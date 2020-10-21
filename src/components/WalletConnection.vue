@@ -32,7 +32,6 @@ import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
-import { lazyComponent } from '@/util'
 
 @Component({
   components: { WalletBase }
