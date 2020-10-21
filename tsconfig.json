@@ -7,17 +7,17 @@
     "importHelpers": true,
     "moduleResolution": "node",
     "experimentalDecorators": true,
-    "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
     "noImplicitAny": false,
     "resolveJsonModule": true,
+    "sourceMap": true,
+    "declaration": true,
+    "outDir": "./lib",
     "baseUrl": ".",
     "types": [
       "webpack-env",
-      "jest",
-      "node"
+      "jest"
     ],
     "paths": {
       "@/*": [

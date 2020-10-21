@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletConnection.vue should renders correctly 1`] = `
+<wallet-base-stub
+  showclose="true"
+  title=""
+>
+  <div
+    class="wallet-connection"
+  >
+    <s-card
+      class="wallet-connection-create"
+    >
+      <div
+        class="title"
+      >
+        
+      </div>
+       
+      <div
+        class="hint"
+      >
+        
+      </div>
+       
+      <s-button
+        class="action"
+        size="medium"
+        type="primary"
+      >
+        
+        
+      
+      </s-button>
+    </s-card>
+     
+    <s-card
+      class="wallet-connection-import"
+    >
+      <div
+        class="title"
+      >
+        
+      </div>
+       
+      <div
+        class="hint"
+      >
+        
+      </div>
+       
+      <s-button
+        class="action"
+        size="medium"
+        type="primary"
+      >
+        
+        
+      
+      </s-button>
+    </s-card>
+  </div>
+</wallet-base-stub>
+`;
