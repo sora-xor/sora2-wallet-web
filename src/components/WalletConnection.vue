@@ -42,9 +42,12 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-$font-size-title: 18px;
-$font-size-hint: 12px;
-$s-color-content-tertiary: #75787B; // TODO: use it from updated library
+@import '../styles/typography';
+@import '../styles/variables';
+@import '../styles/colors';
+
+$font-size-title: $font-size_normal;
+$font-size-hint: $font-size_small;
 
 .wallet-connection {
   &-create {
@@ -53,13 +56,13 @@ $s-color-content-tertiary: #75787B; // TODO: use it from updated library
   .title {
     text-align: center;
     font-size: $font-size-title;
-    line-height: 180%;
+    line-height: 1.8;
   }
   .hint {
     text-align: center;
     font-size: $font-size-hint;
     color: $s-color-content-tertiary;
-    line-height: 180%;
+    line-height: 1.8;
   }
   .action {
     margin-top: 16px;

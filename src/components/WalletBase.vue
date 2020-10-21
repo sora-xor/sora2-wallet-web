@@ -29,10 +29,15 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-$font-size-title: 24px;
+@import '../styles/typography';
+@import '../styles/variables';
+
+$font-size-title: $font-size_medium;
 
 .wallet {
-  width: 448px;
+  width: $wallet-width;
+  font-size: $font-size_basic;
+  line-height: $line-height_basic;
   &-title {
     align-items: center;
     > span {
