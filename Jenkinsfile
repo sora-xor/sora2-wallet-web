@@ -1,4 +1,4 @@
-@Library('jenkins-library@BulatSaif-patch-1' ) _
+@Library('jenkins-library' ) _
 
 def pipeline = new org.js.LibPipeline(steps: this)
 pipeline.runPipeline()
