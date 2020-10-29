@@ -2,6 +2,15 @@
   <s-card class="wallet">
     <template #header>
       <div class="wallet-title s-flex">
+        <s-button
+          v-if="showBack"
+          class="wallet-title-back"
+          type="action"
+          icon="back"
+          size="medium"
+          :tooltip="t('backText')"
+          @click="handleBackClick"
+        />
         <span>{{ title }}</span>
         <s-button
           v-if="showClose"
@@ -17,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop } from 'vue-property-decorator'
 
 import TranslationMixin from './mixins/TranslationMixin'
 
@@ -25,12 +34,18 @@ import TranslationMixin from './mixins/TranslationMixin'
 export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
+  @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
+
+  handleBackClick (): void {
+    this.$emit('back')
+  }
 }
 </script>
 
 <style scoped lang="scss">
 @import '../styles/typography';
 @import '../styles/variables';
+@import '../styles/layout';
 
 $font-size-title: $font-size_medium;
 
@@ -43,6 +58,9 @@ $font-size-title: $font-size_medium;
     > span {
       flex: 1;
       font-size: $font-size-title;
+    }
+    &-back {
+      margin-right: $basic-spacing;
     }
   }
 }

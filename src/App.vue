@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="wallet-wrapper s-flex">
-      <wallet-connection />
+      <wallet />
     </div>
   </div>
 </template>
@@ -14,7 +14,7 @@ import { lazyComponent } from '@/util'
 
 @Component({
   components: {
-    WalletConnection: lazyComponent('WalletConnection')
+    Wallet: lazyComponent('Wallet')
   }
 })
 export default class App extends Vue {
