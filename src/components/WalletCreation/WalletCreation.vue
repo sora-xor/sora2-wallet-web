@@ -72,5 +72,4 @@ $font-size-hint: $font-size_small;
     margin-bottom: $basic-spacing;
   }
 }
-
 </style>

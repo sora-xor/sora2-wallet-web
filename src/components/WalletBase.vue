@@ -13,6 +13,14 @@
         />
         <span>{{ title }}</span>
         <s-button
+          v-if="showSettings"
+          type="action"
+          icon="settings"
+          size="medium"
+          :tooltip="t('settingsText')"
+          @click="handleSettingsClick"
+        />
+        <s-button
           v-if="showClose"
           type="action"
           icon="x-rounded"
@@ -34,10 +42,15 @@ import TranslationMixin from './mixins/TranslationMixin'
 export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
+  @Prop({ default: false, type: Boolean }) readonly showSettings!: boolean
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
 
   handleBackClick (): void {
     this.$emit('back')
+  }
+
+  handleSettingsClick (): void {
+    this.$emit('settings')
   }
 }
 </script>

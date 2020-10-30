@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="wallet-wrapper s-flex">
-      <wallet />
+      <sora-neo-wallet />
     </div>
   </div>
 </template>
@@ -10,12 +10,10 @@
 import Vue from 'vue'
 import { Component, Mixins } from 'vue-property-decorator'
 
-import { lazyComponent } from '@/util'
+import SoraNeoWallet from './SoraNeoWallet.vue'
 
 @Component({
-  components: {
-    Wallet: lazyComponent('Wallet')
-  }
+  components: { SoraNeoWallet }
 })
 export default class App extends Vue {
 }

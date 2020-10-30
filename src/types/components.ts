@@ -1,3 +1,3 @@
 export enum Components {
-  WalletConnection = 'WalletConnection'
+  SoraNeoWallet = 'SoraNeoWallet'
 }

@@ -1,6 +1,6 @@
 <template>
-  <wallet-base :title="t('wallet.title')" show-settings @settings="handleOpenSettings">
-    <div class="wallet">
+  <wallet-base :title="t('settings.title')" show-back @back="handleBack">
+    <div class="wallet-settings">
     </div>
   </wallet-base>
 </template>
@@ -11,18 +11,16 @@ import { Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
-import { RouteNames, WalletTabs } from '../consts'
+import { RouteNames } from '../consts'
 
 @Component({
   components: { WalletBase }
 })
-export default class Wallet extends Mixins(TranslationMixin) {
-  readonly WalletTabs = WalletTabs
-
+export default class WalletSettings extends Mixins(TranslationMixin) {
   @Action navigate
 
-  handleOpenSettings (): void {
-    this.navigate({ name: RouteNames.WalletSettings })
+  handleBack (): void {
+    this.navigate({ name: RouteNames.Wallet })
   }
 }
 </script>
