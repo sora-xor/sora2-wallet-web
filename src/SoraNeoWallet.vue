@@ -1,16 +1,10 @@
 <template>
-  <div>
-    <wallet-connection v-if="currentRoute === RouteNames.WalletConnection" />
-    <wallet-creation v-if="currentRoute === RouteNames.WalletCreation" />
-    <wallet-import v-if="currentRoute === RouteNames.WalletImport" />
-    <wallet-settings v-if="currentRoute === RouteNames.WalletSettings" />
-    <wallet v-if="currentRoute === RouteNames.Wallet" />
-  </div>
+  <component :is="currentRoute" />
 </template>
 
 <script lang="ts">
 import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Getter, Action } from 'vuex-class'
 
 import TranslationMixin from './components/mixins/TranslationMixin'
 import WalletConnection from './components/WalletConnection.vue'
@@ -33,5 +27,13 @@ export default class SoraNeoWallet extends Vue {
   readonly RouteNames = RouteNames
 
   @Getter currentRoute!: RouteNames
+  @Getter isLoggedIn!: boolean
+  @Action navigate
+
+  mounted (): void {
+    if (this.isLoggedIn) {
+      this.navigate({ name: RouteNames.Wallet })
+    }
+  }
 }
 </script>
