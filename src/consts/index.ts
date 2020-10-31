@@ -1,5 +1,5 @@
 export enum RouteNames {
-  WalletConnection = 'Connection',
+  WalletConnection = 'WalletConnection',
   WalletCreation = 'WalletCreation',
   WalletImport = 'WalletImport',
   WalletSettings = 'WalletSettings',
@@ -21,6 +21,12 @@ export enum PasswordCondition {
 export enum WalletTabs {
   Assets = 'assets',
   Activity = 'activity'
+}
+
+export enum AccountMenu {
+  View = 'view',
+  Edit = 'edit',
+  Logout = 'logout'
 }
 
 export const PasswordConditions = [

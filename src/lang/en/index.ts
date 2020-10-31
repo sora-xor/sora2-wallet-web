@@ -1,4 +1,4 @@
-import { PasswordCondition, SourceTypes, WalletTabs } from '../../consts'
+import { AccountMenu, PasswordCondition, SourceTypes, WalletTabs } from '../../consts'
 
 export default {
   closeText: 'Close',
@@ -10,6 +10,9 @@ export default {
   settingsText: 'Settings',
   addTokenText: 'Add token',
   comingSoonText: 'Coming soon',
+  successText: 'Success',
+  warningText: 'Warning',
+  menuText: 'Menu',
   sourceType: {
     placeholder: 'Source type',
     [SourceTypes.MnemonicSeed]: 'Mnemonic seed',
@@ -78,6 +81,15 @@ export default {
     [WalletTabs.Assets]: 'Assets',
     [WalletTabs.Activity]: 'Activity',
     addToken: '@:addTokenText'
+  },
+  account: {
+    successCopy: 'Wallet address has been copied to the clipboard',
+    menu: {
+      tooltip: '@:menuText',
+      [AccountMenu.View]: 'View in Polkascan',
+      [AccountMenu.Edit]: 'Edit name',
+      [AccountMenu.Logout]: 'Logout'
+    }
   },
   settings: {
     title: '@:settingsText'
