@@ -62,7 +62,7 @@ $font-size-hint: $font-size_small;
 
 .wallet-connection {
   &-create {
-    margin-bottom: 20px;
+    margin-bottom: $basic-spacing_big;
   }
   .title {
     text-align: center;

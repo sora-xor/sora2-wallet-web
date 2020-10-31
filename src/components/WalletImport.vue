@@ -14,16 +14,7 @@
         <div class="wallet-import-hint">{{ t(`import.${sourceType}.hint`) }}</div>
       </template>
       <template v-else>
-        <s-card :bodyStyle="{ padding: '0 12px' }">
-          <div class="wallet-import-account s-flex">
-            <div class="avatar" />
-            <div class="credentials s-flex">
-              <span v-if="importFormData.name" class="credentials-name">{{ importFormData.name }}</span>
-              <span class="credentials-address">{{ generatedAddressMock }}</span>
-            </div>
-            <s-icon class="copy" name="copy" @click="handleCopyAddress" />
-          </div>
-        </s-card>
+        <wallet-account :name="importFormData.name" />
         <s-input :placeholder="t(`import.${sourceType}.name.placeholder`)" v-model="importFormData.name" />
         <div class="wallet-import-hint">{{ t(`import.${sourceType}.name.hint`) }}</div>
         <s-input show-password :placeholder="t(`import.${sourceType}.password.placeholder`)" v-model="importFormData.password" />
@@ -50,25 +41,28 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
+import { Action, Getter } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
+import WalletAccount from './WalletAccount.vue'
 import { RouteNames, SourceTypes, PasswordConditions } from '../consts'
 
 @Component({
-  components: { WalletBase }
+  components: { WalletBase, WalletAccount }
 })
 export default class WalletImport extends Mixins(TranslationMixin) {
   readonly SourceTypes = SourceTypes
   readonly PasswordConditions = PasswordConditions
 
+  @Getter account
   @Action navigate
+  @Action getAccount
+  @Action login
 
   sourceType = SourceTypes.MnemonicSeed
   seed = ''
   step = 1
-  generatedAddressMock = '5HVmWWpBi69cmmDGdfgg53dfgxxJ2pveRnfozNg5K'
   importFormData = {
     name: '',
     password: '',
@@ -85,8 +79,6 @@ export default class WalletImport extends Mixins(TranslationMixin) {
       )
   }
 
-  handleCopyAddress (): void {}
-
   handleBack (): void {
     if (this.step === 1) {
       this.navigate({ name: RouteNames.WalletConnection })
@@ -95,15 +87,18 @@ export default class WalletImport extends Mixins(TranslationMixin) {
     this.step = 1
   }
 
-  handleImport (): void {
+  async handleImport (): Promise<void> {
     if (this.step === 1 && this.sourceType === SourceTypes.MnemonicSeed) {
+      await this.getAccount({ seed: this.seed })
+      this.importFormData.name = this.account.name
       this.step = 2
       return
     }
     if (this.sourceType === SourceTypes.RawSeed) {
       // logic for RawSeed import
     } else {
-      // logic for MnemonicSeed import
+      const { name, password } = this.importFormData
+      await this.login({ name, password })
     }
     this.navigate({ name: RouteNames.Wallet })
   }
@@ -119,50 +114,17 @@ export default class WalletImport extends Mixins(TranslationMixin) {
 $avatar-size: 32px;
 $font-size-hint: $font-size_small;
 
-.secondary-text {
+@mixin secondary-text {
   color: $s-color-content-tertiary;
   font-size: $font-size-hint;
   line-height: 1.8;
 }
-
-.text-ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .wallet-import {
   &-hint {
-    @extend .secondary-text;
-  }
-  &-account {
-    margin: $basic-spacing_mini 0;
-    .avatar {
-      margin-right: $basic-spacing_small;
-      background-image: url('../assets/img/avatar-mock.svg');
-      width: $avatar-size;
-      height: $avatar-size;
-    }
-    .credentials {
-      max-width: calc(#{$wallet-width} - 128px);
-      flex-direction: column;
-      justify-content: center;
-      &-name {
-        font-size: $font-size_basic;
-        @extend .text-ellipsis;
-      }
-      &-address {
-        color: $s-color-content-tertiary;
-        font-size: $font-size_small;
-        @extend .text-ellipsis;
-      }
-    }
-    .copy {
-      text-align: right;
-      cursor: pointer;
-    }
+    @include secondary-text;
   }
   &-condition {
-    @extend .secondary-text;
+    @include secondary-text;
     .s-icon-check-mark {
       color: $s-color-content-tertiary;
       &.error {
