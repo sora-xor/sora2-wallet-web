@@ -82,9 +82,9 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 
 <style scoped lang="scss">
 @import '../styles/typography';
-@import '../styles/colors';
 @import '../styles/layout';
 @import '../styles/variables';
+@import '../styles/soramitsu-variables';
 
 $avatar-size: 32px;
 
@@ -96,7 +96,7 @@ $avatar-size: 32px;
   margin: $basic-spacing_mini 0;
   &-avatar {
     margin-right: $basic-spacing_small;
-    background-image: url('../assets/img/avatar-default.svg');
+    background-image: url('../assets/img/avatar-default.svg'); // TODO: fix this import when using it externally
     width: $avatar-size;
     height: $avatar-size;
   }
@@ -109,7 +109,7 @@ $avatar-size: 32px;
       @include text-ellipsis;
     }
     &_address {
-      color: $s-color-content-tertiary;
+      color: $s-color-base-content-tertiary;
       font-size: $font-size_small;
       @include text-ellipsis;
     }
