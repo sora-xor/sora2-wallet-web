@@ -26,9 +26,9 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
 
-import TranslationMixin from '../mixins/TranslationMixin'
-import WalletBase from '../WalletBase.vue'
-import { RouteNames, SourceTypes } from '../../consts'
+import TranslationMixin from './mixins/TranslationMixin'
+import WalletBase from './WalletBase.vue'
+import { RouteNames, SourceTypes } from '../consts'
 
 @Component({
   components: { WalletBase }
@@ -53,15 +53,15 @@ export default class WalletCreation extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../../styles/typography';
-@import '../../styles/colors';
-@import '../../styles/layout';
+@import '../styles/typography';
+@import '../styles/layout';
+@import '../styles/soramitsu-variables';
 
 $font-size-hint: $font-size_small;
 
 .wallet-creation {
   &-hint {
-    color: $s-color-content-tertiary;
+    color: $s-color-base-content-tertiary;
     font-size: $font-size-hint;
     line-height: 1.8;
   }

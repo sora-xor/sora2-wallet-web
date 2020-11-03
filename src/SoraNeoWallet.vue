@@ -8,7 +8,7 @@ import { Getter, Action } from 'vuex-class'
 
 import TranslationMixin from './components/mixins/TranslationMixin'
 import WalletConnection from './components/WalletConnection.vue'
-import WalletCreation from './components/WalletCreation/WalletCreation.vue'
+import WalletCreation from './components/WalletCreation.vue'
 import WalletImport from './components/WalletImport.vue'
 import WalletSettings from './components/WalletSettings.vue'
 import Wallet from './components/Wallet.vue'

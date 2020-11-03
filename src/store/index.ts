@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-const files = require.context('.', false, /\.ts$/)
-const modules = {}
+import account from './Account'
+import router from './Router'
 
-files.keys().forEach(key => {
-  if (key === './index.ts') return
-  modules[key.replace(/(\.\/|\.ts)/g, '')] = files(key).default
-})
+const modules = {
+  account,
+  router
+}
 
 Vue.use(Vuex)
 
@@ -15,5 +15,9 @@ const store = new Vuex.Store({
   modules,
   strict: process.env.NODE_ENV !== 'production'
 })
+
+export {
+  modules
+}
 
 export default store
