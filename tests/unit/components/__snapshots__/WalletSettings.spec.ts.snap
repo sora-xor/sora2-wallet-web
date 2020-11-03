@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletSettings.vue should renders correctly 1`] = `
+<wallet-base-stub
+  showback="true"
+  title=""
+>
+  <div
+    class="wallet-settings"
+  />
+</wallet-base-stub>
+`;

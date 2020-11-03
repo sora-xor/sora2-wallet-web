@@ -1,12 +1,13 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 
 import WalletBase from '@/components/WalletBase.vue'
-import { TranslationMock } from '../../utils'
+import { TranslationMock, SoramitsuElementsImport } from '../../utils'
 
 const localVue = createLocalVue()
 
 describe('WalletBase.vue', () => {
   beforeEach(() => {
+    SoramitsuElementsImport(localVue)
     TranslationMock(WalletBase)
   })
 

@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletCreation.vue should renders correctly 1`] = `
+<wallet-base-stub
+  showback="true"
+  title=""
+>
+  <div
+    class="wallet-creation"
+  >
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      form=""
+      label=""
+      name=""
+      placeholder=""
+      tabindex=""
+      type="text"
+      value=""
+    />
+     
+    <div
+      class="wallet-creation-hint"
+    >
+      
+    </div>
+     
+    <s-select-stub
+      autocomplete="off"
+      inputtype="input"
+      loadingtext="Loading"
+      multiplelimit="0"
+      multipletextprefix=""
+      name=""
+      nodatatext="No data"
+      placeholder="Select"
+      value="MnemonicSeed"
+    >
+      <s-option-stub
+        label=""
+        value="MnemonicSeed"
+      />
+    </s-select-stub>
+     
+    <div
+      class="wallet-creation-hint"
+    >
+      
+    </div>
+     
+    <s-button-stub
+      icon=""
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+    >
+      
+      
+    
+    </s-button-stub>
+  </div>
+</wallet-base-stub>
+`;
