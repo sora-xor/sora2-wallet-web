@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import account from './Account'
-import router from './Router'
+import Account from './Account'
+import Router from './Router'
 
 const modules = {
-  account,
-  router
+  Account,
+  Router
 }
 
 Vue.use(Vuex)
