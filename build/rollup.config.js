@@ -4,10 +4,8 @@ import pkg from '../package.json'
 import scss from 'rollup-plugin-scss'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
-import copy from 'rollup-plugin-copy'
 import { terser } from 'rollup-plugin-terser'
 import del from 'rollup-plugin-delete'
-import modify from 'rollup-plugin-modify'
 
 export default {
   input: 'src/index.ts',
@@ -30,15 +28,6 @@ export default {
     'vue'
   ],
   plugins: [
-    copy({
-      targets: [
-        { src: 'src/assets/*', dest: 'lib/assets' }
-      ]
-    }),
-    modify({
-      find: '../assets',
-      replace: '~assets'
-    }),
     typescript({
       typescript: require('typescript'),
       objectHashIgnoreUnknownHack: true,
