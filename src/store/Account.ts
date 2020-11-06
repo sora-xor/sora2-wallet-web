@@ -6,6 +6,7 @@ import concat from 'lodash/fp/concat'
 
 import * as accountApi from '@/api/account'
 import * as storage from '@/util/storage'
+import { encrypt } from '@/util'
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
@@ -57,9 +58,10 @@ const mutations = {
 
   [types.LOGIN] (state, params) {
     state.name = params.name
-    state.password = params.password
+    const password = encrypt(params.password)
+    state.password = password
     storage.setItem('name', params.name)
-    storage.setItem('password', params.password)
+    storage.setItem('password', password)
   },
 
   [types.GET_ACCOUNT_REQUEST] (state) {

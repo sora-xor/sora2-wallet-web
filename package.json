@@ -8,7 +8,7 @@
   "unpkg": "./lib/soraneo-wallet-web.min.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "build": "rollup -c ./build/rollup.config.js",
+    "build": "rm -rf lib && rollup -c ./build/rollup.config.js",
     "serve": "vue-cli-service serve",
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
@@ -19,6 +19,7 @@
     "@soramitsu/soramitsu-js-ui": "^0.5.4",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
+    "crypto-js": "^4.0.0",
     "lodash": "^4.17.15",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^6.0.0",
+    "@types/crypto-js": "^4.0.1",
     "@types/jest": "^24.0.19",
     "@types/lodash": "^4.14.150",
     "@types/node": "^14.0.26",
