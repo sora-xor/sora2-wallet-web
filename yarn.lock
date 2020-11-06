@@ -1151,10 +1151,10 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
-"@soramitsu/soramitsu-js-ui@^0.4.1":
-  version "0.4.1"
-  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-0.4.1.tgz#c6ba6896faba5a72a2c90c8f2342828ea1add231"
-  integrity sha512-ti1Js+VjZa0IDQjKa/rMQqWIqZGztCeWGK24Uy8lJh4pw0Mv9f4l0rLXjZzeLlz6fM99PeuqGVWRFO/yy0IGbw==
+"@soramitsu/soramitsu-js-ui@^0.5.4":
+  version "0.5.4"
+  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-0.5.4.tgz#172192bc54410aa7b649ee8bbfed514a5dbc6030"
+  integrity sha512-gKhKOnpAg53opdo+9DOIwKdsEKQuslF2Oel0phwLad02UhRpTuS9MA6isE6s9JnxARNgV5hY74WEl2NQBdScvw==
   dependencies:
     core-js "^3.6.4"
     element-ui "^2.13.2"
@@ -1246,6 +1246,11 @@
   integrity sha512-2+FrkXY4zllzTNfJth7jOqEHC+enpLeGslEhpnTAkg21GkRrWV4SsAtqchtT4YS9/nODBU2/ZfsBY2X4J/dX7A==
   dependencies:
     "@types/node" "*"
+
+"@types/crypto-js@^4.0.1":
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/@types/crypto-js/-/crypto-js-4.0.1.tgz#3a4bd24518b0e6c5940da4e2659eeb2ef0806963"
+  integrity sha512-6+OPzqhKX/cx5xh+yO8Cqg3u3alrkhoxhE5ZOdSEv0DOzJ13lwJ6laqGU0Kv6+XDMFmlnGId04LtY22PsFLQUw==
 
 "@types/eslint-visitor-keys@^1.0.0":
   version "1.0.0"
@@ -3831,6 +3836,11 @@ crypto-browserify@^3.11.0:
     public-encrypt "^4.0.0"
     randombytes "^2.0.0"
     randomfill "^1.0.3"
+
+crypto-js@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/crypto-js/-/crypto-js-4.0.0.tgz#2904ab2677a9d042856a2ea2ef80de92e4a36dcc"
+  integrity sha512-bzHZN8Pn+gS7DQA6n+iUmBfl0hO5DJq++QP3U6uTucDtk/0iGpXd/Gg7CGR0p8tJhofJyaKoWBuJI4eAO00BBg==
 
 css-color-names@0.0.4, css-color-names@^0.0.4:
   version "0.0.4"
