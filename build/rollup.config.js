@@ -15,6 +15,11 @@ export default {
       file: 'lib/soraneo-wallet-web.esm.js',
       format: 'esm',
       sourcemap: true
+    }, {
+      name: 'SoraNeoWalletWebUmd',
+      format: 'umd',
+      file: 'lib/soraneo-wallet-web.umd.js',
+      sourcemap: true
     }
   ],
   external: [
@@ -34,7 +39,8 @@ export default {
     commonjs(),
     vue({
       css: true,
-      compileTemplate: true
+      compileTemplate: true,
+      needMap: false // fix for https://github.com/vuejs/rollup-plugin-vue/issues/238
     }),
     scss(),
     resolve(),
@@ -47,7 +53,9 @@ export default {
         'lib/styles',
         'lib/node_modules',
         'lib/plugins',
-        'lib/lang'
+        'lib/lang',
+        'lib/SoraNeoWallet.vue.d.ts',
+        'lib/main.d.ts'
       ],
       hook: 'writeBundle'
     })

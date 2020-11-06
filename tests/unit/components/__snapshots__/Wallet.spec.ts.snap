@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Wallet.vue should renders correctly 1`] = `
+<wallet-base-stub
+  showsettings="true"
+  title=""
+>
+  <wallet-account-stub
+    name="Mock"
+    showmenu="true"
+  />
+   
+  <div
+    class="wallet"
+  />
+</wallet-base-stub>
+`;

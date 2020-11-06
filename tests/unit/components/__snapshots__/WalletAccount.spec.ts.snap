@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletAccount.vue should renders correctly 1`] = `
+<s-card-stub
+  bodystyle="[object Object]"
+  shadow="hover"
+>
+  <div
+    class="account s-flex"
+  >
+    <div
+      class="account-avatar"
+    />
+     
+    <div
+      class="account-credentials"
+    >
+      <!---->
+       
+      <div
+        class="account-credentials_address"
+      >
+        dfsakljfdlkjfhfkjladshslfjafds
+      </div>
+    </div>
+     
+    <s-button-stub
+      class="account-copy"
+      icon="copy"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="link"
+    />
+     
+    <!---->
+  </div>
+</s-card-stub>
+`;
