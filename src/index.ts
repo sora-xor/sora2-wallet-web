@@ -1,27 +1,32 @@
 import Vue from 'vue'
 
-import {
-  WalletConnection
-} from './components'
-import { Components } from './types/components'
+import SoraNeoWallet from './SoraNeoWallet.vue'
+import { Components, Modules } from './types'
 import en from './lang/en'
+import { modules } from './store'
 
 const components = [
-  { component: WalletConnection, name: Components.WalletConnection }
+  { component: SoraNeoWallet, name: Components.SoraNeoWallet }
 ]
 
-const SoraNeoWallet = {
-  install (vue: typeof Vue): void {
+const SoraNeoWalletElements = {
+  install (vue: typeof Vue, options: any): void {
+    if (!options.store) {
+      throw new Error('Please provide vuex store.')
+    }
+    Object.values(Modules).forEach(molude => {
+      options.store.registerModule(molude, modules[molude])
+    })
     components.forEach(el => vue.component(el.name, el.component))
   }
 }
 
 if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(SoraNeoWallet, {})
+  window.Vue.use(SoraNeoWalletElements, {})
 }
 
 export {
   en,
-  WalletConnection
+  SoraNeoWallet
 }
-export default SoraNeoWallet
+export default SoraNeoWalletElements

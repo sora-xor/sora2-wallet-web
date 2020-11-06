@@ -8,6 +8,7 @@
           class="action"
           type="primary"
           size="medium"
+          @click="handleNavigate(RouteNames.WalletCreation)"
         >
           {{ t('connection.create.action') }}
         </s-button>
@@ -19,6 +20,7 @@
           class="action"
           type="primary"
           size="medium"
+          @click="handleNavigate(RouteNames.WalletImport)"
         >
           {{ t('connection.import.action') }}
         </s-button>
@@ -28,29 +30,39 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
+import { RouteNames } from '../consts'
 
 @Component({
   components: { WalletBase }
 })
 export default class WalletConnection extends Mixins(TranslationMixin) {
+  readonly RouteNames = RouteNames
+
+  @Action navigate
+
+  handleNavigate (name: RouteNames): void {
+    this.navigate({ name })
+  }
 }
 </script>
 
 <style scoped lang="scss">
 @import '../styles/typography';
 @import '../styles/variables';
-@import '../styles/colors';
+@import '../styles/layout';
+@import '../styles/soramitsu-variables';
 
 $font-size-title: $font-size_normal;
 $font-size-hint: $font-size_small;
 
 .wallet-connection {
   &-create {
-    margin-bottom: 20px;
+    margin-bottom: $basic-spacing_big;
   }
   .title {
     text-align: center;
@@ -60,11 +72,11 @@ $font-size-hint: $font-size_small;
   .hint {
     text-align: center;
     font-size: $font-size-hint;
-    color: $s-color-content-tertiary;
+    color: $s-color-base-content-tertiary;
     line-height: 1.8;
   }
   .action {
-    margin-top: 16px;
+    margin-top: $basic-spacing;
     width: 100%;
   }
 }
