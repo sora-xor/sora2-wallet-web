@@ -13,6 +13,7 @@ export default {
   successText: 'Success',
   warningText: 'Warning',
   menuText: 'Menu',
+  swapText: 'Swap',
   sourceType: {
     placeholder: 'Source type',
     [SourceTypes.MnemonicSeed]: 'Mnemonic seed',
@@ -90,6 +91,15 @@ export default {
       [AccountMenu.Edit]: 'Edit name',
       [AccountMenu.Logout]: 'Logout'
     }
+  },
+  activity: {
+    empty: 'There is no activity'
+  },
+  assets: {
+    empty: 'There are no assets',
+    add: 'Add token',
+    swap: '@:swapText',
+    emptyDetails: '@:activity.empty'
   },
   settings: {
     title: '@:settingsText'

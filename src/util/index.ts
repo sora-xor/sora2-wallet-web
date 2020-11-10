@@ -13,3 +13,5 @@ export const copyToClipboard = async (text: string) => {
     console.error('Could not copy text: ', err)
   }
 }
+
+export const formatDate = (date: number) => new Date(date).toLocaleString()
