@@ -1,10 +1,10 @@
 <template>
-  <s-card class="wallet">
+  <s-card class="base">
     <template #header>
-      <div class="wallet-title s-flex">
+      <div class="base-title s-flex">
         <s-button
           v-if="showBack"
-          class="wallet-title-back"
+          class="base-title_back"
           type="action"
           icon="back"
           size="medium"
@@ -35,8 +35,10 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
+import { RouteNames } from '../consts'
 
 @Component
 export default class WalletBase extends Mixins(TranslationMixin) {
@@ -45,11 +47,14 @@ export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly showSettings!: boolean
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
 
+  @Action navigate
+
   handleBackClick (): void {
     this.$emit('back')
   }
 
   handleSettingsClick (): void {
+    this.navigate({ name: RouteNames.WalletSettings })
     this.$emit('settings')
   }
 }
@@ -62,7 +67,7 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 
 $font-size-title: $font-size_medium;
 
-.wallet {
+.base {
   width: $wallet-width;
   font-size: $font-size_basic;
   line-height: $line-height_basic;
@@ -72,7 +77,7 @@ $font-size-title: $font-size_medium;
       flex: 1;
       font-size: $font-size-title;
     }
-    &-back {
+    &_back {
       margin-right: $basic-spacing;
     }
   }
