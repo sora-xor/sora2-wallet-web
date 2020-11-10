@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletAssetDetails.vue should renders correctly 1`] = `
+<wallet-base-stub
+  showback="true"
+  showsettings="true"
+  title="XOR"
+>
+  <div
+    class="asset-details s-flex"
+  >
+    <div
+      class="asset-details-item s-flex"
+    >
+      <div
+        class="info s-flex"
+      >
+        <div
+          class="info-operation"
+        >
+          SWAP
+        </div>
+         
+        <div
+          class="info-text"
+        >
+          <span>
+            100 XOR for 24390.1239 KSM
+          </span>
+           
+          <s-button-stub
+            class="info-text_explorer"
+            icon=""
+            nativetype="button"
+            size="small"
+            tabindex="0"
+            tooltip=""
+            tooltipplacement="top"
+            type="link"
+          >
+            <s-icon-stub
+              name="external-link"
+              size="16px"
+            />
+          </s-button-stub>
+        </div>
+         
+        <s-icon-stub
+          class="info-status info-status--loading"
+          name="refresh"
+          size="20px"
+        />
+      </div>
+       
+      <div
+        class="date"
+      >
+        11.11.2020, 01:50:43
+      </div>
+    </div>
+  </div>
+</wallet-base-stub>
+`;
