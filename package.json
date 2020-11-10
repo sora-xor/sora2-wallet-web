@@ -3,7 +3,7 @@
   "version": "0.1.1",
   "private": false,
   "publishConfig": {
-    "registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/"
+    "@soramitsu:registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/"
   },
   "author": "Stefan Popov <popov@soramitsu.co.jp>",
   "main": "./lib/soraneo-wallet-web.umd.js",
