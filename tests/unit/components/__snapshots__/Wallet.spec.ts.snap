@@ -12,6 +12,21 @@ exports[`Wallet.vue should renders correctly 1`] = `
    
   <div
     class="wallet"
-  />
+  >
+    <s-tabs-stub
+      position="top"
+      type="rounded"
+      value="WalletAssets"
+    >
+      <s-tab-stub
+        name="WalletAssets"
+      />
+      <s-tab-stub
+        name="WalletActivity"
+      />
+    </s-tabs-stub>
+     
+    <walletassets-stub />
+  </div>
 </wallet-base-stub>
 `;
