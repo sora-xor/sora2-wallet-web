@@ -50,7 +50,7 @@ exports[`WalletActivity.vue should renders correctly 1`] = `
     <div
       class="date"
     >
-      11.11.2020, 01:50:43
+      27.11.2020, 11:59:59
     </div>
   </div>
 </div>
