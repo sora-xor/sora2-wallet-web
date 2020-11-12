@@ -35,21 +35,19 @@ const assetDetailsMock = {
 }
 
 export const getAccount = async (seed: string) => {
-  return await new Promise(resolve => resolve({ name: nameMock, address: addressMock }))
+  return await Promise.resolve({ name: nameMock, address: addressMock })
 }
 
 export const getAccountAssets = async (address: string) => {
-  return await new Promise(resolve => resolve(assetsMock))
+  return await Promise.resolve(assetsMock)
 }
 
 export const getAccountActivity = async (address: string) => {
-  return await new Promise(resolve =>
-    resolve(Object.values(assetDetailsMock)
-      .flat()
-      .map(item => ({ ...item, fromSymbol: 'XOR' })))
+  return await Promise.resolve(
+    Object.values(assetDetailsMock).flat().map(item => ({ ...item, fromSymbol: 'XOR' }))
   )
 }
 
 export const getAssetDetails = async (address: string, symbol: string) => {
-  return await new Promise(resolve => resolve(assetDetailsMock[symbol]))
+  return await Promise.resolve(assetDetailsMock[symbol])
 }

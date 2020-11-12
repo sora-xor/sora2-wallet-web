@@ -1,6 +1,6 @@
 <template>
   <div class="wallet-assets s-flex">
-    <template v-if="assets.length !== 0">
+    <template v-if="!!assets.length">
       <template v-for="(asset, index) in assets">
         <div class="wallet-assets-item s-flex" :key="asset.symbol">
           <i :class="getAssetClasses(asset)" />

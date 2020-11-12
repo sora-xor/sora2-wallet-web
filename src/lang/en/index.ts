@@ -92,14 +92,13 @@ export default {
       [AccountMenu.Logout]: 'Logout'
     }
   },
-  activity: {
+  history: {
     empty: 'There is no activity'
   },
   assets: {
     empty: 'There are no assets',
     add: 'Add token',
-    swap: '@:swapText',
-    emptyDetails: '@:activity.empty'
+    swap: '@:swapText'
   },
   settings: {
     title: '@:settingsText'
