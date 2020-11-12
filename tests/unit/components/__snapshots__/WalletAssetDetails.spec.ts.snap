@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletAssetDetails.vue should renders correctly 1`] = `
+<wallet-base-stub
+  showback="true"
+  showsettings="true"
+  title="XOR"
+>
+  <wallet-history-stub
+    history="[object Object]"
+  />
+</wallet-base-stub>
+`;

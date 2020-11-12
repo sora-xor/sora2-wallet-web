@@ -18,14 +18,20 @@ const types = flow(
   map(x => [x, x]),
   fromPairs
 )([
-  'GET_ACCOUNT'
+  'GET_ACCOUNT',
+  'GET_ACCOUNT_ASSETS',
+  'GET_ACCOUNT_ACTIVITY',
+  'GET_ASSET_DETAILS'
 ])
 
 function initialState () {
   return {
     address: storage.getItem('address') || '',
     name: storage.getItem('name') || '',
-    password: storage.getItem('password') || ''
+    password: storage.getItem('password') || '',
+    assets: [],
+    selectedAssetDetails: [],
+    activity: []
   }
 }
 
@@ -41,6 +47,15 @@ const getters = {
       name: state.name,
       password: state.password
     }
+  },
+  assets (state) {
+    return state.assets
+  },
+  activity (state) {
+    return state.activity
+  },
+  selectedAssetDetails (state) {
+    return state.selectedAssetDetails
   }
 }
 
@@ -81,6 +96,42 @@ const mutations = {
     state.address = ''
     state.name = ''
     storage.clear()
+  },
+
+  [types.GET_ACCOUNT_ASSETS_REQUEST] (state) {
+    state.assets = []
+  },
+
+  [types.GET_ACCOUNT_ASSETS_SUCCESS] (state, assets) {
+    state.assets = assets
+  },
+
+  [types.GET_ACCOUNT_ASSETS_FAILURE] (state) {
+    state.assets = []
+  },
+
+  [types.GET_ACCOUNT_ACTIVITY_REQUEST] (state) {
+    state.activity = []
+  },
+
+  [types.GET_ACCOUNT_ACTIVITY_SUCCESS] (state, activity) {
+    state.activity = activity
+  },
+
+  [types.GET_ACCOUNT_ACTIVITY_FAILURE] (state) {
+    state.activity = []
+  },
+
+  [types.GET_ASSET_DETAILS_REQUEST] (state) {
+    state.selectedAssetDetails = []
+  },
+
+  [types.GET_ASSET_DETAILS_SUCCESS] (state, data) {
+    state.selectedAssetDetails = data
+  },
+
+  [types.GET_ASSET_DETAILS_FAILURE] (state) {
+    state.selectedAssetDetails = []
   }
 }
 
@@ -92,6 +143,33 @@ const actions = {
       commit(types.GET_ACCOUNT_SUCCESS, account)
     } catch (error) {
       commit(types.GET_ACCOUNT_FAILURE)
+    }
+  },
+  async getAccountAssets ({ commit, state: { address } }) {
+    commit(types.GET_ACCOUNT_ASSETS_REQUEST)
+    try {
+      const assets = await accountApi.getAccountAssets(address)
+      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, assets)
+    } catch (error) {
+      commit(types.GET_ACCOUNT_ASSETS_FAILURE)
+    }
+  },
+  async getAssetDetails ({ commit, state: { address } }, { symbol }) {
+    commit(types.GET_ASSET_DETAILS_REQUEST)
+    try {
+      const data = await accountApi.getAssetDetails(address, symbol)
+      commit(types.GET_ASSET_DETAILS_SUCCESS, data)
+    } catch (error) {
+      commit(types.GET_ASSET_DETAILS_FAILURE)
+    }
+  },
+  async getAccountActivity ({ commit, state: { address } }) {
+    commit(types.GET_ACCOUNT_ACTIVITY_REQUEST)
+    try {
+      const activity = await accountApi.getAccountActivity(address)
+      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, activity)
+    } catch (error) {
+      commit(types.GET_ACCOUNT_ACTIVITY_FAILURE)
     }
   },
   login ({ commit, state: { address } }, { name, password }) {

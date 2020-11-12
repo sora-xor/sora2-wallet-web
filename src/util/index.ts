@@ -1,4 +1,5 @@
 import { AES, enc } from 'crypto-js'
+import moment from 'moment'
 
 const key = 'U2FsdGVkX18ZUVvShFSES21qHsQEqZXMxQ9zgHy'
 
@@ -13,3 +14,5 @@ export const copyToClipboard = async (text: string) => {
     console.error('Could not copy text: ', err)
   }
 }
+
+export const formatDate = (date: number) => moment(date).format('DD.MM.YYYY, h:mm:ss')

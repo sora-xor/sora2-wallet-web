@@ -13,7 +13,7 @@
   "scripts": {
     "build": "rm -rf lib && rollup -c ./build/rollup.config.js",
     "serve": "vue-cli-service serve",
-    "test:unit": "vue-cli-service test:unit",
+    "test:unit": "TZ=utc vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "test:all": "yarn test:unit",
     "lint": "vue-cli-service lint"
@@ -24,6 +24,7 @@
     "core-js": "^3.6.4",
     "crypto-js": "^4.0.0",
     "lodash": "^4.17.15",
+    "moment": "^2.29.1",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.1",
