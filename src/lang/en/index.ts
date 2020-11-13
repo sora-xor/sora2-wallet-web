@@ -1,4 +1,4 @@
-import { AccountMenu, PasswordCondition, SourceTypes, WalletTabs } from '../../consts'
+import { AccountMenu, AddTokenTabs, PasswordCondition, SourceTypes, WalletTabs } from '../../consts'
 
 export default {
   closeText: 'Close',
@@ -14,6 +14,8 @@ export default {
   warningText: 'Warning',
   menuText: 'Menu',
   swapText: 'Swap',
+  searchText: 'Search',
+  cancelText: 'Cancel',
   sourceType: {
     placeholder: 'Source type',
     [SourceTypes.MnemonicSeed]: 'Mnemonic seed',
@@ -102,5 +104,22 @@ export default {
   },
   settings: {
     title: '@:settingsText'
+  },
+  addToken: {
+    title: '@:addTokenText',
+    cancel: '@:cancelText',
+    action: '@:addTokenText',
+    success: 'Token was added successfully!',
+    [AddTokenTabs.Search]: {
+      title: '@:searchText',
+      placeholder: 'Search Token Name, Symbol, or Address',
+      info: 'Add the tokens you\'ve acquired using MetaMask',
+      empty: 'No tokens found'
+    },
+    [AddTokenTabs.Custom]: {
+      title: 'Custom token',
+      addressPlaceholder: 'Address',
+      symbolPlaceholder: 'Token symbol'
+    }
   }
 }
