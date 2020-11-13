@@ -3,7 +3,7 @@
     <template v-if="!!assets.length">
       <template v-for="(asset, index) in assets">
         <div class="wallet-assets-item s-flex" :key="asset.symbol">
-          <i :class="getAssetClasses(asset)" />
+          <i :class="getAssetClasses(asset.symbol)" />
           <div class="amount s-flex">
             <div class="amount-value">{{ formatAmount(asset) }}</div>
             <div class="amount-converted">{{ formatConvertedAmount(asset) }}</div>
@@ -25,7 +25,7 @@
       </template>
     </template>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
-    <s-button class="wallet-assets-add" type="tertiary">{{ t('assets.add') }}</s-button>
+    <s-button class="wallet-assets-add" type="tertiary" @click="handleOpenAddToken">{{ t('assets.add') }}</s-button>
   </div>
 </template>
 
@@ -35,6 +35,7 @@ import { Getter, Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { RouteNames } from '../consts'
+import { getTokenIconClasses } from '../util'
 
 @Component
 export default class WalletAssets extends Mixins(TranslationMixin) {
@@ -46,12 +47,8 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
     this.getAccountAssets()
   }
 
-  getAssetClasses (asset: any): string {
-    const cssClass = 'token-logo'
-    if (asset && asset.symbol) {
-      return `${cssClass} ${cssClass}--${asset.symbol.toLowerCase()}`
-    }
-    return cssClass
+  getAssetClasses (symbol: string): string {
+    return getTokenIconClasses(symbol)
   }
 
   formatAmount (asset: any): string {
@@ -68,6 +65,10 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
 
   handleOpenAssetDetails (symbol: string): void {
     this.navigate({ name: RouteNames.WalletAssetDetails, params: { symbol } })
+  }
+
+  handleOpenAddToken (): void {
+    this.navigate({ name: RouteNames.AddToken })
   }
 }
 </script>

@@ -16,3 +16,11 @@ export const copyToClipboard = async (text: string) => {
 }
 
 export const formatDate = (date: number) => moment(date).format('DD.MM.YYYY, h:mm:ss')
+
+export const getTokenIconClasses = (symbol: string) => {
+  const cssClass = 'token-logo'
+  if (symbol) {
+    return `${cssClass} ${cssClass}--${symbol.toLowerCase()}`
+  }
+  return cssClass
+}
