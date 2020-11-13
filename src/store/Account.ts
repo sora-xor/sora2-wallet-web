@@ -21,7 +21,10 @@ const types = flow(
   'GET_ACCOUNT',
   'GET_ACCOUNT_ASSETS',
   'GET_ACCOUNT_ACTIVITY',
-  'GET_ASSET_DETAILS'
+  'GET_ASSET_DETAILS',
+  'GET_TOKENS',
+  'SEARCH_TOKEN',
+  'ADD_TOKEN'
 ])
 
 function initialState () {
@@ -31,7 +34,8 @@ function initialState () {
     password: storage.getItem('password') || '',
     assets: [],
     selectedAssetDetails: [],
-    activity: []
+    activity: [],
+    tokens: []
   }
 }
 
@@ -56,6 +60,9 @@ const getters = {
   },
   selectedAssetDetails (state) {
     return state.selectedAssetDetails
+  },
+  tokens (state) {
+    return state.tokens
   }
 }
 
@@ -132,7 +139,31 @@ const mutations = {
 
   [types.GET_ASSET_DETAILS_FAILURE] (state) {
     state.selectedAssetDetails = []
-  }
+  },
+
+  [types.GET_TOKENS_REQUEST] (state) {
+    state.tokens = []
+  },
+
+  [types.GET_TOKENS_SUCCESS] (state, tokens) {
+    state.tokens = tokens
+  },
+
+  [types.GET_TOKENS_FAILURE] (state) {
+    state.tokens = []
+  },
+
+  [types.SEARCH_TOKEN_REQUEST] (state) {},
+
+  [types.SEARCH_TOKEN_SUCCESS] (state) {},
+
+  [types.SEARCH_TOKEN_FAILURE] (state) {},
+
+  [types.ADD_TOKEN_REQUEST] (state) {},
+
+  [types.ADD_TOKEN_SUCCESS] (state) {},
+
+  [types.ADD_TOKEN_FAILURE] (state) {}
 }
 
 const actions = {
@@ -170,6 +201,34 @@ const actions = {
       commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, activity)
     } catch (error) {
       commit(types.GET_ACCOUNT_ACTIVITY_FAILURE)
+    }
+  },
+  async getTokens ({ commit, state: { address } }) {
+    commit(types.GET_TOKENS_REQUEST)
+    try {
+      const tokens = await accountApi.getTokens(address)
+      commit(types.GET_TOKENS_SUCCESS, tokens)
+    } catch (error) {
+      commit(types.GET_TOKENS_FAILURE)
+    }
+  },
+  async searchToken ({ commit, state: { address } }, { search }) {
+    commit(types.SEARCH_TOKEN_REQUEST)
+    try {
+      const token = await accountApi.searchToken(address, search)
+      commit(types.SEARCH_TOKEN_SUCCESS)
+      return token
+    } catch (error) {
+      commit(types.SEARCH_TOKEN_FAILURE)
+    }
+  },
+  async addToken ({ commit, state: { address } }, { token }) {
+    commit(types.ADD_TOKEN_REQUEST)
+    try {
+      await accountApi.addToken(address, token)
+      commit(types.ADD_TOKEN_SUCCESS)
+    } catch (error) {
+      commit(types.ADD_TOKEN_FAILURE)
     }
   },
   login ({ commit, state: { address } }, { name, password }) {
