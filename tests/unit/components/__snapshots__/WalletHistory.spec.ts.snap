@@ -8,23 +8,27 @@ exports[`WalletBase.vue should renders correctly 1`] = `
     class="history-item s-flex"
   >
     <div
-      class="info s-flex"
+      class="s-flex"
     >
       <div
-        class="info-operation"
+        class="info s-flex"
       >
-        SWAP
-      </div>
-       
-      <div
-        class="info-text"
-      >
-        <span>
+        <div
+          class="info-operation"
+        >
+          SWAP
+        </div>
+         
+        <div
+          class="info-text"
+        >
+          
           100 XOR for 24390.1239 KSM
-        </span>
+        
+        </div>
          
         <s-button-stub
-          class="info-text_explorer"
+          class="info-text-explorer"
           icon=""
           nativetype="button"
           size="small"
@@ -40,18 +44,18 @@ exports[`WalletBase.vue should renders correctly 1`] = `
         </s-button-stub>
       </div>
        
-      <s-icon-stub
-        class="info-status info-status--loading"
-        name="refresh"
-        size="20px"
-      />
+      <div
+        class="date"
+      >
+        27.11.2020, 11:59:59
+      </div>
     </div>
      
-    <div
-      class="date"
-    >
-      27.11.2020, 11:59:59
-    </div>
+    <s-icon-stub
+      class="info-status info-status--loading"
+      name="refresh"
+      size="20px"
+    />
   </div>
 </div>
 `;
