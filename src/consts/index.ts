@@ -4,7 +4,8 @@ export enum RouteNames {
   WalletImport = 'WalletImport',
   WalletSettings = 'WalletSettings',
   Wallet = 'Wallet',
-  WalletAssetDetails = 'WalletAssetDetails'
+  WalletAssetDetails = 'WalletAssetDetails',
+  AddToken = 'AddToken'
 }
 
 export enum SourceTypes {
@@ -22,6 +23,11 @@ export enum PasswordCondition {
 export enum WalletTabs {
   Assets = 'WalletAssets',
   Activity = 'WalletActivity'
+}
+
+export enum AddTokenTabs {
+  Search = 'AddTokenSearch',
+  Custom = 'AddTokenCustom'
 }
 
 export enum AccountMenu {

@@ -49,67 +49,10 @@ export default class Wallet extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss">
-@import '../styles/layout';
-@import '../styles/soramitsu-variables';
-
-$tabs-class: ".el-tabs";
-$tabs-container-height: $basic-spacing * 4;
-$tabs-container-padding: 2px;
-$tabs-item-height: $tabs-container-height - $tabs-container-padding * 2;
+@import '../styles/mixins';
 
 .wallet {
-  .s-tabs {
-    &#{$tabs-class} {
-      #{$tabs-class}__header {
-        width: 100%;
-      }
-    }
-    #{$tabs-class} {
-      &__header {
-        #{$tabs-class}__nav-wrap #{$tabs-class}__item {
-          padding-right: $basic-spacing;
-          padding-left: $basic-spacing;
-          &.is-active {
-            margin: 0;
-            box-shadow: $s-shadow-tab;
-            &:hover {
-              box-shadow: none;
-            }
-          }
-          &,
-          &.is-active,
-          &.is-focus {
-            border-radius: $border-radius_small;
-          }
-        }
-        #{$tabs-class}__item {
-          height: $tabs-item-height;
-          line-height: $tabs-item-height;
-          &:hover {
-            background-color: $s-color-base-background-hover;
-          }
-        }
-      }
-      &__nav-wrap {
-        height: $tabs-container-height;
-        padding: $tabs-container-padding;
-        background-color: $s-color-base-background;
-        border-radius: $border-radius_small;
-      }
-    }
-  }
-  #{$tabs-class} {
-    &__header {
-      margin-bottom: $basic-spacing_mini;
-    }
-    &__nav {
-      width: 100%;
-    }
-    &__item {
-      width: 50%;
-      text-align: center;
-    }
-  }
+  @include custom-tabs;
 }
 </style>
 
