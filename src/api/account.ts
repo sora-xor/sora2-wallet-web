@@ -24,12 +24,12 @@ const assetsMock = [{
 }]
 const assetDetailsMock = {
   XOR: [
-    { operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'IN_PROGRESS', date: Date.now() - 3600 },
-    { operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'ERROR', date: Date.now() - 3600 },
-    { operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'SUCCESS', date: Date.now() - 3600 }
+    { id: 1, operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'IN_PROGRESS', date: Date.now() - 3600 },
+    { id: 2, operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'ERROR', date: Date.now() - 3600 },
+    { id: 3, operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'SUCCESS', date: Date.now() - 3600 }
   ],
   ETH: [
-    { operation: 'SWAP', fromAmount: 2.2, toSymbol: 'KSM', toAmount: 2439.1239, status: 'SUCCESS', date: Date.now() - 7200 }
+    { id: 4, operation: 'SWAP', fromAmount: 2.2, toSymbol: 'KSM', toAmount: 2439.1239, status: 'SUCCESS', date: Date.now() - 7200 }
   ],
   KSM: []
 }
@@ -38,6 +38,22 @@ const tokensMock = [
   { name: 'Kusama', symbol: 'KSM', address: '34916349d43f65bccca11ff53a8e0382a1a594a7' },
   { name: 'Etherium', symbol: 'ETH', address: '8adaca8ea8192656a15c88797e04c8771c4576b3' }
 ]
+const transactionMock = {
+  id: 1,
+  hash: '5HVmWWpBi69cmmDf4RlKaSqWxxJ2pveRnfozNg5K',
+  status: 'SUCCESS',
+  date: Date.now() - 7200,
+  amount: 23.34,
+  symbol: 'XOR',
+  fee: 0.23,
+  from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K',
+  to: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD',
+  history: [
+    { id: 1, state: 'CREATED', amount: 23.34, fee: 0.23, date: Date.now() - 7200, status: 'SUCCESS' },
+    { id: 2, state: 'SUBMITTED', amount: 23.34, fee: 0.23, date: Date.now() - 7200, status: 'SUCCESS' },
+    { id: 3, state: 'CONFIRMED', amount: 23.34, fee: 0.23, date: Date.now() - 7200, status: 'SUCCESS' }
+  ]
+}
 
 export const getAccount = async (seed: string) => {
   return await Promise.resolve({ name: nameMock, address: addressMock })
@@ -68,4 +84,8 @@ export const searchToken = async (address: string, tokenAddress: string) => {
 
 export const addToken = async (address: string, token: any) => {
   return await Promise.resolve()
+}
+
+export const getTransaction = async (address: string, id: number) => {
+  return await Promise.resolve(transactionMock)
 }

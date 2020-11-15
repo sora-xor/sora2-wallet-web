@@ -24,7 +24,8 @@ const types = flow(
   'GET_ASSET_DETAILS',
   'GET_TOKENS',
   'SEARCH_TOKEN',
-  'ADD_TOKEN'
+  'ADD_TOKEN',
+  'GET_TRANSACTION_DETAILS'
 ])
 
 function initialState () {
@@ -34,6 +35,7 @@ function initialState () {
     password: storage.getItem('password') || '',
     assets: [],
     selectedAssetDetails: [],
+    selectedTransaction: null,
     activity: [],
     tokens: []
   }
@@ -63,6 +65,9 @@ const getters = {
   },
   tokens (state) {
     return state.tokens
+  },
+  selectedTransaction (state) {
+    return state.selectedTransaction
   }
 }
 
@@ -163,7 +168,19 @@ const mutations = {
 
   [types.ADD_TOKEN_SUCCESS] (state) {},
 
-  [types.ADD_TOKEN_FAILURE] (state) {}
+  [types.ADD_TOKEN_FAILURE] (state) {},
+
+  [types.GET_TRANSACTION_DETAILS_REQUEST] (state) {
+    state.selectedTransaction = null
+  },
+
+  [types.GET_TRANSACTION_DETAILS_SUCCESS] (state, transaction) {
+    state.selectedTransaction = transaction
+  },
+
+  [types.GET_TRANSACTION_DETAILS_FAILURE] (state) {
+    state.selectedTransaction = null
+  }
 }
 
 const actions = {
@@ -229,6 +246,15 @@ const actions = {
       commit(types.ADD_TOKEN_SUCCESS)
     } catch (error) {
       commit(types.ADD_TOKEN_FAILURE)
+    }
+  },
+  async getTransactionDetails ({ commit, state: { address } }, { id }) {
+    commit(types.GET_TRANSACTION_DETAILS_REQUEST)
+    try {
+      const transaction = await accountApi.getTransaction(address, id)
+      commit(types.GET_TRANSACTION_DETAILS_SUCCESS, transaction)
+    } catch (error) {
+      commit(types.GET_TRANSACTION_DETAILS_FAILURE)
     }
   },
   login ({ commit, state: { address } }, { name, password }) {
