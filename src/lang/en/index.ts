@@ -121,5 +121,21 @@ export default {
       addressPlaceholder: 'Address',
       symbolPlaceholder: 'Token symbol'
     }
+  },
+  transaction: {
+    title: 'Transaction Details',
+    hash: 'Transaction Hash',
+    status: 'Status',
+    date: 'Date',
+    amount: 'Amount',
+    fee: 'Transaction Fee',
+    total: 'Total',
+    from: 'From',
+    to: 'To',
+    history: {
+      created: 'Transaction created with value of {amount} {symbol}',
+      submitted: 'Transaction submitted with fee of {fee} {symbol}',
+      confirmed: 'Transaction confirmed'
+    }
   }
 }

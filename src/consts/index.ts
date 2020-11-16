@@ -5,7 +5,8 @@ export enum RouteNames {
   WalletSettings = 'WalletSettings',
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
-  AddToken = 'AddToken'
+  AddToken = 'AddToken',
+  WalletTransactionDetails = 'WalletTransactionDetails'
 }
 
 export enum SourceTypes {

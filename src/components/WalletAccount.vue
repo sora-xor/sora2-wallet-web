@@ -124,3 +124,11 @@ $avatar-size: 32px;
   }
 }
 </style>
+
+<style lang="scss">
+@import '../styles/soramitsu-variables';
+
+.account-menu i:hover {
+  color: $s-color-theme-accent;
+}
+</style>
