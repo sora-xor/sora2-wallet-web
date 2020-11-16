@@ -3,10 +3,12 @@ import Vuex from 'vuex'
 
 import Account from './Account'
 import Router from './Router'
+import Settings from './Settings'
 
 const modules = {
   Account,
-  Router
+  Router,
+  Settings
 }
 
 Vue.use(Vuex)

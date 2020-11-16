@@ -1,0 +1,191 @@
+<template>
+  <wallet-base :title="title" show-back @back="handleBack">
+    <div class="wallet-settings-networks">
+      <template v-if="step === 1">
+        <span class="wallet-settings-networks_desc">{{ t('settings.networks.desc') }}</span>
+        <div
+          v-for="(net, index) in availableNetworks"
+          :key="index"
+          @click="openNetwork(net)"
+        >
+          <div class="wallet-settings-networks-item s-flex">
+            <div class="wallet-settings-networks-item-text s-flex">
+              <span class="wallet-settings-networks-item-text_main">{{ net.name }}</span>
+            </div>
+            <s-icon
+              class="wallet-settings-networks-item_icon"
+              name="chevron-right"
+              :size="16"
+            />
+          </div>
+          <s-divider v-if="index !== availableNetworks.length - 1" style="margin: unset" />
+        </div>
+        <div class="wallet-settings-networks_action s-flex">
+          <s-button
+            type="secondary"
+            size="small"
+            @click="createNetwork"
+          >
+            {{ t('settings.networks.create') }}
+          </s-button>
+        </div>
+      </template>
+      <template v-else>
+        <s-form
+          :model="network"
+          :disabled="!network.editable"
+        >
+          <s-form-item prop="name">
+            <s-input v-model="network.name" :placeholder="t('settings.networks.form.name')"></s-input>
+          </s-form-item>
+          <s-form-item prop="address">
+            <s-input v-model="network.address" :placeholder="t('settings.networks.form.address')"></s-input>
+          </s-form-item>
+          <s-form-item prop="explorer">
+            <s-input v-model="network.explorer" :placeholder="t('settings.networks.form.explorer')"></s-input>
+          </s-form-item>
+        </s-form>
+        <div class="wallet-settings-networks_action-group s-flex">
+          <s-button
+            type="secondary"
+            size="small"
+            @click="onCancel"
+          >{{ t('cancelText')}}</s-button>
+          <s-button
+            :disabled="!network.editable"
+            type="primary"
+            size="small"
+            @click="onSave"
+          >{{ t('saveText') }}</s-button>
+        </div>
+      </template>
+    </div>
+  </wallet-base>
+</template>
+
+<script lang="ts">
+import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Action, Getter, State } from 'vuex-class'
+
+import TranslationMixin from '../mixins/TranslationMixin'
+import WalletBase from '../WalletBase.vue'
+import { RouteNames } from '../../consts'
+import last from 'lodash/last'
+
+export interface Network {
+  id: number;
+  name: string;
+  address: string;
+  explorer: string;
+  editable: boolean;
+}
+
+@Component({
+  components: {
+    WalletBase
+  }
+})
+export default class SettingsNetworks extends Mixins(TranslationMixin) {
+  @Getter availableNetworks
+
+  @Action navigate
+  @Action addNetwork
+
+  step = 1
+  network: Network = {
+    id: 0,
+    name: '',
+    address: '',
+    explorer: '',
+    editable: false
+  }
+
+  get title (): string {
+    if (this.step === 2) return this.network.name || this.t('settings.networks.customNetwork')
+    return this.t('settings.menu.Networks.title')
+  }
+
+  openNetwork (net: Network): void {
+    this.step = 2
+    this.network = { ...net }
+  }
+
+  createNetwork (): void {
+    const lastNetwork: Network | undefined = last(this.availableNetworks)
+    const id = lastNetwork ? (lastNetwork.id + 1) : 0
+    this.step = 2
+    this.network = {
+      id,
+      name: '',
+      address: '',
+      explorer: '',
+      editable: true
+    }
+  }
+
+  onCancel (): void {
+    this.step = 1
+  }
+
+  onSave (): void {
+    this.addNetwork({ network: this.network })
+    this.step = 1
+  }
+
+  handleBack (): void {
+    if (this.step === 1) {
+      this.navigate({ name: RouteNames.WalletSettings })
+    } else {
+      this.onCancel()
+    }
+  }
+}
+</script>
+
+<style scoped lang="scss">
+@import '../../styles/typography';
+@import '../../styles/layout';
+@import '../../styles/soramitsu-variables';
+
+.wallet-settings-networks {
+  &_desc {
+    color: $s-color-base-content-tertiary;
+    font-size: $font-size_small;
+    padding: $basic-spacing_small 0;
+  }
+  &_action {
+    justify-content: center;
+  }
+  &_action-group {
+    & > button {
+      width: 100%;
+    }
+  }
+  &-item {
+    justify-content: space-between;
+    padding: $basic-spacing_small 0;
+    &-text {
+      flex-direction: column;
+
+      &_main {
+        text-decoration: unset;
+        color: unset;
+        font-size: $font-size_normal;
+        line-height: 1.8;
+      }
+    }
+
+    &_icon {
+      margin: auto 0;
+    }
+
+    &:hover {
+      cursor: pointer;
+      .wallet-settings-networks-item-text_main,
+      .wallet-settings-networks-item_icon {
+        color: $s-color-button-tertiary-color;
+      }
+    }
+  }
+}
+</style>
