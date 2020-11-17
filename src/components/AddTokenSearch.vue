@@ -104,10 +104,7 @@ export default class AddTokenSearch extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/layout';
-@import '../styles/typography';
-@import '../styles/soramitsu-variables';
-@import '../styles/mixins';
+@import '../styles/icons';
 
 $token-list-height: 350px;
 
@@ -122,7 +119,7 @@ $token-list-height: 350px;
     margin-bottom: $basic-spacing;
     &_info, &_empty {
       font-size: $font-size_small;
-      color: $s-color-base-content-tertiary;
+      color: var(--s-color-base-content-tertiary);
     }
     &_empty {
       text-align: center;
@@ -133,7 +130,7 @@ $token-list-height: 350px;
       margin-right: $basic-spacing_mini / 2;
       border-radius: $basic-spacing_mini;
       &:hover, &.selected {
-        background-color: $s-color-base-background-hover;
+        background-color: var(--s-color-base-background-hover);
         cursor: pointer;
       }
       &-logo {
@@ -148,7 +145,7 @@ $token-list-height: 350px;
         }
         &_symbol {
           font-size: $font-size_small;
-          color: $s-color-base-content-tertiary;
+          color: var(--s-color-base-content-tertiary);
         }
       }
       &:not(:last-child) {

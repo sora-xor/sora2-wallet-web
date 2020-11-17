@@ -74,10 +74,7 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/typography';
-@import '../styles/layout';
-@import '../styles/mixins';
-@import '../styles/soramitsu-variables';
+@import '../styles/icons';
 
 .wallet-assets {
   flex-direction: column;
@@ -91,7 +88,7 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
       flex-direction: column;
       &-converted {
         font-size: $font-size_small;
-        color: $s-color-base-content-tertiary;
+        color: var(--s-color-base-content-tertiary);
       }
     }
     .details {
@@ -111,7 +108,7 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
   &-empty {
     text-align: center;
     font-size: $font-size_small;
-    color: $s-color-base-content-tertiary;
+    color: var(--s-color-base-content-tertiary);
   }
 }
 </style>
