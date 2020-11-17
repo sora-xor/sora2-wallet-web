@@ -106,16 +106,11 @@ export default class WalletImport extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/typography';
-@import '../styles/layout';
-@import '../styles/variables';
-@import '../styles/soramitsu-variables';
-
 $avatar-size: 32px;
 $font-size-hint: $font-size_small;
 
 @mixin secondary-text {
-  color: $s-color-base-content-tertiary;
+  color: var(--s-color-base-content-tertiary);
   font-size: $font-size-hint;
   line-height: 1.8;
 }
@@ -126,9 +121,9 @@ $font-size-hint: $font-size_small;
   &-condition {
     @include secondary-text;
     .s-icon-check-mark {
-      color: $s-color-base-content-tertiary;
+      color: var(--s-color-base-content-tertiary);
       &.error {
-        color: $s-color-status-error;
+        color: var(--s-color-status-error);
       }
     }
   }

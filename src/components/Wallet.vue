@@ -49,16 +49,12 @@ export default class Wallet extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss">
-@import '../styles/mixins';
-
 .wallet {
   @include custom-tabs;
 }
 </style>
 
 <style scoped lang="scss">
-@import '../styles/layout';
-
 .wallet {
   margin-top: $basic-spacing;
 }

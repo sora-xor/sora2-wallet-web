@@ -53,15 +53,11 @@ export default class WalletCreation extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/typography';
-@import '../styles/layout';
-@import '../styles/soramitsu-variables';
-
 $font-size-hint: $font-size_small;
 
 .wallet-creation {
   &-hint {
-    color: $s-color-base-content-tertiary;
+    color: var(--s-color-base-content-tertiary);
     font-size: $font-size-hint;
     line-height: 1.8;
   }

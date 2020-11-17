@@ -57,8 +57,6 @@ export default class AddToken extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss">
-@import '../styles/mixins';
-
 .add-token {
   @include custom-tabs;
 }

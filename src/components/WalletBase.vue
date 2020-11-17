@@ -61,10 +61,6 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/typography';
-@import '../styles/variables';
-@import '../styles/layout';
-
 $font-size-title: $font-size_medium;
 
 .base {
