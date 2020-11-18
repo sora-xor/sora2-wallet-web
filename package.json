@@ -1,9 +1,9 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "publishConfig": {
-    "registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/"
+    "@soramitsu:registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/"
   },
   "author": "Stefan Popov <popov@soramitsu.co.jp>",
   "main": "./lib/soraneo-wallet-web.umd.js",
@@ -11,7 +11,7 @@
   "unpkg": "./lib/soraneo-wallet-web.min.js",
   "typings": "./lib/index.d.ts",
   "scripts": {
-    "build": "rm -rf lib && rollup -c ./build/rollup.config.js",
+    "build": "rollup -c ./build/rollup.config.js",
     "serve": "vue-cli-service serve",
     "test:unit": "TZ=utc vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
@@ -72,6 +72,16 @@
     "vue-router": "^3.1.6",
     "vue-template-compiler": "^2.6.11"
   },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "files": [
+    "lib/*",
+    "*.json",
+    "*.js"
+  ],
   "gitHooks": {
     "pre-commit": "lint-staged"
   },
