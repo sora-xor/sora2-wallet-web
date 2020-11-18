@@ -1,7 +1,16 @@
 <template>
-  <wallet-base :title="t('wallet.title')" show-settings @settings="handleOpenSettings">
+  <wallet-base :title="t('wallet.title')" show-settings>
     <wallet-account show-menu :name="account.name" />
     <div class="wallet">
+      <s-tabs :value="currentTab" type="rounded" @change="handleChangeTab">
+        <s-tab
+          v-for="tab in WalletTabs"
+          :key="tab"
+          :label="t(`wallet.${tab}`)"
+          :name="tab"
+        />
+      </s-tabs>
+      <component :is="currentTab" />
     </div>
   </wallet-base>
 </template>
@@ -13,10 +22,17 @@ import { Action, Getter } from 'vuex-class'
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
 import WalletAccount from './WalletAccount.vue'
-import { RouteNames, WalletTabs } from '../consts'
+import WalletAssets from './WalletAssets.vue'
+import WalletActivity from './WalletActivity.vue'
+import { WalletTabs } from '../consts'
 
 @Component({
-  components: { WalletBase, WalletAccount }
+  components: {
+    WalletBase,
+    WalletAccount,
+    WalletAssets,
+    WalletActivity
+  }
 })
 export default class Wallet extends Mixins(TranslationMixin) {
   readonly WalletTabs = WalletTabs
@@ -24,11 +40,22 @@ export default class Wallet extends Mixins(TranslationMixin) {
   @Getter account!: any
   @Action navigate
 
-  handleOpenSettings (): void {
-    this.navigate({ name: RouteNames.WalletSettings })
+  currentTab = WalletTabs.Assets
+
+  handleChangeTab (value: WalletTabs): void {
+    this.currentTab = value
   }
 }
 </script>
 
+<style lang="scss">
+.wallet {
+  @include custom-tabs;
+}
+</style>
+
 <style scoped lang="scss">
+.wallet {
+  margin-top: $basic-spacing;
+}
 </style>

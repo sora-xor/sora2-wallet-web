@@ -1,4 +1,4 @@
-import { AccountMenu, PasswordCondition, SourceTypes, WalletTabs } from '../../consts'
+import { AccountMenu, AddTokenTabs, PasswordCondition, SourceTypes, WalletTabs } from '../../consts'
 
 export default {
   closeText: 'Close',
@@ -13,6 +13,9 @@ export default {
   successText: 'Success',
   warningText: 'Warning',
   menuText: 'Menu',
+  swapText: 'Swap',
+  searchText: 'Search',
+  cancelText: 'Cancel',
   sourceType: {
     placeholder: 'Source type',
     [SourceTypes.MnemonicSeed]: 'Mnemonic seed',
@@ -91,7 +94,48 @@ export default {
       [AccountMenu.Logout]: 'Logout'
     }
   },
+  history: {
+    empty: 'There is no activity'
+  },
+  assets: {
+    empty: 'There are no assets',
+    add: 'Add token',
+    swap: '@:swapText'
+  },
   settings: {
     title: '@:settingsText'
+  },
+  addToken: {
+    title: '@:addTokenText',
+    cancel: '@:cancelText',
+    action: '@:addTokenText',
+    success: 'Token was added successfully!',
+    [AddTokenTabs.Search]: {
+      title: '@:searchText',
+      placeholder: 'Search Token Name, Symbol, or Address',
+      info: 'Add the tokens you\'ve acquired using MetaMask',
+      empty: 'No tokens found'
+    },
+    [AddTokenTabs.Custom]: {
+      title: 'Custom token',
+      addressPlaceholder: 'Address',
+      symbolPlaceholder: 'Token symbol'
+    }
+  },
+  transaction: {
+    title: 'Transaction Details',
+    hash: 'Transaction Hash',
+    status: 'Status',
+    date: 'Date',
+    amount: 'Amount',
+    fee: 'Transaction Fee',
+    total: 'Total',
+    from: 'From',
+    to: 'To',
+    history: {
+      created: 'Transaction created with value of {amount} {symbol}',
+      submitted: 'Transaction submitted with fee of {fee} {symbol}',
+      confirmed: 'Transaction confirmed'
+    }
   }
 }

@@ -1,0 +1,77 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletAssets.vue should renders correctly 1`] = `
+<div
+  class="wallet-assets s-flex"
+>
+  <div
+    class="wallet-assets-item s-flex"
+  >
+    <i
+      class="token-logo token-logo--xor"
+    />
+     
+    <div
+      class="amount s-flex"
+    >
+      <div
+        class="amount-value"
+      >
+        12787.09 XOR
+      </div>
+       
+      <div
+        class="amount-converted"
+      >
+        $6345.23 USD
+      </div>
+    </div>
+     
+    <s-button-stub
+      class="swap"
+      icon="swap"
+      nativetype="button"
+      size="small"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+    >
+      
+          
+        
+    </s-button-stub>
+     
+    <s-button-stub
+      class="details"
+      icon=""
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="link"
+    >
+      <s-icon-stub
+        name="chevron-right"
+        size="16px"
+      />
+    </s-button-stub>
+  </div>
+   
+  <!---->
+   
+  <s-button-stub
+    class="wallet-assets-add"
+    icon=""
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip=""
+    tooltipplacement="top"
+    type="tertiary"
+  >
+    
+  </s-button-stub>
+</div>
+`;

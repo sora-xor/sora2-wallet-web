@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddTokenCustom.vue should renders correctly 1`] = `
+<div
+  class="token-custom"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    class="token-custom-address"
+    form=""
+    label=""
+    maxlength="128"
+    name=""
+    placeholder=""
+    prefix=""
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    value=""
+  />
+   
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    class="token-custom-symbol"
+    form=""
+    label=""
+    maxlength="10"
+    name=""
+    placeholder=""
+    prefix=""
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    value=""
+  />
+   
+  <div
+    class="token-custom-actions s-flex"
+  >
+    <s-button-stub
+      icon=""
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="secondary"
+    >
+      
+    </s-button-stub>
+     
+    <s-button-stub
+      disabled="true"
+      icon=""
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+    >
+      
+      
+    
+    </s-button-stub>
+  </div>
+</div>
+`;

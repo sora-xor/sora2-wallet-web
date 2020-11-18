@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddToken.vue should renders correctly 1`] = `
+<wallet-base-stub
+  showback="true"
+  title=""
+>
+  <div
+    class="add-token"
+  >
+    <s-tabs-stub
+      position="top"
+      type="rounded"
+      value="AddTokenSearch"
+    >
+      <s-tab-stub
+        name="AddTokenSearch"
+      />
+      <s-tab-stub
+        name="AddTokenCustom"
+      />
+    </s-tabs-stub>
+     
+    <addtokensearch-stub />
+  </div>
+</wallet-base-stub>
+`;

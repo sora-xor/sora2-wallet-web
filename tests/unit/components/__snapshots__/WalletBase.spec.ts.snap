@@ -2,7 +2,7 @@
 
 exports[`WalletBase.vue should renders correctly 1`] = `
 <s-card-stub
-  class="wallet"
+  class="base"
   shadow="hover"
 >
    

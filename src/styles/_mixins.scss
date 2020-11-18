@@ -1,0 +1,88 @@
+@mixin token-logo-styles($size: 32px) {
+  height: $size;
+  width: $size;
+  background-color: var(--s-color-base-border-secondary);
+  background-image: $token-logo-default-svg;
+  background-size: 60%;
+  background-repeat: no-repeat;
+  background-position: 50%;
+  border: 1px solid var(--s-color-base-border-secondary);
+  border-radius: 50%;
+  box-shadow: var(--s-shadow-tooltip);
+
+  &--ksm,
+  &--xor,
+  &--eth {
+    background-size: 100%;
+  }
+
+  &--ksm {
+    background-image: $token-logo-ksm-svg;
+  }
+  &--xor {
+    background-image: $token-logo-xor-svg;
+  }
+  &--eth {
+    background-image: $token-logo-eth-svg;
+  }
+}
+
+@mixin custom-tabs {
+  $tabs-class: ".el-tabs";
+  $tabs-container-height: $basic-spacing * 4;
+  $tabs-container-padding: 2px;
+  $tabs-item-height: $tabs-container-height - $tabs-container-padding * 2;
+
+  .s-tabs {
+    &#{$tabs-class} {
+      #{$tabs-class}__header {
+        width: 100%;
+      }
+    }
+    #{$tabs-class} {
+      &__header {
+        #{$tabs-class}__nav-wrap #{$tabs-class}__item {
+          padding-right: $basic-spacing;
+          padding-left: $basic-spacing;
+          &.is-active {
+            margin: 0;
+            box-shadow: var(--s-shadow-tab);
+            &:hover {
+              box-shadow: none;
+            }
+          }
+          &,
+          &.is-active,
+          &.is-focus {
+            border-radius: $border-radius_small;
+          }
+        }
+        #{$tabs-class}__item {
+          height: $tabs-item-height;
+          line-height: $tabs-item-height;
+          &:hover {
+            background-color: var(--s-color-base-background-hover);
+          }
+        }
+      }
+      &__nav-wrap {
+        height: $tabs-container-height;
+        padding: $tabs-container-padding;
+        background-color: var(--s-color-base-background);
+        border-radius: $border-radius_small;
+      }
+    }
+  }
+  #{$tabs-class} {
+    &__header {
+      margin-bottom: $basic-spacing_mini;
+    }
+    &__nav {
+      width: 100%;
+    }
+    &__item {
+      width: 50%;
+      text-align: center;
+    }
+  }
+}
