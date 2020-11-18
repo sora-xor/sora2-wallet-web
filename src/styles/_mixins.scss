@@ -9,13 +9,11 @@
   border: 1px solid var(--s-color-base-border-secondary);
   border-radius: 50%;
   box-shadow: var(--s-shadow-tooltip);
-
   &--ksm,
   &--xor,
   &--eth {
     background-size: 100%;
   }
-
   &--ksm {
     background-image: $token-logo-ksm-svg;
   }
@@ -29,9 +27,7 @@
 
 @mixin custom-tabs {
   $tabs-class: ".el-tabs";
-  $tabs-container-height: $basic-spacing * 4;
   $tabs-container-padding: 2px;
-  $tabs-item-height: $tabs-container-height - $tabs-container-padding * 2;
 
   .s-tabs {
     &#{$tabs-class} {
@@ -58,15 +54,12 @@
           }
         }
         #{$tabs-class}__item {
-          height: $tabs-item-height;
-          line-height: $tabs-item-height;
           &:hover {
             background-color: var(--s-color-base-background-hover);
           }
         }
       }
       &__nav-wrap {
-        height: $tabs-container-height;
         padding: $tabs-container-padding;
         background-color: var(--s-color-base-background);
         border-radius: $border-radius_small;

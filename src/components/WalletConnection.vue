@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="t('connection.title')" show-close>
+  <wallet-base :title="t('connection.title')" show-close @close="handleClose">
     <div class="wallet-connection">
       <s-card class="wallet-connection-create">
         <div class="title">{{ t('connection.create.title') }}</div>
@@ -47,6 +47,10 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
 
   handleNavigate (name: RouteNames): void {
     this.navigate({ name })
+  }
+
+  handleClose (): void {
+    this.$emit('close')
   }
 }
 </script>
