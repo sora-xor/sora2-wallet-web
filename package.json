@@ -1,9 +1,8 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "publishConfig": {
-    "registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/",
     "@soramitsu:registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/"
   },
   "author": "Stefan Popov <popov@soramitsu.co.jp>",
@@ -73,6 +72,16 @@
     "vue-router": "^3.1.6",
     "vue-template-compiler": "^2.6.11"
   },
+  "postcss": {
+    "plugins": {
+      "autoprefixer": {}
+    }
+  },
+  "files": [
+    "lib/*",
+    "*.json",
+    "*.js"
+  ],
   "gitHooks": {
     "pre-commit": "lint-staged"
   },
