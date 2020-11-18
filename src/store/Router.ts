@@ -17,7 +17,8 @@ const types = flow(
 
 function initialState () {
   return {
-    currentRoute: RouteNames.WalletConnection
+    currentRoute: RouteNames.WalletConnection,
+    currentRouteParams: {}
   }
 }
 
@@ -26,18 +27,22 @@ const state = initialState()
 const getters = {
   currentRoute (state) {
     return state.currentRoute
+  },
+  currentRouteParams (state) {
+    return state.currentRouteParams
   }
 }
 
 const mutations = {
-  [types.NAVIGATE] (state, name: RouteNames) {
-    state.currentRoute = name
+  [types.NAVIGATE] (state, args) {
+    state.currentRoute = args.name
+    state.currentRouteParams = args.params || {}
   }
 }
 
 const actions = {
-  navigate ({ commit }, { name }) {
-    commit(types.NAVIGATE, name)
+  navigate ({ commit }, { name, params }) {
+    commit(types.NAVIGATE, { name, params })
   }
 }
 

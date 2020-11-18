@@ -1,8 +1,9 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "private": false,
   "publishConfig": {
+    "registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/",
     "@soramitsu:registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/"
   },
   "author": "Stefan Popov <popov@soramitsu.co.jp>",
@@ -13,17 +14,18 @@
   "scripts": {
     "build": "rm -rf lib && rollup -c ./build/rollup.config.js",
     "serve": "vue-cli-service serve",
-    "test:unit": "vue-cli-service test:unit",
+    "test:unit": "TZ=utc vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "test:all": "yarn test:unit",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@soramitsu/soramitsu-js-ui": "^0.5.4",
+    "@soramitsu/soramitsu-js-ui": "^0.5.8",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "crypto-js": "^4.0.0",
     "lodash": "^4.17.15",
+    "moment": "^2.29.1",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^8.4.1",
@@ -31,6 +33,7 @@
     "vuex-class": "^0.3.2"
   },
   "devDependencies": {
+    "@babel/runtime": "^7.12.5",
     "@rollup/plugin-node-resolve": "^6.0.0",
     "@types/crypto-js": "^4.0.1",
     "@types/jest": "^24.0.19",

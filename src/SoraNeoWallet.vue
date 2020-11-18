@@ -11,7 +11,10 @@ import WalletConnection from './components/WalletConnection.vue'
 import WalletCreation from './components/WalletCreation.vue'
 import WalletImport from './components/WalletImport.vue'
 import WalletSettings from './components/WalletSettings.vue'
+import WalletAssetDetails from './components/WalletAssetDetails.vue'
+import AddToken from './components/AddToken.vue'
 import Wallet from './components/Wallet.vue'
+import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
 import { RouteNames } from './consts'
 
 @Component({
@@ -20,7 +23,10 @@ import { RouteNames } from './consts'
     WalletCreation,
     WalletImport,
     WalletSettings,
-    Wallet
+    Wallet,
+    WalletAssetDetails,
+    AddToken,
+    WalletTransactionDetails
   }
 })
 export default class SoraNeoWallet extends Vue {

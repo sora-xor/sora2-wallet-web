@@ -18,14 +18,26 @@ const types = flow(
   map(x => [x, x]),
   fromPairs
 )([
-  'GET_ACCOUNT'
+  'GET_ACCOUNT',
+  'GET_ACCOUNT_ASSETS',
+  'GET_ACCOUNT_ACTIVITY',
+  'GET_ASSET_DETAILS',
+  'GET_TOKENS',
+  'SEARCH_TOKEN',
+  'ADD_TOKEN',
+  'GET_TRANSACTION_DETAILS'
 ])
 
 function initialState () {
   return {
     address: storage.getItem('address') || '',
     name: storage.getItem('name') || '',
-    password: storage.getItem('password') || ''
+    password: storage.getItem('password') || '',
+    assets: [],
+    selectedAssetDetails: [],
+    selectedTransaction: null,
+    activity: [],
+    tokens: []
   }
 }
 
@@ -41,6 +53,21 @@ const getters = {
       name: state.name,
       password: state.password
     }
+  },
+  assets (state) {
+    return state.assets
+  },
+  activity (state) {
+    return state.activity
+  },
+  selectedAssetDetails (state) {
+    return state.selectedAssetDetails
+  },
+  tokens (state) {
+    return state.tokens
+  },
+  selectedTransaction (state) {
+    return state.selectedTransaction
   }
 }
 
@@ -81,6 +108,78 @@ const mutations = {
     state.address = ''
     state.name = ''
     storage.clear()
+  },
+
+  [types.GET_ACCOUNT_ASSETS_REQUEST] (state) {
+    state.assets = []
+  },
+
+  [types.GET_ACCOUNT_ASSETS_SUCCESS] (state, assets) {
+    state.assets = assets
+  },
+
+  [types.GET_ACCOUNT_ASSETS_FAILURE] (state) {
+    state.assets = []
+  },
+
+  [types.GET_ACCOUNT_ACTIVITY_REQUEST] (state) {
+    state.activity = []
+  },
+
+  [types.GET_ACCOUNT_ACTIVITY_SUCCESS] (state, activity) {
+    state.activity = activity
+  },
+
+  [types.GET_ACCOUNT_ACTIVITY_FAILURE] (state) {
+    state.activity = []
+  },
+
+  [types.GET_ASSET_DETAILS_REQUEST] (state) {
+    state.selectedAssetDetails = []
+  },
+
+  [types.GET_ASSET_DETAILS_SUCCESS] (state, data) {
+    state.selectedAssetDetails = data
+  },
+
+  [types.GET_ASSET_DETAILS_FAILURE] (state) {
+    state.selectedAssetDetails = []
+  },
+
+  [types.GET_TOKENS_REQUEST] (state) {
+    state.tokens = []
+  },
+
+  [types.GET_TOKENS_SUCCESS] (state, tokens) {
+    state.tokens = tokens
+  },
+
+  [types.GET_TOKENS_FAILURE] (state) {
+    state.tokens = []
+  },
+
+  [types.SEARCH_TOKEN_REQUEST] (state) {},
+
+  [types.SEARCH_TOKEN_SUCCESS] (state) {},
+
+  [types.SEARCH_TOKEN_FAILURE] (state) {},
+
+  [types.ADD_TOKEN_REQUEST] (state) {},
+
+  [types.ADD_TOKEN_SUCCESS] (state) {},
+
+  [types.ADD_TOKEN_FAILURE] (state) {},
+
+  [types.GET_TRANSACTION_DETAILS_REQUEST] (state) {
+    state.selectedTransaction = null
+  },
+
+  [types.GET_TRANSACTION_DETAILS_SUCCESS] (state, transaction) {
+    state.selectedTransaction = transaction
+  },
+
+  [types.GET_TRANSACTION_DETAILS_FAILURE] (state) {
+    state.selectedTransaction = null
   }
 }
 
@@ -92,6 +191,70 @@ const actions = {
       commit(types.GET_ACCOUNT_SUCCESS, account)
     } catch (error) {
       commit(types.GET_ACCOUNT_FAILURE)
+    }
+  },
+  async getAccountAssets ({ commit, state: { address } }) {
+    commit(types.GET_ACCOUNT_ASSETS_REQUEST)
+    try {
+      const assets = await accountApi.getAccountAssets(address)
+      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, assets)
+    } catch (error) {
+      commit(types.GET_ACCOUNT_ASSETS_FAILURE)
+    }
+  },
+  async getAssetDetails ({ commit, state: { address } }, { symbol }) {
+    commit(types.GET_ASSET_DETAILS_REQUEST)
+    try {
+      const data = await accountApi.getAssetDetails(address, symbol)
+      commit(types.GET_ASSET_DETAILS_SUCCESS, data)
+    } catch (error) {
+      commit(types.GET_ASSET_DETAILS_FAILURE)
+    }
+  },
+  async getAccountActivity ({ commit, state: { address } }) {
+    commit(types.GET_ACCOUNT_ACTIVITY_REQUEST)
+    try {
+      const activity = await accountApi.getAccountActivity(address)
+      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, activity)
+    } catch (error) {
+      commit(types.GET_ACCOUNT_ACTIVITY_FAILURE)
+    }
+  },
+  async getTokens ({ commit, state: { address } }) {
+    commit(types.GET_TOKENS_REQUEST)
+    try {
+      const tokens = await accountApi.getTokens(address)
+      commit(types.GET_TOKENS_SUCCESS, tokens)
+    } catch (error) {
+      commit(types.GET_TOKENS_FAILURE)
+    }
+  },
+  async searchToken ({ commit, state: { address } }, { search }) {
+    commit(types.SEARCH_TOKEN_REQUEST)
+    try {
+      const token = await accountApi.searchToken(address, search)
+      commit(types.SEARCH_TOKEN_SUCCESS)
+      return token
+    } catch (error) {
+      commit(types.SEARCH_TOKEN_FAILURE)
+    }
+  },
+  async addToken ({ commit, state: { address } }, { token }) {
+    commit(types.ADD_TOKEN_REQUEST)
+    try {
+      await accountApi.addToken(address, token)
+      commit(types.ADD_TOKEN_SUCCESS)
+    } catch (error) {
+      commit(types.ADD_TOKEN_FAILURE)
+    }
+  },
+  async getTransactionDetails ({ commit, state: { address } }, { id }) {
+    commit(types.GET_TRANSACTION_DETAILS_REQUEST)
+    try {
+      const transaction = await accountApi.getTransaction(address, id)
+      commit(types.GET_TRANSACTION_DETAILS_SUCCESS, transaction)
+    } catch (error) {
+      commit(types.GET_TRANSACTION_DETAILS_FAILURE)
     }
   },
   login ({ commit, state: { address } }, { name, password }) {

@@ -52,11 +52,6 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/typography';
-@import '../styles/variables';
-@import '../styles/layout';
-@import '../styles/soramitsu-variables';
-
 $font-size-title: $font-size_normal;
 $font-size-hint: $font-size_small;
 
@@ -72,7 +67,7 @@ $font-size-hint: $font-size_small;
   .hint {
     text-align: center;
     font-size: $font-size-hint;
-    color: $s-color-base-content-tertiary;
+    color: var(--s-color-base-content-tertiary);
     line-height: 1.8;
   }
   .action {

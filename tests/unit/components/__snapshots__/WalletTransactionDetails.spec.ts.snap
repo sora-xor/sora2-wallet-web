@@ -1,0 +1,173 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletTransactionDetails.vue should renders correctly 1`] = `
+<wallet-base-stub
+  showback="true"
+  title=""
+>
+  <div
+    class="transaction"
+  >
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      class="transaction-hash"
+      form=""
+      label=""
+      name=""
+      placeholder=""
+      prefix=""
+      readonly="true"
+      size="big"
+      suffix=""
+      tabindex=""
+      type="text"
+      value="5HVmWWpBi69cmmDf4RlKaSqWxxJ2pveRnfozNg5K"
+    />
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        success
+      </div>
+    </div>
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        27.11.2020, 11:59:59
+      </div>
+    </div>
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        23.34 XOR
+      </div>
+    </div>
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        0.23 XOR
+      </div>
+    </div>
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        23.57 XOR
+      </div>
+    </div>
+     
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      class="transaction-from"
+      form=""
+      label=""
+      name=""
+      placeholder=""
+      prefix=""
+      readonly="true"
+      size="big"
+      suffix=""
+      tabindex=""
+      type="text"
+      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+    />
+     
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      class="transaction-to"
+      form=""
+      label=""
+      name=""
+      placeholder=""
+      prefix=""
+      readonly="true"
+      size="big"
+      suffix=""
+      tabindex=""
+      type="text"
+      value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
+    />
+     
+    <s-divider-stub
+      contentposition="center"
+      direction="horizontal"
+      type="secondary"
+    />
+     
+    <div
+      class="history s-flex"
+    >
+      <div
+        class="history-info s-flex"
+      >
+        <div
+          class="history-info_text"
+        >
+          
+            
+          
+        </div>
+         
+        <div
+          class="history-info_date"
+        >
+          27.11.2020, 11:59:59
+        </div>
+      </div>
+       
+      <s-icon-stub
+        class="info-status info-status--success"
+        name="check-mark"
+        size="20px"
+      />
+    </div>
+  </div>
+</wallet-base-stub>
+`;
