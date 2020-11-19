@@ -26,6 +26,7 @@
           icon="x-rounded"
           size="medium"
           :tooltip="t('closeText')"
+          @click="handleCloseClick"
         />
       </div>
     </template>
@@ -56,6 +57,10 @@ export default class WalletBase extends Mixins(TranslationMixin) {
   handleSettingsClick (): void {
     this.navigate({ name: RouteNames.WalletSettings })
     this.$emit('settings')
+  }
+
+  handleCloseClick (): void {
+    this.$emit('close')
   }
 }
 </script>
