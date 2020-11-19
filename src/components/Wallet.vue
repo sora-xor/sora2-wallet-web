@@ -10,7 +10,7 @@
           :name="tab"
         />
       </s-tabs>
-      <component :is="currentTab" />
+      <component :is="currentTab" @swap="handleSwap" />
     </div>
   </wallet-base>
 </template>
@@ -44,6 +44,10 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   handleChangeTab (value: WalletTabs): void {
     this.currentTab = value
+  }
+
+  handleSwap (token: any): void {
+    this.$emit('swap', token)
   }
 }
 </script>
