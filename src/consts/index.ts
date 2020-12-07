@@ -46,6 +46,14 @@ export enum SettingsMenu {
   About = 'About'
 }
 
+export interface Network {
+  id: number;
+  name: string;
+  address: string;
+  explorer: string;
+  editable: boolean;
+}
+
 export enum Languages {
   EN = 'en'
 }

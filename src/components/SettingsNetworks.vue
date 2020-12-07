@@ -74,15 +74,7 @@ import last from 'lodash/last'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
-import { RouteNames } from '../consts'
-
-export interface Network {
-  id: number;
-  name: string;
-  address: string;
-  explorer: string;
-  editable: boolean;
-}
+import { Network, RouteNames } from '../consts'
 
 @Component({
   components: {

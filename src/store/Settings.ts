@@ -6,6 +6,7 @@ import concat from 'lodash/fp/concat'
 
 import * as storage from '../util/storage'
 import i18n from '../lang'
+import { Network } from '../consts'
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
@@ -18,7 +19,7 @@ const types = flow(
   fromPairs
 )([])
 
-const DEFAULT_NETWORKS = [{
+const DEFAULT_NETWORKS: Array<Network> = [{
   id: 1,
   name: 'Main Ethereum Network',
   address: 'https://api.infura.io/v1/jsonrpc/mainnet',
@@ -32,7 +33,7 @@ const DEFAULT_NETWORKS = [{
   editable: false
 }]
 
-function modifyActiveNetwork (state, network) {
+function modifyActiveNetwork (state, network: Network) {
   // For now it works as remove operation
   // If it should be removed then DEFAULT_NETWORKS[0] will be set as active network
   if (network.name && network.address && network.explorer) {
@@ -48,8 +49,8 @@ function initialState () {
   return {
     locale: storage.getItem('locale') || i18n.locale,
     locales: i18n.availableLocales,
-    activeNetwork: JSON.parse(storage.getItem('activeNetwork') as any) || DEFAULT_NETWORKS[0],
-    customNetworks: JSON.parse(storage.getItem('networks') as string) || [],
+    activeNetwork: (JSON.parse(storage.getItem('activeNetwork') as string) || DEFAULT_NETWORKS[0]) as Network,
+    customNetworks: (JSON.parse(storage.getItem('networks') as string) || []) as Array<Network>,
     networks: DEFAULT_NETWORKS
   }
 }
@@ -80,7 +81,7 @@ const mutations = {
   },
 
   [types.ADD_NETWORK] (state, { network }) {
-    const alreadyExistingNetwork = state.customNetworks.find(({ id }) => id === network.id)
+    const alreadyExistingNetwork = state.customNetworks.find(({ id }) => id === network.id) as Network
     if (alreadyExistingNetwork) {
       alreadyExistingNetwork.name = network.name
       alreadyExistingNetwork.address = network.address

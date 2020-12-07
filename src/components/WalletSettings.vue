@@ -42,8 +42,7 @@ import { Action, Getter, State } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
-import { RouteNames, SettingsMenu } from '../consts'
-import { Network } from './SettingsNetworks.vue'
+import { Network, RouteNames, SettingsMenu } from '../consts'
 
 interface MenuItem {
   title: string;
