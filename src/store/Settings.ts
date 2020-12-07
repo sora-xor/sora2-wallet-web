@@ -19,18 +19,30 @@ const types = flow(
 )([])
 
 const DEFAULT_NETWORKS = [{
-  id: 0,
+  id: 1,
   name: 'Main Ethereum Network',
   address: 'https://api.infura.io/v1/jsonrpc/mainnet',
   explorer: 'https://etherscan.io',
   editable: false
 }, {
-  id: 1,
+  id: 2,
   name: 'Ropsten Network',
   address: 'https://api.infura.io/v1/jsonrpc/ropsten',
   explorer: 'https://ropsten.etherscan.io',
   editable: false
 }]
+
+function modifyActiveNetwork (state, network) {
+  // For now it works as remove operation
+  // If it should be removed then DEFAULT_NETWORKS[0] will be set as active network
+  if (network.name && network.address && network.explorer) {
+    state.activeNetwork = network
+    storage.setItem('activeNetwork', JSON.stringify(network))
+  } else {
+    state.activeNetwork = DEFAULT_NETWORKS[0]
+    storage.setItem('activeNetwork', JSON.stringify(DEFAULT_NETWORKS[0]))
+  }
+}
 
 function initialState () {
   return {
@@ -68,9 +80,20 @@ const mutations = {
   },
 
   [types.ADD_NETWORK] (state, { network }) {
-    const networks = [...state.customNetworks, network]
-    storage.setItem('networks', JSON.stringify(networks))
-    state.customNetworks = networks
+    const alreadyExistingNetwork = state.customNetworks.find(({ id }) => id === network.id)
+    if (alreadyExistingNetwork) {
+      alreadyExistingNetwork.name = network.name
+      alreadyExistingNetwork.address = network.address
+      alreadyExistingNetwork.explorer = network.explorer
+      if (state.activeNetwork.id === alreadyExistingNetwork.id) {
+        modifyActiveNetwork(state, alreadyExistingNetwork)
+      }
+    }
+    const customNetworks = (alreadyExistingNetwork ? state.customNetworks : [...state.customNetworks, network])
+      // For now it works as remove operation
+      .filter(({ name, address, explorer }) => name && address && explorer)
+    storage.setItem('networks', JSON.stringify(customNetworks))
+    state.customNetworks = customNetworks
   },
 
   [types.SET_ACTIVE_NETWORK] (state, { network }) {

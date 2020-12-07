@@ -18,7 +18,7 @@
               :size="16"
             />
           </div>
-          <s-divider v-if="index !== availableNetworks.length - 1" style="margin: unset" />
+          <s-divider v-if="index !== availableNetworks.length - 1" class="wallet-settings-networks-item_divider" />
         </div>
         <div class="wallet-settings-networks_action s-flex">
           <s-button
@@ -36,13 +36,13 @@
           :disabled="!network.editable"
         >
           <s-form-item prop="name">
-            <s-input v-model="network.name" :placeholder="t('settings.networks.form.name')"></s-input>
+            <s-input v-model="network.name" :placeholder="t('settings.networks.form.name')" />
           </s-form-item>
           <s-form-item prop="address">
-            <s-input v-model="network.address" :placeholder="t('settings.networks.form.address')"></s-input>
+            <s-input v-model="network.address" :placeholder="t('settings.networks.form.address')" />
           </s-form-item>
           <s-form-item prop="explorer">
-            <s-input v-model="network.explorer" :placeholder="t('settings.networks.form.explorer')"></s-input>
+            <s-input v-model="network.explorer" :placeholder="t('settings.networks.form.explorer')" />
           </s-form-item>
         </s-form>
         <div class="wallet-settings-networks_action-group s-flex">
@@ -50,13 +50,17 @@
             type="secondary"
             size="small"
             @click="onCancel"
-          >{{ t('cancelText')}}</s-button>
+          >
+            {{ t('cancelText')}}
+          </s-button>
           <s-button
             :disabled="!network.editable"
             type="primary"
             size="small"
             @click="onSave"
-          >{{ t('saveText') }}</s-button>
+          >
+            {{ t('saveText') }}
+          </s-button>
         </div>
       </template>
     </div>
@@ -66,11 +70,11 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter, State } from 'vuex-class'
-
-import TranslationMixin from '../mixins/TranslationMixin'
-import WalletBase from '../WalletBase.vue'
-import { RouteNames } from '../../consts'
 import last from 'lodash/last'
+
+import TranslationMixin from './mixins/TranslationMixin'
+import WalletBase from './WalletBase.vue'
+import { RouteNames } from '../consts'
 
 export interface Network {
   id: number;
@@ -112,7 +116,7 @@ export default class SettingsNetworks extends Mixins(TranslationMixin) {
 
   createNetwork (): void {
     const lastNetwork: Network | undefined = last(this.availableNetworks)
-    const id = lastNetwork ? (lastNetwork.id + 1) : 0
+    const id = lastNetwork ? (lastNetwork.id + 1) : 1
     this.step = 2
     this.network = {
       id,
@@ -143,18 +147,17 @@ export default class SettingsNetworks extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../../styles/typography';
-@import '../../styles/layout';
-@import '../../styles/soramitsu-variables';
-
 .wallet-settings-networks {
   &_desc {
-    color: $s-color-base-content-tertiary;
+    color: var(--s-color-base-content-tertiary);
     font-size: $font-size_small;
     padding: $basic-spacing_small 0;
   }
   &_action {
     justify-content: center;
+    > * {
+      width: 100%;
+    }
   }
   &_action-group {
     & > button {
@@ -166,7 +169,6 @@ export default class SettingsNetworks extends Mixins(TranslationMixin) {
     padding: $basic-spacing_small 0;
     &-text {
       flex-direction: column;
-
       &_main {
         text-decoration: unset;
         color: unset;
@@ -174,16 +176,17 @@ export default class SettingsNetworks extends Mixins(TranslationMixin) {
         line-height: 1.8;
       }
     }
-
     &_icon {
       margin: auto 0;
     }
-
+    &_divider {
+      margin: unset;
+    }
     &:hover {
       cursor: pointer;
       .wallet-settings-networks-item-text_main,
       .wallet-settings-networks-item_icon {
-        color: $s-color-button-tertiary-color;
+        color: var(--s-color-button-tertiary-color);
       }
     }
   }

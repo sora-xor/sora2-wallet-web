@@ -2,9 +2,9 @@
   <wallet-base :title="t('settings.menu.Language.title')" show-back @back="handleBack">
     <div class="wallet-settings-language">
       <div
-        v-for="(locale, index) in locales"
+        v-for="(locale, index) in sortedLocales"
         :key="index"
-        @click="setLocale({ locale })"
+        @click="handleChangeLocale(locale)"
       >
         <div class="wallet-settings-language-item s-flex">
           <div class="wallet-settings-language-item-text s-flex">
@@ -13,11 +13,15 @@
                 'wallet-settings-language-item-text_main',
                 currentLocale === locale ? 'active' : ''
               ]"
-            >{{ avaliableLocales[locale] }}</span>
+            >
+              {{ avaliableLocales[locale] }}
+            </span>
             <span
               v-if="currentLocale !== locale"
               class="wallet-settings-language-item-text_secondary"
-            > {{ t(`settings.language.${locale}`) }}</span>
+            >
+              {{ t(`settings.language.${locale}`) }}
+            </span>
           </div>
           <s-icon
             v-if="currentLocale === locale"
@@ -26,7 +30,7 @@
             :size="16"
           />
         </div>
-        <s-divider v-if="index !== locales.length - 1" style="margin: unset" />
+        <s-divider v-if="index !== sortedLocales.length - 1" class="wallet-settings-language-item_divider" />
       </div>
     </div>
   </wallet-base>
@@ -35,10 +39,11 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, State } from 'vuex-class'
+import sortBy from 'lodash/fp/sortBy'
 
-import TranslationMixin from '../mixins/TranslationMixin'
-import WalletBase from '../WalletBase.vue'
-import { Languages, RouteNames } from '../../consts'
+import TranslationMixin from './mixins/TranslationMixin'
+import WalletBase from './WalletBase.vue'
+import { Languages, RouteNames } from '../consts'
 
 @Component({
   components: {
@@ -46,16 +51,31 @@ import { Languages, RouteNames } from '../../consts'
   }
 })
 export default class SettingsLanguage extends Mixins(TranslationMixin) {
-  @State(state => state.Settings.locales) locales
-  @State(state => state.Settings.locale) currentLocale
+  @State(state => state.Settings.locales) locales!: Array<string>
+  @State(state => state.Settings.locale) currentLocale!: string
 
   @Action navigate
   @Action setLocale
 
+  get sortedLocales () {
+    // Move currentLocale to the top
+    return sortBy((lang) => lang === this.currentLocale ? 0 : 1, this.locales)
+  }
+
   get avaliableLocales () {
-    return {
-      [Languages.EN]: 'English'
+    const locales = {}
+    Object.values(Languages).forEach(lang => {
+      locales[lang] = this.t(`settings.language.${lang}`)
+    })
+    return locales
+  }
+
+  handleChangeLocale (locale: string): void {
+    if (locale === this.currentLocale) {
+      return
     }
+    this.setLocale({ locale })
+    this.$root.$i18n.locale = locale
   }
 
   handleBack (): void {
@@ -65,43 +85,38 @@ export default class SettingsLanguage extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../../styles/typography';
-@import '../../styles/layout';
-@import '../../styles/soramitsu-variables';
-
 .wallet-settings-language {
   &-item {
     justify-content: space-between;
     padding: $basic-spacing_small 0;
     &-text {
       flex-direction: column;
-
       &_main {
         font-size: $font-size_normal;
         line-height: 1.8;
         &.active {
-          color: $s-color-button-tertiary-color;
+          color: var(--s-color-button-tertiary-color);
         }
       }
       &_secondary {
         font-size: $font-size_small;
-        color: $s-color-base-content-tertiary;
+        color: var(--s-color-base-content-tertiary);
         line-height: 1.8;
       }
     }
-
     &_icon {
       margin: auto 0;
-
       &.active {
-        color: $s-color-button-tertiary-color;
+        color: var(--s-color-button-tertiary-color);
       }
     }
-
+    &_divider {
+      margin: unset;
+    }
     &:hover {
       cursor: pointer;
       .wallet-settings-language-item-text_main {
-        color: $s-color-button-tertiary-color;
+        color: var(--s-color-button-tertiary-color);
       }
     }
   }

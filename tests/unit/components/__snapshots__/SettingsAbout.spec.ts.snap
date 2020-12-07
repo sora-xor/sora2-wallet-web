@@ -1,0 +1,72 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SettingsAbout.vue should renders correctly 1`] = `
+<wallet-base-stub
+  showback="true"
+  title=""
+>
+  <div
+    class="wallet-settings-about"
+  >
+    <span
+      class="wallet-settings-about_desc"
+    >
+      Sora Wallet 2020
+    </span>
+     
+    <div>
+      <div
+        class="wallet-settings-about-item s-flex"
+      >
+        <div
+          class="wallet-settings-about-item-text s-flex"
+        >
+          <a
+            class="wallet-settings-about-item-text_main"
+            target="_blank"
+          >
+            
+          </a>
+        </div>
+         
+        <s-icon-stub
+          class="wallet-settings-about-item_icon"
+          name="external-link"
+          size="16"
+        />
+      </div>
+       
+      <s-divider-stub
+        class="wallet-settings-about-item_divider"
+        contentposition="center"
+        direction="horizontal"
+        type="secondary"
+      />
+    </div>
+    <div>
+      <div
+        class="wallet-settings-about-item s-flex"
+      >
+        <div
+          class="wallet-settings-about-item-text s-flex"
+        >
+          <a
+            class="wallet-settings-about-item-text_main"
+            target="_blank"
+          >
+            
+          </a>
+        </div>
+         
+        <s-icon-stub
+          class="wallet-settings-about-item_icon"
+          name="external-link"
+          size="16"
+        />
+      </div>
+       
+      <!---->
+    </div>
+  </div>
+</wallet-base-stub>
+`;

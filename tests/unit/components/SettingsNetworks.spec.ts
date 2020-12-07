@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 
-import WalletSettings from '@/components/WalletSettings.vue'
+import SettingsNetworks from '@/components/SettingsNetworks.vue'
 import { TranslationMock, SoramitsuElementsImport } from '../../utils'
 
 const localVue = createLocalVue()
@@ -13,21 +13,7 @@ const store = new Vuex.Store({
         navigate: jest.fn()
       }
     },
-    Account: {
-      actions: {
-        logout: jest.fn()
-      }
-    },
     Settings: {
-      state: {
-        activeNetwork: {
-          id: 1,
-          name: 'Main Ethereum Network',
-          address: 'https://api.infura.io/v1/jsonrpc/mainnet',
-          explorer: 'https://etherscan.io',
-          editable: false
-        }
-      },
       getters: {
         availableNetworks: () => ([
           {
@@ -40,20 +26,20 @@ const store = new Vuex.Store({
         ])
       },
       actions: {
-        setActiveNetwork: jest.fn()
+        addNetwork: jest.fn()
       }
     }
   } as any
 })
 
-describe('WalletSettings.vue', () => {
+describe('SettingsNetworks.vue', () => {
   beforeEach(() => {
     SoramitsuElementsImport(localVue)
-    TranslationMock(WalletSettings)
+    TranslationMock(SettingsNetworks)
   })
 
   it('should renders correctly', () => {
-    const wrapper = shallowMount(WalletSettings, { localVue, store })
+    const wrapper = shallowMount(SettingsNetworks, { localVue, store })
     expect(wrapper.element).toMatchSnapshot()
   })
 })

@@ -123,8 +123,9 @@ export default {
     language: {
       [Languages.EN]: 'English'
     },
+    network: 'Network',
     networks: {
-      desc: 'The default network for Ether transactions is Main Net.',
+      desc: 'The default network for Ether transactions is Main Net',
       create: 'Add custom',
       customNetwork: 'Custom network',
       form: {
@@ -132,6 +133,12 @@ export default {
         address: 'Address',
         explorer: 'Explorer'
       }
+    },
+    about: {
+      termsOfService: 'Terms of Service',
+      privacyPolicy: 'Privacy Policy',
+      termsOfServiceLink: 'https://sora.org',
+      privacyPolicyLink: 'https://soramitsu.co.jp'
     }
   },
   addToken: {

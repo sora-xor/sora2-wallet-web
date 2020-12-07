@@ -28,6 +28,7 @@ exports[`WalletBase.vue should renders correctly 1`] = `
         </div>
          
         <s-button-stub
+          borderradius="small"
           class="info-text-explorer"
           icon=""
           nativetype="button"

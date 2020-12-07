@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`SettingsNetworks.vue should renders correctly 1`] = `
+<wallet-base-stub
+  showback="true"
+  title=""
+>
+  <div
+    class="wallet-settings-networks"
+  >
+    <span
+      class="wallet-settings-networks_desc"
+    >
+      
+    </span>
+     
+    <div>
+      <div
+        class="wallet-settings-networks-item s-flex"
+      >
+        <div
+          class="wallet-settings-networks-item-text s-flex"
+        >
+          <span
+            class="wallet-settings-networks-item-text_main"
+          >
+            Main Ethereum Network
+          </span>
+        </div>
+         
+        <s-icon-stub
+          class="wallet-settings-networks-item_icon"
+          name="chevron-right"
+          size="16"
+        />
+      </div>
+       
+      <!---->
+    </div>
+     
+    <div
+      class="wallet-settings-networks_action s-flex"
+    >
+      <s-button-stub
+        borderradius="small"
+        icon=""
+        nativetype="button"
+        size="small"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="secondary"
+      >
+        
+          
+        
+      </s-button-stub>
+    </div>
+  </div>
+</wallet-base-stub>
+`;
