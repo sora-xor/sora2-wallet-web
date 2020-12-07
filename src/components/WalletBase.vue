@@ -1,12 +1,12 @@
 <template>
-  <s-card class="base">
+  <s-card class="base" shadow="never">
     <template #header>
       <div class="base-title s-flex">
         <s-button
           v-if="showBack"
           class="base-title_back"
           type="action"
-          icon="back"
+          icon="chevron-left-rounded"
           size="medium"
           :tooltip="t('backText')"
           @click="handleBackClick"
