@@ -1,5 +1,5 @@
 <template>
-  <component :is="currentRoute" />
+  <component :is="currentRoute" @close="handleClose" @swap="handleSwap" />
 </template>
 
 <script lang="ts">
@@ -47,6 +47,14 @@ export default class SoraNeoWallet extends Vue {
     if (this.isLoggedIn) {
       this.navigate({ name: RouteNames.Wallet })
     }
+  }
+
+  handleClose (): void {
+    this.$emit('close')
+  }
+
+  handleSwap (token: any): void {
+    this.$emit('swap', token)
   }
 }
 </script>

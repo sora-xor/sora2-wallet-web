@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="t('connection.title')" show-close>
+  <wallet-base :title="t('connection.title')" show-close @close="handleClose">
     <div class="wallet-connection">
       <s-card class="wallet-connection-create">
         <div class="title">{{ t('connection.create.title') }}</div>
@@ -48,15 +48,14 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
   handleNavigate (name: RouteNames): void {
     this.navigate({ name })
   }
+
+  handleClose (): void {
+    this.$emit('close')
+  }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../styles/typography';
-@import '../styles/variables';
-@import '../styles/layout';
-@import '../styles/soramitsu-variables';
-
 $font-size-title: $font-size_normal;
 $font-size-hint: $font-size_small;
 
@@ -72,7 +71,7 @@ $font-size-hint: $font-size_small;
   .hint {
     text-align: center;
     font-size: $font-size-hint;
-    color: $s-color-base-content-tertiary;
+    color: var(--s-color-base-content-tertiary);
     line-height: 1.8;
   }
   .action {

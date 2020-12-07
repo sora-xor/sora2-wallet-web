@@ -1,25 +1,19 @@
-@import './soramitsu-variables';
-@import './variables';
-@import './layout';
-
 @mixin token-logo-styles($size: 32px) {
   height: $size;
   width: $size;
-  background-color: $s-color-base-border-secondary;
+  background-color: var(--s-color-base-border-secondary);
   background-image: $token-logo-default-svg;
   background-size: 60%;
   background-repeat: no-repeat;
   background-position: 50%;
-  border: 1px solid $s-color-base-border-secondary;
+  border: 1px solid var(--s-color-base-border-secondary);
   border-radius: 50%;
-  box-shadow: $s-shadow-tooltip;
-
+  box-shadow: var(--s-shadow-tooltip);
   &--ksm,
   &--xor,
   &--eth {
     background-size: 100%;
   }
-
   &--ksm {
     background-image: $token-logo-ksm-svg;
   }
@@ -33,9 +27,7 @@
 
 @mixin custom-tabs {
   $tabs-class: ".el-tabs";
-  $tabs-container-height: $basic-spacing * 4;
   $tabs-container-padding: 2px;
-  $tabs-item-height: $tabs-container-height - $tabs-container-padding * 2;
 
   .s-tabs {
     &#{$tabs-class} {
@@ -50,7 +42,7 @@
           padding-left: $basic-spacing;
           &.is-active {
             margin: 0;
-            box-shadow: $s-shadow-tab;
+            box-shadow: var(--s-shadow-tab);
             &:hover {
               box-shadow: none;
             }
@@ -62,17 +54,14 @@
           }
         }
         #{$tabs-class}__item {
-          height: $tabs-item-height;
-          line-height: $tabs-item-height;
           &:hover {
-            background-color: $s-color-base-background-hover;
+            background-color: var(--s-color-base-background-hover);
           }
         }
       }
       &__nav-wrap {
-        height: $tabs-container-height;
         padding: $tabs-container-padding;
-        background-color: $s-color-base-background;
+        background-color: var(--s-color-base-background);
         border-radius: $border-radius_small;
       }
     }

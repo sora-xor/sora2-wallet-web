@@ -59,10 +59,6 @@ export default class WalletHistory extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/soramitsu-variables';
-@import '../styles/typography';
-@import '../styles/layout';
-
 .history {
   flex-direction: column;
   &-item {
@@ -75,13 +71,13 @@ export default class WalletHistory extends Mixins(TranslationMixin) {
     }
     &:hover {
       cursor: pointer;
-      background-color: $s-color-base-background-hover;
+      background-color: var(--s-color-base-background-hover);
     }
     .info {
       align-items: center;
       &-operation {
-        color: $s-color-base-content-secondary;
-        background-color: $s-color-base-background;
+        color: var(--s-color-base-content-secondary);
+        background-color: var(--s-color-base-background);
         border-radius: $border-radius;
         font-size: $font-size_mini;
         font-weight: bold;
@@ -98,22 +94,22 @@ export default class WalletHistory extends Mixins(TranslationMixin) {
       }
       &-status {
         &--success {
-          color: $s-color-status-success;
+          color: var(--s-color-status-success);
         }
         &--error {
-          color: $s-color-status-error;
+          color: var(--s-color-status-error);
         }
       }
     }
     .date {
       font-size: $font-size_small;
-      color: $s-color-base-content-tertiary;
+      color: var(--s-color-base-content-tertiary);
     }
   }
   &-empty {
     text-align: center;
     font-size: $font-size_small;
-    color: $s-color-base-content-tertiary;
+    color: var(--s-color-base-content-tertiary);
   }
 }
 </style>

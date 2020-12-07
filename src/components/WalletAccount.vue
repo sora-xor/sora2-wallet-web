@@ -81,10 +81,7 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/typography';
-@import '../styles/layout';
-@import '../styles/variables';
-@import '../styles/soramitsu-variables';
+@import '../styles/icons';
 
 $avatar-size: 32px;
 
@@ -109,7 +106,7 @@ $avatar-size: 32px;
       @include text-ellipsis;
     }
     &_address {
-      color: $s-color-base-content-tertiary;
+      color: var(--s-color-base-content-tertiary);
       font-size: $font-size_small;
       @include text-ellipsis;
     }
@@ -126,9 +123,7 @@ $avatar-size: 32px;
 </style>
 
 <style lang="scss">
-@import '../styles/soramitsu-variables';
-
 .account-menu i:hover {
-  color: $s-color-theme-accent;
+  color: var(--s-color-theme-accent);
 }
 </style>

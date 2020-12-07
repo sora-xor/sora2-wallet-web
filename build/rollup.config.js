@@ -40,7 +40,15 @@ export default {
     vue({
       css: true,
       compileTemplate: true,
-      needMap: false // fix for https://github.com/vuejs/rollup-plugin-vue/issues/238
+      needMap: false, // fix for https://github.com/vuejs/rollup-plugin-vue/issues/238
+      data: {
+        scss: `
+          @import "../styles/_variables.scss";
+          @import "../styles/_layout.scss";
+          @import "../styles/_mixins.scss";
+          @import "../styles/_typography.scss";
+        `
+      }
     }),
     scss(),
     resolve(),

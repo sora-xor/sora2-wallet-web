@@ -92,16 +92,12 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/soramitsu-variables';
-@import '../styles/typography';
-@import '../styles/layout';
-
 .transaction {
   &-hash, &-from {
     margin-bottom: $basic-spacing_small;
   }
   &-row {
-    color: $s-color-base-content-secondary;
+    color: var(--s-color-base-content-secondary);
     &_key {
       flex: 1;
     }
@@ -120,7 +116,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
     flex-direction: column;
     font-size: $font-size_small;
     &_date {
-      color: $s-color-base-content-tertiary;
+      color: var(--s-color-base-content-tertiary);
     }
   }
   &:not(:last-child) {
@@ -129,10 +125,10 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
 }
 .info-status {
   &--success {
-    color: $s-color-status-success;
+    color: var(--s-color-status-success);
   }
   &--error {
-    color: $s-color-status-error;
+    color: var(--s-color-status-error);
   }
 }
 </style>

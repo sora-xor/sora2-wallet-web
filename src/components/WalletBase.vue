@@ -26,6 +26,7 @@
           icon="x-rounded"
           size="medium"
           :tooltip="t('closeText')"
+          @click="handleCloseClick"
         />
       </div>
     </template>
@@ -57,14 +58,14 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     this.navigate({ name: RouteNames.WalletSettings })
     this.$emit('settings')
   }
+
+  handleCloseClick (): void {
+    this.$emit('close')
+  }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../styles/typography';
-@import '../styles/variables';
-@import '../styles/layout';
-
 $font-size-title: $font-size_medium;
 
 .base {

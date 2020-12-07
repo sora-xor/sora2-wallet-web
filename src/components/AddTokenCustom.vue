@@ -78,8 +78,6 @@ export default class AddTokenCustom extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-@import '../styles/layout';
-
 .token-custom {
   > * {
     margin-top: $basic-spacing;
