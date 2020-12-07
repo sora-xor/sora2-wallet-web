@@ -55,10 +55,9 @@ export default class WalletImport extends Mixins(TranslationMixin) {
   readonly SourceTypes = SourceTypes
   readonly PasswordConditions = PasswordConditions
 
-  @Getter account
   @Action navigate
-  @Action getAccount
   @Action login
+  @Action checkValidSeed
 
   sourceType = SourceTypes.MnemonicSeed
   seed = ''
@@ -89,8 +88,8 @@ export default class WalletImport extends Mixins(TranslationMixin) {
 
   async handleImport (): Promise<void> {
     if (this.step === 1 && this.sourceType === SourceTypes.MnemonicSeed) {
-      await this.getAccount({ seed: this.seed })
-      this.importFormData.name = this.account.name
+      // TODO: add validation
+      const isValid = this.checkValidSeed({ seed: this.seed })
       this.step = 2
       return
     }
@@ -98,7 +97,7 @@ export default class WalletImport extends Mixins(TranslationMixin) {
       // logic for RawSeed import
     } else {
       const { name, password } = this.importFormData
-      await this.login({ name, password })
+      await this.login({ name, password, seed: this.seed })
     }
     this.navigate({ name: RouteNames.Wallet })
   }

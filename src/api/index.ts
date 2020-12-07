@@ -1,8 +1,13 @@
 import axiosInstance from 'axios'
+import { WalletApi } from '@sora-substrate/util'
 
-export const BASE_URL = process.env.BASE_URL
+import { storage } from '@/util/storage'
 
 const axios = axiosInstance.create()
-axios.defaults.baseURL = BASE_URL
+const walletApi = new WalletApi()
+walletApi.setStorage(storage)
 
-export default axios
+export {
+  axios,
+  walletApi
+}

@@ -1,5 +1,5 @@
 <template>
-  <component :is="currentRoute" @close="handleClose" @swap="handleSwap" />
+  <component v-if="!loading" :is="currentRoute" @close="handleClose" @swap="handleSwap" />
 </template>
 
 <script lang="ts">
@@ -16,6 +16,7 @@ import AddToken from './components/AddToken.vue'
 import Wallet from './components/Wallet.vue'
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
 import { RouteNames } from './consts'
+import { walletApi } from './api'
 
 @Component({
   components: {
@@ -35,6 +36,20 @@ export default class SoraNeoWallet extends Vue {
   @Getter currentRoute!: RouteNames
   @Getter isLoggedIn!: boolean
   @Action navigate
+
+  loading = false
+
+  async created (): Promise<void> {
+    try {
+      this.loading = true
+      await walletApi.initialize()
+      console.info('Connected to blockchain', walletApi.endpoint)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      this.loading = false
+    }
+  }
 
   mounted (): void {
     if (this.isLoggedIn) {
