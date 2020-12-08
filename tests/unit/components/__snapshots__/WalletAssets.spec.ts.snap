@@ -28,8 +28,10 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
     </div>
      
     <s-button-stub
+      borderradius="small"
       class="swap"
       icon="swap"
+      iconposition="right"
       nativetype="button"
       size="small"
       tabindex="0"
@@ -43,8 +45,10 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
     </s-button-stub>
      
     <s-button-stub
+      borderradius="small"
       class="details"
       icon=""
+      iconposition="left"
       nativetype="button"
       size="medium"
       tabindex="0"
@@ -62,8 +66,10 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
   <!---->
    
   <s-button-stub
+    borderradius="small"
     class="wallet-assets-add"
     icon=""
+    iconposition="left"
     nativetype="button"
     size="medium"
     tabindex="0"

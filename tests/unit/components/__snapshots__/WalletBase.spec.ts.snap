@@ -2,9 +2,9 @@
 
 exports[`WalletBase.vue should renders correctly 1`] = `
 <s-card-stub
-  borderradius="small"
+  borderradius="medium"
   class="base"
-  shadow="hover"
+  shadow="never"
 >
    
 </s-card-stub>
