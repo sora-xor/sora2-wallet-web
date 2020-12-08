@@ -35,6 +35,34 @@ exports[`SettingsNetworks.vue should renders correctly 1`] = `
         />
       </div>
        
+      <s-divider-stub
+        class="wallet-settings-networks-item_divider"
+        contentposition="center"
+        direction="horizontal"
+        type="secondary"
+      />
+    </div>
+    <div>
+      <div
+        class="wallet-settings-networks-item s-flex"
+      >
+        <div
+          class="wallet-settings-networks-item-text s-flex"
+        >
+          <span
+            class="wallet-settings-networks-item-text_main"
+          >
+            Ropsten Network
+          </span>
+        </div>
+         
+        <s-icon-stub
+          class="wallet-settings-networks-item_icon"
+          name="chevron-right"
+          size="16"
+        />
+      </div>
+       
       <!---->
     </div>
      

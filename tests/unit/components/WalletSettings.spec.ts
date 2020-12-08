@@ -2,6 +2,7 @@ import Vuex from 'vuex'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 
 import WalletSettings from '@/components/WalletSettings.vue'
+import { DEFAULT_NETWORKS } from '@/store/Settings'
 import { TranslationMock, SoramitsuElementsImport } from '../../utils'
 
 const localVue = createLocalVue()
@@ -20,13 +21,7 @@ const store = new Vuex.Store({
     },
     Settings: {
       state: {
-        activeNetwork: {
-          id: 1,
-          name: 'Main Ethereum Network',
-          address: 'https://api.infura.io/v1/jsonrpc/mainnet',
-          explorer: 'https://etherscan.io',
-          editable: false
-        }
+        activeNetwork: DEFAULT_NETWORKS[0]
       },
       getters: {
         availableNetworks: () => ([

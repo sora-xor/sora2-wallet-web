@@ -19,7 +19,7 @@ const types = flow(
   fromPairs
 )([])
 
-const DEFAULT_NETWORKS: Array<Network> = [{
+export const DEFAULT_NETWORKS: Array<Network> = [{
   id: 1,
   name: 'Main Ethereum Network',
   address: 'https://api.infura.io/v1/jsonrpc/mainnet',
@@ -36,7 +36,7 @@ const DEFAULT_NETWORKS: Array<Network> = [{
 function modifyActiveNetwork (state, network: Network) {
   // For now it works as remove operation
   // If it should be removed then DEFAULT_NETWORKS[0] will be set as active network
-  if (network.name && network.address && network.explorer) {
+  if (network && network.name && network.address && network.explorer) {
     state.activeNetwork = network
     storage.setItem('activeNetwork', JSON.stringify(network))
   } else {
