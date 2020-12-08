@@ -3,18 +3,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 
-import TranslationMixin from './components/mixins/TranslationMixin'
+import AddToken from './components/AddToken.vue'
+import Wallet from './components/Wallet.vue'
+import WalletAssetDetails from './components/WalletAssetDetails.vue'
 import WalletConnection from './components/WalletConnection.vue'
 import WalletCreation from './components/WalletCreation.vue'
 import WalletImport from './components/WalletImport.vue'
 import WalletSettings from './components/WalletSettings.vue'
-import WalletAssetDetails from './components/WalletAssetDetails.vue'
-import AddToken from './components/AddToken.vue'
-import Wallet from './components/Wallet.vue'
+import WalletSettingsAbout from './components/SettingsAbout.vue'
+import WalletSettingsLanguage from './components/SettingsLanguage.vue'
+import WalletSettingsNetworks from './components/SettingsNetworks.vue'
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
+
 import { RouteNames } from './consts'
 
 @Component({
@@ -23,6 +26,9 @@ import { RouteNames } from './consts'
     WalletCreation,
     WalletImport,
     WalletSettings,
+    WalletSettingsLanguage,
+    WalletSettingsNetworks,
+    WalletSettingsAbout,
     Wallet,
     WalletAssetDetails,
     AddToken,
@@ -30,8 +36,6 @@ import { RouteNames } from './consts'
   }
 })
 export default class SoraNeoWallet extends Vue {
-  readonly RouteNames = RouteNames
-
   @Getter currentRoute!: RouteNames
   @Getter isLoggedIn!: boolean
   @Action navigate

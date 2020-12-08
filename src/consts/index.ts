@@ -3,6 +3,9 @@ export enum RouteNames {
   WalletCreation = 'WalletCreation',
   WalletImport = 'WalletImport',
   WalletSettings = 'WalletSettings',
+  WalletSettingsLanguage = 'WalletSettingsLanguage',
+  WalletSettingsNetworks = 'WalletSettingsNetworks',
+  WalletSettingsAbout = 'WalletSettingsAbout',
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
   AddToken = 'AddToken',
@@ -35,6 +38,24 @@ export enum AccountMenu {
   View = 'view',
   Edit = 'edit',
   Logout = 'logout'
+}
+
+export enum SettingsMenu {
+  Language = 'Language',
+  Networks = 'Networks',
+  About = 'About'
+}
+
+export interface Network {
+  id: number;
+  name: string;
+  address: string;
+  explorer: string;
+  editable: boolean;
+}
+
+export enum Languages {
+  EN = 'en'
 }
 
 export const PasswordConditions = [

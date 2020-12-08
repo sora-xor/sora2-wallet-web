@@ -11,6 +11,7 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
     <s-input-stub
       accept=""
       autocomplete="off"
+      borderradius="small"
       form=""
       label=""
       name=""
@@ -31,6 +32,7 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
      
     <s-select-stub
       autocomplete="off"
+      borderradius="small"
       inputtype="input"
       loadingtext="Loading"
       multiplelimit="0"
@@ -38,6 +40,7 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
       name=""
       nodatatext="No data"
       placeholder="Select"
+      popperclass=""
       value="MnemonicSeed"
     >
       <s-option-stub
@@ -53,6 +56,7 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
     </div>
      
     <s-button-stub
+      borderradius="small"
       icon=""
       nativetype="button"
       size="medium"
