@@ -1,33 +1,65 @@
 <template>
-  <s-card class="base" shadow="never">
+  <s-card class="base" border-radius="medium" shadow="never">
     <template #header>
-      <div class="base-title s-flex">
-        <s-button
-          v-if="showBack"
-          class="base-title_back"
-          type="action"
-          icon="chevron-left-rounded"
-          size="medium"
-          :tooltip="t('backText')"
-          @click="handleBackClick"
-        />
+      <div :class="headerClasses">
+        <s-tooltip
+          class="header-tooltip"
+          popper-class="info-tooltip info-tooltip--header"
+          :content="t('backText')"
+          border-radius="mini"
+          theme="light"
+          placement="bottom-start"
+          animation="none"
+          :show-arrow="false"
+        >
+          <s-button
+            v-if="showBack"
+            class="base-title_back"
+            type="action"
+            icon="chevron-left-rounded"
+            size="medium"
+            @click="handleBackClick"
+          />
+        </s-tooltip>
         <span>{{ title }}</span>
-        <s-button
-          v-if="showSettings"
-          type="action"
-          icon="settings"
-          size="medium"
-          :tooltip="t('settingsText')"
-          @click="handleSettingsClick"
-        />
-        <s-button
-          v-if="showClose"
-          type="action"
-          icon="x-rounded"
-          size="medium"
-          :tooltip="t('closeText')"
-          @click="handleCloseClick"
-        />
+        <s-tooltip
+          class="header-tooltip"
+          popper-class="info-tooltip info-tooltip--header"
+          :content="t('settingsText')"
+          border-radius="mini"
+          theme="light"
+          placement="bottom-end"
+          animation="none"
+          :show-arrow="false"
+        >
+          <s-button
+            v-if="showSettings"
+            class="base-title_settings"
+            type="action"
+            icon="settings"
+            size="medium"
+            @click="handleSettingsClick"
+          />
+        </s-tooltip>
+        <s-tooltip
+          class="header-tooltip"
+          popper-class="info-tooltip info-tooltip--header"
+          :content="t('closeText')"
+          border-radius="mini"
+          theme="light"
+          placement="bottom-end"
+          animation="none"
+          :show-arrow="false"
+        >
+          <s-button
+            v-if="showClose"
+            class="base-title_close"
+            type="action"
+            icon="x-rounded"
+            size="medium"
+            @click="handleCloseClick"
+          />
+        </s-tooltip>
       </div>
     </template>
     <slot />
@@ -50,6 +82,14 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 
   @Action navigate
 
+  get headerClasses (): Array<string> {
+    const cssClasses: Array<string> = ['base-title', 's-flex']
+    if (this.showBack) {
+      cssClasses.push('base-title--center')
+    }
+    return cssClasses
+  }
+
   handleBackClick (): void {
     this.$emit('back')
   }
@@ -65,21 +105,44 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 }
 </script>
 
+<style lang="scss">
+.info-tooltip--header {
+  margin-top: #{$basic-spacing_mini / 2} !important;
+}
+</style>
+
 <style scoped lang="scss">
-$font-size-title: $font-size_medium;
+$button-size: var(--s-size-medium);
 
 .base {
+  @include s-card-styles;
   width: $wallet-width;
   font-size: $font-size_basic;
   line-height: $line-height_basic;
   &-title {
+    position: relative;
+    height: $button-size;
     align-items: center;
+    padding-right: $button-size + $basic-spacing;
+    &--center {
+      padding-left: $button-size + $basic-spacing;
+      text-align: center;
+    }
     > span {
       flex: 1;
-      font-size: $font-size-title;
+      font-size: $font-size_medium;
+      line-height: $button-size;
+    }
+    .el-button {
+      position: absolute;
+      top: 0;
     }
     &_back {
-      margin-right: $basic-spacing;
+      left: 0;
+    }
+    &_settings,
+    &_close {
+      right: 0;
     }
   }
 }

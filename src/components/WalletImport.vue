@@ -2,7 +2,7 @@
   <wallet-base :title="t('import.title')" show-back @back="handleBack">
     <div class="wallet-import">
       <template v-if="step === 1">
-        <s-select :placeholder="t('import.sourceType.placeholder')" v-model="sourceType">
+        <s-select :placeholder="t('import.sourceType.placeholder')" v-model="sourceType" border-radius="mini">
           <s-option
             v-for="type in SourceTypes"
             :key="type"
@@ -10,21 +10,21 @@
             :label="t(`import.sourceType.${type}`)"
           />
         </s-select>
-        <s-input type="textarea" :placeholder="t(`import.${sourceType}.placeholder`)" v-model="seed" />
+        <s-input type="textarea" :placeholder="t(`import.${sourceType}.placeholder`)" v-model="seed" border-radius="mini" />
         <div class="wallet-import-hint">{{ t(`import.${sourceType}.hint`) }}</div>
       </template>
       <template v-else>
         <wallet-account :name="importFormData.name" />
-        <s-input :placeholder="t(`import.${sourceType}.name.placeholder`)" v-model="importFormData.name" />
+        <s-input :placeholder="t(`import.${sourceType}.name.placeholder`)" v-model="importFormData.name" border-radius="mini" />
         <div class="wallet-import-hint">{{ t(`import.${sourceType}.name.hint`) }}</div>
-        <s-input show-password :placeholder="t(`import.${sourceType}.password.placeholder`)" v-model="importFormData.password" />
+        <s-input show-password :placeholder="t(`import.${sourceType}.password.placeholder`)" v-model="importFormData.password" border-radius="mini" />
         <div>
           <div class="wallet-import-condition" v-for="condition in PasswordConditions" :key="condition.title">
             <s-icon name="check-mark" :class="{ 'error': !condition.regexp.test(importFormData.password) }" />
             <span>{{ t(`import.${sourceType}.password.${condition.title}`) }}</span>
           </div>
         </div>
-        <s-input show-password :placeholder="t(`import.${sourceType}.repeatedPassword.placeholder`)" v-model="importFormData.repeatedPassword" />
+        <s-input show-password :placeholder="t(`import.${sourceType}.repeatedPassword.placeholder`)" v-model="importFormData.repeatedPassword" border-radius="mini" />
         <div class="wallet-import-hint">{{ t(`import.${sourceType}.password.hint`) }}</div>
       </template>
       <s-button
@@ -105,25 +105,45 @@ export default class WalletImport extends Mixins(TranslationMixin) {
 }
 </script>
 
-<style scoped lang="scss">
-$avatar-size: 32px;
-$font-size-hint: $font-size_small;
+<style lang="scss">
+@include select-icon('wallet-import');
+</style>
 
-@mixin secondary-text {
-  color: var(--s-color-base-content-tertiary);
-  font-size: $font-size-hint;
-  line-height: 1.8;
-}
+<style scoped lang="scss">
+$valid-icon-size: 6px;
+
 .wallet-import {
-  &-hint {
-    @include secondary-text;
+  &-hint,
+  &-condition {
+    @include hint-text(true);
   }
   &-condition {
-    @include secondary-text;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
     .s-icon-check-mark {
-      color: var(--s-color-base-content-tertiary);
+      display: block;
+      margin-left: $valid-icon-size;
+      margin-right: $valid-icon-size;
+      width: $valid-icon-size * 2;
+      font-weight: bold;
+      color: var(--s-color-status-success);
       &.error {
-        color: var(--s-color-status-error);
+        position: relative;
+        &:before {
+          content: "";
+          position: absolute;
+          display: block;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          margin: auto;
+          background-color: var(--s-color-base-content-tertiary);
+          border-radius: 50%;
+          height: $valid-icon-size;
+          width: $valid-icon-size;
+        }
       }
     }
   }

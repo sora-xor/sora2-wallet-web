@@ -4,6 +4,7 @@
       class="token-custom-address"
       :maxlength="128"
       :placeholder="t(`addToken.${AddTokenTabs.Custom}.addressPlaceholder`)"
+      border-radius="mini"
       v-model="address"
       @change="handleSearch"
     />
@@ -11,6 +12,7 @@
       class="token-custom-symbol"
       :maxlength="10"
       :placeholder="t(`addToken.${AddTokenTabs.Custom}.symbolPlaceholder`)"
+      border-radius="mini"
       v-model="symbol"
     />
     <div class="token-custom-actions s-flex">
