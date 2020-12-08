@@ -1,4 +1,4 @@
-import { AccountMenu, AddTokenTabs, PasswordCondition, SourceTypes, WalletTabs } from '../../consts'
+import { AccountMenu, AddTokenTabs, PasswordCondition, SourceTypes, WalletTabs, SettingsMenu, Languages } from '../../consts'
 
 export default {
   closeText: 'Close',
@@ -16,6 +16,8 @@ export default {
   swapText: 'Swap',
   searchText: 'Search',
   cancelText: 'Cancel',
+  saveText: 'Save',
+  logoutText: 'Log out',
   sourceType: {
     placeholder: 'Source type',
     [SourceTypes.MnemonicSeed]: 'Mnemonic seed',
@@ -103,7 +105,41 @@ export default {
     swap: '@:swapText'
   },
   settings: {
-    title: '@:settingsText'
+    title: '@:settingsText',
+    menu: {
+      [SettingsMenu.Language]: {
+        title: 'Language',
+        desc: 'Wallet language settings'
+      },
+      [SettingsMenu.Networks]: {
+        title: 'Networks',
+        desc: 'Add and edit custom RPC networks'
+      },
+      [SettingsMenu.About]: {
+        title: 'About',
+        desc: 'Version, support center, contact info'
+      }
+    },
+    language: {
+      [Languages.EN]: 'English'
+    },
+    network: 'Network',
+    networks: {
+      desc: 'The default network for Ether transactions is Main Net',
+      create: 'Add custom',
+      customNetwork: 'Custom network',
+      form: {
+        name: 'Name',
+        address: 'Address',
+        explorer: 'Explorer'
+      }
+    },
+    about: {
+      termsOfService: 'Terms of Service',
+      privacyPolicy: 'Privacy Policy',
+      termsOfServiceLink: 'https://sora.org',
+      privacyPolicyLink: 'https://soramitsu.co.jp'
+    }
   },
   addToken: {
     title: '@:addTokenText',

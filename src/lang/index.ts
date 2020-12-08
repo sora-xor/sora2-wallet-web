@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
+import * as storage from '../util/storage'
 
 import en from './en'
+import { Languages } from '@/consts'
 
 Vue.use(VueI18n)
 
@@ -10,7 +12,7 @@ const messages = {
 }
 
 const i18n = new VueI18n({
-  locale: 'en',
+  locale: storage.getItem('locale') || Languages.EN,
   messages
 })
 
