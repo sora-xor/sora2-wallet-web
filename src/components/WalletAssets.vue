@@ -19,7 +19,7 @@
             {{ t('assets.swap') }}
           </s-button>
           <s-button class="details" type="link" @click="handleOpenAssetDetails(asset.symbol)">
-            <s-icon name="chevron-right" size="16px" />
+            <s-icon name="chevron-right" size="12px" />
           </s-button>
         </div>
         <s-divider v-if="index !== assets.length - 1" :key="`${asset.symbol}-divider`" />
@@ -106,5 +106,6 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
     text-align: center;
     @include hint-text;
   }
+  @include icon-chevron-right;
 }
 </style>

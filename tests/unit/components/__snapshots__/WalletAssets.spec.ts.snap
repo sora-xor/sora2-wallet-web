@@ -58,7 +58,7 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
     >
       <s-icon-stub
         name="chevron-right"
-        size="16px"
+        size="12px"
       />
     </s-button-stub>
   </div>

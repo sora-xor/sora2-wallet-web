@@ -93,7 +93,7 @@ export default class SettingsLanguage extends Mixins(TranslationMixin) {
       flex-direction: column;
       &_main {
         font-size: $font-size_normal;
-        line-height: 1.8;
+        line-height: $line-height_medium;
         &.active {
           color: var(--s-color-button-tertiary-color);
         }
@@ -101,7 +101,7 @@ export default class SettingsLanguage extends Mixins(TranslationMixin) {
       &_secondary {
         font-size: $font-size_small;
         color: var(--s-color-base-content-tertiary);
-        line-height: 1.8;
+        line-height: $line-height_medium;
       }
     }
     &_icon {

@@ -31,7 +31,7 @@ exports[`SettingsNetworks.vue should renders correctly 1`] = `
         <s-icon-stub
           class="wallet-settings-networks-item_icon"
           name="chevron-right"
-          size="16"
+          size="12px"
         />
       </div>
        
@@ -59,7 +59,7 @@ exports[`SettingsNetworks.vue should renders correctly 1`] = `
         <s-icon-stub
           class="wallet-settings-networks-item_icon"
           name="chevron-right"
-          size="16"
+          size="12px"
         />
       </div>
        
@@ -72,6 +72,7 @@ exports[`SettingsNetworks.vue should renders correctly 1`] = `
       <s-button-stub
         borderradius="small"
         icon=""
+        iconposition="left"
         nativetype="button"
         size="small"
         tabindex="0"

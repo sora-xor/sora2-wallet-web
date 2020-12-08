@@ -97,6 +97,12 @@
   }
 }
 
+@mixin icon-chevron-right {
+  .s-icon-chevron-right {
+    font-weight: bold;
+  }
+}
+
 @mixin select-icon ($containerClass) {
   .#{$containerClass} .s-select .el-select {
     .el-input__icon {
