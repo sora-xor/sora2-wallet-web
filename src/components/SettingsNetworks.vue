@@ -15,7 +15,7 @@
             <s-icon
               class="wallet-settings-networks-item_icon"
               name="chevron-right"
-              :size="16"
+              size="12px"
             />
           </div>
           <s-divider v-if="index !== availableNetworks.length - 1" class="wallet-settings-networks-item_divider" />
@@ -141,8 +141,7 @@ export default class SettingsNetworks extends Mixins(TranslationMixin) {
 <style scoped lang="scss">
 .wallet-settings-networks {
   &_desc {
-    color: var(--s-color-base-content-tertiary);
-    font-size: $font-size_small;
+    @include hint-text;
     padding: $basic-spacing_small 0;
   }
   &_action {
@@ -165,7 +164,7 @@ export default class SettingsNetworks extends Mixins(TranslationMixin) {
         text-decoration: unset;
         color: unset;
         font-size: $font-size_normal;
-        line-height: 1.8;
+        line-height: $line-height_medium;
       }
     }
     &_icon {
@@ -182,5 +181,6 @@ export default class SettingsNetworks extends Mixins(TranslationMixin) {
       }
     }
   }
+  @include icon-chevron-right;
 }
 </style>

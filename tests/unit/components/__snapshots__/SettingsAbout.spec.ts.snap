@@ -28,12 +28,6 @@ exports[`SettingsAbout.vue should renders correctly 1`] = `
             
           </a>
         </div>
-         
-        <s-icon-stub
-          class="wallet-settings-about-item_icon"
-          name="external-link"
-          size="16"
-        />
       </div>
        
       <s-divider-stub
@@ -57,12 +51,6 @@ exports[`SettingsAbout.vue should renders correctly 1`] = `
             
           </a>
         </div>
-         
-        <s-icon-stub
-          class="wallet-settings-about-item_icon"
-          name="external-link"
-          size="16"
-        />
       </div>
        
       <!---->

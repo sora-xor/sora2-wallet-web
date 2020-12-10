@@ -19,6 +19,17 @@ export default class App extends Vue {
 }
 </script>
 
+<style lang="scss">
+.el-tooltip__popper.info-tooltip {
+  padding: $basic-spacing_mini;
+  max-width: 320px;
+  border: none !important;
+  box-shadow: var(--s-shadow-tooltip);
+  font-size: var(--s-font-size-small);
+  line-height: $line-height_small;
+}
+</style>
+
 <style scoped lang="scss">
 .wallet-wrapper {
   justify-content: center;

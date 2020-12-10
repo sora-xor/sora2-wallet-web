@@ -10,11 +10,12 @@
           <div class="wallet-settings-about-item-text s-flex">
             <a class="wallet-settings-about-item-text_main" :href="link.url" target="_blank">{{ link.title }}</a>
           </div>
-          <s-icon
+          <!-- This link was hidden due to PSS-205 task. We'll return it back later.  -->
+          <!-- <s-icon
             class="wallet-settings-about-item_icon"
             name="external-link"
             :size="16"
-          />
+          /> -->
         </div>
         <s-divider v-if="index !== links.length - 1" class="wallet-settings-about-item_divider" />
       </div>
@@ -63,8 +64,7 @@ export default class SettingsAbout extends Mixins(TranslationMixin) {
 <style scoped lang="scss">
 .wallet-settings-about {
   &_desc {
-    color: var(--s-color-base-content-tertiary);
-    font-size: $font-size_small;
+    @include hint-text;
     padding: $basic-spacing_small 0;
   }
   &-item {
@@ -76,7 +76,7 @@ export default class SettingsAbout extends Mixins(TranslationMixin) {
         text-decoration: unset;
         color: unset;
         font-size: $font-size_normal;
-        line-height: 1.8;
+        line-height: $line-height_medium;
       }
     }
     &_icon {

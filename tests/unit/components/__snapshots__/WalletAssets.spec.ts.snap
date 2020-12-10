@@ -31,6 +31,7 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
       borderradius="small"
       class="swap"
       icon="swap"
+      iconposition="right"
       nativetype="button"
       size="small"
       tabindex="0"
@@ -47,6 +48,7 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
       borderradius="small"
       class="details"
       icon=""
+      iconposition="left"
       nativetype="button"
       size="medium"
       tabindex="0"
@@ -56,7 +58,7 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
     >
       <s-icon-stub
         name="chevron-right"
-        size="16px"
+        size="12px"
       />
     </s-button-stub>
   </div>
@@ -67,6 +69,7 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
     borderradius="small"
     class="wallet-assets-add"
     icon=""
+    iconposition="left"
     nativetype="button"
     size="medium"
     tabindex="0"

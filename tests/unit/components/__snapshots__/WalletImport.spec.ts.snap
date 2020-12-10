@@ -10,7 +10,7 @@ exports[`WalletImport.vue should renders correctly 1`] = `
   >
     <s-select-stub
       autocomplete="off"
-      borderradius="small"
+      borderradius="mini"
       inputtype="input"
       loadingtext="Loading"
       multiplelimit="0"
@@ -34,7 +34,7 @@ exports[`WalletImport.vue should renders correctly 1`] = `
     <s-input-stub
       accept=""
       autocomplete="off"
-      borderradius="small"
+      borderradius="mini"
       form=""
       label=""
       name=""
@@ -57,6 +57,7 @@ exports[`WalletImport.vue should renders correctly 1`] = `
       borderradius="small"
       disabled="true"
       icon=""
+      iconposition="left"
       nativetype="button"
       size="medium"
       tabindex="0"

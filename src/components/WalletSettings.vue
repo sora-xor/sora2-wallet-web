@@ -1,7 +1,7 @@
 <template>
   <wallet-base :title="t('settings.title')" show-back @back="handleBack">
     <div class="wallet-settings">
-      <s-select :value="activeNetwork.id" :placeholder="t('settings.network')" @change="id => setActiveNetwork({ id })">
+      <s-select :value="activeNetwork.id" :placeholder="t('settings.network')" border-radius="mini" @change="id => setActiveNetwork({ id })">
         <s-option
           v-for="network in availableNetworks"
           :key="network.id"
@@ -19,7 +19,7 @@
             <span class="wallet-settings-item-text_main">{{ item.title }}</span>
             <span class="wallet-settings-item-text_secondary">{{ item.desc }}</span>
           </div>
-          <s-icon class="wallet-settings-item_icon" name="chevron-right" :size="16" />
+          <s-icon class="wallet-settings-item_icon" name="chevron-right" size="12px" />
         </div>
         <s-divider v-if="index !== menuTabs.length - 1" class="wallet-settings-item_divider" />
       </div>
@@ -91,6 +91,10 @@ export default class WalletSettings extends Mixins(TranslationMixin) {
 }
 </script>
 
+<style lang="scss">
+@include select-icon('wallet-settings');
+</style>
+
 <style scoped lang="scss">
 .wallet-settings {
   &_action {
@@ -106,12 +110,10 @@ export default class WalletSettings extends Mixins(TranslationMixin) {
       flex-direction: column;
       &_main {
         font-size: $font-size_normal;
-        line-height: 1.8;
+        line-height: $line-height_medium;
       }
       &_secondary {
-        font-size: $font-size_small;
-        color: var(--s-color-base-content-tertiary);
-        line-height: 1.8;
+        @include hint-text(true);
       }
     }
     &_icon {
@@ -127,5 +129,6 @@ export default class WalletSettings extends Mixins(TranslationMixin) {
       }
     }
   }
+  @include icon-chevron-right;
 }
 </style>

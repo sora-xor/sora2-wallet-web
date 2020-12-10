@@ -9,9 +9,9 @@ exports[`WalletConnection.vue should renders correctly 1`] = `
     class="wallet-connection"
   >
     <s-card-stub
-      borderradius="small"
+      borderradius="medium"
       class="wallet-connection-create"
-      shadow="hover"
+      shadow="never"
     >
       <div
         class="title"
@@ -29,6 +29,7 @@ exports[`WalletConnection.vue should renders correctly 1`] = `
         borderradius="small"
         class="action"
         icon=""
+        iconposition="left"
         nativetype="button"
         size="medium"
         tabindex="0"
@@ -43,9 +44,9 @@ exports[`WalletConnection.vue should renders correctly 1`] = `
     </s-card-stub>
      
     <s-card-stub
-      borderradius="small"
+      borderradius="medium"
       class="wallet-connection-import"
-      shadow="hover"
+      shadow="never"
     >
       <div
         class="title"
@@ -63,6 +64,7 @@ exports[`WalletConnection.vue should renders correctly 1`] = `
         borderradius="small"
         class="action"
         icon=""
+        iconposition="left"
         nativetype="button"
         size="medium"
         tabindex="0"

@@ -3,7 +3,7 @@ import { AccountMenu, AddTokenTabs, PasswordCondition, SourceTypes, WalletTabs, 
 export default {
   closeText: 'Close',
   backText: 'Back',
-  createWalletText: 'Create a Wallet',
+  createWalletText: 'Create a wallet',
   nameText: 'Name',
   nextText: 'Next',
   importText: 'Import',
@@ -24,7 +24,7 @@ export default {
     [SourceTypes.RawSeed]: 'Raw seed'
   },
   connection: {
-    title: 'Connect to a Wallet',
+    title: 'Connect to a wallet',
     create: {
       title: 'Create a new wallet',
       hint: 'This will create a new wallet and seed phrase',
@@ -33,7 +33,7 @@ export default {
     import: {
       title: 'I already have a seed phrase',
       hint: 'Import your existing wallet using a mnemonic seed pharse, raw seed or JSON backup file',
-      action: 'Import Wallet'
+      action: 'Import wallet'
     }
   },
   creation: {
@@ -50,7 +50,7 @@ export default {
     action: '@:nextText'
   },
   import: {
-    title: 'Import a Wallet',
+    title: 'Import a wallet',
     sourceType: {
       placeholder: '@:sourceType.placeholder',
       [SourceTypes.MnemonicSeed]: `@:sourceType.${SourceTypes.MnemonicSeed}`,
@@ -159,7 +159,7 @@ export default {
     }
   },
   transaction: {
-    title: 'Transaction Details',
+    title: 'Transaction details',
     hash: 'Transaction Hash',
     status: 'Status',
     date: 'Date',

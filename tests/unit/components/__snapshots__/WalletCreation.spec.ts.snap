@@ -11,7 +11,7 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
     <s-input-stub
       accept=""
       autocomplete="off"
-      borderradius="small"
+      borderradius="mini"
       form=""
       label=""
       name=""
@@ -32,7 +32,7 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
      
     <s-select-stub
       autocomplete="off"
-      borderradius="small"
+      borderradius="mini"
       inputtype="input"
       loadingtext="Loading"
       multiplelimit="0"
@@ -55,20 +55,35 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
       
     </div>
      
-    <s-button-stub
-      borderradius="small"
-      icon=""
-      nativetype="button"
-      size="medium"
+    <s-tooltip-stub
+      animation="none"
+      borderradius="mini"
+      class="header-tooltip"
+      closedelay="0"
+      content=""
+      offset="0"
+      opendelay="0"
+      placement="bottom-end"
+      popperclass="info-tooltip info-tooltip--header"
       tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
+      theme="light"
     >
+      <s-button-stub
+        borderradius="small"
+        icon=""
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="primary"
+      >
+        
+        
       
-      
-    
-    </s-button-stub>
+      </s-button-stub>
+    </s-tooltip-stub>
   </div>
 </wallet-base-stub>
 `;

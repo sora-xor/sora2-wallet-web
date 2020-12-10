@@ -10,7 +10,7 @@ exports[`WalletSettings.vue should renders correctly 1`] = `
   >
     <s-select-stub
       autocomplete="off"
-      borderradius="small"
+      borderradius="mini"
       inputtype="input"
       loadingtext="Loading"
       multiplelimit="0"
@@ -50,7 +50,7 @@ exports[`WalletSettings.vue should renders correctly 1`] = `
         <s-icon-stub
           class="wallet-settings-item_icon"
           name="chevron-right"
-          size="16"
+          size="12px"
         />
       </div>
        
@@ -84,7 +84,7 @@ exports[`WalletSettings.vue should renders correctly 1`] = `
         <s-icon-stub
           class="wallet-settings-item_icon"
           name="chevron-right"
-          size="16"
+          size="12px"
         />
       </div>
        
@@ -118,7 +118,7 @@ exports[`WalletSettings.vue should renders correctly 1`] = `
         <s-icon-stub
           class="wallet-settings-item_icon"
           name="chevron-right"
-          size="16"
+          size="12px"
         />
       </div>
        
@@ -131,6 +131,7 @@ exports[`WalletSettings.vue should renders correctly 1`] = `
       <s-button-stub
         borderradius="small"
         icon=""
+        iconposition="left"
         nativetype="button"
         size="small"
         tabindex="0"
