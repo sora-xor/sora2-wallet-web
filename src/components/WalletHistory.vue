@@ -12,6 +12,7 @@
           <div class="info-text">
             {{ `${item.fromAmount} ${item.fromSymbol} for ${item.toAmount} ${item.toSymbol}` }}
           </div>
+          <!-- This link was hidden due to PSS-205 task. We'll return it back later.  -->
           <!-- <s-button
             class="info-text-explorer"
             type="link"

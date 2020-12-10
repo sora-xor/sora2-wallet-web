@@ -7,7 +7,7 @@
         <div class="account-credentials_address">{{ account.address }}</div>
       </div>
       <s-button class="account-copy" size="medium" type="link" icon="copy" @click="handleCopyAddress" />
-      <!-- TODO: Remove tooltip from dropdown -->
+      <!-- TODO: Fix theme of dropdown tooltip (make it white in this context) -->
       <s-dropdown
         v-if="showMenu"
         class="account-menu"

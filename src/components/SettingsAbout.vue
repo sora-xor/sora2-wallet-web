@@ -10,6 +10,7 @@
           <div class="wallet-settings-about-item-text s-flex">
             <a class="wallet-settings-about-item-text_main" :href="link.url" target="_blank">{{ link.title }}</a>
           </div>
+          <!-- This link was hidden due to PSS-205 task. We'll return it back later.  -->
           <!-- <s-icon
             class="wallet-settings-about-item_icon"
             name="external-link"

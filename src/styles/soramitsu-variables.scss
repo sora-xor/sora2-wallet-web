@@ -1,6 +1,5 @@
 @import "../../node_modules/@soramitsu/soramitsu-js-ui/lib/styles/index";
 
-$s-color-base-content-primary: #26262D;
 $s-color-theme-accent: #ed145b;
 $s-color-button-tertiary-color: $s-color-theme-accent;
 $s-color-button-tertiary-color-active: $s-color-theme-accent;
@@ -10,7 +9,6 @@ $s-color-button-tertiary-background-pressed: $s-color-theme-secondary-pressed;
 $s-color-button-tertiary-background-focused: $s-color-theme-secondary-focused;
 
 :root {
-  --s-color-base-content-primary: #{$s-color-base-content-primary};
   --s-color-theme-accent: #{$s-color-theme-accent};
   --s-color-button-tertiary-color: #{$s-color-button-tertiary-color};
   --s-color-button-tertiary-color-active: #{$s-color-button-tertiary-color-active};
