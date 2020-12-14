@@ -46,8 +46,10 @@ export default class SoraNeoWallet extends Vue {
   async created (): Promise<void> {
     try {
       this.loading = true
-      await dexApi.initialize()
-      console.info('Connected to blockchain', dexApi.endpoint)
+      if (!(dexApi.api && dexApi.api.isConnected)) {
+        await dexApi.initialize()
+        console.info('Connected to blockchain', dexApi.endpoint)
+      }
     } catch (error) {
       console.error(error)
     } finally {
