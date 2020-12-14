@@ -4,9 +4,9 @@ import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 
-import * as accountApi from '@/api/account'
-import * as storage from '@/util/storage'
-import { encrypt } from '@/util'
+import * as accountApi from '../api/account'
+import { dexApi } from '../api'
+import { storage } from '../util/storage'
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
@@ -18,7 +18,7 @@ const types = flow(
   map(x => [x, x]),
   fromPairs
 )([
-  'GET_ACCOUNT',
+  'GET_ADDRESS',
   'GET_ACCOUNT_ASSETS',
   'GET_ACCOUNT_ACTIVITY',
   'GET_ASSET_DETAILS',
@@ -30,9 +30,9 @@ const types = flow(
 
 function initialState () {
   return {
-    address: storage.getItem('address') || '',
-    name: storage.getItem('name') || '',
-    password: storage.getItem('password') || '',
+    address: storage.get('address') || '',
+    name: storage.get('name') || '',
+    password: storage.get('password') || '',
     assets: [],
     selectedAssetDetails: [],
     selectedTransaction: null,
@@ -85,29 +85,20 @@ const mutations = {
 
   [types.LOGIN] (state, params) {
     state.name = params.name
-    const password = encrypt(params.password)
-    state.password = password
-    storage.setItem('name', params.name)
-    storage.setItem('password', password)
+    state.address = params.address
+    state.password = params.password
   },
 
-  [types.GET_ACCOUNT_REQUEST] (state) {
+  [types.GET_ADDRESS_REQUEST] (state) {
     state.address = ''
-    state.name = ''
-    storage.clear()
   },
 
-  [types.GET_ACCOUNT_SUCCESS] (state, account) {
-    state.name = account.name
-    state.address = account.address
-    storage.setItem('name', account.name)
-    storage.setItem('address', account.address)
+  [types.GET_ADDRESS_SUCCESS] (state, address) {
+    state.address = address
   },
 
-  [types.GET_ACCOUNT_FAILURE] (state) {
+  [types.GET_ADDRESS_FAILURE] (state) {
     state.address = ''
-    state.name = ''
-    storage.clear()
   },
 
   [types.GET_ACCOUNT_ASSETS_REQUEST] (state) {
@@ -184,20 +175,15 @@ const mutations = {
 }
 
 const actions = {
-  async getAccount ({ commit }, { seed }) {
-    commit(types.GET_ACCOUNT_REQUEST)
-    try {
-      const account = await accountApi.getAccount(seed)
-      commit(types.GET_ACCOUNT_SUCCESS, account)
-    } catch (error) {
-      commit(types.GET_ACCOUNT_FAILURE)
-    }
-  },
   async getAccountAssets ({ commit, state: { address } }) {
     commit(types.GET_ACCOUNT_ASSETS_REQUEST)
     try {
-      const assets = await accountApi.getAccountAssets(address)
-      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, assets)
+      await (
+        storage.get('assets')
+          ? dexApi.updateAccountAssets()
+          : dexApi.getKnownAccountAssets()
+      )
+      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, dexApi.accountAssets)
     } catch (error) {
       commit(types.GET_ACCOUNT_ASSETS_FAILURE)
     }
@@ -257,10 +243,23 @@ const actions = {
       commit(types.GET_TRANSACTION_DETAILS_FAILURE)
     }
   },
-  login ({ commit, state: { address } }, { name, password }) {
-    commit(types.LOGIN, { name, password })
+  checkValidSeed ({ commit }, { seed }) {
+    commit(types.GET_ADDRESS_REQUEST)
+    try {
+      const address = dexApi.checkSeed(seed).address
+      commit(types.GET_ADDRESS_SUCCESS, address)
+      return !!address
+    } catch (error) {
+      commit(types.GET_ADDRESS_FAILURE)
+      return false
+    }
+  },
+  login ({ commit }, { name, password, seed }) {
+    dexApi.importAccount(seed, name, password)
+    commit(types.LOGIN, { name, password, address: dexApi.accountPair.address })
   },
   logout ({ commit }) {
+    dexApi.logout()
     commit(types.LOGOUT)
     commit(types.RESET)
   },

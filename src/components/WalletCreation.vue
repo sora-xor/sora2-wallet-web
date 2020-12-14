@@ -1,23 +1,33 @@
 <template>
   <wallet-base :title="t('creation.title')" show-back @back="handleBack">
     <div class="wallet-creation">
-      <s-input :placeholder="t('creation.name.placeholder')" v-model="creationFormData.name" />
+      <s-input :placeholder="t('creation.name.placeholder')" v-model="creationFormData.name" border-radius="mini" />
       <div class="wallet-creation-hint">{{ t('creation.name.hint') }}</div>
-      <s-select :placeholder="t('creation.sourceType.placeholder')" :value="creationFormData.sourceType">
+      <s-select :placeholder="t('creation.sourceType.placeholder')" :value="creationFormData.sourceType" border-radius="mini">
         <s-option
           :value="SourceTypes.MnemonicSeed"
           :label="t(`creation.sourceType.${SourceTypes.MnemonicSeed}`)"
         />
       </s-select>
       <div class="wallet-creation-hint">{{ t('creation.sourceType.hint') }}</div>
-      <s-button
-        type="primary"
-        size="medium"
-        :tooltip="t('comingSoonText')"
-        @click="handleNext"
+      <s-tooltip
+        class="header-tooltip"
+        popper-class="info-tooltip info-tooltip--header"
+        :content="t('comingSoonText')"
+        border-radius="mini"
+        theme="light"
+        placement="bottom-end"
+        animation="none"
+        :show-arrow="false"
       >
-        {{ t('creation.action') }}
-      </s-button>
+        <s-button
+          type="primary"
+          size="medium"
+          @click="handleNext"
+        >
+          {{ t('creation.action') }}
+        </s-button>
+      </s-tooltip>
     </div>
   </wallet-base>
 </template>
@@ -52,14 +62,14 @@ export default class WalletCreation extends Mixins(TranslationMixin) {
 }
 </script>
 
-<style scoped lang="scss">
-$font-size-hint: $font-size_small;
+<style lang="scss">
+@include select-icon('wallet-creation');
+</style>
 
+<style scoped lang="scss">
 .wallet-creation {
   &-hint {
-    color: var(--s-color-base-content-tertiary);
-    font-size: $font-size-hint;
-    line-height: 1.8;
+    @include hint-text(true);
   }
   > button {
     width: 100%;

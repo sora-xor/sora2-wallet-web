@@ -1,5 +1,5 @@
 <template>
-  <s-card :bodyStyle="{ padding: '0 12px' }">
+  <s-card :bodyStyle="{ padding: '0 12px' }" class="wallet-account" border-radius="mini" shadow="never">
     <div class="account s-flex">
       <div class="account-avatar" />
       <div class="account-credentials">
@@ -7,12 +7,14 @@
         <div class="account-credentials_address">{{ account.address }}</div>
       </div>
       <s-button class="account-copy" size="medium" type="link" icon="copy" @click="handleCopyAddress" />
+      <!-- TODO: Fix theme of dropdown tooltip (make it white in this context) -->
       <s-dropdown
         v-if="showMenu"
         class="account-menu"
+        borderRadius="mini"
         type="ellipsis"
         icon="more-vertical"
-        placement="bottom"
+        placement="bottom-end"
         @select="handleMenuSelect"
       >
         {{ t('account.menu.tooltip') }}
@@ -85,10 +87,15 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 
 $avatar-size: 32px;
 
-@mixin text-ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
+.wallet-account.s-card {
+  box-shadow: none;
+  border: 1px solid var(--s-color-base-border-primary);
 }
+
+.s-card {
+  @include s-card-styles;
+}
+
 .account {
   margin: $basic-spacing_mini 0;
   &-avatar {
@@ -101,14 +108,16 @@ $avatar-size: 32px;
     max-width: 75%;
     flex-direction: column;
     justify-content: center;
+    &_name,
+    &_address {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     &_name {
       font-size: $font-size_basic;
-      @include text-ellipsis;
     }
     &_address {
-      color: var(--s-color-base-content-tertiary);
-      font-size: $font-size_small;
-      @include text-ellipsis;
+      @include hint-text;
     }
   }
   &-copy {

@@ -14,6 +14,7 @@ exports[`Wallet.vue should renders correctly 1`] = `
     class="wallet"
   >
     <s-tabs-stub
+      borderradius="small"
       position="top"
       type="rounded"
       value="WalletAssets"

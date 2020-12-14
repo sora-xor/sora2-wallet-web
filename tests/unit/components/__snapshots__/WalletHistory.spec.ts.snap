@@ -26,22 +26,6 @@ exports[`WalletBase.vue should renders correctly 1`] = `
           100 XOR for 24390.1239 KSM
         
         </div>
-         
-        <s-button-stub
-          class="info-text-explorer"
-          icon=""
-          nativetype="button"
-          size="small"
-          tabindex="0"
-          tooltip=""
-          tooltipplacement="top"
-          type="link"
-        >
-          <s-icon-stub
-            name="external-link"
-            size="16px"
-          />
-        </s-button-stub>
       </div>
        
       <div
