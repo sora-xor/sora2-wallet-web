@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
-import { storage } from '../util/storage'
 
-import en from './en'
+import { storage } from '../util/storage'
 import { Languages } from '../consts'
+import en from './en'
 
 Vue.use(VueI18n)
 

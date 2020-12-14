@@ -5,8 +5,8 @@ import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 
 import * as accountApi from '../api/account'
-import { storage } from '../util/storage'
 import { dexApi } from '../api'
+import { storage } from '../util/storage'
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),

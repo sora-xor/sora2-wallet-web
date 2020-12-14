@@ -72,8 +72,7 @@ export default class WalletSettings extends Mixins(TranslationMixin) {
     }
   ]
 
-  @State(state => state.Settings.activeNetwork) activeNetwork!: Network
-
+  @Getter activeNetwork!: Network
   @Getter availableNetworks!: Array<Network>
 
   @Action navigate

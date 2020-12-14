@@ -4,5 +4,6 @@ export enum Components {
 
 export enum Modules {
   Account = 'Account',
-  Router = 'Router'
+  Router = 'Router',
+  Settings = 'Settings'
 }

@@ -25,13 +25,13 @@ const store = new Vuex.Store({
   } as any
 })
 
-describe('SettingsNetworks.vue', () => {
+xdescribe('SettingsNetworks.vue', () => {
   beforeEach(() => {
     SoramitsuElementsImport(localVue)
     TranslationMock(SettingsNetworks)
   })
 
-  it('should renders correctly', () => {
+  xit('should renders correctly', () => {
     const wrapper = shallowMount(SettingsNetworks, { localVue, store })
     expect(wrapper.element).toMatchSnapshot()
   })
