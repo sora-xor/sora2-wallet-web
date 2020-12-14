@@ -70,7 +70,9 @@ exports[`SettingsNetworks.vue should renders correctly 1`] = `
       class="wallet-settings-networks_action s-flex"
     >
       <s-button-stub
+        borderradius="small"
         icon=""
+        iconposition="left"
         nativetype="button"
         size="small"
         tabindex="0"
