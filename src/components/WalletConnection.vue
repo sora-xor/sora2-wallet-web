@@ -1,7 +1,7 @@
 <template>
   <wallet-base :title="t('connection.title')" show-close @close="handleClose">
     <div class="wallet-connection">
-      <s-card class="wallet-connection-create">
+      <s-card class="wallet-connection-create" border-radius="medium" shadow="never">
         <div class="title">{{ t('connection.create.title') }}</div>
         <div class="hint">{{ t('connection.create.hint') }}</div>
         <s-button
@@ -13,7 +13,7 @@
           {{ t('connection.create.action') }}
         </s-button>
       </s-card>
-      <s-card class="wallet-connection-import">
+      <s-card class="wallet-connection-import" border-radius="medium" shadow="never">
         <div class="title">{{ t('connection.import.title') }}</div>
         <div class="hint">{{ t('connection.import.hint') }}</div>
         <s-button
@@ -56,27 +56,31 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-$font-size-title: $font-size_normal;
-$font-size-hint: $font-size_small;
-
 .wallet-connection {
   &-create {
-    margin-bottom: $basic-spacing_big;
+    margin-bottom: $basic-spacing;
   }
-  .title {
-    text-align: center;
-    font-size: $font-size-title;
-    line-height: 1.8;
-  }
+  .title,
   .hint {
     text-align: center;
-    font-size: $font-size-hint;
-    color: var(--s-color-base-content-tertiary);
-    line-height: 1.8;
+    line-height: $line-height_medium;
+  }
+  .title {
+    font-size: $font-size_normal;
+  }
+  .hint {
+    @include hint-text;
   }
   .action {
     margin-top: $basic-spacing;
     width: 100%;
+  }
+}
+
+.s-card {
+  &:hover,
+  &:focus {
+    border-color: var(--s-color-base-border-primary);
   }
 }
 </style>

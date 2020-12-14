@@ -1,13 +1,13 @@
 <template>
   <wallet-base :title="t('transaction.title')" show-back @back="handleBack">
     <div class="transaction" v-if="selectedTransaction">
-      <s-input class="transaction-hash" readonly :placeholder="t('transaction.hash')" :value="selectedTransaction.hash" />
+      <s-input class="transaction-hash" readonly :placeholder="t('transaction.hash')" :value="selectedTransaction.hash" border-radius="mini" />
       <div v-for="row in dataRows" :key="row.key" class="transaction-row s-flex">
         <div class="transaction-row_key">{{ t(`transaction.${row.key}`) }}</div>
         <div class="transaction-row_value">{{ row.value }}</div>
       </div>
-      <s-input class="transaction-from" readonly :placeholder="t('transaction.from')" :value="selectedTransaction.from" />
-      <s-input class="transaction-to" readonly :placeholder="t('transaction.to')" :value="selectedTransaction.to" />
+      <s-input class="transaction-from" readonly :placeholder="t('transaction.from')" :value="selectedTransaction.from" border-radius="mini" />
+      <s-input class="transaction-to" readonly :placeholder="t('transaction.to')" :value="selectedTransaction.to" border-radius="mini" />
       <template v-if="!!selectedTransaction.history.length">
         <s-divider />
         <div v-for="item in selectedTransaction.history" :key="item.id" class="history s-flex">

@@ -13,12 +13,13 @@
             type="primary"
             size="small"
             icon="swap"
+            icon-position="right"
             @click="handleAssetSwap(asset)"
           >
             {{ t('assets.swap') }}
           </s-button>
           <s-button class="details" type="link" @click="handleOpenAssetDetails(asset.symbol)">
-            <s-icon name="chevron-right" size="16px" />
+            <s-icon name="chevron-right" size="12px" />
           </s-button>
         </div>
         <s-divider v-if="index !== assets.length - 1" :key="`${asset.symbol}-divider`" />
@@ -88,8 +89,7 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
       flex: 1;
       flex-direction: column;
       &-converted {
-        font-size: $font-size_small;
-        color: var(--s-color-base-content-tertiary);
+        @include hint-text;
       }
     }
     .details {
@@ -103,13 +103,10 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
   &-add {
     margin-top: $basic-spacing;
   }
-  &-add, .swap {
-    border-radius: $border-radius_small;
-  }
   &-empty {
     text-align: center;
-    font-size: $font-size_small;
-    color: var(--s-color-base-content-tertiary);
+    @include hint-text;
   }
+  @include icon-chevron-right;
 }
 </style>
