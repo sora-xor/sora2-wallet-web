@@ -17,13 +17,13 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
       <div
         class="amount-value"
       >
-        12787.09 XOR
+        undefined XOR
       </div>
        
       <div
         class="amount-converted"
       >
-        $6345.23 USD
+        $undefined USD
       </div>
     </div>
      
