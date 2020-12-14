@@ -7,9 +7,7 @@ import concat from 'lodash/fp/concat'
 import * as accountApi from '@/api/account'
 import { storage } from '@/util/storage'
 import { encrypt } from '@/util'
-import { walletApi } from '@/api'
-import { KnownAssets } from '@sora-substrate/util'
-import { KnownSymbols } from '@sora-substrate/util/build/assets'
+import { dexApi } from '@/api'
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
@@ -183,14 +181,11 @@ const actions = {
     try {
       await (
         storage.get('assets')
-          ? walletApi.updateAssets()
-          : walletApi.getKnownAssets()
+          ? dexApi.updateAccountAssets()
+          : dexApi.getKnownAccountAssets()
       )
-      console.log('getAccountAssets', walletApi.accountAssets)
-      const xor = KnownAssets.find(item => item.symbol === KnownSymbols.XOR) as any
-      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, walletApi.accountAssets)
+      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, dexApi.accountAssets)
     } catch (error) {
-      console.log(error)
       commit(types.GET_ACCOUNT_ASSETS_FAILURE)
     }
   },
@@ -252,7 +247,7 @@ const actions = {
   checkValidSeed ({ commit }, { seed }) {
     commit(types.GET_ADDRESS_REQUEST)
     try {
-      const address = walletApi.checkSeed(seed).address
+      const address = dexApi.checkSeed(seed).address
       commit(types.GET_ADDRESS_SUCCESS, address)
       return !!address
     } catch (error) {
@@ -261,11 +256,11 @@ const actions = {
     }
   },
   login ({ commit }, { name, password, seed }) {
-    walletApi.importAccount(seed, name, password)
-    commit(types.LOGIN, { name, password, address: walletApi.accountPair.address })
+    dexApi.importAccount(seed, name, password)
+    commit(types.LOGIN, { name, password, address: dexApi.accountPair.address })
   },
   logout ({ commit }) {
-    walletApi.logout()
+    dexApi.logout()
     commit(types.LOGOUT)
     commit(types.RESET)
   },

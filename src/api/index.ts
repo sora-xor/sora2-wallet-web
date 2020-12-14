@@ -1,13 +1,13 @@
 import axiosInstance from 'axios'
-import { WalletApi } from '@sora-substrate/util'
+import { DexApi } from '@sora-substrate/util'
 
 import { storage } from '@/util/storage'
 
 const axios = axiosInstance.create()
-const walletApi = new WalletApi()
-walletApi.setStorage(storage)
+const dexApi = new DexApi()
+dexApi.setStorage(storage)
 
 export {
   axios,
-  walletApi
+  dexApi
 }

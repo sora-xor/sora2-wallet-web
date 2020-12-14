@@ -16,7 +16,7 @@ import AddToken from './components/AddToken.vue'
 import Wallet from './components/Wallet.vue'
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
 import { RouteNames } from './consts'
-import { walletApi } from './api'
+import { dexApi } from './api'
 
 @Component({
   components: {
@@ -42,8 +42,8 @@ export default class SoraNeoWallet extends Vue {
   async created (): Promise<void> {
     try {
       this.loading = true
-      await walletApi.initialize()
-      console.info('Connected to blockchain', walletApi.endpoint)
+      await dexApi.initialize()
+      console.info('Connected to blockchain', dexApi.endpoint)
     } catch (error) {
       console.error(error)
     } finally {
