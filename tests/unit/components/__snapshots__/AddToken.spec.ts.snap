@@ -9,6 +9,7 @@ exports[`AddToken.vue should renders correctly 1`] = `
     class="add-token"
   >
     <s-tabs-stub
+      borderradius="small"
       position="top"
       type="rounded"
       value="AddTokenSearch"

@@ -12,14 +12,15 @@
           <div class="info-text">
             {{ `${item.fromAmount} ${item.fromSymbol} for ${item.toAmount} ${item.toSymbol}` }}
           </div>
-          <s-button
+          <!-- This link was hidden due to PSS-205 task. We'll return it back later.  -->
+          <!-- <s-button
             class="info-text-explorer"
             type="link"
             size="small"
             @click="handleOpenBlockExplorer(item)"
           >
             <s-icon name="external-link" size="16px" />
-          </s-button>
+          </s-button> -->
         </div>
         <div class="date">{{ formatDate(item.date) }}</div>
       </div>
@@ -64,21 +65,19 @@ export default class WalletHistory extends Mixins(TranslationMixin) {
   &-item {
     align-items: center;
     padding: 0 $basic-spacing_mini / 2;
-    border-radius: $basic-spacing_mini / 2;
     > :first-child {
       flex-direction: column;
       flex: 1;
     }
     &:hover {
       cursor: pointer;
-      background-color: var(--s-color-base-background-hover);
     }
     .info {
       align-items: center;
       &-operation {
         color: var(--s-color-base-content-secondary);
         background-color: var(--s-color-base-background);
-        border-radius: $border-radius;
+        border-radius: var(--s-border-radius-mini);
         font-size: $font-size_mini;
         font-weight: bold;
         padding: $basic-spacing_mini / 2;
@@ -86,7 +85,7 @@ export default class WalletHistory extends Mixins(TranslationMixin) {
       }
       &-text {
         font-size: $font-size_small;
-        line-height: 3.4;
+        line-height: $line-height_big;
       }
       &-explorer {
         margin-left: $basic-spacing_mini;
@@ -102,14 +101,12 @@ export default class WalletHistory extends Mixins(TranslationMixin) {
       }
     }
     .date {
-      font-size: $font-size_small;
-      color: var(--s-color-base-content-tertiary);
+      @include hint-text;
     }
   }
   &-empty {
     text-align: center;
-    font-size: $font-size_small;
-    color: var(--s-color-base-content-tertiary);
+    @include hint-text;
   }
 }
 </style>

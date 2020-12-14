@@ -1,9 +1,9 @@
-import { AccountMenu, AddTokenTabs, PasswordCondition, SourceTypes, WalletTabs } from '../../consts'
+import { AccountMenu, AddTokenTabs, PasswordCondition, SourceTypes, WalletTabs, SettingsMenu, Languages } from '../../consts'
 
 export default {
   closeText: 'Close',
   backText: 'Back',
-  createWalletText: 'Create a Wallet',
+  createWalletText: 'Create a wallet',
   nameText: 'Name',
   nextText: 'Next',
   importText: 'Import',
@@ -16,13 +16,15 @@ export default {
   swapText: 'Swap',
   searchText: 'Search',
   cancelText: 'Cancel',
+  saveText: 'Save',
+  logoutText: 'Log out',
   sourceType: {
     placeholder: 'Source type',
     [SourceTypes.MnemonicSeed]: 'Mnemonic seed',
     [SourceTypes.RawSeed]: 'Raw seed'
   },
   connection: {
-    title: 'Connect to a Wallet',
+    title: 'Connect to a wallet',
     create: {
       title: 'Create a new wallet',
       hint: 'This will create a new wallet and seed phrase',
@@ -31,7 +33,7 @@ export default {
     import: {
       title: 'I already have a seed phrase',
       hint: 'Import your existing wallet using a mnemonic seed pharse, raw seed or JSON backup file',
-      action: 'Import Wallet'
+      action: 'Import wallet'
     }
   },
   creation: {
@@ -48,7 +50,7 @@ export default {
     action: '@:nextText'
   },
   import: {
-    title: 'Import a Wallet',
+    title: 'Import a wallet',
     sourceType: {
       placeholder: '@:sourceType.placeholder',
       [SourceTypes.MnemonicSeed]: `@:sourceType.${SourceTypes.MnemonicSeed}`,
@@ -103,7 +105,41 @@ export default {
     swap: '@:swapText'
   },
   settings: {
-    title: '@:settingsText'
+    title: '@:settingsText',
+    menu: {
+      [SettingsMenu.Language]: {
+        title: 'Language',
+        desc: 'Wallet language settings'
+      },
+      [SettingsMenu.Networks]: {
+        title: 'Networks',
+        desc: 'Add and edit custom RPC networks'
+      },
+      [SettingsMenu.About]: {
+        title: 'About',
+        desc: 'Version, support center, contact info'
+      }
+    },
+    language: {
+      [Languages.EN]: 'English'
+    },
+    network: 'Network',
+    networks: {
+      desc: 'The default network for Ether transactions is Main Net',
+      create: 'Add custom',
+      customNetwork: 'Custom network',
+      form: {
+        name: 'Name',
+        address: 'Address',
+        explorer: 'Explorer'
+      }
+    },
+    about: {
+      termsOfService: 'Terms of Service',
+      privacyPolicy: 'Privacy Policy',
+      termsOfServiceLink: 'https://sora.org',
+      privacyPolicyLink: 'https://soramitsu.co.jp'
+    }
   },
   addToken: {
     title: '@:addTokenText',
@@ -123,7 +159,7 @@ export default {
     }
   },
   transaction: {
-    title: 'Transaction Details',
+    title: 'Transaction details',
     hash: 'Transaction Hash',
     status: 'Status',
     date: 'Date',
