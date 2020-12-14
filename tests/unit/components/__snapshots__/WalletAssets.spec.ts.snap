@@ -17,19 +17,21 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
       <div
         class="amount-value"
       >
-        12787.09 XOR
+        undefined XOR
       </div>
        
       <div
         class="amount-converted"
       >
-        $6345.23 USD
+        $undefined USD
       </div>
     </div>
      
     <s-button-stub
+      borderradius="small"
       class="swap"
       icon="swap"
+      iconposition="right"
       nativetype="button"
       size="small"
       tabindex="0"
@@ -43,8 +45,10 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
     </s-button-stub>
      
     <s-button-stub
+      borderradius="small"
       class="details"
       icon=""
+      iconposition="left"
       nativetype="button"
       size="medium"
       tabindex="0"
@@ -54,7 +58,7 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
     >
       <s-icon-stub
         name="chevron-right"
-        size="16px"
+        size="12px"
       />
     </s-button-stub>
   </div>
@@ -62,8 +66,10 @@ exports[`WalletAssets.vue should renders correctly 1`] = `
   <!---->
    
   <s-button-stub
+    borderradius="small"
     class="wallet-assets-add"
     icon=""
+    iconposition="left"
     nativetype="button"
     size="medium"
     tabindex="0"

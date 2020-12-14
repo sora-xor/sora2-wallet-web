@@ -27,42 +27,42 @@
 
 @mixin custom-tabs {
   $tabs-class: ".el-tabs";
+  $tabs-container-height: 40px;
   $tabs-container-padding: 2px;
+  $tabs-item-height: $tabs-container-height - $tabs-container-padding * 2;
 
   .s-tabs {
     &#{$tabs-class} {
       #{$tabs-class}__header {
         width: 100%;
       }
-    }
-    #{$tabs-class} {
-      &__header {
-        #{$tabs-class}__nav-wrap #{$tabs-class}__item {
-          padding-right: $basic-spacing;
-          padding-left: $basic-spacing;
-          &.is-active {
-            margin: 0;
-            box-shadow: var(--s-shadow-tab);
+      #{$tabs-class} {
+        &__header {
+          #{$tabs-class}__nav-wrap #{$tabs-class}__item {
+            padding-right: $basic-spacing;
+            padding-left: $basic-spacing;
+            &.is-active {
+              margin: 0;
+              box-shadow: var(--s-shadow-tab);
+            }
             &:hover {
               box-shadow: none;
+              border-radius: var(--s-border-radius-small);
             }
           }
-          &,
-          &.is-active,
-          &.is-focus {
-            border-radius: $border-radius_small;
+          #{$tabs-class}__item {
+            height: $tabs-item-height;
+            line-height: $tabs-item-height;
+            &:hover {
+              background-color: var(--s-color-base-background-hover);
+            }
           }
         }
-        #{$tabs-class}__item {
-          &:hover {
-            background-color: var(--s-color-base-background-hover);
-          }
+        &__nav-wrap {
+          height: $tabs-container-height;
+          padding: $tabs-container-padding;
+          background-color: var(--s-color-base-background);
         }
-      }
-      &__nav-wrap {
-        padding: $tabs-container-padding;
-        background-color: var(--s-color-base-background);
-        border-radius: $border-radius_small;
       }
     }
   }
@@ -76,6 +76,50 @@
     &__item {
       width: 50%;
       text-align: center;
+    }
+  }
+}
+
+@mixin s-card-styles {
+  border: none;
+
+  &,
+  &.is-hover-shadow:hover {
+    box-shadow: var(--s-shadow-surface);
+  }
+}
+
+@mixin hint-text ($withLineHeight: false) {
+  color: var(--s-color-base-content-tertiary);
+  font-size: $font-size_small;
+  @if $withLineHeight == true {
+    line-height: $line-height_medium;
+  }
+}
+
+@mixin icon-chevron-right {
+  .s-icon-chevron-right {
+    font-weight: bold;
+  }
+}
+
+@mixin select-icon ($containerClass) {
+  .#{$containerClass} .s-select .el-select {
+    .el-input__icon {
+      margin-right: 10px;
+    }
+    i.el-icon-arrow-up:before {
+      position: relative;
+      top: 5px;
+      content: "\e992";
+      color: var(--s-color-base-content-primary);
+      font-size: var(--s-icon-font-size-medium);
+    }
+    .el-input .el-select__caret {
+      transform: rotateZ(0deg);
+      &.is-reverse {
+        transform: rotateZ(180deg);
+      }
     }
   }
 }

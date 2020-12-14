@@ -4,6 +4,7 @@
       class="token-search-input"
       :maxlength="100"
       :placeholder="t(`addToken.${AddTokenTabs.Search}.placeholder`)"
+      border-radius="mini"
       v-model="search"
       @change="handleSearch"
     />
@@ -117,9 +118,9 @@ $token-list-height: 350px;
     height: $token-list-height;
     overflow-y: auto;
     margin-bottom: $basic-spacing;
-    &_info, &_empty {
-      font-size: $font-size_small;
-      color: var(--s-color-base-content-tertiary);
+    &_info,
+    &_empty {
+      @include hint-text;
     }
     &_empty {
       text-align: center;
@@ -128,7 +129,7 @@ $token-list-height: 350px;
       align-items: center;
       padding: $basic-spacing_mini / 2;
       margin-right: $basic-spacing_mini / 2;
-      border-radius: $basic-spacing_mini;
+      // TODO: Add styles as for DEX Search popup
       &:hover, &.selected {
         background-color: var(--s-color-base-background-hover);
         cursor: pointer;
@@ -144,8 +145,7 @@ $token-list-height: 350px;
           font-weight: bold;
         }
         &_symbol {
-          font-size: $font-size_small;
-          color: var(--s-color-base-content-tertiary);
+          @include hint-text;
         }
       }
       &:not(:last-child) {

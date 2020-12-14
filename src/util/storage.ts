@@ -1,15 +1,3 @@
-export const getItem = (key) => {
-  return localStorage.getItem(key)
-}
+import { Storage } from '@sora-substrate/util'
 
-export const setItem = (key, value) => {
-  localStorage.setItem(key, value)
-}
-
-export const removeItem = (key) => {
-  localStorage.removeItem(key)
-}
-
-export const clear = () => {
-  localStorage.clear()
-}
+export const storage = new Storage()

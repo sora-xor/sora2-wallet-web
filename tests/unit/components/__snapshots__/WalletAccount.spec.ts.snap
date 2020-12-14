@@ -3,7 +3,9 @@
 exports[`WalletAccount.vue should renders correctly 1`] = `
 <s-card-stub
   bodystyle="[object Object]"
-  shadow="hover"
+  borderradius="mini"
+  class="wallet-account"
+  shadow="never"
 >
   <div
     class="account s-flex"
@@ -25,8 +27,10 @@ exports[`WalletAccount.vue should renders correctly 1`] = `
     </div>
      
     <s-button-stub
+      borderradius="small"
       class="account-copy"
       icon="copy"
+      iconposition="left"
       nativetype="button"
       size="medium"
       tabindex="0"

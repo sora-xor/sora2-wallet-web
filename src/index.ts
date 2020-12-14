@@ -4,6 +4,8 @@ import SoraNeoWallet from './SoraNeoWallet.vue'
 import { Components, Modules } from './types'
 import en from './lang/en'
 import { modules } from './store'
+import { storage } from './util/storage'
+import { dexApi } from './api'
 
 const components = [
   { component: SoraNeoWallet, name: Components.SoraNeoWallet }
@@ -27,6 +29,8 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 export {
   en,
+  dexApi,
+  storage,
   SoraNeoWallet
 }
 export default SoraNeoWalletElements

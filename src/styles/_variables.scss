@@ -1,1 +1,16 @@
 $wallet-width: 448px;
+
+// Border Radius
+$s-border-radius-base: 8px;
+$s-border-radius-mini: $s-border-radius-base;
+$s-border-radius-small: $s-border-radius-base * 1.5;
+$s-border-radius-medium: $s-border-radius-base * 2;
+$s-border-radius-big: $s-border-radius-base * 3;
+
+:root {
+  // Border Radius
+  --s-border-radius-mini: #{$s-border-radius-mini};
+  --s-border-radius-small: #{$s-border-radius-small};
+  --s-border-radius-medium: #{$s-border-radius-medium};
+  --s-border-radius-big: #{$s-border-radius-big};
+}

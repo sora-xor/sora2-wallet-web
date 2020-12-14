@@ -11,6 +11,7 @@ exports[`WalletTransactionDetails.vue should renders correctly 1`] = `
     <s-input-stub
       accept=""
       autocomplete="off"
+      borderradius="mini"
       class="transaction-hash"
       form=""
       label=""
@@ -104,6 +105,7 @@ exports[`WalletTransactionDetails.vue should renders correctly 1`] = `
     <s-input-stub
       accept=""
       autocomplete="off"
+      borderradius="mini"
       class="transaction-from"
       form=""
       label=""
@@ -121,6 +123,7 @@ exports[`WalletTransactionDetails.vue should renders correctly 1`] = `
     <s-input-stub
       accept=""
       autocomplete="off"
+      borderradius="mini"
       class="transaction-to"
       form=""
       label=""
