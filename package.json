@@ -13,7 +13,7 @@
   "scripts": {
     "build": "rm -rf lib && rollup -c ./build/rollup.config.js",
     "serve": "vue-cli-service serve",
-    "test:unit": "TZ=utc vue-cli-service test:unit",
+    "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "test:all": "yarn test:unit",
     "lint": "vue-cli-service lint"
