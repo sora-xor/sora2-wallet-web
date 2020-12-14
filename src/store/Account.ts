@@ -4,10 +4,9 @@ import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 
-import * as accountApi from '@/api/account'
-import { storage } from '@/util/storage'
-import { encrypt } from '@/util'
-import { dexApi } from '@/api'
+import * as accountApi from '../api/account'
+import { storage } from '../util/storage'
+import { dexApi } from '../api'
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
@@ -87,7 +86,7 @@ const mutations = {
   [types.LOGIN] (state, params) {
     state.name = params.name
     state.address = params.address
-    state.password = encrypt(params.password)
+    state.password = params.password
   },
 
   [types.GET_ADDRESS_REQUEST] (state) {

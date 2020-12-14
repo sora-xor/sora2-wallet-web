@@ -7,7 +7,7 @@ exports[`AddTokenSearch.vue should renders correctly 1`] = `
   <s-input-stub
     accept=""
     autocomplete="off"
-    borderradius="mini"
+    border-radius="mini"
     class="token-search-input"
     form=""
     label=""
@@ -41,9 +41,7 @@ exports[`AddTokenSearch.vue should renders correctly 1`] = `
     class="token-search-actions s-flex"
   >
     <s-button-stub
-      borderradius="small"
       icon=""
-      iconposition="left"
       nativetype="button"
       size="medium"
       tabindex="0"
@@ -57,10 +55,8 @@ exports[`AddTokenSearch.vue should renders correctly 1`] = `
     </s-button-stub>
      
     <s-button-stub
-      borderradius="small"
       disabled="true"
       icon=""
-      iconposition="left"
       nativetype="button"
       size="medium"
       tabindex="0"

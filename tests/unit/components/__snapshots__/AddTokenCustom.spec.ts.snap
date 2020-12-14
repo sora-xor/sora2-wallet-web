@@ -7,7 +7,7 @@ exports[`AddTokenCustom.vue should renders correctly 1`] = `
   <s-input-stub
     accept=""
     autocomplete="off"
-    borderradius="mini"
+    border-radius="mini"
     class="token-custom-address"
     form=""
     label=""
@@ -25,7 +25,7 @@ exports[`AddTokenCustom.vue should renders correctly 1`] = `
   <s-input-stub
     accept=""
     autocomplete="off"
-    borderradius="mini"
+    border-radius="mini"
     class="token-custom-symbol"
     form=""
     label=""
@@ -44,9 +44,7 @@ exports[`AddTokenCustom.vue should renders correctly 1`] = `
     class="token-custom-actions s-flex"
   >
     <s-button-stub
-      borderradius="small"
       icon=""
-      iconposition="left"
       nativetype="button"
       size="medium"
       tabindex="0"
@@ -58,10 +56,8 @@ exports[`AddTokenCustom.vue should renders correctly 1`] = `
     </s-button-stub>
      
     <s-button-stub
-      borderradius="small"
       disabled="true"
       icon=""
-      iconposition="left"
       nativetype="button"
       size="medium"
       tabindex="0"

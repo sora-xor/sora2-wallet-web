@@ -11,7 +11,7 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
     <s-input-stub
       accept=""
       autocomplete="off"
-      borderradius="mini"
+      border-radius="mini"
       form=""
       label=""
       name=""
@@ -32,7 +32,7 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
      
     <s-select-stub
       autocomplete="off"
-      borderradius="mini"
+      border-radius="mini"
       inputtype="input"
       loadingtext="Loading"
       multiplelimit="0"
@@ -40,7 +40,6 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
       name=""
       nodatatext="No data"
       placeholder="Select"
-      popperclass=""
       value="MnemonicSeed"
     >
       <s-option-stub
@@ -57,21 +56,19 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
      
     <s-tooltip-stub
       animation="none"
-      borderradius="mini"
+      border-radius="mini"
       class="header-tooltip"
       closedelay="0"
       content=""
       offset="0"
       opendelay="0"
       placement="bottom-end"
-      popperclass="info-tooltip info-tooltip--header"
+      popper-class="info-tooltip info-tooltip--header"
       tabindex="0"
       theme="light"
     >
       <s-button-stub
-        borderradius="small"
         icon=""
-        iconposition="left"
         nativetype="button"
         size="medium"
         tabindex="0"

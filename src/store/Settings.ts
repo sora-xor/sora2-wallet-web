@@ -4,7 +4,7 @@ import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 
-import * as storage from '../util/storage'
+import { storage } from '../util/storage'
 import i18n from '../lang'
 import { Network } from '../consts'
 
@@ -38,19 +38,19 @@ function modifyActiveNetwork (state, network: Network) {
   // If it should be removed then DEFAULT_NETWORKS[0] will be set as active network
   if (network && network.name && network.address && network.explorer) {
     state.activeNetwork = network
-    storage.setItem('activeNetwork', JSON.stringify(network))
+    storage.set('activeNetwork', JSON.stringify(network))
   } else {
     state.activeNetwork = DEFAULT_NETWORKS[0]
-    storage.setItem('activeNetwork', JSON.stringify(DEFAULT_NETWORKS[0]))
+    storage.set('activeNetwork', JSON.stringify(DEFAULT_NETWORKS[0]))
   }
 }
 
 function initialState () {
   return {
-    locale: storage.getItem('locale') || i18n.locale,
+    locale: storage.get('locale') || i18n.locale,
     locales: i18n.availableLocales,
-    activeNetwork: (JSON.parse(storage.getItem('activeNetwork') as string) || DEFAULT_NETWORKS[0]) as Network,
-    customNetworks: (JSON.parse(storage.getItem('networks') as string) || []) as Array<Network>,
+    activeNetwork: (JSON.parse(storage.get('activeNetwork') as string) || DEFAULT_NETWORKS[0]) as Network,
+    customNetworks: (JSON.parse(storage.get('networks') as string) || []) as Array<Network>,
     networks: DEFAULT_NETWORKS
   }
 }
@@ -77,7 +77,7 @@ const mutations = {
   [types.SET_LOCALE] (state, { locale }) {
     i18n.locale = locale
     state.locale = locale
-    storage.setItem('locale', locale)
+    storage.set('locale', locale)
   },
 
   [types.ADD_NETWORK] (state, { network }) {
@@ -93,12 +93,12 @@ const mutations = {
     const customNetworks = (alreadyExistingNetwork ? state.customNetworks : [...state.customNetworks, network])
       // For now it works as remove operation
       .filter(({ name, address, explorer }) => name && address && explorer)
-    storage.setItem('networks', JSON.stringify(customNetworks))
+    storage.set('networks', JSON.stringify(customNetworks))
     state.customNetworks = customNetworks
   },
 
   [types.SET_ACTIVE_NETWORK] (state, { network }) {
-    storage.setItem('activeNetwork', JSON.stringify(network))
+    storage.set('activeNetwork', JSON.stringify(network))
     state.activeNetwork = network
   }
 }

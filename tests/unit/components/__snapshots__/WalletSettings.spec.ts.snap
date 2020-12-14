@@ -10,7 +10,7 @@ exports[`WalletSettings.vue should renders correctly 1`] = `
   >
     <s-select-stub
       autocomplete="off"
-      borderradius="mini"
+      border-radius="mini"
       inputtype="input"
       loadingtext="Loading"
       multiplelimit="0"
@@ -18,7 +18,6 @@ exports[`WalletSettings.vue should renders correctly 1`] = `
       name=""
       nodatatext="No data"
       placeholder="Select"
-      popperclass=""
       value="1"
     >
       <s-option-stub
@@ -129,9 +128,7 @@ exports[`WalletSettings.vue should renders correctly 1`] = `
       class="wallet-settings_action s-flex"
     >
       <s-button-stub
-        borderradius="small"
         icon=""
-        iconposition="left"
         nativetype="button"
         size="small"
         tabindex="0"
