@@ -1,8 +1,13 @@
 import axiosInstance from 'axios'
+import { DexApi } from '@sora-substrate/util'
 
-export const BASE_URL = process.env.BASE_URL
+import { storage } from '../util/storage'
 
 const axios = axiosInstance.create()
-axios.defaults.baseURL = BASE_URL
+const dexApi = new DexApi()
+dexApi.setStorage(storage)
 
-export default axios
+export {
+  axios,
+  dexApi
+}

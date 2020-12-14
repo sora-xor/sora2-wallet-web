@@ -5,7 +5,8 @@ import scss from 'rollup-plugin-scss'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
 import { terser } from 'rollup-plugin-terser'
-import del from 'rollup-plugin-delete'
+// import del from 'rollup-plugin-delete'
+import copy from 'rollup-plugin-copy'
 
 export default {
   input: 'src/index.ts',
@@ -53,19 +54,25 @@ export default {
     scss(),
     resolve(),
     terser(),
-    del({
+    copy({
+      // TODO: we should find out how to solve an issue with @sora-substrate/util
+      // For now build operation can be done like:
       targets: [
-        'lib/styles/index.d.ts',
-        'lib/soraneo-wallet-web.esm.css',
-        'lib/src',
-        'lib/styles',
-        'lib/node_modules',
-        'lib/plugins',
-        'lib/lang',
-        'lib/SoraNeoWallet.vue.d.ts',
-        'lib/main.d.ts'
+        { src: 'lib/src/*', dest: 'lib' }
       ],
-      hook: 'writeBundle'
+      hook: 'renderChunk'
     })
+    // del({
+    //   targets: [
+    //     'lib/src',
+    //     'lib/styles',
+    //     'lib/node_modules',
+    //     'lib/plugins',
+    //     'lib/lang',
+    //     'lib/SoraNeoWallet.vue.d.ts',
+    //     'lib/main.d.ts'
+    //   ],
+    //   hook: 'writeBundle'
+    // })
   ]
 }

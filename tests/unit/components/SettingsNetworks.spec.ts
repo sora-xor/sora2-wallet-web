@@ -2,8 +2,8 @@ import Vuex from 'vuex'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 
 import SettingsNetworks from '@/components/SettingsNetworks.vue'
-import { DEFAULT_NETWORKS } from '@/store/Settings'
 import { TranslationMock, SoramitsuElementsImport } from '../../utils'
+import { MOCK_NETWORKS } from '../../utils/mock'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -16,7 +16,7 @@ const store = new Vuex.Store({
     },
     Settings: {
       getters: {
-        availableNetworks: () => DEFAULT_NETWORKS
+        availableNetworks: () => MOCK_NETWORKS
       },
       actions: {
         addNetwork: jest.fn()

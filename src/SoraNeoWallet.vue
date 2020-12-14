@@ -1,5 +1,5 @@
 <template>
-  <component :is="currentRoute" @close="handleClose" @swap="handleSwap" />
+  <component v-if="!loading" :is="currentRoute" @close="handleClose" @swap="handleSwap" />
 </template>
 
 <script lang="ts">
@@ -19,6 +19,7 @@ import WalletSettingsNetworks from './components/SettingsNetworks.vue'
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
 
 import { RouteNames } from './consts'
+import { dexApi } from './api'
 
 @Component({
   components: {
@@ -39,6 +40,20 @@ export default class SoraNeoWallet extends Vue {
   @Getter currentRoute!: RouteNames
   @Getter isLoggedIn!: boolean
   @Action navigate
+
+  loading = false
+
+  async created (): Promise<void> {
+    try {
+      this.loading = true
+      await dexApi.initialize()
+      console.info('Connected to blockchain', dexApi.endpoint)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      this.loading = false
+    }
+  }
 
   mounted (): void {
     if (this.isLoggedIn) {

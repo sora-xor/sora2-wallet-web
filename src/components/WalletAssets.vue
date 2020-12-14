@@ -37,10 +37,11 @@ import { Getter, Action } from 'vuex-class'
 import TranslationMixin from './mixins/TranslationMixin'
 import { RouteNames } from '../consts'
 import { getTokenIconClasses } from '../util'
+import { AccountAsset } from '@sora-substrate/util'
 
 @Component
 export default class WalletAssets extends Mixins(TranslationMixin) {
-  @Getter assets!: Array<any>
+  @Getter assets!: Array<AccountAsset>
   @Action getAccountAssets
   @Action navigate
 
@@ -52,12 +53,12 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
     return getTokenIconClasses(symbol)
   }
 
-  formatAmount (asset: any): string {
-    return `${asset.amount} ${asset.symbol}`
+  formatAmount (asset: AccountAsset): string {
+    return `${asset.balance} ${asset.symbol}`
   }
 
   formatConvertedAmount (asset: any): string {
-    return `$${asset.usdAmount} USD`
+    return `$${asset.usdBalance} USD`
   }
 
   handleAssetSwap (asset: any): void {

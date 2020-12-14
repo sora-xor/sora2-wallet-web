@@ -1,4 +1,25 @@
-# soraneo-wallet-web
+# sora2-wallet-web
+
+## How to use
+
+You should set vuex storage and endpoint to blockchain url when using it as a vue plugin:
+```
+import Vue from 'vue'
+import Wallet, { dexApi } from '@soramitsu/soraneo-wallet-web'
+
+import store from '@/store'
+import * as env from '../../public/env.json'
+
+dexApi.endpoint = env.BLOCKCHAIN_URL
+Vue.use(Wallet, { store })
+```
+
+You can also use `storage` instance to interact with wallet data:
+
+```
+import { storage } from '@soramitsu/soraneo-wallet-web'
+
+```
 
 ## Project setup
 ```
