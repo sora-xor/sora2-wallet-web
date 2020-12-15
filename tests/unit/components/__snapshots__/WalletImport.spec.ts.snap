@@ -29,6 +29,10 @@ exports[`WalletImport.vue should renders correctly 1`] = `
         label=""
         value="RawSeed"
       />
+      <s-option-stub
+        label=""
+        value="PolkadotJs"
+      />
     </s-select-stub>
      
     <s-input-stub
