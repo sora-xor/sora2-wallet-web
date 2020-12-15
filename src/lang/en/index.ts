@@ -21,7 +21,8 @@ export default {
   sourceType: {
     placeholder: 'Source type',
     [SourceTypes.MnemonicSeed]: 'Mnemonic seed',
-    [SourceTypes.RawSeed]: 'Raw seed'
+    [SourceTypes.RawSeed]: 'Raw seed',
+    [SourceTypes.PolkadotJs]: 'Polkadot.js'
   },
   connection: {
     title: 'Connect to a wallet',
@@ -54,7 +55,8 @@ export default {
     sourceType: {
       placeholder: '@:sourceType.placeholder',
       [SourceTypes.MnemonicSeed]: `@:sourceType.${SourceTypes.MnemonicSeed}`,
-      [SourceTypes.RawSeed]: `@:sourceType.${SourceTypes.RawSeed}`
+      [SourceTypes.RawSeed]: `@:sourceType.${SourceTypes.RawSeed}`,
+      [SourceTypes.PolkadotJs]: `@:sourceType.${SourceTypes.PolkadotJs}`
     },
     [SourceTypes.MnemonicSeed]: {
       placeholder: 'Separate each word with a single space',
