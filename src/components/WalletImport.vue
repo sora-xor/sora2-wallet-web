@@ -117,7 +117,7 @@ $valid-icon-size: 6px;
     @include hint-text(true);
   }
   &-condition {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     width: 100%;
     .s-icon-check-mark {
@@ -129,6 +129,7 @@ $valid-icon-size: 6px;
       color: var(--s-color-status-success);
       &.error {
         position: relative;
+        height: $valid-icon-size * 2;
         &:before {
           content: "";
           position: absolute;
