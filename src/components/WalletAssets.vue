@@ -8,6 +8,7 @@
             <div class="amount-value">{{ formatAmount(asset) }}</div>
             <div class="amount-converted">{{ formatConvertedAmount(asset) }}</div>
           </div>
+          <!-- TODO: Add Send Button here -->
           <s-button
             class="swap"
             type="primary"
