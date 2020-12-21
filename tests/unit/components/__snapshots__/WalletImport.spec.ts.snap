@@ -19,8 +19,12 @@ exports[`WalletImport.vue should renders correctly 1`] = `
       nodatatext="No data"
       placeholder="Select"
       popperclass=""
-      value="MnemonicSeed"
+      value="PolkadotJs"
     >
+      <s-option-stub
+        label=""
+        value="PolkadotJs"
+      />
       <s-option-stub
         label=""
         value="MnemonicSeed"
@@ -29,37 +33,12 @@ exports[`WalletImport.vue should renders correctly 1`] = `
         label=""
         value="RawSeed"
       />
-      <s-option-stub
-        label=""
-        value="PolkadotJs"
-      />
     </s-select-stub>
      
-    <s-input-stub
-      accept=""
-      autocomplete="off"
-      borderradius="mini"
-      form=""
-      label=""
-      name=""
-      placeholder=""
-      prefix=""
-      size="big"
-      suffix=""
-      tabindex=""
-      type="textarea"
-      value=""
-    />
-     
-    <div
-      class="wallet-import-hint"
-    >
-      
-    </div>
+    <!---->
      
     <s-button-stub
       borderradius="small"
-      disabled="true"
       icon=""
       iconposition="left"
       nativetype="button"

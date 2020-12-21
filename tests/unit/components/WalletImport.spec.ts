@@ -12,7 +12,8 @@ const store = new Vuex.Store({
       actions: {
         login: jest.fn(),
         importPolkadotJs: jest.fn(),
-        checkValidSeed: jest.fn()
+        getPolkadotJsAccounts: jest.fn(),
+        getAddress: jest.fn()
       }
     },
     Router: {
