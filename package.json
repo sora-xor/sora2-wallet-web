@@ -21,7 +21,7 @@
   "dependencies": {
     "@polkadot/extension-dapp": "^0.35.0-beta.35",
     "@sora-substrate/util": "^0.2.3",
-    "@soramitsu/soramitsu-js-ui": "^0.6.4",
+    "@soramitsu/soramitsu-js-ui": "^0.6.7",
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
     "lodash": "^4.17.15",
