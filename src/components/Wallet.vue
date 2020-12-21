@@ -46,8 +46,8 @@ export default class Wallet extends Mixins(TranslationMixin) {
     this.currentTab = value
   }
 
-  handleSwap (token: any): void {
-    this.$emit('swap', token)
+  handleSwap (asset: any): void {
+    this.$emit('swap', asset)
   }
 }
 </script>

@@ -21,15 +21,9 @@ const types = flow(
 
 export const DEFAULT_NETWORKS: Array<Network> = [{
   id: 1,
-  name: 'Main Ethereum Network',
-  address: 'https://api.infura.io/v1/jsonrpc/mainnet',
-  explorer: 'https://etherscan.io',
-  editable: false
-}, {
-  id: 2,
-  name: 'Ropsten Network',
-  address: 'https://api.infura.io/v1/jsonrpc/ropsten',
-  explorer: 'https://ropsten.etherscan.io',
+  name: 'SORA-Substrate Testnet',
+  address: 'wss://ws.stage.sora2.soramitsu.co.jp',
+  explorer: 'https://subscan.io',
   editable: false
 }]
 
@@ -100,6 +94,7 @@ const mutations = {
   [types.SET_ACTIVE_NETWORK] (state, { network }) {
     storage.set('activeNetwork', JSON.stringify(network))
     state.activeNetwork = network
+    // TODO: add connection
   }
 }
 

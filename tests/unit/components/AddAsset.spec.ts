@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 
-import AddTokenCustom from '@/components/AddTokenCustom.vue'
+import AddAsset from '@/components/AddAsset.vue'
 import { TranslationMock, SoramitsuElementsImport } from '../../utils'
 
 const localVue = createLocalVue()
@@ -12,24 +12,18 @@ const store = new Vuex.Store({
       actions: {
         navigate: jest.fn()
       }
-    },
-    Account: {
-      actions: {
-        searchToken: jest.fn(),
-        addToken: jest.fn()
-      }
     }
   } as any
 })
 
-describe('AddTokenCustom.vue', () => {
+describe('AddAsset.vue', () => {
   beforeEach(() => {
     SoramitsuElementsImport(localVue)
-    TranslationMock(AddTokenCustom)
+    TranslationMock(AddAsset)
   })
 
   it('should renders correctly', () => {
-    const wrapper = shallowMount(AddTokenCustom, { localVue, store })
+    const wrapper = shallowMount(AddAsset, { localVue, store })
     expect(wrapper.element).toMatchSnapshot()
   })
 })

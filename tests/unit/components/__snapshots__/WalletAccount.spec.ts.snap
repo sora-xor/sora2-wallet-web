@@ -15,7 +15,7 @@ exports[`WalletAccount.vue should renders correctly 1`] = `
     />
      
     <div
-      class="account-credentials"
+      class="account-credentials s-flex"
     >
       <!---->
        

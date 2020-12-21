@@ -2,13 +2,14 @@ export enum RouteNames {
   WalletConnection = 'WalletConnection',
   WalletCreation = 'WalletCreation',
   WalletImport = 'WalletImport',
+  WalletSend = 'WalletSend',
   WalletSettings = 'WalletSettings',
   WalletSettingsLanguage = 'WalletSettingsLanguage',
   WalletSettingsNetworks = 'WalletSettingsNetworks',
   WalletSettingsAbout = 'WalletSettingsAbout',
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
-  AddToken = 'AddToken',
+  AddAsset = 'AddAsset',
   WalletTransactionDetails = 'WalletTransactionDetails'
 }
 
@@ -30,9 +31,9 @@ export enum WalletTabs {
   Activity = 'WalletActivity'
 }
 
-export enum AddTokenTabs {
-  Search = 'AddTokenSearch',
-  Custom = 'AddTokenCustom'
+export enum AddAssetTabs {
+  Search = 'AddAssetSearch',
+  Custom = 'AddAssetCustom'
 }
 
 export enum AccountMenu {

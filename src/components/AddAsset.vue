@@ -1,15 +1,15 @@
 <template>
-  <wallet-base :title="t('addToken.title')" show-back @back="handleBack">
-    <div class="add-token">
+  <wallet-base :title="t('addAsset.title')" show-back @back="handleBack">
+    <div class="add-asset">
       <s-tabs :value="currentTab" type="rounded" @change="handleChangeTab">
         <s-tab
-          v-for="tab in AddTokenTabs"
+          v-for="tab in AddAssetTabs"
           :key="tab"
-          :label="t(`addToken.${tab}.title`)"
+          :label="t(`addAsset.${tab}.title`)"
           :name="tab"
         />
       </s-tabs>
-      <component :is="currentTab" @add-token="handleOpenNotification" />
+      <component :is="currentTab" @add-asset="handleOpenNotification" />
     </div>
   </wallet-base>
 </template>
@@ -20,25 +20,25 @@ import { Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
-import AddTokenSearch from './AddTokenSearch.vue'
-import AddTokenCustom from './AddTokenCustom.vue'
-import { RouteNames, AddTokenTabs } from '../consts'
+import AddAssetSearch from './AddAssetSearch.vue'
+import AddAssetCustom from './AddAssetCustom.vue'
+import { RouteNames, AddAssetTabs } from '../consts'
 
 @Component({
   components: {
     WalletBase,
-    AddTokenSearch,
-    AddTokenCustom
+    AddAssetSearch,
+    AddAssetCustom
   }
 })
-export default class AddToken extends Mixins(TranslationMixin) {
-  readonly AddTokenTabs = AddTokenTabs
+export default class AddAsset extends Mixins(TranslationMixin) {
+  readonly AddAssetTabs = AddAssetTabs
 
   @Action navigate
 
-  currentTab = AddTokenTabs.Search
+  currentTab = AddAssetTabs.Search
 
-  handleChangeTab (value: AddTokenTabs): void {
+  handleChangeTab (value: AddAssetTabs): void {
     this.currentTab = value
   }
 
@@ -48,7 +48,7 @@ export default class AddToken extends Mixins(TranslationMixin) {
 
   handleOpenNotification (): void {
     this.$notify({
-      message: this.t('addToken.success'),
+      message: this.t('addAsset.success'),
       title: this.t('successText'),
       type: 'success'
     })
@@ -57,7 +57,7 @@ export default class AddToken extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss">
-.add-token {
+.add-asset {
   @include custom-tabs;
 }
 </style>

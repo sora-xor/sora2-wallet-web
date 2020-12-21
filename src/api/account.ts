@@ -33,11 +33,6 @@ const assetDetailsMock = {
   ],
   KSM: []
 }
-const tokensMock = [
-  { name: 'Sora', symbol: 'XOR', address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984' },
-  { name: 'Kusama', symbol: 'KSM', address: '34916349d43f65bccca11ff53a8e0382a1a594a7' },
-  { name: 'Etherium', symbol: 'ETH', address: '8adaca8ea8192656a15c88797e04c8771c4576b3' }
-]
 const transactionMock = {
   id: 1,
   hash: '5HVmWWpBi69cmmDf4RlKaSqWxxJ2pveRnfozNg5K',
@@ -55,14 +50,6 @@ const transactionMock = {
   ]
 }
 
-export const getAccount = async (seed: string) => {
-  return await Promise.resolve({ name: nameMock, address: addressMock })
-}
-
-export const getAccountAssets = async (address: string) => {
-  return await Promise.resolve(assetsMock)
-}
-
 export const getAccountActivity = async (address: string) => {
   return await Promise.resolve(
     Object.values(assetDetailsMock).flat().map(item => ({ ...item, fromSymbol: 'XOR' }))
@@ -71,19 +58,6 @@ export const getAccountActivity = async (address: string) => {
 
 export const getAssetDetails = async (address: string, symbol: string) => {
   return await Promise.resolve(assetDetailsMock[symbol])
-}
-
-export const getTokens = async (address: string) => {
-  return await Promise.resolve(tokensMock)
-}
-
-export const searchToken = async (address: string, tokenAddress: string) => {
-  const token = tokensMock.find(item => item.address.toLowerCase().includes(tokenAddress))
-  return await Promise.resolve(token)
-}
-
-export const addToken = async (address: string, token: any) => {
-  return await Promise.resolve()
 }
 
 export const getTransaction = async (address: string, id: number) => {

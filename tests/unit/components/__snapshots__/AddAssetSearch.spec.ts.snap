@@ -1,35 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AddTokenCustom.vue should renders correctly 1`] = `
+exports[`AddAssetSearch.vue should renders correctly 1`] = `
 <div
-  class="token-custom"
+  class="asset-search"
 >
   <s-input-stub
     accept=""
     autocomplete="off"
     borderradius="mini"
-    class="token-custom-address"
+    class="asset-search-input"
     form=""
     label=""
-    maxlength="128"
-    name=""
-    placeholder=""
-    prefix=""
-    size="big"
-    suffix=""
-    tabindex=""
-    type="text"
-    value=""
-  />
-   
-  <s-input-stub
-    accept=""
-    autocomplete="off"
-    borderradius="mini"
-    class="token-custom-symbol"
-    form=""
-    label=""
-    maxlength="10"
+    maxlength="100"
     name=""
     placeholder=""
     prefix=""
@@ -41,7 +23,22 @@ exports[`AddTokenCustom.vue should renders correctly 1`] = `
   />
    
   <div
-    class="token-custom-actions s-flex"
+    class="asset-search-list"
+  >
+    <div
+      class="asset-search-list_info"
+    >
+      
+      
+    
+    </div>
+     
+    <!---->
+     
+  </div>
+   
+  <div
+    class="asset-search-actions s-flex"
   >
     <s-button-stub
       borderradius="small"
@@ -55,6 +52,8 @@ exports[`AddTokenCustom.vue should renders correctly 1`] = `
       type="secondary"
     >
       
+      
+    
     </s-button-stub>
      
     <s-button-stub
