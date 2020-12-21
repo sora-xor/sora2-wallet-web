@@ -10,26 +10,43 @@
             :label="t(`import.sourceType.${type}`)"
           />
         </s-select>
-        <s-input type="textarea" :placeholder="t(`import.${sourceType}.placeholder`)" v-model="seed" border-radius="mini" />
-        <div class="wallet-import-hint">{{ t(`import.${sourceType}.hint`) }}</div>
+        <template v-if="sourceType !== SourceTypes.PolkadotJs">
+          <s-input type="textarea" :placeholder="t(`import.${sourceType}.placeholder`)" v-model="seed" border-radius="mini" />
+          <div class="wallet-import-hint">{{ t(`import.${sourceType}.hint`) }}</div>
+        </template>
       </template>
       <template v-else>
         <wallet-account :name="importFormData.name" />
-        <s-input :placeholder="t(`import.${sourceType}.name.placeholder`)" v-model="importFormData.name" border-radius="mini" />
-        <div class="wallet-import-hint">{{ t(`import.${sourceType}.name.hint`) }}</div>
-        <s-input show-password :placeholder="t(`import.${sourceType}.password.placeholder`)" v-model="importFormData.password" border-radius="mini" />
+        <s-input
+          :placeholder="t(`import.${SourceTypes.MnemonicSeed}.name.placeholder`)"
+          v-model="importFormData.name"
+          border-radius="mini"
+        />
+        <div class="wallet-import-hint">{{ t(`import.${SourceTypes.MnemonicSeed}.name.hint`) }}</div>
+        <s-input
+          show-password
+          :placeholder="t(`import.${SourceTypes.MnemonicSeed}.password.placeholder`)"
+          v-model="importFormData.password"
+          border-radius="mini"
+        />
         <div>
           <div class="wallet-import-condition" v-for="condition in PasswordConditions" :key="condition.title">
             <s-icon name="check-mark" :class="{ 'error': !condition.regexp.test(importFormData.password) }" />
-            <span>{{ t(`import.${sourceType}.password.${condition.title}`) }}</span>
+            <span>{{ t(`import.${SourceTypes.MnemonicSeed}.password.${condition.title}`) }}</span>
           </div>
         </div>
-        <s-input show-password :placeholder="t(`import.${sourceType}.repeatedPassword.placeholder`)" v-model="importFormData.repeatedPassword" border-radius="mini" />
-        <div class="wallet-import-hint">{{ t(`import.${sourceType}.password.hint`) }}</div>
+        <s-input
+          show-password
+          :placeholder="t(`import.${SourceTypes.MnemonicSeed}.repeatedPassword.placeholder`)"
+          v-model="importFormData.repeatedPassword"
+          border-radius="mini"
+        />
+        <div class="wallet-import-hint">{{ t(`import.${SourceTypes.MnemonicSeed}.password.hint`) }}</div>
       </template>
       <s-button
         type="primary"
         size="medium"
+        :loading="loading"
         :disabled="disabled"
         @click="handleImport"
       >
@@ -44,6 +61,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
+import LoadingMixin from './mixins/LoadingMixin'
 import WalletBase from './WalletBase.vue'
 import WalletAccount from './WalletAccount.vue'
 import { RouteNames, SourceTypes, PasswordConditions } from '../consts'
@@ -51,13 +69,14 @@ import { RouteNames, SourceTypes, PasswordConditions } from '../consts'
 @Component({
   components: { WalletBase, WalletAccount }
 })
-export default class WalletImport extends Mixins(TranslationMixin) {
+export default class WalletImport extends Mixins(TranslationMixin, LoadingMixin) {
   readonly SourceTypes = SourceTypes
   readonly PasswordConditions = PasswordConditions
 
   @Action navigate
   @Action login
   @Action checkValidSeed
+  @Action importPolkadotJs
 
   sourceType = SourceTypes.MnemonicSeed
   seed = ''
@@ -70,7 +89,7 @@ export default class WalletImport extends Mixins(TranslationMixin) {
 
   get disabled (): boolean {
     return this.step === 1
-      ? !this.seed
+      ? this.sourceType !== SourceTypes.PolkadotJs && !this.seed
       : (
         Object.values(this.importFormData).some(prop => !prop) ||
         PasswordConditions.map(({ regexp }) => regexp).some(regexp => !regexp.test(this.importFormData.password)) ||
@@ -87,17 +106,29 @@ export default class WalletImport extends Mixins(TranslationMixin) {
   }
 
   async handleImport (): Promise<void> {
-    if (this.step === 1 && this.sourceType === SourceTypes.MnemonicSeed) {
+    const isInternalImport = [SourceTypes.MnemonicSeed, SourceTypes.RawSeed].includes(this.sourceType)
+    if (isInternalImport && this.step === 1) {
       // TODO: add validation
       const isValid = this.checkValidSeed({ seed: this.seed })
       this.step = 2
       return
     }
-    if (this.sourceType === SourceTypes.RawSeed) {
-      // logic for RawSeed import
-    } else {
-      const { name, password } = this.importFormData
-      await this.login({ name, password, seed: this.seed })
+    try {
+      await this.withApi(async () => {
+        if (isInternalImport) {
+          const { name, password } = this.importFormData
+          await this.login({ name, password, seed: this.seed })
+        } else {
+          try {
+            await this.importPolkadotJs()
+          } catch (error) {
+            this.$alert(this.t(error.message), this.t('errorText'))
+            throw new Error(error)
+          }
+        }
+      })
+    } catch (error) {
+      return
     }
     this.navigate({ name: RouteNames.Wallet })
   }

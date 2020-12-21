@@ -1657,6 +1657,23 @@
     eventemitter3 "^4.0.7"
     rxjs "^6.6.3"
 
+"@polkadot/extension-dapp@^0.35.0-beta.35":
+  version "0.35.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/extension-dapp/-/extension-dapp-0.35.1.tgz#d94f2ce497dba85302a248c895e2f055c2ec2509"
+  integrity sha512-lwBcqAvMCJAS14BxOitP5elr9rcKzW85AtEWgcBtMRmO8u8TncJzXM3W/Sz3UCNOBVpgEKJbEsgV9/FOqxCqHw==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+    "@polkadot/extension-inject" "^0.35.1"
+    "@polkadot/util" "^4.2.1"
+    "@polkadot/util-crypto" "^4.2.1"
+
+"@polkadot/extension-inject@^0.35.1":
+  version "0.35.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/extension-inject/-/extension-inject-0.35.1.tgz#fdacb090b140e0f66bd0530a867b70e882f9be84"
+  integrity sha512-O2wp5JHo6jZvT9mQV3YVrCNHgUPBeoG7ZGMWE/612Y5P5SvS5cyOR1cKG35LrcXCmCc9bqM11wsHPl5raMXk2w==
+  dependencies:
+    "@babel/runtime" "^7.12.5"
+
 "@polkadot/keyring@^3.6.1":
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/@polkadot/keyring/-/keyring-3.7.1.tgz#91c17ed9824d6ed3f909ab43565f8e34bfbe321c"
@@ -12515,6 +12532,13 @@ rollup-plugin-delete@^1.1.0:
   dependencies:
     del "^4.1.1"
 
+rollup-plugin-json@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-json/-/rollup-plugin-json-3.1.0.tgz#7c1daf60c46bc21021ea016bd00863561a03321b"
+  integrity sha512-BlYk5VspvGpjz7lAwArVzBXR60JK+4EKtPkCHouAWg39obk9S61hZYJDBfMK+oitPdoe11i69TlxKlMQNFC/Uw==
+  dependencies:
+    rollup-pluginutils "^2.3.1"
+
 rollup-plugin-scss@^2.5.0:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/rollup-plugin-scss/-/rollup-plugin-scss-2.6.1.tgz#22826b4499f511aaf2edb8420faaf04a42e24a33"
@@ -12561,7 +12585,7 @@ rollup-plugin-vue@^5.1.4:
     source-map "0.7.3"
     vue-runtime-helpers "^1.1.2"
 
-rollup-pluginutils@2, rollup-pluginutils@^2.8.1, rollup-pluginutils@^2.8.2:
+rollup-pluginutils@2, rollup-pluginutils@^2.3.1, rollup-pluginutils@^2.8.1, rollup-pluginutils@^2.8.2:
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/rollup-pluginutils/-/rollup-pluginutils-2.8.2.tgz#72f2af0748b592364dbd3389e600e5a9444a351e"
   integrity sha512-EEp9NhnUkwY8aif6bxgovPHMoMoNr2FulJziTndpt5H9RdwC47GSGuII9XxpSdzVGM0GWrNPHV6ie1LTNJPaLQ==

@@ -1,13 +1,23 @@
 <template>
-  <div class="wallet-assets s-flex">
-    <template v-if="!!assets.length">
-      <template v-for="(asset, index) in assets">
+  <div class="wallet-assets s-flex" v-loading="loading">
+    <template v-if="!!accountAssets.length">
+      <template v-for="(asset, index) in accountAssets">
         <div class="wallet-assets-item s-flex" :key="asset.symbol">
           <i :class="getAssetClasses(asset.symbol)" />
           <div class="amount s-flex">
             <div class="amount-value">{{ formatAmount(asset) }}</div>
             <div class="amount-converted">{{ formatConvertedAmount(asset) }}</div>
           </div>
+          <s-button
+            class="swap"
+            type="primary"
+            size="small"
+            icon="arrow-top-right-rounded"
+            icon-position="right"
+            @click="handleAssetSend(asset)"
+          >
+            {{ t('assets.send') }}
+          </s-button>
           <s-button
             class="swap"
             type="primary"
@@ -22,55 +32,70 @@
             <s-icon name="chevron-right" size="12px" />
           </s-button>
         </div>
-        <s-divider v-if="index !== assets.length - 1" :key="`${asset.symbol}-divider`" />
+        <s-divider v-if="index !== accountAssets.length - 1" :key="`${asset.symbol}-divider`" />
       </template>
     </template>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
-    <s-button class="wallet-assets-add" type="tertiary" @click="handleOpenAddToken">{{ t('assets.add') }}</s-button>
+    <s-button class="wallet-assets-add" type="tertiary" @click="handleOpenAddAsset">{{ t('assets.add') }}</s-button>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-
-import TranslationMixin from './mixins/TranslationMixin'
-import { RouteNames } from '../consts'
-import { getTokenIconClasses } from '../util'
 import { AccountAsset } from '@sora-substrate/util'
 
-@Component
-export default class WalletAssets extends Mixins(TranslationMixin) {
-  @Getter assets!: Array<AccountAsset>
-  @Action getAccountAssets
-  @Action navigate
+import TranslationMixin from './mixins/TranslationMixin'
+import LoadingMixin from './mixins/LoadingMixin'
+import { RouteNames } from '../consts'
+import { getAssetIconClasses } from '../util'
 
-  mounted (): void {
-    this.getAccountAssets()
+@Component
+export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin) {
+  @Getter accountAssets!: Array<AccountAsset>
+  @Getter isExternal!: boolean
+  @Action getAccountAssets
+  @Action updateAccountAssets
+  @Action navigate
+  @Action getSigner
+
+  async mounted (): Promise<void> {
+    const loadAndUpdateAssets = async () => {
+      if (this.isExternal) {
+        await this.getSigner()
+      }
+      await this.getAccountAssets()
+      await this.updateAccountAssets()
+    }
+    this.withApi(loadAndUpdateAssets)
   }
 
   getAssetClasses (symbol: string): string {
-    return getTokenIconClasses(symbol)
+    return getAssetIconClasses(symbol)
   }
 
   formatAmount (asset: AccountAsset): string {
     return `${asset.balance} ${asset.symbol}`
   }
 
-  formatConvertedAmount (asset: any): string {
+  formatConvertedAmount (asset: AccountAsset): string {
     return `$${asset.usdBalance} USD`
   }
 
-  handleAssetSwap (asset: any): void {
+  handleAssetSwap (asset: AccountAsset): void {
     this.$emit('swap', asset)
+  }
+
+  handleAssetSend (asset: AccountAsset): void {
+    this.navigate({ name: RouteNames.WalletSend, params: { asset } })
   }
 
   handleOpenAssetDetails (symbol: string): void {
     this.navigate({ name: RouteNames.WalletAssetDetails, params: { symbol } })
   }
 
-  handleOpenAddToken (): void {
-    this.navigate({ name: RouteNames.AddToken })
+  handleOpenAddAsset (): void {
+    this.navigate({ name: RouteNames.AddAsset })
   }
 }
 </script>
@@ -87,6 +112,8 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
     align-items: center;
     .amount {
       flex: 1;
+      max-width: 37%;
+      overflow-wrap: break-word;
       flex-direction: column;
       &-converted {
         @include hint-text;
@@ -95,9 +122,9 @@ export default class WalletAssets extends Mixins(TranslationMixin) {
     .details {
       padding: 0;
     }
-    .token-logo {
+    .asset-logo {
       margin-right: $basic-spacing;
-      @include token-logo-styles;
+      @include asset-logo-styles;
     }
   }
   &-add {

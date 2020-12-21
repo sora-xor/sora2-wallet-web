@@ -1,4 +1,15 @@
 import moment from 'moment'
+import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
+
+export const APP_NAME = 'Sora2 Wallet'
+
+export const getExtensions = async () => {
+  return await web3Enable(APP_NAME)
+}
+
+export const getExtensionSigner = async (address: string) => {
+  return (await web3FromAddress(address)).signer
+}
 
 export const copyToClipboard = async (text: string) => {
   try {
@@ -10,8 +21,8 @@ export const copyToClipboard = async (text: string) => {
 
 export const formatDate = (date: number) => moment(date).format('DD.MM.YYYY, h:mm:ss')
 
-export const getTokenIconClasses = (symbol: string) => {
-  const cssClass = 'token-logo'
+export const getAssetIconClasses = (symbol: string) => {
+  const cssClass = 'asset-logo'
   if (symbol) {
     return `${cssClass} ${cssClass}--${symbol.toLowerCase()}`
   }
