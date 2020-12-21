@@ -62,7 +62,6 @@
             padding-right: $basic-spacing;
             padding-left: $basic-spacing;
             &.is-active {
-              margin: 0;
               box-shadow: var(--s-shadow-tab);
             }
             &:hover {
@@ -80,7 +79,6 @@
         }
         &__nav-wrap {
           height: $tabs-container-height;
-          padding: $tabs-container-padding;
           background-color: var(--s-color-base-background);
         }
       }
