@@ -16,4 +16,9 @@ $s-color-button-tertiary-background-focused: $s-color-theme-secondary-focused;
   --s-color-button-tertiary-background-hover: #{$s-color-button-tertiary-background-hover};
   --s-color-button-tertiary-background-pressed: #{$s-color-button-tertiary-background-pressed};
   --s-color-button-tertiary-background-focused: #{$s-color-button-tertiary-background-focused};
+  // Border Radius
+  --s-border-radius-mini: #{$s-border-radius-mini};
+  --s-border-radius-small: #{$s-border-radius-small};
+  --s-border-radius-medium: #{$s-border-radius-medium};
+  --s-border-radius-big: #{$s-border-radius-big};
 }
