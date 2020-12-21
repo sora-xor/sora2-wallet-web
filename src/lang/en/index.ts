@@ -34,8 +34,9 @@ export default {
     [KnownSymbols.PSWAP]: 'Polkaswap'
   },
   polkadotjs: {
-    noExtensions: 'There is no Polkadot.js extension. You should install it before continue and reload this page',
-    noAccounts: 'You haven\'t accounts in your Polkadot.js extension. Add the account before continue'
+    noExtensions: 'There is no Polkadot.js extension. You should install it before continue and reload this page\nhttps://polkadot.js.org/extension/',
+    noAccounts: 'You haven\'t accounts in your Polkadot.js extension. Add the account before continue',
+    noAccount: 'Something was happend with your account. Please check it in the Polkadot JS extension'
   },
   sourceType: {
     placeholder: 'Source type',
@@ -79,7 +80,7 @@ export default {
     },
     [SourceTypes.MnemonicSeed]: {
       placeholder: 'Separate each word with a single space',
-      hint: 'Enter your secret twelve word phrase here to erstore your account.',
+      hint: 'Enter your secret twelve word phrase here to restore your account.',
       name: {
         placeholder: '@:nameText',
         hint: 'The name for this account and how it will appear under your addresses. With an on-chain identity, it can be made available to others.'
@@ -98,7 +99,10 @@ export default {
     },
     [SourceTypes.RawSeed]: {
       placeholder: 'Seed (hex or string)',
-      hint: 'Enter your seed here to erstore your account.'
+      hint: 'Enter your seed here to restore your account.'
+    },
+    [SourceTypes.PolkadotJs]: {
+      selectAccount: 'Select account'
     },
     action: '@:importText'
   },

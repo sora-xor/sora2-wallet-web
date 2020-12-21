@@ -16,32 +16,47 @@
         </template>
       </template>
       <template v-else>
-        <wallet-account :name="importFormData.name" />
-        <s-input
-          :placeholder="t(`import.${SourceTypes.MnemonicSeed}.name.placeholder`)"
-          v-model="importFormData.name"
-          border-radius="mini"
-        />
-        <div class="wallet-import-hint">{{ t(`import.${SourceTypes.MnemonicSeed}.name.hint`) }}</div>
-        <s-input
-          show-password
-          :placeholder="t(`import.${SourceTypes.MnemonicSeed}.password.placeholder`)"
-          v-model="importFormData.password"
-          border-radius="mini"
-        />
-        <div>
-          <div class="wallet-import-condition" v-for="condition in PasswordConditions" :key="condition.title">
-            <s-icon name="check-mark" :class="{ 'error': !condition.regexp.test(importFormData.password) }" />
-            <span>{{ t(`import.${SourceTypes.MnemonicSeed}.password.${condition.title}`) }}</span>
+        <template v-if="sourceType !== SourceTypes.PolkadotJs">
+          <wallet-account :name="importFormData.name" />
+          <s-input
+            :placeholder="t(`import.${SourceTypes.MnemonicSeed}.name.placeholder`)"
+            v-model="importFormData.name"
+            border-radius="mini"
+          />
+          <div class="wallet-import-hint">{{ t(`import.${SourceTypes.MnemonicSeed}.name.hint`) }}</div>
+          <s-input
+            show-password
+            :placeholder="t(`import.${SourceTypes.MnemonicSeed}.password.placeholder`)"
+            v-model="importFormData.password"
+            border-radius="mini"
+          />
+          <div>
+            <div class="wallet-import-condition" v-for="condition in PasswordConditions" :key="condition.title">
+              <s-icon name="check-mark" :class="{ 'error': !condition.regexp.test(importFormData.password) }" />
+              <span>{{ t(`import.${SourceTypes.MnemonicSeed}.password.${condition.title}`) }}</span>
+            </div>
           </div>
-        </div>
-        <s-input
-          show-password
-          :placeholder="t(`import.${SourceTypes.MnemonicSeed}.repeatedPassword.placeholder`)"
-          v-model="importFormData.repeatedPassword"
+          <s-input
+            show-password
+            :placeholder="t(`import.${SourceTypes.MnemonicSeed}.repeatedPassword.placeholder`)"
+            v-model="importFormData.repeatedPassword"
+            border-radius="mini"
+          />
+          <div class="wallet-import-hint">{{ t(`import.${SourceTypes.MnemonicSeed}.password.hint`) }}</div>
+        </template>
+        <s-select
+          v-else
+          :placeholder="t(`import.${SourceTypes.PolkadotJs}.selectAccount`)"
+          v-model="selectedPolkadotJsAccount"
           border-radius="mini"
-        />
-        <div class="wallet-import-hint">{{ t(`import.${SourceTypes.MnemonicSeed}.password.hint`) }}</div>
+        >
+          <s-option
+            v-for="account in polkadotJsAccounts"
+            :key="account.address"
+            :value="account.address"
+            :label="account.name"
+          />
+        </s-select>
       </template>
       <s-button
         type="primary"
@@ -59,12 +74,14 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
+import last from 'lodash/fp/last'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'
 import WalletBase from './WalletBase.vue'
 import WalletAccount from './WalletAccount.vue'
 import { RouteNames, SourceTypes, PasswordConditions } from '../consts'
+import { checkValidSeed } from '../api/account'
 
 @Component({
   components: { WalletBase, WalletAccount }
@@ -75,10 +92,13 @@ export default class WalletImport extends Mixins(TranslationMixin, LoadingMixin)
 
   @Action navigate
   @Action login
-  @Action checkValidSeed
+  @Action getAddress
   @Action importPolkadotJs
+  @Action getPolkadotJsAccounts
 
-  sourceType = SourceTypes.MnemonicSeed
+  sourceType = SourceTypes.PolkadotJs
+  polkadotJsAccounts: Array<{ address: string; name: string }> = []
+  selectedPolkadotJsAccount: any = ''
   seed = ''
   step = 1
   importFormData = {
@@ -88,8 +108,11 @@ export default class WalletImport extends Mixins(TranslationMixin, LoadingMixin)
   }
 
   get disabled (): boolean {
+    if (this.sourceType === SourceTypes.PolkadotJs) {
+      return false
+    }
     return this.step === 1
-      ? this.sourceType !== SourceTypes.PolkadotJs && !this.seed
+      ? !(this.seed && checkValidSeed(this.seed))
       : (
         Object.values(this.importFormData).some(prop => !prop) ||
         PasswordConditions.map(({ regexp }) => regexp).some(regexp => !regexp.test(this.importFormData.password)) ||
@@ -107,27 +130,33 @@ export default class WalletImport extends Mixins(TranslationMixin, LoadingMixin)
 
   async handleImport (): Promise<void> {
     const isInternalImport = [SourceTypes.MnemonicSeed, SourceTypes.RawSeed].includes(this.sourceType)
-    if (isInternalImport && this.step === 1) {
-      // TODO: add validation
-      const isValid = this.checkValidSeed({ seed: this.seed })
-      this.step = 2
-      return
-    }
     try {
       await this.withApi(async () => {
-        if (isInternalImport) {
-          const { name, password } = this.importFormData
-          await this.login({ name, password, seed: this.seed })
+        if (this.step === 1) {
+          if (isInternalImport) {
+            this.getAddress({ seed: this.seed })
+          } else {
+            this.polkadotJsAccounts = await this.getPolkadotJsAccounts()
+            this.selectedPolkadotJsAccount = (last(this.polkadotJsAccounts) || {}).address
+          }
         } else {
-          try {
-            await this.importPolkadotJs()
-          } catch (error) {
-            this.$alert(this.t(error.message), this.t('errorText'))
-            throw new Error(error)
+          if (isInternalImport) {
+            const { name, password } = this.importFormData
+            await this.login({ name, password, seed: this.seed })
+          } else {
+            await this.importPolkadotJs({ address: this.selectedPolkadotJsAccount })
           }
         }
       })
     } catch (error) {
+      this.$alert(this.t((error as Error).message), this.t('errorText'))
+      if (this.sourceType === SourceTypes.PolkadotJs && this.step === 2) {
+        this.step = 1
+      }
+      return
+    }
+    if (this.step === 1) {
+      this.step = 2
       return
     }
     this.navigate({ name: RouteNames.Wallet })

@@ -3,8 +3,26 @@ import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
 
 export const APP_NAME = 'Sora2 Wallet'
 
-export const getExtensions = async () => {
-  return await web3Enable(APP_NAME)
+export const getExtension = async () => {
+  let extensions: Array<any> = []
+  try {
+    extensions = await web3Enable(APP_NAME)
+  } catch (error) {
+    throw new Error('polkadotjs.noExtensions')
+  }
+  if (!extensions.length) {
+    throw new Error('polkadotjs.noExtensions')
+  }
+  return extensions[0]
+}
+
+export const getExtensionInfo = async () => {
+  const extension = await getExtension()
+  const accounts = await extension.accounts.get() as Array<{ address: string; name: string }>
+  if (!accounts.length) {
+    throw new Error('polkadotjs.noAccounts')
+  }
+  return { accounts, signer: extension.signer }
 }
 
 export const getExtensionSigner = async (address: string) => {

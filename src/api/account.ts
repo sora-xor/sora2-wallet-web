@@ -1,3 +1,13 @@
+import { dexApi } from '../api'
+
+export const checkValidSeed = (seed: string) => {
+  try {
+    return !!dexApi.checkSeed(seed).address
+  } catch (error) {
+    return false
+  }
+}
+
 // TODO: remove these mock data and add real integration
 const addressMock = '5HVmWWpBi69cmmDGdfgg53dfgxxJ2pveRnfozNg5K'
 const nameMock = 'Mock'

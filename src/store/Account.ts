@@ -8,7 +8,7 @@ import { AccountAsset } from '@sora-substrate/util'
 import * as accountApi from '../api/account'
 import { dexApi } from '../api'
 import { storage } from '../util/storage'
-import { getExtensions, getExtensionSigner } from '../util'
+import { getExtension, getExtensionSigner, getExtensionInfo } from '../util'
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
@@ -31,7 +31,8 @@ const types = flow(
   'GET_TRANSACTION_DETAILS',
   'TRANSFER',
   'POLKADOT_JS_IMPORT',
-  'GET_SIGNER'
+  'GET_SIGNER',
+  'GET_POLKADOT_JS_ACCOUNTS'
 ])
 
 let updateAssetsIntervalId: any = null
@@ -198,6 +199,12 @@ const mutations = {
 
   [types.GET_SIGNER_FAILURE] (state) {},
 
+  [types.GET_POLKADOT_JS_ACCOUNTS_REQUEST] (state) {},
+
+  [types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS] (state) {},
+
+  [types.GET_POLKADOT_JS_ACCOUNTS_FAILURE] (state) {},
+
   [types.POLKADOT_JS_IMPORT_REQUEST] (state) {},
 
   [types.POLKADOT_JS_IMPORT_SUCCESS] (state, account) {
@@ -224,44 +231,43 @@ const mutations = {
 const actions = {
   async getSigner ({ commit, state: { address } }) {
     commit(types.GET_SIGNER_REQUEST)
-    let extensions: Array<any> = []
     try {
-      extensions = await getExtensions()
+      await getExtension()
+      const signer = await getExtensionSigner(address)
+      dexApi.setSigner(signer)
+      commit(types.GET_SIGNER_SUCCESS)
     } catch (error) {
-      commit(types.POLKADOT_JS_IMPORT_FAILURE)
-      throw new Error('polkadotjs.noExtensions')
-    }
-    if (!extensions.length) {
       commit(types.GET_SIGNER_FAILURE)
-      throw new Error('polkadotjs.noExtensions')
+      throw new Error((error as Error).message)
     }
-    const signer = await getExtensionSigner(address)
-    dexApi.setSigner(signer)
-    commit(types.GET_SIGNER_SUCCESS)
   },
-  async importPolkadotJs ({ commit }) {
-    commit(types.POLKADOT_JS_IMPORT_REQUEST)
-    let extensions: Array<any> = []
+  async getPolkadotJsAccounts ({ commit }) {
+    commit(types.GET_POLKADOT_JS_ACCOUNTS_REQUEST)
     try {
-      extensions = await getExtensions()
+      const accounts = (await getExtensionInfo()).accounts
+      commit(types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS)
+      return accounts
+    } catch (error) {
+      commit(types.GET_POLKADOT_JS_ACCOUNTS_FAILURE)
+      throw new Error((error as Error).message)
+    }
+  },
+  async importPolkadotJs ({ commit }, { address }) {
+    commit(types.POLKADOT_JS_IMPORT_REQUEST)
+    try {
+      const info = await getExtensionInfo()
+      const account = info.accounts.find(acc => acc.address === address)
+      if (!account) {
+        commit(types.POLKADOT_JS_IMPORT_FAILURE)
+        throw new Error('polkadotjs.noAccount')
+      }
+      dexApi.importByPolkadotJs(account.address, account.name)
+      dexApi.setSigner(info.signer)
+      commit(types.POLKADOT_JS_IMPORT_SUCCESS, account)
     } catch (error) {
       commit(types.POLKADOT_JS_IMPORT_FAILURE)
-      throw new Error('polkadotjs.noExtensions')
+      throw new Error((error as Error).message)
     }
-    if (!extensions.length) {
-      commit(types.POLKADOT_JS_IMPORT_FAILURE)
-      throw new Error('polkadotjs.noExtensions')
-    }
-    const extension = extensions[0]
-    const accounts = await extension.accounts.get()
-    if (!accounts.length) {
-      commit(types.POLKADOT_JS_IMPORT_FAILURE)
-      throw new Error('polkadotjs.noAccounts')
-    }
-    const account = accounts[0] // TODO: add account selector
-    dexApi.importByPolkadotJs(account.address, account.name)
-    dexApi.setSigner(extension.signer)
-    commit(types.POLKADOT_JS_IMPORT_SUCCESS, account)
   },
   async getAccountAssets ({ commit }) {
     const assets = storage.get('assets')
@@ -349,15 +355,13 @@ const actions = {
       commit(types.GET_TRANSACTION_DETAILS_FAILURE)
     }
   },
-  checkValidSeed ({ commit }, { seed }) {
+  getAddress ({ commit }, { seed }) {
     commit(types.GET_ADDRESS_REQUEST)
     try {
       const address = dexApi.checkSeed(seed).address
       commit(types.GET_ADDRESS_SUCCESS, address)
-      return !!address
     } catch (error) {
       commit(types.GET_ADDRESS_FAILURE)
-      return false
     }
   },
   async transfer ({ commit, getters: { currentRouteParams } }, { to, amount }) {

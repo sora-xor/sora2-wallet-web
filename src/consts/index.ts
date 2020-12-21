@@ -14,9 +14,9 @@ export enum RouteNames {
 }
 
 export enum SourceTypes {
+  PolkadotJs = 'PolkadotJs',
   MnemonicSeed = 'MnemonicSeed',
-  RawSeed = 'RawSeed',
-  PolkadotJs = 'PolkadotJs'
+  RawSeed = 'RawSeed'
 }
 
 export enum PasswordCondition {
