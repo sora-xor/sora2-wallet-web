@@ -175,6 +175,7 @@ export default class WalletSend extends Mixins(TranslationMixin) {
 <style scoped lang="scss">
 @import '../styles/icons';
 
+// TODO: fix typography issues here
 .wallet-send {
   .asset {
     &-balance {

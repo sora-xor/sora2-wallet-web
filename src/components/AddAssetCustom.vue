@@ -75,6 +75,7 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
+// TODO: think about mixin here
 .asset-custom {
   > * {
     margin-top: $basic-spacing;
