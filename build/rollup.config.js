@@ -7,6 +7,7 @@ import commonjs from 'rollup-plugin-commonjs'
 import { terser } from 'rollup-plugin-terser'
 // import del from 'rollup-plugin-delete'
 import copy from 'rollup-plugin-copy'
+import json from 'rollup-plugin-json'
 
 export default {
   input: 'src/index.ts',
@@ -53,6 +54,10 @@ export default {
     }),
     scss(),
     resolve(),
+    // TODO: it is used to fix:
+    // Error: Unexpected token (Note that you need @rollup/plugin-json to import JSON files)
+    // node_modules/elliptic/package.json
+    json(),
     terser(),
     copy({
       // TODO: we should find out how to solve an issue with @sora-substrate/util
