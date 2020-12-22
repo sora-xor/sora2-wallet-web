@@ -73,13 +73,13 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
+import { AccountAsset } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
-import { AccountAsset } from '@sora-substrate/util'
-import { getAssetIconClasses } from '@/util'
-import { dexApi } from '@/api'
+import { getAssetIconClasses } from '../util'
+import { dexApi } from '../api'
 
 @Component({
   components: {
