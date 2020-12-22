@@ -1,7 +1,7 @@
 import Vuex from 'vuex'
 import { shallowMount, createLocalVue } from '@vue/test-utils'
 
-import AddTokenSearch from '@/components/AddTokenSearch.vue'
+import AddAssetSearch from '@/components/AddAssetSearch.vue'
 import { TranslationMock, SoramitsuElementsImport } from '../../utils'
 
 const localVue = createLocalVue()
@@ -15,24 +15,25 @@ const store = new Vuex.Store({
     },
     Account: {
       getters: {
-        tokens: () => [{ name: 'Sora', symbol: 'XOR', address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984' }]
+        assets: () => [{ symbol: 'XOR', address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984', decimals: 18 }],
+        accountAssets: () => [{ symbol: 'XOR', address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984', balance: '0.123', usdBalance: '234', decimals: 18 }]
       },
       actions: {
-        getTokens: jest.fn(),
-        addToken: jest.fn()
+        getAssets: jest.fn(),
+        addAsset: jest.fn()
       }
     }
   } as any
 })
 
-describe('AddTokenSearch.vue', () => {
+describe('AddAssetSearch.vue', () => {
   beforeEach(() => {
     SoramitsuElementsImport(localVue)
-    TranslationMock(AddTokenSearch)
+    TranslationMock(AddAssetSearch)
   })
 
   it('should renders correctly', () => {
-    const wrapper = shallowMount(AddTokenSearch, { localVue, store })
+    const wrapper = shallowMount(AddAssetSearch, { localVue, store })
     expect(wrapper.element).toMatchSnapshot()
   })
 })

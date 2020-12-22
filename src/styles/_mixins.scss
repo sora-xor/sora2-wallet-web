@@ -1,8 +1,8 @@
-@mixin token-logo-styles($size: 32px) {
+@mixin asset-logo-styles($size: 32px) {
   height: $size;
   width: $size;
   background-color: var(--s-color-base-border-secondary);
-  background-image: $token-logo-default-svg;
+  background-image: $asset-logo-default-svg;
   background-size: 60%;
   background-repeat: no-repeat;
   background-position: 50%;
@@ -15,13 +15,33 @@
     background-size: 100%;
   }
   &--ksm {
-    background-image: $token-logo-ksm-svg;
+    background-image: $asset-logo-ksm-svg;
   }
   &--xor {
-    background-image: $token-logo-xor-svg;
+    background-image: $asset-logo-xor-svg;
   }
   &--eth {
-    background-image: $token-logo-eth-svg;
+    background-image: $asset-logo-eth-svg;
+  }
+}
+
+@mixin font-weight($fontWeight: 400, $important: false) {
+  @if $fontWeight == 400 and $important == false {
+    font-family: "Sora", sans-serif;
+  } @else if $fontWeight == 400 and $important == true {
+    font-family: "Sora", sans-serif !important;
+  } @else if $fontWeight == 500 and $important == false {
+    font-family: "SoraSB", sans-serif;
+  } @else if $fontWeight == 500 and $important == true {
+    font-family: "SoraSB", sans-serif !important;
+  } @else if $fontWeight == 600 and $important == false {
+    font-family: "SoraB", sans-serif;
+  } @else if $fontWeight == 600 and $important == true {
+    font-family: "SoraB", sans-serif !important;
+  } @else if $fontWeight == 700 and $important == false {
+    font-family: "SoraEB", sans-serif;
+  } @else if $fontWeight == 700 and $important == true {
+    font-family: "SoraEB", sans-serif !important;
   }
 }
 
