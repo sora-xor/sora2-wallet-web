@@ -2,7 +2,7 @@
   <s-card :bodyStyle="{ padding: '0 12px' }" class="wallet-account" border-radius="mini" shadow="never">
     <div class="account s-flex">
       <div class="account-avatar" />
-      <div class="account-credentials">
+      <div class="account-credentials s-flex">
         <div v-if="name" class="account-credentials_name">{{ name }}</div>
         <div class="account-credentials_address">{{ account.address }}</div>
       </div>

@@ -1,4 +1,6 @@
-import { AccountMenu, AddTokenTabs, PasswordCondition, SourceTypes, WalletTabs, SettingsMenu, Languages } from '../../consts'
+import { KnownSymbols } from '@sora-substrate/util'
+
+import { AccountMenu, AddAssetTabs, PasswordCondition, SourceTypes, WalletTabs, SettingsMenu, Languages } from '../../consts'
 
 export default {
   closeText: 'Close',
@@ -8,7 +10,7 @@ export default {
   nextText: 'Next',
   importText: 'Import',
   settingsText: 'Settings',
-  addTokenText: 'Add token',
+  addAssetText: 'Add token',
   comingSoonText: 'Coming soon',
   successText: 'Success',
   warningText: 'Warning',
@@ -18,6 +20,24 @@ export default {
   cancelText: 'Cancel',
   saveText: 'Save',
   logoutText: 'Log out',
+  sendText: 'Send',
+  addressText: 'Address',
+  amountText: 'Amount',
+  confirmText: 'Confirm',
+  errorText: 'Error',
+  assetNames: {
+    [KnownSymbols.XOR]: 'Sora',
+    [KnownSymbols.DOT]: 'Polkadot',
+    [KnownSymbols.KSM]: 'Kusama',
+    [KnownSymbols.USD]: 'USD',
+    [KnownSymbols.VAL]: 'Sora Validator Asset',
+    [KnownSymbols.PSWAP]: 'Polkaswap'
+  },
+  polkadotjs: {
+    noExtensions: 'There is no Polkadot.js extension. You should install it before continue and reload this page\nhttps://polkadot.js.org/extension/',
+    noAccounts: 'You haven\'t accounts in your Polkadot.js extension. Add the account before continue',
+    noAccount: 'Something was happend with your account. Please check it in the Polkadot JS extension'
+  },
   sourceType: {
     placeholder: 'Source type',
     [SourceTypes.MnemonicSeed]: 'Mnemonic seed',
@@ -60,7 +80,7 @@ export default {
     },
     [SourceTypes.MnemonicSeed]: {
       placeholder: 'Separate each word with a single space',
-      hint: 'Enter your secret twelve word phrase here to erstore your account.',
+      hint: 'Enter your secret twelve word phrase here to restore your account.',
       name: {
         placeholder: '@:nameText',
         hint: 'The name for this account and how it will appear under your addresses. With an on-chain identity, it can be made available to others.'
@@ -71,7 +91,8 @@ export default {
         [PasswordCondition.LowerCase]: 'At least 1 lowercase letter',
         [PasswordCondition.UpperCase]: 'At least 1 uppercase letter',
         [PasswordCondition.Length]: 'At least 8 characters',
-        [PasswordCondition.Digit]: 'At least 1 digit'
+        [PasswordCondition.Digit]: 'At least 1 digit',
+        validMessage: 'Passwords don\'t match'
       },
       repeatedPassword: {
         placeholder: 'Repeat password'
@@ -79,7 +100,10 @@ export default {
     },
     [SourceTypes.RawSeed]: {
       placeholder: 'Seed (hex or string)',
-      hint: 'Enter your seed here to erstore your account.'
+      hint: 'Enter your seed here to restore your account.'
+    },
+    [SourceTypes.PolkadotJs]: {
+      selectAccount: 'Select account'
     },
     action: '@:importText'
   },
@@ -87,7 +111,20 @@ export default {
     title: 'Wallet',
     [WalletTabs.Assets]: 'Assets',
     [WalletTabs.Activity]: 'Activity',
-    addToken: '@:addTokenText'
+    addAsset: '@:addAssetText'
+  },
+  walletSend: {
+    title: 'Send',
+    address: '@:addressText',
+    amount: '@:amountText',
+    balance: 'Balance',
+    max: 'MAX',
+    fee: 'Transaction Fee',
+    noAddress: 'No Address',
+    insufficientBalance: 'Insufficient Balance',
+    confirmTitle: 'Confirm transaction',
+    confirm: '@:confirmText',
+    errorAddress: 'Invalid address! Please check it and try again...'
   },
   account: {
     successCopy: 'Wallet address has been copied to the clipboard',
@@ -104,7 +141,8 @@ export default {
   assets: {
     empty: 'There are no assets',
     add: 'Add token',
-    swap: '@:swapText'
+    swap: '@:swapText',
+    send: '@:sendText'
   },
   settings: {
     title: '@:settingsText',
@@ -132,7 +170,7 @@ export default {
       customNetwork: 'Custom network',
       form: {
         name: 'Name',
-        address: 'Address',
+        address: '@:addressText',
         explorer: 'Explorer'
       }
     },
@@ -143,21 +181,21 @@ export default {
       privacyPolicyLink: 'https://soramitsu.co.jp'
     }
   },
-  addToken: {
-    title: '@:addTokenText',
+  addAsset: {
+    title: '@:addAssetText',
     cancel: '@:cancelText',
-    action: '@:addTokenText',
-    success: 'Token was added successfully!',
-    [AddTokenTabs.Search]: {
+    action: '@:addAssetText',
+    success: 'Asset was added successfully!',
+    [AddAssetTabs.Search]: {
       title: '@:searchText',
-      placeholder: 'Search Token Name, Symbol, or Address',
+      placeholder: 'Search Asset Name, Symbol, or Address',
       info: 'Add the tokens you\'ve acquired using MetaMask',
       empty: 'No tokens found'
     },
-    [AddTokenTabs.Custom]: {
+    [AddAssetTabs.Custom]: {
       title: 'Custom token',
-      addressPlaceholder: 'Address',
-      symbolPlaceholder: 'Token symbol'
+      addressPlaceholder: '@:addressText',
+      symbolPlaceholder: 'Asset symbol'
     }
   },
   transaction: {
@@ -165,7 +203,7 @@ export default {
     hash: 'Transaction Hash',
     status: 'Status',
     date: 'Date',
-    amount: 'Amount',
+    amount: '@:amountText',
     fee: 'Transaction Fee',
     total: 'Total',
     from: 'From',

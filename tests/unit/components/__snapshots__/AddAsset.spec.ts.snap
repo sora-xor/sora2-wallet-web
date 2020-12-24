@@ -1,33 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Wallet.vue should renders correctly 1`] = `
+exports[`AddAsset.vue should renders correctly 1`] = `
 <wallet-base-stub
-  showsettings="true"
+  showback="true"
   title=""
 >
-  <wallet-account-stub
-    name="Mock"
-    showmenu="true"
-  />
-   
   <div
-    class="wallet"
+    class="add-asset"
   >
     <s-tabs-stub
       borderradius="small"
       position="top"
       type="rounded"
-      value="WalletAssets"
+      value="AddAssetSearch"
     >
       <s-tab-stub
-        name="WalletAssets"
+        name="AddAssetSearch"
       />
       <s-tab-stub
-        name="WalletActivity"
+        name="AddAssetCustom"
       />
     </s-tabs-stub>
      
-    <walletassets-stub />
+    <addassetsearch-stub />
   </div>
 </wallet-base-stub>
 `;
