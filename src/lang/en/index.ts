@@ -91,7 +91,8 @@ export default {
         [PasswordCondition.LowerCase]: 'At least 1 lowercase letter',
         [PasswordCondition.UpperCase]: 'At least 1 uppercase letter',
         [PasswordCondition.Length]: 'At least 8 characters',
-        [PasswordCondition.Digit]: 'At least 1 digit'
+        [PasswordCondition.Digit]: 'At least 1 digit',
+        validMessage: 'Passwords don\'t match'
       },
       repeatedPassword: {
         placeholder: 'Repeat password'

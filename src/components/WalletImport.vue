@@ -38,10 +38,17 @@
           </div>
           <s-input
             show-password
+            :class="!arePasswordsMatch ? 's-input--error' : ''"
             :placeholder="t(`import.${SourceTypes.MnemonicSeed}.repeatedPassword.placeholder`)"
             v-model="importFormData.repeatedPassword"
             border-radius="mini"
+            @input="handleRepeatedPassword"
+            @blur="handleRepeatedPassword"
           />
+          <div v-if="!arePasswordsMatch" class="password-error">
+            <s-icon name="error" size="16" />
+            <div class="password-error-message">{{ t(`import.${SourceTypes.MnemonicSeed}.password.validMessage`)}}</div>
+          </div>
           <div class="wallet-import-hint">{{ t(`import.${SourceTypes.MnemonicSeed}.password.hint`) }}</div>
         </template>
         <s-select
@@ -101,6 +108,7 @@ export default class WalletImport extends Mixins(TranslationMixin, LoadingMixin)
   selectedPolkadotJsAccount: any = ''
   seed = ''
   step = 1
+  arePasswordsMatch = true
   importFormData = {
     name: '',
     password: '',
@@ -116,7 +124,7 @@ export default class WalletImport extends Mixins(TranslationMixin, LoadingMixin)
       : (
         Object.values(this.importFormData).some(prop => !prop) ||
         PasswordConditions.map(({ regexp }) => regexp).some(regexp => !regexp.test(this.importFormData.password)) ||
-        this.importFormData.password !== this.importFormData.repeatedPassword
+        !this.arePasswordsMatch
       )
   }
 
@@ -126,6 +134,14 @@ export default class WalletImport extends Mixins(TranslationMixin, LoadingMixin)
       return
     }
     this.step = 1
+  }
+
+  handleRepeatedPassword (): void {
+    if (!!this.importFormData.password.length || !!this.importFormData.repeatedPassword.length) {
+      this.arePasswordsMatch = this.importFormData.password === this.importFormData.repeatedPassword
+    } else {
+      this.arePasswordsMatch = true
+    }
   }
 
   async handleImport (): Promise<void> {
@@ -166,6 +182,23 @@ export default class WalletImport extends Mixins(TranslationMixin, LoadingMixin)
 
 <style lang="scss">
 @include select-icon('wallet-import');
+.wallet-import {
+  .s-input--error {
+    .s-placeholder {
+      color: var(--s-color-status-error);
+    }
+    .s-placeholder,
+    .el-input > input {
+      background-color: var(--s-color-status-error-background);
+    }
+    &:not(.s-disabled),
+    &.s-focused {
+      .el-input > input {
+        border-color: var(--s-color-status-error);
+      }
+    }
+  }
+}
 </style>
 
 <style scoped lang="scss">
@@ -205,6 +238,18 @@ $valid-icon-size: 6px;
           width: $valid-icon-size;
         }
       }
+    }
+  }
+  .password-error {
+    margin-bottom: $basic-spacing_small;
+    display: flex;
+    align-items: baseline;
+    .s-icon-error {
+      color: var(--s-color-status-error);
+      margin-right: $basic-spacing_mini;
+    }
+    &-message {
+      font-size: $font-size_small;
     }
   }
   > button {
