@@ -8,7 +8,8 @@
           class="action"
           type="primary"
           size="medium"
-          @click="handleNavigate(RouteNames.WalletCreation)"
+          :tooltip="t('comingSoonText')"
+          @click="() => {}/* TODO: coming soon handleNavigate(RouteNames.WalletCreation) */"
         >
           {{ t('connection.create.action') }}
         </s-button>

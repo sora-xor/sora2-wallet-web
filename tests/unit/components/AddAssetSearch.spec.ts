@@ -16,7 +16,7 @@ const store = new Vuex.Store({
     Account: {
       getters: {
         assets: () => [{ symbol: 'XOR', address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984', decimals: 18 }],
-        accountAssets: () => [{ symbol: 'XOR', address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984', balance: '0.123', usdBalance: '234', decimals: 18 }]
+        accountAssets: () => [{ symbol: 'XOR', address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984', balance: '0.123', decimals: 18 }]
       },
       actions: {
         getAssets: jest.fn(),
