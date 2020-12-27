@@ -31,7 +31,7 @@
         </div>
         <div v-if="validAddress && valudAmount" class="wallet-send-fee s-flex">
           <span>{{ t('walletSend.fee') }}</span>
-          <span class="wallet-send-fee_value">{{ fee }} XOR</span>
+          <span class="wallet-send-fee_value">{{ fee }} {{ KnownSymbols.XOR }}</span>
         </div>
         <s-button class="wallet-send-action" type="primary" :disabled="!validAddress || !valudAmount" @click="step = 2">
           <template v-if="!validAddress">
@@ -60,7 +60,7 @@
           <s-divider />
           <div class="wallet-send-fee s-flex">
             <span>{{ t('walletSend.fee') }}</span>
-            <span class="wallet-send-fee_value">{{ fee }} XOR</span>
+            <span class="wallet-send-fee_value">{{ fee }} {{ KnownSymbols.XOR }}</span>
           </div>
         </div>
         <s-button class="wallet-send-action" type="primary" @click="handleSend">
@@ -74,7 +74,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, FPNumber } from '@sora-substrate/util'
+import { AccountAsset, FPNumber, KnownSymbols } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
@@ -88,6 +88,8 @@ import { dexApi } from '../api'
   }
 })
 export default class WalletSend extends Mixins(TranslationMixin) {
+  readonly KnownSymbols = KnownSymbols
+
   @Getter currentRouteParams!: any
   @Getter account!: any
   @Action navigate
