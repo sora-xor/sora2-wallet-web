@@ -27,7 +27,7 @@
       <s-icon :class="getStatusClass(item.status)" :name="getStatusIcon(item.status)" size="20px" />
     </div>
   </div>
-  <div v-else class="history-empty">{{ t('history.empty') }}</div>
+  <div v-else class="history-empty">{{ /* t('history.empty') */ t('comingSoonText') }}</div>
 </template>
 
 <script lang="ts">

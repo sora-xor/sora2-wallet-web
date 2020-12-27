@@ -3,7 +3,7 @@ import flatMap from 'lodash/fp/flatMap'
 import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
-import { AccountAsset } from '@sora-substrate/util'
+import { AccountAsset, KnownAssets } from '@sora-substrate/util'
 
 import * as accountApi from '../api/account'
 import { dexApi } from '../api'
@@ -15,7 +15,8 @@ const types = flow(
   concat([
     'RESET',
     'LOGOUT',
-    'LOGIN'
+    'LOGIN',
+    'CHANGE_NAME'
   ]),
   map(x => [x, x]),
   fromPairs
@@ -207,6 +208,10 @@ const mutations = {
 
   [types.POLKADOT_JS_IMPORT_REQUEST] (state) {},
 
+  [types.CHANGE_NAME] (state, newName) {
+    state.name = newName
+  },
+
   [types.POLKADOT_JS_IMPORT_SUCCESS] (state, account) {
     state.address = account.address
     state.name = account.name
@@ -325,10 +330,6 @@ const actions = {
   async searchAsset ({ commit }, { address }) {
     commit(types.SEARCH_ASSET_REQUEST)
     try {
-      if (dexApi.accountAssets.find(asset => asset.address === address)) {
-        return null
-      }
-      // TODO: we will remove this check later and add the ability to register asset by valid address
       const assets = await dexApi.getAssets()
       const asset = assets.find(asset => asset.address === address)
       commit(types.SEARCH_ASSET_SUCCESS)
@@ -337,10 +338,10 @@ const actions = {
       commit(types.SEARCH_ASSET_FAILURE)
     }
   },
-  async addAsset ({ commit }, { asset }) {
+  async addAsset ({ commit }, { address }) {
     commit(types.ADD_ASSET_REQUEST)
     try {
-      await dexApi.getAccountAsset(asset.address)
+      await dexApi.getAccountAsset(address)
       commit(types.ADD_ASSET_SUCCESS)
     } catch (error) {
       commit(types.ADD_ASSET_FAILURE)
@@ -381,6 +382,14 @@ const actions = {
   login ({ commit }, { name, password, seed }) {
     dexApi.importAccount(seed, name, password)
     commit(types.LOGIN, { name, password, address: dexApi.accountPair.address })
+  },
+  changeName ({ commit, state: { name } }, { newName }) {
+    const value = `${newName}`.trim()
+    if (!value || name === value) {
+      return
+    }
+    commit(types.CHANGE_NAME, newName)
+    dexApi.changeName(newName)
   },
   logout ({ commit }) {
     dexApi.logout()

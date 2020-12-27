@@ -13,7 +13,7 @@
         {{ t(`addAsset.${AddAssetTabs.Search}.info`) }}
       </div>
       <div v-if="search && !foundAssets.length" class="asset-search-list_empty">
-        {{ t(`addAsset.${AddAssetTabs.Search}.empty`) }}
+        {{ t(`addAsset.${alreadyAttached ? 'alreadyAttached' : 'empty'}`) }}
       </div>
       <div
         class="asset s-flex"
@@ -64,12 +64,14 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
   search = ''
   selectedAsset: NamedAsset | null = null
   foundAssets: Array<NamedAsset> = []
+  alreadyAttached = false
 
   mounted (): void {
     this.getAssets().then(this.handleSearch)
   }
 
   handleSearch (value?: string): void {
+    this.alreadyAttached = false
     const assets = this.assets
       .filter(asset => !this.accountAssets.find(accountAsset => accountAsset.address === asset.address))
       .map(asset => ({ ...asset, name: this.t(`assetNames.${asset.symbol}`) }))
@@ -79,6 +81,12 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
       return
     }
     const search = value.trim().toLowerCase()
+    if (this.accountAssets.find(({ symbol }) => (symbol || '').toLowerCase() === search || this.t(`assetNames.${symbol}`).toLowerCase() === search)) {
+      this.alreadyAttached = true
+      this.foundAssets = []
+      this.selectedAsset = null
+      return
+    }
     this.foundAssets = assets.filter(({ name, symbol }) => {
       return symbol.toLowerCase().includes(search) || name.toLowerCase().includes(search)
     })
