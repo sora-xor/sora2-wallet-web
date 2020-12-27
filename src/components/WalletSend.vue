@@ -8,6 +8,7 @@
           :placeholder="t('walletSend.address')"
           border-radius="mini"
           v-model="address"
+          @change="calcFee"
         />
         <div class="wallet-send-amount">
           <div class="input-line">
@@ -18,7 +19,7 @@
             </div>
           </div>
           <div class="input-line">
-            <s-input placeholder="0.00" v-model="amount" v-float class="s-input--token-value" />
+            <s-input placeholder="0.00" v-model="amount" v-float class="s-input--token-value" @change="calcFee" />
             <div class="asset s-flex">
               <s-button class="asset-max" type="tertiary" size="small" border-radius="mini" @click="amount = asset.balance">
                 {{ t('walletSend.max') }}
@@ -28,16 +29,16 @@
             </div>
           </div>
         </div>
-        <div class="wallet-send-fee s-flex">
+        <div v-if="validAddress && valudAmount" class="wallet-send-fee s-flex">
           <span>{{ t('walletSend.fee') }}</span>
-          <span class="wallet-send-fee_value">0.001 XOR {{ /* TODO: for now it's a static field; add real numbers later */ }}</span>
+          <span class="wallet-send-fee_value">{{ fee }} XOR</span>
         </div>
         <s-button class="wallet-send-action" type="primary" :disabled="!validAddress || !valudAmount" @click="step = 2">
           <template v-if="!validAddress">
-            {{ t('walletSend.noAddress') }}
+            {{ t(`walletSend.${emptyAddress ? 'noAddress' : 'badAddress'}`) }}
           </template>
           <template v-else-if="!valudAmount">
-            {{ t('walletSend.insufficientBalance') }}
+            {{ t(`walletSend.${emptyAmount ? 'noAmount' : 'badAmount'}`) }}
           </template>
           <template v-else>
             {{ t('walletSend.title') }}
@@ -59,7 +60,7 @@
           <s-divider />
           <div class="wallet-send-fee s-flex">
             <span>{{ t('walletSend.fee') }}</span>
-            <span class="wallet-send-fee_value">0.001 XOR {{ /* TODO: for now it's a static field; add real numbers later */ }}</span>
+            <span class="wallet-send-fee_value">{{ fee }} XOR</span>
           </div>
         </div>
         <s-button class="wallet-send-action" type="primary" @click="handleSend">
@@ -73,12 +74,12 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset } from '@sora-substrate/util'
+import { AccountAsset, FPNumber } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
-import { getAssetIconClasses } from '../util'
+import { formatAddress, getAssetIconClasses } from '../util'
 import { dexApi } from '../api'
 
 @Component({
@@ -95,21 +96,42 @@ export default class WalletSend extends Mixins(TranslationMixin) {
   step = 1
   address = ''
   amount = ''
+  fee = '0'
 
   get asset (): AccountAsset {
     return this.currentRouteParams.asset
   }
 
-  get validAddress (): boolean {
+  get emptyAddress (): boolean {
     if (!this.address.trim()) {
+      return true
+    }
+    return false
+  }
+
+  get validAddress (): boolean {
+    if (this.emptyAddress) {
       return false
     }
-    return true // TODO: add check address function, also it should include from === to check
+    return dexApi.checkAddress(this.address) // TODO: also it should include from === to check
+  }
+
+  get emptyAmount (): boolean {
+    return new FPNumber(this.amount, this.asset.decimals).isZero()
   }
 
   get valudAmount (): boolean {
-    const amount = Number(this.amount)
-    return amount > 0 && amount <= Number(this.asset.balance)
+    const amount = new FPNumber(this.amount, this.asset.decimals)
+    const balance = new FPNumber(this.asset.balance, this.asset.decimals)
+    return amount.isFinity() && !amount.isZero() && (FPNumber.lt(amount, balance) || FPNumber.eq(amount, balance))
+  }
+
+  async calcFee (): Promise<void> {
+    if (!(this.validAddress && this.valudAmount)) {
+      this.fee = '0'
+      return
+    }
+    this.fee = await dexApi.getTransferNetworkFee(this.asset.address, this.address, this.amount)
   }
 
   getAssetClasses = getAssetIconClasses
@@ -126,6 +148,7 @@ export default class WalletSend extends Mixins(TranslationMixin) {
     try {
       await this.transfer({ to: this.address, amount: this.amount })
       this.navigate({ name: RouteNames.Wallet })
+      this.$notify({ message: this.t('walletSend.success'), title: this.t('successText'), type: 'success' })
     } catch (error) {
       this.$alert(this.t(error.message), this.t('errorText'))
     }
@@ -241,7 +264,6 @@ export default class WalletSend extends Mixins(TranslationMixin) {
   &-fee {
     align-items: center;
     margin-top: $basic-spacing_mini;
-    margin-bottom: $basic-spacing;
     width: 100%;
     padding-right: $basic-spacing_mini;
     padding-left: $basic-spacing_mini;
@@ -252,6 +274,7 @@ export default class WalletSend extends Mixins(TranslationMixin) {
     }
   }
   &-action {
+    margin-top: $basic-spacing;
     width: 100%;
   }
   .confirm {
@@ -283,6 +306,7 @@ export default class WalletSend extends Mixins(TranslationMixin) {
     }
     &-to {
       margin-top: $basic-spacing_mini;
+      overflow-wrap: break-word;
     }
     &-from, &-to {
       // It's set to small size cuz we need to show full address

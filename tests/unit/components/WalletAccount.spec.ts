@@ -10,7 +10,8 @@ const store = new Vuex.Store({
   modules: {
     Account: {
       actions: {
-        logout: jest.fn()
+        logout: jest.fn(),
+        changeName: jest.fn()
       },
       getters: {
         account: () => ({

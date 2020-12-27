@@ -6,15 +6,15 @@
           <i :class="getAssetClasses(asset.symbol)" />
           <div class="amount s-flex">
             <div class="amount-value">{{ formatAmount(asset) }}</div>
-            <div class="amount-converted">{{ formatConvertedAmount(asset) }}</div>
+            <!-- TODO: coming soon <div class="amount-converted">{{ formatConvertedAmount(asset) }}</div> -->
           </div>
-          <!-- TODO: Add Send Button here -->
           <s-button
             class="swap"
             type="primary"
             size="small"
             icon="arrow-top-right-rounded"
             icon-position="right"
+            :disabled="isZeroBalance(asset)"
             @click="handleAssetSend(asset)"
           >
             {{ t('assets.send') }}
@@ -44,7 +44,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { AccountAsset } from '@sora-substrate/util'
+import { AccountAsset, FPNumber } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'
@@ -79,8 +79,12 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin)
     return `${asset.balance} ${asset.symbol}`
   }
 
+  isZeroBalance (asset: AccountAsset): boolean {
+    return new FPNumber(asset.balance, asset.decimals).isZero()
+  }
+
   formatConvertedAmount (asset: AccountAsset): string {
-    return `$${asset.usdBalance} USD`
+    return '- USD'
   }
 
   handleAssetSwap (asset: AccountAsset): void {

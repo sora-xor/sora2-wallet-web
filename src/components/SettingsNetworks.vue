@@ -24,7 +24,8 @@
           <s-button
             type="secondary"
             size="small"
-            @click="createNetwork"
+            :tooltip="t('comingSoonText')"
+            @click="() => {}/* TODO: coming soon createNetwork */"
           >
             {{ t('settings.networks.create') }}
           </s-button>

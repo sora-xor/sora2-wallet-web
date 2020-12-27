@@ -108,19 +108,7 @@ exports[`WalletSend.vue should renders correctly 1`] = `
       </div>
     </div>
      
-    <div
-      class="wallet-send-fee s-flex"
-    >
-      <span>
-        
-      </span>
-       
-      <span
-        class="wallet-send-fee_value"
-      >
-        0.001 XOR 
-      </span>
-    </div>
+    <!---->
      
     <s-button-stub
       borderradius="small"
