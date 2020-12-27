@@ -37,6 +37,9 @@ export const copyToClipboard = async (text: string) => {
   }
 }
 
+export const formatAddress = (address: string) =>
+  `${address.slice(0, address.length / 4)}...${address.slice(address.length / 2 + address.length / 4)}`
+
 export const formatDate = (date: number) => moment(date).format('DD.MM.YYYY, h:mm:ss')
 
 export const getAssetIconClasses = (symbol: string) => {

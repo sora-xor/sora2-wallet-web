@@ -66,7 +66,7 @@ exports[`WalletCreation.vue should renders correctly 1`] = `
       placement="bottom-end"
       popperclass="info-tooltip info-tooltip--header"
       tabindex="0"
-      theme="light"
+      theme="auto"
     >
       <s-button-stub
         borderradius="small"

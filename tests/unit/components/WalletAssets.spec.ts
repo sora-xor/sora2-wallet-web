@@ -22,7 +22,6 @@
 //             symbol: 'XOR',
 //             address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984',
 //             balance: 12787.09,
-//             usdBalance: 6345.23,
 //             decimals: 18
 //           }
 //         ]),

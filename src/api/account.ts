@@ -34,12 +34,12 @@ const assetsMock = [{
 }]
 const assetDetailsMock = {
   XOR: [
-    { id: 1, operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'IN_PROGRESS', date: Date.now() - 3600 },
-    { id: 2, operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'ERROR', date: Date.now() - 3600 },
-    { id: 3, operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'SUCCESS', date: Date.now() - 3600 }
+    // { id: 1, operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'IN_PROGRESS', date: Date.now() - 3600 },
+    // { id: 2, operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'ERROR', date: Date.now() - 3600 },
+    // { id: 3, operation: 'SWAP', fromAmount: 100, toSymbol: 'KSM', toAmount: 24390.1239, status: 'SUCCESS', date: Date.now() - 3600 }
   ],
   ETH: [
-    { id: 4, operation: 'SWAP', fromAmount: 2.2, toSymbol: 'KSM', toAmount: 2439.1239, status: 'SUCCESS', date: Date.now() - 7200 }
+    // { id: 4, operation: 'SWAP', fromAmount: 2.2, toSymbol: 'KSM', toAmount: 2439.1239, status: 'SUCCESS', date: Date.now() - 7200 }
   ],
   KSM: []
 }
@@ -62,7 +62,7 @@ const transactionMock = {
 
 export const getAccountActivity = async (address: string) => {
   return await Promise.resolve(
-    Object.values(assetDetailsMock).flat().map(item => ({ ...item, fromSymbol: 'XOR' }))
+    Object.values(assetDetailsMock).flat().map(item => ({ ...item as any, fromSymbol: 'XOR' }))
   )
 }
 

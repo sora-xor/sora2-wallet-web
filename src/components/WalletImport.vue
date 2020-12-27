@@ -4,7 +4,7 @@
       <template v-if="step === 1">
         <s-select :placeholder="t('import.sourceType.placeholder')" v-model="sourceType" border-radius="mini">
           <s-option
-            v-for="type in SourceTypes"
+            v-for="type in hiddenSourceTypes"
             :key="type"
             :value="type"
             :label="t(`import.sourceType.${type}`)"
@@ -113,6 +113,11 @@ export default class WalletImport extends Mixins(TranslationMixin, LoadingMixin)
     name: '',
     password: '',
     repeatedPassword: ''
+  }
+
+  get hiddenSourceTypes () {
+    // TODO: coming soon
+    return [SourceTypes.PolkadotJs]
   }
 
   get disabled (): boolean {
