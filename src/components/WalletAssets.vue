@@ -8,7 +8,6 @@
             <div class="amount-value">{{ formatAmount(asset) }}</div>
             <div class="amount-converted">{{ formatConvertedAmount(asset) }}</div>
           </div>
-          <!-- TODO: Add Send Button here -->
           <s-button
             class="swap"
             type="primary"
@@ -113,9 +112,11 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin)
     align-items: center;
     .amount {
       flex: 1;
-      max-width: 37%;
       overflow-wrap: break-word;
       flex-direction: column;
+      padding-right: $basic-spacing_small;
+      padding-left: $basic-spacing_mini;
+      width: 30%;
       &-converted {
         @include hint-text;
       }
@@ -124,7 +125,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin)
       padding: 0;
     }
     .asset-logo {
-      margin-right: $basic-spacing;
+      flex-shrink: 0;
       @include asset-logo-styles;
     }
   }
