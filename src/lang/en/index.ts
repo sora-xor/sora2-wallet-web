@@ -121,10 +121,13 @@ export default {
     max: 'MAX',
     fee: 'Transaction Fee',
     noAddress: 'No Address',
-    insufficientBalance: 'Insufficient Balance',
+    badAddress: 'Incorrect Address',
+    noAmount: 'No Amount',
+    badAmount: 'Incorrect Amount',
     confirmTitle: 'Confirm transaction',
     confirm: '@:confirmText',
-    errorAddress: 'Invalid address! Please check it and try again...'
+    errorAddress: 'Invalid address! Please check it and try again...',
+    success: 'Transaction was submitted!'
   },
   account: {
     successCopy: 'Wallet address has been copied to the clipboard',
@@ -189,14 +192,15 @@ export default {
     [AddAssetTabs.Search]: {
       title: '@:searchText',
       placeholder: 'Search Asset Name, Symbol, or Address',
-      info: 'Add the tokens you\'ve acquired using MetaMask',
-      empty: 'No tokens found'
+      info: 'Add the tokens you\'ve acquired using MetaMask'
     },
     [AddAssetTabs.Custom]: {
       title: 'Custom token',
       addressPlaceholder: '@:addressText',
       symbolPlaceholder: 'Asset symbol'
-    }
+    },
+    empty: 'No tokens found',
+    alreadyAttached: 'Token was already attached'
   },
   transaction: {
     title: 'Transaction details',

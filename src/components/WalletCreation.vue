@@ -15,7 +15,6 @@
         popper-class="info-tooltip info-tooltip--header"
         :content="t('comingSoonText')"
         border-radius="mini"
-        theme="light"
         placement="bottom-end"
         animation="none"
         :show-arrow="false"

@@ -22,24 +22,9 @@ exports[`AddAssetCustom.vue should renders correctly 1`] = `
     value=""
   />
    
-  <s-input-stub
-    accept=""
-    autocomplete="off"
-    borderradius="mini"
-    class="asset-custom-symbol"
-    form=""
-    label=""
-    maxlength="10"
-    name=""
-    placeholder=""
-    prefix=""
-    readonly="true"
-    size="big"
-    suffix=""
-    tabindex=""
-    type="text"
-    value=""
-  />
+  <!---->
+   
+  <!---->
    
   <div
     class="asset-custom-actions s-flex"

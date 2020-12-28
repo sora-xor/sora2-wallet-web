@@ -9,6 +9,7 @@
       @change="handleSearch"
     />
     <s-input
+      v-if="symbol"
       class="asset-custom-symbol"
       :maxlength="10"
       :placeholder="t(`addAsset.${AddAssetTabs.Custom}.symbolPlaceholder`)"
@@ -16,6 +17,9 @@
       readonly
       v-model="symbol"
     />
+    <div v-if="address && !symbol" class="asset-custom-empty">
+      {{ t(`addAsset.${alreadyAttached ? 'alreadyAttached' : 'empty'}`) }}
+    </div>
     <div class="asset-custom-actions s-flex">
       <s-button @click="handleBack">{{ t('addAsset.cancel') }}</s-button>
       <s-button type="primary" :disabled="!(symbol && address)" @click="handleAddAsset">
@@ -27,8 +31,8 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
-import { Asset } from '@sora-substrate/util'
+import { Getter, Action } from 'vuex-class'
+import { AccountAsset, Asset } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { AddAssetTabs, RouteNames } from '../consts'
@@ -38,6 +42,7 @@ import { getAssetIconClasses } from '../util'
 export default class AddAssetCustom extends Mixins(TranslationMixin) {
   readonly AddAssetTabs = AddAssetTabs
 
+  @Getter accountAssets!: Array<AccountAsset>
   @Action navigate
   @Action searchAsset
   @Action addAsset
@@ -45,15 +50,24 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
   address = ''
   symbol = ''
   selectedAsset: Asset | null = null
+  alreadyAttached = false
 
   async handleSearch (value: string): Promise<void> {
+    this.alreadyAttached = false
     if (!value.trim()) {
       this.selectedAsset = null
       this.symbol = ''
       return
     }
     const search = value.trim().toLowerCase()
-    this.selectedAsset = await this.searchAsset({ search })
+    const asset = await this.searchAsset({ address: search })
+    if (this.accountAssets.find(({ address }) => address.toLowerCase() === search)) {
+      this.selectedAsset = null
+      this.symbol = ''
+      this.alreadyAttached = true
+      return
+    }
+    this.selectedAsset = asset
     if (this.selectedAsset && this.selectedAsset.symbol) {
       this.symbol = this.selectedAsset.symbol
     } else {
@@ -79,6 +93,9 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
 .asset-custom {
   > * {
     margin-top: $basic-spacing;
+  }
+  &-empty {
+    @include hint-text;
   }
   &-actions {
     > * {

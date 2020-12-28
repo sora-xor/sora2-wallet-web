@@ -23,7 +23,7 @@ export const DEFAULT_NETWORKS: Array<Network> = [{
   id: 1,
   name: 'SORA-Substrate Testnet',
   address: 'wss://ws.stage.sora2.soramitsu.co.jp',
-  explorer: 'https://subscan.io',
+  explorer: 'https://polkascan.io',
   editable: false
 }]
 

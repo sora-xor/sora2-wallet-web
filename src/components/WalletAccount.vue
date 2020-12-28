@@ -3,11 +3,20 @@
     <div class="account s-flex">
       <div class="account-avatar" />
       <div class="account-credentials s-flex">
-        <div v-if="name" class="account-credentials_name">{{ name }}</div>
+        <div
+          ref="editNameEl"
+          v-if="name"
+          class="account-credentials_name"
+          :contenteditable="isEditNameOperation"
+          @keydown.enter.prevent
+          @input="handleNameChange"
+          @blur="handleNameInputBlur"
+        >
+          {{ name }}
+        </div>
         <div class="account-credentials_address">{{ account.address }}</div>
       </div>
       <s-button class="account-copy" size="medium" type="link" icon="copy" @click="handleCopyAddress" />
-      <!-- TODO: Fix theme of dropdown tooltip (make it white in this context) -->
       <s-dropdown
         v-if="showMenu"
         class="account-menu"
@@ -23,6 +32,7 @@
             v-for="menuItem in AccountMenu"
             :key="menuItem"
             :value="menuItem"
+            :disabled="/* TODO: coming soon */ menuItem === AccountMenu.View"
           >
             <span>{{ t(`account.menu.${menuItem}`) }}</span>
           </s-dropdown-item>
@@ -33,7 +43,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Component, Mixins, Prop, Ref } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
@@ -47,9 +57,14 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
   @Getter account!: any
   @Action logout
   @Action navigate
+  @Action changeName
 
   @Prop({ default: '', type: String }) readonly name!: string
   @Prop({ default: false, type: Boolean }) readonly showMenu!: boolean
+  @Ref('editNameEl') editNameEl!: HTMLDivElement
+
+  accountName = this.name
+  isEditNameOperation = false
 
   async handleCopyAddress (): Promise<void> {
     try {
@@ -68,15 +83,43 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
     }
   }
 
-  handleMenuSelect (selected: AccountMenu): void {
+  async handleMenuSelect (selected: AccountMenu): Promise<void> {
     switch (selected) {
       case AccountMenu.View:
+        break
       case AccountMenu.Edit:
+        await this.enableNameEdit()
         break
       case AccountMenu.Logout:
         this.navigate({ name: RouteNames.WalletConnection })
         this.logout()
         break
+    }
+  }
+
+  handleNameInputBlur (): void {
+    this.isEditNameOperation = false
+    this.changeName({ newName: this.accountName })
+  }
+
+  handleNameChange (e: any): void {
+    const newName = e.target.innerText
+    this.accountName = newName
+    if (!newName) {
+      this.editNameEl.innerText = this.name
+    }
+  }
+
+  private async enableNameEdit (): Promise<void> {
+    this.isEditNameOperation = true
+    await new Promise(resolve => setTimeout(resolve, 10))
+    const range = document.createRange()
+    range.selectNodeContents(this.editNameEl)
+    range.collapse(false)
+    const selection = window.getSelection()
+    if (selection) {
+      selection.removeAllRanges()
+      selection.addRange(range)
     }
   }
 }
@@ -115,6 +158,8 @@ $avatar-size: 32px;
     }
     &_name {
       font-size: $font-size_basic;
+      outline: none;
+      white-space: nowrap;
     }
     &_address {
       @include hint-text;
