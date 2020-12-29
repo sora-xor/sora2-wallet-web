@@ -21,7 +21,7 @@
           <div class="input-line">
             <s-input placeholder="0.00" v-model="amount" v-float class="s-input--token-value" @change="calcFee" />
             <div class="asset s-flex">
-              <s-button class="asset-max" type="tertiary" size="small" border-radius="mini" @click="amount = asset.balance">
+              <s-button class="asset-max" type="tertiary" size="small" border-radius="mini" @click="handleMaxClick">
                 {{ t('walletSend.max') }}
               </s-button>
               <i :class="getAssetClasses(asset.symbol)" />
@@ -33,12 +33,15 @@
           <span>{{ t('walletSend.fee') }}</span>
           <span class="wallet-send-fee_value">{{ fee }} {{ KnownSymbols.XOR }}</span>
         </div>
-        <s-button class="wallet-send-action" type="primary" :disabled="!validAddress || !valudAmount" @click="step = 2">
+        <s-button class="wallet-send-action" type="primary" :disabled="!validAddress || !valudAmount || !hasEnoughXor" @click="step = 2">
           <template v-if="!validAddress">
             {{ t(`walletSend.${emptyAddress ? 'noAddress' : 'badAddress'}`) }}
           </template>
           <template v-else-if="!valudAmount">
-            {{ t(`walletSend.${emptyAmount ? 'noAmount' : 'badAmount'}`) }}
+            {{ t(`walletSend.${emptyAmount ? 'noAmount' : 'badAmount'}`, emptyAmount ? {} : { symbol: asset.symbol }) }}
+          </template>
+          <template v-else-if="!hasEnoughXor">
+            {{ t('walletSend.badAmount', { symbol: KnownSymbols.XOR }) }}
           </template>
           <template v-else>
             {{ t('walletSend.title') }}
@@ -74,7 +77,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, FPNumber, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
@@ -92,6 +95,7 @@ export default class WalletSend extends Mixins(TranslationMixin) {
 
   @Getter currentRouteParams!: any
   @Getter account!: any
+  @Getter accountAssets!: Array<AccountAsset>
   @Action navigate
   @Action transfer
 
@@ -115,7 +119,7 @@ export default class WalletSend extends Mixins(TranslationMixin) {
     if (this.emptyAddress) {
       return false
     }
-    return dexApi.checkAddress(this.address) // TODO: also it should include from === to check
+    return dexApi.checkAddress(this.address) && this.account.address !== this.address
   }
 
   get emptyAmount (): boolean {
@@ -128,12 +132,28 @@ export default class WalletSend extends Mixins(TranslationMixin) {
     return amount.isFinity() && !amount.isZero() && (FPNumber.lt(amount, balance) || FPNumber.eq(amount, balance))
   }
 
-  async calcFee (): Promise<void> {
-    if (!(this.validAddress && this.valudAmount)) {
-      this.fee = '0'
-      return
+  get hasEnoughXor (): boolean {
+    const xor = KnownAssets.get(KnownSymbols.XOR)
+    const fee = new FPNumber(this.fee, xor.decimals)
+    if (this.asset.symbol === KnownSymbols.XOR) {
+      const amount = new FPNumber(this.amount, this.asset.decimals)
+      const balance = new FPNumber(this.asset.balance, this.asset.decimals)
+      return FPNumber.lt(fee, balance.sub(amount)) || FPNumber.eq(fee, balance.sub(amount))
     }
-    this.fee = await dexApi.getTransferNetworkFee(this.asset.address, this.address, this.amount)
+    const accountXor = this.accountAssets.find(item => item.symbol === KnownSymbols.XOR)
+    if (!accountXor) {
+      return false
+    }
+    const balance = new FPNumber(accountXor.balance, xor.decimals)
+    return FPNumber.lt(fee, balance) || FPNumber.eq(fee, balance)
+  }
+
+  async calcFee (): Promise<void> {
+    this.fee = await dexApi.getTransferNetworkFee(
+      this.asset.address,
+      this.validAddress ? this.address : '',
+      this.valudAmount ? this.amount : 0
+    )
   }
 
   getAssetClasses = getAssetIconClasses
@@ -144,6 +164,17 @@ export default class WalletSend extends Mixins(TranslationMixin) {
       return
     }
     this.navigate({ name: RouteNames.Wallet })
+  }
+
+  async handleMaxClick (): Promise<void> {
+    if (this.asset.symbol === KnownSymbols.XOR) {
+      await this.calcFee()
+      const balance = new FPNumber(this.asset.balance, this.asset.decimals)
+      const fee = new FPNumber(this.fee, this.asset.decimals)
+      this.amount = balance.sub(fee).toString()
+      return
+    }
+    this.amount = this.asset.balance
   }
 
   async handleSend (): Promise<void> {
