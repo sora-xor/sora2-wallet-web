@@ -46,12 +46,7 @@ export default class SoraNeoWallet extends Mixins(LoadingMixin) {
   @Action navigate
 
   async created (): Promise<void> {
-    this.withLoading(async () => {
-      if (!(dexApi.api && dexApi.api.isConnected)) {
-        await dexApi.initialize()
-        console.info('Connected to blockchain', dexApi.endpoint)
-      }
-    })
+    this.withApi(() => {}) // We need it just for loading state
   }
 
   mounted (): void {

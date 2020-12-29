@@ -28,9 +28,7 @@
 //         isExternal: () => false
 //       },
 //       actions: {
-//         getAccountAssets: jest.fn(),
-//         updateAccountAssets: jest.fn(),
-//         getSigner: jest.fn()
+//         getAccountAssets: jest.fn()
 //       }
 //     },
 //     Router: {
