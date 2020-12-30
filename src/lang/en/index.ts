@@ -123,7 +123,7 @@ export default {
     noAddress: 'No Address',
     badAddress: 'Incorrect Address',
     noAmount: 'No Amount',
-    badAmount: 'Incorrect Amount',
+    badAmount: 'Insufficient {symbol} Balance',
     confirmTitle: 'Confirm transaction',
     confirm: '@:confirmText',
     errorAddress: 'Invalid address! Please check it and try again...',

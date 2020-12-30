@@ -54,21 +54,11 @@ import { getAssetIconClasses } from '../util'
 @Component
 export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin) {
   @Getter accountAssets!: Array<AccountAsset>
-  @Getter isExternal!: boolean
   @Action getAccountAssets
-  @Action updateAccountAssets
   @Action navigate
-  @Action getSigner
 
   async mounted (): Promise<void> {
-    const loadAndUpdateAssets = async () => {
-      if (this.isExternal) {
-        await this.getSigner()
-      }
-      await this.getAccountAssets()
-      await this.updateAccountAssets()
-    }
-    this.withApi(loadAndUpdateAssets)
+    this.withApi(this.getAccountAssets)
   }
 
   getAssetClasses (symbol: string): string {

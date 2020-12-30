@@ -11,11 +11,16 @@ import Vue from 'vue'
 import { Component, Mixins } from 'vue-property-decorator'
 
 import SoraNeoWallet from './SoraNeoWallet.vue'
+import { initWallet } from './index'
 
 @Component({
   components: { SoraNeoWallet }
 })
 export default class App extends Vue {
+  created (): void {
+    const withoutExternalStore = true
+    initWallet(withoutExternalStore) // We don't need storage for local development
+  }
 }
 </script>
 
