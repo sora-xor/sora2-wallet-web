@@ -118,7 +118,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
 <style scoped lang="scss">
 @import '../styles/icons';
 
-$asset-list-height: 350px;
+$asset-item-height: 71px;
 
 .asset-search {
   margin-top: $basic-spacing;
@@ -126,9 +126,10 @@ $asset-list-height: 350px;
     margin-bottom: $basic-spacing;
   }
   &-list {
-    height: $asset-list-height;
+    height: calc(#{$asset-item-height} * 5);
     overflow-y: auto;
-    margin-bottom: $basic-spacing;
+    margin-left: -#{$basic-spacing_big};
+    margin-right: -#{$basic-spacing_big};
     &_info,
     &_empty {
       @include hint-text;
@@ -138,29 +139,27 @@ $asset-list-height: 350px;
     }
     .asset {
       align-items: center;
-      padding: $basic-spacing_mini / 2;
-      margin-right: $basic-spacing_mini / 2;
-      // TODO: Add styles as for DEX Search popup
+      height: $asset-item-height;
+      padding: 0 $basic-spacing_big;
       &:hover, &.selected {
         background-color: var(--s-color-base-background-hover);
         cursor: pointer;
       }
       &-logo {
         margin-right: $basic-spacing;
-        @include asset-logo-styles;
+        @include asset-logo-styles(40px);
       }
       &-description {
         flex: 1;
         flex-direction: column;
+        line-height: $line-height_medium;
         &_name {
-          font-weight: bold;
+          font-feature-settings: $s-font-feature-settings-common;
+          @include font-weight(600)
         }
         &_symbol {
           @include hint-text;
         }
-      }
-      &:not(:last-child) {
-        margin-bottom: $basic-spacing / 2;
       }
     }
   }

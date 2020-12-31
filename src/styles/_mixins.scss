@@ -95,6 +95,9 @@
           #{$tabs-class}__item {
             height: $tabs-item-height;
             line-height: $tabs-item-height;
+            font-weight: normal;
+            font-feature-settings: $s-font-feature-settings-title;
+            @include font-weight(600, true);
             &:hover {
               background-color: var(--s-color-base-background-hover);
             }
