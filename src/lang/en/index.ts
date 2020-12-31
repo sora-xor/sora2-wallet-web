@@ -45,7 +45,7 @@ export default {
     [SourceTypes.PolkadotJs]: 'Polkadot.js'
   },
   connection: {
-    title: 'Connect to a wallet',
+    title: 'Connect wallet',
     create: {
       title: 'Create a new wallet',
       hint: 'This will create a new wallet and a seed phrase',
@@ -122,12 +122,12 @@ export default {
     fee: 'Transaction Fee',
     noAddress: 'No Address',
     badAddress: 'Incorrect Address',
-    noAmount: 'No Amount',// is this a term of some sort? 
+    noAmount: 'No Amount',
     badAmount: 'Insufficient {symbol} Balance',
     confirmTitle: 'Confirm transaction',
     confirm: '@:confirmText',
     errorAddress: 'Invalid address. Please check it and try again.',
-    success: 'Transaction was submitted!'
+    success: 'Transaction was submitted'
   },
   account: {
     successCopy: 'Wallet address is copied to the clipboard',
