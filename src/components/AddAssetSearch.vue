@@ -134,6 +134,8 @@ $asset-item-height: 71px;
     &_info,
     &_empty {
       @include hint-text;
+      padding-left: $basic-spacing_big;
+      padding-right: $basic-spacing_big;
     }
     &_empty {
       text-align: center;
