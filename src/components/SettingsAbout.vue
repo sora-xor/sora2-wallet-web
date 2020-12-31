@@ -51,8 +51,7 @@ export default class SettingsAbout extends Mixins(TranslationMixin) {
   @Action navigate
 
   get appInfo (): string {
-    const year = new Date().getFullYear()
-    return `Sora2 Wallet ${year}`
+    return 'SORA Wallet'
   }
 
   handleBack (): void {
