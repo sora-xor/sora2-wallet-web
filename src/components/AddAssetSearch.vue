@@ -25,7 +25,7 @@
         <i :class="getAssetClasses(asset.symbol)" />
         <div class="asset-description s-flex">
           <div class="asset-description_name">{{ asset.name }}</div>
-          <div class="asset-description_symbol">{{ asset.symbol }}</div>
+          <div class="asset-description_symbol">{{ asset.symbol === KnownSymbols.USD ? 'USDT' : asset.symbol }}</div>
         </div>
       </div>
     </div>
@@ -43,7 +43,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, Asset } from '@sora-substrate/util'
+import { AccountAsset, Asset, KnownSymbols } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { AddAssetTabs, RouteNames } from '../consts'
@@ -54,6 +54,7 @@ type NamedAsset = Asset & { name: string }
 @Component
 export default class AddAssetSearch extends Mixins(TranslationMixin) {
   readonly AddAssetTabs = AddAssetTabs
+  readonly KnownSymbols = KnownSymbols
 
   @Getter assets!: Array<Asset>
   @Getter accountAssets!: Array<AccountAsset>

@@ -44,7 +44,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { AccountAsset, FPNumber } from '@sora-substrate/util'
+import { AccountAsset, FPNumber, KnownSymbols } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'
@@ -66,7 +66,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin)
   }
 
   formatAmount (asset: AccountAsset): string {
-    return `${asset.balance} ${asset.symbol}`
+    return `${asset.balance} ${asset.symbol === KnownSymbols.USD ? 'USDT' : asset.symbol}`
   }
 
   isZeroBalance (asset: AccountAsset): boolean {

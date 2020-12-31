@@ -32,7 +32,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { AccountAsset, Asset } from '@sora-substrate/util'
+import { AccountAsset, Asset, KnownSymbols } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { AddAssetTabs, RouteNames } from '../consts'
@@ -69,7 +69,7 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
     }
     this.selectedAsset = asset
     if (this.selectedAsset && this.selectedAsset.symbol) {
-      this.symbol = this.selectedAsset.symbol
+      this.symbol = this.selectedAsset.symbol === KnownSymbols.USD ? 'USDT' : this.selectedAsset.symbol
     } else {
       this.selectedAsset = null
       this.symbol = ''
