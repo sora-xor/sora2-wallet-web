@@ -5,7 +5,7 @@ import { AccountMenu, AddAssetTabs, PasswordCondition, SourceTypes, WalletTabs, 
 export default {
   closeText: 'Close',
   backText: 'Back',
-  createWalletText: 'Create a wallet',
+  createWalletText: 'Create wallet',
   nameText: 'Name',
   nextText: 'Next',
   importText: 'Import',
@@ -29,7 +29,7 @@ export default {
     [KnownSymbols.XOR]: 'Sora',
     [KnownSymbols.DOT]: 'Polkadot',
     [KnownSymbols.KSM]: 'Kusama',
-    [KnownSymbols.USD]: 'USD',
+    [KnownSymbols.USD]: 'Tether',
     [KnownSymbols.VAL]: 'Sora Validator Asset',
     [KnownSymbols.PSWAP]: 'Polkaswap'
   },
@@ -53,7 +53,7 @@ export default {
     },
     import: {
       title: 'I already have a seed phrase',
-      hint: 'Import your existing wallet using a mnemonic seed pharse, raw seed or JSON backup file',
+      hint: 'Import your existing wallet using seed phrase, raw seed, JSON backup file or connect your Polkadot.js wallet.',
       action: 'Import wallet'
     }
   },
@@ -168,7 +168,7 @@ export default {
     },
     network: 'Network',
     networks: {
-      desc: 'The default network for Ethereum transactions is the Mainnet',
+      desc: '',
       create: 'Add custom',
       customNetwork: 'Custom network',
       form: {
