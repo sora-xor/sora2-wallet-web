@@ -1,27 +1,50 @@
 @mixin asset-logo-styles($size: 32px) {
+  $tokens-list: "eth", "dot", "ksm", "pswap", "smc", "usdt", "val", "valerc", "xor", "xorerc";
+  $token-background-color: var(--s-color-base-on-accent);
   height: $size;
   width: $size;
-  background-color: var(--s-color-base-border-secondary);
+  background-color: $token-background-color;
   background-image: $asset-logo-default-svg;
   background-size: 60%;
   background-repeat: no-repeat;
   background-position: 50%;
-  border: 1px solid var(--s-color-base-border-secondary);
+  border: 1px solid $token-background-color;
   border-radius: 50%;
   box-shadow: var(--s-shadow-tooltip);
-  &--ksm,
-  &--xor,
+  @each $token in $tokens-list {
+    &--#{$token} {
+      background-size: 100%;
+    }
+  }
   &--eth {
-    background-size: 100%;
+    background-image: $asset-logo-eth-svg;
+  }
+  &--dot {
+    background-image: $asset-logo-dot-svg;
   }
   &--ksm {
     background-image: $asset-logo-ksm-svg;
   }
+  &--pswap {
+    background-image: $asset-logo-pswap-svg;
+  }
+  &--smc {
+    background-image: $asset-logo-smc-svg;
+  }
+  &--usdt {
+    background-image: $asset-logo-usdt-svg;
+  }
+  &--val {
+    background-image: $asset-logo-val-svg;
+  }
+  &--valerc {
+    background-image: $asset-logo-valerc-svg;
+  }
   &--xor {
     background-image: $asset-logo-xor-svg;
   }
-  &--eth {
-    background-image: $asset-logo-eth-svg;
+  &--xorerc {
+    background-image: $asset-logo-xorerc-svg;
   }
 }
 
@@ -72,6 +95,9 @@
           #{$tabs-class}__item {
             height: $tabs-item-height;
             line-height: $tabs-item-height;
+            font-weight: normal;
+            font-feature-settings: $s-font-feature-settings-title;
+            @include font-weight(600, true);
             &:hover {
               background-color: var(--s-color-base-background-hover);
             }

@@ -14,7 +14,7 @@
         >
           {{ name }}
         </div>
-        <div class="account-credentials_address">{{ account.address }}</div>
+        <div class="account-credentials_address">{{ formatAddress(account.address) }}</div>
       </div>
       <s-button class="account-copy" size="medium" type="link" icon="copy" @click="handleCopyAddress" />
       <s-dropdown
@@ -48,7 +48,7 @@ import { Getter, Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { AccountMenu, RouteNames } from '../consts'
-import { copyToClipboard } from '../util'
+import { copyToClipboard, formatAddress } from '../util'
 
 @Component
 export default class WalletAccount extends Mixins(TranslationMixin) {
@@ -108,6 +108,10 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
     if (!newName) {
       this.editNameEl.innerText = this.name
     }
+  }
+
+  formatAddress (address: string): string {
+    return formatAddress(address, 14)
   }
 
   private async enableNameEdit (): Promise<void> {

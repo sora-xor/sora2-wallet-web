@@ -21,7 +21,7 @@ const types = flow(
 
 export const DEFAULT_NETWORKS: Array<Network> = [{
   id: 1,
-  name: 'SORA-Substrate Testnet',
+  name: 'SORA-staging Testnet',
   address: 'wss://ws.stage.sora2.soramitsu.co.jp',
   explorer: 'https://polkascan.io',
   editable: false
