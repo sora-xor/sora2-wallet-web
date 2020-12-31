@@ -1,5 +1,5 @@
 @mixin asset-logo-styles($size: 32px) {
-  $tokens-list: "eth", "dot", "ksm", "pswap", "smc", "usd", "val", "valerc", "xor", "xorerc";
+  $tokens-list: "eth", "dot", "ksm", "pswap", "smc", "usdt", "val", "valerc", "xor", "xorerc";
   $token-background-color: var(--s-color-base-on-accent);
   height: $size;
   width: $size;
