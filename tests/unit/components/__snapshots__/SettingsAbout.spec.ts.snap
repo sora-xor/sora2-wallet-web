@@ -11,7 +11,7 @@ exports[`SettingsAbout.vue should renders correctly 1`] = `
     <span
       class="wallet-settings-about_desc"
     >
-      Sora2 Wallet 2020
+      SORA Wallet
     </span>
      
     <div>

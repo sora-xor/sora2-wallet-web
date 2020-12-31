@@ -34,9 +34,9 @@ export default {
     [KnownSymbols.PSWAP]: 'Polkaswap'
   },
   polkadotjs: {
-    noExtensions: 'There is no Polkadot.js extension. You should install it before continue and reload this page\nhttps://polkadot.js.org/extension/',
-    noAccounts: 'You haven\'t accounts in your Polkadot.js extension. Add the account before continue',
-    noAccount: 'Something was happend with your account. Please check it in the Polkadot JS extension'
+    noExtensions: 'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
+    noAccounts: 'There seems to be no accounts in your Polkadot.js extension. Please add an account and try again.',
+    noAccount: 'Polkadot.js account error. Please check your account in the Polkadot.js extension'
   },
   sourceType: {
     placeholder: 'Source type',
@@ -45,10 +45,10 @@ export default {
     [SourceTypes.PolkadotJs]: 'Polkadot.js'
   },
   connection: {
-    title: 'Connect to a wallet',
+    title: 'Connect wallet',
     create: {
       title: 'Create a new wallet',
-      hint: 'This will create a new wallet and seed phrase',
+      hint: 'This will create a new wallet and a seed phrase',
       action: '@:createWalletText'
     },
     import: {
@@ -61,7 +61,7 @@ export default {
     title: '@:createWalletText',
     name: {
       placeholder: '@:nameText',
-      hint: 'The name for this account and how it will appear under your addresses. With an on-chain identity, it can be made available to others.'
+      hint: 'The name of this account and how it will appear in your addresses. With an on-chain identity, it can be made available to others.'
     },
     sourceType: {
       placeholder: '@:sourceType.placeholder',
@@ -79,11 +79,11 @@ export default {
       [SourceTypes.PolkadotJs]: `@:sourceType.${SourceTypes.PolkadotJs}`
     },
     [SourceTypes.MnemonicSeed]: {
-      placeholder: 'Separate each word with a single space',
+      placeholder: 'Separate each word with a single space. Make sure there are no extra spaces before and after the phrase.',
       hint: 'Enter your secret twelve word phrase here to restore your account.',
       name: {
         placeholder: '@:nameText',
-        hint: 'The name for this account and how it will appear under your addresses. With an on-chain identity, it can be made available to others.'
+        hint: 'The name of this account and how it will appear in your addresses. With an on-chain identity, it can be made available to others.'
       },
       password: {
         placeholder: 'Password',
@@ -126,11 +126,11 @@ export default {
     badAmount: 'Insufficient {symbol} Balance',
     confirmTitle: 'Confirm transaction',
     confirm: '@:confirmText',
-    errorAddress: 'Invalid address! Please check it and try again...',
-    success: 'Transaction was submitted!'
+    errorAddress: 'Invalid address. Please check it and try again.',
+    success: 'Transaction was submitted'
   },
   account: {
-    successCopy: 'Wallet address has been copied to the clipboard',
+    successCopy: 'Wallet address is copied to the clipboard',
     menu: {
       tooltip: '@:menuText',
       [AccountMenu.View]: 'View in Polkascan',
@@ -213,7 +213,7 @@ export default {
     from: 'From',
     to: 'To',
     history: {
-      created: 'Transaction created with value of {amount} {symbol}',
+      created: 'Transaction for {amount} {symbol} has been created.',
       submitted: 'Transaction submitted with fee of {fee} {symbol}',
       confirmed: 'Transaction confirmed'
     }

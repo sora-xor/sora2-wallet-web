@@ -184,7 +184,7 @@ export default class WalletSend extends Mixins(TranslationMixin) {
       }
       await this.transfer({ to: this.address, amount: this.amount })
       this.navigate({ name: RouteNames.Wallet })
-      this.$notify({ message: this.t('walletSend.success'), title: this.t('successText'), type: 'success' })
+      this.$notify({ message: this.t('walletSend.success'), title: '' })
     } catch (error) {
       this.$alert(this.t(error.message, { symbol: KnownSymbols.XOR }), this.t('errorText'))
     }
