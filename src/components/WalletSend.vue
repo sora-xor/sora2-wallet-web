@@ -25,7 +25,7 @@
                 {{ t('walletSend.max') }}
               </s-button>
               <i :class="getAssetClasses(asset.symbol)" />
-              <span class="asset-name">{{ asset.symbol }}</span>
+              <span class="asset-name">{{ asset.symbol === KnownSymbols.USD ? 'USDT' : asset.symbol }}</span>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@
             <span class="confirm-asset-title">{{ amount }}</span>
             <div class="confirm-asset-value s-flex">
               <i :class="getAssetClasses(asset.symbol)" />
-              <span class="asset-name">{{ asset.symbol }}</span>
+              <span class="asset-name">{{ asset.symbol === KnownSymbols.USD ? 'USDT' : asset.symbol }}</span>
             </div>
           </div>
           <div class="confirm-from">{{ account.address }}</div>
@@ -82,7 +82,7 @@ import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substra
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
-import { formatAddress, getAssetIconClasses } from '../util'
+import { getAssetIconClasses } from '../util'
 import { dexApi } from '../api'
 
 @Component({
@@ -179,11 +179,14 @@ export default class WalletSend extends Mixins(TranslationMixin) {
 
   async handleSend (): Promise<void> {
     try {
+      if (!this.hasEnoughXor) {
+        throw new Error('badAmount')
+      }
       await this.transfer({ to: this.address, amount: this.amount })
       this.navigate({ name: RouteNames.Wallet })
-      this.$notify({ message: this.t('walletSend.success'), title: this.t('successText'), type: 'success' })
+      this.$notify({ message: this.t('walletSend.success'), title: '' })
     } catch (error) {
-      this.$alert(this.t(error.message), this.t('errorText'))
+      this.$alert(this.t(error.message, { symbol: KnownSymbols.XOR }), this.t('errorText'))
     }
   }
 }

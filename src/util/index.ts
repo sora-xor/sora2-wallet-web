@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
+import { KnownSymbols } from '@sora-substrate/util'
 
 export const APP_NAME = 'Sora2 Wallet'
 
@@ -37,15 +38,17 @@ export const copyToClipboard = async (text: string) => {
   }
 }
 
-export const formatAddress = (address: string) =>
-  `${address.slice(0, address.length / 4)}...${address.slice(address.length / 2 + address.length / 4)}`
+export const formatAddress = (address: string, length = address.length / 2) => {
+  const center = address.length / 2
+  return `${address.slice(0, center - (length / 2))}...${address.slice(center + (length / 2))}`
+}
 
 export const formatDate = (date: number) => moment(date).format('DD.MM.YYYY, h:mm:ss')
 
 export const getAssetIconClasses = (symbol: string) => {
   const cssClass = 'asset-logo'
   if (symbol) {
-    return `${cssClass} ${cssClass}--${symbol.toLowerCase()}`
+    return `${cssClass} ${cssClass}--${symbol === KnownSymbols.USD ? 'usdt' : symbol.toLowerCase()}`
   }
   return cssClass
 }
