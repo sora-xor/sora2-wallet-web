@@ -180,12 +180,13 @@ export default class WalletSend extends Mixins(TranslationMixin) {
   async handleSend (): Promise<void> {
     try {
       if (!this.hasEnoughXor) {
-        throw new Error('badAmount')
+        throw new Error('walletSend.badAmount')
       }
       await this.transfer({ to: this.address, amount: this.amount })
       this.navigate({ name: RouteNames.Wallet })
       this.$notify({ message: this.t('walletSend.success'), title: '' })
     } catch (error) {
+      // `symbol` parameter will be skipped if it's not needed here
       this.$alert(this.t(error.message, { symbol: KnownSymbols.XOR }), this.t('errorText'))
     }
   }
