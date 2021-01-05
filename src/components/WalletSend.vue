@@ -19,7 +19,7 @@
             </div>
           </div>
           <div class="input-line">
-            <s-input placeholder="0.00" v-model="amount" v-float class="s-input--token-value" @change="calcFee" />
+            <s-input placeholder="0.00" v-model="amount" v-float class="s-input--token-value" @change="calcFee" @blur="resetAmount" />
             <div class="asset s-flex">
               <s-button class="asset-max" type="tertiary" size="small" border-radius="mini" @click="handleMaxClick">
                 {{ t('walletSend.max') }}
@@ -29,15 +29,15 @@
             </div>
           </div>
         </div>
-        <div v-if="validAddress && valudAmount" class="wallet-send-fee s-flex">
+        <div v-if="validAddress && validAmount" class="wallet-send-fee s-flex">
           <span>{{ t('walletSend.fee') }}</span>
           <span class="wallet-send-fee_value">{{ fee }} {{ KnownSymbols.XOR }}</span>
         </div>
-        <s-button class="wallet-send-action" type="primary" :disabled="!validAddress || !valudAmount || !hasEnoughXor" @click="step = 2">
+        <s-button class="wallet-send-action" type="primary" :disabled="!validAddress || !validAmount || !hasEnoughXor" @click="step = 2">
           <template v-if="!validAddress">
             {{ t(`walletSend.${emptyAddress ? 'noAddress' : 'badAddress'}`) }}
           </template>
-          <template v-else-if="!valudAmount">
+          <template v-else-if="!validAmount">
             {{ t(`walletSend.${emptyAmount ? 'noAmount' : 'badAmount'}`, emptyAmount ? {} : { symbol: asset.symbol }) }}
           </template>
           <template v-else-if="!hasEnoughXor">
@@ -126,7 +126,7 @@ export default class WalletSend extends Mixins(TranslationMixin) {
     return new FPNumber(this.amount, this.asset.decimals).isZero()
   }
 
-  get valudAmount (): boolean {
+  get validAmount (): boolean {
     const amount = new FPNumber(this.amount, this.asset.decimals)
     const balance = new FPNumber(this.asset.balance, this.asset.decimals)
     return amount.isFinity() && !amount.isZero() && (FPNumber.lt(amount, balance) || FPNumber.eq(amount, balance))
@@ -149,11 +149,20 @@ export default class WalletSend extends Mixins(TranslationMixin) {
   }
 
   async calcFee (): Promise<void> {
+    if (this.amount === '.') {
+      this.amount = '0.'
+    }
     this.fee = await dexApi.getTransferNetworkFee(
       this.asset.address,
       this.validAddress ? this.address : '',
-      this.valudAmount ? this.amount : 0
+      this.validAmount ? this.amount : 0
     )
+  }
+
+  resetAmount (): void {
+    if (this.amount === '0' || this.amount === '0.') {
+      this.amount = ''
+    }
   }
 
   getAssetClasses = getAssetIconClasses
