@@ -148,9 +148,21 @@ export default class WalletSend extends Mixins(TranslationMixin) {
     return FPNumber.lt(fee, balance) || FPNumber.eq(fee, balance)
   }
 
+  // We could use this method to check if the user enters a text value in a numeric field (we could do this by copy and paste)
+  isNumberValue (value: any): boolean {
+    const numberValue = +value
+    return typeof numberValue === 'number' && !isNaN(numberValue)
+  }
+
   async calcFee (): Promise<void> {
-    if (this.amount === '.') {
-      this.amount = '0.'
+    if (this.amount.indexOf('.') === 0) {
+      this.amount = '0' + this.amount
+    }
+    if (!this.isNumberValue(this.amount)) {
+      await setTimeout(() => {
+        this.amount = ''
+      }, 50)
+      return
     }
     this.fee = await dexApi.getTransferNetworkFee(
       this.asset.address,
@@ -160,8 +172,17 @@ export default class WalletSend extends Mixins(TranslationMixin) {
   }
 
   resetAmount (): void {
-    if (this.amount === '0' || this.amount === '0.') {
+    if (+this.amount === 0) {
       this.amount = ''
+    } else {
+      // Trim zeros in the beginning
+      if (this.amount.indexOf('0') === 0 && this.amount.indexOf('.') !== 1) {
+        this.amount = this.amount.replace(/^0+/, '')
+      }
+      // Trim dot in the end
+      if (this.amount.indexOf('.') === this.amount.length - 1) {
+        this.amount = this.amount.substring(0, this.amount.length - 1)
+      }
     }
   }
 
