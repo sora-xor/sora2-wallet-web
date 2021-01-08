@@ -19,7 +19,7 @@
             </div>
           </div>
           <div class="input-line">
-            <s-input placeholder="0.00" v-model="amount" v-float class="s-input--token-value" @change="calcFee" @blur="resetAmount" />
+            <s-input placeholder="0.00" v-model="amount" v-float class="s-input--token-value" @change="calcFee" @blur="formatAmount" />
             <div class="asset s-flex">
               <s-button class="asset-max" type="tertiary" size="small" border-radius="mini" @click="handleMaxClick">
                 {{ t('walletSend.max') }}
@@ -154,14 +154,19 @@ export default class WalletSend extends Mixins(TranslationMixin) {
     return typeof numberValue === 'number' && !isNaN(numberValue)
   }
 
+  resetAmount (): void {
+    this.amount = ''
+  }
+
   async calcFee (): Promise<void> {
     if (this.amount.indexOf('.') === 0) {
       this.amount = '0' + this.amount
     }
     if (!this.isNumberValue(this.amount)) {
-      await setTimeout(() => {
-        this.amount = ''
-      }, 50)
+      await new Promise<void>((resolve) => setTimeout(() => {
+        this.resetAmount()
+        resolve()
+      }, 50))
       return
     }
     this.fee = await dexApi.getTransferNetworkFee(
@@ -171,9 +176,9 @@ export default class WalletSend extends Mixins(TranslationMixin) {
     )
   }
 
-  resetAmount (): void {
+  formatAmount (): void {
     if (+this.amount === 0) {
-      this.amount = ''
+      this.resetAmount()
     } else {
       // Trim zeros in the beginning
       if (this.amount.indexOf('0') === 0 && this.amount.indexOf('.') !== 1) {
