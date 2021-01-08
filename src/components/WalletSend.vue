@@ -163,10 +163,8 @@ export default class WalletSend extends Mixins(TranslationMixin) {
       this.amount = '0' + this.amount
     }
     if (!this.isNumberValue(this.amount)) {
-      await new Promise<void>((resolve) => setTimeout(() => {
-        this.resetAmount()
-        resolve()
-      }, 50))
+      await new Promise(resolve => setTimeout(resolve, 50))
+      this.resetAmount()
       return
     }
     this.fee = await dexApi.getTransferNetworkFee(
@@ -179,15 +177,15 @@ export default class WalletSend extends Mixins(TranslationMixin) {
   formatAmount (): void {
     if (+this.amount === 0) {
       this.resetAmount()
-    } else {
-      // Trim zeros in the beginning
-      if (this.amount.indexOf('0') === 0 && this.amount.indexOf('.') !== 1) {
-        this.amount = this.amount.replace(/^0+/, '')
-      }
-      // Trim dot in the end
-      if (this.amount.indexOf('.') === this.amount.length - 1) {
-        this.amount = this.amount.substring(0, this.amount.length - 1)
-      }
+      return
+    }
+    // Trim zeros in the beginning
+    if (this.amount.indexOf('0') === 0 && this.amount.indexOf('.') !== 1) {
+      this.amount = this.amount.replace(/^0+/, '')
+    }
+    // Trim dot in the end
+    if (this.amount.indexOf('.') === this.amount.length - 1) {
+      this.amount = this.amount.substring(0, this.amount.length - 1)
     }
   }
 
