@@ -71,14 +71,14 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
       await copyToClipboard(this.account.address)
       this.$notify({
         message: this.t('account.successCopy'),
-        title: this.t('successText'),
-        type: 'success'
+        type: 'success',
+        title: ''
       })
     } catch (error) {
       this.$notify({
-        message: error,
-        title: this.t('warningText'),
-        type: 'warning'
+        message: `${this.t('warningText')} ${error}`,
+        type: 'warning',
+        title: ''
       })
     }
   }
