@@ -7,19 +7,29 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import { Component, Mixins } from 'vue-property-decorator'
+import { Component, Mixins, Watch } from 'vue-property-decorator'
+import { Action, Getter } from 'vuex-class'
 
-import SoraNeoWallet from './SoraNeoWallet.vue'
+import TransactionMixin from './components/mixins/TransactionMixin'
 import { initWallet } from './index'
+import SoraNeoWallet from './SoraNeoWallet.vue'
 
 @Component({
   components: { SoraNeoWallet }
 })
-export default class App extends Vue {
-  created (): void {
+export default class App extends Mixins(TransactionMixin) {
+  @Getter firstReadyTransaction!: any
+  @Action trackActiveTransactions
+
+  async created (): Promise<void> {
     const withoutExternalStore = true
     initWallet(withoutExternalStore) // We don't need storage for local development
+    this.trackActiveTransactions()
+  }
+
+  @Watch('firstReadyTransaction', { deep: true })
+  private handleNotifyAboutTransaction (value): void {
+    this.handleChangeTransaction(value)
   }
 }
 </script>
@@ -67,6 +77,10 @@ export default class App extends Vue {
         width: 100%;
       }
     }
+  }
+  &:hover .loader {
+    width: 0;
+    animation: none;
   }
 }
 </style>

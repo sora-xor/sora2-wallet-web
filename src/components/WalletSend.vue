@@ -79,7 +79,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
 
-import TranslationMixin from './mixins/TranslationMixin'
+import TransactionMixin from './mixins/TransactionMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
 import { getAssetIconClasses } from '../util'
@@ -90,7 +90,7 @@ import { dexApi } from '../api'
     WalletBase
   }
 })
-export default class WalletSend extends Mixins(TranslationMixin) {
+export default class WalletSend extends Mixins(TransactionMixin) {
   readonly KnownSymbols = KnownSymbols
 
   @Getter currentRouteParams!: any
@@ -211,17 +211,15 @@ export default class WalletSend extends Mixins(TranslationMixin) {
   }
 
   async handleSend (): Promise<void> {
-    try {
-      if (!this.hasEnoughXor) {
-        throw new Error('walletSend.badAmount')
+    await this.withNotifications(
+      async () => {
+        if (!this.hasEnoughXor) {
+          throw new Error('walletSend.badAmount')
+        }
+        await this.transfer({ to: this.address, amount: this.amount })
       }
-      await this.transfer({ to: this.address, amount: this.amount })
-      this.navigate({ name: RouteNames.Wallet })
-      this.$notify({ message: this.t('walletSend.success'), title: '' })
-    } catch (error) {
-      // `symbol` parameter will be skipped if it's not needed here
-      this.$alert(this.t(error.message, { symbol: KnownSymbols.XOR }), this.t('errorText'))
-    }
+    )
+    this.navigate({ name: RouteNames.Wallet })
   }
 }
 </script>
