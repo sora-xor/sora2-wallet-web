@@ -1,4 +1,4 @@
-import { KnownSymbols, Operation } from '@sora-substrate/util'
+import { KnownSymbols, Operation, TransactionStatus } from '@sora-substrate/util'
 
 import { AccountMenu, AddAssetTabs, PasswordCondition, SourceTypes, WalletTabs, SettingsMenu, Languages } from '../../consts'
 
@@ -27,8 +27,11 @@ export default {
   errorText: 'Error',
   unknownErrorText: 'ERROR Something went wrong...',
   transactionSubmittedText: 'Transaction was submitted',
-  operations: {
+  [TransactionStatus.Finalized]: {
     [Operation.Transfer]: 'Sent {amount} {symbol} to {address}'
+  },
+  [TransactionStatus.Error]: {
+    [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}'
   },
   assetNames: {
     [KnownSymbols.XOR]: 'Sora',

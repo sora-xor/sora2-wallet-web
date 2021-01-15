@@ -20,7 +20,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin) {
     if (!value || value.type !== Operation.Transfer) {
       return ''
     }
-    return this.t(`operations.${Operation.Transfer}`, {
+    return this.t(`operations.${value.status}.${Operation.Transfer}`, {
       amount: value.amount,
       symbol: value.symbol,
       address: formatAddress(value.to as string, 20)

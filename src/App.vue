@@ -49,6 +49,7 @@ export default class App extends Mixins(TransactionMixin) {
   border-radius: 4px;
   border: none;
   align-items: center;
+  width: 405px;
   .el-notification {
     &__content {
       color: var(--s-color-utility-surface);
