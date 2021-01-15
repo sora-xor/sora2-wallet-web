@@ -28,7 +28,7 @@ export default {
   unknownErrorText: 'ERROR Something went wrong...',
   transactionSubmittedText: 'Transaction was submitted',
   operations: {
-    [Operation.Transfer]: 'SEND {amount} {symbol} to {address}'
+    [Operation.Transfer]: 'Sent {amount} {symbol} to {address}'
   },
   assetNames: {
     [KnownSymbols.XOR]: 'Sora',
