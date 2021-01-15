@@ -25,6 +25,7 @@ export default {
   amountText: 'Amount',
   confirmText: 'Confirm',
   errorText: 'Error',
+  unknownErrorText: 'ERROR Something went wrong...',
   transactionSubmittedText: 'Transaction was submitted',
   operations: {
     [Operation.Transfer]: 'SEND {amount} {symbol} to {address}'

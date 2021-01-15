@@ -48,7 +48,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin) {
     const message = this.getMessage(value)
     if (value.status === TransactionStatus.Error) {
       this.$notify({
-        message: message || this.t('unknownError'),
+        message: message || this.t('unknownErrorText'),
         type: 'error',
         title: ''
       })
@@ -75,7 +75,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin) {
       this.removeActiveTransaction({ tx: this.transaction })
       this.transaction = null
       this.$notify({
-        message: message || this.t('unknownError'),
+        message: message || this.t('unknownErrorText'),
         type: 'error',
         title: ''
       })
