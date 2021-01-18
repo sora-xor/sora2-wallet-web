@@ -4,11 +4,13 @@ import Vuex from 'vuex'
 import Account from './Account'
 import Router from './Router'
 import Settings from './Settings'
+import Transactions from './Transactions'
 
 const modules = {
   Account,
   Router,
-  Settings
+  Settings,
+  Transactions
 }
 
 Vue.use(Vuex)

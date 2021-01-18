@@ -1,4 +1,6 @@
 import { Vue, Component } from 'vue-property-decorator'
+
+import { delay } from '../../util'
 import { dexApi } from '../../api'
 
 export const isApiConnected = () => dexApi.api && dexApi.api.isConnected
@@ -27,7 +29,7 @@ export default class LoadingMixin extends Vue {
   async withApi (func: Function): Promise<any> {
     this.loading = true
     if (!isApiConnected()) {
-      await new Promise(resolve => setTimeout(resolve, 50))
+      await delay()
       return await this.withApi(func)
     } else {
       return await this.withLoading(func)

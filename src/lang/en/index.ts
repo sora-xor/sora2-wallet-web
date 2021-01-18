@@ -1,4 +1,4 @@
-import { KnownSymbols } from '@sora-substrate/util'
+import { KnownSymbols, Operation, TransactionStatus } from '@sora-substrate/util'
 
 import { AccountMenu, AddAssetTabs, PasswordCondition, SourceTypes, WalletTabs, SettingsMenu, Languages } from '../../consts'
 
@@ -25,6 +25,14 @@ export default {
   amountText: 'Amount',
   confirmText: 'Confirm',
   errorText: 'Error',
+  unknownErrorText: 'ERROR Something went wrong...',
+  transactionSubmittedText: 'Transaction was submitted',
+  [TransactionStatus.Finalized]: {
+    [Operation.Transfer]: 'Sent {amount} {symbol} to {address}'
+  },
+  [TransactionStatus.Error]: {
+    [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}'
+  },
   assetNames: {
     [KnownSymbols.XOR]: 'Sora',
     [KnownSymbols.DOT]: 'Polkadot',
@@ -126,8 +134,7 @@ export default {
     badAmount: 'Insufficient {symbol} Balance',
     confirmTitle: 'Confirm transaction',
     confirm: '@:confirmText',
-    errorAddress: 'Invalid address. Please check it and try again.',
-    success: 'Transaction was submitted'
+    errorAddress: 'Invalid address. Please check it and try again.'
   },
   account: {
     successCopy: 'Wallet address is copied to the clipboard',

@@ -48,7 +48,7 @@ import { Getter, Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { AccountMenu, RouteNames } from '../consts'
-import { copyToClipboard, formatAddress } from '../util'
+import { copyToClipboard, delay, formatAddress } from '../util'
 
 @Component
 export default class WalletAccount extends Mixins(TranslationMixin) {
@@ -71,14 +71,14 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
       await copyToClipboard(this.account.address)
       this.$notify({
         message: this.t('account.successCopy'),
-        title: this.t('successText'),
-        type: 'success'
+        type: 'success',
+        title: ''
       })
     } catch (error) {
       this.$notify({
-        message: error,
-        title: this.t('warningText'),
-        type: 'warning'
+        message: `${this.t('warningText')} ${error}`,
+        type: 'warning',
+        title: ''
       })
     }
   }
@@ -116,7 +116,7 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 
   private async enableNameEdit (): Promise<void> {
     this.isEditNameOperation = true
-    await new Promise(resolve => setTimeout(resolve, 10))
+    await delay(10)
     const range = document.createRange()
     range.selectNodeContents(this.editNameEl)
     range.collapse(false)

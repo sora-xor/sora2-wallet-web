@@ -77,3 +77,7 @@ export const getStatusClass = (status: string) => {
   }
   return state ? `info-status info-status--${state}` : 'info-status'
 }
+
+export const delay = async (ms = 50) => {
+  await new Promise(resolve => setTimeout(resolve, ms))
+}
