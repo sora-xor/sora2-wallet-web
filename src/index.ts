@@ -7,6 +7,7 @@ import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
 import { storage } from './util/storage'
 import { dexApi } from './api'
+import { delay } from './util'
 
 let store: Store<unknown>
 let isWalletLoaded = false
@@ -35,7 +36,7 @@ if (typeof window !== 'undefined' && window.Vue) {
 async function initWallet (withoutStore = false): Promise<void> {
   isWalletLoaded = false
   if (!withoutStore && !store) {
-    await new Promise(resolve => setTimeout(resolve, 50))
+    await delay()
     return await initWallet(withoutStore)
   } else {
     if (withoutStore) {

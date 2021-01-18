@@ -49,8 +49,8 @@ export default class AddAsset extends Mixins(TranslationMixin) {
   handleOpenNotification (): void {
     this.$notify({
       message: this.t('addAsset.success'),
-      title: this.t('successText'),
-      type: 'success'
+      type: 'success',
+      title: ''
     })
   }
 }
