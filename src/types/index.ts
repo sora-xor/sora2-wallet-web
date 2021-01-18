@@ -5,5 +5,6 @@ export enum Components {
 export enum Modules {
   Account = 'Account',
   Router = 'Router',
-  Settings = 'Settings'
+  Settings = 'Settings',
+  Transactions = 'Transactions'
 }
