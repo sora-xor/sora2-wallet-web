@@ -82,7 +82,7 @@ import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substra
 import TransactionMixin from './mixins/TransactionMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
-import { getAssetIconClasses } from '../util'
+import { delay, getAssetIconClasses } from '../util'
 import { dexApi } from '../api'
 
 @Component({
@@ -163,7 +163,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
       this.amount = '0' + this.amount
     }
     if (!this.isNumberValue(this.amount)) {
-      await new Promise(resolve => setTimeout(resolve, 50))
+      await delay()
       this.resetAmount()
       return
     }

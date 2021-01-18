@@ -51,6 +51,18 @@ export default class App extends Mixins(TransactionMixin) {
   align-items: center;
   width: 405px;
   .el-notification {
+    &__icon {
+      position: relative;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--s-color-utility-surface);
+      &:before {
+        position: absolute;
+        top: -2px;
+        left: -2px;
+      }
+    }
     &__content {
       color: var(--s-color-utility-surface);
       text-align: left;

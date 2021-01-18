@@ -4,7 +4,7 @@ import findLast from 'lodash/fp/findLast'
 import { Action } from 'vuex-class'
 
 import { dexApi } from '../../api'
-import { formatAddress } from '../../util'
+import { delay, formatAddress } from '../../util'
 import TranslationMixin from './TranslationMixin'
 
 @Component
@@ -34,7 +34,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin) {
       dexApi.accountHistory
     )
     if (!tx) {
-      await new Promise(resolve => setTimeout(resolve, 50))
+      await delay()
       return await this.getLastTransaction()
     }
     this.addActiveTransaction({ tx })

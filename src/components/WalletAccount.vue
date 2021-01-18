@@ -48,7 +48,7 @@ import { Getter, Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { AccountMenu, RouteNames } from '../consts'
-import { copyToClipboard, formatAddress } from '../util'
+import { copyToClipboard, delay, formatAddress } from '../util'
 
 @Component
 export default class WalletAccount extends Mixins(TranslationMixin) {
@@ -116,7 +116,7 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 
   private async enableNameEdit (): Promise<void> {
     this.isEditNameOperation = true
-    await new Promise(resolve => setTimeout(resolve, 10))
+    await delay(10)
     const range = document.createRange()
     range.selectNodeContents(this.editNameEl)
     range.collapse(false)
