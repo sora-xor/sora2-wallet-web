@@ -128,7 +128,7 @@ export default {
     balance: 'Balance',
     max: 'MAX',
     fee: 'Transaction Fee',
-    noAddress: 'No Address',
+    enterAddress: 'Enter address',
     badAddress: 'Incorrect Address',
     noAmount: 'No Amount',
     badAmount: 'Insufficient {symbol} Balance',
