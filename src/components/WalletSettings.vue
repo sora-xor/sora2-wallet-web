@@ -1,7 +1,7 @@
 <template>
   <wallet-base :title="t('settings.title')" show-back @back="handleBack">
     <div class="wallet-settings">
-      <s-select :value="activeNetwork.id" :placeholder="t('settings.network')" border-radius="mini" @change="id => setActiveNetwork({ id })">
+      <s-select :value="activeNetwork.id" :placeholder="t('settings.network')" border-radius="mini" :disabled="availableNetworks.length <= 1" @change="id => setActiveNetwork({ id })">
         <s-option
           v-for="network in availableNetworks"
           :key="network.id"
