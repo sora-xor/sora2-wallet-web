@@ -35,7 +35,7 @@
         </div>
         <s-button class="wallet-send-action" type="primary" :disabled="!validAddress || !validAmount || !hasEnoughXor" @click="step = 2">
           <template v-if="!validAddress">
-            {{ t(`walletSend.${emptyAddress ? 'noAddress' : 'badAddress'}`) }}
+            {{ t(`walletSend.${emptyAddress ? 'enterAddress' : 'badAddress'}`) }}
           </template>
           <template v-else-if="!validAmount">
             {{ t(`walletSend.${emptyAmount ? 'noAmount' : 'badAmount'}`, emptyAmount ? {} : { symbol: asset.symbol }) }}
@@ -269,6 +269,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 // TODO: fix typography issues here
 .wallet-send {
   .asset {
+    align-items: center;
     &-balance {
       margin-left: auto;
       &-title {
@@ -294,6 +295,8 @@ export default class WalletSend extends Mixins(TransactionMixin) {
     }
     &-max {
       margin-left: $basic-spacing_mini;
+      height: var(--s-size-mini);
+      padding: $basic-spacing_mini / 2 $basic-spacing_mini;
     }
     &-max, &-name {
       font-feature-settings: $s-font-feature-settings-title;
