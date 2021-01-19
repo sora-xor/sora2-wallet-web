@@ -1,5 +1,6 @@
 <template>
-  <wallet-base :title="currentRouteParams.symbol" show-back show-settings @back="handleBack">
+  <!-- TODO: Add more button -->
+  <wallet-base :title="currentRouteParams.symbol" show-back @back="handleBack">
     <wallet-history :history="history" />
   </wallet-base>
 </template>

@@ -11,6 +11,7 @@ exports[`WalletSettings.vue should renders correctly 1`] = `
     <s-select-stub
       autocomplete="off"
       borderradius="mini"
+      disabled="true"
       inputtype="input"
       loadingtext="Loading"
       multiplelimit="0"
