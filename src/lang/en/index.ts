@@ -35,10 +35,7 @@ export default {
   },
   assetNames: {
     [KnownSymbols.XOR]: 'Sora',
-    [KnownSymbols.DOT]: 'Polkadot',
-    [KnownSymbols.KSM]: 'Kusama',
-    [KnownSymbols.USD]: 'Tether',
-    [KnownSymbols.VAL]: 'Sora Validator Asset',
+    [KnownSymbols.VAL]: 'Sora Validator Token',
     [KnownSymbols.PSWAP]: 'Polkaswap'
   },
   polkadotjs: {

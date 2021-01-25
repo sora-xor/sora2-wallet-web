@@ -5,12 +5,12 @@
 You should set vuex storage and endpoint to blockchain url when using it as a vue plugin:
 ```
 import Vue from 'vue'
-import Wallet, { dexApi } from '@soramitsu/soraneo-wallet-web'
+import Wallet, { connection } from '@soramitsu/soraneo-wallet-web'
 
 import store from '@/store'
 import * as env from '../../public/env.json'
 
-dexApi.endpoint = env.BLOCKCHAIN_URL
+connection.endpoint = env.BLOCKCHAIN_URL
 Vue.use(Wallet, { store })
 ```
 

@@ -66,7 +66,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin)
   }
 
   formatAmount (asset: AccountAsset): string {
-    return `${asset.balance} ${asset.symbol === KnownSymbols.USD ? 'USDT' : asset.symbol}`
+    return `${asset.balance} ${asset.symbol}`
   }
 
   isZeroBalance (asset: AccountAsset): boolean {

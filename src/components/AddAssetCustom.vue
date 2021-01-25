@@ -69,7 +69,7 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
     }
     this.selectedAsset = asset
     if (this.selectedAsset && this.selectedAsset.symbol) {
-      this.symbol = this.selectedAsset.symbol === KnownSymbols.USD ? 'USDT' : this.selectedAsset.symbol
+      this.symbol = this.selectedAsset.symbol
     } else {
       this.selectedAsset = null
       this.symbol = ''
