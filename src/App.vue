@@ -7,6 +7,7 @@
 </template>
 
 <script lang="ts">
+// This file is only for local usage
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
