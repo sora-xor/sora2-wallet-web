@@ -25,7 +25,7 @@
         <i :class="getAssetClasses(asset.symbol)" />
         <div class="asset-description s-flex">
           <div class="asset-description_name">{{ asset.name }}</div>
-          <div class="asset-description_symbol">{{ asset.symbol === KnownSymbols.USD ? 'USDT' : asset.symbol }}</div>
+          <div class="asset-description_symbol">{{ asset.symbol }}</div>
         </div>
       </div>
     </div>

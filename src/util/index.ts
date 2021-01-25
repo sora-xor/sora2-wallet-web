@@ -48,7 +48,7 @@ export const formatDate = (date: number) => moment(date).format('DD.MM.YYYY, h:m
 export const getAssetIconClasses = (symbol: string) => {
   const cssClass = 'asset-logo'
   if (symbol) {
-    return `${cssClass} ${cssClass}--${symbol === KnownSymbols.USD ? 'usdt' : symbol.toLowerCase()}`
+    return `${cssClass} ${cssClass}--${symbol.toLowerCase()}`
   }
   return cssClass
 }

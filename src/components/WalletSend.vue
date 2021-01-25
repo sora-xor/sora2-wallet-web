@@ -25,7 +25,7 @@
                 {{ t('walletSend.max') }}
               </s-button>
               <i :class="getAssetClasses(asset.symbol)" />
-              <span class="asset-name">{{ asset.symbol === KnownSymbols.USD ? 'USDT' : asset.symbol }}</span>
+              <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@
             <span class="confirm-asset-title">{{ amount }}</span>
             <div class="confirm-asset-value s-flex">
               <i :class="getAssetClasses(asset.symbol)" />
-              <span class="asset-name">{{ asset.symbol === KnownSymbols.USD ? 'USDT' : asset.symbol }}</span>
+              <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
           <div class="confirm-from">{{ account.address }}</div>
