@@ -19,9 +19,9 @@
             </div>
           </div>
           <div class="input-line">
-            <s-input placeholder="0.00" v-model="amount" v-float class="s-input--token-value" @change="calcFee" @blur="formatAmount" />
+            <s-input placeholder="0.0" v-model="amount" v-float class="s-input--token-value" @change="calcFee" @blur="formatAmount" />
             <div class="asset s-flex">
-              <s-button class="asset-max" type="tertiary" size="small" border-radius="mini" @click="handleMaxClick">
+              <s-button v-if="isMaxButtonAvailable" class="asset-max" type="tertiary" size="small" border-radius="mini" @click="handleMaxClick">
                 {{ t('walletSend.max') }}
               </s-button>
               <i :class="getAssetClasses(asset.symbol)" />
@@ -29,6 +29,7 @@
             </div>
           </div>
         </div>
+        <!-- TODO: It seems that we don't need next two checks -->
         <div v-if="validAddress && validAmount" class="wallet-send-fee s-flex">
           <span>{{ t('walletSend.fee') }}</span>
           <span class="wallet-send-fee_value">{{ fee }} {{ KnownSymbols.XOR }}</span>
@@ -38,7 +39,7 @@
             {{ t(`walletSend.${emptyAddress ? 'enterAddress' : 'badAddress'}`) }}
           </template>
           <template v-else-if="!validAmount">
-            {{ t(`walletSend.${emptyAmount ? 'noAmount' : 'badAmount'}`, emptyAmount ? {} : { symbol: asset.symbol }) }}
+            {{ t(`walletSend.${emptyAmount ? 'enterAmount' : 'badAmount'}`, emptyAmount ? {} : { symbol: asset.symbol }) }}
           </template>
           <template v-else-if="!hasEnoughXor">
             {{ t('walletSend.badAmount', { symbol: KnownSymbols.XOR }) }}
@@ -104,6 +105,14 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   amount = ''
   fee = '0'
 
+  async mounted (): Promise<void> {
+    await this.calcFee()
+  }
+
+  beforeDestroy (): void {
+    this.fee = '0'
+  }
+
   get asset (): AccountAsset {
     return this.currentRouteParams.asset
   }
@@ -132,20 +141,39 @@ export default class WalletSend extends Mixins(TransactionMixin) {
     return amount.isFinity() && !amount.isZero() && (FPNumber.lt(amount, balance) || FPNumber.eq(amount, balance))
   }
 
+  get isMaxButtonAvailable (): boolean {
+    const decimals = this.asset.decimals
+    const balance = new FPNumber(this.asset.balance, decimals)
+    const amount = new FPNumber(this.amount, decimals)
+    if (this.isXorAccountAsset(this.asset)) {
+      if (+this.fee === 0) {
+        return false
+      }
+      const fee = new FPNumber(this.fee, decimals)
+      return !FPNumber.eq(fee, balance.sub(amount)) && FPNumber.lt(fee, balance.sub(amount))
+    }
+    return !FPNumber.eq(balance, amount)
+  }
+
   get hasEnoughXor (): boolean {
     const xor = KnownAssets.get(KnownSymbols.XOR)
-    const fee = new FPNumber(this.fee, xor.decimals)
-    if (this.asset.symbol === KnownSymbols.XOR) {
-      const amount = new FPNumber(this.amount, this.asset.decimals)
-      const balance = new FPNumber(this.asset.balance, this.asset.decimals)
+    const xorDecimals = xor.decimals
+    const fee = new FPNumber(this.fee, xorDecimals)
+    if (this.isXorAccountAsset(this.asset)) {
+      const balance = new FPNumber(this.asset.balance, xorDecimals)
+      const amount = new FPNumber(this.amount, xorDecimals)
       return FPNumber.lt(fee, balance.sub(amount)) || FPNumber.eq(fee, balance.sub(amount))
     }
-    const accountXor = this.accountAssets.find(item => item.symbol === KnownSymbols.XOR)
+    const accountXor = this.accountAssets.find(item => this.isXorAccountAsset(item))
     if (!accountXor) {
       return false
     }
-    const balance = new FPNumber(accountXor.balance, xor.decimals)
+    const balance = new FPNumber(accountXor.balance, xorDecimals)
     return FPNumber.lt(fee, balance) || FPNumber.eq(fee, balance)
+  }
+
+  isXorAccountAsset (asset: AccountAsset): boolean {
+    return asset.symbol === KnownSymbols.XOR
   }
 
   // We could use this method to check if the user enters a text value in a numeric field (we could do this by copy and paste)
@@ -200,7 +228,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   }
 
   async handleMaxClick (): Promise<void> {
-    if (this.asset.symbol === KnownSymbols.XOR) {
+    if (this.isXorAccountAsset(this.asset)) {
       await this.calcFee()
       const balance = new FPNumber(this.asset.balance, this.asset.decimals)
       const fee = new FPNumber(this.fee, this.asset.decimals)
