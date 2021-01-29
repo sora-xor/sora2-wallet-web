@@ -29,8 +29,7 @@
             </div>
           </div>
         </div>
-        <!-- TODO: It seems that we don't need next two checks -->
-        <div v-if="validAddress && validAmount" class="wallet-send-fee s-flex">
+        <div class="wallet-send-fee s-flex">
           <span>{{ t('walletSend.fee') }}</span>
           <span class="wallet-send-fee_value">{{ fee }} {{ KnownSymbols.XOR }}</span>
         </div>
@@ -109,10 +108,6 @@ export default class WalletSend extends Mixins(TransactionMixin) {
     await this.calcFee()
   }
 
-  beforeDestroy (): void {
-    this.fee = '0'
-  }
-
   get asset (): AccountAsset {
     return this.currentRouteParams.asset
   }
@@ -138,7 +133,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   get validAmount (): boolean {
     const amount = new FPNumber(this.amount, this.asset.decimals)
     const balance = new FPNumber(this.asset.balance, this.asset.decimals)
-    return amount.isFinity() && !amount.isZero() && (FPNumber.lt(amount, balance) || FPNumber.eq(amount, balance))
+    return amount.isFinity() && !amount.isZero() && FPNumber.lte(amount, balance)
   }
 
   get isMaxButtonAvailable (): boolean {
@@ -162,14 +157,14 @@ export default class WalletSend extends Mixins(TransactionMixin) {
     if (this.isXorAccountAsset(this.asset)) {
       const balance = new FPNumber(this.asset.balance, xorDecimals)
       const amount = new FPNumber(this.amount, xorDecimals)
-      return FPNumber.lt(fee, balance.sub(amount)) || FPNumber.eq(fee, balance.sub(amount))
+      return FPNumber.lte(fee, balance.sub(amount))
     }
     const accountXor = this.accountAssets.find(item => this.isXorAccountAsset(item))
     if (!accountXor) {
       return false
     }
     const balance = new FPNumber(accountXor.balance, xorDecimals)
-    return FPNumber.lt(fee, balance) || FPNumber.eq(fee, balance)
+    return FPNumber.lte(fee, balance)
   }
 
   isXorAccountAsset (asset: AccountAsset): boolean {
