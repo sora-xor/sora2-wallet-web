@@ -28,6 +28,9 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
   }
 
   get history (): Array<any> {
+    if (!this.selectedAssetDetails) {
+      return []
+    }
     return this.selectedAssetDetails.map(item => ({ ...item, fromSymbol: this.currentRouteParams.symbol }))
   }
 
