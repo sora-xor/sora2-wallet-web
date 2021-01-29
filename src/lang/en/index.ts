@@ -126,9 +126,9 @@ export default {
     max: 'MAX',
     fee: 'Transaction Fee',
     enterAddress: 'Enter address',
-    badAddress: 'Incorrect Address',
-    noAmount: 'No Amount',
-    badAmount: 'Insufficient {symbol} Balance',
+    badAddress: 'Incorrect address',
+    enterAmount: 'Enter amount',
+    badAmount: 'Insufficient {symbol} balance',
     confirmTitle: 'Confirm transaction',
     confirm: '@:confirmText',
     errorAddress: 'Invalid address. Please check it and try again.'
