@@ -51,10 +51,6 @@ async function initWallet (withoutStore = false): Promise<void> {
       console.info('Connected to blockchain', connection.endpoint)
     }
     dexApi.initialize()
-    if (!store.getters.isLoggedIn) {
-      isWalletLoaded = true
-      return
-    }
     if (store.getters.isExternal) {
       await store.dispatch('getSigner')
     }

@@ -94,9 +94,6 @@ const mutations = {
     Object.keys(s).forEach(key => {
       state[key] = s[key]
     })
-    if (updateAssetsIntervalId) {
-      clearInterval(updateAssetsIntervalId)
-    }
   },
 
   [types.LOGIN] (state, params) {
@@ -274,7 +271,10 @@ const actions = {
       throw new Error((error as Error).message)
     }
   },
-  async getAccountAssets ({ commit }) {
+  async getAccountAssets ({ commit, getters }) {
+    if (!getters.isLoggedIn) {
+      return
+    }
     const assets = storage.get('assets')
     commit(!assets ? types.GET_ACCOUNT_ASSETS_REQUEST : types.UPDATE_ACCOUNT_ASSETS_REQUEST)
     try {
@@ -288,9 +288,16 @@ const actions = {
       commit(!assets ? types.GET_ACCOUNT_ASSETS_FAILURE : types.UPDATE_ACCOUNT_ASSETS_FAILURE)
     }
   },
-  async updateAccountAssets ({ commit }) {
+  async updateAccountAssets ({ commit, getters }) {
+    if (updateAssetsIntervalId) {
+      clearInterval(updateAssetsIntervalId)
+    }
     const fiveSeconds = 5 * 1000
     updateAssetsIntervalId = setInterval(async () => {
+      console.log('updated')
+      if (!getters.isLoggedIn) {
+        return
+      }
       commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST)
       try {
         await dexApi.updateAccountAssets()
