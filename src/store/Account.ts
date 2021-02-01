@@ -294,7 +294,6 @@ const actions = {
     }
     const fiveSeconds = 5 * 1000
     updateAssetsIntervalId = setInterval(async () => {
-      console.log('updated')
       if (!getters.isLoggedIn) {
         return
       }
