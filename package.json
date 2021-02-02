@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "private": false,
   "publishConfig": {
     "@soramitsu:registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/"
