@@ -145,7 +145,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
         return false
       }
       const fee = new FPNumber(this.fee, decimals)
-      return !FPNumber.eq(fee, balance.sub(amount)) && FPNumber.lt(fee, balance.sub(amount))
+      return !FPNumber.eq(fee, balance.sub(amount)) && FPNumber.gt(balance, fee)
     }
     return !FPNumber.eq(balance, amount)
   }
