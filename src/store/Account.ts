@@ -3,10 +3,10 @@ import flatMap from 'lodash/fp/flatMap'
 import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
-import { AccountAsset, KnownAssets } from '@sora-substrate/util'
+import { AccountAsset } from '@sora-substrate/util'
 
 import * as accountApi from '../api/account'
-import { dexApi } from '../api'
+import { api } from '../api'
 import { storage } from '../util/storage'
 import { getExtension, getExtensionSigner, getExtensionInfo } from '../util'
 
@@ -236,7 +236,7 @@ const actions = {
     try {
       await getExtension()
       const signer = await getExtensionSigner(address)
-      dexApi.setSigner(signer)
+      api.setSigner(signer)
       commit(types.GET_SIGNER_SUCCESS)
     } catch (error) {
       commit(types.GET_SIGNER_FAILURE)
@@ -263,8 +263,8 @@ const actions = {
         commit(types.POLKADOT_JS_IMPORT_FAILURE)
         throw new Error('polkadotjs.noAccount')
       }
-      dexApi.importByPolkadotJs(account.address, account.name)
-      dexApi.setSigner(info.signer)
+      api.importByPolkadotJs(account.address, account.name)
+      api.setSigner(info.signer)
       commit(types.POLKADOT_JS_IMPORT_SUCCESS, account)
     } catch (error) {
       commit(types.POLKADOT_JS_IMPORT_FAILURE)
@@ -280,10 +280,10 @@ const actions = {
     try {
       await (
         assets
-          ? dexApi.updateAccountAssets()
-          : dexApi.getKnownAccountAssets()
+          ? api.updateAccountAssets()
+          : api.getKnownAccountAssets()
       )
-      commit(!assets ? types.GET_ACCOUNT_ASSETS_SUCCESS : types.UPDATE_ACCOUNT_ASSETS_SUCCESS, dexApi.accountAssets)
+      commit(!assets ? types.GET_ACCOUNT_ASSETS_SUCCESS : types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
     } catch (error) {
       commit(!assets ? types.GET_ACCOUNT_ASSETS_FAILURE : types.UPDATE_ACCOUNT_ASSETS_FAILURE)
     }
@@ -299,8 +299,8 @@ const actions = {
       }
       commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST)
       try {
-        await dexApi.updateAccountAssets()
-        commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, dexApi.accountAssets)
+        await api.updateAccountAssets()
+        commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
       } catch (error) {
         commit(types.UPDATE_ACCOUNT_ASSETS_FAILURE)
       }
@@ -327,7 +327,7 @@ const actions = {
   async getAssets ({ commit }) {
     commit(types.GET_ASSETS_REQUEST)
     try {
-      const assets = await dexApi.getAssets()
+      const assets = await api.getAssets()
       commit(types.GET_ASSETS_SUCCESS, assets)
     } catch (error) {
       commit(types.GET_ASSETS_FAILURE)
@@ -336,7 +336,7 @@ const actions = {
   async searchAsset ({ commit }, { address }) {
     commit(types.SEARCH_ASSET_REQUEST)
     try {
-      const assets = await dexApi.getAssets()
+      const assets = await api.getAssets()
       const asset = assets.find(asset => asset.address === address)
       commit(types.SEARCH_ASSET_SUCCESS)
       return asset
@@ -347,7 +347,7 @@ const actions = {
   async addAsset ({ commit }, { address }) {
     commit(types.ADD_ASSET_REQUEST)
     try {
-      await dexApi.getAccountAsset(address)
+      await api.getAccountAsset(address)
       commit(types.ADD_ASSET_SUCCESS)
     } catch (error) {
       commit(types.ADD_ASSET_FAILURE)
@@ -365,7 +365,7 @@ const actions = {
   getAddress ({ commit }, { seed }) {
     commit(types.GET_ADDRESS_REQUEST)
     try {
-      const address = dexApi.checkSeed(seed).address
+      const address = api.checkSeed(seed).address
       commit(types.GET_ADDRESS_SUCCESS, address)
     } catch (error) {
       commit(types.GET_ADDRESS_FAILURE)
@@ -375,7 +375,7 @@ const actions = {
     commit(types.TRANSFER_REQUEST)
     const asset = currentRouteParams.asset as AccountAsset
     try {
-      await dexApi.transfer(asset.address, to, amount)
+      await api.transfer(asset.address, to, amount)
       commit(types.TRANSFER_SUCCESS)
     } catch (error) {
       commit(types.TRANSFER_FAILURE)
@@ -386,8 +386,8 @@ const actions = {
     }
   },
   login ({ commit }, { name, password, seed }) {
-    dexApi.importAccount(seed, name, password)
-    commit(types.LOGIN, { name, password, address: dexApi.accountPair.address })
+    api.importAccount(seed, name, password)
+    commit(types.LOGIN, { name, password, address: api.accountPair.address })
   },
   changeName ({ commit, state: { name } }, { newName }) {
     const value = `${newName}`.trim()
@@ -395,10 +395,10 @@ const actions = {
       return
     }
     commit(types.CHANGE_NAME, newName)
-    dexApi.changeName(newName)
+    api.changeName(newName)
   },
   logout ({ commit }) {
-    dexApi.logout()
+    api.logout()
     commit(types.RESET)
   },
   reset ({ commit }) {

@@ -99,15 +99,15 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 
   handleNameInputBlur (): void {
     this.isEditNameOperation = false
+    if (!this.accountName) {
+      this.editNameEl.innerText = this.name
+      return
+    }
     this.changeName({ newName: this.accountName })
   }
 
   handleNameChange (e: any): void {
-    const newName = e.target.innerText
-    this.accountName = newName
-    if (!newName) {
-      this.editNameEl.innerText = this.name
-    }
+    this.accountName = e.target.innerText
   }
 
   formatAddress (address: string): string {
