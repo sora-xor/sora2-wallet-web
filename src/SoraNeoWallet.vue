@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 
 import AddAsset from './components/AddAsset.vue'
@@ -22,7 +22,6 @@ import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
 import LoadingMixin from './components/mixins/LoadingMixin'
 
 import { RouteNames } from './consts'
-import { dexApi } from './api'
 
 @Component({
   components: {

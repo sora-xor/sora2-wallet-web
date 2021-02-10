@@ -9,7 +9,7 @@
 //         at Function.defineProperty (<anonymous>)
 //
 //       1 | import axiosInstance from 'axios'
-//     > 2 | import { DexApi } from '@sora-substrate/util'
+//     > 2 | import { api } from '@sora-substrate/util'
 
 // const localVue = createLocalVue()
 // localVue.use(Vuex)
