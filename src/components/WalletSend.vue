@@ -66,7 +66,12 @@
             <span class="wallet-send-fee_value">{{ fee }} {{ KnownSymbols.XOR }}</span>
           </div>
         </div>
-        <s-button class="wallet-send-action" type="primary" @click="handleSend">
+        <s-button
+          class="wallet-send-action"
+          type="primary"
+          :disabled="loading"
+          @click="handleSend"
+        >
           {{ t('walletSend.confirm') }}
         </s-button>
       </template>
@@ -75,7 +80,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
 
@@ -83,7 +88,7 @@ import TransactionMixin from './mixins/TransactionMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
 import { delay, getAssetIconClasses } from '../util'
-import { dexApi } from '../api'
+import { api } from '../api'
 
 @Component({
   components: {
@@ -123,7 +128,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
     if (this.emptyAddress) {
       return false
     }
-    return dexApi.checkAddress(this.address) && this.account.address !== this.address
+    return api.checkAddress(this.address) && this.account.address !== this.address
   }
 
   get emptyAmount (): boolean {
@@ -190,7 +195,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
       this.resetAmount()
       return
     }
-    this.fee = await dexApi.getTransferNetworkFee(
+    this.fee = await api.getTransferNetworkFee(
       this.asset.address,
       this.validAddress ? this.address : '',
       this.validAmount ? this.amount : 0

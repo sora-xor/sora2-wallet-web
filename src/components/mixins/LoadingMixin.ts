@@ -1,9 +1,9 @@
 import { Vue, Component } from 'vue-property-decorator'
 
 import { delay } from '../../util'
-import { dexApi } from '../../api'
+import { api } from '../../api'
 
-export const isApiConnected = () => dexApi.api && dexApi.api.isConnected
+export const isApiConnected = () => api.api && api.api.isConnected
 
 @Component
 export default class LoadingMixin extends Vue {

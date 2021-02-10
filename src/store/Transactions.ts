@@ -5,7 +5,7 @@ import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 import { History, TransactionStatus } from '@sora-substrate/util'
 
-import { dexApi } from '../api'
+import { api } from '../api'
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
@@ -60,10 +60,10 @@ const mutations = {
   },
 
   [types.UPDATE_ACTIVE_TRANSACTIONS] (state) {
-    if (!dexApi.accountHistory.length) {
+    if (!api.accountHistory.length) {
       return
     }
-    const activeTransactions = dexApi.accountHistory.filter(tx => state.activeTransactions.find(t => t.id === tx.id))
+    const activeTransactions = api.accountHistory.filter(tx => state.activeTransactions.find(t => t.id === tx.id))
     state.activeTransactions = activeTransactions
   }
 }

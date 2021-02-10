@@ -6,7 +6,7 @@ import { Components, Modules } from './types'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
 import { storage } from './util/storage'
-import { dexApi, connection } from './api'
+import { api, connection } from './api'
 import { delay } from './util'
 
 let store: Store<unknown>
@@ -50,7 +50,7 @@ async function initWallet (withoutStore = false): Promise<void> {
       await connection.open()
       console.info('Connected to blockchain', connection.endpoint)
     }
-    dexApi.initialize()
+    api.initialize()
     if (store.getters.isExternal) {
       await store.dispatch('getSigner')
     }
@@ -64,7 +64,7 @@ export {
   initWallet,
   isWalletLoaded,
   en,
-  dexApi,
+  api,
   connection,
   storage,
   SoraNeoWallet
