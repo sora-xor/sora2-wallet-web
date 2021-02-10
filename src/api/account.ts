@@ -1,8 +1,8 @@
-import { dexApi } from '../api'
+import { api } from '../api'
 
 export const checkValidSeed = (seed: string) => {
   try {
-    return !!dexApi.checkSeed(seed).address
+    return !!api.checkSeed(seed).address
   } catch (error) {
     return false
   }
