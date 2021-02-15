@@ -8,6 +8,7 @@ import internalStore, { modules } from './store' // `internalStore` is required 
 import { storage } from './util/storage'
 import { api, connection } from './api'
 import { delay } from './util'
+import * as WALLET_CONSTS from './consts'
 
 let store: Store<unknown>
 let isWalletLoaded = false
@@ -67,6 +68,7 @@ export {
   api,
   connection,
   storage,
-  SoraNeoWallet
+  SoraNeoWallet,
+  WALLET_CONSTS
 }
 export default SoraNeoWalletElements
