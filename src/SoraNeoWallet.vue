@@ -7,6 +7,7 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 
 import AddAsset from './components/AddAsset.vue'
+import CreateToken from './components/CreateToken.vue'
 import Wallet from './components/Wallet.vue'
 import WalletAssetDetails from './components/WalletAssetDetails.vue'
 import WalletConnection from './components/WalletConnection.vue'
@@ -17,6 +18,7 @@ import WalletSettings from './components/WalletSettings.vue'
 import WalletSettingsAbout from './components/SettingsAbout.vue'
 import WalletSettingsLanguage from './components/SettingsLanguage.vue'
 import WalletSettingsNetworks from './components/SettingsNetworks.vue'
+import WalletSettingsAdvanced from './components/SettingsAdvanced.vue'
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
 
 import LoadingMixin from './components/mixins/LoadingMixin'
@@ -32,10 +34,12 @@ import { RouteNames } from './consts'
     WalletSettings,
     WalletSettingsLanguage,
     WalletSettingsNetworks,
+    WalletSettingsAdvanced,
     WalletSettingsAbout,
     Wallet,
     WalletAssetDetails,
     AddAsset,
+    CreateToken,
     WalletTransactionDetails
   }
 })

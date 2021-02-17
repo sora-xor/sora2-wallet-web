@@ -42,19 +42,13 @@ import { Action, Getter, State } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
-import { Network, RouteNames, SettingsMenu } from '../consts'
-
-interface MenuItem {
-  title: string;
-  desc: string;
-  route: RouteNames;
-}
+import { Network, RouteNames, SettingsMenu, SettingsMenuItem } from '../consts'
 
 @Component({
   components: { WalletBase }
 })
 export default class WalletSettings extends Mixins(TranslationMixin) {
-  readonly menuTabs: MenuItem[] = [
+  readonly menuTabs: SettingsMenuItem[] = [
     {
       title: this.t(`settings.menu.${SettingsMenu.Language}.title`),
       desc: this.t(`settings.menu.${SettingsMenu.Language}.desc`),
@@ -69,6 +63,11 @@ export default class WalletSettings extends Mixins(TranslationMixin) {
       title: this.t(`settings.menu.${SettingsMenu.About}.title`),
       desc: this.t(`settings.menu.${SettingsMenu.About}.desc`),
       route: RouteNames.WalletSettingsAbout
+    },
+    {
+      title: this.t(`settings.menu.${SettingsMenu.Advanced}.title`),
+      desc: this.t(`settings.menu.${SettingsMenu.Advanced}.desc`),
+      route: RouteNames.WalletSettingsAdvanced
     }
   ]
 

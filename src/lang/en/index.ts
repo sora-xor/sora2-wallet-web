@@ -11,6 +11,7 @@ export default {
   importText: 'Import',
   settingsText: 'Settings',
   addAssetText: 'Add token',
+  createTokenText: 'Create token',
   comingSoonText: 'Coming soon',
   successText: 'Success',
   warningText: 'Warning',
@@ -165,6 +166,10 @@ export default {
       [SettingsMenu.About]: {
         title: 'About',
         desc: 'Version, support center, contact info'
+      },
+      [SettingsMenu.Advanced]: {
+        title: 'Advanced',
+        desc: 'Advanced settings for advanced users'
       }
     },
     language: {
@@ -205,6 +210,25 @@ export default {
     },
     empty: 'No tokens found',
     alreadyAttached: 'Token was already attached'
+  },
+  createToken: {
+    title: '@:createTokenText',
+    cancel: '@:canelText',
+    action: '@:createTokenText',
+    confirm: '@:confirmText',
+    success: 'Token was created successfully!',
+    tooltipValue: 'To create a token, you have to pay a fee',
+    tokenSymbol: {
+      placeholder: 'Token symbol',
+      desc: 'This is an identifier for the token. You can use from 3 to 5 alphanumeric characters for the selection.'
+    },
+    tokenSupply: {
+      placeholder: 'Token supply',
+      desc: 'You will receive these tokens upon creation.'
+    },
+    extensibleSupply: {
+      placeholder: 'Extensible supply'
+    }
   },
   transaction: {
     title: 'Transaction details',

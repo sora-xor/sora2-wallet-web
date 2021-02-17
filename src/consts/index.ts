@@ -7,8 +7,10 @@ export enum RouteNames {
   WalletSettingsLanguage = 'WalletSettingsLanguage',
   WalletSettingsNetworks = 'WalletSettingsNetworks',
   WalletSettingsAbout = 'WalletSettingsAbout',
+  WalletSettingsAdvanced = 'WalletSettingsAdvanced',
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
+  CreateToken = 'CreateToken',
   AddAsset = 'AddAsset',
   WalletTransactionDetails = 'WalletTransactionDetails'
 }
@@ -45,7 +47,8 @@ export enum AccountMenu {
 export enum SettingsMenu {
   Language = 'Language',
   Networks = 'Networks',
-  About = 'About'
+  About = 'About',
+  Advanced = 'Advanced'
 }
 
 export interface Network {
@@ -66,3 +69,9 @@ export const PasswordConditions = [
   { title: PasswordCondition.Length, regexp: /^.{8,}$/ },
   { title: PasswordCondition.Digit, regexp: /(?=.*\d)/ }
 ]
+
+export interface SettingsMenuItem {
+  title: string;
+  desc: string;
+  route: RouteNames;
+}
