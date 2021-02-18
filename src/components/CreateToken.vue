@@ -4,13 +4,15 @@
       <template v-if="step === STEPS.Create">
         <s-input
           :placeholder="t(`createToken.tokenSymbol.placeholder`)"
-          :minlength="3"
-          :maxlength="5"
+          :minlength="1"
+          :maxlength="7"
+          v-maska="tokenSymbolMask"
           v-model="tokenSymbol"
         />
         <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenSymbol.desc`) }}</p>
         <s-input
           :placeholder="t(`createToken.tokenSupply.placeholder`)"
+          v-maska="tokenSupplyMask"
           v-model="tokenSupply"
         />
         <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenSupply.desc`) }}</p>
@@ -74,6 +76,9 @@ export default class CreateToken extends Mixins(TranslationMixin) {
   tokenSupply = ''
   extensibleSupply = false
 
+  tokenSymbolMask = 'AAAAAAA'
+  tokenSupplyMask = { mask: 'N#*', tokens: { N: { pattern: /[1-9]/ } } }
+
   @Action navigate
 
   handleBack (): void {
@@ -88,6 +93,10 @@ export default class CreateToken extends Mixins(TranslationMixin) {
     if (this.tokenSymbol.length > 0 && this.tokenSupply.length > 0) {
       this.step = this.STEPS.Confirm
     }
+  }
+
+  createToken (): void {
+    console.log('NEW TOKEN', this.tokenSymbol, this.tokenSupply, this.extensibleSupply)
   }
 }
 </script>
