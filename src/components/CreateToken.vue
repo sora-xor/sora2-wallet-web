@@ -24,15 +24,15 @@
       </template>
       <template v-else-if="step === STEPS.Confirm">
         <div class="wallet-settings-create-token_confirm-block">
-          <span>Token symbol</span>
+          <span>{{ t('createToken.tokenSymbol.placeholder') }}</span>
           <span>{{ tokenSymbol }}</span>
         </div>
         <div class="wallet-settings-create-token_confirm-block">
-          <span>Total supply</span>
+          <span>{{ t('createToken.tokenSupply.placeholder') }}</span>
           <span>{{ tokenSupply }}</span>
         </div>
         <div class="wallet-settings-create-token_confirm-block">
-          <span>Extensible supply</span>
+          <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
           <span>{{ extensibleSupply ? 'Yes' : 'No' }}</span>
         </div>
         <s-divider class="wallet-settings-create-token_divider" />
@@ -41,7 +41,7 @@
             <s-tooltip class="bridge-info-icon" popper-class="info-tooltip info-tooltip--bridge" border-radius="mini" :content="t('createToken.tooltipValue')" theme="light" placement="right-start" animation="none" :show-arrow="false">
               <s-icon name="info" size="16" />
             </s-tooltip>
-            <span class="wallet-settings-create-token_fee-block_title">Network fee</span>
+            <span class="wallet-settings-create-token_fee-block_title">{{ t('createToken.fee') }}</span>
           </div>
           <span>0.01 XOR</span>
         </div>

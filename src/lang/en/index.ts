@@ -218,9 +218,10 @@ export default {
     confirm: '@:confirmText',
     success: 'Token was created successfully!',
     tooltipValue: 'To create a token, you have to pay a fee',
+    fee: 'Network fee',
     tokenSymbol: {
       placeholder: 'Token symbol',
-      desc: 'This is an identifier for the token. You can use from 3 to 5 alphanumeric characters for the selection.'
+      desc: 'This is an identifier for the token. You can use from 1 to 7 characters for the selection.'
     },
     tokenSupply: {
       placeholder: 'Token supply',
