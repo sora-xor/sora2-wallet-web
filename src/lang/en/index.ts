@@ -213,7 +213,6 @@ export default {
   },
   createToken: {
     title: '@:createTokenText',
-    cancel: '@:canelText',
     action: '@:createTokenText',
     confirm: '@:confirmText',
     success: 'Token was created successfully!',
