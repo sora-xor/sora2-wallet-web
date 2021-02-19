@@ -7,6 +7,8 @@ import { History, TransactionStatus } from '@sora-substrate/util'
 
 import { api } from '../api'
 
+const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2 * 1000
+
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
@@ -19,6 +21,8 @@ const types = flow(
 )([])
 
 let updateActiveTransactionsId: any = null
+
+const isValidTransaction = (tx: History) => tx && tx.id !== undefined
 
 function initialState () {
   return {
@@ -46,14 +50,14 @@ const mutations = {
   },
 
   [types.ADD_ACTIVE_TRANSACTION] (state, tx: History) {
-    if (state.activeTransactions.find((t: History) => t.id === tx.id)) {
+    if (!isValidTransaction(tx) || state.activeTransactions.find((t: History) => t.id === tx.id)) {
       return
     }
     state.activeTransactions.push(tx)
   },
 
   [types.REMOVE_ACTIVE_TRANSACTION] (state, tx: History) {
-    if (!state.activeTransactions.find((t: History) => t.id === tx.id)) {
+    if (!isValidTransaction(tx)) {
       return
     }
     state.activeTransactions = state.activeTransactions.filter((t: History) => t.id !== tx.id)
@@ -77,10 +81,9 @@ const actions = {
   },
   // Should be used once in a root of the project
   trackActiveTransactions ({ commit }) {
-    const twoSeconds = 2 * 1000
     updateActiveTransactionsId = setInterval(() => {
       commit(types.UPDATE_ACTIVE_TRANSACTIONS)
-    }, twoSeconds)
+    }, UPDATE_ACTIVE_TRANSACTIONS_INTERVAL)
   }
 }
 
