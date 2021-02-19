@@ -216,9 +216,14 @@ export default {
     desc: 'Create and deploy custom token on SORA',
     action: '@:createTokenText',
     confirm: '@:confirmText',
-    success: 'Token was created successfully!',
+    success: {
+      title: 'Transaction submitted',
+      desc: 'Create {symbol} token'
+    },
     tooltipValue: 'To create a token, you have to pay a fee',
     fee: 'Network fee',
+    feeError: 'Failed to get a fee for a transaction',
+    error: 'Failed to create {symbol} token',
     tokenSymbol: {
       placeholder: 'Token symbol',
       desc: 'This is an identifier for the token. You can use from 1 to 7 characters for the selection.'
