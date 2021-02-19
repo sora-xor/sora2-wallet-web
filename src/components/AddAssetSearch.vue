@@ -24,7 +24,7 @@
       >
         <i :class="getAssetClasses(asset.symbol)" />
         <div class="asset-description s-flex">
-          <div class="asset-description_name">{{ asset.name }}</div>
+          <div class="asset-description_name">{{ formatName(asset) }}</div>
           <div class="asset-description_symbol">{{ asset.symbol }}</div>
         </div>
       </div>
@@ -94,6 +94,13 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     if (this.selectedAsset && !this.foundAssets.find(({ address }) => (this.selectedAsset || {}).address === address)) {
       this.selectedAsset = null
     }
+  }
+
+  formatName (asset: NamedAsset): string {
+    if (!asset.name || asset.name.includes('assetNames')) {
+      return asset.symbol
+    }
+    return asset.name
   }
 
   handleSelectAsset (asset: NamedAsset): void {
