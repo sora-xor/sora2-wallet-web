@@ -22,7 +22,7 @@ const types = flow(
 
 let updateActiveTransactionsId: any = null
 
-const isValidTransaction = (tx: History) => tx?.id !== undefined
+const isValidTransaction = (tx: History) => tx && tx.id !== undefined
 
 function initialState () {
   return {
