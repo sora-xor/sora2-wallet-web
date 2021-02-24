@@ -213,6 +213,7 @@ export default {
   },
   createToken: {
     title: '@:createTokenText',
+    desc: 'Create and deploy custom token on SORA',
     action: '@:createTokenText',
     confirm: '@:confirmText',
     success: 'Token was created successfully!',

@@ -126,10 +126,6 @@ export default class CreateToken extends Mixins(TranslationMixin) {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-
-    // color: var(--s-color-base-content-secondary);
-    // font-size: $font-size_normal;
-    // font-feature-settings: $s-font-feature-settings-common;
     color: var(--s-color-base-content-secondary);
     font-size: $font-size_basic;
     font-weight: normal;

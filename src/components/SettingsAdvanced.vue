@@ -35,8 +35,8 @@ import { RouteNames, SettingsMenuItem } from '../consts'
 export default class SettingsAdvanced extends Mixins(TranslationMixin) {
   readonly menuTabs: SettingsMenuItem[] = [
     {
-      title: 'Create token',
-      desc: 'Create and deploy custom token on SORA',
+      title: `${this.$t('createToken.title')}`,
+      desc: `${this.$t('createToken.desc')}`,
       route: RouteNames.CreateToken
     }
   ]
