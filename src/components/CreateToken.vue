@@ -115,7 +115,7 @@ export default class CreateToken extends Mixins(TranslationMixin) {
     flex-direction: row;
     justify-content: space-between;
     background: var(--s-color-base-background);
-    padding: 11px $basic-spacing;
+    padding: $basic-spacing_small $basic-spacing;
     border-radius: $basic-spacing_mini;
     margin-bottom: $basic-spacing;
   }
