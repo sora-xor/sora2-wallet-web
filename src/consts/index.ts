@@ -74,4 +74,5 @@ export interface SettingsMenuItem {
   title: string;
   desc: string;
   route: RouteNames;
+  visible: boolean;
 }

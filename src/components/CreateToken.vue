@@ -95,9 +95,6 @@ export default class CreateToken extends Mixins(TranslationMixin) {
   }
 
   async calculateFee (): Promise<string> {
-    console.log(
-      this.tokenSymbol, this.tokenSupply, this.extensibleSupply
-    )
     return api.getRegisterAssetNetworkFee(
       this.tokenSymbol,
       this.tokenSupply,
