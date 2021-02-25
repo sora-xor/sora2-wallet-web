@@ -20,7 +20,7 @@
           <span>{{ t(`createToken.extensibleSupply.placeholder`) }}</span>
           <s-switch v-model="extensibleSupply" />
         </div>
-        <s-button class="wallet-settings-create-token_action" @click="confirm" type="primary">{{ t('createToken.action') }}</s-button>
+        <s-button class="wallet-settings-create-token_action" @click="onConfirm" type="primary">{{ t('createToken.action') }}</s-button>
       </template>
       <template v-else-if="step === STEPS.Confirm">
         <div class="wallet-settings-create-token_confirm-block">
@@ -43,21 +43,23 @@
             </s-tooltip>
             <span class="wallet-settings-create-token_fee-block_title">{{ t('createToken.fee') }}</span>
           </div>
-          <span>0.01 XOR</span>
+          <span>{{ fee }} {{ KnownSymbols.XOR }}</span>
         </div>
-        <s-button class="wallet-settings-create-token_action" @click="createToken" type="primary">{{ t('createToken.confirm') }}</s-button>
+        <s-button class="wallet-settings-create-token_action" @click="onCreate" type="primary">{{ t('createToken.confirm') }}</s-button>
       </template>
     </div>
   </wallet-base>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
-import { Action, State } from 'vuex-class'
+import { Component, Mixins } from 'vue-property-decorator'
+import { Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
+import { api } from '../api'
+import { KnownSymbols } from '@sora-substrate/util'
 
 enum STEPS {
   Create,
@@ -70,11 +72,14 @@ enum STEPS {
   }
 })
 export default class CreateToken extends Mixins(TranslationMixin) {
-  STEPS = STEPS
+  readonly KnownSymbols = KnownSymbols
+  readonly STEPS = STEPS
+
   step = this.STEPS.Create
   tokenSymbol = ''
   tokenSupply = ''
   extensibleSupply = false
+  fee = '0.0'
 
   tokenSymbolMask = 'AAAAAAA'
   tokenSupplyMask = { mask: 'N#*', tokens: { N: { pattern: /[1-9]/ } } }
@@ -89,14 +94,55 @@ export default class CreateToken extends Mixins(TranslationMixin) {
     }
   }
 
-  confirm (): void {
+  async calculateFee (): Promise<string> {
+    return api.getRegisterAssetNetworkFee(
+      this.tokenSymbol,
+      this.tokenSupply,
+      this.extensibleSupply
+    )
+  }
+
+  async registerAsset (): Promise<void> {
+    return api.registerAsset(
+      this.tokenSymbol,
+      this.tokenSupply,
+      this.extensibleSupply
+    )
+  }
+
+  async onConfirm (): Promise<void> {
     if (this.tokenSymbol.length > 0 && this.tokenSupply.length > 0) {
-      this.step = this.STEPS.Confirm
+      try {
+        this.fee = await this.calculateFee()
+        this.step = this.STEPS.Confirm
+      } catch (error) {
+        console.error(error)
+        this.$notify({
+          message: this.t('createToken.feeError'),
+          type: 'error',
+          title: ''
+        })
+      }
     }
   }
 
-  createToken (): void {
-    console.log('NEW TOKEN', this.tokenSymbol, this.tokenSupply, this.extensibleSupply)
+  async onCreate (): Promise<void> {
+    try {
+      await this.registerAsset()
+      this.$notify({
+        type: 'info',
+        title: this.t('createToken.success.title'),
+        message: this.t('createToken.success.desc', { symbol: this.tokenSymbol })
+      })
+      this.navigate({ name: RouteNames.Wallet })
+    } catch (error) {
+      console.error(error)
+      this.$notify({
+        type: 'error',
+        title: '',
+        message: this.t('createToken.error', { symbol: this.tokenSymbol })
+      })
+    }
   }
 }
 </script>

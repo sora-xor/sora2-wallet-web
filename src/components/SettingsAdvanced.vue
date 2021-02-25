@@ -37,7 +37,8 @@ export default class SettingsAdvanced extends Mixins(TranslationMixin) {
     {
       title: `${this.$t('createToken.title')}`,
       desc: `${this.$t('createToken.desc')}`,
-      route: RouteNames.CreateToken
+      route: RouteNames.CreateToken,
+      visible: true
     }
   ]
 
