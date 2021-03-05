@@ -21,6 +21,19 @@ import { storage } from '@soramitsu/soraneo-wallet-web'
 
 ```
 
+If you want to change some default wallet permissions, pass related object to `initWallet` function.
+Here is example with default permissions:
+
+```
+const permissions = {
+    sendAssets: true, // enable 'send' button in assets list
+    swapAssets: true, // enable 'swap' button in assets list
+}
+
+initWallet({ permissions })
+
+```
+
 ## Project setup
 ```
 yarn install
