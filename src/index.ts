@@ -34,18 +34,21 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(SoraNeoWalletElements, {})
 }
 
-async function initWallet (withoutStore = false): Promise<void> {
+async function initWallet ({
+  withoutStore = false,
+  permissions
+}: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
   isWalletLoaded = false
   if (!withoutStore && !store) {
     await delay()
-    return await initWallet(withoutStore)
+    return await initWallet({ withoutStore, permissions })
   } else {
     if (withoutStore) {
       store = internalStore
     }
     if (connection.loading) {
       await delay()
-      return await initWallet(withoutStore)
+      return await initWallet({ withoutStore, permissions })
     }
     if (!connection.api) {
       await connection.open()
@@ -54,6 +57,9 @@ async function initWallet (withoutStore = false): Promise<void> {
     api.initialize()
     if (store.getters.isExternal) {
       await store.dispatch('getSigner')
+    }
+    if (permissions) {
+      store.dispatch('setPermissions', permissions)
     }
     await store.dispatch('getAccountAssets')
     await store.dispatch('updateAccountAssets')

@@ -9,6 +9,7 @@
             <!-- TODO: coming soon <div class="amount-converted">{{ formatConvertedAmount(asset) }}</div> -->
           </div>
           <s-button
+            v-if="permissions.sendAssets"
             class="swap"
             type="primary"
             size="small"
@@ -20,6 +21,7 @@
             {{ t('assets.send') }}
           </s-button>
           <s-button
+            v-if="permissions.swapAssets"
             class="swap"
             type="primary"
             size="small"
@@ -54,6 +56,7 @@ import { getAssetIconClasses } from '../util'
 @Component
 export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin) {
   @Getter accountAssets!: Array<AccountAsset>
+  @Getter permissions
   @Action getAccountAssets
   @Action navigate
 

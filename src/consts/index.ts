@@ -76,3 +76,13 @@ export interface SettingsMenuItem {
   route: RouteNames;
   visible: boolean;
 }
+
+export interface WalletPermissions {
+  sendAssets?: boolean;
+  swapAssets?: boolean;
+}
+
+export interface WalletInitOptions {
+  withoutStore?: boolean;
+  permissions?: WalletPermissions;
+}
