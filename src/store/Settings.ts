@@ -6,14 +6,15 @@ import concat from 'lodash/fp/concat'
 
 import { storage } from '../util/storage'
 import i18n from '../lang'
-import { Network } from '../consts'
+import { Network, WalletPermissions } from '../consts'
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
     'SET_LOCALE',
     'ADD_NETWORK',
-    'SET_ACTIVE_NETWORK'
+    'SET_ACTIVE_NETWORK',
+    'SET_PERMISSIONS'
   ]),
   map(x => [x, x]),
   fromPairs
@@ -45,7 +46,11 @@ function initialState () {
     locales: i18n.availableLocales,
     activeNetwork: (JSON.parse(storage.get('activeNetwork') as string) || DEFAULT_NETWORKS[0]) as Network,
     customNetworks: (JSON.parse(storage.get('networks') as string) || []) as Array<Network>,
-    networks: DEFAULT_NETWORKS
+    networks: DEFAULT_NETWORKS,
+    permissions: {
+      sendAssets: true,
+      swapAssets: true
+    }
   }
 }
 
@@ -57,6 +62,9 @@ const getters = {
   },
   activeNetwork (state) {
     return state.activeNetwork
+  },
+  permissions (state) {
+    return state.permissions
   }
 }
 
@@ -95,6 +103,14 @@ const mutations = {
     storage.set('activeNetwork', JSON.stringify(network))
     state.activeNetwork = network
     // TODO: add connection
+  },
+
+  [types.SET_PERMISSIONS] (state, permissions: WalletPermissions) {
+    if (typeof permissions !== 'object' || Array.isArray(permissions)) {
+      console.error(`Permissions should be an object, ${typeof permissions} is given`)
+      return
+    }
+    state.permissions = { ...state.permissions, ...permissions }
   }
 }
 
@@ -110,6 +126,10 @@ const actions = {
   setActiveNetwork ({ commit, getters }, { id }) {
     const network = getters.availableNetworks.find(net => net.id === id)
     commit(types.SET_ACTIVE_NETWORK, { network })
+  },
+
+  setPermissions ({ commit }, permisssions) {
+    commit(types.SET_PERMISSIONS, permisssions)
   }
 }
 
