@@ -23,8 +23,7 @@ export default class App extends Mixins(TransactionMixin) {
   @Action trackActiveTransactions
 
   async created (): Promise<void> {
-    const withoutExternalStore = true
-    initWallet(withoutExternalStore) // We don't need storage for local development
+    initWallet({ withoutStore: true }) // We don't need storage for local development
     this.trackActiveTransactions()
   }
 
