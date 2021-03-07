@@ -82,7 +82,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, FPNumber, KnownSymbols } from '@sora-substrate/util'
 
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import TransactionMixin from './mixins/TransactionMixin'
@@ -160,19 +160,7 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
   }
 
   get hasEnoughXor (): boolean {
-    const xor = KnownAssets.get(KnownSymbols.XOR)
-    const xorDecimals = xor.decimals
-    if (this.isXorAccountAsset(this.asset)) {
-      const balance = new FPNumber(this.asset.balance, xorDecimals)
-      const amount = new FPNumber(this.amount, xorDecimals)
-      return FPNumber.lte(this.fee, balance.sub(amount))
-    }
-    const accountXor = this.accountAssets.find(item => this.isXorAccountAsset(item))
-    if (!accountXor) {
-      return false
-    }
-    const balance = new FPNumber(accountXor.balance, xorDecimals)
-    return FPNumber.lte(this.fee, balance)
+    return api.hasEnoughXor(this.asset, this.amount, this.fee)
   }
 
   isXorAccountAsset (asset: AccountAsset): boolean {
