@@ -5,7 +5,7 @@
         <div class="wallet-assets-item s-flex" :key="asset.symbol">
           <i :class="getAssetClasses(asset.symbol)" />
           <div class="amount s-flex">
-            <div class="amount-value">{{ formatAmount(asset) }}</div>
+            <div class="amount-value">{{ formatBalance(asset) }}</div>
             <!-- TODO: coming soon <div class="amount-converted">{{ formatConvertedAmount(asset) }}</div> -->
           </div>
           <s-button
@@ -46,15 +46,16 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { AccountAsset, FPNumber, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset } from '@sora-substrate/util'
 
+import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'
 import { RouteNames } from '../consts'
 import { getAssetIconClasses } from '../util'
 
 @Component
-export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin) {
+export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
   @Getter accountAssets!: Array<AccountAsset>
   @Getter permissions
   @Action getAccountAssets
@@ -68,12 +69,12 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin)
     return getAssetIconClasses(symbol)
   }
 
-  formatAmount (asset: AccountAsset): string {
-    return `${asset.balance} ${asset.symbol}`
+  formatBalance (asset: AccountAsset): string {
+    return `${this.formatCodecNumber(asset.balance, asset.decimals)} ${asset.symbol}`
   }
 
   isZeroBalance (asset: AccountAsset): boolean {
-    return new FPNumber(asset.balance, asset.decimals).isZero()
+    return this.isCodecZero(asset.balance, asset.decimals)
   }
 
   formatConvertedAmount (asset: AccountAsset): string {

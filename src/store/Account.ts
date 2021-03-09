@@ -347,7 +347,7 @@ const actions = {
   async addAsset ({ commit }, { address }) {
     commit(types.ADD_ASSET_REQUEST)
     try {
-      await api.getAccountAsset(address)
+      await api.getAccountAsset(address, true)
       commit(types.ADD_ASSET_SUCCESS)
     } catch (error) {
       commit(types.ADD_ASSET_FAILURE)

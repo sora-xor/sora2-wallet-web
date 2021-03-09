@@ -15,7 +15,7 @@
             <div class="input-line-title">{{ t('walletSend.amount') }}</div>
             <div class="input-line-balance">
               <span class="asset-balance-title">{{ t('walletSend.balance') }}</span>
-              <span class="asset-balance-value">{{ asset.balance }}</span>
+              <span class="asset-balance-value">{{ balance }}</span>
             </div>
           </div>
           <div class="input-line">
@@ -31,7 +31,7 @@
         </div>
         <div class="wallet-send-fee s-flex">
           <span>{{ t('walletSend.fee') }}</span>
-          <span class="wallet-send-fee_value">{{ fee }} {{ KnownSymbols.XOR }}</span>
+          <span class="wallet-send-fee_value">{{ fee.format() }} {{ KnownSymbols.XOR }}</span>
         </div>
         <s-button class="wallet-send-action" type="primary" :disabled="!validAddress || !validAmount || !hasEnoughXor" @click="step = 2">
           <template v-if="!validAddress">
@@ -51,7 +51,7 @@
       <template v-else>
         <div class="confirm">
           <div class="confirm-asset s-flex">
-            <span class="confirm-asset-title">{{ amount }}</span>
+            <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
             <div class="confirm-asset-value s-flex">
               <i :class="getAssetClasses(asset.symbol)" />
               <span class="asset-name">{{ asset.symbol }}</span>
@@ -63,7 +63,7 @@
           <s-divider />
           <div class="wallet-send-fee s-flex">
             <span>{{ t('walletSend.fee') }}</span>
-            <span class="wallet-send-fee_value">{{ fee }} {{ KnownSymbols.XOR }}</span>
+            <span class="wallet-send-fee_value">{{ fee.format() }} {{ KnownSymbols.XOR }}</span>
           </div>
         </div>
         <s-button
@@ -82,8 +82,9 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, FPNumber, KnownSymbols } from '@sora-substrate/util'
 
+import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import TransactionMixin from './mixins/TransactionMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
@@ -95,7 +96,7 @@ import { api } from '../api'
     WalletBase
   }
 })
-export default class WalletSend extends Mixins(TransactionMixin) {
+export default class WalletSend extends Mixins(TransactionMixin, NumberFormatterMixin) {
   readonly KnownSymbols = KnownSymbols
 
   @Getter currentRouteParams!: any
@@ -107,7 +108,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   step = 1
   address = ''
   amount = ''
-  fee = '0'
+  fee = this.getFPNumber(0)
 
   async mounted (): Promise<void> {
     await this.calcFee()
@@ -115,6 +116,10 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 
   get asset (): AccountAsset {
     return this.currentRouteParams.asset
+  }
+
+  get balance (): string {
+    return this.formatCodecNumber(this.asset.balance, this.asset.decimals)
   }
 
   get emptyAddress (): boolean {
@@ -132,44 +137,30 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   }
 
   get emptyAmount (): boolean {
-    return new FPNumber(this.amount, this.asset.decimals).isZero()
+    return +this.amount === 0
   }
 
   get validAmount (): boolean {
-    const amount = new FPNumber(this.amount, this.asset.decimals)
-    const balance = new FPNumber(this.asset.balance, this.asset.decimals)
+    const amount = this.getFPNumber(this.amount, this.asset.decimals)
+    const balance = this.getFPNumberFromCodec(this.asset.balance, this.asset.decimals)
     return amount.isFinity() && !amount.isZero() && FPNumber.lte(amount, balance)
   }
 
   get isMaxButtonAvailable (): boolean {
     const decimals = this.asset.decimals
-    const balance = new FPNumber(this.asset.balance, decimals)
-    const amount = new FPNumber(this.amount, decimals)
+    const balance = this.getFPNumberFromCodec(this.asset.balance, decimals)
+    const amount = this.getFPNumber(this.amount, decimals)
     if (this.isXorAccountAsset(this.asset)) {
-      if (+this.fee === 0) {
+      if (this.fee.isZero()) {
         return false
       }
-      const fee = new FPNumber(this.fee, decimals)
-      return !FPNumber.eq(fee, balance.sub(amount)) && FPNumber.gt(balance, fee)
+      return !FPNumber.eq(this.fee, balance.sub(amount)) && FPNumber.gt(balance, this.fee)
     }
     return !FPNumber.eq(balance, amount)
   }
 
   get hasEnoughXor (): boolean {
-    const xor = KnownAssets.get(KnownSymbols.XOR)
-    const xorDecimals = xor.decimals
-    const fee = new FPNumber(this.fee, xorDecimals)
-    if (this.isXorAccountAsset(this.asset)) {
-      const balance = new FPNumber(this.asset.balance, xorDecimals)
-      const amount = new FPNumber(this.amount, xorDecimals)
-      return FPNumber.lte(fee, balance.sub(amount))
-    }
-    const accountXor = this.accountAssets.find(item => this.isXorAccountAsset(item))
-    if (!accountXor) {
-      return false
-    }
-    const balance = new FPNumber(accountXor.balance, xorDecimals)
-    return FPNumber.lte(fee, balance)
+    return api.hasEnoughXor(this.asset, this.amount, this.fee)
   }
 
   isXorAccountAsset (asset: AccountAsset): boolean {
@@ -195,10 +186,12 @@ export default class WalletSend extends Mixins(TransactionMixin) {
       this.resetAmount()
       return
     }
-    this.fee = await api.getTransferNetworkFee(
-      this.asset.address,
-      this.validAddress ? this.address : '',
-      this.validAmount ? this.amount : 0
+    this.fee = this.getFPNumberFromCodec(
+      await api.getTransferNetworkFee(
+        this.asset.address,
+        this.validAddress ? this.address : '',
+        this.validAmount ? this.amount : 0
+      )
     )
   }
 
@@ -230,12 +223,11 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   async handleMaxClick (): Promise<void> {
     if (this.isXorAccountAsset(this.asset)) {
       await this.calcFee()
-      const balance = new FPNumber(this.asset.balance, this.asset.decimals)
-      const fee = new FPNumber(this.fee, this.asset.decimals)
-      this.amount = balance.sub(fee).toString()
+      const balance = this.getFPNumberFromCodec(this.asset.balance, this.asset.decimals)
+      this.amount = balance.sub(this.fee).toString()
       return
     }
-    this.amount = this.asset.balance
+    this.amount = this.getStringFromCodec(this.asset.balance, this.asset.decimals)
   }
 
   async handleSend (): Promise<void> {
