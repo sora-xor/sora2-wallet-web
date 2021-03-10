@@ -33,19 +33,8 @@
           <span>{{ t('walletSend.fee') }}</span>
           <span class="wallet-send-fee_value">{{ fee.format() }} {{ KnownSymbols.XOR }}</span>
         </div>
-        <s-button class="wallet-send-action" type="primary" :disabled="!validAddress || !validAmount || !hasEnoughXor" @click="step = 2">
-          <template v-if="!validAddress">
-            {{ t(`walletSend.${emptyAddress ? 'enterAddress' : 'badAddress'}`) }}
-          </template>
-          <template v-else-if="!validAmount">
-            {{ t(`walletSend.${emptyAmount ? 'enterAmount' : 'badAmount'}`, emptyAmount ? {} : { symbol: asset.symbol }) }}
-          </template>
-          <template v-else-if="!hasEnoughXor">
-            {{ t('walletSend.badAmount', { symbol: KnownSymbols.XOR }) }}
-          </template>
-          <template v-else>
-            {{ t('walletSend.title') }}
-          </template>
+        <s-button class="wallet-send-action" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
+          {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
       </template>
       <template v-else>
@@ -69,10 +58,10 @@
         <s-button
           class="wallet-send-action"
           type="primary"
-          :disabled="loading"
+          :disabled="sendButtonDisabled"
           @click="handleSend"
         >
-          {{ t('walletSend.confirm') }}
+          {{ sendButtonDisabledText || t('walletSend.confirm') }}
         </s-button>
       </template>
     </div>
@@ -115,7 +104,9 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
   }
 
   get asset (): AccountAsset {
-    return this.currentRouteParams.asset
+    const { address } = this.currentRouteParams.asset
+
+    return this.accountAssets.find(asset => asset.address === address) || this.currentRouteParams.asset
   }
 
   get balance (): string {
@@ -161,6 +152,26 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
 
   get hasEnoughXor (): boolean {
     return api.hasEnoughXor(this.asset, this.amount, this.fee)
+  }
+
+  get sendButtonDisabled (): boolean {
+    return this.loading || !this.validAddress || !this.validAmount || !this.hasEnoughXor
+  }
+
+  get sendButtonDisabledText (): string {
+    if (!this.validAddress) {
+      return this.t(`walletSend.${this.emptyAddress ? 'enterAddress' : 'badAddress'}`)
+    }
+
+    if (!this.validAmount) {
+      return this.t(`walletSend.${this.emptyAmount ? 'enterAmount' : 'badAmount'}`, this.emptyAmount ? {} : { symbol: this.asset.symbol })
+    }
+
+    if (!this.hasEnoughXor) {
+      return this.t('walletSend.badAmount', { symbol: KnownSymbols.XOR })
+    }
+
+    return ''
   }
 
   isXorAccountAsset (asset: AccountAsset): boolean {
