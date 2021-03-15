@@ -43,9 +43,17 @@
             </s-tooltip>
             <span class="wallet-settings-create-token_fee-block_title">{{ t('createToken.fee') }}</span>
           </div>
-          <span>{{ fee }} {{ KnownSymbols.XOR }}</span>
+          <span>{{ formattedFee }} {{ KnownSymbols.XOR }}</span>
         </div>
-        <s-button class="wallet-settings-create-token_action" @click="onCreate" type="primary">{{ t('createToken.confirm') }}</s-button>
+        <s-button
+          class="wallet-settings-create-token_action"
+          type="primary"
+          :disabled="!hasEnoughXor"
+          @click="onCreate"
+        >
+          <template v-if="!hasEnoughXor">{{ t('createToken.insufficientBalance', { symbol: KnownSymbols.XOR }) }}</template>
+          <template v-else>{{ t('createToken.confirm') }}</template>
+        </s-button>
       </template>
     </div>
   </wallet-base>
@@ -54,12 +62,13 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
+import { KnownSymbols, CodecString, KnownAssets, FPNumber } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
+import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
 import { api } from '../api'
-import { KnownSymbols } from '@sora-substrate/util'
 
 enum STEPS {
   Create,
@@ -71,7 +80,7 @@ enum STEPS {
     WalletBase
   }
 })
-export default class CreateToken extends Mixins(TranslationMixin) {
+export default class CreateToken extends Mixins(TranslationMixin, NumberFormatterMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly STEPS = STEPS
 
@@ -79,7 +88,7 @@ export default class CreateToken extends Mixins(TranslationMixin) {
   tokenSymbol = ''
   tokenSupply = ''
   extensibleSupply = false
-  fee = '0.0'
+  fee: CodecString = '0'
 
   tokenSymbolMask = 'AAAAAAA'
   tokenSupplyMask = { mask: 'N#*', tokens: { N: { pattern: /[1-9]/ } } }
@@ -94,7 +103,21 @@ export default class CreateToken extends Mixins(TranslationMixin) {
     }
   }
 
-  async calculateFee (): Promise<string> {
+  get formattedFee (): string {
+    return this.formatCodecNumber(this.fee)
+  }
+
+  get hasEnoughXor (): boolean {
+    const xor = KnownAssets.get(KnownSymbols.XOR)
+    const accountXor = api.accountAssets.find(asset => asset.address === xor.address)
+    if (!accountXor || !+accountXor.balance) {
+      return false
+    }
+    const fpAccountXor = this.getFPNumberFromCodec(accountXor.balance, accountXor.decimals)
+    return FPNumber.gte(fpAccountXor, this.getFPNumberFromCodec(this.fee))
+  }
+
+  async calculateFee (): Promise<CodecString> {
     return api.getRegisterAssetNetworkFee(
       this.tokenSymbol,
       this.tokenSupply,
@@ -128,6 +151,9 @@ export default class CreateToken extends Mixins(TranslationMixin) {
 
   async onCreate (): Promise<void> {
     try {
+      if (!this.hasEnoughXor) {
+        return
+      }
       await this.registerAsset()
       this.$notify({
         type: 'info',

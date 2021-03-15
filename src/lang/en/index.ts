@@ -26,6 +26,7 @@ export default {
   amountText: 'Amount',
   confirmText: 'Confirm',
   errorText: 'Error',
+  insufficientBalanceText: 'Insufficient {symbol} balance',
   unknownErrorText: 'ERROR Something went wrong...',
   transactionSubmittedText: 'Transaction was submitted',
   [TransactionStatus.Finalized]: {
@@ -129,7 +130,7 @@ export default {
     enterAddress: 'Enter address',
     badAddress: 'Incorrect address',
     enterAmount: 'Enter amount',
-    badAmount: 'Insufficient {symbol} balance',
+    badAmount: '@:insufficientBalanceText',
     confirmTitle: 'Confirm transaction',
     confirm: '@:confirmText',
     errorAddress: 'Invalid address. Please check it and try again.'
@@ -222,6 +223,7 @@ export default {
     },
     tooltipValue: 'To create a token, you have to pay a fee',
     fee: 'Network fee',
+    insufficientBalance: '@:insufficientBalanceText',
     feeError: 'Failed to get a fee for a transaction',
     error: 'Failed to create {symbol} token',
     tokenSymbol: {
