@@ -71,7 +71,7 @@ export default class WalletSettings extends Mixins(TranslationMixin) {
       title: this.t(`settings.menu.${SettingsMenu.Advanced}.title`),
       desc: this.t(`settings.menu.${SettingsMenu.Advanced}.desc`),
       route: RouteNames.WalletSettingsAdvanced,
-      visible: false
+      visible: true
     }
   ]
 
