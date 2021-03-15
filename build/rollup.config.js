@@ -5,7 +5,7 @@ import scss from 'rollup-plugin-scss'
 import resolve from '@rollup/plugin-node-resolve'
 import commonjs from 'rollup-plugin-commonjs'
 import { terser } from 'rollup-plugin-terser'
-// import del from 'rollup-plugin-delete'
+import del from 'rollup-plugin-delete'
 import copy from 'rollup-plugin-copy'
 import json from 'rollup-plugin-json'
 
@@ -66,18 +66,19 @@ export default {
         { src: 'lib/src/*', dest: 'lib' }
       ],
       hook: 'renderChunk'
+    }),
+    del({
+      targets: [
+        // 'lib/src', Cannot be removed due to issue above
+        'lib/styles',
+        'lib/node_modules',
+        'lib/plugins',
+        'lib/lang',
+        'lib/SoraNeoWallet.vue.d.ts',
+        'lib/main.d.ts',
+        'lib/soraneo-wallet-web.esm.css'
+      ],
+      hook: 'writeBundle'
     })
-    // del({
-    //   targets: [
-    //     'lib/src',
-    //     'lib/styles',
-    //     'lib/node_modules',
-    //     'lib/plugins',
-    //     'lib/lang',
-    //     'lib/SoraNeoWallet.vue.d.ts',
-    //     'lib/main.d.ts'
-    //   ],
-    //   hook: 'writeBundle'
-    // })
   ]
 }
