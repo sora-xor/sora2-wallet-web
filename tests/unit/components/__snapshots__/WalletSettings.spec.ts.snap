@@ -123,6 +123,40 @@ exports[`WalletSettings.vue should renders correctly 1`] = `
         />
       </div>
        
+      <s-divider-stub
+        class="wallet-settings-item_divider"
+        contentposition="center"
+        direction="horizontal"
+        type="secondary"
+      />
+    </div>
+    <div>
+      <div
+        class="wallet-settings-item s-flex"
+      >
+        <div
+          class="wallet-settings-item-text s-flex"
+        >
+          <span
+            class="wallet-settings-item-text_main"
+          >
+            
+          </span>
+           
+          <span
+            class="wallet-settings-item-text_secondary"
+          >
+            
+          </span>
+        </div>
+         
+        <s-icon-stub
+          class="wallet-settings-item_icon"
+          name="chevron-right"
+          size="12px"
+        />
+      </div>
+       
       <!---->
     </div>
      
