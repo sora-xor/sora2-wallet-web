@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import { Store } from 'vuex'
 
+import './plugins'
+// import './styles' We don't need it for now
+
 import SoraNeoWallet from './SoraNeoWallet.vue'
 import { Components, Modules } from './types'
 import en from './lang/en'
