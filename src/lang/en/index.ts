@@ -151,7 +151,9 @@ export default {
     empty: 'There are no assets',
     add: 'Add token',
     swap: '@:swapText',
-    send: '@:sendText'
+    send: '@:sendText',
+    copy: 'Copy Asset ID',
+    successCopy: '{symbol} Asset ID is copied to the clipboard'
   },
   settings: {
     title: '@:settingsText',

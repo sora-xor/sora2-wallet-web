@@ -42,6 +42,24 @@
         <s-tooltip
           class="header-tooltip"
           popper-class="info-tooltip info-tooltip--header"
+          :content="t(actionTooltip)"
+          border-radius="mini"
+          placement="bottom-end"
+          animation="none"
+          :show-arrow="false"
+        >
+          <s-button
+            v-if="showAction"
+            class="base-title_action"
+            type="action"
+            :icon="actionIcon"
+            size="medium"
+            @click="handleActionClick"
+          />
+        </s-tooltip>
+        <s-tooltip
+          class="header-tooltip"
+          popper-class="info-tooltip info-tooltip--header"
           :content="t('closeText')"
           border-radius="mini"
           placement="bottom-end"
@@ -76,6 +94,9 @@ export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
   @Prop({ default: false, type: Boolean }) readonly showSettings!: boolean
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
+  @Prop({ default: false, type: Boolean }) readonly showAction!: boolean
+  @Prop({ default: '', type: String }) readonly actionTooltip!: string
+  @Prop({ default: '', type: String }) readonly actionIcon!: string
 
   @Action navigate
 
@@ -98,6 +119,10 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 
   handleCloseClick (): void {
     this.$emit('close')
+  }
+
+  handleActionClick (): void {
+    this.$emit('action')
   }
 }
 </script>
@@ -138,7 +163,7 @@ $button-size: var(--s-size-medium);
       left: 0;
     }
     &_settings,
-    &_close {
+    &_close, &_action {
       right: 0;
     }
   }

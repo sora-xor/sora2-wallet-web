@@ -48,8 +48,7 @@ import { AccountAsset, Asset, KnownSymbols } from '@sora-substrate/util'
 import TranslationMixin from './mixins/TranslationMixin'
 import { AddAssetTabs, RouteNames } from '../consts'
 import { getAssetIconClasses } from '../util'
-
-type NamedAsset = Asset & { name: string }
+import { NamedAsset } from '../types'
 
 @Component
 export default class AddAssetSearch extends Mixins(TranslationMixin) {

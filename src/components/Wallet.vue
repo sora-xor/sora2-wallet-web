@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
@@ -38,7 +38,6 @@ export default class Wallet extends Mixins(TranslationMixin) {
   readonly WalletTabs = WalletTabs
 
   @Getter account!: any
-  @Action navigate
 
   currentTab = WalletTabs.Assets
 
