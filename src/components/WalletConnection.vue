@@ -85,7 +85,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     await this.withLoading(async () => {
       this.isExtensionAvailable = await this.checkExtension()
     })
-    if (this.currentRouteParams?.isAccountSwitch) {
+    if ((this.currentRouteParams || {}).isAccountSwitch) {
       this.step = Step.Second
       this.polkadotJsAccounts = await this.getPolkadotJsAccounts()
     }
