@@ -5,7 +5,6 @@ import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 import { AccountAsset } from '@sora-substrate/util'
 
-import * as accountApi from '../api/account'
 import { api } from '../api'
 import { storage } from '../util/storage'
 import { getExtension, getExtensionSigner, getExtensionInfo } from '../util'
@@ -231,6 +230,14 @@ const mutations = {
 }
 
 const actions = {
+  async checkExtension ({ commit }) {
+    try {
+      await getExtension()
+      return true
+    } catch (error) {
+      return false
+    }
+  },
   async getSigner ({ commit, state: { address } }) {
     commit(types.GET_SIGNER_REQUEST)
     try {
@@ -309,8 +316,7 @@ const actions = {
   async getAssetDetails ({ commit, state: { address } }, { symbol }) {
     commit(types.GET_ASSET_DETAILS_REQUEST)
     try {
-      const data = await accountApi.getAssetDetails(address, symbol)
-      commit(types.GET_ASSET_DETAILS_SUCCESS, data)
+      commit(types.GET_ASSET_DETAILS_SUCCESS, {})
     } catch (error) {
       commit(types.GET_ASSET_DETAILS_FAILURE)
     }
@@ -318,8 +324,7 @@ const actions = {
   async getAccountActivity ({ commit, state: { address } }) {
     commit(types.GET_ACCOUNT_ACTIVITY_REQUEST)
     try {
-      const activity = await accountApi.getAccountActivity(address)
-      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, activity)
+      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, [])
     } catch (error) {
       commit(types.GET_ACCOUNT_ACTIVITY_FAILURE)
     }
@@ -356,8 +361,7 @@ const actions = {
   async getTransactionDetails ({ commit, state: { address } }, { id }) {
     commit(types.GET_TRANSACTION_DETAILS_REQUEST)
     try {
-      const transaction = await accountApi.getTransaction(address, id)
-      commit(types.GET_TRANSACTION_DETAILS_SUCCESS, transaction)
+      commit(types.GET_TRANSACTION_DETAILS_SUCCESS, {})
     } catch (error) {
       commit(types.GET_TRANSACTION_DETAILS_FAILURE)
     }

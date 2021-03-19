@@ -39,7 +39,7 @@
         <div class="wallet-settings-create-token_confirm-block">
           <div class="wallet-settings-create-token_fee-block">
             <s-tooltip class="bridge-info-icon" popper-class="info-tooltip info-tooltip--bridge" border-radius="mini" :content="t('createToken.tooltipValue')" theme="light" placement="right-start" animation="none" :show-arrow="false">
-              <s-icon name="info" size="16" />
+              <s-icon name="info-16" />
             </s-tooltip>
             <span class="wallet-settings-create-token_fee-block_title">{{ t('createToken.fee') }}</span>
           </div>
@@ -64,7 +64,7 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
 import { KnownSymbols, CodecString, KnownAssets, FPNumber } from '@sora-substrate/util'
 
-import TranslationMixin from './mixins/TranslationMixin'
+import TransactionMixin from './mixins/TransactionMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
@@ -80,7 +80,7 @@ enum STEPS {
     WalletBase
   }
 })
-export default class CreateToken extends Mixins(TranslationMixin, NumberFormatterMixin) {
+export default class CreateToken extends Mixins(TransactionMixin, NumberFormatterMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly STEPS = STEPS
 
@@ -97,7 +97,7 @@ export default class CreateToken extends Mixins(TranslationMixin, NumberFormatte
 
   handleBack (): void {
     if (this.step === this.STEPS.Create) {
-      this.navigate({ name: RouteNames.WalletSettingsAdvanced })
+      this.navigate({ name: RouteNames.Wallet })
     } else {
       this.step = this.STEPS.Create
     }
@@ -150,25 +150,15 @@ export default class CreateToken extends Mixins(TranslationMixin, NumberFormatte
   }
 
   async onCreate (): Promise<void> {
-    try {
-      if (!this.hasEnoughXor) {
-        return
+    await this.withNotifications(
+      async () => {
+        if (!this.hasEnoughXor) {
+          throw new Error('walletSend.badAmount')
+        }
+        await this.registerAsset()
       }
-      await this.registerAsset()
-      this.$notify({
-        type: 'info',
-        title: this.t('createToken.success.title'),
-        message: this.t('createToken.success.desc', { symbol: this.tokenSymbol })
-      })
-      this.navigate({ name: RouteNames.Wallet })
-    } catch (error) {
-      console.error(error)
-      this.$notify({
-        type: 'error',
-        title: '',
-        message: this.t('createToken.error', { symbol: this.tokenSymbol })
-      })
-    }
+    )
+    this.navigate({ name: RouteNames.Wallet })
   }
 }
 </script>
@@ -180,7 +170,7 @@ export default class CreateToken extends Mixins(TranslationMixin, NumberFormatte
     font-size: $font-size_small;
     padding: $basic-spacing_mini 0 $basic-spacing 0;
     line-height: $line-height_medium;
-    font-feature-settings: $s-font-feature-settings-common;
+    font-feature-settings: var(--s-font-feature-settings-common);
   }
   &_supply-block {
     display: flex;
@@ -203,7 +193,7 @@ export default class CreateToken extends Mixins(TranslationMixin, NumberFormatte
     font-weight: normal;
     padding: $basic-spacing_mini 0;
     line-height: $line-height_medium;
-    font-feature-settings: $s-font-feature-settings-common;
+    font-feature-settings: var(--s-font-feature-settings-common);
   }
   &_fee-block {
     display: flex;

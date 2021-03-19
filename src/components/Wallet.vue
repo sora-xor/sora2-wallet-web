@@ -1,6 +1,12 @@
 <template>
-  <wallet-base :title="t('wallet.title')" show-settings>
-    <wallet-account show-menu :name="account.name" />
+  <wallet-base
+    :title="t('wallet.title')"
+    show-action
+    action-icon="various-atom-24"
+    action-tooltip="wallet.createToken"
+    @action="handleCreateToken"
+  >
+    <wallet-account show-controls />
     <div class="wallet">
       <s-tabs :value="currentTab" type="rounded" @change="handleChangeTab">
         <s-tab
@@ -24,7 +30,7 @@ import WalletBase from './WalletBase.vue'
 import WalletAccount from './WalletAccount.vue'
 import WalletAssets from './WalletAssets.vue'
 import WalletActivity from './WalletActivity.vue'
-import { WalletTabs } from '../consts'
+import { RouteNames, WalletTabs } from '../consts'
 
 @Component({
   components: {
@@ -38,6 +44,7 @@ export default class Wallet extends Mixins(TranslationMixin) {
   readonly WalletTabs = WalletTabs
 
   @Getter account!: any
+  @Action navigate
 
   currentTab = WalletTabs.Assets
 
@@ -47,6 +54,10 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   handleSwap (asset: any): void {
     this.$emit('swap', asset)
+  }
+
+  handleCreateToken (): void {
+    this.navigate({ name: RouteNames.CreateToken })
   }
 }
 </script>

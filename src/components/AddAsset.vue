@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'

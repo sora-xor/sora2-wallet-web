@@ -1,72 +1,54 @@
 <template>
-  <s-card :bodyStyle="{ padding: '0 12px' }" class="wallet-account" border-radius="mini" shadow="never">
+  <s-card :bodyStyle="{ padding: '0 12px' }" class="wallet-account" border-radius="mini">
     <div class="account s-flex">
       <div class="account-avatar" />
-      <div class="account-credentials s-flex">
-        <div
-          ref="editNameEl"
-          v-if="name"
-          class="account-credentials_name"
-          :contenteditable="isEditNameOperation"
-          @keydown.enter.prevent
-          @input="handleNameChange"
-          @blur="handleNameInputBlur"
-        >
-          {{ name }}
+      <div class="account-details s-flex">
+        <div class="account-credentials s-flex">
+          <div v-if="(polkadotAccount || account).name" class="account-credentials_name">{{ (polkadotAccount || account).name }}</div>
+          <s-tooltip :content="t('account.copy')">
+            <div class="account-credentials_address" @click="handleCopyAddress($event)">{{ formatAddress((polkadotAccount || account).address) }}</div>
+          </s-tooltip>
         </div>
-        <div class="account-credentials_address">{{ formatAddress(account.address) }}</div>
-      </div>
-      <s-button class="account-copy" size="medium" type="link" icon="copy" @click="handleCopyAddress" />
-      <s-dropdown
-        v-if="showMenu"
-        class="account-menu"
-        borderRadius="mini"
-        type="ellipsis"
-        icon="more-vertical"
-        placement="bottom-end"
-        @select="handleMenuSelect"
-      >
-        {{ t('account.menu.tooltip') }}
-        <template slot="menu">
-          <s-dropdown-item
-            v-for="menuItem in AccountMenu"
-            :key="menuItem"
-            :value="menuItem"
-            :disabled="/* TODO: coming soon */ menuItem === AccountMenu.View"
-          >
-            <span>{{ t(`account.menu.${menuItem}`) }}</span>
-          </s-dropdown-item>
+        <template v-if="showControls">
+          <s-button
+            class="account-switch"
+            type="link"
+            icon="arrows-refresh-ccw-24"
+            :tooltip="t('account.switch')"
+            @click="handleSwitchAccount"
+          />
+          <s-button
+            class="account-logout"
+            type="link"
+            icon="security-logout-24"
+            :tooltip="t('account.logout')"
+            @click="handleLogout"
+          />
         </template>
-      </s-dropdown>
+      </div>
     </div>
   </s-card>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Ref } from 'vue-property-decorator'
+import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
-import { AccountMenu, RouteNames } from '../consts'
-import { copyToClipboard, delay, formatAddress } from '../util'
+import { RouteNames } from '../consts'
+import { copyToClipboard, formatAddress } from '../util'
 
 @Component
 export default class WalletAccount extends Mixins(TranslationMixin) {
-  readonly AccountMenu = AccountMenu
-
   @Getter account!: any
   @Action logout
   @Action navigate
-  @Action changeName
 
-  @Prop({ default: '', type: String }) readonly name!: string
-  @Prop({ default: false, type: Boolean }) readonly showMenu!: boolean
-  @Ref('editNameEl') editNameEl!: HTMLDivElement
+  @Prop({ default: false, type: Boolean }) readonly showControls!: boolean
+  @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: { name: string; address: string }
 
-  accountName = this.name
-  isEditNameOperation = false
-
-  async handleCopyAddress (): Promise<void> {
+  async handleCopyAddress (event: Event): Promise<void> {
+    event.stopImmediatePropagation()
     try {
       await copyToClipboard(this.account.address)
       this.$notify({
@@ -83,48 +65,18 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
     }
   }
 
-  async handleMenuSelect (selected: AccountMenu): Promise<void> {
-    switch (selected) {
-      case AccountMenu.View:
-        break
-      case AccountMenu.Edit:
-        await this.enableNameEdit()
-        break
-      case AccountMenu.Logout:
-        this.navigate({ name: RouteNames.WalletConnection })
-        this.logout()
-        break
-    }
+  handleSwitchAccount (): void {
+    this.navigate({ name: RouteNames.WalletConnection, params: { isAccountSwitch: true } })
+    this.logout()
   }
 
-  handleNameInputBlur (): void {
-    this.isEditNameOperation = false
-    if (!this.accountName) {
-      this.editNameEl.innerText = this.name
-      return
-    }
-    this.changeName({ newName: this.accountName })
-  }
-
-  handleNameChange (e: any): void {
-    this.accountName = e.target.innerText
+  handleLogout (): void {
+    this.navigate({ name: RouteNames.WalletConnection })
+    this.logout()
   }
 
   formatAddress (address: string): string {
-    return formatAddress(address, 14)
-  }
-
-  private async enableNameEdit (): Promise<void> {
-    this.isEditNameOperation = true
-    await delay(10)
-    const range = document.createRange()
-    range.selectNodeContents(this.editNameEl)
-    range.collapse(false)
-    const selection = window.getSelection()
-    if (selection) {
-      selection.removeAllRanges()
-      selection.addRange(range)
-    }
+    return formatAddress(address, 24)
   }
 }
 </script>
@@ -145,14 +97,18 @@ $avatar-size: 32px;
 
 .account {
   margin: $basic-spacing_mini 0;
+  align-items: center;
   &-avatar {
     margin-right: $basic-spacing_small;
     background-image: $avatar-default-svg;
     width: $avatar-size;
     height: $avatar-size;
   }
+  &-details {
+    flex: 1;
+  }
   &-credentials {
-    max-width: 75%;
+    flex: 1;
     flex-direction: column;
     justify-content: center;
     &_name,
@@ -166,16 +122,20 @@ $avatar-size: 32px;
       white-space: nowrap;
     }
     &_address {
+      width: fit-content;
+      outline: none;
       @include hint-text;
+      &:hover {
+        text-decoration: underline;
+        cursor: pointer;
+      }
     }
   }
-  &-copy {
-    flex: 1;
-    padding: 0;
-    text-align: right;
+  &-switch {
+    margin-left: 10px;
   }
-  &-menu {
-    align-self: center;
+  &-switch, &-logout {
+    padding: 0;
   }
 }
 </style>

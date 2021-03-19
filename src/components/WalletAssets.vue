@@ -2,8 +2,8 @@
   <div class="wallet-assets s-flex" v-loading="loading">
     <template v-if="!!accountAssets.length">
       <template v-for="(asset, index) in namedAccountAssets">
-        <div class="wallet-assets-item s-flex" :key="asset.symbol">
-          <i :class="getAssetClasses(asset.symbol)" />
+        <div class="wallet-assets-item s-flex" :key="asset.address">
+          <i :class="getAssetClasses(asset.address)" />
           <div class="asset s-flex">
             <div class="asset-value">{{ formatBalance(asset) }}</div>
             <div class="asset-info">{{ asset.name || asset.symbol }}
@@ -11,14 +11,13 @@
                 <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
               </s-tooltip>
             </div>
-            <!-- TODO: coming soon <div class="amount-converted">{{ formatConvertedAmount(asset) }}</div> -->
           </div>
           <s-button
             v-if="permissions.sendAssets"
-            class="swap"
+            class="send"
             type="primary"
             size="small"
-            icon="arrow-top-right-rounded"
+            icon="finance-send-24"
             :tooltip="t('assets.send')"
             :disabled="isZeroBalance(asset)"
             @click="handleAssetSend(asset)"
@@ -28,19 +27,26 @@
             class="swap"
             type="primary"
             size="small"
-            icon="swap"
+            icon="arrows-swap-24"
             :tooltip="t('assets.swap')"
             @click="handleAssetSwap(asset)"
           />
           <s-button class="details" type="link" @click="handleOpenAssetDetails(asset)">
-            <s-icon name="chevron-right" size="12px" />
+            <s-icon name="arrows-chevron-right-rounded-24" />
           </s-button>
         </div>
-        <s-divider v-if="index !== accountAssets.length - 1" :key="`${asset.symbol}-divider`" />
+        <s-divider v-if="index !== accountAssets.length - 1" :key="`${asset.address}-divider`" />
       </template>
     </template>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
-    <s-button class="wallet-assets-add" type="tertiary" @click="handleOpenAddAsset">{{ t('assets.add') }}</s-button>
+    <s-button
+      class="wallet-assets-add"
+      icon="circle-plus-16"
+      icon-position="right"
+      @click="handleOpenAddAsset"
+    >
+      {{ t('assets.add') }}
+    </s-button>
   </div>
 </template>
 
@@ -54,7 +60,7 @@ import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'
 import { RouteNames } from '../consts'
 import { getAssetIconClasses, formatAddress, copyToClipboard } from '../util'
-import { NamedAccountAsset } from '@/types'
+import { NamedAccountAsset } from '../types'
 
 @Component
 export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
@@ -71,15 +77,15 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     return this.accountAssets.map(asset => {
       const knownAsset = KnownAssets.get(asset.address)
       return { ...asset, name: knownAsset ? this.t(`assetNames.${asset.symbol}`) : '' }
-    })
+    }).filter(asset => !Number.isNaN(+asset.balance))
   }
 
   getFormattedAddress (asset: NamedAccountAsset): string {
-    return formatAddress(asset.address, 56)
+    return formatAddress(asset.address, 10)
   }
 
-  getAssetClasses (symbol: string): string {
-    return getAssetIconClasses(symbol)
+  getAssetClasses (address: string): string {
+    return getAssetIconClasses(address)
   }
 
   formatBalance (asset: NamedAccountAsset): string {
@@ -129,6 +135,16 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 }
 </script>
 
+<style lang="scss">
+.wallet-assets-item {
+  .swap, .send {
+    &:not(.s-action).s-i-position-left > span > i[class^=s-icon-] {
+      margin-right: 0;
+    }
+  }
+}
+</style>
+
 <style scoped lang="scss">
 @import '../styles/icons';
 
@@ -151,7 +167,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
       }
       &-id:hover {
         text-decoration: underline;
-        cursor: pointer
+        cursor: pointer;
       }
       &-converted {
         @include hint-text;
@@ -172,6 +188,5 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     text-align: center;
     @include hint-text;
   }
-  @include icon-chevron-right;
 }
 </style>

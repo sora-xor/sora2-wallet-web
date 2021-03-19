@@ -1,5 +1,5 @@
 @mixin asset-logo-styles($size: 32px) {
-  $tokens-list: "eth", "dot", "ksm", "pswap", "smc", "usdt", "val", "valerc", "xor", "xorerc";
+  $tokens-list: "eth", "pswap", "val", "valerc", "xor", "xorerc";
   $token-background-color: var(--s-color-base-on-accent);
   height: $size;
   width: $size;
@@ -19,20 +19,8 @@
   &--eth {
     background-image: $asset-logo-eth-svg;
   }
-  &--dot {
-    background-image: $asset-logo-dot-svg;
-  }
-  &--ksm {
-    background-image: $asset-logo-ksm-svg;
-  }
   &--pswap {
     background-image: $asset-logo-pswap-svg;
-  }
-  &--smc {
-    background-image: $asset-logo-smc-svg;
-  }
-  &--usdt {
-    background-image: $asset-logo-usdt-svg;
   }
   &--val {
     background-image: $asset-logo-val-svg;
@@ -45,26 +33,6 @@
   }
   &--xorerc {
     background-image: $asset-logo-xorerc-svg;
-  }
-}
-
-@mixin font-weight($fontWeight: 400, $important: false) {
-  @if $fontWeight == 400 and $important == false {
-    font-family: "Sora", sans-serif;
-  } @else if $fontWeight == 400 and $important == true {
-    font-family: "Sora", sans-serif !important;
-  } @else if $fontWeight == 500 and $important == false {
-    font-family: "SoraSB", sans-serif;
-  } @else if $fontWeight == 500 and $important == true {
-    font-family: "SoraSB", sans-serif !important;
-  } @else if $fontWeight == 600 and $important == false {
-    font-family: "SoraB", sans-serif;
-  } @else if $fontWeight == 600 and $important == true {
-    font-family: "SoraB", sans-serif !important;
-  } @else if $fontWeight == 700 and $important == false {
-    font-family: "SoraEB", sans-serif;
-  } @else if $fontWeight == 700 and $important == true {
-    font-family: "SoraEB", sans-serif !important;
   }
 }
 
@@ -96,8 +64,8 @@
             height: $tabs-item-height;
             line-height: $tabs-item-height;
             font-weight: normal;
-            font-feature-settings: $s-font-feature-settings-title;
-            @include font-weight(600, true);
+            font-feature-settings: var(--s-font-feature-settings-heading);
+            font-weight: 600 !important;
             &:hover {
               background-color: var(--s-color-base-background-hover);
             }
@@ -141,12 +109,6 @@
   }
 }
 
-@mixin icon-chevron-right {
-  .s-icon-chevron-right {
-    font-weight: bold;
-  }
-}
-
 @mixin select-icon ($containerClass) {
   .#{$containerClass} .s-select .el-select {
     .el-input__icon {
@@ -155,7 +117,7 @@
     i.el-icon-arrow-up:before {
       position: relative;
       top: 5px;
-      content: "\e992";
+      content: "\e9e4"; // TODO: change it asap
       color: var(--s-color-base-content-primary);
       font-size: var(--s-icon-font-size-medium);
     }
