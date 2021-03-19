@@ -1966,39 +1966,39 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
-"@sora-substrate/api-derive@^0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/api-derive/-/api-derive-0.6.4.tgz#e4f7fcd3643f4865197248c8ecbe65d65ff74c81"
-  integrity sha512-q9+/xHWlP6QbS8MJRSI6SG0/htuQgjGcJnKLcSmb8XX97LCuK5keeAPL0Rihfer462XYfxEWVVaQYavRHk3+7A==
+"@sora-substrate/api-derive@^0.6.5":
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/api-derive/-/api-derive-0.6.5.tgz#8e081a9009cfd102bc80c640acc76fb35d8b5c98"
+  integrity sha512-CQ44WCODHtln+ylHf0/3Hygz49Z4f17+JwcDQC68nBlSLv7oMinznJB2J4wqvxbllF1Ocdv6beQ3OKVVvrfczQ==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api-derive" "^4.1.1"
-    "@sora-substrate/types" "^0.6.4"
+    "@sora-substrate/types" "^0.6.5"
     rxjs "^6.5.5"
 
-"@sora-substrate/api@^0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/api/-/api-0.6.4.tgz#e1a6162447c227a943c86bc1dbc35b9dbfaf4a7e"
-  integrity sha512-ivFUB+iSxBZO+2fz6oM9iixMCch5JJ7vcZoNnQcllIbwBfAN8LIiCRnONXY15DixGN5L3751464T0xaGG8DjEA==
+"@sora-substrate/api@^0.6.5":
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/api/-/api-0.6.5.tgz#0b8881b50e5c73b237bf900c2debc03308960ada"
+  integrity sha512-kL6uhxfwN4OoHLIVoCr9W1SVc5uXh5cdZHCqaF3nmAXwhgzp1Cn+BN0PIfLdQSLyuEOnF+BNzQrij78wh/OHJQ==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-api-derive" "^0.8.2-9"
     "@polkadot/api" "^4.1.1"
     "@polkadot/rpc-core" "^4.1.1"
-    "@sora-substrate/api-derive" "^0.6.4"
-    "@sora-substrate/types" "^0.6.4"
+    "@sora-substrate/api-derive" "^0.6.5"
+    "@sora-substrate/types" "^0.6.5"
 
-"@sora-substrate/type-definitions@^0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/type-definitions/-/type-definitions-0.6.4.tgz#b8846c741db7a9bedf0684fa8a016ac0f1cd4370"
-  integrity sha512-l0tKSrkWSomnUO+X6ezQoTRWx73zgyVmeEiDFvpXz/zhY8UDgvlKNvr06hM4almdn9STT/Xq65/pivRYedLElQ==
+"@sora-substrate/type-definitions@^0.6.5":
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/type-definitions/-/type-definitions-0.6.5.tgz#410125a584f7439cf5d9b09b8fac964a56d49f52"
+  integrity sha512-2d0JGEFkMzZtRbYf4mFnISZ9LxG88KuAVHB2qoLbBeea2DAgtFsNDUe16iI1t5I1y/iOE0ErguqlmHqa4BY57g==
   dependencies:
     "@open-web3/orml-type-definitions" "^0.8.2-9"
 
-"@sora-substrate/types@^0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/types/-/types-0.6.4.tgz#36ab4e56bffa7b9676267995b1aea3359f2385f5"
-  integrity sha512-4LuqgWx8ucYK7HeAL8BoDCFDeLCNfiHxo6123I6sHUwj/eegHh8oba4MrXLeQkxi8cYTn9FvAcOqIsR6aoGkVw==
+"@sora-substrate/types@^0.6.5":
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/types/-/types-0.6.5.tgz#8eee58143942329248829966e5241606b031c56d"
+  integrity sha512-wLJXJMCFSTffXFitl9ykIka0BVOJTi0oJTWcx5viPUKyX5nttsYzaAdA4ddQ7xl8SOBAe6/1IM+N4PJ+vQVYDw==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/api-mobx" "^0.8.2-9"
@@ -2006,15 +2006,15 @@
     "@polkadot/api" "^4.1.1"
     "@polkadot/typegen" "^4.1.1"
     "@polkadot/types" "^4.1.1"
-    "@sora-substrate/type-definitions" "^0.6.4"
+    "@sora-substrate/type-definitions" "^0.6.5"
 
-"@sora-substrate/util@^0.6.4":
-  version "0.6.4"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/util/-/util-0.6.4.tgz#af419a103e2278e9de8a5d50a58c5e2a1ecd88e5"
-  integrity sha512-Sf+kZVeqxzWdfnrJzAGQvTaLqP2l3Lv9L9T2tBQGhP6FXVW3NBnO0eCiNMWh6HnQFrnm5QsvOGpulKi+7ajFtg==
+"@sora-substrate/util@^0.6.5":
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/util/-/util-0.6.5.tgz#e076ebe2207be8960f08feb4a96e64323ee19b4b"
+  integrity sha512-xLmu+SMJGAhBhoCBhG7Rq8pkAqoV6hZL062A26Z4bm2UDzSrMkeKfIx4RuzQgRFewxk5OJlbiALVwe3JtE9fNw==
   dependencies:
     "@polkadot/ui-keyring" "^0.61.1"
-    "@sora-substrate/api" "^0.6.4"
+    "@sora-substrate/api" "^0.6.5"
     bignumber.js "^9.0.1"
     crypto-js "^4.0.0"
     lodash "^4.17.15"
