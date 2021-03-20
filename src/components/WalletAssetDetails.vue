@@ -1,6 +1,13 @@
 <template>
-  <!-- TODO: Add more button -->
-  <wallet-base :title="currentRouteParams.symbol" show-back @back="handleBack">
+  <wallet-base
+    :title="currentRouteParams.asset.symbol"
+    show-back
+    :show-action="!isXor"
+    action-icon="basic-trash-24"
+    action-tooltip="asset.remove"
+    @back="handleBack"
+    @action="handleRemoveAsset"
+  >
     <wallet-history :history="history" />
   </wallet-base>
 </template>
@@ -8,7 +15,9 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
+import { KnownAssets, KnownSymbols } from '@sora-substrate/util'
 
+import { api } from '../api'
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
 import WalletHistory from './WalletHistory.vue'
@@ -21,21 +30,30 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
   @Getter currentRouteParams!: any
   @Getter selectedAssetDetails!: Array<any>
   @Action navigate
-  @Action getAssetDetails
 
   mounted (): void {
-    this.getAssetDetails({ symbol: this.currentRouteParams.symbol })
+  }
+
+  get isXor (): boolean {
+    const asset = KnownAssets.get(this.currentRouteParams.asset.address)
+    return asset && asset.symbol === KnownSymbols.XOR
   }
 
   get history (): Array<any> {
     if (!this.selectedAssetDetails) {
       return []
     }
-    return this.selectedAssetDetails.map(item => ({ ...item, fromSymbol: this.currentRouteParams.symbol }))
+    return this.selectedAssetDetails.map(item => ({ ...item, fromSymbol: this.currentRouteParams.asset.symbol }))
   }
 
   handleBack (): void {
     this.navigate({ name: RouteNames.Wallet })
+  }
+
+  handleRemoveAsset (): void {
+    const accountAssets = api.accountAssets
+    api.removeAsset(this.currentRouteParams.asset.address)
+    this.handleBack()
   }
 }
 </script>

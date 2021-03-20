@@ -6,7 +6,7 @@
       :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
       border-radius="mini"
       v-model="search"
-      @change="handleSearch"
+      @input="handleSearch"
     />
     <div class="asset-search-list" v-if="!!foundAssets">
       <div class="asset-search-list_info" v-if="!(search || foundAssets.length)">
@@ -22,10 +22,14 @@
         :class="{ 'selected': (selectedAsset || {}).address === asset.address }"
         @click="handleSelectAsset(asset)"
       >
-        <i :class="getAssetClasses(asset.symbol)" />
+        <i :class="getAssetClasses(asset.address)" />
         <div class="asset-description s-flex">
-          <div class="asset-description_name">{{ formatName(asset) }}</div>
           <div class="asset-description_symbol">{{ asset.symbol }}</div>
+          <div class="asset-description_info">{{ formatName(asset) }}
+            <s-tooltip :content="t('assets.copy')">
+              <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
+            </s-tooltip>
+          </div>
         </div>
       </div>
     </div>
@@ -43,13 +47,12 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, Asset, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, Asset, KnownAssets, KnownSymbols } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { AddAssetTabs, RouteNames } from '../consts'
-import { getAssetIconClasses } from '../util'
-
-type NamedAsset = Asset & { name: string }
+import { copyToClipboard, formatAddress, getAssetIconClasses } from '../util'
+import { NamedAsset } from '../types'
 
 @Component
 export default class AddAssetSearch extends Mixins(TranslationMixin) {
@@ -75,21 +78,28 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     this.alreadyAttached = false
     const assets = this.assets
       .filter(asset => !this.accountAssets.find(accountAsset => accountAsset.address === asset.address))
-      .map(asset => ({ ...asset, name: this.t(`assetNames.${asset.symbol}`) }))
+      .map(asset => {
+        const knownAsset = KnownAssets.get(asset.address)
+        return { ...asset, name: knownAsset ? this.t(`assetNames.${asset.symbol}`) : '' }
+      })
     if (!value || !value.trim()) {
       this.foundAssets = assets
       this.selectedAsset = null
       return
     }
     const search = value.trim().toLowerCase()
-    if (this.accountAssets.find(({ symbol }) => (symbol || '').toLowerCase() === search || this.t(`assetNames.${symbol}`).toLowerCase() === search)) {
+    const attached = this.accountAssets.find(({ symbol, address }) => {
+      const knownAsset = KnownAssets.get(address)
+      return address === search || (symbol || '').toLowerCase() === search || (knownAsset && this.t(`assetNames.${symbol}`).toLowerCase() === search)
+    })
+    if (attached) {
       this.alreadyAttached = true
       this.foundAssets = []
       this.selectedAsset = null
       return
     }
-    this.foundAssets = assets.filter(({ name, symbol }) => {
-      return symbol.toLowerCase().includes(search) || name.toLowerCase().includes(search)
+    this.foundAssets = assets.filter(({ name, symbol, address }) => {
+      return address === search || symbol.toLowerCase().includes(search) || name.toLowerCase().includes(search)
     })
     if (this.selectedAsset && !this.foundAssets.find(({ address }) => (this.selectedAsset || {}).address === address)) {
       this.selectedAsset = null
@@ -117,8 +127,29 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     this.$emit('add-asset')
   }
 
-  getAssetClasses (symbol: string): string {
-    return getAssetIconClasses(symbol)
+  getAssetClasses (address: string): string {
+    return getAssetIconClasses(address)
+  }
+
+  getFormattedAddress (asset: NamedAsset): string {
+    return formatAddress(asset.address, 10)
+  }
+
+  async handleCopy (asset: NamedAsset): Promise<void> {
+    try {
+      await copyToClipboard(asset.address)
+      this.$notify({
+        message: this.t('assets.successCopy', { symbol: asset.symbol }),
+        type: 'success',
+        title: ''
+      })
+    } catch (error) {
+      this.$notify({
+        message: `${this.t('warningText')} ${error}`,
+        type: 'warning',
+        title: ''
+      })
+    }
   }
 }
 </script>
@@ -163,12 +194,16 @@ $asset-item-height: 71px;
         flex: 1;
         flex-direction: column;
         line-height: $line-height_medium;
-        &_name {
-          font-feature-settings: $s-font-feature-settings-common;
-          @include font-weight(600)
-        }
         &_symbol {
+          font-feature-settings: var(--s-font-feature-settings-common);
+          font-weight: 600;
+        }
+        &_info {
           @include hint-text;
+          .asset-id:hover {
+            text-decoration: underline;
+            cursor: pointer;
+          }
         }
       }
     }

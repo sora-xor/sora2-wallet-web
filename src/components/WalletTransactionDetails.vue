@@ -50,7 +50,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
   @Getter currentRouteParams!: any
   @Getter selectedTransaction!: any
   @Action navigate
-  @Action getTransactionDetails
 
   getStatusIcon = getStatusIcon
   getStatusClass = getStatusClass
@@ -60,9 +59,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
     const id = this.currentRouteParams.id
     if (!id) {
       this.navigate({ name: RouteNames.Wallet })
-      return
     }
-    this.getTransactionDetails({ id })
   }
 
   get dataRows (): Array<{ key: string; value: string }> {

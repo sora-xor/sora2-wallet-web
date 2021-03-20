@@ -24,7 +24,7 @@
               <s-button v-if="isMaxButtonAvailable" class="asset-max" type="tertiary" size="small" border-radius="mini" @click="handleMaxClick">
                 {{ t('walletSend.max') }}
               </s-button>
-              <i :class="getAssetClasses(asset.symbol)" />
+              <i :class="getAssetClasses(asset.address)" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
@@ -42,12 +42,12 @@
           <div class="confirm-asset s-flex">
             <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
             <div class="confirm-asset-value s-flex">
-              <i :class="getAssetClasses(asset.symbol)" />
+              <i :class="getAssetClasses(asset.address)" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
           <div class="confirm-from">{{ account.address }}</div>
-          <s-icon name="arrow-bottom-rounded" />
+          <s-icon name="arrows-arrow-bottom-24" />
           <div class="confirm-to">{{ address }}</div>
           <s-divider />
           <div class="wallet-send-fee s-flex">
@@ -260,7 +260,7 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
   $swap-input-class: ".el-input";
   .s-input--token-value {
     min-height: 0;
-    font-feature-settings: $s-font-feature-settings-input;
+    font-feature-settings: var(--s-font-feature-settings-input);
     #{$swap-input-class} {
       #{$swap-input-class}__inner {
         padding-top: 0;
@@ -309,8 +309,8 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
       }
       &-value {
         margin-left: $basic-spacing_mini / 2;
-        font-feature-settings: $s-font-feature-settings-common;
-        letter-spacing: $s-letter-spacing-big;
+        font-feature-settings: var(--s-font-feature-settings-common);
+        letter-spacing: var(--s-letter-spacing-big);
       }
     }
     &-logo {
@@ -330,8 +330,8 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
       padding: $basic-spacing_mini / 2 $basic-spacing_mini;
     }
     &-max, &-name {
-      font-feature-settings: $s-font-feature-settings-title;
-      @include font-weight(700, true);
+      font-feature-settings: var(--s-font-feature-settings-heading);
+      font-weight: 700;
     }
   }
   &-address {
@@ -356,7 +356,7 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
         align-items: baseline;
       }
       &-title {
-        @include font-weight(600);
+        font-weight: 600;
       }
       &-balance {
         padding-right: $basic-spacing_mini;
@@ -372,7 +372,7 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
     color: var(--s-color-base-content-secondary);
     &_value {
       margin-left: auto;
-      font-feature-settings: $s-font-feature-settings-common;
+      font-feature-settings: var(--s-font-feature-settings-common);
     }
   }
   &-action {
@@ -383,7 +383,7 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
     &-asset {
       margin-bottom: $basic-spacing;
       font-size: 30px;
-      @include font-weight(400);
+      font-weight: 400;
       &-title {
         line-height: 1.33;
         flex: 1;
@@ -398,7 +398,7 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
           }
           &-name {
             line-height: 1.33;
-            @include font-weight(400, true);
+            font-weight: 400;
           }
         }
       }
@@ -413,7 +413,7 @@ export default class WalletSend extends Mixins(TransactionMixin, NumberFormatter
     &-from, &-to {
       // It's set to small size cuz we need to show full address
       font-size: $font-size_small;
-      @include font-weight(600);
+      font-weight: 600;
     }
   }
 }

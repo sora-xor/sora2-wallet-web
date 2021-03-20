@@ -32,11 +32,10 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { AccountAsset, Asset, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, Asset } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { AddAssetTabs, RouteNames } from '../consts'
-import { getAssetIconClasses } from '../util'
 
 @Component
 export default class AddAssetCustom extends Mixins(TranslationMixin) {
