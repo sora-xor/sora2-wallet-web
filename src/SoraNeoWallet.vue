@@ -11,14 +11,7 @@ import CreateToken from './components/CreateToken.vue'
 import Wallet from './components/Wallet.vue'
 import WalletAssetDetails from './components/WalletAssetDetails.vue'
 import WalletConnection from './components/WalletConnection.vue'
-import WalletCreation from './components/WalletCreation.vue'
-import WalletImport from './components/WalletImport.vue'
 import WalletSend from './components/WalletSend.vue'
-import WalletSettings from './components/WalletSettings.vue'
-import WalletSettingsAbout from './components/SettingsAbout.vue'
-import WalletSettingsLanguage from './components/SettingsLanguage.vue'
-import WalletSettingsNetworks from './components/SettingsNetworks.vue'
-import WalletSettingsAdvanced from './components/SettingsAdvanced.vue'
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
 
 import LoadingMixin from './components/mixins/LoadingMixin'
@@ -28,14 +21,7 @@ import { RouteNames } from './consts'
 @Component({
   components: {
     WalletConnection,
-    WalletCreation,
-    WalletImport,
     WalletSend,
-    WalletSettings,
-    WalletSettingsLanguage,
-    WalletSettingsNetworks,
-    WalletSettingsAdvanced,
-    WalletSettingsAbout,
     Wallet,
     WalletAssetDetails,
     AddAsset,
