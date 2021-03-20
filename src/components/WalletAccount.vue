@@ -85,6 +85,7 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 @import '../styles/icons';
 
 $avatar-size: 32px;
+$button-margin: 10px;
 
 .wallet-account.s-card {
   box-shadow: none;
@@ -132,7 +133,7 @@ $avatar-size: 32px;
     }
   }
   &-switch {
-    margin-left: 10px;
+    margin-left: $button-margin;
   }
   &-switch, &-logout {
     padding: 0;
