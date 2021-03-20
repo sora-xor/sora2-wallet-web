@@ -26,7 +26,7 @@ const assetsMock = [{
   usdAmount: 634.25
 },
 {
-  name: 'Etherium',
+  name: 'Ethereum',
   symbol: 'ETH',
   address: '8adaca8ea8192656a15c88797e04c8771c4576b3',
   amount: 3.32,
