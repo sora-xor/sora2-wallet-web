@@ -3,8 +3,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Vue } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Component, Vue } from 'vue-property-decorator'
+import { Getter } from 'vuex-class'
 
 import WalletHistory from './WalletHistory.vue'
 
@@ -13,10 +13,8 @@ import WalletHistory from './WalletHistory.vue'
 })
 export default class WalletActivity extends Vue {
   @Getter activity!: Array<any>
-  @Action getAccountActivity
 
   mounted (): void {
-    this.getAccountActivity()
   }
 }
 </script>

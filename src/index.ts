@@ -6,6 +6,7 @@ import './plugins'
 
 import SoraNeoWallet from './SoraNeoWallet.vue'
 import { Components, Modules } from './types'
+import type { NamedAccountAsset, NamedAsset } from './types'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
 import { storage } from './util/storage'
@@ -78,6 +79,8 @@ export {
   connection,
   storage,
   SoraNeoWallet,
-  WALLET_CONSTS
+  WALLET_CONSTS,
+  NamedAsset,
+  NamedAccountAsset
 }
 export default SoraNeoWalletElements

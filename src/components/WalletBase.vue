@@ -1,62 +1,32 @@
 <template>
-  <s-card class="base" border-radius="medium" shadow="never">
+  <s-card class="base" border-radius="medium">
     <template #header>
       <div :class="headerClasses">
-        <s-tooltip
-          class="header-tooltip"
-          popper-class="info-tooltip info-tooltip--header"
-          :content="t('backText')"
-          border-radius="mini"
-          placement="bottom-start"
-          animation="none"
-          :show-arrow="false"
-        >
-          <s-button
-            v-if="showBack"
-            class="base-title_back"
-            type="action"
-            icon="chevron-left-rounded"
-            size="medium"
-            @click="handleBackClick"
-          />
-        </s-tooltip>
-        <span>{{ title }}</span>
-        <s-tooltip
-          class="header-tooltip"
-          popper-class="info-tooltip info-tooltip--header"
-          :content="t('settingsText')"
-          border-radius="mini"
-          placement="bottom-end"
-          animation="none"
-          :show-arrow="false"
-        >
-          <s-button
-            v-if="showSettings"
-            class="base-title_settings"
-            type="action"
-            icon="settings"
-            size="medium"
-            @click="handleSettingsClick"
-          />
-        </s-tooltip>
-        <s-tooltip
-          class="header-tooltip"
-          popper-class="info-tooltip info-tooltip--header"
-          :content="t('closeText')"
-          border-radius="mini"
-          placement="bottom-end"
-          animation="none"
-          :show-arrow="false"
-        >
-          <s-button
-            v-if="showClose"
-            class="base-title_close"
-            type="action"
-            icon="x-rounded"
-            size="medium"
-            @click="handleCloseClick"
-          />
-        </s-tooltip>
+        <s-button
+          v-if="showBack"
+          class="base-title_back"
+          type="action"
+          icon="arrows-chevron-left-rounded-24"
+          :tooltip="t('backText')"
+          @click="handleBackClick"
+        />
+        <h3>{{ title }}</h3>
+        <s-button
+          v-if="showAction"
+          class="base-title_action"
+          type="action"
+          :icon="actionIcon"
+          :tooltip="t(actionTooltip)"
+          @click="handleActionClick"
+        />
+        <s-button
+          v-if="showClose"
+          class="base-title_close"
+          type="action"
+          icon="basic-close-24"
+          :tooltip="t('closeText')"
+          @click="handleCloseClick"
+        />
       </div>
     </template>
     <slot />
@@ -68,14 +38,15 @@ import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
-import { RouteNames } from '../consts'
 
 @Component
 export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
-  @Prop({ default: false, type: Boolean }) readonly showSettings!: boolean
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
+  @Prop({ default: false, type: Boolean }) readonly showAction!: boolean
+  @Prop({ default: '', type: String }) readonly actionTooltip!: string
+  @Prop({ default: '', type: String }) readonly actionIcon!: string
 
   @Action navigate
 
@@ -91,22 +62,15 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     this.$emit('back')
   }
 
-  handleSettingsClick (): void {
-    this.navigate({ name: RouteNames.WalletSettings })
-    this.$emit('settings')
-  }
-
   handleCloseClick (): void {
     this.$emit('close')
   }
+
+  handleActionClick (): void {
+    this.$emit('action')
+  }
 }
 </script>
-
-<style lang="scss">
-.info-tooltip--header {
-  margin-top: #{$basic-spacing_mini / 2} !important;
-}
-</style>
 
 <style scoped lang="scss">
 $button-size: var(--s-size-medium);
@@ -123,12 +87,10 @@ $button-size: var(--s-size-medium);
     padding-right: $button-size + $basic-spacing;
     &--center {
       padding-left: $button-size + $basic-spacing;
-      text-align: center;
+      justify-content: center;
     }
     > span {
       flex: 1;
-      font-size: $font-size_medium;
-      line-height: $button-size;
     }
     .el-button {
       position: absolute;
@@ -137,8 +99,7 @@ $button-size: var(--s-size-medium);
     &_back {
       left: 0;
     }
-    &_settings,
-    &_close {
+    &_close, &_action {
       right: 0;
     }
   }
