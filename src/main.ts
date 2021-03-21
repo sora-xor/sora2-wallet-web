@@ -5,9 +5,11 @@ import store from './store'
 import i18n from './lang'
 import { connection } from './api'
 import * as env from '../public/env.json'
+import { install } from './plugins'
 
-import './plugins'
 import './styles'
+
+install(store)
 
 connection.endpoint = env.BLOCKCHAIN_URL
 
