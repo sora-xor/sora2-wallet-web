@@ -90,7 +90,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     const search = value.trim().toLowerCase()
     const attached = this.accountAssets.find(({ symbol, address }) => {
       const knownAsset = KnownAssets.get(address)
-      return address === search || (symbol || '').toLowerCase() === search || (knownAsset && this.t(`assetNames.${symbol}`).toLowerCase() === search)
+      return address.toLowerCase() === search || (symbol || '').toLowerCase() === search || (knownAsset && this.t(`assetNames.${symbol}`).toLowerCase() === search)
     })
     if (attached) {
       this.alreadyAttached = true
@@ -99,7 +99,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
       return
     }
     this.foundAssets = assets.filter(({ name, symbol, address }) => {
-      return address === search || symbol.toLowerCase().includes(search) || name.toLowerCase().includes(search)
+      return address.toLowerCase() === search || symbol.toLowerCase().includes(search) || name.toLowerCase().includes(search)
     })
     if (this.selectedAsset && !this.foundAssets.find(({ address }) => (this.selectedAsset || {}).address === address)) {
       this.selectedAsset = null
