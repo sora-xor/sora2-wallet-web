@@ -1,4 +1,6 @@
 import Vue from 'vue'
 import Maska from 'maska'
 
-Vue.use(Maska)
+export function install () {
+  Vue.use(Maska)
+}
