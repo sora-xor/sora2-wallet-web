@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import { Store } from 'vuex'
 
-import './plugins'
+import { install } from './plugins'
 // import './styles' We don't need it for now
 
 import SoraNeoWallet from './SoraNeoWallet.vue'
@@ -30,6 +30,7 @@ const SoraNeoWalletElements = {
       options.store.registerModule(molude, modules[molude])
     })
     store = options.store
+    install(store)
     components.forEach(el => vue.component(el.name, el.component))
   }
 }
