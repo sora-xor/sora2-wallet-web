@@ -55,7 +55,7 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
     return (this.polkadotAccount || this.account).name
   }
 
-  get formattedAddress () {
+  get formattedAddress (): string {
     return formatAddress(this.address, 24)
   }
 
