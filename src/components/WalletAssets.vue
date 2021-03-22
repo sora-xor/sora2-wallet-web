@@ -149,6 +149,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 @import '../styles/icons';
 
 $asset-item-height: 70px;
+$asset-icon-shadow-size: 3px;
 
 .wallet-assets {
   flex-direction: column;
@@ -159,6 +160,7 @@ $asset-item-height: 70px;
   &-item {
     align-items: center;
     height: $asset-item-height;
+    padding-left: $asset-icon-shadow-size;
     .asset {
       flex: 1;
       overflow-wrap: break-word;
