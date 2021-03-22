@@ -1,6 +1,6 @@
 <template>
   <div class="wallet-assets s-flex" v-loading="loading">
-    <template v-if="!!accountAssets.length">
+    <div v-if="!!namedAccountAssets.length" class="wallet-assets-container">
       <template v-for="(asset, index) in namedAccountAssets">
         <div class="wallet-assets-item s-flex" :key="asset.address">
           <i :class="getAssetClasses(asset.address)" />
@@ -35,9 +35,9 @@
             <s-icon name="arrows-chevron-right-rounded-24" />
           </s-button>
         </div>
-        <s-divider v-if="index !== accountAssets.length - 1" :key="`${asset.address}-divider`" />
+        <s-divider v-if="index !== namedAccountAssets.length - 1" class="wallet-assets-item_divider" :key="`${asset.address}-divider`" />
       </template>
-    </template>
+    </div>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
     <s-button
       class="wallet-assets-add"
@@ -148,13 +148,17 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 <style scoped lang="scss">
 @import '../styles/icons';
 
+$asset-item-height: 70px;
+
 .wallet-assets {
   flex-direction: column;
-  > :first-child {
-    margin-top: $basic-spacing;
+  &-container {
+    max-height: calc(#{$asset-item-height} * 5);
+    overflow-y: auto;
   }
   &-item {
     align-items: center;
+    height: $asset-item-height;
     .asset {
       flex: 1;
       overflow-wrap: break-word;
@@ -165,9 +169,12 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
       &-info {
         @include hint-text;
       }
-      &-id:hover {
-        text-decoration: underline;
-        cursor: pointer;
+      &-id {
+        outline: none;
+        &:hover {
+          text-decoration: underline;
+          cursor: pointer;
+        }
       }
       &-converted {
         @include hint-text;
@@ -179,6 +186,9 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     .asset-logo {
       flex-shrink: 0;
       @include asset-logo-styles;
+    }
+    &_divider {
+      margin: 0;
     }
   }
   &-add {
