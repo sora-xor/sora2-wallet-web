@@ -4,9 +4,9 @@
       <div class="account-avatar" />
       <div class="account-details s-flex">
         <div class="account-credentials s-flex">
-          <div v-if="(polkadotAccount || account).name" class="account-credentials_name">{{ (polkadotAccount || account).name }}</div>
+          <div v-if="name" class="account-credentials_name">{{ name }}</div>
           <s-tooltip :content="t('account.copy')">
-            <div class="account-credentials_address" @click="handleCopyAddress($event)">{{ formatAddress((polkadotAccount || account).address) }}</div>
+            <div class="account-credentials_address" @click="handleCopyAddress($event)">{{ formattedAddress }}</div>
           </s-tooltip>
         </div>
         <template v-if="showControls">
@@ -47,10 +47,22 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly showControls!: boolean
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: { name: string; address: string }
 
+  get address (): string {
+    return (this.polkadotAccount || this.account).address
+  }
+
+  get name (): string {
+    return (this.polkadotAccount || this.account).name
+  }
+
+  get formattedAddress () {
+    return formatAddress(this.address, 24)
+  }
+
   async handleCopyAddress (event: Event): Promise<void> {
     event.stopImmediatePropagation()
     try {
-      await copyToClipboard(this.account.address)
+      await copyToClipboard(this.address)
       this.$notify({
         message: this.t('account.successCopy'),
         type: 'success',
@@ -73,10 +85,6 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
   handleLogout (): void {
     this.navigate({ name: RouteNames.WalletConnection })
     this.logout()
-  }
-
-  formatAddress (address: string): string {
-    return formatAddress(address, 24)
   }
 }
 </script>
