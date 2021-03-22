@@ -200,9 +200,12 @@ $asset-item-height: 71px;
         }
         &_info {
           @include hint-text;
-          .asset-id:hover {
-            text-decoration: underline;
-            cursor: pointer;
+          .asset-id {
+            outline: none;
+            &:hover {
+              text-decoration: underline;
+              cursor: pointer;
+            }
           }
         }
       }
