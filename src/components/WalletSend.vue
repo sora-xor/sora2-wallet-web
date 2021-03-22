@@ -73,7 +73,6 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { AccountAsset, FPNumber, KnownSymbols } from '@sora-substrate/util'
 
-import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import TransactionMixin from './mixins/TransactionMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
@@ -85,7 +84,7 @@ import { api } from '../api'
     WalletBase
   }
 })
-export default class WalletSend extends Mixins(TransactionMixin, NumberFormatterMixin) {
+export default class WalletSend extends Mixins(TransactionMixin) {
   readonly KnownSymbols = KnownSymbols
 
   @Getter currentRouteParams!: any

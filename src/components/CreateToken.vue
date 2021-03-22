@@ -65,7 +65,6 @@ import { Action } from 'vuex-class'
 import { KnownSymbols, CodecString, KnownAssets, FPNumber } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
-import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
 import { api } from '../api'
@@ -80,7 +79,7 @@ enum STEPS {
     WalletBase
   }
 })
-export default class CreateToken extends Mixins(TransactionMixin, NumberFormatterMixin) {
+export default class CreateToken extends Mixins(TransactionMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly STEPS = STEPS
 

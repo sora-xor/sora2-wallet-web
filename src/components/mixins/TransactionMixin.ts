@@ -7,9 +7,10 @@ import { api } from '../../api'
 import { delay, formatAddress } from '../../util'
 import TranslationMixin from './TranslationMixin'
 import LoadingMixin from './LoadingMixin'
+import NumberFormatterMixin from './NumberFormatterMixin'
 
 @Component
-export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin) {
+export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
   private time = 0
 
   transaction: History | null = null // It's used just for sync errors
@@ -22,9 +23,9 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       return ''
     }
     return this.t(`operations.${value.status}.${value.type}`, {
-      amount: value.amount,
+      amount: value.amount ? this.formatStringValue(value.amount) : '',
       symbol: value.symbol,
-      address: value.to ? formatAddress(value.to as string, 20) : ''
+      address: value.to ? formatAddress(value.to as string, 10) : ''
     })
   }
 
