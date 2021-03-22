@@ -35,7 +35,7 @@ const types = flow(
   'GET_POLKADOT_JS_ACCOUNTS'
 ])
 
-let updateAssetsIntervalId: any = null
+let updateAssetsTimeoutId: any = null
 
 function initialState () {
   return {
@@ -295,15 +295,15 @@ const actions = {
       commit(!assets ? types.GET_ACCOUNT_ASSETS_FAILURE : types.UPDATE_ACCOUNT_ASSETS_FAILURE)
     }
   },
-  async updateAccountAssets ({ commit, getters }) {
-    if (updateAssetsIntervalId) {
-      clearInterval(updateAssetsIntervalId)
+  async updateAccountAssets ({ dispatch }) {
+    if (updateAssetsTimeoutId) {
+      clearTimeout(updateAssetsTimeoutId)
     }
-    const fiveSeconds = 5 * 1000
-    updateAssetsIntervalId = setInterval(async () => {
-      if (!getters.isLoggedIn) {
-        return
-      }
+
+    await dispatch('updateAccountAssetsProcess')
+  },
+  async updateAccountAssetsProcess ({ commit, getters, dispatch }) {
+    if (getters.isLoggedIn) {
       commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST)
       try {
         await api.updateAccountAssets()
@@ -311,6 +311,12 @@ const actions = {
       } catch (error) {
         commit(types.UPDATE_ACCOUNT_ASSETS_FAILURE)
       }
+    }
+
+    const fiveSeconds = 5 * 1000
+
+    updateAssetsTimeoutId = setTimeout(() => {
+      dispatch('updateAccountAssetsProcess')
     }, fiveSeconds)
   },
   async getAssetDetails ({ commit, state: { address } }, { symbol }) {
