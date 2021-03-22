@@ -295,22 +295,29 @@ const actions = {
       commit(!assets ? types.GET_ACCOUNT_ASSETS_FAILURE : types.UPDATE_ACCOUNT_ASSETS_FAILURE)
     }
   },
-  async updateAccountAssets ({ commit, getters }) {
+  async updateAccountAssets ({ dispatch }) {
     if (updateAssetsIntervalId) {
-      clearInterval(updateAssetsIntervalId)
+      clearTimeout(updateAssetsIntervalId)
     }
+
+    await dispatch('updateAccountAssetsProcess')
+  },
+  async updateAccountAssetsProcess ({ commit, getters, dispatch }) {
+    if (!getters.isLoggedIn) {
+      return
+    }
+    commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST)
+    try {
+      await api.updateAccountAssets()
+      commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
+    } catch (error) {
+      commit(types.UPDATE_ACCOUNT_ASSETS_FAILURE)
+    }
+
     const fiveSeconds = 5 * 1000
-    updateAssetsIntervalId = setInterval(async () => {
-      if (!getters.isLoggedIn) {
-        return
-      }
-      commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST)
-      try {
-        await api.updateAccountAssets()
-        commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
-      } catch (error) {
-        commit(types.UPDATE_ACCOUNT_ASSETS_FAILURE)
-      }
+
+    updateAssetsIntervalId = setTimeout(async () => {
+      dispatch('updateAccountAssetsProcess')
     }, fiveSeconds)
   },
   async getAssetDetails ({ commit, state: { address } }, { symbol }) {
