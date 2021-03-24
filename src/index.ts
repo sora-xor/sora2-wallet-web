@@ -5,6 +5,7 @@ import { install } from './plugins'
 // import './styles' We don't need it for now
 
 import SoraNeoWallet from './SoraNeoWallet.vue'
+import WalletAvatar from './components/WalletAvatar.vue'
 import { Components, Modules } from './types'
 import type { NamedAccountAsset, NamedAsset } from './types'
 import en from './lang/en'
@@ -82,6 +83,7 @@ export {
   SoraNeoWallet,
   WALLET_CONSTS,
   NamedAsset,
-  NamedAccountAsset
+  NamedAccountAsset,
+  WalletAvatar
 }
 export default SoraNeoWalletElements
