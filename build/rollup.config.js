@@ -41,6 +41,7 @@ export default {
     commonjs(),
     vue({
       css: true,
+      runtimeCompiler: true,
       compileTemplate: true,
       needMap: false, // fix for https://github.com/vuejs/rollup-plugin-vue/issues/238
       data: {
