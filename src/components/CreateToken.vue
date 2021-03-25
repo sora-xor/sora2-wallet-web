@@ -1,35 +1,48 @@
 <template>
   <wallet-base :title="t('createToken.title')" show-back @back="handleBack">
     <div class="wallet-settings-create-token">
-      <template v-if="step === STEPS.Create">
+      <template v-if="step === Step.Create">
         <s-input
           :placeholder="t(`createToken.tokenSymbol.placeholder`)"
           :minlength="1"
           :maxlength="7"
+          :disabled="loading"
           v-maska="tokenSymbolMask"
           v-model="tokenSymbol"
         />
         <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenSymbol.desc`) }}</p>
-        <s-input
+        <s-float-input
           :placeholder="t(`createToken.tokenSupply.placeholder`)"
-          v-maska="tokenSupplyMask"
           v-model="tokenSupply"
+          :decimals="decimals"
+          :max="maxTotalSupply"
+          :disabled="loading"
         />
         <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenSupply.desc`) }}</p>
         <div class="wallet-settings-create-token_supply-block">
           <span>{{ t(`createToken.extensibleSupply.placeholder`) }}</span>
-          <s-switch v-model="extensibleSupply" />
+          <s-switch v-model="extensibleSupply" :disabled="loading" />
         </div>
-        <s-button class="wallet-settings-create-token_action" @click="onConfirm" type="primary">{{ t('createToken.action') }}</s-button>
+        <s-button
+          class="wallet-settings-create-token_action"
+          type="primary"
+          :loading="loading"
+          :disabled="!(tokenSymbol && tokenSupply)"
+          @click="onConfirm"
+        >
+          <template v-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
+          <template v-else-if="!tokenSupply">{{ t('createToken.enterSupply') }}</template>
+          <template v-else>{{ t('createToken.action') }}</template>
+        </s-button>
       </template>
-      <template v-else-if="step === STEPS.Confirm">
+      <template v-else-if="step === Step.Confirm">
         <div class="wallet-settings-create-token_confirm-block">
           <span>{{ t('createToken.tokenSymbol.placeholder') }}</span>
           <span>{{ tokenSymbol }}</span>
         </div>
         <div class="wallet-settings-create-token_confirm-block">
           <span>{{ t('createToken.tokenSupply.placeholder') }}</span>
-          <span>{{ tokenSupply }}</span>
+          <span>{{ formattedTokenSupply }}</span>
         </div>
         <div class="wallet-settings-create-token_confirm-block">
           <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
@@ -49,6 +62,7 @@
           class="wallet-settings-create-token_action"
           type="primary"
           :disabled="!hasEnoughXor"
+          :loading="loading"
           @click="onCreate"
         >
           <template v-if="!hasEnoughXor">{{ t('createToken.insufficientBalance', { symbol: KnownSymbols.XOR }) }}</template>
@@ -62,14 +76,14 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
-import { KnownSymbols, CodecString, KnownAssets, FPNumber } from '@sora-substrate/util'
+import { KnownSymbols, CodecString, KnownAssets, FPNumber, MaxTotalSupply } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
 import { api } from '../api'
 
-enum STEPS {
+enum Step {
   Create,
   Confirm
 }
@@ -81,29 +95,33 @@ enum STEPS {
 })
 export default class CreateToken extends Mixins(TransactionMixin) {
   readonly KnownSymbols = KnownSymbols
-  readonly STEPS = STEPS
+  readonly Step = Step
+  readonly decimals = FPNumber.DEFAULT_PRECISION
+  readonly maxTotalSupply = MaxTotalSupply
+  readonly tokenSymbolMask = 'AAAAAAA'
 
-  step = this.STEPS.Create
+  step = Step.Create
   tokenSymbol = ''
   tokenSupply = ''
   extensibleSupply = false
   fee: CodecString = '0'
 
-  tokenSymbolMask = 'AAAAAAA'
-  tokenSupplyMask = { mask: 'N#*', tokens: { N: { pattern: /[1-9]/ } } }
-
   @Action navigate
 
   handleBack (): void {
-    if (this.step === this.STEPS.Create) {
+    if (this.step === Step.Create) {
       this.navigate({ name: RouteNames.Wallet })
     } else {
-      this.step = this.STEPS.Create
+      this.step = Step.Create
     }
   }
 
   get formattedFee (): string {
     return this.formatCodecNumber(this.fee)
+  }
+
+  get formattedTokenSupply (): string {
+    return this.formatStringValue(this.tokenSupply, this.decimals)
   }
 
   get hasEnoughXor (): boolean {
@@ -133,18 +151,26 @@ export default class CreateToken extends Mixins(TransactionMixin) {
   }
 
   async onConfirm (): Promise<void> {
-    if (this.tokenSymbol.length > 0 && this.tokenSupply.length > 0) {
-      try {
+    if (!this.tokenSymbol.length || !this.tokenSupply.length) {
+      return
+    }
+    const tokenSupply = this.getFPNumber(this.tokenSupply, this.decimals)
+    const maxTokenSupply = this.getFPNumber(MaxTotalSupply, this.decimals)
+    if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
+      this.tokenSupply = maxTokenSupply.toString()
+    }
+    try {
+      await this.withLoading(async () => {
         this.fee = await this.calculateFee()
-        this.step = this.STEPS.Confirm
-      } catch (error) {
-        console.error(error)
-        this.$notify({
-          message: this.t('createToken.feeError'),
-          type: 'error',
-          title: ''
-        })
-      }
+        this.step = Step.Confirm
+      })
+    } catch (error) {
+      console.error(error)
+      this.$notify({
+        message: this.t('createToken.feeError'),
+        type: 'error',
+        title: ''
+      })
     }
   }
 
@@ -155,9 +181,9 @@ export default class CreateToken extends Mixins(TransactionMixin) {
           throw new Error('walletSend.badAmount')
         }
         await this.registerAsset()
+        this.navigate({ name: RouteNames.Wallet })
       }
     )
-    this.navigate({ name: RouteNames.Wallet })
   }
 }
 </script>
