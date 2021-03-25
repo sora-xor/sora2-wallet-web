@@ -1,7 +1,7 @@
 <template>
   <s-card :bodyStyle="{ padding: '0 12px' }" class="wallet-account" border-radius="mini">
     <div class="account s-flex">
-      <div class="account-avatar" />
+      <wallet-avatar class="account-avatar" :address="address" />
       <div class="account-details s-flex">
         <div class="account-credentials s-flex">
           <div v-if="name" class="account-credentials_name">{{ name }}</div>
@@ -37,8 +37,13 @@ import { Getter, Action } from 'vuex-class'
 import TranslationMixin from './mixins/TranslationMixin'
 import { RouteNames } from '../consts'
 import { copyToClipboard, formatAddress } from '../util'
+import WalletAvatar from './WalletAvatar.vue'
 
-@Component
+@Component({
+  components: {
+    WalletAvatar
+  }
+})
 export default class WalletAccount extends Mixins(TranslationMixin) {
   @Getter account!: any
   @Action logout
@@ -109,7 +114,6 @@ $button-margin: 10px;
   align-items: center;
   &-avatar {
     margin-right: $basic-spacing_small;
-    background-image: $avatar-default-svg;
     width: $avatar-size;
     height: $avatar-size;
   }
