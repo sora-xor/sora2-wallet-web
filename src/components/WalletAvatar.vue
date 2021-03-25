@@ -27,6 +27,3 @@ export default class WalletAvatar extends Vue {
   @Prop({ default: '', type: String, required: true }) readonly address!: string
 }
 </script>
-
-<style scoped lang="scss">
-</style>
