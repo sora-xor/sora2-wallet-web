@@ -10,5 +10,6 @@ module.exports = {
         `
       }
     }
-  }
+  },
+  runtimeCompiler: true
 }
