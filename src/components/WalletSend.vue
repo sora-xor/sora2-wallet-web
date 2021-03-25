@@ -71,7 +71,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, FPNumber, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
 import WalletBase from './WalletBase.vue'
@@ -174,7 +174,11 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   }
 
   isXorAccountAsset (asset: AccountAsset): boolean {
-    return asset.symbol === KnownSymbols.XOR
+    const knownAsset = KnownAssets.get(asset.address)
+    if (!knownAsset) {
+      return false
+    }
+    return knownAsset.symbol === KnownSymbols.XOR
   }
 
   // We could use this method to check if the user enters a text value in a numeric field (we could do this by copy and paste)
