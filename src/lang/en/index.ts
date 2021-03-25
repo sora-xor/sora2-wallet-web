@@ -39,8 +39,8 @@ export default {
     }
   },
   assetNames: {
-    [KnownSymbols.XOR]: 'Sora',
-    [KnownSymbols.VAL]: 'Sora Validator Token',
+    [KnownSymbols.XOR]: 'SORA',
+    [KnownSymbols.VAL]: 'SORA Validator Token',
     [KnownSymbols.PSWAP]: 'Polkaswap'
   },
   polkadotjs: {
@@ -127,6 +127,8 @@ export default {
     title: '@:createTokenText',
     desc: 'Create and deploy custom token on SORA',
     action: '@:createTokenText',
+    enterSymbol: 'Enter token symbol',
+    enterSupply: 'Enter token supply',
     confirm: '@:confirmText',
     success: {
       title: 'Transaction submitted',
