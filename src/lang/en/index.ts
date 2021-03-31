@@ -1,4 +1,4 @@
-import { KnownSymbols, Operation, TransactionStatus } from '@sora-substrate/util'
+import { Operation, TransactionStatus } from '@sora-substrate/util'
 
 import { AddAssetTabs, WalletTabs } from '../../consts'
 
@@ -37,11 +37,6 @@ export default {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
       [Operation.RegisterAsset]: 'Failed to register {symbol} asset'
     }
-  },
-  assetNames: {
-    [KnownSymbols.XOR]: 'SORA',
-    [KnownSymbols.VAL]: 'SORA Validator Token',
-    [KnownSymbols.PSWAP]: 'Polkaswap'
   },
   polkadotjs: {
     noExtensions: 'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
