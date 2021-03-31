@@ -7,9 +7,9 @@ import { install } from './plugins'
 import SoraNeoWallet from './SoraNeoWallet.vue'
 import WalletAvatar from './components/WalletAvatar.vue'
 import { Components, Modules } from './types'
-import type { NamedAccountAsset, NamedAsset } from './types'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
+import { updateAccountAssetsSubscription } from './store/Account'
 import { storage } from './util/storage'
 import { api, connection } from './api'
 import { delay } from './util'
@@ -80,10 +80,9 @@ export {
   api,
   connection,
   storage,
+  updateAccountAssetsSubscription,
   SoraNeoWallet,
   WALLET_CONSTS,
-  NamedAsset,
-  NamedAccountAsset,
   WalletAvatar
 }
 export default SoraNeoWalletElements
