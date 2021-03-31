@@ -143,6 +143,10 @@ export default {
       placeholder: 'Token symbol',
       desc: 'This is an identifier for the token. You can use from 1 to 7 characters for the selection.'
     },
+    tokenName: {
+      placeholder: 'Token name',
+      desc: 'This is a name for the token. You can use from 1 to 33 characters for the selection.'
+    },
     tokenSupply: {
       placeholder: 'Token supply',
       desc: 'You will receive these tokens upon creation.'

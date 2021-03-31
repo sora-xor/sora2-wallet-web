@@ -1,7 +1,7 @@
 <template>
   <div class="wallet-assets s-flex" v-loading="loading">
-    <div v-if="!!namedAccountAssets.length" class="wallet-assets-container">
-      <template v-for="(asset, index) in namedAccountAssets">
+    <div v-if="!!formattedAccountAssets.length" class="wallet-assets-container">
+      <template v-for="(asset, index) in formattedAccountAssets">
         <div class="wallet-assets-item s-flex" :key="asset.address">
           <i :class="getAssetClasses(asset.address)" />
           <div class="asset s-flex">
@@ -35,7 +35,7 @@
             <s-icon name="arrows-chevron-right-rounded-24" />
           </s-button>
         </div>
-        <s-divider v-if="index !== namedAccountAssets.length - 1" class="wallet-assets-item_divider" :key="`${asset.address}-divider`" />
+        <s-divider v-if="index !== formattedAccountAssets.length - 1" class="wallet-assets-item_divider" :key="`${asset.address}-divider`" />
       </template>
     </div>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
@@ -60,7 +60,6 @@ import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'
 import { RouteNames } from '../consts'
 import { getAssetIconClasses, formatAddress, copyToClipboard } from '../util'
-import { NamedAccountAsset } from '../types'
 
 @Component
 export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
@@ -73,14 +72,11 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     this.withApi(this.getAccountAssets)
   }
 
-  get namedAccountAssets (): Array<NamedAccountAsset> {
-    return this.accountAssets.map(asset => {
-      const knownAsset = KnownAssets.get(asset.address)
-      return { ...asset, name: knownAsset ? this.t(`assetNames.${asset.symbol}`) : '' }
-    }).filter(asset => !Number.isNaN(+asset.balance))
+  get formattedAccountAssets (): Array<AccountAsset> {
+    return this.accountAssets.filter(asset => !Number.isNaN(+asset.balance))
   }
 
-  getFormattedAddress (asset: NamedAccountAsset): string {
+  getFormattedAddress (asset: AccountAsset): string {
     return formatAddress(asset.address, 10)
   }
 
@@ -88,27 +84,27 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     return getAssetIconClasses(address)
   }
 
-  formatBalance (asset: NamedAccountAsset): string {
+  formatBalance (asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance, asset.decimals)} ${asset.symbol}`
   }
 
-  isZeroBalance (asset: NamedAccountAsset): boolean {
+  isZeroBalance (asset: AccountAsset): boolean {
     return this.isCodecZero(asset.balance, asset.decimals)
   }
 
-  formatConvertedAmount (asset: NamedAccountAsset): string {
+  formatConvertedAmount (asset: AccountAsset): string {
     return '- USD'
   }
 
-  handleAssetSwap (asset: NamedAccountAsset): void {
+  handleAssetSwap (asset: AccountAsset): void {
     this.$emit('swap', asset)
   }
 
-  handleAssetSend (asset: NamedAccountAsset): void {
+  handleAssetSend (asset: AccountAsset): void {
     this.navigate({ name: RouteNames.WalletSend, params: { asset } })
   }
 
-  handleOpenAssetDetails (asset: NamedAccountAsset): void {
+  handleOpenAssetDetails (asset: AccountAsset): void {
     this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } })
   }
 
@@ -116,7 +112,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     this.navigate({ name: RouteNames.AddAsset })
   }
 
-  async handleCopy (asset: NamedAccountAsset): Promise<void> {
+  async handleCopy (asset: AccountAsset): Promise<void> {
     try {
       await copyToClipboard(asset.address)
       this.$notify({
@@ -137,7 +133,9 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 
 <style lang="scss">
 .wallet-assets-item {
+  $button-width: 48px;
   .swap, .send {
+    max-width: $button-width;
     &:not(.s-action).s-i-position-left > span > i[class^=s-icon-] {
       margin-right: 0;
     }
