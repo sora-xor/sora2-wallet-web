@@ -1,5 +1,5 @@
 <template>
-  <component v-if="!loading" :is="currentRoute" @close="handleClose" @swap="handleSwap" />
+  <component v-if="!loading" :is="currentRoute" @close="handleClose" @swap="handleSwap" @learn-more="handleLearnMore" />
 </template>
 
 <script lang="ts">
@@ -50,6 +50,10 @@ export default class SoraNeoWallet extends Mixins(LoadingMixin) {
 
   handleSwap (asset: any): void {
     this.$emit('swap', asset)
+  }
+
+  handleLearnMore (): void {
+    this.$emit('learn-more')
   }
 }
 </script>
