@@ -125,7 +125,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   handleLearnMoreClick (): void {
-    window.open('https://polkadot.js.org/docs/', '_blank')
+    this.$emit('learn-more')
   }
 }
 </script>
