@@ -11,6 +11,15 @@
           v-model="tokenSymbol"
         />
         <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenSymbol.desc`) }}</p>
+        <s-input
+          :placeholder="t(`createToken.tokenName.placeholder`)"
+          :minlength="1"
+          :maxlength="33"
+          :disabled="loading"
+          v-maska="tokenNameMask"
+          v-model="tokenName"
+        />
+        <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenName.desc`) }}</p>
         <s-float-input
           :placeholder="t(`createToken.tokenSupply.placeholder`)"
           v-model="tokenSupply"
@@ -27,7 +36,7 @@
           class="wallet-settings-create-token_action"
           type="primary"
           :loading="loading"
-          :disabled="!(tokenSymbol && tokenSupply)"
+          :disabled="!(tokenSymbol && tokenName.trim() && tokenSupply)"
           @click="onConfirm"
         >
           <template v-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
@@ -39,6 +48,10 @@
         <div class="wallet-settings-create-token_confirm-block">
           <span>{{ t('createToken.tokenSymbol.placeholder') }}</span>
           <span>{{ tokenSymbol }}</span>
+        </div>
+        <div class="wallet-settings-create-token_confirm-block">
+          <span>{{ t('createToken.tokenName.placeholder') }}</span>
+          <span>{{ tokenName.trim() }}</span>
         </div>
         <div class="wallet-settings-create-token_confirm-block">
           <span>{{ t('createToken.tokenSupply.placeholder') }}</span>
@@ -99,9 +112,11 @@ export default class CreateToken extends Mixins(TransactionMixin) {
   readonly decimals = FPNumber.DEFAULT_PRECISION
   readonly maxTotalSupply = MaxTotalSupply
   readonly tokenSymbolMask = 'AAAAAAA'
+  readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } }
 
   step = Step.Create
   tokenSymbol = ''
+  tokenName = ''
   tokenSupply = ''
   extensibleSupply = false
   fee: CodecString = '0'
@@ -137,6 +152,7 @@ export default class CreateToken extends Mixins(TransactionMixin) {
   async calculateFee (): Promise<CodecString> {
     return api.getRegisterAssetNetworkFee(
       this.tokenSymbol,
+      this.tokenName,
       this.tokenSupply,
       this.extensibleSupply
     )
@@ -145,6 +161,7 @@ export default class CreateToken extends Mixins(TransactionMixin) {
   async registerAsset (): Promise<void> {
     return api.registerAsset(
       this.tokenSymbol,
+      this.tokenName.trim(),
       this.tokenSupply,
       this.extensibleSupply
     )

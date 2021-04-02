@@ -47,17 +47,15 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, Asset, KnownAssets, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, Asset } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { AddAssetTabs, RouteNames } from '../consts'
 import { copyToClipboard, formatAddress, getAssetIconClasses } from '../util'
-import { NamedAsset } from '../types'
 
 @Component
 export default class AddAssetSearch extends Mixins(TranslationMixin) {
   readonly AddAssetTabs = AddAssetTabs
-  readonly KnownSymbols = KnownSymbols
 
   @Getter assets!: Array<Asset>
   @Getter accountAssets!: Array<AccountAsset>
@@ -66,8 +64,8 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
   @Action addAsset
 
   search = ''
-  selectedAsset: NamedAsset | null = null
-  foundAssets: Array<NamedAsset> = []
+  selectedAsset: Asset | null = null
+  foundAssets: Array<Asset> = []
   alreadyAttached = false
 
   mounted (): void {
@@ -76,21 +74,15 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
 
   handleSearch (value?: string): void {
     this.alreadyAttached = false
-    const assets = this.assets
-      .filter(asset => !this.accountAssets.find(accountAsset => accountAsset.address === asset.address))
-      .map(asset => {
-        const knownAsset = KnownAssets.get(asset.address)
-        return { ...asset, name: knownAsset ? this.t(`assetNames.${asset.symbol}`) : '' }
-      })
+    const assets = this.assets.filter(asset => !this.accountAssets.find(accountAsset => accountAsset.address === asset.address))
     if (!value || !value.trim()) {
       this.foundAssets = assets
       this.selectedAsset = null
       return
     }
     const search = value.trim().toLowerCase()
-    const attached = this.accountAssets.find(({ symbol, address }) => {
-      const knownAsset = KnownAssets.get(address)
-      return address.toLowerCase() === search || (symbol || '').toLowerCase() === search || (knownAsset && this.t(`assetNames.${symbol}`).toLowerCase() === search)
+    const attached = this.accountAssets.find(({ name, symbol, address }) => {
+      return address.toLowerCase() === search || (symbol || '').toLowerCase() === search || (name || '').toLowerCase() === search
     })
     if (attached) {
       this.alreadyAttached = true
@@ -106,14 +98,11 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     }
   }
 
-  formatName (asset: NamedAsset): string {
-    if (!asset.name || asset.name.includes('assetNames')) {
-      return asset.symbol
-    }
-    return asset.name
+  formatName (asset: Asset): string {
+    return asset.name || asset.symbol
   }
 
-  handleSelectAsset (asset: NamedAsset): void {
+  handleSelectAsset (asset: Asset): void {
     this.selectedAsset = asset
   }
 
@@ -131,11 +120,11 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     return getAssetIconClasses(address)
   }
 
-  getFormattedAddress (asset: NamedAsset): string {
+  getFormattedAddress (asset: Asset): string {
     return formatAddress(asset.address, 10)
   }
 
-  async handleCopy (asset: NamedAsset): Promise<void> {
+  async handleCopy (asset: Asset): Promise<void> {
     try {
       await copyToClipboard(asset.address)
       this.$notify({

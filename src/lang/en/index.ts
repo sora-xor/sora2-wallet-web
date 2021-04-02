@@ -1,4 +1,4 @@
-import { KnownSymbols, Operation, TransactionStatus } from '@sora-substrate/util'
+import { Operation, TransactionStatus } from '@sora-substrate/util'
 
 import { AddAssetTabs, WalletTabs } from '../../consts'
 
@@ -55,11 +55,6 @@ export default {
       [Operation.RegisterAsset]: 'Failed to register {symbol} asset',
       [Operation.ClaimRewards]: 'Failed to claim rewards {rewards}'
     }
-  },
-  assetNames: {
-    [KnownSymbols.XOR]: 'SORA',
-    [KnownSymbols.VAL]: 'SORA Validator Token',
-    [KnownSymbols.PSWAP]: 'Polkaswap'
   },
   polkadotjs: {
     noExtensions: 'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
@@ -163,6 +158,10 @@ export default {
     tokenSymbol: {
       placeholder: 'Token symbol',
       desc: 'This is an identifier for the token. You can use from 1 to 7 characters for the selection.'
+    },
+    tokenName: {
+      placeholder: 'Token name',
+      desc: 'This is a name for the token. You can use from 1 to 33 characters for the selection.'
     },
     tokenSupply: {
       placeholder: 'Token supply',

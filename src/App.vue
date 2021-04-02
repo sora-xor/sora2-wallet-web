@@ -14,6 +14,7 @@ import { Action, Getter } from 'vuex-class'
 import TransactionMixin from './components/mixins/TransactionMixin'
 import { initWallet } from './index'
 import SoraNeoWallet from './SoraNeoWallet.vue'
+import { updateAccountAssetsSubscription } from './store/Account'
 
 @Component({
   components: { SoraNeoWallet }
@@ -30,6 +31,12 @@ export default class App extends Mixins(TransactionMixin) {
   @Watch('firstReadyTransaction', { deep: true })
   private handleNotifyAboutTransaction (value): void {
     this.handleChangeTransaction(value)
+  }
+
+  destroyed (): void {
+    if (updateAccountAssetsSubscription) {
+      updateAccountAssetsSubscription.unsubscribe()
+    }
   }
 }
 </script>

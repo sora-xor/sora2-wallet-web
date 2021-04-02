@@ -9,6 +9,8 @@ import { api } from '../api'
 import { storage } from '../util/storage'
 import { getExtension, getExtensionSigner, getExtensionInfo } from '../util'
 
+export let updateAccountAssetsSubscription: any = null
+
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
@@ -34,8 +36,6 @@ const types = flow(
   'GET_SIGNER',
   'GET_POLKADOT_JS_ACCOUNTS'
 ])
-
-let updateAssetsTimeoutId: any = null
 
 function initialState () {
   return {
@@ -283,41 +283,29 @@ const actions = {
       return
     }
     const assets = storage.get('assets')
-    commit(!assets ? types.GET_ACCOUNT_ASSETS_REQUEST : types.UPDATE_ACCOUNT_ASSETS_REQUEST)
+    if (assets) {
+      return
+    }
+    commit(types.GET_ACCOUNT_ASSETS_REQUEST)
     try {
-      await (
-        assets
-          ? api.updateAccountAssets()
-          : api.getKnownAccountAssets()
-      )
-      commit(!assets ? types.GET_ACCOUNT_ASSETS_SUCCESS : types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
+      await api.getKnownAccountAssets()
+      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
     } catch (error) {
-      commit(!assets ? types.GET_ACCOUNT_ASSETS_FAILURE : types.UPDATE_ACCOUNT_ASSETS_FAILURE)
+      commit(types.GET_ACCOUNT_ASSETS_FAILURE)
     }
   },
-  async updateAccountAssets ({ dispatch }) {
-    if (updateAssetsTimeoutId) {
-      clearTimeout(updateAssetsTimeoutId)
-    }
-
-    await dispatch('updateAccountAssetsProcess')
-  },
-  async updateAccountAssetsProcess ({ commit, getters, dispatch }) {
+  async updateAccountAssets ({ commit, getters }) {
     if (getters.isLoggedIn) {
       commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST)
       try {
-        await api.updateAccountAssets()
-        commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
+        updateAccountAssetsSubscription = api.assetsBalanceUpdated.subscribe(data => {
+          commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
+        })
+        api.updateAccountAssets()
       } catch (error) {
         commit(types.UPDATE_ACCOUNT_ASSETS_FAILURE)
       }
     }
-
-    const fiveSeconds = 5 * 1000
-
-    updateAssetsTimeoutId = setTimeout(() => {
-      dispatch('updateAccountAssetsProcess')
-    }, fiveSeconds)
   },
   async getAssetDetails ({ commit, state: { address } }, { symbol }) {
     commit(types.GET_ASSET_DETAILS_REQUEST)
