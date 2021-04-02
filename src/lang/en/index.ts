@@ -29,13 +29,31 @@ export default {
   unknownErrorText: 'ERROR Something went wrong...',
   transactionSubmittedText: 'Transaction was submitted',
   operations: {
+    [Operation.Swap]: 'Swap',
+    [Operation.Transfer]: 'Transfer',
+    [Operation.AddLiquidity]: 'Add Liquidity',
+    [Operation.RemoveLiquidity]: 'Remove Liquidity',
+    [Operation.CreatePair]: 'Create Pair',
+    [Operation.RegisterAsset]: 'Register Asset',
+    [Operation.ClaimRewards]: 'Claim Rewards',
+    andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: 'Sent {amount} {symbol} to {address}',
-      [Operation.RegisterAsset]: 'Registered {symbol} asset'
+      [Operation.Swap]: 'Swapped {amount} {symbol} for {amount2} {symbol2}',
+      [Operation.AddLiquidity]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
+      [Operation.RemoveLiquidity]: 'Removed {amount} {symbol} and {amount2} {symbol2}',
+      [Operation.CreatePair]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
+      [Operation.RegisterAsset]: 'Registered {symbol} asset',
+      [Operation.ClaimRewards]: 'Reward claimed successfully {rewards}'
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
-      [Operation.RegisterAsset]: 'Failed to register {symbol} asset'
+      [Operation.Swap]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2}',
+      [Operation.AddLiquidity]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
+      [Operation.RemoveLiquidity]: 'Failed to remove {amount} {symbol} and {amount2} {symbol2}',
+      [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
+      [Operation.RegisterAsset]: 'Failed to register {symbol} asset',
+      [Operation.ClaimRewards]: 'Failed to claim rewards {rewards}'
     }
   },
   assetNames: {
@@ -64,7 +82,7 @@ export default {
     }
   },
   wallet: {
-    title: 'Wallet',
+    title: 'SORA Network account',
     [WalletTabs.Assets]: 'Assets',
     [WalletTabs.Activity]: 'Activity',
     addAsset: '@:addAssetText',
@@ -92,7 +110,9 @@ export default {
     logout: 'Logout'
   },
   history: {
-    empty: 'There is no activity'
+    filterPlaceholder: 'Filter by address, asset',
+    empty: 'Your transactions will appear here',
+    emptySearch: 'No transactions found'
   },
   assets: {
     empty: 'There are no assets',
@@ -155,7 +175,7 @@ export default {
     title: 'Transaction details',
     hash: 'Transaction Hash',
     status: 'Status',
-    date: 'Date',
+    startTime: 'Date',
     amount: '@:amountText',
     fee: 'Transaction Fee',
     total: 'Total',

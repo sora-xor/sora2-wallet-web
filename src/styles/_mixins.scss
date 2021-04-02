@@ -105,7 +105,31 @@
   color: var(--s-color-base-content-tertiary);
   font-size: $font-size_small;
   @if $withLineHeight == true {
-    line-height: $line-height_medium;
+    line-height: var(--s-line-height-big);
+  }
+}
+
+@mixin svg-icon ($url: '', $width: var(--s-icon-font-size-mini), $height: $width) {
+  display: block;
+  width: $width;
+  height: $height;
+  @if $url != '' {
+    background-image: url($url);
+  }
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+
+@mixin loading {
+  animation: rotation 2s infinite linear;
+  @keyframes rotation {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(359deg);
+    }
   }
 }
 

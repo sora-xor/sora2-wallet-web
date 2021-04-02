@@ -327,10 +327,10 @@ const actions = {
       commit(types.GET_ASSET_DETAILS_FAILURE)
     }
   },
-  async getAccountActivity ({ commit, state: { address } }) {
+  async getAccountActivity ({ commit }) {
     commit(types.GET_ACCOUNT_ACTIVITY_REQUEST)
     try {
-      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, [])
+      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, api.accountHistory)
     } catch (error) {
       commit(types.GET_ACCOUNT_ACTIVITY_FAILURE)
     }
@@ -364,10 +364,15 @@ const actions = {
       commit(types.ADD_ASSET_FAILURE)
     }
   },
-  async getTransactionDetails ({ commit, state: { address } }, { id }) {
+  async getTransactionDetails ({ commit, getters, state: { address } }, id) {
     commit(types.GET_TRANSACTION_DETAILS_REQUEST)
     try {
-      commit(types.GET_TRANSACTION_DETAILS_SUCCESS, {})
+      const transactions = getters.activity
+      let transaction = null
+      if (transactions?.length) {
+        transaction = transactions.find(item => id === item.id)
+      }
+      commit(types.GET_TRANSACTION_DETAILS_SUCCESS, transaction)
     } catch (error) {
       commit(types.GET_TRANSACTION_DETAILS_FAILURE)
     }

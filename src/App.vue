@@ -41,7 +41,7 @@ export default class App extends Mixins(TransactionMixin) {
   border: none !important;
   box-shadow: var(--s-shadow-tooltip);
   font-size: var(--s-font-size-small);
-  line-height: $line-height_small;
+  line-height: var(--s-line-height-medium);
 }
 .el-notification.sora {
   background: var(--s-color-brand-day);

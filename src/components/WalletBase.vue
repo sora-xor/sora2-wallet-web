@@ -79,7 +79,7 @@ $button-size: var(--s-size-medium);
   @include s-card-styles;
   width: $wallet-width;
   font-size: $font-size_basic;
-  line-height: $line-height_basic;
+  line-height: var(--s-line-height-base);
   &-title {
     position: relative;
     height: $button-size;

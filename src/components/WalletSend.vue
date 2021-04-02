@@ -276,7 +276,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
       border-radius: 0;
       color: var(--s-color-base-content-primary);
       font-size: 20px;
-      line-height: 1.3;
+      line-height: var(--s-line-height-small);
       &, &:hover, &:focus {
         background-color: var(--s-color-base-background);
         border-color: var(--s-color-base-background);
@@ -299,7 +299,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 
 <style scoped lang="scss">
 @import '../styles/icons';
-
+$logo-size: var(--s-size-mini);
 // TODO: fix typography issues here
 .wallet-send {
   .asset {
@@ -318,7 +318,6 @@ export default class WalletSend extends Mixins(TransactionMixin) {
     }
     &-logo {
       @include asset-logo-styles;
-      $logo-size: 24px;
       width: $logo-size;
       height: $logo-size;
       margin: $basic-spacing_mini / 2 $basic-spacing_mini;

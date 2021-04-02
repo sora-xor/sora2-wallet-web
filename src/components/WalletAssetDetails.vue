@@ -3,12 +3,12 @@
     :title="currentRouteParams.asset.symbol"
     show-back
     :show-action="!isXor"
-    action-icon="basic-trash-24"
+    action-icon="basic-eye-24"
     action-tooltip="asset.remove"
     @back="handleBack"
     @action="handleRemoveAsset"
   >
-    <wallet-history :history="history" />
+    <wallet-history :assetAddress="currentRouteParams.asset.address" />
   </wallet-base>
 </template>
 
@@ -31,19 +31,9 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
   @Getter selectedAssetDetails!: Array<any>
   @Action navigate
 
-  mounted (): void {
-  }
-
   get isXor (): boolean {
     const asset = KnownAssets.get(this.currentRouteParams.asset.address)
     return asset && asset.symbol === KnownSymbols.XOR
-  }
-
-  get history (): Array<any> {
-    if (!this.selectedAssetDetails) {
-      return []
-    }
-    return this.selectedAssetDetails.map(item => ({ ...item, fromSymbol: this.currentRouteParams.asset.symbol }))
   }
 
   handleBack (): void {

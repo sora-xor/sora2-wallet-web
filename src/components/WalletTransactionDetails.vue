@@ -1,14 +1,14 @@
 <template>
-  <wallet-base :title="t('transaction.title')" show-back @back="handleBack">
+  <wallet-base :title="t(`operations.${selectedTransaction.type}`)" show-back @back="handleBack">
     <div class="transaction" v-if="selectedTransaction">
-      <s-input class="transaction-hash" readonly :placeholder="t('transaction.hash')" :value="selectedTransaction.hash" border-radius="mini" />
+      <s-input v-if="selectedTransaction.hash" class="transaction-hash" readonly :placeholder="t('transaction.hash')" :value="selectedTransaction.hash" border-radius="mini" />
       <div v-for="row in dataRows" :key="row.key" class="transaction-row s-flex">
         <div class="transaction-row_key">{{ t(`transaction.${row.key}`) }}</div>
         <div class="transaction-row_value">{{ row.value }}</div>
       </div>
       <s-input class="transaction-from" readonly :placeholder="t('transaction.from')" :value="selectedTransaction.from" border-radius="mini" />
       <s-input class="transaction-to" readonly :placeholder="t('transaction.to')" :value="selectedTransaction.to" border-radius="mini" />
-      <template v-if="!!selectedTransaction.history.length">
+      <!-- <template v-if="selectedTransaction.history && !!selectedTransaction.history.length">
         <s-divider />
         <div v-for="item in selectedTransaction.history" :key="item.id" class="history s-flex">
           <div class="history-info s-flex">
@@ -28,7 +28,7 @@
           </div>
           <s-icon :class="getStatusClass(item.status)" :name="getStatusIcon(item.status)" size="20px" />
         </div>
-      </template>
+      </template> -->
     </div>
   </wallet-base>
 </template>
@@ -50,35 +50,41 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
   @Getter currentRouteParams!: any
   @Getter selectedTransaction!: any
   @Action navigate
+  @Action getAccountActivity
+  @Action getTransactionDetails
 
   getStatusIcon = getStatusIcon
   getStatusClass = getStatusClass
   formatDate = formatDate
+  transaction: any = null
 
-  mounted (): void {
+  mounted () {
     const id = this.currentRouteParams.id
     if (!id) {
       this.navigate({ name: RouteNames.Wallet })
     }
+    this.getAccountActivity()
+    this.getTransactionDetails(id)
   }
 
   get dataRows (): Array<{ key: string; value: string }> {
     const rows: Array<{ key: string; value: string }> = []
-    const params = pick(['status', 'date', 'amount', 'fee'], this.selectedTransaction)
+    const params = pick(['status', 'startTime', 'amount', 'fee'], this.selectedTransaction)
     Object.keys(params).forEach(key => {
       switch (key) {
         case 'status':
           rows.push({ key, value: params.status.toLowerCase() })
           break
-        case 'date':
-          rows.push({ key, value: formatDate(params.date) })
+        case 'startTime':
+          rows.push({ key, value: formatDate(params.startTime) })
           break
         default:
           rows.push({ key, value: `${params[key]} ${this.selectedTransaction.symbol}` })
           break
       }
     })
-    rows.push({ key: 'total', value: `${params.amount + params.fee} ${this.selectedTransaction.symbol}` })
+    // We don't have total right now
+    // rows.push({ key: 'total', value: `${params.amount + params.fee} ${this.selectedTransaction.symbol}` })
     return rows
   }
 
