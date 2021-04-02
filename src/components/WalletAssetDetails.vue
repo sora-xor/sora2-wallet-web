@@ -34,6 +34,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
   @Getter selectedAssetDetails!: Array<any>
   @Getter activity!: Array<History | any>
   @Action navigate
+  @Action getAccountActivity
 
   get isXor (): boolean {
     const asset = KnownAssets.get(this.currentRouteParams.asset.address)
@@ -55,8 +56,8 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
   }
 
   handleCleanHistory (): void {
-    // TODO: Add remove method from api
-    console.log('Clean asset\'s history without Bridge history')
+    api.clearHistory(this.currentRouteParams?.asset?.address)
+    this.getAccountActivity()
   }
 }
 </script>

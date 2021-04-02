@@ -28,6 +28,7 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
+import { api } from '../api'
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
 import WalletAccount from './WalletAccount.vue'
@@ -49,6 +50,7 @@ export default class Wallet extends Mixins(TranslationMixin) {
   @Getter account!: any
   @Getter activity!: Array<History | any>
   @Action navigate
+  @Action getAccountActivity
 
   currentTab = WalletTabs.Assets
 
@@ -69,8 +71,8 @@ export default class Wallet extends Mixins(TranslationMixin) {
   }
 
   handleCleanHistory (): void {
-    // TODO: Add remove method from api
-    console.log('Clean history without Bridge history')
+    api.clearHistory()
+    this.getAccountActivity()
   }
 }
 </script>
