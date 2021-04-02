@@ -6,6 +6,7 @@
     :show-action="!isXor"
     action-icon="basic-eye-24"
     action-tooltip="asset.remove"
+    :disabled-clean-history="isCleanHistoryDisabled"
     @back="handleBack"
     @action="handleRemoveAsset"
     @cleanHistory="handleCleanHistory"
@@ -31,11 +32,16 @@ import { RouteNames } from '../consts'
 export default class WalletAssetDetails extends Mixins(TranslationMixin) {
   @Getter currentRouteParams!: any
   @Getter selectedAssetDetails!: Array<any>
+  @Getter activity!: Array<History | any>
   @Action navigate
 
   get isXor (): boolean {
     const asset = KnownAssets.get(this.currentRouteParams.asset.address)
     return asset && asset.symbol === KnownSymbols.XOR
+  }
+
+  get isCleanHistoryDisabled (): boolean {
+    return !this.activity.filter(item => [item.assetAddress, item.asset2Address].includes(this.currentRouteParams?.asset?.address)).length
   }
 
   handleBack (): void {

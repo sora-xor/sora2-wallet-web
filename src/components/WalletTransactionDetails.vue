@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="t(`operations.${selectedTransaction.type}`)" show-back @back="handleBack">
+  <wallet-base :title="t(`${!selectedTransaction ? 'transaction.title' : 'operations.'+selectedTransaction.type}`)" show-back @back="handleBack">
     <div class="transaction" v-if="selectedTransaction">
       <s-input v-if="selectedTransaction.hash" class="transaction-hash" readonly :placeholder="t('transaction.hash')" :value="selectedTransaction.hash" border-radius="mini" />
       <div v-for="row in dataRows" :key="row.key" class="transaction-row s-flex">

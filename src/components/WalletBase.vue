@@ -24,6 +24,7 @@
           class="base-title_trash"
           type="action"
           icon="basic-trash-24"
+          :disabled="disabledCleanHistory"
           :tooltip="t('history.clearHistory')"
           @click="handleCleanHistoryClick"
         />
@@ -52,6 +53,7 @@ export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
   @Prop({ default: false, type: Boolean }) readonly showAction!: boolean
+  @Prop({ default: false, type: Boolean }) readonly disabledCleanHistory!: boolean
   @Prop({ default: false, type: Boolean }) readonly showCleanHistory!: boolean
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
   @Prop({ default: '', type: String }) readonly actionTooltip!: string

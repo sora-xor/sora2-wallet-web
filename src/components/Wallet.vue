@@ -3,6 +3,7 @@
     :title="t('wallet.title')"
     show-action
     :show-clean-history="currentTab === WalletTabs.Activity"
+    :disabled-clean-history="isCleanHistoryDisabled"
     action-icon="various-atom-24"
     action-tooltip="wallet.createToken"
     @action="handleCreateToken"
@@ -46,9 +47,14 @@ export default class Wallet extends Mixins(TranslationMixin) {
   readonly WalletTabs = WalletTabs
 
   @Getter account!: any
+  @Getter activity!: Array<History | any>
   @Action navigate
 
   currentTab = WalletTabs.Assets
+
+  get isCleanHistoryDisabled (): boolean {
+    return !this.activity.length
+  }
 
   handleChangeTab (value: WalletTabs): void {
     this.currentTab = value
