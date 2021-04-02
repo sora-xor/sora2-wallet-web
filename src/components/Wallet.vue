@@ -2,9 +2,11 @@
   <wallet-base
     :title="t('wallet.title')"
     show-action
+    :show-clean-history="currentTab === WalletTabs.Activity"
     action-icon="various-atom-24"
     action-tooltip="wallet.createToken"
     @action="handleCreateToken"
+    @cleanHistory="handleCleanHistory"
   >
     <wallet-account show-controls />
     <div class="wallet">
@@ -58,6 +60,11 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   handleCreateToken (): void {
     this.navigate({ name: RouteNames.CreateToken })
+  }
+
+  handleCleanHistory (): void {
+    // TODO: Add remove method from api
+    console.log('Clean history without Bridge history')
   }
 }
 </script>

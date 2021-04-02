@@ -20,6 +20,14 @@
           @click="handleActionClick"
         />
         <s-button
+          v-if="showCleanHistory"
+          class="base-title_trash"
+          type="action"
+          icon="basic-trash-24"
+          :tooltip="t('history.clearHistory')"
+          @click="handleCleanHistoryClick"
+        />
+        <s-button
           v-if="showClose"
           class="base-title_close"
           type="action"
@@ -42,9 +50,10 @@ import TranslationMixin from './mixins/TranslationMixin'
 @Component
 export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string
-  @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
   @Prop({ default: false, type: Boolean }) readonly showAction!: boolean
+  @Prop({ default: false, type: Boolean }) readonly showCleanHistory!: boolean
+  @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
   @Prop({ default: '', type: String }) readonly actionTooltip!: string
   @Prop({ default: '', type: String }) readonly actionIcon!: string
 
@@ -55,6 +64,9 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     if (this.showBack) {
       cssClasses.push('base-title--center')
     }
+    if (this.showCleanHistory) {
+      cssClasses.push('base-title--has-history')
+    }
     return cssClasses
   }
 
@@ -62,12 +74,16 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     this.$emit('back')
   }
 
-  handleCloseClick (): void {
-    this.$emit('close')
-  }
-
   handleActionClick (): void {
     this.$emit('action')
+  }
+
+  handleCleanHistoryClick (): void {
+    this.$emit('cleanHistory')
+  }
+
+  handleCloseClick (): void {
+    this.$emit('close')
   }
 }
 </script>
@@ -89,6 +105,11 @@ $button-size: var(--s-size-medium);
       padding-left: $button-size + $basic-spacing;
       justify-content: center;
     }
+    &--has-history {
+      .base-title_action {
+        right: calc(var(--s-size-medium) + #{$button-margin});
+      }
+    }
     > span {
       flex: 1;
     }
@@ -99,7 +120,7 @@ $button-size: var(--s-size-medium);
     &_back {
       left: 0;
     }
-    &_close, &_action {
+    &_action, &_trash, &_close {
       right: 0;
     }
   }

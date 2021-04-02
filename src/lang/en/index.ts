@@ -110,6 +110,7 @@ export default {
     logout: 'Logout'
   },
   history: {
+    clearHistory: 'Clear history',
     filterPlaceholder: 'Filter by address, asset',
     empty: 'Your transactions will appear here',
     emptySearch: 'No transactions found'

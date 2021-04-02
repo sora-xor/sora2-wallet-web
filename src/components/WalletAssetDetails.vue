@@ -2,11 +2,13 @@
   <wallet-base
     :title="currentRouteParams.asset.symbol"
     show-back
+    show-clean-history
     :show-action="!isXor"
     action-icon="basic-eye-24"
     action-tooltip="asset.remove"
     @back="handleBack"
     @action="handleRemoveAsset"
+    @cleanHistory="handleCleanHistory"
   >
     <wallet-history :assetAddress="currentRouteParams.asset.address" />
   </wallet-base>
@@ -44,6 +46,11 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
     const accountAssets = api.accountAssets
     api.removeAsset(this.currentRouteParams.asset.address)
     this.handleBack()
+  }
+
+  handleCleanHistory (): void {
+    // TODO: Add remove method from api
+    console.log('Clean asset\'s history without Bridge history')
   }
 }
 </script>
