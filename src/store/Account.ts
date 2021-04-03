@@ -357,7 +357,7 @@ const actions = {
     try {
       const transactions = getters.activity
       let transaction = null
-      if (transactions?.length) {
+      if (transactions && transactions.length) {
         transaction = transactions.find(item => id === item.id)
       }
       commit(types.GET_TRANSACTION_DETAILS_SUCCESS, transaction)
