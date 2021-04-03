@@ -3,7 +3,7 @@ import flatMap from 'lodash/fp/flatMap'
 import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
-import { AccountAsset } from '@sora-substrate/util'
+import { AccountAsset, isBridgeOperation } from '@sora-substrate/util'
 
 import { api } from '../api'
 import { storage } from '../util/storage'
@@ -318,7 +318,8 @@ const actions = {
   async getAccountActivity ({ commit }) {
     commit(types.GET_ACCOUNT_ACTIVITY_REQUEST)
     try {
-      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, api.accountHistory)
+      const transactions = api.accountHistory
+      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, transactions.filter(item => !isBridgeOperation(item.type)))
     } catch (error) {
       commit(types.GET_ACCOUNT_ACTIVITY_FAILURE)
     }

@@ -94,7 +94,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get hasHistory (): boolean {
-    return !(this.transactions && this.transactions.length)
+    return !!(this.transactions && this.transactions.length)
   }
 
   mounted () {
