@@ -2,7 +2,7 @@ import moment from 'moment'
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
 import { KnownAssets } from '@sora-substrate/util'
 
-export const APP_NAME = 'Sora2 Wallet'
+export const APP_NAME = 'SORA Wallet'
 
 export const getExtension = async () => {
   let extensions: Array<any> = []
