@@ -39,10 +39,10 @@
         v-if="hasHistory"
         :layout="'total, prev, next'"
         :current-page.sync="currentPage"
-        :page-size="8"
+        :page-size="pageAmount"
         :total="filteredHistory.length"
-        @prev-click="handlePrevClick"
-        @next-click="handleNextClick"
+        @prev-click="handlePaginationClick"
+        @next-click="handlePaginationClick"
       />
     </s-form>
   </div>
@@ -95,7 +95,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   getFilteredHistory (history: Array<any>): Array<any> {
     if (this.query) {
       const query = this.query.toLowerCase().trim()
-      console.log('query', this.query)
       return history.filter(item =>
         `${item.assetAddress}`.toLowerCase().includes(query) ||
         `${item.asset2Address}`.toLowerCase().includes(query) ||
@@ -110,7 +109,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   getStatus (status: string): string {
     if ([TransactionStatus.Error, 'invalid'].includes(status)) {
       status = TransactionStatus.Error
-    } else if (![TransactionStatus.Error, TransactionStatus.Finalized].includes(status as TransactionStatus)) {
+    } else if (status !== TransactionStatus.Finalized) {
       status = 'in_progress'
     }
     return status.toUpperCase()
@@ -124,11 +123,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return getStatusIcon(this.getStatus(status))
   }
 
-  handlePrevClick (current: number): void {
-    this.currentPage = current
-  }
-
-  handleNextClick (current: number): void {
+  handlePaginationClick (current: number): void {
     this.currentPage = current
   }
 

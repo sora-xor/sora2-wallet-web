@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="t(`${!selectedTransaction ? 'transaction.title' : 'operations.'+selectedTransaction.type}`)" show-back @back="handleBack">
+  <wallet-base :title="t(!selectedTransaction ? 'transaction.title' : 'operations.'+selectedTransaction.type)" show-back @back="handleBack">
     <div class="transaction" v-if="selectedTransaction">
       <div v-if="selectedTransaction.blockId" class="s-input-container">
         <s-input :placeholder="t('transaction.hash')" :value="formatAddress(selectedTransaction.blockId)" readonly />
@@ -18,12 +18,41 @@
           </template>
         </s-dropdown>
       </div>
-      <div v-for="row in dataRows" :key="row.key" class="transaction-row s-flex">
+      <div v-if="selectedTransaction.status" class="transaction-row s-flex">
         <div class="transaction-row_key">
-          {{ t(`transaction.${row.key}`) }}
+          {{ t('transaction.status') }}
         </div>
-        <div class="transaction-row_value" v-html="row.value" />
-        <s-icon v-if="row.key === 'status' && isComplete" name="basic-check-mark-24" />
+        <div class="transaction-row_value">
+          <span :class="statusClass">{{ statusTitle }}</span>
+        </div>
+        <s-icon v-if="isComplete" name="basic-check-mark-24" />
+      </div>
+      <div v-if="selectedTransaction.errorMessage" class="transaction-row s-flex">
+        <div class="transaction-row_key">
+          {{ t('transaction.errorMessage') }}
+        </div>
+        <div class="transaction-row_value">
+          <!--  TODO: Add all error messages to translation -->
+          <span :class="statusClass">{{ selectedTransaction.errorMessage }}</span>
+        </div>
+      </div>
+      <div v-if="selectedTransaction.startTime" class="transaction-row s-flex">
+        <div class="transaction-row_key">
+          {{ t('transaction.startTime') }}
+        </div>
+        <div class="transaction-row_value">{{ formatDate(selectedTransaction.startTime) }}</div>
+      </div>
+      <div v-if="selectedTransaction.amount" class="transaction-row s-flex">
+        <div class="transaction-row_key">
+          {{ t('transaction.amount') }}
+        </div>
+        <div class="transaction-row_value">{{ `${selectedTransaction.amount} ${selectedTransaction.symbol}` }}</div>
+      </div>
+      <div v-if="selectedTransaction.amount2" class="transaction-row s-flex">
+        <div class="transaction-row_key">
+          {{ t('transaction.amount2') }}
+        </div>
+        <div class="transaction-row_value">{{ `${selectedTransaction.amount2} ${selectedTransaction.symbol2}` }}</div>
       </div>
       <div v-if="selectedTransaction.from" class="s-input-container">
         <s-input :placeholder="t('transaction.from')" :value="formatAddress(selectedTransaction.from)" readonly />
@@ -122,37 +151,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
       return this.t('transaction.statuses.complete')
     }
     return this.t('transaction.statuses.pending')
-  }
-
-  get dataRows (): Array<{ key: string; value: string }> {
-    const rows: Array<{ key: string; value: string }> = []
-    const params = pick(['status', 'errorMessage', 'startTime', 'amount', 'amount2'], this.selectedTransaction)
-    Object.keys(params).forEach(key => {
-      switch (key) {
-        case 'status':
-          rows.push({ key, value: `<span class="${this.statusClass}">${this.statusTitle}</span><s-icon v-if="item.status !== TransactionStatus.Finalized" :class="getStatusClass(item.status)" :name="getStatusIcon(item.status)" />` })
-          break
-        case 'errorMessage':
-          // TODO: Add all error messages to translation
-          rows.push({ key, value: `<span class="${this.statusClass}">${this.selectedTransaction.errorMessage}</span>` })
-          break
-        case 'startTime':
-          rows.push({ key, value: formatDate(params.startTime) })
-          break
-        case 'amount':
-          rows.push({ key, value: `${params[key]} ${this.selectedTransaction.symbol}` })
-          break
-        case 'amount2':
-          rows.push({ key, value: `${params[key]} ${this.selectedTransaction.symbol2}` })
-          break
-        default:
-          rows.push({ key, value: `${params[key]}` })
-          break
-      }
-    })
-    // We don't have total right now
-    // rows.push({ key: 'total', value: `${params.amount + params.fee} ${this.selectedTransaction.symbol}` })
-    return rows
   }
 
   handleBack (): void {
