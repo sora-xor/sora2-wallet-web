@@ -146,8 +146,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
 <style scoped lang="scss">
 @import '../styles/icons';
 
-$asset-item-height: 71px;
-
 .asset-search {
   margin-top: $basic-spacing;
   &-input {
@@ -201,6 +199,7 @@ $asset-item-height: 71px;
     }
   }
   &-actions {
+    margin-bottom: $basic-spacing;
     > * {
       flex: .5;
     }

@@ -28,19 +28,9 @@
             <div class="history-item-info">
               <div class="history-item-operation ch3" :data-type="item.type">{{ t(`operations.${item.type}`) }}</div>
               <div class="history-item-title p4">{{ getMessage(item) }}</div>
-              <s-icon v-if="getStatusIcon(item.status)" :class="getStatusClass(item.status)" :name="getStatusIcon(item.status)" />
-              <span v-else :class="getStatusClass(item.status)" />
+              <s-icon v-if="item.status !== TransactionStatus.Finalized" :class="getStatusClass(item.status)" :name="getStatusIcon(item.status)" />
             </div>
             <div class="history-item-date">{{ formatDate(item.startTime) }}</div>
-            <!-- This link was hidden due to PSS-205 task. We'll return it back later.  -->
-            <!-- <s-button
-            class="info-text-explorer"
-            type="link"
-            size="small"
-            @click="handleOpenBlockExplorer(item)"
-            >
-            <s-icon name="external-link" size="16px" />
-            </s-button> -->
           </div>
         </template>
         <div v-else class="history-empty p4">{{ t(`history.${hasHistory ? 'emptySearch' : 'empty'}`) }}</div>
@@ -77,6 +67,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   @Prop() readonly assetAddress?: string
 
   formatDate = formatDate
+  TransactionStatus = TransactionStatus
   query = ''
   currentPage = 1
   pageAmount = 8
@@ -116,29 +107,21 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return history
   }
 
-  getStatusClass (status: string): string {
-    if (status === 'invalid') {
+  getStatus (status: string): string {
+    if ([TransactionStatus.Error, 'invalid'].includes(status)) {
       status = TransactionStatus.Error
-    } else if ([TransactionStatus.Finalized, 'done'].includes(status)) {
-      status = 'success'
-    } else if (![TransactionStatus.Finalized, TransactionStatus.Error].includes(status as TransactionStatus)) {
+    } else if (![TransactionStatus.Error, TransactionStatus.Finalized].includes(status as TransactionStatus)) {
       status = 'in_progress'
     }
-    return getStatusClass(status.toUpperCase())
+    return status.toUpperCase()
+  }
+
+  getStatusClass (status: string): string {
+    return getStatusClass(this.getStatus(status))
   }
 
   getStatusIcon (status: string): string {
-    if (status === 'invalid') {
-      status = TransactionStatus.Error
-    } else if (![TransactionStatus.Finalized, TransactionStatus.Error].includes(status as TransactionStatus)) {
-      status = 'in_progress'
-    }
-    return getStatusIcon(status.toUpperCase())
-  }
-
-  handleOpenBlockExplorer (item: any): void {
-    // TODO: Add event handling
-    this.$emit('block-explorer', item)
+    return getStatusIcon(this.getStatus(status))
   }
 
   handlePrevClick (current: number): void {
@@ -162,6 +145,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
 <style lang="scss">
 .history {
+  margin-top: $basic-spacing;
   .el-card__body {
     padding: $basic-spacing $basic-spacing $basic-spacing_big;
   }
@@ -200,15 +184,15 @@ $history-item-top-border-height: 1px;
     margin-bottom: $basic-spacing;
   }
   &-items {
-    height: #{$history-item-height * 8};
+    min-height: #{$history-item-height * 8};
   }
   &-item {
     display: flex;
     flex-direction: column;
     margin-right: -#{$history-item-horizontal-space * 2};
     margin-left: -#{$history-item-horizontal-space * 2};
-    height: $history-item-height;
-    padding: #{$basic-spacing / 2 + $history-item-top-border-height} $history-item-horizontal-space * 2 $basic-spacing;
+    min-height: $history-item-height;
+    padding: #{$basic-spacing / 2 + $history-item-top-border-height} $history-item-horizontal-space * 2;
     font-size: var(--s-font-size-mini);
     &:not(:first-child) {
       position: relative;
@@ -235,13 +219,15 @@ $history-item-top-border-height: 1px;
     }
     &-info {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       .info-status--error  {
         color: var(--s-color-status-error);
       }
     }
     &-title {
-      line-height: 1;
+      width: auto;
+      padding-right: $basic-spacing_mini;
+      line-height: var(--s-line-height-mini);
     }
     &-title,
     &-date {

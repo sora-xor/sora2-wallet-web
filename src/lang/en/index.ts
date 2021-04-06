@@ -175,12 +175,20 @@ export default {
     title: 'Transaction details',
     hash: 'Transaction Hash',
     status: 'Status',
+    statuses: {
+      pending: 'Pending...',
+      failed: 'Transaction failed',
+      complete: 'Complete'
+    },
+    errorMessage: 'Error',
     startTime: 'Date',
     amount: '@:amountText',
+    amount2: '@:amountText 2',
     fee: 'Transaction Fee',
     total: 'Total',
     from: 'From',
     to: 'To',
+    viewInPolkascan: 'View in Polkascan',
     history: {
       created: 'Transaction for {amount} {symbol} has been created.',
       submitted: 'Transaction submitted with fee of {fee} {symbol}',
