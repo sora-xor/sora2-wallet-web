@@ -62,5 +62,9 @@ export default class SoraNeoWallet extends Mixins(LoadingMixin) {
   handleOperation (operation: Operations, asset: AccountAsset): void {
     this.$emit(operation, asset)
   }
+
+  handleLearnMore (): void {
+    this.$emit('learn-more')
+  }
 }
 </script>
