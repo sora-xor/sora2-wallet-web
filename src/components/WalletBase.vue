@@ -116,16 +116,13 @@ $button-size: var(--s-size-medium);
       }
     }
     &--actions {
-      &.base-title--has-center {
+      &.base-title--center {
         padding-left: calc(#{$button-size} * 2 + #{$basic-spacing});
       }
       padding-right: calc(#{$button-size} * 2 + #{$basic-spacing});
       .base-title_action {
         right: calc(#{$button-size} + #{$basic-spacing_mini});
       }
-    }
-    > span {
-      flex: 1;
     }
     .el-button {
       position: absolute;
