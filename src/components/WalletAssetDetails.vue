@@ -1,6 +1,6 @@
 <template>
   <wallet-base
-    :title="currentRouteParams.asset.symbol"
+    :title="asset.name"
     show-back
     show-clean-history
     :show-action="!isXor"
@@ -11,62 +11,254 @@
     @action="handleRemoveAsset"
     @cleanHistory="handleCleanHistory"
   >
-    <wallet-history :assetAddress="currentRouteParams.asset.address" />
+    <s-card class="asset-details">
+      <div class="asset-details-container s-flex">
+        <i :class="getAssetClasses(asset.address)" />
+        <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">{{ balance }}
+          <s-icon v-if="isXor" name="chevron-down-rounded-16" />
+        </div>
+        <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
+          <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
+            <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
+            <div class="balance-value">{{ getDetailedBalance(type) }}</div>
+          </div>
+          <s-divider />
+          <div class="balance s-flex p4">
+            <div class="balance-label">{{ t('assets.balance.total') }}</div>
+            <div class="balance-value">{{ totalBalance }}</div>
+          </div>
+        </div>
+        <div class="asset-details-actions">
+          <s-button
+            v-for="operation in operations"
+            :key="operation.type"
+            :icon="operation.icon"
+            :tooltip="getOperationTooltip(operation)"
+            :disabled="isOperationDisabled(operation.type)"
+            type="action"
+            @click="handleOperation(operation.type)"
+          />
+        </div>
+      </div>
+    </s-card>
+    <wallet-history :assetAddress="asset.address" />
   </wallet-base>
 </template>
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { KnownAssets, KnownSymbols, History } from '@sora-substrate/util'
+import { AccountAsset, CodecString, KnownAssets, KnownSymbols, History } from '@sora-substrate/util'
 
 import { api } from '../api'
 import TranslationMixin from './mixins/TranslationMixin'
+import NumberFormatterMixin from './mixins/NumberFormatterMixin'
+import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
 import WalletHistory from './WalletHistory.vue'
 import { RouteNames } from '../consts'
+import { getAssetIconClasses } from '../util'
+import { Operations, BalanceTypes } from '../types'
+
+interface Operation {
+  type: Operations;
+  icon: string;
+}
 
 @Component({
   components: { WalletBase, WalletHistory }
 })
-export default class WalletAssetDetails extends Mixins(TranslationMixin) {
+export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberFormatterMixin, CopyAddressMixin) {
+  readonly balanceTypes = Object.values(BalanceTypes).filter(type => type !== BalanceTypes.Total)
+  readonly operations = [
+    { type: Operations.Send, icon: 'finance-send-24' },
+    { type: Operations.Receive, icon: 'basic-receive-24' },
+    { type: Operations.Swap, icon: 'arrows-swap-24' },
+    { type: Operations.Liquidity, icon: 'basic-drop-24' },
+    { type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' }
+  ] as Array<Operation>
+
+  @Getter account!: any
+  @Getter accountAssets!: Array<AccountAsset>
   @Getter currentRouteParams!: any
   @Getter selectedAssetDetails!: Array<any>
   @Getter activity!: Array<History | any>
   @Action navigate
   @Action getAccountActivity
 
-  get asset (): History | any {
-    return this.currentRouteParams && this.currentRouteParams.asset
+  wasBalanceDetailsClicked = false
+
+  private formatBalance (value: CodecString): string {
+    return `${this.formatCodecNumber(value, this.asset.decimals)} ${this.asset.symbol}`
   }
 
-  get assetAddress (): string {
-    return this.asset ? this.asset.address : ''
+  get asset (): AccountAsset {
+    // currentRouteParams.asset was added here to avoid a case when the asset is not found
+    return this.accountAssets.find(({ address }) => address === this.currentRouteParams.asset.address) || this.currentRouteParams.asset as AccountAsset
+  }
+
+  get balance (): string {
+    return this.formatBalance(this.asset.balance.transferable)
+  }
+
+  getDetailedBalance (type: BalanceTypes): string {
+    return this.formatBalance(this.asset.balance[type])
+  }
+
+  get totalBalance (): string {
+    return this.formatBalance(this.asset.balance.total)
+  }
+
+  get isEmptyBalance (): boolean {
+    return this.isCodecZero(this.asset.balance.transferable, this.asset.decimals)
+  }
+
+  get balanceStyles (): object {
+    const balanceLength = this.balance.length
+    // We've decided to calcutate font size values manually
+    let fontSize = 30
+    if (balanceLength > 35) {
+      fontSize = 14
+    } else if (balanceLength > 24 && balanceLength <= 35) {
+      fontSize = 16
+    } else if (balanceLength > 17 && balanceLength <= 24) {
+      fontSize = 20
+    }
+    return { fontSize: `${fontSize}px` }
+  }
+
+  get balanceDetailsClasses (): Array<string> {
+    const cssClasses: Array<string> = ['asset-details-balance', 'd2']
+    if (this.isXor) {
+      cssClasses.push('asset-details-balance--clickable')
+    }
+    if (this.wasBalanceDetailsClicked) {
+      cssClasses.push('asset-details-balance--clicked')
+    }
+    return cssClasses
   }
 
   get isXor (): boolean {
-    const asset = KnownAssets.get(this.assetAddress)
+    const asset = KnownAssets.get(this.asset.address)
     return asset && asset.symbol === KnownSymbols.XOR
   }
 
   get isCleanHistoryDisabled (): boolean {
-    return !this.asset ? true : !this.activity.filter(item => [item.assetAddress, item.asset2Address].includes(this.assetAddress)).length
+    return !this.asset ? true : !this.activity.filter(item => [item.assetAddress, item.asset2Address].includes(this.asset.address)).length
   }
 
   handleBack (): void {
     this.navigate({ name: RouteNames.Wallet })
   }
 
+  getOperationTooltip (operation: Operation): string {
+    if (operation.type !== Operations.Receive || !this.wasAddressCopied) {
+      return this.t(`assets.${operation.type}`)
+    }
+    // TODO: [UI-LIB] add key property with the content value for tooltip in buttons to rerender it each time
+    return this.t('assets.copied')
+  }
+
+  isOperationDisabled (operation: Operations): boolean {
+    return operation === Operations.Send && this.isEmptyBalance
+  }
+
+  handleOperation (operation: Operations): void {
+    switch (operation) {
+      case Operations.Send:
+        this.navigate({ name: RouteNames.WalletSend, params: { asset: this.asset } })
+        break
+      case Operations.Receive:
+        this.handleCopyAddress(this.account.address)
+        break
+      default:
+        this.$emit(operation, this.asset)
+        break
+    }
+  }
+
+  handleClickDetailedBalance (): void {
+    this.wasBalanceDetailsClicked = !this.wasBalanceDetailsClicked
+  }
+
+  getAssetClasses (address: string): string {
+    return getAssetIconClasses(address)
+  }
+
   handleRemoveAsset (): void {
-    const accountAssets = api.accountAssets
-    api.removeAsset(this.assetAddress)
+    api.removeAsset(this.asset.address)
     this.handleBack()
   }
 
   handleCleanHistory (): void {
     if (!this.asset) return
-    api.clearHistory(this.assetAddress)
+    api.clearHistory(this.asset.address)
     this.getAccountActivity()
   }
 }
 </script>
+
+<style scoped lang="scss">
+@import '../styles/icons';
+
+.asset-details {
+  margin-bottom: $basic-spacing;
+  border-radius: var(--s-border-radius-small);
+  &-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  &-balance {
+    position: relative;
+    margin-top: $basic-spacing_mini;
+    margin-bottom: $basic-spacing;
+    &--clickable {
+      cursor: pointer;
+    }
+    .s-icon-chevron-down-rounded-16 {
+      position: absolute;
+      top: 25%;
+      margin-left: $basic-spacing_mini;
+      transition: transform 0.3s;
+    }
+    &--clicked .s-icon-chevron-down-rounded-16 {
+      transform: rotate(180deg);
+    }
+    &-info {
+      width: 100%;
+      margin-bottom: $basic-spacing;
+      .balance {
+        justify-content: space-between;
+        margin-bottom: calc(#{$basic-spacing_mini} / 2);
+      }
+      .s-divider-secondary {
+        margin: $basic-spacing_mini 0;
+      }
+    }
+  }
+  &-actions {
+    .s-action {
+      background-color: var(--s-color-theme-accent);
+      border-color: var(--s-color-theme-accent);
+      &.focusing {
+        background-color: var(--s-color-theme-accent-focused);
+        border-color: var(--s-color-theme-accent-focused);
+      }
+      &:hover {
+        background-color: var(--s-color-theme-accent-hover);
+        border-color: var(--s-color-theme-accent-hover);
+      }
+      &.s-pressed {
+        background-color: var(--s-color-theme-accent-pressed);
+        border-color: var(--s-color-theme-accent-pressed);
+      }
+      &, &.focusing, &:hover, &.s-pressed {
+        color: var(--s-color-base-on-accent);
+      }
+    }
+  }
+  .asset-logo {
+    @include asset-logo-styles(48px);
+  }
+}
+</style>

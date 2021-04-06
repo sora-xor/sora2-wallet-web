@@ -8,3 +8,19 @@ export enum Modules {
   Settings = 'Settings',
   Transactions = 'Transactions'
 }
+
+export enum Operations {
+  Send = 'send',
+  Receive = 'receive',
+  Swap = 'swap',
+  Liquidity = 'liquidity',
+  Bridge = 'bridge'
+}
+
+export enum BalanceTypes {
+  Transferable = 'transferable',
+  Frozen = 'frozen',
+  Locked = 'locked',
+  Reserved = 'reserved',
+  Total = 'total'
+}
