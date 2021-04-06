@@ -193,7 +193,8 @@ $asset-icon-shadow-size: 3px;
       margin: 0;
     }
   }
-  &-add {
+  &-add,
+  &-empty {
     margin-top: $basic-spacing;
   }
   &-empty {
