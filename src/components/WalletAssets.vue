@@ -5,7 +5,12 @@
         <div class="wallet-assets-item s-flex" :key="asset.address">
           <i :class="getAssetClasses(asset.address)" />
           <div class="asset s-flex">
-            <div class="asset-value">{{ formatBalance(asset) }}</div>
+            <div class="asset-value">{{ formatBalance(asset) }}
+              <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
+                <s-icon name="lock-16" size="12px" />
+                {{ formatLockedBalance(asset) }}
+              </div>
+            </div>
             <div class="asset-info">{{ asset.name || asset.symbol }}
               <s-tooltip :content="t('assets.copy')">
                 <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
@@ -53,7 +58,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { AccountAsset, KnownAssets } from '@sora-substrate/util'
+import { AccountAsset } from '@sora-substrate/util'
 
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import TranslationMixin from './mixins/TranslationMixin'
@@ -73,7 +78,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
   }
 
   get formattedAccountAssets (): Array<AccountAsset> {
-    return this.accountAssets.filter(asset => !Number.isNaN(+asset.balance.transferable))
+    return this.accountAssets.filter(asset => asset.balance && !Number.isNaN(+asset.balance.transferable))
   }
 
   getFormattedAddress (asset: AccountAsset): string {
@@ -90,6 +95,14 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 
   isZeroBalance (asset: AccountAsset): boolean {
     return this.isCodecZero(asset.balance.transferable, asset.decimals)
+  }
+
+  hasLockedBalance (asset: AccountAsset): boolean {
+    return !this.isCodecZero(asset.balance.locked, asset.decimals)
+  }
+
+  formatLockedBalance (asset: AccountAsset): string {
+    return this.formatCodecNumber(asset.balance.locked, asset.decimals)
   }
 
   formatConvertedAmount (asset: AccountAsset): string {
@@ -146,7 +159,6 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 <style scoped lang="scss">
 @import '../styles/icons';
 
-$asset-item-height: 70px;
 $asset-icon-shadow-size: 3px;
 
 .wallet-assets {
@@ -164,8 +176,11 @@ $asset-icon-shadow-size: 3px;
       overflow-wrap: break-word;
       flex-direction: column;
       padding-right: $basic-spacing_small;
-      padding-left: $basic-spacing_mini;
+      padding-left: $basic-spacing_small;
       width: 30%;
+      &-value, &-info {
+        line-height: var(--s-line-height-base);
+      }
       &-info {
         @include hint-text;
       }
@@ -174,6 +189,17 @@ $asset-icon-shadow-size: 3px;
         &:hover {
           text-decoration: underline;
           cursor: pointer;
+        }
+      }
+      &-value-locked {
+        display: inline-flex;
+        align-items: baseline;
+        color: var(--s-color-base-content-secondary);
+        background: var(--s-color-base-background);
+        padding: 0 $basic-spacing_mini;
+        border-radius: var(--s-border-radius-mini);
+        > .s-icon-lock-16 {
+          color: var(--s-color-base-content-secondary);
         }
       }
       &-converted {
@@ -191,7 +217,8 @@ $asset-icon-shadow-size: 3px;
       margin: 0;
     }
   }
-  &-add {
+  &-add,
+  &-empty {
     margin-top: $basic-spacing;
   }
   &-empty {

@@ -3,7 +3,7 @@ import flatMap from 'lodash/fp/flatMap'
 import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
-import { AccountAsset } from '@sora-substrate/util'
+import { AccountAsset, isBridgeOperation } from '@sora-substrate/util'
 
 import { api } from '../api'
 import { storage } from '../util/storage'
@@ -315,10 +315,11 @@ const actions = {
       commit(types.GET_ASSET_DETAILS_FAILURE)
     }
   },
-  async getAccountActivity ({ commit, state: { address } }) {
+  async getAccountActivity ({ commit }) {
     commit(types.GET_ACCOUNT_ACTIVITY_REQUEST)
     try {
-      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, [])
+      const transactions = api.accountHistory
+      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, transactions.filter(item => !isBridgeOperation(item.type)))
     } catch (error) {
       commit(types.GET_ACCOUNT_ACTIVITY_FAILURE)
     }
@@ -352,10 +353,15 @@ const actions = {
       commit(types.ADD_ASSET_FAILURE)
     }
   },
-  async getTransactionDetails ({ commit, state: { address } }, { id }) {
+  async getTransactionDetails ({ commit, getters, state: { address } }, id) {
     commit(types.GET_TRANSACTION_DETAILS_REQUEST)
     try {
-      commit(types.GET_TRANSACTION_DETAILS_SUCCESS, {})
+      const transactions = getters.activity
+      let transaction = null
+      if (transactions && transactions.length) {
+        transaction = transactions.find(item => id === item.id)
+      }
+      commit(types.GET_TRANSACTION_DETAILS_SUCCESS, transaction)
     } catch (error) {
       commit(types.GET_TRANSACTION_DETAILS_FAILURE)
     }
