@@ -142,10 +142,10 @@ export default class CreateToken extends Mixins(TransactionMixin) {
   get hasEnoughXor (): boolean {
     const xor = KnownAssets.get(KnownSymbols.XOR)
     const accountXor = api.accountAssets.find(asset => asset.address === xor.address)
-    if (!accountXor || !+accountXor.balance) {
+    if (!accountXor || !accountXor.balance || !+accountXor.balance.transferable) {
       return false
     }
-    const fpAccountXor = this.getFPNumberFromCodec(accountXor.balance, accountXor.decimals)
+    const fpAccountXor = this.getFPNumberFromCodec(accountXor.balance.transferable, accountXor.decimals)
     return FPNumber.gte(fpAccountXor, this.getFPNumberFromCodec(this.fee))
   }
 

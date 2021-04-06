@@ -73,7 +73,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
   }
 
   get formattedAccountAssets (): Array<AccountAsset> {
-    return this.accountAssets.filter(asset => !Number.isNaN(+asset.balance))
+    return this.accountAssets.filter(asset => !Number.isNaN(+asset.balance.transferable))
   }
 
   getFormattedAddress (asset: AccountAsset): string {
@@ -85,11 +85,11 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
   }
 
   formatBalance (asset: AccountAsset): string {
-    return `${this.formatCodecNumber(asset.balance, asset.decimals)} ${asset.symbol}`
+    return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)} ${asset.symbol}`
   }
 
   isZeroBalance (asset: AccountAsset): boolean {
-    return this.isCodecZero(asset.balance, asset.decimals)
+    return this.isCodecZero(asset.balance.transferable, asset.decimals)
   }
 
   formatConvertedAmount (asset: AccountAsset): string {

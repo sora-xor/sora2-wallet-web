@@ -109,7 +109,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   }
 
   get balance (): string {
-    return this.formatCodecNumber(this.asset.balance, this.asset.decimals)
+    return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
   }
 
   get emptyAddress (): boolean {
@@ -132,13 +132,13 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 
   get validAmount (): boolean {
     const amount = this.getFPNumber(this.amount, this.asset.decimals)
-    const balance = this.getFPNumberFromCodec(this.asset.balance, this.asset.decimals)
+    const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, this.asset.decimals)
     return amount.isFinity() && !amount.isZero() && FPNumber.lte(amount, balance)
   }
 
   get isMaxButtonAvailable (): boolean {
     const decimals = this.asset.decimals
-    const balance = this.getFPNumberFromCodec(this.asset.balance, decimals)
+    const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, decimals)
     const amount = this.getFPNumber(this.amount, decimals)
     if (this.isXorAccountAsset(this.asset)) {
       if (this.fee.isZero()) {
@@ -237,11 +237,11 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   async handleMaxClick (): Promise<void> {
     if (this.isXorAccountAsset(this.asset)) {
       await this.calcFee()
-      const balance = this.getFPNumberFromCodec(this.asset.balance, this.asset.decimals)
+      const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, this.asset.decimals)
       this.amount = balance.sub(this.fee).toString()
       return
     }
-    this.amount = this.getStringFromCodec(this.asset.balance, this.asset.decimals)
+    this.amount = this.getStringFromCodec(this.asset.balance.transferable, this.asset.decimals)
   }
 
   async handleSend (): Promise<void> {
