@@ -159,7 +159,6 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 <style scoped lang="scss">
 @import '../styles/icons';
 
-$asset-item-height: 70px;
 $asset-icon-shadow-size: 3px;
 
 .wallet-assets {
@@ -177,8 +176,11 @@ $asset-icon-shadow-size: 3px;
       overflow-wrap: break-word;
       flex-direction: column;
       padding-right: $basic-spacing_small;
-      padding-left: $basic-spacing_mini;
+      padding-left: $basic-spacing_small;
       width: 30%;
+      &-value, &-info {
+        line-height: var(--s-line-height-base);
+      }
       &-info {
         @include hint-text;
       }
@@ -215,7 +217,8 @@ $asset-icon-shadow-size: 3px;
       margin: 0;
     }
   }
-  &-add {
+  &-add,
+  &-empty {
     margin-top: $basic-spacing;
   }
   &-empty {

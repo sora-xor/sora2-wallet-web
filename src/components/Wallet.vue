@@ -2,9 +2,12 @@
   <wallet-base
     :title="t('wallet.title')"
     show-action
+    :show-clean-history="currentTab === WalletTabs.Activity"
+    :disabled-clean-history="isCleanHistoryDisabled"
     action-icon="various-atom-24"
     action-tooltip="wallet.createToken"
     @action="handleCreateToken"
+    @cleanHistory="handleCleanHistory"
   >
     <wallet-account show-controls />
     <div class="wallet">
@@ -25,6 +28,7 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
+import { api } from '../api'
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
 import WalletAccount from './WalletAccount.vue'
@@ -44,9 +48,15 @@ export default class Wallet extends Mixins(TranslationMixin) {
   readonly WalletTabs = WalletTabs
 
   @Getter account!: any
+  @Getter activity!: Array<History | any>
   @Action navigate
+  @Action getAccountActivity
 
   currentTab = WalletTabs.Assets
+
+  get isCleanHistoryDisabled (): boolean {
+    return !this.activity.length
+  }
 
   handleChangeTab (value: WalletTabs): void {
     this.currentTab = value
@@ -58,6 +68,11 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   handleCreateToken (): void {
     this.navigate({ name: RouteNames.CreateToken })
+  }
+
+  handleCleanHistory (): void {
+    api.clearHistory()
+    this.getAccountActivity()
   }
 }
 </script>

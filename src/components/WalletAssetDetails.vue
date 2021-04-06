@@ -2,11 +2,14 @@
   <wallet-base
     :title="asset.name"
     show-back
+    show-clean-history
     :show-action="!isXor"
-    action-icon="basic-trash-24"
+    action-icon="basic-eye-24"
     action-tooltip="asset.remove"
+    :disabled-clean-history="isCleanHistoryDisabled"
     @back="handleBack"
     @action="handleRemoveAsset"
+    @cleanHistory="handleCleanHistory"
   >
     <s-card class="asset-details">
       <div class="asset-details-container s-flex">
@@ -38,14 +41,14 @@
         </div>
       </div>
     </s-card>
-    <wallet-history :history="history" />
+    <wallet-history :assetAddress="asset.address" />
   </wallet-base>
 </template>
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, CodecString, KnownAssets, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, CodecString, KnownAssets, KnownSymbols, History } from '@sora-substrate/util'
 
 import { api } from '../api'
 import TranslationMixin from './mixins/TranslationMixin'
@@ -79,7 +82,9 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   @Getter accountAssets!: Array<AccountAsset>
   @Getter currentRouteParams!: any
   @Getter selectedAssetDetails!: Array<any>
+  @Getter activity!: Array<History | any>
   @Action navigate
+  @Action getAccountActivity
 
   wasBalanceDetailsClicked = false
 
@@ -138,11 +143,8 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
     return asset && asset.symbol === KnownSymbols.XOR
   }
 
-  get history (): Array<any> {
-    if (!this.selectedAssetDetails) {
-      return []
-    }
-    return this.selectedAssetDetails.map(item => ({ ...item, fromSymbol: this.currentRouteParams.asset.symbol }))
+  get isCleanHistoryDisabled (): boolean {
+    return !this.asset ? true : !this.activity.filter(item => [item.assetAddress, item.asset2Address].includes(this.asset.address)).length
   }
 
   handleBack (): void {
@@ -186,6 +188,12 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   handleRemoveAsset (): void {
     api.removeAsset(this.asset.address)
     this.handleBack()
+  }
+
+  handleCleanHistory (): void {
+    if (!this.asset) return
+    api.clearHistory(this.asset.address)
+    this.getAccountActivity()
   }
 }
 </script>

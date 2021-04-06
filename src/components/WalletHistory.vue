@@ -1,112 +1,288 @@
 <template>
-  <div v-if="!!history.length" class="history s-flex">
-    <div
-      class="history-item s-flex"
-      v-for="(item, index) in history"
-      :key="`history-${index}`"
-      @click="handleOpenTransactionDetails(item.id)"
+  <div class="history s-flex">
+    <s-form
+      class="history-form"
+      :show-message="false"
     >
-      <div class="s-flex">
-        <div class="info s-flex">
-          <div class="info-operation">{{ item.operation }}</div>
-          <div class="info-text">
-            {{ `${item.fromAmount} ${item.fromSymbol} for ${item.toAmount} ${item.toSymbol}` }}
-          </div>
-          <!-- This link was hidden due to PSS-205 task. We'll return it back later.  -->
-          <!-- <s-button
-            class="info-text-explorer"
-            type="link"
-            size="small"
-            @click="handleOpenBlockExplorer(item)"
+      <s-form-item v-if="hasHistory" class="history--search">
+        <s-input
+          v-model="query"
+          :placeholder="t('history.filterPlaceholder')"
+          prefix="el-icon-search"
+          size="medium"
+          border-radius="mini"
+        >
+          <template #suffix>
+            <s-button class="s-button--clear" icon="clear-X-16" @click="handleResetSearch" />
+          </template>
+        </s-input>
+      </s-form-item>
+      <div class="history-items">
+        <template v-if="filteredHistory.length">
+          <div
+            class="history-item s-flex"
+            v-for="item in filteredHistory.slice((currentPage - 1) * pageAmount, currentPage * pageAmount)"
+            :key="`history-${item.id}`"
+            @click="handleOpenTransactionDetails(item.id)"
           >
-            <s-icon name="external-link" size="16px" />
-          </s-button> -->
-        </div>
-        <div class="date">{{ formatDate(item.date) }}</div>
+            <div class="history-item-info">
+              <div class="history-item-operation ch3" :data-type="item.type">{{ t(`operations.${item.type}`) }}</div>
+              <div class="history-item-title p4">{{ getMessage(item) }}</div>
+              <s-icon v-if="item.status !== TransactionStatus.Finalized" :class="getStatusClass(item.status)" :name="getStatusIcon(item.status)" />
+            </div>
+            <div class="history-item-date">{{ formatDate(item.startTime) }}</div>
+          </div>
+        </template>
+        <div v-else class="history-empty p4">{{ t(`history.${hasHistory ? 'emptySearch' : 'empty'}`) }}</div>
       </div>
-      <s-icon :class="getStatusClass(item.status)" :name="getStatusIcon(item.status)" size="20px" />
-    </div>
+      <s-pagination
+        v-if="hasHistory"
+        :layout="'total, prev, next'"
+        :current-page.sync="currentPage"
+        :page-size="pageAmount"
+        :total="filteredHistory.length"
+        @prev-click="handlePaginationClick"
+        @next-click="handlePaginationClick"
+      />
+    </s-form>
   </div>
-  <div v-else class="history-empty">{{ /* t('history.empty') */ t('comingSoonText') }}</div>
 </template>
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
+import { Getter, Action } from 'vuex-class'
 
-import TranslationMixin from './mixins/TranslationMixin'
+import { History, TransactionStatus } from '@sora-substrate/util'
+import LoadingMixin from './mixins/LoadingMixin'
+import TransactionMixin from './mixins/TransactionMixin'
 import { formatDate, getStatusIcon, getStatusClass } from '../util'
 import { RouteNames } from '../consts'
 
 @Component
-export default class WalletHistory extends Mixins(TranslationMixin) {
+export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
+  @Getter activity!: Array<History>
   @Action navigate
+  @Action getAccountActivity
 
-  @Prop() readonly history!: Array<any>
+  @Prop() readonly assetAddress?: string
 
-  getStatusIcon = getStatusIcon
-  getStatusClass = getStatusClass
   formatDate = formatDate
+  TransactionStatus = TransactionStatus
+  query = ''
+  currentPage = 1
+  pageAmount = 8
 
-  handleOpenBlockExplorer (item: any): void {
-    // TODO: Add event handling
-    this.$emit('block-explorer', item)
+  get transactions (): Array<History> {
+    if (this.assetAddress) {
+      return this.activity.filter(item => [item.assetAddress, item.asset2Address].includes(this.assetAddress))
+    }
+    return this.activity
+  }
+
+  get filteredHistory (): Array<any> {
+    if (!this.hasHistory) return []
+    return this.getFilteredHistory(this.transactions).sort((a: History, b: History) => a.startTime && b.startTime ? b.startTime - a.startTime : 0)
+  }
+
+  get hasHistory (): boolean {
+    return !!(this.transactions && this.transactions.length)
+  }
+
+  mounted () {
+    this.getAccountActivity()
+  }
+
+  getFilteredHistory (history: Array<any>): Array<any> {
+    if (this.query) {
+      const query = this.query.toLowerCase().trim()
+      return history.filter(item =>
+        `${item.assetAddress}`.toLowerCase().includes(query) ||
+        `${item.asset2Address}`.toLowerCase().includes(query) ||
+        `${item.symbol}`.toLowerCase().includes(query) ||
+        `${item.symbol2}`.toLowerCase().includes(query)
+      )
+    }
+
+    return history
+  }
+
+  getStatus (status: string): string {
+    if ([TransactionStatus.Error, 'invalid'].includes(status)) {
+      status = TransactionStatus.Error
+    } else if (status !== TransactionStatus.Finalized) {
+      status = 'in_progress'
+    }
+    return status.toUpperCase()
+  }
+
+  getStatusClass (status: string): string {
+    return getStatusClass(this.getStatus(status))
+  }
+
+  getStatusIcon (status: string): string {
+    return getStatusIcon(this.getStatus(status))
+  }
+
+  handlePaginationClick (current: number): void {
+    this.currentPage = current
   }
 
   handleOpenTransactionDetails (id: number): void {
     this.navigate({ name: RouteNames.WalletTransactionDetails, params: { id } })
   }
+
+  handleResetSearch (): void {
+    this.query = ''
+    this.currentPage = 1
+  }
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .history {
-  flex-direction: column;
-  &-item {
-    align-items: center;
-    padding: 0 $basic-spacing_mini / 2;
-    > :first-child {
-      flex-direction: column;
-      flex: 1;
-    }
-    &:hover {
-      cursor: pointer;
-    }
-    .info {
-      align-items: center;
-      &-operation {
-        color: var(--s-color-base-content-secondary);
-        background-color: var(--s-color-base-background);
-        border-radius: var(--s-border-radius-mini);
-        font-size: $font-size_mini;
-        font-weight: bold;
-        padding: $basic-spacing_mini / 2;
+  margin-top: $basic-spacing;
+  .el-card__body {
+    padding: $basic-spacing $basic-spacing $basic-spacing_big;
+  }
+  .el-pagination {
+    .btn {
+      &-prev,
+      &-next {
+        padding-right: 0;
+        padding-left: 0;
+        min-width: $basic-spacing_big;
+      }
+      &-prev {
+        margin-left: auto;
         margin-right: $basic-spacing_mini;
       }
-      &-text {
-        font-size: $font-size_small;
-        line-height: $line-height_big;
-      }
-      &-explorer {
-        margin-left: $basic-spacing_mini;
-        padding: 0;
-      }
-      &-status {
-        &--success {
-          color: var(--s-color-status-success);
-        }
-        &--error {
-          color: var(--s-color-status-error);
-        }
+    }
+  }
+  &--search {
+    .el-input__inner {
+      padding-right: var(--s-size-medium);
+    }
+  }
+}
+</style>
+
+<style scoped lang="scss">
+@import '../styles/icons';
+
+$history-item-horizontal-space: 10px;
+$history-item-height: 48px;
+$history-item-top-border-height: 1px;
+
+.history {
+  flex-direction: column;
+  &--search.el-form-item {
+    margin-bottom: $basic-spacing;
+  }
+  &-items {
+    min-height: #{$history-item-height * 8};
+  }
+  &-item {
+    display: flex;
+    flex-direction: column;
+    margin-right: -#{$history-item-horizontal-space * 2};
+    margin-left: -#{$history-item-horizontal-space * 2};
+    min-height: $history-item-height;
+    padding: #{$basic-spacing / 2 + $history-item-top-border-height} $history-item-horizontal-space * 2;
+    font-size: var(--s-font-size-mini);
+    &:not(:first-child) {
+      position: relative;
+      &:before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
+        height: 1px;
+        width: calc(100% - #{$history-item-horizontal-space * 4});
+        content: '';
+        background-color: var(--s-color-base-border-secondary);
       }
     }
-    .date {
-      @include hint-text;
+    &:hover {
+      background-color: var(--s-color-base-background-hover);
+      cursor: pointer;
+      &:before, & + .history-item::before {
+        width: 100%;
+      }
+    }
+    &-info {
+      display: flex;
+      align-items: flex-start;
+      .info-status--error  {
+        color: var(--s-color-status-error);
+      }
+    }
+    &-title {
+      width: auto;
+      padding-right: $basic-spacing_mini;
+      line-height: var(--s-line-height-mini);
+    }
+    &-title,
+    &-date {
+      width: 100%;
+    }
+    &-date {
+      margin-top: $basic-spacing_mini / 2;
+      line-height: var(--s-line-height-mini);
+      color: var(--s-color-base-content-tetriary);
+    }
+    &-operation {
+      flex-shrink: 0;
+      color: var(--s-color-base-content-secondary);
+      background-color: var(--s-color-base-background);
+      border-radius: var(--s-border-radius-mini);
+      padding: 0 $basic-spacing_mini / 2;
+      margin-right: $basic-spacing_mini / 2;
+    }
+    &-title,
+    &-date {
+      width: 100%;
+    }
+    &-date {
+      color: var(--s-color-base-content-secondary);
+      line-height: var(--s-line-height-mini);
+    }
+    &-icon {
+      flex-shrink: 0;
+      align-self: flex-start;
+      margin-top: $basic-spacing_mini / 2;
+      margin-right: $basic-spacing_mini;
+      margin-left: auto;
+    }
+    .info-status--loading {
+      @include svg-icon;
+      @include loading;
+      background-image: $status-pending-svg;
+      height: var(--s-font-size-mini);
+      width: var(--s-font-size-mini);
     }
   }
   &-empty {
     text-align: center;
-    @include hint-text;
   }
+  .history--search {
+    position: relative;
+    .s-button--clear {
+      width: 32px;
+      margin-right: -8px;
+      padding: 0;
+      background-color: transparent;
+      border-radius: 0;
+      border: none;
+    }
+  }
+}
+.el-pagination {
+  display: flex;
+  margin-top: $basic-spacing;
+  padding-left: 0;
+  padding-right: 0;
 }
 </style>

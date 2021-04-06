@@ -20,6 +20,15 @@
           @click="handleActionClick"
         />
         <s-button
+          v-if="showCleanHistory"
+          class="base-title_trash"
+          type="action"
+          icon="basic-trash-24"
+          :disabled="disabledCleanHistory"
+          :tooltip="t('history.clearHistory')"
+          @click="handleCleanHistoryClick"
+        />
+        <s-button
           v-if="showClose"
           class="base-title_close"
           type="action"
@@ -42,9 +51,11 @@ import TranslationMixin from './mixins/TranslationMixin'
 @Component
 export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string
-  @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
   @Prop({ default: false, type: Boolean }) readonly showAction!: boolean
+  @Prop({ default: false, type: Boolean }) readonly disabledCleanHistory!: boolean
+  @Prop({ default: false, type: Boolean }) readonly showCleanHistory!: boolean
+  @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
   @Prop({ default: '', type: String }) readonly actionTooltip!: string
   @Prop({ default: '', type: String }) readonly actionIcon!: string
 
@@ -55,7 +66,10 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     if (this.showBack) {
       cssClasses.push('base-title--center')
     }
-    if (this.showAction && this.showClose) {
+    if (this.showCleanHistory) {
+      cssClasses.push('base-title--has-history')
+    }
+    if (this.showAction && (this.showClose || this.showCleanHistory)) {
       cssClasses.push('base-title--actions')
     }
     return cssClasses
@@ -65,12 +79,16 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     this.$emit('back')
   }
 
-  handleCloseClick (): void {
-    this.$emit('close')
-  }
-
   handleActionClick (): void {
     this.$emit('action')
+  }
+
+  handleCleanHistoryClick (): void {
+    this.$emit('cleanHistory')
+  }
+
+  handleCloseClick (): void {
+    this.$emit('close')
   }
 }
 </script>
@@ -82,7 +100,7 @@ $button-size: var(--s-size-medium);
   @include s-card-styles;
   width: $wallet-width;
   font-size: $font-size_basic;
-  line-height: $line-height_basic;
+  line-height: var(--s-line-height-base);
   &-title {
     position: relative;
     height: $button-size;
@@ -92,12 +110,22 @@ $button-size: var(--s-size-medium);
       padding-left: calc(#{$button-size} + #{$basic-spacing});
       text-align: center;
     }
+    &--has-history {
+      .base-title_action {
+        right: calc(var(--s-size-medium) + #{$button-margin});
+      }
+    }
     &--actions {
-      padding-left: calc(#{$button-size} * 2 + #{$basic-spacing});
+      &.base-title--has-center {
+        padding-left: calc(#{$button-size} * 2 + #{$basic-spacing});
+      }
       padding-right: calc(#{$button-size} * 2 + #{$basic-spacing});
       .base-title_action {
         right: calc(#{$button-size} + #{$basic-spacing_mini});
       }
+    }
+    > span {
+      flex: 1;
     }
     .el-button {
       position: absolute;
@@ -111,7 +139,7 @@ $button-size: var(--s-size-medium);
     &_back {
       left: 0;
     }
-    &_close, &_action {
+    &_action, &_trash, &_close {
       right: 0;
     }
   }

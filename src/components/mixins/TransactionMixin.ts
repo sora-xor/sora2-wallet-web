@@ -1,5 +1,5 @@
 import { Component, Mixins } from 'vue-property-decorator'
-import { History, TransactionStatus, Operation } from '@sora-substrate/util'
+import { History, TransactionStatus, Operation, RewardInfo } from '@sora-substrate/util'
 import findLast from 'lodash/fp/findLast'
 import { Action } from 'vuex-class'
 
@@ -19,14 +19,37 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
   @Action removeActiveTransaction
 
   private getMessage (value?: History): string {
-    if (!value || ![Operation.Transfer, Operation.RegisterAsset].includes(value.type)) {
+    if (!value || !Object.values(Operation).includes(value.type as any)) {
       return ''
     }
-    return this.t(`operations.${value.status}.${value.type}`, {
-      amount: value.amount ? this.formatStringValue(value.amount) : '',
-      symbol: value.symbol,
-      address: value.to ? formatAddress(value.to as string, 10) : ''
-    })
+    const params = { ...value } as any
+    if (value.type === Operation.Transfer) {
+      params.address = formatAddress(value.to as string, 10)
+    }
+    if ([Operation.Transfer, Operation.RemoveLiquidity].includes(value.type)) {
+      params.amount = params.amount ? this.formatStringValue(params.amount) : ''
+    }
+    if ([Operation.AddLiquidity, Operation.CreatePair, Operation.Swap].includes(value.type)) {
+      params.amount2 = params.amount2 ? this.formatStringValue(params.amount2) : ''
+    }
+    if (value.type === Operation.ClaimRewards) {
+      params.rewards = params.rewards.reduce((result, item: RewardInfo) => {
+        if (+item.amount === 0) return result
+
+        const amount = this.getStringFromCodec(item.amount, item.asset.decimals)
+        const itemString = `${amount} ${item.asset.symbol}`
+
+        result.push(itemString)
+
+        return result
+      }, []).join(` ${this.t('operations.andText')} `)
+    }
+    if (value.status === 'invalid') {
+      value.status = TransactionStatus.Error
+    } else if (value.status !== TransactionStatus.Error) {
+      value.status = TransactionStatus.Finalized
+    }
+    return this.t(`operations.${value.status}.${value.type}`, params)
   }
 
   private async getLastTransaction (): Promise<void> {

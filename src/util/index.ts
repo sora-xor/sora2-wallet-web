@@ -58,9 +58,9 @@ export const getAssetIconClasses = (address: string) => {
 
 export const getStatusIcon = (status: string) => {
   switch (status) {
-    case 'IN_PROGRESS': return 'refresh'
-    case 'ERROR': return 'circle-x'
-    case 'SUCCESS': return 'check-mark'
+    case 'IN_PROGRESS': return 'refresh-16'
+    case 'ERROR': return 'status-error-ic-16'
+    case 'SUCCESS': return 'status-success-ic-16'
   }
   return ''
 }
