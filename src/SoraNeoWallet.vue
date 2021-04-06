@@ -2,10 +2,11 @@
   <component
     v-if="!loading"
     :is="currentRoute"
-    @close="handleClose"
     @swap="(asset) => handleOperation(Operations.Swap, asset)"
     @liquidity="(asset) => handleOperation(Operations.Liquidity, asset)"
     @bridge="(asset) => handleOperation(Operations.Bridge, asset)"
+    @learn-more="handleLearnMore"
+    @close="handleClose"
   />
 </template>
 
