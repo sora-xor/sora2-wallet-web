@@ -1,6 +1,7 @@
 import { Operation, TransactionStatus } from '@sora-substrate/util'
 
 import { AddAssetTabs, WalletTabs } from '../../consts'
+import { BalanceTypes } from '../../types'
 
 export default {
   closeText: 'Close',
@@ -94,8 +95,19 @@ export default {
     add: 'Add token',
     swap: '@:swapText',
     send: '@:sendText',
+    receive: '@:account.copy',
+    liquidity: 'Add liquidity',
+    bridge: 'Bridge',
     copy: 'Copy Asset ID',
-    successCopy: '{symbol} Asset ID is copied to the clipboard'
+    successCopy: '{symbol} Asset ID is copied to the clipboard',
+    copied: 'Copied!',
+    balance: {
+      [BalanceTypes.Transferable]: 'Transferable',
+      [BalanceTypes.Frozen]: 'Frozen',
+      [BalanceTypes.Locked]: ' - Locked',
+      [BalanceTypes.Reserved]: ' - Reserved',
+      [BalanceTypes.Total]: 'Total'
+    }
   },
   asset: {
     remove: 'Remove asset'

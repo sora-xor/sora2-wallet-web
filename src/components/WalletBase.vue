@@ -10,7 +10,7 @@
           :tooltip="t('backText')"
           @click="handleBackClick"
         />
-        <h3>{{ title }}</h3>
+        <h3 class="base-title_text">{{ title }}</h3>
         <s-button
           v-if="showAction"
           class="base-title_action"
@@ -55,6 +55,9 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     if (this.showBack) {
       cssClasses.push('base-title--center')
     }
+    if (this.showAction && this.showClose) {
+      cssClasses.push('base-title--actions')
+    }
     return cssClasses
   }
 
@@ -84,17 +87,26 @@ $button-size: var(--s-size-medium);
     position: relative;
     height: $button-size;
     align-items: center;
-    padding-right: $button-size + $basic-spacing;
+    padding-right: calc(#{$button-size} + #{$basic-spacing});
     &--center {
-      padding-left: $button-size + $basic-spacing;
-      justify-content: center;
+      padding-left: calc(#{$button-size} + #{$basic-spacing});
+      text-align: center;
     }
-    > span {
-      flex: 1;
+    &--actions {
+      padding-left: calc(#{$button-size} * 2 + #{$basic-spacing});
+      padding-right: calc(#{$button-size} * 2 + #{$basic-spacing});
+      .base-title_action {
+        right: calc(#{$button-size} + #{$basic-spacing_mini});
+      }
     }
     .el-button {
       position: absolute;
-      top: 0;
+    }
+    &_text {
+      flex: 1;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
     &_back {
       left: 0;
