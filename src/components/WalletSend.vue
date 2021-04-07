@@ -389,6 +389,7 @@ $logo-size: var(--s-size-mini);
       &-title {
         line-height: 1.33;
         flex: 1;
+        word-break: break-word;
       }
       &-value {
         .asset {
