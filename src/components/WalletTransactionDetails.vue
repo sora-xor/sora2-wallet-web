@@ -6,7 +6,7 @@
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="copyTooltop('transaction.hash')"
+          :tooltip="copyTooltip('transaction.hash')"
           type="action"
           @click="handleCopy(selectedTransaction.blockId, t('transaction.hash'))"
         />
@@ -66,7 +66,7 @@
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="copyTooltop('transaction.from')"
+          :tooltip="copyTooltip('transaction.from')"
           type="action"
           @click="handleCopy(selectedTransaction.from, t('transaction.from'))"
         />
@@ -90,7 +90,7 @@
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="copyTooltop('transaction.to')"
+          :tooltip="copyTooltip('transaction.to')"
           type="action"
           @click="handleCopy(selectedTransaction.to, t('transaction.to'))"
         />
@@ -178,7 +178,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
     this.navigate({ name: RouteNames.Wallet })
   }
 
-  copyTooltop (value: string): string {
+  copyTooltip (value: string): string {
     return this.t('transaction.copy', { value: this.t(value) })
   }
 
