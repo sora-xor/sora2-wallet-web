@@ -255,6 +255,11 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
       &, &.focusing, &:hover, &.s-pressed {
         color: var(--s-color-base-on-accent);
       }
+      &:disabled {
+        color: var(--s-color-base-on-disabled);
+        background-color: var(--s-color-base-disabled);
+        border-color: var(--s-color-base-disabled);
+      }
     }
   }
   .asset-logo {
