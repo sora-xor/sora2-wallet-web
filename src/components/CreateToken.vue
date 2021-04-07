@@ -40,6 +40,7 @@
           @click="onConfirm"
         >
           <template v-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
+          <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
           <template v-else-if="!tokenSupply">{{ t('createToken.enterSupply') }}</template>
           <template v-else>{{ t('createToken.action') }}</template>
         </s-button>
