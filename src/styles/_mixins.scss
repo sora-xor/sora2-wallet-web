@@ -54,6 +54,7 @@
             padding-left: $basic-spacing;
             &.is-active {
               box-shadow: var(--s-shadow-tab);
+              background-color: var(--s-color-base-on-accent);
             }
             &:hover {
               box-shadow: none;
@@ -67,7 +68,7 @@
             font-feature-settings: var(--s-font-feature-settings-heading);
             font-weight: 600 !important;
             &:hover {
-              background-color: var(--s-color-base-background-hover);
+              background-color: transparent;
             }
           }
         }

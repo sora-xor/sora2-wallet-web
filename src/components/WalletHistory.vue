@@ -12,7 +12,7 @@
           size="medium"
           border-radius="mini"
         >
-          <template #suffix>
+          <template #suffix v-if="query">
             <s-button class="s-button--clear" icon="clear-X-16" @click="handleResetSearch" />
           </template>
         </s-input>
@@ -92,18 +92,17 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     this.getAccountActivity()
   }
 
-  getFilteredHistory (history: Array<any>): Array<any> {
-    if (this.query) {
-      const query = this.query.toLowerCase().trim()
-      return history.filter(item =>
-        `${item.assetAddress}`.toLowerCase().includes(query) ||
-        `${item.asset2Address}`.toLowerCase().includes(query) ||
-        `${item.symbol}`.toLowerCase().includes(query) ||
-        `${item.symbol2}`.toLowerCase().includes(query)
-      )
+  getFilteredHistory (history: Array<History>): Array<History> {
+    if (!this.query) {
+      return history
     }
-
-    return history
+    const query = this.query.toLowerCase().trim()
+    return history.filter(item =>
+      `${item.assetAddress}`.toLowerCase().includes(query) ||
+      `${item.asset2Address}`.toLowerCase().includes(query) ||
+      `${item.symbol}`.toLowerCase().includes(query) ||
+      `${item.symbol2}`.toLowerCase().includes(query)
+    )
   }
 
   getStatus (status: string): string {
