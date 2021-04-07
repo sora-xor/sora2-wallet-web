@@ -27,6 +27,7 @@
         >
           {{ t('connection.action.learnMore') }}
         </s-button>
+        <p v-if="step === Step.First && !isExtensionAvailable" class="wallet-connection-text no-permissions p4" v-html="t('connection.noPermissions')" />
         <p v-if="loading" class="wallet-connection-text waiting-text p4" v-html="t('connection.loadingText')" />
       </template>
       <template v-if="step === Step.Second && polkadotJsAccounts.length">
@@ -141,7 +142,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   &-text {
     color: var(--s-color-base-content-tertiary);
     margin-bottom: $basic-spacing_mini;
-    &.waiting-text {
+    &.waiting-text, &.no-permissions {
       margin-top: $basic-spacing_mini;
     }
   }
