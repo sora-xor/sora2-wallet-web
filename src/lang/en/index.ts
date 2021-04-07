@@ -156,6 +156,7 @@ export default {
     desc: 'Create and deploy custom token on SORA',
     action: '@:createTokenText',
     enterSymbol: 'Enter token symbol',
+    enterName: 'Enter token name',
     enterSupply: 'Enter token supply',
     confirm: '@:confirmText',
     success: {
