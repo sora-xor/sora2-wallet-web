@@ -3,6 +3,13 @@
     <div class="transaction" v-if="selectedTransaction">
       <div v-if="selectedTransaction.blockId" class="s-input-container">
         <s-input :placeholder="t('transaction.hash')" :value="formatAddress(selectedTransaction.blockId)" readonly />
+        <s-button
+          class="s-button--copy"
+          icon="basic-copy-24"
+          :tooltip="copyTooltop('transaction.hash')"
+          type="action"
+          @click="handleCopy(selectedTransaction.blockId, t('transaction.hash'))"
+        />
         <s-dropdown
           class="s-dropdown--menu"
           borderRadius="mini"
@@ -12,7 +19,7 @@
           @select="handleOpenPolkascan"
         >
           <template slot="menu">
-            <s-dropdown-item>
+            <s-dropdown-item disabled>
               <span>{{ t('transaction.viewInPolkascan') }}</span>
             </s-dropdown-item>
           </template>
@@ -56,6 +63,13 @@
       </div>
       <div v-if="selectedTransaction.from" class="s-input-container">
         <s-input :placeholder="t('transaction.from')" :value="formatAddress(selectedTransaction.from)" readonly />
+        <s-button
+          class="s-button--copy"
+          icon="basic-copy-24"
+          :tooltip="copyTooltop('transaction.from')"
+          type="action"
+          @click="handleCopy(selectedTransaction.from, t('transaction.from'))"
+        />
         <s-dropdown
           class="s-dropdown--menu"
           borderRadius="mini"
@@ -65,7 +79,7 @@
           @select="handleOpenPolkascan"
         >
           <template slot="menu">
-            <s-dropdown-item>
+            <s-dropdown-item disabled>
               <span>{{ t('transaction.viewInPolkascan') }}</span>
             </s-dropdown-item>
           </template>
@@ -73,6 +87,13 @@
       </div>
       <div v-if="selectedTransaction.to" class="s-input-container">
         <s-input :placeholder="t('transaction.to')" :value="formatAddress(selectedTransaction.to)" readonly />
+        <s-button
+          class="s-button--copy"
+          icon="basic-copy-24"
+          :tooltip="copyTooltop('transaction.to')"
+          type="action"
+          @click="handleCopy(selectedTransaction.to, t('transaction.to'))"
+        />
         <s-dropdown
           class="s-dropdown--menu"
           borderRadius="mini"
@@ -82,7 +103,7 @@
           @select="handleOpenPolkascan"
         >
           <template slot="menu">
-            <s-dropdown-item>
+            <s-dropdown-item disabled>
               <span>{{ t('transaction.viewInPolkascan') }}</span>
             </s-dropdown-item>
           </template>
@@ -95,18 +116,18 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import pick from 'lodash/fp/pick'
 
 import { TransactionStatus } from '@sora-substrate/util'
 import TranslationMixin from './mixins/TranslationMixin'
+import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
-import { formatDate, formatAddress, getStatusIcon, getStatusClass } from '../util'
+import { formatDate, formatAddress, getStatusIcon, getStatusClass, copyToClipboard } from '../util'
 
 @Component({
   components: { WalletBase }
 })
-export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
+export default class WalletTransactionDetails extends Mixins(TranslationMixin, CopyAddressMixin) {
   @Getter currentRouteParams!: any
   @Getter selectedTransaction!: any
   @Action navigate
@@ -157,8 +178,29 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
     this.navigate({ name: RouteNames.Wallet })
   }
 
+  copyTooltop (value: string): string {
+    return this.t('transaction.copy', { value: this.t(value) })
+  }
+
   handleOpenPolkascan (): void {
     // TODO: Add work with Polkascan
+  }
+
+  async handleCopy (address: string, value: string): Promise<void> {
+    try {
+      await copyToClipboard(address)
+      this.$notify({
+        message: this.t('transaction.successCopy', { value: value }),
+        type: 'success',
+        title: ''
+      })
+    } catch (error) {
+      this.$notify({
+        message: `${this.t('warningText')} ${error}`,
+        type: 'warning',
+        title: ''
+      })
+    }
   }
 }
 </script>
@@ -175,6 +217,8 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
 </style>
 
 <style scoped lang="scss">
+$dropdown-right: 15px;
+$dropdown-width: var(--s-size-mini);
 .transaction {
   &-hash, &-from {
     margin-bottom: $basic-spacing_small;
@@ -201,15 +245,28 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin) {
     position: relative;
     margin-bottom: $basic-spacing_small;
   }
+  .s-button--copy {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+    right: calc(#{$dropdown-right} + #{$dropdown-width} + #{$basic-spacing_mini / 2});
+    z-index: 1;
+    &, &:hover, &:focus, &:active {
+      background-color: transparent;
+      border-color: transparent;
+    }
+  }
   .s-dropdown--menu {
     position: absolute;
     z-index: 1;
     top: 0;
-    right: 15px;
+    right: $dropdown-right;
     bottom: 0;
     margin-top: auto;
     margin-bottom: auto;
-    width: var(--s-size-mini);
+    width: $dropdown-width;
     height: var(--s-size-mini);
     line-height: 1;
   }

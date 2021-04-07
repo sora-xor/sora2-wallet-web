@@ -202,6 +202,8 @@ export default {
     from: 'From',
     to: 'To',
     viewInPolkascan: 'View in Polkascan',
+    successCopy: '{value} is copied to the clipboard',
+    copy: 'Copy {value}',
     history: {
       created: 'Transaction for {amount} {symbol} has been created.',
       submitted: 'Transaction submitted with fee of {fee} {symbol}',
