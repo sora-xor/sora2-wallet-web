@@ -52,7 +52,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 
-import { History, TransactionStatus } from '@sora-substrate/util'
+import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util'
 import LoadingMixin from './mixins/LoadingMixin'
 import TransactionMixin from './mixins/TransactionMixin'
 import { formatDate, getStatusIcon, getStatusClass } from '../util'
@@ -64,13 +64,17 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   @Action navigate
   @Action getAccountActivity
 
-  @Prop() readonly assetAddress?: string
+  @Prop() readonly asset?: AccountAsset
 
   formatDate = formatDate
   TransactionStatus = TransactionStatus
   query = ''
   currentPage = 1
   pageAmount = 8
+
+  get assetAddress (): string | undefined {
+    return this.asset && this.asset.address
+  }
 
   get transactions (): Array<History> {
     if (this.assetAddress) {
@@ -127,7 +131,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   handleOpenTransactionDetails (id: number): void {
-    this.navigate({ name: RouteNames.WalletTransactionDetails, params: { id } })
+    this.navigate({ name: RouteNames.WalletTransactionDetails, params: { id, asset: this.asset } })
   }
 
   handleResetSearch (): void {

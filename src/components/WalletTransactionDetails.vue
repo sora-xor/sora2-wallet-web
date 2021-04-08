@@ -117,11 +117,11 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-import { TransactionStatus } from '@sora-substrate/util'
+import { TransactionStatus, AccountAsset } from '@sora-substrate/util'
 import TranslationMixin from './mixins/TranslationMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
-import { RouteNames } from '../consts'
+import { RouteNames, WalletTabs } from '../consts'
 import { formatDate, formatAddress, getStatusIcon, getStatusClass, copyToClipboard } from '../util'
 
 @Component({
@@ -130,6 +130,7 @@ import { formatDate, formatAddress, getStatusIcon, getStatusClass, copyToClipboa
 export default class WalletTransactionDetails extends Mixins(TranslationMixin, CopyAddressMixin) {
   @Getter currentRouteParams!: any
   @Getter selectedTransaction!: any
+  @Getter accountAssets!: Array<AccountAsset>
   @Action navigate
   @Action getAccountActivity
   @Action getTransactionDetails
@@ -148,6 +149,11 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
     }
     this.getAccountActivity()
     this.getTransactionDetails(id)
+  }
+
+  get asset (): AccountAsset {
+    // currentRouteParams.asset was added here to avoid a case when the asset is not found
+    return this.accountAssets.find(({ address }) => address === this.currentRouteParams.asset.address) || this.currentRouteParams.asset as AccountAsset
   }
 
   get statusClass (): string {
@@ -175,7 +181,11 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
   }
 
   handleBack (): void {
-    this.navigate({ name: RouteNames.Wallet })
+    if (this.currentRouteParams.asset) {
+      this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.asset } })
+      return
+    }
+    this.navigate({ name: RouteNames.Wallet, params: { currentTab: WalletTabs.Activity } })
   }
 
   copyTooltip (value: string): string {
