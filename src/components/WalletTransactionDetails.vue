@@ -241,6 +241,10 @@ $dropdown-width: var(--s-size-mini);
     &_key {
       flex: 1;
     }
+    &_value {
+      padding-left: $basic-spacing_small;
+      text-align: right;
+    }
     &:not(:last-child) {
       margin-bottom: $basic-spacing_mini;
     }

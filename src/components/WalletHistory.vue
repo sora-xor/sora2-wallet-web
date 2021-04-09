@@ -105,7 +105,11 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       `${item.assetAddress}`.toLowerCase().includes(query) ||
       `${item.asset2Address}`.toLowerCase().includes(query) ||
       `${item.symbol}`.toLowerCase().includes(query) ||
-      `${item.symbol2}`.toLowerCase().includes(query)
+      `${item.symbol2}`.toLowerCase().includes(query) ||
+      `${item.blockId}`.toLowerCase().includes(query) ||
+      `${item.from}`.toLowerCase().includes(query) ||
+      `${item.to}`.toLowerCase().includes(query) ||
+      this.t(`operations.${item.type}`).toLowerCase().includes(query)
     )
   }
 
