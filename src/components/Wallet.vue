@@ -47,12 +47,17 @@ import { RouteNames, WalletTabs } from '../consts'
 export default class Wallet extends Mixins(TranslationMixin) {
   readonly WalletTabs = WalletTabs
 
+  @Getter currentRouteParams!: any
   @Getter account!: any
   @Getter activity!: Array<History | any>
   @Action navigate
   @Action getAccountActivity
 
-  currentTab = WalletTabs.Assets
+  currentTab: WalletTabs = WalletTabs.Assets
+
+  mounted () {
+    if (this.currentRouteParams.currentTab) this.currentTab = this.currentRouteParams.currentTab
+  }
 
   get isCleanHistoryDisabled (): boolean {
     return !this.activity.length
