@@ -108,7 +108,7 @@ export default {
   },
   history: {
     clearHistory: 'Clear history',
-    filterPlaceholder: 'Filter by address, asset',
+    filterPlaceholder: 'Filter by address, asset, type, block id',
     empty: 'Your transactions will appear here',
     emptySearch: 'No transactions found'
   },
