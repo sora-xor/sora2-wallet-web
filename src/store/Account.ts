@@ -17,7 +17,8 @@ const types = flow(
     'RESET',
     'LOGOUT',
     'LOGIN',
-    'CHANGE_NAME'
+    'CHANGE_NAME',
+    'SYNC_WITH_STORAGE'
   ]),
   map(x => [x, x]),
   fromPairs
@@ -93,6 +94,14 @@ const mutations = {
     Object.keys(s).forEach(key => {
       state[key] = s[key]
     })
+  },
+
+  [types.SYNC_WITH_STORAGE] (state) {
+    state.address = storage.get('address') || ''
+    state.name = storage.get('name') || ''
+    state.password = storage.get('password') || ''
+    state.isExternal = Boolean(storage.get('isExternal')) || false
+    state.accountAssets = api.accountAssets // to save reactivity
   },
 
   [types.LOGIN] (state, params) {
@@ -283,7 +292,7 @@ const actions = {
       return
     }
     const assets = storage.get('assets')
-    if (assets) {
+    if (assets && getters.accountAssets.length !== 0) {
       return
     }
     commit(types.GET_ACCOUNT_ASSETS_REQUEST)
@@ -404,6 +413,22 @@ const actions = {
   logout ({ commit }) {
     api.logout()
     commit(types.RESET)
+  },
+  async syncWithStorage ({ commit, state, getters, dispatch }) {
+    // previous state
+    const { isLoggedIn } = getters
+    const { address } = state
+
+    commit(types.SYNC_WITH_STORAGE)
+
+    // check log in/out state changes after sync
+    if (getters.isLoggedIn === isLoggedIn && state.address === address) return
+
+    if (!getters.isLoggedIn) {
+      dispatch('logout')
+    } else {
+      await dispatch('importPolkadotJs', { address: state.address })
+    }
   },
   reset ({ commit }) {
     commit(types.RESET)

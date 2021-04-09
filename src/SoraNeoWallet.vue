@@ -14,6 +14,7 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 import { AccountAsset } from '@sora-substrate/util'
+import debounce from 'lodash/fp/debounce'
 
 import AddAsset from './components/AddAsset.vue'
 import CreateToken from './components/CreateToken.vue'
@@ -27,6 +28,8 @@ import LoadingMixin from './components/mixins/LoadingMixin'
 
 import { Operations } from './types'
 import { RouteNames } from './consts'
+
+const SyncWithStorageDebounceTimeout = 100
 
 @Component({
   components: {
@@ -42,17 +45,37 @@ import { RouteNames } from './consts'
 export default class SoraNeoWallet extends Mixins(LoadingMixin) {
   readonly Operations = Operations
 
+  handleSyncWithStorageDebounced: any
+
   @Getter currentRoute!: RouteNames
   @Getter isLoggedIn!: boolean
   @Action navigate
+  @Action syncWithStorage
 
   async created (): Promise<void> {
     this.withApi(() => {}) // We need it just for loading state
+    this.handleSyncWithStorageDebounced = debounce(SyncWithStorageDebounceTimeout)(this.handleSyncWithStorage)
   }
 
   mounted (): void {
-    if (this.isLoggedIn) {
+    this.checkCurrentRoute()
+    window.addEventListener('storage', this.handleSyncWithStorageDebounced)
+  }
+
+  destroyed (): void {
+    window.removeEventListener('storage', this.handleSyncWithStorageDebounced)
+  }
+
+  async handleSyncWithStorage (): Promise<void> {
+    await this.syncWithStorage()
+    this.checkCurrentRoute()
+  }
+
+  checkCurrentRoute (): void {
+    if (this.isLoggedIn && this.currentRoute === RouteNames.WalletConnection) {
       this.navigate({ name: RouteNames.Wallet })
+    } else if (!this.isLoggedIn && this.currentRoute !== RouteNames.WalletConnection) {
+      this.navigate({ name: RouteNames.WalletConnection })
     }
   }
 
