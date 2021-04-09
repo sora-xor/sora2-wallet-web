@@ -41,7 +41,7 @@
         </div>
       </div>
     </s-card>
-    <wallet-history :assetAddress="asset.address" />
+    <wallet-history :asset="asset" />
   </wallet-base>
 </template>
 
