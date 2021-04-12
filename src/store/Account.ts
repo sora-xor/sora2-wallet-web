@@ -40,10 +40,10 @@ const types = flow(
 
 function initialState () {
   return {
-    address: storage.get('address') || '',
-    name: storage.get('name') || '',
-    password: storage.get('password') || '',
-    isExternal: Boolean(storage.get('isExternal')) || false,
+    address: '',
+    name: '',
+    password: '',
+    isExternal: false,
     accountAssets: [],
     selectedAssetDetails: [],
     selectedTransaction: null,
@@ -57,8 +57,8 @@ const state = initialState()
 const getters = {
   isLoggedIn (state) {
     return !state.isExternal
-      ? state.address && state.name && state.password
-      : state.address
+      ? !!state.address && !!state.name && !!state.password
+      : !!state.address
   },
   isExternal (state) {
     return state.isExternal

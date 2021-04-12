@@ -45,7 +45,7 @@ const SyncWithStorageDebounceTimeout = 100
 export default class SoraNeoWallet extends Mixins(LoadingMixin) {
   readonly Operations = Operations
 
-  handleSyncWithStorageDebounced: any
+  handleSyncWithStorageDebounced = debounce(SyncWithStorageDebounceTimeout)(this.handleSyncWithStorage)
 
   @Getter currentRoute!: RouteNames
   @Getter isLoggedIn!: boolean
@@ -53,13 +53,10 @@ export default class SoraNeoWallet extends Mixins(LoadingMixin) {
   @Action syncWithStorage
 
   async created (): Promise<void> {
-    this.withApi(() => {}) // We need it just for loading state
-    this.handleSyncWithStorageDebounced = debounce(SyncWithStorageDebounceTimeout)(this.handleSyncWithStorage)
-  }
-
-  mounted (): void {
-    this.checkCurrentRoute()
-    window.addEventListener('storage', this.handleSyncWithStorageDebounced)
+    this.withApi(async () => {
+      await this.handleSyncWithStorage()
+      window.addEventListener('storage', this.handleSyncWithStorageDebounced)
+    })
   }
 
   destroyed (): void {
