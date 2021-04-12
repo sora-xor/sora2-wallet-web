@@ -136,7 +136,6 @@ export default {
   },
   addAsset: {
     title: '@:addAssetText',
-    cancel: '@:cancelText',
     action: '@:addAssetText',
     success: 'Asset was added successfully!',
     [AddAssetTabs.Search]: {
