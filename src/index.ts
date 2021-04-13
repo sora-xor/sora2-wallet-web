@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import { Store } from 'vuex'
+import debounce from 'lodash/fp/debounce'
 
 import { install } from './plugins'
 // import './styles' We don't need it for now
@@ -17,6 +18,19 @@ import * as WALLET_CONSTS from './consts'
 
 let store: Store<unknown>
 let isWalletLoaded = false
+let unsubscribeStoreFromStorage: Function
+
+const subscribeStoreToStorageUpdates = store => {
+  if (typeof unsubscribeStoreFromStorage === 'function') {
+    unsubscribeStoreFromStorage()
+  }
+
+  const syncWithStorageHandler = debounce(100)(() => store.dispatch('syncWithStorage'))
+
+  window.addEventListener('storage', syncWithStorageHandler)
+
+  unsubscribeStoreFromStorage = () => window.removeEventListener('storage', syncWithStorageHandler)
+}
 
 const components = [
   { component: SoraNeoWallet, name: Components.SoraNeoWallet }
@@ -67,8 +81,10 @@ async function initWallet ({
     if (permissions) {
       store.dispatch('setPermissions', permissions)
     }
+    await store.dispatch('syncWithStorage')
     await store.dispatch('getAccountAssets')
     await store.dispatch('updateAccountAssets')
+    subscribeStoreToStorageUpdates(store)
     isWalletLoaded = true
   }
 }
