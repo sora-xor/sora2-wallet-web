@@ -165,6 +165,7 @@ $asset-icon-shadow-size: 3px;
   flex-direction: column;
   &-container {
     max-height: calc(#{$asset-item-height} * 5);
+    overflow-x: hidden;
     overflow-y: auto;
   }
   &-item {
