@@ -20,12 +20,9 @@
     <div v-if="address && !symbol" class="asset-custom-empty">
       {{ t(`addAsset.${alreadyAttached ? 'alreadyAttached' : 'empty'}`) }}
     </div>
-    <div class="asset-custom-actions s-flex">
-      <s-button @click="handleBack">{{ t('addAsset.cancel') }}</s-button>
-      <s-button type="primary" :disabled="!(symbol && address)" @click="handleAddAsset">
-        {{ t('addAsset.action') }}
-      </s-button>
-    </div>
+    <s-button type="primary" :disabled="!(symbol && address)" @click="handleAddAsset">
+      {{ t('addAsset.action') }}
+    </s-button>
   </div>
 </template>
 
@@ -75,10 +72,6 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
     }
   }
 
-  handleBack (): void {
-    this.navigate({ name: RouteNames.Wallet })
-  }
-
   async handleAddAsset (): Promise<void> {
     await this.addAsset({ address: this.address })
     this.navigate({ name: RouteNames.Wallet })
@@ -88,7 +81,6 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
 </script>
 
 <style scoped lang="scss">
-// TODO: think about mixin here
 .asset-custom {
   > * {
     margin-top: $basic-spacing;
@@ -96,10 +88,8 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
   &-empty {
     @include hint-text;
   }
-  &-actions {
-    > * {
-      flex: .5;
-    }
+  .el-button--primary {
+    width: 100%;
   }
 }
 </style>

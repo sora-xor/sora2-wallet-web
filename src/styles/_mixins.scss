@@ -52,13 +52,14 @@
           #{$tabs-class}__nav-wrap #{$tabs-class}__item {
             padding-right: $basic-spacing;
             padding-left: $basic-spacing;
+            &.is-focus {
+              box-shadow: none;
+            }
             &.is-active {
               box-shadow: var(--s-shadow-tab);
-              background-color: var(--s-color-base-on-accent);
-            }
-            &:hover {
-              box-shadow: none;
-              border-radius: var(--s-border-radius-small);
+              &, &:hover {
+                background-color: var(--s-color-base-on-accent);
+              }
             }
           }
           #{$tabs-class}__item {
