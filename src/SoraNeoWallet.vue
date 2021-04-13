@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-import { Getter, Action } from 'vuex-class'
+import { Getter } from 'vuex-class'
 import { AccountAsset } from '@sora-substrate/util'
 
 import AddAsset from './components/AddAsset.vue'
@@ -43,17 +43,9 @@ export default class SoraNeoWallet extends Mixins(LoadingMixin) {
   readonly Operations = Operations
 
   @Getter currentRoute!: RouteNames
-  @Getter isLoggedIn!: boolean
-  @Action navigate
 
   async created (): Promise<void> {
     this.withApi(() => {}) // We need it just for loading state
-  }
-
-  mounted (): void {
-    if (this.isLoggedIn) {
-      this.navigate({ name: RouteNames.Wallet })
-    }
   }
 
   handleClose (): void {

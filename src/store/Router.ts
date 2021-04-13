@@ -43,6 +43,16 @@ const mutations = {
 const actions = {
   navigate ({ commit }, { name, params }) {
     commit(types.NAVIGATE, { name, params })
+  },
+  checkCurrentRoute ({ dispatch, getters, rootGetters }) {
+    const { currentRoute } = getters
+    const { isLoggedIn } = rootGetters
+
+    if (isLoggedIn && currentRoute === RouteNames.WalletConnection) {
+      dispatch('navigate', { name: RouteNames.Wallet })
+    } else if (!isLoggedIn && currentRoute !== RouteNames.WalletConnection) {
+      dispatch('navigate', { name: RouteNames.WalletConnection })
+    }
   }
 }
 
