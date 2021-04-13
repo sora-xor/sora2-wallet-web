@@ -2,7 +2,7 @@
   <wallet-base :title="t(!selectedTransaction ? 'transaction.title' : 'operations.'+selectedTransaction.type)" show-back @back="handleBack">
     <div class="transaction" v-if="selectedTransaction">
       <div v-if="selectedTransaction.blockId" class="s-input-container">
-        <s-input :placeholder="t('transaction.hash')" :value="formatAddress(selectedTransaction.blockId)" readonly />
+        <s-input :placeholder="t('transaction.hash')" :value="formatAddress(selectedTransaction.blockId, 24)" readonly />
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
@@ -62,7 +62,7 @@
         <div class="transaction-row_value">{{ `${selectedTransaction.amount2} ${selectedTransaction.symbol2}` }}</div>
       </div>
       <div v-if="selectedTransaction.from" class="s-input-container">
-        <s-input :placeholder="t('transaction.from')" :value="formatAddress(selectedTransaction.from)" readonly />
+        <s-input :placeholder="t('transaction.from')" :value="formatAddress(selectedTransaction.from, 24)" readonly />
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
@@ -86,7 +86,7 @@
         </s-dropdown>
       </div>
       <div v-if="selectedTransaction.to" class="s-input-container">
-        <s-input :placeholder="t('transaction.to')" :value="formatAddress(selectedTransaction.to)" readonly />
+        <s-input :placeholder="t('transaction.to')" :value="formatAddress(selectedTransaction.to, 24)" readonly />
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
