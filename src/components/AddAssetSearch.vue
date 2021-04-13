@@ -33,14 +33,9 @@
         </div>
       </div>
     </div>
-    <div class="asset-search-actions s-flex">
-      <s-button @click="handleBack">
-        {{ t('addAsset.cancel') }}
-      </s-button>
-      <s-button type="primary" :disabled="!selectedAsset" @click="handleAddAsset">
-        {{ t('addAsset.action') }}
-      </s-button>
-    </div>
+    <s-button type="primary" :disabled="!selectedAsset" @click="handleAddAsset">
+      {{ t('addAsset.action') }}
+    </s-button>
   </div>
 </template>
 
@@ -104,10 +99,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
 
   handleSelectAsset (asset: Asset): void {
     this.selectedAsset = asset
-  }
-
-  handleBack (): void {
-    this.navigate({ name: RouteNames.Wallet })
   }
 
   async handleAddAsset (): Promise<void> {
@@ -198,11 +189,8 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
       }
     }
   }
-  &-actions {
-    margin-bottom: $basic-spacing;
-    > * {
-      flex: .5;
-    }
+  .el-button--primary {
+    width: 100%;
   }
 }
 </style>
