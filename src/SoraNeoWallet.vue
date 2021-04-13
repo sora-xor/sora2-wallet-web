@@ -45,7 +45,7 @@ export default class SoraNeoWallet extends Mixins(LoadingMixin) {
   @Getter currentRoute!: RouteNames
 
   async created (): Promise<void> {
-    this.withApi(() => {})
+    this.withApi(() => {}) // We need it just for loading state
   }
 
   handleClose (): void {
