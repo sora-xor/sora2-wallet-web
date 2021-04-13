@@ -40,10 +40,10 @@ const types = flow(
 
 function initialState () {
   return {
-    address: '',
-    name: '',
-    password: '',
-    isExternal: false,
+    address: storage.get('address') || '',
+    name: storage.get('name') || '',
+    password: storage.get('password') || '',
+    isExternal: Boolean(storage.get('isExternal')) || false,
     accountAssets: [],
     selectedAssetDetails: [],
     selectedTransaction: null,
@@ -422,13 +422,15 @@ const actions = {
     commit(types.SYNC_WITH_STORAGE)
 
     // check log in/out state changes after sync
-    if (getters.isLoggedIn === isLoggedIn && state.address === address) return
-
-    if (!getters.isLoggedIn) {
-      dispatch('logout')
-    } else {
-      await dispatch('importPolkadotJs', { address: state.address })
+    if (getters.isLoggedIn !== isLoggedIn || state.address !== address) {
+      if (getters.isLoggedIn) {
+        await dispatch('importPolkadotJs', { address: state.address })
+      } else if (api.accountPair) {
+        dispatch('logout')
+      }
     }
+
+    dispatch('checkCurrentRoute', undefined, { root: true })
   },
   reset ({ commit }) {
     commit(types.RESET)
