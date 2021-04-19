@@ -270,7 +270,7 @@ const actions = {
       throw new Error((error as Error).message)
     }
   },
-  async importPolkadotJs ({ commit }, { address }) {
+  async importPolkadotJs ({ commit, dispatch }, { address }) {
     commit(types.POLKADOT_JS_IMPORT_REQUEST)
     try {
       const info = await getExtensionInfo()
@@ -282,6 +282,10 @@ const actions = {
       api.importByPolkadotJs(account.address, account.name)
       api.setSigner(info.signer)
       commit(types.POLKADOT_JS_IMPORT_SUCCESS, account)
+      if (!updateAccountAssetsSubscription) {
+        await dispatch('getAccountAssets')
+        await dispatch('updateAccountAssets')
+      }
     } catch (error) {
       commit(types.POLKADOT_JS_IMPORT_FAILURE)
       throw new Error((error as Error).message)
@@ -412,6 +416,10 @@ const actions = {
   },
   logout ({ commit }) {
     api.logout()
+    if (updateAccountAssetsSubscription) {
+      updateAccountAssetsSubscription.unsubscribe()
+      updateAccountAssetsSubscription = null
+    }
     commit(types.RESET)
   },
   async syncWithStorage ({ commit, state, getters, dispatch }) {
