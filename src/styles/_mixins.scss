@@ -1,3 +1,9 @@
+@mixin value-prefix($prop, $value) {
+  @each $prefix in ('-webkit-', '-moz-', '') {
+    #{$prop}: #{$prefix}#{$value};
+  }
+}
+
 @mixin asset-logo-styles($size: 32px) {
   $tokens-list: "eth", "pswap", "val", "valerc", "xor", "xorerc";
   $token-background-color: var(--s-color-base-on-accent);

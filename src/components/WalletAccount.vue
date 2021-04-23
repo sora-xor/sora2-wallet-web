@@ -134,7 +134,7 @@ $avatar-size: 32px;
       white-space: nowrap;
     }
     &_address {
-      width: fit-content;
+      @include value-prefix(width, fit-content);
       outline: none;
       @include hint-text;
       &:hover {
