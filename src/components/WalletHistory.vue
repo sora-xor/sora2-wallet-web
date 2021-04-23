@@ -186,7 +186,7 @@ $history-item-top-border-height: 1px;
     margin-bottom: $basic-spacing;
   }
   &-items {
-    min-height: #{$history-item-height * 8};
+    max-height: #{$history-item-height * 8};
   }
   &-item {
     display: flex;
