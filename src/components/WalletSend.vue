@@ -163,11 +163,11 @@ export default class WalletSend extends Mixins(TransactionMixin) {
     }
 
     if (!this.validAmount) {
-      return this.t(`walletSend.${this.emptyAmount ? 'enterAmount' : 'badAmount'}`, this.emptyAmount ? {} : { symbol: this.asset.symbol })
+      return this.t(`walletSend.${this.emptyAmount ? 'enterAmount' : 'badAmount'}`, this.emptyAmount ? {} : { tokenSymbol: this.asset.symbol })
     }
 
     if (!this.hasEnoughXor) {
-      return this.t('walletSend.badAmount', { symbol: KnownSymbols.XOR })
+      return this.t('walletSend.badAmount', { tokenSymbol: KnownSymbols.XOR })
     }
 
     return ''

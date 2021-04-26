@@ -26,7 +26,7 @@ export default {
   amountText: 'Amount',
   confirmText: 'Confirm',
   errorText: 'Error',
-  insufficientBalanceText: 'Insufficient {symbol} balance',
+  insufficientBalanceText: 'Insufficient {tokenSymbol} balance',
   unknownErrorText: 'ERROR Something went wrong...',
   transactionSubmittedText: 'Transaction was submitted',
   operations: {
