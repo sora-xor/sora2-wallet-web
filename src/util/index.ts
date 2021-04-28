@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
-import { KnownAssets } from '@sora-substrate/util'
+import { RegisteredAssets } from '@sora-substrate/util'
 
 export const APP_NAME = 'Sora2 Wallet'
 
@@ -44,16 +44,18 @@ export const formatAddress = (address: string, length = address.length / 2): str
 
 export const formatDate = (date: number) => moment(date).format('DD.MM.YYYY, h:mm:ss')
 
-export const getAssetIconClasses = (address: string) => {
-  const cssClass = 'asset-logo'
+export const getAssetIconStyles = (address: string) => {
   if (!address) {
-    return cssClass
+    return {}
   }
-  const asset = KnownAssets.get(address)
-  if (asset) {
-    return `${cssClass} ${cssClass}--${asset.symbol.toLowerCase()}`
+  const asset = RegisteredAssets[address]
+  if (!asset) {
+    return {}
   }
-  return cssClass
+  return {
+    'background-size': '100%',
+    'background-image': `url("${asset}")`
+  }
 }
 
 export const getStatusIcon = (status: string) => {
