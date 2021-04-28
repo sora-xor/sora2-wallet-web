@@ -24,7 +24,7 @@
               <s-button v-if="isMaxButtonAvailable" class="asset-max" type="tertiary" size="small" border-radius="mini" @click="handleMaxClick">
                 {{ t('walletSend.max') }}
               </s-button>
-              <i :class="getAssetClasses(asset.address)" />
+              <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
@@ -42,7 +42,7 @@
           <div class="confirm-asset s-flex">
             <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
             <div class="confirm-asset-value s-flex">
-              <i :class="getAssetClasses(asset.address)" />
+              <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
@@ -76,7 +76,7 @@ import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substra
 import TransactionMixin from './mixins/TransactionMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
-import { delay, getAssetIconClasses } from '../util'
+import { delay, getAssetIconStyles } from '../util'
 import { api } from '../api'
 
 @Component({
@@ -224,7 +224,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
     }
   }
 
-  getAssetClasses = getAssetIconClasses
+  getAssetIconStyles = getAssetIconStyles
 
   handleBack (): void {
     if (this.step !== 1) {
