@@ -185,9 +185,6 @@ $history-item-top-border-height: 1px;
   &--search.el-form-item {
     margin-bottom: $basic-spacing;
   }
-  &-items {
-    max-height: #{$history-item-height * 8};
-  }
   &-item {
     display: flex;
     flex-direction: column;
