@@ -22,7 +22,7 @@
         :class="{ 'selected': (selectedAsset || {}).address === asset.address }"
         @click="handleSelectAsset(asset)"
       >
-        <i :class="getAssetClasses(asset.address)" />
+        <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
         <div class="asset-description s-flex">
           <div class="asset-description_symbol">{{ asset.symbol }}</div>
           <div class="asset-description_info">{{ formatName(asset) }}
@@ -46,7 +46,7 @@ import { AccountAsset, Asset } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { AddAssetTabs, RouteNames } from '../consts'
-import { copyToClipboard, formatAddress, getAssetIconClasses } from '../util'
+import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util'
 
 @Component
 export default class AddAssetSearch extends Mixins(TranslationMixin) {
@@ -107,9 +107,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     this.$emit('add-asset')
   }
 
-  getAssetClasses (address: string): string {
-    return getAssetIconClasses(address)
-  }
+  getAssetIconStyles = getAssetIconStyles
 
   getFormattedAddress (asset: Asset): string {
     return formatAddress(asset.address, 10)
