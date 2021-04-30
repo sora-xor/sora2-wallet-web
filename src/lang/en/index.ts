@@ -66,11 +66,10 @@ export default {
     title: 'SORA Network account',
     text: 'Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
     install: 'No polkadot.js extension found. Install it and reload the page.<br/><span class="wallet-connection-link">https://polkadot.js.org/extension/</span>',
-    noPermissions: 'Accidenatlly rejected permission request?</br>Currently polkadot{.js} extension doesn’t have permission managment. As a workaround you can restart your browser and revisit this page to proceed with authorization.',
+    noPermissions: 'Accidentally rejected permission request?</br>Currently polkadot{.js} extension doesn’t have permission managment. As a workaround you can restart your browser and revisit this page to proceed with authorization.',
     noAccounts: 'No account found in your polkadot{.js} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
     loadingTitle: 'Waiting for you to allow access to polkadot{.js} extension..',
-    loadingText: 'Accidenatlly rejected permission request?</br>Currently polkadot{.js} extension doesn’t have permission managment. As a workaround you can restart your browser and revisit this page to proceed with authorization.',
     action: {
       install: 'Install extension',
       learnMore: 'Learn more',
@@ -140,7 +139,7 @@ export default {
     success: 'Asset was added successfully!',
     [AddAssetTabs.Search]: {
       title: '@:searchText',
-      placeholder: 'Search Asset Name, Symbol, or Address',
+      placeholder: 'Search by Asset ID, Name or Ticker Symbol',
       info: 'Add the tokens you\'ve acquired using MetaMask'
     },
     [AddAssetTabs.Custom]: {
