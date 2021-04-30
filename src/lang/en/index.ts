@@ -11,7 +11,7 @@ export default {
   nextText: 'Next',
   importText: 'Import',
   settingsText: 'Settings',
-  addAssetText: 'Add token',
+  addAssetText: 'Add asset',
   createTokenText: 'Create token',
   comingSoonText: 'Coming soon',
   successText: 'Success',
@@ -107,13 +107,13 @@ export default {
   },
   history: {
     clearHistory: 'Clear history',
-    filterPlaceholder: 'Filter by address, asset, type, block id',
+    filterPlaceholder: 'Filter by Address, Symbol, Type or Block ID',
     empty: 'Your transactions will appear here',
     emptySearch: 'No transactions found'
   },
   assets: {
     empty: 'There are no assets',
-    add: 'Add token',
+    add: '@:addAssetText',
     swap: '@:swapText',
     send: '@:sendText',
     receive: '@:account.copy',
@@ -139,11 +139,11 @@ export default {
     success: 'Asset was added successfully!',
     [AddAssetTabs.Search]: {
       title: '@:searchText',
-      placeholder: 'Search by Asset ID, Name or Ticker Symbol',
+      placeholder: 'Filter by Asset ID, Name or Ticker Symbol',
       info: 'Add the tokens you\'ve acquired using MetaMask'
     },
     [AddAssetTabs.Custom]: {
-      title: 'Custom token',
+      title: 'Custom asset',
       addressPlaceholder: '@:addressText',
       symbolPlaceholder: 'Asset symbol'
     },
@@ -152,7 +152,7 @@ export default {
   },
   createToken: {
     title: '@:createTokenText',
-    desc: 'Create and deploy custom token on SORA',
+    desc: 'Create and deploy custom asset on SORA',
     action: '@:createTokenText',
     enterSymbol: 'Enter token symbol',
     enterName: 'Enter token name',
