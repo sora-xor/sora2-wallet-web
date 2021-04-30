@@ -19,15 +19,15 @@
           :tooltip="t(actionTooltip)"
           @click="handleActionClick"
         />
-        <s-button
-          v-if="false/* TODO: think about it showCleanHistory */"
+        <!-- <s-button
+          v-if="showCleanHistory"
           class="base-title_trash"
           type="action"
           icon="basic-trash-24"
           :disabled="disabledCleanHistory"
           :tooltip="t('history.clearHistory')"
           @click="handleCleanHistoryClick"
-        />
+        /> -->
         <s-button
           v-if="showClose"
           class="base-title_close"
@@ -66,10 +66,11 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     if (this.showBack) {
       cssClasses.push('base-title--center')
     }
-    if (this.showCleanHistory) {
-      cssClasses.push('base-title--has-history')
-    }
-    if (this.showAction && (this.showClose || this.showCleanHistory)) {
+    // if (this.showCleanHistory) {
+    //   cssClasses.push('base-title--has-history')
+    // }
+    // if (this.showAction && (this.showClose || this.showCleanHistory)) {
+    if (this.showAction && this.showClose) {
       cssClasses.push('base-title--actions')
     }
     return cssClasses
