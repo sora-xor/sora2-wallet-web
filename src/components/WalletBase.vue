@@ -20,7 +20,7 @@
           @click="handleActionClick"
         />
         <s-button
-          v-if="showCleanHistory"
+          v-if="false/* TODO: think about it showCleanHistory */"
           class="base-title_trash"
           type="action"
           icon="basic-trash-24"
