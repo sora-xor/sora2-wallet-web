@@ -64,10 +64,10 @@ const mutations = {
   },
 
   [types.UPDATE_ACTIVE_TRANSACTIONS] (state) {
-    if (!api.accountHistory.length) {
+    if (!api.history.length) {
       return
     }
-    const activeTransactions = api.accountHistory.filter(tx => state.activeTransactions.find(t => t.id === tx.id))
+    const activeTransactions = api.history.filter(tx => state.activeTransactions.find(t => t.id === tx.id))
     state.activeTransactions = activeTransactions
   }
 }

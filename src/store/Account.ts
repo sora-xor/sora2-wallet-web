@@ -331,7 +331,7 @@ const actions = {
   async getAccountActivity ({ commit }) {
     commit(types.GET_ACCOUNT_ACTIVITY_REQUEST)
     try {
-      const transactions = api.accountHistory
+      const transactions = api.history
       commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, transactions.filter(item => !isBridgeOperation(item.type)))
     } catch (error) {
       commit(types.GET_ACCOUNT_ACTIVITY_FAILURE)
@@ -428,6 +428,8 @@ const actions = {
     const { address } = state
 
     commit(types.SYNC_WITH_STORAGE)
+    // to sync history
+    dispatch('getAccountActivity')
 
     // check log in/out state changes after sync
     if (getters.isLoggedIn !== isLoggedIn || state.address !== address) {
