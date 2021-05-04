@@ -56,7 +56,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     // Now we are checking every transaction with 1 second interval
     const tx = findLast(
       item => Math.abs(Number(item.startTime) - this.time) < 1000,
-      api.accountHistory
+      api.history
     )
     if (!tx) {
       await delay()

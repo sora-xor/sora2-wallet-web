@@ -1,6 +1,6 @@
 <template>
   <component
-    v-if="!loading"
+    v-loading="loading"
     :is="currentRoute"
     @swap="(asset) => handleOperation(Operations.Swap, asset)"
     @liquidity="(asset) => handleOperation(Operations.Liquidity, asset)"
