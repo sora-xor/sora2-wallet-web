@@ -80,8 +80,10 @@ const actions = {
     commit(types.REMOVE_ACTIVE_TRANSACTION, tx)
   },
   // Should be used once in a root of the project
-  trackActiveTransactions ({ commit }) {
+  trackActiveTransactions ({ commit, dispatch }) {
     updateActiveTransactionsId = setInterval(() => {
+      // to update app activities (history)
+      dispatch('getAccountActivity', {}, { root: true })
       commit(types.UPDATE_ACTIVE_TRANSACTIONS)
     }, UPDATE_ACTIVE_TRANSACTIONS_INTERVAL)
   }
