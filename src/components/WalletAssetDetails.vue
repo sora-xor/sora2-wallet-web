@@ -13,7 +13,7 @@
   >
     <s-card class="asset-details">
       <div class="asset-details-container s-flex">
-        <i :class="getAssetClasses(asset.address)" />
+        <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
         <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">{{ balance }}
           <s-icon v-if="isXor" name="chevron-down-rounded-16" />
         </div>
@@ -57,7 +57,7 @@ import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
 import WalletHistory from './WalletHistory.vue'
 import { RouteNames } from '../consts'
-import { getAssetIconClasses } from '../util'
+import { getAssetIconStyles } from '../util'
 import { Operations, BalanceTypes } from '../types'
 
 interface Operation {
@@ -181,9 +181,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
     this.wasBalanceDetailsClicked = !this.wasBalanceDetailsClicked
   }
 
-  getAssetClasses (address: string): string {
-    return getAssetIconClasses(address)
-  }
+  getAssetIconStyles = getAssetIconStyles
 
   handleRemoveAsset (): void {
     api.removeAsset(this.asset.address)

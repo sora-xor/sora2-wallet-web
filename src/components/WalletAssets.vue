@@ -3,7 +3,7 @@
     <div v-if="!!formattedAccountAssets.length" class="wallet-assets-container">
       <template v-for="(asset, index) in formattedAccountAssets">
         <div class="wallet-assets-item s-flex" :key="asset.address">
-          <i :class="getAssetClasses(asset.address)" />
+          <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
           <div class="asset s-flex">
             <div class="asset-value">{{ formatBalance(asset) }}
               <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
@@ -64,7 +64,7 @@ import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'
 import { RouteNames } from '../consts'
-import { getAssetIconClasses, formatAddress, copyToClipboard } from '../util'
+import { getAssetIconStyles, formatAddress, copyToClipboard } from '../util'
 
 @Component
 export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
@@ -85,9 +85,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     return formatAddress(asset.address, 10)
   }
 
-  getAssetClasses (address: string): string {
-    return getAssetIconClasses(address)
-  }
+  getAssetIconStyles = getAssetIconStyles
 
   formatBalance (asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)} ${asset.symbol}`

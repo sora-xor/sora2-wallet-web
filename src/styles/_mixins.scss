@@ -1,5 +1,10 @@
+@mixin value-prefix($prop, $value) {
+  @each $prefix in ('-webkit-', '-moz-', '') {
+    #{$prop}: #{$prefix}#{$value};
+  }
+}
+
 @mixin asset-logo-styles($size: 32px) {
-  $tokens-list: "eth", "pswap", "val", "valerc", "xor", "xorerc";
   $token-background-color: var(--s-color-base-on-accent);
   height: $size;
   width: $size;
@@ -11,29 +16,6 @@
   border: 1px solid $token-background-color;
   border-radius: 50%;
   box-shadow: var(--s-shadow-tooltip);
-  @each $token in $tokens-list {
-    &--#{$token} {
-      background-size: 100%;
-    }
-  }
-  &--eth {
-    background-image: $asset-logo-eth-svg;
-  }
-  &--pswap {
-    background-image: $asset-logo-pswap-svg;
-  }
-  &--val {
-    background-image: $asset-logo-val-svg;
-  }
-  &--valerc {
-    background-image: $asset-logo-valerc-svg;
-  }
-  &--xor {
-    background-image: $asset-logo-xor-svg;
-  }
-  &--xorerc {
-    background-image: $asset-logo-xorerc-svg;
-  }
 }
 
 @mixin custom-tabs {
