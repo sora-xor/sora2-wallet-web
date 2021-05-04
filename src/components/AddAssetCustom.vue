@@ -1,6 +1,7 @@
 <template>
   <div class="asset-custom">
     <s-input
+      ref="search"
       class="asset-custom-address"
       :maxlength="128"
       :placeholder="t(`addAsset.${AddAssetTabs.Custom}.addressPlaceholder`)"
@@ -47,6 +48,14 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
   symbol = ''
   selectedAsset: Asset | null = null
   alreadyAttached = false
+
+  mounted (): void {
+    const input = this.$refs.search as any
+
+    if (input && typeof input.focus === 'function') {
+      input.focus()
+    }
+  }
 
   async handleSearch (value: string): Promise<void> {
     this.alreadyAttached = false
