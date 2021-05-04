@@ -1,6 +1,7 @@
 <template>
   <div class="asset-search">
     <s-input
+      ref="search"
       class="asset-search-input"
       :maxlength="100"
       :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
@@ -63,8 +64,16 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
   foundAssets: Array<Asset> = []
   alreadyAttached = false
 
-  mounted (): void {
-    this.getAssets().then(this.handleSearch)
+  async mounted (): Promise<void> {
+    await this.getAssets()
+
+    const input = this.$refs.search as any
+
+    if (input && typeof input.focus === 'function') {
+      input.focus()
+    }
+
+    this.handleSearch()
   }
 
   handleSearch (value?: string): void {

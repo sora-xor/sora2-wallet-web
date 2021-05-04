@@ -18,7 +18,9 @@ const types = flow(
     'LOGOUT',
     'LOGIN',
     'CHANGE_NAME',
-    'SYNC_WITH_STORAGE'
+    'SYNC_WITH_STORAGE',
+    'SET_TRANSACTION_DETAILS_ID',
+    'GET_ACCOUNT_ACTIVITY'
   ]),
   map(x => [x, x]),
   fromPairs
@@ -26,12 +28,10 @@ const types = flow(
   'GET_ADDRESS',
   'GET_ACCOUNT_ASSETS',
   'UPDATE_ACCOUNT_ASSETS',
-  'GET_ACCOUNT_ACTIVITY',
   'GET_ASSET_DETAILS',
   'GET_ASSETS',
   'SEARCH_ASSET',
   'ADD_ASSET',
-  'GET_TRANSACTION_DETAILS',
   'TRANSFER',
   'POLKADOT_JS_IMPORT',
   'GET_SIGNER',
@@ -46,8 +46,8 @@ function initialState () {
     isExternal: Boolean(storage.get('isExternal')) || false,
     accountAssets: [],
     selectedAssetDetails: [],
-    selectedTransaction: null,
-    activity: [],
+    selectedTransactionId: null,
+    activity: [], // all history
     assets: []
   }
 }
@@ -75,7 +75,7 @@ const getters = {
     return state.accountAssets
   },
   activity (state) {
-    return state.activity
+    return state.activity.filter(item => !isBridgeOperation(item.type))
   },
   selectedAssetDetails (state) {
     return state.selectedAssetDetails
@@ -83,8 +83,8 @@ const getters = {
   assets (state) {
     return state.assets
   },
-  selectedTransaction (state) {
-    return state.selectedTransaction
+  selectedTransaction (state, getters) {
+    return getters.activity.find(item => item.id === state.selectedTransactionId)
   }
 }
 
@@ -102,6 +102,7 @@ const mutations = {
     state.password = storage.get('password') || ''
     state.isExternal = Boolean(storage.get('isExternal')) || false
     state.accountAssets = api.accountAssets // to save reactivity
+    state.activity = api.history
   },
 
   [types.LOGIN] (state, params) {
@@ -145,16 +146,8 @@ const mutations = {
     state.accountAssets = []
   },
 
-  [types.GET_ACCOUNT_ACTIVITY_REQUEST] (state) {
-    state.activity = []
-  },
-
-  [types.GET_ACCOUNT_ACTIVITY_SUCCESS] (state, activity) {
+  [types.GET_ACCOUNT_ACTIVITY] (state, activity) {
     state.activity = activity
-  },
-
-  [types.GET_ACCOUNT_ACTIVITY_FAILURE] (state) {
-    state.activity = []
   },
 
   [types.GET_ASSET_DETAILS_REQUEST] (state) {
@@ -225,16 +218,8 @@ const mutations = {
 
   [types.POLKADOT_JS_IMPORT_FAILURE] (state) {},
 
-  [types.GET_TRANSACTION_DETAILS_REQUEST] (state) {
-    state.selectedTransaction = null
-  },
-
-  [types.GET_TRANSACTION_DETAILS_SUCCESS] (state, transaction) {
-    state.selectedTransaction = transaction
-  },
-
-  [types.GET_TRANSACTION_DETAILS_FAILURE] (state) {
-    state.selectedTransaction = null
+  [types.SET_TRANSACTION_DETAILS_ID] (state, id) {
+    state.selectedTransactionId = id
   }
 }
 
@@ -328,14 +313,8 @@ const actions = {
       commit(types.GET_ASSET_DETAILS_FAILURE)
     }
   },
-  async getAccountActivity ({ commit }) {
-    commit(types.GET_ACCOUNT_ACTIVITY_REQUEST)
-    try {
-      const transactions = api.accountHistory
-      commit(types.GET_ACCOUNT_ACTIVITY_SUCCESS, transactions.filter(item => !isBridgeOperation(item.type)))
-    } catch (error) {
-      commit(types.GET_ACCOUNT_ACTIVITY_FAILURE)
-    }
+  getAccountActivity ({ commit }) {
+    commit(types.GET_ACCOUNT_ACTIVITY, api.history)
   },
   async getAssets ({ commit }) {
     commit(types.GET_ASSETS_REQUEST)
@@ -366,18 +345,8 @@ const actions = {
       commit(types.ADD_ASSET_FAILURE)
     }
   },
-  async getTransactionDetails ({ commit, getters, state: { address } }, id) {
-    commit(types.GET_TRANSACTION_DETAILS_REQUEST)
-    try {
-      const transactions = getters.activity
-      let transaction = null
-      if (transactions && transactions.length) {
-        transaction = transactions.find(item => id === item.id)
-      }
-      commit(types.GET_TRANSACTION_DETAILS_SUCCESS, transaction)
-    } catch (error) {
-      commit(types.GET_TRANSACTION_DETAILS_FAILURE)
-    }
+  getTransactionDetails ({ commit }, id) {
+    commit(types.SET_TRANSACTION_DETAILS_ID, id)
   },
   getAddress ({ commit }, { seed }) {
     commit(types.GET_ADDRESS_REQUEST)
