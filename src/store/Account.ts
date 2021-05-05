@@ -3,7 +3,7 @@ import flatMap from 'lodash/fp/flatMap'
 import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
-import { AccountAsset, isBridgeOperation } from '@sora-substrate/util'
+import { AccountAsset } from '@sora-substrate/util'
 
 import { api } from '../api'
 import { storage } from '../util/storage'
@@ -47,7 +47,7 @@ function initialState () {
     accountAssets: [],
     selectedAssetDetails: [],
     selectedTransactionId: null,
-    activity: [], // all history
+    activity: [], // account history (without bridge)
     assets: []
   }
 }
@@ -75,7 +75,7 @@ const getters = {
     return state.accountAssets
   },
   activity (state) {
-    return state.activity.filter(item => !isBridgeOperation(item.type))
+    return state.activity
   },
   selectedAssetDetails (state) {
     return state.selectedAssetDetails
@@ -102,7 +102,7 @@ const mutations = {
     state.password = storage.get('password') || ''
     state.isExternal = Boolean(storage.get('isExternal')) || false
     state.accountAssets = api.accountAssets // to save reactivity
-    state.activity = api.history
+    state.activity = api.accountHistory
   },
 
   [types.LOGIN] (state, params) {
@@ -314,7 +314,7 @@ const actions = {
     }
   },
   getAccountActivity ({ commit }) {
-    commit(types.GET_ACCOUNT_ACTIVITY, api.history)
+    commit(types.GET_ACCOUNT_ACTIVITY, api.accountHistory)
   },
   async getAssets ({ commit }) {
     commit(types.GET_ASSETS_REQUEST)
