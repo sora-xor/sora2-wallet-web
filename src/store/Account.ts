@@ -75,7 +75,7 @@ const getters = {
     return state.accountAssets
   },
   activity (state) {
-    return state.activity.filter(item => !isBridgeOperation(item.type))
+    return state.activity
   },
   selectedAssetDetails (state) {
     return state.selectedAssetDetails
