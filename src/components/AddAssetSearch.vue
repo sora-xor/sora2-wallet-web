@@ -10,13 +10,11 @@
       @input="handleSearch"
     />
     <div class="asset-search-list" v-loading="assetsLoading">
-      <div class="asset-search-list_info" v-if="!(searchValue || foundAssets.length)">
-        {{ t(`addAsset.${AddAssetTabs.Search}.info`) }}
-      </div>
-      <div v-if="search && !foundAssets.length" class="asset-search-list_empty">
+      <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </div>
       <div
+        v-else
         class="asset s-flex"
         v-for="asset in foundAssets"
         :key="asset.address"
@@ -165,7 +163,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     overflow-y: auto;
     margin-left: -#{$basic-spacing_big};
     margin-right: -#{$basic-spacing_big};
-    &_info,
     &_empty {
       @include hint-text;
       padding-left: $basic-spacing_big;
