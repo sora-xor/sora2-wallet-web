@@ -97,7 +97,11 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 <style scoped lang="scss">
 @import '../styles/icons';
 
+$avatar-margin-right: $basic-spacing_small;
 $avatar-size: 32px;
+$account-button-width: 30px;
+$account-button-margin-left: $button-margin;
+$account-buttons-number: 2;
 
 .wallet-account.s-card {
   box-shadow: none;
@@ -112,17 +116,20 @@ $avatar-size: 32px;
   margin: $basic-spacing_mini 0;
   align-items: center;
   &-avatar {
-    margin-right: $basic-spacing_small;
+    margin-right: $avatar-margin-right;
     width: $avatar-size;
     height: $avatar-size;
+    flex-shrink: 0;
   }
   &-details {
     flex: 1;
+    width: calc(100% - #{$avatar-size} - #{$avatar-margin-right});
   }
   &-credentials {
     flex: 1;
     flex-direction: column;
     justify-content: center;
+    width: calc(100% - #{$account-button-width * $account-buttons-number} - #{$account-button-margin-left * $account-buttons-number});
     &_name,
     &_address {
       overflow: hidden;
@@ -132,6 +139,8 @@ $avatar-size: 32px;
       font-size: $font-size_basic;
       outline: none;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     &_address {
       @include value-prefix(width, fit-content);
@@ -142,6 +151,10 @@ $avatar-size: 32px;
         cursor: pointer;
       }
     }
+  }
+  .el-button {
+    margin-left: $account-button-margin-left;
+    width: $account-button-width;
   }
   &-switch {
     margin-left: $button-margin;
