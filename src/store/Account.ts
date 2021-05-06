@@ -87,9 +87,6 @@ const getters = {
   assets (state) {
     return state.assets
   },
-  assetsAddressTable (state) {
-    return toHashTable(state.assets, 'address')
-  },
   assetsLoading (state) {
     return state.assetsLoading
   },
