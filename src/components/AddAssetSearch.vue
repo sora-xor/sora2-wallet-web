@@ -61,7 +61,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
 
   search = ''
   selectedAsset: Asset | null = null
-  alreadyAttached = false
 
   async mounted (): Promise<void> {
     await this.getAssets()
