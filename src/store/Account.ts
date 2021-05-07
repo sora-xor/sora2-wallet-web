@@ -7,7 +7,7 @@ import { AccountAsset } from '@sora-substrate/util'
 
 import { api } from '../api'
 import { storage } from '../util/storage'
-import { getExtension, getExtensionSigner, getExtensionInfo } from '../util'
+import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util'
 
 export let updateAccountAssetsSubscription: any = null
 
@@ -48,7 +48,8 @@ function initialState () {
     selectedAssetDetails: [],
     selectedTransactionId: null,
     activity: [], // account history (without bridge)
-    assets: []
+    assets: [],
+    assetsLoading: false
   }
 }
 
@@ -74,6 +75,9 @@ const getters = {
   accountAssets (state) {
     return state.accountAssets
   },
+  accountAssetsAddressTable (state) {
+    return toHashTable(state.accountAssets, 'address')
+  },
   activity (state) {
     return state.activity
   },
@@ -82,6 +86,9 @@ const getters = {
   },
   assets (state) {
     return state.assets
+  },
+  assetsLoading (state) {
+    return state.assetsLoading
   },
   selectedTransaction (state, getters) {
     return getters.activity.find(item => item.id === state.selectedTransactionId)
@@ -164,14 +171,17 @@ const mutations = {
 
   [types.GET_ASSETS_REQUEST] (state) {
     state.assets = []
+    state.assetsLoading = true
   },
 
   [types.GET_ASSETS_SUCCESS] (state, assets) {
     state.assets = assets
+    state.assetsLoading = false
   },
 
   [types.GET_ASSETS_FAILURE] (state) {
     state.assets = []
+    state.assetsLoading = false
   },
 
   [types.SEARCH_ASSET_REQUEST] (state) {},

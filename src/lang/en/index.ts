@@ -139,8 +139,7 @@ export default {
     success: 'Asset was added successfully!',
     [AddAssetTabs.Search]: {
       title: '@:searchText',
-      placeholder: 'Filter by Asset ID, Name or Ticker Symbol',
-      info: 'Add the tokens you\'ve acquired using MetaMask'
+      placeholder: 'Filter by Asset ID, Name or Ticker Symbol'
     },
     [AddAssetTabs.Custom]: {
       title: 'Custom asset',
