@@ -86,3 +86,11 @@ export const getStatusClass = (status: string) => {
 export const delay = async (ms = 50) => {
   await new Promise(resolve => setTimeout(resolve, ms))
 }
+
+export const toHashTable = (list: Array<any>, key: string) => {
+  return list.reduce((result, item) => {
+    if (!(key in item)) return result
+
+    return { ...result, [item[key]]: item }
+  }, {})
+}

@@ -3,20 +3,18 @@
     <s-input
       ref="search"
       class="asset-search-input"
+      border-radius="mini"
       :maxlength="100"
       :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
-      border-radius="mini"
       v-model="search"
       @input="handleSearch"
     />
-    <div class="asset-search-list" v-if="!!foundAssets">
-      <div class="asset-search-list_info" v-if="!(search || foundAssets.length)">
-        {{ t(`addAsset.${AddAssetTabs.Search}.info`) }}
-      </div>
-      <div v-if="search && !foundAssets.length" class="asset-search-list_empty">
-        {{ t(`addAsset.${alreadyAttached ? 'alreadyAttached' : 'empty'}`) }}
+    <div class="asset-search-list" v-loading="assetsLoading">
+      <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
+        {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </div>
       <div
+        v-else
         class="asset s-flex"
         v-for="asset in foundAssets"
         :key="asset.address"
@@ -54,15 +52,15 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
   readonly AddAssetTabs = AddAssetTabs
 
   @Getter assets!: Array<Asset>
+  @Getter assetsLoading!: boolean
   @Getter accountAssets!: Array<AccountAsset>
+  @Getter accountAssetsAddressTable
   @Action navigate
   @Action getAssets
   @Action addAsset
 
   search = ''
   selectedAsset: Asset | null = null
-  foundAssets: Array<Asset> = []
-  alreadyAttached = false
 
   async mounted (): Promise<void> {
     await this.getAssets()
@@ -72,32 +70,42 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     if (input && typeof input.focus === 'function') {
       input.focus()
     }
-
-    this.handleSearch()
   }
 
-  handleSearch (value?: string): void {
-    this.alreadyAttached = false
-    const assets = this.assets.filter(asset => !this.accountAssets.find(accountAsset => accountAsset.address === asset.address))
-    if (!value || !value.trim()) {
-      this.foundAssets = assets
-      this.selectedAsset = null
-      return
-    }
-    const search = value.trim().toLowerCase()
-    const attached = this.accountAssets.find(({ name, symbol, address }) => {
-      return address.toLowerCase() === search || (symbol || '').toLowerCase() === search || (name || '').toLowerCase() === search
-    })
-    if (attached) {
-      this.alreadyAttached = true
-      this.foundAssets = []
-      this.selectedAsset = null
-      return
-    }
-    this.foundAssets = assets.filter(({ name, symbol, address }) => {
-      return address.toLowerCase() === search || symbol.toLowerCase().includes(search) || name.toLowerCase().includes(search)
-    })
-    if (this.selectedAsset && !this.foundAssets.find(({ address }) => (this.selectedAsset || {}).address === address)) {
+  get searchValue (): string {
+    return this.search ? this.search.trim().toLowerCase() : ''
+  }
+
+  get notAddedAssets (): Array<Asset> {
+    return this.assets.filter(asset => !(asset.address in this.accountAssetsAddressTable))
+  }
+
+  get foundAssets (): Array<Asset> {
+    if (!this.searchValue) return this.notAddedAssets
+
+    return this.notAddedAssets.filter(({ name, symbol, address }) =>
+      address.toLowerCase() === this.searchValue ||
+      symbol.toLowerCase().includes(this.searchValue) ||
+      name.toLowerCase().includes(this.searchValue)
+    )
+  }
+
+  get assetIsAlreadyAdded (): boolean {
+    if (!this.searchValue) return false
+
+    return this.accountAssets.some(({ name = '', symbol = '', address = '' }) =>
+      address.toLowerCase() === this.searchValue ||
+      symbol.toLowerCase() === this.searchValue ||
+      name.toLowerCase() === this.searchValue
+    )
+  }
+
+  handleSearch (): void {
+    if (!this.selectedAsset) return
+
+    const isSelectedAssetPresented = !!this.foundAssets.find(({ address }) => (this.selectedAsset || {}).address === address)
+
+    if (!isSelectedAssetPresented) {
       this.selectedAsset = null
     }
   }
@@ -154,7 +162,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     overflow-y: auto;
     margin-left: -#{$basic-spacing_big};
     margin-right: -#{$basic-spacing_big};
-    &_info,
     &_empty {
       @include hint-text;
       padding-left: $basic-spacing_big;
