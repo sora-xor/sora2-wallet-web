@@ -6,9 +6,9 @@
           <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
           <div class="asset s-flex">
             <div class="asset-value">{{ formatBalance(asset) }}
-              <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
+              <div v-if="hasFrozenBalance(asset)" class="asset-value-locked p4">
                 <s-icon name="lock-16" size="12px" />
-                {{ formatLockedBalance(asset) }}
+                {{ formatFrozenBalance(asset) }}
               </div>
             </div>
             <div class="asset-info">{{ asset.name || asset.symbol }}
@@ -95,12 +95,12 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     return this.isCodecZero(asset.balance.transferable, asset.decimals)
   }
 
-  hasLockedBalance (asset: AccountAsset): boolean {
-    return !this.isCodecZero(asset.balance.locked, asset.decimals)
+  hasFrozenBalance (asset: AccountAsset): boolean {
+    return !this.isCodecZero(asset.balance.frozen, asset.decimals)
   }
 
-  formatLockedBalance (asset: AccountAsset): string {
-    return this.formatCodecNumber(asset.balance.locked, asset.decimals)
+  formatFrozenBalance (asset: AccountAsset): string {
+    return this.formatCodecNumber(asset.balance.frozen, asset.decimals)
   }
 
   formatConvertedAmount (asset: AccountAsset): string {
