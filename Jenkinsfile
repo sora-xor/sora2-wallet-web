@@ -1,4 +1,6 @@
 @Library('jenkins-library' ) _
 
-def pipeline = new org.js.LibPipeline(steps: this)
+def pipeline = new org.js.LibPipeline(
+    steps: this,
+    buildDockerImage: 'build-tools/node:14-ubuntu')
 pipeline.runPipeline()
