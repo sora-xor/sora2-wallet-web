@@ -50,7 +50,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   readonly AddAssetTabs = AddAssetTabs
 
   @Getter assets!: Array<Asset>
-  // @Getter whitelistAssets!: Array<Asset> TODO: Maybe it's better to use whitelisted assets here
   @Getter assetsLoading!: boolean
   @Getter accountAssets!: Array<AccountAsset>
   @Getter accountAssetsAddressTable
