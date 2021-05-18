@@ -88,12 +88,6 @@ const getters = {
   assets (state) {
     return state.assets
   },
-  whitelistAssets (state) {
-    return state.assets.filter(asset => isWhitelistAsset(asset))
-  },
-  nonWhitelistAssets (state) {
-    return state.assets.filter(asset => !isWhitelistAsset(asset))
-  },
   assetsLoading (state) {
     return state.assetsLoading
   },
