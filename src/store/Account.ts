@@ -4,6 +4,7 @@ import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 import { AccountAsset } from '@sora-substrate/util'
+import { isWhitelistAsset } from 'polkaswap-token-whitelist'
 
 import { api } from '../api'
 import { storage } from '../util/storage'
@@ -86,6 +87,12 @@ const getters = {
   },
   assets (state) {
     return state.assets
+  },
+  whitelistAssets (state) {
+    return state.assets.filter(asset => isWhitelistAsset(asset))
+  },
+  nonWhitelistAssets (state) {
+    return state.assets.filter(asset => !isWhitelistAsset(asset))
   },
   assetsLoading (state) {
     return state.assetsLoading

@@ -11385,6 +11385,11 @@ pnp-webpack-plugin@^1.6.4:
   dependencies:
     ts-pnp "^1.1.6"
 
+polkaswap-token-whitelist@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/polkaswap-token-whitelist/-/polkaswap-token-whitelist-1.0.0.tgz#902932a86fb5118c244815c35f6490921316aa12"
+  integrity sha512-E5oH57/YGeNh6phmSHCDl0Tm7RWfgJ+xQvYK4NN9CpfBCYn+bhRelFK+8wl1jz2KGWGZS0uIuoWFO+qfI8YL7Q==
+
 portfinder@^1.0.26:
   version "1.0.28"
   resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.28.tgz#67c4622852bd5374dd1dd900f779f53462fac778"
