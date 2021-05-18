@@ -19,7 +19,14 @@
             </div>
           </div>
           <div class="input-line">
-            <s-input placeholder="0.0" v-model="amount" v-float class="s-input--token-value" @change="calcFee" @blur="formatAmount" />
+            <s-float-input
+              v-model="amount"
+              placeholder="0.0"
+              class="s-input--token-value"
+              :delimiters="delimiters"
+              @change="calcFee"
+              @blur="formatAmount"
+            />
             <div class="asset s-flex">
               <s-button v-if="isMaxButtonAvailable" class="asset-max" type="tertiary" size="small" border-radius="mini" @click="handleMaxClick">
                 {{ t('walletSend.max') }}
@@ -31,7 +38,7 @@
         </div>
         <div class="wallet-send-fee s-flex">
           <span>{{ t('walletSend.fee') }}</span>
-          <span class="wallet-send-fee_value">{{ fee.format() }} {{ KnownSymbols.XOR }}</span>
+          <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
         </div>
         <s-button class="wallet-send-action" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
           {{ sendButtonDisabledText || t('walletSend.title') }}
@@ -52,7 +59,7 @@
           <s-divider />
           <div class="wallet-send-fee s-flex">
             <span>{{ t('walletSend.fee') }}</span>
-            <span class="wallet-send-fee_value">{{ fee.format() }} {{ KnownSymbols.XOR }}</span>
+            <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
           </div>
         </div>
         <s-button
@@ -86,6 +93,7 @@ import { api } from '../api'
 })
 export default class WalletSend extends Mixins(TransactionMixin) {
   readonly KnownSymbols = KnownSymbols
+  readonly delimiters = FPNumber.DELIMITERS_CONFIG
 
   @Getter currentRouteParams!: any
   @Getter account!: any

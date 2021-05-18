@@ -21,9 +21,10 @@
         />
         <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenName.desc`) }}</p>
         <s-float-input
-          :placeholder="t(`createToken.tokenSupply.placeholder`)"
           v-model="tokenSupply"
+          :placeholder="t(`createToken.tokenSupply.placeholder`)"
           :decimals="decimals"
+          :delimiters="delimiters"
           :max="maxTotalSupply"
           :disabled="loading"
         />
@@ -111,6 +112,7 @@ export default class CreateToken extends Mixins(TransactionMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly Step = Step
   readonly decimals = FPNumber.DEFAULT_PRECISION
+  readonly delimiters = FPNumber.DELIMITERS_CONFIG
   readonly maxTotalSupply = MaxTotalSupply
   readonly tokenSymbolMask = 'AAAAAAA'
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } }

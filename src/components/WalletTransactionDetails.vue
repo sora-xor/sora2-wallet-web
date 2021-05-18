@@ -49,17 +49,17 @@
         </div>
         <div class="transaction-row_value">{{ formatDate(selectedTransaction.startTime) }}</div>
       </div>
-      <div v-if="selectedTransaction.amount" class="transaction-row s-flex">
+      <div v-if="transactionAmount" class="transaction-row s-flex">
         <div class="transaction-row_key">
           {{ t('transaction.amount') }}
         </div>
-        <div class="transaction-row_value">{{ `${selectedTransaction.amount} ${selectedTransaction.symbol}` }}</div>
+        <div class="transaction-row_value">{{ `${transactionAmount} ${selectedTransaction.symbol}` }}</div>
       </div>
-      <div v-if="selectedTransaction.amount2" class="transaction-row s-flex">
+      <div v-if="transactionAmount2" class="transaction-row s-flex">
         <div class="transaction-row_key">
           {{ t('transaction.amount2') }}
         </div>
-        <div class="transaction-row_value">{{ `${selectedTransaction.amount2} ${selectedTransaction.symbol2}` }}</div>
+        <div class="transaction-row_value">{{ `${transactionAmount2} ${selectedTransaction.symbol2}` }}</div>
       </div>
       <div v-if="selectedTransaction.from" class="s-input-container">
         <s-input :placeholder="t('transaction.from')" :value="formatAddress(selectedTransaction.from, 24)" readonly />
@@ -117,7 +117,7 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-import { TransactionStatus, AccountAsset } from '@sora-substrate/util'
+import { TransactionStatus, AccountAsset, FPNumber } from '@sora-substrate/util'
 import TranslationMixin from './mixins/TranslationMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
@@ -178,6 +178,14 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
       return this.t('transaction.statuses.complete')
     }
     return this.t('transaction.statuses.pending')
+  }
+
+  get transactionAmount (): string | null {
+    return this.selectedTransaction.amount ? new FPNumber(this.selectedTransaction.amount).toLocaleString() : null
+  }
+
+  get transactionAmount2 (): string | null {
+    return this.selectedTransaction.amount2 ? new FPNumber(this.selectedTransaction.amount2).toLocaleString() : null
   }
 
   handleBack (): void {

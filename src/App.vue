@@ -11,6 +11,7 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
+import { FPNumber } from '@sora-substrate/util'
 import TransactionMixin from './components/mixins/TransactionMixin'
 import { initWallet } from './index'
 import SoraNeoWallet from './SoraNeoWallet.vue'
@@ -26,6 +27,9 @@ export default class App extends Mixins(TransactionMixin) {
   async created (): Promise<void> {
     initWallet({ withoutStore: true }) // We don't need storage for local development
     this.trackActiveTransactions()
+    const localeLanguage = navigator.language
+    FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2)
+    FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2)
   }
 
   @Watch('firstReadyTransaction', { deep: true })
