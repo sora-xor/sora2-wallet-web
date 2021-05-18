@@ -184,7 +184,7 @@ export default {
   },
   transaction: {
     title: 'Transaction details',
-    hash: 'Transaction Hash',
+    blockId: 'Block Id',
     status: 'Status',
     statuses: {
       pending: 'Pending...',

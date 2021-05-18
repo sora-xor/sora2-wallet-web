@@ -9,7 +9,7 @@
       v-model="search"
       @input="handleSearch"
     />
-    <div class="asset-search-list" v-loading="assetsLoading">
+    <div class="asset-search-list" v-loading="assetsLoading || loading">
       <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </div>
@@ -32,7 +32,7 @@
         </div>
       </div>
     </div>
-    <s-button type="primary" :disabled="!selectedAsset" @click="handleAddAsset">
+    <s-button type="primary" :disabled="!selectedAsset || loading" @click="handleAddAsset">
       {{ t('addAsset.action') }}
     </s-button>
   </div>
@@ -44,11 +44,12 @@ import { Action, Getter } from 'vuex-class'
 import { AccountAsset, Asset } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
+import LoadingMixin from './mixins/LoadingMixin'
 import { AddAssetTabs, RouteNames } from '../consts'
 import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util'
 
 @Component
-export default class AddAssetSearch extends Mixins(TranslationMixin) {
+export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
   readonly AddAssetTabs = AddAssetTabs
 
   @Getter assets!: Array<Asset>
@@ -119,7 +120,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
   }
 
   async handleAddAsset (): Promise<void> {
-    await this.addAsset({ address: (this.selectedAsset || {}).address })
+    await this.withLoading(async () => await this.addAsset({ address: (this.selectedAsset || {}).address }))
     this.navigate({ name: RouteNames.Wallet })
     this.$emit('add-asset')
   }
