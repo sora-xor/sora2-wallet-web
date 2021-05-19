@@ -4,6 +4,7 @@ import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 import { AccountAsset } from '@sora-substrate/util'
+import { isWhitelistAsset } from 'polkaswap-token-whitelist'
 
 import { api } from '../api'
 import { storage } from '../util/storage'
