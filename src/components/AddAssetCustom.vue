@@ -59,10 +59,11 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
       this.alreadyAttached = true
       return
     }
-    this.selectedAsset = asset
-    if (!this.selectedAsset?.symbol) {
+    if (!this.selectedAsset || !this.selectedAsset.symbol) {
       this.selectedAsset = null
+      return
     }
+    this.selectedAsset = asset
   }
 
   navigateToAddAssetDetails (): void {
