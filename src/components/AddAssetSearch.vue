@@ -26,15 +26,12 @@
           <div class="asset-description_symbol">{{ asset.symbol }}</div>
           <div class="asset-description_info">{{ formatName(asset) }}
             <s-tooltip :content="t('assets.copy')">
-              <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
+              <span class="asset-id" @click="handleCopy(asset, $event)">({{ getFormattedAddress(asset) }})</span>
             </s-tooltip>
           </div>
         </div>
       </div>
     </div>
-    <s-button type="primary" :disabled="!selectedAsset || loading" @click="handleAddAsset">
-      {{ t('addAsset.action') }}
-    </s-button>
   </div>
 </template>
 
@@ -56,9 +53,8 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   @Getter assetsLoading!: boolean
   @Getter accountAssets!: Array<AccountAsset>
   @Getter accountAssetsAddressTable
-  @Action navigate
-  @Action getAssets
-  @Action addAsset
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action getAssets!: () => Promise<void>
 
   search = ''
   selectedAsset: Asset | null = null
@@ -117,12 +113,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 
   handleSelectAsset (asset: Asset): void {
     this.selectedAsset = asset
-  }
-
-  async handleAddAsset (): Promise<void> {
-    await this.withLoading(async () => await this.addAsset({ address: (this.selectedAsset || {}).address }))
-    this.navigate({ name: RouteNames.Wallet })
-    this.$emit('add-asset')
+    this.navigate({ name: RouteNames.AddAssetDetails, params: { asset: this.selectedAsset } })
   }
 
   getAssetIconStyles = getAssetIconStyles
@@ -131,7 +122,8 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
     return formatAddress(asset.address, 10)
   }
 
-  async handleCopy (asset: Asset): Promise<void> {
+  async handleCopy (asset: Asset, event: Event): Promise<void> {
+    event.stopImmediatePropagation()
     try {
       await copyToClipboard(asset.address)
       this.$notify({
