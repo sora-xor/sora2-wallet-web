@@ -7,6 +7,7 @@
     @bridge="(asset) => handleOperation(Operations.Bridge, asset)"
     @learn-more="handleLearnMore"
     @close="handleClose"
+    @add-asset="handleShowAddAssetNotification"
   />
 </template>
 
@@ -16,6 +17,7 @@ import { Getter } from 'vuex-class'
 import { AccountAsset } from '@sora-substrate/util'
 
 import AddAsset from './components/AddAsset.vue'
+import AddAssetDetails from './components/AddAssetDetails.vue'
 import CreateToken from './components/CreateToken.vue'
 import Wallet from './components/Wallet.vue'
 import WalletAssetDetails from './components/WalletAssetDetails.vue'
@@ -24,22 +26,24 @@ import WalletSend from './components/WalletSend.vue'
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
 
 import LoadingMixin from './components/mixins/LoadingMixin'
+import TranslationMixin from './components/mixins/TranslationMixin'
 
 import { Operations } from './types'
 import { RouteNames } from './consts'
 
 @Component({
   components: {
-    WalletConnection,
-    WalletSend,
+    AddAsset,
+    AddAssetDetails,
+    CreateToken,
     Wallet,
     WalletAssetDetails,
-    AddAsset,
-    CreateToken,
+    WalletConnection,
+    WalletSend,
     WalletTransactionDetails
   }
 })
-export default class SoraNeoWallet extends Mixins(LoadingMixin) {
+export default class SoraNeoWallet extends Mixins(LoadingMixin, TranslationMixin) {
   readonly Operations = Operations
 
   @Getter currentRoute!: RouteNames
@@ -58,6 +62,14 @@ export default class SoraNeoWallet extends Mixins(LoadingMixin) {
 
   handleLearnMore (): void {
     this.$emit('learn-more')
+  }
+
+  handleShowAddAssetNotification (): void {
+    this.$notify({
+      message: this.t('addAsset.success'),
+      type: 'success',
+      title: ''
+    })
   }
 }
 </script>
