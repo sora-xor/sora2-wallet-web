@@ -55,7 +55,7 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
   @Action addAsset!: (options: { address?: string }) => Promise<void>
 
-  mounted (): void {
+  created (): void {
     if (!this.currentRouteParams.asset) {
       this.back()
       return
