@@ -60,8 +60,7 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
       return
     }
     this.selectedAsset = asset
-    if (this.selectedAsset && this.selectedAsset.symbol) {
-    } else {
+    if (!this.selectedAsset?.symbol) {
       this.selectedAsset = null
     }
   }
