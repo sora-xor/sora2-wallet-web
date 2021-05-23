@@ -21,7 +21,6 @@
           <div class="input-line">
             <s-float-input
               v-model="amount"
-              placeholder="0.0"
               class="s-input--token-value"
               :delimiters="delimiters"
               @change="calcFee"
