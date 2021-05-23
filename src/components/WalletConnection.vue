@@ -1,6 +1,6 @@
 <template>
   <wallet-base :title="t('connection.title')">
-    <div class="wallet-connection">
+    <div class="wallet-connection" v-loading="isAccountLoading">
       <template v-if="step === Step.First">
         <p v-if="loading" class="wallet-connection-text p4">{{ t('connection.loadingTitle') }}</p>
         <template v-else>
@@ -71,6 +71,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   readonly RouteNames = RouteNames
   readonly Step = Step
 
+  isAccountLoading = false
   isExtensionAvailable = false
   step = Step.First
   polkadotJsAccounts: Array<Account> = []
@@ -115,11 +116,14 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   async handleSelectAccount (account: Account): Promise<void> {
+    this.isAccountLoading = true
     try {
       await this.importPolkadotJs({ address: account.address })
     } catch (error) {
       this.$alert(this.t((error as Error).message), this.t('errorText'))
       this.step = Step.First
+    } finally {
+      this.isAccountLoading = false
     }
     this.navigate({ name: RouteNames.Wallet })
   }

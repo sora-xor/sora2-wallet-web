@@ -2,13 +2,13 @@
   <wallet-base :title="t(!selectedTransaction ? 'transaction.title' : 'operations.'+selectedTransaction.type)" show-back @back="handleBack">
     <div class="transaction" v-if="selectedTransaction">
       <div v-if="selectedTransaction.blockId" class="s-input-container">
-        <s-input :placeholder="t('transaction.hash')" :value="formatAddress(selectedTransaction.blockId, 24)" readonly />
+        <s-input :placeholder="t('transaction.blockId')" :value="formatAddress(selectedTransaction.blockId, 24)" readonly />
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="copyTooltip('transaction.hash')"
+          :tooltip="copyTooltip('transaction.blockId')"
           type="action"
-          @click="handleCopy(selectedTransaction.blockId, t('transaction.hash'))"
+          @click="handleCopy(selectedTransaction.blockId, t('transaction.blockId'))"
         />
         <s-dropdown
           class="s-dropdown--menu"
@@ -238,9 +238,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
 $dropdown-right: 15px;
 $dropdown-width: var(--s-size-mini);
 .transaction {
-  &-hash, &-from {
-    margin-bottom: $basic-spacing_small;
-  }
   &-row {
     align-items: center;
     padding-right: $basic-spacing_mini;

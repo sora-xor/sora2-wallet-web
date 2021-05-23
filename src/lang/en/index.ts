@@ -147,7 +147,14 @@ export default {
       symbolPlaceholder: 'Asset symbol'
     },
     empty: 'No tokens found',
-    alreadyAttached: 'Token was already attached'
+    alreadyAttached: 'Token was already attached',
+    understand: 'I understand',
+    warningTitle: 'Trade at your own risk!',
+    warningMessage: 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects.\nIf you purchase this token, you may not be able to sell it back.',
+    approved: 'Asset approved by community',
+    unknown: 'Unknown source',
+    scam: 'SCAM',
+    next: 'Next'
   },
   createToken: {
     title: '@:createTokenText',
@@ -184,7 +191,7 @@ export default {
   },
   transaction: {
     title: 'Transaction details',
-    hash: 'Transaction Hash',
+    blockId: 'Block Id',
     status: 'Status',
     statuses: {
       pending: 'Pending...',

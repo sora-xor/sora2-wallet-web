@@ -9,7 +9,7 @@
           :name="tab"
         />
       </s-tabs>
-      <component :is="currentTab" @add-asset="handleOpenNotification" />
+      <component :is="currentTab" />
     </div>
   </wallet-base>
 </template>
@@ -34,7 +34,7 @@ import { RouteNames, AddAssetTabs } from '../consts'
 export default class AddAsset extends Mixins(TranslationMixin) {
   readonly AddAssetTabs = AddAssetTabs
 
-  @Action navigate
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
 
   currentTab = AddAssetTabs.Search
 
@@ -44,14 +44,6 @@ export default class AddAsset extends Mixins(TranslationMixin) {
 
   handleBack (): void {
     this.navigate({ name: RouteNames.Wallet })
-  }
-
-  handleOpenNotification (): void {
-    this.$notify({
-      message: this.t('addAsset.success'),
-      type: 'success',
-      title: ''
-    })
   }
 }
 </script>
