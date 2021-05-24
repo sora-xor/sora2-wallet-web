@@ -53,13 +53,13 @@
         <div class="transaction-row_key">
           {{ t('transaction.amount') }}
         </div>
-        <div class="transaction-row_value">{{ formattedAmount }}</div>
+        <div class="transaction-row_value">{{ transactionAmount }}</div>
       </div>
       <div v-if="transactionAmount2" class="transaction-row s-flex">
         <div class="transaction-row_key">
           {{ t('transaction.amount2') }}
         </div>
-        <div class="transaction-row_value">{{ `${formatStringValue(selectedTransaction.amount2)} ${selectedTransaction.symbol2}` }}</div>
+        <div class="transaction-row_value">{{ transactionAmount2 }}</div>
       </div>
       <div v-if="selectedTransaction.from" class="s-input-container">
         <s-input :placeholder="t('transaction.from')" :value="formatAddress(selectedTransaction.from)" readonly />
@@ -192,6 +192,14 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
       return `${amount} ${firstSymbol} ${this.t('operations.andText')} ${this.selectedTransaction.symbol2}`
     }
     return `${amount} ${firstSymbol}`
+  }
+
+  get transactionAmount (): string | null {
+    return this.formattedAmount || null
+  }
+
+  get transactionAmount2 (): string | null {
+    return this.selectedTransaction.amount2 ? `${this.formatStringValue(this.selectedTransaction.amount2)} ${this.selectedTransaction.symbol2}` : null
   }
 
   formatAddress (address: string): string {
