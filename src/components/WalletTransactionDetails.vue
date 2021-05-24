@@ -1,8 +1,8 @@
 <template>
-  <wallet-base :title="t(!selectedTransaction ? 'transaction.title' : 'operations.'+selectedTransaction.type)" show-back @back="handleBack">
+  <wallet-base :title="t(!selectedTransaction ? 'transaction.title' : `operations.${selectedTransaction.type}`)" show-back @back="handleBack">
     <div class="transaction" v-if="selectedTransaction">
       <div v-if="selectedTransaction.blockId" class="s-input-container">
-        <s-input :placeholder="t('transaction.blockId')" :value="formatAddress(selectedTransaction.blockId, 24)" readonly />
+        <s-input :placeholder="t('transaction.blockId')" :value="formatAddress(selectedTransaction.blockId)" readonly />
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
@@ -53,16 +53,16 @@
         <div class="transaction-row_key">
           {{ t('transaction.amount') }}
         </div>
-        <div class="transaction-row_value">{{ `${selectedTransaction.amount} ${selectedTransaction.symbol}` }}</div>
+        <div class="transaction-row_value">{{ formattedAmount }}</div>
       </div>
       <div v-if="selectedTransaction.amount2" class="transaction-row s-flex">
         <div class="transaction-row_key">
           {{ t('transaction.amount2') }}
         </div>
-        <div class="transaction-row_value">{{ `${selectedTransaction.amount2} ${selectedTransaction.symbol2}` }}</div>
+        <div class="transaction-row_value">{{ `${formatStringValue(selectedTransaction.amount2)} ${selectedTransaction.symbol2}` }}</div>
       </div>
       <div v-if="selectedTransaction.from" class="s-input-container">
-        <s-input :placeholder="t('transaction.from')" :value="formatAddress(selectedTransaction.from, 24)" readonly />
+        <s-input :placeholder="t('transaction.from')" :value="formatAddress(selectedTransaction.from)" readonly />
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
@@ -86,7 +86,7 @@
         </s-dropdown>
       </div>
       <div v-if="selectedTransaction.to" class="s-input-container">
-        <s-input :placeholder="t('transaction.to')" :value="formatAddress(selectedTransaction.to, 24)" readonly />
+        <s-input :placeholder="t('transaction.to')" :value="formatAddress(selectedTransaction.to)" readonly />
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
@@ -117,9 +117,10 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-import { TransactionStatus, AccountAsset } from '@sora-substrate/util'
+import { TransactionStatus, AccountAsset, Operation } from '@sora-substrate/util'
 import TranslationMixin from './mixins/TranslationMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
+import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames, WalletTabs } from '../consts'
 import { formatDate, formatAddress, getStatusIcon, getStatusClass, copyToClipboard } from '../util'
@@ -127,7 +128,9 @@ import { formatDate, formatAddress, getStatusIcon, getStatusClass, copyToClipboa
 @Component({
   components: { WalletBase }
 })
-export default class WalletTransactionDetails extends Mixins(TranslationMixin, CopyAddressMixin) {
+export default class WalletTransactionDetails extends Mixins(TranslationMixin, CopyAddressMixin, NumberFormatterMixin) {
+  readonly Operation = Operation
+
   @Getter currentRouteParams!: any
   @Getter selectedTransaction!: any
   @Getter accountAssets!: Array<AccountAsset>
@@ -139,7 +142,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
   TransactionStatus = TransactionStatus
   getStatusClass = getStatusClass
   formatDate = formatDate
-  formatAddress = formatAddress
   transaction: any = null
 
   mounted () {
@@ -178,6 +180,22 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
       return this.t('transaction.statuses.complete')
     }
     return this.t('transaction.statuses.pending')
+  }
+
+  get formattedAmount (): string {
+    if (!this.selectedTransaction || !this.selectedTransaction.amount) {
+      return ''
+    }
+    const amount = this.formatStringValue(this.selectedTransaction.amount)
+    const firstSymbol = this.selectedTransaction.symbol
+    if (this.selectedTransaction.type === Operation.RemoveLiquidity) {
+      return `${amount} ${firstSymbol} ${this.t('operations.andText')} ${this.selectedTransaction.symbol2}`
+    }
+    return `${amount} ${firstSymbol}`
+  }
+
+  formatAddress (address: string): string {
+    return formatAddress(address, 24)
   }
 
   handleBack (): void {
