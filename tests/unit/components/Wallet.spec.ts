@@ -1,13 +1,13 @@
 import Vuex from 'vuex'
-import { shallowMount, createLocalVue } from '@vue/test-utils'
+import { shallowMount } from '@vue/test-utils'
+
+import { useDescribe, localVue } from '../../utils'
+import { MOCK_HISTORY } from '../../utils/mock'
 
 import Wallet from '@/components/Wallet.vue'
-import { TranslationMock, SoramitsuElementsImport } from '../../utils'
 import { WalletTabs } from '@/consts'
 
-const localVue = createLocalVue()
-localVue.use(Vuex)
-const store = new Vuex.Store({
+const createStore = (currentTab: WalletTabs) => new Vuex.Store({
   modules: {
     Account: {
       getters: {
@@ -16,7 +16,7 @@ const store = new Vuex.Store({
           name: 'Mock',
           password: '123qwaszx'
         }),
-        activity: () => ({})
+        activity: () => MOCK_HISTORY
       },
       actions: {
         getAccountActivity: jest.fn()
@@ -25,7 +25,7 @@ const store = new Vuex.Store({
     Router: {
       getters: {
         currentRouteParams: () => ({
-          currentTab: WalletTabs.Assets
+          currentTab
         })
       },
       actions: {
@@ -35,15 +35,9 @@ const store = new Vuex.Store({
   } as any
 })
 
-describe('Wallet.vue', () => {
-  beforeEach(() => {
-    SoramitsuElementsImport(localVue)
-    TranslationMock(Wallet)
-  })
-
-  it('should renders correctly', () => {
-    const wrapper = shallowMount(Wallet, { localVue, store })
+useDescribe('Wallet.vue', Wallet, () => {
+  Object.values(WalletTabs).map(item => it(`[WalletTabs.${item}]: should renders correctly`, () => {
+    const wrapper = shallowMount(Wallet, { localVue, store: createStore(item) })
     expect(wrapper.element).toMatchSnapshot()
-    expect(true).toBe(true)
-  })
+  }))
 })
