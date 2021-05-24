@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Wallet.vue should renders correctly 1`] = `
+<wallet-base-stub
+  actionicon="various-atom-24"
+  actiontooltip="wallet.createToken"
+  disabledcleanhistory="true"
+  showaction="true"
+  title=""
+>
+  <wallet-account-stub
+    showcontrols="true"
+  />
+   
+  <div
+    class="wallet"
+  >
+    <s-tabs-stub
+      borderradius="small"
+      position="top"
+      type="rounded"
+      value="WalletAssets"
+    >
+      <s-tab-stub
+        name="WalletAssets"
+      />
+      <s-tab-stub
+        name="WalletActivity"
+      />
+    </s-tabs-stub>
+     
+    <walletassets-stub />
+  </div>
+</wallet-base-stub>
+`;
