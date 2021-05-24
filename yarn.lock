@@ -2173,10 +2173,10 @@
     crypto-js "^4.0.0"
     lodash "^4.17.15"
 
-"@soramitsu/soramitsu-js-ui@^0.8.5":
-  version "0.8.5"
-  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-0.8.5.tgz#3446e7cec2eeee9f2fd02ca7b7769b142a0f0449"
-  integrity sha512-PKPBkUVRXGSkUwMc66ech4lgSqRzTdMeCZgk/GgVqrkP5eKyQY9LqzhrEabbOj11LE6kbY5fJ1e6VPlDOsOJbg==
+"@soramitsu/soramitsu-js-ui@^0.8.9":
+  version "0.8.9"
+  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-0.8.9.tgz#e7665a11c3b37547390ef709f8cdf90d074ca695"
+  integrity sha512-1dAQ5BhZ6zCyNFmK+rJl9SKdBPoynzADRW5mqWvKZ/Rsgn3UVCTmLfEXtST5LceOdIZFG7dw54WD63io6ubnhg==
   dependencies:
     core-js "^3.6.4"
     element-ui "^2.13.2"

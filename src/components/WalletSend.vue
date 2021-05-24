@@ -22,6 +22,7 @@
             <s-float-input
               v-model="amount"
               class="s-input--token-value"
+              :hasLocaleString="true"
               :delimiters="delimiters"
               @change="calcFee"
               @blur="formatAmount"

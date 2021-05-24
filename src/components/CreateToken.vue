@@ -24,6 +24,7 @@
           v-model="tokenSupply"
           :placeholder="t(`createToken.tokenSupply.placeholder`)"
           :decimals="decimals"
+          :hasLocaleString="true"
           :delimiters="delimiters"
           :max="maxTotalSupply"
           :disabled="loading"
