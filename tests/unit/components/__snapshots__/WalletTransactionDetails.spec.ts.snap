@@ -1,0 +1,1087 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should renders correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+>
+  <div
+    class="transaction"
+  >
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="0xB8c77482e4...52C74426C6DD"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        <span
+          class="transaction-status"
+        >
+          
+        </span>
+      </div>
+       
+      <s-icon-stub
+        name="basic-check-mark-24"
+      />
+    </div>
+     
+    <!---->
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        27.11.2020, 11:59:59
+      </div>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        0.1 XOR
+      </div>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        0.9 PSWAP
+      </div>
+    </div>
+     
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="5HVmWWpBi69c...pveRnfozNg5K"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+     
+    <!---->
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should renders correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+>
+  <div
+    class="transaction"
+  >
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="0xB8c77482e4...52C74426C6DD"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        <span
+          class="transaction-status"
+        >
+          
+        </span>
+      </div>
+       
+      <s-icon-stub
+        name="basic-check-mark-24"
+      />
+    </div>
+     
+    <!---->
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        27.11.2020, 11:59:59
+      </div>
+    </div>
+     
+    <!---->
+     
+    <!---->
+     
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="5HVmWWpBi69c...pveRnfozNg5K"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+     
+    <!---->
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should renders correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+>
+  <div
+    class="transaction"
+  >
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="0xB8c77482e4...52C74426C6DD"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        <span
+          class="transaction-status"
+        >
+          
+        </span>
+      </div>
+       
+      <s-icon-stub
+        name="basic-check-mark-24"
+      />
+    </div>
+     
+    <!---->
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        27.11.2020, 11:59:59
+      </div>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        100.123 XOR undefined PSWAP
+      </div>
+    </div>
+     
+    <!---->
+     
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="5HVmWWpBi69c...pveRnfozNg5K"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+     
+    <!---->
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`WalletTransactionDetails.vue [Swap, error]: should renders correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+>
+  <div
+    class="transaction"
+  >
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="0xB8c77482e4...52C74426C6DD"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        <span
+          class="transaction-status transaction-status--error"
+        >
+          
+        </span>
+      </div>
+       
+      <!---->
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        <span
+          class="transaction-status transaction-status--error"
+        >
+          Test error message!
+        </span>
+      </div>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        27.11.2020, 11:59:59
+      </div>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        0.1 XOR
+      </div>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        0.9 PSWAP
+      </div>
+    </div>
+     
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="5HVmWWpBi69c...pveRnfozNg5K"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+     
+    <!---->
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`WalletTransactionDetails.vue [Transfer, finalized]: should renders correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+>
+  <div
+    class="transaction"
+  >
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="0xB8c77482e4...52C74426C6DD"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        <span
+          class="transaction-status"
+        >
+          
+        </span>
+      </div>
+       
+      <s-icon-stub
+        name="basic-check-mark-24"
+      />
+    </div>
+     
+    <!---->
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        27.11.2020, 11:59:59
+      </div>
+    </div>
+     
+    <div
+      class="transaction-row s-flex"
+    >
+      <div
+        class="transaction-row_key"
+      >
+        
+        
+      
+      </div>
+       
+      <div
+        class="transaction-row_value"
+      >
+        0.1 XOR
+      </div>
+    </div>
+     
+    <!---->
+     
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="5HVmWWpBi69c...pveRnfozNg5K"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+     
+    <div
+      class="s-input-container"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix=""
+        readonly="true"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        value="0xB8c77482e4...52C74426C6DD"
+      />
+       
+      <s-button-stub
+        borderradius="small"
+        class="s-button--copy"
+        icon="basic-copy-24"
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="action"
+      />
+       
+      <s-dropdown-stub
+        borderradius="mini"
+        buttontype="secondary"
+        class="s-dropdown--menu"
+        hideonclick="true"
+        hidetimeout="150"
+        icon="basic-more-vertical-24"
+        placement="bottom-end"
+        showtimeout="250"
+        size="medium"
+        tabindex="0"
+        trigger="hover"
+        type="ellipsis"
+      >
+        <template>
+          <s-dropdown-item-stub
+            disabled="true"
+          >
+            <span>
+              
+            </span>
+          </s-dropdown-item-stub>
+        </template>
+      </s-dropdown-stub>
+    </div>
+  </div>
+</wallet-base-stub>
+`;
