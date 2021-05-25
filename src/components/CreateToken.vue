@@ -3,33 +3,35 @@
     <div class="wallet-settings-create-token">
       <template v-if="step === Step.Create">
         <s-input
-          :placeholder="t(`createToken.tokenSymbol.placeholder`)"
+          :placeholder="t('createToken.tokenSymbol.placeholder')"
           :minlength="1"
           :maxlength="7"
           :disabled="loading"
           v-maska="tokenSymbolMask"
           v-model="tokenSymbol"
         />
-        <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenSymbol.desc`) }}</p>
+        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSymbol.desc') }}</p>
         <s-input
-          :placeholder="t(`createToken.tokenName.placeholder`)"
+          :placeholder="t('createToken.tokenName.placeholder')"
           :minlength="1"
           :maxlength="33"
           :disabled="loading"
           v-maska="tokenNameMask"
           v-model="tokenName"
         />
-        <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenName.desc`) }}</p>
+        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
         <s-float-input
-          :placeholder="t(`createToken.tokenSupply.placeholder`)"
           v-model="tokenSupply"
+          :placeholder="t('createToken.tokenSupply.placeholder')"
           :decimals="decimals"
+          :hasLocaleString="true"
+          :delimiters="delimiters"
           :max="maxTotalSupply"
           :disabled="loading"
         />
-        <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenSupply.desc`) }}</p>
+        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSupply.desc') }}</p>
         <div class="wallet-settings-create-token_supply-block">
-          <span>{{ t(`createToken.extensibleSupply.placeholder`) }}</span>
+          <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
           <s-switch v-model="extensibleSupply" :disabled="loading" />
         </div>
         <s-button
@@ -111,6 +113,7 @@ export default class CreateToken extends Mixins(TransactionMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly Step = Step
   readonly decimals = FPNumber.DEFAULT_PRECISION
+  readonly delimiters = FPNumber.DELIMITERS_CONFIG
   readonly maxTotalSupply = MaxTotalSupply
   readonly tokenSymbolMask = 'AAAAAAA'
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } }
