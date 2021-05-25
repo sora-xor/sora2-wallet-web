@@ -103,10 +103,6 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     return this.formatCodecNumber(asset.balance.locked, asset.decimals)
   }
 
-  formatConvertedAmount (asset: AccountAsset): string {
-    return '- USD'
-  }
-
   handleAssetSwap (asset: AccountAsset): void {
     this.$emit('swap', asset)
   }
