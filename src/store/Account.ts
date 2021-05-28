@@ -4,7 +4,6 @@ import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 import { AccountAsset } from '@sora-substrate/util'
-import { isWhitelistAsset } from 'polkaswap-token-whitelist'
 
 import { api } from '../api'
 import { storage } from '../util/storage'
@@ -221,9 +220,9 @@ const mutations = {
     state.name = newName
   },
 
-  [types.POLKADOT_JS_IMPORT_SUCCESS] (state, account) {
-    state.address = account.address
-    state.name = account.name
+  [types.POLKADOT_JS_IMPORT_SUCCESS] (state, name) {
+    state.address = api.address
+    state.name = name
     state.isExternal = true
   },
 
@@ -235,6 +234,9 @@ const mutations = {
 }
 
 const actions = {
+  formatAddress ({ commit }, address) {
+    return api.formatAddress(address)
+  },
   async checkExtension ({ commit }) {
     try {
       await getExtension()
@@ -247,7 +249,8 @@ const actions = {
     commit(types.GET_SIGNER_REQUEST)
     try {
       await getExtension()
-      const signer = await getExtensionSigner(address)
+      const defaultAddress = api.formatAddress(address, false)
+      const signer = await getExtensionSigner(defaultAddress)
       api.setSigner(signer)
       commit(types.GET_SIGNER_SUCCESS)
     } catch (error) {
@@ -277,7 +280,7 @@ const actions = {
       }
       api.importByPolkadotJs(account.address, account.name)
       api.setSigner(info.signer)
-      commit(types.POLKADOT_JS_IMPORT_SUCCESS, account)
+      commit(types.POLKADOT_JS_IMPORT_SUCCESS, account.name)
       if (!updateAccountAssetsSubscription) {
         await dispatch('getAccountAssets')
         await dispatch('updateAccountAssets')
@@ -384,7 +387,7 @@ const actions = {
   },
   login ({ commit }, { name, password, seed }) {
     api.importAccount(seed, name, password)
-    commit(types.LOGIN, { name, password, address: api.accountPair.address })
+    commit(types.LOGIN, { name, password, address: api.address })
   },
   changeName ({ commit, state: { name } }, { newName }) {
     const value = `${newName}`.trim()
