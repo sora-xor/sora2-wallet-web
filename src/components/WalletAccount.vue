@@ -36,7 +36,7 @@ import { Getter, Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { RouteNames } from '../consts'
-import { copyToClipboard, formatAddress } from '../util'
+import { copyToClipboard, formatAddress, formatSoraAddress } from '../util'
 import WalletAvatar from './WalletAvatar.vue'
 
 @Component({
@@ -53,7 +53,10 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: { name: string; address: string }
 
   get address (): string {
-    return (this.polkadotAccount || this.account).address
+    if (this.polkadotAccount) {
+      return formatSoraAddress(this.polkadotAccount.address)
+    }
+    return this.account.address
   }
 
   get name (): string {

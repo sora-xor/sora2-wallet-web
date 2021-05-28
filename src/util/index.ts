@@ -2,7 +2,11 @@ import moment from 'moment'
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
 import { WhitelistAssets } from 'polkaswap-token-whitelist'
 
+import { api } from '../api'
+
 export const APP_NAME = 'Sora2 Wallet'
+
+export const formatSoraAddress = (address: string) => api.formatAddress(address)
 
 export const getExtension = async () => {
   let extensions: Array<any> = []
