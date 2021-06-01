@@ -83,7 +83,7 @@ const actions = {
   trackActiveTransactions ({ commit, dispatch }) {
     updateActiveTransactionsId = setInterval(() => {
       // to update app activities (history)
-      dispatch('getAccountActivity', {}, { root: true })
+      dispatch('getAccountActivity', undefined, { root: true })
       commit(types.UPDATE_ACTIVE_TRANSACTIONS)
     }, UPDATE_ACTIVE_TRANSACTIONS_INTERVAL)
   }

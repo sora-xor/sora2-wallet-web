@@ -11,15 +11,19 @@
         </div>
         <template v-if="showControls">
           <s-button
-            class="account-switch"
-            type="link"
+            class="account__action-button account-switch"
+            type="action"
+            alternative
+            rounded
             icon="arrows-refresh-ccw-24"
             :tooltip="t('account.switch')"
             @click="handleSwitchAccount"
           />
           <s-button
-            class="account-logout"
-            type="link"
+            class="account__action-button account-logout"
+            type="action"
+            alternative
+            rounded
             icon="security-logout-24"
             :tooltip="t('account.logout')"
             @click="handleLogout"
@@ -102,9 +106,7 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 
 $avatar-margin-right: $basic-spacing_small;
 $avatar-size: 32px;
-$account-button-width: 30px;
 $account-button-margin-left: $button-margin;
-$account-buttons-number: 2;
 
 .wallet-account.s-card {
   box-shadow: none;
@@ -132,7 +134,6 @@ $account-buttons-number: 2;
     flex: 1;
     flex-direction: column;
     justify-content: center;
-    width: calc(100% - #{$account-button-width * $account-buttons-number} - #{$account-button-margin-left * $account-buttons-number});
     &_name,
     &_address {
       overflow: hidden;
@@ -155,12 +156,10 @@ $account-buttons-number: 2;
       }
     }
   }
-  .el-button {
-    margin-left: $account-button-margin-left;
-    width: $account-button-width;
-  }
-  &-switch {
-    margin-left: $button-margin;
+  &__action-button {
+    & + & {
+      margin-left: $account-button-margin-left;
+    }
   }
   &-switch, &-logout {
     padding: 0;

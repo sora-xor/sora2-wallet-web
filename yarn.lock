@@ -2214,10 +2214,10 @@
     crypto-js "^4.0.0"
     lodash "^4.17.15"
 
-"@soramitsu/soramitsu-js-ui@^0.8.9":
-  version "0.8.9"
-  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-0.8.9.tgz#e7665a11c3b37547390ef709f8cdf90d074ca695"
-  integrity sha512-1dAQ5BhZ6zCyNFmK+rJl9SKdBPoynzADRW5mqWvKZ/Rsgn3UVCTmLfEXtST5LceOdIZFG7dw54WD63io6ubnhg==
+"@soramitsu/soramitsu-js-ui@^0.9.1":
+  version "0.9.1"
+  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-0.9.1.tgz#0511e81918d97aed19719746df37bd9683277d06"
+  integrity sha512-j1XoJn3Qk2ZlA8ziBP6ffwU6o4T45pqU4kHI2AhMZiBKjduDER0xvEVhd2xBrTikXKgUP/3Qn6UA4156Zsyhug==
   dependencies:
     core-js "^3.6.4"
     element-ui "^2.13.2"
@@ -3997,9 +3997,9 @@ bindings@^1.3.0, bindings@^1.5.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-"bip32-ed25519@git+https://github.com/Zondax/bip32-ed25519.git":
+"bip32-ed25519@https://github.com/Zondax/bip32-ed25519":
   version "0.0.4"
-  resolved "git+https://github.com/Zondax/bip32-ed25519.git#0949df01b5c93885339bc28116690292088f6134"
+  resolved "https://github.com/Zondax/bip32-ed25519#0949df01b5c93885339bc28116690292088f6134"
   dependencies:
     bn.js "^5.1.1"
     elliptic "^6.4.1"

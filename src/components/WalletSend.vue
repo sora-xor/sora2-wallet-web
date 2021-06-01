@@ -28,7 +28,7 @@
               @blur="formatAmount"
             />
             <div class="asset s-flex">
-              <s-button v-if="isMaxButtonAvailable" class="asset-max" type="tertiary" size="small" border-radius="mini" @click="handleMaxClick">
+              <s-button v-if="isMaxButtonAvailable" class="asset-max" type="primary" alternative size="small" border-radius="mini" @click="handleMaxClick">
                 {{ t('walletSend.max') }}
               </s-button>
               <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
