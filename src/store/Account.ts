@@ -245,6 +245,16 @@ const actions = {
       return false
     }
   },
+  async checkSigner ({ dispatch, getters }) {
+    try {
+      if (getters.isExternal) {
+        await dispatch('getSigner')
+      }
+    } catch (error) {
+      console.error(error)
+      dispatch('logout')
+    }
+  },
   async getSigner ({ commit, state: { address } }) {
     commit(types.GET_SIGNER_REQUEST)
     try {
