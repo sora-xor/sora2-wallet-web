@@ -74,13 +74,11 @@ async function initWallet ({
       await connection.open()
       console.info('Connected to blockchain', connection.endpoint)
     }
-    api.initialize()
-    if (store.getters.isExternal) {
-      await store.dispatch('getSigner')
-    }
     if (permissions) {
       store.dispatch('setPermissions', permissions)
     }
+    api.initialize()
+    await store.dispatch('checkSigner')
     await store.dispatch('syncWithStorage')
     await store.dispatch('getAccountAssets')
     await store.dispatch('updateAccountAssets')
