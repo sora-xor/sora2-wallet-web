@@ -6,7 +6,6 @@
           v-if="showBack"
           class="base-title_back"
           type="action"
-          rounded
           icon="arrows-chevron-left-rounded-24"
           :tooltip="t('backText')"
           @click="handleBackClick"
@@ -16,7 +15,6 @@
           v-if="showAction"
           class="base-title_action"
           type="action"
-          rounded
           :icon="actionIcon"
           :tooltip="t(actionTooltip)"
           @click="handleActionClick"

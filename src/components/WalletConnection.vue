@@ -13,6 +13,7 @@
         <s-button
           class="wallet-connection-action"
           type="primary"
+          size="big"
           :loading="loading"
           @click="handleActionClick"
         >
@@ -21,6 +22,7 @@
         <s-button
           v-if="!loading"
           class="wallet-connection-action"
+          type="tertiary"
           icon="question-circle-16"
           icon-position="right"
           @click="handleLearnMoreClick"
@@ -144,7 +146,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 .wallet-connection {
   &-text {
     color: var(--s-color-base-content-tertiary);
-    margin-bottom: $basic-spacing_mini;
+    margin-bottom: $basic-spacing;
     &.no-permissions {
       margin-top: $basic-spacing_mini;
     }
@@ -159,8 +161,11 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     }
   }
   &-action {
-    margin-top: $basic-spacing_mini;
     width: 100%;
+    & + & {
+      margin-left: 0;
+      margin-top: $basic-spacing;
+    }
     &.s-secondary {
       margin-left: 0;
     }

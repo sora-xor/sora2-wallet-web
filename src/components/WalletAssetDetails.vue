@@ -32,12 +32,15 @@
           <s-button
             v-for="operation in operations"
             :key="operation.type"
-            :icon="operation.icon"
             :tooltip="getOperationTooltip(operation)"
             :disabled="isOperationDisabled(operation.type)"
-            type="action"
+            type="primary"
+            size="medium"
+            rounded
             @click="handleOperation(operation.type)"
-          />
+          >
+            <s-icon :name="operation.icon" />
+          </s-button>
         </div>
       </div>
     </s-card>

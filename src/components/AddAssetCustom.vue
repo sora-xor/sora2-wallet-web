@@ -12,7 +12,7 @@
     <div v-if="address && !selectedAsset" class="asset-custom-empty">
       {{ t(`addAsset.${alreadyAttached ? 'alreadyAttached' : 'empty'}`) }}
     </div>
-    <s-button type="primary" :disabled="!(selectedAsset && address)" @click="navigateToAddAssetDetails">
+    <s-button type="primary" size="big" :disabled="!(selectedAsset && address)" @click="navigateToAddAssetDetails">
       {{ t('addAsset.next') }}
     </s-button>
   </div>

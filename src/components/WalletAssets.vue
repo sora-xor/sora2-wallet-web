@@ -19,25 +19,32 @@
           </div>
           <s-button
             v-if="permissions.sendAssets"
-            class="send"
+            class="wallet-assets__button send"
             type="primary"
-            size="small"
-            icon="finance-send-24"
+            rounded
             :tooltip="t('assets.send')"
             :disabled="isZeroBalance(asset)"
             @click="handleAssetSend(asset)"
-          />
+          >
+            <s-icon name="finance-send-24" />
+          </s-button>
           <s-button
             v-if="permissions.swapAssets"
-            class="swap"
+            class="wallet-assets__button swap"
             type="primary"
-            size="small"
-            icon="arrows-swap-24"
+            rounded
             :tooltip="t('assets.swap')"
             @click="handleAssetSwap(asset)"
-          />
-          <s-button class="details" type="link" @click="handleOpenAssetDetails(asset)">
-            <s-icon name="arrows-chevron-right-rounded-24" />
+          >
+            <s-icon name="arrows-swap-24" />
+          </s-button>
+          <s-button
+            class="wallet-assets__button details"
+            type="action"
+            icon="arrows-chevron-right-rounded-24"
+            alternative
+            @click="handleOpenAssetDetails(asset)"
+          >
           </s-button>
         </div>
         <s-divider v-if="index !== formattedAccountAssets.length - 1" class="wallet-assets-item_divider" :key="`${asset.address}-divider`" />
@@ -138,18 +145,6 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 }
 </script>
 
-<style lang="scss">
-.wallet-assets-item {
-  $button-width: 48px;
-  .swap, .send {
-    max-width: $button-width;
-    &:not(.s-action).s-i-position-left > span > i[class^=s-icon-] {
-      margin-right: 0;
-    }
-  }
-}
-</style>
-
 <style scoped lang="scss">
 @import '../styles/icons';
 
@@ -219,6 +214,11 @@ $asset-icon-shadow-size: 3px;
   &-empty {
     text-align: center;
     @include hint-text;
+  }
+  &__button {
+    & + & {
+      margin-left: $button-margin;
+    }
   }
 }
 </style>

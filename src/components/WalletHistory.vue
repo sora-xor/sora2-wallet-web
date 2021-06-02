@@ -13,7 +13,9 @@
           border-radius="mini"
         >
           <template #suffix v-if="query">
-            <s-button class="s-button--clear" icon="clear-X-16" @click="handleResetSearch" />
+            <s-button class="s-button--clear" :use-design-system="false" @click="handleResetSearch">
+              <s-icon name="clear-X-16" />
+            </s-button>
           </template>
         </s-input>
       </s-form-item>
@@ -274,8 +276,8 @@ $history-item-top-border-height: 1px;
   .history--search {
     position: relative;
     .s-button--clear {
-      width: 32px;
-      margin-right: -8px;
+      width: 18px;
+      height: 18px;
       padding: 0;
       background-color: transparent;
       border-radius: 0;

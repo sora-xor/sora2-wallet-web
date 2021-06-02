@@ -37,6 +37,7 @@
         <s-button
           class="wallet-settings-create-token_action"
           type="primary"
+          size="big"
           :loading="loading"
           :disabled="!(tokenSymbol && tokenName.trim() && tokenSupply)"
           @click="onConfirm"

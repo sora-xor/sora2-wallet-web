@@ -8,6 +8,7 @@
           icon="basic-copy-24"
           :tooltip="copyTooltip('transaction.blockId')"
           type="action"
+          alternative
           @click="handleCopy(selectedTransaction.blockId, t('transaction.blockId'))"
         />
         <s-dropdown
@@ -68,6 +69,7 @@
           icon="basic-copy-24"
           :tooltip="copyTooltip('transaction.from')"
           type="action"
+          alternative
           @click="handleCopy(selectedTransaction.from, t('transaction.from'))"
         />
         <s-dropdown
