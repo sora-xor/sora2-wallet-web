@@ -5,8 +5,4 @@ $s-border-radius-small: $s-border-radius-base * 1.5 !default;
 $s-border-radius-medium: $s-border-radius-base * 2 !default;
 $s-border-radius-big: $s-border-radius-base * 3 !default;
 
-// Typography (TODO: Define in Polkaswap)
-$s-font-size-mini: 11px;
-$s-font-size-small: 13px;
-
 @import "../../node_modules/@soramitsu/soramitsu-js-ui/lib/styles/index";
