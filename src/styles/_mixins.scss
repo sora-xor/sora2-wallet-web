@@ -86,7 +86,7 @@
 }
 
 @mixin hint-text ($withLineHeight: false) {
-  color: var(--s-color-base-content-tertiary);
+  color: var(--s-color-base-content-quaternary);
   font-size: $font-size_small;
   @if $withLineHeight == true {
     line-height: var(--s-line-height-big);
