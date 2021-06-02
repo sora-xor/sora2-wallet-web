@@ -238,32 +238,6 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
       }
     }
   }
-  &-actions {
-    .s-action {
-      background-color: var(--s-color-theme-accent);
-      border-color: var(--s-color-theme-accent);
-      &.focusing {
-        background-color: var(--s-color-theme-accent-focused);
-        border-color: var(--s-color-theme-accent-focused);
-      }
-      &:hover {
-        background-color: var(--s-color-theme-accent-hover);
-        border-color: var(--s-color-theme-accent-hover);
-      }
-      &.s-pressed {
-        background-color: var(--s-color-theme-accent-pressed);
-        border-color: var(--s-color-theme-accent-pressed);
-      }
-      &, &.focusing, &:hover, &.s-pressed {
-        color: var(--s-color-base-on-accent);
-      }
-      &:disabled {
-        color: var(--s-color-base-on-disabled);
-        background-color: var(--s-color-base-disabled);
-        border-color: var(--s-color-base-disabled);
-      }
-    }
-  }
   .asset-logo {
     @include asset-logo-styles(48px);
   }

@@ -213,10 +213,10 @@ export default class CreateToken extends Mixins(TransactionMixin) {
 <style scoped lang="scss">
 .wallet-settings-create-token {
   &_desc {
-    color: var(--s-color-base-content-secondary);
-    font-size: $font-size_small;
+    color: var(--s-color-base-content-primary);
+    font-size: var(--s-font-size-small);
+    line-height: var(--s-line-height-base);
     padding: $basic-spacing_mini 0 $basic-spacing 0;
-    line-height: var(--s-line-height-big);
     font-feature-settings: var(--s-font-feature-settings-common);
   }
   &_supply-block {

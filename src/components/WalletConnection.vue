@@ -2,13 +2,13 @@
   <wallet-base :title="t('connection.title')">
     <div class="wallet-connection" v-loading="isAccountLoading">
       <template v-if="step === Step.First">
-        <p v-if="loading" class="wallet-connection-text p4">{{ t('connection.loadingTitle') }}</p>
+        <p v-if="loading" class="wallet-connection-text">{{ t('connection.loadingTitle') }}</p>
         <template v-else>
-          <p class="wallet-connection-text p4">{{ t('connection.text') }}</p>
-          <p v-if="!isExtensionAvailable" class="wallet-connection-text p4" v-html="t('connection.install')" />
+          <p class="wallet-connection-text">{{ t('connection.text') }}</p>
+          <p v-if="!isExtensionAvailable" class="wallet-connection-text" v-html="t('connection.install')" />
         </template>
       </template>
-      <p v-if="step === Step.Second && !polkadotJsAccounts.length" class="wallet-connection-text p4">{{ t('connection.noAccounts') }}</p>
+      <p v-if="step === Step.Second && !polkadotJsAccounts.length" class="wallet-connection-text">{{ t('connection.noAccounts') }}</p>
       <template v-if="step === Step.First || (step === Step.Second && !polkadotJsAccounts.length)">
         <s-button
           class="wallet-connection-action"
@@ -29,10 +29,10 @@
         >
           {{ t('connection.action.learnMore') }}
         </s-button>
-        <p v-if="(step === Step.First && !isExtensionAvailable) || loading" class="wallet-connection-text no-permissions p4" v-html="t('connection.noPermissions')" />
+        <p v-if="(step === Step.First && !isExtensionAvailable) || loading" class="wallet-connection-text no-permissions" v-html="t('connection.noPermissions')" />
       </template>
       <template v-if="step === Step.Second && polkadotJsAccounts.length">
-        <p class="wallet-connection-text p4">{{ t('connection.selectAccount') }}</p>
+        <p class="wallet-connection-text">{{ t('connection.selectAccount') }}</p>
         <div
           class="wallet-connection-account"
           v-for="account in polkadotJsAccounts"
@@ -145,7 +145,9 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 <style scoped lang="scss">
 .wallet-connection {
   &-text {
-    color: var(--s-color-base-content-tertiary);
+    font-size: var(--s-font-size-small);
+    line-height: var(--s-line-height-base);
+    color: var(--s-color-base-content-primary);
     margin-bottom: $basic-spacing;
     &.no-permissions {
       margin-top: $basic-spacing_mini;

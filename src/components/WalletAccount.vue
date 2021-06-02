@@ -148,8 +148,9 @@ $account-button-margin-left: $button-margin;
     }
     &_address {
       @include value-prefix(width, fit-content);
-      outline: none;
       @include hint-text;
+      outline: none;
+      color: var(--s-color-base-content-quaternary);
       &:hover {
         text-decoration: underline;
         cursor: pointer;
