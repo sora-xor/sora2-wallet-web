@@ -1,5 +1,5 @@
 <template>
-  <s-card class="base" border-radius="medium">
+  <s-card primary class="base" border-radius="medium" shadow="always">
     <template #header>
       <div :class="headerClasses">
         <s-button
@@ -99,7 +99,6 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 $button-size: var(--s-size-medium);
 
 .base {
-  @include s-card-styles;
   width: $wallet-width;
   font-size: $font-size_basic;
   line-height: var(--s-line-height-base);
@@ -108,6 +107,7 @@ $button-size: var(--s-size-medium);
     height: $button-size;
     align-items: center;
     padding-right: calc(#{$button-size} + #{$basic-spacing});
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
     &--center {
       padding-left: calc(#{$button-size} + #{$basic-spacing});
       text-align: center;

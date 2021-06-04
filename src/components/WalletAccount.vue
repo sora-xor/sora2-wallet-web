@@ -113,10 +113,6 @@ $account-button-margin-left: $button-margin;
   border: 1px solid var(--s-color-base-border-primary);
 }
 
-.s-card {
-  @include s-card-styles;
-}
-
 .account {
   margin: $basic-spacing_mini 0;
   align-items: center;

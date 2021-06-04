@@ -76,15 +76,6 @@
   }
 }
 
-@mixin s-card-styles {
-  border: none;
-
-  &,
-  &.is-hover-shadow:hover {
-    box-shadow: var(--s-shadow-surface);
-  }
-}
-
 @mixin hint-text ($withLineHeight: false) {
   color: var(--s-color-base-content-secondary);
   font-size: $font-size_small;
