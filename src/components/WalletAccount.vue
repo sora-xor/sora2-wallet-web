@@ -1,5 +1,5 @@
 <template>
-  <s-card :bodyStyle="{ padding: '0 12px' }" class="wallet-account" border-radius="mini">
+  <s-card pressed shadow="always" size="small" border-radius="mini" class="wallet-account">
     <div class="account s-flex">
       <wallet-avatar class="account-avatar" :address="address" />
       <div class="account-details s-flex">
@@ -114,8 +114,8 @@ $account-button-margin-left: $button-margin;
 }
 
 .account {
-  margin: $basic-spacing_mini 0;
   align-items: center;
+
   &-avatar {
     margin-right: $avatar-margin-right;
     width: $avatar-size;

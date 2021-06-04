@@ -1,5 +1,5 @@
 <template>
-  <s-card primary class="base" border-radius="medium" shadow="always">
+  <s-card primary class="base" border-radius="medium" shadow="always" size="big">
     <template #header>
       <div :class="headerClasses">
         <s-button
@@ -102,6 +102,7 @@ $button-size: var(--s-size-medium);
   width: $wallet-width;
   font-size: $font-size_basic;
   line-height: var(--s-line-height-base);
+
   &-title {
     position: relative;
     height: $button-size;

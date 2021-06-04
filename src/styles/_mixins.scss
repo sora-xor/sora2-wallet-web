@@ -20,9 +20,6 @@
 
 @mixin custom-tabs {
   $tabs-class: ".el-tabs";
-  $tabs-container-height: 40px;
-  $tabs-container-padding: 2px;
-  $tabs-item-height: $tabs-container-height - $tabs-container-padding * 2;
 
   .s-tabs {
     &#{$tabs-class} {
@@ -31,33 +28,10 @@
       }
       #{$tabs-class} {
         &__header {
-          #{$tabs-class}__nav-wrap #{$tabs-class}__item {
-            padding-right: $basic-spacing;
-            padding-left: $basic-spacing;
-            &.is-focus {
-              box-shadow: none;
-            }
-            &.is-active {
-              box-shadow: var(--s-shadow-tab);
-              &, &:hover {
-                background-color: var(--s-color-base-on-accent);
-              }
-            }
-          }
           #{$tabs-class}__item {
-            height: $tabs-item-height;
-            line-height: $tabs-item-height;
-            font-weight: normal;
             font-feature-settings: var(--s-font-feature-settings-heading);
-            font-weight: 600 !important;
-            &:hover {
-              background-color: transparent;
-            }
+            font-weight: 600;
           }
-        }
-        &__nav-wrap {
-          height: $tabs-container-height;
-          background-color: var(--s-color-base-background);
         }
       }
     }

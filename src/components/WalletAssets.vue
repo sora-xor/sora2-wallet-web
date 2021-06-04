@@ -152,6 +152,8 @@ $asset-icon-shadow-size: 3px;
 
 .wallet-assets {
   flex-direction: column;
+  margin-top: calc(var(--s-basic-spacing) * 2);
+
   &-container {
     max-height: calc(#{$asset-item-height} * 5);
     overflow-x: hidden;
