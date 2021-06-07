@@ -207,7 +207,7 @@ $asset-icon-shadow-size: 3px;
     }
     .asset-logo {
       flex-shrink: 0;
-      @include asset-logo-styles;
+      @include asset-logo-styles(40px);
     }
     &_divider {
       margin: 0;

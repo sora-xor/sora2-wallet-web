@@ -153,12 +153,12 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   &-list {
     height: calc(#{$asset-item-height} * 5);
     overflow-y: auto;
-    margin-left: calc(var(--s-basic-spacing) * -2.5);
-    margin-right: calc(var(--s-basic-spacing) * -2.5);
+    margin-left: calc(var(--s-basic-spacing) * -3);
+    margin-right: calc(var(--s-basic-spacing) * -3);
     &_empty {
       @include hint-text;
-      padding-left: calc(var(--s-basic-spacing) * 2.5);
-      padding-right: calc(var(--s-basic-spacing) * 2.5);
+      padding-left: calc(var(--s-basic-spacing) * 3);
+      padding-right: calc(var(--s-basic-spacing) * 3);
     }
     &_empty {
       text-align: center;

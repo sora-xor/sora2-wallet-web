@@ -195,6 +195,7 @@ $history-item-top-border-height: 1px;
     min-height: $history-item-height;
     padding: calc(var(--s-basic-spacing) + #{$history-item-top-border-height}) $history-item-horizontal-space * 2;
     font-size: var(--s-font-size-mini);
+    border-radius: var(--s-border-radius-small);
     &:not(:first-child) {
       position: relative;
       &:before {
@@ -241,10 +242,8 @@ $history-item-top-border-height: 1px;
     }
     &-operation {
       flex-shrink: 0;
-      color: var(--s-color-base-content-secondary);
-      background-color: var(--s-color-base-background);
+      color: var(--s-color-theme-accent);
       border-radius: var(--s-border-radius-mini);
-      padding: 0 calc(var(--s-basic-spacing) / 2);
       margin-right: calc(var(--s-basic-spacing) / 2);
     }
     &-title,

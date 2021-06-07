@@ -13,9 +13,7 @@
   background-size: 60%;
   background-repeat: no-repeat;
   background-position: 50%;
-  border: 1px solid $token-background-color;
   border-radius: 50%;
-  box-shadow: var(--s-shadow-tooltip);
 }
 
 @mixin custom-tabs {

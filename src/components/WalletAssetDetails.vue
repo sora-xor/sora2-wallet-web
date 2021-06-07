@@ -11,7 +11,7 @@
     @action="handleRemoveAsset"
     @cleanHistory="handleCleanHistory"
   >
-    <s-card class="asset-details">
+    <s-card class="asset-details" primary>
       <div class="asset-details-container s-flex">
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
         <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">{{ balance }}
