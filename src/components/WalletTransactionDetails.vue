@@ -94,6 +94,7 @@
           icon="basic-copy-24"
           :tooltip="copyTooltip('transaction.to')"
           type="action"
+          alternative
           @click="handleCopy(selectedTransaction.to, t('transaction.to'))"
         />
         <s-dropdown
@@ -256,29 +257,29 @@ $dropdown-width: var(--s-size-mini);
 .transaction {
   &-row {
     align-items: center;
-    padding-right: $basic-spacing_mini;
-    padding-left: $basic-spacing_mini;
+    padding-right: var(--s-basic-spacing);
+    padding-left: var(--s-basic-spacing);
     color: var(--s-color-base-content-secondary);
     &_key {
       flex: 1;
     }
     &_value {
-      padding-left: $basic-spacing_small;
+      padding-left: calc(var(--s-basic-spacing) * 1.5);
       text-align: right;
     }
     &:not(:last-child) {
-      margin-bottom: $basic-spacing_mini;
+      margin-bottom: var(--s-basic-spacing);
     }
     &:last-child {
-      margin-bottom: $basic-spacing_small;
+      margin-bottom: calc(var(--s-basic-spacing) * 1.5);
     }
     .s-icon-basic-check-mark-24 {
-      margin-left: $basic-spacing_mini;
+      margin-left: var(--s-basic-spacing);
     }
   }
   .s-input-container {
     position: relative;
-    margin-bottom: $basic-spacing_small;
+    margin-bottom: calc(var(--s-basic-spacing) * 1.5);
   }
   .s-button--copy {
     position: absolute;
@@ -286,7 +287,7 @@ $dropdown-width: var(--s-size-mini);
     bottom: 0;
     margin-top: auto;
     margin-bottom: auto;
-    right: calc(#{$dropdown-right} + #{$dropdown-width} + #{$basic-spacing_mini / 2});
+    right: calc(#{$dropdown-right} + #{$dropdown-width} + calc(var(--s-basic-spacing) / 2));
     z-index: 1;
     &, &:hover, &:focus, &:active {
       background-color: transparent;
@@ -311,13 +312,13 @@ $dropdown-width: var(--s-size-mini);
   &-info {
     flex: 1;
     flex-direction: column;
-    font-size: $font-size_small;
+    font-size: var(--s-font-size-mini);
     &_date {
       color: var(--s-color-base-content-tertiary);
     }
   }
   &:not(:last-child) {
-    margin-bottom: $basic-spacing_mini;
+    margin-bottom: var(--s-basic-spacing);
   }
 }
 .info-status {

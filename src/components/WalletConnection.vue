@@ -145,16 +145,16 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 <style scoped lang="scss">
 .wallet-connection {
   &-text {
-    font-size: var(--s-font-size-small);
+    font-size: var(--s-font-size-extra-small);
     line-height: var(--s-line-height-base);
     color: var(--s-color-base-content-primary);
-    margin-bottom: $basic-spacing;
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
     &.no-permissions {
-      margin-top: $basic-spacing_mini;
+      margin-top: var(--s-basic-spacing);
     }
   }
   &-account {
-    margin-bottom: $basic-spacing_mini;
+    margin-bottom: var(--s-basic-spacing);
     &:hover {
       cursor: pointer;
       .wallet-account {
@@ -166,7 +166,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     width: 100%;
     & + & {
       margin-left: 0;
-      margin-top: $basic-spacing;
+      margin-top: calc(var(--s-basic-spacing) * 2);
     }
     &.s-secondary {
       margin-left: 0;

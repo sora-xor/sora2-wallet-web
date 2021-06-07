@@ -1,5 +1,5 @@
 <template>
-  <s-card pressed shadow="always" size="small" border-radius="mini" class="wallet-account">
+  <s-card :pressed="pressed" shadow="always" size="small" border-radius="medium" class="wallet-account">
     <div class="account s-flex">
       <wallet-avatar class="account-avatar" :address="address" />
       <div class="account-details s-flex">
@@ -53,6 +53,7 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
   @Action logout
   @Action navigate
 
+  @Prop({ default: false, type: Boolean }) readonly pressed!: boolean
   @Prop({ default: false, type: Boolean }) readonly showControls!: boolean
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: { name: string; address: string }
 
@@ -104,9 +105,8 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 <style scoped lang="scss">
 @import '../styles/icons';
 
-$avatar-margin-right: $basic-spacing_small;
+$avatar-margin-right: calc(var(--s-basic-spacing) * 1.5);
 $avatar-size: 32px;
-$account-button-margin-left: $button-margin;
 
 .wallet-account.s-card {
   box-shadow: none;
@@ -136,7 +136,7 @@ $account-button-margin-left: $button-margin;
       text-overflow: ellipsis;
     }
     &_name {
-      font-size: $font-size_basic;
+      font-size: var(--s-font-size-small);
       outline: none;
       white-space: nowrap;
       overflow: hidden;
@@ -155,7 +155,7 @@ $account-button-margin-left: $button-margin;
   }
   &__action-button {
     & + & {
-      margin-left: $account-button-margin-left;
+      margin-left: var(--s-basic-spacing);
     }
   }
   &-switch, &-logout {

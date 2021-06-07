@@ -52,7 +52,8 @@
 
 @mixin hint-text ($withLineHeight: false) {
   color: var(--s-color-base-content-secondary);
-  font-size: $font-size_small;
+  font-size: var(--s-font-size-mini);
+  line-height: var(--s-line-height-medium);
   @if $withLineHeight == true {
     line-height: var(--s-line-height-big);
   }

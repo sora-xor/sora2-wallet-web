@@ -203,7 +203,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
 @import '../styles/icons';
 
 .asset-details {
-  margin-bottom: $basic-spacing;
+  margin-bottom: calc(var(--s-basic-spacing) * 2);
   border-radius: var(--s-border-radius-small);
   &-container {
     flex-direction: column;
@@ -211,30 +211,30 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   }
   &-balance {
     position: relative;
-    margin-top: $basic-spacing_mini;
-    margin-bottom: $basic-spacing;
+    margin-top: var(--s-basic-spacing);
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
     &--clickable {
       cursor: pointer;
     }
     .s-icon-chevron-down-rounded-16 {
       position: absolute;
       top: 25%;
-      padding-left: $basic-spacing_mini;
+      padding-left: calc(var(--s-basic-spacing) * 1.5);
       transition: transform 0.3s;
     }
     &--clicked .s-icon-chevron-down-rounded-16 {
-      padding-right: $basic-spacing_mini;
+      padding-right: calc(var(--s-basic-spacing) * 1.5);
       transform: rotate(180deg);
     }
     &-info {
       width: 100%;
-      margin-bottom: $basic-spacing;
+      margin-bottom: calc(var(--s-basic-spacing) * 2);
       .balance {
         justify-content: space-between;
-        margin-bottom: calc(#{$basic-spacing_mini} / 2);
+        margin-bottom: calc(var(--s-basic-spacing) / 2);
       }
       .s-divider-secondary {
-        margin: $basic-spacing_mini 0;
+        margin: calc(var(--s-basic-spacing) * 1.5) 0;
       }
     }
   }

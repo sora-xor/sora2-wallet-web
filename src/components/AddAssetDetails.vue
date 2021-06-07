@@ -164,12 +164,12 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     display: flex;
     align-items: center;
     background: var(--s-color-base-background);
-    padding: $basic-spacing_small $basic-spacing;
-    margin-bottom: $basic-spacing;
+    padding: calc(var(--s-basic-spacing) * 1.5) calc(var(--s-basic-spacing) * 2);
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
     border-radius: var(--s-border-radius-small);
     .asset {
       &-logo {
-        margin-right: $basic-spacing;
+        margin-right: calc(var(--s-basic-spacing) * 2);
         @include asset-logo-styles(40px);
       }
       &-description {
@@ -192,15 +192,15 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
         }
       }
       &-nature {
-        font-size: $font-size_small;
+        font-size: var(--s-font-size-mini);
       }
     }
   }
   &_text {
     display: flex;
     flex-direction: column;
-    padding: $basic-spacing;
-    margin-bottom: $basic-spacing;
+    padding: calc(var(--s-basic-spacing) * 2);
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
     border: 1px solid var(--s-color-base-border-secondary);
     border-radius: var(--s-border-radius-small);
     .warning-text {
@@ -212,9 +212,9 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     align-items: center;
     justify-content: space-between;
     background: var(--s-color-base-background);
-    padding: $basic-spacing_small $basic-spacing;
+    padding: calc(var(--s-basic-spacing) * 1.5) calc(var(--s-basic-spacing) * 2);
     border-radius: var(--s-border-radius-mini);
-    margin-bottom: $basic-spacing;
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
   }
   &_action {
     width: 100%;

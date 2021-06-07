@@ -146,19 +146,19 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 @import '../styles/icons';
 
 .asset-search {
-  margin-top: $basic-spacing;
+  margin-top: calc(var(--s-basic-spacing) * 2);
   &-input {
-    margin-bottom: $basic-spacing;
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
   }
   &-list {
     height: calc(#{$asset-item-height} * 5);
     overflow-y: auto;
-    margin-left: -#{$basic-spacing_big};
-    margin-right: -#{$basic-spacing_big};
+    margin-left: calc(var(--s-basic-spacing) * -2.5);
+    margin-right: calc(var(--s-basic-spacing) * -2.5);
     &_empty {
       @include hint-text;
-      padding-left: $basic-spacing_big;
-      padding-right: $basic-spacing_big;
+      padding-left: calc(var(--s-basic-spacing) * 2.5);
+      padding-right: calc(var(--s-basic-spacing) * 2.5);
     }
     &_empty {
       text-align: center;
@@ -166,13 +166,13 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
     .asset {
       align-items: center;
       height: $asset-item-height;
-      padding: 0 $basic-spacing_big;
+      padding: 0 calc(var(--s-basic-spacing) * 2.5);
       &:hover, &.selected {
         background-color: var(--s-color-base-background-hover);
         cursor: pointer;
       }
       &-logo {
-        margin-right: $basic-spacing;
+        margin-right: calc(var(--s-basic-spacing) * 2);
         @include asset-logo-styles(40px);
       }
       &-description {

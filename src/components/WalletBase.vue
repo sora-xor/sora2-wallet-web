@@ -100,31 +100,31 @@ $button-size: var(--s-size-medium);
 
 .base {
   width: $wallet-width;
-  font-size: $font-size_basic;
+  font-size: var(--s-font-size-small);
   line-height: var(--s-line-height-base);
 
   &-title {
     position: relative;
     height: $button-size;
     align-items: center;
-    padding-right: calc(#{$button-size} + #{$basic-spacing});
+    padding-right: calc(#{$button-size} + calc(var(--s-basic-spacing) * 2));
     margin-bottom: calc(var(--s-basic-spacing) * 2);
     &--center {
-      padding-left: calc(#{$button-size} + #{$basic-spacing});
+      padding-left: calc(#{$button-size} + calc(var(--s-basic-spacing) * 2));
       text-align: center;
     }
     &--has-history {
       .base-title_action {
-        right: calc(var(--s-size-medium) + #{$button-margin});
+        right: calc(var(--s-size-medium) + var(--s-basic-spacing));
       }
     }
     &--actions {
       &.base-title--center {
-        padding-left: calc(#{$button-size} * 2 + #{$basic-spacing});
+        padding-left: calc(#{$button-size} * 2 + calc(var(--s-basic-spacing) * 2));
       }
-      padding-right: calc(#{$button-size} * 2 + #{$basic-spacing});
+      padding-right: calc(#{$button-size} * 2 + calc(var(--s-basic-spacing) * 2));
       .base-title_action {
-        right: calc(#{$button-size} + #{$basic-spacing_mini});
+        right: calc(#{$button-size} + var(--s-basic-spacing));
       }
     }
     .el-button {

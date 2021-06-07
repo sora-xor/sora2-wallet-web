@@ -167,11 +167,15 @@ $asset-icon-shadow-size: 3px;
       flex: 1;
       overflow-wrap: break-word;
       flex-direction: column;
-      padding-right: $basic-spacing_small;
-      padding-left: $basic-spacing_small;
+      padding-right: calc(var(--s-basic-spacing) * 1.5);
+      padding-left: calc(var(--s-basic-spacing) * 1.5);
       width: 30%;
       &-value, &-info {
         line-height: var(--s-line-height-base);
+      }
+      &-value {
+        font-size: var(--s-font-size-medium);
+        font-weight: 800;
       }
       &-info {
         @include hint-text;
@@ -188,7 +192,7 @@ $asset-icon-shadow-size: 3px;
         align-items: baseline;
         color: var(--s-color-base-content-secondary);
         background: var(--s-color-base-background);
-        padding: 0 $basic-spacing_mini;
+        padding: 0 var(--s-basic-spacing);
         border-radius: var(--s-border-radius-mini);
         > .s-icon-lock-16 {
           color: var(--s-color-base-content-secondary);
@@ -211,7 +215,7 @@ $asset-icon-shadow-size: 3px;
   }
   &-add,
   &-empty {
-    margin-top: $basic-spacing;
+    margin-top: calc(var(--s-basic-spacing) * 2);
   }
   &-empty {
     text-align: center;
@@ -219,7 +223,7 @@ $asset-icon-shadow-size: 3px;
   }
   &__button {
     & + & {
-      margin-left: $button-margin;
+      margin-left: var(--s-basic-spacing);
     }
   }
 }

@@ -48,7 +48,7 @@ export default class App extends Mixins(TransactionMixin) {
 
 <style lang="scss">
 .el-tooltip__popper.info-tooltip {
-  padding: $basic-spacing_mini;
+  padding: var(--s-basic-spacing);
   max-width: 320px;
   border: none !important;
   box-shadow: var(--s-shadow-tooltip);

@@ -287,7 +287,7 @@ $logo-size: var(--s-size-mini);
         font-size: var(--s-font-size-mini);
       }
       &-value {
-        margin-left: $basic-spacing_mini / 2;
+        margin-left: calc(var(--s-basic-spacing) / 2);
         font-feature-settings: var(--s-font-feature-settings-common);
         letter-spacing: var(--s-letter-spacing-big);
       }
@@ -296,15 +296,15 @@ $logo-size: var(--s-size-mini);
       @include asset-logo-styles;
       width: $logo-size;
       height: $logo-size;
-      margin: $basic-spacing_mini / 2 $basic-spacing_mini;
+      margin: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);
     }
     &-name {
       line-height: 2.29;
     }
     &-max {
-      margin-left: $basic-spacing_mini;
+      margin-left: var(--s-basic-spacing);
       height: var(--s-size-mini);
-      padding: $basic-spacing_mini / 2 $basic-spacing_mini;
+      padding: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);
     }
     &-max, &-name {
       font-feature-settings: var(--s-font-feature-settings-heading);
@@ -312,13 +312,13 @@ $logo-size: var(--s-size-mini);
     }
   }
   &-address {
-    margin-bottom: $basic-spacing;
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
   }
   &-amount {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: $basic-spacing_mini;
+    margin-bottom: var(--s-basic-spacing);
 
     &-title,
     &-balance {
@@ -331,10 +331,10 @@ $logo-size: var(--s-size-mini);
   }
   &-fee {
     align-items: center;
-    margin-top: $basic-spacing;
+    margin-top: calc(var(--s-basic-spacing) * 2);
     width: 100%;
-    padding-right: $basic-spacing_mini;
-    padding-left: $basic-spacing_mini;
+    padding-right: var(--s-basic-spacing);
+    padding-left: var(--s-basic-spacing);
     color: var(--s-color-base-content-secondary);
     &_value {
       margin-left: auto;
@@ -342,12 +342,12 @@ $logo-size: var(--s-size-mini);
     }
   }
   &-action {
-    margin-top: $basic-spacing;
+    margin-top: calc(var(--s-basic-spacing) * 2);
     width: 100%;
   }
   .confirm {
     &-asset {
-      margin-bottom: $basic-spacing;
+      margin-bottom: calc(var(--s-basic-spacing) * 2);
       font-size: 30px;
       font-weight: 400;
       &-title {
@@ -361,7 +361,7 @@ $logo-size: var(--s-size-mini);
             $logo-size: 40px;
             width: $logo-size;
             height: $logo-size;
-            margin: 0 $basic-spacing_mini;
+            margin: 0 var(--s-basic-spacing);
           }
           &-name {
             line-height: 1.33;
@@ -371,15 +371,15 @@ $logo-size: var(--s-size-mini);
       }
     }
     &-from {
-      margin-bottom: $basic-spacing_mini;
+      margin-bottom: var(--s-basic-spacing);
     }
     &-to {
-      margin-top: $basic-spacing_mini;
+      margin-top: var(--s-basic-spacing);
       overflow-wrap: break-word;
     }
     &-from, &-to {
       // It's set to small size cuz we need to show full address
-      font-size: $font-size_small;
+      font-size: var(--s-font-size-mini);
       font-weight: 600;
     }
   }

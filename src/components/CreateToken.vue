@@ -31,8 +31,8 @@
         />
         <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSupply.desc') }}</p>
         <div class="wallet-settings-create-token_supply-block">
-          <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
           <s-switch v-model="extensibleSupply" :disabled="loading" />
+          <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
         </div>
         <s-button
           class="wallet-settings-create-token_action"
@@ -214,19 +214,21 @@ export default class CreateToken extends Mixins(TransactionMixin) {
 .wallet-settings-create-token {
   &_desc {
     color: var(--s-color-base-content-primary);
-    font-size: var(--s-font-size-small);
+    font-size: var(--s-font-size-extra-small);
     line-height: var(--s-line-height-base);
-    padding: $basic-spacing_mini 0 $basic-spacing 0;
+    padding: var(--s-basic-spacing) calc(var(--s-basic-spacing) * 1.5) calc(var(--s-basic-spacing) * 2);
     font-feature-settings: var(--s-font-feature-settings-common);
   }
   &_supply-block {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    background: var(--s-color-base-background);
-    padding: $basic-spacing_small $basic-spacing;
-    border-radius: $basic-spacing_mini;
-    margin-bottom: $basic-spacing;
+    justify-content: flex-start;
+    padding: 0 calc(var(--s-basic-spacing) * 1.5);
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
+
+    > span {
+      margin-left: calc(var(--s-basic-spacing) * 1.5);
+    }
   }
   &_action {
     width: 100%;
@@ -236,9 +238,9 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     flex-direction: row;
     justify-content: space-between;
     color: var(--s-color-base-content-secondary);
-    font-size: $font-size_basic;
+    font-size: var(--s-font-size-small);
     font-weight: normal;
-    padding: $basic-spacing_mini 0;
+    padding: var(--s-basic-spacing) 0;
     line-height: var(--s-line-height-big);
     font-feature-settings: var(--s-font-feature-settings-common);
   }
@@ -248,7 +250,7 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     align-items: center;
   }
   &_fee-block_title {
-    margin-left: $basic-spacing_mini;
+    margin-left: var(--s-basic-spacing);
     line-height: 1;
   }
   &_divider {

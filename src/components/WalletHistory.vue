@@ -9,7 +9,7 @@
           v-model="query"
           :placeholder="t('history.filterPlaceholder')"
           prefix="el-icon-search"
-          size="medium"
+          size="big"
           border-radius="mini"
         >
           <template #suffix v-if="query">
@@ -149,9 +149,9 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
 <style lang="scss">
 .history {
-  margin-top: $basic-spacing;
+  margin-top: calc(var(--s-basic-spacing) * 2);
   .el-card__body {
-    padding: $basic-spacing $basic-spacing $basic-spacing_big;
+    padding: calc(var(--s-basic-spacing) * 2) calc(var(--s-basic-spacing) * 2) calc(var(--s-basic-spacing) * 2.5);
   }
   .el-pagination {
     .btn {
@@ -159,11 +159,11 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       &-next {
         padding-right: 0;
         padding-left: 0;
-        min-width: $basic-spacing_big;
+        min-width: calc(var(--s-basic-spacing) * 2.5);
       }
       &-prev {
         margin-left: auto;
-        margin-right: $basic-spacing_mini;
+        margin-right: var(--s-basic-spacing);
       }
     }
   }
@@ -185,7 +185,7 @@ $history-item-top-border-height: 1px;
 .history {
   flex-direction: column;
   &--search.el-form-item {
-    margin-bottom: $basic-spacing;
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
   }
   &-item {
     display: flex;
@@ -193,7 +193,7 @@ $history-item-top-border-height: 1px;
     margin-right: -#{$history-item-horizontal-space * 2};
     margin-left: -#{$history-item-horizontal-space * 2};
     min-height: $history-item-height;
-    padding: #{$basic-spacing / 2 + $history-item-top-border-height} $history-item-horizontal-space * 2;
+    padding: calc(var(--s-basic-spacing) + #{$history-item-top-border-height}) $history-item-horizontal-space * 2;
     font-size: var(--s-font-size-mini);
     &:not(:first-child) {
       position: relative;
@@ -227,7 +227,7 @@ $history-item-top-border-height: 1px;
     }
     &-title {
       width: auto;
-      padding-right: $basic-spacing_mini;
+      padding-right: var(--s-basic-spacing);
       line-height: var(--s-line-height-mini);
     }
     &-title,
@@ -235,7 +235,7 @@ $history-item-top-border-height: 1px;
       width: 100%;
     }
     &-date {
-      margin-top: $basic-spacing_mini / 2;
+      margin-top: calc(var(--s-basic-spacing) / 2);
       line-height: var(--s-line-height-mini);
       color: var(--s-color-base-content-tetriary);
     }
@@ -244,8 +244,8 @@ $history-item-top-border-height: 1px;
       color: var(--s-color-base-content-secondary);
       background-color: var(--s-color-base-background);
       border-radius: var(--s-border-radius-mini);
-      padding: 0 $basic-spacing_mini / 2;
-      margin-right: $basic-spacing_mini / 2;
+      padding: 0 calc(var(--s-basic-spacing) / 2);
+      margin-right: calc(var(--s-basic-spacing) / 2);
     }
     &-title,
     &-date {
@@ -258,8 +258,8 @@ $history-item-top-border-height: 1px;
     &-icon {
       flex-shrink: 0;
       align-self: flex-start;
-      margin-top: $basic-spacing_mini / 2;
-      margin-right: $basic-spacing_mini;
+      margin-top: calc(var(--s-basic-spacing) / 2);
+      margin-right: var(--s-basic-spacing);
       margin-left: auto;
     }
     .info-status--loading {
@@ -287,7 +287,7 @@ $history-item-top-border-height: 1px;
 }
 .el-pagination {
   display: flex;
-  margin-top: $basic-spacing;
+  margin-top: calc(var(--s-basic-spacing) * 2);
   padding-left: 0;
   padding-right: 0;
 }
