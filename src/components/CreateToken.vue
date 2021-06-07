@@ -3,6 +3,7 @@
     <div class="wallet-settings-create-token">
       <template v-if="step === Step.Create">
         <s-input
+          class="s-typography-input-field"
           :placeholder="t('createToken.tokenSymbol.placeholder')"
           :minlength="1"
           :maxlength="7"
@@ -12,6 +13,7 @@
         />
         <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSymbol.desc') }}</p>
         <s-input
+          class="s-typography-input-field"
           :placeholder="t('createToken.tokenName.placeholder')"
           :minlength="1"
           :maxlength="33"
@@ -21,6 +23,7 @@
         />
         <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
         <s-float-input
+          class="s-typography-input-field"
           v-model="tokenSupply"
           :placeholder="t('createToken.tokenSupply.placeholder')"
           :decimals="decimals"
@@ -35,9 +38,8 @@
           <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
         </div>
         <s-button
-          class="wallet-settings-create-token_action"
+          class="wallet-settings-create-token_action s-typography-button--large"
           type="primary"
-          size="big"
           :loading="loading"
           :disabled="!(tokenSymbol && tokenName.trim() && tokenSupply)"
           @click="onConfirm"
@@ -76,7 +78,7 @@
           <span>{{ formattedFee }} {{ KnownSymbols.XOR }}</span>
         </div>
         <s-button
-          class="wallet-settings-create-token_action"
+          class="wallet-settings-create-token_action s-typography-button--large"
           type="primary"
           :disabled="!hasEnoughXor"
           :loading="loading"
@@ -220,15 +222,8 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     font-feature-settings: var(--s-font-feature-settings-common);
   }
   &_supply-block {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    padding: 0 calc(var(--s-basic-spacing) * 1.5);
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
-
-    > span {
-      margin-left: calc(var(--s-basic-spacing) * 1.5);
-    }
+    @include switch-block;
+    padding-top: 0;
   }
   &_action {
     width: 100%;

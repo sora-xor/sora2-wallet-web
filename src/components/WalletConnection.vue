@@ -11,9 +11,8 @@
       <p v-if="step === Step.Second && !polkadotJsAccounts.length" class="wallet-connection-text">{{ t('connection.noAccounts') }}</p>
       <template v-if="step === Step.First || (step === Step.Second && !polkadotJsAccounts.length)">
         <s-button
-          class="wallet-connection-action"
+          class="wallet-connection-action s-typography-button--large"
           type="primary"
-          size="big"
           :loading="loading"
           @click="handleActionClick"
         >
@@ -21,7 +20,7 @@
         </s-button>
         <s-button
           v-if="!loading"
-          class="wallet-connection-action"
+          class="wallet-connection-action s-typography-button--large"
           type="tertiary"
           icon="question-circle-16"
           icon-position="right"

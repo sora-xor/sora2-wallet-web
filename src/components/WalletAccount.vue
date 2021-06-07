@@ -134,9 +134,11 @@ $avatar-size: 32px;
     &_address {
       overflow: hidden;
       text-overflow: ellipsis;
+      letter-spacing: var(--s-letter-spacing-small);
     }
     &_name {
-      font-size: var(--s-font-size-small);
+      font-size: var(--s-font-size-medium);
+      line-height: var(--s-line-height-medium);
       outline: none;
       white-space: nowrap;
       overflow: hidden;

@@ -95,6 +95,14 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 }
 </script>
 
+<style lang="scss">
+.base {
+  .el-loading-mask {
+    background-color: var(--s-color-utility-surface);
+  }
+}
+</style>
+
 <style scoped lang="scss">
 $button-size: var(--s-size-medium);
 
@@ -135,6 +143,10 @@ $button-size: var(--s-size-medium);
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
+      font-size: var(--s-font-size-large);
+      line-height: var(--s-line-height-small);
+      font-weight: 300;
+      letter-spacing: var(--s-letter-spacing-mini);
     }
     &_back {
       left: 0;

@@ -27,7 +27,7 @@
             </div>
           </div>
           <div class="asset s-flex" slot="right">
-            <s-button v-if="isMaxButtonAvailable" class="asset-max" type="primary" alternative size="small" border-radius="mini" @click="handleMaxClick">
+            <s-button v-if="isMaxButtonAvailable" class="asset-max" type="primary" alternative size="mini" border-radius="mini" @click="handleMaxClick">
               {{ t('walletSend.max') }}
             </s-button>
             <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
@@ -38,7 +38,7 @@
           <span>{{ t('walletSend.fee') }}</span>
           <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
         </div>
-        <s-button class="wallet-send-action" type="primary" size="big" :disabled="sendButtonDisabled" @click="step = 2">
+        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
       </template>
@@ -61,9 +61,8 @@
           </div>
         </div>
         <s-button
-          class="wallet-send-action"
+          class="wallet-send-action s-typography-button--large"
           type="primary"
-          size="big"
           :disabled="sendButtonDisabled"
           @click="handleSend"
         >

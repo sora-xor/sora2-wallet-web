@@ -52,7 +52,7 @@
     </div>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
     <s-button
-      class="wallet-assets-add"
+      class="wallet-assets-add s-typography-button--large"
       icon="circle-plus-16"
       icon-position="right"
       @click="handleOpenAddAsset"
@@ -148,8 +148,6 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 <style scoped lang="scss">
 @import '../styles/icons';
 
-$asset-icon-shadow-size: 3px;
-
 .wallet-assets {
   flex-direction: column;
   margin-top: calc(var(--s-basic-spacing) * 2);
@@ -162,7 +160,7 @@ $asset-icon-shadow-size: 3px;
   &-item {
     align-items: center;
     height: $asset-item-height;
-    padding-left: $asset-icon-shadow-size;
+
     .asset {
       flex: 1;
       overflow-wrap: break-word;

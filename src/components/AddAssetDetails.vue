@@ -1,27 +1,31 @@
 <template>
   <wallet-base :title="t('addAsset.title')" show-back @back="handleBack">
     <div class="add-asset-details">
-      <div class="add-asset-details_asset" v-if="asset">
-        <i class="asset-logo" :style="assetIconStyles" />
-        <div class="asset-description s-flex">
-          <div class="asset-description_symbol">{{ asset.symbol }}</div>
-          <div class="asset-description_info">{{ formattedName }}
-            <s-tooltip :content="t('assets.copy')">
-              <span class="asset-id" @click="handleCopy($event)">({{ formattedAddress }})</span>
-            </s-tooltip>
+      <s-card shadow="always" size="small" border-radius="mini">
+        <div class="add-asset-details_asset" v-if="asset">
+          <i class="asset-logo" :style="assetIconStyles" />
+          <div class="asset-description s-flex">
+            <div class="asset-description_symbol">{{ asset.symbol }}</div>
+            <div class="asset-description_info">{{ formattedName }}
+              <s-tooltip :content="t('assets.copy')">
+                <span class="asset-id" @click="handleCopy($event)">({{ formattedAddress }})</span>
+              </s-tooltip>
+            </div>
+            <s-card size="mini" :status="assetCardStatus">
+              <div class="asset-nature">{{ assetNatureText }}</div>
+            </s-card>
           </div>
-          <div class="asset-nature" :style="assetNatureStyles">{{ assetNatureText }}</div>
         </div>
-      </div>
-      <div class="add-asset-details_text">
-        <span class="p2">{{ t('addAsset.warningTitle') }}</span>
-        <span class="warning-text p4">{{ t('addAsset.warningMessage') }}</span>
-      </div>
+      </s-card>
+      <s-card status="warning" shadow="always" pressed class="add-asset-details_text">
+        <div class="p2">{{ t('addAsset.warningTitle') }}</div>
+        <div class="warning-text p4">{{ t('addAsset.warningMessage') }}</div>
+      </s-card>
       <div class="add-asset-details_confirm">
-        <span>{{ t('addAsset.understand') }}</span>
         <s-switch v-model="isConfirmed" :disabled="loading" />
+        <span>{{ t('addAsset.understand') }}</span>
       </div>
-      <s-button class="add-asset-details_action" type="primary" size="big" :disabled="!asset || !isConfirmed || loading" @click="handleAddAsset">
+      <s-button class="add-asset-details_action s-typography-button--large" type="primary" :disabled="!asset || !isConfirmed || loading" @click="handleAddAsset">
         {{ t('addAsset.action') }}
       </s-button>
     </div>
@@ -77,14 +81,8 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     return isBlacklistAsset(this.asset)
   }
 
-  get assetNatureStyles (): object {
-    const styles = {}
-    if (!this.asset) {
-      return styles
-    }
-    return {
-      color: `var(--s-color-status-${this.isWhitelist ? 'success' : 'error'})`
-    }
+  get assetCardStatus (): string {
+    return this.isWhitelist ? 'success' : 'error'
   }
 
   get assetNatureText (): string {
@@ -160,13 +158,14 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
 @import '../styles/icons';
 
 .add-asset-details {
+  & > * {
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
+  }
+
   &_asset {
     display: flex;
     align-items: center;
-    background: var(--s-color-base-background);
-    padding: calc(var(--s-basic-spacing) * 1.5) calc(var(--s-basic-spacing) * 2);
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
-    border-radius: var(--s-border-radius-small);
+
     .asset {
       &-logo {
         margin-right: calc(var(--s-basic-spacing) * 2);
@@ -175,8 +174,11 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
       &-description {
         flex: 1;
         flex-direction: column;
-        line-height: var(--s-line-height-big);
+        align-items: flex-start;
+
         &_symbol {
+          font-size: var(--s-font-size-big);
+          line-height: var(--s-line-height-small);
           font-feature-settings: var(--s-font-feature-settings-common);
           font-weight: 600;
         }
@@ -193,28 +195,14 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
       }
       &-nature {
         font-size: var(--s-font-size-mini);
+        font-weight: 300;
+        letter-spacing: var(--s-letter-spacing-small);
+        line-height: var(--s-line-height-medium);
       }
     }
   }
-  &_text {
-    display: flex;
-    flex-direction: column;
-    padding: calc(var(--s-basic-spacing) * 2);
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
-    border: 1px solid var(--s-color-base-border-secondary);
-    border-radius: var(--s-border-radius-small);
-    .warning-text {
-      color: var(-s-color-base-content-secondary);
-    }
-  }
   &_confirm {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--s-color-base-background);
-    padding: calc(var(--s-basic-spacing) * 1.5) calc(var(--s-basic-spacing) * 2);
-    border-radius: var(--s-border-radius-mini);
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
+    @include switch-block;
   }
   &_action {
     width: 100%;
