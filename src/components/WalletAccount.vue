@@ -1,5 +1,5 @@
 <template>
-  <s-card :bodyStyle="{ padding: '0 12px' }" class="wallet-account" border-radius="mini">
+  <s-card :pressed="pressed" shadow="always" size="small" border-radius="medium" class="wallet-account">
     <div class="account s-flex">
       <wallet-avatar class="account-avatar" :address="address" />
       <div class="account-details s-flex">
@@ -11,15 +11,19 @@
         </div>
         <template v-if="showControls">
           <s-button
-            class="account-switch"
-            type="link"
+            class="account__action-button account-switch"
+            type="action"
+            alternative
+            rounded
             icon="arrows-refresh-ccw-24"
             :tooltip="t('account.switch')"
             @click="handleSwitchAccount"
           />
           <s-button
-            class="account-logout"
-            type="link"
+            class="account__action-button account-logout"
+            type="action"
+            alternative
+            rounded
             icon="security-logout-24"
             :tooltip="t('account.logout')"
             @click="handleLogout"
@@ -49,6 +53,7 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
   @Action logout
   @Action navigate
 
+  @Prop({ default: false, type: Boolean }) readonly pressed!: boolean
   @Prop({ default: false, type: Boolean }) readonly showControls!: boolean
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: { name: string; address: string }
 
@@ -100,24 +105,17 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 <style scoped lang="scss">
 @import '../styles/icons';
 
-$avatar-margin-right: $basic-spacing_small;
+$avatar-margin-right: calc(var(--s-basic-spacing) * 1.5);
 $avatar-size: 32px;
-$account-button-width: 30px;
-$account-button-margin-left: $button-margin;
-$account-buttons-number: 2;
 
 .wallet-account.s-card {
   box-shadow: none;
   border: 1px solid var(--s-color-base-border-primary);
 }
 
-.s-card {
-  @include s-card-styles;
-}
-
 .account {
-  margin: $basic-spacing_mini 0;
   align-items: center;
+
   &-avatar {
     margin-right: $avatar-margin-right;
     width: $avatar-size;
@@ -132,14 +130,15 @@ $account-buttons-number: 2;
     flex: 1;
     flex-direction: column;
     justify-content: center;
-    width: calc(100% - #{$account-button-width * $account-buttons-number} - #{$account-button-margin-left * $account-buttons-number});
     &_name,
     &_address {
       overflow: hidden;
       text-overflow: ellipsis;
+      letter-spacing: var(--s-letter-spacing-small);
     }
     &_name {
-      font-size: $font-size_basic;
+      font-size: var(--s-font-size-medium);
+      line-height: var(--s-line-height-medium);
       outline: none;
       white-space: nowrap;
       overflow: hidden;
@@ -147,20 +146,19 @@ $account-buttons-number: 2;
     }
     &_address {
       @include value-prefix(width, fit-content);
-      outline: none;
       @include hint-text;
+      outline: none;
+      color: var(--s-color-base-content-quaternary);
       &:hover {
         text-decoration: underline;
         cursor: pointer;
       }
     }
   }
-  .el-button {
-    margin-left: $account-button-margin-left;
-    width: $account-button-width;
-  }
-  &-switch {
-    margin-left: $button-margin;
+  &__action-button {
+    & + & {
+      margin-left: var(--s-basic-spacing);
+    }
   }
   &-switch, &-logout {
     padding: 0;

@@ -1,9 +1,9 @@
 <template>
-  <div id="app">
+  <s-design-system-provider :value="libraryDesignSystem" id="app">
     <div class="wallet-wrapper s-flex">
       <sora-neo-wallet />
     </div>
-  </div>
+  </s-design-system-provider>
 </template>
 
 <script lang="ts">
@@ -21,6 +21,7 @@ import { updateAccountAssetsSubscription } from './store/Account'
   components: { SoraNeoWallet }
 })
 export default class App extends Mixins(TransactionMixin) {
+  @Getter libraryDesignSystem
   @Getter firstReadyTransaction!: any
   @Action trackActiveTransactions
 
@@ -47,7 +48,7 @@ export default class App extends Mixins(TransactionMixin) {
 
 <style lang="scss">
 .el-tooltip__popper.info-tooltip {
-  padding: $basic-spacing_mini;
+  padding: var(--s-basic-spacing);
   max-width: 320px;
   border: none !important;
   box-shadow: var(--s-shadow-tooltip);
