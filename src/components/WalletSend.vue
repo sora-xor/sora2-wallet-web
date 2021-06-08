@@ -10,37 +10,35 @@
           v-model="address"
           @change="calcFee"
         />
-        <div class="wallet-send-amount">
-          <div class="input-line">
-            <div class="input-line-title">{{ t('walletSend.amount') }}</div>
-            <div class="input-line-balance">
-              <span class="asset-balance-title">{{ t('walletSend.balance') }}</span>
-              <span class="asset-balance-value">{{ balance }}</span>
+        <s-float-input
+          v-model="amount"
+          class="wallet-send-input"
+          size="medium"
+          has-locale-string
+          :delimiters="delimiters"
+          @change="calcFee"
+          @blur="formatAmount"
+        >
+          <div class="wallet-send-amount" slot="top">
+            <div class="wallet-send-amount-title">{{ t('walletSend.amount') }}</div>
+            <div class="wallet-send-amount-balance">
+              <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
+              <span class="wallet-send-amount-balance-value">{{ balance }}</span>
             </div>
           </div>
-          <div class="input-line">
-            <s-float-input
-              v-model="amount"
-              class="s-input--token-value"
-              has-locale-string
-              :delimiters="delimiters"
-              @change="calcFee"
-              @blur="formatAmount"
-            />
-            <div class="asset s-flex">
-              <s-button v-if="isMaxButtonAvailable" class="asset-max" type="tertiary" size="small" border-radius="mini" @click="handleMaxClick">
-                {{ t('walletSend.max') }}
-              </s-button>
-              <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
-              <span class="asset-name">{{ asset.symbol }}</span>
-            </div>
+          <div class="asset s-flex" slot="right">
+            <s-button v-if="isMaxButtonAvailable" class="asset-max" type="primary" alternative size="mini" border-radius="mini" @click="handleMaxClick">
+              {{ t('walletSend.max') }}
+            </s-button>
+            <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+            <span class="asset-name">{{ asset.symbol }}</span>
           </div>
-        </div>
+        </s-float-input>
         <div class="wallet-send-fee s-flex">
           <span>{{ t('walletSend.fee') }}</span>
           <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
         </div>
-        <s-button class="wallet-send-action" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
+        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
       </template>
@@ -63,7 +61,7 @@
           </div>
         </div>
         <s-button
-          class="wallet-send-action"
+          class="wallet-send-action s-typography-button--large"
           type="primary"
           :disabled="sendButtonDisabled"
           @click="handleSend"
@@ -267,41 +265,10 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 </script>
 
 <style lang="scss">
-.wallet-send {
-  $swap-input-class: ".el-input";
-  .s-input--token-value {
-    min-height: 0;
-    font-feature-settings: var(--s-font-feature-settings-input);
-    #{$swap-input-class} {
-      #{$swap-input-class}__inner {
-        padding-top: 0;
-      }
-    }
-    #{$swap-input-class}__inner {
-      height: var(--s-size-small);
-      padding-right: 0;
-      padding-left: 0;
-      border-radius: 0;
-      color: var(--s-color-base-content-primary);
-      font-size: 20px;
-      line-height: var(--s-line-height-small);
-      &, &:hover, &:focus {
-        background-color: var(--s-color-base-background);
-        border-color: var(--s-color-base-background);
-      }
-      &:disabled {
-        color: var(--s-color-base-content-tertiary);
-      }
-      &:not(:disabled) {
-        &:hover, &:focus {
-          color: var(--s-color-base-content-primary);
-        }
-      }
-    }
-    .s-placeholder {
-      display: none;
-    }
-  }
+.wallet-send-input .el-input__inner {
+  font-size: 20px;
+  line-height: var(--s-line-height-small);
+  font-feature-settings: var(--s-font-feature-settings-input);
 }
 </style>
 
@@ -319,7 +286,7 @@ $logo-size: var(--s-size-mini);
         font-size: var(--s-font-size-mini);
       }
       &-value {
-        margin-left: $basic-spacing_mini / 2;
+        margin-left: calc(var(--s-basic-spacing) / 2);
         font-feature-settings: var(--s-font-feature-settings-common);
         letter-spacing: var(--s-letter-spacing-big);
       }
@@ -328,16 +295,15 @@ $logo-size: var(--s-size-mini);
       @include asset-logo-styles;
       width: $logo-size;
       height: $logo-size;
-      margin: $basic-spacing_mini / 2 $basic-spacing_mini;
+      margin: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);
     }
     &-name {
       line-height: 2.29;
-      margin-right: $basic-spacing_mini;
     }
     &-max {
-      margin-left: $basic-spacing_mini;
+      margin-left: var(--s-basic-spacing);
       height: var(--s-size-mini);
-      padding: $basic-spacing_mini / 2 $basic-spacing_mini;
+      padding: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);
     }
     &-max, &-name {
       font-feature-settings: var(--s-font-feature-settings-heading);
@@ -345,40 +311,29 @@ $logo-size: var(--s-size-mini);
     }
   }
   &-address {
-    margin-bottom: $basic-spacing;
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
   }
   &-amount {
-    position: relative;
-    padding: $basic-spacing_small $basic-spacing_mini $basic-spacing_mini $basic-spacing;
-    width: 100%;
-    background-color: var(--s-color-base-background);
-    border-radius: var(--s-border-radius-mini);
-    .input-line {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      + .input-line {
-        margin-top: $basic-spacing_small;
-      }
-      &-title,
-      &-balance {
-        display: inline-flex;
-        align-items: baseline;
-      }
-      &-title {
-        font-weight: 600;
-      }
-      &-balance {
-        padding-right: $basic-spacing_mini;
-      }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--s-basic-spacing);
+
+    &-title,
+    &-balance {
+      display: inline-flex;
+      align-items: baseline;
+    }
+    &-title {
+      font-weight: 600;
     }
   }
   &-fee {
     align-items: center;
-    margin-top: $basic-spacing_mini;
+    margin-top: calc(var(--s-basic-spacing) * 2);
     width: 100%;
-    padding-right: $basic-spacing_mini;
-    padding-left: $basic-spacing_mini;
+    padding-right: var(--s-basic-spacing);
+    padding-left: var(--s-basic-spacing);
     color: var(--s-color-base-content-secondary);
     &_value {
       margin-left: auto;
@@ -386,12 +341,12 @@ $logo-size: var(--s-size-mini);
     }
   }
   &-action {
-    margin-top: $basic-spacing;
+    margin-top: calc(var(--s-basic-spacing) * 2);
     width: 100%;
   }
   .confirm {
     &-asset {
-      margin-bottom: $basic-spacing;
+      margin-bottom: calc(var(--s-basic-spacing) * 2);
       font-size: 30px;
       font-weight: 400;
       &-title {
@@ -405,7 +360,7 @@ $logo-size: var(--s-size-mini);
             $logo-size: 40px;
             width: $logo-size;
             height: $logo-size;
-            margin: 0 $basic-spacing_mini;
+            margin: 0 var(--s-basic-spacing);
           }
           &-name {
             line-height: 1.33;
@@ -415,15 +370,15 @@ $logo-size: var(--s-size-mini);
       }
     }
     &-from {
-      margin-bottom: $basic-spacing_mini;
+      margin-bottom: var(--s-basic-spacing);
     }
     &-to {
-      margin-top: $basic-spacing_mini;
+      margin-top: var(--s-basic-spacing);
       overflow-wrap: break-word;
     }
     &-from, &-to {
       // It's set to small size cuz we need to show full address
-      font-size: $font-size_small;
+      font-size: var(--s-font-size-mini);
       font-weight: 600;
     }
   }

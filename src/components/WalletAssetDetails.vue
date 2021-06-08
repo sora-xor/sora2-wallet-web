@@ -11,7 +11,7 @@
     @action="handleRemoveAsset"
     @cleanHistory="handleCleanHistory"
   >
-    <s-card class="asset-details">
+    <s-card class="asset-details" primary>
       <div class="asset-details-container s-flex">
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
         <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">{{ balance }}
@@ -32,12 +32,15 @@
           <s-button
             v-for="operation in operations"
             :key="operation.type"
-            :icon="operation.icon"
             :tooltip="getOperationTooltip(operation)"
             :disabled="isOperationDisabled(operation.type)"
-            type="action"
+            type="primary"
+            size="medium"
+            rounded
             @click="handleOperation(operation.type)"
-          />
+          >
+            <s-icon :name="operation.icon" />
+          </s-button>
         </div>
       </div>
     </s-card>
@@ -200,7 +203,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
 @import '../styles/icons';
 
 .asset-details {
-  margin-bottom: $basic-spacing;
+  margin-bottom: calc(var(--s-basic-spacing) * 2);
   border-radius: var(--s-border-radius-small);
   &-container {
     flex-direction: column;
@@ -208,56 +211,30 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   }
   &-balance {
     position: relative;
-    margin-top: $basic-spacing_mini;
-    margin-bottom: $basic-spacing;
+    margin-top: var(--s-basic-spacing);
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
     &--clickable {
       cursor: pointer;
     }
     .s-icon-chevron-down-rounded-16 {
       position: absolute;
       top: 25%;
-      padding-left: $basic-spacing_mini;
+      padding-left: calc(var(--s-basic-spacing) * 1.5);
       transition: transform 0.3s;
     }
     &--clicked .s-icon-chevron-down-rounded-16 {
-      padding-right: $basic-spacing_mini;
+      padding-right: calc(var(--s-basic-spacing) * 1.5);
       transform: rotate(180deg);
     }
     &-info {
       width: 100%;
-      margin-bottom: $basic-spacing;
+      margin-bottom: calc(var(--s-basic-spacing) * 2);
       .balance {
         justify-content: space-between;
-        margin-bottom: calc(#{$basic-spacing_mini} / 2);
+        margin-bottom: calc(var(--s-basic-spacing) / 2);
       }
       .s-divider-secondary {
-        margin: $basic-spacing_mini 0;
-      }
-    }
-  }
-  &-actions {
-    .s-action {
-      background-color: var(--s-color-theme-accent);
-      border-color: var(--s-color-theme-accent);
-      &.focusing {
-        background-color: var(--s-color-theme-accent-focused);
-        border-color: var(--s-color-theme-accent-focused);
-      }
-      &:hover {
-        background-color: var(--s-color-theme-accent-hover);
-        border-color: var(--s-color-theme-accent-hover);
-      }
-      &.s-pressed {
-        background-color: var(--s-color-theme-accent-pressed);
-        border-color: var(--s-color-theme-accent-pressed);
-      }
-      &, &.focusing, &:hover, &.s-pressed {
-        color: var(--s-color-base-on-accent);
-      }
-      &:disabled {
-        color: var(--s-color-base-on-disabled);
-        background-color: var(--s-color-base-disabled);
-        border-color: var(--s-color-base-disabled);
+        margin: calc(var(--s-basic-spacing) * 1.5) 0;
       }
     }
   }
