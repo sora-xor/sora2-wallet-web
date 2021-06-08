@@ -19,25 +19,32 @@
           </div>
           <s-button
             v-if="permissions.sendAssets"
-            class="send"
+            class="wallet-assets__button send"
             type="primary"
-            size="small"
-            icon="finance-send-24"
+            rounded
             :tooltip="t('assets.send')"
             :disabled="isZeroBalance(asset)"
             @click="handleAssetSend(asset)"
-          />
+          >
+            <s-icon name="finance-send-24" />
+          </s-button>
           <s-button
             v-if="permissions.swapAssets"
-            class="swap"
+            class="wallet-assets__button swap"
             type="primary"
-            size="small"
-            icon="arrows-swap-24"
+            rounded
             :tooltip="t('assets.swap')"
             @click="handleAssetSwap(asset)"
-          />
-          <s-button class="details" type="link" @click="handleOpenAssetDetails(asset)">
-            <s-icon name="arrows-chevron-right-rounded-24" />
+          >
+            <s-icon name="arrows-swap-24" />
+          </s-button>
+          <s-button
+            class="wallet-assets__button details"
+            type="action"
+            icon="arrows-chevron-right-rounded-24"
+            alternative
+            @click="handleOpenAssetDetails(asset)"
+          >
           </s-button>
         </div>
         <s-divider v-if="index !== formattedAccountAssets.length - 1" class="wallet-assets-item_divider" :key="`${asset.address}-divider`" />
@@ -45,7 +52,7 @@
     </div>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
     <s-button
-      class="wallet-assets-add"
+      class="wallet-assets-add s-typography-button--large"
       icon="circle-plus-16"
       icon-position="right"
       @click="handleOpenAddAsset"
@@ -138,25 +145,13 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 }
 </script>
 
-<style lang="scss">
-.wallet-assets-item {
-  $button-width: 48px;
-  .swap, .send {
-    max-width: $button-width;
-    &:not(.s-action).s-i-position-left > span > i[class^=s-icon-] {
-      margin-right: 0;
-    }
-  }
-}
-</style>
-
 <style scoped lang="scss">
 @import '../styles/icons';
 
-$asset-icon-shadow-size: 3px;
-
 .wallet-assets {
   flex-direction: column;
+  margin-top: calc(var(--s-basic-spacing) * 2);
+
   &-container {
     max-height: calc(#{$asset-item-height} * 5);
     overflow-x: hidden;
@@ -165,16 +160,20 @@ $asset-icon-shadow-size: 3px;
   &-item {
     align-items: center;
     height: $asset-item-height;
-    padding-left: $asset-icon-shadow-size;
+
     .asset {
       flex: 1;
       overflow-wrap: break-word;
       flex-direction: column;
-      padding-right: $basic-spacing_small;
-      padding-left: $basic-spacing_small;
+      padding-right: calc(var(--s-basic-spacing) * 1.5);
+      padding-left: calc(var(--s-basic-spacing) * 1.5);
       width: 30%;
       &-value, &-info {
         line-height: var(--s-line-height-base);
+      }
+      &-value {
+        font-size: var(--s-font-size-medium);
+        font-weight: 800;
       }
       &-info {
         @include hint-text;
@@ -191,7 +190,7 @@ $asset-icon-shadow-size: 3px;
         align-items: baseline;
         color: var(--s-color-base-content-secondary);
         background: var(--s-color-base-background);
-        padding: 0 $basic-spacing_mini;
+        padding: 0 var(--s-basic-spacing);
         border-radius: var(--s-border-radius-mini);
         > .s-icon-lock-16 {
           color: var(--s-color-base-content-secondary);
@@ -206,7 +205,7 @@ $asset-icon-shadow-size: 3px;
     }
     .asset-logo {
       flex-shrink: 0;
-      @include asset-logo-styles;
+      @include asset-logo-styles(40px);
     }
     &_divider {
       margin: 0;
@@ -214,11 +213,16 @@ $asset-icon-shadow-size: 3px;
   }
   &-add,
   &-empty {
-    margin-top: $basic-spacing;
+    margin-top: calc(var(--s-basic-spacing) * 2);
   }
   &-empty {
     text-align: center;
     @include hint-text;
+  }
+  &__button {
+    & + & {
+      margin-left: var(--s-basic-spacing);
+    }
   }
 }
 </style>

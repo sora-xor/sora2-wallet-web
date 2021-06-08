@@ -9,7 +9,7 @@
     @action="handleCreateToken"
     @cleanHistory="handleCleanHistory"
   >
-    <wallet-account show-controls />
+    <wallet-account show-controls pressed />
     <div class="wallet">
       <s-tabs :value="currentTab" type="rounded" @change="handleChangeTab">
         <s-tab
@@ -90,6 +90,6 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
 <style scoped lang="scss">
 .wallet {
-  margin-top: $basic-spacing;
+  margin-top: calc(var(--s-basic-spacing) * 2);
 }
 </style>
