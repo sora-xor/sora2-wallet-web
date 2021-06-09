@@ -1,10 +1,11 @@
 import Vue from 'vue'
-import SoramitsuElements, { Message, MessageBox, Notification, setTheme } from '@soramitsu/soramitsu-js-ui'
+import SoramitsuElements, { Message, MessageBox, Notification, setTheme, setDesignSystem, DesignSystemTypes, Themes } from '@soramitsu/soramitsu-js-ui'
 import '@soramitsu/soramitsu-js-ui/lib/styles'
 
 export function install (store) {
   Vue.use(SoramitsuElements, { store })
-  setTheme('light')
+  setTheme(Themes.LIGHT)
+  setDesignSystem(DesignSystemTypes.NEUMORPHIC)
   Vue.prototype.$prompt = MessageBox.prompt
   Vue.prototype.$alert = MessageBox.alert
   Vue.prototype.$message = Message
