@@ -1,6 +1,6 @@
 <template>
   <component
-    v-loading="loading"
+    v-lottie-loader="{ loading }"
     :is="currentRoute"
     @swap="(asset) => handleOperation(Operations.Swap, asset)"
     @liquidity="(asset) => handleOperation(Operations.Liquidity, asset)"
