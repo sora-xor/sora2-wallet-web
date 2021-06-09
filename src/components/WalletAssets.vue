@@ -1,5 +1,5 @@
 <template>
-  <div class="wallet-assets s-flex" v-loading="loading">
+  <div class="wallet-assets s-flex" v-lottie-loader="{ loading }">
     <div v-if="!!formattedAccountAssets.length" class="wallet-assets-container">
       <template v-for="(asset, index) in formattedAccountAssets">
         <div class="wallet-assets-item s-flex" :key="asset.address">
