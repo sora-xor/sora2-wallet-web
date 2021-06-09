@@ -7,6 +7,7 @@ import { install } from './plugins'
 
 import SoraNeoWallet from './SoraNeoWallet.vue'
 import WalletAvatar from './components/WalletAvatar.vue'
+import { Loader } from './directives'
 import { Components, Modules } from './types'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
@@ -47,6 +48,7 @@ const SoraNeoWalletElements = {
     store = options.store
     install(store)
     components.forEach(el => vue.component(el.name, el.component))
+    vue.directive('lottie-loader', Loader)
   }
 }
 

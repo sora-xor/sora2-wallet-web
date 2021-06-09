@@ -1,6 +1,6 @@
 <template>
   <wallet-base :title="t('connection.title')">
-    <div class="wallet-connection" v-loading="isAccountLoading">
+    <div class="wallet-connection" v-lottie-loader="{ loading: isAccountLoading }">
       <template v-if="step === Step.First">
         <p v-if="loading" class="wallet-connection-text p4">{{ t('connection.loadingTitle') }}</p>
         <template v-else>

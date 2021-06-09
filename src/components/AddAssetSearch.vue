@@ -9,7 +9,7 @@
       v-model="search"
       @input="handleSearch"
     />
-    <div class="asset-search-list" v-loading="assetsLoading || loading">
+    <div class="asset-search-list" v-lottie-loader="{ loading: assetsLoading || loading }">
       <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </div>
