@@ -1,4 +1,5 @@
 // Brand
+$s-color-brand-day: #A19A9D;
 $s-brand-pinky: #ED145B; // Some texts, brand stuff
 $s-brand-blue: #0D0248; // Brand stuff
 // Primary theme colors
@@ -48,5 +49,12 @@ $s-border-radius-mini: $s-border-radius-base !default;
 $s-border-radius-small: $s-border-radius-base * 1.5 !default;
 $s-border-radius-medium: $s-border-radius-base * 2 !default;
 $s-border-radius-big: $s-border-radius-base * 3 !default;
+// Transition
+$s-transition-default: all 0.125s ease-in-out;
+
+:root {
+  --s-color-brand-day: #{$s-color-brand-day};
+  --s-transition-default: #{$s-transition-default};
+}
 
 @import "../../node_modules/@soramitsu/soramitsu-js-ui/lib/styles/index";

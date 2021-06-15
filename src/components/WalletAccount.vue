@@ -109,8 +109,7 @@ $avatar-margin-right: calc(var(--s-basic-spacing) * 1.5);
 $avatar-size: 32px;
 
 .wallet-account.s-card {
-  box-shadow: none;
-  border: 1px solid var(--s-color-base-border-primary);
+  border: 1px solid transparent;
 }
 
 .account {
