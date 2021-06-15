@@ -27,7 +27,7 @@
             </div>
           </div>
           <div class="asset s-flex" slot="right">
-            <s-button v-if="isMaxButtonAvailable" class="asset-max" type="primary" alternative size="mini" border-radius="mini" @click="handleMaxClick">
+            <s-button v-if="isMaxButtonAvailable" class="asset-max s-typography-button--small" type="primary" alternative size="mini" border-radius="mini" @click="handleMaxClick">
               {{ t('walletSend.max') }}
             </s-button>
             <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
@@ -318,14 +318,18 @@ $logo-size: var(--s-size-mini);
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--s-basic-spacing);
+    font-size: var(--s-font-size-mini);
+    line-height: var(--s-line-height-medium);
+    text-transform: uppercase;
 
     &-title,
     &-balance {
       display: inline-flex;
       align-items: baseline;
-    }
-    &-title {
-      font-weight: 600;
+
+      &-title {
+        margin-right: calc(var(--s-basic-spacing) / 2);
+      }
     }
   }
   &-fee {
