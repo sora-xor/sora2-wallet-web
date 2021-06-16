@@ -14,7 +14,7 @@ import internalStore, { modules } from './store' // `internalStore` is required 
 import { updateAccountAssetsSubscription } from './store/Account'
 import { storage } from './util/storage'
 import { api, connection } from './api'
-import { delay } from './util'
+import { delay, getExplorerLink } from './util'
 import * as WALLET_CONSTS from './consts'
 
 let store: Store<unknown>
@@ -96,9 +96,11 @@ export {
   api,
   connection,
   storage,
+  getExplorerLink,
   updateAccountAssetsSubscription,
   SoraNeoWallet,
   WALLET_CONSTS,
-  WalletAvatar
+  WalletAvatar,
+  store as externalStore // only for soraNetwork getter in wallet
 }
 export default SoraNeoWalletElements
