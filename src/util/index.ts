@@ -34,6 +34,23 @@ export const getExtensionSigner = async (address: string) => {
   return (await web3FromAddress(address)).signer
 }
 
+/**
+ * Returns block explorer link according to appropriate network type.
+ * @param soraNetwork
+ * Devnet will set by default
+ */
+export const getExplorerLink = (soraNetwork?: string) => {
+  switch (soraNetwork) {
+    case 'Testnet':
+      return 'https://test.sorascan.com/sora-staging'
+    case 'Mainnet':
+      return 'https://sorascan.com/sora-mainnet'
+    case 'Devnet':
+    default:
+      return 'https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev'
+  }
+}
+
 export const copyToClipboard = async (text: string) => {
   try {
     return navigator.clipboard.writeText(text)
