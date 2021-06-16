@@ -29,11 +29,11 @@ $lottie-loader-class: '.lottie-loader';
   bottom: 0;
   left: 0;
   margin: auto;
-  z-index: 3003;
+  z-index: 1;
 }
 #{$lottie-loader-class}--loading {
   position: relative;
-  &:before {
+  &:after {
     border-radius: inherit;
     display: block;
     height: 100%;
@@ -42,19 +42,10 @@ $lottie-loader-class: '.lottie-loader';
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 3002;
     background-color: var(--s-color-utility-body);
   }
   #{$lottie-loader-class} {
     display: block;
-  }
-  #{$lottie-loader-class}--loading {
-    &:before {
-      z-index: 3000;
-    }
-    #{$lottie-loader-class} {
-      z-index: 3001;
-    }
   }
 }
 </style>
