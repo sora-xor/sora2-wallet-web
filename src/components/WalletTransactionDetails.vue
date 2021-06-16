@@ -257,14 +257,8 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
   }
 }
 // TODO: fix UI library
-$dropdown-padding: 16px;
 .s-dropdown-menu__item {
   border-radius: calc(var(--s-border-radius-mini) / 2);
-  display: inline-block;
-  margin-left: -#{$dropdown-padding};
-  margin-right: -#{$dropdown-padding};
-  padding-left: $dropdown-padding;
-  padding-right: $dropdown-padding;
 }
 </style>
 
