@@ -3,9 +3,9 @@ import flatMap from 'lodash/fp/flatMap'
 import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
-import { AccountAsset } from '@sora-substrate/util'
+import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist } from '@sora-substrate/util'
 
-import { api } from '../api'
+import { api, axios } from '../api'
 import { storage } from '../util/storage'
 import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util'
 
@@ -35,7 +35,8 @@ const types = flow(
   'TRANSFER',
   'POLKADOT_JS_IMPORT',
   'GET_SIGNER',
-  'GET_POLKADOT_JS_ACCOUNTS'
+  'GET_POLKADOT_JS_ACCOUNTS',
+  'GET_WHITELIST'
 ])
 
 function initialState () {
@@ -49,6 +50,7 @@ function initialState () {
     selectedTransactionId: null,
     activity: [], // account history (without bridge)
     assets: [],
+    whitelistArray: [],
     assetsLoading: false
   }
 }
@@ -86,6 +88,15 @@ const getters = {
   },
   assets (state) {
     return state.assets
+  },
+  whitelistArray (state): Array<WhitelistArrayItem> {
+    return state.whitelistArray
+  },
+  whitelist (state): Whitelist {
+    return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistAssets(state.whitelistArray) : {}
+  },
+  whitelistIdsBySymbol (state) {
+    return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistIdsBySymbol(state.whitelistArray) : {}
   },
   assetsLoading (state) {
     return state.assetsLoading
@@ -182,6 +193,18 @@ const mutations = {
   [types.GET_ASSETS_FAILURE] (state) {
     state.assets = []
     state.assetsLoading = false
+  },
+
+  [types.GET_WHITELIST_REQUEST] (state) {
+    state.whitelistArray = []
+  },
+
+  [types.GET_WHITELIST_SUCCESS] (state, whitelist: Array<WhitelistArrayItem>) {
+    state.whitelistArray = whitelist
+  },
+
+  [types.GET_WHITELIST_FAILURE] (state) {
+    state.whitelistArray = []
   },
 
   [types.SEARCH_ASSET_REQUEST] (state) {},
@@ -340,10 +363,19 @@ const actions = {
   getAccountActivity ({ commit }) {
     commit(types.GET_ACCOUNT_ACTIVITY, api.accountHistory)
   },
-  async getAssets ({ commit }) {
+  async getWhitelist ({ commit }) {
+    commit(types.GET_WHITELIST_REQUEST)
+    try {
+      const { data } = await axios.get('/whitelist.json')
+      commit(types.GET_WHITELIST_SUCCESS, data)
+    } catch (error) {
+      commit(types.GET_WHITELIST_FAILURE)
+    }
+  },
+  async getAssets ({ commit, state: { whitelistArray } }) {
     commit(types.GET_ASSETS_REQUEST)
     try {
-      const assets = await api.getAssets()
+      const assets = await api.getAssets(whitelistArray)
       commit(types.GET_ASSETS_SUCCESS, assets)
     } catch (error) {
       commit(types.GET_ASSETS_FAILURE)
