@@ -225,7 +225,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
   getBlockExplorerLink (key: string, value: string): string {
     // TODO: move soraNetwork to the wallet
     const networkType = externalStore.getters.soraNetwork
-    return `${getExplorerLink()}/${key}/${value}`
+    return `${getExplorerLink(networkType)}/${key}/${value}`
   }
 
   async handleCopy (address: string, value: string): Promise<void> {
