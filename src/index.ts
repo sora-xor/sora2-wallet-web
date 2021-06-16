@@ -80,6 +80,7 @@ async function initWallet ({
       store.dispatch('setPermissions', permissions)
     }
     api.initialize()
+    await store.dispatch('getWhitelist')
     await store.dispatch('checkSigner')
     await store.dispatch('syncWithStorage')
     await store.dispatch('getAccountAssets')

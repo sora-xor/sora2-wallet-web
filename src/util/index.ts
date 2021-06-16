@@ -1,8 +1,8 @@
 import moment from 'moment'
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
-import { WhitelistAssets } from 'polkaswap-token-whitelist'
 
 import { api } from '../api'
+import store from '../store'
 
 export const APP_NAME = 'Sora2 Wallet'
 
@@ -69,7 +69,7 @@ export const getAssetIconStyles = (address: string) => {
   if (!address) {
     return {}
   }
-  const asset = WhitelistAssets[address]
+  const asset = store.getters.whitelist[address]
   if (!asset) {
     return {}
   }
