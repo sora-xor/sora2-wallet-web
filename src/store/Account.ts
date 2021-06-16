@@ -3,6 +3,7 @@ import flatMap from 'lodash/fp/flatMap'
 import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
+import omit from 'lodash/fp/omit'
 import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist } from '@sora-substrate/util'
 
 import { api, axios } from '../api'
@@ -108,7 +109,7 @@ const getters = {
 
 const mutations = {
   [types.RESET] (state) {
-    const s = initialState()
+    const s = omit(['whitelistArray', 'assets'], initialState())
     Object.keys(s).forEach(key => {
       state[key] = s[key]
     })
@@ -372,19 +373,19 @@ const actions = {
       commit(types.GET_WHITELIST_FAILURE)
     }
   },
-  async getAssets ({ commit, state: { whitelistArray } }) {
+  async getAssets ({ commit, getters: { whitelist } }) {
     commit(types.GET_ASSETS_REQUEST)
     try {
-      const assets = await api.getAssets(whitelistArray)
+      const assets = await api.getAssets(whitelist)
       commit(types.GET_ASSETS_SUCCESS, assets)
     } catch (error) {
       commit(types.GET_ASSETS_FAILURE)
     }
   },
-  async searchAsset ({ commit }, { address }) {
+  async searchAsset ({ commit, getters: { whitelist } }, { address }) {
     commit(types.SEARCH_ASSET_REQUEST)
     try {
-      const assets = await api.getAssets()
+      const assets = await api.getAssets(whitelist)
       const asset = assets.find(asset => asset.address === address)
       commit(types.SEARCH_ASSET_SUCCESS)
       return asset
