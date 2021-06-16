@@ -35,8 +35,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { Asset } from '@sora-substrate/util'
-import { isWhitelistAsset, isBlacklistAsset } from 'polkaswap-token-whitelist'
+import { Asset, isWhitelistAsset, isBlacklistAsset, Whitelist } from '@sora-substrate/util'
 
 import LoadingMixin from './mixins/LoadingMixin'
 import TranslationMixin from './mixins/TranslationMixin'
@@ -54,6 +53,8 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
   isConfirmed = false
 
   @Getter currentRouteParams!: any
+  @Getter whitelist!: Whitelist
+  @Getter whitelistIdsBySymbol!: any
 
   @Action back!: () => Promise<void>
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
@@ -71,14 +72,14 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     if (!this.asset) {
       return false
     }
-    return isWhitelistAsset(this.asset)
+    return isWhitelistAsset(this.asset, this.whitelist)
   }
 
   get isBlacklist (): boolean {
     if (!this.asset) {
       return false
     }
-    return isBlacklistAsset(this.asset)
+    return isBlacklistAsset(this.asset, this.whitelist)
   }
 
   get assetCardStatus (): string {
