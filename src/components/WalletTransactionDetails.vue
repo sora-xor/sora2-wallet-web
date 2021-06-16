@@ -12,16 +12,17 @@
           @click="handleCopy(selectedTransaction.blockId, t('transaction.blockId'))"
         />
         <s-dropdown
-          class="s-dropdown--menu"
+          class="s-dropdown-menu"
           borderRadius="mini"
           type="ellipsis"
           icon="basic-more-vertical-24"
           placement="bottom-end"
-          @select="handleOpenPolkascan"
         >
           <template slot="menu">
-            <s-dropdown-item disabled>
-              <span>{{ t('transaction.viewInPolkascan') }}</span>
+            <s-dropdown-item class="s-dropdown-menu__item">
+              <a class="transaction-link" :href="getBlockExplorerLink('block', selectedTransaction.blockId)" target="_blank" rel="nofollow noopener">
+                {{ t('transaction.viewInPolkascan') }}
+              </a>
             </s-dropdown-item>
           </template>
         </s-dropdown>
@@ -73,16 +74,17 @@
           @click="handleCopy(selectedTransaction.from, t('transaction.from'))"
         />
         <s-dropdown
-          class="s-dropdown--menu"
+          class="s-dropdown-menu"
           borderRadius="mini"
           type="ellipsis"
           icon="basic-more-vertical-24"
           placement="bottom-end"
-          @select="handleOpenPolkascan"
         >
           <template slot="menu">
-            <s-dropdown-item disabled>
-              <span>{{ t('transaction.viewInPolkascan') }}</span>
+            <s-dropdown-item class="s-dropdown-menu__item">
+              <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.from)" target="_blank" rel="nofollow noopener">
+                {{ t('transaction.viewInPolkascan') }}
+              </a>
             </s-dropdown-item>
           </template>
         </s-dropdown>
@@ -98,16 +100,17 @@
           @click="handleCopy(selectedTransaction.to, t('transaction.to'))"
         />
         <s-dropdown
-          class="s-dropdown--menu"
+          class="s-dropdown-menu"
           borderRadius="mini"
           type="ellipsis"
           icon="basic-more-vertical-24"
           placement="bottom-end"
-          @select="handleOpenPolkascan"
         >
           <template slot="menu">
-            <s-dropdown-item disabled>
-              <span>{{ t('transaction.viewInPolkascan') }}</span>
+            <s-dropdown-item class="s-dropdown-menu__item">
+              <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.to)" target="_blank" rel="nofollow noopener">
+                {{ t('transaction.viewInPolkascan') }}
+              </a>
             </s-dropdown-item>
           </template>
         </s-dropdown>
@@ -126,7 +129,9 @@ import CopyAddressMixin from './mixins/CopyAddressMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames, WalletTabs } from '../consts'
-import { formatDate, formatAddress, getStatusIcon, getStatusClass, copyToClipboard } from '../util'
+import { formatDate, formatAddress, getStatusIcon, getStatusClass, copyToClipboard, getExplorerLink } from '../util'
+
+import { externalStore } from '../index'
 
 @Component({
   components: { WalletBase }
@@ -217,8 +222,10 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
     return this.t('transaction.copy', { value: this.t(value) })
   }
 
-  handleOpenPolkascan (): void {
-    // TODO: Add work with Polkascan
+  getBlockExplorerLink (key: string, value: string): string {
+    // TODO: move soraNetwork to the wallet
+    const networkType = externalStore.getters.soraNetwork
+    return `${getExplorerLink()}/${key}/${value}`
   }
 
   async handleCopy (address: string, value: string): Promise<void> {
@@ -249,6 +256,16 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
     }
   }
 }
+// TODO: fix UI library
+$dropdown-padding: 16px;
+.s-dropdown-menu__item {
+  border-radius: calc(var(--s-border-radius-mini) / 2);
+  display: inline-block;
+  margin-left: -#{$dropdown-padding};
+  margin-right: -#{$dropdown-padding};
+  padding-left: $dropdown-padding;
+  padding-right: $dropdown-padding;
+}
 </style>
 
 <style scoped lang="scss">
@@ -277,6 +294,10 @@ $dropdown-width: var(--s-size-mini);
       margin-left: var(--s-basic-spacing);
     }
   }
+  &-link {
+    color: inherit;
+    text-decoration: none;
+  }
   .s-input-container {
     position: relative;
     margin-bottom: calc(var(--s-basic-spacing) * 1.5);
@@ -294,7 +315,7 @@ $dropdown-width: var(--s-size-mini);
       border-color: transparent;
     }
   }
-  .s-dropdown--menu {
+  .s-dropdown-menu {
     position: absolute;
     z-index: 1;
     top: 0;
