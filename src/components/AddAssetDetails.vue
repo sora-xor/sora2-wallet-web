@@ -159,7 +159,7 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
 @import '../styles/icons';
 
 .add-asset-details {
-  & > * {
+  & > *:not(:last-child) {
     margin-bottom: calc(var(--s-basic-spacing) * 2);
   }
 
@@ -204,6 +204,8 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
   }
   &_confirm {
     @include switch-block;
+    padding-top: 0;
+    padding-bottom: 0;
   }
   &_action {
     width: 100%;
