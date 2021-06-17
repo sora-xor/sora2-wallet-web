@@ -1,8 +1,10 @@
 import moment from 'moment'
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
+import { FPNumber, KnownAssets, RewardInfo, RewardsInfo } from '@sora-substrate/util'
 
 import { api } from '../api'
 import store from '../store'
+import { RewardsAmountHeaderItem } from '../types/rewards'
 
 export const APP_NAME = 'Sora2 Wallet'
 
@@ -114,4 +116,29 @@ export const toHashTable = (list: Array<any>, key: string) => {
 
     return { ...result, [item[key]]: item }
   }, {})
+}
+
+export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo>): Array<RewardsAmountHeaderItem> => {
+  const rewardsHash = rewards.reduce((result, item) => {
+    const isRewardsInfo = 'rewards' in item
+    const { address, decimals } = isRewardsInfo ? (item as RewardsInfo).rewards[0].asset : (item as RewardInfo).asset
+    const amount = isRewardsInfo ? (item as RewardsInfo).limit : (item as RewardInfo).amount
+    const current = result[address] || new FPNumber(0, decimals)
+    const addValue = FPNumber.fromCodecValue(amount, decimals)
+    result[address] = current.add(addValue)
+    return result
+  }, {})
+
+  return Object.entries(rewardsHash).reduce((total: Array<RewardsAmountHeaderItem>, [address, amount]) => {
+    if ((amount as FPNumber).isZero()) return total
+
+    const item = {
+      symbol: KnownAssets.get(address).symbol,
+      amount: (amount as FPNumber).toLocaleString()
+    } as RewardsAmountHeaderItem
+
+    total.push(item)
+
+    return total
+  }, [])
 }
