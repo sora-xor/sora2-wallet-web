@@ -1,10 +1,10 @@
 import { Component, Mixins } from 'vue-property-decorator'
-import { History, TransactionStatus, Operation, RewardInfo } from '@sora-substrate/util'
+import { History, TransactionStatus, Operation } from '@sora-substrate/util'
 import findLast from 'lodash/fp/findLast'
 import { Action } from 'vuex-class'
 
 import { api } from '../../api'
-import { delay, formatAddress } from '../../util'
+import { delay, formatAddress, groupRewardsByAssetsList } from '../../util'
 import TranslationMixin from './TranslationMixin'
 import LoadingMixin from './LoadingMixin'
 import NumberFormatterMixin from './NumberFormatterMixin'
@@ -33,16 +33,9 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       params.amount2 = params.amount2 ? this.formatStringValue(params.amount2) : ''
     }
     if (value.type === Operation.ClaimRewards) {
-      params.rewards = params.rewards.reduce((result, item: RewardInfo) => {
-        if (+item.amount === 0) return result
-
-        const amount = this.getStringFromCodec(item.amount, item.asset.decimals)
-        const itemString = `${amount} ${item.asset.symbol}`
-
-        result.push(itemString)
-
-        return result
-      }, []).join(` ${this.t('operations.andText')} `)
+      params.rewards = groupRewardsByAssetsList(params.rewards)
+        .map(({ amount, symbol }) => `${amount} ${symbol}`)
+        .join(` ${this.t('operations.andText')} `)
     }
     if (value.status === 'invalid') {
       value.status = TransactionStatus.Error
