@@ -21,7 +21,7 @@
           <template slot="menu">
             <s-dropdown-item class="s-dropdown-menu__item">
               <a class="transaction-link" :href="getBlockExplorerLink('block', selectedTransaction.blockId)" target="_blank" rel="nofollow noopener">
-                {{ t('transaction.viewInPolkascan') }}
+                {{ t('transaction.viewInSorascan') }}
               </a>
             </s-dropdown-item>
           </template>
@@ -83,7 +83,7 @@
           <template slot="menu">
             <s-dropdown-item class="s-dropdown-menu__item">
               <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.from)" target="_blank" rel="nofollow noopener">
-                {{ t('transaction.viewInPolkascan') }}
+                {{ t('transaction.viewInSorascan') }}
               </a>
             </s-dropdown-item>
           </template>
@@ -109,7 +109,7 @@
           <template slot="menu">
             <s-dropdown-item class="s-dropdown-menu__item">
               <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.to)" target="_blank" rel="nofollow noopener">
-                {{ t('transaction.viewInPolkascan') }}
+                {{ t('transaction.viewInSorascan') }}
               </a>
             </s-dropdown-item>
           </template>
