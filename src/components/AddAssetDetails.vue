@@ -79,7 +79,7 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     if (!this.asset) {
       return false
     }
-    return isBlacklistAsset(this.asset, this.whitelist)
+    return isBlacklistAsset(this.asset, this.whitelistIdsBySymbol)
   }
 
   get assetCardStatus (): string {
