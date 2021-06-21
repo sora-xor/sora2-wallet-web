@@ -219,7 +219,6 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     font-size: var(--s-font-size-extra-small);
     line-height: var(--s-line-height-base);
     padding: var(--s-basic-spacing) calc(var(--s-basic-spacing) * 1.5) calc(var(--s-basic-spacing) * 2);
-    font-feature-settings: var(--s-font-feature-settings-common);
   }
   &_supply-block {
     @include switch-block;
@@ -237,7 +236,6 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     font-weight: normal;
     padding: var(--s-basic-spacing) 0;
     line-height: var(--s-line-height-big);
-    font-feature-settings: var(--s-font-feature-settings-common);
   }
   &_fee-block {
     display: flex;
