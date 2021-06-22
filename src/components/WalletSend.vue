@@ -234,7 +234,6 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 .wallet-send-input .el-input__inner {
   font-size: 20px;
   line-height: var(--s-line-height-small);
-  font-feature-settings: var(--s-font-feature-settings-input);
 }
 </style>
 
@@ -253,7 +252,6 @@ $logo-size: var(--s-size-mini);
       }
       &-value {
         margin-left: calc(var(--s-basic-spacing) / 2);
-        font-feature-settings: var(--s-font-feature-settings-common);
         letter-spacing: var(--s-letter-spacing-big);
       }
     }
@@ -272,7 +270,6 @@ $logo-size: var(--s-size-mini);
       padding: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);
     }
     &-max, &-name {
-      font-feature-settings: var(--s-font-feature-settings-heading);
       font-weight: 700;
     }
   }
@@ -307,7 +304,6 @@ $logo-size: var(--s-size-mini);
     color: var(--s-color-base-content-secondary);
     &_value {
       margin-left: auto;
-      font-feature-settings: var(--s-font-feature-settings-common);
     }
   }
   &-action {
