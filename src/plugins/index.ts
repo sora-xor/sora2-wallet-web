@@ -1,4 +1,3 @@
-import './lottie'
 import { install as installSoramitsuUI } from './soramitsuUI'
 import { install as installMaska } from './maska'
 
