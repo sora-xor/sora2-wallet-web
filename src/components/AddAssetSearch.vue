@@ -180,7 +180,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
         flex-direction: column;
         line-height: var(--s-line-height-big);
         &_symbol {
-          font-feature-settings: var(--s-font-feature-settings-common);
           font-weight: 600;
         }
         &_info {

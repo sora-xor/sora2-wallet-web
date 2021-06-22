@@ -180,7 +180,6 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
         &_symbol {
           font-size: var(--s-font-size-big);
           line-height: var(--s-line-height-small);
-          font-feature-settings: var(--s-font-feature-settings-common);
           font-weight: 600;
         }
         &_info {
