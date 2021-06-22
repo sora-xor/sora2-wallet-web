@@ -27,7 +27,6 @@
       #{$tabs-class} {
         &__header {
           #{$tabs-class}__item {
-            font-feature-settings: var(--s-font-feature-settings-heading);
             font-weight: 600;
           }
         }

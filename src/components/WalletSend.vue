@@ -8,7 +8,6 @@
           :placeholder="t('walletSend.address')"
           border-radius="mini"
           v-model="address"
-          @change="calcFee"
         />
         <s-float-input
           v-model="amount"
@@ -16,8 +15,6 @@
           size="medium"
           has-locale-string
           :delimiters="delimiters"
-          @change="calcFee"
-          @blur="formatAmount"
         >
           <div class="wallet-send-amount" slot="top">
             <div class="wallet-send-amount-title">{{ t('walletSend.amount') }}</div>
@@ -81,7 +78,7 @@ import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substra
 import TransactionMixin from './mixins/TransactionMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames } from '../consts'
-import { delay, getAssetIconStyles } from '../util'
+import { getAssetIconStyles } from '../util'
 import { api } from '../api'
 
 @Component({
@@ -103,8 +100,9 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   address = ''
   amount = ''
   fee = this.getFPNumber(0)
+  feeLoading = false
 
-  async mounted (): Promise<void> {
+  async created (): Promise<void> {
     await this.calcFee()
   }
 
@@ -160,7 +158,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   }
 
   get sendButtonDisabled (): boolean {
-    return this.loading || !this.validAddress || !this.validAmount || !this.hasEnoughXor
+    return this.loading || this.feeLoading || !this.validAddress || !this.validAmount || !this.hasEnoughXor
   }
 
   get sendButtonDisabledText (): string {
@@ -187,25 +185,8 @@ export default class WalletSend extends Mixins(TransactionMixin) {
     return knownAsset.symbol === KnownSymbols.XOR
   }
 
-  // We could use this method to check if the user enters a text value in a numeric field (we could do this by copy and paste)
-  isNumberValue (value: any): boolean {
-    const numberValue = +value
-    return typeof numberValue === 'number' && !isNaN(numberValue)
-  }
-
-  resetAmount (): void {
-    this.amount = ''
-  }
-
   async calcFee (): Promise<void> {
-    if (this.amount.indexOf('.') === 0) {
-      this.amount = '0' + this.amount
-    }
-    if (!this.isNumberValue(this.amount)) {
-      await delay()
-      this.resetAmount()
-      return
-    }
+    this.feeLoading = true
     this.fee = this.getFPNumberFromCodec(
       await api.getTransferNetworkFee(
         this.asset.address,
@@ -213,21 +194,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
         this.validAmount ? this.amount : 0
       )
     )
-  }
-
-  formatAmount (): void {
-    if (+this.amount === 0) {
-      this.resetAmount()
-      return
-    }
-    // Trim zeros in the beginning
-    if (this.amount.indexOf('0') === 0 && this.amount.indexOf('.') !== 1) {
-      this.amount = this.amount.replace(/^0+/, '')
-    }
-    // Trim dot in the end
-    if (this.amount.indexOf('.') === this.amount.length - 1) {
-      this.amount = this.amount.substring(0, this.amount.length - 1)
-    }
+    this.feeLoading = false
   }
 
   getAssetIconStyles = getAssetIconStyles
@@ -242,7 +209,6 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 
   async handleMaxClick (): Promise<void> {
     if (this.isXorAccountAsset(this.asset)) {
-      await this.calcFee()
       const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, this.asset.decimals)
       this.amount = balance.sub(this.fee).toString()
       return
@@ -268,7 +234,6 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 .wallet-send-input .el-input__inner {
   font-size: 20px;
   line-height: var(--s-line-height-small);
-  font-feature-settings: var(--s-font-feature-settings-input);
 }
 </style>
 
@@ -287,7 +252,6 @@ $logo-size: var(--s-size-mini);
       }
       &-value {
         margin-left: calc(var(--s-basic-spacing) / 2);
-        font-feature-settings: var(--s-font-feature-settings-common);
         letter-spacing: var(--s-letter-spacing-big);
       }
     }
@@ -306,7 +270,6 @@ $logo-size: var(--s-size-mini);
       padding: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);
     }
     &-max, &-name {
-      font-feature-settings: var(--s-font-feature-settings-heading);
       font-weight: 700;
     }
   }
@@ -341,7 +304,6 @@ $logo-size: var(--s-size-mini);
     color: var(--s-color-base-content-secondary);
     &_value {
       margin-left: auto;
-      font-feature-settings: var(--s-font-feature-settings-common);
     }
   }
   &-action {
