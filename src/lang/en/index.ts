@@ -192,6 +192,7 @@ export default {
   transaction: {
     title: 'Transaction details',
     blockId: 'Block Id',
+    txId: 'Transaction Id',
     status: 'Status',
     statuses: {
       pending: 'Pending...',
