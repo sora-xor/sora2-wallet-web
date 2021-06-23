@@ -1,15 +1,15 @@
 <template>
   <wallet-base :title="t(!selectedTransaction ? 'transaction.title' : `operations.${selectedTransaction.type}`)" show-back @back="handleBack">
     <div class="transaction" v-if="selectedTransaction">
-      <div v-if="selectedTransaction.blockId" class="s-input-container">
-        <s-input :placeholder="t('transaction.blockId')" :value="formatAddress(selectedTransaction.blockId)" readonly />
+      <div v-if="transactionId" class="s-input-container">
+        <s-input :placeholder="t(transactionIdKey)" :value="formatAddress(transactionId)" readonly />
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="copyTooltip('transaction.blockId')"
+          :tooltip="copyTooltip(transactionIdKey)"
           type="action"
           alternative
-          @click="handleCopy(selectedTransaction.blockId, t('transaction.blockId'))"
+          @click="handleCopy(transactionId, t(transactionIdKey))"
         />
         <s-dropdown
           class="s-dropdown-menu"
@@ -20,7 +20,7 @@
         >
           <template slot="menu">
             <s-dropdown-item class="s-dropdown-menu__item">
-              <a class="transaction-link" :href="getBlockExplorerLink('block', selectedTransaction.blockId)" target="_blank" rel="nofollow noopener">
+              <a class="transaction-link" :href="getBlockExplorerLink(transactionIdExplorerCode, transactionId)" target="_blank" rel="nofollow noopener">
                 {{ t('transaction.viewInSorascan') }}
               </a>
             </s-dropdown-item>
@@ -188,6 +188,18 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
       return this.t('transaction.statuses.complete')
     }
     return this.t('transaction.statuses.pending')
+  }
+
+  get transactionIdKey (): string {
+    return `transaction.${this.selectedTransaction.txId ? 'txId' : 'blockId'}`
+  }
+
+  get transactionId (): string {
+    return this.selectedTransaction.txId || this.selectedTransaction.blockId
+  }
+
+  get transactionIdExplorerCode (): string {
+    return this.selectedTransaction.txId ? 'transaction' : 'block'
   }
 
   get formattedAmount (): string {
