@@ -1,6 +1,6 @@
 <template>
   <wallet-base :title="t('connection.title')">
-    <div class="wallet-connection" v-loading="isAccountLoading">
+    <div class="wallet-connection" v-loading="isAccountLoading || (isAccountSwitch && loading)">
       <template v-if="step === Step.First">
         <p v-if="loading" class="wallet-connection-text">{{ t('connection.loadingTitle') }}</p>
         <template v-else>
@@ -83,14 +83,18 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   @Action getPolkadotJsAccounts
   @Action importPolkadotJs
 
+  get isAccountSwitch (): boolean {
+    return (this.currentRouteParams || {}).isAccountSwitch
+  }
+
   async created (): Promise<void> {
     await this.withLoading(async () => {
       this.isExtensionAvailable = await this.checkExtension()
+      if (this.isAccountSwitch) {
+        this.step = Step.Second
+        this.polkadotJsAccounts = await this.getPolkadotJsAccounts()
+      }
     })
-    if ((this.currentRouteParams || {}).isAccountSwitch) {
-      this.step = Step.Second
-      this.polkadotJsAccounts = await this.getPolkadotJsAccounts()
-    }
   }
 
   get actionButtonText (): string {
@@ -109,8 +113,10 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
         window.open('https://polkadot.js.org/extension/', '_blank')
         return
       }
-      this.step = Step.Second
-      this.polkadotJsAccounts = await this.getPolkadotJsAccounts()
+      await this.withLoading(async () => {
+        this.polkadotJsAccounts = await this.getPolkadotJsAccounts()
+        this.step = Step.Second
+      })
     } else if (!this.polkadotJsAccounts.length) {
       window.history.go()
     }
@@ -143,6 +149,9 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
 <style scoped lang="scss">
 .wallet-connection {
+  // Margin and padding are set for the loader
+  margin: calc(var(--s-basic-spacing) * -1);
+  padding: var(--s-basic-spacing);
   &-text {
     font-size: var(--s-font-size-extra-small);
     line-height: var(--s-line-height-base);
