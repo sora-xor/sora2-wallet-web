@@ -19,11 +19,11 @@
           placement="bottom-end"
         >
           <template slot="menu">
-            <s-dropdown-item class="s-dropdown-menu__item">
-              <a class="transaction-link" :href="getBlockExplorerLink(transactionIdExplorerCode, transactionId)" target="_blank" rel="nofollow noopener">
+            <a class="transaction-link" :href="getBlockExplorerLink(transactionIdExplorerCode, transactionId)" target="_blank" rel="nofollow noopener">
+              <s-dropdown-item class="s-dropdown-menu__item">
                 {{ t('transaction.viewInSorascan') }}
-              </a>
-            </s-dropdown-item>
+              </s-dropdown-item>
+            </a>
           </template>
         </s-dropdown>
       </div>
@@ -81,11 +81,11 @@
           placement="bottom-end"
         >
           <template slot="menu">
-            <s-dropdown-item class="s-dropdown-menu__item">
-              <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.from)" target="_blank" rel="nofollow noopener">
+            <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.from)" target="_blank" rel="nofollow noopener">
+              <s-dropdown-item class="s-dropdown-menu__item">
                 {{ t('transaction.viewInSorascan') }}
-              </a>
-            </s-dropdown-item>
+              </s-dropdown-item>
+            </a>
           </template>
         </s-dropdown>
       </div>
@@ -107,11 +107,11 @@
           placement="bottom-end"
         >
           <template slot="menu">
-            <s-dropdown-item class="s-dropdown-menu__item">
-              <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.to)" target="_blank" rel="nofollow noopener">
+            <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.to)" target="_blank" rel="nofollow noopener">
+              <s-dropdown-item class="s-dropdown-menu__item">
                 {{ t('transaction.viewInSorascan') }}
-              </a>
-            </s-dropdown-item>
+              </s-dropdown-item>
+            </a>
           </template>
         </s-dropdown>
       </div>
