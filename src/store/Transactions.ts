@@ -67,8 +67,11 @@ const mutations = {
     if (!api.history.length) {
       return
     }
-    const activeTransactions = api.history.filter(tx => state.activeTransactions.find(t => t.id === tx.id))
-    state.activeTransactions = activeTransactions
+    const history = api.history
+
+    state.activeTransactions = state.activeTransactions.map(tx => {
+      return history.find(item => item.id === tx.id) || tx
+    })
   }
 }
 
