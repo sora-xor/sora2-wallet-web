@@ -3,10 +3,10 @@ import flatMap from 'lodash/fp/flatMap'
 import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
-import { AccountAsset } from '@sora-substrate/util'
-import { isWhitelistAsset } from 'polkaswap-token-whitelist'
+import omit from 'lodash/fp/omit'
+import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist } from '@sora-substrate/util'
 
-import { api } from '../api'
+import { api, axios } from '../api'
 import { storage } from '../util/storage'
 import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util'
 
@@ -36,7 +36,8 @@ const types = flow(
   'TRANSFER',
   'POLKADOT_JS_IMPORT',
   'GET_SIGNER',
-  'GET_POLKADOT_JS_ACCOUNTS'
+  'GET_POLKADOT_JS_ACCOUNTS',
+  'GET_WHITELIST'
 ])
 
 function initialState () {
@@ -50,6 +51,7 @@ function initialState () {
     selectedTransactionId: null,
     activity: [], // account history (without bridge)
     assets: [],
+    whitelistArray: [],
     assetsLoading: false
   }
 }
@@ -88,6 +90,15 @@ const getters = {
   assets (state) {
     return state.assets
   },
+  whitelistArray (state): Array<WhitelistArrayItem> {
+    return state.whitelistArray
+  },
+  whitelist (state): Whitelist {
+    return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistAssets(state.whitelistArray) : {}
+  },
+  whitelistIdsBySymbol (state) {
+    return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistIdsBySymbol(state.whitelistArray) : {}
+  },
   assetsLoading (state) {
     return state.assetsLoading
   },
@@ -98,7 +109,7 @@ const getters = {
 
 const mutations = {
   [types.RESET] (state) {
-    const s = initialState()
+    const s = omit(['whitelistArray', 'assets'], initialState())
     Object.keys(s).forEach(key => {
       state[key] = s[key]
     })
@@ -185,6 +196,18 @@ const mutations = {
     state.assetsLoading = false
   },
 
+  [types.GET_WHITELIST_REQUEST] (state) {
+    state.whitelistArray = []
+  },
+
+  [types.GET_WHITELIST_SUCCESS] (state, whitelist: Array<WhitelistArrayItem>) {
+    state.whitelistArray = whitelist
+  },
+
+  [types.GET_WHITELIST_FAILURE] (state) {
+    state.whitelistArray = []
+  },
+
   [types.SEARCH_ASSET_REQUEST] (state) {},
 
   [types.SEARCH_ASSET_SUCCESS] (state) {},
@@ -221,9 +244,9 @@ const mutations = {
     state.name = newName
   },
 
-  [types.POLKADOT_JS_IMPORT_SUCCESS] (state, account) {
-    state.address = account.address
-    state.name = account.name
+  [types.POLKADOT_JS_IMPORT_SUCCESS] (state, name) {
+    state.address = api.address
+    state.name = name
     state.isExternal = true
   },
 
@@ -235,6 +258,9 @@ const mutations = {
 }
 
 const actions = {
+  formatAddress ({ commit }, address) {
+    return api.formatAddress(address)
+  },
   async checkExtension ({ commit }) {
     try {
       await getExtension()
@@ -243,11 +269,22 @@ const actions = {
       return false
     }
   },
+  async checkSigner ({ dispatch, getters }) {
+    if (getters.isExternal) {
+      try {
+        await dispatch('getSigner')
+      } catch (error) {
+        console.error(error)
+        dispatch('logout')
+      }
+    }
+  },
   async getSigner ({ commit, state: { address } }) {
     commit(types.GET_SIGNER_REQUEST)
     try {
       await getExtension()
-      const signer = await getExtensionSigner(address)
+      const defaultAddress = api.formatAddress(address, false)
+      const signer = await getExtensionSigner(defaultAddress)
       api.setSigner(signer)
       commit(types.GET_SIGNER_SUCCESS)
     } catch (error) {
@@ -277,7 +314,7 @@ const actions = {
       }
       api.importByPolkadotJs(account.address, account.name)
       api.setSigner(info.signer)
-      commit(types.POLKADOT_JS_IMPORT_SUCCESS, account)
+      commit(types.POLKADOT_JS_IMPORT_SUCCESS, account.name)
       if (!updateAccountAssetsSubscription) {
         await dispatch('getAccountAssets')
         await dispatch('updateAccountAssets')
@@ -327,19 +364,28 @@ const actions = {
   getAccountActivity ({ commit }) {
     commit(types.GET_ACCOUNT_ACTIVITY, api.accountHistory)
   },
-  async getAssets ({ commit }) {
+  async getWhitelist ({ commit }) {
+    commit(types.GET_WHITELIST_REQUEST)
+    try {
+      const { data } = await axios.get('/whitelist.json')
+      commit(types.GET_WHITELIST_SUCCESS, data)
+    } catch (error) {
+      commit(types.GET_WHITELIST_FAILURE)
+    }
+  },
+  async getAssets ({ commit, getters: { whitelist } }) {
     commit(types.GET_ASSETS_REQUEST)
     try {
-      const assets = await api.getAssets()
+      const assets = await api.getAssets(whitelist)
       commit(types.GET_ASSETS_SUCCESS, assets)
     } catch (error) {
       commit(types.GET_ASSETS_FAILURE)
     }
   },
-  async searchAsset ({ commit }, { address }) {
+  async searchAsset ({ commit, getters: { whitelist } }, { address }) {
     commit(types.SEARCH_ASSET_REQUEST)
     try {
-      const assets = await api.getAssets()
+      const assets = await api.getAssets(whitelist)
       const asset = assets.find(asset => asset.address === address)
       commit(types.SEARCH_ASSET_SUCCESS)
       return asset
@@ -384,7 +430,7 @@ const actions = {
   },
   login ({ commit }, { name, password, seed }) {
     api.importAccount(seed, name, password)
-    commit(types.LOGIN, { name, password, address: api.accountPair.address })
+    commit(types.LOGIN, { name, password, address: api.address })
   },
   changeName ({ commit, state: { name } }, { newName }) {
     const value = `${newName}`.trim()

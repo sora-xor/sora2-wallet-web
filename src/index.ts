@@ -13,7 +13,7 @@ import internalStore, { modules } from './store' // `internalStore` is required 
 import { updateAccountAssetsSubscription } from './store/Account'
 import { storage } from './util/storage'
 import { api, connection } from './api'
-import { delay } from './util'
+import { delay, getExplorerLink } from './util'
 import * as WALLET_CONSTS from './consts'
 
 let store: Store<unknown>
@@ -74,13 +74,12 @@ async function initWallet ({
       await connection.open()
       console.info('Connected to blockchain', connection.endpoint)
     }
-    api.initialize()
-    if (store.getters.isExternal) {
-      await store.dispatch('getSigner')
-    }
     if (permissions) {
       store.dispatch('setPermissions', permissions)
     }
+    api.initialize()
+    await store.dispatch('getWhitelist')
+    await store.dispatch('checkSigner')
     await store.dispatch('syncWithStorage')
     await store.dispatch('getAccountAssets')
     await store.dispatch('updateAccountAssets')
@@ -96,9 +95,11 @@ export {
   api,
   connection,
   storage,
+  getExplorerLink,
   updateAccountAssetsSubscription,
   SoraNeoWallet,
   WALLET_CONSTS,
-  WalletAvatar
+  WalletAvatar,
+  store as externalStore // only for soraNetwork getter in wallet
 }
 export default SoraNeoWalletElements

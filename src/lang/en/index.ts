@@ -192,6 +192,7 @@ export default {
   transaction: {
     title: 'Transaction details',
     blockId: 'Block Id',
+    txId: 'Transaction Id',
     status: 'Status',
     statuses: {
       pending: 'Pending...',
@@ -206,7 +207,7 @@ export default {
     total: 'Total',
     from: 'From',
     to: 'To',
-    viewInPolkascan: 'View in Polkascan',
+    viewInSorascan: 'View in SORAScan',
     successCopy: '{value} is copied to the clipboard',
     copy: 'Copy {value}',
     history: {

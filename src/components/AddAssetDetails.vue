@@ -1,27 +1,31 @@
 <template>
   <wallet-base :title="t('addAsset.title')" show-back @back="handleBack">
     <div class="add-asset-details">
-      <div class="add-asset-details_asset" v-if="asset">
-        <i class="asset-logo" :style="assetIconStyles" />
-        <div class="asset-description s-flex">
-          <div class="asset-description_symbol">{{ asset.symbol }}</div>
-          <div class="asset-description_info">{{ formattedName }}
-            <s-tooltip :content="t('assets.copy')">
-              <span class="asset-id" @click="handleCopy($event)">({{ formattedAddress }})</span>
-            </s-tooltip>
+      <s-card shadow="always" size="small" border-radius="mini">
+        <div class="add-asset-details_asset" v-if="asset">
+          <i class="asset-logo" :style="assetIconStyles" />
+          <div class="asset-description s-flex">
+            <div class="asset-description_symbol">{{ asset.symbol }}</div>
+            <div class="asset-description_info">{{ formattedName }}
+              <s-tooltip :content="t('assets.copy')">
+                <span class="asset-id" @click="handleCopy($event)">({{ formattedAddress }})</span>
+              </s-tooltip>
+            </div>
+            <s-card size="mini" :status="assetCardStatus">
+              <div class="asset-nature">{{ assetNatureText }}</div>
+            </s-card>
           </div>
-          <div class="asset-nature" :style="assetNatureStyles">{{ assetNatureText }}</div>
         </div>
-      </div>
-      <div class="add-asset-details_text">
-        <span class="p2">{{ t('addAsset.warningTitle') }}</span>
-        <span class="warning-text p4">{{ t('addAsset.warningMessage') }}</span>
-      </div>
+      </s-card>
+      <s-card status="warning" shadow="always" pressed class="add-asset-details_text">
+        <div class="p2">{{ t('addAsset.warningTitle') }}</div>
+        <div class="warning-text p4">{{ t('addAsset.warningMessage') }}</div>
+      </s-card>
       <div class="add-asset-details_confirm">
-        <span>{{ t('addAsset.understand') }}</span>
         <s-switch v-model="isConfirmed" :disabled="loading" />
+        <span>{{ t('addAsset.understand') }}</span>
       </div>
-      <s-button class="add-asset-details_action" type="primary" :disabled="!asset || !isConfirmed || loading" @click="handleAddAsset">
+      <s-button class="add-asset-details_action s-typography-button--large" type="primary" :disabled="!asset || !isConfirmed || loading" @click="handleAddAsset">
         {{ t('addAsset.action') }}
       </s-button>
     </div>
@@ -31,8 +35,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { Asset } from '@sora-substrate/util'
-import { isWhitelistAsset, isBlacklistAsset } from 'polkaswap-token-whitelist'
+import { Asset, isWhitelistAsset, isBlacklistAsset, Whitelist } from '@sora-substrate/util'
 
 import LoadingMixin from './mixins/LoadingMixin'
 import TranslationMixin from './mixins/TranslationMixin'
@@ -50,6 +53,8 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
   isConfirmed = false
 
   @Getter currentRouteParams!: any
+  @Getter whitelist!: Whitelist
+  @Getter whitelistIdsBySymbol!: any
 
   @Action back!: () => Promise<void>
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
@@ -67,24 +72,18 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     if (!this.asset) {
       return false
     }
-    return isWhitelistAsset(this.asset)
+    return isWhitelistAsset(this.asset, this.whitelist)
   }
 
   get isBlacklist (): boolean {
     if (!this.asset) {
       return false
     }
-    return isBlacklistAsset(this.asset)
+    return isBlacklistAsset(this.asset, this.whitelistIdsBySymbol)
   }
 
-  get assetNatureStyles (): object {
-    const styles = {}
-    if (!this.asset) {
-      return styles
-    }
-    return {
-      color: `var(--s-color-status-${this.isWhitelist ? 'success' : 'error'})`
-    }
+  get assetCardStatus (): string {
+    return this.isWhitelist ? 'success' : 'error'
   }
 
   get assetNatureText (): string {
@@ -160,24 +159,27 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
 @import '../styles/icons';
 
 .add-asset-details {
+  & > *:not(:last-child) {
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
+  }
+
   &_asset {
     display: flex;
     align-items: center;
-    background: var(--s-color-base-background);
-    padding: $basic-spacing_small $basic-spacing;
-    margin-bottom: $basic-spacing;
-    border-radius: var(--s-border-radius-small);
+
     .asset {
       &-logo {
-        margin-right: $basic-spacing;
+        margin-right: calc(var(--s-basic-spacing) * 2);
         @include asset-logo-styles(40px);
       }
       &-description {
         flex: 1;
         flex-direction: column;
-        line-height: var(--s-line-height-big);
+        align-items: flex-start;
+
         &_symbol {
-          font-feature-settings: var(--s-font-feature-settings-common);
+          font-size: var(--s-font-size-big);
+          line-height: var(--s-line-height-small);
           font-weight: 600;
         }
         &_info {
@@ -192,29 +194,17 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
         }
       }
       &-nature {
-        font-size: $font-size_small;
+        font-size: var(--s-font-size-mini);
+        font-weight: 300;
+        letter-spacing: var(--s-letter-spacing-small);
+        line-height: var(--s-line-height-medium);
       }
     }
   }
-  &_text {
-    display: flex;
-    flex-direction: column;
-    padding: $basic-spacing;
-    margin-bottom: $basic-spacing;
-    border: 1px solid var(--s-color-base-border-secondary);
-    border-radius: var(--s-border-radius-small);
-    .warning-text {
-      color: var(-s-color-base-content-secondary);
-    }
-  }
   &_confirm {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--s-color-base-background);
-    padding: $basic-spacing_small $basic-spacing;
-    border-radius: var(--s-border-radius-mini);
-    margin-bottom: $basic-spacing;
+    @include switch-block;
+    padding-top: 0;
+    padding-bottom: 0;
   }
   &_action {
     width: 100%;

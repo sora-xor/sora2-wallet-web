@@ -3,37 +3,42 @@
     <div class="wallet-settings-create-token">
       <template v-if="step === Step.Create">
         <s-input
-          :placeholder="t(`createToken.tokenSymbol.placeholder`)"
+          class="s-typography-input-field"
+          :placeholder="t('createToken.tokenSymbol.placeholder')"
           :minlength="1"
           :maxlength="7"
           :disabled="loading"
           v-maska="tokenSymbolMask"
           v-model="tokenSymbol"
         />
-        <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenSymbol.desc`) }}</p>
+        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSymbol.desc') }}</p>
         <s-input
-          :placeholder="t(`createToken.tokenName.placeholder`)"
+          class="s-typography-input-field"
+          :placeholder="t('createToken.tokenName.placeholder')"
           :minlength="1"
           :maxlength="33"
           :disabled="loading"
           v-maska="tokenNameMask"
           v-model="tokenName"
         />
-        <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenName.desc`) }}</p>
+        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
         <s-float-input
-          :placeholder="t(`createToken.tokenSupply.placeholder`)"
+          class="s-typography-input-field"
           v-model="tokenSupply"
+          :placeholder="t('createToken.tokenSupply.placeholder')"
           :decimals="decimals"
+          has-locale-string
+          :delimiters="delimiters"
           :max="maxTotalSupply"
           :disabled="loading"
         />
-        <p class="wallet-settings-create-token_desc">{{ t(`createToken.tokenSupply.desc`) }}</p>
+        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSupply.desc') }}</p>
         <div class="wallet-settings-create-token_supply-block">
-          <span>{{ t(`createToken.extensibleSupply.placeholder`) }}</span>
           <s-switch v-model="extensibleSupply" :disabled="loading" />
+          <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
         </div>
         <s-button
-          class="wallet-settings-create-token_action"
+          class="wallet-settings-create-token_action s-typography-button--large"
           type="primary"
           :loading="loading"
           :disabled="!(tokenSymbol && tokenName.trim() && tokenSupply)"
@@ -73,7 +78,7 @@
           <span>{{ formattedFee }} {{ KnownSymbols.XOR }}</span>
         </div>
         <s-button
-          class="wallet-settings-create-token_action"
+          class="wallet-settings-create-token_action s-typography-button--large"
           type="primary"
           :disabled="!hasEnoughXor"
           :loading="loading"
@@ -111,6 +116,7 @@ export default class CreateToken extends Mixins(TransactionMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly Step = Step
   readonly decimals = FPNumber.DEFAULT_PRECISION
+  readonly delimiters = FPNumber.DELIMITERS_CONFIG
   readonly maxTotalSupply = MaxTotalSupply
   readonly tokenSymbolMask = 'AAAAAAA'
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } }
@@ -209,20 +215,14 @@ export default class CreateToken extends Mixins(TransactionMixin) {
 <style scoped lang="scss">
 .wallet-settings-create-token {
   &_desc {
-    color: var(--s-color-base-content-secondary);
-    font-size: $font-size_small;
-    padding: $basic-spacing_mini 0 $basic-spacing 0;
-    line-height: var(--s-line-height-big);
-    font-feature-settings: var(--s-font-feature-settings-common);
+    color: var(--s-color-base-content-primary);
+    font-size: var(--s-font-size-extra-small);
+    line-height: var(--s-line-height-base);
+    padding: var(--s-basic-spacing) calc(var(--s-basic-spacing) * 1.5) calc(var(--s-basic-spacing) * 2);
   }
   &_supply-block {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    background: var(--s-color-base-background);
-    padding: $basic-spacing_small $basic-spacing;
-    border-radius: $basic-spacing_mini;
-    margin-bottom: $basic-spacing;
+    @include switch-block;
+    padding-top: 0;
   }
   &_action {
     width: 100%;
@@ -232,11 +232,10 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     flex-direction: row;
     justify-content: space-between;
     color: var(--s-color-base-content-secondary);
-    font-size: $font-size_basic;
+    font-size: var(--s-font-size-small);
     font-weight: normal;
-    padding: $basic-spacing_mini 0;
+    padding: var(--s-basic-spacing) 0;
     line-height: var(--s-line-height-big);
-    font-feature-settings: var(--s-font-feature-settings-common);
   }
   &_fee-block {
     display: flex;
@@ -244,7 +243,7 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     align-items: center;
   }
   &_fee-block_title {
-    margin-left: $basic-spacing_mini;
+    margin-left: var(--s-basic-spacing);
     line-height: 1;
   }
   &_divider {

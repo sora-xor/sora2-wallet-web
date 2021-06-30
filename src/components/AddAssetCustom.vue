@@ -12,7 +12,7 @@
     <div v-if="address && !selectedAsset" class="asset-custom-empty">
       {{ t(`addAsset.${alreadyAttached ? 'alreadyAttached' : 'empty'}`) }}
     </div>
-    <s-button type="primary" :disabled="!(selectedAsset && address)" @click="navigateToAddAssetDetails">
+    <s-button type="primary" class="s-typography-button--large" :disabled="!(selectedAsset && address)" @click="navigateToAddAssetDetails">
       {{ t('addAsset.next') }}
     </s-button>
   </div>
@@ -75,7 +75,7 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
 <style scoped lang="scss">
 .asset-custom {
   > * {
-    margin-top: $basic-spacing;
+    margin-top: calc(var(--s-basic-spacing) * 2);
   }
   &-empty {
     @include hint-text;
