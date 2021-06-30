@@ -51,6 +51,10 @@ $s-border-radius-medium: $s-border-radius-base * 2 !default;
 $s-border-radius-big: $s-border-radius-base * 3 !default;
 // Transition
 $s-transition-default: all 0.125s ease-in-out;
+// Fonts paths
+$s-font-family-default-path: '~@soramitsu/soramitsu-js-ui/lib/assets/fonts/Sora-VariableFont_wght.ttf' !default;
+$s-font-family-mono-path: '~@soramitsu/soramitsu-js-ui/lib/assets/fonts/JetBrainsMono-Regular.woff' !default;
+$s-font-family-icons-path: '~@soramitsu/soramitsu-js-ui/lib/assets/fonts/soramitsu-icons-1.0.0.ttf' !default;
 
 :root {
   --s-color-brand-day: #{$s-color-brand-day};
