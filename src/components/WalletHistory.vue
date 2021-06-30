@@ -215,9 +215,6 @@ $history-item-top-border-height: 1px;
     &:hover {
       background-color: var(--s-color-base-background-hover);
       cursor: pointer;
-      &:before, & + .history-item::before {
-        width: 100%;
-      }
     }
     &-info {
       display: flex;

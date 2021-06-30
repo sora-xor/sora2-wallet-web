@@ -90,14 +90,21 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
     }
   }
 
-  handleSwitchAccount (): void {
-    this.navigate({ name: RouteNames.WalletConnection, params: { isAccountSwitch: true } })
+  private navigateToWalletConnection (params?: any): void {
+    const navigationArgs: any = { name: RouteNames.WalletConnection }
+    if (params) {
+      navigationArgs.params = params
+    }
+    this.navigate(navigationArgs)
     this.logout()
   }
 
+  handleSwitchAccount (): void {
+    this.navigateToWalletConnection({ isAccountSwitch: true })
+  }
+
   handleLogout (): void {
-    this.navigate({ name: RouteNames.WalletConnection })
-    this.logout()
+    this.navigateToWalletConnection()
   }
 }
 </script>
