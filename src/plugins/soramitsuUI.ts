@@ -33,7 +33,7 @@ const components = [
 const directives = []
 
 export function install (store) {
-  Vue.use(SoramitsuElements as any, { store, components, directives })
+  Vue.use(SoramitsuElements, { store, components, directives })
   setTheme(Themes.LIGHT)
   setDesignSystem(DesignSystemTypes.NEUMORPHIC)
   Vue.prototype.$prompt = MessageBox.prompt
