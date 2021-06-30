@@ -1,45 +1,49 @@
 <template>
   <wallet-base :title="t('connection.title')">
     <div class="wallet-connection" v-loading="isAccountLoading || (isAccountSwitch && loading)">
-      <template v-if="step === Step.First">
-        <p v-if="loading" class="wallet-connection-text">{{ t('connection.loadingTitle') }}</p>
-        <template v-else>
-          <p class="wallet-connection-text">{{ t('connection.text') }}</p>
-          <p v-if="!isExtensionAvailable" class="wallet-connection-text" v-html="t('connection.install')" />
+      <template v-if="!isAccountLoading">
+        <template v-if="step === Step.First">
+          <p v-if="loading" class="wallet-connection-text">{{ t('connection.loadingTitle') }}</p>
+          <template v-else>
+            <p class="wallet-connection-text">{{ t('connection.text') }}</p>
+            <p v-if="!isExtensionAvailable" class="wallet-connection-text" v-html="t('connection.install')" />
+          </template>
         </template>
-      </template>
-      <p v-if="step === Step.Second && !polkadotJsAccounts.length" class="wallet-connection-text">{{ t('connection.noAccounts') }}</p>
-      <template v-if="step === Step.First || (step === Step.Second && !polkadotJsAccounts.length)">
-        <s-button
-          class="wallet-connection-action s-typography-button--large"
-          type="primary"
-          :loading="loading"
-          @click="handleActionClick"
-        >
-          {{ t(actionButtonText) }}
-        </s-button>
-        <s-button
-          v-if="!loading"
-          class="wallet-connection-action s-typography-button--large"
-          type="tertiary"
-          icon="question-circle-16"
-          icon-position="right"
-          @click="handleLearnMoreClick"
-        >
-          {{ t('connection.action.learnMore') }}
-        </s-button>
-        <p v-if="(step === Step.First && !isExtensionAvailable) || loading" class="wallet-connection-text no-permissions" v-html="t('connection.noPermissions')" />
-      </template>
-      <template v-if="step === Step.Second && polkadotJsAccounts.length">
-        <p class="wallet-connection-text">{{ t('connection.selectAccount') }}</p>
-        <div
-          class="wallet-connection-account"
-          v-for="account in polkadotJsAccounts"
-          :key="account.address"
-          @click="handleSelectAccount(account)"
-        >
-          <wallet-account :polkadotAccount="account" />
-        </div>
+        <p v-if="step === Step.Second && !polkadotJsAccounts.length" class="wallet-connection-text">{{ t('connection.noAccounts') }}</p>
+        <template v-if="step === Step.First || (step === Step.Second && !polkadotJsAccounts.length)">
+          <s-button
+            class="wallet-connection-action s-typography-button--large"
+            type="primary"
+            :loading="loading"
+            @click="handleActionClick"
+          >
+            {{ t(actionButtonText) }}
+          </s-button>
+          <s-button
+            v-if="!loading"
+            class="wallet-connection-action s-typography-button--large"
+            type="tertiary"
+            icon="question-circle-16"
+            icon-position="right"
+            @click="handleLearnMoreClick"
+          >
+            {{ t('connection.action.learnMore') }}
+          </s-button>
+          <p v-if="(step === Step.First && !isExtensionAvailable) || loading" class="wallet-connection-text no-permissions" v-html="t('connection.noPermissions')" />
+        </template>
+        <template v-if="step === Step.Second && polkadotJsAccounts.length">
+          <p class="wallet-connection-text">{{ t('connection.selectAccount') }}</p>
+          <div class="wallet-connection-accounts">
+            <div
+              class="wallet-connection-account"
+              v-for="account in polkadotJsAccounts"
+              :key="account.address"
+              @click="handleSelectAccount(account)"
+            >
+              <wallet-account :polkadotAccount="account" />
+            </div>
+          </div>
+        </template>
       </template>
     </div>
   </wallet-base>
@@ -72,7 +76,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   readonly RouteNames = RouteNames
   readonly Step = Step
 
-  isAccountLoading = false
+  isAccountLoading = true
   isExtensionAvailable = false
   step = Step.First
   polkadotJsAccounts: Array<Account> = []
@@ -95,6 +99,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
         this.polkadotJsAccounts = await this.getPolkadotJsAccounts()
       }
     })
+    this.isAccountLoading = false
   }
 
   get actionButtonText (): string {
@@ -148,9 +153,14 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 </style>
 
 <style scoped lang="scss">
+$account-height: 60px;
+$account-margin-bottom: var(--s-basic-spacing);
+$accounts-padding: calc(#{$account-margin-bottom} / 2);
+$accounts-number: 7;
 .wallet-connection {
   // Margin and padding are set for the loader
   margin: calc(var(--s-basic-spacing) * -1);
+  min-height: 204px;
   padding: var(--s-basic-spacing);
   &-text {
     font-size: var(--s-font-size-extra-small);
@@ -161,8 +171,15 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
       margin-top: var(--s-basic-spacing);
     }
   }
+  &-accounts {
+    margin: calc(-1 * #{$accounts-padding});
+    max-height: calc(calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number});
+    padding: $accounts-padding;
+    overflow-y: auto;
+  }
   &-account {
     margin-bottom: var(--s-basic-spacing);
+    height: $account-height;
     &:hover {
       cursor: pointer;
       .wallet-account {
