@@ -6,7 +6,7 @@
           <p v-if="loading" class="wallet-connection-text">{{ t('connection.loadingTitle') }}</p>
           <template v-else>
             <p class="wallet-connection-text">{{ t('connection.text') }}</p>
-            <p v-if="!isExtensionAvailable" class="wallet-connection-text" v-html="t('connection.install')" />
+            <p v-if="!(isExtensionInstalled && isExtensionAvailable)" class="wallet-connection-text" v-html="t('connection.install')" />
           </template>
         </template>
         <p v-if="step === Step.Second && !polkadotJsAccounts.length" class="wallet-connection-text">{{ t('connection.noAccounts') }}</p>
@@ -29,7 +29,7 @@
           >
             {{ t('connection.action.learnMore') }}
           </s-button>
-          <p v-if="(step === Step.First && !isExtensionAvailable) || loading" class="wallet-connection-text no-permissions" v-html="t('connection.noPermissions')" />
+          <p v-if="(step === Step.First && !(isExtensionInstalled && isExtensionAvailable)) || loading" class="wallet-connection-text no-permissions" v-html="t('connection.noPermissions')" />
         </template>
         <template v-if="step === Step.Second && polkadotJsAccounts.length">
           <p class="wallet-connection-text">{{ t('connection.selectAccount') }}</p>
@@ -78,6 +78,8 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   isAccountLoading = true
   isExtensionAvailable = false
+  extensionTimer: any
+  setExtensionTimer = false
   step = Step.First
   polkadotJsAccounts: Array<Account> = []
   @Getter currentRouteParams!: any
@@ -89,6 +91,22 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   get isAccountSwitch (): boolean {
     return (this.currentRouteParams || {}).isAccountSwitch
+  }
+
+  get isExtensionInstalled (): boolean {
+    if (this.isExtensionAvailable) {
+      if (this.extensionTimer) {
+        this.setExtensionTimer = false
+        clearInterval(this.extensionTimer)
+      }
+      return true
+    }
+    if (this.setExtensionTimer) {
+      this.extensionTimer = setInterval(async () => {
+        this.isExtensionAvailable = await this.checkExtension()
+      }, 3000)
+    }
+    return this.isExtensionAvailable
   }
 
   async created (): Promise<void> {
@@ -115,6 +133,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   async handleActionClick (): Promise<void> {
     if (this.step === Step.First) {
       if (!this.isExtensionAvailable) {
+        this.setExtensionTimer = true
         window.open('https://polkadot.js.org/extension/', '_blank')
         return
       }
