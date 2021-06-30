@@ -1,9 +1,39 @@
 import Vue from 'vue'
-import SoramitsuElements, { Message, MessageBox, Notification, setTheme, setDesignSystem, DesignSystemTypes, Themes } from '@soramitsu/soramitsu-js-ui'
-import '@soramitsu/soramitsu-js-ui/lib/styles'
+import SoramitsuElements, {
+  setTheme,
+  setDesignSystem,
+  Themes,
+  DesignSystemTypes,
+  Components,
+  Message,
+  MessageBox,
+  Notification
+} from '@soramitsu/soramitsu-js-ui'
+
+const components = [
+  Components.SButton,
+  Components.SCard,
+  Components.SDesignSystemProvider,
+  Components.SDivider,
+  Components.SDropdown,
+  Components.SDropdownItem,
+  Components.SIcon,
+  Components.SInput,
+  Components.SFloatInput,
+  Components.SForm,
+  Components.SFormItem,
+  Components.SPagination,
+  Components.SSwitch,
+  Components.STabs,
+  Components.STab,
+  Components.STooltip
+]
+
+// Don't need default library directives
+const directives = []
 
 export function install (store) {
-  Vue.use(SoramitsuElements, { store })
+  Vue.use(SoramitsuElements, { store, components, directives })
   setTheme(Themes.LIGHT)
   setDesignSystem(DesignSystemTypes.NEUMORPHIC)
   Vue.prototype.$prompt = MessageBox.prompt
