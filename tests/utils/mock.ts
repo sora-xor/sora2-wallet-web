@@ -46,6 +46,7 @@ export const MOCK_HISTORY: Array<History> = [
   {
     id: '1',
     blockId: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD',
+    txId: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7',
     status: TransactionStatus.Finalized,
     type: Operation.Transfer,
     startTime: 1605048643745,

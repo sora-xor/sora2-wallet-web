@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Wallet.vue [WalletTabs.WalletActivity]: should renders correctly 1`] = `
+exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`] = `
 <wallet-base-stub
   actionicon="various-atom-24"
   actiontooltip="wallet.createToken"
@@ -8,6 +8,7 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should renders correctly 1`] = 
   title=""
 >
   <wallet-account-stub
+    pressed="true"
     showcontrols="true"
   />
    
@@ -18,6 +19,7 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should renders correctly 1`] = 
       borderradius="small"
       position="top"
       type="rounded"
+      usedesignsystem="true"
       value="WalletAssets"
     >
       <s-tab-stub
@@ -33,7 +35,7 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should renders correctly 1`] = 
 </wallet-base-stub>
 `;
 
-exports[`Wallet.vue [WalletTabs.WalletAssets]: should renders correctly 1`] = `
+exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] = `
 <wallet-base-stub
   actionicon="various-atom-24"
   actiontooltip="wallet.createToken"
@@ -41,6 +43,7 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should renders correctly 1`] = `
   title=""
 >
   <wallet-account-stub
+    pressed="true"
     showcontrols="true"
   />
    
@@ -51,6 +54,7 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should renders correctly 1`] = `
       borderradius="small"
       position="top"
       type="rounded"
+      usedesignsystem="true"
       value="WalletAssets"
     >
       <s-tab-stub

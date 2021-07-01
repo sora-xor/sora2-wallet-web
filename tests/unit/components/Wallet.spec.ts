@@ -36,7 +36,7 @@ const createStore = (currentTab: WalletTabs) => new Vuex.Store({
 })
 
 useDescribe('Wallet.vue', Wallet, () => {
-  Object.values(WalletTabs).map(item => it(`[WalletTabs.${item}]: should renders correctly`, () => {
+  Object.values(WalletTabs).map(item => it(`[WalletTabs.${item}]: should be rendered correctly`, () => {
     const wrapper = shallowMount(Wallet, { localVue, store: createStore(item) })
     expect(wrapper.element).toMatchSnapshot()
   }))
