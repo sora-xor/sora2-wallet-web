@@ -1,4 +1,4 @@
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
 import { FPNumber, KnownAssets, RewardInfo, RewardsInfo } from '@sora-substrate/util'
 
@@ -65,7 +65,7 @@ export const formatAddress = (address: string, length = address.length / 2): str
   return `${address.slice(0, length / 2)}...${address.slice(-length / 2)}`
 }
 
-export const formatDate = (date: number) => moment(date).format('DD.MM.YYYY, h:mm:ss')
+export const formatDate = (date: number) => dayjs(date).format('DD.MM.YYYY, h:mm:ss')
 
 export const getAssetIconStyles = (address: string) => {
   if (!address) {
