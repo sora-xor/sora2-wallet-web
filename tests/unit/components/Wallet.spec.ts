@@ -1,41 +1,43 @@
-// import Vuex from 'vuex'
-// import { shallowMount, createLocalVue } from '@vue/test-utils'
+import Vuex from 'vuex'
+import { shallowMount } from '@vue/test-utils'
 
-// import Wallet from '@/components/Wallet.vue'
-// import { TranslationMock, SoramitsuElementsImport } from '../../utils'
+import { useDescribe, localVue } from '../../utils'
+import { MOCK_HISTORY } from '../../utils/mock'
 
-// TODO: fix issue with imports (only CI issue)
+import Wallet from '@/components/Wallet.vue'
+import { WalletTabs } from '@/consts'
 
-// const localVue = createLocalVue()
-// localVue.use(Vuex)
-// const store = new Vuex.Store({
-//   modules: {
-//     Account: {
-//       getters: {
-//         account: () => ({
-//           address: 'dfsakljfdlkjfhfkjladshslfjafds',
-//           name: 'Mock',
-//           password: '123qwaszx'
-//         })
-//       }
-//     },
-//     Router: {
-//       actions: {
-//         navigate: jest.fn()
-//       }
-//     }
-//   } as any
-// })
+const createStore = (currentTab: WalletTabs) => new Vuex.Store({
+  modules: {
+    Account: {
+      getters: {
+        account: () => ({
+          address: 'dfsakljfdlkjfhfkjladshslfjafds',
+          name: 'Mock',
+          password: '123qwaszx'
+        }),
+        activity: () => MOCK_HISTORY
+      },
+      actions: {
+        getAccountActivity: jest.fn()
+      }
+    },
+    Router: {
+      getters: {
+        currentRouteParams: () => ({
+          currentTab
+        })
+      },
+      actions: {
+        navigate: jest.fn()
+      }
+    }
+  } as any
+})
 
-describe('Wallet.vue', () => {
-  beforeEach(() => {
-    // SoramitsuElementsImport(localVue)
-    // TranslationMock(Wallet)
-  })
-
-  it('should renders correctly', () => {
-    // const wrapper = shallowMount(Wallet, { localVue, store })
-    // expect(wrapper.element).toMatchSnapshot()
-    expect(true).toBe(true)
-  })
+useDescribe('Wallet.vue', Wallet, () => {
+  Object.values(WalletTabs).map(item => it(`[WalletTabs.${item}]: should be rendered correctly`, () => {
+    const wrapper = shallowMount(Wallet, { localVue, store: createStore(item) })
+    expect(wrapper.element).toMatchSnapshot()
+  }))
 })
