@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon="various-atom-24"
+  actiontooltip="wallet.createToken"
+  showaction="true"
+  title=""
+>
+  <wallet-account-stub
+    pressed="true"
+    showcontrols="true"
+  />
+   
+  <div
+    class="wallet"
+  >
+    <s-tabs-stub
+      borderradius="small"
+      position="top"
+      type="rounded"
+      usedesignsystem="true"
+      value="WalletAssets"
+    >
+      <s-tab-stub
+        name="WalletAssets"
+      />
+      <s-tab-stub
+        name="WalletActivity"
+      />
+    </s-tabs-stub>
+     
+    <walletassets-stub />
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon="various-atom-24"
+  actiontooltip="wallet.createToken"
+  showaction="true"
+  title=""
+>
+  <wallet-account-stub
+    pressed="true"
+    showcontrols="true"
+  />
+   
+  <div
+    class="wallet"
+  >
+    <s-tabs-stub
+      borderradius="small"
+      position="top"
+      type="rounded"
+      usedesignsystem="true"
+      value="WalletAssets"
+    >
+      <s-tab-stub
+        name="WalletAssets"
+      />
+      <s-tab-stub
+        name="WalletActivity"
+      />
+    </s-tabs-stub>
+     
+    <walletassets-stub />
+  </div>
+</wallet-base-stub>
+`;
