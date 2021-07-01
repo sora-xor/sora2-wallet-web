@@ -120,6 +120,10 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     this.isAccountLoading = false
   }
 
+  destroyed (): void {
+    clearInterval(this.extensionTimer)
+  }
+
   get actionButtonText (): string {
     if (this.step === Step.First && !this.isExtensionAvailable) {
       return 'connection.action.install'
