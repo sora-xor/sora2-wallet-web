@@ -3,7 +3,8 @@ module.exports = {
   setupFiles: ['./tests/unit/setup.js'],
   verbose: true,
   transform: {
-    '^.+\\.js$': 'babel-jest'
+    '^.+\\.js$': 'babel-jest',
+    '^.+\\.tsx?$': 'ts-jest'
   },
   transformIgnorePatterns: ['node_modules/?!(@polkadot/util)']
 }

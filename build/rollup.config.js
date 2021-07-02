@@ -27,7 +27,28 @@ export default {
   external: [
     ...Object.keys(pkg.dependencies || {}),
     'tslib',
-    'vue'
+    'vue',
+    '@soramitsu/soramitsu-js-ui/src/utils/Theme',
+    '@soramitsu/soramitsu-js-ui/src/utils/DesignSystem',
+    '@soramitsu/soramitsu-js-ui/src/utils',
+    '@soramitsu/soramitsu-js-ui/src/plugins/elementUI',
+    '@soramitsu/soramitsu-js-ui/src/plugins/soramitsuUIStore',
+    '@soramitsu/soramitsu-js-ui/src/components/Button/SButton',
+    '@soramitsu/soramitsu-js-ui/src/components/Card/SCard',
+    '@soramitsu/soramitsu-js-ui/src/components/DesignSystem/SDesignSystemProvider',
+    '@soramitsu/soramitsu-js-ui/src/components/Divider/SDivider',
+    '@soramitsu/soramitsu-js-ui/src/components/Dropdown/SDropdown',
+    '@soramitsu/soramitsu-js-ui/src/components/Dropdown/SDropdownItem',
+    '@soramitsu/soramitsu-js-ui/src/components/Icon/SIcon',
+    '@soramitsu/soramitsu-js-ui/src/components/Input/SInput',
+    '@soramitsu/soramitsu-js-ui/src/components/Input/SFloatInput',
+    '@soramitsu/soramitsu-js-ui/src/components/Form/SForm',
+    '@soramitsu/soramitsu-js-ui/src/components/Form/SFormItem',
+    '@soramitsu/soramitsu-js-ui/src/components/Pagination',
+    '@soramitsu/soramitsu-js-ui/src/components/Switch',
+    '@soramitsu/soramitsu-js-ui/src/components/Tab/STab',
+    '@soramitsu/soramitsu-js-ui/src/components/Tab/STabs',
+    '@soramitsu/soramitsu-js-ui/src/components/Tooltip'
   ],
   plugins: [
     typescript({
