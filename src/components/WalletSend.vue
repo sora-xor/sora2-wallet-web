@@ -6,7 +6,6 @@
           class="wallet-send-address"
           :maxlength="128"
           :placeholder="t('walletSend.address')"
-          border-radius="mini"
           v-model="address"
         />
         <s-float-input
