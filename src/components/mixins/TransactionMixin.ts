@@ -23,13 +23,13 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       return ''
     }
     const params = { ...value } as any
-    if (value.type === Operation.Transfer) {
+    if ([Operation.Transfer, Operation.SwapAndSend].includes(value.type)) {
       params.address = formatAddress(value.to as string, 10)
     }
-    if ([Operation.AddLiquidity, Operation.CreatePair, Operation.Transfer, Operation.RemoveLiquidity, Operation.Swap].includes(value.type)) {
+    if ([Operation.AddLiquidity, Operation.CreatePair, Operation.Transfer, Operation.RemoveLiquidity, Operation.Swap, Operation.SwapAndSend].includes(value.type)) {
       params.amount = params.amount ? this.formatStringValue(params.amount) : ''
     }
-    if ([Operation.AddLiquidity, Operation.CreatePair, Operation.RemoveLiquidity, Operation.Swap].includes(value.type)) {
+    if ([Operation.AddLiquidity, Operation.CreatePair, Operation.RemoveLiquidity, Operation.Swap, Operation.SwapAndSend].includes(value.type)) {
       params.amount2 = params.amount2 ? this.formatStringValue(params.amount2) : ''
     }
     if (value.type === Operation.ClaimRewards) {
