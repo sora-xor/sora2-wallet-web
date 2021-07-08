@@ -87,6 +87,7 @@ export default {
   walletSend: {
     title: 'Send',
     address: '@:addressText',
+    addressDesc: 'Only SORA network account addresses are accepted. Please ensure that you have a correctly formatted SORA network account address starting with the ‘cn’ prefix.',
     amount: '@:amountText',
     balance: 'Balance',
     max: 'MAX',
