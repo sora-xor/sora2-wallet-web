@@ -87,6 +87,7 @@ export default {
   walletSend: {
     title: 'Send',
     address: '@:addressText',
+    addressDesc: 'Only SORA network account addresses are accepted. Please ensure that you have a correctly formatted SORA network account address starting with the ‘cn’ prefix.',
     amount: '@:amountText',
     balance: 'Balance',
     max: 'MAX',
@@ -186,7 +187,8 @@ export default {
       desc: 'You will receive these tokens upon creation.'
     },
     extensibleSupply: {
-      placeholder: 'Extensible supply'
+      placeholder: 'Extensible supply',
+      desc: 'Ability to mint more tokens.'
     }
   },
   transaction: {

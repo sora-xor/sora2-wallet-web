@@ -9,6 +9,7 @@
           border-radius="mini"
           v-model="address"
         />
+        <p class="wallet-send-address-description">{{ t('walletSend.addressDesc') }}</p>
         <s-float-input
           v-model="amount"
           class="wallet-send-input"
@@ -274,7 +275,15 @@ $logo-size: var(--s-size-mini);
     }
   }
   &-address {
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
+    margin-bottom: var(--s-basic-spacing);
+    &-description {
+      margin-bottom: calc(var(--s-basic-spacing) * 2);
+      padding-right: calc(var(--s-basic-spacing) * 1.25);
+      padding-left: calc(var(--s-basic-spacing) * 1.25);
+      font-weight: 300;
+      font-size: var(--s-font-size-extra-small);
+      line-height: var(--s-line-height-base);
+    }
   }
   &-amount {
     display: flex;
