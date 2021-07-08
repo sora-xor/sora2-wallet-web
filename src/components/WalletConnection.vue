@@ -121,7 +121,9 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   destroyed (): void {
-    clearInterval(this.extensionTimer)
+    if (this.extensionTimer) {
+      clearInterval(this.extensionTimer)
+    }
   }
 
   get actionButtonText (): string {
