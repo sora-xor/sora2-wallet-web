@@ -149,6 +149,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 <style lang="scss">
 .wallet-connection-link {
   color: var(--s-color-theme-accent);
+  text-decoration: none;
 }
 </style>
 
