@@ -6,7 +6,7 @@
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="copyTooltip(transactionIdKey)"
+          :tooltip="getCopyTooltip(transactionIdKey)"
           type="action"
           alternative
           @click="handleCopy(transactionId, t(transactionIdKey))"
@@ -68,7 +68,7 @@
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="copyTooltip('transaction.from')"
+          :tooltip="getCopyTooltip('transaction.from')"
           type="action"
           alternative
           @click="handleCopy(selectedTransaction.from, t('transaction.from'))"
@@ -94,7 +94,7 @@
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="copyTooltip('transaction.to')"
+          :tooltip="getCopyTooltip('transaction.to')"
           type="action"
           alternative
           @click="handleCopy(selectedTransaction.to, t('transaction.to'))"
@@ -230,13 +230,13 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
     this.navigate({ name: RouteNames.Wallet, params: { currentTab: WalletTabs.Activity } })
   }
 
-  copyTooltip (value: string): string {
+  getCopyTooltip (value: string): string {
     return this.t('transaction.copy', { value: this.t(value) })
   }
 
   getBlockExplorerLink (key: string, value: string): string {
     // TODO: move soraNetwork to the wallet
-    const networkType = externalStore.getters.soraNetwork
+    const networkType = externalStore ? externalStore.getters.soraNetwork : undefined
     return `${getExplorerLink(networkType)}/${key}/${value}`
   }
 

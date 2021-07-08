@@ -45,7 +45,6 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 
@@ -54,13 +53,11 @@ export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
   @Prop({ default: false, type: Boolean }) readonly showAction!: boolean
-  @Prop({ default: false, type: Boolean }) readonly disabledCleanHistory!: boolean
-  @Prop({ default: false, type: Boolean }) readonly showCleanHistory!: boolean
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
   @Prop({ default: '', type: String }) readonly actionTooltip!: string
   @Prop({ default: '', type: String }) readonly actionIcon!: string
-
-  @Action navigate
+  // @Prop({ default: false, type: Boolean }) readonly disabledCleanHistory!: boolean
+  // @Prop({ default: false, type: Boolean }) readonly showCleanHistory!: boolean
 
   get headerClasses (): Array<string> {
     const cssClasses: Array<string> = ['base-title', 's-flex']
@@ -85,13 +82,13 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     this.$emit('action')
   }
 
-  handleCleanHistoryClick (): void {
-    this.$emit('cleanHistory')
-  }
-
   handleCloseClick (): void {
     this.$emit('close')
   }
+
+  // handleCleanHistoryClick (): void {
+  //   this.$emit('cleanHistory')
+  // }
 }
 </script>
 

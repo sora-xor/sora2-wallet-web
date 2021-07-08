@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WalletBase.vue should renders correctly 1`] = `
+exports[`WalletBase.vue should be rendered correctly 1`] = `
 <s-card-stub
   borderradius="medium"
   class="base"

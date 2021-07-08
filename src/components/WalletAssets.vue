@@ -51,14 +51,7 @@
       </template>
     </div>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
-    <s-button
-      class="wallet-assets-add s-typography-button--large"
-      icon="circle-plus-16"
-      icon-position="right"
-      @click="handleOpenAddAsset"
-    >
-      {{ t('assets.add') }}
-    </s-button>
+    <s-button class="wallet-assets-add s-typography-button--large" @click="handleOpenAddAsset">{{ t('assets.add') }}</s-button>
   </div>
 </template>
 
