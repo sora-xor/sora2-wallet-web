@@ -187,7 +187,8 @@ export default {
       desc: 'You will receive these tokens upon creation.'
     },
     extensibleSupply: {
-      placeholder: 'Extensible supply'
+      placeholder: 'Extensible supply',
+      desc: 'Ability to mint more tokens.'
     }
   },
   transaction: {
