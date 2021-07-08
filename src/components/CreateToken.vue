@@ -37,6 +37,7 @@
           <s-switch v-model="extensibleSupply" :disabled="loading" />
           <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
         </div>
+        <p class="wallet-settings-create-token_desc">{{ t('createToken.extensibleSupply.desc') }}</p>
         <s-button
           class="wallet-settings-create-token_action s-typography-button--large"
           type="primary"
@@ -222,7 +223,7 @@ export default class CreateToken extends Mixins(TransactionMixin) {
   }
   &_supply-block {
     @include switch-block;
-    padding-top: 0;
+    padding: 0 calc(var(--s-basic-spacing) * 1.5);
   }
   &_action {
     width: 100%;
