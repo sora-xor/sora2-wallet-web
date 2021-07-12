@@ -219,8 +219,14 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
     .s-icon-chevron-down-rounded-16 {
       position: absolute;
       top: 25%;
-      padding-left: calc(var(--s-basic-spacing) * 1.5);
+      padding: 2px;
+      height: var(--s-icon-font-size-small);
+      width: var(--s-icon-font-size-small);
       transition: transform 0.3s;
+      background-color: var(--s-color-base-content-secondary);
+      color: var(--s-color-base-on-accent);
+      border-radius: 50%;
+      margin-left: var(--s-basic-spacing);
     }
     &--clicked .s-icon-chevron-down-rounded-16 {
       padding-right: calc(var(--s-basic-spacing) * 1.5);

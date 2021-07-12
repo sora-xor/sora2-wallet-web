@@ -10,7 +10,6 @@
           :placeholder="t('history.filterPlaceholder')"
           prefix="el-icon-search"
           size="big"
-          border-radius="mini"
         >
           <template #suffix v-if="query">
             <s-button class="s-button--clear" :use-design-system="false" @click="handleResetSearch">
