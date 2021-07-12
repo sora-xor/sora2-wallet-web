@@ -6,7 +6,6 @@
           class="wallet-send-address"
           :maxlength="128"
           :placeholder="t('walletSend.address')"
-          border-radius="mini"
           v-model="address"
         />
         <p class="wallet-send-address-description">{{ t('walletSend.addressDesc') }}</p>
