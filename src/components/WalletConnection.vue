@@ -80,8 +80,8 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   isExtensionAvailable = false
   extensionTimer: any
   step = Step.First
-  polkadotJsAccounts: Array<Account> = []
   @Getter currentRouteParams!: any
+  @Getter polkadotJsAccounts!: Array<Account>
 
   @Action navigate
   @Action checkExtension
@@ -97,6 +97,9 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
       if (this.extensionTimer) {
         clearInterval(this.extensionTimer)
       }
+      if (!this.polkadotJsAccounts.length) {
+        this.step = Step.Second
+      }
       return true
     }
     return false
@@ -110,11 +113,11 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
           this.isExtensionAvailable = await this.checkExtension()
         }, 1500)
       }
-      if (this.isAccountSwitch) {
-        this.step = Step.Second
-        this.polkadotJsAccounts = await this.getPolkadotJsAccounts()
-      }
     })
+    if (this.isExtensionAvailable && (this.isAccountSwitch || !this.polkadotJsAccounts.length)) {
+      this.step = Step.Second
+      await this.getPolkadotJsAccounts()
+    }
     this.isAccountLoading = false
   }
 
