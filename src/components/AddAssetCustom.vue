@@ -5,7 +5,6 @@
       class="asset-custom-address"
       :maxlength="128"
       :placeholder="t(`addAsset.${AddAssetTabs.Custom}.addressPlaceholder`)"
-      border-radius="mini"
       v-model="address"
       @change="handleSearch"
     />
