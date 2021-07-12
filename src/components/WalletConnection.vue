@@ -6,7 +6,7 @@
           <p v-if="loading" class="wallet-connection-text">{{ t('connection.loadingTitle') }}</p>
           <template v-else>
             <p class="wallet-connection-text">{{ t('connection.text') }}</p>
-            <p v-if="!isExtensionAvailable" class="wallet-connection-text" v-html="t('connection.install')" />
+            <p v-if="!isExtensionEnabled" class="wallet-connection-text" v-html="t('connection.install')" />
           </template>
         </template>
         <p v-if="step === Step.Second && !polkadotJsAccounts.length" class="wallet-connection-text">{{ t('connection.noAccounts') }}</p>
@@ -29,7 +29,7 @@
           >
             {{ t('connection.action.learnMore') }}
           </s-button>
-          <p v-if="(step === Step.First && !isExtensionAvailable) || loading" class="wallet-connection-text no-permissions" v-html="t('connection.noPermissions')" />
+          <p v-if="(step === Step.First && !isExtensionEnabled) || loading" class="wallet-connection-text no-permissions" v-html="t('connection.noPermissions')" />
         </template>
         <template v-if="step === Step.Second && polkadotJsAccounts.length">
           <p class="wallet-connection-text">{{ t('connection.selectAccount') }}</p>
@@ -78,9 +78,10 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   isAccountLoading = true
   isExtensionAvailable = false
+  extensionTimer: any
   step = Step.First
-  polkadotJsAccounts: Array<Account> = []
   @Getter currentRouteParams!: any
+  @Getter polkadotJsAccounts!: Array<Account>
 
   @Action navigate
   @Action checkExtension
@@ -91,19 +92,37 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     return (this.currentRouteParams || {}).isAccountSwitch
   }
 
+  get isExtensionEnabled (): boolean {
+    if (this.isExtensionAvailable) {
+      if (this.extensionTimer) {
+        clearInterval(this.extensionTimer)
+      }
+      if (!this.polkadotJsAccounts.length) {
+        this.step = Step.Second
+      }
+      return true
+    }
+    return false
+  }
+
   async created (): Promise<void> {
     await this.withLoading(async () => {
       this.isExtensionAvailable = await this.checkExtension()
-      if (this.isAccountSwitch) {
-        this.step = Step.Second
-        this.polkadotJsAccounts = await this.getPolkadotJsAccounts()
+      if (!this.isExtensionAvailable) {
+        this.extensionTimer = setInterval(async () => {
+          this.isExtensionAvailable = await this.checkExtension()
+        }, 1500)
       }
     })
+    if (this.isExtensionAvailable && (this.isAccountSwitch || !this.polkadotJsAccounts.length)) {
+      this.step = Step.Second
+      await this.getPolkadotJsAccounts()
+    }
     this.isAccountLoading = false
   }
 
   get actionButtonText (): string {
-    if (this.step === Step.First && !this.isExtensionAvailable) {
+    if (this.step === Step.First && !this.isExtensionEnabled) {
       return 'connection.action.install'
     }
     if (this.step === Step.Second && !this.polkadotJsAccounts.length) {
@@ -114,7 +133,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   async handleActionClick (): Promise<void> {
     if (this.step === Step.First) {
-      if (!this.isExtensionAvailable) {
+      if (!this.isExtensionEnabled) {
         window.open('https://polkadot.js.org/extension/', '_blank')
         return
       }
@@ -140,6 +159,12 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     this.navigate({ name: RouteNames.Wallet })
   }
 
+  destroyed (): void {
+    if (this.extensionTimer) {
+      clearInterval(this.extensionTimer)
+    }
+  }
+
   handleLearnMoreClick (): void {
     this.$emit('learn-more')
   }
@@ -149,6 +174,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 <style lang="scss">
 .wallet-connection-link {
   color: var(--s-color-theme-accent);
+  text-decoration: none;
 }
 </style>
 
