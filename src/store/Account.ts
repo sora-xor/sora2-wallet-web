@@ -51,6 +51,7 @@ function initialState () {
     selectedTransactionId: null,
     activity: [], // account history (without bridge)
     assets: [],
+    polkadotJsAccounts: [],
     whitelistArray: [],
     assetsLoading: false
   }
@@ -89,6 +90,9 @@ const getters = {
   },
   assets (state) {
     return state.assets
+  },
+  polkadotJsAccounts (state) {
+    return state.polkadotJsAccounts
   },
   whitelistArray (state): Array<WhitelistArrayItem> {
     return state.whitelistArray
@@ -232,11 +236,15 @@ const mutations = {
 
   [types.GET_SIGNER_FAILURE] (state) {},
 
-  [types.GET_POLKADOT_JS_ACCOUNTS_REQUEST] (state) {},
-
-  [types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS] (state) {},
-
-  [types.GET_POLKADOT_JS_ACCOUNTS_FAILURE] (state) {},
+  [types.GET_POLKADOT_JS_ACCOUNTS_REQUEST] (state) {
+    state.polkadotJsAccounts = []
+  },
+  [types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS] (state, polkadotJsAccounts: Array<Account>) {
+    state.polkadotJsAccounts = polkadotJsAccounts
+  },
+  [types.GET_POLKADOT_JS_ACCOUNTS_FAILURE] (state) {
+    state.polkadotJsAccounts = []
+  },
 
   [types.POLKADOT_JS_IMPORT_REQUEST] (state) {},
 
@@ -296,11 +304,9 @@ const actions = {
     commit(types.GET_POLKADOT_JS_ACCOUNTS_REQUEST)
     try {
       const accounts = (await getExtensionInfo()).accounts
-      commit(types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS)
-      return accounts
+      commit(types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS, accounts)
     } catch (error) {
       commit(types.GET_POLKADOT_JS_ACCOUNTS_FAILURE)
-      throw new Error((error as Error).message)
     }
   },
   async importPolkadotJs ({ commit, dispatch }, { address }) {
