@@ -17,15 +17,18 @@
         <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">{{ balance }}
           <s-icon v-if="isXor" name="chevron-down-rounded-16" />
         </div>
+        <fiat-value v-if="fiatPrice" :value="balanceFiat" />
         <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
           <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
             <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
             <div class="balance-value">{{ getDetailedBalance(type) }}</div>
+            <fiat-value v-if="fiatPrice" :value="getDetailedBalance(type, true)" />
           </div>
           <s-divider />
           <div class="balance s-flex p4">
             <div class="balance-label">{{ t('assets.balance.total') }}</div>
             <div class="balance-value">{{ totalBalance }}</div>
+            <fiat-value v-if="fiatPrice" :value="balanceFiat" />
           </div>
         </div>
         <div class="asset-details-actions">
@@ -58,6 +61,7 @@ import TranslationMixin from './mixins/TranslationMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
+import FiatValue from './FiatValue.vue'
 import WalletHistory from './WalletHistory.vue'
 import { RouteNames } from '../consts'
 import { getAssetIconStyles } from '../util'
@@ -69,7 +73,7 @@ interface Operation {
 }
 
 @Component({
-  components: { WalletBase, WalletHistory }
+  components: { WalletBase, FiatValue, WalletHistory }
 })
 export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberFormatterMixin, CopyAddressMixin) {
   readonly balanceTypes = Object.values(BalanceTypes).filter(type => type !== BalanceTypes.Total)
@@ -95,6 +99,15 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
     return `${this.formatCodecNumber(value, this.asset.decimals)} ${this.asset.symbol}`
   }
 
+  private formatFiatBalance (value: CodecString): string {
+    return `${this.formatCodecNumber((this.fiatPrice ? +value * this.fiatPrice : value).toString(), this.asset.decimals)}`
+  }
+
+  get fiatPrice (): number | null {
+    // TODO fiat integration: Check if Fiat values available (price != undefined)
+    return 2.5
+  }
+
   get asset (): AccountAsset {
     // currentRouteParams.asset was added here to avoid a case when the asset is not found
     return this.accountAssets.find(({ address }) => address === this.currentRouteParams.asset.address) || this.currentRouteParams.asset as AccountAsset
@@ -104,8 +117,12 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
     return this.formatBalance(this.asset.balance.transferable)
   }
 
-  getDetailedBalance (type: BalanceTypes): string {
-    return this.formatBalance(this.asset.balance[type])
+  get balanceFiat (): string {
+    return this.formatFiatBalance(this.asset.balance.transferable)
+  }
+
+  getDetailedBalance (type: BalanceTypes, isFiatBalance: false): string {
+    return !isFiatBalance ? this.formatBalance(this.asset.balance[type]) : this.formatFiatBalance(this.asset.balance[type])
   }
 
   get totalBalance (): string {
@@ -212,7 +229,6 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   &-balance {
     position: relative;
     margin-top: var(--s-basic-spacing);
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
     &--clickable {
       cursor: pointer;
     }
@@ -238,11 +254,20 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
       .balance {
         justify-content: space-between;
         margin-bottom: calc(var(--s-basic-spacing) / 2);
+        &-value {
+          margin-left: auto;
+          + .fiat-value {
+            margin-left: calc(var(--s-basic-spacing) / 2);
+          }
+        }
       }
       .s-divider-secondary {
         margin: calc(var(--s-basic-spacing) * 1.5) 0;
       }
     }
+  }
+  &-actions {
+    margin-top: calc(var(--s-basic-spacing) * 2);
   }
   .asset-logo {
     @include asset-logo-styles(48px);

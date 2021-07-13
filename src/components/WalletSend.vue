@@ -21,6 +21,7 @@
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <span class="wallet-send-amount-balance-value">{{ balance }}</span>
+              <fiat-value v-if="fiatPrice" :value="balance" />
             </div>
           </div>
           <div class="asset s-flex" slot="right">
@@ -30,11 +31,16 @@
             <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
             <span class="asset-name">{{ asset.symbol }}</span>
           </div>
+          <div class="asset-info" slot="bottom">
+            <fiat-value v-if="fiatPrice" :value="fiatAmount" />
+            <div class="asset-highlight">
+              {{ asset.name || asset.symbol }}
+              <s-tooltip :content="t('assets.copy')">
+                <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
+              </s-tooltip>
+            </div>
+          </div>
         </s-float-input>
-        <div class="wallet-send-fee s-flex">
-          <span>{{ t('walletSend.fee') }}</span>
-          <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
-        </div>
         <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
@@ -51,11 +57,6 @@
           <div class="confirm-from">{{ account.address }}</div>
           <s-icon name="arrows-arrow-bottom-24" />
           <div class="confirm-to">{{ address }}</div>
-          <s-divider />
-          <div class="wallet-send-fee s-flex">
-            <span>{{ t('walletSend.fee') }}</span>
-            <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
-          </div>
         </div>
         <s-button
           class="wallet-send-action s-typography-button--large"
@@ -66,6 +67,13 @@
           {{ sendButtonDisabledText || t('walletSend.confirm') }}
         </s-button>
       </template>
+      <div class="wallet-send-fee s-flex">
+        <!-- TODO fiat integration: Change styles to DEX one -->
+        <span>{{ t('walletSend.fee') }}</span>
+        <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
+        <fiat-value v-if="fiatPrice" :value="fee.toString()" />
+      </div>
+      <s-divider />
     </div>
   </wallet-base>
 </template>
@@ -73,17 +81,19 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, Asset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
 import WalletBase from './WalletBase.vue'
+import FiatValue from './FiatValue.vue'
 import { RouteNames } from '../consts'
-import { getAssetIconStyles } from '../util'
+import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util'
 import { api } from '../api'
 
 @Component({
   components: {
-    WalletBase
+    WalletBase,
+    FiatValue
   }
 })
 export default class WalletSend extends Mixins(TransactionMixin) {
@@ -114,6 +124,15 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 
   get balance (): string {
     return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
+  }
+
+  get fiatPrice (): number | null {
+    // TODO fiat integration: Check if Fiat values available (price != undefined)
+    return 2.5
+  }
+
+  get fiatAmount (): string {
+    return this.formatCodecNumber((this.fiatPrice ? +this.amount * this.fiatPrice : this.amount).toString(), this.asset.decimals)
   }
 
   get emptyAddress (): boolean {
@@ -199,6 +218,10 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 
   getAssetIconStyles = getAssetIconStyles
 
+  getFormattedAddress (asset: Asset): string {
+    return formatAddress(asset.address, 10)
+  }
+
   handleBack (): void {
     if (this.step !== 1) {
       this.step = 1
@@ -214,6 +237,23 @@ export default class WalletSend extends Mixins(TransactionMixin) {
       return
     }
     this.amount = this.getStringFromCodec(this.asset.balance.transferable, this.asset.decimals)
+  }
+
+  async handleCopy (asset: AccountAsset): Promise<void> {
+    try {
+      await copyToClipboard(asset.address)
+      this.$notify({
+        message: this.t('assets.successCopy', { symbol: asset.symbol }),
+        type: 'success',
+        title: ''
+      })
+    } catch (error) {
+      this.$notify({
+        message: `${this.t('warningText')} ${error}`,
+        type: 'warning',
+        title: ''
+      })
+    }
   }
 
   async handleSend (): Promise<void> {
@@ -234,6 +274,22 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 .wallet-send-input .el-input__inner {
   font-size: 20px;
   line-height: var(--s-line-height-small);
+}
+.wallet-send-amount,
+.wallet-send .asset-info,
+.wallet-send-fee {
+  .fiat-value {
+    &__number,
+    &__decimals {
+      font-size: inherit;
+      font-weight: inherit;
+    }
+  }
+}
+.wallet-send-fee {
+  .fiat-value__decimals {
+    font-size: var(--s-font-size-extra-mini);
+  }
 }
 </style>
 
@@ -272,6 +328,23 @@ $logo-size: var(--s-size-mini);
     &-max, &-name {
       font-weight: 700;
     }
+    &-info {
+      display: flex;
+      .fiat-value {
+        font-weight: 600;
+      }
+      .asset-id {
+        cursor: pointer;
+      }
+    }
+    &-highlight {
+      margin-left: auto;
+      color: var(--s-color-base-content-secondary);
+      font-size: var(--s-font-size-extra-mini);
+      font-weight: 300 ;
+      line-height: var(--s-line-height-medium);
+      letter-spacing: var(--s-letter-spacing-small);
+    }
   }
   &-address {
     margin-bottom: var(--s-basic-spacing);
@@ -302,6 +375,16 @@ $logo-size: var(--s-size-mini);
         margin-right: calc(var(--s-basic-spacing) / 2);
       }
     }
+    &-balance {
+      &-title {
+        color: var(--s-color-base-content-secondary);
+      }
+      .fiat-value {
+        margin-left: calc(var(--s-basic-spacing) / 2);
+        font-size: inherit;
+        font-weight: 400;
+      }
+    }
   }
   &-fee {
     align-items: center;
@@ -312,6 +395,11 @@ $logo-size: var(--s-size-mini);
     color: var(--s-color-base-content-secondary);
     &_value {
       margin-left: auto;
+    }
+    .fiat-value {
+      margin-left: calc(var(--s-basic-spacing) / 2);
+      font-weight: 400;
+      font-size: var(--s-font-size-extra-small);
     }
   }
   &-action {

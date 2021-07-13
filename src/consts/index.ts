@@ -6,7 +6,8 @@ export enum RouteNames {
   CreateToken = 'CreateToken',
   AddAsset = 'AddAsset',
   WalletTransactionDetails = 'WalletTransactionDetails',
-  AddAssetDetails = 'AddAssetDetails'
+  AddAssetDetails = 'AddAssetDetails',
+  FiatValue = 'FiatValue'
 }
 
 export enum WalletTabs {

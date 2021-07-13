@@ -1,5 +1,12 @@
 <template>
-  <div class="wallet-assets s-flex" v-loading="loading">
+  <div :class="computedClasses" v-loading="loading">
+    <template v-if="areFiatValuesAvailable">
+      <div class="total-fiat-values">
+        <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
+        <fiat-value :value="accountAssetsFiatSum" :withDecimals="false" />
+      </div>
+      <s-divider class="wallet-assets-item_divider" />
+    </template>
     <div v-if="!!formattedAccountAssets.length" class="wallet-assets-container">
       <template v-for="(asset, index) in formattedAccountAssets">
         <div class="wallet-assets-item s-flex" :key="asset.address">
@@ -11,6 +18,7 @@
                 {{ formatLockedBalance(asset) }}
               </div>
             </div>
+            <fiat-value v-if="areFiatValuesAvailable" :value="formatFiatValue(asset)" />
             <div class="asset-info">{{ asset.name || asset.symbol }}
               <s-tooltip :content="t('assets.copy')">
                 <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
@@ -63,10 +71,15 @@ import { AccountAsset } from '@sora-substrate/util'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'
+import FiatValue from './FiatValue.vue'
 import { RouteNames } from '../consts'
 import { getAssetIconStyles, formatAddress, copyToClipboard } from '../util'
 
-@Component
+@Component({
+  components: {
+    FiatValue
+  }
+})
 export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
   @Getter accountAssets!: Array<AccountAsset>
   @Getter permissions
@@ -77,8 +90,32 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     this.withApi(this.getAccountAssets)
   }
 
+  get areFiatValuesAvailable (): boolean {
+    // TODO fiat integration: Check if Fiat values available
+    return true
+  }
+
+  get computedClasses (): string {
+    const baseClass = 'wallet-assets'
+    const classes = [baseClass]
+
+    if (this.areFiatValuesAvailable) {
+      classes.push(`${baseClass}--fiat`)
+    }
+
+    return classes.concat('s-flex').join(' ')
+  }
+
   get formattedAccountAssets (): Array<AccountAsset> {
     return this.accountAssets.filter(asset => asset.balance && !Number.isNaN(+asset.balance.transferable))
+  }
+
+  get accountAssetsFiatSum (): string {
+    if (this.areFiatValuesAvailable) {
+      // TODO fiat integration: Get Fiat values sum
+      return '4,395,432'
+    }
+    return '0'
   }
 
   getFormattedAddress (asset: AccountAsset): string {
@@ -89,6 +126,11 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 
   formatBalance (asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)} ${asset.symbol}`
+  }
+
+  formatFiatValue (asset: AccountAsset): string {
+    // TODO fiat integration: Get Fiat value
+    return `${this.formatCodecNumber((+asset.balance.transferable / 2.5).toString(), asset.decimals)}`
   }
 
   isZeroBalance (asset: AccountAsset): boolean {
@@ -141,9 +183,20 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 <style scoped lang="scss">
 @import '../styles/icons';
 
-.wallet-assets {
+$wallet-assets-class: '.wallet-assets';
+
+#{$wallet-assets-class} {
   flex-direction: column;
   margin-top: calc(var(--s-basic-spacing) * 2);
+
+  &--fiat {
+    #{$wallet-assets-class}-container {
+      max-height: calc(#{$asset-item-height--fiat} * 5);
+    }
+    #{$wallet-assets-class}-item {
+      height: $asset-item-height--fiat;
+    }
+  }
 
   &-container {
     max-height: calc(#{$asset-item-height} * 5);
@@ -215,6 +268,15 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
   &__button {
     & + & {
       margin-left: var(--s-basic-spacing);
+    }
+  }
+
+  .total-fiat-values {
+    padding-bottom: var(--s-basic-spacing);
+    text-align: center;
+    &__title {
+      text-transform: uppercase;
+      padding-right: calc(var(--s-basic-spacing) / 4);
     }
   }
 }

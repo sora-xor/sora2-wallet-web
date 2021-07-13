@@ -114,6 +114,7 @@ export default {
   },
   assets: {
     empty: 'There are no assets',
+    totalAssetsValue: 'Your total assets value:',
     add: '@:addAssetText',
     swap: '@:swapText',
     send: '@:sendText',
