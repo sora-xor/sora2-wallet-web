@@ -4,7 +4,7 @@
   }
 }
 
-@mixin asset-logo-styles($size: 32px) {
+@mixin asset-logo-styles($size: var(--s-size-medium)) {
   $token-background-color: var(--s-color-base-on-accent);
   height: $size;
   width: $size;
