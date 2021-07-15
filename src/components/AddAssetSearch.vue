@@ -3,6 +3,7 @@
     <s-input
       ref="search"
       class="asset-search-input"
+      prefix="s-icon-search-16"
       :maxlength="100"
       :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
       v-model="search"

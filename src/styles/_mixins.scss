@@ -4,7 +4,7 @@
   }
 }
 
-@mixin asset-logo-styles($size: 32px) {
+@mixin asset-logo-styles($size: var(--s-size-medium)) {
   $token-background-color: var(--s-color-base-on-accent);
   height: $size;
   width: $size;
@@ -67,9 +67,9 @@
   & > span {
     margin-left: calc(var(--s-basic-spacing) * 1.5);
     font-size: var(--s-font-size-medium);
-    font-weight: 300;
+    font-weight: 400;
     letter-spacing: var(--s-letter-spacing-small);
-    line-height: var(--s-line-height-medium);;
+    line-height: var(--s-line-height-medium);
   }
 }
 

@@ -15,10 +15,11 @@
           v-if="showAction"
           class="base-title_action"
           type="action"
-          :icon="actionIcon"
           :tooltip="t(actionTooltip)"
           @click="handleActionClick"
-        />
+        >
+          <s-icon :name="actionIcon" size="28" />
+        </s-button>
         <!-- <s-button
           v-if="showCleanHistory"
           class="base-title_trash"
