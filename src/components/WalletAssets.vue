@@ -198,7 +198,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     }
     .asset-logo {
       flex-shrink: 0;
-      @include asset-logo-styles(40px);
+      @include asset-logo-styles;
     }
     &_divider {
       margin: 0;
