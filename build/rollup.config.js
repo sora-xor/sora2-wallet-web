@@ -48,7 +48,15 @@ export default {
     '@soramitsu/soramitsu-js-ui/src/components/Switch',
     '@soramitsu/soramitsu-js-ui/src/components/Tab/STab',
     '@soramitsu/soramitsu-js-ui/src/components/Tab/STabs',
-    '@soramitsu/soramitsu-js-ui/src/components/Tooltip'
+    '@soramitsu/soramitsu-js-ui/src/components/Tooltip',
+    'lodash/fp/debounce',
+    'lodash/fp/findLast',
+    'lodash/fp/map',
+    'lodash/fp/flatMap',
+    'lodash/fp/fromPairs',
+    'lodash/fp/flow',
+    'lodash/fp/concat',
+    'lodash/fp/omit'
   ],
   plugins: [
     typescript({
