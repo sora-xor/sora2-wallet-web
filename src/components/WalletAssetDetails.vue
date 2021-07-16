@@ -15,7 +15,7 @@
       <div class="asset-details-container s-flex">
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
         <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">{{ balance }}
-          <s-icon v-if="isXor" name="chevron-down-rounded-16" />
+          <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
         </div>
         <fiat-value v-if="fiatPrice" :value="balanceFiat" />
         <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
@@ -221,7 +221,9 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
 
 .asset-details {
   margin-bottom: calc(var(--s-basic-spacing) * 2);
-  border-radius: var(--s-border-radius-small);
+  &.s-card.neumorphic {
+    padding-top: 0;
+  }
   &-container {
     flex-direction: column;
     align-items: center;
@@ -235,7 +237,6 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
     .s-icon-chevron-down-rounded-16 {
       position: absolute;
       top: 25%;
-      padding: 2px;
       height: var(--s-icon-font-size-small);
       width: var(--s-icon-font-size-small);
       transition: transform 0.3s;

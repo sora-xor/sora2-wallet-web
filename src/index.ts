@@ -2,7 +2,7 @@ import Vue from 'vue'
 import { Store } from 'vuex'
 import debounce from 'lodash/fp/debounce'
 
-import { install } from './plugins'
+import installWalletPlugins from './plugins'
 // import './styles' We don't need it for now
 
 import SoraNeoWallet from './SoraNeoWallet.vue'
@@ -45,7 +45,7 @@ const SoraNeoWalletElements = {
       options.store.registerModule(molude, modules[molude])
     })
     store = options.store
-    install(store)
+    installWalletPlugins(vue, store)
     components.forEach(el => vue.component(el.name, el.component))
   }
 }

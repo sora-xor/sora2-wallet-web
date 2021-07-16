@@ -251,7 +251,7 @@ $wallet-assets-class: '.wallet-assets';
     }
     .asset-logo {
       flex-shrink: 0;
-      @include asset-logo-styles(40px);
+      @include asset-logo-styles;
     }
     &_divider {
       margin: 0;

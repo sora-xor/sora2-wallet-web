@@ -312,7 +312,7 @@ $logo-size: var(--s-size-mini);
       }
     }
     &-logo {
-      @include asset-logo-styles;
+      @include asset-logo-styles(32px);
       width: $logo-size;
       height: $logo-size;
       margin: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);

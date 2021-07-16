@@ -24,29 +24,29 @@ import STab from '@soramitsu/soramitsu-js-ui/src/components/Tab/STab'
 import STabs from '@soramitsu/soramitsu-js-ui/src/components/Tab/STabs'
 import STooltip from '@soramitsu/soramitsu-js-ui/src/components/Tooltip'
 
-export function install (store) {
-  Vue.use(ElementUIPlugin)
-  Vue.use(SoramitsuUIStorePlugin, { store })
-  Vue.use(SButton)
-  Vue.use(SCard)
-  Vue.use(SDesignSystemProvider)
-  Vue.use(SDivider)
-  Vue.use(SDropdown)
-  Vue.use(SDropdownItem)
-  Vue.use(SIcon)
-  Vue.use(SInput)
-  Vue.use(SFloatInput)
-  Vue.use(SForm)
-  Vue.use(SFormItem)
-  Vue.use(SPagination)
-  Vue.use(SSwitch)
-  Vue.use(STab)
-  Vue.use(STabs)
-  Vue.use(STooltip)
-  Vue.prototype.$prompt = MessageBox.prompt
-  Vue.prototype.$alert = MessageBox.alert
-  Vue.prototype.$message = Message
-  Vue.prototype.$notify = ({ message, type }) => {
+export function install (vue: typeof Vue, store) {
+  vue.use(ElementUIPlugin)
+  vue.use(SoramitsuUIStorePlugin, { store })
+  vue.use(SButton)
+  vue.use(SCard)
+  vue.use(SDesignSystemProvider)
+  vue.use(SDivider)
+  vue.use(SDropdown)
+  vue.use(SDropdownItem)
+  vue.use(SIcon)
+  vue.use(SInput)
+  vue.use(SFloatInput)
+  vue.use(SForm)
+  vue.use(SFormItem)
+  vue.use(SPagination)
+  vue.use(SSwitch)
+  vue.use(STab)
+  vue.use(STabs)
+  vue.use(STooltip)
+  vue.prototype.$prompt = MessageBox.prompt
+  vue.prototype.$alert = MessageBox.alert
+  vue.prototype.$message = Message
+  vue.prototype.$notify = ({ message, type }) => {
     Notification({
       message,
       title: '',
