@@ -24,3 +24,8 @@ export enum BalanceTypes {
   Reserved = 'reserved',
   Total = 'total'
 }
+
+export interface Account {
+  address: string;
+  name: string;
+}
