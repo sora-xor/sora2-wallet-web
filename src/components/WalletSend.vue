@@ -331,6 +331,7 @@ $logo-size: var(--s-size-mini);
     &-info {
       display: flex;
       .fiat-value {
+        margin-left: 0;
         font-weight: 600;
       }
       .asset-id {
@@ -380,7 +381,6 @@ $logo-size: var(--s-size-mini);
         color: var(--s-color-base-content-secondary);
       }
       .fiat-value {
-        margin-left: calc(var(--s-basic-spacing) / 2);
         font-size: inherit;
         font-weight: 400;
       }
@@ -397,7 +397,6 @@ $logo-size: var(--s-size-mini);
       margin-left: auto;
     }
     .fiat-value {
-      margin-left: calc(var(--s-basic-spacing) / 2);
       font-weight: 400;
       font-size: var(--s-font-size-extra-small);
     }

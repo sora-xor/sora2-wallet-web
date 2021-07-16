@@ -34,12 +34,14 @@ export default class FiatValue extends Vue {
 
 <style scoped lang="scss">
 .fiat-value {
+  margin-left: calc(var(--s-basic-spacing) / 2);
   color: var(--s-color-fiat-value);
   font-family: var(--s-font-family-default);
   font-weight: 800;
   font-size: var(--s-font-size-small);
   line-height: var(--s-line-height-medium);
   letter-spacing: var(--s-letter-spacing-small);
+  white-space: nowrap;
   &__prefix {
     opacity: .6;
     padding-right: calc(var(--s-basic-spacing) / 4);

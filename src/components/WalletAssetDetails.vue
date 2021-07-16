@@ -227,6 +227,9 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   &-container {
     flex-direction: column;
     align-items: center;
+    .fiat-value {
+      margin-left: 0;
+    }
   }
   &-balance {
     position: relative;
@@ -257,9 +260,6 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
         margin-bottom: calc(var(--s-basic-spacing) / 2);
         &-value {
           margin-left: auto;
-          + .fiat-value {
-            margin-left: calc(var(--s-basic-spacing) / 2);
-          }
         }
       }
       .s-divider-secondary {
