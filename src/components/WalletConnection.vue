@@ -58,15 +58,11 @@ import LoadingMixin from './mixins/LoadingMixin'
 import WalletBase from './WalletBase.vue'
 import WalletAccount from './WalletAccount.vue'
 import { RouteNames } from '../consts'
+import { Account } from '../types'
 
 enum Step {
   First = 1,
   Second = 2
-}
-
-interface Account {
-  address: string;
-  name: string;
 }
 
 @Component({
