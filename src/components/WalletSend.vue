@@ -21,7 +21,7 @@
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <span class="wallet-send-amount-balance-value">{{ balance }}</span>
-              <fiat-value v-if="fiatPrice" :value="balance" />
+              <fiat-value v-if="assetFiatPrice" :value="formatFiatPrice(assetFiatPrice)" />
             </div>
           </div>
           <div class="asset s-flex" slot="right">
@@ -32,7 +32,7 @@
             <span class="asset-name">{{ asset.symbol }}</span>
           </div>
           <div class="asset-info" slot="bottom">
-            <fiat-value v-if="fiatPrice" :value="fiatAmount" />
+            <fiat-value v-if="fiatAmount" :value="fiatAmount" />
             <div class="asset-highlight">
               {{ asset.name || asset.symbol }}
               <s-tooltip :content="t('assets.copy')">
@@ -71,7 +71,7 @@
         <!-- TODO fiat integration: Change styles to DEX one -->
         <span>{{ t('walletSend.fee') }}</span>
         <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
-        <fiat-value v-if="fiatPrice" :value="fee.toString()" />
+        <fiat-value v-if="feeFiatPrice" :value="formatFiatPrice(feeFiatPrice)" />
       </div>
       <s-divider />
     </div>
@@ -81,9 +81,10 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, Asset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, Asset, FPNumber, KnownAssets, KnownSymbols, Whitelist } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
+import FiatValueMixin from './mixins/FiatValueMixin'
 import WalletBase from './WalletBase.vue'
 import FiatValue from './FiatValue.vue'
 import { RouteNames } from '../consts'
@@ -96,13 +97,15 @@ import { api } from '../api'
     FiatValue
   }
 })
-export default class WalletSend extends Mixins(TransactionMixin) {
+export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly delimiters = FPNumber.DELIMITERS_CONFIG
 
   @Getter currentRouteParams!: any
   @Getter account!: any
   @Getter accountAssets!: Array<AccountAsset>
+  @Getter whitelist!: Whitelist
+
   @Action navigate
   @Action transfer
 
@@ -126,13 +129,16 @@ export default class WalletSend extends Mixins(TransactionMixin) {
     return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
   }
 
-  get fiatPrice (): number | null {
-    // TODO fiat integration: Check if Fiat values available (price != undefined)
-    return 2.5
+  get assetFiatPrice (): null | string {
+    return this.getAssetFiatPrice(this.whitelist, this.asset)
   }
 
-  get fiatAmount (): string {
-    return this.formatCodecNumber((this.fiatPrice ? +this.amount * this.fiatPrice : this.amount).toString(), this.asset.decimals)
+  get feeFiatPrice (): null | string {
+    return this.isXorAccountAsset(this.asset) ? this.assetFiatPrice : this.getAssetFiatPrice(this.whitelist, KnownAssets.get(KnownSymbols.XOR))
+  }
+
+  get fiatAmount (): null | string {
+    return this.getFiatAmount(this.amount, this.assetFiatPrice)
   }
 
   get emptyAddress (): boolean {
@@ -332,6 +338,7 @@ $logo-size: var(--s-size-mini);
       display: flex;
       .fiat-value {
         margin-left: 0;
+        margin-right: var(--s-basic-spacing);
         font-weight: 600;
       }
       .asset-id {
@@ -345,6 +352,7 @@ $logo-size: var(--s-size-mini);
       font-weight: 300 ;
       line-height: var(--s-line-height-medium);
       letter-spacing: var(--s-letter-spacing-small);
+      text-align: right;
     }
   }
   &-address {

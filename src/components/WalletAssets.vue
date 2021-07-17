@@ -1,9 +1,9 @@
 <template>
   <div :class="computedClasses" v-loading="loading">
-    <template v-if="areFiatValuesAvailable">
+    <template v-if="assetsFiatAmount">
       <div class="total-fiat-values">
         <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
-        <fiat-value :value="accountAssetsFiatSum" :withDecimals="false" />
+        <fiat-value :value="assetsFiatAmount" :withDecimals="false" />
       </div>
       <s-divider class="wallet-assets-item_divider" />
     </template>
@@ -18,7 +18,7 @@
                 {{ formatLockedBalance(asset) }}
               </div>
             </div>
-            <fiat-value v-if="areFiatValuesAvailable" :value="formatFiatValue(asset)" />
+            <fiat-value v-if="getAssetFiatPrice(whitelist, asset)" :value="getFiatAmount(getBalance(asset), getAssetFiatPrice(whitelist, asset))" />
             <div class="asset-info">{{ asset.name || asset.symbol }}
               <s-tooltip :content="t('assets.copy')">
                 <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
@@ -66,9 +66,10 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { AccountAsset } from '@sora-substrate/util'
+import { AccountAsset, Whitelist, FPNumber } from '@sora-substrate/util'
 
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
+import FiatValueMixin from './mixins/FiatValueMixin'
 import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'
 import FiatValue from './FiatValue.vue'
@@ -80,9 +81,10 @@ import { getAssetIconStyles, formatAddress, copyToClipboard } from '../util'
     FiatValue
   }
 })
-export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
+export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin, FiatValueMixin) {
   @Getter accountAssets!: Array<AccountAsset>
   @Getter permissions
+  @Getter whitelist!: Whitelist
   @Action getAccountAssets
   @Action navigate
 
@@ -90,16 +92,11 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     this.withApi(this.getAccountAssets)
   }
 
-  get areFiatValuesAvailable (): boolean {
-    // TODO fiat integration: Check if Fiat values available
-    return true
-  }
-
   get computedClasses (): string {
     const baseClass = 'wallet-assets'
     const classes = [baseClass]
 
-    if (this.areFiatValuesAvailable) {
+    if (this.assetsFiatAmount) {
       classes.push(`${baseClass}--fiat`)
     }
 
@@ -110,12 +107,22 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     return this.accountAssets.filter(asset => asset.balance && !Number.isNaN(+asset.balance.transferable))
   }
 
-  get accountAssetsFiatSum (): string {
-    if (this.areFiatValuesAvailable) {
-      // TODO fiat integration: Get Fiat values sum
-      return '4,395,432'
+  get assetsFiatAmount (): null | string {
+    if (!this.formattedAccountAssets) {
+      return null
     }
-    return '0'
+    if (!this.formattedAccountAssets.length) {
+      return '0'
+    }
+    const fiatAmount = this.formattedAccountAssets.reduce((sum: FPNumber, asset: AccountAsset, index) => {
+      const price = this.getAssetFiatPrice(this.whitelist, asset)
+      if (price) {
+        const currentMul = this.getFPNumber(this.getBalance(asset)).mul(FPNumber.fromCodecValue(price))
+        return index === 0 ? currentMul : sum.add(currentMul)
+      }
+      return sum
+    }, new FPNumber(FPNumber.ZERO, FPNumber.DEFAULT_PRECISION))
+    return fiatAmount ? fiatAmount.toString() : null
   }
 
   getFormattedAddress (asset: AccountAsset): string {
@@ -124,13 +131,12 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 
   getAssetIconStyles = getAssetIconStyles
 
-  formatBalance (asset: AccountAsset): string {
-    return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)} ${asset.symbol}`
+  getBalance (asset: AccountAsset): string {
+    return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`
   }
 
-  formatFiatValue (asset: AccountAsset): string {
-    // TODO fiat integration: Get Fiat value
-    return `${this.formatCodecNumber((+asset.balance.transferable / 2.5).toString(), asset.decimals)}`
+  formatBalance (asset: AccountAsset): string {
+    return `${this.getBalance(asset)} ${asset.symbol}`
   }
 
   isZeroBalance (asset: AccountAsset): boolean {
