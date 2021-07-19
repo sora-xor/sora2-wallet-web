@@ -21,7 +21,7 @@
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <span class="wallet-send-amount-balance-value">{{ balance }}</span>
-              <fiat-value v-if="assetFiatPrice" :value="formatFiatPrice(assetFiatPrice)" :withLeftShift="true" />
+              <fiat-value v-if="assetFiatPrice" :value="getFiatAmount(balance, assetFiatPrice)" :withLeftShift="true" />
             </div>
           </div>
           <div class="asset s-flex" slot="right">
@@ -78,7 +78,7 @@
           <s-icon name="info-16" size="14px" />
         </s-tooltip>
         <span class="wallet-send-fee__value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
-        <fiat-value v-if="feeFiatPrice" :value="formatFiatPrice(feeFiatPrice)" :withLeftShift="true" />
+        <fiat-value v-if="feeFiatPrice" :value="getFiatAmount(fee.toString(), feeFiatPrice)" :withLeftShift="true" />
       </div>
     </div>
   </wallet-base>
