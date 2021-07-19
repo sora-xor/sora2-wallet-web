@@ -21,7 +21,7 @@
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <span class="wallet-send-amount-balance-value">{{ balance }}</span>
-              <fiat-value v-if="assetFiatPrice" :value="formatFiatPrice(assetFiatPrice)" />
+              <fiat-value v-if="assetFiatPrice" :value="formatFiatPrice(assetFiatPrice)" :withLeftShift="true" />
             </div>
           </div>
           <div class="asset s-flex" slot="right">
@@ -68,12 +68,18 @@
         </s-button>
       </template>
       <div class="wallet-send-fee s-flex">
-        <!-- TODO fiat integration: Change styles to DEX one -->
-        <span>{{ t('walletSend.fee') }}</span>
-        <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
-        <fiat-value v-if="feeFiatPrice" :value="formatFiatPrice(feeFiatPrice)" />
+        <span class="wallet-send-fee__label">{{ t('walletSend.fee') }}</span>
+        <s-tooltip
+          popper-class="info-tooltip info-tooltip--info-line"
+          :content="t('walletSend.feeTooltip')"
+          placement="right-start"
+          border-radius="mini"
+        >
+          <s-icon name="info-16" size="14px" />
+        </s-tooltip>
+        <span class="wallet-send-fee__value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
+        <fiat-value v-if="feeFiatPrice" :value="formatFiatPrice(feeFiatPrice)" :withLeftShift="true" />
       </div>
-      <s-divider />
     </div>
   </wallet-base>
 </template>
@@ -400,9 +406,15 @@ $logo-size: var(--s-size-mini);
     width: 100%;
     padding-right: var(--s-basic-spacing);
     padding-left: var(--s-basic-spacing);
-    color: var(--s-color-base-content-secondary);
-    &_value {
+    color: var(--s-color-base-content-primary);
+    border-bottom: 1px solid var(--s-color-base-border-secondary);
+    &__label {
+      margin-right: var(--s-basic-spacing);
+      text-transform: uppercase;
+    }
+    &__value {
       margin-left: auto;
+      font-weight: 600;
     }
     .fiat-value {
       font-weight: 400;

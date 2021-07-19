@@ -3,7 +3,7 @@
     <template v-if="assetsFiatAmount">
       <div class="total-fiat-values">
         <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
-        <fiat-value :value="assetsFiatAmount" :withDecimals="false" />
+        <fiat-value :value="assetsFiatAmount" :withDecimals="false" :withLeftShift="true" />
       </div>
       <s-divider class="wallet-assets-item_divider" />
     </template>
@@ -228,7 +228,7 @@ $wallet-assets-class: '.wallet-assets';
         font-weight: 800;
       }
       &-info {
-        @include hint-text;
+        @include hint-text($color: var(--s-color-base-content-primary));
       }
       &-id {
         outline: none;
@@ -250,6 +250,9 @@ $wallet-assets-class: '.wallet-assets';
       }
       &-converted {
         @include hint-text;
+      }
+      .fiat-value {
+        white-space: initial;
       }
     }
     .details {
@@ -278,11 +281,20 @@ $wallet-assets-class: '.wallet-assets';
   }
 
   .total-fiat-values {
-    padding-bottom: var(--s-basic-spacing);
-    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-top: calc(var(--s-basic-spacing) * 0.75);
+    padding-bottom: calc(var(--s-basic-spacing) * 0.75);
     &__title {
       text-transform: uppercase;
       padding-right: calc(var(--s-basic-spacing) / 4);
+      white-space: nowrap;
+      letter-spacing: var(--s-letter-spacing-small);
+    }
+    .fiat-value {
+      font-size: var(--s-font-size-medium);
     }
   }
 }

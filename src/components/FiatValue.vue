@@ -1,5 +1,5 @@
 <template>
-  <span class="fiat-value" v-if="value">
+  <span :class="computedClasses" v-if="value">
     <span class="fiat-value__prefix">~$</span>
     <span class="fiat-value__number">{{ formatted.value }}</span>
     <span class="fiat-value__decimals">{{ formatted.decimals }}</span>
@@ -7,34 +7,43 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Component, Mixins, Prop } from 'vue-property-decorator'
 
 import { FPNumber } from '@sora-substrate/util'
+import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 
 @Component
-export default class FiatValue extends Vue {
+export default class FiatValue extends Mixins(NumberFormatterMixin) {
   @Prop({ default: '', type: String }) readonly value!: string
   @Prop({ default: true, type: Boolean }) readonly withDecimals!: boolean
+  @Prop({ default: false, type: Boolean }) readonly withLeftShift!: boolean
 
   get formatted (): any {
-    const delimiterIndex = this.value.indexOf(FPNumber.DELIMITERS_CONFIG.decimal)
-    if (this.withDecimals) {
-      return {
-        value: delimiterIndex !== -1 ? this.value.substring(0, delimiterIndex) : this.value,
-        decimals: delimiterIndex !== -1 ? this.value.substring(delimiterIndex) : FPNumber.DELIMITERS_CONFIG.decimal + '00'
-      }
-    }
+    const formattedValue = this.formatStringValue(this.value)
+    const delimiterIndex = formattedValue.indexOf(FPNumber.DELIMITERS_CONFIG.decimal)
     return {
-      value: delimiterIndex !== -1 ? this.value.substring(0, delimiterIndex) : this.value,
-      decimals: ''
+      value: delimiterIndex !== -1 ? formattedValue.substring(0, delimiterIndex) : formattedValue,
+      decimals: this.withDecimals
+        ? delimiterIndex !== -1 ? formattedValue.substring(delimiterIndex, delimiterIndex + 3) : FPNumber.DELIMITERS_CONFIG.decimal + '00'
+        : ''
     }
+  }
+
+  get computedClasses (): string {
+    const baseClass = 'fiat-value'
+    const classes = [baseClass]
+
+    if (this.withLeftShift) {
+      classes.push(`${baseClass}--shifted`)
+    }
+
+    return classes.join(' ')
   }
 }
 </script>
 
 <style scoped lang="scss">
 .fiat-value {
-  margin-left: calc(var(--s-basic-spacing) / 2);
   color: var(--s-color-fiat-value);
   font-family: var(--s-font-family-default);
   font-weight: 800;
@@ -42,6 +51,9 @@ export default class FiatValue extends Vue {
   line-height: var(--s-line-height-medium);
   letter-spacing: var(--s-letter-spacing-small);
   white-space: nowrap;
+  &--shifted {
+    margin-left: calc(var(--s-basic-spacing) / 2);
+  }
   &__prefix {
     opacity: .6;
     padding-right: calc(var(--s-basic-spacing) / 4);

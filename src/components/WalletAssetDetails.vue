@@ -18,19 +18,6 @@
           <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
         </div>
         <fiat-value v-if="price" :value="getFiatAmount(getBalance(asset, BalanceTypes.Transferable), price)" />
-        <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
-          <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
-            <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
-            <div class="balance-value">{{ formatBalance(asset.balance[type]) }}</div>
-            <fiat-value v-if="price" :value="getFiatAmount(getBalance(asset, type), price)" />
-          </div>
-          <s-divider />
-          <div class="balance s-flex p4">
-            <div class="balance-label">{{ t('assets.balance.total') }}</div>
-            <div class="balance-value">{{ totalBalance }}</div>
-            <fiat-value v-if="price" :value="getFiatAmount(getBalance(asset, BalanceTypes.Total), price)" />
-          </div>
-        </div>
         <div class="asset-details-actions">
           <s-button
             v-for="operation in operations"
@@ -44,6 +31,18 @@
           >
             <s-icon :name="operation.icon" />
           </s-button>
+        </div>
+        <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
+          <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
+            <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
+            <div class="balance-value">{{ formatBalance(asset.balance[type]) }}</div>
+            <fiat-value v-if="price" :value="getFiatAmount(getBalance(asset, type), price)" :withLeftShift="true" />
+          </div>
+          <div class="balance s-flex p4">
+            <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
+            <div class="balance-value">{{ totalBalance }}</div>
+            <fiat-value v-if="price" :value="getFiatAmount(getBalance(asset, BalanceTypes.Total), price)" :withLeftShift="true" />
+          </div>
         </div>
       </div>
     </s-card>
@@ -210,17 +209,54 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
 }
 </script>
 
+<style lang="scss">
+$asset-details-class: '.asset-details';
+#{$asset-details-class}-container {
+  #{$asset-details-class}-balance {
+    + .fiat-value {
+      font-size: var(--s-font-size-medium);
+      &__prefix {
+        font-weight: 600;
+      }
+      &__decimals {
+        font-size: var(--s-font-size-small);
+      }
+    }
+    &-info {
+      .fiat-value {
+        font-size: var(--s-font-size-extra-small);
+        font-weight: 400;
+        &__number,
+        &__decimals {
+          font-weight: inherit;
+        }
+        &__number {
+          font-size: inherit;
+        }
+        &__decimals {
+          font-size: var(--s-font-size-extra-mini);
+        }
+      }
+    }
+  }
+}
+</style>
+
 <style scoped lang="scss">
 @import '../styles/icons';
 
 .asset-details {
-  margin-bottom: calc(var(--s-basic-spacing) * 2);
+  margin-bottom: 0;
   &.s-card.neumorphic {
     padding-top: 0;
+    padding-bottom: 0;
   }
   &-container {
     flex-direction: column;
     align-items: center;
+    .fiat-value + .asset-details-actions {
+      margin-top: calc(var(--s-basic-spacing) * 1.5);
+    }
   }
   &-balance {
     position: relative;
@@ -245,20 +281,22 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
     }
     &-info {
       width: 100%;
-      margin-bottom: calc(var(--s-basic-spacing) * 2);
+      margin-top: calc(var(--s-basic-spacing) * 2);
       .balance {
         justify-content: space-between;
         margin-bottom: calc(var(--s-basic-spacing) / 2);
+        border-bottom: 1px solid var(--s-color-base-border-secondary);
+        &-label {
+          text-transform: uppercase;
+        }
+        &-label--total,
+        &-value {
+          font-weight: 600;
+        }
         &-value {
           margin-left: auto;
         }
       }
-      .s-divider-secondary {
-        margin: calc(var(--s-basic-spacing) * 1.5) 0;
-      }
-    }
-    + .fiat-value {
-      margin-left: 0;
     }
   }
   &-actions {
