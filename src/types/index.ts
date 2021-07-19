@@ -1,5 +1,3 @@
-import { Asset, AccountAsset } from '@sora-substrate/util'
-
 export enum Components {
   SoraNeoWallet = 'SoraNeoWallet'
 }
