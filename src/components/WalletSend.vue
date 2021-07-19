@@ -36,7 +36,7 @@
             <div class="asset-highlight">
               {{ asset.name || asset.symbol }}
               <s-tooltip :content="t('assets.copy')">
-                <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
+                <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
               </s-tooltip>
             </div>
           </div>
@@ -95,10 +95,11 @@ import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols }
 
 import TransactionMixin from './mixins/TransactionMixin'
 import FiatValueMixin from './mixins/FiatValueMixin'
+import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
 import FiatValue from './FiatValue.vue'
 import { RouteNames } from '../consts'
-import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util'
+import { formatAddress, getAssetIconStyles } from '../util'
 import { api } from '../api'
 
 @Component({
@@ -107,7 +108,7 @@ import { api } from '../api'
     FiatValue
   }
 })
-export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin) {
+export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin, CopyAddressMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly delimiters = FPNumber.DELIMITERS_CONFIG
 
@@ -252,23 +253,6 @@ export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin)
       return
     }
     this.amount = this.getStringFromCodec(this.asset.balance.transferable, this.asset.decimals)
-  }
-
-  async handleCopy (asset: AccountAsset): Promise<void> {
-    try {
-      await copyToClipboard(asset.address)
-      this.$notify({
-        message: this.t('assets.successCopy', { symbol: asset.symbol }),
-        type: 'success',
-        title: ''
-      })
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: ''
-      })
-    }
   }
 
   async handleSend (): Promise<void> {
