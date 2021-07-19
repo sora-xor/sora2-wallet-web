@@ -21,7 +21,7 @@
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <span class="wallet-send-amount-balance-value">{{ balance }}</span>
-              <fiat-value v-if="assetFiatPrice" :value="getFiatAmount(balance, assetFiatPrice)" :withLeftShift="true" />
+              <fiat-value v-if="assetFiatPrice" :value="getFiatAmount(asset)" :withLeftShift="true" />
             </div>
           </div>
           <div class="asset s-flex" slot="right">
@@ -78,7 +78,11 @@
           <s-icon name="info-16" size="14px" />
         </s-tooltip>
         <span class="wallet-send-fee__value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
-        <fiat-value v-if="feeFiatPrice" :value="getFiatAmount(fee.toString(), feeFiatPrice)" :withLeftShift="true" />
+        <fiat-value
+          v-if="this.isXorAccountAsset(asset) ? assetFiatPrice : getAssetFiatPrice(xorAsset)"
+          :value="getFiatAmountByString(xorAsset, fee.toString())"
+          :withLeftShift="true"
+        />
       </div>
     </div>
   </wallet-base>
@@ -87,7 +91,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, Asset, FPNumber, KnownAssets, KnownSymbols, Whitelist } from '@sora-substrate/util'
+import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
 import FiatValueMixin from './mixins/FiatValueMixin'
@@ -110,7 +114,6 @@ export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin)
   @Getter currentRouteParams!: any
   @Getter account!: any
   @Getter accountAssets!: Array<AccountAsset>
-  @Getter whitelist!: Whitelist
 
   @Action navigate
   @Action transfer
@@ -135,16 +138,16 @@ export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin)
     return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
   }
 
-  get assetFiatPrice (): null | string {
-    return this.getAssetFiatPrice(this.whitelist, this.asset)
+  get assetFiatPrice (): CodecString | null {
+    return this.getAssetFiatPrice(this.asset)
   }
 
-  get feeFiatPrice (): null | string {
-    return this.isXorAccountAsset(this.asset) ? this.assetFiatPrice : this.getAssetFiatPrice(this.whitelist, KnownAssets.get(KnownSymbols.XOR))
+  get xorAsset (): Asset {
+    return KnownAssets.get(KnownSymbols.XOR)
   }
 
-  get fiatAmount (): null | string {
-    return this.getFiatAmount(this.amount, this.assetFiatPrice)
+  get fiatAmount (): string | null {
+    return this.getFiatAmountByString(this.asset, this.amount)
   }
 
   get emptyAddress (): boolean {

@@ -18,7 +18,7 @@
                 {{ formatLockedBalance(asset) }}
               </div>
             </div>
-            <fiat-value v-if="getAssetFiatPrice(whitelist, asset)" :value="getFiatAmount(getBalance(asset), getAssetFiatPrice(whitelist, asset))" />
+            <fiat-value v-if="getAssetFiatPrice(asset)" :value="getFiatAmount(asset)" />
             <div class="asset-info">{{ asset.name || asset.symbol }}
               <s-tooltip :content="t('assets.copy')">
                 <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
@@ -66,7 +66,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { AccountAsset, Whitelist, FPNumber } from '@sora-substrate/util'
+import { AccountAsset, FPNumber } from '@sora-substrate/util'
 
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import FiatValueMixin from './mixins/FiatValueMixin'
@@ -84,7 +84,6 @@ import { getAssetIconStyles, formatAddress, copyToClipboard } from '../util'
 export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin, FiatValueMixin) {
   @Getter accountAssets!: Array<AccountAsset>
   @Getter permissions
-  @Getter whitelist!: Whitelist
   @Action getAccountAssets
   @Action navigate
 
@@ -107,21 +106,17 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     return this.accountAssets.filter(asset => asset.balance && !Number.isNaN(+asset.balance.transferable))
   }
 
-  get assetsFiatAmount (): null | string {
+  get assetsFiatAmount (): string | null {
     if (!this.formattedAccountAssets) {
       return null
     }
     if (!this.formattedAccountAssets.length) {
       return '0'
     }
-    const fiatAmount = this.formattedAccountAssets.reduce((sum: FPNumber, asset: AccountAsset, index) => {
-      const price = this.getAssetFiatPrice(this.whitelist, asset)
-      if (price) {
-        const currentMul = this.getFPNumber(this.getBalance(asset)).mul(FPNumber.fromCodecValue(price))
-        return index === 0 ? currentMul : sum.add(currentMul)
-      }
-      return sum
-    }, new FPNumber(FPNumber.ZERO, FPNumber.DEFAULT_PRECISION))
+    const fiatAmount = this.formattedAccountAssets.reduce((sum: FPNumber, asset: AccountAsset) => {
+      const price = this.getAssetFiatPrice(asset)
+      return price ? sum.add(this.getFPNumberFromCodec(asset.balance.transferable, asset.decimals).mul(FPNumber.fromCodecValue(price))) : sum
+    }, new FPNumber(0))
     return fiatAmount && !fiatAmount.isZero() ? fiatAmount.toString() : null
   }
 

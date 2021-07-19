@@ -17,7 +17,7 @@
         <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">{{ balance }}
           <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
         </div>
-        <fiat-value v-if="price" :value="getFiatAmount(getBalance(asset, BalanceTypes.Transferable), price)" />
+        <fiat-value v-if="price" :value="getFiatAmount(asset)" />
         <div class="asset-details-actions">
           <s-button
             v-for="operation in operations"
@@ -36,12 +36,12 @@
           <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
             <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
             <div class="balance-value">{{ formatBalance(asset.balance[type]) }}</div>
-            <fiat-value v-if="price" :value="getFiatAmount(getBalance(asset, type), price)" :withLeftShift="true" />
+            <fiat-value v-if="price" :value="getFiatAmount(asset, type)" :withLeftShift="true" />
           </div>
           <div class="balance s-flex p4">
             <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
             <div class="balance-value">{{ totalBalance }}</div>
-            <fiat-value v-if="price" :value="getFiatAmount(getBalance(asset, BalanceTypes.Total), price)" :withLeftShift="true" />
+            <fiat-value v-if="price" :value="getFiatAmount(asset, BalanceTypes.Total)" :withLeftShift="true" />
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, CodecString, KnownAssets, KnownSymbols, History, Whitelist } from '@sora-substrate/util'
+import { AccountAsset, CodecString, KnownAssets, KnownSymbols, History } from '@sora-substrate/util'
 
 import { api } from '../api'
 import TranslationMixin from './mixins/TranslationMixin'
@@ -90,7 +90,6 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   @Getter currentRouteParams!: any
   @Getter selectedAssetDetails!: Array<any>
   @Getter activity!: Array<History | any>
-  @Getter whitelist!: Whitelist
   @Action navigate
   @Action getAccountActivity
 
@@ -101,8 +100,8 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
     return `${this.formatCodecNumber(value, this.asset.decimals)} ${this.asset.symbol}`
   }
 
-  get price (): null | CodecString {
-    return this.getAssetFiatPrice(this.whitelist, this.asset)
+  get price (): CodecString | null {
+    return this.getAssetFiatPrice(this.asset)
   }
 
   get asset (): AccountAsset {
@@ -192,7 +191,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
 
   getAssetIconStyles = getAssetIconStyles
 
-  getBalance (asset: AccountAsset, type: string): string {
+  getBalance (asset: AccountAsset, type: BalanceTypes): string {
     return `${this.formatCodecNumber(asset.balance[type], asset.decimals)}`
   }
 
