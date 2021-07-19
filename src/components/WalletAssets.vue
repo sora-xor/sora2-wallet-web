@@ -122,7 +122,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
       }
       return sum
     }, new FPNumber(FPNumber.ZERO, FPNumber.DEFAULT_PRECISION))
-    return fiatAmount ? fiatAmount.toString() : null
+    return fiatAmount && !fiatAmount.isZero ? fiatAmount.toString() : null
   }
 
   getFormattedAddress (asset: AccountAsset): string {
