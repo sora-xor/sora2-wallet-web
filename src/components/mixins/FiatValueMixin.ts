@@ -13,7 +13,6 @@ export default class FiatValueMixin extends Mixins(NumberFormatterMixin) {
     if (!price) {
       return null
     }
-    // TODO: Roundoff is needed for hige numbers.
     return new FPNumber(amount).mul(FPNumber.fromCodecValue(price)).toString()
   }
 
