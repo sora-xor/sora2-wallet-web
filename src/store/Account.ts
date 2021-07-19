@@ -4,9 +4,10 @@ import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 import omit from 'lodash/fp/omit'
-import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist } from '@sora-substrate/util'
+import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist, FPNumber } from '@sora-substrate/util'
 
-import { api, axios } from '../api'
+import { api, axios, getCeresTokensData } from '../api'
+import { Account } from '../types'
 import { storage } from '../util/storage'
 import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util'
 
@@ -374,7 +375,21 @@ const actions = {
     commit(types.GET_WHITELIST_REQUEST)
     try {
       const { data } = await axios.get('/whitelist.json')
-      commit(types.GET_WHITELIST_SUCCESS, data)
+      const cerestokenApiObj = await getCeresTokensData()
+      if (!cerestokenApiObj) {
+        commit(types.GET_WHITELIST_SUCCESS, data)
+        return
+      }
+
+      const dataWithPrice = data.map(item => {
+        const asset = item
+        const price = cerestokenApiObj[item.address]
+        if (price) {
+          asset.price = price
+        }
+        return asset
+      })
+      commit(types.GET_WHITELIST_SUCCESS, dataWithPrice)
     } catch (error) {
       commit(types.GET_WHITELIST_FAILURE)
     }
