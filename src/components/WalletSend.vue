@@ -81,6 +81,7 @@
         <fiat-value
           v-if="this.isXorAccountAsset(asset) ? assetFiatPrice : getAssetFiatPrice(xorAsset)"
           :value="getFiatAmountByString(xorAsset, fee.toString())"
+          with-decimals
           with-left-shift
         />
       </div>
@@ -148,7 +149,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin,
   }
 
   get fiatAmount (): string | null {
-    return this.getFiatAmountByString(this.asset, this.amount)
+    return this.getFiatAmountByString(this.asset, this.amount || '0')
   }
 
   get emptyAddress (): boolean {
