@@ -1,9 +1,9 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
-
 import { Whitelist, Asset, AccountAsset, FPNumber, CodecString } from '@sora-substrate/util'
-import NumberFormatterMixin from '@/components/mixins/NumberFormatterMixin'
-import { BalanceTypes } from '@/types'
+
+import NumberFormatterMixin from './NumberFormatterMixin'
+import { BalanceTypes } from '../../types'
 
 @Component
 export default class FiatValueMixin extends Mixins(NumberFormatterMixin) {

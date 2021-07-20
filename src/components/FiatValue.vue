@@ -10,6 +10,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 
 import { FPNumber } from '@sora-substrate/util'
+
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 
 @Component
