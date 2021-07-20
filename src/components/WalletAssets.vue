@@ -68,7 +68,6 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 import { AccountAsset, FPNumber } from '@sora-substrate/util'
 
-import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import FiatValueMixin from './mixins/FiatValueMixin'
 import LoadingMixin from './mixins/LoadingMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
@@ -81,7 +80,7 @@ import { getAssetIconStyles, formatAddress } from '../util'
     FiatValue
   }
 })
-export default class WalletAssets extends Mixins(LoadingMixin, NumberFormatterMixin, FiatValueMixin, CopyAddressMixin) {
+export default class WalletAssets extends Mixins(LoadingMixin, FiatValueMixin, CopyAddressMixin) {
   @Getter accountAssets!: Array<AccountAsset>
   @Getter permissions
   @Action getAccountAssets
