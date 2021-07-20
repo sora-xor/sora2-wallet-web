@@ -48,8 +48,8 @@
   }
 }
 
-@mixin hint-text ($withLineHeight: false) {
-  color: var(--s-color-base-content-secondary);
+@mixin hint-text ($withLineHeight: false, $color: var(--s-color-base-content-secondary)) {
+  color: $color;
   font-size: var(--s-font-size-mini);
   font-weight: 300;
   line-height: var(--s-line-height-medium);

@@ -21,6 +21,7 @@
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <span class="wallet-send-amount-balance-value">{{ balance }}</span>
+              <fiat-value v-if="assetFiatPrice" :value="getFiatAmount(asset)" with-decimals with-left-shift />
             </div>
           </div>
           <div class="asset s-flex" slot="right">
@@ -30,11 +31,16 @@
             <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
             <span class="asset-name">{{ asset.symbol }}</span>
           </div>
+          <div class="asset-info" slot="bottom">
+            <fiat-value v-if="fiatAmount" :value="fiatAmount" with-decimals />
+            <div class="asset-highlight">
+              {{ asset.name || asset.symbol }}
+              <s-tooltip :content="copyTooltip">
+                <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
+              </s-tooltip>
+            </div>
+          </div>
         </s-float-input>
-        <div class="wallet-send-fee s-flex">
-          <span>{{ t('walletSend.fee') }}</span>
-          <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
-        </div>
         <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
@@ -51,11 +57,6 @@
           <div class="confirm-from">{{ account.address }}</div>
           <s-icon name="arrows-arrow-bottom-24" />
           <div class="confirm-to">{{ address }}</div>
-          <s-divider />
-          <div class="wallet-send-fee s-flex">
-            <span>{{ t('walletSend.fee') }}</span>
-            <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
-          </div>
         </div>
         <s-button
           class="wallet-send-action s-typography-button--large"
@@ -66,6 +67,24 @@
           {{ sendButtonDisabledText || t('walletSend.confirm') }}
         </s-button>
       </template>
+      <div class="wallet-send-fee s-flex">
+        <span class="wallet-send-fee__label">{{ t('walletSend.fee') }}</span>
+        <s-tooltip
+          popper-class="info-tooltip info-tooltip--info-line"
+          :content="t('walletSend.feeTooltip')"
+          placement="right-start"
+          border-radius="mini"
+        >
+          <s-icon name="info-16" size="14px" />
+        </s-tooltip>
+        <span class="wallet-send-fee__value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
+        <fiat-value
+          v-if="this.isXorAccountAsset(asset) ? assetFiatPrice : getAssetFiatPrice(xorAsset)"
+          :value="getFiatAmountByString(xorAsset, fee.toString())"
+          with-decimals
+          with-left-shift
+        />
+      </div>
     </div>
   </wallet-base>
 </template>
@@ -73,26 +92,31 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
+import FiatValueMixin from './mixins/FiatValueMixin'
+import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
+import FiatValue from './FiatValue.vue'
 import { RouteNames } from '../consts'
-import { getAssetIconStyles } from '../util'
+import { formatAddress, getAssetIconStyles } from '../util'
 import { api } from '../api'
 
 @Component({
   components: {
-    WalletBase
+    WalletBase,
+    FiatValue
   }
 })
-export default class WalletSend extends Mixins(TransactionMixin) {
+export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin, CopyAddressMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly delimiters = FPNumber.DELIMITERS_CONFIG
 
   @Getter currentRouteParams!: any
   @Getter account!: any
   @Getter accountAssets!: Array<AccountAsset>
+
   @Action navigate
   @Action transfer
 
@@ -114,6 +138,18 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 
   get balance (): string {
     return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
+  }
+
+  get assetFiatPrice (): CodecString | null {
+    return this.getAssetFiatPrice(this.asset)
+  }
+
+  get xorAsset (): Asset {
+    return KnownAssets.get(KnownSymbols.XOR)
+  }
+
+  get fiatAmount (): string | null {
+    return this.getFiatAmountByString(this.asset, this.amount || '0')
   }
 
   get emptyAddress (): boolean {
@@ -199,6 +235,10 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 
   getAssetIconStyles = getAssetIconStyles
 
+  getFormattedAddress (asset: Asset): string {
+    return formatAddress(asset.address, 10)
+  }
+
   handleBack (): void {
     if (this.step !== 1) {
       this.step = 1
@@ -234,6 +274,22 @@ export default class WalletSend extends Mixins(TransactionMixin) {
 .wallet-send-input .el-input__inner {
   font-size: 20px;
   line-height: var(--s-line-height-small);
+}
+.wallet-send-amount,
+.wallet-send .asset-info,
+.wallet-send-fee {
+  .fiat-value {
+    &__number,
+    &__decimals {
+      font-size: inherit;
+      font-weight: inherit;
+    }
+  }
+}
+.wallet-send-fee {
+  .fiat-value__decimals {
+    font-size: var(--s-font-size-extra-mini);
+  }
 }
 </style>
 
@@ -272,6 +328,26 @@ $logo-size: var(--s-size-mini);
     &-max, &-name {
       font-weight: 700;
     }
+    &-info {
+      display: flex;
+      .fiat-value {
+        margin-left: 0;
+        margin-right: var(--s-basic-spacing);
+        font-weight: 600;
+      }
+      .asset-id {
+        cursor: pointer;
+      }
+    }
+    &-highlight {
+      margin-left: auto;
+      color: var(--s-color-base-content-secondary);
+      font-size: var(--s-font-size-extra-mini);
+      font-weight: 300 ;
+      line-height: var(--s-line-height-medium);
+      letter-spacing: var(--s-letter-spacing-small);
+      text-align: right;
+    }
   }
   &-address {
     margin-bottom: var(--s-basic-spacing);
@@ -302,6 +378,15 @@ $logo-size: var(--s-size-mini);
         margin-right: calc(var(--s-basic-spacing) / 2);
       }
     }
+    &-balance {
+      &-title {
+        color: var(--s-color-base-content-secondary);
+      }
+      .fiat-value {
+        font-size: inherit;
+        font-weight: 400;
+      }
+    }
   }
   &-fee {
     align-items: center;
@@ -309,9 +394,19 @@ $logo-size: var(--s-size-mini);
     width: 100%;
     padding-right: var(--s-basic-spacing);
     padding-left: var(--s-basic-spacing);
-    color: var(--s-color-base-content-secondary);
-    &_value {
+    color: var(--s-color-base-content-primary);
+    border-bottom: 1px solid var(--s-color-base-border-secondary);
+    &__label {
+      margin-right: var(--s-basic-spacing);
+      text-transform: uppercase;
+    }
+    &__value {
       margin-left: auto;
+      font-weight: 600;
+    }
+    .fiat-value {
+      font-weight: 400;
+      font-size: var(--s-font-size-extra-small);
     }
   }
   &-action {
