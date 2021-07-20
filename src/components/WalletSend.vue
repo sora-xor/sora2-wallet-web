@@ -21,7 +21,7 @@
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <span class="wallet-send-amount-balance-value">{{ balance }}</span>
-              <fiat-value v-if="assetFiatPrice" :value="getFiatAmount(asset)" :with-left-shift="true" />
+              <fiat-value v-if="assetFiatPrice" :value="getFiatAmount(asset)" with-decimals with-left-shift />
             </div>
           </div>
           <div class="asset s-flex" slot="right">
@@ -32,7 +32,7 @@
             <span class="asset-name">{{ asset.symbol }}</span>
           </div>
           <div class="asset-info" slot="bottom">
-            <fiat-value v-if="fiatAmount" :value="fiatAmount" />
+            <fiat-value v-if="fiatAmount" :value="fiatAmount" with-decimals />
             <div class="asset-highlight">
               {{ asset.name || asset.symbol }}
               <s-tooltip :content="copyTooltip">
@@ -81,7 +81,7 @@
         <fiat-value
           v-if="this.isXorAccountAsset(asset) ? assetFiatPrice : getAssetFiatPrice(xorAsset)"
           :value="getFiatAmountByString(xorAsset, fee.toString())"
-          :with-left-shift="true"
+          with-left-shift
         />
       </div>
     </div>

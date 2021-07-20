@@ -3,7 +3,7 @@
     <template v-if="assetsFiatAmount">
       <div class="total-fiat-values">
         <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
-        <fiat-value :value="assetsFiatAmount" :with-decimals="false" :with-left-shift="true" />
+        <fiat-value :value="assetsFiatAmount" with-left-shift />
       </div>
       <s-divider class="wallet-assets-item_divider" />
     </template>
@@ -18,7 +18,7 @@
                 {{ formatLockedBalance(asset) }}
               </div>
             </div>
-            <fiat-value v-if="getAssetFiatPrice(asset)" :value="getFiatAmount(asset)" />
+            <fiat-value v-if="getAssetFiatPrice(asset)" :value="getFiatAmount(asset)" with-decimals />
             <div class="asset-info">{{ asset.name || asset.symbol }}
               <s-tooltip :content="copyTooltip">
                 <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>

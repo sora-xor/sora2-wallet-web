@@ -2,7 +2,7 @@
   <span :class="computedClasses" v-if="value">
     <span class="fiat-value__prefix">~$</span>
     <span class="fiat-value__number">{{ formatted.value }}</span>
-    <span class="fiat-value__decimals">{{ formatted.decimals }}</span>
+    <span v-if="withDecimals" class="fiat-value__decimals">{{ formatted.decimals }}</span>
   </span>
 </template>
 
@@ -15,7 +15,7 @@ import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 @Component
 export default class FiatValue extends Mixins(NumberFormatterMixin) {
   @Prop({ default: '', type: String }) readonly value!: string
-  @Prop({ default: true, type: Boolean }) readonly withDecimals!: boolean
+  @Prop({ default: false, type: Boolean }) readonly withDecimals!: boolean
   @Prop({ default: false, type: Boolean }) readonly withLeftShift!: boolean
 
   get formatted (): any {
