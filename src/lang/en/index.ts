@@ -91,7 +91,8 @@ export default {
     amount: '@:amountText',
     balance: 'Balance',
     max: 'MAX',
-    fee: 'Transaction Fee',
+    fee: 'Network fee',
+    feeTooltip: 'Network fee is used to ensure SORA system\'s growth and stable performance.',
     enterAddress: 'Enter address',
     badAddress: 'Incorrect address',
     enterAmount: 'Enter amount',
@@ -114,6 +115,7 @@ export default {
   },
   assets: {
     empty: 'There are no assets',
+    totalAssetsValue: 'Your total assets value:',
     add: '@:addAssetText',
     swap: '@:swapText',
     send: '@:sendText',

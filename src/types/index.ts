@@ -1,5 +1,3 @@
-import { Asset, AccountAsset } from '@sora-substrate/util'
-
 export enum Components {
   SoraNeoWallet = 'SoraNeoWallet'
 }
@@ -25,4 +23,9 @@ export enum BalanceTypes {
   Locked = 'locked',
   Reserved = 'reserved',
   Total = 'total'
+}
+
+export interface Account {
+  address: string;
+  name: string;
 }
