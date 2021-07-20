@@ -6,7 +6,7 @@
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="getCopyTooltip(transactionIdKey)"
+          :tooltip="getOperationTooltip(transactionIdKey)"
           type="action"
           alternative
           @click="handleCopy(transactionId, t(transactionIdKey))"
@@ -68,7 +68,7 @@
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="getCopyTooltip('transaction.from')"
+          :tooltip="getOperationTooltip('transaction.from')"
           type="action"
           alternative
           @click="handleCopy(selectedTransaction.from, t('transaction.from'))"
@@ -94,7 +94,7 @@
         <s-button
           class="s-button--copy"
           icon="basic-copy-24"
-          :tooltip="getCopyTooltip('transaction.to')"
+          :tooltip="getOperationTooltip('transaction.to')"
           type="action"
           alternative
           @click="handleCopy(selectedTransaction.to, t('transaction.to'))"
@@ -124,7 +124,6 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import { TransactionStatus, AccountAsset, Operation } from '@sora-substrate/util'
-import TranslationMixin from './mixins/TranslationMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
@@ -136,7 +135,7 @@ import { externalStore } from '../index'
 @Component({
   components: { WalletBase }
 })
-export default class WalletTransactionDetails extends Mixins(TranslationMixin, CopyAddressMixin, NumberFormatterMixin) {
+export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, NumberFormatterMixin) {
   readonly Operation = Operation
 
   @Getter currentRouteParams!: any
@@ -230,7 +229,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, C
     this.navigate({ name: RouteNames.Wallet, params: { currentTab: WalletTabs.Activity } })
   }
 
-  getCopyTooltip (value: string): string {
+  getOperationTooltip (value: string): string {
     return this.t('transaction.copy', { value: this.t(value) })
   }
 

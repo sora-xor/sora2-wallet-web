@@ -38,6 +38,8 @@ $s-color-status-warning-background: #C6E2FF;
 $s-color-status-error-background: #FFD8EB;
 // Shadows
 $s-shadow-surface: 1px 1px 5px var(--s-shadow-color-dark), inset 1px 1px 1px var(--s-shadow-color-dark); // container
+// Fiat colors
+$s-color-fiat-value: rgba(71, 154, 239, 1) !default;
 // Size
 $s-size-big: 58px;
 $s-size-medium: 42px;
@@ -59,6 +61,8 @@ $s-font-family-icons-path: '~@soramitsu/soramitsu-js-ui/lib/assets/fonts/soramit
 :root {
   --s-color-brand-day: #{$s-color-brand-day};
   --s-transition-default: #{$s-transition-default};
+  // Fiat colors
+  --s-color-fiat-value: #{$s-color-fiat-value};
 }
 
 @import "../../node_modules/@soramitsu/soramitsu-js-ui/lib/styles/index";

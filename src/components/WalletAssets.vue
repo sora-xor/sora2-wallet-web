@@ -1,5 +1,12 @@
 <template>
-  <div class="wallet-assets s-flex" v-loading="loading">
+  <div :class="computedClasses" v-loading="loading">
+    <template v-if="assetsFiatAmount">
+      <div class="total-fiat-values">
+        <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
+        <fiat-value :value="assetsFiatAmount" with-left-shift />
+      </div>
+      <s-divider class="wallet-assets-item_divider" />
+    </template>
     <div v-if="!!formattedAccountAssets.length" class="wallet-assets-container">
       <template v-for="(asset, index) in formattedAccountAssets">
         <div class="wallet-assets-item s-flex" :key="asset.address">
@@ -11,9 +18,10 @@
                 {{ formatLockedBalance(asset) }}
               </div>
             </div>
+            <fiat-value v-if="getAssetFiatPrice(asset)" :value="getFiatAmount(asset)" with-decimals />
             <div class="asset-info">{{ asset.name || asset.symbol }}
-              <s-tooltip :content="t('assets.copy')">
-                <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
+              <s-tooltip :content="copyTooltip">
+                <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
               </s-tooltip>
             </div>
           </div>
@@ -58,16 +66,22 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-import { AccountAsset } from '@sora-substrate/util'
+import { AccountAsset, FPNumber } from '@sora-substrate/util'
 
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
-import TranslationMixin from './mixins/TranslationMixin'
+import FiatValueMixin from './mixins/FiatValueMixin'
 import LoadingMixin from './mixins/LoadingMixin'
+import CopyAddressMixin from './mixins/CopyAddressMixin'
+import FiatValue from './FiatValue.vue'
 import { RouteNames } from '../consts'
-import { getAssetIconStyles, formatAddress, copyToClipboard } from '../util'
+import { getAssetIconStyles, formatAddress } from '../util'
 
-@Component
-export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
+@Component({
+  components: {
+    FiatValue
+  }
+})
+export default class WalletAssets extends Mixins(LoadingMixin, NumberFormatterMixin, FiatValueMixin, CopyAddressMixin) {
   @Getter accountAssets!: Array<AccountAsset>
   @Getter permissions
   @Action getAccountAssets
@@ -77,8 +91,33 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
     this.withApi(this.getAccountAssets)
   }
 
+  get computedClasses (): string {
+    const baseClass = 'wallet-assets'
+    const classes = [baseClass]
+
+    if (this.assetsFiatAmount) {
+      classes.push(`${baseClass}--fiat`)
+    }
+
+    return classes.concat('s-flex').join(' ')
+  }
+
   get formattedAccountAssets (): Array<AccountAsset> {
     return this.accountAssets.filter(asset => asset.balance && !Number.isNaN(+asset.balance.transferable))
+  }
+
+  get assetsFiatAmount (): string | null {
+    if (!this.formattedAccountAssets) {
+      return null
+    }
+    if (!this.formattedAccountAssets.length) {
+      return '0'
+    }
+    const fiatAmount = this.formattedAccountAssets.reduce((sum: FPNumber, asset: AccountAsset) => {
+      const price = this.getAssetFiatPrice(asset)
+      return price ? sum.add(this.getFPNumberFromCodec(asset.balance.transferable, asset.decimals).mul(FPNumber.fromCodecValue(price))) : sum
+    }, new FPNumber(0))
+    return fiatAmount && !fiatAmount.isZero() ? fiatAmount.toString() : null
   }
 
   getFormattedAddress (asset: AccountAsset): string {
@@ -87,8 +126,12 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 
   getAssetIconStyles = getAssetIconStyles
 
+  getBalance (asset: AccountAsset): string {
+    return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`
+  }
+
   formatBalance (asset: AccountAsset): string {
-    return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)} ${asset.symbol}`
+    return `${this.getBalance(asset)} ${asset.symbol}`
   }
 
   isZeroBalance (asset: AccountAsset): boolean {
@@ -118,32 +161,26 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
   handleOpenAddAsset (): void {
     this.navigate({ name: RouteNames.AddAsset })
   }
-
-  async handleCopy (asset: AccountAsset): Promise<void> {
-    try {
-      await copyToClipboard(asset.address)
-      this.$notify({
-        message: this.t('assets.successCopy', { symbol: asset.symbol }),
-        type: 'success',
-        title: ''
-      })
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: ''
-      })
-    }
-  }
 }
 </script>
 
 <style scoped lang="scss">
 @import '../styles/icons';
 
-.wallet-assets {
+$wallet-assets-class: '.wallet-assets';
+
+#{$wallet-assets-class} {
   flex-direction: column;
   margin-top: calc(var(--s-basic-spacing) * 2);
+
+  &--fiat {
+    #{$wallet-assets-class}-container {
+      max-height: calc(#{$asset-item-height--fiat} * 5);
+    }
+    #{$wallet-assets-class}-item {
+      height: $asset-item-height--fiat;
+    }
+  }
 
   &-container {
     max-height: calc(#{$asset-item-height} * 5);
@@ -169,7 +206,7 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
         font-weight: 800;
       }
       &-info {
-        @include hint-text;
+        @include hint-text($color: var(--s-color-base-content-primary));
       }
       &-id {
         outline: none;
@@ -191,6 +228,9 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
       }
       &-converted {
         @include hint-text;
+      }
+      .fiat-value {
+        white-space: initial;
       }
     }
     .details {
@@ -215,6 +255,24 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
   &__button {
     & + & {
       margin-left: var(--s-basic-spacing);
+    }
+  }
+
+  .total-fiat-values {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding-top: calc(var(--s-basic-spacing) * 0.75);
+    padding-bottom: calc(var(--s-basic-spacing) * 0.75);
+    &__title {
+      text-transform: uppercase;
+      padding-right: calc(var(--s-basic-spacing) / 4);
+      white-space: nowrap;
+      letter-spacing: var(--s-letter-spacing-small);
+    }
+    .fiat-value {
+      font-size: var(--s-font-size-medium);
     }
   }
 }
