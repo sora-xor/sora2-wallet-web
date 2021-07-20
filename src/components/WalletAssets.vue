@@ -20,8 +20,8 @@
             </div>
             <fiat-value v-if="getAssetFiatPrice(asset)" :value="getFiatAmount(asset)" />
             <div class="asset-info">{{ asset.name || asset.symbol }}
-              <s-tooltip :content="t('assets.copy')">
-                <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
+              <s-tooltip :content="getCopyTooltip">
+                <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
               </s-tooltip>
             </div>
           </div>
@@ -70,18 +70,18 @@ import { AccountAsset, FPNumber } from '@sora-substrate/util'
 
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import FiatValueMixin from './mixins/FiatValueMixin'
-import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'
+import CopyAddressMixin from './mixins/CopyAddressMixin'
 import FiatValue from './FiatValue.vue'
 import { RouteNames } from '../consts'
-import { getAssetIconStyles, formatAddress, copyToClipboard } from '../util'
+import { getAssetIconStyles, formatAddress } from '../util'
 
 @Component({
   components: {
     FiatValue
   }
 })
-export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin, FiatValueMixin) {
+export default class WalletAssets extends Mixins(LoadingMixin, NumberFormatterMixin, FiatValueMixin, CopyAddressMixin) {
   @Getter accountAssets!: Array<AccountAsset>
   @Getter permissions
   @Action getAccountAssets
@@ -160,23 +160,6 @@ export default class WalletAssets extends Mixins(TranslationMixin, LoadingMixin,
 
   handleOpenAddAsset (): void {
     this.navigate({ name: RouteNames.AddAsset })
-  }
-
-  async handleCopy (asset: AccountAsset): Promise<void> {
-    try {
-      await copyToClipboard(asset.address)
-      this.$notify({
-        message: this.t('assets.successCopy', { symbol: asset.symbol }),
-        type: 'success',
-        title: ''
-      })
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: ''
-      })
-    }
   }
 }
 </script>

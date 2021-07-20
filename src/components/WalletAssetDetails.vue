@@ -56,7 +56,6 @@ import { Action, Getter } from 'vuex-class'
 import { AccountAsset, CodecString, KnownAssets, KnownSymbols, History } from '@sora-substrate/util'
 
 import { api } from '../api'
-import TranslationMixin from './mixins/TranslationMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import FiatValueMixin from './mixins/FiatValueMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
@@ -75,7 +74,7 @@ interface Operation {
 @Component({
   components: { WalletBase, FiatValue, WalletHistory }
 })
-export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberFormatterMixin, FiatValueMixin, CopyAddressMixin) {
+export default class WalletAssetDetails extends Mixins(NumberFormatterMixin, FiatValueMixin, CopyAddressMixin) {
   readonly balanceTypes = Object.values(BalanceTypes).filter(type => type !== BalanceTypes.Total)
   readonly operations = [
     { type: Operations.Send, icon: 'finance-send-24' },
