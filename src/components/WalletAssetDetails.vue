@@ -36,12 +36,12 @@
           <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
             <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
             <div class="balance-value">{{ formatBalance(asset.balance[type]) }}</div>
-            <fiat-value v-if="price" :value="getFiatAmount(asset, type)" :withLeftShift="true" />
+            <fiat-value v-if="price" :value="getFiatAmount(asset, type)" :with-left-shift="true" />
           </div>
           <div class="balance s-flex p4">
             <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
             <div class="balance-value">{{ totalBalance }}</div>
-            <fiat-value v-if="price" :value="getFiatAmount(asset, BalanceTypes.Total)" :withLeftShift="true" />
+            <fiat-value v-if="price" :value="getFiatAmount(asset, BalanceTypes.Total)" :with-left-shift="true" />
           </div>
         </div>
       </div>

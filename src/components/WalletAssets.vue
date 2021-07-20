@@ -3,7 +3,7 @@
     <template v-if="assetsFiatAmount">
       <div class="total-fiat-values">
         <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
-        <fiat-value :value="assetsFiatAmount" :withDecimals="false" :withLeftShift="true" />
+        <fiat-value :value="assetsFiatAmount" :with-decimals="false" :with-left-shift="true" />
       </div>
       <s-divider class="wallet-assets-item_divider" />
     </template>
