@@ -20,7 +20,7 @@
             </div>
             <fiat-value v-if="getAssetFiatPrice(asset)" :value="getFiatAmount(asset)" />
             <div class="asset-info">{{ asset.name || asset.symbol }}
-              <s-tooltip :content="getCopyTooltip">
+              <s-tooltip :content="copyTooltip">
                 <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
               </s-tooltip>
             </div>
