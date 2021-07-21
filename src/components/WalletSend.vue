@@ -21,7 +21,7 @@
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <span class="wallet-send-amount-balance-value">{{ balance }}</span>
-              <fiat-value v-if="assetFiatPrice" :value="getFiatAmount(asset)" with-decimals with-left-shift />
+              <fiat-value v-if="assetFiatPrice" :value="getFiatBalance(asset)" with-decimals with-left-shift />
             </div>
           </div>
           <div class="asset s-flex" slot="right">
@@ -80,7 +80,7 @@
         <span class="wallet-send-fee__value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
         <fiat-value
           v-if="this.isXorAccountAsset(asset) ? assetFiatPrice : getAssetFiatPrice(xorAsset)"
-          :value="getFiatAmountByString(xorAsset, fee.toString())"
+          :value="getFiatAmountByFPNumber(fee)"
           with-decimals
           with-left-shift
         />
@@ -149,7 +149,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin,
   }
 
   get fiatAmount (): string | null {
-    return this.getFiatAmountByString(this.asset, this.amount || '0')
+    return this.getFiatAmountByString(this.amount, this.asset)
   }
 
   get emptyAddress (): boolean {

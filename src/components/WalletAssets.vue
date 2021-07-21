@@ -18,7 +18,7 @@
                 {{ formatLockedBalance(asset) }}
               </div>
             </div>
-            <fiat-value v-if="getAssetFiatPrice(asset)" :value="getFiatAmount(asset)" with-decimals />
+            <fiat-value v-if="getAssetFiatPrice(asset)" :value="getFiatBalance(asset)" with-decimals />
             <div class="asset-info">{{ asset.name || asset.symbol }}
               <s-tooltip :content="copyTooltip">
                 <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
