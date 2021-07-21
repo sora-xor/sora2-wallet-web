@@ -23,6 +23,7 @@ export default class FiatValueMixin extends Mixins(NumberFormatterMixin) {
   }
 
   getFiatAmountByString (amount: string, asset: AccountAsset): string | null {
+    // When input is empty, zero should be shown
     if (!amount && amount !== '') {
       return null
     }
