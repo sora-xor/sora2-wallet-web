@@ -1,5 +1,5 @@
 <template>
-  <span :class="computedClasses" v-if="value">
+  <span v-if="value" :class="computedClasses">
     <span class="fiat-value__prefix">~$</span>
     <span class="fiat-value__number">{{ formatted.value }}</span>
     <span v-if="withDecimals" class="fiat-value__decimals">{{ formatted.decimals }}</span>

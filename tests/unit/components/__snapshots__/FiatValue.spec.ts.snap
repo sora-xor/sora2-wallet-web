@@ -1,0 +1,25 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FiatValue.vue should be rendered correctly 1`] = `
+<span
+  class="fiat-value"
+>
+  <span
+    class="fiat-value__prefix"
+  >
+    ~$
+  </span>
+   
+  <span
+    class="fiat-value__number"
+  >
+    1,234
+  </span>
+   
+  <span
+    class="fiat-value__decimals"
+  >
+    .56
+  </span>
+</span>
+`;
