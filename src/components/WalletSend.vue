@@ -41,7 +41,7 @@
             </div>
           </div>
         </s-float-input>
-        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
+        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" :loading="feeLoading" @click="step = 2">
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
       </template>
@@ -194,7 +194,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin,
   }
 
   get sendButtonDisabled (): boolean {
-    return this.loading || this.feeLoading || !this.validAddress || !this.validAmount || !this.hasEnoughXor
+    return this.loading || !this.validAddress || !this.validAmount || !this.hasEnoughXor
   }
 
   get sendButtonDisabledText (): string {
