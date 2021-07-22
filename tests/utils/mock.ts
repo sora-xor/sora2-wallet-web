@@ -101,3 +101,61 @@ export const MOCK_HISTORY: Array<History> = [
     from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K'
   }
 ]
+
+interface FiatValue {
+  title: string;
+  value: any;
+  withDecimals?: boolean;
+  withLeftShift?: boolean;
+}
+
+export const MOCK_FIAT_VALUES: Array<FiatValue> = [
+  {
+    title: 'With Empty Value',
+    value: ''
+  },
+  {
+    title: 'Value only',
+    value: '1234.5678'
+  },
+  {
+    title: 'With Decimals',
+    value: '1234.5678',
+    withDecimals: true
+  },
+  {
+    title: 'With Left Shift',
+    value: '1234.5678',
+    withLeftShift: true
+  },
+  {
+    title: 'With 0 Value',
+    value: 0,
+    withDecimals: true
+  },
+  {
+    title: 'With "0" Value',
+    value: '0',
+    withDecimals: true
+  },
+  {
+    title: 'With undefined Value',
+    value: undefined,
+    withDecimals: true
+  },
+  {
+    title: 'With NaN Value',
+    value: NaN,
+    withDecimals: true
+  },
+  {
+    title: 'With "NaN" Value',
+    value: 'NaN',
+    withDecimals: true
+  },
+  {
+    title: 'With Infinity Value',
+    value: Infinity,
+    withDecimals: true
+  }
+]
