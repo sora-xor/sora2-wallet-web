@@ -1,6 +1,54 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`FiatValue.vue should be rendered correctly 1`] = `
+exports[`FiatValue.vue [Value only]: should be rendered correctly 1`] = `
+<span
+  class="fiat-value"
+>
+  <span
+    class="fiat-value__prefix"
+  >
+    ~$
+  </span>
+   
+  <span
+    class="fiat-value__number"
+  >
+    1,234
+  </span>
+   
+  <!---->
+</span>
+`;
+
+exports[`FiatValue.vue [With "0" Value]: should be rendered correctly 1`] = `
+<span
+  class="fiat-value"
+>
+  <span
+    class="fiat-value__prefix"
+  >
+    ~$
+  </span>
+   
+  <span
+    class="fiat-value__number"
+  >
+    0
+  </span>
+   
+  <span
+    class="fiat-value__decimals"
+  >
+    .00
+  </span>
+</span>
+`;
+
+exports[`FiatValue.vue [With "NaN" Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FiatValue.vue [With 0 Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FiatValue.vue [With Decimals]: should be rendered correctly 1`] = `
 <span
   class="fiat-value"
 >
@@ -23,3 +71,31 @@ exports[`FiatValue.vue should be rendered correctly 1`] = `
   </span>
 </span>
 `;
+
+exports[`FiatValue.vue [With Empty Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FiatValue.vue [With Infinity Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FiatValue.vue [With Left Shift]: should be rendered correctly 1`] = `
+<span
+  class="fiat-value fiat-value--shifted"
+>
+  <span
+    class="fiat-value__prefix"
+  >
+    ~$
+  </span>
+   
+  <span
+    class="fiat-value__number"
+  >
+    1,234
+  </span>
+   
+  <!---->
+</span>
+`;
+
+exports[`FiatValue.vue [With NaN Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FiatValue.vue [With undefined Value]: should be rendered correctly 1`] = `<!---->`;
