@@ -1,7 +1,7 @@
 import Vue from 'vue'
 
-import { Themes } from '@soramitsu/soramitsu-js-ui/src/utils/Theme'
-import { DesignSystemTypes } from '@soramitsu/soramitsu-js-ui/src/utils/DesignSystem'
+import { Theme } from '@soramitsu/soramitsu-js-ui/src/utils/Theme'
+import { DesignSystem } from '@soramitsu/soramitsu-js-ui/src/utils/DesignSystem'
 import { setTheme, setDesignSystem } from '@soramitsu/soramitsu-js-ui/src/utils'
 
 import ElementUIPlugin, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui/src/plugins/elementUI'
@@ -60,6 +60,6 @@ export function install (vue: typeof Vue, store) {
     elements[elements.length - 1].appendChild(el)
   }
 
-  setTheme(Themes.LIGHT)
-  setDesignSystem(DesignSystemTypes.NEUMORPHIC)
+  setTheme(Theme.LIGHT)
+  setDesignSystem(DesignSystem.NEUMORPHIC)
 }
