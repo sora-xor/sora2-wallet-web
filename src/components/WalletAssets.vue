@@ -7,57 +7,59 @@
       </div>
       <s-divider class="wallet-assets-item_divider" />
     </template>
-    <div v-if="!!formattedAccountAssets.length" class="wallet-assets-container">
-      <template v-for="(asset, index) in formattedAccountAssets">
-        <div class="wallet-assets-item s-flex" :key="asset.address">
-          <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
-          <div class="asset s-flex">
-            <div class="asset-value">{{ formatBalance(asset) }}
-              <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
-                <s-icon name="lock-16" size="12px" />
-                {{ formatLockedBalance(asset) }}
+    <s-scrollbar v-if="!!formattedAccountAssets.length" class="wallet-assets-scrollbar">
+      <div class="wallet-assets-container">
+        <template v-for="(asset, index) in formattedAccountAssets">
+          <div class="wallet-assets-item s-flex" :key="asset.address">
+            <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+            <div class="asset s-flex">
+              <div class="asset-value">{{ formatBalance(asset) }}
+                <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
+                  <s-icon name="lock-16" size="12px" />
+                  {{ formatLockedBalance(asset) }}
+                </div>
+              </div>
+              <fiat-value v-if="getAssetFiatPrice(asset)" :value="getFiatBalance(asset)" with-decimals />
+              <div class="asset-info">{{ asset.name || asset.symbol }}
+                <s-tooltip :content="copyTooltip">
+                  <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
+                </s-tooltip>
               </div>
             </div>
-            <fiat-value v-if="getAssetFiatPrice(asset)" :value="getFiatBalance(asset)" with-decimals />
-            <div class="asset-info">{{ asset.name || asset.symbol }}
-              <s-tooltip :content="copyTooltip">
-                <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
-              </s-tooltip>
-            </div>
+            <s-button
+              v-if="permissions.sendAssets"
+              class="wallet-assets__button send"
+              type="primary"
+              rounded
+              :tooltip="t('assets.send')"
+              :disabled="isZeroBalance(asset)"
+              @click="handleAssetSend(asset)"
+            >
+              <s-icon name="finance-send-24" />
+            </s-button>
+            <s-button
+              v-if="permissions.swapAssets"
+              class="wallet-assets__button swap"
+              type="primary"
+              rounded
+              :tooltip="t('assets.swap')"
+              @click="handleAssetSwap(asset)"
+            >
+              <s-icon name="arrows-swap-24" />
+            </s-button>
+            <s-button
+              class="wallet-assets__button details"
+              type="action"
+              icon="arrows-chevron-right-rounded-24"
+              alternative
+              @click="handleOpenAssetDetails(asset)"
+            >
+            </s-button>
           </div>
-          <s-button
-            v-if="permissions.sendAssets"
-            class="wallet-assets__button send"
-            type="primary"
-            rounded
-            :tooltip="t('assets.send')"
-            :disabled="isZeroBalance(asset)"
-            @click="handleAssetSend(asset)"
-          >
-            <s-icon name="finance-send-24" />
-          </s-button>
-          <s-button
-            v-if="permissions.swapAssets"
-            class="wallet-assets__button swap"
-            type="primary"
-            rounded
-            :tooltip="t('assets.swap')"
-            @click="handleAssetSwap(asset)"
-          >
-            <s-icon name="arrows-swap-24" />
-          </s-button>
-          <s-button
-            class="wallet-assets__button details"
-            type="action"
-            icon="arrows-chevron-right-rounded-24"
-            alternative
-            @click="handleOpenAssetDetails(asset)"
-          >
-          </s-button>
-        </div>
-        <s-divider v-if="index !== formattedAccountAssets.length - 1" class="wallet-assets-item_divider" :key="`${asset.address}-divider`" />
-      </template>
-    </div>
+          <s-divider v-if="index !== formattedAccountAssets.length - 1" class="wallet-assets-item_divider" :key="`${asset.address}-divider`" />
+        </template>
+      </div>
+    </s-scrollbar>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
     <s-button class="wallet-assets-add s-typography-button--large" @click="handleOpenAddAsset">{{ t('assets.add') }}</s-button>
   </div>
@@ -163,6 +165,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FiatValueMixin, C
 }
 </script>
 
+<style lang="scss">
+.wallet-assets-scrollbar > .el-scrollbar__bar.is-vertical {
+  right: 0;
+}
+</style>
+
 <style scoped lang="scss">
 @import '../styles/icons';
 
@@ -183,8 +191,6 @@ $wallet-assets-class: '.wallet-assets';
 
   &-container {
     max-height: calc(#{$asset-item-height} * 5);
-    overflow-x: hidden;
-    overflow-y: auto;
   }
   &-item {
     align-items: center;
