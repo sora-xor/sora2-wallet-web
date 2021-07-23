@@ -47,6 +47,9 @@ export default class App extends Mixins(TransactionMixin) {
 </script>
 
 <style lang="scss">
+html {
+  background: var(--s-color-utility-surface);
+}
 .el-tooltip__popper.info-tooltip {
   padding: var(--s-basic-spacing);
   max-width: 320px;
@@ -112,6 +115,7 @@ export default class App extends Mixins(TransactionMixin) {
 
 <style scoped lang="scss">
 .wallet-wrapper {
+  margin: 40px 0;
   justify-content: center;
   align-items: center;
   height: 100vh;
