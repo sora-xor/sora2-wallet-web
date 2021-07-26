@@ -221,6 +221,10 @@ $history-item-top-border-height: 1px;
       .info-status--error  {
         color: var(--s-color-status-error);
       }
+      // TODO: [1.4] remove it
+      .info-status--loading:before {
+        content: '';
+      }
     }
     &-title {
       width: auto;

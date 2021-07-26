@@ -37,12 +37,13 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         .map(({ amount, symbol }) => `${amount} ${symbol}`)
         .join(` ${this.t('operations.andText')} `)
     }
-    if (value.status === 'invalid') {
-      value.status = TransactionStatus.Error
-    } else if (value.status !== TransactionStatus.Error) {
-      value.status = TransactionStatus.Finalized
+    let status = value.status
+    if (status === 'invalid') {
+      status = TransactionStatus.Error
+    } else if (status !== TransactionStatus.Error) {
+      status = TransactionStatus.Finalized
     }
-    return this.t(`operations.${value.status}.${value.type}`, params)
+    return this.t(`operations.${status}.${value.type}`, params)
   }
 
   private async getLastTransaction (): Promise<void> {

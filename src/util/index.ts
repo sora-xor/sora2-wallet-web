@@ -82,7 +82,7 @@ export const getAssetIconStyles = (address: string) => {
 }
 
 export const getStatusIcon = (status: string) => {
-  // TODO: missed icons like 'status-error-ic-16', we should check it
+  // TODO: [1.4] we should check it
   switch (status) {
     case 'IN_PROGRESS': return 'refresh-16'
     case 'ERROR': return 'basic-clear-X-xs-24'

@@ -239,7 +239,7 @@ const mutations = {
   [types.GET_POLKADOT_JS_ACCOUNTS_REQUEST] (state) {
     state.polkadotJsAccounts = []
   },
-  [types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS] (state, polkadotJsAccounts: Array<Account>) {
+  [types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS] (state, polkadotJsAccounts: Array<any>) {
     state.polkadotJsAccounts = polkadotJsAccounts
   },
   [types.GET_POLKADOT_JS_ACCOUNTS_FAILURE] (state) {
