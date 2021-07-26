@@ -35,7 +35,7 @@
           <span>{{ t('walletSend.fee') }}</span>
           <span class="wallet-send-fee_value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
         </div>
-        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
+        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" :loading="feeLoading" @click="step = 2">
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
       </template>
@@ -158,7 +158,7 @@ export default class WalletSend extends Mixins(TransactionMixin) {
   }
 
   get sendButtonDisabled (): boolean {
-    return this.loading || this.feeLoading || !this.validAddress || !this.validAmount || !this.hasEnoughXor
+    return this.loading || !this.validAddress || !this.validAmount || !this.hasEnoughXor
   }
 
   get sendButtonDisabledText (): string {
