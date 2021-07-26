@@ -14,10 +14,15 @@
     <s-card class="asset-details" primary>
       <div class="asset-details-container s-flex">
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
-        <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">{{ balance }}
+        <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
+          <formatted-amount :value="balance" :font-size-rate="FontSizeRate.SMALL">
+            <template v-slot="{ decimal }">
+              {{ decimal }} {{ asset.symbol }} <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
+            </template>
+          </formatted-amount>
           <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
         </div>
-        <fiat-value v-if="price" :value="getFiatBalance(asset)" with-decimals />
+        <formatted-amount v-if="price" :value="getFiatBalance(asset)" is-fiat-value :font-size-rate="FontSizeRate.MEDIUM" />
         <div class="asset-details-actions">
           <s-button
             v-for="operation in operations"
@@ -35,13 +40,35 @@
         <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
           <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
             <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
-            <div class="balance-value">{{ formatBalance(asset.balance[type]) }}</div>
-            <fiat-value v-if="price" :value="getFiatBalance(asset, type)" with-decimals with-left-shift />
+            <formatted-amount
+              class="balance-value"
+              :value="formatBalance(asset.balance[type])"
+              :font-size-rate="FontSizeRate.MEDIUM"
+              :font-weight-rate="FontWeightRate.SMALL"
+            >
+              <template v-slot="{ decimal }">{{ decimal }} <span class="formatted-amount__symbol">{{ asset.symbol }}</span></template>
+            </formatted-amount>
+            <formatted-amount
+              v-if="price"
+              :value="getFiatBalance(asset, type)"
+              is-fiat-value
+              :font-size-rate="FontSizeRate.MEDIUM"
+              :font-weight-rate="FontWeightRate.SMALL"
+              with-left-shift
+            />
           </div>
           <div class="balance s-flex p4">
             <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
-            <div class="balance-value">{{ totalBalance }}</div>
-            <fiat-value v-if="price" :value="getFiatBalance(asset, BalanceType.Total)" with-decimals with-left-shift />
+            <formatted-amount
+              v-if="price"
+              class="balance-value"
+              :value="totalBalance"
+              :font-size-rate="FontSizeRate.MEDIUM"
+              :font-weight-rate="FontWeightRate.SMALL"
+            >
+              <template v-slot="{ decimal }">{{ decimal }} <span class="formatted-amount__symbol">{{ asset.symbol }}</span></template>
+            </formatted-amount>
+            <formatted-amount v-if="price" :value="getFiatBalance(asset, BalanceType.Total)" is-fiat-value with-left-shift />
           </div>
         </div>
       </div>
@@ -56,14 +83,14 @@ import { Action, Getter } from 'vuex-class'
 import { AccountAsset, CodecString, KnownAssets, KnownSymbols, BalanceType, History } from '@sora-substrate/util'
 
 import { api } from '../api'
-import FiatValueMixin from './mixins/FiatValueMixin'
+import FormattedAmountMixin from './mixins/FormattedAmountMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
-import FiatValue from './FiatValue.vue'
+import FormattedAmount from './FormattedAmount.vue'
 import WalletHistory from './WalletHistory.vue'
 import { RouteNames } from '../consts'
 import { getAssetIconStyles } from '../util'
-import { Operations } from '../types'
+import { Operations, FontSizeRate, FontWeightRate } from '../types'
 
 interface Operation {
   type: Operations;
@@ -71,9 +98,13 @@ interface Operation {
 }
 
 @Component({
-  components: { WalletBase, FiatValue, WalletHistory }
+  components: {
+    WalletBase,
+    FormattedAmount,
+    WalletHistory
+  }
 })
-export default class WalletAssetDetails extends Mixins(FiatValueMixin, CopyAddressMixin) {
+export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin) {
   readonly balanceTypes = Object.values(BalanceType).filter(type => type !== BalanceType.Total)
   readonly operations = [
     { type: Operations.Send, icon: 'finance-send-24' },
@@ -82,6 +113,10 @@ export default class WalletAssetDetails extends Mixins(FiatValueMixin, CopyAddre
     { type: Operations.Liquidity, icon: 'basic-drop-24' },
     { type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' }
   ] as Array<Operation>
+
+  readonly BalanceType = BalanceType
+  readonly FontSizeRate = FontSizeRate
+  readonly FontWeightRate = FontWeightRate
 
   @Getter account!: any
   @Getter accountAssets!: Array<AccountAsset>
@@ -92,10 +127,9 @@ export default class WalletAssetDetails extends Mixins(FiatValueMixin, CopyAddre
   @Action getAccountActivity
 
   wasBalanceDetailsClicked = false
-  BalanceType = BalanceType
 
   private formatBalance (value: CodecString): string {
-    return `${this.formatCodecNumber(value, this.asset.decimals)} ${this.asset.symbol}`
+    return this.formatCodecNumber(value, this.asset.decimals)
   }
 
   get price (): CodecString | null {
@@ -108,7 +142,7 @@ export default class WalletAssetDetails extends Mixins(FiatValueMixin, CopyAddre
   }
 
   get balance (): string {
-    return this.formatBalance(this.asset.balance.transferable)
+    return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
   }
 
   get totalBalance (): string {
@@ -206,39 +240,6 @@ export default class WalletAssetDetails extends Mixins(FiatValueMixin, CopyAddre
 }
 </script>
 
-<style lang="scss">
-$asset-details-class: '.asset-details';
-#{$asset-details-class}-container {
-  #{$asset-details-class}-balance {
-    + .fiat-value {
-      font-size: var(--s-font-size-medium);
-      &__prefix {
-        font-weight: 600;
-      }
-      &__decimals {
-        font-size: var(--s-font-size-small);
-      }
-    }
-    &-info {
-      .fiat-value {
-        font-size: var(--s-font-size-extra-small);
-        font-weight: 400;
-        &__number,
-        &__decimals {
-          font-weight: inherit;
-        }
-        &__number {
-          font-size: inherit;
-        }
-        &__decimals {
-          font-size: var(--s-font-size-extra-mini);
-        }
-      }
-    }
-  }
-}
-</style>
-
 <style scoped lang="scss">
 @import '../styles/icons';
 
@@ -248,11 +249,16 @@ $asset-details-class: '.asset-details';
     padding-top: 0;
     padding-bottom: 0;
   }
+  &-balance + .formatted-amount--fiat-value {
+    font-weight: 600;
+  }
   &-container {
     flex-direction: column;
     align-items: center;
-    .fiat-value + .asset-details-actions {
-      margin-top: calc(var(--s-basic-spacing) * 1.5);
+    .formatted-amount--fiat-value {
+      + .asset-details-actions {
+        margin-top: calc(var(--s-basic-spacing) * 1.5);
+      }
     }
   }
   &-balance {
@@ -263,7 +269,10 @@ $asset-details-class: '.asset-details';
     }
     .s-icon-chevron-down-rounded-16 {
       position: absolute;
-      top: 25%;
+      top: 0;
+      bottom: 0;
+      margin-top: auto;
+      margin-bottom: auto;
       height: var(--s-icon-font-size-small);
       width: var(--s-icon-font-size-small);
       transition: transform 0.3s;
@@ -283,11 +292,12 @@ $asset-details-class: '.asset-details';
         justify-content: space-between;
         margin-bottom: calc(var(--s-basic-spacing) / 2);
         border-bottom: 1px solid var(--s-color-base-border-secondary);
+        font-size: var(--s-font-size-extra-small);
         &-label {
           text-transform: uppercase;
+          margin-right: var(--s-basic-spacing);
         }
-        &-label--total,
-        &-value {
+        &-label--total {
           font-weight: 600;
         }
         &-value {

@@ -205,7 +205,7 @@ $accounts-number: 7;
     &:hover {
       cursor: pointer;
       .wallet-account {
-        border-color: var(--s-color-base-content-quaternary);
+        border-color: var(--s-color-base-content-secondary);
       }
     }
   }

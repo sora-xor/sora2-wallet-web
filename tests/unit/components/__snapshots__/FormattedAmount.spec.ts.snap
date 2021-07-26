@@ -1,0 +1,233 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`FormattedAmount.vue [FontSizeRate Medium]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--font-size-medium"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1234
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    .5678
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [FontSizeRate Normal]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1234
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    .5678
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [FontSizeRate Small]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--font-size-small"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1234
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    .5678
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [FontWeightRate Medium]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--font-size-medium"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1234
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    .5678
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [FontWeightRate Normal]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1234
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    .5678
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [FontWeightRate Small]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--font-size-small"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1234
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    .5678
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [Is Fiat Value]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--fiat-value"
+>
+  <span
+    class="formatted-amount__prefix"
+  >
+    ~$
+  </span>
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1234
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    .56
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [Value only]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1234
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    .5678
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [With "0" Value]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    0
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [With "NaN" Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FormattedAmount.vue [With 0 Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FormattedAmount.vue [With Empty Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FormattedAmount.vue [With Infinity Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FormattedAmount.vue [With Left Shift]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--shifted"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1234
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    .5678
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [With NaN Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FormattedAmount.vue [With undefined Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FormattedAmount.vue [Without Decimals]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1234
+  </span>
+   
+  <!---->
+</span>
+`;

@@ -1,5 +1,7 @@
 import { AccountAsset, FPNumber, KnownSymbols, History, TransactionStatus, Operation } from '@sora-substrate/util'
 
+import { FontSizeRate, FontWeightRate } from '../../src/types'
+
 export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
   {
     address: '0x0200000000000000000000000000000000000000000000000000000000000000',
@@ -102,14 +104,17 @@ export const MOCK_HISTORY: Array<History> = [
   }
 ]
 
-interface FiatValue {
+interface FormattedAmount {
   title: string;
   value: any;
-  withDecimals?: boolean;
+  fontSizeRate?: string;
+  fontWeightRate?: string;
+  isFiatValue?: boolean;
+  integerOnly?: boolean;
   withLeftShift?: boolean;
 }
 
-export const MOCK_FIAT_VALUES: Array<FiatValue> = [
+export const MOCK_FORMATTED_AMOUNT: Array<FormattedAmount> = [
   {
     title: 'With Empty Value',
     value: ''
@@ -119,9 +124,44 @@ export const MOCK_FIAT_VALUES: Array<FiatValue> = [
     value: '1234.5678'
   },
   {
-    title: 'With Decimals',
+    title: 'FontSizeRate Small',
     value: '1234.5678',
-    withDecimals: true
+    fontSizeRate: FontSizeRate.SMALL
+  },
+  {
+    title: 'FontSizeRate Normal',
+    value: '1234.5678',
+    fontSizeRate: FontSizeRate.NORMAL
+  },
+  {
+    title: 'FontSizeRate Medium',
+    value: '1234.5678',
+    fontSizeRate: FontSizeRate.MEDIUM
+  },
+  {
+    title: 'FontWeightRate Small',
+    value: '1234.5678',
+    fontSizeRate: FontWeightRate.SMALL
+  },
+  {
+    title: 'FontWeightRate Normal',
+    value: '1234.5678',
+    fontSizeRate: FontWeightRate.NORMAL
+  },
+  {
+    title: 'FontWeightRate Medium',
+    value: '1234.5678',
+    fontSizeRate: FontWeightRate.MEDIUM
+  },
+  {
+    title: 'Is Fiat Value',
+    value: '1234.5678',
+    isFiatValue: true
+  },
+  {
+    title: 'Without Decimals',
+    value: '1234.5678',
+    integerOnly: true
   },
   {
     title: 'With Left Shift',
@@ -130,32 +170,26 @@ export const MOCK_FIAT_VALUES: Array<FiatValue> = [
   },
   {
     title: 'With 0 Value',
-    value: 0,
-    withDecimals: true
+    value: 0
   },
   {
     title: 'With "0" Value',
-    value: '0',
-    withDecimals: true
+    value: '0'
   },
   {
     title: 'With undefined Value',
-    value: undefined,
-    withDecimals: true
+    value: undefined
   },
   {
     title: 'With NaN Value',
-    value: NaN,
-    withDecimals: true
+    value: NaN
   },
   {
     title: 'With "NaN" Value',
-    value: 'NaN',
-    withDecimals: true
+    value: 'NaN'
   },
   {
     title: 'With Infinity Value',
-    value: Infinity,
-    withDecimals: true
+    value: Infinity
   }
 ]
