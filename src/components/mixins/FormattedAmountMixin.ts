@@ -32,7 +32,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
       return null
     }
     return (isCodecString ? this.getFPNumberFromCodec(amount || '0', asset.decimals) : this.getFPNumber(amount || '0', asset.decimals))
-      .mul(FPNumber.fromCodecValue(price)).toString()
+      .mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
   getFiatAmountByString (amount: string, asset: AccountAsset): string | null {
@@ -44,7 +44,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
     if (!price) {
       return null
     }
-    return this.getFPNumber(amount || '0', asset.decimals).mul(FPNumber.fromCodecValue(price)).toString()
+    return this.getFPNumber(amount || '0', asset.decimals).mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
   getFiatAmountByFPNumber (amount: FPNumber, asset = KnownAssets.get(KnownSymbols.XOR)): string | null {
@@ -52,7 +52,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
     if (!price) {
       return null
     }
-    return amount.mul(FPNumber.fromCodecValue(price)).toString()
+    return amount.mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
   getFiatAmountByCodecString (amount: CodecString, asset = KnownAssets.get(KnownSymbols.XOR)): string | null {
