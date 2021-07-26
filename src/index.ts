@@ -10,7 +10,7 @@ import WalletAvatar from './components/WalletAvatar.vue'
 import FormattedAmount from './components/FormattedAmount.vue'
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
-import { Components, Modules } from './types'
+import { Components, Modules, FontSizeRate, FontWeightRate } from './types'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
 import { updateAccountAssetsSubscription } from './store/Account'
@@ -106,6 +106,8 @@ export {
   FormattedAmount,
   NumberFormatterMixin,
   FormattedAmountMixin,
+  FontSizeRate,
+  FontWeightRate,
   store as externalStore // only for soraNetwork getter in wallet
 }
 export default SoraNeoWalletElements
