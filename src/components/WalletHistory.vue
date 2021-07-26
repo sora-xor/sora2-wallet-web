@@ -222,8 +222,13 @@ $history-item-top-border-height: 1px;
         color: var(--s-color-status-error);
       }
       // TODO: [1.4] remove it
-      .info-status--loading:before {
-        content: '';
+      i.info-status--loading {
+        width: var(--s-icon-font-size-mini);
+        height: var(--s-icon-font-size-mini);
+        margin-right: 6px;
+        &:before {
+          content: '';
+        }
       }
     }
     &-title {
