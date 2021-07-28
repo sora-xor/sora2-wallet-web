@@ -15,12 +15,9 @@
       <div class="asset-details-container s-flex">
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
         <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
-          <formatted-amount :value="balance" :font-size-rate="FontSizeRate.SMALL">
-            <template v-slot="{ decimal }">
-              {{ decimal }} {{ asset.symbol }} <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
-            </template>
+          <formatted-amount :value="balance" :font-size-rate="FontSizeRate.SMALL" :asset-symbol="asset.symbol">
+            <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
           </formatted-amount>
-          <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
         </div>
         <formatted-amount v-if="price" :value="getFiatBalance(asset)" is-fiat-value :font-size-rate="FontSizeRate.MEDIUM" />
         <div class="asset-details-actions">
@@ -43,11 +40,10 @@
             <formatted-amount
               class="balance-value"
               :value="formatBalance(asset.balance[type])"
+              :asset-symbol="asset.symbol"
               :font-size-rate="FontSizeRate.MEDIUM"
               :font-weight-rate="FontWeightRate.SMALL"
-            >
-              <template v-slot="{ decimal }">{{ decimal }} <span class="formatted-amount__symbol">{{ asset.symbol }}</span></template>
-            </formatted-amount>
+            />
             <formatted-amount
               v-if="price"
               :value="getFiatBalance(asset, type)"
@@ -63,12 +59,18 @@
               v-if="price"
               class="balance-value"
               :value="totalBalance"
+              :asset-symbol="asset.symbol"
               :font-size-rate="FontSizeRate.MEDIUM"
               :font-weight-rate="FontWeightRate.SMALL"
-            >
-              <template v-slot="{ decimal }">{{ decimal }} <span class="formatted-amount__symbol">{{ asset.symbol }}</span></template>
-            </formatted-amount>
-            <formatted-amount v-if="price" :value="getFiatBalance(asset, BalanceType.Total)" is-fiat-value with-left-shift />
+            />
+            <formatted-amount
+              v-if="price"
+              :value="getFiatBalance(asset, BalanceType.Total)"
+              is-fiat-value
+              :font-size-rate="FontSizeRate.MEDIUM"
+              :font-weight-rate="FontWeightRate.SMALL"
+              with-left-shift
+            />
           </div>
         </div>
       </div>
@@ -240,6 +242,17 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 }
 </script>
 
+<style lang="scss">
+.asset-details-balance {
+  .formatted-amount {
+    font-size: inherit;
+    .formatted-amount__symbol {
+      font-size: 0.777em;
+    }
+  }
+}
+</style>
+
 <style scoped lang="scss">
 @import '../styles/icons';
 
@@ -248,9 +261,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   &.s-card.neumorphic {
     padding-top: 0;
     padding-bottom: 0;
-  }
-  &-balance + .formatted-amount--fiat-value {
-    font-weight: 600;
   }
   &-container {
     flex-direction: column;
@@ -267,12 +277,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     &--clickable {
       cursor: pointer;
     }
+    & + .formatted-amount--fiat-value {
+      font-weight: 600;
+    }
     .s-icon-chevron-down-rounded-16 {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      margin-top: auto;
-      margin-bottom: auto;
       height: var(--s-icon-font-size-small);
       width: var(--s-icon-font-size-small);
       transition: transform 0.3s;
@@ -290,6 +298,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
       margin-top: calc(var(--s-basic-spacing) * 2);
       .balance {
         justify-content: space-between;
+        align-items: baseline;
         margin-bottom: calc(var(--s-basic-spacing) / 2);
         border-bottom: 1px solid var(--s-color-base-border-secondary);
         font-size: var(--s-font-size-extra-small);

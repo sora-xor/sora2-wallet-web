@@ -31,7 +31,9 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
     if (!price) {
       return null
     }
-    return (isCodecString ? this.getFPNumberFromCodec(amount || '0', asset.decimals) : this.getFPNumber(amount || '0', asset.decimals))
+    const { decimals } = asset
+    const amountParam = amount || '0'
+    return (isCodecString ? this.getFPNumberFromCodec(amountParam, decimals) : this.getFPNumber(amountParam, decimals))
       .mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 

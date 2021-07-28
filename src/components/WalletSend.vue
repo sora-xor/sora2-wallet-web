@@ -68,7 +68,7 @@
           {{ sendButtonDisabledText || t('walletSend.confirm') }}
         </s-button>
       </template>
-      <wallet-fee :fee="fee" has-fiat-value />
+      <wallet-fee :value="fee" has-fiat-value />
     </div>
   </wallet-base>
 </template>
@@ -299,6 +299,7 @@ $logo-size: var(--s-size-mini);
     }
     &-info {
       display: flex;
+      align-items: baseline;
       .asset-id {
         cursor: pointer;
       }
@@ -330,7 +331,7 @@ $logo-size: var(--s-size-mini);
   &-amount {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
     margin-bottom: var(--s-basic-spacing);
     font-size: var(--s-font-size-mini);
     line-height: var(--s-line-height-medium);

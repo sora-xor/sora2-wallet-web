@@ -79,7 +79,7 @@
           <template v-else>{{ t('createToken.confirm') }}</template>
         </s-button>
       </template>
-      <wallet-fee v-if="!isCreateDisabled" :fee="formattedFee" has-fiat-value />
+      <wallet-fee v-if="!isCreateDisabled" :value="formattedFee" has-fiat-value />
     </div>
   </wallet-base>
 </template>

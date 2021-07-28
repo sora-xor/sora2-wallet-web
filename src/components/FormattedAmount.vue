@@ -2,17 +2,17 @@
   <span v-if="value && isFiniteValue" :class="computedClasses">
     <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
     <span class="formatted-amount__integer">{{ formatted.integer }}</span>
-    <span v-if="!integerOnly" class="formatted-amount__decimal">
-      <slot :decimal="formatted.decimal">{{ formatted.decimal }}</slot>
-    </span>
+    <span v-if="!integerOnly" class="formatted-amount__decimal">{{ formatted.decimal }}</span>
+    <span v-if="assetSymbol" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+    <slot />
   </span>
 </template>
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { FPNumber } from '@sora-substrate/util'
-import { FontSizeRate, FontWeightRate } from '../types'
 
+import { FontSizeRate, FontWeightRate } from '../types'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 
 interface FormattedAmountValues {
@@ -23,16 +23,30 @@ interface FormattedAmountValues {
 @Component
 export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   @Prop({ default: '', type: String }) readonly value!: string
-  // FontSizeRate.NORMAL / FontWeightRate.NORMAL font size/weight of integer and decimal are the same
+  /**
+   * Font size rate between integer and decimal numbers' parts. Possible values: `"small"`, `"medium"`, `"normal"`.
+   * By default it's set to `"normal"` and it means the same font sizes for both numbers' parts.
+   */
   @Prop({ default: FontSizeRate.NORMAL, type: String }) readonly fontSizeRate?: string
+  /**
+   * Font weight rate between integer and decimal numbers' parts. Possible values: `"small"`, `"medium"`, `"normal"`.
+   * By default it's set to `"normal"` and it means the same font weights for both numbers' parts.
+   */
   @Prop({ default: FontWeightRate.NORMAL, type: String }) readonly fontWeightRate?: string
+  @Prop({ default: '', type: String }) readonly assetSymbol?: string
   @Prop({ default: false, type: Boolean }) readonly isFiatValue?: boolean
   @Prop({ default: false, type: Boolean }) readonly integerOnly?: boolean
   @Prop({ default: false, type: Boolean }) readonly withLeftShift?: boolean
 
+  get unformatted (): string {
+    return this.value
+      .replace(new RegExp(FPNumber.DELIMITERS_CONFIG.thousand, 'g'), '')
+      .replace(FPNumber.DELIMITERS_CONFIG.decimal, '.')
+  }
+
   get isFiniteValue (): boolean {
     if (+this.value !== Infinity) {
-      return Number.isFinite(+this.value.replace(FPNumber.DELIMITERS_CONFIG.thousand, ''))
+      return Number.isFinite(+this.unformatted)
     }
     return false
   }
@@ -53,8 +67,6 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
         decimal = FPNumber.DELIMITERS_CONFIG.decimal + decimal
       }
     }
-
-    integer = integer.toLocaleString()
 
     return {
       integer,
@@ -91,6 +103,8 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
 $formatted-amount-class: '.formatted-amount';
 
 #{$formatted-amount-class} {
+  display: inline-flex;
+  align-items: baseline;
   &--fiat-value {
     color: var(--s-color-fiat-value);
     font-family: var(--s-font-family-default);
@@ -102,7 +116,7 @@ $formatted-amount-class: '.formatted-amount';
     white-space: nowrap;
   }
   #{$formatted-amount-class}__symbol {
-    font-size: var(--s-font-size-extra-small);
+    margin-left: calc(var(--s-basic-spacing) / 2);
   }
   &--font-size {
     &-medium {

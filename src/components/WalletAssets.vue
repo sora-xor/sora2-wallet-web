@@ -14,9 +14,7 @@
             <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
             <div class="asset s-flex">
               <div class="asset-value">
-                <formatted-amount :value="getBalance(asset)" :font-size-rate="FontSizeRate.SMALL">
-                  <template v-slot="{ decimal }">{{ decimal }} {{ asset.symbol }}</template>
-                </formatted-amount>
+                <formatted-amount :value="getBalance(asset)" :font-size-rate="FontSizeRate.SMALL" :asset-symbol="asset.symbol" />
                 <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
                   <s-icon name="lock-16" size="12px" />
                   {{ formatLockedBalance(asset) }}
@@ -276,7 +274,7 @@ $wallet-assets-class: '.wallet-assets';
 
   .total-fiat-values {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     justify-content: center;
     flex-wrap: wrap;
     padding-top: calc(var(--s-basic-spacing) * 0.75);

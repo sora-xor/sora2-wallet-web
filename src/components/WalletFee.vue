@@ -11,15 +11,14 @@
     </s-tooltip>
     <formatted-amount
       class="wallet-fee__value"
-      :value="fee.toLocaleString()"
+      :value="value.toLocaleString()"
+      :asset-symbol="KnownSymbols.XOR"
       :font-size-rate="FontSizeRate.MEDIUM"
       :font-weight-rate="FontWeightRate.SMALL"
-    >
-      <template v-slot="{ decimal }">{{ decimal }} <span class="formatted-amount__symbol">{{ KnownSymbols.XOR }}</span></template>
-    </formatted-amount>
+    />
     <formatted-amount
       v-if="hasFiatValue"
-      :value="getFiatAmountByFPNumber(fee)"
+      :value="getFiatAmountByFPNumber(value)"
       is-fiat-value
       :font-size-rate="FontSizeRate.MEDIUM"
       with-left-shift
@@ -46,7 +45,7 @@ export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountM
   readonly FontSizeRate = FontSizeRate
   readonly FontWeightRate = FontWeightRate
 
-  @Prop({ default: FPNumber.ZERO, type: FPNumber }) readonly fee!: FPNumber
+  @Prop({ default: FPNumber.ZERO, type: FPNumber }) readonly value!: FPNumber
   @Prop({ default: false, type: Boolean }) readonly hasFiatValue?: boolean
 }
 </script>
@@ -61,7 +60,7 @@ $formatted-amount-class: '.formatted-amount';
 
 <style scoped lang="scss">
 .wallet-fee {
-  align-items: center;
+  align-items: baseline;
   margin-top: calc(var(--s-basic-spacing) * 2);
   width: 100%;
   padding-right: var(--s-basic-spacing);
@@ -74,6 +73,7 @@ $formatted-amount-class: '.formatted-amount';
   }
   .el-tooltip {
     margin-right: var(--s-basic-spacing);
+    align-self: center;
   }
 }
 </style>
