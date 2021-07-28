@@ -11,6 +11,8 @@ useDescribe('FormattedAmount.vue', FormattedAmount, () => {
       value: item.value,
       fontSizeRate: item.fontSizeRate,
       fontWeightRate: item.fontWeightRate,
+      assetSymbol: item.assetSymbol,
+      symbolAsDecimal: item.symbolAsDecimal,
       isFiatValue: item.isFiatValue,
       integerOnly: item.integerOnly,
       withLeftShift: item.withLeftShift

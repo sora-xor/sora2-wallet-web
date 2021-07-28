@@ -2,8 +2,10 @@
   <span v-if="value && isFiniteValue" :class="computedClasses">
     <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
     <span class="formatted-amount__integer">{{ formatted.integer }}</span>
-    <span v-if="!integerOnly" class="formatted-amount__decimal">{{ formatted.decimal }}</span>
-    <span v-if="assetSymbol" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+    <span v-if="!integerOnly" class="formatted-amount__decimal">
+      {{ formatted.decimal }}<span v-if="assetSymbol && symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+    </span>
+    <span v-if="assetSymbol && !symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
     <slot />
   </span>
 </template>
@@ -34,6 +36,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    */
   @Prop({ default: FontWeightRate.NORMAL, type: String }) readonly fontWeightRate?: string
   @Prop({ default: '', type: String }) readonly assetSymbol?: string
+  @Prop({ default: false, type: Boolean }) readonly symbolAsDecimal?: boolean
   @Prop({ default: false, type: Boolean }) readonly isFiatValue?: boolean
   @Prop({ default: false, type: Boolean }) readonly integerOnly?: boolean
   @Prop({ default: false, type: Boolean }) readonly withLeftShift?: boolean

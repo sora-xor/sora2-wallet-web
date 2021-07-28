@@ -9,14 +9,19 @@ exports[`FormattedAmount.vue [FontSizeRate Medium]: should be rendered correctly
   <span
     class="formatted-amount__integer"
   >
-    1234
+    1,234,567
   </span>
    
   <span
     class="formatted-amount__decimal"
   >
-    .5678
+    
+    .890123
+    <!---->
   </span>
+   
+  <!---->
+   
 </span>
 `;
 
@@ -29,14 +34,19 @@ exports[`FormattedAmount.vue [FontSizeRate Normal]: should be rendered correctly
   <span
     class="formatted-amount__integer"
   >
-    1234
+    1,234,567
   </span>
    
   <span
     class="formatted-amount__decimal"
   >
-    .5678
+    
+    .890123
+    <!---->
   </span>
+   
+  <!---->
+   
 </span>
 `;
 
@@ -49,34 +59,44 @@ exports[`FormattedAmount.vue [FontSizeRate Small]: should be rendered correctly 
   <span
     class="formatted-amount__integer"
   >
-    1234
+    1,234,567
   </span>
    
   <span
     class="formatted-amount__decimal"
   >
-    .5678
+    
+    .890123
+    <!---->
   </span>
+   
+  <!---->
+   
 </span>
 `;
 
 exports[`FormattedAmount.vue [FontWeightRate Medium]: should be rendered correctly 1`] = `
 <span
-  class="formatted-amount formatted-amount--font-size-medium"
+  class="formatted-amount formatted-amount--font-weight-medium"
 >
   <!---->
    
   <span
     class="formatted-amount__integer"
   >
-    1234
+    1,234,567
   </span>
    
   <span
     class="formatted-amount__decimal"
   >
-    .5678
+    
+    .890123
+    <!---->
   </span>
+   
+  <!---->
+   
 </span>
 `;
 
@@ -89,34 +109,102 @@ exports[`FormattedAmount.vue [FontWeightRate Normal]: should be rendered correct
   <span
     class="formatted-amount__integer"
   >
-    1234
+    1,234,567
   </span>
    
   <span
     class="formatted-amount__decimal"
   >
-    .5678
+    
+    .890123
+    <!---->
   </span>
+   
+  <!---->
+   
 </span>
 `;
 
 exports[`FormattedAmount.vue [FontWeightRate Small]: should be rendered correctly 1`] = `
 <span
-  class="formatted-amount formatted-amount--font-size-small"
+  class="formatted-amount formatted-amount--font-weight-small"
 >
   <!---->
    
   <span
     class="formatted-amount__integer"
   >
-    1234
+    1,234,567
   </span>
    
   <span
     class="formatted-amount__decimal"
   >
-    .5678
+    
+    .890123
+    <!---->
   </span>
+   
+  <!---->
+   
+</span>
+`;
+
+exports[`FormattedAmount.vue [Is Fiat Value With One Decimal Symbol]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--fiat-value"
+>
+  <span
+    class="formatted-amount__prefix"
+  >
+    ~$
+  </span>
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1,234,567
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    
+    .80
+    <!---->
+  </span>
+   
+  <!---->
+   
+</span>
+`;
+
+exports[`FormattedAmount.vue [Is Fiat Value Without Decimals]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--fiat-value"
+>
+  <span
+    class="formatted-amount__prefix"
+  >
+    ~$
+  </span>
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1,234,567
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    
+    .00
+    <!---->
+  </span>
+   
+  <!---->
+   
 </span>
 `;
 
@@ -133,14 +221,48 @@ exports[`FormattedAmount.vue [Is Fiat Value]: should be rendered correctly 1`] =
   <span
     class="formatted-amount__integer"
   >
-    1234
+    1,234,567
   </span>
    
   <span
     class="formatted-amount__decimal"
   >
-    .56
+    
+    .89
+    <!---->
   </span>
+   
+  <!---->
+   
+</span>
+`;
+
+exports[`FormattedAmount.vue [Symbol In Decimal Container]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1,234,567
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    
+    .890123
+    <span
+      class="formatted-amount__symbol"
+    >
+      XOR
+    </span>
+  </span>
+   
+  <!---->
+   
 </span>
 `;
 
@@ -153,14 +275,19 @@ exports[`FormattedAmount.vue [Value only]: should be rendered correctly 1`] = `
   <span
     class="formatted-amount__integer"
   >
-    1234
+    1,234,567
   </span>
    
   <span
     class="formatted-amount__decimal"
   >
-    .5678
+    
+    .890123
+    <!---->
   </span>
+   
+  <!---->
+   
 </span>
 `;
 
@@ -180,7 +307,12 @@ exports[`FormattedAmount.vue [With "0" Value]: should be rendered correctly 1`] 
     class="formatted-amount__decimal"
   >
     
+    
+    <!---->
   </span>
+   
+  <!---->
+   
 </span>
 `;
 
@@ -192,6 +324,31 @@ exports[`FormattedAmount.vue [With Empty Value]: should be rendered correctly 1`
 
 exports[`FormattedAmount.vue [With Infinity Value]: should be rendered correctly 1`] = `<!---->`;
 
+exports[`FormattedAmount.vue [With Integer]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1,234,567
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    
+    
+    <!---->
+  </span>
+   
+  <!---->
+   
+</span>
+`;
+
 exports[`FormattedAmount.vue [With Left Shift]: should be rendered correctly 1`] = `
 <span
   class="formatted-amount formatted-amount--shifted"
@@ -201,18 +358,52 @@ exports[`FormattedAmount.vue [With Left Shift]: should be rendered correctly 1`]
   <span
     class="formatted-amount__integer"
   >
-    1234
+    1,234,567
   </span>
    
   <span
     class="formatted-amount__decimal"
   >
-    .5678
+    
+    .890123
+    <!---->
   </span>
+   
+  <!---->
+   
 </span>
 `;
 
 exports[`FormattedAmount.vue [With NaN Value]: should be rendered correctly 1`] = `<!---->`;
+
+exports[`FormattedAmount.vue [With asset symbol]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount"
+>
+  <!---->
+   
+  <span
+    class="formatted-amount__integer"
+  >
+    1,234,567
+  </span>
+   
+  <span
+    class="formatted-amount__decimal"
+  >
+    
+    .890123
+    <!---->
+  </span>
+   
+  <span
+    class="formatted-amount__symbol"
+  >
+    XOR
+  </span>
+   
+</span>
+`;
 
 exports[`FormattedAmount.vue [With undefined Value]: should be rendered correctly 1`] = `<!---->`;
 
@@ -225,9 +416,12 @@ exports[`FormattedAmount.vue [Without Decimals]: should be rendered correctly 1`
   <span
     class="formatted-amount__integer"
   >
-    1234
+    1,234,567
   </span>
    
   <!---->
+   
+  <!---->
+   
 </span>
 `;

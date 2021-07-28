@@ -14,7 +14,12 @@
             <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
             <div class="asset s-flex">
               <div class="asset-value">
-                <formatted-amount :value="getBalance(asset)" :font-size-rate="FontSizeRate.SMALL" :asset-symbol="asset.symbol" />
+                <formatted-amount
+                  :value="getBalance(asset)"
+                  :font-size-rate="FontSizeRate.SMALL"
+                  :asset-symbol="asset.symbol"
+                  symbol-as-decimal
+                />
                 <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
                   <s-icon name="lock-16" size="12px" />
                   {{ formatLockedBalance(asset) }}

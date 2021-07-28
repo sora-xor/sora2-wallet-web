@@ -15,7 +15,12 @@
       <div class="asset-details-container s-flex">
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
         <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
-          <formatted-amount :value="balance" :font-size-rate="FontSizeRate.SMALL" :asset-symbol="asset.symbol">
+          <formatted-amount
+            :value="balance"
+            :font-size-rate="FontSizeRate.SMALL"
+            :asset-symbol="asset.symbol"
+            symbol-as-decimal
+          >
             <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
           </formatted-amount>
         </div>
@@ -241,17 +246,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 }
 </script>
-
-<style lang="scss">
-.asset-details-balance {
-  .formatted-amount {
-    font-size: inherit;
-    .formatted-amount__symbol {
-      font-size: 0.777em;
-    }
-  }
-}
-</style>
 
 <style scoped lang="scss">
 @import '../styles/icons';
