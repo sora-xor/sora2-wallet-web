@@ -155,13 +155,31 @@ export default class CreateToken extends Mixins(TransactionMixin, FormattedAmoun
     return FPNumber.gte(fpAccountXor, this.getFPNumberFromCodec(this.fee))
   }
 
-  async calculateFee (): Promise<CodecString> {
-    return api.getRegisterAssetNetworkFee(
-      this.tokenSymbol,
-      this.tokenName,
-      this.tokenSupply,
-      this.extensibleSupply
-    )
+  async created () {
+    await this.calculateFee()
+  }
+
+  async calculateFee (isConfirm?: boolean): Promise<void> {
+    try {
+      await this.withLoading(async () => {
+        this.fee = await api.getRegisterAssetNetworkFee(
+          this.tokenSymbol,
+          this.tokenName,
+          this.tokenSupply,
+          this.extensibleSupply
+        )
+        if (isConfirm) {
+          this.step = Step.Confirm
+        }
+      })
+    } catch (error) {
+      console.error(error)
+      this.$notify({
+        message: this.t('createToken.feeError'),
+        type: 'error',
+        title: ''
+      })
+    }
   }
 
   async registerAsset (): Promise<void> {
@@ -182,19 +200,7 @@ export default class CreateToken extends Mixins(TransactionMixin, FormattedAmoun
     if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
       this.tokenSupply = maxTokenSupply.toString()
     }
-    try {
-      await this.withLoading(async () => {
-        this.fee = await this.calculateFee()
-        this.step = Step.Confirm
-      })
-    } catch (error) {
-      console.error(error)
-      this.$notify({
-        message: this.t('createToken.feeError'),
-        type: 'error',
-        title: ''
-      })
-    }
+    await this.calculateFee(true)
   }
 
   async onCreate (): Promise<void> {
