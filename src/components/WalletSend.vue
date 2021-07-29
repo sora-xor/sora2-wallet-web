@@ -257,8 +257,12 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
 
 <style lang="scss">
 .wallet-send-input .el-input__inner {
-  font-size: 20px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: var(--s-font-size-large);
   line-height: var(--s-line-height-small);
+  font-weight: 800;
 }
 </style>
 

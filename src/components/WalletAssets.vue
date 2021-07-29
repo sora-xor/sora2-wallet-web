@@ -251,6 +251,10 @@ $wallet-assets-class: '.wallet-assets';
       &-converted {
         @include hint-text;
       }
+      .formatted-amount {
+        display: block;
+        line-height: var(--s-line-height-mini);
+      }
     }
     .details {
       padding: 0;

@@ -3,7 +3,8 @@
     <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
     <span class="formatted-amount__integer">{{ formatted.integer }}</span>
     <span v-if="!integerOnly" class="formatted-amount__decimal">
-      {{ formatted.decimal }}<span v-if="assetSymbol && symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+      <span class="formatted-amount__decimal-value">{{ formatted.decimal }}</span>
+      <span v-if="assetSymbol && symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
     </span>
     <span v-if="assetSymbol && !symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
     <slot />
@@ -89,6 +90,10 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
       classes.push(`${baseClass}--font-weight-${this.fontWeightRate}`)
     }
 
+    if (this.assetSymbol && this.symbolAsDecimal) {
+      classes.push(`${baseClass}--symbol-as-decimal`)
+    }
+
     if (this.isFiatValue) {
       classes.push(`${baseClass}--fiat-value`)
     }
@@ -118,8 +123,16 @@ $formatted-amount-class: '.formatted-amount';
     align-items: baseline;
     white-space: nowrap;
   }
-  #{$formatted-amount-class}__symbol {
+  &--symbol-as-decimal {
+    #{$formatted-amount-class}__decimal-value {
+      margin-right: calc(var(--s-basic-spacing) / 2);
+    }
+  }
+  #{$formatted-amount-class}__decimal + #{$formatted-amount-class}__symbol {
     margin-left: calc(var(--s-basic-spacing) / 2);
+  }
+  #{$formatted-amount-class}__symbol {
+    white-space: nowrap;
   }
   &--font-size {
     &-medium {
