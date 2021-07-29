@@ -280,7 +280,7 @@ $logo-size: var(--s-size-mini);
         font-size: var(--s-font-size-mini);
       }
       &-value {
-        margin-left: calc(var(--s-basic-spacing) / 2);
+        margin-left: $basic-spacing-mini;
         letter-spacing: var(--s-letter-spacing-big);
       }
     }
@@ -288,7 +288,7 @@ $logo-size: var(--s-size-mini);
       @include asset-logo-styles(32px);
       width: $logo-size;
       height: $logo-size;
-      margin: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);
+      margin: $basic-spacing-mini var(--s-basic-spacing);
     }
     &-name {
       line-height: 2.29;
@@ -296,7 +296,7 @@ $logo-size: var(--s-size-mini);
     &-max {
       margin-left: var(--s-basic-spacing);
       height: var(--s-size-mini);
-      padding: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);
+      padding: $basic-spacing-mini var(--s-basic-spacing);
     }
     &-max, &-name {
       font-weight: 700;
@@ -347,10 +347,13 @@ $logo-size: var(--s-size-mini);
       align-items: baseline;
 
       &-title {
-        margin-right: calc(var(--s-basic-spacing) / 2);
+        margin-right: $basic-spacing-mini;
       }
     }
     &-balance {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-left: var(--s-basic-spacing);
       &-title {
         color: var(--s-color-base-content-secondary);
       }

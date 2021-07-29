@@ -288,6 +288,7 @@ $wallet-assets-class: '.wallet-assets';
     flex-wrap: wrap;
     padding-top: calc(var(--s-basic-spacing) * 0.75);
     padding-bottom: calc(var(--s-basic-spacing) * 0.75);
+    text-align: center;
     &__title {
       text-transform: uppercase;
       padding-right: calc(var(--s-basic-spacing) / 4);
@@ -296,6 +297,9 @@ $wallet-assets-class: '.wallet-assets';
       letter-spacing: var(--s-letter-spacing-small);
     }
     .formatted-amount--fiat-value {
+      display: block;
+      white-space: normal;
+      word-break: break-all;
       font-size: var(--s-font-size-medium);
       font-weight: 600;
     }

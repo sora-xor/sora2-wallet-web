@@ -125,11 +125,11 @@ $formatted-amount-class: '.formatted-amount';
   }
   &--symbol-as-decimal {
     #{$formatted-amount-class}__decimal-value {
-      margin-right: calc(var(--s-basic-spacing) / 2);
+      margin-right: $basic-spacing-mini;
     }
   }
   #{$formatted-amount-class}__decimal + #{$formatted-amount-class}__symbol {
-    margin-left: calc(var(--s-basic-spacing) / 2);
+    margin-left: $basic-spacing-mini;
   }
   #{$formatted-amount-class}__symbol {
     white-space: nowrap;
@@ -170,7 +170,7 @@ $formatted-amount-class: '.formatted-amount';
     }
   }
   &--shifted {
-    margin-left: calc(var(--s-basic-spacing) / 2);
+    margin-left: $basic-spacing-mini;
   }
   &__prefix {
     opacity: .6;

@@ -312,7 +312,7 @@ $dropdown-width: var(--s-size-mini);
     bottom: 0;
     margin-top: auto;
     margin-bottom: auto;
-    right: calc(#{$dropdown-right} + #{$dropdown-width} + calc(var(--s-basic-spacing) / 2));
+    right: calc(#{$dropdown-right} + #{$dropdown-width} + $basic-spacing-mini);
     z-index: 1;
     &, &:hover, &:focus, &:active {
       background-color: transparent;

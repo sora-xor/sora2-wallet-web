@@ -90,7 +90,7 @@ import { Action } from 'vuex-class'
 import { KnownSymbols, CodecString, KnownAssets, FPNumber, MaxTotalSupply } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
-import FormattedAmountMixin from './mixins/FormattedAmountMixin'
+import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import WalletFee from './WalletFee.vue'
 import { RouteNames } from '../consts'
@@ -107,7 +107,7 @@ enum Step {
     WalletFee
   }
 })
-export default class CreateToken extends Mixins(TransactionMixin, FormattedAmountMixin) {
+export default class CreateToken extends Mixins(TransactionMixin, NumberFormatterMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly Step = Step
   readonly decimals = FPNumber.DEFAULT_PRECISION

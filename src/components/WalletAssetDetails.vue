@@ -272,6 +272,12 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
       cursor: pointer;
     }
     & + .formatted-amount--fiat-value {
+      display: block;
+      white-space: normal;
+      overflow-wrap: break-word;
+      width: 100%;
+      text-align: center;
+      font-size: var(--s-font-size-medium);
       font-weight: 600;
     }
     .s-icon-chevron-down-rounded-16 {
@@ -293,7 +299,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
       .balance {
         justify-content: space-between;
         align-items: baseline;
-        margin-bottom: calc(var(--s-basic-spacing) / 2);
+        margin-bottom: $basic-spacing-mini;
         border-bottom: 1px solid var(--s-color-base-border-secondary);
         font-size: var(--s-font-size-extra-small);
         &-label {
@@ -303,8 +309,18 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
         &-label--total {
           font-weight: 600;
         }
+        &-value,
+        &-value + .formatted-amount {
+          display: block;
+          white-space: normal;
+          word-break: break-word;
+        }
         &-value {
           margin-left: auto;
+          line-height: var(--s-line-height-medium);
+        }
+        &-value + .formatted-amount {
+          text-align: right;
         }
       }
     }
