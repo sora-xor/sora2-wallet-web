@@ -241,7 +241,7 @@ $history-item-top-border-height: 1px;
       width: 100%;
     }
     &-date {
-      margin-top: calc(var(--s-basic-spacing) / 2);
+      margin-top: $basic-spacing-mini;
       line-height: var(--s-line-height-mini);
       color: var(--s-color-base-content-tetriary);
     }
@@ -249,7 +249,7 @@ $history-item-top-border-height: 1px;
       flex-shrink: 0;
       color: var(--s-color-theme-accent);
       border-radius: var(--s-border-radius-mini);
-      margin-right: calc(var(--s-basic-spacing) / 2);
+      margin-right: $basic-spacing-mini;
     }
     &-title,
     &-date {
@@ -262,7 +262,7 @@ $history-item-top-border-height: 1px;
     &-icon {
       flex-shrink: 0;
       align-self: flex-start;
-      margin-top: calc(var(--s-basic-spacing) / 2);
+      margin-top: $basic-spacing-mini;
       margin-right: var(--s-basic-spacing);
       margin-left: auto;
     }
