@@ -23,7 +23,7 @@
     "@polkadot/extension-dapp": "^0.35.0-beta.35",
     "@polkadot/vue-identicon": "^0.72.1",
     "@sora-substrate/util": "1.4.1",
-    "@soramitsu/soramitsu-js-ui": "1.0.4",
+    "@soramitsu/soramitsu-js-ui": "1.0.3",
     "axios": "^0.19.0",
     "core-js": "^3.6.4",
     "dayjs": "^1.10.5",
