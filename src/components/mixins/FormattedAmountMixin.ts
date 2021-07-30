@@ -5,7 +5,7 @@ import { Whitelist, Asset, AccountAsset, KnownAssets, KnownSymbols, BalanceType,
 import NumberFormatterMixin from './NumberFormatterMixin'
 
 @Component
-export default class FiatValueMixin extends Mixins(NumberFormatterMixin) {
+export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
   @Getter whitelist!: Whitelist
 
   getAssetFiatPrice (accountAsset: Asset | AccountAsset): CodecString | null {
@@ -19,7 +19,22 @@ export default class FiatValueMixin extends Mixins(NumberFormatterMixin) {
       return null
     }
     return this.getFPNumberFromCodec(asset.balance[type], asset.decimals)
-      .mul(FPNumber.fromCodecValue(price)).toString()
+      .mul(FPNumber.fromCodecValue(price)).toLocaleString()
+  }
+
+  getFiatAmount (amount: string | CodecString, asset: Asset | AccountAsset, isCodecString = false): string | null {
+    // When input is empty, zero should be shown
+    if (!amount && amount !== '') {
+      return null
+    }
+    const price = this.getAssetFiatPrice(asset)
+    if (!price) {
+      return null
+    }
+    const { decimals } = asset
+    const amountParam = amount || '0'
+    return (isCodecString ? this.getFPNumberFromCodec(amountParam, decimals) : this.getFPNumber(amountParam, decimals))
+      .mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
   getFiatAmountByString (amount: string, asset: AccountAsset): string | null {
@@ -31,7 +46,7 @@ export default class FiatValueMixin extends Mixins(NumberFormatterMixin) {
     if (!price) {
       return null
     }
-    return this.getFPNumber(amount || '0', asset.decimals).mul(FPNumber.fromCodecValue(price)).toString()
+    return this.getFPNumber(amount || '0', asset.decimals).mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
   getFiatAmountByFPNumber (amount: FPNumber, asset = KnownAssets.get(KnownSymbols.XOR)): string | null {
@@ -39,6 +54,10 @@ export default class FiatValueMixin extends Mixins(NumberFormatterMixin) {
     if (!price) {
       return null
     }
-    return amount.mul(FPNumber.fromCodecValue(price)).toString()
+    return amount.mul(FPNumber.fromCodecValue(price)).toLocaleString()
+  }
+
+  getFiatAmountByCodecString (amount: CodecString, asset = KnownAssets.get(KnownSymbols.XOR)): string | null {
+    return this.getFiatAmount(amount, asset, true)
   }
 }

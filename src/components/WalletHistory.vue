@@ -221,6 +221,15 @@ $history-item-top-border-height: 1px;
       .info-status--error  {
         color: var(--s-color-status-error);
       }
+      // TODO: [1.4] remove it
+      i.info-status--loading {
+        width: var(--s-icon-font-size-mini);
+        height: var(--s-icon-font-size-mini);
+        margin-right: 6px;
+        &:before {
+          content: '';
+        }
+      }
     }
     &-title {
       width: auto;
@@ -232,7 +241,7 @@ $history-item-top-border-height: 1px;
       width: 100%;
     }
     &-date {
-      margin-top: calc(var(--s-basic-spacing) / 2);
+      margin-top: $basic-spacing-mini;
       line-height: var(--s-line-height-mini);
       color: var(--s-color-base-content-tetriary);
     }
@@ -240,7 +249,7 @@ $history-item-top-border-height: 1px;
       flex-shrink: 0;
       color: var(--s-color-theme-accent);
       border-radius: var(--s-border-radius-mini);
-      margin-right: calc(var(--s-basic-spacing) / 2);
+      margin-right: $basic-spacing-mini;
     }
     &-title,
     &-date {
@@ -253,7 +262,7 @@ $history-item-top-border-height: 1px;
     &-icon {
       flex-shrink: 0;
       align-self: flex-start;
-      margin-top: calc(var(--s-basic-spacing) / 2);
+      margin-top: $basic-spacing-mini;
       margin-right: var(--s-basic-spacing);
       margin-left: auto;
     }
