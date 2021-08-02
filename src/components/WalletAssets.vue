@@ -224,7 +224,7 @@ $wallet-assets-class: '.wallet-assets';
         line-height: var(--s-line-height-base);
       }
       &-value {
-        font-size: var(--s-font-size-big);
+        font-size: var(--s-font-size-small);
         font-weight: 800;
       }
       &-info {
