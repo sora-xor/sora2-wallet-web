@@ -62,6 +62,6 @@ export function install (vue: typeof Vue, store) {
     elements[elements.length - 1].appendChild(el)
   }
 
-  setTheme(Theme.LIGHT)
+  setTheme()
   setDesignSystem(DesignSystem.NEUMORPHIC)
 }
