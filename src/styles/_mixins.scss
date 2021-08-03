@@ -48,14 +48,11 @@
   }
 }
 
-@mixin hint-text ($withLineHeight: false, $color: var(--s-color-base-content-secondary)) {
-  color: $color;
+@mixin hint-text ($lineHeight: var(--s-line-height-medium)) {
+  color: var(--s-color-base-content-secondary);
   font-size: var(--s-font-size-mini);
   font-weight: 300;
-  line-height: var(--s-line-height-medium);
-  @if $withLineHeight == true {
-    line-height: var(--s-line-height-big);
-  }
+  line-height: $lineHeight;
 }
 
 @mixin switch-block () {

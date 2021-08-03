@@ -31,9 +31,10 @@
             :key="operation.type"
             :tooltip="getOperationTooltip(operation)"
             :disabled="isOperationDisabled(operation.type)"
-            type="primary"
+            type="action"
             size="medium"
             rounded
+            primary
             @click="handleOperation(operation.type)"
           >
             <s-icon :name="operation.icon" />

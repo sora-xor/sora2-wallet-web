@@ -1,6 +1,5 @@
 import Vue from 'vue'
 
-import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme'
 import DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem'
 import { setTheme, setDesignSystem } from '@soramitsu/soramitsu-js-ui/lib/utils'
 
@@ -62,6 +61,6 @@ export function install (vue: typeof Vue, store) {
     elements[elements.length - 1].appendChild(el)
   }
 
-  setTheme(Theme.LIGHT)
+  setTheme()
   setDesignSystem(DesignSystem.NEUMORPHIC)
 }
