@@ -53,7 +53,7 @@
             <s-button
               v-if="permissions.swapAssets"
               class="wallet-assets__button swap"
-              type="primary"
+              type="action"
               rounded
               primary
               :tooltip="t('assets.swap')"
