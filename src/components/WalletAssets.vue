@@ -53,7 +53,7 @@
             <s-button
               v-if="permissions.swapAssets"
               class="wallet-assets__button swap"
-              type="primary"
+              type="action"
               rounded
               primary
               :tooltip="t('assets.swap')"
@@ -62,7 +62,7 @@
               <s-icon name="arrows-swap-24" />
             </s-button>
             <s-button
-              class="wallet-assets__button details"
+              class="wallet-assets__button el-button--details"
               type="action"
               icon="arrows-chevron-right-rounded-24"
               alternative
@@ -219,18 +219,25 @@ $wallet-assets-class: '.wallet-assets';
       flex: 1;
       overflow-wrap: break-word;
       flex-direction: column;
-      padding-right: calc(var(--s-basic-spacing) * 1.5);
-      padding-left: calc(var(--s-basic-spacing) * 1.5);
+      padding-right: var(--s-basic-spacing);
+      padding-left: var(--s-basic-spacing);
       width: 30%;
+      justify-content: center;
       &-value, &-info {
         line-height: var(--s-line-height-base);
       }
       &-value {
-        font-size: var(--s-font-size-big);
+        font-size: var(--s-font-size-medium);
         font-weight: 800;
+        letter-spacing: var(--s-letter-spacing-mini);
+        line-height: var(--s-line-height-reset);
+      }
+      &-info,
+      .formatted-amount--fiat-value {
+        margin-top: $basic-spacing-mini;
       }
       &-info {
-        @include hint-text($color: var(--s-color-base-content-primary));
+        @include hint-text(var(--s-line-height-reset));
       }
       &-id {
         outline: none;
@@ -255,11 +262,8 @@ $wallet-assets-class: '.wallet-assets';
       }
       .formatted-amount {
         display: block;
-        line-height: var(--s-line-height-mini);
+        line-height: var(--s-line-height-reset);
       }
-    }
-    .details {
-      padding: 0;
     }
     .asset-logo {
       flex-shrink: 0;
@@ -280,6 +284,11 @@ $wallet-assets-class: '.wallet-assets';
   &__button {
     & + & {
       margin-left: var(--s-basic-spacing);
+    }
+    &.el-button--details {
+      margin-left: 0;
+      padding-right: 0 !important;
+      width: calc(var(--s-size-medium) - 7px) !important;
     }
   }
 
