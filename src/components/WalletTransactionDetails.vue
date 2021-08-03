@@ -128,7 +128,7 @@ import CopyAddressMixin from './mixins/CopyAddressMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import { RouteNames, WalletTabs } from '../consts'
-import { formatDate, formatAddress, getStatusIcon, getStatusClass, copyToClipboard, getExplorerLink } from '../util'
+import { formatDate, formatAddress, getStatusClass, copyToClipboard, getExplorerLink } from '../util'
 
 import { externalStore } from '../index'
 
@@ -145,7 +145,6 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
   @Action getAccountActivity
   @Action getTransactionDetails
 
-  getStatusIcon = getStatusIcon
   TransactionStatus = TransactionStatus
   getStatusClass = getStatusClass
   formatDate = formatDate
@@ -313,7 +312,7 @@ $dropdown-width: var(--s-size-mini);
     bottom: 0;
     margin-top: auto;
     margin-bottom: auto;
-    right: calc(#{$dropdown-right} + #{$dropdown-width} + calc(var(--s-basic-spacing) / 2));
+    right: calc(#{$dropdown-right} + #{$dropdown-width} + #{$basic-spacing-mini});
     z-index: 1;
     &, &:hover, &:focus, &:active {
       background-color: transparent;

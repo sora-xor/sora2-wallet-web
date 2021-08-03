@@ -15,13 +15,14 @@
           size="medium"
           has-locale-string
           :delimiters="delimiters"
+          :max="getMax((asset || {}).address)"
         >
           <div class="wallet-send-amount" slot="top">
             <div class="wallet-send-amount-title">{{ t('walletSend.amount') }}</div>
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <span class="wallet-send-amount-balance-value">{{ balance }}</span>
-              <fiat-value v-if="assetFiatPrice" :value="getFiatBalance(asset)" with-decimals with-left-shift />
+              <formatted-amount v-if="assetFiatPrice" :value="getFiatBalance(asset)" is-fiat-value with-left-shift />
             </div>
           </div>
           <div class="asset s-flex" slot="right">
@@ -32,7 +33,7 @@
             <span class="asset-name">{{ asset.symbol }}</span>
           </div>
           <div class="asset-info" slot="bottom">
-            <fiat-value v-if="fiatAmount" :value="fiatAmount" with-decimals />
+            <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
             <div class="asset-highlight">
               {{ asset.name || asset.symbol }}
               <s-tooltip :content="copyTooltip">
@@ -67,24 +68,7 @@
           {{ sendButtonDisabledText || t('walletSend.confirm') }}
         </s-button>
       </template>
-      <div class="wallet-send-fee s-flex">
-        <span class="wallet-send-fee__label">{{ t('walletSend.fee') }}</span>
-        <s-tooltip
-          popper-class="info-tooltip info-tooltip--info-line"
-          :content="t('walletSend.feeTooltip')"
-          placement="right-start"
-          border-radius="mini"
-        >
-          <s-icon name="info-16" size="14px" />
-        </s-tooltip>
-        <span class="wallet-send-fee__value">{{ fee.toLocaleString() }} {{ KnownSymbols.XOR }}</span>
-        <fiat-value
-          v-if="this.isXorAccountAsset(asset) ? assetFiatPrice : getAssetFiatPrice(xorAsset)"
-          :value="getFiatAmountByFPNumber(fee)"
-          with-decimals
-          with-left-shift
-        />
-      </div>
+      <wallet-fee :value="fee" has-fiat-value />
     </div>
   </wallet-base>
 </template>
@@ -95,10 +79,11 @@ import { Action, Getter } from 'vuex-class'
 import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
-import FiatValueMixin from './mixins/FiatValueMixin'
+import FormattedAmountMixin from './mixins/FormattedAmountMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
-import FiatValue from './FiatValue.vue'
+import FormattedAmount from './FormattedAmount.vue'
+import WalletFee from './WalletFee.vue'
 import { RouteNames } from '../consts'
 import { formatAddress, getAssetIconStyles } from '../util'
 import { api } from '../api'
@@ -106,11 +91,11 @@ import { api } from '../api'
 @Component({
   components: {
     WalletBase,
-    FiatValue
+    FormattedAmount,
+    WalletFee
   }
 })
-export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin, CopyAddressMixin) {
-  readonly KnownSymbols = KnownSymbols
+export default class WalletSend extends Mixins(TransactionMixin, FormattedAmountMixin, CopyAddressMixin) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG
 
   @Getter currentRouteParams!: any
@@ -272,24 +257,12 @@ export default class WalletSend extends Mixins(TransactionMixin, FiatValueMixin,
 
 <style lang="scss">
 .wallet-send-input .el-input__inner {
-  font-size: 20px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: var(--s-font-size-large);
   line-height: var(--s-line-height-small);
-}
-.wallet-send-amount,
-.wallet-send .asset-info,
-.wallet-send-fee {
-  .fiat-value {
-    &__number,
-    &__decimals {
-      font-size: inherit;
-      font-weight: inherit;
-    }
-  }
-}
-.wallet-send-fee {
-  .fiat-value__decimals {
-    font-size: var(--s-font-size-extra-mini);
-  }
+  font-weight: 800;
 }
 </style>
 
@@ -307,7 +280,7 @@ $logo-size: var(--s-size-mini);
         font-size: var(--s-font-size-mini);
       }
       &-value {
-        margin-left: calc(var(--s-basic-spacing) / 2);
+        margin-left: $basic-spacing-mini;
         letter-spacing: var(--s-letter-spacing-big);
       }
     }
@@ -315,7 +288,7 @@ $logo-size: var(--s-size-mini);
       @include asset-logo-styles(32px);
       width: $logo-size;
       height: $logo-size;
-      margin: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);
+      margin: $basic-spacing-mini var(--s-basic-spacing);
     }
     &-name {
       line-height: 2.29;
@@ -323,20 +296,19 @@ $logo-size: var(--s-size-mini);
     &-max {
       margin-left: var(--s-basic-spacing);
       height: var(--s-size-mini);
-      padding: calc(var(--s-basic-spacing) / 2) var(--s-basic-spacing);
+      padding: $basic-spacing-mini var(--s-basic-spacing);
     }
     &-max, &-name {
       font-weight: 700;
     }
     &-info {
       display: flex;
-      .fiat-value {
-        margin-left: 0;
-        margin-right: var(--s-basic-spacing);
-        font-weight: 600;
-      }
+      align-items: baseline;
       .asset-id {
         cursor: pointer;
+      }
+      .formatted-amount--fiat-value {
+        font-weight: 600;
       }
     }
     &-highlight {
@@ -363,7 +335,7 @@ $logo-size: var(--s-size-mini);
   &-amount {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: baseline;
     margin-bottom: var(--s-basic-spacing);
     font-size: var(--s-font-size-mini);
     line-height: var(--s-line-height-medium);
@@ -375,38 +347,16 @@ $logo-size: var(--s-size-mini);
       align-items: baseline;
 
       &-title {
-        margin-right: calc(var(--s-basic-spacing) / 2);
+        margin-right: $basic-spacing-mini;
       }
     }
     &-balance {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-left: var(--s-basic-spacing);
       &-title {
         color: var(--s-color-base-content-secondary);
       }
-      .fiat-value {
-        font-size: inherit;
-        font-weight: 400;
-      }
-    }
-  }
-  &-fee {
-    align-items: center;
-    margin-top: calc(var(--s-basic-spacing) * 2);
-    width: 100%;
-    padding-right: var(--s-basic-spacing);
-    padding-left: var(--s-basic-spacing);
-    color: var(--s-color-base-content-primary);
-    border-bottom: 1px solid var(--s-color-base-border-secondary);
-    &__label {
-      margin-right: var(--s-basic-spacing);
-      text-transform: uppercase;
-    }
-    &__value {
-      margin-left: auto;
-      font-weight: 600;
-    }
-    .fiat-value {
-      font-weight: 400;
-      font-size: var(--s-font-size-extra-small);
     }
   }
   &-action {

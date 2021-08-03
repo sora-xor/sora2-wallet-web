@@ -42,7 +42,7 @@
           class="wallet-settings-create-token_action s-typography-button--large"
           type="primary"
           :loading="loading"
-          :disabled="!(tokenSymbol && tokenName.trim() && tokenSupply)"
+          :disabled="isCreateDisabled"
           @click="onConfirm"
         >
           <template v-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
@@ -68,16 +68,6 @@
           <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
           <span>{{ extensibleSupply ? 'Yes' : 'No' }}</span>
         </div>
-        <s-divider class="wallet-settings-create-token_divider" />
-        <div class="wallet-settings-create-token_confirm-block">
-          <div class="wallet-settings-create-token_fee-block">
-            <s-tooltip class="bridge-info-icon" popper-class="info-tooltip info-tooltip--bridge" border-radius="mini" :content="t('createToken.tooltipValue')" theme="light" placement="right-start" animation="none" :show-arrow="false">
-              <s-icon name="info-16" />
-            </s-tooltip>
-            <span class="wallet-settings-create-token_fee-block_title">{{ t('createToken.fee') }}</span>
-          </div>
-          <span>{{ formattedFee }} {{ KnownSymbols.XOR }}</span>
-        </div>
         <s-button
           class="wallet-settings-create-token_action s-typography-button--large"
           type="primary"
@@ -89,6 +79,7 @@
           <template v-else>{{ t('createToken.confirm') }}</template>
         </s-button>
       </template>
+      <wallet-fee v-if="!isCreateDisabled" :value="formattedFee" has-fiat-value />
     </div>
   </wallet-base>
 </template>
@@ -99,7 +90,9 @@ import { Action } from 'vuex-class'
 import { KnownSymbols, CodecString, KnownAssets, FPNumber, MaxTotalSupply } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
+import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
+import WalletFee from './WalletFee.vue'
 import { RouteNames } from '../consts'
 import { api } from '../api'
 
@@ -110,10 +103,11 @@ enum Step {
 
 @Component({
   components: {
-    WalletBase
+    WalletBase,
+    WalletFee
   }
 })
-export default class CreateToken extends Mixins(TransactionMixin) {
+export default class CreateToken extends Mixins(TransactionMixin, NumberFormatterMixin) {
   readonly KnownSymbols = KnownSymbols
   readonly Step = Step
   readonly decimals = FPNumber.DEFAULT_PRECISION
@@ -139,8 +133,12 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     }
   }
 
-  get formattedFee (): string {
-    return this.formatCodecNumber(this.fee)
+  get formattedFee (): FPNumber {
+    return this.getFPNumberFromCodec(this.fee)
+  }
+
+  get isCreateDisabled (): boolean {
+    return !(this.tokenSymbol && this.tokenName.trim() && this.tokenSupply)
   }
 
   get formattedTokenSupply (): string {
@@ -157,13 +155,31 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     return FPNumber.gte(fpAccountXor, this.getFPNumberFromCodec(this.fee))
   }
 
-  async calculateFee (): Promise<CodecString> {
-    return api.getRegisterAssetNetworkFee(
-      this.tokenSymbol,
-      this.tokenName,
-      this.tokenSupply,
-      this.extensibleSupply
-    )
+  async created () {
+    await this.calculateFee()
+  }
+
+  async calculateFee (isConfirm?: boolean): Promise<void> {
+    try {
+      await this.withLoading(async () => {
+        this.fee = await api.getRegisterAssetNetworkFee(
+          this.tokenSymbol,
+          this.tokenName,
+          this.tokenSupply,
+          this.extensibleSupply
+        )
+        if (isConfirm) {
+          this.step = Step.Confirm
+        }
+      })
+    } catch (error) {
+      console.error(error)
+      this.$notify({
+        message: this.t('createToken.feeError'),
+        type: 'error',
+        title: ''
+      })
+    }
   }
 
   async registerAsset (): Promise<void> {
@@ -184,19 +200,7 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
       this.tokenSupply = maxTokenSupply.toString()
     }
-    try {
-      await this.withLoading(async () => {
-        this.fee = await this.calculateFee()
-        this.step = Step.Confirm
-      })
-    } catch (error) {
-      console.error(error)
-      this.$notify({
-        message: this.t('createToken.feeError'),
-        type: 'error',
-        title: ''
-      })
-    }
+    await this.calculateFee(true)
   }
 
   async onCreate (): Promise<void> {
@@ -237,15 +241,6 @@ export default class CreateToken extends Mixins(TransactionMixin) {
     font-weight: normal;
     padding: var(--s-basic-spacing) 0;
     line-height: var(--s-line-height-big);
-  }
-  &_fee-block {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-  &_fee-block_title {
-    margin-left: var(--s-basic-spacing);
-    line-height: 1;
   }
   &_divider {
     margin: unset;

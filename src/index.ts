@@ -7,7 +7,10 @@ import installWalletPlugins from './plugins'
 
 import SoraNeoWallet from './SoraNeoWallet.vue'
 import WalletAvatar from './components/WalletAvatar.vue'
-import { Components, Modules } from './types'
+import FormattedAmount from './components/FormattedAmount.vue'
+import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
+import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
+import { Components, Modules, FontSizeRate, FontWeightRate } from './types'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
 import { updateAccountAssetsSubscription } from './store/Account'
@@ -100,6 +103,11 @@ export {
   SoraNeoWallet,
   WALLET_CONSTS,
   WalletAvatar,
+  FormattedAmount,
+  NumberFormatterMixin,
+  FormattedAmountMixin,
+  FontSizeRate,
+  FontWeightRate,
   store as externalStore // only for soraNetwork getter in wallet
 }
 export default SoraNeoWalletElements
