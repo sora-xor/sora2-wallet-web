@@ -9,7 +9,7 @@
     @action="handleCreateToken"
     @cleanHistory="handleCleanHistory"
   >
-    <wallet-account show-controls pressed />
+    <wallet-account show-controls />
     <div class="wallet">
       <s-tabs :value="currentTab" type="rounded" @change="handleChangeTab">
         <s-tab

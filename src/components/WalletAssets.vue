@@ -238,6 +238,7 @@ $wallet-assets-class: '.wallet-assets';
       }
       &-info {
         @include hint-text(var(--s-line-height-reset));
+        color: var(--s-color-base-content-primary);
       }
       &-id {
         outline: none;

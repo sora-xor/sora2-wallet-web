@@ -306,6 +306,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
         &-label {
           text-transform: uppercase;
           margin-right: var(--s-basic-spacing);
+          font-weight: 300;
         }
         &-label--total {
           font-weight: 600;
