@@ -9,7 +9,7 @@
       v-model="search"
       @input="handleSearch"
     />
-    <div class="asset-search-list" v-loading="assetsLoading || loading">
+    <s-scrollbar class="asset-search-list" v-loading="assetsLoading || loading">
       <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </div>
@@ -31,7 +31,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </s-scrollbar>
   </div>
 </template>
 
@@ -152,7 +152,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   }
   &-list {
     height: calc(#{$asset-item-height} * 5);
-    overflow-y: auto;
     margin-left: calc(var(--s-basic-spacing) * -3);
     margin-right: calc(var(--s-basic-spacing) * -3);
     &_empty {
