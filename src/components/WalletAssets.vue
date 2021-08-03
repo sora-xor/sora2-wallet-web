@@ -41,8 +41,9 @@
             <s-button
               v-if="permissions.sendAssets"
               class="wallet-assets__button send"
-              type="primary"
+              type="action"
               rounded
+              primary
               :tooltip="t('assets.send')"
               :disabled="isZeroBalance(asset)"
               @click="handleAssetSend(asset)"
@@ -54,6 +55,7 @@
               class="wallet-assets__button swap"
               type="primary"
               rounded
+              primary
               :tooltip="t('assets.swap')"
               @click="handleAssetSwap(asset)"
             >
