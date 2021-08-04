@@ -181,8 +181,8 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
 <style lang="scss">
 .wallet-assets {
-  &-scrollbar > .el-scrollbar__bar.is-vertical {
-    right: 0;
+  &-scrollbar {
+    @include scrollbar;
   }
   .asset-value .formatted-amount__decimal {
     font-weight: 600;

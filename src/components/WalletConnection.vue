@@ -172,8 +172,8 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   color: var(--s-color-theme-accent);
   text-decoration: none;
 }
-.wallet-connection-accounts.el-scrollbar .el-scrollbar__wrap {
-  overflow-x: hidden;
+.wallet-connection-accounts {
+  @include scrollbar;
 }
 </style>
 
@@ -201,8 +201,10 @@ $accounts-number: 7;
     height: calc(calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom});
   }
   &-account {
-    margin-bottom: var(--s-basic-spacing);
     height: $account-height;
+    &:not(:last-child) {
+      margin-bottom: var(--s-basic-spacing);
+    }
     &:hover {
       cursor: pointer;
       .wallet-account {

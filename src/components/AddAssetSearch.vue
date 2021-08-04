@@ -143,8 +143,8 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 </script>
 
 <style lang="scss">
-.asset-search-list.el-scrollbar .el-scrollbar__wrap {
-  overflow-x: hidden;
+.asset-search-list {
+  @include scrollbar(0);
 }
 </style>
 
