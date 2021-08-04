@@ -173,7 +173,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   text-decoration: none;
 }
 .wallet-connection-accounts {
-  @include scrollbar;
+  @include scrollbar(18px);
 }
 </style>
 

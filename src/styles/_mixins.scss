@@ -115,15 +115,15 @@
   }
 }
 
-@mixin scrollbar ($offsetRight: 6px) {
+@mixin scrollbar ($outerRight: 6px, $innerRight: 0) {
   &.el-scrollbar {
-    margin-right: -#{$offsetRight};
+    margin-right: -#{$outerRight};
     .el-scrollbar__wrap {
-      padding-right: $offsetRight;
+      padding-right: $outerRight;
       overflow-x: hidden;
     }
     > .el-scrollbar__bar.is-vertical {
-      right: 0;
+      right: $innerRight;
     }
   }
 }
