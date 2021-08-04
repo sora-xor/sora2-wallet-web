@@ -15,19 +15,21 @@
             type="action"
             alternative
             rounded
-            icon="arrows-refresh-ccw-24"
             :tooltip="t('account.switch')"
             @click="handleSwitchAccount"
-          />
+          >
+            <s-icon name="arrows-refresh-ccw-24" size="28" />
+          </s-button>
           <s-button
             class="account__action-button account-logout"
             type="action"
             alternative
             rounded
-            icon="security-logout-24"
             :tooltip="t('account.logout')"
             @click="handleLogout"
-          />
+          >
+            <s-icon name="security-logout-24" size="28" />
+          </s-button>
         </template>
       </div>
     </div>

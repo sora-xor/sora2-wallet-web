@@ -48,7 +48,7 @@
               :disabled="isZeroBalance(asset)"
               @click="handleAssetSend(asset)"
             >
-              <s-icon name="finance-send-24" />
+              <s-icon name="finance-send-24" size="28" />
             </s-button>
             <s-button
               v-if="permissions.swapAssets"
@@ -59,15 +59,15 @@
               :tooltip="t('assets.swap')"
               @click="handleAssetSwap(asset)"
             >
-              <s-icon name="arrows-swap-24" />
+              <s-icon name="arrows-swap-24" size="28" />
             </s-button>
             <s-button
               class="wallet-assets__button el-button--details"
               type="action"
-              icon="arrows-chevron-right-rounded-24"
               alternative
               @click="handleOpenAssetDetails(asset)"
             >
+              <s-icon name="arrows-chevron-right-rounded-24" size="28" />
             </s-button>
           </div>
           <s-divider v-if="index !== formattedAccountAssets.length - 1" class="wallet-assets-item_divider" :key="`${asset.address}-divider`" />
@@ -286,11 +286,6 @@ $wallet-assets-count: 5;
   &__button {
     & + & {
       margin-left: var(--s-basic-spacing);
-    }
-    &.el-button--details {
-      margin-left: 0;
-      padding-right: 0 !important;
-      width: calc(var(--s-size-medium) - 7px) !important;
     }
   }
 
