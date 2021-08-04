@@ -14,7 +14,7 @@ import { Action, Getter } from 'vuex-class'
 
 import { FPNumber } from '@sora-substrate/util'
 import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme'
-import { setTheme } from '@soramitsu/soramitsu-js-ui/lib/utils'
+import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils'
 
 import TransactionMixin from './components/mixins/TransactionMixin'
 import { initWallet } from './index'
@@ -26,7 +26,7 @@ import { updateAccountAssetsSubscription } from './store/Account'
 })
 export default class App extends Mixins(TransactionMixin) {
   @Getter libraryDesignSystem
-  @Getter libraryTheme
+  @Getter libraryTheme!: Theme
   @Getter firstReadyTransaction!: any
   @Action trackActiveTransactions
 
@@ -50,8 +50,7 @@ export default class App extends Mixins(TransactionMixin) {
   }
 
   changeTheme (): void {
-    const theme = this.libraryTheme === Theme.DARK ? Theme.LIGHT : Theme.DARK
-    setTheme(theme)
+    switchTheme()
   }
 }
 </script>

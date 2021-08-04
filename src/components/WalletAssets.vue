@@ -194,6 +194,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 @import '../styles/icons';
 
 $wallet-assets-class: '.wallet-assets';
+$wallet-assets-count: 5;
 
 #{$wallet-assets-class} {
   flex-direction: column;
@@ -201,7 +202,7 @@ $wallet-assets-class: '.wallet-assets';
 
   &--fiat {
     #{$wallet-assets-class}-container {
-      max-height: calc(#{$asset-item-height--fiat} * 5);
+      max-height: calc(#{$asset-item-height--fiat} * #{$wallet-assets-count} + 4px);
     }
     #{$wallet-assets-class}-item {
       height: $asset-item-height--fiat;
@@ -209,7 +210,7 @@ $wallet-assets-class: '.wallet-assets';
   }
 
   &-container {
-    max-height: calc(#{$asset-item-height} * 5);
+    max-height: calc((#{$asset-item-height} * #{$wallet-assets-count}) + 4px);
   }
   &-item {
     align-items: center;
