@@ -2425,10 +2425,10 @@
     crypto-js "^4.0.0"
     lodash "^4.17.15"
 
-"@soramitsu/soramitsu-js-ui@1.0.10":
-  version "1.0.10"
-  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-1.0.10.tgz#7a603d7fd80dc7bde7dee8db5216b7ad1f35ff1e"
-  integrity sha512-K+Wfvp2wO1+Vd83s3+7K4wzziaG40A6u2KjuhaD+V111BedIdnMmJeIoS4HLh9tJnOcbw0K9/ZkB8M/LwepvoQ==
+"@soramitsu/soramitsu-js-ui@1.0.11":
+  version "1.0.11"
+  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-1.0.11.tgz#7439ab2973ba8ba51264658cd6f389f4f9a8c2fb"
+  integrity sha512-xhlv7iC8fYP+v+WqimpiT30BURljg11+N64Tghlr4tYSKlbZAoY0d3gEpyf/nbJK+hevbSiObNUzcSRPcwBEvg==
   dependencies:
     core-js "^3.6.4"
     element-resize-detector "^1.2.1"
