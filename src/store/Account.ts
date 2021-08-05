@@ -13,6 +13,8 @@ import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from 
 
 export let updateAccountAssetsSubscription: any = null
 
+type WhitelistParams = { whitelist: Array<WhitelistArrayItem>; withoutFiat?: boolean }
+
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
@@ -54,7 +56,8 @@ function initialState () {
     assets: [],
     polkadotJsAccounts: [],
     whitelistArray: [],
-    assetsLoading: false
+    assetsLoading: false,
+    withoutFiat: false
   }
 }
 
@@ -103,6 +106,9 @@ const getters = {
   },
   whitelistIdsBySymbol (state) {
     return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistIdsBySymbol(state.whitelistArray) : {}
+  },
+  withoutFiat (state): boolean {
+    return state.withoutFiat
   },
   assetsLoading (state) {
     return state.assetsLoading
@@ -203,14 +209,19 @@ const mutations = {
 
   [types.GET_WHITELIST_REQUEST] (state) {
     state.whitelistArray = []
+    state.withoutFiat = false
   },
 
-  [types.GET_WHITELIST_SUCCESS] (state, whitelist: Array<WhitelistArrayItem>) {
-    state.whitelistArray = whitelist
+  [types.GET_WHITELIST_SUCCESS] (state, params: WhitelistParams) {
+    state.whitelistArray = params.whitelist
+    if (params.withoutFiat) {
+      state.withoutFiat = true
+    }
   },
 
   [types.GET_WHITELIST_FAILURE] (state) {
     state.whitelistArray = []
+    state.withoutFiat = true
   },
 
   [types.SEARCH_ASSET_REQUEST] (state) {},
@@ -377,7 +388,7 @@ const actions = {
       const { data } = await axios.get('/whitelist.json')
       const cerestokenApiObj = await getCeresTokensData()
       if (!cerestokenApiObj) {
-        commit(types.GET_WHITELIST_SUCCESS, data)
+        commit(types.GET_WHITELIST_SUCCESS, { whitelist: data, withoutFiat: true } as WhitelistParams)
         return
       }
 
@@ -389,7 +400,7 @@ const actions = {
         }
         return asset
       })
-      commit(types.GET_WHITELIST_SUCCESS, dataWithPrice)
+      commit(types.GET_WHITELIST_SUCCESS, { whitelist: dataWithPrice } as WhitelistParams)
     } catch (error) {
       commit(types.GET_WHITELIST_FAILURE)
     }
