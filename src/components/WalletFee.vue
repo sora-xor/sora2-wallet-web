@@ -69,6 +69,7 @@ $formatted-amount-class: '.formatted-amount';
   color: var(--s-color-base-content-primary);
   border-bottom: 1px solid var(--s-color-base-border-secondary);
   &__label {
+    font-weight: 300;
     margin-right: var(--s-basic-spacing);
     text-transform: uppercase;
   }

@@ -221,7 +221,7 @@ $history-item-top-border-height: 1px;
       .info-status--error  {
         color: var(--s-color-status-error);
       }
-      // TODO: [1.4] remove it
+      // TODO: [1.5] remove it
       i.info-status--loading {
         width: var(--s-icon-font-size-mini);
         height: var(--s-icon-font-size-mini);

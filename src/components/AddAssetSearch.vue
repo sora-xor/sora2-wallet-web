@@ -9,7 +9,7 @@
       v-model="search"
       @input="handleSearch"
     />
-    <div class="asset-search-list" v-loading="assetsLoading || loading">
+    <s-scrollbar class="asset-search-list" v-loading="assetsLoading || loading">
       <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </div>
@@ -31,7 +31,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </s-scrollbar>
   </div>
 </template>
 
@@ -142,6 +142,12 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 }
 </script>
 
+<style lang="scss">
+.asset-search-list {
+  @include scrollbar(0);
+}
+</style>
+
 <style scoped lang="scss">
 @import '../styles/icons';
 
@@ -166,7 +172,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
     .asset {
       align-items: center;
       height: $asset-item-height;
-      padding: 0 calc(var(--s-basic-spacing) * 2.5);
+      padding: 0 calc(var(--s-basic-spacing) * 3);
       &:hover, &.selected {
         background-color: var(--s-color-base-background-hover);
         cursor: pointer;

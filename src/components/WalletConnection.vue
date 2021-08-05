@@ -33,7 +33,7 @@
         </template>
         <template v-if="step === Step.Second && polkadotJsAccounts.length">
           <p class="wallet-connection-text">{{ t('connection.selectAccount') }}</p>
-          <div class="wallet-connection-accounts">
+          <s-scrollbar class="wallet-connection-accounts">
             <div
               class="wallet-connection-account"
               v-for="account in polkadotJsAccounts"
@@ -42,7 +42,7 @@
             >
               <wallet-account :polkadotAccount="account" />
             </div>
-          </div>
+          </s-scrollbar>
         </template>
       </template>
     </div>
@@ -172,6 +172,9 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   color: var(--s-color-theme-accent);
   text-decoration: none;
 }
+.wallet-connection-accounts {
+  @include scrollbar(18px);
+}
 </style>
 
 <style scoped lang="scss">
@@ -186,6 +189,7 @@ $accounts-number: 7;
   padding: var(--s-basic-spacing);
   &-text {
     font-size: var(--s-font-size-extra-small);
+    font-weight: 300;
     line-height: var(--s-line-height-base);
     color: var(--s-color-base-content-primary);
     margin-bottom: calc(var(--s-basic-spacing) * 2);
@@ -194,14 +198,13 @@ $accounts-number: 7;
     }
   }
   &-accounts {
-    margin: calc(-1 * #{$accounts-padding});
-    max-height: calc(calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number});
-    padding: $accounts-padding;
-    overflow-y: auto;
+    height: calc(calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom});
   }
   &-account {
-    margin-bottom: var(--s-basic-spacing);
     height: $account-height;
+    &:not(:last-child) {
+      margin-bottom: var(--s-basic-spacing);
+    }
     &:hover {
       cursor: pointer;
       .wallet-account {

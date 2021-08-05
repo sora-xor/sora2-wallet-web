@@ -1,5 +1,5 @@
 <template>
-  <s-card :pressed="pressed" shadow="always" size="small" border-radius="medium" class="wallet-account">
+  <s-card shadow="always" size="small" border-radius="medium" class="wallet-account">
     <div class="account s-flex">
       <wallet-avatar class="account-avatar" :address="address" :size="28" />
       <div class="account-details s-flex">
@@ -15,19 +15,21 @@
             type="action"
             alternative
             rounded
-            icon="arrows-refresh-ccw-24"
             :tooltip="t('account.switch')"
             @click="handleSwitchAccount"
-          />
+          >
+            <s-icon name="arrows-refresh-ccw-24" size="28" />
+          </s-button>
           <s-button
             class="account__action-button account-logout"
             type="action"
             alternative
             rounded
-            icon="security-logout-24"
             :tooltip="t('account.logout')"
             @click="handleLogout"
-          />
+          >
+            <s-icon name="security-logout-24" size="28" />
+          </s-button>
         </template>
       </div>
     </div>
@@ -53,7 +55,6 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
   @Action logout
   @Action navigate
 
-  @Prop({ default: false, type: Boolean }) readonly pressed!: boolean
   @Prop({ default: false, type: Boolean }) readonly showControls!: boolean
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: { name: string; address: string }
 
@@ -154,6 +155,7 @@ $avatar-size: 32px;
     }
     &_name {
       font-size: var(--s-font-size-medium);
+      font-weight: 600;
       line-height: var(--s-line-height-medium);
       outline: none;
       white-space: nowrap;
@@ -164,7 +166,6 @@ $avatar-size: 32px;
       @include value-prefix(width, fit-content);
       @include hint-text;
       outline: none;
-      color: var(--s-color-base-content-quaternary);
       &:hover {
         text-decoration: underline;
         cursor: pointer;

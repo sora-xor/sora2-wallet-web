@@ -29,8 +29,10 @@
             <s-button v-if="isMaxButtonAvailable" class="asset-max s-typography-button--small" type="primary" alternative size="mini" border-radius="mini" @click="handleMaxClick">
               {{ t('walletSend.max') }}
             </s-button>
-            <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
-            <span class="asset-name">{{ asset.symbol }}</span>
+            <div class="asset-box">
+              <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+              <span class="asset-name">{{ asset.symbol }}</span>
+            </div>
           </div>
           <div class="asset-info" slot="bottom">
             <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
@@ -273,6 +275,11 @@ $logo-size: var(--s-size-mini);
 .wallet-send {
   .asset {
     align-items: center;
+
+    & > * {
+      margin-left: var(--s-basic-spacing);
+    }
+
     &-balance {
       margin-left: auto;
       &-title {
@@ -284,22 +291,30 @@ $logo-size: var(--s-size-mini);
         letter-spacing: var(--s-letter-spacing-big);
       }
     }
+    &-box {
+      display: flex;
+      align-items: center;
+      background-color: var(--s-color-utility-surface);
+      border-radius: var(--s-border-radius-mini);
+      box-shadow: var(--s-shadow-element);
+      padding: $basic-spacing-mini calc(var(--s-basic-spacing) * 0.75);
+    }
     &-logo {
       @include asset-logo-styles(32px);
       width: $logo-size;
       height: $logo-size;
-      margin: $basic-spacing-mini var(--s-basic-spacing);
+      margin-right: var(--s-basic-spacing);
     }
     &-name {
-      line-height: 2.29;
+      font-size: var(--s-icon-font-size-small);
+      line-height: var(--s-line-height-reset);
     }
     &-max {
-      margin-left: var(--s-basic-spacing);
       height: var(--s-size-mini);
       padding: $basic-spacing-mini var(--s-basic-spacing);
     }
     &-max, &-name {
-      font-weight: 700;
+      font-weight: 800;
     }
     &-info {
       display: flex;
@@ -338,6 +353,7 @@ $logo-size: var(--s-size-mini);
     align-items: baseline;
     margin-bottom: var(--s-basic-spacing);
     font-size: var(--s-font-size-mini);
+    font-weight: 300;
     line-height: var(--s-line-height-medium);
     text-transform: uppercase;
 
