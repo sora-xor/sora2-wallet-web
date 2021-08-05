@@ -222,6 +222,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   &_desc {
     color: var(--s-color-base-content-primary);
     font-size: var(--s-font-size-extra-small);
+    font-weight: 300;
     line-height: var(--s-line-height-base);
     padding: var(--s-basic-spacing) calc(var(--s-basic-spacing) * 1.5) calc(var(--s-basic-spacing) * 2);
   }

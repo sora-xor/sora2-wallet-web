@@ -1,5 +1,6 @@
 <template>
   <s-design-system-provider :value="libraryDesignSystem" id="app">
+    <s-button @click="changeTheme">{{ libraryTheme }} theme</s-button>
     <div class="wallet-wrapper s-flex">
       <sora-neo-wallet />
     </div>
@@ -12,6 +13,10 @@ import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
 import { FPNumber } from '@sora-substrate/util'
+import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils'
+import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme'
+import DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem'
+
 import TransactionMixin from './components/mixins/TransactionMixin'
 import { initWallet } from './index'
 import SoraNeoWallet from './SoraNeoWallet.vue'
@@ -21,7 +26,8 @@ import { updateAccountAssetsSubscription } from './store/Account'
   components: { SoraNeoWallet }
 })
 export default class App extends Mixins(TransactionMixin) {
-  @Getter libraryDesignSystem
+  @Getter libraryDesignSystem!: DesignSystem
+  @Getter libraryTheme!: Theme
   @Getter firstReadyTransaction!: any
   @Action trackActiveTransactions
 
@@ -42,6 +48,10 @@ export default class App extends Mixins(TransactionMixin) {
     if (updateAccountAssetsSubscription) {
       updateAccountAssetsSubscription.unsubscribe()
     }
+  }
+
+  changeTheme (): void {
+    switchTheme()
   }
 }
 </script>

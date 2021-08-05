@@ -37,7 +37,7 @@
             primary
             @click="handleOperation(operation.type)"
           >
-            <s-icon :name="operation.icon" />
+            <s-icon :name="operation.icon" size="28" />
           </s-button>
         </div>
         <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
@@ -306,6 +306,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
         &-label {
           text-transform: uppercase;
           margin-right: var(--s-basic-spacing);
+          font-weight: 300;
         }
         &-label--total {
           font-weight: 600;

@@ -8,7 +8,6 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`
   title=""
 >
   <wallet-account-stub
-    pressed="true"
     showcontrols="true"
   />
    
@@ -43,7 +42,6 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
   title=""
 >
   <wallet-account-stub
-    pressed="true"
     showcontrols="true"
   />
    
