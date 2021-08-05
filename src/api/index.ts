@@ -1,4 +1,5 @@
 import axiosInstance from 'axios'
+import isEmpty from 'lodash/fp/isEmpty'
 import { api, connection, FPNumber } from '@sora-substrate/util'
 
 import { storage } from '../util/storage'
@@ -20,9 +21,14 @@ async function getCeresTokensData (): Promise<FiatMappedTokens | null> {
   try {
     const cerestokenApi = await axios.get('https://cerestoken.io/api/pairs')
     const cerestokenApiObj = (cerestokenApi.data as Array<any>).reduce((acc, item) => {
-      acc[item.asset_id] = new FPNumber(item.price).toCodecString()
+      if (+item.price) {
+        acc[item.asset_id] = new FPNumber(item.price).toCodecString()
+      }
       return acc
     }, {})
+    if (isEmpty(cerestokenApiObj)) {
+      return null
+    }
     return cerestokenApiObj as FiatMappedTokens
   } catch (error) {
     console.warn('CERES API not available!')

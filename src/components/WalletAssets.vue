@@ -102,6 +102,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   readonly FontWeightRate = FontWeightRate
 
   @Getter accountAssets!: Array<AccountAsset>
+  @Getter withoutFiat!: boolean
   @Getter permissions
   @Action getAccountAssets
   @Action navigate
@@ -126,7 +127,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   get assetsFiatAmount (): string | null {
-    if (!this.formattedAccountAssets) {
+    if (!this.formattedAccountAssets || this.withoutFiat) {
       return null
     }
     if (!this.formattedAccountAssets.length) {
