@@ -1,7 +1,7 @@
 <template>
   <wallet-base :title="t('addAsset.title')" show-back @back="handleBack">
     <div class="add-asset-details">
-      <s-card shadow="always" size="small" border-radius="mini">
+      <s-card shadow="always" size="small" border-radius="mini" pressed>
         <div class="add-asset-details_asset" v-if="asset">
           <i class="asset-logo" :style="assetIconStyles" />
           <div class="asset-description s-flex">
@@ -17,7 +17,7 @@
           </div>
         </div>
       </s-card>
-      <s-card status="warning" shadow="always" pressed class="add-asset-details_text">
+      <s-card :status="cardStatus" shadow="always" class="add-asset-details_text">
         <div class="p2">{{ t('addAsset.warningTitle') }}</div>
         <div class="warning-text p4">{{ t('addAsset.warningMessage') }}</div>
       </s-card>
@@ -36,6 +36,7 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { Asset, isWhitelistAsset, isBlacklistAsset, Whitelist } from '@sora-substrate/util'
+import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme'
 
 import LoadingMixin from './mixins/LoadingMixin'
 import TranslationMixin from './mixins/TranslationMixin'
@@ -55,6 +56,7 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
   @Getter currentRouteParams!: any
   @Getter whitelist!: Whitelist
   @Getter whitelistIdsBySymbol!: any
+  @Getter libraryTheme
 
   @Action back!: () => Promise<void>
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
@@ -66,6 +68,11 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
       return
     }
     this.asset = this.currentRouteParams.asset
+  }
+
+  get cardStatus (): string {
+    if (this.libraryTheme !== Theme.DARK) return 'warning'
+    return ''
   }
 
   get isWhitelist (): boolean {
@@ -184,6 +191,7 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
         }
         &_info {
           @include hint-text;
+          color: var(--s-color-base-content-primary);
           .asset-id {
             outline: none;
             &:hover {
@@ -208,6 +216,9 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
   }
   &_action {
     width: 100%;
+  }
+  &_text {
+    color: var(--s-color-status-warning);
   }
 }
 </style>

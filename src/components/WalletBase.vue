@@ -6,10 +6,11 @@
           v-if="showBack"
           class="base-title_back"
           type="action"
-          icon="arrows-chevron-left-rounded-24"
           :tooltip="t('backText')"
           @click="handleBackClick"
-        />
+        >
+          <s-icon name="arrows-chevron-left-rounded-24" size="28" />
+        </s-button>
         <h3 class="base-title_text">{{ title }}</h3>
         <s-button
           v-if="showAction"
@@ -37,7 +38,9 @@
           icon="basic-close-24"
           :tooltip="t('closeText')"
           @click="handleCloseClick"
-        />
+        >
+          <s-icon name="basic-close-24" size="28" />
+        </s-button>
       </div>
     </template>
     <slot />
