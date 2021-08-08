@@ -70,7 +70,7 @@
           {{ sendButtonDisabledText || t('walletSend.confirm') }}
         </s-button>
       </template>
-      <wallet-fee :value="fee" has-fiat-value />
+      <wallet-fee :value="fee" />
     </div>
   </wallet-base>
 </template>
@@ -323,7 +323,10 @@ $logo-size: var(--s-size-mini);
         cursor: pointer;
       }
       .formatted-amount--fiat-value {
+        margin-right: $basic-spacing-mini;
         font-weight: 600;
+        white-space: normal;
+        word-break: break-all;
       }
     }
     &-highlight {

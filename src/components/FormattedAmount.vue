@@ -111,25 +111,32 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
 $formatted-amount-class: '.formatted-amount';
 
 #{$formatted-amount-class} {
-  display: inline-flex;
-  align-items: baseline;
+  display: block;
+  overflow-wrap: break-word;
+  // Trick to fix horizontal spacings bug between elements
+  word-spacing: -3px;
+  letter-spacing: -3px;
+  span:not(.formatted-amount__decimal) {
+    display: inline;
+    // Trick to fix horizontal spacings bug between elements
+    word-spacing: normal;
+    letter-spacing: normal;
+  }
   &--fiat-value {
+    white-space: nowrap;
     color: var(--s-color-fiat-value);
     font-family: var(--s-font-family-default);
     font-weight: 400;
     line-height: var(--s-line-height-medium);
     letter-spacing: var(--s-letter-spacing-small);
-    display: inline-flex;
-    align-items: baseline;
-    white-space: nowrap;
   }
   &--symbol-as-decimal {
     #{$formatted-amount-class}__decimal-value {
       margin-right: $basic-spacing-mini;
     }
   }
-  #{$formatted-amount-class}__decimal + #{$formatted-amount-class}__symbol {
-    margin-left: $basic-spacing-mini;
+  #{$formatted-amount-class}__decimal:not(:last-child) {
+    margin-right: $basic-spacing-mini;
   }
   #{$formatted-amount-class}__symbol {
     white-space: nowrap;
