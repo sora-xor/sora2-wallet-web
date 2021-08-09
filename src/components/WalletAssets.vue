@@ -312,8 +312,6 @@ $wallet-assets-count: 5;
     }
     .formatted-amount--fiat-value {
       display: block;
-      white-space: normal;
-      word-break: break-all;
       font-size: var(--s-font-size-medium);
       font-weight: 600;
     }

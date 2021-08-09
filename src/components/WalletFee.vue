@@ -45,8 +45,10 @@ export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountM
 </script>
 
 <style lang="scss">
-.wallet-fee .formatted-amount__container {
-  margin-left: auto;
+.wallet-fee .formatted-amount {
+  &__container {
+    margin-left: auto;
+  }
 }
 </style>
 

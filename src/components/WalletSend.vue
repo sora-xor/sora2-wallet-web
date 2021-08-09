@@ -258,13 +258,20 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
 </script>
 
 <style lang="scss">
-.wallet-send-input .el-input__inner {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  font-size: var(--s-font-size-large);
-  line-height: var(--s-line-height-small);
-  font-weight: 800;
+.wallet-send {
+  &-amount-balance {
+    .formatted-amount--fiat-value {
+      text-align: right;
+    }
+  }
+  &-input .el-input__inner {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: var(--s-font-size-large);
+    line-height: var(--s-line-height-small);
+    font-weight: 800;
+  }
 }
 </style>
 
@@ -325,8 +332,6 @@ $logo-size: var(--s-size-mini);
       .formatted-amount--fiat-value {
         margin-right: $basic-spacing-mini;
         font-weight: 600;
-        white-space: normal;
-        word-break: break-all;
       }
     }
     &-highlight {

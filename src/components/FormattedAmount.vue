@@ -112,7 +112,8 @@ $formatted-amount-class: '.formatted-amount';
 
 #{$formatted-amount-class} {
   display: block;
-  overflow-wrap: break-all;
+  overflow-wrap: anywhere;
+  word-break: break-all;
   // Trick to fix horizontal spacings bug between elements
   word-spacing: -3px;
   letter-spacing: -3px;
@@ -123,7 +124,6 @@ $formatted-amount-class: '.formatted-amount';
     letter-spacing: normal;
   }
   &--fiat-value {
-    white-space: nowrap;
     color: var(--s-color-fiat-value);
     font-family: var(--s-font-family-default);
     font-weight: 400;

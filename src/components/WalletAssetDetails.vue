@@ -266,7 +266,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
       cursor: pointer;
     }
     & + .formatted-amount--fiat-value {
-      white-space: normal;
       width: 100%;
       text-align: center;
       font-size: var(--s-font-size-medium);
