@@ -13,25 +13,21 @@
           <div class="wallet-assets-item s-flex" :key="asset.address">
             <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
             <div class="asset s-flex">
-              <div class="asset-value">
-                <formatted-amount
-                  :value="getBalance(asset)"
-                  :font-size-rate="FontSizeRate.SMALL"
-                  :asset-symbol="asset.symbol"
-                  symbol-as-decimal
-                />
+              <formatted-amount-with-fiat-value
+                value-class="asset-value"
+                :value="getBalance(asset)"
+                :font-size-rate="FontSizeRate.SMALL"
+                :asset-symbol="asset.symbol"
+                symbol-as-decimal
+                :fiat-value="getFiatBalance(asset)"
+                :fiat-font-size-rate="FontSizeRate.MEDIUM"
+                :fiat-font-weight-rate="FontWeightRate.MEDIUM"
+              >
                 <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
                   <s-icon name="lock-16" size="12px" />
                   {{ formatLockedBalance(asset) }}
                 </div>
-              </div>
-              <formatted-amount
-                v-if="getAssetFiatPrice(asset)"
-                :value="getFiatBalance(asset)"
-                is-fiat-value
-                :font-size-rate="FontSizeRate.MEDIUM"
-                :font-weight-rate="FontWeightRate.MEDIUM"
-              />
+              </formatted-amount-with-fiat-value>
               <div class="asset-info">{{ asset.name || asset.symbol }}
                 <s-tooltip :content="copyTooltip">
                   <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
@@ -88,13 +84,15 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin'
 import LoadingMixin from './mixins/LoadingMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import FormattedAmount from './FormattedAmount.vue'
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue'
 import { RouteNames } from '../consts'
 import { FontSizeRate, FontWeightRate } from '../types'
 import { getAssetIconStyles, formatAddress } from '../util'
 
 @Component({
   components: {
-    FormattedAmount
+    FormattedAmount,
+    FormattedAmountWithFiatValue
   }
 })
 export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, CopyAddressMixin) {
@@ -185,8 +183,28 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   &-scrollbar {
     @include scrollbar(18px);
   }
-  .asset-value .formatted-amount__decimal {
-    font-weight: 600;
+  .asset {
+    .formatted-amount {
+      display: block;
+      width: 100%;
+      line-height: var(--s-line-height-reset);
+      &__container {
+        justify-content: flex-start;
+        text-align: left;
+      }
+      &--fiat-value {
+        margin-top: $basic-spacing-mini;
+      }
+    }
+    &-value {
+      font-size: var(--s-font-size-medium);
+      font-weight: 800;
+      letter-spacing: var(--s-letter-spacing-mini);
+      line-height: var(--s-line-height-reset);
+      .formatted-amount__decimal {
+        font-weight: 600;
+      }
+    }
   }
 }
 </style>
@@ -228,17 +246,8 @@ $wallet-assets-count: 5;
       &-value, &-info {
         line-height: var(--s-line-height-base);
       }
-      &-value {
-        font-size: var(--s-font-size-medium);
-        font-weight: 800;
-        letter-spacing: var(--s-letter-spacing-mini);
-        line-height: var(--s-line-height-reset);
-      }
-      &-info,
-      .formatted-amount--fiat-value {
-        margin-top: $basic-spacing-mini;
-      }
       &-info {
+        margin-top: $basic-spacing-mini;
         @include hint-text(var(--s-line-height-reset));
         color: var(--s-color-base-content-primary);
       }
@@ -262,10 +271,6 @@ $wallet-assets-count: 5;
       }
       &-converted {
         @include hint-text;
-      }
-      .formatted-amount {
-        display: block;
-        line-height: var(--s-line-height-reset);
       }
     }
     .asset-logo {
@@ -307,8 +312,6 @@ $wallet-assets-count: 5;
     }
     .formatted-amount--fiat-value {
       display: block;
-      white-space: normal;
-      word-break: break-all;
       font-size: var(--s-font-size-medium);
       font-weight: 600;
     }

@@ -43,38 +43,27 @@
         <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
           <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
             <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
-            <formatted-amount
-              class="balance-value"
+            <formatted-amount-with-fiat-value
+              value-class="balance-value"
               :value="formatBalance(asset.balance[type])"
+              :font-size-rate="FontSizeRate.MEDIUM"
+              :font-weight-rate="FontWeightRate.SMALL"
               :asset-symbol="asset.symbol"
-              :font-size-rate="FontSizeRate.MEDIUM"
-              :font-weight-rate="FontWeightRate.SMALL"
-            />
-            <formatted-amount
-              v-if="price"
-              :value="getFiatBalance(asset, type)"
-              is-fiat-value
-              :font-size-rate="FontSizeRate.MEDIUM"
-              :font-weight-rate="FontWeightRate.SMALL"
+              :fiat-value="getFiatBalance(asset, type)"
+              fiat-format-as-value
               with-left-shift
             />
           </div>
           <div class="balance s-flex p4">
             <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
-            <formatted-amount
-              v-if="price"
-              class="balance-value"
+            <formatted-amount-with-fiat-value
+              value-class="balance-value"
               :value="totalBalance"
+              :font-size-rate="FontSizeRate.MEDIUM"
+              :font-weight-rate="FontWeightRate.SMALL"
               :asset-symbol="asset.symbol"
-              :font-size-rate="FontSizeRate.MEDIUM"
-              :font-weight-rate="FontWeightRate.SMALL"
-            />
-            <formatted-amount
-              v-if="price"
-              :value="getFiatBalance(asset, BalanceType.Total)"
-              is-fiat-value
-              :font-size-rate="FontSizeRate.MEDIUM"
-              :font-weight-rate="FontWeightRate.SMALL"
+              :fiat-value="getFiatBalance(asset, BalanceType.Total)"
+              fiat-format-as-value
               with-left-shift
             />
           </div>
@@ -95,6 +84,7 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
 import FormattedAmount from './FormattedAmount.vue'
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue'
 import WalletHistory from './WalletHistory.vue'
 import { RouteNames } from '../consts'
 import { getAssetIconStyles } from '../util'
@@ -109,6 +99,7 @@ interface Operation {
   components: {
     WalletBase,
     FormattedAmount,
+    FormattedAmountWithFiatValue,
     WalletHistory
   }
 })
@@ -267,28 +258,29 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     }
   }
   &-balance {
-    position: relative;
+    width: 100%;
     margin-top: var(--s-basic-spacing);
+    position: relative;
+    text-align: center;
     &--clickable {
       cursor: pointer;
     }
     & + .formatted-amount--fiat-value {
-      display: block;
-      white-space: normal;
-      overflow-wrap: break-word;
       width: 100%;
       text-align: center;
       font-size: var(--s-font-size-medium);
       font-weight: 600;
     }
     .s-icon-chevron-down-rounded-16 {
+      display: inline-block;
+      margin-left: var(--s-basic-spacing);
       height: var(--s-icon-font-size-small);
       width: var(--s-icon-font-size-small);
       transition: transform 0.3s;
       background-color: var(--s-color-base-content-secondary);
       color: var(--s-color-base-on-accent);
       border-radius: 50%;
-      margin-left: var(--s-basic-spacing);
+      text-align: left;
     }
     &--clicked .s-icon-chevron-down-rounded-16 {
       padding-right: calc(var(--s-basic-spacing) * 1.5);
@@ -307,22 +299,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
           text-transform: uppercase;
           margin-right: var(--s-basic-spacing);
           font-weight: 300;
+          white-space: nowrap;
         }
         &-label--total {
           font-weight: 600;
-        }
-        &-value,
-        &-value + .formatted-amount {
-          display: block;
-          white-space: normal;
-          word-break: break-word;
-        }
-        &-value {
-          margin-left: auto;
-          line-height: var(--s-line-height-medium);
-        }
-        &-value + .formatted-amount {
-          text-align: right;
         }
       }
     }
