@@ -9,18 +9,13 @@
     >
       <s-icon name="info-16" size="14px" />
     </s-tooltip>
-    <formatted-amount
-      class="wallet-fee__value"
+    <formatted-amount-with-fiat-value
       :value="value.toLocaleString()"
-      :asset-symbol="KnownSymbols.XOR"
       :font-size-rate="FontSizeRate.MEDIUM"
       :font-weight-rate="FontWeightRate.SMALL"
-    />
-    <formatted-amount
-      v-if="hasFiatValue"
-      :value="getFiatAmountByFPNumber(value)"
-      is-fiat-value
-      :font-size-rate="FontSizeRate.MEDIUM"
+      :asset-symbol="KnownSymbols.XOR"
+      :fiat-value="getFiatAmountByFPNumber(value)"
+      :fiat-font-size-rate="FontSizeRate.MEDIUM"
       with-left-shift
     />
   </div>
@@ -32,12 +27,12 @@ import { FPNumber, KnownSymbols } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import FormattedAmountMixin from './mixins/FormattedAmountMixin'
-import FormattedAmount from './FormattedAmount.vue'
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue'
 import { FontSizeRate, FontWeightRate } from '../types'
 
 @Component({
   components: {
-    FormattedAmount
+    FormattedAmountWithFiatValue
   }
 })
 export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountMixin) {
@@ -46,15 +41,14 @@ export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountM
   readonly FontWeightRate = FontWeightRate
 
   @Prop({ default: FPNumber.ZERO, type: FPNumber }) readonly value!: FPNumber
-  @Prop({ default: false, type: Boolean }) readonly hasFiatValue?: boolean
 }
 </script>
 
 <style lang="scss">
-$formatted-amount-class: '.formatted-amount';
-
-.wallet-fee__value {
-  margin-left: auto;
+.wallet-fee .formatted-amount {
+  &__container {
+    margin-left: auto;
+  }
 }
 </style>
 
