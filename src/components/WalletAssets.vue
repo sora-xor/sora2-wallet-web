@@ -14,7 +14,7 @@
             <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
             <div class="asset s-flex">
               <formatted-amount-with-fiat-value
-                valueClass="asset-value"
+                value-class="asset-value"
                 :value="getBalance(asset)"
                 :font-size-rate="FontSizeRate.SMALL"
                 :asset-symbol="asset.symbol"

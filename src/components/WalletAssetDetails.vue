@@ -44,7 +44,7 @@
           <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
             <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
             <formatted-amount-with-fiat-value
-              valueClass="balance-value"
+              value-class="balance-value"
               :value="formatBalance(asset.balance[type])"
               :font-size-rate="FontSizeRate.MEDIUM"
               :font-weight-rate="FontWeightRate.SMALL"
@@ -57,7 +57,7 @@
           <div class="balance s-flex p4">
             <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
             <formatted-amount-with-fiat-value
-              valueClass="balance-value"
+              value-class="balance-value"
               :value="totalBalance"
               :font-size-rate="FontSizeRate.MEDIUM"
               :font-weight-rate="FontWeightRate.SMALL"

@@ -11,6 +11,7 @@
       <slot />
     </formatted-amount>
     <formatted-amount
+      v-if="hasFiatValue"
       is-fiat-value
       :value="fiatValue"
       :font-size-rate="fiatFormatAsValue ? fontSizeRate : fiatFontSizeRate"
@@ -39,6 +40,7 @@ export default class FormattedAmountWithFiatValue extends Vue {
   @Prop({ default: '', type: String }) readonly assetSymbol?: string
   @Prop({ default: false, type: Boolean }) readonly symbolAsDecimal?: boolean
   @Prop({ default: false, type: Boolean }) readonly integerOnly?: boolean
+  @Prop({ default: true, type: Boolean }) readonly hasFiatValue?: boolean
   @Prop({ default: '', type: String }) readonly fiatValue?: string
   @Prop({ default: false, type: Boolean }) readonly fiatFormatAsValue?: boolean
   @Prop({ default: FontSizeRate.NORMAL, type: String }) readonly fiatFontSizeRate?: string
