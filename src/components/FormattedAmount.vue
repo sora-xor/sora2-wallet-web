@@ -25,6 +25,9 @@ interface FormattedAmountValues {
 
 @Component
 export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
+  /**
+   * Balance or Amount value.
+   */
   @Prop({ default: '', type: String }) readonly value!: string
   /**
    * Font size rate between integer and decimal numbers' parts. Possible values: `"small"`, `"medium"`, `"normal"`.
@@ -36,10 +39,26 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    * By default it's set to `"normal"` and it means the same font weights for both numbers' parts.
    */
   @Prop({ default: FontWeightRate.NORMAL, type: String }) readonly fontWeightRate?: string
+  /**
+   * Amount value's asset symbol.
+   */
   @Prop({ default: '', type: String }) readonly assetSymbol?: string
+  /**
+   * Font size of asset symbol is the same with decimal part size.
+   * Symbol value located inside formatted-amount__decimal container at the HTML structure.
+   */
   @Prop({ default: false, type: Boolean }) readonly symbolAsDecimal?: boolean
+  /**
+   * Adds special class and styles to formatted number to convert in to Fiat value.
+   */
   @Prop({ default: false, type: Boolean }) readonly isFiatValue?: boolean
+  /**
+   * Fills only intger part if we don't need decimals value.
+   */
   @Prop({ default: false, type: Boolean }) readonly integerOnly?: boolean
+  /**
+   * Added special class to left shifting for Fiat value if needed (the shift is the same in all screens).
+   */
   @Prop({ default: false, type: Boolean }) readonly withLeftShift?: boolean
 
   get unformatted (): string {
@@ -111,25 +130,32 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
 $formatted-amount-class: '.formatted-amount';
 
 #{$formatted-amount-class} {
-  display: inline-flex;
-  align-items: baseline;
+  display: block;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+  // Trick to fix horizontal spacings bug between elements
+  word-spacing: -3px;
+  letter-spacing: -3px;
+  span:not(.formatted-amount__decimal) {
+    display: inline;
+    // Trick to fix horizontal spacings bug between elements
+    word-spacing: normal;
+    letter-spacing: normal;
+  }
   &--fiat-value {
     color: var(--s-color-fiat-value);
     font-family: var(--s-font-family-default);
     font-weight: 400;
     line-height: var(--s-line-height-medium);
     letter-spacing: var(--s-letter-spacing-small);
-    display: inline-flex;
-    align-items: baseline;
-    white-space: nowrap;
   }
   &--symbol-as-decimal {
     #{$formatted-amount-class}__decimal-value {
       margin-right: $basic-spacing-mini;
     }
   }
-  #{$formatted-amount-class}__decimal + #{$formatted-amount-class}__symbol {
-    margin-left: $basic-spacing-mini;
+  #{$formatted-amount-class}__decimal:not(:last-child) {
+    margin-right: $basic-spacing-mini;
   }
   #{$formatted-amount-class}__symbol {
     white-space: nowrap;

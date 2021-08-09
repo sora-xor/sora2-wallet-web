@@ -8,6 +8,7 @@ import installWalletPlugins from './plugins'
 import SoraNeoWallet from './SoraNeoWallet.vue'
 import WalletAvatar from './components/WalletAvatar.vue'
 import FormattedAmount from './components/FormattedAmount.vue'
+import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue'
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
 import { Components, Modules, FontSizeRate, FontWeightRate } from './types'
@@ -104,6 +105,7 @@ export {
   WALLET_CONSTS,
   WalletAvatar,
   FormattedAmount,
+  FormattedAmountWithFiatValue,
   NumberFormatterMixin,
   FormattedAmountMixin,
   FontSizeRate,
