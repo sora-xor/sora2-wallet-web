@@ -9,17 +9,15 @@
     >
       <s-icon name="info-16" size="14px" />
     </s-tooltip>
-    <span class="wallet-fee__value">
-      <formatted-amount-with-fiat-value
-        :value="value.toLocaleString()"
-        :font-size-rate="FontSizeRate.MEDIUM"
-        :font-weight-rate="FontWeightRate.SMALL"
-        :asset-symbol="KnownSymbols.XOR"
-        :fiat-value="getFiatAmountByFPNumber(value)"
-        :fiat-font-size-rate="FontSizeRate.MEDIUM"
-        with-left-shift
-      />
-    </span>
+    <formatted-amount-with-fiat-value
+      :value="value.toLocaleString()"
+      :font-size-rate="FontSizeRate.MEDIUM"
+      :font-weight-rate="FontWeightRate.SMALL"
+      :asset-symbol="KnownSymbols.XOR"
+      :fiat-value="getFiatAmountByFPNumber(value)"
+      :fiat-font-size-rate="FontSizeRate.MEDIUM"
+      with-left-shift
+    />
   </div>
 </template>
 
@@ -47,9 +45,7 @@ export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountM
 </script>
 
 <style lang="scss">
-$formatted-amount-class: '.formatted-amount';
-
-.wallet-fee__value {
+.wallet-fee .formatted-amount__container {
   margin-left: auto;
 }
 </style>
