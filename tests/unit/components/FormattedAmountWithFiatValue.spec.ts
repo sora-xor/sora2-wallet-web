@@ -14,7 +14,6 @@ useDescribe('FormattedAmountWithFiatValue.vue', FormattedAmountWithFiatValue, ()
       fontWeightRate: item.fontWeightRate,
       assetSymbol: item.assetSymbol,
       symbolAsDecimal: item.symbolAsDecimal,
-      integerOnly: item.integerOnly,
       hasFiatValue: item.hasFiatValue,
       fiatValue: item.fiatValue,
       fiatFormatAsValue: item.fiatFormatAsValue,

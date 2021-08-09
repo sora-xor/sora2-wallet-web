@@ -281,25 +281,3 @@ exports[`FormattedAmountWithFiatValue.vue [With value class]: should be rendered
   />
 </div>
 `;
-
-exports[`FormattedAmountWithFiatValue.vue [Without Decimals]: should be rendered correctly 1`] = `
-<div
-  class="formatted-amount__container"
->
-  <formatted-amount-stub
-    assetsymbol=""
-    class=""
-    fontsizerate="normal"
-    fontweightrate="normal"
-    value="1,234,567.890123"
-  />
-   
-  <formatted-amount-stub
-    assetsymbol=""
-    fontsizerate="normal"
-    fontweightrate="normal"
-    isfiatvalue="true"
-    value="1,234,567.890123"
-  />
-</div>
-`;

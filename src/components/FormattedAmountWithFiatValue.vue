@@ -39,7 +39,6 @@ export default class FormattedAmountWithFiatValue extends Vue {
   @Prop({ default: FontWeightRate.NORMAL, type: String }) readonly fontWeightRate?: string
   @Prop({ default: '', type: String }) readonly assetSymbol?: string
   @Prop({ default: false, type: Boolean }) readonly symbolAsDecimal?: boolean
-  @Prop({ default: false, type: Boolean }) readonly integerOnly?: boolean
   @Prop({ default: true, type: Boolean }) readonly hasFiatValue?: boolean
   @Prop({ default: '', type: String }) readonly fiatValue?: string
   @Prop({ default: false, type: Boolean }) readonly fiatFormatAsValue?: boolean

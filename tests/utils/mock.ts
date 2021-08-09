@@ -229,7 +229,6 @@ interface FormattedAmountWithFiatValue {
   fontWeightRate?: string;
   assetSymbol?: string;
   symbolAsDecimal?: boolean;
-  integerOnly?: boolean;
   hasFiatValue?: boolean;
   fiatValue?: string;
   fiatFormatAsValue?: boolean;
@@ -281,12 +280,6 @@ export const MOCK_FORMATTED_AMOUNT_WITH_FIAT_VALUE: Array<FormattedAmountWithFia
     value: '1,234,567.890123',
     assetSymbol: KnownSymbols.XOR,
     symbolAsDecimal: true,
-    fiatValue: '1,234,567.890123'
-  },
-  {
-    title: 'Without Decimals',
-    value: '1,234,567.890123',
-    integerOnly: true,
     fiatValue: '1,234,567.890123'
   },
   {
