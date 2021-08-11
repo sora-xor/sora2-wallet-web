@@ -37,8 +37,8 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         .map(({ amount, symbol }) => `${amount} ${symbol}`)
         .join(` ${this.t('operations.andText')} `)
     }
-    let status = value.status
-    if (status === 'invalid') {
+    let status = value.status as TransactionStatus
+    if ([TransactionStatus.Invalid, TransactionStatus.Usurped].includes(status)) {
       status = TransactionStatus.Error
     } else if (status !== TransactionStatus.Error) {
       status = TransactionStatus.Finalized
