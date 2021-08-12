@@ -3,7 +3,6 @@
     <div class="wallet-settings-create-token">
       <template v-if="step === Step.Create">
         <s-input
-          class="s-typography-input-field"
           :placeholder="t('createToken.tokenSymbol.placeholder')"
           :minlength="1"
           :maxlength="7"
@@ -13,7 +12,6 @@
         />
         <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSymbol.desc') }}</p>
         <s-input
-          class="s-typography-input-field"
           :placeholder="t('createToken.tokenName.placeholder')"
           :minlength="1"
           :maxlength="33"
@@ -23,7 +21,6 @@
         />
         <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
         <s-float-input
-          class="s-typography-input-field"
           v-model="tokenSupply"
           :placeholder="t('createToken.tokenSupply.placeholder')"
           :decimals="decimals"
