@@ -11,13 +11,13 @@
                 <span class="asset-id" @click="handleCopy($event)">({{ formattedAddress }})</span>
               </s-tooltip>
             </div>
-            <s-card size="mini" :status="assetCardStatus">
+            <s-card size="mini" :status="assetCardStatus" primary>
               <div class="asset-nature">{{ assetNatureText }}</div>
             </s-card>
           </div>
         </div>
       </s-card>
-      <s-card :status="cardStatus" shadow="always" class="add-asset-details_text">
+      <s-card status="warning" :primary="isCardPrimary" shadow="always" class="add-asset-details_text">
         <div class="p2">{{ t('addAsset.warningTitle') }}</div>
         <div class="warning-text p4">{{ t('addAsset.warningMessage') }}</div>
       </s-card>
@@ -70,9 +70,8 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     this.asset = this.currentRouteParams.asset
   }
 
-  get cardStatus (): string {
-    if (this.libraryTheme !== Theme.DARK) return 'warning'
-    return ''
+  get isCardPrimary (): boolean {
+    return this.libraryTheme !== Theme.DARK
   }
 
   get isWhitelist (): boolean {
