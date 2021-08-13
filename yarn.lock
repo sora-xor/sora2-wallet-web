@@ -2425,14 +2425,14 @@
     crypto-js "^4.0.0"
     lodash "^4.17.15"
 
-"@soramitsu/soramitsu-js-ui@1.0.16":
-  version "1.0.16"
-  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-1.0.16.tgz#250b6bc198d15b0e15f96d604e4294acad972876"
-  integrity sha512-uHrShYqHGTPukgyp458s7HKuLxXAVQ2eN09gYh9/eygAaKcV7aLq/y0Ffz7hRHmyMgPq1JJ8YjvKs91aLdTbQQ==
+"@soramitsu/soramitsu-js-ui@1.0.17":
+  version "1.0.17"
+  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-1.0.17.tgz#65fce7c8610acf90ae78b228a398367518657639"
+  integrity sha512-9Zs8xNvYwk8scfFTDi1nYju8ei8B5Dc07OWdI2TdkNr6murhDNVN3tAvmhiT5VD9wGfJlrsORcf2iUNdg7sE3w==
   dependencies:
     core-js "^3.6.4"
     element-resize-detector "^1.2.1"
-    element-ui "^2.13.2"
+    element-ui "^2.15.5"
     lodash "^4.17.15"
     throttle-debounce "^1.0.1"
     v-jsoneditor "^1.4.1"
@@ -6235,10 +6235,10 @@ element-resize-detector@^1.2.1:
   dependencies:
     batch-processor "1.0.0"
 
-element-ui@^2.13.2:
-  version "2.15.1"
-  resolved "https://registry.yarnpkg.com/element-ui/-/element-ui-2.15.1.tgz#ada00aa6e32c02774a2e77563dd84668f813cdff"
-  integrity sha512-TqlScAKGH97XndSScUDeEHIzL1x7yg7DvQdKPEOUdiDcyIz3y3FJJBlpHYaJT96FOn1xpIcUZb+I2FJeU9EcrQ==
+element-ui@^2.15.5:
+  version "2.15.5"
+  resolved "https://registry.yarnpkg.com/element-ui/-/element-ui-2.15.5.tgz#dfb376dc5cd60adab21c991bd4fac3e67e5300f4"
+  integrity sha512-B/YCdz2aRY2WnFXzbTRTHPKZHBD/2KV6u88EBnkaARC/Lyxnap+7vpvrcW5UNTyVwjItS5Fj1eQyRy6236lbXg==
   dependencies:
     async-validator "~1.8.1"
     babel-helper-vue-jsx-merge-props "^2.0.0"
