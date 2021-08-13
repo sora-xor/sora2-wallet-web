@@ -261,8 +261,8 @@ $wallet-assets-count: 5;
       &-value-locked {
         display: inline-flex;
         align-items: baseline;
+        background-color: var(--s-color-base-content-secondary);
         color: var(--s-color-base-on-accent);
-        background: var(--s-color-base-content-secondary);
         padding: 0 var(--s-basic-spacing);
         border-radius: var(--s-border-radius-mini);
         > .s-icon-lock-16 {
