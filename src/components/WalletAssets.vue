@@ -23,9 +23,9 @@
                 :fiat-font-size-rate="FontSizeRate.MEDIUM"
                 :fiat-font-weight-rate="FontWeightRate.MEDIUM"
               >
-                <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
+                <div v-if="hasFrozenBalance(asset)" class="asset-value-locked p4">
                   <s-icon name="lock-16" size="12px" />
-                  {{ formatLockedBalance(asset) }}
+                  <span>{{ formatFrozenBalance(asset) }}</span>
                 </div>
               </formatted-amount-with-fiat-value>
               <div class="asset-info">{{ asset.name || asset.symbol }}
@@ -152,12 +152,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return this.isCodecZero(asset.balance.transferable, asset.decimals)
   }
 
-  hasLockedBalance (asset: AccountAsset): boolean {
-    return !this.isCodecZero(asset.balance.locked, asset.decimals)
+  hasFrozenBalance (asset: AccountAsset): boolean {
+    return !this.isCodecZero(asset.balance.frozen, asset.decimals)
   }
 
-  formatLockedBalance (asset: AccountAsset): string {
-    return this.formatCodecNumber(asset.balance.locked, asset.decimals)
+  formatFrozenBalance (asset: AccountAsset): string {
+    return this.formatCodecNumber(asset.balance.frozen, asset.decimals)
   }
 
   handleAssetSwap (asset: AccountAsset): void {
@@ -267,7 +267,9 @@ $wallet-assets-count: 5;
         border-radius: var(--s-border-radius-mini);
         > .s-icon-lock-16 {
           color: var(--s-color-base-on-accent);
-          margin-right: $basic-spacing-mini;
+        }
+        > span {
+          margin-left: calc(var(--s-basic-spacing) / 2);
         }
       }
       &-converted {
