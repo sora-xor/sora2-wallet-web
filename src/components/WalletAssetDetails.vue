@@ -11,33 +11,62 @@
     @action="handleRemoveAsset"
     @cleanHistory="handleCleanHistory"
   >
-    <s-card class="asset-details">
+    <s-card class="asset-details" primary>
       <div class="asset-details-container s-flex">
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
-        <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">{{ balance }}
-          <s-icon v-if="isXor" name="chevron-down-rounded-16" />
+        <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
+          <formatted-amount
+            :value="balance"
+            :font-size-rate="FontSizeRate.SMALL"
+            :asset-symbol="asset.symbol"
+            symbol-as-decimal
+          >
+            <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
+          </formatted-amount>
         </div>
-        <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
-          <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
-            <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
-            <div class="balance-value">{{ getDetailedBalance(type) }}</div>
-          </div>
-          <s-divider />
-          <div class="balance s-flex p4">
-            <div class="balance-label">{{ t('assets.balance.total') }}</div>
-            <div class="balance-value">{{ totalBalance }}</div>
-          </div>
-        </div>
+        <formatted-amount v-if="price" :value="getFiatBalance(asset)" is-fiat-value :font-size-rate="FontSizeRate.MEDIUM" />
         <div class="asset-details-actions">
           <s-button
             v-for="operation in operations"
             :key="operation.type"
-            :icon="operation.icon"
             :tooltip="getOperationTooltip(operation)"
             :disabled="isOperationDisabled(operation.type)"
             type="action"
+            size="medium"
+            rounded
+            primary
             @click="handleOperation(operation.type)"
-          />
+          >
+            <s-icon :name="operation.icon" size="28" />
+          </s-button>
+        </div>
+        <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
+          <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
+            <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
+            <formatted-amount-with-fiat-value
+              value-class="balance-value"
+              :value="formatBalance(asset.balance[type])"
+              :font-size-rate="FontSizeRate.MEDIUM"
+              :font-weight-rate="FontWeightRate.SMALL"
+              :asset-symbol="asset.symbol"
+              :fiat-value="getFiatBalance(asset, type)"
+              fiat-format-as-value
+              with-left-shift
+            />
+          </div>
+          <div class="balance s-flex p4">
+            <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
+            <formatted-amount-with-fiat-value
+              value-class="balance-value"
+              :value="totalBalance"
+              :font-size-rate="FontSizeRate.MEDIUM"
+              :font-weight-rate="FontWeightRate.SMALL"
+              :asset-symbol="asset.symbol"
+              :fiat-value="getFiatBalance(asset, BalanceType.Total)"
+              fiat-format-as-value
+              with-left-shift
+            />
+          </div>
         </div>
       </div>
     </s-card>
@@ -48,17 +77,18 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, CodecString, KnownAssets, KnownSymbols, History } from '@sora-substrate/util'
+import { AccountAsset, CodecString, KnownAssets, KnownSymbols, BalanceType, History } from '@sora-substrate/util'
 
 import { api } from '../api'
-import TranslationMixin from './mixins/TranslationMixin'
-import NumberFormatterMixin from './mixins/NumberFormatterMixin'
+import FormattedAmountMixin from './mixins/FormattedAmountMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import WalletBase from './WalletBase.vue'
+import FormattedAmount from './FormattedAmount.vue'
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue'
 import WalletHistory from './WalletHistory.vue'
 import { RouteNames } from '../consts'
 import { getAssetIconStyles } from '../util'
-import { Operations, BalanceTypes } from '../types'
+import { Operations, FontSizeRate, FontWeightRate } from '../types'
 
 interface Operation {
   type: Operations;
@@ -66,10 +96,15 @@ interface Operation {
 }
 
 @Component({
-  components: { WalletBase, WalletHistory }
+  components: {
+    WalletBase,
+    FormattedAmount,
+    FormattedAmountWithFiatValue,
+    WalletHistory
+  }
 })
-export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberFormatterMixin, CopyAddressMixin) {
-  readonly balanceTypes = Object.values(BalanceTypes).filter(type => type !== BalanceTypes.Total)
+export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin) {
+  readonly balanceTypes = Object.values(BalanceType).filter(type => type !== BalanceType.Total)
   readonly operations = [
     { type: Operations.Send, icon: 'finance-send-24' },
     { type: Operations.Receive, icon: 'basic-receive-24' },
@@ -77,6 +112,10 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
     { type: Operations.Liquidity, icon: 'basic-drop-24' },
     { type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' }
   ] as Array<Operation>
+
+  readonly BalanceType = BalanceType
+  readonly FontSizeRate = FontSizeRate
+  readonly FontWeightRate = FontWeightRate
 
   @Getter account!: any
   @Getter accountAssets!: Array<AccountAsset>
@@ -89,7 +128,11 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   wasBalanceDetailsClicked = false
 
   private formatBalance (value: CodecString): string {
-    return `${this.formatCodecNumber(value, this.asset.decimals)} ${this.asset.symbol}`
+    return this.formatCodecNumber(value, this.asset.decimals)
+  }
+
+  get price (): CodecString | null {
+    return this.getAssetFiatPrice(this.asset)
   }
 
   get asset (): AccountAsset {
@@ -98,11 +141,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   }
 
   get balance (): string {
-    return this.formatBalance(this.asset.balance.transferable)
-  }
-
-  getDetailedBalance (type: BalanceTypes): string {
-    return this.formatBalance(this.asset.balance[type])
+    return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
   }
 
   get totalBalance (): string {
@@ -183,6 +222,10 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
 
   getAssetIconStyles = getAssetIconStyles
 
+  getBalance (asset: AccountAsset, type: BalanceType): string {
+    return `${this.formatCodecNumber(asset.balance[type], asset.decimals)}`
+  }
+
   handleRemoveAsset (): void {
     api.removeAsset(this.asset.address)
     this.handleBack()
@@ -200,66 +243,72 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
 @import '../styles/icons';
 
 .asset-details {
-  margin-bottom: $basic-spacing;
-  border-radius: var(--s-border-radius-small);
+  margin-bottom: 0;
+  &.s-card.neumorphic {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
   &-container {
     flex-direction: column;
     align-items: center;
+    .formatted-amount--fiat-value {
+      + .asset-details-actions {
+        margin-top: calc(var(--s-basic-spacing) * 1.5);
+      }
+    }
   }
   &-balance {
+    width: 100%;
+    margin-top: var(--s-basic-spacing);
     position: relative;
-    margin-top: $basic-spacing_mini;
-    margin-bottom: $basic-spacing;
+    text-align: center;
     &--clickable {
       cursor: pointer;
     }
+    & + .formatted-amount--fiat-value {
+      width: 100%;
+      text-align: center;
+      font-size: var(--s-font-size-medium);
+      font-weight: 600;
+    }
     .s-icon-chevron-down-rounded-16 {
-      position: absolute;
-      top: 25%;
-      padding-left: $basic-spacing_mini;
+      display: inline-block;
+      margin-left: var(--s-basic-spacing);
+      height: var(--s-icon-font-size-small);
+      width: var(--s-icon-font-size-small);
       transition: transform 0.3s;
+      background-color: var(--s-color-base-content-secondary);
+      color: var(--s-color-base-on-accent);
+      border-radius: 50%;
+      text-align: left;
     }
     &--clicked .s-icon-chevron-down-rounded-16 {
-      padding-right: $basic-spacing_mini;
+      padding-right: calc(var(--s-basic-spacing) * 1.5);
       transform: rotate(180deg);
     }
     &-info {
       width: 100%;
-      margin-bottom: $basic-spacing;
+      margin-top: calc(var(--s-basic-spacing) * 2);
       .balance {
         justify-content: space-between;
-        margin-bottom: calc(#{$basic-spacing_mini} / 2);
-      }
-      .s-divider-secondary {
-        margin: $basic-spacing_mini 0;
+        align-items: baseline;
+        margin-bottom: $basic-spacing-mini;
+        border-bottom: 1px solid var(--s-color-base-border-secondary);
+        font-size: var(--s-font-size-extra-small);
+        &-label {
+          text-transform: uppercase;
+          margin-right: var(--s-basic-spacing);
+          font-weight: 300;
+          white-space: nowrap;
+        }
+        &-label--total {
+          font-weight: 600;
+        }
       }
     }
   }
   &-actions {
-    .s-action {
-      background-color: var(--s-color-theme-accent);
-      border-color: var(--s-color-theme-accent);
-      &.focusing {
-        background-color: var(--s-color-theme-accent-focused);
-        border-color: var(--s-color-theme-accent-focused);
-      }
-      &:hover {
-        background-color: var(--s-color-theme-accent-hover);
-        border-color: var(--s-color-theme-accent-hover);
-      }
-      &.s-pressed {
-        background-color: var(--s-color-theme-accent-pressed);
-        border-color: var(--s-color-theme-accent-pressed);
-      }
-      &, &.focusing, &:hover, &.s-pressed {
-        color: var(--s-color-base-on-accent);
-      }
-      &:disabled {
-        color: var(--s-color-base-on-disabled);
-        background-color: var(--s-color-base-disabled);
-        border-color: var(--s-color-base-disabled);
-      }
-    }
+    margin-top: calc(var(--s-basic-spacing) * 2);
   }
   .asset-logo {
     @include asset-logo-styles(48px);

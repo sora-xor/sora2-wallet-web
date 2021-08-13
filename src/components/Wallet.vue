@@ -90,6 +90,6 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
 <style scoped lang="scss">
 .wallet {
-  margin-top: $basic-spacing;
+  margin-top: calc(var(--s-basic-spacing) * 2);
 }
 </style>

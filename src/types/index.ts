@@ -17,10 +17,19 @@ export enum Operations {
   Bridge = 'bridge'
 }
 
-export enum BalanceTypes {
-  Transferable = 'transferable',
-  Frozen = 'frozen',
-  Locked = 'locked',
-  Reserved = 'reserved',
-  Total = 'total'
+export interface Account {
+  address: string;
+  name: string;
+}
+
+export enum FontSizeRate {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  NORMAL = 'normal'
+}
+
+export enum FontWeightRate {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  NORMAL = 'normal'
 }

@@ -2,18 +2,22 @@ import Vue from 'vue'
 import { Store } from 'vuex'
 import debounce from 'lodash/fp/debounce'
 
-import { install } from './plugins'
+import installWalletPlugins from './plugins'
 // import './styles' We don't need it for now
 
 import SoraNeoWallet from './SoraNeoWallet.vue'
 import WalletAvatar from './components/WalletAvatar.vue'
-import { Components, Modules } from './types'
+import FormattedAmount from './components/FormattedAmount.vue'
+import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue'
+import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
+import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
+import { Components, Modules, FontSizeRate, FontWeightRate } from './types'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
 import { updateAccountAssetsSubscription } from './store/Account'
 import { storage } from './util/storage'
 import { api, connection } from './api'
-import { delay } from './util'
+import { delay, getExplorerLink } from './util'
 import * as WALLET_CONSTS from './consts'
 
 let store: Store<unknown>
@@ -45,7 +49,7 @@ const SoraNeoWalletElements = {
       options.store.registerModule(molude, modules[molude])
     })
     store = options.store
-    install(store)
+    installWalletPlugins(vue, store)
     components.forEach(el => vue.component(el.name, el.component))
   }
 }
@@ -74,13 +78,12 @@ async function initWallet ({
       await connection.open()
       console.info('Connected to blockchain', connection.endpoint)
     }
-    api.initialize()
-    if (store.getters.isExternal) {
-      await store.dispatch('getSigner')
-    }
     if (permissions) {
       store.dispatch('setPermissions', permissions)
     }
+    api.initialize()
+    await store.dispatch('getWhitelist')
+    await store.dispatch('checkSigner')
     await store.dispatch('syncWithStorage')
     await store.dispatch('getAccountAssets')
     await store.dispatch('updateAccountAssets')
@@ -96,9 +99,17 @@ export {
   api,
   connection,
   storage,
+  getExplorerLink,
   updateAccountAssetsSubscription,
   SoraNeoWallet,
   WALLET_CONSTS,
-  WalletAvatar
+  WalletAvatar,
+  FormattedAmount,
+  FormattedAmountWithFiatValue,
+  NumberFormatterMixin,
+  FormattedAmountMixin,
+  FontSizeRate,
+  FontWeightRate,
+  store as externalStore // only for soraNetwork getter in wallet
 }
 export default SoraNeoWalletElements

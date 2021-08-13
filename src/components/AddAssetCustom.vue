@@ -5,24 +5,14 @@
       class="asset-custom-address"
       :maxlength="128"
       :placeholder="t(`addAsset.${AddAssetTabs.Custom}.addressPlaceholder`)"
-      border-radius="mini"
       v-model="address"
       @change="handleSearch"
     />
-    <s-input
-      v-if="symbol"
-      class="asset-custom-symbol"
-      :maxlength="10"
-      :placeholder="t(`addAsset.${AddAssetTabs.Custom}.symbolPlaceholder`)"
-      border-radius="mini"
-      readonly
-      v-model="symbol"
-    />
-    <div v-if="address && !symbol" class="asset-custom-empty">
+    <div v-if="address && !selectedAsset" class="asset-custom-empty">
       {{ t(`addAsset.${alreadyAttached ? 'alreadyAttached' : 'empty'}`) }}
     </div>
-    <s-button type="primary" :disabled="!(symbol && address)" @click="handleAddAsset">
-      {{ t('addAsset.action') }}
+    <s-button type="primary" class="s-typography-button--large" :disabled="!(selectedAsset && address)" @click="navigateToAddAssetDetails">
+      {{ t('addAsset.next') }}
     </s-button>
   </div>
 </template>
@@ -40,12 +30,10 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
   readonly AddAssetTabs = AddAssetTabs
 
   @Getter accountAssets!: Array<AccountAsset>
-  @Action navigate
-  @Action searchAsset
-  @Action addAsset
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action searchAsset!: (options: { address: string }) => Promise<Asset>
 
   address = ''
-  symbol = ''
   selectedAsset: Asset | null = null
   alreadyAttached = false
 
@@ -61,30 +49,24 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
     this.alreadyAttached = false
     if (!value.trim()) {
       this.selectedAsset = null
-      this.symbol = ''
       return
     }
     const search = value.trim().toLowerCase()
     const asset = await this.searchAsset({ address: search })
     if (this.accountAssets.find(({ address }) => address.toLowerCase() === search)) {
       this.selectedAsset = null
-      this.symbol = ''
       this.alreadyAttached = true
       return
     }
-    this.selectedAsset = asset
-    if (this.selectedAsset && this.selectedAsset.symbol) {
-      this.symbol = this.selectedAsset.symbol
-    } else {
+    if (!this.selectedAsset || !this.selectedAsset.symbol) {
       this.selectedAsset = null
-      this.symbol = ''
+      return
     }
+    this.selectedAsset = asset
   }
 
-  async handleAddAsset (): Promise<void> {
-    await this.addAsset({ address: this.address })
-    this.navigate({ name: RouteNames.Wallet })
-    this.$emit('add-asset')
+  navigateToAddAssetDetails (): void {
+    this.navigate({ name: RouteNames.AddAssetDetails, params: { asset: this.selectedAsset } })
   }
 }
 </script>
@@ -92,7 +74,7 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
 <style scoped lang="scss">
 .asset-custom {
   > * {
-    margin-top: $basic-spacing;
+    margin-top: calc(var(--s-basic-spacing) * 2);
   }
   &-empty {
     @include hint-text;

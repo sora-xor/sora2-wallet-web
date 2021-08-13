@@ -1,7 +1,6 @@
-import { Operation, TransactionStatus } from '@sora-substrate/util'
+import { Operation, TransactionStatus, BalanceType } from '@sora-substrate/util'
 
 import { AddAssetTabs, WalletTabs } from '../../consts'
-import { BalanceTypes } from '../../types'
 
 export default {
   closeText: 'Close',
@@ -65,7 +64,7 @@ export default {
   connection: {
     title: 'SORA Network account',
     text: 'Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
-    install: 'No polkadot.js extension found. Install it and reload the page.<br/><span class="wallet-connection-link">https://polkadot.js.org/extension/</span>',
+    install: 'No polkadot.js extension found. Install it and <a href="#" onclick="window.location.reload(true);" class="wallet-connection-link">reload</a> the page.<br/><span class="wallet-connection-link">https://polkadot.js.org/extension/</span>',
     noPermissions: 'Accidentally rejected permission request?</br>Currently polkadot{.js} extension doesn’t have permission managment. As a workaround you can restart your browser and revisit this page to proceed with authorization.',
     noAccounts: 'No account found in your polkadot{.js} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
@@ -87,10 +86,12 @@ export default {
   walletSend: {
     title: 'Send',
     address: '@:addressText',
+    addressDesc: 'Only SORA network account addresses are accepted. Please ensure that you have a correctly formatted SORA network account address starting with the ‘cn’ prefix.',
     amount: '@:amountText',
     balance: 'Balance',
     max: 'MAX',
-    fee: 'Transaction Fee',
+    fee: 'Network fee',
+    feeTooltip: 'Network fee is used to ensure SORA system\'s growth and stable performance.',
     enterAddress: 'Enter address',
     badAddress: 'Incorrect address',
     enterAmount: 'Enter amount',
@@ -113,6 +114,7 @@ export default {
   },
   assets: {
     empty: 'There are no assets',
+    totalAssetsValue: 'Your total assets value:',
     add: '@:addAssetText',
     swap: '@:swapText',
     send: '@:sendText',
@@ -123,11 +125,11 @@ export default {
     successCopy: '{symbol} Asset ID is copied to the clipboard',
     copied: 'Copied!',
     balance: {
-      [BalanceTypes.Transferable]: 'Transferable',
-      [BalanceTypes.Frozen]: 'Frozen',
-      [BalanceTypes.Locked]: ' - Locked',
-      [BalanceTypes.Reserved]: ' - Reserved',
-      [BalanceTypes.Total]: 'Total'
+      [BalanceType.Transferable]: 'Transferable',
+      [BalanceType.Frozen]: 'Frozen',
+      [BalanceType.Locked]: ' - Locked',
+      [BalanceType.Reserved]: ' - Reserved',
+      [BalanceType.Total]: 'Total'
     }
   },
   asset: {
@@ -147,7 +149,14 @@ export default {
       symbolPlaceholder: 'Asset symbol'
     },
     empty: 'No tokens found',
-    alreadyAttached: 'Token was already attached'
+    alreadyAttached: 'Token was already attached',
+    understand: 'I understand',
+    warningTitle: 'Trade at your own risk!',
+    warningMessage: 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects.\nIf you purchase this token, you may not be able to sell it back.',
+    approved: 'Asset approved by community',
+    unknown: 'Unknown source',
+    scam: 'SCAM',
+    next: 'Next'
   },
   createToken: {
     title: '@:createTokenText',
@@ -179,12 +188,14 @@ export default {
       desc: 'You will receive these tokens upon creation.'
     },
     extensibleSupply: {
-      placeholder: 'Extensible supply'
+      placeholder: 'Extensible supply',
+      desc: 'Ability to mint more tokens.'
     }
   },
   transaction: {
     title: 'Transaction details',
-    hash: 'Transaction Hash',
+    blockId: 'Block Id',
+    txId: 'Transaction Id',
     status: 'Status',
     statuses: {
       pending: 'Pending...',
@@ -199,7 +210,7 @@ export default {
     total: 'Total',
     from: 'From',
     to: 'To',
-    viewInPolkascan: 'View in Polkascan',
+    viewInSorascan: 'View in SORAScan',
     successCopy: '{value} is copied to the clipboard',
     copy: 'Copy {value}',
     history: {

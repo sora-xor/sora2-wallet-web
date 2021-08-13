@@ -1,7 +1,4 @@
-$basic-spacing: 16px;
-$basic-spacing_big: $basic-spacing * 1.25;
-$basic-spacing_small: $basic-spacing * .75;
-$basic-spacing_mini: $basic-spacing * .5;
-
-$button-margin: 10px;
 $asset-item-height: 71px;
+$asset-item-height--fiat: 86px;
+
+$basic-spacing-mini: calc(var(--s-basic-spacing) / 2);

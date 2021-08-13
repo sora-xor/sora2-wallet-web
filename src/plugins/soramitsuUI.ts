@@ -1,14 +1,53 @@
 import Vue from 'vue'
-import SoramitsuElements, { Message, MessageBox, Notification, setTheme } from '@soramitsu/soramitsu-js-ui'
-import '@soramitsu/soramitsu-js-ui/lib/styles'
 
-export function install (store) {
-  Vue.use(SoramitsuElements, { store })
-  setTheme('light')
-  Vue.prototype.$prompt = MessageBox.prompt
-  Vue.prototype.$alert = MessageBox.alert
-  Vue.prototype.$message = Message
-  Vue.prototype.$notify = ({ message, type }) => {
+import DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem'
+import { setTheme, setDesignSystem } from '@soramitsu/soramitsu-js-ui/lib/utils'
+
+import ElementUIPlugin, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui/lib/plugins/elementUI'
+import SoramitsuUIStorePlugin from '@soramitsu/soramitsu-js-ui/lib/plugins/soramitsuUIStore'
+
+import SButton from '@soramitsu/soramitsu-js-ui/lib/components/Button/SButton'
+import SCard from '@soramitsu/soramitsu-js-ui/lib/components/Card/SCard'
+import SDesignSystemProvider from '@soramitsu/soramitsu-js-ui/lib/components/DesignSystem/SDesignSystemProvider'
+import SDivider from '@soramitsu/soramitsu-js-ui/lib/components/Divider/SDivider'
+import SDropdown from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdown'
+import SDropdownItem from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdownItem'
+import SIcon from '@soramitsu/soramitsu-js-ui/lib/components/Icon/SIcon'
+import SInput from '@soramitsu/soramitsu-js-ui/lib/components/Input/SInput'
+import SFloatInput from '@soramitsu/soramitsu-js-ui/lib/components/Input/SFloatInput'
+import SForm from '@soramitsu/soramitsu-js-ui/lib/components/Form/SForm'
+import SFormItem from '@soramitsu/soramitsu-js-ui/lib/components/Form/SFormItem'
+import SPagination from '@soramitsu/soramitsu-js-ui/lib/components/Pagination'
+import SScrollbar from '@soramitsu/soramitsu-js-ui/lib/components/Scrollbar'
+import SSwitch from '@soramitsu/soramitsu-js-ui/lib/components/Switch'
+import STab from '@soramitsu/soramitsu-js-ui/lib/components/Tab/STab'
+import STabs from '@soramitsu/soramitsu-js-ui/lib/components/Tab/STabs'
+import STooltip from '@soramitsu/soramitsu-js-ui/lib/components/Tooltip'
+
+export function install (vue: typeof Vue, store) {
+  vue.use(ElementUIPlugin)
+  vue.use(SoramitsuUIStorePlugin, { store })
+  vue.use(SButton)
+  vue.use(SCard)
+  vue.use(SDesignSystemProvider)
+  vue.use(SDivider)
+  vue.use(SDropdown)
+  vue.use(SDropdownItem)
+  vue.use(SIcon)
+  vue.use(SInput)
+  vue.use(SFloatInput)
+  vue.use(SForm)
+  vue.use(SFormItem)
+  vue.use(SPagination)
+  vue.use(SScrollbar)
+  vue.use(SSwitch)
+  vue.use(STab)
+  vue.use(STabs)
+  vue.use(STooltip)
+  vue.prototype.$prompt = MessageBox.prompt
+  vue.prototype.$alert = MessageBox.alert
+  vue.prototype.$message = Message
+  vue.prototype.$notify = ({ message, type }) => {
     Notification({
       message,
       title: '',
@@ -21,4 +60,7 @@ export function install (store) {
     const elements = Array.from(document.getElementsByClassName('el-notification'))
     elements[elements.length - 1].appendChild(el)
   }
+
+  setTheme()
+  setDesignSystem(DesignSystem.NEUMORPHIC)
 }

@@ -1,15 +1,21 @@
 <template>
-  <div id="app">
+  <s-design-system-provider :value="libraryDesignSystem" id="app">
+    <s-button @click="changeTheme">{{ libraryTheme }} theme</s-button>
     <div class="wallet-wrapper s-flex">
       <sora-neo-wallet />
     </div>
-  </div>
+  </s-design-system-provider>
 </template>
 
 <script lang="ts">
 // This file is only for local usage
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
+
+import { FPNumber } from '@sora-substrate/util'
+import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils'
+import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme'
+import DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem'
 
 import TransactionMixin from './components/mixins/TransactionMixin'
 import { initWallet } from './index'
@@ -20,12 +26,17 @@ import { updateAccountAssetsSubscription } from './store/Account'
   components: { SoraNeoWallet }
 })
 export default class App extends Mixins(TransactionMixin) {
+  @Getter libraryDesignSystem!: DesignSystem
+  @Getter libraryTheme!: Theme
   @Getter firstReadyTransaction!: any
   @Action trackActiveTransactions
 
   async created (): Promise<void> {
     initWallet({ withoutStore: true }) // We don't need storage for local development
     this.trackActiveTransactions()
+    const localeLanguage = navigator.language
+    FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2)
+    FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2)
   }
 
   @Watch('firstReadyTransaction', { deep: true })
@@ -38,12 +49,19 @@ export default class App extends Mixins(TransactionMixin) {
       updateAccountAssetsSubscription.unsubscribe()
     }
   }
+
+  changeTheme (): void {
+    switchTheme()
+  }
 }
 </script>
 
 <style lang="scss">
+html {
+  background: var(--s-color-utility-surface);
+}
 .el-tooltip__popper.info-tooltip {
-  padding: $basic-spacing_mini;
+  padding: var(--s-basic-spacing);
   max-width: 320px;
   border: none !important;
   box-shadow: var(--s-shadow-tooltip);
@@ -107,6 +125,7 @@ export default class App extends Mixins(TransactionMixin) {
 
 <style scoped lang="scss">
 .wallet-wrapper {
+  margin: 40px 0;
   justify-content: center;
   align-items: center;
   height: 100vh;

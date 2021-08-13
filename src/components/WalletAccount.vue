@@ -1,7 +1,7 @@
 <template>
-  <s-card :bodyStyle="{ padding: '0 12px' }" class="wallet-account" border-radius="mini">
+  <s-card shadow="always" size="small" border-radius="medium" class="wallet-account">
     <div class="account s-flex">
-      <wallet-avatar class="account-avatar" :address="address" />
+      <wallet-avatar class="account-avatar" :address="address" :size="28" />
       <div class="account-details s-flex">
         <div class="account-credentials s-flex">
           <div v-if="name" class="account-credentials_name">{{ name }}</div>
@@ -11,19 +11,25 @@
         </div>
         <template v-if="showControls">
           <s-button
-            class="account-switch"
-            type="link"
-            icon="arrows-refresh-ccw-24"
+            class="account__action-button account-switch"
+            type="action"
+            alternative
+            rounded
             :tooltip="t('account.switch')"
             @click="handleSwitchAccount"
-          />
+          >
+            <s-icon name="arrows-refresh-ccw-24" size="28" />
+          </s-button>
           <s-button
-            class="account-logout"
-            type="link"
-            icon="security-logout-24"
+            class="account__action-button account-logout"
+            type="action"
+            alternative
+            rounded
             :tooltip="t('account.logout')"
             @click="handleLogout"
-          />
+          >
+            <s-icon name="security-logout-24" size="28" />
+          </s-button>
         </template>
       </div>
     </div>
@@ -36,7 +42,7 @@ import { Getter, Action } from 'vuex-class'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import { RouteNames } from '../consts'
-import { copyToClipboard, formatAddress } from '../util'
+import { copyToClipboard, formatAddress, formatSoraAddress } from '../util'
 import WalletAvatar from './WalletAvatar.vue'
 
 @Component({
@@ -53,7 +59,10 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: { name: string; address: string }
 
   get address (): string {
-    return (this.polkadotAccount || this.account).address
+    if (this.polkadotAccount) {
+      return formatSoraAddress(this.polkadotAccount.address)
+    }
+    return this.account.address
   }
 
   get name (): string {
@@ -82,39 +91,48 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
     }
   }
 
-  handleSwitchAccount (): void {
-    this.navigate({ name: RouteNames.WalletConnection, params: { isAccountSwitch: true } })
+  private navigateToWalletConnection (params?: any): void {
+    const navigationArgs: any = { name: RouteNames.WalletConnection }
+    if (params) {
+      navigationArgs.params = params
+    }
+    this.navigate(navigationArgs)
     this.logout()
   }
 
+  handleSwitchAccount (): void {
+    this.navigateToWalletConnection({ isAccountSwitch: true })
+  }
+
   handleLogout (): void {
-    this.navigate({ name: RouteNames.WalletConnection })
-    this.logout()
+    this.navigateToWalletConnection()
   }
 }
 </script>
 
+<style lang="scss">
+.account-avatar {
+  border: 2px solid var(--s-color-base-border-secondary);
+  border-radius: 50%;
+  svg circle:first-child {
+    fill: var(--s-color-utility-surface);
+  }
+}
+</style>
+
 <style scoped lang="scss">
 @import '../styles/icons';
 
-$avatar-margin-right: $basic-spacing_small;
+$avatar-margin-right: calc(var(--s-basic-spacing) * 1.5);
 $avatar-size: 32px;
-$account-button-width: 30px;
-$account-button-margin-left: $button-margin;
-$account-buttons-number: 2;
 
 .wallet-account.s-card {
-  box-shadow: none;
-  border: 1px solid var(--s-color-base-border-primary);
-}
-
-.s-card {
-  @include s-card-styles;
+  border: 1px solid transparent;
 }
 
 .account {
-  margin: $basic-spacing_mini 0;
   align-items: center;
+
   &-avatar {
     margin-right: $avatar-margin-right;
     width: $avatar-size;
@@ -129,14 +147,16 @@ $account-buttons-number: 2;
     flex: 1;
     flex-direction: column;
     justify-content: center;
-    width: calc(100% - #{$account-button-width * $account-buttons-number} - #{$account-button-margin-left * $account-buttons-number});
     &_name,
     &_address {
       overflow: hidden;
       text-overflow: ellipsis;
+      letter-spacing: var(--s-letter-spacing-small);
     }
     &_name {
-      font-size: $font-size_basic;
+      font-size: var(--s-font-size-medium);
+      font-weight: 600;
+      line-height: var(--s-line-height-medium);
       outline: none;
       white-space: nowrap;
       overflow: hidden;
@@ -144,20 +164,18 @@ $account-buttons-number: 2;
     }
     &_address {
       @include value-prefix(width, fit-content);
-      outline: none;
       @include hint-text;
+      outline: none;
       &:hover {
         text-decoration: underline;
         cursor: pointer;
       }
     }
   }
-  .el-button {
-    margin-left: $account-button-margin-left;
-    width: $account-button-width;
-  }
-  &-switch {
-    margin-left: $button-margin;
+  &__action-button {
+    & + & {
+      margin-left: var(--s-basic-spacing);
+    }
   }
   &-switch, &-logout {
     padding: 0;

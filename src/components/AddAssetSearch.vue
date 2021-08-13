@@ -3,13 +3,13 @@
     <s-input
       ref="search"
       class="asset-search-input"
-      border-radius="mini"
+      prefix="s-icon-search-16"
       :maxlength="100"
       :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
       v-model="search"
       @input="handleSearch"
     />
-    <div class="asset-search-list" v-loading="assetsLoading">
+    <s-scrollbar class="asset-search-list" v-loading="assetsLoading || loading">
       <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </div>
@@ -26,15 +26,12 @@
           <div class="asset-description_symbol">{{ asset.symbol }}</div>
           <div class="asset-description_info">{{ formatName(asset) }}
             <s-tooltip :content="t('assets.copy')">
-              <span class="asset-id" @click="handleCopy(asset)">({{ getFormattedAddress(asset) }})</span>
+              <span class="asset-id" @click="handleCopy(asset, $event)">({{ getFormattedAddress(asset) }})</span>
             </s-tooltip>
           </div>
         </div>
       </div>
-    </div>
-    <s-button type="primary" :disabled="!selectedAsset" @click="handleAddAsset">
-      {{ t('addAsset.action') }}
-    </s-button>
+    </s-scrollbar>
   </div>
 </template>
 
@@ -44,20 +41,20 @@ import { Action, Getter } from 'vuex-class'
 import { AccountAsset, Asset } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
+import LoadingMixin from './mixins/LoadingMixin'
 import { AddAssetTabs, RouteNames } from '../consts'
 import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util'
 
 @Component
-export default class AddAssetSearch extends Mixins(TranslationMixin) {
+export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
   readonly AddAssetTabs = AddAssetTabs
 
   @Getter assets!: Array<Asset>
   @Getter assetsLoading!: boolean
   @Getter accountAssets!: Array<AccountAsset>
   @Getter accountAssetsAddressTable
-  @Action navigate
-  @Action getAssets
-  @Action addAsset
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action getAssets!: () => Promise<void>
 
   search = ''
   selectedAsset: Asset | null = null
@@ -116,12 +113,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
 
   handleSelectAsset (asset: Asset): void {
     this.selectedAsset = asset
-  }
-
-  async handleAddAsset (): Promise<void> {
-    await this.addAsset({ address: (this.selectedAsset || {}).address })
-    this.navigate({ name: RouteNames.Wallet })
-    this.$emit('add-asset')
+    this.navigate({ name: RouteNames.AddAssetDetails, params: { asset: this.selectedAsset } })
   }
 
   getAssetIconStyles = getAssetIconStyles
@@ -130,7 +122,8 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     return formatAddress(asset.address, 10)
   }
 
-  async handleCopy (asset: Asset): Promise<void> {
+  async handleCopy (asset: Asset, event: Event): Promise<void> {
+    event.stopImmediatePropagation()
     try {
       await copyToClipboard(asset.address)
       this.$notify({
@@ -149,23 +142,29 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
 }
 </script>
 
+<style lang="scss">
+.asset-search-list {
+  @include scrollbar(0);
+}
+</style>
+
 <style scoped lang="scss">
 @import '../styles/icons';
 
 .asset-search {
-  margin-top: $basic-spacing;
+  margin-top: calc(var(--s-basic-spacing) * 2);
   &-input {
-    margin-bottom: $basic-spacing;
+    margin-bottom: calc(var(--s-basic-spacing) * 2);
   }
   &-list {
     height: calc(#{$asset-item-height} * 5);
     overflow-y: auto;
-    margin-left: -#{$basic-spacing_big};
-    margin-right: -#{$basic-spacing_big};
+    margin-left: calc(var(--s-basic-spacing) * -3);
+    margin-right: calc(var(--s-basic-spacing) * -3);
     &_empty {
       @include hint-text;
-      padding-left: $basic-spacing_big;
-      padding-right: $basic-spacing_big;
+      padding-left: calc(var(--s-basic-spacing) * 3);
+      padding-right: calc(var(--s-basic-spacing) * 3);
     }
     &_empty {
       text-align: center;
@@ -173,13 +172,13 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
     .asset {
       align-items: center;
       height: $asset-item-height;
-      padding: 0 $basic-spacing_big;
+      padding: 0 calc(var(--s-basic-spacing) * 3);
       &:hover, &.selected {
         background-color: var(--s-color-base-background-hover);
         cursor: pointer;
       }
       &-logo {
-        margin-right: $basic-spacing;
+        margin-right: calc(var(--s-basic-spacing) * 2);
         @include asset-logo-styles(40px);
       }
       &-description {
@@ -187,7 +186,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin) {
         flex-direction: column;
         line-height: var(--s-line-height-big);
         &_symbol {
-          font-feature-settings: var(--s-font-feature-settings-common);
           font-weight: 600;
         }
         &_info {
