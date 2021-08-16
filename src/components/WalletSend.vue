@@ -1,7 +1,7 @@
 <template>
   <wallet-base
     :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)"
-    :tooltip="t('walletSend.tooltip')"
+    :tooltip="tooltipContent"
     show-back
     @back="handleBack"
   >
@@ -16,9 +16,10 @@
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
           <s-tooltip :content="copyTooltip">
-            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">{{ visibleSoraAddress }}</p>
+            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">{{ formattedSoraAddress }}</p>
           </s-tooltip>
         </template>
+        <p v-if="isAccountAddress" class="wallet-send-address-error">{{ t('walletSend.addressError') }}</p>
         <s-float-input
           v-model="amount"
           class="wallet-send-input"
@@ -69,7 +70,7 @@
           </div>
           <div class="confirm-from">{{ account.address }}</div>
           <s-icon name="arrows-arrow-bottom-24" />
-          <div class="confirm-to">{{ address }}</div>
+          <div class="confirm-to">{{ formattedSoraAddress }}</div>
         </div>
         <s-button
           class="wallet-send-action s-typography-button--large"
@@ -127,6 +128,10 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     await this.calcFee()
   }
 
+  get tooltipContent (): string {
+    return this.step === 1 ? this.t('walletSend.tooltip') : ''
+  }
+
   get asset (): AccountAsset {
     const { address } = this.currentRouteParams.asset
 
@@ -156,11 +161,15 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     return false
   }
 
+  get isAccountAddress (): boolean {
+    return [this.address, this.formattedSoraAddress].includes(this.account.address)
+  }
+
   get validAddress (): boolean {
     if (this.emptyAddress) {
       return false
     }
-    return api.validateAddress(this.address) && ![this.address, this.formattedSoraAddress].includes(this.account.address)
+    return api.validateAddress(this.address) && !this.isAccountAddress
   }
 
   get formattedSoraAddress (): string {
@@ -172,10 +181,6 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     } catch {
       return ''
     }
-  }
-
-  get visibleSoraAddress (): string {
-    return this.formattedSoraAddress ? formatAddress(this.formattedSoraAddress, this.formattedSoraAddress.length * 0.9) : ''
   }
 
   get isNotSoraAddress (): boolean {
@@ -336,14 +341,8 @@ $logo-size: var(--s-size-mini);
       padding: $basic-spacing-mini calc(var(--s-basic-spacing) * 0.75);
     }
     &-logo {
-      @include asset-logo-styles(32px);
-      width: $logo-size;
-      height: $logo-size;
+      @include asset-logo-styles(var(--s-size-mini));
       margin-right: var(--s-basic-spacing);
-    }
-    &-name {
-      font-size: var(--s-icon-font-size-small);
-      line-height: var(--s-line-height-reset);
     }
     &-max {
       height: var(--s-size-mini);
@@ -351,6 +350,10 @@ $logo-size: var(--s-size-mini);
     }
     &-max, &-name {
       font-weight: 800;
+    }
+    &-name {
+      font-size: var(--s-icon-font-size-small);
+      line-height: var(--s-line-height-reset);
     }
     &-info {
       display: flex;
@@ -377,19 +380,31 @@ $logo-size: var(--s-size-mini);
       text-decoration: underline;
     }
   }
+  &-address-formatted,
+  .confirm-from,
+  .confirm-to {
+    word-break: break-all;
+  }
   &-address {
     margin-bottom: var(--s-basic-spacing);
     &-warning,
+    &-errror,
     &-formatted {
       padding-right: calc(var(--s-basic-spacing) * 1.25);
       padding-left: calc(var(--s-basic-spacing) * 1.25);
     }
-    &-warning {
+    &-warning,
+    &-error {
       margin-bottom: var(--s-basic-spacing);
-      color: var(--s-color-status-warning);
       font-weight: 400;
       font-size: var(--s-font-size-extra-small);
       line-height: var(--s-line-height-base);
+    }
+    &-warning {
+      color: var(--s-color-status-warning);
+    }
+    &-error {
+      color: var(--s-color-status-error);
     }
     &-formatted {
       margin-bottom: calc(var(--s-basic-spacing) * 2);
@@ -434,7 +449,8 @@ $logo-size: var(--s-size-mini);
   .confirm {
     &-asset {
       margin-bottom: calc(var(--s-basic-spacing) * 2);
-      font-size: 30px;
+      font-size: var(--s-heading2-font-size);
+      line-height: var(--s-line-height-small);
       font-weight: 400;
       &-title {
         line-height: 1.33;
@@ -442,15 +458,17 @@ $logo-size: var(--s-size-mini);
         word-break: break-word;
       }
       &-value {
+        align-items: center;
+        justify-content: flex-end;
+        white-space: nowrap;
         .asset {
           &-logo {
-            $logo-size: 40px;
-            width: $logo-size;
-            height: $logo-size;
-            margin: 0 var(--s-basic-spacing);
+            @include asset-logo-styles(var(--s-size-small));
+            margin-right: calc(var(--s-basic-spacing) * 2);
           }
           &-name {
-            line-height: 1.33;
+            font-size: var(--s-heading2-font-size);
+            line-height: var(--s-line-height-small);
             font-weight: 400;
           }
         }
