@@ -1,5 +1,10 @@
 <template>
-  <wallet-base :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)" show-back @back="handleBack">
+  <wallet-base
+    :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)"
+    :tooltip="t('walletSend.tooltip')"
+    show-back
+    @back="handleBack"
+  >
     <div class="wallet-send">
       <template v-if="step === 1">
         <s-input
@@ -8,7 +13,12 @@
           :placeholder="t('walletSend.address')"
           v-model="address"
         />
-        <p class="wallet-send-address-description">{{ t('walletSend.addressDesc') }}</p>
+        <template v-if="isNotSoraAddress">
+          <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
+          <s-tooltip :content="copyTooltip">
+            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">{{ formattedSoraAddress }}</p>
+          </s-tooltip>
+        </template>
         <s-float-input
           v-model="amount"
           class="wallet-send-input"
@@ -87,7 +97,7 @@ import WalletBase from './WalletBase.vue'
 import FormattedAmount from './FormattedAmount.vue'
 import WalletFee from './WalletFee.vue'
 import { RouteNames } from '../consts'
-import { formatAddress, getAssetIconStyles } from '../util'
+import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util'
 import { api } from '../api'
 
 @Component({
@@ -150,7 +160,22 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     if (this.emptyAddress) {
       return false
     }
-    return api.checkAddress(this.address) && this.account.address !== this.address
+    return api.validateAddress(this.address) && ![this.address, this.formattedSoraAddress].includes(this.account.address)
+  }
+
+  get formattedSoraAddress (): string {
+    if (this.emptyAddress) {
+      return ''
+    }
+    try {
+      return formatSoraAddress(this.address)
+    } catch {
+      return ''
+    }
+  }
+
+  get isNotSoraAddress (): boolean {
+    return !!this.formattedSoraAddress && this.address.slice(0, 2) !== 'cn'
   }
 
   get emptyAmount (): boolean {
@@ -326,9 +351,6 @@ $logo-size: var(--s-size-mini);
     &-info {
       display: flex;
       align-items: baseline;
-      .asset-id {
-        cursor: pointer;
-      }
       .formatted-amount--fiat-value {
         margin-right: $basic-spacing-mini;
         font-weight: 600;
@@ -344,15 +366,33 @@ $logo-size: var(--s-size-mini);
       text-align: right;
     }
   }
+  .asset-id,
+  &-address-formatted {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
   &-address {
     margin-bottom: var(--s-basic-spacing);
-    &-description {
-      margin-bottom: calc(var(--s-basic-spacing) * 2);
+    &-warning,
+    &-formatted {
       padding-right: calc(var(--s-basic-spacing) * 1.25);
       padding-left: calc(var(--s-basic-spacing) * 1.25);
-      font-weight: 300;
+    }
+    &-warning {
+      margin-bottom: var(--s-basic-spacing);
+      color: var(--s-color-status-warning);
+      font-weight: 400;
       font-size: var(--s-font-size-extra-small);
       line-height: var(--s-line-height-base);
+    }
+    &-formatted {
+      margin-bottom: calc(var(--s-basic-spacing) * 2);
+      font-weight: 200;
+      font-size: var(--s-font-size-mini);
+      line-height: var(--s-line-height-base);
+      letter-spacing: var(--s-letter-spacing-small);
     }
   }
   &-amount {

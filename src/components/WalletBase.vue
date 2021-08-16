@@ -11,7 +11,19 @@
         >
           <s-icon name="arrows-chevron-left-rounded-24" size="28" />
         </s-button>
-        <h3 class="base-title_text">{{ title }}</h3>
+        <h3 class="base-title_text">
+          {{ title }}
+          <s-tooltip
+            v-if="!!tooltip"
+            class="base-title_tooltip"
+            popper-class="info-tooltip base-title_tooltip-popper"
+            border-radius="mini"
+            :content="tooltip"
+            placement="right"
+          >
+            <s-icon name="info-16" size="18px" />
+          </s-tooltip>
+        </h3>
         <s-button
           v-if="showAction"
           class="base-title_action"
@@ -55,6 +67,7 @@ import TranslationMixin from './mixins/TranslationMixin'
 @Component
 export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string
+  @Prop({ default: '', type: String }) readonly tooltip!: string
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
   @Prop({ default: false, type: Boolean }) readonly showAction!: boolean
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
@@ -101,6 +114,9 @@ export default class WalletBase extends Mixins(TranslationMixin) {
   .el-loading-mask {
     background-color: var(--s-color-utility-surface);
   }
+}
+.base-title_tooltip-popper.neumorphic.info-tooltip {
+  max-width: 165px;
 }
 </style>
 
@@ -154,6 +170,12 @@ $button-size: var(--s-size-medium);
     }
     &_action, &_trash, &_close {
       right: 0;
+    }
+    &_tooltip {
+      margin-top: auto;
+      margin-bottom: auto;
+      margin-left: var(--s-basic-spacing);
+      cursor: pointer;
     }
   }
 }

@@ -85,8 +85,9 @@ export default {
   },
   walletSend: {
     title: 'Send',
+    tooltip: 'Send tokens between SORA network accounts',
     address: '@:addressText',
-    addressDesc: 'Only SORA network account addresses are accepted. Please ensure that you have a correctly formatted SORA network account address starting with the ‘cn’ prefix.',
+    addressWarning: 'Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:',
     amount: '@:amountText',
     balance: 'Balance',
     max: 'MAX',
