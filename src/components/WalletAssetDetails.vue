@@ -253,7 +253,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     align-items: center;
     .formatted-amount--fiat-value {
       + .asset-details-actions {
-        margin-top: calc(var(--s-basic-spacing) * 1.5);
+        margin-top: #{$basic-spacing-small};
       }
     }
   }
@@ -283,12 +283,12 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
       text-align: left;
     }
     &--clicked .s-icon-chevron-down-rounded-16 {
-      padding-right: calc(var(--s-basic-spacing) * 1.5);
+      padding-right: #{$basic-spacing-small};
       transform: rotate(180deg);
     }
     &-info {
       width: 100%;
-      margin-top: calc(var(--s-basic-spacing) * 2);
+      margin-top: #{$basic-spacing-medium};
       .balance {
         justify-content: space-between;
         align-items: baseline;
@@ -308,7 +308,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     }
   }
   &-actions {
-    margin-top: calc(var(--s-basic-spacing) * 2);
+    margin-top: #{$basic-spacing-medium};
   }
   .asset-logo {
     @include asset-logo-styles(48px);

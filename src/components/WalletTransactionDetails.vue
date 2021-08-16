@@ -27,41 +27,36 @@
           </template>
         </s-dropdown>
       </div>
-      <div v-if="selectedTransaction.status" class="transaction-row s-flex">
-        <div class="transaction-row_key">
-          {{ t('transaction.status') }}
-        </div>
-        <div class="transaction-row_value">
+      <div class="info-line-container">
+        <info-line v-if="selectedTransaction.status" :label="t('transaction.status')">
           <span :class="statusClass">{{ statusTitle }}</span>
-        </div>
-        <s-icon v-if="isComplete" name="basic-check-mark-24" />
-      </div>
-      <div v-if="selectedTransaction.errorMessage" class="transaction-row s-flex">
-        <div class="transaction-row_key">
-          {{ t('transaction.errorMessage') }}
-        </div>
-        <div class="transaction-row_value">
-          <!--  TODO: Add all error messages to translation -->
+          <s-icon v-if="isComplete" name="basic-check-mark-24" size="16px" />
+        </info-line>
+        <info-line v-if="selectedTransaction.errorMessage" :label="t('transaction.errorMessage')">
           <span :class="statusClass">{{ selectedTransaction.errorMessage }}</span>
-        </div>
-      </div>
-      <div v-if="selectedTransaction.startTime" class="transaction-row s-flex">
-        <div class="transaction-row_key">
-          {{ t('transaction.startTime') }}
-        </div>
-        <div class="transaction-row_value">{{ formatDate(selectedTransaction.startTime) }}</div>
-      </div>
-      <div v-if="formattedAmount" class="transaction-row s-flex">
-        <div class="transaction-row_key">
-          {{ t('transaction.amount') }}
-        </div>
-        <div class="transaction-row_value">{{ formattedAmount }}</div>
-      </div>
-      <div v-if="transactionAmount2" class="transaction-row s-flex">
-        <div class="transaction-row_key">
-          {{ t('transaction.amount2') }}
-        </div>
-        <div class="transaction-row_value">{{ transactionAmount2 }}</div>
+        </info-line>
+        <info-line v-if="selectedTransaction.startTime" :label="t('transaction.startTime')" :value="formatDate(selectedTransaction.startTime)" />
+        <info-line v-if="selectedTransaction.amount" :label="t('transaction.amount')">
+          <formatted-amount
+            class="info-line-value"
+            :value="transactionAmount"
+            :asset-symbol="selectedTransaction.symbol"
+            :font-size-rate="FontSizeRate.MEDIUM"
+            :font-weight-rate="FontWeightRate.SMALL"
+          >
+            <template v-if="isRemoveLiquidityType">
+              <span class="formatted-amount__divider">{{ t('operations.andText') }}</span>
+              <span class="formatted-amount__symbol">{{ selectedTransaction.symbol2 }}</span>
+            </template>
+          </formatted-amount>
+        </info-line>
+        <info-line
+          v-if="selectedTransaction.amount2"
+          :label="t('transaction.amount2')"
+          :value="transactionAmount2"
+          :asset-symbol="selectedTransaction.symbol2"
+          is-formatted
+        />
       </div>
       <div v-if="selectedTransaction.from" class="s-input-container">
         <s-input :placeholder="t('transaction.from')" :value="formatAddress(selectedTransaction.from)" readonly />
@@ -127,16 +122,25 @@ import { TransactionStatus, AccountAsset, Operation } from '@sora-substrate/util
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
+import InfoLine from './InfoLine.vue'
+import FormattedAmount from './FormattedAmount.vue'
 import { RouteNames, WalletTabs } from '../consts'
+import { FontSizeRate, FontWeightRate } from '../types'
 import { formatDate, formatAddress, getStatusClass, copyToClipboard, getExplorerLink } from '../util'
 
 import { externalStore } from '../index'
 
 @Component({
-  components: { WalletBase }
+  components: {
+    WalletBase,
+    InfoLine,
+    FormattedAmount
+  }
 })
 export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, NumberFormatterMixin) {
   readonly Operation = Operation
+  readonly FontSizeRate = FontSizeRate
+  readonly FontWeightRate = FontWeightRate
 
   @Getter currentRouteParams!: any
   @Getter selectedTransaction!: any
@@ -200,20 +204,16 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
     return this.selectedTransaction.txId ? 'transaction' : 'block'
   }
 
-  get formattedAmount (): string {
-    if (!this.selectedTransaction || !this.selectedTransaction.amount) {
-      return ''
-    }
-    const amount = this.formatStringValue(this.selectedTransaction.amount)
-    const firstSymbol = this.selectedTransaction.symbol
-    if (this.selectedTransaction.type === Operation.RemoveLiquidity) {
-      return `${amount} ${firstSymbol} ${this.t('operations.andText')} ${this.selectedTransaction.symbol2}`
-    }
-    return `${amount} ${firstSymbol}`
+  get transactionAmount (): string {
+    return this.formatStringValue(this.selectedTransaction.amount)
   }
 
-  get transactionAmount2 (): string | null {
-    return this.selectedTransaction.amount2 ? `${this.formatStringValue(this.selectedTransaction.amount2)} ${this.selectedTransaction.symbol2}` : null
+  get isRemoveLiquidityType (): boolean {
+    return this.selectedTransaction.type === Operation.RemoveLiquidity
+  }
+
+  get transactionAmount2 (): string {
+    return this.formatStringValue(this.selectedTransaction.amount2)
   }
 
   formatAddress (address: string): string {
@@ -276,27 +276,8 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
 $dropdown-right: 15px;
 $dropdown-width: var(--s-size-mini);
 .transaction {
-  &-row {
-    align-items: center;
-    padding-right: var(--s-basic-spacing);
-    padding-left: var(--s-basic-spacing);
-    color: var(--s-color-base-content-secondary);
-    &_key {
-      flex: 1;
-    }
-    &_value {
-      padding-left: calc(var(--s-basic-spacing) * 1.5);
-      text-align: right;
-    }
-    &:not(:last-child) {
-      margin-bottom: var(--s-basic-spacing);
-    }
-    &:last-child {
-      margin-bottom: calc(var(--s-basic-spacing) * 1.5);
-    }
-    .s-icon-basic-check-mark-24 {
-      margin-left: var(--s-basic-spacing);
-    }
+  .s-icon-basic-check-mark-24 {
+    margin-left: var(--s-basic-spacing);
   }
   &-link {
     color: inherit;
@@ -304,7 +285,9 @@ $dropdown-width: var(--s-size-mini);
   }
   .s-input-container {
     position: relative;
-    margin-bottom: calc(var(--s-basic-spacing) * 1.5);
+  }
+  .info-line-container {
+    margin-bottom: #{$basic-spacing-medium};
   }
   .s-button--copy {
     position: absolute;
@@ -330,6 +313,10 @@ $dropdown-width: var(--s-size-mini);
     width: $dropdown-width;
     height: var(--s-size-mini);
     line-height: 1;
+  }
+  .formatted-amount__divider {
+    margin-right: #{$basic-spacing-extra-mini};
+    margin-left: #{$basic-spacing-extra-mini};
   }
 }
 .history {

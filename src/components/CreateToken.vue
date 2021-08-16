@@ -221,11 +221,11 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
-    padding: var(--s-basic-spacing) calc(var(--s-basic-spacing) * 1.5) calc(var(--s-basic-spacing) * 2);
+    padding: var(--s-basic-spacing) #{$basic-spacing-small} #{$basic-spacing-medium};
   }
   &_supply-block {
     @include switch-block;
-    padding: 0 calc(var(--s-basic-spacing) * 1.5);
+    padding: 0 #{$basic-spacing-small};
   }
   &_action {
     width: 100%;
