@@ -388,7 +388,7 @@ $logo-size: var(--s-size-mini);
   &-address {
     margin-bottom: var(--s-basic-spacing);
     &-warning,
-    &-errror,
+    &-error,
     &-formatted {
       padding-right: calc(var(--s-basic-spacing) * 1.25);
       padding-left: calc(var(--s-basic-spacing) * 1.25);
