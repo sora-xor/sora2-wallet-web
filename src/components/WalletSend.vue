@@ -13,10 +13,10 @@
           :placeholder="t('walletSend.address')"
           v-model="address"
         />
-        <template v-if="isNotSoraAddress">
+        <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
           <s-tooltip :content="copyTooltip">
-            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">{{ formattedSoraAddress }}</p>
+            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">{{ visibleSoraAddress }}</p>
           </s-tooltip>
         </template>
         <s-float-input
@@ -172,6 +172,10 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     } catch {
       return ''
     }
+  }
+
+  get visibleSoraAddress (): string {
+    return this.formattedSoraAddress ? formatAddress(this.formattedSoraAddress, this.formattedSoraAddress.length * 0.9) : ''
   }
 
   get isNotSoraAddress (): boolean {
