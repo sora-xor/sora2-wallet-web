@@ -6,6 +6,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
   actiontooltip=""
   showback="true"
   title=""
+  tooltip=""
 >
   <div
     class="transaction"
@@ -241,6 +242,7 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
   actiontooltip=""
   showback="true"
   title=""
+  tooltip=""
 >
   <div
     class="transaction"
@@ -444,6 +446,7 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
   actiontooltip=""
   showback="true"
   title=""
+  tooltip=""
 >
   <div
     class="transaction"
@@ -663,6 +666,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
   actiontooltip=""
   showback="true"
   title=""
+  tooltip=""
 >
   <div
     class="transaction"
@@ -916,6 +920,7 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
   actiontooltip=""
   showback="true"
   title=""
+  tooltip=""
 >
   <div
     class="transaction"
