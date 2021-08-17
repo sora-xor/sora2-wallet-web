@@ -1,5 +1,10 @@
 <template>
-  <wallet-base :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)" show-back @back="handleBack">
+  <wallet-base
+    :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)"
+    :tooltip="tooltipContent"
+    show-back
+    @back="handleBack"
+  >
     <div class="wallet-send">
       <template v-if="step === 1">
         <s-input
@@ -8,7 +13,13 @@
           :placeholder="t('walletSend.address')"
           v-model="address"
         />
-        <p class="wallet-send-address-description">{{ t('walletSend.addressDesc') }}</p>
+        <template v-if="validAddress && isNotSoraAddress">
+          <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
+          <s-tooltip :content="copyTooltip">
+            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">{{ formattedSoraAddress }}</p>
+          </s-tooltip>
+        </template>
+        <p v-if="isAccountAddress" class="wallet-send-address-error">{{ t('walletSend.addressError') }}</p>
         <s-float-input
           v-model="amount"
           class="wallet-send-input"
@@ -59,7 +70,7 @@
           </div>
           <div class="confirm-from">{{ account.address }}</div>
           <s-icon name="arrows-arrow-bottom-24" />
-          <div class="confirm-to">{{ address }}</div>
+          <div class="confirm-to">{{ formattedSoraAddress }}</div>
         </div>
         <s-button
           class="wallet-send-action s-typography-button--large"
@@ -87,7 +98,7 @@ import WalletBase from './WalletBase.vue'
 import FormattedAmount from './FormattedAmount.vue'
 import WalletFee from './WalletFee.vue'
 import { RouteNames } from '../consts'
-import { formatAddress, getAssetIconStyles } from '../util'
+import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util'
 import { api } from '../api'
 
 @Component({
@@ -115,6 +126,10 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
 
   async created (): Promise<void> {
     await this.calcFee()
+  }
+
+  get tooltipContent (): string {
+    return this.step === 1 ? this.t('walletSend.tooltip') : ''
   }
 
   get asset (): AccountAsset {
@@ -146,11 +161,30 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     return false
   }
 
+  get isAccountAddress (): boolean {
+    return [this.address, this.formattedSoraAddress].includes(this.account.address)
+  }
+
   get validAddress (): boolean {
     if (this.emptyAddress) {
       return false
     }
-    return api.checkAddress(this.address) && this.account.address !== this.address
+    return api.validateAddress(this.address) && !this.isAccountAddress
+  }
+
+  get formattedSoraAddress (): string {
+    if (this.emptyAddress) {
+      return ''
+    }
+    try {
+      return formatSoraAddress(this.address)
+    } catch {
+      return ''
+    }
+  }
+
+  get isNotSoraAddress (): boolean {
+    return !!this.formattedSoraAddress && this.address.slice(0, 2) !== 'cn'
   }
 
   get emptyAmount (): boolean {
@@ -307,14 +341,8 @@ $logo-size: var(--s-size-mini);
       padding: $basic-spacing-mini calc(var(--s-basic-spacing) * 0.75);
     }
     &-logo {
-      @include asset-logo-styles(32px);
-      width: $logo-size;
-      height: $logo-size;
+      @include asset-logo-styles(var(--s-size-mini));
       margin-right: var(--s-basic-spacing);
-    }
-    &-name {
-      font-size: var(--s-icon-font-size-small);
-      line-height: var(--s-line-height-reset);
     }
     &-max {
       height: var(--s-size-mini);
@@ -323,12 +351,13 @@ $logo-size: var(--s-size-mini);
     &-max, &-name {
       font-weight: 800;
     }
+    &-name {
+      font-size: var(--s-icon-font-size-small);
+      line-height: var(--s-line-height-reset);
+    }
     &-info {
       display: flex;
       align-items: baseline;
-      .asset-id {
-        cursor: pointer;
-      }
       .formatted-amount--fiat-value {
         margin-right: $basic-spacing-mini;
         font-weight: 600;
@@ -344,15 +373,45 @@ $logo-size: var(--s-size-mini);
       text-align: right;
     }
   }
+  .asset-id,
+  &-address-formatted {
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+  &-address-formatted,
+  .confirm-from,
+  .confirm-to {
+    word-break: break-all;
+  }
   &-address {
     margin-bottom: var(--s-basic-spacing);
-    &-description {
-      margin-bottom: calc(var(--s-basic-spacing) * 2);
+    &-warning,
+    &-error,
+    &-formatted {
       padding-right: calc(var(--s-basic-spacing) * 1.25);
       padding-left: calc(var(--s-basic-spacing) * 1.25);
-      font-weight: 300;
+    }
+    &-warning,
+    &-error {
+      margin-bottom: var(--s-basic-spacing);
+      font-weight: 400;
       font-size: var(--s-font-size-extra-small);
       line-height: var(--s-line-height-base);
+    }
+    &-warning {
+      color: var(--s-color-status-warning);
+    }
+    &-error {
+      color: var(--s-color-status-error);
+    }
+    &-formatted {
+      margin-bottom: calc(var(--s-basic-spacing) * 2);
+      font-weight: 200;
+      font-size: var(--s-font-size-mini);
+      line-height: var(--s-line-height-base);
+      letter-spacing: var(--s-letter-spacing-small);
     }
   }
   &-amount {
@@ -390,7 +449,8 @@ $logo-size: var(--s-size-mini);
   .confirm {
     &-asset {
       margin-bottom: calc(var(--s-basic-spacing) * 2);
-      font-size: 30px;
+      font-size: var(--s-heading2-font-size);
+      line-height: var(--s-line-height-small);
       font-weight: 400;
       &-title {
         line-height: 1.33;
@@ -398,15 +458,17 @@ $logo-size: var(--s-size-mini);
         word-break: break-word;
       }
       &-value {
+        align-items: center;
+        justify-content: flex-end;
+        white-space: nowrap;
         .asset {
           &-logo {
-            $logo-size: 40px;
-            width: $logo-size;
-            height: $logo-size;
-            margin: 0 var(--s-basic-spacing);
+            @include asset-logo-styles(var(--s-size-small));
+            margin-right: calc(var(--s-basic-spacing) * 2);
           }
           &-name {
-            line-height: 1.33;
+            font-size: var(--s-heading2-font-size);
+            line-height: var(--s-line-height-small);
             font-weight: 400;
           }
         }
