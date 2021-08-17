@@ -218,8 +218,18 @@ $history-item-top-border-height: 1px;
     &-info {
       display: flex;
       align-items: flex-start;
-      .info-status--error  {
-        color: var(--s-color-status-error);
+      .info-status {
+        &--loading,
+        &--success,
+        &--error {
+          line-height: var(--s-font-size-small);
+        }
+        &.info-status--loading {
+          height: var(--s-font-size-small);
+        }
+        &--error  {
+          color: var(--s-color-status-error);
+        }
       }
       // TODO: [1.5] remove it
       i.info-status--loading {
