@@ -224,7 +224,7 @@ $history-item-top-border-height: 1px;
         &--error {
           line-height: var(--s-font-size-small);
         }
-        &--loading {
+        &.info-status--loading {
           height: var(--s-font-size-small);
         }
         &--error  {
