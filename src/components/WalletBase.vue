@@ -14,7 +14,7 @@
         <h3 class="base-title_text">
           {{ title }}
           <s-tooltip
-            v-if="!!tooltip"
+            v-if="tooltip"
             class="base-title_tooltip"
             popper-class="info-tooltip base-title_tooltip-popper"
             border-radius="mini"
