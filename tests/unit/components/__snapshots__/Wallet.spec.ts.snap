@@ -6,6 +6,7 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`
   actiontooltip="wallet.createToken"
   showaction="true"
   title=""
+  tooltip=""
 >
   <wallet-account-stub
     showcontrols="true"
@@ -40,6 +41,7 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
   actiontooltip="wallet.createToken"
   showaction="true"
   title=""
+  tooltip=""
 >
   <wallet-account-stub
     showcontrols="true"

@@ -265,11 +265,14 @@ $wallet-assets-count: 5;
         color: var(--s-color-base-on-accent);
         padding: 0 var(--s-basic-spacing);
         border-radius: var(--s-border-radius-mini);
+        max-width: 100%;
         > .s-icon-lock-16 {
           color: var(--s-color-base-on-accent);
         }
         > span {
           margin-left: #{$basic-spacing-mini};
+          white-space: nowrap;
+          overflow: hidden;
         }
       }
       &-converted {
