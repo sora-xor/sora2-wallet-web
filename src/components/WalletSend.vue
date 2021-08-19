@@ -89,7 +89,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols, Operation } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
 import FormattedAmountMixin from './mixins/FormattedAmountMixin'
@@ -124,8 +124,10 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   fee = this.getFPNumber(0)
   feeLoading = false
 
-  async created (): Promise<void> {
-    await this.calcFee()
+  created (): void {
+    this.feeLoading = true
+    this.fee = this.getFPNumberFromCodec(api.NetworkFee[Operation.Transfer])
+    this.feeLoading = false
   }
 
   get tooltipContent (): string {
@@ -240,18 +242,6 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
       return false
     }
     return knownAsset.symbol === KnownSymbols.XOR
-  }
-
-  async calcFee (): Promise<void> {
-    this.feeLoading = true
-    this.fee = this.getFPNumberFromCodec(
-      await api.getTransferNetworkFee(
-        this.asset.address,
-        this.validAddress ? this.address : '',
-        this.validAmount ? this.amount : 0
-      )
-    )
-    this.feeLoading = false
   }
 
   getAssetIconStyles = getAssetIconStyles

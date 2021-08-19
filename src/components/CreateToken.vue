@@ -84,7 +84,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
-import { KnownSymbols, CodecString, KnownAssets, FPNumber, MaxTotalSupply } from '@sora-substrate/util'
+import { KnownSymbols, CodecString, KnownAssets, FPNumber, MaxTotalSupply, Operation } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
@@ -152,31 +152,8 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     return FPNumber.gte(fpAccountXor, this.getFPNumberFromCodec(this.fee))
   }
 
-  async created () {
-    await this.calculateFee()
-  }
-
-  async calculateFee (isConfirm?: boolean): Promise<void> {
-    try {
-      await this.withLoading(async () => {
-        this.fee = await api.getRegisterAssetNetworkFee(
-          this.tokenSymbol,
-          this.tokenName,
-          this.tokenSupply,
-          this.extensibleSupply
-        )
-        if (isConfirm) {
-          this.step = Step.Confirm
-        }
-      })
-    } catch (error) {
-      console.error(error)
-      this.$notify({
-        message: this.t('createToken.feeError'),
-        type: 'error',
-        title: ''
-      })
-    }
+  created (): void {
+    this.fee = api.NetworkFee[Operation.RegisterAsset]
   }
 
   async registerAsset (): Promise<void> {
@@ -197,7 +174,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
       this.tokenSupply = maxTokenSupply.toString()
     }
-    await this.calculateFee(true)
+    this.step = Step.Confirm
   }
 
   async onCreate (): Promise<void> {
