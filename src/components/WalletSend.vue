@@ -55,7 +55,7 @@
             </div>
           </div>
         </s-float-input>
-        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" :loading="feeLoading" @click="step = 2">
+        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
       </template>
@@ -121,13 +121,9 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   step = 1
   address = ''
   amount = ''
-  fee = this.getFPNumber(0)
-  feeLoading = false
 
-  created (): void {
-    this.feeLoading = true
-    this.fee = this.getFPNumberFromCodec(api.NetworkFee[Operation.Transfer])
-    this.feeLoading = false
+  get fee (): FPNumber {
+    return this.getFPNumberFromCodec(api.NetworkFee[Operation.Transfer])
   }
 
   get tooltipContent (): string {
