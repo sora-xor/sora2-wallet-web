@@ -285,6 +285,9 @@ $dropdown-width: var(--s-size-mini);
   }
   .s-input-container {
     position: relative;
+    + .s-input-container {
+      margin-top: var(--s-basic-spacing);
+    }
   }
   .info-line-container {
     margin-bottom: #{$basic-spacing-medium};
