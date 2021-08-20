@@ -338,7 +338,7 @@ $logo-size: var(--s-size-mini);
       background-color: var(--s-color-utility-surface);
       border-radius: var(--s-border-radius-mini);
       box-shadow: var(--s-shadow-element);
-      padding: $basic-spacing-mini calc(var(--s-basic-spacing) * 0.75);
+      padding: $basic-spacing-mini #{$basic-spacing-extra-small};
     }
     &-logo {
       @include asset-logo-styles(var(--s-size-mini));
@@ -387,6 +387,9 @@ $logo-size: var(--s-size-mini);
   }
   &-address {
     margin-bottom: var(--s-basic-spacing);
+    &-description {
+      margin-bottom: #{$basic-spacing-medium};
+    }
     &-warning,
     &-error,
     &-formatted {
@@ -443,12 +446,12 @@ $logo-size: var(--s-size-mini);
     }
   }
   &-action {
-    margin-top: calc(var(--s-basic-spacing) * 2);
+    margin-top: #{$basic-spacing-medium};
     width: 100%;
   }
   .confirm {
     &-asset {
-      margin-bottom: calc(var(--s-basic-spacing) * 2);
+      margin-bottom: #{$basic-spacing-medium};
       font-size: var(--s-heading2-font-size);
       line-height: var(--s-line-height-small);
       font-weight: 400;

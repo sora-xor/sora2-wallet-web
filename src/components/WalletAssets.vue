@@ -217,7 +217,7 @@ $wallet-assets-count: 5;
 
 #{$wallet-assets-class} {
   flex-direction: column;
-  margin-top: calc(var(--s-basic-spacing) * 2);
+  margin-top: #{$basic-spacing-medium};
 
   &--fiat {
     #{$wallet-assets-class}-container {
@@ -270,7 +270,7 @@ $wallet-assets-count: 5;
           color: var(--s-color-base-on-accent);
         }
         > span {
-          margin-left: calc(var(--s-basic-spacing) / 2);
+          margin-left: #{$basic-spacing-mini};
           white-space: nowrap;
           overflow: hidden;
         }
@@ -289,7 +289,7 @@ $wallet-assets-count: 5;
   }
   &-add,
   &-empty {
-    margin-top: calc(var(--s-basic-spacing) * 2);
+    margin-top: #{$basic-spacing-medium};
   }
   &-empty {
     text-align: center;
@@ -306,12 +306,12 @@ $wallet-assets-count: 5;
     align-items: baseline;
     justify-content: center;
     flex-wrap: wrap;
-    padding-top: calc(var(--s-basic-spacing) * 0.75);
-    padding-bottom: calc(var(--s-basic-spacing) * 0.75);
+    padding-top: #{$basic-spacing-extra-small};
+    padding-bottom: #{$basic-spacing-extra-small};
     text-align: center;
     &__title {
       text-transform: uppercase;
-      padding-right: calc(var(--s-basic-spacing) / 4);
+      padding-right: #{$basic-spacing-extra-mini};
       white-space: nowrap;
       font-weight: 400;
       letter-spacing: var(--s-letter-spacing-small);

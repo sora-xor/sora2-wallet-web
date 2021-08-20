@@ -152,9 +152,9 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 @import '../styles/icons';
 
 .asset-search {
-  margin-top: calc(var(--s-basic-spacing) * 2);
+  margin-top: #{$basic-spacing-medium};
   &-input {
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
+    margin-bottom: #{$basic-spacing-medium};
   }
   &-list {
     height: calc(#{$asset-item-height} * 5);
@@ -178,7 +178,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
         cursor: pointer;
       }
       &-logo {
-        margin-right: calc(var(--s-basic-spacing) * 2);
+        margin-right: #{$basic-spacing-medium};
         @include asset-logo-styles(40px);
       }
       &-description {
