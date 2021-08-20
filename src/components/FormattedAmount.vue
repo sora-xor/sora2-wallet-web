@@ -200,7 +200,7 @@ $formatted-amount-class: '.formatted-amount';
   }
   &__prefix {
     opacity: .6;
-    padding-right: calc(var(--s-basic-spacing) / 4);
+    padding-right: #{$basic-spacing-extra-mini};
   }
 }
 </style>

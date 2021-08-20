@@ -49,22 +49,10 @@
         </s-button>
       </template>
       <template v-else-if="step === Step.Confirm">
-        <div class="wallet-settings-create-token_confirm-block">
-          <span>{{ t('createToken.tokenSymbol.placeholder') }}</span>
-          <span>{{ tokenSymbol }}</span>
-        </div>
-        <div class="wallet-settings-create-token_confirm-block">
-          <span>{{ t('createToken.tokenName.placeholder') }}</span>
-          <span>{{ tokenName.trim() }}</span>
-        </div>
-        <div class="wallet-settings-create-token_confirm-block">
-          <span>{{ t('createToken.tokenSupply.placeholder') }}</span>
-          <span>{{ formattedTokenSupply }}</span>
-        </div>
-        <div class="wallet-settings-create-token_confirm-block">
-          <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
-          <span>{{ extensibleSupply ? 'Yes' : 'No' }}</span>
-        </div>
+        <info-line :label="t('createToken.tokenSymbol.placeholder')" :value="tokenSymbol" />
+        <info-line :label="t('createToken.tokenName.placeholder')" :value="tokenName.trim()" />
+        <info-line :label="t('createToken.tokenSupply.placeholder')" :value="formattedTokenSupply" />
+        <info-line :label="t('createToken.extensibleSupply.placeholder')" :value="extensibleSupply ? 'Yes' : 'No'" />
         <s-button
           class="wallet-settings-create-token_action s-typography-button--large"
           type="primary"
@@ -89,6 +77,7 @@ import { KnownSymbols, KnownAssets, FPNumber, MaxTotalSupply, Operation } from '
 import TransactionMixin from './mixins/TransactionMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
+import InfoLine from './InfoLine.vue'
 import WalletFee from './WalletFee.vue'
 import { RouteNames } from '../consts'
 import { api } from '../api'
@@ -101,6 +90,7 @@ enum Step {
 @Component({
   components: {
     WalletBase,
+    InfoLine,
     WalletFee
   }
 })
@@ -193,24 +183,15 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
-    padding: var(--s-basic-spacing) calc(var(--s-basic-spacing) * 1.5) calc(var(--s-basic-spacing) * 2);
+    padding: var(--s-basic-spacing) #{$basic-spacing-small} #{$basic-spacing-medium};
   }
   &_supply-block {
     @include switch-block;
-    padding: 0 calc(var(--s-basic-spacing) * 1.5);
+    padding: 0 #{$basic-spacing-small};
   }
   &_action {
+    margin-top: #{$basic-spacing-medium};
     width: 100%;
-  }
-  &_confirm-block {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    color: var(--s-color-base-content-secondary);
-    font-size: var(--s-font-size-small);
-    font-weight: normal;
-    padding: var(--s-basic-spacing) 0;
-    line-height: var(--s-line-height-big);
   }
   &_divider {
     margin: unset;

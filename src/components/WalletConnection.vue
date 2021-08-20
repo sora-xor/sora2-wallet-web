@@ -192,7 +192,7 @@ $accounts-number: 7;
     font-weight: 300;
     line-height: var(--s-line-height-base);
     color: var(--s-color-base-content-primary);
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
+    margin-bottom: #{$basic-spacing-medium};
     &.no-permissions {
       margin-top: var(--s-basic-spacing);
     }
@@ -216,7 +216,7 @@ $accounts-number: 7;
     width: 100%;
     & + & {
       margin-left: 0;
-      margin-top: calc(var(--s-basic-spacing) * 2);
+      margin-top: #{$basic-spacing-medium};
     }
     &.s-secondary {
       margin-left: 0;

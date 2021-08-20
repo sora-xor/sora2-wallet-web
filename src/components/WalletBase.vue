@@ -132,10 +132,10 @@ $button-size: var(--s-size-medium);
     position: relative;
     height: $button-size;
     align-items: center;
-    padding-right: calc(#{$button-size} + calc(var(--s-basic-spacing) * 2));
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
+    padding-right: calc(#{$button-size} + #{$basic-spacing-medium});
+    margin-bottom: #{$basic-spacing-medium};
     &--center {
-      padding-left: calc(#{$button-size} + calc(var(--s-basic-spacing) * 2));
+      padding-left: calc(#{$button-size} + #{$basic-spacing-medium});
       text-align: center;
     }
     &--has-history {
@@ -145,9 +145,9 @@ $button-size: var(--s-size-medium);
     }
     &--actions {
       &.base-title--center {
-        padding-left: calc(#{$button-size} * 2 + calc(var(--s-basic-spacing) * 2));
+        padding-left: calc(#{$button-size} * 2 + #{$basic-spacing-medium});
       }
-      padding-right: calc(#{$button-size} * 2 + calc(var(--s-basic-spacing) * 2));
+      padding-right: calc(#{$button-size} * 2 + #{$basic-spacing-medium});
       .base-title_action {
         right: calc(#{$button-size} + var(--s-basic-spacing));
       }
