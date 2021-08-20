@@ -166,7 +166,7 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
 
 .add-asset-details {
   & > *:not(:last-child) {
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
+    margin-bottom: #{$basic-spacing-medium};
   }
 
   &_asset {
@@ -175,7 +175,7 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
 
     .asset {
       &-logo {
-        margin-right: calc(var(--s-basic-spacing) * 2);
+        margin-right: #{$basic-spacing-medium};
         @include asset-logo-styles(40px);
       }
       &-description {

@@ -148,9 +148,9 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
 <style lang="scss">
 .history {
-  margin-top: calc(var(--s-basic-spacing) * 2);
+  margin-top: #{$basic-spacing-medium};
   .el-card__body {
-    padding: calc(var(--s-basic-spacing) * 2) calc(var(--s-basic-spacing) * 2) calc(var(--s-basic-spacing) * 2.5);
+    padding: #{$basic-spacing-medium} #{$basic-spacing-medium} calc(var(--s-basic-spacing) * 2.5);
   }
   .el-pagination {
     .btn {
@@ -184,7 +184,7 @@ $history-item-top-border-height: 1px;
 .history {
   flex-direction: column;
   &--search.el-form-item {
-    margin-bottom: calc(var(--s-basic-spacing) * 2);
+    margin-bottom: #{$basic-spacing-medium};
   }
   &-item {
     display: flex;
@@ -301,7 +301,7 @@ $history-item-top-border-height: 1px;
 }
 .el-pagination {
   display: flex;
-  margin-top: calc(var(--s-basic-spacing) * 2);
+  margin-top: #{$basic-spacing-medium};
   padding-left: 0;
   padding-right: 0;
 }
