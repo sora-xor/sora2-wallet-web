@@ -81,85 +81,63 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
     </div>
      
     <div
-      class="transaction-row s-flex"
+      class="info-line-container"
     >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
-       
-      <div
-        class="transaction-row_value"
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value=""
       >
         <span
           class="transaction-status"
         >
           
         </span>
-      </div>
+         
+        <s-icon-stub
+          name="basic-check-mark-24"
+          size="16px"
+        />
+      </info-line-stub>
        
-      <s-icon-stub
-        name="basic-check-mark-24"
+      <!---->
+       
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value="27.11.2020, 11:59:59"
       />
-    </div>
-     
-    <!---->
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
        
-      <div
-        class="transaction-row_value"
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value=""
       >
-        27.11.2020, 11:59:59
-      </div>
-    </div>
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
+        <formatted-amount-stub
+          assetsymbol="XOR"
+          class="info-line-value"
+          fontsizerate="medium"
+          fontweightrate="small"
+          value="0.1"
+        >
+          <!---->
+        </formatted-amount-stub>
+      </info-line-stub>
        
-      <div
-        class="transaction-row_value"
-      >
-        0.1 XOR
-      </div>
-    </div>
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
-       
-      <div
-        class="transaction-row_value"
-      >
-        0.9 PSWAP
-      </div>
+      <info-line-stub
+        assetsymbol="PSWAP"
+        fiatvalue=""
+        isformatted="true"
+        label=""
+        labeltooltip=""
+        value="0.9"
+      />
     </div>
      
     <div
@@ -317,54 +295,41 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
     </div>
      
     <div
-      class="transaction-row s-flex"
+      class="info-line-container"
     >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
-       
-      <div
-        class="transaction-row_value"
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value=""
       >
         <span
           class="transaction-status"
         >
           
         </span>
-      </div>
+         
+        <s-icon-stub
+          name="basic-check-mark-24"
+          size="16px"
+        />
+      </info-line-stub>
        
-      <s-icon-stub
-        name="basic-check-mark-24"
+      <!---->
+       
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value="27.11.2020, 11:59:59"
       />
-    </div>
-     
-    <!---->
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
        
-      <div
-        class="transaction-row_value"
-      >
-        27.11.2020, 11:59:59
-      </div>
+      <!---->
+       
+      <!---->
     </div>
-     
-    <!---->
-     
-    <!---->
      
     <div
       class="s-input-container"
@@ -521,70 +486,67 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
     </div>
      
     <div
-      class="transaction-row s-flex"
+      class="info-line-container"
     >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
-       
-      <div
-        class="transaction-row_value"
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value=""
       >
         <span
           class="transaction-status"
         >
           
         </span>
-      </div>
+         
+        <s-icon-stub
+          name="basic-check-mark-24"
+          size="16px"
+        />
+      </info-line-stub>
        
-      <s-icon-stub
-        name="basic-check-mark-24"
+      <!---->
+       
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value="27.11.2020, 11:59:59"
       />
-    </div>
-     
-    <!---->
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
        
-      <div
-        class="transaction-row_value"
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value=""
       >
-        27.11.2020, 11:59:59
-      </div>
-    </div>
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
+        <formatted-amount-stub
+          assetsymbol="XOR"
+          class="info-line-value"
+          fontsizerate="medium"
+          fontweightrate="small"
+          value="100.123"
+        >
+          <span
+            class="formatted-amount__divider"
+          >
+            
+          </span>
+           
+          <span
+            class="formatted-amount__symbol"
+          >
+            PSWAP
+          </span>
+        </formatted-amount-stub>
+      </info-line-stub>
        
-      <div
-        class="transaction-row_value"
-      >
-        100.123 XOR undefined PSWAP
-      </div>
+      <!---->
     </div>
-     
-    <!---->
      
     <div
       class="s-input-container"
@@ -741,103 +703,72 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
     </div>
      
     <div
-      class="transaction-row s-flex"
+      class="info-line-container"
     >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
-       
-      <div
-        class="transaction-row_value"
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value=""
       >
         <span
           class="transaction-status transaction-status--error"
         >
           
         </span>
-      </div>
+         
+        <!---->
+      </info-line-stub>
        
-      <!---->
-    </div>
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
-       
-      <div
-        class="transaction-row_value"
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value=""
       >
         <span
           class="transaction-status transaction-status--error"
         >
           Test error message!
         </span>
-      </div>
-    </div>
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
+      </info-line-stub>
        
-      <div
-        class="transaction-row_value"
-      >
-        27.11.2020, 11:59:59
-      </div>
-    </div>
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value="27.11.2020, 11:59:59"
+      />
        
-      <div
-        class="transaction-row_value"
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value=""
       >
-        0.1 XOR
-      </div>
-    </div>
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
+        <formatted-amount-stub
+          assetsymbol="XOR"
+          class="info-line-value"
+          fontsizerate="medium"
+          fontweightrate="small"
+          value="0.1"
+        >
+          <!---->
+        </formatted-amount-stub>
+      </info-line-stub>
        
-      <div
-        class="transaction-row_value"
-      >
-        0.9 PSWAP
-      </div>
+      <info-line-stub
+        assetsymbol="PSWAP"
+        fiatvalue=""
+        isformatted="true"
+        label=""
+        labeltooltip=""
+        value="0.9"
+      />
     </div>
      
     <div
@@ -995,70 +926,57 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
     </div>
      
     <div
-      class="transaction-row s-flex"
+      class="info-line-container"
     >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
-       
-      <div
-        class="transaction-row_value"
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value=""
       >
         <span
           class="transaction-status"
         >
           
         </span>
-      </div>
+         
+        <s-icon-stub
+          name="basic-check-mark-24"
+          size="16px"
+        />
+      </info-line-stub>
        
-      <s-icon-stub
-        name="basic-check-mark-24"
+      <!---->
+       
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value="27.11.2020, 11:59:59"
       />
-    </div>
-     
-    <!---->
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
        
-      <div
-        class="transaction-row_value"
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label=""
+        labeltooltip=""
+        value=""
       >
-        27.11.2020, 11:59:59
-      </div>
-    </div>
-     
-    <div
-      class="transaction-row s-flex"
-    >
-      <div
-        class="transaction-row_key"
-      >
-        
-        
-      
-      </div>
+        <formatted-amount-stub
+          assetsymbol="XOR"
+          class="info-line-value"
+          fontsizerate="medium"
+          fontweightrate="small"
+          value="0.1"
+        >
+          <!---->
+        </formatted-amount-stub>
+      </info-line-stub>
        
-      <div
-        class="transaction-row_value"
-      >
-        0.1 XOR
-      </div>
+      <!---->
     </div>
-     
-    <!---->
      
     <div
       class="s-input-container"

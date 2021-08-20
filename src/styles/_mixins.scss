@@ -59,10 +59,10 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: calc(var(--s-basic-spacing) * 2);
+  padding: #{$basic-spacing-medium};
 
   & > span {
-    margin-left: calc(var(--s-basic-spacing) * 1.5);
+    margin-left: #{$basic-spacing-small};
     font-size: var(--s-font-size-medium);
     font-weight: 300;
     letter-spacing: var(--s-letter-spacing-small);
