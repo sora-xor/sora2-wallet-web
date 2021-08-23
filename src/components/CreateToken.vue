@@ -64,7 +64,7 @@
           <template v-else>{{ t('createToken.confirm') }}</template>
         </s-button>
       </template>
-      <wallet-fee v-if="!isCreateDisabled" :value="formattedFee" />
+      <wallet-fee v-if="!isCreateDisabled" :value="fee" />
     </div>
   </wallet-base>
 </template>
@@ -72,7 +72,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action } from 'vuex-class'
-import { KnownSymbols, CodecString, KnownAssets, FPNumber, MaxTotalSupply } from '@sora-substrate/util'
+import { KnownSymbols, KnownAssets, FPNumber, MaxTotalSupply, Operation } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
@@ -108,7 +108,6 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   tokenName = ''
   tokenSupply = ''
   extensibleSupply = false
-  fee: CodecString = '0'
 
   @Action navigate
 
@@ -120,8 +119,8 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     }
   }
 
-  get formattedFee (): FPNumber {
-    return this.getFPNumberFromCodec(this.fee)
+  get fee (): FPNumber {
+    return this.getFPNumberFromCodec(api.NetworkFee[Operation.RegisterAsset])
   }
 
   get isCreateDisabled (): boolean {
@@ -139,34 +138,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
       return false
     }
     const fpAccountXor = this.getFPNumberFromCodec(accountXor.balance.transferable, accountXor.decimals)
-    return FPNumber.gte(fpAccountXor, this.getFPNumberFromCodec(this.fee))
-  }
-
-  async created () {
-    await this.calculateFee()
-  }
-
-  async calculateFee (isConfirm?: boolean): Promise<void> {
-    try {
-      await this.withLoading(async () => {
-        this.fee = await api.getRegisterAssetNetworkFee(
-          this.tokenSymbol,
-          this.tokenName,
-          this.tokenSupply,
-          this.extensibleSupply
-        )
-        if (isConfirm) {
-          this.step = Step.Confirm
-        }
-      })
-    } catch (error) {
-      console.error(error)
-      this.$notify({
-        message: this.t('createToken.feeError'),
-        type: 'error',
-        title: ''
-      })
-    }
+    return FPNumber.gte(fpAccountXor, this.fee)
   }
 
   async registerAsset (): Promise<void> {
@@ -187,7 +159,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
       this.tokenSupply = maxTokenSupply.toString()
     }
-    await this.calculateFee(true)
+    this.step = Step.Confirm
   }
 
   async onCreate (): Promise<void> {

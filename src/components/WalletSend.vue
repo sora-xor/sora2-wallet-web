@@ -55,7 +55,7 @@
             </div>
           </div>
         </s-float-input>
-        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" :loading="feeLoading" @click="step = 2">
+        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
       </template>
@@ -89,7 +89,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols } from '@sora-substrate/util'
+import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols, Operation } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
 import FormattedAmountMixin from './mixins/FormattedAmountMixin'
@@ -121,11 +121,9 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   step = 1
   address = ''
   amount = ''
-  fee = this.getFPNumber(0)
-  feeLoading = false
 
-  async created (): Promise<void> {
-    await this.calcFee()
+  get fee (): FPNumber {
+    return this.getFPNumberFromCodec(api.NetworkFee[Operation.Transfer])
   }
 
   get tooltipContent (): string {
@@ -240,18 +238,6 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
       return false
     }
     return knownAsset.symbol === KnownSymbols.XOR
-  }
-
-  async calcFee (): Promise<void> {
-    this.feeLoading = true
-    this.fee = this.getFPNumberFromCodec(
-      await api.getTransferNetworkFee(
-        this.asset.address,
-        this.validAddress ? this.address : '',
-        this.validAmount ? this.amount : 0
-      )
-    )
-    this.feeLoading = false
   }
 
   getAssetIconStyles = getAssetIconStyles
