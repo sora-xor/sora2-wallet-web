@@ -4,9 +4,9 @@
       class="wallet-fee"
       :label="t('walletSend.fee')"
       :label-tooltip="t('walletSend.feeTooltip')"
-      :value="value.toLocaleString()"
-      :asset-symbol="KnownSymbols.XOR"
-      :fiat-value="getFiatAmountByFPNumber(value)"
+      :value="formattedValue"
+      :asset-symbol="xor"
+      :fiat-value="formattedFiatValue"
       is-formatted
     />
   </div>
@@ -26,8 +26,18 @@ import InfoLine from './InfoLine.vue'
   }
 })
 export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountMixin) {
-  readonly KnownSymbols = KnownSymbols
-
   @Prop({ default: FPNumber.ZERO, type: FPNumber }) readonly value!: FPNumber
+
+  get xor (): string {
+    return KnownSymbols.XOR
+  }
+
+  get formattedValue (): string {
+    return this.value.toLocaleString()
+  }
+
+  get formattedFiatValue (): string | null {
+    return this.getFiatAmountByFPNumber(this.value)
+  }
 }
 </script>
