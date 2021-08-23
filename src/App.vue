@@ -32,7 +32,7 @@ export default class App extends Mixins(TransactionMixin) {
   @Action trackActiveTransactions
 
   async created (): Promise<void> {
-    initWallet({ withoutStore: true }) // We don't need storage for local development
+    await initWallet({ withoutStore: true }) // We don't need storage for local development
     this.trackActiveTransactions()
     const localeLanguage = navigator.language
     FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2)
