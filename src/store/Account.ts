@@ -9,7 +9,7 @@ import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArr
 import { api, axios, getCeresTokensData } from '../api'
 import { Account } from '../types'
 import { storage } from '../util/storage'
-import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util'
+import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable, formatSoraAddress } from '../util'
 
 export let updateAccountAssetsSubscription: any = null
 
@@ -324,8 +324,9 @@ const actions = {
   async importPolkadotJs ({ commit, dispatch }, { address }) {
     commit(types.POLKADOT_JS_IMPORT_REQUEST)
     try {
+      const defaultAddress = api.formatAddress(address, false)
       const info = await getExtensionInfo()
-      const account = info.accounts.find(acc => acc.address === address)
+      const account = info.accounts.find(acc => acc.address === defaultAddress)
       if (!account) {
         commit(types.POLKADOT_JS_IMPORT_FAILURE)
         throw new Error('polkadotjs.noAccount')
