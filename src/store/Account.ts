@@ -6,7 +6,7 @@ import concat from 'lodash/fp/concat'
 import omit from 'lodash/fp/omit'
 import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist, FPNumber } from '@sora-substrate/util'
 
-import { api, axios, getCeresTokensData } from '../api'
+import { api, axios, getSubqueryTokensData } from '../api'
 import { Account } from '../types'
 import { storage } from '../util/storage'
 import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util'
@@ -386,7 +386,7 @@ const actions = {
     commit(types.GET_WHITELIST_REQUEST)
     try {
       const { data } = await axios.get('/whitelist.json')
-      const cerestokenApiObj = await getCeresTokensData()
+      const cerestokenApiObj = await getSubqueryTokensData()
       if (!cerestokenApiObj) {
         commit(types.GET_WHITELIST_SUCCESS, { whitelist: data, withoutFiat: true } as WhitelistParams)
         return

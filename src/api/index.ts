@@ -17,21 +17,53 @@ type FiatMappedTokens = {
   [key: string]: string;
 }
 
-async function getCeresTokensData (): Promise<FiatMappedTokens | null> {
+async function getSubqueryTokensData (): Promise<FiatMappedTokens | null> {
   try {
-    const cerestokenApi = await axios.get('https://cerestoken.io/api/pairs')
-    const cerestokenApiObj = (cerestokenApi.data as Array<any>).reduce((acc, item) => {
-      if (+item.price) {
-        acc[item.asset_id] = new FPNumber(item.price).toCodecString()
+    const subqueryApi = await axios({
+      method: 'post',
+      url: 'https://api.subquery.network/sq/sora-xor/sora-dev',
+      headers: {
+        'content-type': 'application/json',
+        accept: 'application/json'
+      },
+      // TODO: Check why array of pools has no XOR asset
+      data: {
+        query: `query {
+            poolXYKEntities (last: 1) {
+              nodes {
+                pools {
+                  edges {
+                    node {
+                      targetAssetId,
+                      priceUSD
+                    }
+                  }
+                }
+              }
+            }
+          }`,
+        variables: null
       }
+    })
+    const subqueryApiTokens = (subqueryApi.data?.data?.poolXYKEntities?.nodes[0]?.pools?.edges as Array<any>).reduce((acc, itemNode) => {
+      const item = itemNode.node
+      // TODO: Could we show zero price?
+      // if (+item.priceUSD) {
+      acc[item.targetAssetId] = new FPNumber(item.priceUSD).toCodecString()
+      // }
       return acc
     }, {})
-    if (isEmpty(cerestokenApiObj)) {
+    if (isEmpty(subqueryApiTokens)) {
+      // TODO: This line is for dev only
+      console.log('subqueryApiTokens is empty')
       return null
     }
-    return cerestokenApiObj as FiatMappedTokens
+    // TODO: This line is for dev only
+    console.log('subqueryApiTokens: ', subqueryApiTokens)
+    return subqueryApiTokens as FiatMappedTokens
   } catch (error) {
-    console.warn('CERES API not available!')
+    console.error(error)
+    console.warn('SubQuery API not available!')
     return null
   }
 }
@@ -40,5 +72,5 @@ export {
   axios,
   connection,
   api,
-  getCeresTokensData
+  getSubqueryTokensData
 }
