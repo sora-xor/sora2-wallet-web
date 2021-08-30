@@ -53,15 +53,18 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
 
-import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util'
+import { AccountAsset, History, TransactionStatus, api } from '@sora-substrate/util'
 import LoadingMixin from './mixins/LoadingMixin'
 import TransactionMixin from './mixins/TransactionMixin'
 import { formatDate, getStatusIcon, getStatusClass } from '../util'
 import { RouteNames } from '../consts'
 
+import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery'
+
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
   @Getter activity!: Array<History>
+  @Getter account!: any
   @Action navigate
   @Action getAccountActivity
 
@@ -72,6 +75,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   query = ''
   currentPage = 1
   pageAmount = 8
+  pageInfo: any = {}
 
   get assetAddress (): string | undefined {
     return this.asset && this.asset.address
@@ -93,8 +97,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return !!(this.transactions && this.transactions.length)
   }
 
-  mounted () {
-    this.getAccountActivity()
+  async mounted () {
+    await this.updateHistory()
   }
 
   getFilteredHistory (history: Array<History>): Array<History> {
@@ -131,7 +135,13 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return getStatusIcon(this.getStatus(status))
   }
 
-  handlePaginationClick (current: number): void {
+  async handlePaginationClick (current: number): Promise<void> {
+    if (current > this.currentPage) {
+      await this.updateHistory({ after: this.pageInfo.endCursor })
+    } else {
+      await this.updateHistory({ before: this.pageInfo.startCursor })
+    }
+
     this.currentPage = current
   }
 
@@ -142,6 +152,44 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   handleResetSearch (): void {
     this.query = ''
     this.currentPage = 1
+  }
+
+  async updateHistory (params?: any): Promise<void> {
+    await this.updateHistoryFromExplorer(params)
+    this.getAccountActivity()
+  }
+
+  async updateHistoryFromExplorer ({ before = '', after = '' } = {}) {
+    const variables = {
+      address: this.account.address, // to search history for current account
+      first: this.pageAmount // pagination size
+    }
+
+    const {
+      historyElements: {
+        edges,
+        pageInfo
+      }
+    } = await SubqueryExplorerService.getAccountTransactions(variables)
+
+    this.pageInfo = { ...pageInfo }
+
+    for (const edge of edges) {
+      const transaction = edge.node
+      const hasHistoryItem = this.activity.find(item => item.txId === transaction.id)
+
+      if (!hasHistoryItem) {
+        const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction)
+
+        console.log(historyItem)
+
+        if (historyItem) {
+          api.saveHistory(historyItem)
+        }
+      }
+    }
+
+    console.log(api.history)
   }
 }
 </script>

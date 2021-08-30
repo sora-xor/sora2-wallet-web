@@ -4,12 +4,12 @@ import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 import omit from 'lodash/fp/omit'
-import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist, FPNumber } from '@sora-substrate/util'
+import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist, axiosInstance } from '@sora-substrate/util'
 
-import { api, axios, getCeresTokensData } from '../api'
+import { api, getCeresTokensData } from '../api'
 import { Account } from '../types'
 import { storage } from '../util/storage'
-import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable, formatSoraAddress } from '../util'
+import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util'
 
 export let updateAccountAssetsSubscription: any = null
 
@@ -386,7 +386,7 @@ const actions = {
   async getWhitelist ({ commit }) {
     commit(types.GET_WHITELIST_REQUEST)
     try {
-      const { data } = await axios.get('/whitelist.json')
+      const { data } = await axiosInstance.get('/whitelist.json')
       const cerestokenApiObj = await getCeresTokensData()
       if (!cerestokenApiObj) {
         commit(types.GET_WHITELIST_SUCCESS, { whitelist: data, withoutFiat: true } as WhitelistParams)

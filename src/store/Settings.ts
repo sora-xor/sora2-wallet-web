@@ -8,11 +8,14 @@ import { storage } from '../util/storage'
 import i18n from '../lang'
 import { WalletPermissions } from '../consts'
 
+import { SubqueryExplorerService } from '../services/subquery'
+
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
     'SET_LOCALE',
-    'SET_PERMISSIONS'
+    'SET_PERMISSIONS',
+    'SET_SORA_NETWORK'
   ]),
   map(x => [x, x]),
   fromPairs
@@ -25,7 +28,8 @@ function initialState () {
     permissions: {
       sendAssets: true,
       swapAssets: true
-    }
+    },
+    soraNetwork: ''
   }
 }
 
@@ -34,6 +38,9 @@ const state = initialState()
 const getters = {
   permissions (state) {
     return state.permissions
+  },
+  soraNetwork (state) {
+    return state.soraNetwork
   }
 }
 
@@ -57,6 +64,10 @@ const mutations = {
       return
     }
     state.permissions = { ...state.permissions, ...permissions }
+  },
+
+  [types.SET_SORA_NETWORK] (state, value = '') {
+    state.soraNetwork = value
   }
 }
 
@@ -67,6 +78,12 @@ const actions = {
 
   setPermissions ({ commit }, permisssions) {
     commit(types.SET_PERMISSIONS, permisssions)
+  },
+
+  setSoraNetwork ({ commit }, network: string) {
+    commit(types.SET_SORA_NETWORK, network)
+    // update explorer network
+    SubqueryExplorerService.setSoraNetwork(network)
   }
 }
 
