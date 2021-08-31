@@ -1,0 +1,391 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`InfoLine.vue [Label and Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      1,234,567.890123
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With "0" Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      0
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With "NaN" Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      NaN
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With 0 Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      0
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With Asset Symbol]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      1,234,567.890123
+      <span
+        class="asset-symbol"
+      >
+         XOR
+      </span>
+    </span>
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With Empty Label and Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With Fiat Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      1,234,567.890123
+      <!---->
+    </span>
+     
+    <formatted-amount-stub
+      assetsymbol=""
+      fontweightrate="normal"
+      isfiatvalue="true"
+      value="1,234,567.890123"
+      withleftshift="true"
+    />
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With Formatted Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <formatted-amount-stub
+      assetsymbol=""
+      class="info-line-value"
+      fontsizerate="medium"
+      fontweightrate="small"
+      value="1,234,567.890123456789"
+    />
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With Infinity Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      Infinity
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With Label Tooltip]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <s-tooltip-stub
+    animation="el-fade-in-linear"
+    borderradius="mini"
+    closedelay="0"
+    content="Label tooltip"
+    hideafter="0"
+    offset="0"
+    opendelay="1000"
+    placement="right-start"
+    popperclass="info-tooltip info-tooltip--info-line"
+    showarrow="true"
+    tabindex="0"
+    theme="auto"
+    usedesignsystem="true"
+  >
+    <s-icon-stub
+      name="info-16"
+      size="14px"
+    />
+  </s-tooltip-stub>
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      1,234,567.890123
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With NaN Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      NaN
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With undefined Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </div>
+</div>
+`;
