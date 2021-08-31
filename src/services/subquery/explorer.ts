@@ -34,7 +34,7 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   public async getTransaction (hash: string): Promise<any> {
-    // TODO: subquery in progress
+    // TODO: wait for Subquery support
     console.warn('SubqueryExplorer: "getTransaction" method is not implemented')
     return null
   }

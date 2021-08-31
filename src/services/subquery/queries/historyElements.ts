@@ -1,26 +1,28 @@
 export const HistoryElementsQuery = `
 query HistoryElements (
   $address: String = "",
-  $first: Int = 5,
+  $first: Int = null,
+  $last: Int = null,
   $after: Cursor  = "",
+  $before: Cursor  = "",
   $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC)
 {
   historyElements (
     first: $first
+    last: $last
+    before: $before
     after: $after
     orderBy: $orderBy
     filter: {
-      or: [
+      and: [
         {
           address: {
             equalTo: $address
           }
         }
         {
-          transfer: {
-            contains: {
-              to: $address
-            }
+          method: {
+            in: ["swap", "transfer", "depositLiquidity", "withdrawLiquidity"]
           }
         }
       ]

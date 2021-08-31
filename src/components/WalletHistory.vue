@@ -18,7 +18,7 @@
           </template>
         </s-input>
       </s-form-item>
-      <div class="history-items">
+      <div class="history-items" v-loading="loading">
         <template v-if="filteredHistory.length">
           <div
             class="history-item s-flex"
@@ -41,7 +41,8 @@
         :layout="'total, prev, next'"
         :current-page.sync="currentPage"
         :page-size="pageAmount"
-        :total="filteredHistory.length"
+        :total="total"
+        :disabled="loading"
         @prev-click="handlePaginationClick"
         @next-click="handlePaginationClick"
       />
@@ -60,6 +61,7 @@ import { formatDate, getStatusIcon, getStatusClass } from '../util'
 import { RouteNames } from '../consts'
 
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery'
+import { CursorPaginationItems, CursorPaginationDirection } from '../services/types'
 
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
@@ -75,7 +77,21 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   query = ''
   currentPage = 1
   pageAmount = 8
-  pageInfo: any = {}
+
+  historyExplorer = {
+    pageInfo: {
+      startCursor: '',
+      endCursor: ''
+    },
+    totalCount: 0
+  }
+
+  // for fast search
+  get activityHashTable (): any {
+    return this.activity.reduce((result, item) => {
+      return { ...result, [item.txId]: item }
+    }, {})
+  }
 
   get assetAddress (): string | undefined {
     return this.asset && this.asset.address
@@ -95,6 +111,14 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   get hasHistory (): boolean {
     return !!(this.transactions && this.transactions.length)
+  }
+
+  get total (): number {
+    const historyItemsCount = this.filteredHistory.length
+
+    if (this.query) return historyItemsCount
+
+    return Math.max(this.historyExplorer.totalCount, historyItemsCount)
   }
 
   async mounted () {
@@ -136,11 +160,12 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   async handlePaginationClick (current: number): Promise<void> {
-    if (current > this.currentPage) {
-      await this.updateHistory({ after: this.pageInfo.endCursor })
-    } else {
-      await this.updateHistory({ before: this.pageInfo.startCursor })
-    }
+    const { endCursor, startCursor } = this.historyExplorer.pageInfo
+    const isNext = current > this.currentPage
+    const cursor = isNext ? endCursor : startCursor
+    const cursorDirection = isNext ? CursorPaginationDirection.AFTER : CursorPaginationDirection.BEFORE
+
+    await this.updateHistory({ [cursorDirection]: cursor })
 
     this.currentPage = current
   }
@@ -155,41 +180,47 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   async updateHistory (params?: any): Promise<void> {
-    await this.updateHistoryFromExplorer(params)
-    this.getAccountActivity()
+    await this.withLoading(async () => {
+      await this.updateHistoryFromExplorer(params)
+      await this.getAccountActivity()
+    })
   }
 
   async updateHistoryFromExplorer ({ before = '', after = '' } = {}) {
+    const paginationSize = before ? CursorPaginationItems.LAST : CursorPaginationItems.FIRST
     const variables = {
       address: this.account.address, // to search history for current account
-      first: this.pageAmount // pagination size
+      after, // cursor
+      before, // cursor
+      [paginationSize]: this.pageAmount // pagination size
     }
 
-    const {
-      historyElements: {
-        edges,
-        pageInfo
-      }
-    } = await SubqueryExplorerService.getAccountTransactions(variables)
+    try {
+      const {
+        historyElements: {
+          edges,
+          pageInfo,
+          totalCount
+        }
+      } = await SubqueryExplorerService.getAccountTransactions(variables)
 
-    this.pageInfo = { ...pageInfo }
+      this.historyExplorer = { pageInfo, totalCount }
 
-    for (const edge of edges) {
-      const transaction = edge.node
-      const hasHistoryItem = this.activity.find(item => item.txId === transaction.id)
+      for (const edge of edges) {
+        const transaction = edge.node
+        const hasHistoryItem = transaction.id in this.activityHashTable
 
-      if (!hasHistoryItem) {
-        const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction)
+        if (!hasHistoryItem) {
+          const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction)
 
-        console.log(historyItem)
-
-        if (historyItem) {
-          api.saveHistory(historyItem)
+          if (historyItem) {
+            api.saveHistory(historyItem)
+          }
         }
       }
+    } catch (error) {
+      console.error(error)
     }
-
-    console.log(api.history)
   }
 }
 </script>

@@ -17,7 +17,6 @@ enum ModuleNames {
   Utility = 'utility'
 }
 
-/* eslint-disable @typescript-eslint/camelcase */
 const OperationByModuleCall = {
   [ModuleNames.Assets]: {
     transfer: Operation.Transfer,
@@ -66,7 +65,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     const payload: History = {
       id, // history item id will be txId
       type,
-      txId: getTransactionId(transaction),
+      txId: id,
       blockHeight: transaction.blockHeight,
       endTime: timestamp,
       startTime: timestamp,
@@ -75,7 +74,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       status: getTransactionStatus(transaction)
     }
 
-    // TODO: research error tx
+    // TODO: if Subquery will support error message, add it
     // if (transaction.errorMessage) {
     //   payload.errorMessage = transaction.errorMessage
     // }
@@ -100,8 +99,15 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       }
       case Operation.AddLiquidity:
       case Operation.RemoveLiquidity: {
-        payload.assetAddress = transaction.liquidityOperation.baseAssetId
-        payload.asset2Address = transaction.liquidityOperation.targetAssetId
+        const assetAddress = transaction.liquidityOperation.baseAssetId
+        const asset2Address = transaction.liquidityOperation.targetAssetId
+        const asset = await api.getAssetInfo(assetAddress)
+        const asset2 = await api.getAssetInfo(asset2Address)
+
+        payload.assetAddress = assetAddress
+        payload.asset2Address = asset2Address
+        payload.symbol = asset?.symbol ?? ''
+        payload.symbol2 = asset2?.symbol ?? ''
         payload.amount = transaction.liquidityOperation.baseAssetAmount
         payload.amount2 = transaction.liquidityOperation.targetAssetAmount
 
@@ -118,6 +124,10 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
         return payload
       }
+      // TODO: wait for Subquery support:
+      // Operation.Rewards
+      // Operation.RegisterAsset
+      // utility.batch
       default:
         return null
     }
