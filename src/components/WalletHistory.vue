@@ -62,6 +62,7 @@ import { RouteNames } from '../consts'
 
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery'
 import { CursorPaginationItems, CursorPaginationDirection } from '../services/types'
+import { historyElementsFilter } from '../services/subquery/queries/historyElements'
 
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
@@ -187,12 +188,21 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   async updateHistoryFromExplorer ({ before = '', after = '' } = {}) {
-    const paginationSize = before ? CursorPaginationItems.LAST : CursorPaginationItems.FIRST
+    const {
+      assetAddress,
+      account: { address },
+      pageAmount,
+      query
+    } = this
+
+    const filter = historyElementsFilter(address, { assetAddress, query })
+    const paginationDirection = before ? CursorPaginationItems.LAST : CursorPaginationItems.FIRST
+    const paginationSize = pageAmount // if query used, fetch all items
     const variables = {
-      address: this.account.address, // to search history for current account
       after, // cursor
       before, // cursor
-      [paginationSize]: this.pageAmount // pagination size
+      filter, // filter by account & asset
+      [paginationDirection]: paginationSize // pagination size
     }
 
     try {
@@ -262,9 +272,15 @@ $history-item-top-border-height: 1px;
 
 .history {
   flex-direction: column;
+
   &--search.el-form-item {
     margin-bottom: #{$basic-spacing-medium};
   }
+
+  &-items {
+    min-height: $history-item-height;
+  }
+
   &-item {
     display: flex;
     flex-direction: column;
