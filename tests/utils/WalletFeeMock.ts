@@ -1,6 +1,6 @@
 interface WalletFee {
   title: string;
-  value: any;
+  value: string;
 }
 
 export const MOCK_WALLET_FEE: Array<WalletFee> = [
@@ -9,27 +9,15 @@ export const MOCK_WALLET_FEE: Array<WalletFee> = [
     value: '1,234,567.890123'
   },
   {
-    title: 'With 0 Value',
-    value: 0
-  },
-  {
     title: 'With "0" Value',
     value: '0'
-  },
-  {
-    title: 'With undefined Value',
-    value: undefined
-  },
-  {
-    title: 'With NaN Value',
-    value: NaN
   },
   {
     title: 'With "NaN" Value',
     value: 'NaN'
   },
   {
-    title: 'With Infinity Value',
-    value: Infinity
+    title: 'With "Infinity" Value',
+    value: 'Infinity'
   }
 ]
