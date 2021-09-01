@@ -16,12 +16,6 @@ query HistoryElements (
     filter: $filter
   )
   {
-    totalCount
-    pageInfo {
-      startCursor
-      endCursor
-      hasNextPage
-    }
     edges {
       cursor 
       node {
@@ -58,39 +52,7 @@ const createAsssetFilters = (assetAddress: string): Array<any> =>
     return result
   }, [])
 
-const createQueryFilters = (query: string): Array<any> => {
-  const isAssetAddress = (query: string) => query.startsWith('0x') && query.length === 66
-  const isAccountAddress = (query: string) => query.startsWith('cn') && query.length === 49
-
-  const queryFilters: any = []
-
-  if (isAccountAddress(query)) {
-    queryFilters.push(
-      {
-        transfer: {
-          contains: {
-            from: query
-          }
-        }
-      },
-      {
-        transfer: {
-          contains: {
-            to: query
-          }
-        }
-      }
-    )
-  }
-
-  if (isAssetAddress(query)) {
-    queryFilters.push(...createAsssetFilters(query))
-  }
-
-  return queryFilters
-}
-
-export const historyElementsFilter = (address: string, { assetAddress = '', query = '' }): any => {
+export const historyElementsFilter = (address: string, { assetAddress = '', timestamp = 0 }): any => {
   const filter: any = {
     and: [
       {
@@ -112,9 +74,11 @@ export const historyElementsFilter = (address: string, { assetAddress = '', quer
     })
   }
 
-  if (query) {
+  if (timestamp) {
     filter.and.push({
-      or: createQueryFilters(query)
+      timestamp: {
+        greaterThan: String(timestamp)
+      }
     })
   }
 

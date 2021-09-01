@@ -9,8 +9,8 @@ export default class SubqueryExplorer implements Explorer {
       case 'Mainnet':
         return 'https://api.subquery.network/sq/sora-xor/sora'
       // TODO: subquery in progress
-      case 'Devnet':
       case 'Testnet':
+      case 'Devnet':
       default:
         return 'https://api.subquery.network/sq/sora-xor/sora-dev'
     }

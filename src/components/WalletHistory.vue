@@ -58,10 +58,10 @@ import { AccountAsset, History, TransactionStatus, api } from '@sora-substrate/u
 import LoadingMixin from './mixins/LoadingMixin'
 import TransactionMixin from './mixins/TransactionMixin'
 import { formatDate, getStatusIcon, getStatusClass } from '../util'
+import { subqueryStorage } from '../util/storage'
 import { RouteNames } from '../consts'
 
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery'
-import { CursorPaginationItems, CursorPaginationDirection } from '../services/types'
 import { historyElementsFilter } from '../services/subquery/queries/historyElements'
 
 @Component
@@ -79,17 +79,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   currentPage = 1
   pageAmount = 8
 
-  historyExplorer = {
-    pageInfo: {
-      startCursor: '',
-      endCursor: ''
-    },
-    totalCount: 0
-  }
-
   // for fast search
   get activityHashTable (): any {
     return this.activity.reduce((result, item) => {
+      if (!item.txId) return result
       return { ...result, [item.txId]: item }
     }, {})
   }
@@ -115,11 +108,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get total (): number {
-    const historyItemsCount = this.filteredHistory.length
-
-    if (this.query) return historyItemsCount
-
-    return Math.max(this.historyExplorer.totalCount, historyItemsCount)
+    return this.filteredHistory.length
   }
 
   async mounted () {
@@ -160,14 +149,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return getStatusIcon(this.getStatus(status))
   }
 
-  async handlePaginationClick (current: number): Promise<void> {
-    const { endCursor, startCursor } = this.historyExplorer.pageInfo
-    const isNext = current > this.currentPage
-    const cursor = isNext ? endCursor : startCursor
-    const cursorDirection = isNext ? CursorPaginationDirection.AFTER : CursorPaginationDirection.BEFORE
-
-    await this.updateHistory({ [cursorDirection]: cursor })
-
+  handlePaginationClick (current: number): void {
     this.currentPage = current
   }
 
@@ -180,55 +162,61 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     this.currentPage = 1
   }
 
-  async updateHistory (params?: any): Promise<void> {
+  async updateHistory (): Promise<void> {
     await this.withLoading(async () => {
-      await this.updateHistoryFromExplorer(params)
+      await this.updateHistoryFromExplorer()
       await this.getAccountActivity()
     })
   }
 
-  async updateHistoryFromExplorer ({ before = '', after = '' } = {}): Promise<void> {
-    // do request only without search
-    if (this.query) return
-
+  async updateHistoryFromExplorer (): Promise<void> {
     const {
       assetAddress,
-      account: { address },
-      pageAmount
+      activity,
+      account: { address }
     } = this
 
-    const filter = historyElementsFilter(address, { assetAddress })
-    const paginationDirection = before ? CursorPaginationItems.LAST : CursorPaginationItems.FIRST
-    const paginationSize = pageAmount // if query used, fetch all items
+    const operations = SubqueryDataParserService.supportedOperations
+    const parsedHistoryOperations = JSON.parse(subqueryStorage.get('operations'))
+
+    const operationsChanged = (
+      !Array.isArray(parsedHistoryOperations) ||
+      operations.length !== parsedHistoryOperations.length ||
+      !operations.every(item => !!parsedHistoryOperations.find(el => el === item))
+    )
+
+    const timestamp = (operationsChanged || !activity.length) ? 0 : api.historySyncTimestamp
+    const filter = historyElementsFilter(address, { assetAddress, timestamp })
     const variables = {
-      after, // cursor
-      before, // cursor
-      filter, // filter by account & asset
-      [paginationDirection]: paginationSize // pagination size
+      filter // filter by account & asset
     }
 
     try {
-      const {
-        historyElements: {
-          edges,
-          pageInfo,
-          totalCount
-        }
-      } = await SubqueryExplorerService.getAccountTransactions(variables)
+      const { historyElements: { edges } } = await SubqueryExplorerService.getAccountTransactions(variables)
 
-      this.historyExplorer = { pageInfo, totalCount }
+      if (edges.length !== 0) {
+        const latestTimestamp = edges[0].node.timestamp
 
-      for (const edge of edges) {
-        const transaction = edge.node
-        const hasHistoryItem = transaction.id in this.activityHashTable
+        api.historySyncTimestamp = +latestTimestamp
 
-        if (!hasHistoryItem) {
-          const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction)
+        for (const edge of edges) {
+          const transaction = edge.node
+          const hasHistoryItem = transaction.id in this.activityHashTable
 
-          if (historyItem) {
-            api.saveHistory(historyItem)
+          if (!hasHistoryItem) {
+            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction)
+
+            if (historyItem) {
+              api.saveHistory(historyItem)
+            }
           }
         }
+      } else {
+        api.historySyncTimestamp = timestamp
+      }
+
+      if (operationsChanged) {
+        subqueryStorage.set('operations', JSON.stringify(operations))
       }
     } catch (error) {
       console.error(error)

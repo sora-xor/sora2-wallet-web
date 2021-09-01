@@ -56,12 +56,23 @@ const getTransactionStatus = (tx: any): string => {
 }
 
 export default class SubqueryDataParser implements ExplorerDataParser {
+  public static SUPPORTED_OPERATIONS = [
+    Operation.Transfer,
+    Operation.Swap,
+    Operation.AddLiquidity,
+    Operation.RemoveLiquidity
+  ]
+
+  public get supportedOperations (): Array<Operation> {
+    return SubqueryDataParser.SUPPORTED_OPERATIONS
+  }
+
   public async parseTransactionAsHistoryItem (transaction): Promise<History | null> {
     const id = getTransactionId(transaction)
     const type = getTransactionOperationType(transaction)
     const timestamp = getTransactionTimestamp(transaction)
     const blockHeight = transaction.blockHeight
-    const blockId = (await api.api.rpc.chain.getBlockHash(blockHeight)).toString() // move to subquery
+    // TODO: add to subquery blockId
 
     // common attributes
     const payload: History = {
@@ -69,7 +80,6 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       type,
       txId: id,
       blockHeight,
-      blockId,
       endTime: timestamp,
       startTime: timestamp,
       from: transaction.address,
