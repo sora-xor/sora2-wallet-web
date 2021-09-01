@@ -60,6 +60,28 @@ exports[`InfoLine.vue [With "0" Value]: should be rendered correctly 1`] = `
 </div>
 `;
 
+exports[`InfoLine.vue [With "Infinity" Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+    <!---->
+     
+  </div>
+</div>
+`;
+
 exports[`InfoLine.vue [With "NaN" Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
@@ -76,44 +98,6 @@ exports[`InfoLine.vue [With "NaN" Value]: should be rendered correctly 1`] = `
   <div
     class="info-line-content"
   >
-     
-    <span
-      class="info-line-value"
-    >
-      NaN
-      <!---->
-    </span>
-     
-    <!---->
-     
-  </div>
-</div>
-`;
-
-exports[`InfoLine.vue [With 0 Value]: should be rendered correctly 1`] = `
-<div
-  class="info-line"
->
-   
-  <span
-    class="info-line-label"
-  >
-    Label
-  </span>
-   
-  <!---->
-   
-  <div
-    class="info-line-content"
-  >
-     
-    <span
-      class="info-line-value"
-    >
-      0
-      <!---->
-    </span>
-     
     <!---->
      
   </div>
@@ -170,14 +154,6 @@ exports[`InfoLine.vue [With Empty Label and Value]: should be rendered correctly
   <div
     class="info-line-content"
   >
-     
-    <span
-      class="info-line-value"
-    >
-      
-      <!---->
-    </span>
-     
     <!---->
      
   </div>
@@ -251,36 +227,6 @@ exports[`InfoLine.vue [With Formatted Value]: should be rendered correctly 1`] =
 </div>
 `;
 
-exports[`InfoLine.vue [With Infinity Value]: should be rendered correctly 1`] = `
-<div
-  class="info-line"
->
-   
-  <span
-    class="info-line-label"
-  >
-    Label
-  </span>
-   
-  <!---->
-   
-  <div
-    class="info-line-content"
-  >
-     
-    <span
-      class="info-line-value"
-    >
-      Infinity
-      <!---->
-    </span>
-     
-    <!---->
-     
-  </div>
-</div>
-`;
-
 exports[`InfoLine.vue [With Label Tooltip]: should be rendered correctly 1`] = `
 <div
   class="info-line"
@@ -321,66 +267,6 @@ exports[`InfoLine.vue [With Label Tooltip]: should be rendered correctly 1`] = `
       class="info-line-value"
     >
       1,234,567.890123
-      <!---->
-    </span>
-     
-    <!---->
-     
-  </div>
-</div>
-`;
-
-exports[`InfoLine.vue [With NaN Value]: should be rendered correctly 1`] = `
-<div
-  class="info-line"
->
-   
-  <span
-    class="info-line-label"
-  >
-    Label
-  </span>
-   
-  <!---->
-   
-  <div
-    class="info-line-content"
-  >
-     
-    <span
-      class="info-line-value"
-    >
-      NaN
-      <!---->
-    </span>
-     
-    <!---->
-     
-  </div>
-</div>
-`;
-
-exports[`InfoLine.vue [With undefined Value]: should be rendered correctly 1`] = `
-<div
-  class="info-line"
->
-   
-  <span
-    class="info-line-label"
-  >
-    Label
-  </span>
-   
-  <!---->
-   
-  <div
-    class="info-line-content"
-  >
-     
-    <span
-      class="info-line-value"
-    >
-      
       <!---->
     </span>
      
