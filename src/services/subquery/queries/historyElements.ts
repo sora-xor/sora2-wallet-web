@@ -5,7 +5,7 @@ query HistoryElements (
   $after: Cursor = "",
   $before: Cursor = "",
   $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC,
-  $filter: HistoryElementFilter = {})
+  $filter: HistoryElementFilter)
 {
   historyElements (
     first: $first

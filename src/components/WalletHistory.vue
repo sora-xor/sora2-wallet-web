@@ -187,15 +187,17 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     })
   }
 
-  async updateHistoryFromExplorer ({ before = '', after = '' } = {}) {
+  async updateHistoryFromExplorer ({ before = '', after = '' } = {}): Promise<void> {
+    // do request only without search
+    if (this.query) return
+
     const {
       assetAddress,
       account: { address },
-      pageAmount,
-      query
+      pageAmount
     } = this
 
-    const filter = historyElementsFilter(address, { assetAddress, query })
+    const filter = historyElementsFilter(address, { assetAddress })
     const paginationDirection = before ? CursorPaginationItems.LAST : CursorPaginationItems.FIRST
     const paginationSize = pageAmount // if query used, fetch all items
     const variables = {

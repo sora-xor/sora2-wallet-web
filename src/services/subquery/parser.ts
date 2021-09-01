@@ -60,13 +60,16 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     const id = getTransactionId(transaction)
     const type = getTransactionOperationType(transaction)
     const timestamp = getTransactionTimestamp(transaction)
+    const blockHeight = transaction.blockHeight
+    const blockId = (await api.api.rpc.chain.getBlockHash(blockHeight)).toString() // move to subquery
 
     // common attributes
     const payload: History = {
       id, // history item id will be txId
       type,
       txId: id,
-      blockHeight: transaction.blockHeight,
+      blockHeight,
+      blockId,
       endTime: timestamp,
       startTime: timestamp,
       from: transaction.address,
