@@ -4,7 +4,7 @@ interface InfoLine {
   title: string;
   label: string;
   labelTooltip?: string;
-  value: any;
+  value: string;
   assetSymbol?: string;
   isFormatted?: boolean;
   fiatValue?: string;
@@ -46,24 +46,9 @@ export const MOCK_INFO_LINE: Array<InfoLine> = [
     fiatValue: '1,234,567.890123'
   },
   {
-    title: 'With 0 Value',
-    label: 'Label',
-    value: 0
-  },
-  {
     title: 'With "0" Value',
     label: 'Label',
     value: '0'
-  },
-  {
-    title: 'With undefined Value',
-    label: 'Label',
-    value: undefined
-  },
-  {
-    title: 'With NaN Value',
-    label: 'Label',
-    value: NaN
   },
   {
     title: 'With "NaN" Value',
@@ -71,8 +56,8 @@ export const MOCK_INFO_LINE: Array<InfoLine> = [
     value: 'NaN'
   },
   {
-    title: 'With Infinity Value',
+    title: 'With "Infinity" Value',
     label: 'Label',
-    value: Infinity
+    value: 'Infinity'
   }
 ]

@@ -48,13 +48,17 @@ import { FontSizeRate, FontWeightRate } from '../types'
 export default class InfoLine extends Vue {
   @Prop({ default: '', type: String }) readonly label!: string
   @Prop({ default: '', type: String }) readonly labelTooltip?: string
-  @Prop({ default: '' }) readonly value!: string | number
+  @Prop({ default: '' }) readonly value!: string
   @Prop({ default: '', type: String }) readonly assetSymbol?: string
   @Prop({ default: false, type: Boolean }) readonly isFormatted?: boolean
   @Prop({ default: '', type: String }) readonly fiatValue?: string
 
   get isValueExists (): boolean {
-    return !!(this.value || +this.value === 0 || isNaN(+this.value))
+    if (this.value === 'NaN' || this.value === 'Infinity') {
+      console.error(`The ${this.label} value is: ${this.value}.`)
+      return false
+    }
+    return !!this.value
   }
 
   get formattedFontSize (): FontSizeRate | null {
