@@ -5,7 +5,7 @@ enum Step {
 
 export interface CreateTokenData {
   title: string;
-  step: any;
+  step: Step;
   tokenSymbol: string;
   tokenName: string;
   tokenSupply: string;

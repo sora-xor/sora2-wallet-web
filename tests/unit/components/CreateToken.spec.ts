@@ -9,7 +9,6 @@ useDescribe('CreateToken.vue', CreateToken, () => {
   MOCK_CREATE_TOKEN.map(item => it(`[${item.title}]: should be rendered correctly`, () => {
     const wrapper = shallowMount(CreateToken, {
       localVue,
-      mocks: { $t: () => {} },
       data () {
         return {
           step: item.step,
