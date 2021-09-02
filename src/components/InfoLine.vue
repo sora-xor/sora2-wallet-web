@@ -12,7 +12,7 @@
       <s-icon name="info-16" size="14px" />
     </s-tooltip>
     <div class="info-line-content">
-      <template v-if="value">
+      <template v-if="isValueExists">
         <slot name="info-line-value-prefix" />
         <formatted-amount
           v-if="isFormatted"
@@ -24,6 +24,7 @@
         />
         <span v-else class="info-line-value">{{ value }}<span v-if="assetSymbol" class="asset-symbol">{{ ' ' + assetSymbol }}</span></span>
         <formatted-amount
+          v-if="fiatValue"
           :value="fiatValue"
           is-fiat-value
           :font-size-rate="formattedFontSize"
@@ -47,10 +48,18 @@ import { FontSizeRate, FontWeightRate } from '../types'
 export default class InfoLine extends Vue {
   @Prop({ default: '', type: String }) readonly label!: string
   @Prop({ default: '', type: String }) readonly labelTooltip?: string
-  @Prop({ default: '' }) readonly value!: string | number
+  @Prop({ default: '' }) readonly value!: string
   @Prop({ default: '', type: String }) readonly assetSymbol?: string
   @Prop({ default: false, type: Boolean }) readonly isFormatted?: boolean
   @Prop({ default: '', type: String }) readonly fiatValue?: string
+
+  get isValueExists (): boolean {
+    if (this.value === 'NaN' || this.value.includes('Infinity')) {
+      console.error(`The ${this.label} value is: ${this.value}.`)
+      return false
+    }
+    return !!this.value
+  }
 
   get formattedFontSize (): FontSizeRate | null {
     return this.isFormatted ? FontSizeRate.MEDIUM : null
