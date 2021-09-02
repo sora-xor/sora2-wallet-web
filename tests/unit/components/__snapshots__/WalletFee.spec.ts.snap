@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletFee.vue [With "0" Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line-container"
+>
+  <info-line-stub
+    assetsymbol="XOR"
+    class="wallet-fee"
+    isformatted="true"
+    label=""
+    labeltooltip=""
+    value="0"
+  />
+</div>
+`;
+
+exports[`WalletFee.vue [With "Infinity" Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line-container"
+>
+  <info-line-stub
+    assetsymbol="XOR"
+    class="wallet-fee"
+    isformatted="true"
+    label=""
+    labeltooltip=""
+    value="Infinity"
+  />
+</div>
+`;
+
+exports[`WalletFee.vue [With "NaN" Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line-container"
+>
+  <info-line-stub
+    assetsymbol="XOR"
+    class="wallet-fee"
+    isformatted="true"
+    label=""
+    labeltooltip=""
+    value="NaN"
+  />
+</div>
+`;
+
+exports[`WalletFee.vue [With Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line-container"
+>
+  <info-line-stub
+    assetsymbol="XOR"
+    class="wallet-fee"
+    isformatted="true"
+    label=""
+    labeltooltip=""
+    value="1,234,567.890123"
+  />
+</div>
+`;
