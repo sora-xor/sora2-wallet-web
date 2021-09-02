@@ -1,0 +1,189 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+  tooltip=""
+>
+  <div
+    class="wallet-settings-create-token"
+  >
+    <info-line-stub
+      assetsymbol=""
+      fiatvalue=""
+      label=""
+      labeltooltip=""
+      value="TSYMBOL"
+    />
+     
+    <info-line-stub
+      assetsymbol=""
+      fiatvalue=""
+      label=""
+      labeltooltip=""
+      value="Token name"
+    />
+     
+    <info-line-stub
+      assetsymbol=""
+      fiatvalue=""
+      label=""
+      labeltooltip=""
+      value="10,000,000,000"
+    />
+     
+    <info-line-stub
+      assetsymbol=""
+      fiatvalue=""
+      label=""
+      labeltooltip=""
+      value="Yes"
+    />
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-settings-create-token_action s-typography-button--large"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+      usedesignsystem="true"
+    >
+      
+    </s-button-stub>
+     
+    <wallet-fee-stub
+      value="0"
+    />
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+  tooltip=""
+>
+  <div
+    class="wallet-settings-create-token"
+  >
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      borderradius="small"
+      form=""
+      label=""
+      maxlength="7"
+      minlength="1"
+      name=""
+      placeholder=""
+      prefix=""
+      size="big"
+      suffix=""
+      tabindex=""
+      type="text"
+      usedesignsystem="true"
+      value=""
+    />
+     
+    <p
+      class="wallet-settings-create-token_desc"
+    >
+      
+    </p>
+     
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      borderradius="small"
+      form=""
+      label=""
+      maxlength="33"
+      minlength="1"
+      name=""
+      placeholder=""
+      prefix=""
+      size="big"
+      suffix=""
+      tabindex=""
+      type="text"
+      usedesignsystem="true"
+      value=""
+    />
+     
+    <p
+      class="wallet-settings-create-token_desc"
+    >
+      
+    </p>
+     
+    <s-float-input-stub
+      decimals="18"
+      delimiters="[object Object]"
+      haslocalestring="true"
+      max="170141183460469231731.687303715884105727"
+      value=""
+    />
+     
+    <p
+      class="wallet-settings-create-token_desc"
+    >
+      
+    </p>
+     
+    <div
+      class="wallet-settings-create-token_supply-block"
+    >
+      <s-switch-stub
+        activeiconСlass=""
+        activetext=""
+        activevalue="true"
+        inactiveiconСlass=""
+        inactivetext=""
+        name=""
+        usedesignsystem="true"
+        width="40"
+      />
+       
+      <span>
+        
+      </span>
+    </div>
+     
+    <p
+      class="wallet-settings-create-token_desc"
+    >
+      
+    </p>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-settings-create-token_action s-typography-button--large"
+      disabled="true"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+      usedesignsystem="true"
+    >
+      
+    </s-button-stub>
+     
+    <!---->
+  </div>
+</wallet-base-stub>
+`;
