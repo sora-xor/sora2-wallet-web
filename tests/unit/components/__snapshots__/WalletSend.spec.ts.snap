@@ -1,0 +1,715 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletSend.vue [Confirm Step]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+  tooltip=""
+>
+  <div
+    class="wallet-send"
+  >
+    <div
+      class="confirm"
+    >
+      <div
+        class="confirm-asset s-flex"
+      >
+        <span
+          class="confirm-asset-title"
+        >
+          10,000,000,000
+        </span>
+         
+        <div
+          class="confirm-asset-value s-flex"
+        >
+          <i
+            class="asset-logo"
+          />
+           
+          <span
+            class="asset-name"
+          >
+            XOR
+          </span>
+        </div>
+      </div>
+       
+      <div
+        class="confirm-from"
+      >
+        dfsakljfdlkjfhfkjladshslfjafds
+      </div>
+       
+      <s-icon-stub
+        name="arrows-arrow-bottom-24"
+      />
+       
+      <div
+        class="confirm-to"
+      >
+        
+      </div>
+    </div>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-send-action s-typography-button--large"
+      disabled="true"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+      usedesignsystem="true"
+    >
+      
+        
+      
+    </s-button-stub>
+     
+    <wallet-fee-stub
+      value="0"
+    />
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+  tooltip=""
+>
+  <div
+    class="wallet-send"
+  >
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      borderradius="small"
+      class="wallet-send-address"
+      form=""
+      label=""
+      maxlength="128"
+      name=""
+      placeholder=""
+      prefix=""
+      size="big"
+      suffix=""
+      tabindex=""
+      type="text"
+      usedesignsystem="true"
+      value=""
+    />
+     
+    <!---->
+     
+    <!---->
+     
+    <s-float-input-stub
+      class="wallet-send-input"
+      delimiters="[object Object]"
+      haslocalestring="true"
+      max="700000"
+      size="medium"
+      value=""
+    >
+      <div
+        class="wallet-send-amount"
+      >
+        <div
+          class="wallet-send-amount-title"
+        >
+          
+        </div>
+         
+        <div
+          class="wallet-send-amount-balance"
+        >
+          <span
+            class="wallet-send-amount-balance-title"
+          >
+            
+          </span>
+           
+          <span
+            class="wallet-send-amount-balance-value"
+          >
+            123.4
+          </span>
+           
+          <!---->
+        </div>
+      </div>
+       
+      <div
+        class="asset s-flex"
+      >
+        <!---->
+         
+        <div
+          class="asset-box"
+        >
+          <i
+            class="asset-logo"
+          />
+           
+          <span
+            class="asset-name"
+          >
+            XOR
+          </span>
+        </div>
+      </div>
+       
+      <div
+        class="asset-info"
+      >
+        <!---->
+         
+        <div
+          class="asset-highlight"
+        >
+          
+            SORA
+            
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content=""
+            hideafter="0"
+            offset="0"
+            opendelay="1000"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
+          >
+            <span
+              class="asset-id"
+            >
+              (0x020...00000)
+            </span>
+          </s-tooltip-stub>
+        </div>
+      </div>
+    </s-float-input-stub>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-send-action s-typography-button--large"
+      disabled="true"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+      usedesignsystem="true"
+    >
+      
+        
+      
+    </s-button-stub>
+     
+    <wallet-fee-stub
+      value="0"
+    />
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+  tooltip=""
+>
+  <div
+    class="wallet-send"
+  >
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      borderradius="small"
+      class="wallet-send-address"
+      form=""
+      label=""
+      maxlength="128"
+      name=""
+      placeholder=""
+      prefix=""
+      size="big"
+      suffix=""
+      tabindex=""
+      type="text"
+      usedesignsystem="true"
+      value="12345"
+    />
+     
+    <!---->
+     
+    <!---->
+     
+    <s-float-input-stub
+      class="wallet-send-input"
+      delimiters="[object Object]"
+      haslocalestring="true"
+      max="700000"
+      size="medium"
+      value=""
+    >
+      <div
+        class="wallet-send-amount"
+      >
+        <div
+          class="wallet-send-amount-title"
+        >
+          
+        </div>
+         
+        <div
+          class="wallet-send-amount-balance"
+        >
+          <span
+            class="wallet-send-amount-balance-title"
+          >
+            
+          </span>
+           
+          <span
+            class="wallet-send-amount-balance-value"
+          >
+            123.4
+          </span>
+           
+          <!---->
+        </div>
+      </div>
+       
+      <div
+        class="asset s-flex"
+      >
+        <!---->
+         
+        <div
+          class="asset-box"
+        >
+          <i
+            class="asset-logo"
+          />
+           
+          <span
+            class="asset-name"
+          >
+            XOR
+          </span>
+        </div>
+      </div>
+       
+      <div
+        class="asset-info"
+      >
+        <!---->
+         
+        <div
+          class="asset-highlight"
+        >
+          
+            SORA
+            
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content=""
+            hideafter="0"
+            offset="0"
+            opendelay="1000"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
+          >
+            <span
+              class="asset-id"
+            >
+              (0x020...00000)
+            </span>
+          </s-tooltip-stub>
+        </div>
+      </div>
+    </s-float-input-stub>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-send-action s-typography-button--large"
+      disabled="true"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+      usedesignsystem="true"
+    >
+      
+        
+      
+    </s-button-stub>
+     
+    <wallet-fee-stub
+      value="0"
+    />
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+  tooltip=""
+>
+  <div
+    class="wallet-send"
+  >
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      borderradius="small"
+      class="wallet-send-address"
+      form=""
+      label=""
+      maxlength="128"
+      name=""
+      placeholder=""
+      prefix=""
+      size="big"
+      suffix=""
+      tabindex=""
+      type="text"
+      usedesignsystem="true"
+      value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
+    />
+     
+    <p
+      class="wallet-send-address-warning"
+    >
+      
+    </p>
+     
+    <s-tooltip-stub
+      animation="el-fade-in-linear"
+      borderradius="small"
+      closedelay="0"
+      content=""
+      hideafter="0"
+      offset="0"
+      opendelay="1000"
+      placement="top"
+      showarrow="true"
+      tabindex="0"
+      theme="auto"
+      usedesignsystem="true"
+    >
+      <p
+        class="wallet-send-address-formatted"
+      >
+        cnV1qZzFyBzkXS4xfmEnXue4SPhAbFNqcvULKSdzkfPEEZsBe
+      </p>
+    </s-tooltip-stub>
+     
+    <!---->
+     
+    <s-float-input-stub
+      class="wallet-send-input"
+      delimiters="[object Object]"
+      haslocalestring="true"
+      max="700000"
+      size="medium"
+      value=""
+    >
+      <div
+        class="wallet-send-amount"
+      >
+        <div
+          class="wallet-send-amount-title"
+        >
+          
+        </div>
+         
+        <div
+          class="wallet-send-amount-balance"
+        >
+          <span
+            class="wallet-send-amount-balance-title"
+          >
+            
+          </span>
+           
+          <span
+            class="wallet-send-amount-balance-value"
+          >
+            123.4
+          </span>
+           
+          <!---->
+        </div>
+      </div>
+       
+      <div
+        class="asset s-flex"
+      >
+        <!---->
+         
+        <div
+          class="asset-box"
+        >
+          <i
+            class="asset-logo"
+          />
+           
+          <span
+            class="asset-name"
+          >
+            XOR
+          </span>
+        </div>
+      </div>
+       
+      <div
+        class="asset-info"
+      >
+        <!---->
+         
+        <div
+          class="asset-highlight"
+        >
+          
+            SORA
+            
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content=""
+            hideafter="0"
+            offset="0"
+            opendelay="1000"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
+          >
+            <span
+              class="asset-id"
+            >
+              (0x020...00000)
+            </span>
+          </s-tooltip-stub>
+        </div>
+      </div>
+    </s-float-input-stub>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-send-action s-typography-button--large"
+      disabled="true"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+      usedesignsystem="true"
+    >
+      
+        
+      
+    </s-button-stub>
+     
+    <wallet-fee-stub
+      value="0"
+    />
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+  tooltip=""
+>
+  <div
+    class="wallet-send"
+  >
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      borderradius="small"
+      class="wallet-send-address"
+      form=""
+      label=""
+      maxlength="128"
+      name=""
+      placeholder=""
+      prefix=""
+      size="big"
+      suffix=""
+      tabindex=""
+      type="text"
+      usedesignsystem="true"
+      value="dfsakljfdlkjfhfkjladshslfjafds"
+    />
+     
+    <!---->
+     
+    <p
+      class="wallet-send-address-error"
+    >
+      
+    </p>
+     
+    <s-float-input-stub
+      class="wallet-send-input"
+      delimiters="[object Object]"
+      haslocalestring="true"
+      max="700000"
+      size="medium"
+      value=""
+    >
+      <div
+        class="wallet-send-amount"
+      >
+        <div
+          class="wallet-send-amount-title"
+        >
+          
+        </div>
+         
+        <div
+          class="wallet-send-amount-balance"
+        >
+          <span
+            class="wallet-send-amount-balance-title"
+          >
+            
+          </span>
+           
+          <span
+            class="wallet-send-amount-balance-value"
+          >
+            123.4
+          </span>
+           
+          <!---->
+        </div>
+      </div>
+       
+      <div
+        class="asset s-flex"
+      >
+        <!---->
+         
+        <div
+          class="asset-box"
+        >
+          <i
+            class="asset-logo"
+          />
+           
+          <span
+            class="asset-name"
+          >
+            XOR
+          </span>
+        </div>
+      </div>
+       
+      <div
+        class="asset-info"
+      >
+        <!---->
+         
+        <div
+          class="asset-highlight"
+        >
+          
+            SORA
+            
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content=""
+            hideafter="0"
+            offset="0"
+            opendelay="1000"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
+          >
+            <span
+              class="asset-id"
+            >
+              (0x020...00000)
+            </span>
+          </s-tooltip-stub>
+        </div>
+      </div>
+    </s-float-input-stub>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-send-action s-typography-button--large"
+      disabled="true"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+      usedesignsystem="true"
+    >
+      
+        
+      
+    </s-button-stub>
+     
+    <wallet-fee-stub
+      value="0"
+    />
+  </div>
+</wallet-base-stub>
+`;

@@ -1,53 +1,36 @@
-// import Vuex from 'vuex'
-// import { shallowMount, createLocalVue } from '@vue/test-utils'
+import Vuex from 'vuex'
+import { shallowMount } from '@vue/test-utils'
 
-// import WalletSend from '@/components/WalletSend.vue'
-// import { TranslationMock, SoramitsuElementsImport } from '../../utils'
+import { useDescribe, localVue } from '../../utils'
+import { MOCK_ACCOUNT_ASSETS, MOCK_WHITE_LIST, MOCK_ACCOUNTS } from '../../utils/mock'
+import { MOCK_WALLET_SEND } from '../../utils/WalletSendMock'
 
-// TODO: fix issue with CI
+import WalletSend from '@/components/WalletSend.vue'
 
-// const localVue = createLocalVue()
-// localVue.use(Vuex)
-// const store = new Vuex.Store({
-//   modules: {
-//     Account: {
-//       actions: {
-//         transfer: jest.fn()
-//       },
-//       getters: {
-//         account: () => ({ address: 'asdfsasda', name: 'mock', password: 'asdsdadds', isExternal: false }),
-//         accountAssets: () => [{ symbol: 'XOR', address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984', balance: '0.123', decimals: 18 }]
-//       }
-//     },
-//     Router: {
-//       actions: {
-//         navigate: jest.fn()
-//       },
-//       getters: {
-//         currentRouteParams: () => (
-//           {
-//             asset: {
-//               symbol: 'XOR',
-//               address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984',
-//               balance: 12787.09,
-//               decimals: 18
-//             }
-//           }
-//         )
-//       }
-//     }
-//   } as any
-// })
-
-describe('WalletSend.vue', () => {
-  beforeEach(() => {
-    // SoramitsuElementsImport(localVue)
-    // TranslationMock(WalletSend)
+useDescribe('WalletSend.vue', WalletSend, () => {
+  const store = new Vuex.Store({
+    getters: {
+      currentRouteParams: () => ({ id: '1', asset: MOCK_ACCOUNT_ASSETS[0] }),
+      accountAssets: () => MOCK_ACCOUNT_ASSETS,
+      account: () => MOCK_ACCOUNTS[0],
+      whitelist: () => MOCK_WHITE_LIST
+    },
+    actions: {
+      setAttribute: jest.fn()
+    }
   })
-
-  it('should renders correctly', () => {
-    // const wrapper = shallowMount(WalletSend, { localVue, store })
-    // expect(wrapper.element).toMatchSnapshot()
-    expect(true).toBe(true)
-  })
+  MOCK_WALLET_SEND.map(item => it(`[${item.title}]: should be rendered correctly`, () => {
+    const wrapper = shallowMount(WalletSend, {
+      localVue,
+      store,
+      data () {
+        return {
+          step: item.step,
+          address: item.address,
+          amount: item.amount
+        }
+      }
+    })
+    expect(wrapper.element).toMatchSnapshot()
+  }))
 })

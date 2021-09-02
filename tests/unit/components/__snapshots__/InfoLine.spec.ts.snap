@@ -206,13 +206,36 @@ exports[`InfoLine.vue [With Fiat Value]: should be rendered correctly 1`] = `
       <!---->
     </span>
      
-    <formatted-amount-stub
-      assetsymbol=""
-      fontweightrate="normal"
-      isfiatvalue="true"
-      value="1,234,567.890123"
-      withleftshift="true"
-    />
+    <span
+      class="formatted-amount formatted-amount--font-size-null formatted-amount--fiat-value formatted-amount--shifted"
+    >
+      <span
+        class="formatted-amount__prefix"
+      >
+        ~$
+      </span>
+       
+      <span
+        class="formatted-amount__integer"
+      >
+        1,234,567
+      </span>
+       
+      <span
+        class="formatted-amount__decimal"
+      >
+        <span
+          class="formatted-amount__decimal-value"
+        >
+          .89
+        </span>
+         
+        <!---->
+      </span>
+       
+      <!---->
+       
+    </span>
      
   </div>
 </div>
@@ -235,13 +258,32 @@ exports[`InfoLine.vue [With Formatted Value]: should be rendered correctly 1`] =
     class="info-line-content"
   >
      
-    <formatted-amount-stub
-      assetsymbol=""
-      class="info-line-value"
-      fontsizerate="medium"
-      fontweightrate="small"
-      value="1,234,567.890123456789"
-    />
+    <span
+      class="info-line-value formatted-amount formatted-amount--font-size-medium formatted-amount--font-weight-small"
+    >
+      <!---->
+       
+      <span
+        class="formatted-amount__integer"
+      >
+        1,234,567
+      </span>
+       
+      <span
+        class="formatted-amount__decimal"
+      >
+        <span
+          class="formatted-amount__decimal-value"
+        >
+          .890123456789
+        </span>
+         
+        <!---->
+      </span>
+       
+      <!---->
+       
+    </span>
      
     <!---->
      
