@@ -30,6 +30,28 @@ exports[`InfoLine.vue [Label and Value]: should be rendered correctly 1`] = `
 </div>
 `;
 
+exports[`InfoLine.vue [With "-Infinity" Value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+    <!---->
+     
+  </div>
+</div>
+`;
+
 exports[`InfoLine.vue [With "0" Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
