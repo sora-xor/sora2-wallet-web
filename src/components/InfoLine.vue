@@ -54,7 +54,7 @@ export default class InfoLine extends Vue {
   @Prop({ default: '', type: String }) readonly fiatValue?: string
 
   get isValueExists (): boolean {
-    if (this.value === 'NaN' || this.value === 'Infinity') {
+    if (this.value === 'NaN' || this.value.includes('Infinity')) {
       console.error(`The ${this.label} value is: ${this.value}.`)
       return false
     }
