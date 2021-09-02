@@ -59,5 +59,10 @@ export const MOCK_INFO_LINE: Array<InfoLine> = [
     title: 'With "Infinity" Value',
     label: 'Label',
     value: 'Infinity'
+  },
+  {
+    title: 'With "-Infinity" Value',
+    label: 'Label',
+    value: '-Infinity'
   }
 ]
