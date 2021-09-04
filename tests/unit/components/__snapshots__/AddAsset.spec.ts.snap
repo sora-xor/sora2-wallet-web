@@ -1,0 +1,63 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddAsset.vue [Custom Asset Tab]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+  tooltip=""
+>
+  <div
+    class="add-asset"
+  >
+    <s-tabs-stub
+      borderradius="small"
+      position="top"
+      type="rounded"
+      usedesignsystem="true"
+      value="AddAssetCustom"
+    >
+      <s-tab-stub
+        name="AddAssetSearch"
+      />
+      <s-tab-stub
+        name="AddAssetCustom"
+      />
+    </s-tabs-stub>
+     
+    <addassetcustom-stub />
+  </div>
+</wallet-base-stub>
+`;
+
+exports[`AddAsset.vue [Search Tab]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon=""
+  actiontooltip=""
+  showback="true"
+  title=""
+  tooltip=""
+>
+  <div
+    class="add-asset"
+  >
+    <s-tabs-stub
+      borderradius="small"
+      position="top"
+      type="rounded"
+      usedesignsystem="true"
+      value="AddAssetSearch"
+    >
+      <s-tab-stub
+        name="AddAssetSearch"
+      />
+      <s-tab-stub
+        name="AddAssetCustom"
+      />
+    </s-tabs-stub>
+     
+    <addassetsearch-stub />
+  </div>
+</wallet-base-stub>
+`;
