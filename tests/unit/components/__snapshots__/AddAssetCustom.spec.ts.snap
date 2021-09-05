@@ -1,0 +1,196 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddAssetCustom.vue [Empty address Input]: should be rendered correctly 1`] = `
+<div
+  class="asset-custom"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    class="asset-custom-address"
+    form=""
+    label=""
+    maxlength="128"
+    name=""
+    placeholder=""
+    prefix=""
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    usedesignsystem="true"
+    value=""
+  />
+   
+  <!---->
+   
+  <s-button-stub
+    borderradius="small"
+    class="s-typography-button--large"
+    disabled="true"
+    icon=""
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip=""
+    tooltipplacement="top"
+    type="primary"
+    usedesignsystem="true"
+  >
+    
+    
+  
+  </s-button-stub>
+</div>
+`;
+
+exports[`AddAssetCustom.vue [No Tokens Found]: should be rendered correctly 1`] = `
+<div
+  class="asset-custom"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    class="asset-custom-address"
+    form=""
+    label=""
+    maxlength="128"
+    name=""
+    placeholder=""
+    prefix=""
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    usedesignsystem="true"
+    value="123456"
+  />
+   
+  <div
+    class="asset-custom-empty"
+  >
+    
+    
+  
+  </div>
+   
+  <s-button-stub
+    borderradius="small"
+    class="s-typography-button--large"
+    disabled="true"
+    icon=""
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip=""
+    tooltipplacement="top"
+    type="primary"
+    usedesignsystem="true"
+  >
+    
+    
+  
+  </s-button-stub>
+</div>
+`;
+
+exports[`AddAssetCustom.vue [Token is Found]: should be rendered correctly 1`] = `
+<div
+  class="asset-custom"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    class="asset-custom-address"
+    form=""
+    label=""
+    maxlength="128"
+    name=""
+    placeholder=""
+    prefix=""
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    usedesignsystem="true"
+    value="0x0200000000000000000000000000000000000000000000000000000000000000"
+  />
+   
+  <!---->
+   
+  <s-button-stub
+    borderradius="small"
+    class="s-typography-button--large"
+    icon=""
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip=""
+    tooltipplacement="top"
+    type="primary"
+    usedesignsystem="true"
+  >
+    
+    
+  
+  </s-button-stub>
+</div>
+`;
+
+exports[`AddAssetCustom.vue [Token was already attached]: should be rendered correctly 1`] = `
+<div
+  class="asset-custom"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    class="asset-custom-address"
+    form=""
+    label=""
+    maxlength="128"
+    name=""
+    placeholder=""
+    prefix=""
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    usedesignsystem="true"
+    value="0x0200000000000000000000000000000000000000000000000000000000000000"
+  />
+   
+  <div
+    class="asset-custom-empty"
+  >
+    
+    
+  
+  </div>
+   
+  <s-button-stub
+    borderradius="small"
+    class="s-typography-button--large"
+    disabled="true"
+    icon=""
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip=""
+    tooltipplacement="top"
+    type="primary"
+    usedesignsystem="true"
+  >
+    
+    
+  
+  </s-button-stub>
+</div>
+`;
