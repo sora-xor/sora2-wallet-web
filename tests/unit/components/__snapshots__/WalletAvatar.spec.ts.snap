@@ -1,0 +1,360 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletAvatar.vue [With Beachball Theme]: should be rendered correctly 1`] = `
+<div>
+  <div>
+    <div
+      class=""
+      style="background: white; border-radius: 128px; display: inline-block; height: 256px; margin: 0px; overflow: hidden; padding: 0px; width: 256px;"
+    >
+      <div
+        class=""
+        style="background: rgb(47, 47, 47); border-radius: 128px; display: inline-block; height: 256px; margin: 0px; overflow: hidden; padding: 0px; width: 256px;"
+      >
+        <svg
+          height="256"
+          width="256"
+          x="0"
+          y="0"
+        >
+          <circle
+            cx="159.3342446381849"
+            cy="142.7447422458985"
+            fill="hsl(218.39999999999998, 65.6%, 55.5%)"
+            r="140.4287109375"
+          />
+          <circle
+            cx="99.58816234791361"
+            cy="83.05148636768945"
+            fill="hsl(351.29999999999995, 100%, 25.1%)"
+            r="112.5796875"
+          />
+          <circle
+            cx="62.59402852118562"
+            cy="106.87453532189868"
+            fill="hsl(231.29999999999995, 100%, 22.9%)"
+            r="86.583203125"
+          />
+          <circle
+            cx="174.48362372272217"
+            cy="184.37452097148622"
+            fill="hsl(268.20000000000005, 100%, 87.3%)"
+            r="62.491015625"
+          />
+          <circle
+            cx="36.5058148462132"
+            cy="135.84712249733508"
+            fill="hsl(351.29999999999995, 85.7%, 86.3%)"
+            r="38.53212890625"
+          />
+        </svg>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`WalletAvatar.vue [With Empty Address]: should be rendered correctly 1`] = `
+<div>
+  <svg
+    height="32"
+    viewBox="0 0 64 64"
+    width="32"
+  >
+    <circle
+      cx="50%"
+      cy="50%"
+      fill="#eee"
+      r="50%"
+    />
+  </svg>
+</div>
+`;
+
+exports[`WalletAvatar.vue [With Size 10]: should be rendered correctly 1`] = `
+<div>
+  <div>
+    <svg
+      height="10"
+      viewBox="0 0 64 64"
+      width="10"
+    >
+      <circle
+        cx="32"
+        cy="32"
+        fill="#eee"
+        r="32"
+      />
+      <circle
+        cx="32"
+        cy="8"
+        fill="hsl(95, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="32"
+        cy="20"
+        fill="hsl(112, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="21.607695154586736"
+        cy="14"
+        fill="hsl(22, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="11.215390309173472"
+        cy="20"
+        fill="hsl(67, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="21.607695154586736"
+        cy="26"
+        fill="hsl(320, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="11.215390309173472"
+        cy="32"
+        fill="hsl(45, 80%, 75%)"
+        r="5"
+      />
+      <circle
+        cx="11.215390309173472"
+        cy="44"
+        fill="hsl(50, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="21.607695154586736"
+        cy="38"
+        fill="hsl(0, 80%, 75%)"
+        r="5"
+      />
+      <circle
+        cx="21.607695154586736"
+        cy="50"
+        fill="hsl(45, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="32"
+        cy="56"
+        fill="hsl(50, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="32"
+        cy="44"
+        fill="hsl(0, 80%, 75%)"
+        r="5"
+      />
+      <circle
+        cx="42.392304845413264"
+        cy="50"
+        fill="hsl(45, 80%, 75%)"
+        r="5"
+      />
+      <circle
+        cx="52.78460969082653"
+        cy="44"
+        fill="hsl(67, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="42.392304845413264"
+        cy="38"
+        fill="hsl(320, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="52.78460969082653"
+        cy="32"
+        fill="hsl(22, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="52.78460969082653"
+        cy="20"
+        fill="hsl(95, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="42.392304845413264"
+        cy="26"
+        fill="hsl(112, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="42.392304845413264"
+        cy="14"
+        fill="hsl(163, 80%, 75%)"
+        r="5"
+      />
+      <circle
+        cx="32"
+        cy="32"
+        fill="hsl(337, 80%, 15%)"
+        r="5"
+      />
+    </svg>
+  </div>
+</div>
+`;
+
+exports[`WalletAvatar.vue [With Substrate Theme]: should be rendered correctly 1`] = `
+<div>
+  <div>
+    <svg
+      height="32"
+      viewBox="0 0 32 32"
+      width="32"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M16 7L13 10L10 7L13 4ZM19 10L16 7L19 4L22 7ZM16 25L19 22L22 25L19 28ZM13 22L16 25L13 28L10 25ZM10 13L7 16L4 13L7 10ZM25 16L22 13L25 10L28 13ZM22 19L25 16L28 19L25 22ZM7 16L10 19L7 22L4 19Z"
+        fill="#e3e3e3"
+      />
+      <path
+        d="M10 4L10 10L7 10ZM28 10L22 10L22 7ZM22 28L22 22L25 22ZM4 22L10 22L10 25ZM10 10L16 10L16 16L10 16ZM12.2 13.7a1.6,1.6 0 1,0 3.1,0a1.6,1.6 0 1,0 -3.1,0M22 10L22 16L16 16L16 10ZM16.7 13.7a1.6,1.6 0 1,0 3.1,0a1.6,1.6 0 1,0 -3.1,0M22 22L16 22L16 16L22 16ZM16.7 18.3a1.6,1.6 0 1,0 3.1,0a1.6,1.6 0 1,0 -3.1,0M10 22L10 16L16 16L16 22ZM12.2 18.3a1.6,1.6 0 1,0 3.1,0a1.6,1.6 0 1,0 -3.1,0"
+        fill="#59c7bd"
+      />
+    </svg>
+  </div>
+</div>
+`;
+
+exports[`WalletAvatar.vue [With default Theme (Polkadot) and Size]: should be rendered correctly 1`] = `
+<div>
+  <div>
+    <svg
+      height="32"
+      viewBox="0 0 64 64"
+      width="32"
+    >
+      <circle
+        cx="32"
+        cy="32"
+        fill="#eee"
+        r="32"
+      />
+      <circle
+        cx="32"
+        cy="8"
+        fill="hsl(95, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="32"
+        cy="20"
+        fill="hsl(112, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="21.607695154586736"
+        cy="14"
+        fill="hsl(22, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="11.215390309173472"
+        cy="20"
+        fill="hsl(67, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="21.607695154586736"
+        cy="26"
+        fill="hsl(320, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="11.215390309173472"
+        cy="32"
+        fill="hsl(45, 80%, 75%)"
+        r="5"
+      />
+      <circle
+        cx="11.215390309173472"
+        cy="44"
+        fill="hsl(50, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="21.607695154586736"
+        cy="38"
+        fill="hsl(0, 80%, 75%)"
+        r="5"
+      />
+      <circle
+        cx="21.607695154586736"
+        cy="50"
+        fill="hsl(45, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="32"
+        cy="56"
+        fill="hsl(50, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="32"
+        cy="44"
+        fill="hsl(0, 80%, 75%)"
+        r="5"
+      />
+      <circle
+        cx="42.392304845413264"
+        cy="50"
+        fill="hsl(45, 80%, 75%)"
+        r="5"
+      />
+      <circle
+        cx="52.78460969082653"
+        cy="44"
+        fill="hsl(67, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="42.392304845413264"
+        cy="38"
+        fill="hsl(320, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="52.78460969082653"
+        cy="32"
+        fill="hsl(22, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="52.78460969082653"
+        cy="20"
+        fill="hsl(95, 80%, 53%)"
+        r="5"
+      />
+      <circle
+        cx="42.392304845413264"
+        cy="26"
+        fill="hsl(112, 80%, 35%)"
+        r="5"
+      />
+      <circle
+        cx="42.392304845413264"
+        cy="14"
+        fill="hsl(163, 80%, 75%)"
+        r="5"
+      />
+      <circle
+        cx="32"
+        cy="32"
+        fill="hsl(337, 80%, 15%)"
+        r="5"
+      />
+    </svg>
+  </div>
+</div>
+`;
