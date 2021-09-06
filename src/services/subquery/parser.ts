@@ -37,10 +37,13 @@ const OperationByModuleCall = {
 
 const getTransactionId = (tx: any): string => tx.id
 
-const getTransactionOperationType = (tx: any): Operation => {
+const getTransactionOperationType = (tx: any): Operation | null => {
   const { module, method } = tx
 
-  return OperationByModuleCall[module]?.[method] ?? ''
+  if (!(module in OperationByModuleCall)) return null
+  if (!(method in OperationByModuleCall[module])) return null
+
+  return OperationByModuleCall[module][method]
 }
 
 const getTransactionTimestamp = (tx: any) => {
@@ -74,6 +77,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     const blockHeight = transaction.blockHeight
     // TODO: add to subquery blockId
 
+    if (!type) return null
+
     // common attributes
     const payload: History = {
       id, // history item id will be txId
@@ -103,8 +108,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.asset2Address = asset2Address
         payload.amount = transaction.swap.baseAssetAmount
         payload.amount2 = transaction.swap.targetAssetAmount
-        payload.symbol = asset?.symbol ?? ''
-        payload.symbol2 = asset2?.symbol ?? ''
+        payload.symbol = asset && asset.symbol ? asset.symbol : ''
+        payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : ''
         payload.liquiditySource = transaction.swap.selectedMarket
         payload.liquidityProviderFee = new FPNumber(transaction.swap.liquidityProviderFee).toCodecString()
 
@@ -119,8 +124,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
         payload.assetAddress = assetAddress
         payload.asset2Address = asset2Address
-        payload.symbol = asset?.symbol ?? ''
-        payload.symbol2 = asset2?.symbol ?? ''
+        payload.symbol = asset && asset.symbol ? asset.symbol : ''
+        payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : ''
         payload.amount = transaction.liquidityOperation.baseAssetAmount
         payload.amount2 = transaction.liquidityOperation.targetAssetAmount
 
@@ -131,7 +136,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const asset = await api.getAssetInfo(assetAddress)
 
         payload.assetAddress = assetAddress
-        payload.symbol = asset?.symbol ?? ''
+        payload.symbol = asset && asset.symbol ? asset.symbol : ''
         payload.to = transaction.transfer.to
         payload.amount = transaction.transfer.amount
 
