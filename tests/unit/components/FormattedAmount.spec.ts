@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 
 import { useDescribe, localVue } from '../../utils'
-import { MOCK_FORMATTED_AMOUNT } from '../../utils/mock'
+import { MOCK_FORMATTED_AMOUNT } from '../../utils/FormattedAmountMock'
 
 import FormattedAmount from '@/components/FormattedAmount.vue'
 
