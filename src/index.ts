@@ -111,7 +111,6 @@ export {
   NumberFormatterMixin,
   FormattedAmountMixin,
   FontSizeRate,
-  FontWeightRate,
-  store as externalStore // only for soraNetwork getter in wallet
+  FontWeightRate
 }
 export default SoraNeoWalletElements

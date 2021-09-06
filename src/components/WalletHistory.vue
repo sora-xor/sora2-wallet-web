@@ -192,7 +192,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     }
 
     try {
-      const { historyElements: { edges } } = await SubqueryExplorerService.getAccountTransactions(variables)
+      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables)
 
       if (edges.length !== 0) {
         const latestTimestamp = edges[0].node.timestamp

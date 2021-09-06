@@ -37,7 +37,7 @@ query HistoryElements (
 }
 `
 
-const createAsssetFilters = (assetAddress: string): Array<any> =>
+const createAssetFilters = (assetAddress: string): Array<any> =>
   ['swap', 'transfer', 'liquidityOperation'].reduce<any[]>((result, method) => {
     const attributes = method === 'transfer' ? ['assetId'] : ['baseAssetId', 'targetAssetId']
     attributes.forEach(attr => {
@@ -70,7 +70,7 @@ export const historyElementsFilter = (address: string, { assetAddress = '', time
 
   if (assetAddress) {
     filter.and.push({
-      or: createAsssetFilters(assetAddress)
+      or: createAssetFilters(assetAddress)
     })
   }
 

@@ -4,15 +4,16 @@ import { Explorer } from '../types'
 import { HistoryElementsQuery } from './queries/historyElements'
 
 export default class SubqueryExplorer implements Explorer {
+  // TODO: add api link for wss://ws.tst.sora2.soramitsu.co.jp?
   public static getApiUrl (soraNetwork?: string): string {
     switch (soraNetwork) {
       case 'Mainnet':
         return 'https://api.subquery.network/sq/sora-xor/sora'
-      // TODO: subquery in progress
       case 'Testnet':
+        return 'https://api.subquery.network/sq/sora-xor/sora-staging'
       case 'Devnet':
       default:
-        return 'https://api.subquery.network/sq/sora-xor/sora-dev'
+        return 'https://subquery.q1.dev.sora2.soramitsu.co.jp/'
     }
   }
 
@@ -23,20 +24,9 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   public async getAccountTransactions (params = {}): Promise<any> {
-    try {
-      const data = await this.request(HistoryElementsQuery, params)
+    const { historyElements } = await this.request(HistoryElementsQuery, params)
 
-      return data
-    } catch (error) {
-      console.error(error)
-      return []
-    }
-  }
-
-  public async getTransaction (hash: string): Promise<any> {
-    // TODO: wait for Subquery support
-    console.warn('SubqueryExplorer: "getTransaction" method is not implemented')
-    return null
+    return historyElements
   }
 
   public async request (scheme: any, params = {}): Promise<any> {
