@@ -53,23 +53,24 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
+import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util'
 
-import { AccountAsset, History, TransactionStatus, api } from '@sora-substrate/util'
+import { api } from '../api'
 import LoadingMixin from './mixins/LoadingMixin'
 import TransactionMixin from './mixins/TransactionMixin'
 import { formatDate, getStatusIcon, getStatusClass } from '../util'
 import { subqueryStorage } from '../util/storage'
 import { RouteNames } from '../consts'
-
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery'
 import { historyElementsFilter } from '../services/subquery/queries/historyElements'
+import type { Account } from '../types/common'
 
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
   @Getter activity!: Array<History>
-  @Getter account!: any
-  @Action navigate
-  @Action getAccountActivity
+  @Getter account!: Account
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action getAccountActivity!: AsyncVoidFn
 
   @Prop() readonly asset?: AccountAsset
 

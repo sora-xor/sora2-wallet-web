@@ -36,7 +36,7 @@ export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountM
     return this.value.toLocaleString()
   }
 
-  get formattedFiatValue (): string | null {
+  get formattedFiatValue (): Nullable<string> {
     return this.getFiatAmountByFPNumber(this.value)
   }
 }

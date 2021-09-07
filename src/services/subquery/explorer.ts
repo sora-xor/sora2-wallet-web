@@ -1,7 +1,7 @@
 import { axiosInstance } from '@sora-substrate/util'
 
-import { Explorer } from '../types'
 import { HistoryElementsQuery } from './queries/historyElements'
+import type { Explorer } from '../types'
 
 import store from '../../store'
 

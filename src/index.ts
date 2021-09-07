@@ -12,10 +12,9 @@ import FormattedAmount from './components/FormattedAmount.vue'
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue'
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
-import { Components, Modules, FontSizeRate, FontWeightRate } from './types'
+import { Components, Modules, FontSizeRate, FontWeightRate } from './types/common'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
-import { updateAccountAssetsSubscription } from './store/Account'
 import { storage } from './util/storage'
 import { api, connection } from './api'
 import { delay, getExplorerLink } from './util'
@@ -101,7 +100,6 @@ export {
   connection,
   storage,
   getExplorerLink,
-  updateAccountAssetsSubscription,
   SoraNeoWallet,
   WALLET_CONSTS,
   WalletAvatar,

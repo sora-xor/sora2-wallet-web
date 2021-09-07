@@ -1,7 +1,7 @@
 import { History } from '@sora-substrate/util'
 
 export interface ExplorerDataParser {
-  parseTransactionAsHistoryItem: (transaction: any) => Promise<History | null>;
+  parseTransactionAsHistoryItem: (transaction: any) => Promise<Nullable<History>>;
 }
 
 export interface Explorer {

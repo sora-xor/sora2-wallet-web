@@ -85,8 +85,8 @@ import LoadingMixin from './mixins/LoadingMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import FormattedAmount from './FormattedAmount.vue'
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue'
-import { RouteNames } from '../consts'
-import { FontSizeRate, FontWeightRate } from '../types'
+import { RouteNames, WalletPermissions } from '../consts'
+import { FontSizeRate, FontWeightRate } from '../types/common'
 import { getAssetIconStyles, formatAddress } from '../util'
 
 @Component({
@@ -101,9 +101,9 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   @Getter accountAssets!: Array<AccountAsset>
   @Getter withoutFiat!: boolean
-  @Getter permissions
-  @Action getAccountAssets
-  @Action navigate
+  @Getter permissions!: WalletPermissions
+  @Action getAccountAssets!: AsyncVoidFn
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
 
   async mounted (): Promise<void> {
     this.withApi(this.getAccountAssets)
@@ -124,7 +124,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return this.accountAssets.filter(asset => asset.balance && !Number.isNaN(+asset.balance.transferable))
   }
 
-  get assetsFiatAmount (): string | null {
+  get assetsFiatAmount (): Nullable<string> {
     if (!this.formattedAccountAssets || this.withoutFiat) {
       return null
     }

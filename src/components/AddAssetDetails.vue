@@ -41,8 +41,9 @@ import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme'
 import LoadingMixin from './mixins/LoadingMixin'
 import TranslationMixin from './mixins/TranslationMixin'
 import WalletBase from './WalletBase.vue'
-import { RouteNames } from '@/consts'
-import { copyToClipboard, formatAddress, getAssetIconStyles } from '@/util'
+import { RouteNames } from '../consts'
+import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util'
+import type { WhitelistIdsBySymbol } from '../types/common'
 
 @Component({
   components: {
@@ -50,17 +51,16 @@ import { copyToClipboard, formatAddress, getAssetIconStyles } from '@/util'
   }
 })
 export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMixin) {
-  asset: Asset | null = null
+  asset: Nullable<Asset> = null
   isConfirmed = false
 
   @Getter currentRouteParams!: any
   @Getter whitelist!: Whitelist
-  @Getter whitelistIdsBySymbol!: any
-  @Getter libraryTheme
-
-  @Action back!: () => Promise<void>
+  @Getter whitelistIdsBySymbol!: WhitelistIdsBySymbol
+  @Getter libraryTheme!: Theme
+  @Action back!: AsyncVoidFn
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action addAsset!: (options: { address?: string }) => Promise<void>
+  @Action addAsset!: (address?: string) => Promise<void>
 
   created (): void {
     if (!this.currentRouteParams.asset) {
@@ -154,7 +154,7 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
   }
 
   async handleAddAsset (): Promise<void> {
-    await this.withLoading(async () => await this.addAsset({ address: (this.asset || {}).address }))
+    await this.withLoading(async () => await this.addAsset((this.asset || {}).address))
     this.navigate({ name: RouteNames.Wallet, params: { asset: this.asset } })
     this.$emit('add-asset')
   }

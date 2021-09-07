@@ -1,8 +1,9 @@
 
-import { api, FPNumber, Operation, TransactionStatus, History, Asset } from '@sora-substrate/util'
+import { FPNumber, Operation, TransactionStatus, History, Asset } from '@sora-substrate/util'
 
 import store from '../../store'
-import { ExplorerDataParser } from '../types'
+import { api } from '../../api'
+import type { ExplorerDataParser } from '../types'
 
 enum ModuleCallOperation {
   RegisterPair = 'registerPair',
@@ -38,7 +39,7 @@ const OperationByModuleCall = {
 
 const getTransactionId = (tx: any): string => tx.id
 
-const getTransactionOperationType = (tx: any): Operation | null => {
+const getTransactionOperationType = (tx: any): Nullable<Operation> => {
   const { module, method } = tx
 
   if (!(module in OperationByModuleCall)) return null
@@ -78,7 +79,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     return SubqueryDataParser.SUPPORTED_OPERATIONS
   }
 
-  public async parseTransactionAsHistoryItem (transaction): Promise<History | null> {
+  public async parseTransactionAsHistoryItem (transaction): Promise<Nullable<History>> {
     const id = getTransactionId(transaction)
     const type = getTransactionOperationType(transaction)
     const timestamp = getTransactionTimestamp(transaction)

@@ -8,12 +8,12 @@ import NumberFormatterMixin from './NumberFormatterMixin'
 export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
   @Getter whitelist!: Whitelist
 
-  getAssetFiatPrice (accountAsset: Asset | AccountAsset): CodecString | null {
+  getAssetFiatPrice (accountAsset: Asset | AccountAsset): Nullable<CodecString> {
     const asset = this.whitelist[accountAsset.address]
     return !asset || !asset.price ? null : asset.price
   }
 
-  getFiatBalance (asset: AccountAsset, type = BalanceType.Transferable): string | null {
+  getFiatBalance (asset: AccountAsset, type = BalanceType.Transferable): Nullable<string> {
     const price = this.getAssetFiatPrice(asset)
     if (!price || !asset.balance) {
       return null
@@ -22,7 +22,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
       .mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
-  getFiatAmount (amount: string | CodecString, asset: Asset | AccountAsset, isCodecString = false): string | null {
+  getFiatAmount (amount: string | CodecString, asset: Asset | AccountAsset, isCodecString = false): Nullable<string> {
     // When input is empty, zero should be shown
     if (!amount && amount !== '') {
       return null
@@ -37,7 +37,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
       .mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
-  getFiatAmountByString (amount: string, asset: AccountAsset): string | null {
+  getFiatAmountByString (amount: string, asset: AccountAsset): Nullable<string> {
     // When input is empty, zero should be shown
     if (!amount && amount !== '') {
       return null
@@ -49,7 +49,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
     return this.getFPNumber(amount || '0', asset.decimals).mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
-  getFiatAmountByFPNumber (amount: FPNumber, asset = KnownAssets.get(KnownSymbols.XOR)): string | null {
+  getFiatAmountByFPNumber (amount: FPNumber, asset = KnownAssets.get(KnownSymbols.XOR)): Nullable<string> {
     const price = this.getAssetFiatPrice(asset)
     if (!price) {
       return null
@@ -57,7 +57,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
     return amount.mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
-  getFiatAmountByCodecString (amount: CodecString, asset = KnownAssets.get(KnownSymbols.XOR)): string | null {
+  getFiatAmountByCodecString (amount: CodecString, asset = KnownAssets.get(KnownSymbols.XOR)): Nullable<string> {
     return this.getFiatAmount(amount, asset, true)
   }
 }

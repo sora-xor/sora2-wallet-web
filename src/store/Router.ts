@@ -15,7 +15,14 @@ const types = flow(
   fromPairs
 )([])
 
-function initialState () {
+type RouterState = {
+  currentRoute: RouteNames;
+  currentRouteParams: object;
+  previousRoute: string | RouteNames;
+  previousRouteParams: object;
+}
+
+function initialState (): RouterState {
   return {
     currentRoute: RouteNames.WalletConnection,
     currentRouteParams: {},
@@ -27,16 +34,16 @@ function initialState () {
 const state = initialState()
 
 const getters = {
-  currentRoute (state) {
+  currentRoute (state: RouterState) {
     return state.currentRoute
   },
-  currentRouteParams (state) {
+  currentRouteParams (state: RouterState) {
     return state.currentRouteParams
   }
 }
 
 const mutations = {
-  [types.NAVIGATE] (state, args) {
+  [types.NAVIGATE] (state: RouterState, args) {
     state.previousRoute = `${state.currentRoute}`
     state.previousRouteParams = { ...state.currentRouteParams }
     state.currentRoute = args.name

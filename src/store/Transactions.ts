@@ -12,6 +12,7 @@ const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2 * 1000
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
+    'RESET_ACTIVE_TRANSACTIONS',
     'ADD_ACTIVE_TRANSACTION',
     'REMOVE_ACTIVE_TRANSACTION',
     'UPDATE_ACTIVE_TRANSACTIONS'
@@ -20,50 +21,54 @@ const types = flow(
   fromPairs
 )([])
 
-let updateActiveTransactionsId: any = null
-
 const isValidTransaction = (tx: History) => tx && tx.id !== undefined
 
-function initialState () {
+type TransactionsState = {
+  activeTransactions: Array<History>;
+  updateActiveTransactionsId: Nullable<NodeJS.Timeout>;
+}
+
+function initialState (): TransactionsState {
   return {
-    activeTransactions: [] as Array<History>
+    activeTransactions: [],
+    updateActiveTransactionsId: null
   }
 }
 
 const state = initialState()
 
 const getters = {
-  firstReadyTransaction (state) {
-    return state.activeTransactions.find(t => [TransactionStatus.Finalized, TransactionStatus.Error].includes(t.status))
+  firstReadyTransaction (state: TransactionsState) {
+    return state.activeTransactions.find(t => [TransactionStatus.Finalized, TransactionStatus.Error].includes(t.status as TransactionStatus))
   }
 }
 
 const mutations = {
-  [types.RESET] (state) {
+  [types.RESET_ACTIVE_TRANSACTIONS] (state: TransactionsState) {
+    if (state.updateActiveTransactionsId) {
+      clearInterval(state.updateActiveTransactionsId)
+    }
     const s = initialState()
     Object.keys(s).forEach(key => {
       state[key] = s[key]
     })
-    if (updateActiveTransactionsId) {
-      clearInterval(updateActiveTransactionsId)
-    }
   },
 
-  [types.ADD_ACTIVE_TRANSACTION] (state, tx: History) {
+  [types.ADD_ACTIVE_TRANSACTION] (state: TransactionsState, tx: History) {
     if (!isValidTransaction(tx) || state.activeTransactions.find((t: History) => t.id === tx.id)) {
       return
     }
     state.activeTransactions.push(tx)
   },
 
-  [types.REMOVE_ACTIVE_TRANSACTION] (state, tx: History) {
+  [types.REMOVE_ACTIVE_TRANSACTION] (state: TransactionsState, tx: History) {
     if (!isValidTransaction(tx)) {
       return
     }
     state.activeTransactions = state.activeTransactions.filter((t: History) => t.id !== tx.id)
   },
 
-  [types.UPDATE_ACTIVE_TRANSACTIONS] (state) {
+  [types.UPDATE_ACTIVE_TRANSACTIONS] (state: TransactionsState) {
     if (!api.history.length) {
       return
     }
@@ -76,19 +81,23 @@ const mutations = {
 }
 
 const actions = {
-  addActiveTransaction ({ commit }, { tx }) {
+  addActiveTransaction ({ commit }, tx: History) {
     commit(types.ADD_ACTIVE_TRANSACTION, tx)
   },
-  removeActiveTransaction ({ commit }, { tx }) {
+  removeActiveTransaction ({ commit }, tx: History) {
     commit(types.REMOVE_ACTIVE_TRANSACTION, tx)
   },
   // Should be used once in a root of the project
-  trackActiveTransactions ({ commit, dispatch }) {
-    updateActiveTransactionsId = setInterval(() => {
+  trackActiveTransactions ({ commit, dispatch, state }) {
+    commit(types.RESET_ACTIVE_TRANSACTIONS)
+    state.updateActiveTransactionsId = setInterval(() => {
       // to update app activities (history)
       dispatch('getAccountActivity', undefined, { root: true })
       commit(types.UPDATE_ACTIVE_TRANSACTIONS)
     }, UPDATE_ACTIVE_TRANSACTIONS_INTERVAL)
+  },
+  resetActiveTransactions ({ commit }) {
+    commit(types.RESET_ACTIVE_TRANSACTIONS)
   }
 }
 

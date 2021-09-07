@@ -9,7 +9,7 @@ type FiatMappedTokens = {
   [key: string]: string;
 }
 
-async function getCeresTokensData (): Promise<FiatMappedTokens | null> {
+async function getCeresTokensData (): Promise<Nullable<FiatMappedTokens>> {
   try {
     const cerestokenApi = await axiosInstance.get('https://cerestoken.io/api/pairs')
     const cerestokenApiObj = (cerestokenApi.data as Array<any>).reduce((acc, item) => {

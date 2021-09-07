@@ -1,5 +1,5 @@
 import { KnownSymbols } from '@sora-substrate/util'
-import { FontSizeRate, FontWeightRate } from '../../src/types'
+import { FontSizeRate, FontWeightRate } from '../../src/types/common'
 
 interface FormattedAmount {
   title: string;

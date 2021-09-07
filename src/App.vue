@@ -12,15 +12,14 @@
 import { Component, Mixins, Watch } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 
-import { FPNumber } from '@sora-substrate/util'
+import { FPNumber, History } from '@sora-substrate/util'
 import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils'
-import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme'
-import DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem'
+import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme'
+import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem'
 
 import TransactionMixin from './components/mixins/TransactionMixin'
 import { initWallet } from './index'
 import SoraNeoWallet from './SoraNeoWallet.vue'
-import { updateAccountAssetsSubscription } from './store/Account'
 
 @Component({
   components: { SoraNeoWallet }
@@ -28,9 +27,12 @@ import { updateAccountAssetsSubscription } from './store/Account'
 export default class App extends Mixins(TransactionMixin) {
   @Getter libraryDesignSystem!: DesignSystem
   @Getter libraryTheme!: Theme
-  @Getter firstReadyTransaction!: any
-  @Action trackActiveTransactions
-  @Action setSoraNetwork!: any
+  @Getter firstReadyTransaction!: Nullable<History>
+
+  @Action trackActiveTransactions!: AsyncVoidFn
+  @Action resetActiveTransactions!: AsyncVoidFn
+  @Action resetAccountAssetsSubscription!: AsyncVoidFn
+  @Action setSoraNetwork!: AsyncVoidFn
 
   async created (): Promise<void> {
     await this.setSoraNetwork()
@@ -42,14 +44,13 @@ export default class App extends Mixins(TransactionMixin) {
   }
 
   @Watch('firstReadyTransaction', { deep: true })
-  private handleNotifyAboutTransaction (value): void {
+  private handleNotifyAboutTransaction (value: History): void {
     this.handleChangeTransaction(value)
   }
 
-  destroyed (): void {
-    if (updateAccountAssetsSubscription) {
-      updateAccountAssetsSubscription.unsubscribe()
-    }
+  beforeDestroy (): void {
+    this.resetActiveTransactions()
+    this.resetAccountAssetsSubscription()
   }
 
   changeTheme (): void {
