@@ -3,6 +3,8 @@ import { axiosInstance } from '@sora-substrate/util'
 import { Explorer } from '../types'
 import { HistoryElementsQuery } from './queries/historyElements'
 
+import store from '../../store'
+
 export default class SubqueryExplorer implements Explorer {
   // TODO: add api link for wss://ws.tst.sora2.soramitsu.co.jp?
   public static getApiUrl (soraNetwork?: string): string {
@@ -17,10 +19,8 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public soraNetwork!: string
-
-  public setSoraNetwork (soraNetwork: string): void {
-    this.soraNetwork = soraNetwork
+  public get soraNetwork (): string {
+    return store.getters.soraNetwork
   }
 
   public async getAccountTransactions (params = {}): Promise<any> {

@@ -8,8 +8,6 @@ import { storage } from '../util/storage'
 import i18n from '../lang'
 import { WalletPermissions } from '../consts'
 
-import { SubqueryExplorerService } from '../services/subquery'
-
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
@@ -82,8 +80,6 @@ const actions = {
 
   setSoraNetwork ({ commit }, network: string) {
     commit(types.SET_SORA_NETWORK, network)
-    // update explorer network
-    SubqueryExplorerService.setSoraNetwork(network)
   }
 }
 

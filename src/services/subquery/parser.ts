@@ -1,6 +1,7 @@
 
-import { api, FPNumber, Operation, TransactionStatus, History } from '@sora-substrate/util'
+import { api, FPNumber, Operation, TransactionStatus, History, Asset } from '@sora-substrate/util'
 
+import store from '../../store'
 import { ExplorerDataParser } from '../types'
 
 enum ModuleCallOperation {
@@ -47,7 +48,7 @@ const getTransactionOperationType = (tx: any): Operation | null => {
 }
 
 const getTransactionTimestamp = (tx: any) => {
-  const timestamp = Date.parse(tx.timestamp)
+  const timestamp = +tx.timestamp * 1000
 
   return !Number.isNaN(timestamp) ? timestamp : Date.now()
 }
@@ -56,6 +57,13 @@ const getTransactionStatus = (tx: any): string => {
   if (tx.success) return TransactionStatus.Finalized
 
   return TransactionStatus.Error
+}
+
+const getAssetByAddress = async (address: string): Promise<Asset> => {
+  if (address in store.getters.whitelist) {
+    return store.getters.whitelist[address]
+  }
+  return await api.getAssetInfo(address)
 }
 
 export default class SubqueryDataParser implements ExplorerDataParser {
@@ -101,8 +109,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       case Operation.Swap: {
         const assetAddress = transaction.swap.baseAssetId
         const asset2Address = transaction.swap.targetAssetId
-        const asset = await api.getAssetInfo(assetAddress)
-        const asset2 = await api.getAssetInfo(asset2Address)
+        const asset = await getAssetByAddress(assetAddress)
+        const asset2 = await getAssetByAddress(asset2Address)
 
         payload.assetAddress = assetAddress
         payload.asset2Address = asset2Address
@@ -119,8 +127,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       case Operation.RemoveLiquidity: {
         const assetAddress = transaction.liquidityOperation.baseAssetId
         const asset2Address = transaction.liquidityOperation.targetAssetId
-        const asset = await api.getAssetInfo(assetAddress)
-        const asset2 = await api.getAssetInfo(asset2Address)
+        const asset = await getAssetByAddress(assetAddress)
+        const asset2 = await getAssetByAddress(asset2Address)
 
         payload.assetAddress = assetAddress
         payload.asset2Address = asset2Address
@@ -133,7 +141,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       }
       case Operation.Transfer: {
         const assetAddress = transaction.transfer.assetId
-        const asset = await api.getAssetInfo(assetAddress)
+        const asset = await getAssetByAddress(assetAddress)
 
         payload.assetAddress = assetAddress
         payload.symbol = asset && asset.symbol ? asset.symbol : ''
