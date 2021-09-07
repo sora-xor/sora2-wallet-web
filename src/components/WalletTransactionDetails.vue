@@ -128,8 +128,6 @@ import { RouteNames, WalletTabs } from '../consts'
 import { FontSizeRate, FontWeightRate } from '../types'
 import { formatDate, formatAddress, getStatusClass, copyToClipboard, getExplorerLink } from '../util'
 
-import { externalStore } from '../index'
-
 @Component({
   components: {
     WalletBase,
@@ -142,6 +140,7 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
   readonly FontSizeRate = FontSizeRate
   readonly FontWeightRate = FontWeightRate
 
+  @Getter soraNetwork!: string
   @Getter currentRouteParams!: any
   @Getter selectedTransaction!: any
   @Getter accountAssets!: Array<AccountAsset>
@@ -233,9 +232,7 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
   }
 
   getBlockExplorerLink (key: string, value: string): string {
-    // TODO: move soraNetwork to the wallet
-    const networkType = externalStore ? externalStore.getters.soraNetwork : undefined
-    return `${getExplorerLink(networkType)}/${key}/${value}`
+    return `${getExplorerLink(this.soraNetwork)}/${key}/${value}`
   }
 
   async handleCopy (address: string, value: string): Promise<void> {

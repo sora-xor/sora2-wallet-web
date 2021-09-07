@@ -1,15 +1,7 @@
-import axiosInstance from 'axios'
 import isEmpty from 'lodash/fp/isEmpty'
-import { api, connection, FPNumber } from '@sora-substrate/util'
+import { api, connection, FPNumber, axiosInstance } from '@sora-substrate/util'
 
 import { storage } from '../util/storage'
-
-const axios = axiosInstance.create()
-const { origin, pathname } = window.location
-const baseUrl = `${origin}${pathname}`
-
-axios.defaults.headers.common['Cache-Control'] = 'no-cache'
-axios.defaults.baseURL = baseUrl
 
 api.setStorage(storage)
 
@@ -19,7 +11,7 @@ type FiatMappedTokens = {
 
 async function getCeresTokensData (): Promise<FiatMappedTokens | null> {
   try {
-    const cerestokenApi = await axios.get('https://cerestoken.io/api/pairs')
+    const cerestokenApi = await axiosInstance.get('https://cerestoken.io/api/pairs')
     const cerestokenApiObj = (cerestokenApi.data as Array<any>).reduce((acc, item) => {
       if (+item.price) {
         acc[item.asset_id] = new FPNumber(item.price).toCodecString()
@@ -37,7 +29,6 @@ async function getCeresTokensData (): Promise<FiatMappedTokens | null> {
 }
 
 export {
-  axios,
   connection,
   api,
   getCeresTokensData
