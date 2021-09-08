@@ -230,12 +230,11 @@ const mutations = {
   },
 
   [types.GET_FIAT_PRICE_AND_APY_OBJECT_REQUEST] (state: AccountState) {
-    state.fiatPriceAndApyObject = {}
-    state.withoutFiatAndApy = false
   },
 
   [types.GET_FIAT_PRICE_AND_APY_OBJECT_SUCCESS] (state: AccountState, object: FiatPriceAndApyObject) {
     state.fiatPriceAndApyObject = object
+    state.withoutFiatAndApy = false
   },
 
   [types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE] (state: AccountState) {
