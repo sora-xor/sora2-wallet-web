@@ -1,16 +1,17 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
-import { Whitelist, Asset, AccountAsset, KnownAssets, KnownSymbols, BalanceType, FPNumber, CodecString } from '@sora-substrate/util'
+import { Asset, AccountAsset, KnownAssets, KnownSymbols, BalanceType, FPNumber, CodecString } from '@sora-substrate/util'
 
 import NumberFormatterMixin from './NumberFormatterMixin'
+import { FiatPriceAndApyObject } from '../../services/types'
 
 @Component
 export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
-  @Getter whitelist!: Whitelist
+  @Getter fiatPriceAndApyObject!: FiatPriceAndApyObject
 
   getAssetFiatPrice (accountAsset: Asset | AccountAsset): Nullable<CodecString> {
-    const asset = this.whitelist[accountAsset.address]
-    return !asset || !asset.price ? null : asset.price
+    const fiatObj = this.fiatPriceAndApyObject[accountAsset.address]
+    return !fiatObj || !fiatObj.price ? null : fiatObj.price
   }
 
   getFiatBalance (asset: AccountAsset, type = BalanceType.Transferable): Nullable<string> {

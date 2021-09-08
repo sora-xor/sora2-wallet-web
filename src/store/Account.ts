@@ -7,18 +7,21 @@ import omit from 'lodash/fp/omit'
 import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist, axiosInstance, History, Asset } from '@sora-substrate/util'
 import type { Subscription } from '@polkadot/x-rxjs'
 
-import { api, getCeresTokensData } from '../api'
+import { api } from '../api'
 import { storage } from '../util/storage'
 import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util'
+import { SubqueryExplorerService } from '../services/subquery'
+import type { FiatPriceAndApyObject } from '../services/types'
 import type { Account, PolkadotJsAccount } from '../types/common'
 
-type WhitelistParams = { whitelist: Array<WhitelistArrayItem>; withoutFiat?: boolean }
+const HOUR = 60 * 60 * 1000
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
     'RESET_ACCOUNT',
     'RESET_ACCOUNT_ASSETS_SUBSCRIPTION',
+    'RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION',
     'LOGOUT',
     'SYNC_WITH_STORAGE',
     'SET_TRANSACTION_DETAILS_ID',
@@ -37,7 +40,8 @@ const types = flow(
   'IMPORT_POLKADOT_JS_ACCOUNT',
   'GET_SIGNER',
   'GET_POLKADOT_JS_ACCOUNTS',
-  'GET_WHITELIST'
+  'GET_WHITELIST',
+  'GET_FIAT_PRICE_AND_APY_OBJECT'
 ])
 
 type AccountState = {
@@ -51,8 +55,10 @@ type AccountState = {
   polkadotJsAccounts: Array<PolkadotJsAccount>;
   whitelistArray: Array<WhitelistArrayItem>;
   assetsLoading: boolean;
-  withoutFiat: boolean;
+  withoutFiatAndApy: boolean;
   updateAccountAssetsSubscription: Nullable<Subscription>;
+  fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
+  fiatPriceAndApyTimer: Nullable<NodeJS.Timer>;
 }
 
 function initialState (): AccountState {
@@ -67,8 +73,10 @@ function initialState (): AccountState {
     polkadotJsAccounts: [],
     whitelistArray: [],
     assetsLoading: false,
-    withoutFiat: false,
-    updateAccountAssetsSubscription: null
+    withoutFiatAndApy: false,
+    updateAccountAssetsSubscription: null,
+    fiatPriceAndApyObject: {},
+    fiatPriceAndApyTimer: null
   }
 }
 
@@ -103,17 +111,20 @@ const getters = {
   polkadotJsAccounts (state: AccountState) {
     return state.polkadotJsAccounts
   },
-  whitelistArray (state: AccountState): Array<WhitelistArrayItem> {
+  whitelistArray (state: AccountState) {
     return state.whitelistArray
   },
-  whitelist (state: AccountState): Whitelist {
+  whitelist (state: AccountState) {
     return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistAssets(state.whitelistArray) : {}
   },
   whitelistIdsBySymbol (state: AccountState) {
     return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistIdsBySymbol(state.whitelistArray) : {}
   },
-  withoutFiat (state: AccountState): boolean {
-    return state.withoutFiat
+  withoutFiatAndApy (state: AccountState) {
+    return state.withoutFiatAndApy
+  },
+  fiatPriceAndApyObject (state: AccountState) {
+    return state.fiatPriceAndApyObject
   },
   assetsLoading (state: AccountState) {
     return state.assetsLoading
@@ -124,8 +135,14 @@ const getters = {
 }
 
 const mutations = {
+  [types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION] (state: AccountState) {
+    if (state.fiatPriceAndApyTimer) {
+      clearInterval(state.fiatPriceAndApyTimer)
+      state.fiatPriceAndApyTimer = null
+    }
+  },
   [types.RESET_ACCOUNT] (state: AccountState) {
-    const s = omit(['whitelistArray', 'assets'], initialState())
+    const s = omit(['whitelistArray', 'fiatPriceAndApyObject', 'fiatPriceAndApyTimer', 'assets'], initialState())
     Object.keys(s).forEach(key => {
       state[key] = s[key]
     })
@@ -202,19 +219,28 @@ const mutations = {
 
   [types.GET_WHITELIST_REQUEST] (state: AccountState) {
     state.whitelistArray = []
-    state.withoutFiat = false
   },
 
-  [types.GET_WHITELIST_SUCCESS] (state: AccountState, params: WhitelistParams) {
-    state.whitelistArray = params.whitelist
-    if (params.withoutFiat) {
-      state.withoutFiat = true
-    }
+  [types.GET_WHITELIST_SUCCESS] (state: AccountState, whitelistArray: Array<WhitelistArrayItem>) {
+    state.whitelistArray = whitelistArray
   },
 
   [types.GET_WHITELIST_FAILURE] (state: AccountState) {
     state.whitelistArray = []
-    state.withoutFiat = true
+  },
+
+  [types.GET_FIAT_PRICE_AND_APY_OBJECT_REQUEST] (state: AccountState) {
+    state.fiatPriceAndApyObject = {}
+    state.withoutFiatAndApy = false
+  },
+
+  [types.GET_FIAT_PRICE_AND_APY_OBJECT_SUCCESS] (state: AccountState, object: FiatPriceAndApyObject) {
+    state.fiatPriceAndApyObject = object
+  },
+
+  [types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE] (state: AccountState) {
+    state.fiatPriceAndApyObject = {}
+    state.withoutFiatAndApy = true
   },
 
   [types.SEARCH_ASSET_REQUEST] (state: AccountState) {},
@@ -361,24 +387,29 @@ const actions = {
     commit(types.GET_WHITELIST_REQUEST)
     try {
       const { data } = await axiosInstance.get('/whitelist.json')
-      const cerestokenApiObj = await getCeresTokensData()
-      if (!cerestokenApiObj) {
-        commit(types.GET_WHITELIST_SUCCESS, { whitelist: data, withoutFiat: true } as WhitelistParams)
-        return
-      }
-
-      const dataWithPrice = data.map(item => {
-        const asset = item
-        const price = cerestokenApiObj[item.address]
-        if (price) {
-          asset.price = price
-        }
-        return asset
-      })
-      commit(types.GET_WHITELIST_SUCCESS, { whitelist: dataWithPrice } as WhitelistParams)
+      commit(types.GET_WHITELIST_SUCCESS, data)
     } catch (error) {
       commit(types.GET_WHITELIST_FAILURE)
     }
+  },
+  async getFiatPriceAndApyObject ({ commit }) {
+    commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_REQUEST)
+    try {
+      const data = await SubqueryExplorerService.getFiatPriceAndApyObject()
+      if (!data) {
+        commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE)
+        return
+      }
+      commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_SUCCESS, data)
+    } catch (error) {
+      commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE)
+    }
+  },
+  subscribeOnFiatPriceAndApyObjectUpdates ({ commit, dispatch, state }) {
+    dispatch('getFiatPriceAndApyObject')
+    state.fiatPriceAndApyTimer = setInterval(() => {
+      dispatch('getFiatPriceAndApyObject')
+    }, HOUR)
   },
   async getAssets ({ commit, getters: { whitelist } }) {
     commit(types.GET_ASSETS_REQUEST)
@@ -433,6 +464,9 @@ const actions = {
   },
   resetAccountAssetsSubscription ({ commit }) {
     commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION)
+  },
+  resetFiatPriceAndApySubscription ({ commit }) {
+    commit(types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION)
   },
   async syncWithStorage ({ commit, state, getters, dispatch }) {
     // previous state
