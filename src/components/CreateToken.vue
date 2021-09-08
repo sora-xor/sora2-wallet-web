@@ -109,7 +109,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   tokenSupply = ''
   extensibleSupply = false
 
-  @Action navigate
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
 
   handleBack (): void {
     if (this.step === Step.Create) {

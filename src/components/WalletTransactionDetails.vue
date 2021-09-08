@@ -117,15 +117,15 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
+import { TransactionStatus, AccountAsset, Operation, History } from '@sora-substrate/util'
 
-import { TransactionStatus, AccountAsset, Operation } from '@sora-substrate/util'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import InfoLine from './InfoLine.vue'
 import FormattedAmount from './FormattedAmount.vue'
 import { RouteNames, WalletTabs } from '../consts'
-import { FontSizeRate, FontWeightRate } from '../types'
+import { FontSizeRate, FontWeightRate } from '../types/common'
 import { formatDate, formatAddress, getStatusClass, copyToClipboard, getExplorerLink } from '../util'
 
 @Component({
@@ -142,11 +142,11 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
 
   @Getter soraNetwork!: string
   @Getter currentRouteParams!: any
-  @Getter selectedTransaction!: any
+  @Getter selectedTransaction!: History
   @Getter accountAssets!: Array<AccountAsset>
-  @Action navigate
-  @Action getAccountActivity
-  @Action getTransactionDetails
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action getAccountActivity!: AsyncVoidFn
+  @Action getTransactionDetails!: (id: string) => Promise<void>
 
   TransactionStatus = TransactionStatus
   getStatusClass = getStatusClass
@@ -154,7 +154,7 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
   transaction: any = null
 
   mounted () {
-    const id = this.currentRouteParams.id
+    const id: string = this.currentRouteParams.id
     if (!id) {
       this.navigate({ name: RouteNames.Wallet })
     }
@@ -183,7 +183,7 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
   }
 
   get statusTitle (): string {
-    if ([TransactionStatus.Error, 'invalid'].includes(this.selectedTransaction.status)) {
+    if ([TransactionStatus.Error, 'invalid'].includes(this.selectedTransaction.status as string)) {
       return this.t('transaction.statuses.failed')
     } else if (this.isComplete) {
       return this.t('transaction.statuses.complete')
@@ -195,7 +195,7 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
     return `transaction.${this.selectedTransaction.txId ? 'txId' : 'blockId'}`
   }
 
-  get transactionId (): string {
+  get transactionId (): Nullable<string> {
     return this.selectedTransaction.txId || this.selectedTransaction.blockId
   }
 
@@ -204,7 +204,7 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
   }
 
   get transactionAmount (): string {
-    return this.formatStringValue(this.selectedTransaction.amount)
+    return this.formatStringValue(this.selectedTransaction.amount as string)
   }
 
   get isRemoveLiquidityType (): boolean {
@@ -212,7 +212,7 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
   }
 
   get transactionAmount2 (): string {
-    return this.formatStringValue(this.selectedTransaction.amount2)
+    return this.formatStringValue(this.selectedTransaction.amount2 as string)
   }
 
   formatAddress (address: string): string {

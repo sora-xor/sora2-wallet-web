@@ -1,19 +1,20 @@
 import { Component, Mixins } from 'vue-property-decorator'
 import { Getter } from 'vuex-class'
-import { Whitelist, Asset, AccountAsset, KnownAssets, KnownSymbols, BalanceType, FPNumber, CodecString } from '@sora-substrate/util'
+import { Asset, AccountAsset, KnownAssets, KnownSymbols, BalanceType, FPNumber, CodecString } from '@sora-substrate/util'
 
 import NumberFormatterMixin from './NumberFormatterMixin'
+import { FiatPriceAndApyObject } from '../../services/types'
 
 @Component
 export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
-  @Getter whitelist!: Whitelist
+  @Getter fiatPriceAndApyObject!: FiatPriceAndApyObject
 
-  getAssetFiatPrice (accountAsset: Asset | AccountAsset): CodecString | null {
-    const asset = this.whitelist[accountAsset.address]
-    return !asset || !asset.price ? null : asset.price
+  getAssetFiatPrice (accountAsset: Asset | AccountAsset): Nullable<CodecString> {
+    const fiatObj = this.fiatPriceAndApyObject[accountAsset.address]
+    return !fiatObj || !fiatObj.price ? null : fiatObj.price
   }
 
-  getFiatBalance (asset: AccountAsset, type = BalanceType.Transferable): string | null {
+  getFiatBalance (asset: AccountAsset, type = BalanceType.Transferable): Nullable<string> {
     const price = this.getAssetFiatPrice(asset)
     if (!price || !asset.balance) {
       return null
@@ -22,7 +23,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
       .mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
-  getFiatAmount (amount: string | CodecString, asset: Asset | AccountAsset, isCodecString = false): string | null {
+  getFiatAmount (amount: string | CodecString, asset: Asset | AccountAsset, isCodecString = false): Nullable<string> {
     // When input is empty, zero should be shown
     if (!amount && amount !== '') {
       return null
@@ -37,7 +38,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
       .mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
-  getFiatAmountByString (amount: string, asset: AccountAsset): string | null {
+  getFiatAmountByString (amount: string, asset: AccountAsset): Nullable<string> {
     // When input is empty, zero should be shown
     if (!amount && amount !== '') {
       return null
@@ -49,7 +50,15 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
     return this.getFPNumber(amount || '0', asset.decimals).mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
-  getFiatAmountByFPNumber (amount: FPNumber, asset = KnownAssets.get(KnownSymbols.XOR)): string | null {
+  getFPNumberFiatAmountByFPNumber (amount: FPNumber, asset = KnownAssets.get(KnownSymbols.XOR)): Nullable<FPNumber> {
+    const price = this.getAssetFiatPrice(asset)
+    if (!price) {
+      return null
+    }
+    return amount.mul(FPNumber.fromCodecValue(price))
+  }
+
+  getFiatAmountByFPNumber (amount: FPNumber, asset = KnownAssets.get(KnownSymbols.XOR)): Nullable<string> {
     const price = this.getAssetFiatPrice(asset)
     if (!price) {
       return null
@@ -57,7 +66,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
     return amount.mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
-  getFiatAmountByCodecString (amount: CodecString, asset = KnownAssets.get(KnownSymbols.XOR)): string | null {
+  getFiatAmountByCodecString (amount: CodecString, asset = KnownAssets.get(KnownSymbols.XOR)): Nullable<string> {
     return this.getFiatAmount(amount, asset, true)
   }
 }

@@ -7,6 +7,7 @@ exports[`WalletFee.vue [With "0" Value]: should be rendered correctly 1`] = `
   <info-line-stub
     assetsymbol="XOR"
     class="wallet-fee"
+    fiatvalue="0"
     isformatted="true"
     label=""
     labeltooltip=""
@@ -22,6 +23,7 @@ exports[`WalletFee.vue [With "Infinity" Value]: should be rendered correctly 1`]
   <info-line-stub
     assetsymbol="XOR"
     class="wallet-fee"
+    fiatvalue="Infinity"
     isformatted="true"
     label=""
     labeltooltip=""
@@ -37,6 +39,7 @@ exports[`WalletFee.vue [With "NaN" Value]: should be rendered correctly 1`] = `
   <info-line-stub
     assetsymbol="XOR"
     class="wallet-fee"
+    fiatvalue="NaN"
     isformatted="true"
     label=""
     labeltooltip=""
@@ -52,6 +55,7 @@ exports[`WalletFee.vue [With Value]: should be rendered correctly 1`] = `
   <info-line-stub
     assetsymbol="XOR"
     class="wallet-fee"
+    fiatvalue="1,518,518.5048512"
     isformatted="true"
     label=""
     labeltooltip=""

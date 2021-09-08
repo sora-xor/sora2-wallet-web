@@ -28,8 +28,8 @@ import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
 import LoadingMixin from './components/mixins/LoadingMixin'
 import TranslationMixin from './components/mixins/TranslationMixin'
 
-import { Operations } from './types'
-import { RouteNames } from './consts'
+import { Operations } from './types/common'
+import type { RouteNames } from './consts'
 
 @Component({
   components: {

@@ -100,6 +100,7 @@ import WalletFee from './WalletFee.vue'
 import { RouteNames } from '../consts'
 import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util'
 import { api } from '../api'
+import type { Account } from '../types/common'
 
 @Component({
   components: {
@@ -112,11 +113,11 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   readonly delimiters = FPNumber.DELIMITERS_CONFIG
 
   @Getter currentRouteParams!: any
-  @Getter account!: any
+  @Getter account!: Account
   @Getter accountAssets!: Array<AccountAsset>
 
-  @Action navigate
-  @Action transfer
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action transfer!: (options: { to: string; amount: string }) => Promise<void>
 
   step = 1
   address = ''
@@ -140,7 +141,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
   }
 
-  get assetFiatPrice (): CodecString | null {
+  get assetFiatPrice (): Nullable<CodecString> {
     return this.getAssetFiatPrice(this.asset)
   }
 
@@ -148,7 +149,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     return KnownAssets.get(KnownSymbols.XOR)
   }
 
-  get fiatAmount (): string | null {
+  get fiatAmount (): Nullable<string> {
     return this.getFiatAmountByString(this.amount, this.asset)
   }
 

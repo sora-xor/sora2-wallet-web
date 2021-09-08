@@ -40,7 +40,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
 import FormattedAmount from './FormattedAmount.vue'
-import { FontSizeRate, FontWeightRate } from '../types'
+import { FontSizeRate, FontWeightRate } from '../types/common'
 
 @Component({
   components: { FormattedAmount }
@@ -61,11 +61,11 @@ export default class InfoLine extends Vue {
     return !!this.value
   }
 
-  get formattedFontSize (): FontSizeRate | null {
+  get formattedFontSize (): Nullable<FontSizeRate> {
     return this.isFormatted ? FontSizeRate.MEDIUM : null
   }
 
-  get formattedFontWeight (): FontWeightRate | null {
+  get formattedFontWeight (): Nullable<FontWeightRate> {
     return this.isFormatted ? FontWeightRate.SMALL : null
   }
 }
