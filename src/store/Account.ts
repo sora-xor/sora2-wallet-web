@@ -4,24 +4,25 @@ import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
 import omit from 'lodash/fp/omit'
-import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist, FPNumber } from '@sora-substrate/util'
+import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist, axiosInstance, History, Asset } from '@sora-substrate/util'
+import type { Subscription } from '@polkadot/x-rxjs'
 
-import { api, axios, getCeresTokensData } from '../api'
-import { Account } from '../types'
+import { api } from '../api'
 import { storage } from '../util/storage'
-import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable, formatSoraAddress } from '../util'
+import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util'
+import { SubqueryExplorerService } from '../services/subquery'
+import type { FiatPriceAndApyObject } from '../services/types'
+import type { Account, PolkadotJsAccount } from '../types/common'
 
-export let updateAccountAssetsSubscription: any = null
-
-type WhitelistParams = { whitelist: Array<WhitelistArrayItem>; withoutFiat?: boolean }
+const HOUR = 60 * 60 * 1000
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
-    'RESET',
+    'RESET_ACCOUNT',
+    'RESET_ACCOUNT_ASSETS_SUBSCRIPTION',
+    'RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION',
     'LOGOUT',
-    'LOGIN',
-    'CHANGE_NAME',
     'SYNC_WITH_STORAGE',
     'SET_TRANSACTION_DETAILS_ID',
     'GET_ACCOUNT_ACTIVITY'
@@ -32,253 +33,259 @@ const types = flow(
   'GET_ADDRESS',
   'GET_ACCOUNT_ASSETS',
   'UPDATE_ACCOUNT_ASSETS',
-  'GET_ASSET_DETAILS',
   'GET_ASSETS',
   'SEARCH_ASSET',
   'ADD_ASSET',
   'TRANSFER',
-  'POLKADOT_JS_IMPORT',
+  'IMPORT_POLKADOT_JS_ACCOUNT',
   'GET_SIGNER',
   'GET_POLKADOT_JS_ACCOUNTS',
-  'GET_WHITELIST'
+  'GET_WHITELIST',
+  'GET_FIAT_PRICE_AND_APY_OBJECT'
 ])
 
-function initialState () {
+type AccountState = {
+  address: string;
+  name: string;
+  isExternal: boolean;
+  accountAssets: Array<AccountAsset>;
+  selectedTransactionId: Nullable<string>;
+  activity: Array<History>;
+  assets: Array<Asset>;
+  polkadotJsAccounts: Array<PolkadotJsAccount>;
+  whitelistArray: Array<WhitelistArrayItem>;
+  assetsLoading: boolean;
+  withoutFiatAndApy: boolean;
+  updateAccountAssetsSubscription: Nullable<Subscription>;
+  fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
+  fiatPriceAndApyTimer: Nullable<NodeJS.Timer>;
+}
+
+function initialState (): AccountState {
   return {
     address: storage.get('address') || '',
     name: storage.get('name') || '',
-    password: storage.get('password') || '',
     isExternal: Boolean(storage.get('isExternal')) || false,
     accountAssets: [],
-    selectedAssetDetails: [],
     selectedTransactionId: null,
     activity: [], // account history (without bridge)
     assets: [],
     polkadotJsAccounts: [],
     whitelistArray: [],
     assetsLoading: false,
-    withoutFiat: false
+    withoutFiatAndApy: false,
+    updateAccountAssetsSubscription: null,
+    fiatPriceAndApyObject: {},
+    fiatPriceAndApyTimer: null
   }
 }
 
 const state = initialState()
 
 const getters = {
-  isLoggedIn (state) {
-    return !state.isExternal
-      ? !!state.address && !!state.name && !!state.password
-      : !!state.address
+  isLoggedIn (state: AccountState) {
+    return state.isExternal && state.address
   },
-  isExternal (state) {
+  isExternal (state: AccountState) {
     return state.isExternal
   },
-  account (state) {
+  account (state: AccountState): Account {
     return {
       address: state.address,
       name: state.name,
-      password: state.password,
       isExternal: state.isExternal
     }
   },
-  accountAssets (state) {
+  accountAssets (state: AccountState) {
     return state.accountAssets
   },
-  accountAssetsAddressTable (state) {
+  accountAssetsAddressTable (state: AccountState) {
     return toHashTable(state.accountAssets, 'address')
   },
-  activity (state) {
+  activity (state: AccountState) {
     return state.activity
   },
-  selectedAssetDetails (state) {
-    return state.selectedAssetDetails
-  },
-  assets (state) {
+  assets (state: AccountState) {
     return state.assets
   },
-  polkadotJsAccounts (state) {
+  polkadotJsAccounts (state: AccountState) {
     return state.polkadotJsAccounts
   },
-  whitelistArray (state): Array<WhitelistArrayItem> {
+  whitelistArray (state: AccountState) {
     return state.whitelistArray
   },
-  whitelist (state): Whitelist {
+  whitelist (state: AccountState) {
     return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistAssets(state.whitelistArray) : {}
   },
-  whitelistIdsBySymbol (state) {
+  whitelistIdsBySymbol (state: AccountState) {
     return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistIdsBySymbol(state.whitelistArray) : {}
   },
-  withoutFiat (state): boolean {
-    return state.withoutFiat
+  withoutFiatAndApy (state: AccountState) {
+    return state.withoutFiatAndApy
   },
-  assetsLoading (state) {
+  fiatPriceAndApyObject (state: AccountState) {
+    return state.fiatPriceAndApyObject
+  },
+  assetsLoading (state: AccountState) {
     return state.assetsLoading
   },
-  selectedTransaction (state, getters) {
+  selectedTransaction (state: AccountState, getters): History {
     return getters.activity.find(item => item.id === state.selectedTransactionId)
   }
 }
 
 const mutations = {
-  [types.RESET] (state) {
-    const s = omit(['whitelistArray', 'assets'], initialState())
+  [types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION] (state: AccountState) {
+    if (state.fiatPriceAndApyTimer) {
+      clearInterval(state.fiatPriceAndApyTimer)
+      state.fiatPriceAndApyTimer = null
+    }
+  },
+  [types.RESET_ACCOUNT] (state: AccountState) {
+    const s = omit(['whitelistArray', 'fiatPriceAndApyObject', 'fiatPriceAndApyTimer', 'assets'], initialState())
     Object.keys(s).forEach(key => {
       state[key] = s[key]
     })
   },
 
-  [types.SYNC_WITH_STORAGE] (state) {
+  [types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION] (state: AccountState) {
+    if (state.updateAccountAssetsSubscription) {
+      state.updateAccountAssetsSubscription.unsubscribe()
+      state.updateAccountAssetsSubscription = null
+    }
+  },
+
+  [types.SYNC_WITH_STORAGE] (state: AccountState) {
     state.address = storage.get('address') || ''
     state.name = storage.get('name') || ''
-    state.password = storage.get('password') || ''
     state.isExternal = Boolean(storage.get('isExternal')) || false
     state.accountAssets = api.accountAssets // to save reactivity
     state.activity = api.accountHistory
   },
 
-  [types.LOGIN] (state, params) {
-    state.name = params.name
-    state.address = params.address
-    state.password = params.password
-  },
-
-  [types.GET_ADDRESS_REQUEST] (state) {
+  [types.GET_ADDRESS_REQUEST] (state: AccountState) {
     state.address = ''
   },
 
-  [types.GET_ADDRESS_SUCCESS] (state, address) {
+  [types.GET_ADDRESS_SUCCESS] (state: AccountState, address: string) {
     state.address = address
   },
 
-  [types.GET_ADDRESS_FAILURE] (state) {
+  [types.GET_ADDRESS_FAILURE] (state: AccountState) {
     state.address = ''
   },
 
-  [types.GET_ACCOUNT_ASSETS_REQUEST] (state) {
+  [types.GET_ACCOUNT_ASSETS_REQUEST] (state: AccountState) {
     state.accountAssets = []
   },
 
-  [types.GET_ACCOUNT_ASSETS_SUCCESS] (state, assets) {
+  [types.GET_ACCOUNT_ASSETS_SUCCESS] (state: AccountState, assets: Array<AccountAsset>) {
     state.accountAssets = assets
   },
 
-  [types.GET_ACCOUNT_ASSETS_FAILURE] (state) {
+  [types.GET_ACCOUNT_ASSETS_FAILURE] (state: AccountState) {
     state.accountAssets = []
   },
 
-  [types.UPDATE_ACCOUNT_ASSETS_REQUEST] (state) {
+  [types.UPDATE_ACCOUNT_ASSETS_REQUEST] (state: AccountState) {
   },
 
-  [types.UPDATE_ACCOUNT_ASSETS_SUCCESS] (state, assets) {
+  [types.UPDATE_ACCOUNT_ASSETS_SUCCESS] (state: AccountState, assets: Array<AccountAsset>) {
     state.accountAssets = assets
   },
 
-  [types.UPDATE_ACCOUNT_ASSETS_FAILURE] (state) {
+  [types.UPDATE_ACCOUNT_ASSETS_FAILURE] (state: AccountState) {
     state.accountAssets = []
   },
 
-  [types.GET_ACCOUNT_ACTIVITY] (state, activity) {
+  [types.GET_ACCOUNT_ACTIVITY] (state: AccountState, activity: Array<History>) {
     state.activity = activity
   },
 
-  [types.GET_ASSET_DETAILS_REQUEST] (state) {
-    state.selectedAssetDetails = []
-  },
-
-  [types.GET_ASSET_DETAILS_SUCCESS] (state, data) {
-    state.selectedAssetDetails = data
-  },
-
-  [types.GET_ASSET_DETAILS_FAILURE] (state) {
-    state.selectedAssetDetails = []
-  },
-
-  [types.GET_ASSETS_REQUEST] (state) {
+  [types.GET_ASSETS_REQUEST] (state: AccountState) {
     state.assets = []
     state.assetsLoading = true
   },
 
-  [types.GET_ASSETS_SUCCESS] (state, assets) {
+  [types.GET_ASSETS_SUCCESS] (state: AccountState, assets: Array<Asset>) {
     state.assets = assets
     state.assetsLoading = false
   },
 
-  [types.GET_ASSETS_FAILURE] (state) {
+  [types.GET_ASSETS_FAILURE] (state: AccountState) {
     state.assets = []
     state.assetsLoading = false
   },
 
-  [types.GET_WHITELIST_REQUEST] (state) {
+  [types.GET_WHITELIST_REQUEST] (state: AccountState) {
     state.whitelistArray = []
-    state.withoutFiat = false
   },
 
-  [types.GET_WHITELIST_SUCCESS] (state, params: WhitelistParams) {
-    state.whitelistArray = params.whitelist
-    if (params.withoutFiat) {
-      state.withoutFiat = true
-    }
+  [types.GET_WHITELIST_SUCCESS] (state: AccountState, whitelistArray: Array<WhitelistArrayItem>) {
+    state.whitelistArray = whitelistArray
   },
 
-  [types.GET_WHITELIST_FAILURE] (state) {
+  [types.GET_WHITELIST_FAILURE] (state: AccountState) {
     state.whitelistArray = []
-    state.withoutFiat = true
   },
 
-  [types.SEARCH_ASSET_REQUEST] (state) {},
+  [types.GET_FIAT_PRICE_AND_APY_OBJECT_REQUEST] (state: AccountState) {
+  },
 
-  [types.SEARCH_ASSET_SUCCESS] (state) {},
+  [types.GET_FIAT_PRICE_AND_APY_OBJECT_SUCCESS] (state: AccountState, object: FiatPriceAndApyObject) {
+    state.fiatPriceAndApyObject = object
+    state.withoutFiatAndApy = false
+  },
 
-  [types.SEARCH_ASSET_FAILURE] (state) {},
+  [types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE] (state: AccountState) {
+    state.fiatPriceAndApyObject = {}
+    state.withoutFiatAndApy = true
+  },
 
-  [types.ADD_ASSET_REQUEST] (state) {},
+  [types.SEARCH_ASSET_REQUEST] (state: AccountState) {},
+  [types.SEARCH_ASSET_SUCCESS] (state: AccountState) {},
+  [types.SEARCH_ASSET_FAILURE] (state: AccountState) {},
 
-  [types.ADD_ASSET_SUCCESS] (state) {},
+  [types.ADD_ASSET_REQUEST] (state: AccountState) {},
+  [types.ADD_ASSET_SUCCESS] (state: AccountState) {},
+  [types.ADD_ASSET_FAILURE] (state: AccountState) {},
 
-  [types.ADD_ASSET_FAILURE] (state) {},
+  [types.TRANSFER_REQUEST] (state: AccountState) {},
+  [types.TRANSFER_SUCCESS] (state: AccountState) {},
+  [types.TRANSFER_FAILURE] (state: AccountState) {},
 
-  [types.TRANSFER_REQUEST] (state) {},
+  [types.GET_SIGNER_REQUEST] (state: AccountState) {},
+  [types.GET_SIGNER_SUCCESS] (state: AccountState) {},
+  [types.GET_SIGNER_FAILURE] (state: AccountState) {},
 
-  [types.TRANSFER_SUCCESS] (state) {},
-
-  [types.TRANSFER_FAILURE] (state) {},
-
-  [types.GET_SIGNER_REQUEST] (state) {},
-
-  [types.GET_SIGNER_SUCCESS] (state) {},
-
-  [types.GET_SIGNER_FAILURE] (state) {},
-
-  [types.GET_POLKADOT_JS_ACCOUNTS_REQUEST] (state) {
+  [types.GET_POLKADOT_JS_ACCOUNTS_REQUEST] (state: AccountState) {
     state.polkadotJsAccounts = []
   },
-  [types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS] (state, polkadotJsAccounts: Array<Account>) {
+  [types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS] (state: AccountState, polkadotJsAccounts: Array<PolkadotJsAccount>) {
     state.polkadotJsAccounts = polkadotJsAccounts
   },
-  [types.GET_POLKADOT_JS_ACCOUNTS_FAILURE] (state) {
+  [types.GET_POLKADOT_JS_ACCOUNTS_FAILURE] (state: AccountState) {
     state.polkadotJsAccounts = []
   },
 
-  [types.POLKADOT_JS_IMPORT_REQUEST] (state) {},
+  [types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST] (state: AccountState) {},
 
-  [types.CHANGE_NAME] (state, newName) {
-    state.name = newName
-  },
-
-  [types.POLKADOT_JS_IMPORT_SUCCESS] (state, name) {
+  [types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS] (state: AccountState, name: string) {
     state.address = api.address
     state.name = name
     state.isExternal = true
   },
 
-  [types.POLKADOT_JS_IMPORT_FAILURE] (state) {},
+  [types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE] (state: AccountState) {},
 
-  [types.SET_TRANSACTION_DETAILS_ID] (state, id) {
+  [types.SET_TRANSACTION_DETAILS_ID] (state: AccountState, id: string) {
     state.selectedTransactionId = id
   }
 }
 
 const actions = {
-  formatAddress ({ commit }, address) {
+  /** TODO: check its usage */
+  formatAddress ({ commit }, address: string) {
     return api.formatAddress(address)
   },
   async checkExtension ({ commit }) {
@@ -321,25 +328,25 @@ const actions = {
       commit(types.GET_POLKADOT_JS_ACCOUNTS_FAILURE)
     }
   },
-  async importPolkadotJs ({ commit, dispatch }, { address }) {
-    commit(types.POLKADOT_JS_IMPORT_REQUEST)
+  async importPolkadotJs ({ commit, dispatch }, address: string) {
+    commit(types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST)
     try {
       const defaultAddress = api.formatAddress(address, false)
       const info = await getExtensionInfo()
       const account = info.accounts.find(acc => acc.address === defaultAddress)
       if (!account) {
-        commit(types.POLKADOT_JS_IMPORT_FAILURE)
+        commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE)
         throw new Error('polkadotjs.noAccount')
       }
       api.importByPolkadotJs(account.address, account.name)
       api.setSigner(info.signer)
-      commit(types.POLKADOT_JS_IMPORT_SUCCESS, account.name)
-      if (!updateAccountAssetsSubscription) {
+      commit(types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS, account.name)
+      if (!state.updateAccountAssetsSubscription) {
         await dispatch('getAccountAssets')
         await dispatch('updateAccountAssets')
       }
     } catch (error) {
-      commit(types.POLKADOT_JS_IMPORT_FAILURE)
+      commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE)
       throw new Error((error as Error).message)
     }
   },
@@ -363,7 +370,7 @@ const actions = {
     if (getters.isLoggedIn) {
       commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST)
       try {
-        updateAccountAssetsSubscription = api.assetsBalanceUpdated.subscribe(data => {
+        state.updateAccountAssetsSubscription = api.assetsBalanceUpdated.subscribe(data => {
           commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
         })
         api.updateAccountAssets()
@@ -372,39 +379,36 @@ const actions = {
       }
     }
   },
-  async getAssetDetails ({ commit, state: { address } }, { symbol }) {
-    commit(types.GET_ASSET_DETAILS_REQUEST)
-    try {
-      commit(types.GET_ASSET_DETAILS_SUCCESS, {})
-    } catch (error) {
-      commit(types.GET_ASSET_DETAILS_FAILURE)
-    }
-  },
   getAccountActivity ({ commit }) {
     commit(types.GET_ACCOUNT_ACTIVITY, api.accountHistory)
   },
   async getWhitelist ({ commit }) {
     commit(types.GET_WHITELIST_REQUEST)
     try {
-      const { data } = await axios.get('/whitelist.json')
-      const cerestokenApiObj = await getCeresTokensData()
-      if (!cerestokenApiObj) {
-        commit(types.GET_WHITELIST_SUCCESS, { whitelist: data, withoutFiat: true } as WhitelistParams)
-        return
-      }
-
-      const dataWithPrice = data.map(item => {
-        const asset = item
-        const price = cerestokenApiObj[item.address]
-        if (price) {
-          asset.price = price
-        }
-        return asset
-      })
-      commit(types.GET_WHITELIST_SUCCESS, { whitelist: dataWithPrice } as WhitelistParams)
+      const { data } = await axiosInstance.get('/whitelist.json')
+      commit(types.GET_WHITELIST_SUCCESS, data)
     } catch (error) {
       commit(types.GET_WHITELIST_FAILURE)
     }
+  },
+  async getFiatPriceAndApyObject ({ commit }) {
+    commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_REQUEST)
+    try {
+      const data = await SubqueryExplorerService.getFiatPriceAndApyObject()
+      if (!data) {
+        commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE)
+        return
+      }
+      commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_SUCCESS, data)
+    } catch (error) {
+      commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE)
+    }
+  },
+  subscribeOnFiatPriceAndApyObjectUpdates ({ commit, dispatch, state }) {
+    dispatch('getFiatPriceAndApyObject')
+    state.fiatPriceAndApyTimer = setInterval(() => {
+      dispatch('getFiatPriceAndApyObject')
+    }, HOUR)
   },
   async getAssets ({ commit, getters: { whitelist } }) {
     commit(types.GET_ASSETS_REQUEST)
@@ -415,7 +419,7 @@ const actions = {
       commit(types.GET_ASSETS_FAILURE)
     }
   },
-  async searchAsset ({ commit, getters: { whitelist } }, { address }) {
+  async searchAsset ({ commit, getters: { whitelist } }, address: string) {
     commit(types.SEARCH_ASSET_REQUEST)
     try {
       const assets = await api.getAssets(whitelist)
@@ -426,7 +430,7 @@ const actions = {
       commit(types.SEARCH_ASSET_FAILURE)
     }
   },
-  async addAsset ({ commit }, { address }) {
+  async addAsset ({ commit }, address: string) {
     commit(types.ADD_ASSET_REQUEST)
     try {
       await api.getAccountAsset(address, true)
@@ -435,17 +439,8 @@ const actions = {
       commit(types.ADD_ASSET_FAILURE)
     }
   },
-  getTransactionDetails ({ commit }, id) {
+  getTransactionDetails ({ commit }, id: string) {
     commit(types.SET_TRANSACTION_DETAILS_ID, id)
-  },
-  getAddress ({ commit }, { seed }) {
-    commit(types.GET_ADDRESS_REQUEST)
-    try {
-      const address = api.checkSeed(seed).address
-      commit(types.GET_ADDRESS_SUCCESS, address)
-    } catch (error) {
-      commit(types.GET_ADDRESS_FAILURE)
-    }
   },
   async transfer ({ commit, getters: { currentRouteParams } }, { to, amount }) {
     commit(types.TRANSFER_REQUEST)
@@ -461,25 +456,16 @@ const actions = {
       throw new Error(error.message)
     }
   },
-  login ({ commit }, { name, password, seed }) {
-    api.importAccount(seed, name, password)
-    commit(types.LOGIN, { name, password, address: api.address })
-  },
-  changeName ({ commit, state: { name } }, { newName }) {
-    const value = `${newName}`.trim()
-    if (!value || name === value) {
-      return
-    }
-    commit(types.CHANGE_NAME, newName)
-    api.changeName(newName)
-  },
   logout ({ commit }) {
     api.logout()
-    if (updateAccountAssetsSubscription) {
-      updateAccountAssetsSubscription.unsubscribe()
-      updateAccountAssetsSubscription = null
-    }
-    commit(types.RESET)
+    commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION)
+    commit(types.RESET_ACCOUNT)
+  },
+  resetAccountAssetsSubscription ({ commit }) {
+    commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION)
+  },
+  resetFiatPriceAndApySubscription ({ commit }) {
+    commit(types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION)
   },
   async syncWithStorage ({ commit, state, getters, dispatch }) {
     // previous state
@@ -498,9 +484,6 @@ const actions = {
     }
 
     dispatch('checkCurrentRoute', undefined, { root: true })
-  },
-  reset ({ commit }) {
-    commit(types.RESET)
   }
 }
 

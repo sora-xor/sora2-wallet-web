@@ -2372,39 +2372,39 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
-"@sora-substrate/api-derive@^1.6.4":
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/api-derive/-/api-derive-1.6.4.tgz#b9c33bcb75fe06e9d5677f18dda6929bfc177eb9"
-  integrity sha512-67lRynr9Prcl5eVBCShfj2+wowUDng7LQ2A1bu3ewBexfw8x0lBmB6oBVzpNDqavo+mdLL1doTkanOOzm/zYCg==
+"@sora-substrate/api-derive@^1.6.6":
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/api-derive/-/api-derive-1.6.6.tgz#fabf4a923382aea6ecf2691f7a831cc68d2a8cfd"
+  integrity sha512-BV5jIzAengO8n5r25AV+ZVYK1VHsIF+TwcEpyBLqVzLh/9ulpTVGictV1Nw4LyMYND4fMaIfpRG8IztvKQGWBw==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api-derive" "^4.10.1"
-    "@sora-substrate/types" "^1.6.4"
+    "@sora-substrate/types" "^1.6.6"
     rxjs "^6.5.5"
 
-"@sora-substrate/api@^1.6.4":
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/api/-/api-1.6.4.tgz#750e6d70b22c09fe1bec94145854fcb655d6d282"
-  integrity sha512-YYNBSw85EylMJYGYYr4iNMsOvtCjHFzVpbDauuX6qe56TejUwkeKdINeNvxEIzlMEAWgBTgbxgchOzMxLoU3lA==
+"@sora-substrate/api@^1.6.6":
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/api/-/api-1.6.6.tgz#d37db69f68a18b391b3a784b133df56a05d4ba78"
+  integrity sha512-UxG8rpEIsuwVdjKl7vhACaV2d1YVa+DWUJTV51/bm4WEqwYK7ZSCGyn5+V55YyhEPWA/pvZ/7RGBZ0rLkz62QA==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-api-derive" "^0.8.2-9"
     "@polkadot/api" "^4.10.1"
     "@polkadot/rpc-core" "^4.10.1"
-    "@sora-substrate/api-derive" "^1.6.4"
-    "@sora-substrate/types" "^1.6.4"
+    "@sora-substrate/api-derive" "^1.6.6"
+    "@sora-substrate/types" "^1.6.6"
 
-"@sora-substrate/type-definitions@^1.6.4":
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/type-definitions/-/type-definitions-1.6.4.tgz#31ca3fbea36c8bee5550999a0dc3c90964fcfa64"
-  integrity sha512-voWjc6lWGJB5pzVsBbnoQeqD5rI2nwczSY4nSmCXouSnbiXE4thvY46UcwLsjuCOtBX9ZvyznoAoeY/iHT+7VQ==
+"@sora-substrate/type-definitions@^1.6.6":
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/type-definitions/-/type-definitions-1.6.6.tgz#ce100440f3ed81d069d17ddcc3db32d44bada3da"
+  integrity sha512-/6XV69csMAssUCX3rL6GqxnL5dBqKe2/RnlaOMwr9uRXqYfPMzqxKpSv0EMln6hXeBuDfs7W9wZOCYDcG8OZkA==
   dependencies:
     "@open-web3/orml-type-definitions" "^0.8.2-9"
 
-"@sora-substrate/types@^1.6.4":
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/types/-/types-1.6.4.tgz#123790db2fb17601697bb351363b1c951fd2ad25"
-  integrity sha512-Dvz5eKbxon2waRfpZ6FkqO+F1BgUFk4EAq/Em1QLUwTWTWPvg9yP6fFqUrrGrfZjpf1/h+U8tNNPYrc1ZY+i0g==
+"@sora-substrate/types@^1.6.6":
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/types/-/types-1.6.6.tgz#8417d2f102a0c8c17a18ccef949b56be70770fab"
+  integrity sha512-ntZUst1aXYMh01+xKceC3Cn133hJNfljwqRMtrf6+ZCc4TSRqf8Xb7e184zlMB/aUd+Kvxo2NMDJJgmdTdnRKw==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/api-mobx" "^0.8.2-9"
@@ -2412,15 +2412,15 @@
     "@polkadot/api" "^4.10.1"
     "@polkadot/typegen" "^4.10.1"
     "@polkadot/types" "^4.10.1"
-    "@sora-substrate/type-definitions" "^1.6.4"
+    "@sora-substrate/type-definitions" "^1.6.6"
 
-"@sora-substrate/util@1.6.4":
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/util/-/util-1.6.4.tgz#fe17b5ac4f4b599bdcd0d4473f4c2f1b98241baf"
-  integrity sha512-RmDkOjd1ssY8Jsl68p/FZxzXaNwgOGx0nWhjo6lZKzBSC1jDxpAC9pxAND5n99Je5HXgT9NQmgUWbNgfm3Ithg==
+"@sora-substrate/util@1.6.6":
+  version "1.6.6"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/util/-/util-1.6.6.tgz#da6b47bd7b07184ee754ce8d2ccaa1ac7974f358"
+  integrity sha512-yDZCX/CRhp4v512zzWmude2h1PDpVYxefplP8cYb8GJUsMYm3okkHup5qsAWvcqyCoKFhIjo9882MKcdPv3dyw==
   dependencies:
     "@polkadot/ui-keyring" "^0.77.1"
-    "@sora-substrate/api" "^1.6.4"
+    "@sora-substrate/api" "^1.6.6"
     axios "^0.21.1"
     bignumber.js "^9.0.1"
     crypto-js "^4.0.0"
@@ -3925,13 +3925,6 @@ aws4@^1.8.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.11.0.tgz#d61f46d83b2519250e2784daf5b09479a8b41c59"
   integrity sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==
-
-axios@^0.19.0:
-  version "0.19.2"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-0.19.2.tgz#3ea36c5d8818d0d5f8a8a97a6d36b86cdc00cb27"
-  integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
-  dependencies:
-    follow-redirects "1.5.10"
 
 axios@^0.21.1:
   version "0.21.3"
@@ -5808,13 +5801,6 @@ debug@4:
   dependencies:
     ms "2.1.2"
 
-debug@=3.1.0, debug@~3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
-  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
-  dependencies:
-    ms "2.0.0"
-
 debug@^3.1.0, debug@^3.1.1, debug@^3.2.6:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.7.tgz#72580b7e9145fb39b6676f9c5e5fb100b934179a"
@@ -5828,6 +5814,13 @@ debug@^4.0.1, debug@^4.1.0, debug@^4.1.1:
   integrity sha512-doEwdvm4PCeK4K3RQN2ZC2BYUBaxwLARCqZmMjtF8a51J2Rb0xpVloFRnCODwqjpwnAoao4pelN8l3RJdv3gRQ==
   dependencies:
     ms "2.1.2"
+
+debug@~3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
+  integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
+  dependencies:
+    ms "2.0.0"
 
 decamelize@^1.0.0, decamelize@^1.1.2, decamelize@^1.2.0:
   version "1.2.0"
@@ -7276,13 +7269,6 @@ flush-write-stream@^1.0.0:
   dependencies:
     inherits "^2.0.3"
     readable-stream "^2.3.6"
-
-follow-redirects@1.5.10:
-  version "1.5.10"
-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.10.tgz#7b7a9f9aea2fdff36786a94ff643ed07f4ff5e2a"
-  integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
-  dependencies:
-    debug "=3.1.0"
 
 follow-redirects@^1.0.0:
   version "1.13.3"

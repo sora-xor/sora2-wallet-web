@@ -13,13 +13,13 @@ import NumberFormatterMixin from './NumberFormatterMixin'
 export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
   private time = 0
 
-  transaction: History | null = null // It's used just for sync errors
+  transaction: Nullable<History> = null // It's used just for sync errors
 
-  @Action addActiveTransaction
-  @Action removeActiveTransaction
+  @Action addActiveTransaction!: (tx: History) => Promise<void>
+  @Action removeActiveTransaction!: (tx: History) => Promise<void>
 
-  private getMessage (value?: History): string {
-    if (!value || !Object.values(Operation).includes(value.type as any)) {
+  getMessage (value?: History): string {
+    if (!value || !Object.values(Operation).includes(value.type as Operation)) {
       return ''
     }
     const params = { ...value } as any
@@ -57,12 +57,12 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       return await this.getLastTransaction()
     }
     this.transaction = tx
-    this.addActiveTransaction({ tx: this.transaction })
+    this.addActiveTransaction(this.transaction)
   }
 
   /** Should be used with @Watch like a singletone in a root of the project */
   handleChangeTransaction (value: History): void {
-    if (!value || !value.status || ![TransactionStatus.Finalized, TransactionStatus.Error].includes(value.status as any)) {
+    if (!value || !value.status || ![TransactionStatus.Finalized, TransactionStatus.Error].includes(value.status as TransactionStatus)) {
       return
     }
     const message = this.getMessage(value)
@@ -80,10 +80,10 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       })
     }
     this.time = 0
-    this.removeActiveTransaction({ tx: value })
+    this.removeActiveTransaction(value)
   }
 
-  async withNotifications (func: () => Promise<void>): Promise<void> {
+  async withNotifications (func: AsyncVoidFn): Promise<void> {
     await this.withLoading(async () => {
       try {
         this.time = Date.now()
@@ -93,8 +93,10 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       } catch (error) {
         const message = this.getMessage(this.transaction as History)
         this.time = 0
-        this.removeActiveTransaction({ tx: this.transaction })
-        this.transaction = null
+        if (this.transaction) {
+          this.removeActiveTransaction(this.transaction)
+          this.transaction = null
+        }
         this.$notify({
           message: message || this.t('unknownErrorText'),
           type: 'error',

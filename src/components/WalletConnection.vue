@@ -58,13 +58,14 @@ import LoadingMixin from './mixins/LoadingMixin'
 import WalletBase from './WalletBase.vue'
 import WalletAccount from './WalletAccount.vue'
 import { RouteNames } from '../consts'
-import { Account } from '../types'
+import type { PolkadotJsAccount } from '../types/common'
 
 enum Step {
   First = 1,
   Second = 2
 }
 
+// TODO: [PW-295] Refactor this component
 @Component({
   components: { WalletBase, WalletAccount }
 })
@@ -74,15 +75,16 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   isAccountLoading = true
   isExtensionAvailable = false
-  extensionTimer: any
+  extensionTimer: Nullable<NodeJS.Timer> = null
   step = Step.First
-  @Getter currentRouteParams!: any
-  @Getter polkadotJsAccounts!: Array<Account>
 
-  @Action navigate
-  @Action checkExtension
-  @Action getPolkadotJsAccounts
-  @Action importPolkadotJs
+  @Getter currentRouteParams!: any
+  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>
+
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action checkExtension!: () => Promise<boolean>
+  @Action getPolkadotJsAccounts!: AsyncVoidFn
+  @Action importPolkadotJs!: (address: string) => Promise<void>
 
   get isAccountSwitch (): boolean {
     return (this.currentRouteParams || {}).isAccountSwitch
@@ -142,10 +144,10 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     }
   }
 
-  async handleSelectAccount (account: Account): Promise<void> {
+  async handleSelectAccount (account: PolkadotJsAccount): Promise<void> {
     this.isAccountLoading = true
     try {
-      await this.importPolkadotJs({ address: account.address })
+      await this.importPolkadotJs(account.address)
     } catch (error) {
       this.$alert(this.t((error as Error).message), this.t('errorText'))
       this.step = Step.First
@@ -155,7 +157,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     this.navigate({ name: RouteNames.Wallet })
   }
 
-  destroyed (): void {
+  beforeDestroy (): void {
     if (this.extensionTimer) {
       clearInterval(this.extensionTimer)
     }

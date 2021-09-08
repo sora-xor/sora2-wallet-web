@@ -17,9 +17,13 @@ export enum Operations {
   Bridge = 'bridge'
 }
 
-export interface Account {
+export interface PolkadotJsAccount {
   address: string;
   name: string;
+}
+
+export interface Account extends PolkadotJsAccount {
+  isExternal: boolean;
 }
 
 export enum FontSizeRate {
@@ -32,4 +36,11 @@ export enum FontWeightRate {
   SMALL = 'small',
   MEDIUM = 'medium',
   NORMAL = 'normal'
+}
+
+export type WhitelistIdsBySymbol = { [key: string]: string }
+
+export type Permissions = {
+  sendAssets: boolean;
+  swapAssets: boolean;
 }
