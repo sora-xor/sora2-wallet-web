@@ -50,6 +50,14 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
     return this.getFPNumber(amount || '0', asset.decimals).mul(FPNumber.fromCodecValue(price)).toLocaleString()
   }
 
+  getFPNumberFiatAmountByFPNumber (amount: FPNumber, asset = KnownAssets.get(KnownSymbols.XOR)): Nullable<FPNumber> {
+    const price = this.getAssetFiatPrice(asset)
+    if (!price) {
+      return null
+    }
+    return amount.mul(FPNumber.fromCodecValue(price))
+  }
+
   getFiatAmountByFPNumber (amount: FPNumber, asset = KnownAssets.get(KnownSymbols.XOR)): Nullable<string> {
     const price = this.getAssetFiatPrice(asset)
     if (!price) {

@@ -32,12 +32,20 @@ export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountM
     return KnownSymbols.XOR
   }
 
+  private formatValue (value: FPNumber): string {
+    return value.isFinity() ? value.toLocaleString() : value.toString()
+  }
+
   get formattedValue (): string {
-    return this.value.toLocaleString()
+    return this.formatValue(this.value)
   }
 
   get formattedFiatValue (): Nullable<string> {
-    return this.getFiatAmountByFPNumber(this.value)
+    const value = this.getFPNumberFiatAmountByFPNumber(this.value)
+    if (!value) {
+      return value
+    }
+    return this.formatValue(value)
   }
 }
 </script>
