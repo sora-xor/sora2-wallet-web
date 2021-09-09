@@ -81,7 +81,12 @@ async function initWallet ({
     if (permissions) {
       store.dispatch('setPermissions', permissions)
     }
-    await api.initialize()
+    try {
+      await api.initialize()
+    } catch (error) {
+      console.error('Something went wrong during api initialization', error)
+      throw error
+    }
     await store.dispatch('getWhitelist')
     await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates')
     await store.dispatch('checkSigner')

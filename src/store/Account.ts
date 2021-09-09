@@ -83,10 +83,10 @@ function initialState (): AccountState {
 const state = initialState()
 
 const getters = {
-  isLoggedIn (state: AccountState) {
-    return state.isExternal && state.address
+  isLoggedIn (state: AccountState): boolean {
+    return state.isExternal && !!state.address
   },
-  isExternal (state: AccountState) {
+  isExternal (state: AccountState): boolean {
     return state.isExternal
   },
   account (state: AccountState): Account {
@@ -96,37 +96,37 @@ const getters = {
       isExternal: state.isExternal
     }
   },
-  accountAssets (state: AccountState) {
+  accountAssets (state: AccountState): Array<AccountAsset> {
     return state.accountAssets
   },
-  accountAssetsAddressTable (state: AccountState) {
+  accountAssetsAddressTable (state: AccountState): any {
     return toHashTable(state.accountAssets, 'address')
   },
-  activity (state: AccountState) {
+  activity (state: AccountState): Array<History> {
     return state.activity
   },
-  assets (state: AccountState) {
+  assets (state: AccountState): Array<Asset> {
     return state.assets
   },
-  polkadotJsAccounts (state: AccountState) {
+  polkadotJsAccounts (state: AccountState): Array<PolkadotJsAccount> {
     return state.polkadotJsAccounts
   },
-  whitelistArray (state: AccountState) {
+  whitelistArray (state: AccountState): Array<WhitelistArrayItem> {
     return state.whitelistArray
   },
-  whitelist (state: AccountState) {
+  whitelist (state: AccountState): Whitelist {
     return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistAssets(state.whitelistArray) : {}
   },
-  whitelistIdsBySymbol (state: AccountState) {
+  whitelistIdsBySymbol (state: AccountState): any {
     return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistIdsBySymbol(state.whitelistArray) : {}
   },
-  withoutFiatAndApy (state: AccountState) {
+  withoutFiatAndApy (state: AccountState): boolean {
     return state.withoutFiatAndApy
   },
-  fiatPriceAndApyObject (state: AccountState) {
+  fiatPriceAndApyObject (state: AccountState): Nullable<FiatPriceAndApyObject> {
     return state.fiatPriceAndApyObject
   },
-  assetsLoading (state: AccountState) {
+  assetsLoading (state: AccountState): boolean {
     return state.assetsLoading
   },
   selectedTransaction (state: AccountState, getters): History {
