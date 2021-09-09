@@ -7,6 +7,7 @@
           :key="tab"
           :label="t(`addAsset.${tab}.title`)"
           :name="tab"
+          :disabled="tab === AddAssetTabs.Custom /* TODO: uncomment it when we'll know what this tab should actually do */"
         />
       </s-tabs>
       <component :is="currentTab" />
@@ -51,5 +52,8 @@ export default class AddAsset extends Mixins(TranslationMixin) {
 <style lang="scss">
 .add-asset {
   @include custom-tabs;
+  #tab-AddAssetCustom.is-disabled {
+    color: var(--s-color-base-content-tertiary);
+  }
 }
 </style>

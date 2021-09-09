@@ -31,10 +31,10 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
 
   @Getter accountAssets!: Array<AccountAsset>
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action searchAsset!: (options: { address: string }) => Promise<Asset>
+  @Action searchAsset!: (address: string) => Promise<Asset>
 
   address = ''
-  selectedAsset: Asset | null = null
+  selectedAsset: Nullable<Asset> = null
   alreadyAttached = false
 
   mounted (): void {
@@ -52,7 +52,7 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
       return
     }
     const search = value.trim().toLowerCase()
-    const asset = await this.searchAsset({ address: search })
+    const asset = await this.searchAsset(search)
     if (this.accountAssets.find(({ address }) => address.toLowerCase() === search)) {
       this.selectedAsset = null
       this.alreadyAttached = true

@@ -33,15 +33,19 @@ const permissions = {
 initWallet({ permissions })
 ```
 
-Also, you need to unsubscribe from event of balances update when Vue root component will be destroyed.
+Also, you need to unsubscribe from events of balances updates and txs statuses sync when Vue root component will be destroyed.
 
 ```
-import { updateAccountAssetsSubscription } from '@soramitsu/soraneo-wallet-web'
+import { Action } from 'vuex-class'
 
-destroyed (): void {
-    if (updateAccountAssetsSubscription) {
-      updateAccountAssetsSubscription.unsubscribe()
-    }
+@Action resetActiveTransactions
+@Action resetAccountAssetsSubscription
+@Action resetFiatPriceAndApySubscription
+
+beforeDestroy (): void {
+    this.resetActiveTransactions()
+    this.resetAccountAssetsSubscription()
+    this.resetFiatPriceAndApySubscription()
 }
 ```
 
