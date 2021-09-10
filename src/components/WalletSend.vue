@@ -115,6 +115,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   @Getter currentRouteParams!: any
   @Getter account!: Account
   @Getter accountAssets!: Array<AccountAsset>
+  @Getter networkFees!: any
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
   @Action transfer!: (options: { to: string; amount: string }) => Promise<void>
@@ -124,7 +125,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   amount = ''
 
   get fee (): FPNumber {
-    return this.getFPNumberFromCodec(api.NetworkFee[Operation.Transfer])
+    return this.getFPNumberFromCodec(this.networkFees[Operation.Transfer])
   }
 
   get tooltipContent (): string {
