@@ -3,6 +3,9 @@ import { FPNumber, CodecString, MaxTotalSupply, KnownAssets } from '@sora-substr
 
 @Component
 export default class NumberFormatterMixin extends Vue {
+  readonly Zero = FPNumber.ZERO
+  readonly Hundred = FPNumber.HUNDRED
+
   getFPNumber (value: string | number, decimals?: number): FPNumber {
     return new FPNumber(value, decimals)
   }

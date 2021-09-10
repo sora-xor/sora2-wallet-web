@@ -34,7 +34,7 @@ function initialState (): RouterState {
 const state = initialState()
 
 const getters = {
-  currentRoute (state: RouterState) {
+  currentRoute (state: RouterState): RouteNames {
     return state.currentRoute
   },
   currentRouteParams (state: RouterState) {
