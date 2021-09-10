@@ -87,6 +87,7 @@ async function initWallet ({
       console.error('Something went wrong during api initialization', error)
       throw error
     }
+    await store.dispatch('updateNetworkFees')
     await store.dispatch('getWhitelist')
     await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates')
     await store.dispatch('checkSigner')

@@ -6,11 +6,14 @@ import concat from 'lodash/fp/concat'
 
 import type { WalletPermissions } from '../consts'
 
+import { api } from '../api'
+
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
     'SET_PERMISSIONS',
-    'SET_SORA_NETWORK'
+    'SET_SORA_NETWORK',
+    'UPDATE_NETWORK_FEES'
   ]),
   map(x => [x, x]),
   fromPairs
@@ -19,6 +22,7 @@ const types = flow(
 type SettingsState = {
   permissions: WalletPermissions;
   soraNetwork: string;
+  networkFees: any;
 }
 
 function initialState (): SettingsState {
@@ -27,7 +31,8 @@ function initialState (): SettingsState {
       sendAssets: true,
       swapAssets: true
     },
-    soraNetwork: ''
+    soraNetwork: '',
+    networkFees: {}
   }
 }
 
@@ -39,6 +44,9 @@ const getters = {
   },
   soraNetwork (state: SettingsState) {
     return state.soraNetwork
+  },
+  networkFees (state: SettingsState) {
+    return state.networkFees
   }
 }
 
@@ -53,6 +61,10 @@ const mutations = {
 
   [types.SET_SORA_NETWORK] (state: SettingsState, value = '') {
     state.soraNetwork = value
+  },
+
+  [types.UPDATE_NETWORK_FEES] (state: SettingsState, fees = {}) {
+    state.networkFees = { ...fees }
   }
 }
 
@@ -63,6 +75,10 @@ const actions = {
 
   setSoraNetwork ({ commit }, network: string) {
     commit(types.SET_SORA_NETWORK, network)
+  },
+
+  updateNetworkFees ({ commit }) {
+    commit(types.UPDATE_NETWORK_FEES, api.NetworkFee)
   }
 }
 
