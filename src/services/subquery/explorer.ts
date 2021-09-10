@@ -4,7 +4,7 @@ import { HistoryElementsQuery } from './queries/historyElements'
 import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject } from '../types'
 
 import store from '../../store'
-import { FiatPriceQuery } from './queries/fiatPrice'
+import { FiatPriceQuery } from './queries/fiatPriceAndApy'
 
 export default class SubqueryExplorer implements Explorer {
   // TODO: add api link for wss://ws.tst.sora2.soramitsu.co.jp?
