@@ -3,10 +3,10 @@ import flatMap from 'lodash/fp/flatMap'
 import fromPairs from 'lodash/fp/fromPairs'
 import flow from 'lodash/fp/flow'
 import concat from 'lodash/fp/concat'
-
-import type { WalletPermissions } from '../consts'
+import type { NetworkFeesObject } from '@sora-substrate/util'
 
 import { api } from '../api'
+import type { WalletPermissions } from '../consts'
 
 const types = flow(
   flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
@@ -22,7 +22,7 @@ const types = flow(
 type SettingsState = {
   permissions: WalletPermissions;
   soraNetwork: string;
-  networkFees: any;
+  networkFees: NetworkFeesObject;
 }
 
 function initialState (): SettingsState {
@@ -32,20 +32,20 @@ function initialState (): SettingsState {
       swapAssets: true
     },
     soraNetwork: '',
-    networkFees: {}
+    networkFees: {} as NetworkFeesObject // It won't be empty at the moment of usage
   }
 }
 
 const state = initialState()
 
 const getters = {
-  permissions (state: SettingsState) {
+  permissions (state: SettingsState): WalletPermissions {
     return state.permissions
   },
-  soraNetwork (state: SettingsState) {
+  soraNetwork (state: SettingsState): string {
     return state.soraNetwork
   },
-  networkFees (state: SettingsState) {
+  networkFees (state: SettingsState): NetworkFeesObject {
     return state.networkFees
   }
 }
@@ -63,7 +63,7 @@ const mutations = {
     state.soraNetwork = value
   },
 
-  [types.UPDATE_NETWORK_FEES] (state: SettingsState, fees = {}) {
+  [types.UPDATE_NETWORK_FEES] (state: SettingsState, fees = {} as NetworkFeesObject) {
     state.networkFees = { ...fees }
   }
 }
