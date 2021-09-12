@@ -160,7 +160,7 @@ $avatar-size: 32px;
       margin-left: var(--s-basic-spacing);
     }
   }
-  &-switch, &-logout {
+  &-switch {
     padding: 0;
   }
 }
