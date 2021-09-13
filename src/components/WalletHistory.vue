@@ -18,7 +18,7 @@
           </template>
         </s-input>
       </s-form-item>
-      <div class="history-items">
+      <div class="history-items" v-loading="loading">
         <template v-if="filteredHistory.length">
           <div
             class="history-item s-flex"
@@ -41,7 +41,8 @@
         :layout="'total, prev, next'"
         :current-page.sync="currentPage"
         :page-size="pageAmount"
-        :total="filteredHistory.length"
+        :total="total"
+        :disabled="loading"
         @prev-click="handlePaginationClick"
         @next-click="handlePaginationClick"
       />
@@ -52,18 +53,24 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { Getter, Action } from 'vuex-class'
-
 import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util'
+
+import { api } from '../api'
 import LoadingMixin from './mixins/LoadingMixin'
 import TransactionMixin from './mixins/TransactionMixin'
 import { formatDate, getStatusIcon, getStatusClass } from '../util'
+import { subqueryStorage } from '../util/storage'
 import { RouteNames } from '../consts'
+import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery'
+import { historyElementsFilter } from '../services/subquery/queries/historyElements'
+import type { Account } from '../types/common'
 
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
   @Getter activity!: Array<History>
-  @Action navigate
-  @Action getAccountActivity
+  @Getter account!: Account
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action getAccountActivity!: AsyncVoidFn
 
   @Prop() readonly asset?: AccountAsset
 
@@ -72,6 +79,14 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   query = ''
   currentPage = 1
   pageAmount = 8
+
+  // for fast search
+  get activityHashTable (): any {
+    return this.activity.reduce((result, item) => {
+      if (!item.txId) return result
+      return { ...result, [item.txId]: item }
+    }, {})
+  }
 
   get assetAddress (): string | undefined {
     return this.asset && this.asset.address
@@ -93,8 +108,12 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return !!(this.transactions && this.transactions.length)
   }
 
-  mounted () {
-    this.getAccountActivity()
+  get total (): number {
+    return this.filteredHistory.length
+  }
+
+  async mounted () {
+    await this.updateHistory()
   }
 
   getFilteredHistory (history: Array<History>): Array<History> {
@@ -143,6 +162,67 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     this.query = ''
     this.currentPage = 1
   }
+
+  async updateHistory (): Promise<void> {
+    await this.withLoading(async () => {
+      await this.updateHistoryFromExplorer()
+      await this.getAccountActivity()
+    })
+  }
+
+  async updateHistoryFromExplorer (): Promise<void> {
+    const {
+      assetAddress,
+      activity,
+      account: { address }
+    } = this
+
+    const operations = SubqueryDataParserService.supportedOperations
+    const parsedHistoryOperations = JSON.parse(subqueryStorage.get('operations'))
+
+    const operationsChanged = (
+      !Array.isArray(parsedHistoryOperations) ||
+      operations.length !== parsedHistoryOperations.length ||
+      !operations.every(item => !!parsedHistoryOperations.find(el => el === item))
+    )
+
+    const timestamp = (operationsChanged || !activity.length) ? 0 : api.historySyncTimestamp
+    const filter = historyElementsFilter(address, { assetAddress, timestamp })
+    const variables = {
+      filter // filter by account & asset
+    }
+
+    try {
+      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables)
+
+      if (edges.length !== 0) {
+        const latestTimestamp = edges[0].node.timestamp
+
+        api.historySyncTimestamp = +latestTimestamp
+
+        for (const edge of edges) {
+          const transaction = edge.node
+          const hasHistoryItem = transaction.id in this.activityHashTable
+
+          if (!hasHistoryItem) {
+            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction)
+
+            if (historyItem) {
+              api.saveHistory(historyItem)
+            }
+          }
+        }
+      } else {
+        api.historySyncTimestamp = timestamp
+      }
+
+      if (operationsChanged) {
+        subqueryStorage.set('operations', JSON.stringify(operations))
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
 }
 </script>
 
@@ -183,9 +263,15 @@ $history-item-top-border-height: 1px;
 
 .history {
   flex-direction: column;
+
   &--search.el-form-item {
     margin-bottom: #{$basic-spacing-medium};
   }
+
+  &-items {
+    min-height: $history-item-height;
+  }
+
   &-item {
     display: flex;
     flex-direction: column;

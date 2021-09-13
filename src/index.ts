@@ -12,10 +12,9 @@ import FormattedAmount from './components/FormattedAmount.vue'
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue'
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
-import { Components, Modules, FontSizeRate, FontWeightRate } from './types'
+import { Components, Modules, FontSizeRate, FontWeightRate } from './types/common'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
-import { updateAccountAssetsSubscription } from './store/Account'
 import { storage } from './util/storage'
 import { api, connection } from './api'
 import { delay, getExplorerLink } from './util'
@@ -82,8 +81,15 @@ async function initWallet ({
     if (permissions) {
       store.dispatch('setPermissions', permissions)
     }
-    await api.initialize()
+    try {
+      await api.initialize()
+    } catch (error) {
+      console.error('Something went wrong during api initialization', error)
+      throw error
+    }
+    await store.dispatch('updateNetworkFees')
     await store.dispatch('getWhitelist')
+    await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates')
     await store.dispatch('checkSigner')
     await store.dispatch('syncWithStorage')
     await store.dispatch('getAccountAssets')
@@ -101,7 +107,6 @@ export {
   connection,
   storage,
   getExplorerLink,
-  updateAccountAssetsSubscription,
   SoraNeoWallet,
   WALLET_CONSTS,
   WalletAvatar,
@@ -111,7 +116,6 @@ export {
   NumberFormatterMixin,
   FormattedAmountMixin,
   FontSizeRate,
-  FontWeightRate,
-  store as externalStore // only for soraNetwork getter in wallet
+  FontWeightRate
 }
 export default SoraNeoWalletElements

@@ -52,12 +52,12 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   @Getter assets!: Array<Asset>
   @Getter assetsLoading!: boolean
   @Getter accountAssets!: Array<AccountAsset>
-  @Getter accountAssetsAddressTable
+  @Getter accountAssetsAddressTable!: any
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action getAssets!: () => Promise<void>
+  @Action getAssets!: AsyncVoidFn
 
   search = ''
-  selectedAsset: Asset | null = null
+  selectedAsset: Nullable<Asset> = null
 
   async mounted (): Promise<void> {
     await this.getAssets()

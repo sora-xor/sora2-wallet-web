@@ -44,6 +44,7 @@ import TranslationMixin from './mixins/TranslationMixin'
 import { RouteNames } from '../consts'
 import { copyToClipboard, formatAddress, formatSoraAddress } from '../util'
 import WalletAvatar from './WalletAvatar.vue'
+import type { Account, PolkadotJsAccount } from '../types/common'
 
 @Component({
   components: {
@@ -51,12 +52,12 @@ import WalletAvatar from './WalletAvatar.vue'
   }
 })
 export default class WalletAccount extends Mixins(TranslationMixin) {
-  @Getter account!: any
-  @Action logout
-  @Action navigate
+  @Getter account!: Account
+  @Action logout!: AsyncVoidFn
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
 
   @Prop({ default: false, type: Boolean }) readonly showControls!: boolean
-  @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: { name: string; address: string }
+  @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount
 
   get address (): string {
     if (this.polkadotAccount) {

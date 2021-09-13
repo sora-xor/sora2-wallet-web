@@ -15,7 +15,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator'
 import { FPNumber } from '@sora-substrate/util'
 
-import { FontSizeRate, FontWeightRate } from '../types'
+import { FontSizeRate, FontWeightRate } from '../types/common'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 
 interface FormattedAmountValues {

@@ -35,6 +35,7 @@ import WalletAccount from './WalletAccount.vue'
 import WalletAssets from './WalletAssets.vue'
 import WalletActivity from './WalletActivity.vue'
 import { RouteNames, WalletTabs } from '../consts'
+import type { Account } from '../types/common'
 
 @Component({
   components: {
@@ -48,10 +49,10 @@ export default class Wallet extends Mixins(TranslationMixin) {
   readonly WalletTabs = WalletTabs
 
   @Getter currentRouteParams!: any
-  @Getter account!: any
-  @Getter activity!: Array<History | any>
-  @Action navigate
-  @Action getAccountActivity
+  @Getter account!: Account
+  @Getter activity!: Array<History>
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action getAccountActivity!: AsyncVoidFn
 
   currentTab: WalletTabs = WalletTabs.Assets
 

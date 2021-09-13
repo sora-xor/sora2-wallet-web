@@ -88,7 +88,7 @@ import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue'
 import WalletHistory from './WalletHistory.vue'
 import { RouteNames } from '../consts'
 import { getAssetIconStyles } from '../util'
-import { Operations, FontSizeRate, FontWeightRate } from '../types'
+import { Operations, FontSizeRate, FontWeightRate, Account } from '../types/common'
 
 interface Operation {
   type: Operations;
@@ -117,13 +117,12 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   readonly FontSizeRate = FontSizeRate
   readonly FontWeightRate = FontWeightRate
 
-  @Getter account!: any
+  @Getter account!: Account
   @Getter accountAssets!: Array<AccountAsset>
   @Getter currentRouteParams!: any
-  @Getter selectedAssetDetails!: Array<any>
-  @Getter activity!: Array<History | any>
-  @Action navigate
-  @Action getAccountActivity
+  @Getter activity!: Array<History>
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action getAccountActivity!: AsyncVoidFn
 
   wasBalanceDetailsClicked = false
 
@@ -131,7 +130,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     return this.formatCodecNumber(value, this.asset.decimals)
   }
 
-  get price (): CodecString | null {
+  get price (): Nullable<CodecString> {
     return this.getAssetFiatPrice(this.asset)
   }
 

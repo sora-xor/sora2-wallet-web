@@ -24,7 +24,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
-import { FontSizeRate, FontWeightRate } from '../types'
+import { FontSizeRate, FontWeightRate } from '../types/common'
 import FormattedAmount from './FormattedAmount.vue'
 
 @Component({

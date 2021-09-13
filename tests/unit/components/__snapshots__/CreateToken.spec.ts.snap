@@ -60,7 +60,7 @@ exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
     </s-button-stub>
      
     <wallet-fee-stub
-      value="0"
+      value="0.007"
     />
   </div>
 </wallet-base-stub>

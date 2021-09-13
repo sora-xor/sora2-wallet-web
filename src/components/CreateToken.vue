@@ -71,14 +71,14 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
-import { KnownSymbols, KnownAssets, FPNumber, MaxTotalSupply, Operation } from '@sora-substrate/util'
+import { Action, Getter } from 'vuex-class'
+import { KnownSymbols, KnownAssets, FPNumber, MaxTotalSupply, NetworkFeesObject } from '@sora-substrate/util'
 
-import TransactionMixin from './mixins/TransactionMixin'
-import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import InfoLine from './InfoLine.vue'
 import WalletFee from './WalletFee.vue'
+import TransactionMixin from './mixins/TransactionMixin'
+import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import { RouteNames } from '../consts'
 import { api } from '../api'
 
@@ -109,7 +109,8 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   tokenSupply = ''
   extensibleSupply = false
 
-  @Action navigate
+  @Getter networkFees!: NetworkFeesObject
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
 
   handleBack (): void {
     if (this.step === Step.Create) {
@@ -120,7 +121,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   }
 
   get fee (): FPNumber {
-    return this.getFPNumberFromCodec(api.NetworkFee[Operation.RegisterAsset])
+    return this.getFPNumberFromCodec(this.networkFees.RegisterAsset)
   }
 
   get isCreateDisabled (): boolean {

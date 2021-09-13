@@ -89,7 +89,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols, Operation } from '@sora-substrate/util'
+import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols, NetworkFeesObject } from '@sora-substrate/util'
 
 import TransactionMixin from './mixins/TransactionMixin'
 import FormattedAmountMixin from './mixins/FormattedAmountMixin'
@@ -100,6 +100,7 @@ import WalletFee from './WalletFee.vue'
 import { RouteNames } from '../consts'
 import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util'
 import { api } from '../api'
+import type { Account } from '../types/common'
 
 @Component({
   components: {
@@ -112,18 +113,19 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   readonly delimiters = FPNumber.DELIMITERS_CONFIG
 
   @Getter currentRouteParams!: any
-  @Getter account!: any
+  @Getter account!: Account
   @Getter accountAssets!: Array<AccountAsset>
+  @Getter networkFees!: NetworkFeesObject
 
-  @Action navigate
-  @Action transfer
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action transfer!: (options: { to: string; amount: string }) => Promise<void>
 
   step = 1
   address = ''
   amount = ''
 
   get fee (): FPNumber {
-    return this.getFPNumberFromCodec(api.NetworkFee[Operation.Transfer])
+    return this.getFPNumberFromCodec(this.networkFees.Transfer)
   }
 
   get tooltipContent (): string {
@@ -140,7 +142,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
   }
 
-  get assetFiatPrice (): CodecString | null {
+  get assetFiatPrice (): Nullable<CodecString> {
     return this.getAssetFiatPrice(this.asset)
   }
 
@@ -148,7 +150,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     return KnownAssets.get(KnownSymbols.XOR)
   }
 
-  get fiatAmount (): string | null {
+  get fiatAmount (): Nullable<string> {
     return this.getFiatAmountByString(this.amount, this.asset)
   }
 

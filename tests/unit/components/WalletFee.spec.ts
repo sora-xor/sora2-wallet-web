@@ -10,7 +10,11 @@ import WalletFee from '@/components/WalletFee.vue'
 useDescribe('WalletFee.vue', WalletFee, () => {
   const store = new Vuex.Store({
     getters: {
-      whitelist: () => MOCK_WHITE_LIST
+      fiatPriceAndApyObject: () => ({
+        '0x0200000000000000000000000000000000000000000000000000000000000000': {
+          price: '1230000000000000000'
+        }
+      })
     }
   })
   MOCK_WALLET_FEE.map(item => it(`[${item.title}]: should be rendered correctly`, () => {

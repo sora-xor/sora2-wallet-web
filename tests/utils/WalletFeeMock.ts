@@ -1,23 +1,25 @@
+import { FPNumber } from '@sora-substrate/util'
+
 interface WalletFee {
   title: string;
-  value: string;
+  value: FPNumber;
 }
 
 export const MOCK_WALLET_FEE: Array<WalletFee> = [
   {
     title: 'With Value',
-    value: '1,234,567.890123'
+    value: new FPNumber('1234567.890123')
   },
   {
     title: 'With "0" Value',
-    value: '0'
+    value: new FPNumber('0')
   },
   {
     title: 'With "NaN" Value',
-    value: 'NaN'
+    value: new FPNumber('NaN')
   },
   {
     title: 'With "Infinity" Value',
-    value: 'Infinity'
+    value: new FPNumber('Infinity')
   }
 ]
