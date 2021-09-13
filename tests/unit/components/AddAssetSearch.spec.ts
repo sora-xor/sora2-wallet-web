@@ -1,42 +1,37 @@
-// import Vuex from 'vuex'
-// import { shallowMount, createLocalVue } from '@vue/test-utils'
+import Vuex from 'vuex'
+import { shallowMount } from '@vue/test-utils'
 
-// import AddAssetSearch from '@/components/AddAssetSearch.vue'
-// import { TranslationMock, SoramitsuElementsImport } from '../../utils'
+import { useDescribe, localVue } from '../../utils'
+import { MOCK_ACCOUNT_ASSETS } from '../../utils/mock'
+import { MOCK_ADD_ASSET_SEARCH } from '../../utils/AddAssetSearchMock'
 
-// TODO: Fix CI
+import AddAssetSearch from '@/components/AddAssetSearch.vue'
 
-// const localVue = createLocalVue()
-// localVue.use(Vuex)
-// const store = new Vuex.Store({
-//   modules: {
-//     Router: {
-//       actions: {
-//         navigate: jest.fn()
-//       }
-//     },
-//     Account: {
-//       getters: {
-//         assets: () => [{ symbol: 'XOR', address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984', decimals: 18 }],
-//         accountAssets: () => [{ symbol: 'XOR', address: '1f9840a85d5af5bf1d1762f925bdaddc4201f984', balance: '0.123', decimals: 18 }]
-//       },
-//       actions: {
-//         getAssets: jest.fn(),
-//         addAsset: jest.fn()
-//       }
-//     }
-//   } as any
-// })
-
-describe('AddAssetSearch.vue', () => {
-  beforeEach(() => {
-    // SoramitsuElementsImport(localVue)
-    // TranslationMock(AddAssetSearch)
+useDescribe('AddAssetSearch.vue', AddAssetSearch, () => {
+  // TODO: Check this place, there are strange tests results
+  const accountAssetsAddressTableMock = MOCK_ACCOUNT_ASSETS.reduce((param, item) => {
+    param[item.address] = item
+    return param
+  }, {})
+  const store = new Vuex.Store({
+    getters: {
+      assets: () => MOCK_ACCOUNT_ASSETS,
+      accountAssets: () => MOCK_ACCOUNT_ASSETS,
+      accountAssetsAddressTable: () => accountAssetsAddressTableMock
+    }
   })
-
-  it('should renders correctly', () => {
-    // const wrapper = shallowMount(AddAssetSearch, { localVue, store })
-    // expect(wrapper.element).toMatchSnapshot()
-    expect(true).toBe(true)
-  })
+  MOCK_ADD_ASSET_SEARCH.map(item => it(`[${item.title}]: should be rendered correctly`, () => {
+    const wrapper = shallowMount(AddAssetSearch, {
+      store,
+      localVue,
+      data () {
+        return {
+          loading: item.loading,
+          search: item.search,
+          selectedAsset: item.selectedAsset
+        }
+      }
+    })
+    expect(wrapper.element).toMatchSnapshot()
+  }))
 })
