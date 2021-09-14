@@ -11,10 +11,8 @@ query PoolXYKEntities (
         edges {
           node {
             targetAssetId,
-            baseAssetReserves,
-            targetAssetReserves,
             priceUSD,
-            apy
+            strategicBonusApy
           }
         }
       }
