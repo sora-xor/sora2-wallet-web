@@ -39,19 +39,11 @@ export default class SubqueryExplorer implements Explorer {
       if (!poolXYKEntities) {
         return null
       }
-      const xorAddress = KnownAssets.get(KnownSymbols.XOR).address
-      const daiAddress = '0x0200060000000000000000000000000000000000000000000000000000000000' // TODO: move it to substrate-js
       const data = (poolXYKEntities.nodes[0].pools.edges as Array<any>).reduce((acc, item) => {
         const el: PoolXYKEntity = item.node
-        const apy = new FPNumber(+el.apy).toCodecString()
-        const price = new FPNumber(+el.priceUSD).toCodecString()
-        acc[el.targetAssetId] = { apy, price }
-        if (el.targetAssetId === daiAddress) {
-          const xorReserve = new FPNumber(+el.baseAssetReserves)
-          const daiReserve = new FPNumber(+el.targetAssetReserves)
-          const xorPrice = daiReserve.div(xorReserve).toCodecString()
-          acc[xorAddress] = { price: xorPrice }
-        }
+        const strategicBonusApy = new FPNumber(el.strategicBonusApy).toCodecString()
+        const price = new FPNumber(el.priceUSD).toCodecString()
+        acc[el.targetAssetId] = { strategicBonusApy, price }
         return acc
       }, {})
       return data

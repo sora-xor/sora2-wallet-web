@@ -20,16 +20,6 @@
           >
             <s-icon name="arrows-refresh-ccw-24" size="28" />
           </s-button>
-          <s-button
-            class="account__action-button account-logout"
-            type="action"
-            alternative
-            rounded
-            :tooltip="t('account.logout')"
-            @click="handleLogout"
-          >
-            <s-icon name="security-logout-24" size="28" />
-          </s-button>
         </template>
       </div>
     </div>
@@ -92,21 +82,13 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
     }
   }
 
-  private navigateToWalletConnection (params?: any): void {
-    const navigationArgs: any = { name: RouteNames.WalletConnection }
-    if (params) {
-      navigationArgs.params = params
+  handleSwitchAccount (): void {
+    const navigationArgs = {
+      name: RouteNames.WalletConnection,
+      params: { isAccountSwitch: true }
     }
     this.navigate(navigationArgs)
     this.logout()
-  }
-
-  handleSwitchAccount (): void {
-    this.navigateToWalletConnection({ isAccountSwitch: true })
-  }
-
-  handleLogout (): void {
-    this.navigateToWalletConnection()
   }
 }
 </script>
@@ -178,7 +160,7 @@ $avatar-size: 32px;
       margin-left: var(--s-basic-spacing);
     }
   }
-  &-switch, &-logout {
+  &-switch {
     padding: 0;
   }
 }

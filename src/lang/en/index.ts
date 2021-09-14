@@ -19,7 +19,6 @@ export default {
   searchText: 'Search',
   cancelText: 'Cancel',
   saveText: 'Save',
-  logoutText: 'Log out',
   sendText: 'Send',
   addressText: 'Address',
   amountText: 'Amount',
@@ -105,8 +104,7 @@ export default {
   account: {
     successCopy: 'Wallet address is copied to the clipboard',
     copy: 'Copy address',
-    switch: 'Switch account',
-    logout: 'Logout'
+    switch: 'Switch account'
   },
   history: {
     clearHistory: 'Clear history',
