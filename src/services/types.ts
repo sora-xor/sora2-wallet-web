@@ -10,16 +10,14 @@ export interface Explorer {
 }
 
 export type PoolXYKEntity = {
-  apy: string;
-  baseAssetReserves: string;
+  strategicBonusApy: string;
   priceUSD: string;
   targetAssetId: string;
-  targetAssetReserves: string;
 }
 
 export type FiatPriceAndApyObject = {
   [key: string]: {
     price: CodecString;
-    apy?: CodecString;
+    strategicBonusApy?: CodecString;
   };
 }
