@@ -22,6 +22,7 @@ exports[`AddAsset.vue [Custom Asset Tab]: should be rendered correctly 1`] = `
         name="AddAssetSearch"
       />
       <s-tab-stub
+        disabled="true"
         name="AddAssetCustom"
       />
     </s-tabs-stub>
@@ -53,6 +54,7 @@ exports[`AddAsset.vue [Search Tab]: should be rendered correctly 1`] = `
         name="AddAssetSearch"
       />
       <s-tab-stub
+        disabled="true"
         name="AddAssetCustom"
       />
     </s-tabs-stub>
