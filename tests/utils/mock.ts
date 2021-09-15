@@ -1,4 +1,6 @@
-import { AccountAsset, FPNumber, KnownSymbols, History, TransactionStatus, Operation, WhitelistArrayItem } from '@sora-substrate/util'
+import { AccountAsset, FPNumber, KnownSymbols, History, TransactionStatus, Operation, WhitelistArrayItem, api } from '@sora-substrate/util'
+
+export const MOCK_NETWORK_FEE: {} = api.NetworkFee
 
 export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
   {
@@ -124,3 +126,9 @@ export const MOCK_WHITE_LIST: Array<WhitelistArrayItem> = [
     icon: "data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' %3E%3Cpath fill='%23E3232C' d='M22,11c0,6.1-4.9,11-11,11S0,17.1,0,11S4.9,0,11,0S22,4.9,22,11z'/%3E%3Cpath fill='%23FFFFFF' d='M5.8,20.7c1.7-2.6,3.5-5.2,5.3-7.8l5.2,7.8c0.3-0.1,0.5-0.3,0.8-0.5s0.5-0.3,0.7-0.5 c-1.9-2.9-3.9-5.8-5.8-8.7h5.8V9.2H12V7.3h5.8V5.5H4.3v1.8h5.8v1.9H4.3V11h5.8l-5.8,8.7C4.5,19.9,4.7,20,5,20.2 C5.3,20.4,5.5,20.6,5.8,20.7z'/%3E%3C/svg%3E"
   }
 ]
+
+export const MOCK_FIAT_PRICE_AND_APY_OBJECT: any = {
+  '0x0200000000000000000000000000000000000000000000000000000000000000': {
+    price: '1230000000000000000'
+  }
+}

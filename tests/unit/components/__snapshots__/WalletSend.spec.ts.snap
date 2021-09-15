@@ -147,7 +147,14 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
             123.4
           </span>
            
-          <!---->
+          <formatted-amount-stub
+            assetsymbol=""
+            fontsizerate="normal"
+            fontweightrate="normal"
+            isfiatvalue="true"
+            value="151.782"
+            withleftshift="true"
+          />
         </div>
       </div>
        
@@ -174,7 +181,13 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
       <div
         class="asset-info"
       >
-        <!---->
+        <formatted-amount-stub
+          assetsymbol=""
+          fontsizerate="normal"
+          fontweightrate="normal"
+          isfiatvalue="true"
+          value="0"
+        />
          
         <div
           class="asset-highlight"
@@ -298,7 +311,14 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
             123.4
           </span>
            
-          <!---->
+          <formatted-amount-stub
+            assetsymbol=""
+            fontsizerate="normal"
+            fontweightrate="normal"
+            isfiatvalue="true"
+            value="151.782"
+            withleftshift="true"
+          />
         </div>
       </div>
        
@@ -325,7 +345,13 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
       <div
         class="asset-info"
       >
-        <!---->
+        <formatted-amount-stub
+          assetsymbol=""
+          fontsizerate="normal"
+          fontweightrate="normal"
+          isfiatvalue="true"
+          value="0"
+        />
          
         <div
           class="asset-highlight"
@@ -474,7 +500,14 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
             123.4
           </span>
            
-          <!---->
+          <formatted-amount-stub
+            assetsymbol=""
+            fontsizerate="normal"
+            fontweightrate="normal"
+            isfiatvalue="true"
+            value="151.782"
+            withleftshift="true"
+          />
         </div>
       </div>
        
@@ -501,7 +534,13 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
       <div
         class="asset-info"
       >
-        <!---->
+        <formatted-amount-stub
+          assetsymbol=""
+          fontsizerate="normal"
+          fontweightrate="normal"
+          isfiatvalue="true"
+          value="0"
+        />
          
         <div
           class="asset-highlight"
@@ -629,7 +668,14 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
             123.4
           </span>
            
-          <!---->
+          <formatted-amount-stub
+            assetsymbol=""
+            fontsizerate="normal"
+            fontweightrate="normal"
+            isfiatvalue="true"
+            value="151.782"
+            withleftshift="true"
+          />
         </div>
       </div>
        
@@ -656,7 +702,13 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
       <div
         class="asset-info"
       >
-        <!---->
+        <formatted-amount-stub
+          assetsymbol=""
+          fontsizerate="normal"
+          fontweightrate="normal"
+          isfiatvalue="true"
+          value="0"
+        />
          
         <div
           class="asset-highlight"
