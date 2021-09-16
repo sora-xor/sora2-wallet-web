@@ -11,12 +11,6 @@ export interface AddAssetSearchData {
 
 export const MOCK_ADD_ASSET_SEARCH: Array<AddAssetSearchData> = [
   {
-    title: 'Assets List Is Loading',
-    loading: true,
-    search: '',
-    selectedAsset: null
-  },
-  {
     title: 'Empty Search Input',
     loading: false,
     search: '',
@@ -31,7 +25,7 @@ export const MOCK_ADD_ASSET_SEARCH: Array<AddAssetSearchData> = [
   {
     title: 'Token is Found',
     loading: false,
-    search: MOCK_ACCOUNT_ASSETS[0].address,
-    selectedAsset: MOCK_ACCOUNT_ASSETS[0] as Asset
+    search: 'TEST',
+    selectedAsset: null
   }
 ]

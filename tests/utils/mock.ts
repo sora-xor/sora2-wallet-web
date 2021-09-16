@@ -1,4 +1,4 @@
-import { AccountAsset, FPNumber, KnownSymbols, History, TransactionStatus, Operation, WhitelistArrayItem, api } from '@sora-substrate/util'
+import { Asset, AccountAsset, FPNumber, KnownSymbols, History, TransactionStatus, Operation, WhitelistArrayItem, api } from '@sora-substrate/util'
 
 import type { Account } from '@/types/common'
 
@@ -43,6 +43,15 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
       frozen: '0',
       locked: '0'
     }
+  }
+]
+
+export const MOCK_ASSETS: Array<Asset> = [
+  {
+    address: '0x0212350000000000000000000000000000000000000000000000000000000000',
+    symbol: 'TEST',
+    name: 'Test Asset',
+    decimals: FPNumber.DEFAULT_PRECISION
   }
 ]
 

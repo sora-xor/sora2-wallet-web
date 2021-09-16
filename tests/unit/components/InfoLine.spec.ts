@@ -4,7 +4,6 @@ import { useDescribe, localVue } from '../../utils'
 import { MOCK_INFO_LINE } from '../../utils/InfoLineMock'
 
 import InfoLine from '@/components/InfoLine.vue'
-import FormattedAmount from '@/components/FormattedAmount.vue'
 
 useDescribe('InfoLine.vue', InfoLine, () => {
   MOCK_INFO_LINE.map(item => it(`[${item.title}]: should be rendered correctly`, () => {
@@ -18,10 +17,7 @@ useDescribe('InfoLine.vue', InfoLine, () => {
     }
     const wrapper = shallowMount(InfoLine, {
       localVue,
-      propsData,
-      stubs: {
-        FormattedAmount: FormattedAmount
-      }
+      propsData
     })
     expect(wrapper.element).toMatchSnapshot()
   }))
