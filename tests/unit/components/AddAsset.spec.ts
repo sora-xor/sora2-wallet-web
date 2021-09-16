@@ -9,7 +9,7 @@ useDescribe('AddAsset.vue', AddAsset, () => {
   MOCK_ADD_ASSET.map(item => it(`[${item.title}]: should be rendered correctly`, () => {
     const wrapper = shallowMount(AddAsset, {
       localVue,
-      data () {
+      data: () => {
         return {
           currentTab: item.currentTab
         }
