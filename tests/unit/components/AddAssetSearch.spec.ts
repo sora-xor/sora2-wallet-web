@@ -24,7 +24,7 @@ useDescribe('AddAssetSearch.vue', AddAssetSearch, () => {
     const wrapper = shallowMount(AddAssetSearch, {
       store,
       localVue,
-      data () {
+      data: () => {
         return {
           loading: item.loading,
           search: item.search,

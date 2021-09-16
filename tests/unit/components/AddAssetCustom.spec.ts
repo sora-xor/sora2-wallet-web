@@ -9,7 +9,7 @@ useDescribe('AddAssetCustom.vue', AddAssetCustom, () => {
   MOCK_ADD_ASSET_CUSTOM.map(item => it(`[${item.title}]: should be rendered correctly`, () => {
     const wrapper = shallowMount(AddAssetCustom, {
       localVue,
-      data () {
+      data: () => {
         return {
           address: item.address,
           selectedAsset: item.selectedAsset,

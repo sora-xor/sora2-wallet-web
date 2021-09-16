@@ -25,7 +25,7 @@ useDescribe('WalletSend.vue', WalletSend, () => {
     const wrapper = shallowMount(WalletSend, {
       localVue,
       store,
-      data () {
+      data: () => {
         return {
           step: item.step,
           address: item.address,

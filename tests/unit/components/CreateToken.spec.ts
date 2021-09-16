@@ -27,7 +27,7 @@ useDescribe('CreateToken.vue', CreateToken, () => {
     const wrapper = shallowMount(CreateToken, {
       localVue,
       store: createStore(),
-      data () {
+      data: () => {
         return {
           step: item.step,
           tokenSymbol: item.tokenSymbol,
