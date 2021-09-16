@@ -1,0 +1,189 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1`] = `
+<div
+  class="asset-search"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    class="asset-search-input"
+    form=""
+    label=""
+    maxlength="100"
+    name=""
+    placeholder=""
+    prefix="s-icon-search-16"
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    usedesignsystem="true"
+    value=""
+  />
+   
+  <s-scrollbar-stub
+    class="asset-search-list"
+    tag="div"
+  >
+    <div
+      class="asset s-flex"
+    >
+      <i
+        class="asset-logo"
+      />
+       
+      <div
+        class="asset-description s-flex"
+      >
+        <div
+          class="asset-description_symbol"
+        >
+          TEST
+        </div>
+         
+        <div
+          class="asset-description_info"
+        >
+          Test Asset
+          
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content=""
+            hideafter="0"
+            offset="0"
+            opendelay="1000"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
+          >
+            <span
+              class="asset-id"
+            >
+              (0x021...00000)
+            </span>
+          </s-tooltip-stub>
+        </div>
+      </div>
+    </div>
+  </s-scrollbar-stub>
+</div>
+`;
+
+exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] = `
+<div
+  class="asset-search"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    class="asset-search-input"
+    form=""
+    label=""
+    maxlength="100"
+    name=""
+    placeholder=""
+    prefix="s-icon-search-16"
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    usedesignsystem="true"
+    value="123456"
+  />
+   
+  <s-scrollbar-stub
+    class="asset-search-list"
+    tag="div"
+  >
+    <div
+      class="asset-search-list_empty"
+    >
+      
+      
+    
+    </div>
+  </s-scrollbar-stub>
+</div>
+`;
+
+exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] = `
+<div
+  class="asset-search"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    class="asset-search-input"
+    form=""
+    label=""
+    maxlength="100"
+    name=""
+    placeholder=""
+    prefix="s-icon-search-16"
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    usedesignsystem="true"
+    value="TEST"
+  />
+   
+  <s-scrollbar-stub
+    class="asset-search-list"
+    tag="div"
+  >
+    <div
+      class="asset s-flex"
+    >
+      <i
+        class="asset-logo"
+      />
+       
+      <div
+        class="asset-description s-flex"
+      >
+        <div
+          class="asset-description_symbol"
+        >
+          TEST
+        </div>
+         
+        <div
+          class="asset-description_info"
+        >
+          Test Asset
+          
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content=""
+            hideafter="0"
+            offset="0"
+            opendelay="1000"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
+          >
+            <span
+              class="asset-id"
+            >
+              (0x021...00000)
+            </span>
+          </s-tooltip-stub>
+        </div>
+      </div>
+    </div>
+  </s-scrollbar-stub>
+</div>
+`;

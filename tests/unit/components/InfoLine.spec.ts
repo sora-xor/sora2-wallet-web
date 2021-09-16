@@ -15,7 +15,10 @@ useDescribe('InfoLine.vue', InfoLine, () => {
       isFormatted: item.isFormatted,
       fiatValue: item.fiatValue
     }
-    const wrapper = shallowMount(InfoLine, { localVue, propsData })
+    const wrapper = shallowMount(InfoLine, {
+      localVue,
+      propsData
+    })
     expect(wrapper.element).toMatchSnapshot()
   }))
 })
