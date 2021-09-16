@@ -1741,10 +1741,17 @@
     memoizee "^0.4.14"
     rxjs "^6.6.3"
 
-"@open-web3/orml-type-definitions@^0.8.2-11", "@open-web3/orml-type-definitions@^0.8.2-9":
+"@open-web3/orml-type-definitions@^0.8.2-11":
   version "0.8.2-11"
   resolved "https://registry.yarnpkg.com/@open-web3/orml-type-definitions/-/orml-type-definitions-0.8.2-11.tgz#56358d371b63f83761234a7b1283ac9008e6dddd"
   integrity sha512-cUv5+mprnaGNt0tu3FhK1nFRBK7SGjPhA1O0nxWWeRmuuH5fjkr0glbHE9kcKuCBfsh7nt6NGwxwl9emQtUDSA==
+
+"@open-web3/orml-type-definitions@^0.9.4-35":
+  version "0.9.4-35"
+  resolved "https://registry.yarnpkg.com/@open-web3/orml-type-definitions/-/orml-type-definitions-0.9.4-35.tgz#49a6637871ee4fc352d2ed59a63c32b205559536"
+  integrity sha512-Pycx7Wd3OJIcQaDemGlVAHVXNra5mx//8zWC23js5uBO0brmxdjxnfOZ25HkyfsV4IJXRBKJ7FhnFcOxefBPwQ==
+  dependencies:
+    lodash.merge "^4.6.2"
 
 "@open-web3/orml-types@^0.8.2-9":
   version "0.8.2-11"
@@ -2372,39 +2379,39 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
-"@sora-substrate/api-derive@^1.6.8":
-  version "1.6.8"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/api-derive/-/api-derive-1.6.8.tgz#9d08654d42757ea8208a788fb9f41fd3f29d6c5a"
-  integrity sha512-JxUNQqHp3TMMj+dLV82+FC0uBj7hGozK9t8Vu8mlr6ivVHhI2TjViZFRiQ+s7YsZIow97XuFZKWdYILSG5KrmA==
+"@sora-substrate/api-derive@^1.6.9":
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/api-derive/-/api-derive-1.6.9.tgz#8b24150d9615fa6d576e54767e8a47ec073c219c"
+  integrity sha512-sPeVgIkuFOvz7U6rduMgrgEStO5gblDLJlVCWH8Gq55n9bQi238BCm1wQ/EM0ePacPDuPfl1/ROUr1O6XKE24A==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@polkadot/api-derive" "^4.10.1"
-    "@sora-substrate/types" "^1.6.8"
+    "@sora-substrate/types" "^1.6.9"
     rxjs "^6.5.5"
 
-"@sora-substrate/api@^1.6.8":
-  version "1.6.8"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/api/-/api-1.6.8.tgz#6ee0ed8ed97f8cbca8ef000fb237e33a3d9a9368"
-  integrity sha512-wdOjNg5ZzCto3bQC7wfFwQYGdeF3Ma9qkG9o4UgHuv9ZzGD/hho/6kuy0B0F2gM2oTLmvTw3FYHMIWZ68SoFtQ==
+"@sora-substrate/api@^1.6.9":
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/api/-/api-1.6.9.tgz#2ba52cadc32013b847f6c8a6c3fe3e59af86b2cd"
+  integrity sha512-Or7jafTJeWxIDjt8SbPXf5pQi+aaVnJb6xwlRn6YDu9vBVk1vaUIoKKq6fGDDuOSGXy1hAkwvUo8iW07TowLog==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/orml-api-derive" "^0.8.2-9"
     "@polkadot/api" "^4.10.1"
     "@polkadot/rpc-core" "^4.10.1"
-    "@sora-substrate/api-derive" "^1.6.8"
-    "@sora-substrate/types" "^1.6.8"
+    "@sora-substrate/api-derive" "^1.6.9"
+    "@sora-substrate/types" "^1.6.9"
 
-"@sora-substrate/type-definitions@^1.6.8":
-  version "1.6.8"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/type-definitions/-/type-definitions-1.6.8.tgz#96224ae6ad3b2f18f37acece3793840baab862d2"
-  integrity sha512-MfWUI8EWV51lNCEYmmDgPmgriuyxwtdLUcm9lQgns+XPntE93IAjXXXa580czlS0WZ1bNchs4lJXH3ESRVqXPg==
+"@sora-substrate/type-definitions@^1.6.9":
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/type-definitions/-/type-definitions-1.6.9.tgz#9438b27db69ad40072dc8af6a8fec7d89235b4ca"
+  integrity sha512-ZU6CWFHxjp7sIiINkRH2rDHnoZJrc1p+TMRAHVNe5dGB4H5iIHKZ/bViHaMmv1vUwVurVvh04Am9gTU8P61EVg==
   dependencies:
-    "@open-web3/orml-type-definitions" "^0.8.2-9"
+    "@open-web3/orml-type-definitions" "^0.9.4-35"
 
-"@sora-substrate/types@^1.6.8":
-  version "1.6.8"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/types/-/types-1.6.8.tgz#20e1f9dacae9a7d40772511e2fa67625b807509c"
-  integrity sha512-AIwvCxZcPT03ofhn0KIz4W+iWh40iFQzvIF6E5MwLArqSMOWxDGcGl3deST1wmqtXNA2Yw1DwhfzWahALh93Ng==
+"@sora-substrate/types@^1.6.9":
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/types/-/types-1.6.9.tgz#9d4cd786296aacfd11b3a12eaea6e63ba915517b"
+  integrity sha512-Av9lCljLNP+eMU/9FIuRaYyhIMwVBTY6dDV+cioVPkkL2KPKs6MYz14E6u++ug2o5Y9Vov1H1/50D3AzesG2Mw==
   dependencies:
     "@babel/runtime" "^7.10.2"
     "@open-web3/api-mobx" "^0.8.2-9"
@@ -2412,15 +2419,15 @@
     "@polkadot/api" "^4.10.1"
     "@polkadot/typegen" "^4.10.1"
     "@polkadot/types" "^4.10.1"
-    "@sora-substrate/type-definitions" "^1.6.8"
+    "@sora-substrate/type-definitions" "^1.6.9"
 
-"@sora-substrate/util@1.6.8":
-  version "1.6.8"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/util/-/util-1.6.8.tgz#b41e635660de1874e5430aa28f676df9c8f9016f"
-  integrity sha512-t5AkepM473BWLmTrs7/Q0mX9wYGFtlMikBeZUvHy43BDFDJaIOeCSSFKPTUMncpnvTPnGTn2Ck2n68AnzblrUg==
+"@sora-substrate/util@1.6.9":
+  version "1.6.9"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/util/-/util-1.6.9.tgz#01d1544a46b457a4196b411ec0fc38622b1fbab1"
+  integrity sha512-XoolP2dIo7gSUGeiMN2oPVT1U8tstXdZuttBtCrQdb3Fb+/c+H2efz+YEVl8NYUTHK/29RLSq0zdIlO6Gs9Y1A==
   dependencies:
     "@polkadot/ui-keyring" "^0.77.1"
-    "@sora-substrate/api" "^1.6.8"
+    "@sora-substrate/api" "^1.6.9"
     axios "^0.21.1"
     bignumber.js "^9.0.1"
     crypto-js "^4.0.0"
@@ -4738,15 +4745,10 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001181:
-  version "1.0.30001204"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001204.tgz#256c85709a348ec4d175e847a3b515c66e79f2aa"
-  integrity sha512-JUdjWpcxfJ9IPamy2f5JaRDCaqJOxDzOSKtbdx4rH9VivMd1vIzoPumsJa9LoMIi4Fx2BV2KZOxWhNkBjaYivQ==
-
-caniuse-lite@^1.0.30001219:
-  version "1.0.30001248"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001248.tgz#26ab45e340f155ea5da2920dadb76a533cb8ebce"
-  integrity sha512-NwlQbJkxUFJ8nMErnGtT0QTM2TJ33xgz4KXJSMIrjXIbDVdaYueGyjOrLKRtJC+rTiWfi6j5cnZN1NBiSBJGNw==
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001181, caniuse-lite@^1.0.30001219:
+  version "1.0.30001257"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001257.tgz"
+  integrity sha512-JN49KplOgHSXpIsVSF+LUyhD8PUp6xPpAXeRrrcBh4KBeP7W864jHn6RvzJgDlrReyeVjMFJL3PLpPvKIxlIHA==
 
 canvas-renderer@~2.2.0:
   version "2.2.0"
@@ -10235,6 +10237,11 @@ lodash.memoize@4.x, lodash.memoize@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/lodash.memoize/-/lodash.memoize-4.1.2.tgz#bcc6c49a42a2840ed997f323eada5ecd182e0bfe"
   integrity sha1-vMbEmkKihA7Zl/Mj6tpezRguC/4=
+
+lodash.merge@^4.6.2:
+  version "4.6.2"
+  resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
+  integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
 
 lodash.once@^4.1.1:
   version "4.1.1"

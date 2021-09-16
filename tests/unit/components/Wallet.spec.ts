@@ -2,7 +2,7 @@ import Vuex from 'vuex'
 import { shallowMount } from '@vue/test-utils'
 
 import { useDescribe, localVue } from '../../utils'
-import { MOCK_ACCOUNTS, MOCK_HISTORY } from '../../utils/mock'
+import { MOCK_ACCOUNT, MOCK_HISTORY } from '../../utils/mock'
 
 import Wallet from '@/components/Wallet.vue'
 import { WalletTabs } from '@/consts'
@@ -11,7 +11,7 @@ const createStore = (currentTab: WalletTabs) => new Vuex.Store({
   modules: {
     Account: {
       getters: {
-        account: () => MOCK_ACCOUNTS[0],
+        account: () => MOCK_ACCOUNT,
         activity: () => MOCK_HISTORY
       },
       actions: {

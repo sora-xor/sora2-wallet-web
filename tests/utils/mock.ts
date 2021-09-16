@@ -1,5 +1,7 @@
 import { AccountAsset, FPNumber, KnownSymbols, History, TransactionStatus, Operation, WhitelistArrayItem, api } from '@sora-substrate/util'
 
+import type { Account } from '@/types/common'
+
 export const MOCK_NETWORK_FEE: {} = api.NetworkFee
 
 export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
@@ -131,4 +133,12 @@ export const MOCK_FIAT_PRICE_AND_APY_OBJECT: any = {
   '0x0200000000000000000000000000000000000000000000000000000000000000': {
     price: '1230000000000000000'
   }
+}
+
+export const MOCK_SORA_NETWORK = 'Devnet'
+
+export const MOCK_ACCOUNT: Account = {
+  address: '',
+  name: '',
+  isExternal: true
 }
