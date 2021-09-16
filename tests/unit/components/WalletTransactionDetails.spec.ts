@@ -3,12 +3,17 @@ import { shallowMount } from '@vue/test-utils'
 import { History } from '@sora-substrate/util'
 
 import { useDescribe, localVue } from '../../utils'
-import { MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock'
+import { MOCK_ACCOUNT_ASSETS, MOCK_HISTORY, MOCK_SORA_NETWORK } from '../../utils/mock'
 
 import WalletTransactionDetails from '@/components/WalletTransactionDetails.vue'
 
 const createStore = (tx: History) => new Vuex.Store({
   modules: {
+    Settings: {
+      getters: {
+        soraNetwork: () => MOCK_SORA_NETWORK
+      }
+    },
     Account: {
       getters: {
         selectedTransaction: () => tx,
