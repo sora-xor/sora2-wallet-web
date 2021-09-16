@@ -1,5 +1,7 @@
 import { AccountAsset, FPNumber, KnownSymbols, History, TransactionStatus, Operation } from '@sora-substrate/util'
 
+import type { Account } from '@/types/common'
+
 export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
   {
     address: '0x0200000000000000000000000000000000000000000000000000000000000000',
@@ -101,3 +103,11 @@ export const MOCK_HISTORY: Array<History> = [
     from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K'
   }
 ]
+
+export const MOCK_SORA_NETWORK = 'Devnet'
+
+export const MOCK_ACCOUNT: Account = {
+  address: '',
+  name: '',
+  isExternal: true
+}

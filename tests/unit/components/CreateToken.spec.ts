@@ -13,6 +13,11 @@ const createStore = () => new Vuex.Store({
       getters: {
         networkFees: () => MOCK_NETWORK_FEES
       }
+    },
+    Router: {
+      actions: {
+        navigate: jest.fn()
+      }
     }
   } as any
 })
