@@ -23,4 +23,14 @@ useDescribe('WalletFee.vue', WalletFee, () => {
     const wrapper = shallowMount(WalletFee, { localVue, store, propsData })
     expect(wrapper.element).toMatchSnapshot()
   }))
+  it('Should not be rendered', () => {
+    const propsData = {
+      value: '123'
+    }
+    try {
+      shallowMount(WalletFee, { localVue, store, propsData })
+    } catch (error) {
+      expect((error as Error).message).toBe('[WalletFee.vue]: property "value" should have FPNumber type')
+    }
+  })
 })
