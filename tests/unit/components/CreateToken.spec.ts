@@ -27,15 +27,17 @@ useDescribe('CreateToken.vue', CreateToken, () => {
     const wrapper = shallowMount(CreateToken, {
       localVue,
       store: createStore(),
-      data () {
+      data: () => {
         return {
           step: item.step,
           tokenSymbol: item.tokenSymbol,
           tokenName: item.tokenName,
           tokenSupply: item.tokenSupply,
-          extensibleSupply: item.extensibleSupply,
-          hasEnoughXor: item.hasEnoughXor
+          extensibleSupply: item.extensibleSupply
         }
+      },
+      computed: {
+        hasEnoughXor: () => item.hasEnoughXor
       }
     })
     expect(wrapper.element).toMatchSnapshot()
