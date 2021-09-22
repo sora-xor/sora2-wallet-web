@@ -1,12 +1,10 @@
 import { Asset } from '@sora-substrate/util'
 
-import { MOCK_ACCOUNT_ASSETS } from '../utils/mock'
-
 export interface AddAssetSearchData {
   title: string;
   loading: boolean;
   search: string;
-  selectedAsset: Asset | null;
+  selectedAsset: Nullable<Asset>;
 }
 
 export const MOCK_ADD_ASSET_SEARCH: Array<AddAssetSearchData> = [

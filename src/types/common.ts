@@ -26,18 +26,6 @@ export interface Account extends PolkadotJsAccount {
   isExternal: boolean;
 }
 
-export enum FontSizeRate {
-  SMALL = 'small',
-  MEDIUM = 'medium',
-  NORMAL = 'normal'
-}
-
-export enum FontWeightRate {
-  SMALL = 'small',
-  MEDIUM = 'medium',
-  NORMAL = 'normal'
-}
-
 export type WhitelistIdsBySymbol = { [key: string]: string }
 
 export type Permissions = {

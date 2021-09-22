@@ -124,8 +124,7 @@ import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import InfoLine from './InfoLine.vue'
 import FormattedAmount from './FormattedAmount.vue'
-import { RouteNames, WalletTabs, SoraNetwork, ExplorerLink, ExplorerType } from '../consts'
-import { FontSizeRate, FontWeightRate } from '../types/common'
+import { RouteNames, WalletTabs, SoraNetwork, ExplorerLink, ExplorerType, FontSizeRate, FontWeightRate } from '../consts'
 import { formatDate, formatAddress, getStatusClass, copyToClipboard, getExplorerLinks } from '../util'
 
 @Component({

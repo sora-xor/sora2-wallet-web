@@ -12,7 +12,7 @@ import FormattedAmount from './components/FormattedAmount.vue'
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue'
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
-import { Components, Modules, FontSizeRate, FontWeightRate } from './types/common'
+import { Components, Modules } from './types/common'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
 import { storage } from './util/storage'
@@ -114,8 +114,6 @@ export {
   FormattedAmount,
   FormattedAmountWithFiatValue,
   NumberFormatterMixin,
-  FormattedAmountMixin,
-  FontSizeRate,
-  FontWeightRate
+  FormattedAmountMixin
 }
 export default SoraNeoWalletElements

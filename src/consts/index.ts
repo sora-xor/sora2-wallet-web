@@ -45,3 +45,15 @@ export interface WalletInitOptions {
   withoutStore?: boolean;
   permissions?: WalletPermissions;
 }
+
+export enum FontSizeRate {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  NORMAL = 'normal'
+}
+
+export enum FontWeightRate {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  NORMAL = 'normal'
+}
