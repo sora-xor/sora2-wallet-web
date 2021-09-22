@@ -210,7 +210,10 @@ export default {
     total: 'Total',
     from: 'From',
     to: 'To',
-    viewInSorascan: 'View in SORAScan',
+    viewIn: {
+      sorascan: 'View in SORAScan',
+      subscan: 'View in Subscan'
+    },
     successCopy: '{value} is copied to the clipboard',
     copy: 'Copy {value}',
     history: {

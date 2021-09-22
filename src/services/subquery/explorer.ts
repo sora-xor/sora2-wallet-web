@@ -1,26 +1,28 @@
-import { axiosInstance, FPNumber, KnownAssets, KnownSymbols } from '@sora-substrate/util'
+import { axiosInstance, FPNumber } from '@sora-substrate/util'
 
 import { HistoryElementsQuery } from './queries/historyElements'
+import { SoraNetwork } from '../../consts'
 import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject } from '../types'
 
 import store from '../../store'
 import { FiatPriceQuery } from './queries/fiatPriceAndApy'
 
 export default class SubqueryExplorer implements Explorer {
-  // TODO: add api link for wss://ws.tst.sora2.soramitsu.co.jp?
-  public static getApiUrl (soraNetwork?: string): string {
+  public static getApiUrl (soraNetwork?: SoraNetwork): string {
     switch (soraNetwork) {
-      case 'Mainnet':
+      case SoraNetwork.Prod:
         return 'https://api.subquery.network/sq/sora-xor/sora'
-      case 'Testnet':
+      case SoraNetwork.Stage:
         return 'https://api.subquery.network/sq/sora-xor/sora-staging'
-      case 'Devnet':
+      case SoraNetwork.Test:
+        return 'https://subquery.q1.tst.sora2.soramitsu.co.jp'
+      case SoraNetwork.Dev:
       default:
-        return 'https://subquery.q1.dev.sora2.soramitsu.co.jp/'
+        return 'https://subquery.q1.dev.sora2.soramitsu.co.jp'
     }
   }
 
-  public get soraNetwork (): string {
+  public get soraNetwork (): SoraNetwork {
     return store.getters.soraNetwork
   }
 

@@ -19,9 +19,9 @@
           placement="bottom-end"
         >
           <template slot="menu">
-            <a class="transaction-link" :href="getBlockExplorerLink(transactionIdExplorerCode, transactionId)" target="_blank" rel="nofollow noopener">
+            <a v-for="link in txExplorerLinks" :key="link.type" class="transaction-link" :href="link.value" target="_blank" rel="nofollow noopener">
               <s-dropdown-item class="s-dropdown-menu__item">
-                {{ t('transaction.viewInSorascan') }}
+                {{ t(`transaction.viewIn.${link.type}`) }}
               </s-dropdown-item>
             </a>
           </template>
@@ -76,9 +76,9 @@
           placement="bottom-end"
         >
           <template slot="menu">
-            <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.from)" target="_blank" rel="nofollow noopener">
+            <a v-for="link in accountExplorerLinks" :key="link.type" class="transaction-link" :href="link.value + selectedTransaction.from" target="_blank" rel="nofollow noopener">
               <s-dropdown-item class="s-dropdown-menu__item">
-                {{ t('transaction.viewInSorascan') }}
+                {{ t(`transaction.viewIn.${link.type}`) }}
               </s-dropdown-item>
             </a>
           </template>
@@ -102,9 +102,9 @@
           placement="bottom-end"
         >
           <template slot="menu">
-            <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.to)" target="_blank" rel="nofollow noopener">
+            <a v-for="link in accountExplorerLinks" :key="link.type" class="transaction-link" :href="link.value + selectedTransaction.to" target="_blank" rel="nofollow noopener">
               <s-dropdown-item class="s-dropdown-menu__item">
-                {{ t('transaction.viewInSorascan') }}
+                {{ t(`transaction.viewIn.${link.type}`) }}
               </s-dropdown-item>
             </a>
           </template>
@@ -124,9 +124,9 @@ import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import InfoLine from './InfoLine.vue'
 import FormattedAmount from './FormattedAmount.vue'
-import { RouteNames, WalletTabs } from '../consts'
+import { RouteNames, WalletTabs, SoraNetwork, ExplorerLink, ExplorerType } from '../consts'
 import { FontSizeRate, FontWeightRate } from '../types/common'
-import { formatDate, formatAddress, getStatusClass, copyToClipboard, getExplorerLink } from '../util'
+import { formatDate, formatAddress, getStatusClass, copyToClipboard, getExplorerLinks } from '../util'
 
 @Component({
   components: {
@@ -140,7 +140,7 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
   readonly FontSizeRate = FontSizeRate
   readonly FontWeightRate = FontWeightRate
 
-  @Getter soraNetwork!: string
+  @Getter soraNetwork!: SoraNetwork
   @Getter currentRouteParams!: any
   @Getter selectedTransaction!: History
   @Getter accountAssets!: Array<AccountAsset>
@@ -199,10 +199,6 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
     return this.selectedTransaction.txId || this.selectedTransaction.blockId
   }
 
-  get transactionIdExplorerCode (): string {
-    return this.selectedTransaction.txId ? 'transaction' : 'block'
-  }
-
   get transactionAmount (): string {
     return this.formatStringValue(this.selectedTransaction.amount as string)
   }
@@ -231,8 +227,26 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
     return this.t('transaction.copy', { value: this.t(value) })
   }
 
-  getBlockExplorerLink (key: string, value: string): string {
-    return `${getExplorerLink(this.soraNetwork)}/${key}/${value}`
+  get baseExplorerLinks (): Array<ExplorerLink> {
+    return getExplorerLinks(this.soraNetwork)
+  }
+
+  get accountExplorerLinks (): Array<ExplorerLink> {
+    return this.baseExplorerLinks.map(({ type, value }) => ({ type, value: `${value}/account/` }))
+  }
+
+  get txExplorerLinks (): Array<ExplorerLink> {
+    return this.baseExplorerLinks.map(({ type, value }) => {
+      const link = { type } as ExplorerLink
+      if (!this.selectedTransaction.txId) {
+        link.value = `${value}/block/${this.transactionId}`
+      } else if (type === ExplorerType.Sorascan) {
+        link.value = `${value}/transaction/${this.transactionId}`
+      } else {
+        link.value = `${value}/extrinsic/${this.transactionId}`
+      }
+      return link
+    })
   }
 
   async handleCopy (address: string, value: string): Promise<void> {
