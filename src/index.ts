@@ -5,14 +5,14 @@ import debounce from 'lodash/fp/debounce'
 import installWalletPlugins from './plugins'
 // import './styles' We don't need it for now
 
-import SoraNeoWallet from './SoraNeoWallet.vue'
+import SoraWallet from './SoraWallet.vue'
 import WalletAvatar from './components/WalletAvatar.vue'
 import InfoLine from './components/InfoLine.vue'
 import FormattedAmount from './components/FormattedAmount.vue'
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue'
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
-import { Components, Modules } from './types/common'
+import { Modules } from './types/common'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
 import { storage } from './util/storage'
@@ -36,11 +36,7 @@ const subscribeStoreToStorageUpdates = store => {
   unsubscribeStoreFromStorage = () => window.removeEventListener('storage', syncWithStorageHandler)
 }
 
-const components = [
-  { component: SoraNeoWallet, name: Components.SoraNeoWallet }
-]
-
-const SoraNeoWalletElements = {
+const SoraWalletElements = {
   install (vue: typeof Vue, options: any): void {
     if (!options.store) {
       throw new Error('Please provide vuex store.')
@@ -50,12 +46,12 @@ const SoraNeoWalletElements = {
     })
     store = options.store
     installWalletPlugins(vue, store)
-    components.forEach(el => vue.component(el.name, el.component))
+    vue.component('SoraWallet', SoraWallet) // Root component
   }
 }
 
 if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(SoraNeoWalletElements, {})
+  window.Vue.use(SoraWalletElements, {})
 }
 
 async function initWallet ({
@@ -99,6 +95,19 @@ async function initWallet ({
   }
 }
 
+const components = {
+  SoraWallet,
+  WalletAvatar,
+  InfoLine,
+  FormattedAmount,
+  FormattedAmountWithFiatValue
+}
+
+const mixins = {
+  NumberFormatterMixin,
+  FormattedAmountMixin
+}
+
 export {
   initWallet,
   isWalletLoaded,
@@ -107,13 +116,8 @@ export {
   connection,
   storage,
   getExplorerLinks,
-  SoraNeoWallet,
   WALLET_CONSTS,
-  WalletAvatar,
-  InfoLine,
-  FormattedAmount,
-  FormattedAmountWithFiatValue,
-  NumberFormatterMixin,
-  FormattedAmountMixin
+  components,
+  mixins
 }
-export default SoraNeoWalletElements
+export default SoraWalletElements

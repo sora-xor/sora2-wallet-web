@@ -2,7 +2,7 @@
   <s-design-system-provider :value="libraryDesignSystem" id="app">
     <s-button @click="changeTheme">{{ libraryTheme }} theme</s-button>
     <div class="wallet-wrapper s-flex">
-      <sora-neo-wallet />
+      <sora-wallet />
     </div>
   </s-design-system-provider>
 </template>
@@ -19,11 +19,11 @@ import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem
 
 import TransactionMixin from './components/mixins/TransactionMixin'
 import { initWallet } from './index'
-import SoraNeoWallet from './SoraNeoWallet.vue'
+import SoraWallet from './SoraWallet.vue'
 import { SoraNetwork } from './consts'
 
 @Component({
-  components: { SoraNeoWallet }
+  components: { SoraWallet }
 })
 export default class App extends Mixins(TransactionMixin) {
   @Getter libraryDesignSystem!: DesignSystem
