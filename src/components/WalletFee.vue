@@ -20,13 +20,20 @@ import TranslationMixin from './mixins/TranslationMixin'
 import FormattedAmountMixin from './mixins/FormattedAmountMixin'
 import InfoLine from './InfoLine.vue'
 
+function isFPNumber (value: any): boolean {
+  if (value instanceof FPNumber) {
+    return true
+  }
+  throw new Error('[WalletFee.vue]: property "value" should have FPNumber type')
+}
+
 @Component({
   components: {
     InfoLine
   }
 })
 export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountMixin) {
-  @Prop({ default: FPNumber.ZERO, type: FPNumber }) readonly value!: FPNumber
+  @Prop({ required: true, validator: isFPNumber }) readonly value!: FPNumber
 
   get xor (): string {
     return KnownSymbols.XOR

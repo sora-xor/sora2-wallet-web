@@ -4,7 +4,8 @@ import { FPNumber, KnownAssets, RewardInfo, RewardsInfo } from '@sora-substrate/
 
 import { api } from '../api'
 import store from '../store'
-import { RewardsAmountHeaderItem } from '../types/rewards'
+import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts'
+import type { RewardsAmountHeaderItem } from '../types/rewards'
 
 export const APP_NAME = 'Sora2 Wallet'
 
@@ -41,15 +42,20 @@ export const getExtensionSigner = async (address: string) => {
  * @param soraNetwork
  * Devnet will set by default
  */
-export const getExplorerLink = (soraNetwork?: string) => {
+export const getExplorerLinks = (soraNetwork?: SoraNetwork): Array<ExplorerLink> => {
   switch (soraNetwork) {
-    case 'Testnet':
-      return 'https://test.sorascan.com/sora-staging'
-    case 'Mainnet':
-      return 'https://sorascan.com/sora-mainnet'
-    case 'Devnet':
+    case SoraNetwork.Prod:
+      return [
+        { type: ExplorerType.Sorascan, value: 'https://sorascan.com/sora-mainnet' },
+        { type: ExplorerType.Subscan, value: 'https://sora.subscan.io' }
+      ]
+    case SoraNetwork.Stage:
+      return [{ type: ExplorerType.Sorascan, value: 'https://test.sorascan.com/sora-staging' }]
+    case SoraNetwork.Test:
+      return [{ type: ExplorerType.Sorascan, value: 'https://sorascan.tst.sora2.soramitsu.co.jp/sora-test' }]
+    case SoraNetwork.Dev:
     default:
-      return 'https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev'
+      return [{ type: ExplorerType.Sorascan, value: 'https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev' }]
   }
 }
 

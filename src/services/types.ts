@@ -1,11 +1,13 @@
-import { History, CodecString } from '@sora-substrate/util'
+import type { History, CodecString } from '@sora-substrate/util'
+
+import type { SoraNetwork } from '../consts'
 
 export interface ExplorerDataParser {
   parseTransactionAsHistoryItem: (transaction: any) => Promise<Nullable<History>>;
 }
 
 export interface Explorer {
-  soraNetwork: string;
+  soraNetwork: SoraNetwork;
   getAccountTransactions: (params?: any) => Promise<any>;
 }
 

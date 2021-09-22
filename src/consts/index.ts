@@ -19,8 +19,21 @@ export enum AddAssetTabs {
   Custom = 'AddAssetCustom'
 }
 
-export enum Languages {
-  EN = 'en'
+export enum SoraNetwork {
+  Dev = 'Dev',
+  Test = 'Test',
+  Stage = 'Stage',
+  Prod = 'Prod'
+}
+
+export enum ExplorerType {
+  Sorascan = 'sorascan',
+  Subscan = 'subscan'
+}
+
+export type ExplorerLink = {
+  type: ExplorerType;
+  value: string;
 }
 
 export interface WalletPermissions {

@@ -38,7 +38,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
-import { AccountAsset, Asset } from '@sora-substrate/util'
+import type { AccountAsset, Asset } from '@sora-substrate/util'
 
 import TranslationMixin from './mixins/TranslationMixin'
 import LoadingMixin from './mixins/LoadingMixin'

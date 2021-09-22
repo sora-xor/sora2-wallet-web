@@ -17,7 +17,7 @@ import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
 import { storage } from './util/storage'
 import { api, connection } from './api'
-import { delay, getExplorerLink } from './util'
+import { delay, getExplorerLinks } from './util'
 import * as WALLET_CONSTS from './consts'
 
 let store: Store<unknown>
@@ -106,7 +106,7 @@ export {
   api,
   connection,
   storage,
-  getExplorerLink,
+  getExplorerLinks,
   SoraNeoWallet,
   WALLET_CONSTS,
   WalletAvatar,
