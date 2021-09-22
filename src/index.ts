@@ -1,17 +1,20 @@
 import Vue from 'vue'
-import { Store } from 'vuex'
 import debounce from 'lodash/fp/debounce'
+import type { Store } from 'vuex'
 
 import installWalletPlugins from './plugins'
 // import './styles' We don't need it for now
 
+// Components
 import SoraWallet from './SoraWallet.vue'
 import WalletAvatar from './components/WalletAvatar.vue'
 import InfoLine from './components/InfoLine.vue'
 import FormattedAmount from './components/FormattedAmount.vue'
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue'
+// Mixins
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
+
 import { Modules } from './types/common'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
@@ -41,8 +44,8 @@ const SoraWalletElements = {
     if (!options.store) {
       throw new Error('Please provide vuex store.')
     }
-    Object.values(Modules).forEach(molude => {
-      options.store.registerModule(molude, modules[molude])
+    Object.values(Modules).forEach(module => {
+      options.store.registerModule(module, modules[module])
     })
     store = options.store
     installWalletPlugins(vue, store)
