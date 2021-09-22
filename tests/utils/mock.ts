@@ -144,7 +144,7 @@ export const MOCK_FIAT_PRICE_AND_APY_OBJECT: any = {
   }
 }
 
-export const MOCK_SORA_NETWORK = 'Devnet'
+export const MOCK_SORA_NETWORK = 'Dev'
 
 export const MOCK_ACCOUNT: Account = {
   address: '',
