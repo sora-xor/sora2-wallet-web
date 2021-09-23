@@ -19,8 +19,27 @@ export enum AddAssetTabs {
   Custom = 'AddAssetCustom'
 }
 
-export enum Languages {
-  EN = 'en'
+export enum SoraNetwork {
+  Dev = 'Dev',
+  Test = 'Test',
+  Stage = 'Stage',
+  Prod = 'Prod'
+}
+
+export enum HashType {
+  ID = 'id',
+  Block = 'block',
+  Account = 'account'
+}
+
+export enum ExplorerType {
+  Sorascan = 'sorascan',
+  Subscan = 'subscan'
+}
+
+export type ExplorerLink = {
+  type: ExplorerType;
+  value: string;
 }
 
 export interface WalletPermissions {
@@ -31,4 +50,16 @@ export interface WalletPermissions {
 export interface WalletInitOptions {
   withoutStore?: boolean;
   permissions?: WalletPermissions;
+}
+
+export enum FontSizeRate {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  NORMAL = 'normal'
+}
+
+export enum FontWeightRate {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  NORMAL = 'normal'
 }

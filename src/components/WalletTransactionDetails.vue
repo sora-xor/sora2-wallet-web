@@ -1,32 +1,12 @@
 <template>
   <wallet-base :title="t(!selectedTransaction ? 'transaction.title' : `operations.${selectedTransaction.type}`)" show-back @back="handleBack">
     <div class="transaction" v-if="selectedTransaction">
-      <div v-if="transactionId" class="s-input-container">
-        <s-input :placeholder="t(transactionIdKey)" :value="formatAddress(transactionId)" readonly />
-        <s-button
-          class="s-button--copy"
-          icon="basic-copy-24"
-          :tooltip="getOperationTooltip(transactionIdKey)"
-          type="action"
-          alternative
-          @click="handleCopy(transactionId, t(transactionIdKey))"
-        />
-        <s-dropdown
-          class="s-dropdown-menu"
-          borderRadius="mini"
-          type="ellipsis"
-          icon="basic-more-vertical-24"
-          placement="bottom-end"
-        >
-          <template slot="menu">
-            <a class="transaction-link" :href="getBlockExplorerLink(transactionIdExplorerCode, transactionId)" target="_blank" rel="nofollow noopener">
-              <s-dropdown-item class="s-dropdown-menu__item">
-                {{ t('transaction.viewInSorascan') }}
-              </s-dropdown-item>
-            </a>
-          </template>
-        </s-dropdown>
-      </div>
+      <transaction-hash-view
+        v-if="transactionId"
+        :value="transactionId"
+        :translation="transactionIdKey"
+        :type="selectedTransaction.txId ? HashType.ID : HashType.Block"
+      />
       <div class="info-line-container">
         <info-line v-if="selectedTransaction.status" :label="t('transaction.status')">
           <span :class="statusClass">{{ statusTitle }}</span>
@@ -58,58 +38,18 @@
           is-formatted
         />
       </div>
-      <div v-if="selectedTransaction.from" class="s-input-container">
-        <s-input :placeholder="t('transaction.from')" :value="formatAddress(selectedTransaction.from)" readonly />
-        <s-button
-          class="s-button--copy"
-          icon="basic-copy-24"
-          :tooltip="getOperationTooltip('transaction.from')"
-          type="action"
-          alternative
-          @click="handleCopy(selectedTransaction.from, t('transaction.from'))"
-        />
-        <s-dropdown
-          class="s-dropdown-menu"
-          borderRadius="mini"
-          type="ellipsis"
-          icon="basic-more-vertical-24"
-          placement="bottom-end"
-        >
-          <template slot="menu">
-            <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.from)" target="_blank" rel="nofollow noopener">
-              <s-dropdown-item class="s-dropdown-menu__item">
-                {{ t('transaction.viewInSorascan') }}
-              </s-dropdown-item>
-            </a>
-          </template>
-        </s-dropdown>
-      </div>
-      <div v-if="selectedTransaction.to" class="s-input-container">
-        <s-input :placeholder="t('transaction.to')" :value="formatAddress(selectedTransaction.to)" readonly />
-        <s-button
-          class="s-button--copy"
-          icon="basic-copy-24"
-          :tooltip="getOperationTooltip('transaction.to')"
-          type="action"
-          alternative
-          @click="handleCopy(selectedTransaction.to, t('transaction.to'))"
-        />
-        <s-dropdown
-          class="s-dropdown-menu"
-          borderRadius="mini"
-          type="ellipsis"
-          icon="basic-more-vertical-24"
-          placement="bottom-end"
-        >
-          <template slot="menu">
-            <a class="transaction-link" :href="getBlockExplorerLink('account', selectedTransaction.to)" target="_blank" rel="nofollow noopener">
-              <s-dropdown-item class="s-dropdown-menu__item">
-                {{ t('transaction.viewInSorascan') }}
-              </s-dropdown-item>
-            </a>
-          </template>
-        </s-dropdown>
-      </div>
+      <transaction-hash-view
+        v-if="selectedTransaction.from"
+        translation="transaction.from"
+        :value="selectedTransaction.from"
+        :type="HashType.Account"
+      />
+      <transaction-hash-view
+        v-if="selectedTransaction.to"
+        translation="transaction.to"
+        :value="selectedTransaction.to"
+        :type="HashType.Account"
+      />
     </div>
   </wallet-base>
 </template>
@@ -119,28 +59,28 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { TransactionStatus, AccountAsset, Operation, History } from '@sora-substrate/util'
 
-import CopyAddressMixin from './mixins/CopyAddressMixin'
+import TranslationMixin from './mixins/TranslationMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import InfoLine from './InfoLine.vue'
 import FormattedAmount from './FormattedAmount.vue'
-import { RouteNames, WalletTabs } from '../consts'
-import { FontSizeRate, FontWeightRate } from '../types/common'
-import { formatDate, formatAddress, getStatusClass, copyToClipboard, getExplorerLink } from '../util'
+import TransactionHashView from './TransactionHashView.vue'
+import { RouteNames, WalletTabs, FontSizeRate, FontWeightRate, HashType } from '../consts'
+import { formatDate, getStatusClass } from '../util'
 
 @Component({
   components: {
     WalletBase,
     InfoLine,
-    FormattedAmount
+    FormattedAmount,
+    TransactionHashView
   }
 })
-export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, NumberFormatterMixin) {
-  readonly Operation = Operation
+export default class WalletTransactionDetails extends Mixins(TranslationMixin, NumberFormatterMixin) {
   readonly FontSizeRate = FontSizeRate
   readonly FontWeightRate = FontWeightRate
+  readonly HashType = HashType
 
-  @Getter soraNetwork!: string
   @Getter currentRouteParams!: any
   @Getter selectedTransaction!: History
   @Getter accountAssets!: Array<AccountAsset>
@@ -148,7 +88,6 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
   @Action getAccountActivity!: AsyncVoidFn
   @Action getTransactionDetails!: (id: string) => Promise<void>
 
-  TransactionStatus = TransactionStatus
   getStatusClass = getStatusClass
   formatDate = formatDate
   transaction: any = null
@@ -199,10 +138,6 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
     return this.selectedTransaction.txId || this.selectedTransaction.blockId
   }
 
-  get transactionIdExplorerCode (): string {
-    return this.selectedTransaction.txId ? 'transaction' : 'block'
-  }
-
   get transactionAmount (): string {
     return this.formatStringValue(this.selectedTransaction.amount as string)
   }
@@ -215,41 +150,12 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
     return this.formatStringValue(this.selectedTransaction.amount2 as string)
   }
 
-  formatAddress (address: string): string {
-    return formatAddress(address, 24)
-  }
-
   handleBack (): void {
     if (this.currentRouteParams.asset) {
       this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.asset } })
       return
     }
     this.navigate({ name: RouteNames.Wallet, params: { currentTab: WalletTabs.Activity } })
-  }
-
-  getOperationTooltip (value: string): string {
-    return this.t('transaction.copy', { value: this.t(value) })
-  }
-
-  getBlockExplorerLink (key: string, value: string): string {
-    return `${getExplorerLink(this.soraNetwork)}/${key}/${value}`
-  }
-
-  async handleCopy (address: string, value: string): Promise<void> {
-    try {
-      await copyToClipboard(address)
-      this.$notify({
-        message: this.t('transaction.successCopy', { value: value }),
-        type: 'success',
-        title: ''
-      })
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: ''
-      })
-    }
   }
 }
 </script>
@@ -263,56 +169,15 @@ export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, N
     }
   }
 }
-// TODO: fix UI library
-.s-dropdown-menu__item {
-  border-radius: calc(var(--s-border-radius-mini) / 2);
-}
 </style>
 
 <style scoped lang="scss">
-$dropdown-right: 15px;
-$dropdown-width: var(--s-size-mini);
 .transaction {
   .s-icon-basic-check-mark-24 {
     margin-left: var(--s-basic-spacing);
   }
-  &-link {
-    color: inherit;
-    text-decoration: none;
-  }
-  .s-input-container {
-    position: relative;
-    + .s-input-container {
-      margin-top: var(--s-basic-spacing);
-    }
-  }
   .info-line-container {
     margin-bottom: #{$basic-spacing-medium};
-  }
-  .s-button--copy {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    margin-top: auto;
-    margin-bottom: auto;
-    right: calc(#{$dropdown-right} + #{$dropdown-width} + #{$basic-spacing-mini});
-    z-index: 1;
-    &, &:hover, &:focus, &:active {
-      background-color: transparent;
-      border-color: transparent;
-    }
-  }
-  .s-dropdown-menu {
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    right: $dropdown-right;
-    bottom: 0;
-    margin-top: auto;
-    margin-bottom: auto;
-    width: $dropdown-width;
-    height: var(--s-size-mini);
-    line-height: 1;
   }
   .formatted-amount__divider {
     margin-right: #{$basic-spacing-extra-mini};

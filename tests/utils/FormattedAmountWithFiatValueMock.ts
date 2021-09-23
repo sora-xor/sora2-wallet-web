@@ -1,19 +1,20 @@
 import { KnownSymbols } from '@sora-substrate/util'
-import { FontSizeRate, FontWeightRate } from '../../src/types/common'
+
+import { FontSizeRate, FontWeightRate } from '@/consts'
 
 interface FormattedAmountWithFiatValue {
   title: string;
   valueClass?: string;
   value: any;
-  fontSizeRate?: string;
-  fontWeightRate?: string;
+  fontSizeRate?: FontSizeRate;
+  fontWeightRate?: FontWeightRate;
   assetSymbol?: string;
   symbolAsDecimal?: boolean;
   hasFiatValue?: boolean;
   fiatValue?: string;
   fiatFormatAsValue?: boolean;
-  fiatFontSizeRate?: string;
-  fiatFontWeightRate?: string;
+  fiatFontSizeRate?: FontSizeRate;
+  fiatFontWeightRate?: FontWeightRate;
   withLeftShift?: boolean;
 }
 

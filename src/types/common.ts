@@ -1,7 +1,3 @@
-export enum Components {
-  SoraNeoWallet = 'SoraNeoWallet'
-}
-
 export enum Modules {
   Account = 'Account',
   Router = 'Router',
@@ -24,18 +20,6 @@ export interface PolkadotJsAccount {
 
 export interface Account extends PolkadotJsAccount {
   isExternal: boolean;
-}
-
-export enum FontSizeRate {
-  SMALL = 'small',
-  MEDIUM = 'medium',
-  NORMAL = 'normal'
-}
-
-export enum FontWeightRate {
-  SMALL = 'small',
-  MEDIUM = 'medium',
-  NORMAL = 'normal'
 }
 
 export type WhitelistIdsBySymbol = { [key: string]: string }

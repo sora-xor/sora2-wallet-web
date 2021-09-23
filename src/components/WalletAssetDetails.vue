@@ -86,9 +86,9 @@ import WalletBase from './WalletBase.vue'
 import FormattedAmount from './FormattedAmount.vue'
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue'
 import WalletHistory from './WalletHistory.vue'
-import { RouteNames } from '../consts'
+import { RouteNames, FontSizeRate, FontWeightRate } from '../consts'
 import { getAssetIconStyles } from '../util'
-import { Operations, FontSizeRate, FontWeightRate, Account } from '../types/common'
+import { Operations, Account } from '../types/common'
 
 interface Operation {
   type: Operations;

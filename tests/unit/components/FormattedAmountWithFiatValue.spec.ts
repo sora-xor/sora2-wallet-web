@@ -21,7 +21,10 @@ useDescribe('FormattedAmountWithFiatValue.vue', FormattedAmountWithFiatValue, ()
       fiatFontWeightRate: item.fiatFontWeightRate,
       withLeftShift: item.withLeftShift
     }
-    const wrapper = shallowMount(FormattedAmountWithFiatValue, { localVue, propsData })
+    const wrapper = shallowMount(FormattedAmountWithFiatValue, {
+      localVue,
+      propsData
+    })
     expect(wrapper.element).toMatchSnapshot()
   }))
 })

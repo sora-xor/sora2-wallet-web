@@ -11,74 +11,11 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
   <div
     class="transaction"
   >
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="0xB8c77482e4...52C74426C6DD"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/block/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.blockId"
+      type="block"
+      value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
+    />
      
     <div
       class="info-line-container"
@@ -140,74 +77,11 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
       />
     </div>
      
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="5HVmWWpBi69c...pveRnfozNg5K"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.from"
+      type="account"
+      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+    />
      
     <!---->
   </div>
@@ -225,74 +99,11 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
   <div
     class="transaction"
   >
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="0xB8c77482e4...52C74426C6DD"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/block/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.blockId"
+      type="block"
+      value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
+    />
      
     <div
       class="info-line-container"
@@ -331,74 +142,11 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
       <!---->
     </div>
      
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="5HVmWWpBi69c...pveRnfozNg5K"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.from"
+      type="account"
+      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+    />
      
     <!---->
   </div>
@@ -416,74 +164,11 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
   <div
     class="transaction"
   >
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="0xB8c77482e4...52C74426C6DD"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/block/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.blockId"
+      type="block"
+      value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
+    />
      
     <div
       class="info-line-container"
@@ -548,74 +233,11 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
       <!---->
     </div>
      
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="5HVmWWpBi69c...pveRnfozNg5K"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.from"
+      type="account"
+      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+    />
      
     <!---->
   </div>
@@ -633,74 +255,11 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
   <div
     class="transaction"
   >
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="0xB8c77482e4...52C74426C6DD"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/block/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.blockId"
+      type="block"
+      value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
+    />
      
     <div
       class="info-line-container"
@@ -771,74 +330,11 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
       />
     </div>
      
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="5HVmWWpBi69c...pveRnfozNg5K"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.from"
+      type="account"
+      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+    />
      
     <!---->
   </div>
@@ -856,74 +352,11 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
   <div
     class="transaction"
   >
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="0xB8c77482e4...52C74426C6D7"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/transaction/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.txId"
+      type="id"
+      value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
+    />
      
     <div
       class="info-line-container"
@@ -978,143 +411,17 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
       <!---->
     </div>
      
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="5HVmWWpBi69c...pveRnfozNg5K"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.from"
+      type="account"
+      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+    />
      
-    <div
-      class="s-input-container"
-    >
-      <s-input-stub
-        accept=""
-        autocomplete="off"
-        borderradius="small"
-        form=""
-        label=""
-        name=""
-        placeholder=""
-        prefix=""
-        readonly="true"
-        size="big"
-        suffix=""
-        tabindex=""
-        type="text"
-        usedesignsystem="true"
-        value="0xB8c77482e4...52C74426C6DD"
-      />
-       
-      <s-button-stub
-        alternative="true"
-        borderradius="small"
-        class="s-button--copy"
-        icon="basic-copy-24"
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip=""
-        tooltipplacement="top"
-        type="action"
-        usedesignsystem="true"
-      />
-       
-      <s-dropdown-stub
-        borderradius="mini"
-        buttontype="secondary"
-        class="s-dropdown-menu"
-        hideonclick="true"
-        hidetimeout="150"
-        icon="basic-more-vertical-24"
-        placement="bottom-end"
-        showtimeout="250"
-        size="medium"
-        tabindex="0"
-        trigger="hover"
-        type="ellipsis"
-      >
-        <template>
-          <a
-            class="transaction-link"
-            href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <s-dropdown-item-stub
-              class="s-dropdown-menu__item"
-            >
-              
-              
-            
-            </s-dropdown-item-stub>
-          </a>
-        </template>
-      </s-dropdown-stub>
-    </div>
+    <transaction-hash-view-stub
+      translation="transaction.to"
+      type="account"
+      value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
+    />
   </div>
 </wallet-base-stub>
 `;

@@ -2,7 +2,7 @@
   <s-design-system-provider :value="libraryDesignSystem" id="app">
     <s-button @click="changeTheme">{{ libraryTheme }} theme</s-button>
     <div class="wallet-wrapper s-flex">
-      <sora-neo-wallet />
+      <sora-wallet />
     </div>
   </s-design-system-provider>
 </template>
@@ -19,10 +19,11 @@ import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem
 
 import TransactionMixin from './components/mixins/TransactionMixin'
 import { initWallet } from './index'
-import SoraNeoWallet from './SoraNeoWallet.vue'
+import SoraWallet from './SoraWallet.vue'
+import { SoraNetwork } from './consts'
 
 @Component({
-  components: { SoraNeoWallet }
+  components: { SoraWallet }
 })
 export default class App extends Mixins(TransactionMixin) {
   @Getter libraryDesignSystem!: DesignSystem
@@ -33,10 +34,10 @@ export default class App extends Mixins(TransactionMixin) {
   @Action resetActiveTransactions!: AsyncVoidFn
   @Action resetAccountAssetsSubscription!: AsyncVoidFn
   @Action resetFiatPriceAndApySubscription!: AsyncVoidFn
-  @Action setSoraNetwork!: AsyncVoidFn
+  @Action setSoraNetwork!: (network: SoraNetwork) => Promise<void>
 
   async created (): Promise<void> {
-    await this.setSoraNetwork()
+    await this.setSoraNetwork(SoraNetwork.Dev)
     await initWallet({ withoutStore: true }) // We don't need storage for local development
     this.trackActiveTransactions()
     const localeLanguage = navigator.language
