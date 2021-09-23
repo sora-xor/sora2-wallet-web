@@ -43,7 +43,7 @@ import type { RouteNames } from './consts'
     WalletTransactionDetails
   }
 })
-export default class SoraNeoWallet extends Mixins(LoadingMixin, TranslationMixin) {
+export default class SoraWallet extends Mixins(LoadingMixin, TranslationMixin) {
   readonly Operations = Operations
 
   @Getter currentRoute!: RouteNames

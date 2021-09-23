@@ -40,7 +40,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator'
 
 import FormattedAmount from './FormattedAmount.vue'
-import { FontSizeRate, FontWeightRate } from '../types/common'
+import { FontSizeRate, FontWeightRate } from '../consts'
 
 @Component({
   components: { FormattedAmount }

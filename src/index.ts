@@ -1,18 +1,22 @@
-import Vue from 'vue'
-import { Store } from 'vuex'
 import debounce from 'lodash/fp/debounce'
+import type Vue from 'vue'
+import type { Store } from 'vuex'
 
 import installWalletPlugins from './plugins'
 // import './styles' We don't need it for now
 
-import SoraNeoWallet from './SoraNeoWallet.vue'
+// Components
+import SoraWallet from './SoraWallet.vue'
 import WalletAvatar from './components/WalletAvatar.vue'
 import InfoLine from './components/InfoLine.vue'
 import FormattedAmount from './components/FormattedAmount.vue'
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue'
+import TransactionHashView from './components/TransactionHashView.vue'
+// Mixins
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
-import { Components, Modules, FontSizeRate, FontWeightRate } from './types/common'
+
+import { Modules } from './types/common'
 import en from './lang/en'
 import internalStore, { modules } from './store' // `internalStore` is required for local usage
 import { storage } from './util/storage'
@@ -36,26 +40,22 @@ const subscribeStoreToStorageUpdates = store => {
   unsubscribeStoreFromStorage = () => window.removeEventListener('storage', syncWithStorageHandler)
 }
 
-const components = [
-  { component: SoraNeoWallet, name: Components.SoraNeoWallet }
-]
-
-const SoraNeoWalletElements = {
+const SoraWalletElements = {
   install (vue: typeof Vue, options: any): void {
     if (!options.store) {
       throw new Error('Please provide vuex store.')
     }
-    Object.values(Modules).forEach(molude => {
-      options.store.registerModule(molude, modules[molude])
+    Object.values(Modules).forEach(module => {
+      options.store.registerModule(module, modules[module])
     })
     store = options.store
     installWalletPlugins(vue, store)
-    components.forEach(el => vue.component(el.name, el.component))
+    vue.component('SoraWallet', SoraWallet) // Root component
   }
 }
 
 if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(SoraNeoWalletElements, {})
+  window.Vue.use(SoraWalletElements, {})
 }
 
 async function initWallet ({
@@ -99,6 +99,20 @@ async function initWallet ({
   }
 }
 
+const components = {
+  SoraWallet,
+  WalletAvatar,
+  InfoLine,
+  FormattedAmount,
+  FormattedAmountWithFiatValue,
+  TransactionHashView
+}
+
+const mixins = {
+  NumberFormatterMixin,
+  FormattedAmountMixin
+}
+
 export {
   initWallet,
   isWalletLoaded,
@@ -107,15 +121,8 @@ export {
   connection,
   storage,
   getExplorerLinks,
-  SoraNeoWallet,
   WALLET_CONSTS,
-  WalletAvatar,
-  InfoLine,
-  FormattedAmount,
-  FormattedAmountWithFiatValue,
-  NumberFormatterMixin,
-  FormattedAmountMixin,
-  FontSizeRate,
-  FontWeightRate
+  components,
+  mixins
 }
-export default SoraNeoWalletElements
+export default SoraWalletElements

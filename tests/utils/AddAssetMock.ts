@@ -1,4 +1,4 @@
-import { AddAssetTabs } from '../../src/consts'
+import { AddAssetTabs } from '@/consts'
 
 export interface AddAssetData {
   title: string;

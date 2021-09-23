@@ -3,6 +3,7 @@ import { Component, Mixins } from 'vue-property-decorator'
 import TranslationMixin from './TranslationMixin'
 import { copyToClipboard, delay } from '../../util'
 
+// TODO: make a common solution without 'address' word and use it everywhere
 @Component
 export default class CopyAddressMixin extends Mixins(TranslationMixin) {
   wasAddressCopied = false
