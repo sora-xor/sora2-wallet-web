@@ -26,6 +26,12 @@ export enum SoraNetwork {
   Prod = 'Prod'
 }
 
+export enum HashType {
+  ID = 'id',
+  Block = 'block',
+  Account = 'account'
+}
+
 export enum ExplorerType {
   Sorascan = 'sorascan',
   Subscan = 'subscan'
