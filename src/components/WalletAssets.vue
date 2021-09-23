@@ -85,8 +85,7 @@ import LoadingMixin from './mixins/LoadingMixin'
 import CopyAddressMixin from './mixins/CopyAddressMixin'
 import FormattedAmount from './FormattedAmount.vue'
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue'
-import { RouteNames, WalletPermissions } from '../consts'
-import { FontSizeRate, FontWeightRate } from '../types/common'
+import { RouteNames, WalletPermissions, FontSizeRate, FontWeightRate } from '../consts'
 import { getAssetIconStyles, formatAddress } from '../util'
 
 @Component({

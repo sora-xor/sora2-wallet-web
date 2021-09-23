@@ -1,5 +1,6 @@
 import { Asset, AccountAsset, FPNumber, KnownSymbols, History, TransactionStatus, Operation, WhitelistArrayItem, api } from '@sora-substrate/util'
 
+import { SoraNetwork } from '@/consts'
 import type { Account } from '@/types/common'
 
 export const MOCK_NETWORK_FEE: {} = api.NetworkFee
@@ -144,7 +145,7 @@ export const MOCK_FIAT_PRICE_AND_APY_OBJECT: any = {
   }
 }
 
-export const MOCK_SORA_NETWORK = 'Dev'
+export const MOCK_SORA_NETWORK = SoraNetwork.Dev
 
 export const MOCK_ACCOUNT: Account = {
   address: '',

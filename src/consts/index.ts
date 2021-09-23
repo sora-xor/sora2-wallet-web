@@ -26,6 +26,12 @@ export enum SoraNetwork {
   Prod = 'Prod'
 }
 
+export enum HashType {
+  ID = 'id',
+  Block = 'block',
+  Account = 'account'
+}
+
 export enum ExplorerType {
   Sorascan = 'sorascan',
   Subscan = 'subscan'
@@ -44,4 +50,16 @@ export interface WalletPermissions {
 export interface WalletInitOptions {
   withoutStore?: boolean;
   permissions?: WalletPermissions;
+}
+
+export enum FontSizeRate {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  NORMAL = 'normal'
+}
+
+export enum FontWeightRate {
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  NORMAL = 'normal'
 }
