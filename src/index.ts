@@ -11,6 +11,7 @@ import WalletAvatar from './components/WalletAvatar.vue'
 import InfoLine from './components/InfoLine.vue'
 import FormattedAmount from './components/FormattedAmount.vue'
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue'
+import TransactionHashView from './components/TransactionHashView.vue'
 // Mixins
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin'
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin'
@@ -103,7 +104,8 @@ const components = {
   WalletAvatar,
   InfoLine,
   FormattedAmount,
-  FormattedAmountWithFiatValue
+  FormattedAmountWithFiatValue,
+  TransactionHashView
 }
 
 const mixins = {
