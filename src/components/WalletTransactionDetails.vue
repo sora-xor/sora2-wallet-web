@@ -65,7 +65,7 @@ import WalletBase from './WalletBase.vue'
 import InfoLine from './InfoLine.vue'
 import FormattedAmount from './FormattedAmount.vue'
 import TransactionHashView from './TransactionHashView.vue'
-import { RouteNames, WalletTabs, SoraNetwork, FontSizeRate, FontWeightRate, HashType } from '../consts'
+import { RouteNames, WalletTabs, FontSizeRate, FontWeightRate, HashType } from '../consts'
 import { formatDate, getStatusClass } from '../util'
 
 @Component({
