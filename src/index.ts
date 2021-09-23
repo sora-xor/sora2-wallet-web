@@ -1,5 +1,5 @@
-import Vue from 'vue'
 import debounce from 'lodash/fp/debounce'
+import type Vue from 'vue'
 import type { Store } from 'vuex'
 
 import installWalletPlugins from './plugins'

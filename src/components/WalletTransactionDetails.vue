@@ -119,7 +119,7 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { Action, Getter } from 'vuex-class'
 import { TransactionStatus, AccountAsset, Operation, History } from '@sora-substrate/util'
 
-import CopyAddressMixin from './mixins/CopyAddressMixin'
+import TranslationMixin from './mixins/TranslationMixin'
 import NumberFormatterMixin from './mixins/NumberFormatterMixin'
 import WalletBase from './WalletBase.vue'
 import InfoLine from './InfoLine.vue'
@@ -134,7 +134,7 @@ import { formatDate, formatAddress, getStatusClass, copyToClipboard, getExplorer
     FormattedAmount
   }
 })
-export default class WalletTransactionDetails extends Mixins(CopyAddressMixin, NumberFormatterMixin) {
+export default class WalletTransactionDetails extends Mixins(TranslationMixin, NumberFormatterMixin) {
   readonly Operation = Operation
   readonly FontSizeRate = FontSizeRate
   readonly FontWeightRate = FontWeightRate
