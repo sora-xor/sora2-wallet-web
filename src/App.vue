@@ -74,6 +74,18 @@ html {
   font-size: var(--s-font-size-small);
   line-height: var(--s-line-height-medium);
 }
+.el-loading-mask {
+  background-color: var(--s-color-utility-body);
+  .el-loading-spinner {
+    background-image: url("~@/assets/img/pswap-loader.svg");
+    height: var(--s-size-medium);
+    width: var(--s-size-medium);
+    margin-left: calc(50% - (var(--s-size-medium) / 2));
+    > svg {
+      display: none;
+    }
+  }
+}
 .el-notification.sora {
   background: var(--s-color-brand-day);
   box-shadow: var(--s-shadow-tooltip);
