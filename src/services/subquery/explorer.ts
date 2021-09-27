@@ -43,9 +43,19 @@ export default class SubqueryExplorer implements Explorer {
       }
       const data = (poolXYKEntities.nodes[0].pools.edges as Array<any>).reduce((acc, item) => {
         const el: PoolXYKEntity = item.node
-        const strategicBonusApy = new FPNumber(el.strategicBonusApy).toCodecString()
-        const price = new FPNumber(el.priceUSD).toCodecString()
-        acc[el.targetAssetId] = { strategicBonusApy, price }
+        const strategicBonusApyFPNumber = new FPNumber(el.strategicBonusApy)
+        const priceFPNumber = new FPNumber(el.priceUSD)
+        const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity()
+        const isPriceFinity = priceFPNumber.isFinity()
+        if (isPriceFinity || isStrategicBonusApyFinity) {
+          acc[el.targetAssetId] = {}
+        }
+        if (isPriceFinity) {
+          acc[el.targetAssetId].price = priceFPNumber.toCodecString()
+        }
+        if (isStrategicBonusApyFinity) {
+          acc[el.targetAssetId].strategicBonusApy = strategicBonusApyFPNumber.toCodecString()
+        }
         return acc
       }, {})
       return data
