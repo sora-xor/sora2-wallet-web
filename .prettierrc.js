@@ -37,5 +37,5 @@ module.exports = {
   // lf for newline
   endOfLine: 'lf',
   // formats quoted code embedded
-  embeddedLanguageFormatting: 'auto'
-}
+  embeddedLanguageFormatting: 'auto',
+};

@@ -6,9 +6,9 @@ module.exports = {
           @import "@/styles/_variables.scss";
           @import "@/styles/_layout.scss";
           @import "@/styles/_mixins.scss";
-        `
-      }
-    }
+        `,
+      },
+    },
   },
-  runtimeCompiler: true
-}
+  runtimeCompiler: true,
+};
