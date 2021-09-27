@@ -18,6 +18,7 @@ module.exports = {
       singleline: 'never',
       multiline: 'always'
     }],
+    'vue/html-indent': ['warn', 2],
     '@typescript-eslint/explicit-function-return-type': ['off'],
     '@typescript-eslint/no-explicit-any': ['off'],
     '@typescript-eslint/no-use-before-define': ['off'],
