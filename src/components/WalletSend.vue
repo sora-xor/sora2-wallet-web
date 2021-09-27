@@ -60,7 +60,9 @@
             <div class="asset-highlight">
               {{ asset.name || asset.symbol }}
               <s-tooltip :content="copyTooltip">
-                <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
+                <span class="asset-id" @click="handleCopyAddress(asset.address)">
+                  ({{ getFormattedAddress(asset) }})
+                </span>
               </s-tooltip>
             </div>
           </div>

@@ -22,7 +22,10 @@
           :font-size-rate="formattedFontSize"
           :font-weight-rate="formattedFontWeight"
         />
-        <span v-else class="info-line-value">{{ value }}<span v-if="assetSymbol" class="asset-symbol">{{ ' ' + assetSymbol }}</span></span>
+        <span v-else class="info-line-value">
+          {{ value }}
+          <span v-if="assetSymbol" class="asset-symbol">{{ ' ' + assetSymbol }}</span>
+        </span>
         <formatted-amount
           v-if="fiatValue"
           :value="fiatValue"
