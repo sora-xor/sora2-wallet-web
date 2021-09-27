@@ -1,37 +1,39 @@
-import Vuex from 'vuex'
-import { shallowMount } from '@vue/test-utils'
+import Vuex from 'vuex';
+import { shallowMount } from '@vue/test-utils';
 
-import { useDescribe, localVue } from '../../utils'
-import { MOCK_FIAT_PRICE_AND_APY_OBJECT } from '../../utils/mock'
-import { MOCK_WALLET_FEE } from '../../utils/WalletFeeMock'
+import { useDescribe, localVue } from '../../utils';
+import { MOCK_FIAT_PRICE_AND_APY_OBJECT } from '../../utils/mock';
+import { MOCK_WALLET_FEE } from '../../utils/WalletFeeMock';
 
-import WalletFee from '@/components/WalletFee.vue'
+import WalletFee from '@/components/WalletFee.vue';
 
 useDescribe('WalletFee.vue', WalletFee, () => {
   const store = new Vuex.Store({
     getters: {
-      fiatPriceAndApyObject: () => MOCK_FIAT_PRICE_AND_APY_OBJECT
-    }
-  })
-  MOCK_WALLET_FEE.map(item => it(`[${item.title}]: should be rendered correctly`, () => {
-    const propsData = {
-      value: item.value
-    }
-    const wrapper = shallowMount(WalletFee, {
-      localVue,
-      store,
-      propsData
+      fiatPriceAndApyObject: () => MOCK_FIAT_PRICE_AND_APY_OBJECT,
+    },
+  });
+  MOCK_WALLET_FEE.map((item) =>
+    it(`[${item.title}]: should be rendered correctly`, () => {
+      const propsData = {
+        value: item.value,
+      };
+      const wrapper = shallowMount(WalletFee, {
+        localVue,
+        store,
+        propsData,
+      });
+      expect(wrapper.element).toMatchSnapshot();
     })
-    expect(wrapper.element).toMatchSnapshot()
-  }))
+  );
   it('Should not be rendered', () => {
     const propsData = {
-      value: '123'
-    }
+      value: '123',
+    };
     try {
-      shallowMount(WalletFee, { localVue, store, propsData })
+      shallowMount(WalletFee, { localVue, store, propsData });
     } catch (error) {
-      expect((error as Error).message).toBe('[WalletFee.vue]: property "value" should have FPNumber type')
+      expect((error as Error).message).toBe('[WalletFee.vue]: property "value" should have FPNumber type');
     }
-  })
-})
+  });
+});

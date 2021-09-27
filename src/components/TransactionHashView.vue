@@ -35,59 +35,59 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
+import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
 
-import { copyToClipboard, formatAddress, getExplorerLinks } from '../util'
-import TranslationMixin from './mixins/TranslationMixin'
-import { ExplorerLink, SoraNetwork, HashType, ExplorerType } from '../consts'
+import { copyToClipboard, formatAddress, getExplorerLinks } from '../util';
+import TranslationMixin from './mixins/TranslationMixin';
+import { ExplorerLink, SoraNetwork, HashType, ExplorerType } from '../consts';
 
 @Component
 export default class TransactionHashView extends Mixins(TranslationMixin) {
-  @Prop({ type: String, required: true }) readonly value!: string
-  @Prop({ type: String, required: true }) readonly type!: HashType
-  @Prop({ type: String, required: true }) readonly translation!: string
+  @Prop({ type: String, required: true }) readonly value!: string;
+  @Prop({ type: String, required: true }) readonly type!: HashType;
+  @Prop({ type: String, required: true }) readonly translation!: string;
 
-  @Getter soraNetwork!: SoraNetwork
+  @Getter soraNetwork!: SoraNetwork;
 
-  get explorerLinks (): Array<ExplorerLink> {
-    const baseLinks = getExplorerLinks(this.soraNetwork)
+  get explorerLinks(): Array<ExplorerLink> {
+    const baseLinks = getExplorerLinks(this.soraNetwork);
     if ([HashType.Account, HashType.Block].includes(this.type)) {
-      return baseLinks.map(({ type, value }) => ({ type, value: `${value}/${this.type}/${this.value}` }))
+      return baseLinks.map(({ type, value }) => ({ type, value: `${value}/${this.type}/${this.value}` }));
     }
     return baseLinks.map(({ type, value }) => {
-      const link = { type } as ExplorerLink
+      const link = { type } as ExplorerLink;
       if (type === ExplorerType.Sorascan) {
-        link.value = `${value}/transaction/${this.value}`
+        link.value = `${value}/transaction/${this.value}`;
       } else {
-        link.value = `${value}/extrinsic/${this.value}`
+        link.value = `${value}/extrinsic/${this.value}`;
       }
-      return link
-    })
+      return link;
+    });
   }
 
-  get operationTooltip (): string {
-    return this.t('transaction.copy', { value: this.t(this.translation) })
+  get operationTooltip(): string {
+    return this.t('transaction.copy', { value: this.t(this.translation) });
   }
 
-  get formattedAddress (): string {
-    return formatAddress(this.value, 24)
+  get formattedAddress(): string {
+    return formatAddress(this.value, 24);
   }
 
-  async handleCopy (): Promise<void> {
+  async handleCopy(): Promise<void> {
     try {
-      await copyToClipboard(this.value)
+      await copyToClipboard(this.value);
       this.$notify({
         message: this.t('transaction.successCopy', { value: this.t(this.translation) }),
         type: 'success',
-        title: ''
-      })
+        title: '',
+      });
     } catch (error) {
       this.$notify({
         message: `${this.t('warningText')} ${error}`,
         type: 'warning',
-        title: ''
-      })
+        title: '',
+      });
     }
   }
 }
@@ -129,7 +129,10 @@ $dropdown-width: var(--s-size-mini);
     margin-bottom: auto;
     right: calc(#{$dropdown-right} + #{$dropdown-width} + #{$basic-spacing-mini});
     z-index: 1;
-    &, &:hover, &:focus, &:active {
+    &,
+    &:hover,
+    &:focus,
+    &:active {
       background-color: transparent;
       border-color: transparent;
     }

@@ -9,7 +9,9 @@
             <p v-if="!isExtensionEnabled" class="wallet-connection-text" v-html="t('connection.install')" />
           </template>
         </template>
-        <p v-if="step === Step.Second && !polkadotJsAccounts.length" class="wallet-connection-text">{{ t('connection.noAccounts') }}</p>
+        <p v-if="step === Step.Second && !polkadotJsAccounts.length" class="wallet-connection-text">
+          {{ t('connection.noAccounts') }}
+        </p>
         <template v-if="step === Step.First || (step === Step.Second && !polkadotJsAccounts.length)">
           <s-button
             class="wallet-connection-action s-typography-button--large"
@@ -29,7 +31,11 @@
           >
             {{ t('connection.action.learnMore') }}
           </s-button>
-          <p v-if="(step === Step.First && !isExtensionEnabled) || loading" class="wallet-connection-text no-permissions" v-html="t('connection.noPermissions')" />
+          <p
+            v-if="(step === Step.First && !isExtensionEnabled) || loading"
+            class="wallet-connection-text no-permissions"
+            v-html="t('connection.noPermissions')"
+          />
         </template>
         <template v-if="step === Step.Second && polkadotJsAccounts.length">
           <p class="wallet-connection-text">{{ t('connection.selectAccount') }}</p>
@@ -50,121 +56,121 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Getter, Action } from 'vuex-class'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Getter, Action } from 'vuex-class';
 
-import TranslationMixin from './mixins/TranslationMixin'
-import LoadingMixin from './mixins/LoadingMixin'
-import WalletBase from './WalletBase.vue'
-import WalletAccount from './WalletAccount.vue'
-import { RouteNames } from '../consts'
-import type { PolkadotJsAccount } from '../types/common'
+import TranslationMixin from './mixins/TranslationMixin';
+import LoadingMixin from './mixins/LoadingMixin';
+import WalletBase from './WalletBase.vue';
+import WalletAccount from './WalletAccount.vue';
+import { RouteNames } from '../consts';
+import type { PolkadotJsAccount } from '../types/common';
 
 enum Step {
   First = 1,
-  Second = 2
+  Second = 2,
 }
 
 // TODO: [PW-295] Refactor this component
 @Component({
-  components: { WalletBase, WalletAccount }
+  components: { WalletBase, WalletAccount },
 })
 export default class WalletConnection extends Mixins(TranslationMixin, LoadingMixin) {
-  readonly RouteNames = RouteNames
-  readonly Step = Step
+  readonly RouteNames = RouteNames;
+  readonly Step = Step;
 
-  isAccountLoading = true
-  isExtensionAvailable = false
-  extensionTimer: Nullable<NodeJS.Timer> = null
-  step = Step.First
+  isAccountLoading = true;
+  isExtensionAvailable = false;
+  extensionTimer: Nullable<NodeJS.Timer> = null;
+  step = Step.First;
 
-  @Getter currentRouteParams!: any
-  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>
+  @Getter currentRouteParams!: any;
+  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action checkExtension!: () => Promise<boolean>
-  @Action getPolkadotJsAccounts!: AsyncVoidFn
-  @Action importPolkadotJs!: (address: string) => Promise<void>
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Action checkExtension!: () => Promise<boolean>;
+  @Action getPolkadotJsAccounts!: AsyncVoidFn;
+  @Action importPolkadotJs!: (address: string) => Promise<void>;
 
-  get isAccountSwitch (): boolean {
-    return (this.currentRouteParams || {}).isAccountSwitch
+  get isAccountSwitch(): boolean {
+    return (this.currentRouteParams || {}).isAccountSwitch;
   }
 
-  get isExtensionEnabled (): boolean {
+  get isExtensionEnabled(): boolean {
     if (this.isExtensionAvailable) {
       if (this.extensionTimer) {
-        clearInterval(this.extensionTimer)
+        clearInterval(this.extensionTimer);
       }
       if (!this.polkadotJsAccounts.length) {
-        this.step = Step.Second
+        this.step = Step.Second;
       }
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 
-  async created (): Promise<void> {
+  async created(): Promise<void> {
     await this.withLoading(async () => {
-      this.isExtensionAvailable = await this.checkExtension()
+      this.isExtensionAvailable = await this.checkExtension();
       if (!this.isExtensionAvailable) {
         this.extensionTimer = setInterval(async () => {
-          this.isExtensionAvailable = await this.checkExtension()
-        }, 1500)
+          this.isExtensionAvailable = await this.checkExtension();
+        }, 1500);
       }
-    })
+    });
     if (this.isExtensionAvailable && (this.isAccountSwitch || !this.polkadotJsAccounts.length)) {
-      this.step = Step.Second
-      await this.getPolkadotJsAccounts()
+      this.step = Step.Second;
+      await this.getPolkadotJsAccounts();
     }
-    this.isAccountLoading = false
+    this.isAccountLoading = false;
   }
 
-  get actionButtonText (): string {
+  get actionButtonText(): string {
     if (this.step === Step.First && !this.isExtensionEnabled) {
-      return 'connection.action.install'
+      return 'connection.action.install';
     }
     if (this.step === Step.Second && !this.polkadotJsAccounts.length) {
-      return 'connection.action.refresh'
+      return 'connection.action.refresh';
     }
-    return 'connection.action.connect'
+    return 'connection.action.connect';
   }
 
-  async handleActionClick (): Promise<void> {
+  async handleActionClick(): Promise<void> {
     if (this.step === Step.First) {
       if (!this.isExtensionEnabled) {
-        window.open('https://polkadot.js.org/extension/', '_blank')
-        return
+        window.open('https://polkadot.js.org/extension/', '_blank');
+        return;
       }
       await this.withLoading(async () => {
-        await this.getPolkadotJsAccounts()
-        this.step = Step.Second
-      })
+        await this.getPolkadotJsAccounts();
+        this.step = Step.Second;
+      });
     } else if (!this.polkadotJsAccounts.length) {
-      window.history.go()
+      window.history.go();
     }
   }
 
-  async handleSelectAccount (account: PolkadotJsAccount): Promise<void> {
-    this.isAccountLoading = true
+  async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
+    this.isAccountLoading = true;
     try {
-      await this.importPolkadotJs(account.address)
+      await this.importPolkadotJs(account.address);
     } catch (error) {
-      this.$alert(this.t((error as Error).message), this.t('errorText'))
-      this.step = Step.First
+      this.$alert(this.t((error as Error).message), this.t('errorText'));
+      this.step = Step.First;
     } finally {
-      this.isAccountLoading = false
+      this.isAccountLoading = false;
     }
-    this.navigate({ name: RouteNames.Wallet })
+    this.navigate({ name: RouteNames.Wallet });
   }
 
-  beforeDestroy (): void {
+  beforeDestroy(): void {
     if (this.extensionTimer) {
-      clearInterval(this.extensionTimer)
+      clearInterval(this.extensionTimer);
     }
   }
 
-  handleLearnMoreClick (): void {
-    this.$emit('learn-more')
+  handleLearnMoreClick(): void {
+    this.$emit('learn-more');
   }
 }
 </script>
@@ -200,7 +206,9 @@ $accounts-number: 7;
     }
   }
   &-accounts {
-    height: calc(calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom});
+    height: calc(
+      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom}
+    );
   }
   &-account {
     height: $account-height;

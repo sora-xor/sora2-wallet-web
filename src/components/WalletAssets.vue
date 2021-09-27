@@ -28,7 +28,8 @@
                   <span>{{ formatFrozenBalance(asset) }}</span>
                 </div>
               </formatted-amount-with-fiat-value>
-              <div class="asset-info">{{ asset.name || asset.symbol }}
+              <div class="asset-info">
+                {{ asset.name || asset.symbol }}
                 <s-tooltip :content="copyTooltip">
                   <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
                 </s-tooltip>
@@ -66,113 +67,123 @@
               <s-icon name="arrows-chevron-right-rounded-24" size="28" />
             </s-button>
           </div>
-          <s-divider v-if="index !== formattedAccountAssets.length - 1" class="wallet-assets-item_divider" :key="`${asset.address}-divider`" />
+          <s-divider
+            v-if="index !== formattedAccountAssets.length - 1"
+            class="wallet-assets-item_divider"
+            :key="`${asset.address}-divider`"
+          />
         </template>
       </div>
     </s-scrollbar>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
-    <s-button class="wallet-assets-add s-typography-button--large" @click="handleOpenAddAsset">{{ t('assets.add') }}</s-button>
+    <s-button class="wallet-assets-add s-typography-button--large" @click="handleOpenAddAsset">{{
+      t('assets.add')
+    }}</s-button>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Getter, Action } from 'vuex-class'
-import { AccountAsset, FPNumber } from '@sora-substrate/util'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Getter, Action } from 'vuex-class';
+import { AccountAsset, FPNumber } from '@sora-substrate/util';
 
-import FormattedAmountMixin from './mixins/FormattedAmountMixin'
-import LoadingMixin from './mixins/LoadingMixin'
-import CopyAddressMixin from './mixins/CopyAddressMixin'
-import FormattedAmount from './FormattedAmount.vue'
-import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue'
-import { RouteNames, WalletPermissions, FontSizeRate, FontWeightRate } from '../consts'
-import { getAssetIconStyles, formatAddress } from '../util'
+import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import LoadingMixin from './mixins/LoadingMixin';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import FormattedAmount from './FormattedAmount.vue';
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import { RouteNames, WalletPermissions, FontSizeRate, FontWeightRate } from '../consts';
+import { getAssetIconStyles, formatAddress } from '../util';
 
 @Component({
   components: {
     FormattedAmount,
-    FormattedAmountWithFiatValue
-  }
+    FormattedAmountWithFiatValue,
+  },
 })
 export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, CopyAddressMixin) {
-  readonly FontSizeRate = FontSizeRate
-  readonly FontWeightRate = FontWeightRate
+  readonly FontSizeRate = FontSizeRate;
+  readonly FontWeightRate = FontWeightRate;
 
-  @Getter accountAssets!: Array<AccountAsset>
-  @Getter withoutFiatAndApy!: boolean
-  @Getter permissions!: WalletPermissions
-  @Action getAccountAssets!: AsyncVoidFn
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Getter accountAssets!: Array<AccountAsset>;
+  @Getter withoutFiatAndApy!: boolean;
+  @Getter permissions!: WalletPermissions;
+  @Action getAccountAssets!: AsyncVoidFn;
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
-  async mounted (): Promise<void> {
-    this.withApi(this.getAccountAssets)
+  async mounted(): Promise<void> {
+    this.withApi(this.getAccountAssets);
   }
 
-  get computedClasses (): string {
-    const baseClass = 'wallet-assets'
-    const classes = [baseClass]
+  get computedClasses(): string {
+    const baseClass = 'wallet-assets';
+    const classes = [baseClass];
 
     if (this.assetsFiatAmount) {
-      classes.push(`${baseClass}--fiat`)
+      classes.push(`${baseClass}--fiat`);
     }
 
-    return classes.concat('s-flex').join(' ')
+    return classes.concat('s-flex').join(' ');
   }
 
-  get formattedAccountAssets (): Array<AccountAsset> {
-    return this.accountAssets.filter(asset => asset.balance && !Number.isNaN(+asset.balance.transferable))
+  get formattedAccountAssets(): Array<AccountAsset> {
+    return this.accountAssets.filter((asset) => asset.balance && !Number.isNaN(+asset.balance.transferable));
   }
 
-  get assetsFiatAmount (): Nullable<string> {
+  get assetsFiatAmount(): Nullable<string> {
     if (!this.formattedAccountAssets || this.withoutFiatAndApy) {
-      return null
+      return null;
     }
     if (!this.formattedAccountAssets.length) {
-      return '0'
+      return '0';
     }
     const fiatAmount = this.formattedAccountAssets.reduce((sum: FPNumber, asset: AccountAsset) => {
-      const price = this.getAssetFiatPrice(asset)
-      return price ? sum.add(this.getFPNumberFromCodec(asset.balance.transferable, asset.decimals).mul(FPNumber.fromCodecValue(price))) : sum
-    }, new FPNumber(0))
-    return fiatAmount ? fiatAmount.toLocaleString() : null
+      const price = this.getAssetFiatPrice(asset);
+      return price
+        ? sum.add(
+            this.getFPNumberFromCodec(asset.balance.transferable, asset.decimals).mul(FPNumber.fromCodecValue(price))
+          )
+        : sum;
+    }, new FPNumber(0));
+    return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
-  getFormattedAddress (asset: AccountAsset): string {
-    return formatAddress(asset.address, 10)
+  getFormattedAddress(asset: AccountAsset): string {
+    return formatAddress(asset.address, 10);
   }
 
-  getAssetIconStyles = getAssetIconStyles
+  getAssetIconStyles = getAssetIconStyles;
 
-  getBalance (asset: AccountAsset): string {
-    return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`
+  getBalance(asset: AccountAsset): string {
+    return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
   }
 
-  isZeroBalance (asset: AccountAsset): boolean {
-    return this.isCodecZero(asset.balance.transferable, asset.decimals)
+  isZeroBalance(asset: AccountAsset): boolean {
+    return this.isCodecZero(asset.balance.transferable, asset.decimals);
   }
 
-  hasFrozenBalance (asset: AccountAsset): boolean {
-    return !this.isCodecZero(asset.balance.frozen, asset.decimals)
+  hasFrozenBalance(asset: AccountAsset): boolean {
+    return !this.isCodecZero(asset.balance.frozen, asset.decimals);
   }
 
-  formatFrozenBalance (asset: AccountAsset): string {
-    return this.formatCodecNumber(asset.balance.frozen, asset.decimals)
+  formatFrozenBalance(asset: AccountAsset): string {
+    return this.formatCodecNumber(asset.balance.frozen, asset.decimals);
   }
 
-  handleAssetSwap (asset: AccountAsset): void {
-    this.$emit('swap', asset)
+  handleAssetSwap(asset: AccountAsset): void {
+    this.$emit('swap', asset);
   }
 
-  handleAssetSend (asset: AccountAsset): void {
-    this.navigate({ name: RouteNames.WalletSend, params: { asset } })
+  handleAssetSend(asset: AccountAsset): void {
+    this.navigate({ name: RouteNames.WalletSend, params: { asset } });
   }
 
-  handleOpenAssetDetails (asset: AccountAsset): void {
-    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } })
+  handleOpenAssetDetails(asset: AccountAsset): void {
+    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } });
   }
 
-  handleOpenAddAsset (): void {
-    this.navigate({ name: RouteNames.AddAsset })
+  handleOpenAddAsset(): void {
+    this.navigate({ name: RouteNames.AddAsset });
   }
 }
 </script>
@@ -242,7 +253,8 @@ $wallet-assets-count: 5;
       padding-left: var(--s-basic-spacing);
       width: 30%;
       justify-content: center;
-      &-value, &-info {
+      &-value,
+      &-info {
         line-height: var(--s-line-height-base);
       }
       &-info {

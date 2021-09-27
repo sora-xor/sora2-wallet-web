@@ -60,47 +60,47 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import TranslationMixin from './mixins/TranslationMixin'
+import TranslationMixin from './mixins/TranslationMixin';
 
 @Component
 export default class WalletBase extends Mixins(TranslationMixin) {
-  @Prop({ default: '', type: String }) readonly title!: string
-  @Prop({ default: '', type: String }) readonly tooltip!: string
-  @Prop({ default: false, type: Boolean }) readonly showBack!: boolean
-  @Prop({ default: false, type: Boolean }) readonly showAction!: boolean
-  @Prop({ default: false, type: Boolean }) readonly showClose!: boolean
-  @Prop({ default: '', type: String }) readonly actionTooltip!: string
-  @Prop({ default: '', type: String }) readonly actionIcon!: string
+  @Prop({ default: '', type: String }) readonly title!: string;
+  @Prop({ default: '', type: String }) readonly tooltip!: string;
+  @Prop({ default: false, type: Boolean }) readonly showBack!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly showAction!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly showClose!: boolean;
+  @Prop({ default: '', type: String }) readonly actionTooltip!: string;
+  @Prop({ default: '', type: String }) readonly actionIcon!: string;
   // @Prop({ default: false, type: Boolean }) readonly disabledCleanHistory!: boolean
   // @Prop({ default: false, type: Boolean }) readonly showCleanHistory!: boolean
 
-  get headerClasses (): Array<string> {
-    const cssClasses: Array<string> = ['base-title', 's-flex']
+  get headerClasses(): Array<string> {
+    const cssClasses: Array<string> = ['base-title', 's-flex'];
     if (this.showBack) {
-      cssClasses.push('base-title--center')
+      cssClasses.push('base-title--center');
     }
     // if (this.showCleanHistory) {
     //   cssClasses.push('base-title--has-history')
     // }
     // if (this.showAction && (this.showClose || this.showCleanHistory)) {
     if (this.showAction && this.showClose) {
-      cssClasses.push('base-title--actions')
+      cssClasses.push('base-title--actions');
     }
-    return cssClasses
+    return cssClasses;
   }
 
-  handleBackClick (): void {
-    this.$emit('back')
+  handleBackClick(): void {
+    this.$emit('back');
   }
 
-  handleActionClick (): void {
-    this.$emit('action')
+  handleActionClick(): void {
+    this.$emit('action');
   }
 
-  handleCloseClick (): void {
-    this.$emit('close')
+  handleCloseClick(): void {
+    this.$emit('close');
   }
 
   // handleCleanHistoryClick (): void {
@@ -168,7 +168,9 @@ $button-size: var(--s-size-medium);
     &_back {
       left: 0;
     }
-    &_action, &_trash, &_close {
+    &_action,
+    &_trash,
+    &_close {
       right: 0;
     }
     &_tooltip {

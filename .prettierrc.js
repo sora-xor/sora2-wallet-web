@@ -14,7 +14,7 @@ module.exports = {
   // use double quotes instead of single quotes in jsx
   jsxSingleQuote: false,
   // no comma at the end
-  trailingComma: 'all',
+  trailingComma: 'es5',
   // spaces are required at the beginning and end of the braces
   bracketSpacing: true,
   // brackets are required for arrow function parameter, even when there is only one parameter

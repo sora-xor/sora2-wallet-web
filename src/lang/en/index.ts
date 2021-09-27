@@ -1,6 +1,6 @@
-import { Operation, TransactionStatus, BalanceType } from '@sora-substrate/util'
+import { Operation, TransactionStatus, BalanceType } from '@sora-substrate/util';
 
-import { AddAssetTabs, WalletTabs } from '../../consts'
+import { AddAssetTabs, WalletTabs } from '../../consts';
 
 export default {
   closeText: 'Close',
@@ -43,7 +43,7 @@ export default {
       [Operation.RemoveLiquidity]: 'Removed {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RegisterAsset]: 'Registered {symbol} asset',
-      [Operation.ClaimRewards]: 'Reward claimed successfully {rewards}'
+      [Operation.ClaimRewards]: 'Reward claimed successfully {rewards}',
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
@@ -52,19 +52,22 @@ export default {
       [Operation.RemoveLiquidity]: 'Failed to remove {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RegisterAsset]: 'Failed to register {symbol} asset',
-      [Operation.ClaimRewards]: 'Failed to claim rewards {rewards}'
-    }
+      [Operation.ClaimRewards]: 'Failed to claim rewards {rewards}',
+    },
   },
   polkadotjs: {
-    noExtensions: 'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
+    noExtensions:
+      'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
     noAccounts: 'There seems to be no accounts in your Polkadot.js extension. Please add an account and try again.',
-    noAccount: 'Polkadot.js account error. Please check your account in the Polkadot.js extension'
+    noAccount: 'Polkadot.js account error. Please check your account in the Polkadot.js extension',
   },
   connection: {
     title: 'SORA Network account',
     text: 'Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
-    install: 'No polkadot.js extension found. Install it and <a href="#" onclick="window.location.reload(true);" class="wallet-connection-link">reload</a> the page.<br/><span class="wallet-connection-link">https://polkadot.js.org/extension/</span>',
-    noPermissions: 'Accidentally rejected permission request?</br>Currently polkadot{.js} extension doesn’t have permission managment. As a workaround you can restart your browser and revisit this page to proceed with authorization.',
+    install:
+      'No polkadot.js extension found. Install it and <a href="#" onclick="window.location.reload(true);" class="wallet-connection-link">reload</a> the page.<br/><span class="wallet-connection-link">https://polkadot.js.org/extension/</span>',
+    noPermissions:
+      'Accidentally rejected permission request?</br>Currently polkadot{.js} extension doesn’t have permission managment. As a workaround you can restart your browser and revisit this page to proceed with authorization.',
     noAccounts: 'No account found in your polkadot{.js} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
     loadingTitle: 'Waiting for you to allow access to polkadot{.js} extension..',
@@ -72,45 +75,46 @@ export default {
       install: 'Install extension',
       learnMore: 'Learn more',
       connect: 'Connect account',
-      refresh: 'Refresh'
-    }
+      refresh: 'Refresh',
+    },
   },
   wallet: {
     title: 'SORA Network account',
     [WalletTabs.Assets]: 'Assets',
     [WalletTabs.Activity]: 'Activity',
     addAsset: '@:addAssetText',
-    createToken: '@:createTokenText'
+    createToken: '@:createTokenText',
   },
   walletSend: {
     title: 'Send',
     tooltip: 'Send tokens between SORA network accounts',
     address: '@:addressText',
-    addressWarning: 'Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:',
+    addressWarning:
+      'Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:',
     addressError: 'You cannot send tokens to the same acount that you are currently connected to.',
     amount: '@:amountText',
     balance: 'Balance',
     max: 'MAX',
     fee: 'Network fee',
-    feeTooltip: 'Network fee is used to ensure SORA system\'s growth and stable performance.',
+    feeTooltip: "Network fee is used to ensure SORA system's growth and stable performance.",
     enterAddress: 'Enter address',
     badAddress: 'Incorrect address',
     enterAmount: 'Enter amount',
     badAmount: '@:insufficientBalanceText',
     confirmTitle: 'Confirm transaction',
     confirm: '@:confirmText',
-    errorAddress: 'Invalid address. Please check it and try again.'
+    errorAddress: 'Invalid address. Please check it and try again.',
   },
   account: {
     successCopy: 'Wallet address is copied to the clipboard',
     copy: 'Copy address',
-    switch: 'Switch account'
+    switch: 'Switch account',
   },
   history: {
     clearHistory: 'Clear history',
     filterPlaceholder: 'Filter by Address, Symbol, Type or Block ID',
     empty: 'Your transactions will appear here',
-    emptySearch: 'No transactions found'
+    emptySearch: 'No transactions found',
   },
   assets: {
     empty: 'There are no assets',
@@ -129,11 +133,11 @@ export default {
       [BalanceType.Frozen]: 'Frozen',
       [BalanceType.Locked]: ' - Locked',
       [BalanceType.Reserved]: ' - Reserved',
-      [BalanceType.Total]: 'Total'
-    }
+      [BalanceType.Total]: 'Total',
+    },
   },
   asset: {
-    remove: 'Remove asset'
+    remove: 'Remove asset',
   },
   addAsset: {
     title: '@:addAssetText',
@@ -141,22 +145,23 @@ export default {
     success: 'Asset was added successfully!',
     [AddAssetTabs.Search]: {
       title: '@:searchText',
-      placeholder: 'Filter by Asset ID, Name or Ticker Symbol'
+      placeholder: 'Filter by Asset ID, Name or Ticker Symbol',
     },
     [AddAssetTabs.Custom]: {
       title: 'Custom asset',
       addressPlaceholder: '@:addressText',
-      symbolPlaceholder: 'Asset symbol'
+      symbolPlaceholder: 'Asset symbol',
     },
     empty: 'No tokens found',
     alreadyAttached: 'Token was already attached',
     understand: 'I understand',
     warningTitle: 'Trade at your own risk!',
-    warningMessage: 'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects.\nIf you purchase this token, you may not be able to sell it back.',
+    warningMessage:
+      'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects.\nIf you purchase this token, you may not be able to sell it back.',
     approved: 'Asset approved by community',
     unknown: 'Unknown source',
     scam: 'SCAM',
-    next: 'Next'
+    next: 'Next',
   },
   createToken: {
     title: '@:createTokenText',
@@ -168,7 +173,7 @@ export default {
     confirm: '@:confirmText',
     success: {
       title: 'Transaction submitted',
-      desc: 'Create {symbol} token'
+      desc: 'Create {symbol} token',
     },
     tooltipValue: 'To create a token, you have to pay a fee',
     fee: 'Network fee',
@@ -177,20 +182,20 @@ export default {
     error: 'Failed to create {symbol} token',
     tokenSymbol: {
       placeholder: 'Token symbol',
-      desc: 'This is an identifier for the token. You can use from 1 to 7 characters for the selection.'
+      desc: 'This is an identifier for the token. You can use from 1 to 7 characters for the selection.',
     },
     tokenName: {
       placeholder: 'Token name',
-      desc: 'This is a name for the token. You can use from 1 to 33 characters for the selection.'
+      desc: 'This is a name for the token. You can use from 1 to 33 characters for the selection.',
     },
     tokenSupply: {
       placeholder: 'Token supply',
-      desc: 'You will receive these tokens upon creation.'
+      desc: 'You will receive these tokens upon creation.',
     },
     extensibleSupply: {
       placeholder: 'Extensible supply',
-      desc: 'Ability to mint more tokens.'
-    }
+      desc: 'Ability to mint more tokens.',
+    },
   },
   transaction: {
     title: 'Transaction details',
@@ -200,7 +205,7 @@ export default {
     statuses: {
       pending: 'Pending...',
       failed: 'Transaction failed',
-      complete: 'Complete'
+      complete: 'Complete',
     },
     errorMessage: 'Error',
     startTime: 'Date',
@@ -212,14 +217,14 @@ export default {
     to: 'To',
     viewIn: {
       sorascan: 'View in SORAScan',
-      subscan: 'View in Subscan'
+      subscan: 'View in Subscan',
     },
     successCopy: '{value} is copied to the clipboard',
     copy: 'Copy {value}',
     history: {
       created: 'Transaction for {amount} {symbol} has been created.',
       submitted: 'Transaction submitted with fee of {fee} {symbol}',
-      confirmed: 'Transaction confirmed'
-    }
-  }
-}
+      confirmed: 'Transaction confirmed',
+    },
+  },
+};

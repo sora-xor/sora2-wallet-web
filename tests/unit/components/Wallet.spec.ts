@@ -1,39 +1,42 @@
-import Vuex from 'vuex'
-import { shallowMount } from '@vue/test-utils'
+import Vuex from 'vuex';
+import { shallowMount } from '@vue/test-utils';
 
-import { useDescribe, localVue } from '../../utils'
-import { MOCK_ACCOUNT, MOCK_HISTORY } from '../../utils/mock'
+import { useDescribe, localVue } from '../../utils';
+import { MOCK_ACCOUNT, MOCK_HISTORY } from '../../utils/mock';
 
-import Wallet from '@/components/Wallet.vue'
-import { WalletTabs } from '@/consts'
+import Wallet from '@/components/Wallet.vue';
+import { WalletTabs } from '@/consts';
 
-const createStore = (currentTab: WalletTabs) => new Vuex.Store({
-  modules: {
-    Account: {
-      getters: {
-        account: () => MOCK_ACCOUNT,
-        activity: () => MOCK_HISTORY
+const createStore = (currentTab: WalletTabs) =>
+  new Vuex.Store({
+    modules: {
+      Account: {
+        getters: {
+          account: () => MOCK_ACCOUNT,
+          activity: () => MOCK_HISTORY,
+        },
+        actions: {
+          getAccountActivity: jest.fn(),
+        },
       },
-      actions: {
-        getAccountActivity: jest.fn()
-      }
-    },
-    Router: {
-      getters: {
-        currentRouteParams: () => ({
-          currentTab
-        })
+      Router: {
+        getters: {
+          currentRouteParams: () => ({
+            currentTab,
+          }),
+        },
+        actions: {
+          navigate: jest.fn(),
+        },
       },
-      actions: {
-        navigate: jest.fn()
-      }
-    }
-  } as any
-})
+    } as any,
+  });
 
 useDescribe('Wallet.vue', Wallet, () => {
-  Object.values(WalletTabs).map(item => it(`[WalletTabs.${item}]: should be rendered correctly`, () => {
-    const wrapper = shallowMount(Wallet, { localVue, store: createStore(item) })
-    expect(wrapper.element).toMatchSnapshot()
-  }))
-})
+  Object.values(WalletTabs).map((item) =>
+    it(`[WalletTabs.${item}]: should be rendered correctly`, () => {
+      const wrapper = shallowMount(Wallet, { localVue, store: createStore(item) });
+      expect(wrapper.element).toMatchSnapshot();
+    })
+  );
+});

@@ -11,62 +11,67 @@
     <div v-if="address && !selectedAsset" class="asset-custom-empty">
       {{ t(`addAsset.${alreadyAttached ? 'alreadyAttached' : 'empty'}`) }}
     </div>
-    <s-button type="primary" class="s-typography-button--large" :disabled="!(selectedAsset && address)" @click="navigateToAddAssetDetails">
+    <s-button
+      type="primary"
+      class="s-typography-button--large"
+      :disabled="!(selectedAsset && address)"
+      @click="navigateToAddAssetDetails"
+    >
       {{ t('addAsset.next') }}
     </s-button>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Getter, Action } from 'vuex-class'
-import { AccountAsset, Asset } from '@sora-substrate/util'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Getter, Action } from 'vuex-class';
+import { AccountAsset, Asset } from '@sora-substrate/util';
 
-import TranslationMixin from './mixins/TranslationMixin'
-import { AddAssetTabs, RouteNames } from '../consts'
+import TranslationMixin from './mixins/TranslationMixin';
+import { AddAssetTabs, RouteNames } from '../consts';
 
 @Component
 export default class AddAssetCustom extends Mixins(TranslationMixin) {
-  readonly AddAssetTabs = AddAssetTabs
+  readonly AddAssetTabs = AddAssetTabs;
 
-  @Getter accountAssets!: Array<AccountAsset>
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action searchAsset!: (address: string) => Promise<Asset>
+  @Getter accountAssets!: Array<AccountAsset>;
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Action searchAsset!: (address: string) => Promise<Asset>;
 
-  address = ''
-  selectedAsset: Nullable<Asset> = null
-  alreadyAttached = false
+  address = '';
+  selectedAsset: Nullable<Asset> = null;
+  alreadyAttached = false;
 
-  mounted (): void {
-    const input = this.$refs.search as any
+  mounted(): void {
+    const input = this.$refs.search as any;
 
     if (input && typeof input.focus === 'function') {
-      input.focus()
+      input.focus();
     }
   }
 
-  async handleSearch (value: string): Promise<void> {
-    this.alreadyAttached = false
+  async handleSearch(value: string): Promise<void> {
+    this.alreadyAttached = false;
     if (!value.trim()) {
-      this.selectedAsset = null
-      return
+      this.selectedAsset = null;
+      return;
     }
-    const search = value.trim().toLowerCase()
-    const asset = await this.searchAsset(search)
+    const search = value.trim().toLowerCase();
+    const asset = await this.searchAsset(search);
     if (this.accountAssets.find(({ address }) => address.toLowerCase() === search)) {
-      this.selectedAsset = null
-      this.alreadyAttached = true
-      return
+      this.selectedAsset = null;
+      this.alreadyAttached = true;
+      return;
     }
     if (!this.selectedAsset || !this.selectedAsset.symbol) {
-      this.selectedAsset = null
-      return
+      this.selectedAsset = null;
+      return;
     }
-    this.selectedAsset = asset
+    this.selectedAsset = asset;
   }
 
-  navigateToAddAssetDetails (): void {
-    this.navigate({ name: RouteNames.AddAssetDetails, params: { asset: this.selectedAsset } })
+  navigateToAddAssetDetails(): void {
+    this.navigate({ name: RouteNames.AddAssetDetails, params: { asset: this.selectedAsset } });
   }
 }
 </script>

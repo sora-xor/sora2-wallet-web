@@ -3,13 +3,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator';
 
-import WalletHistory from './WalletHistory.vue'
+import WalletHistory from './WalletHistory.vue';
 
 @Component({
-  components: { WalletHistory }
+  components: { WalletHistory },
 })
-export default class WalletActivity extends Vue {
-}
+export default class WalletActivity extends Vue {}
 </script>

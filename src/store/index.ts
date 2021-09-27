@@ -1,27 +1,25 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from 'vue';
+import Vuex from 'vuex';
 
-import Account from './Account'
-import Router from './Router'
-import Settings from './Settings'
-import Transactions from './Transactions'
+import Account from './Account';
+import Router from './Router';
+import Settings from './Settings';
+import Transactions from './Transactions';
 
 const modules = {
   Account,
   Router,
   Settings,
-  Transactions
-}
+  Transactions,
+};
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 const store = new Vuex.Store({
   modules,
-  strict: false
-})
+  strict: false,
+});
 
-export {
-  modules
-}
+export { modules };
 
-export default store
+export default store;
