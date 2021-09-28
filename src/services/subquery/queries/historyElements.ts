@@ -35,52 +35,52 @@ query HistoryElements (
     }
   }
 }
-`
+`;
 
 const createAssetFilters = (assetAddress: string): Array<any> =>
   ['swap', 'transfer', 'liquidityOperation'].reduce<any[]>((result, method) => {
-    const attributes = method === 'transfer' ? ['assetId'] : ['baseAssetId', 'targetAssetId']
-    attributes.forEach(attr => {
+    const attributes = method === 'transfer' ? ['assetId'] : ['baseAssetId', 'targetAssetId'];
+    attributes.forEach((attr) => {
       result.push({
         [method]: {
           contains: {
-            [attr]: assetAddress
-          }
-        }
-      })
-    })
-    return result
-  }, [])
+            [attr]: assetAddress,
+          },
+        },
+      });
+    });
+    return result;
+  }, []);
 
 export const historyElementsFilter = (address: string, { assetAddress = '', timestamp = 0 }): any => {
   const filter: any = {
     and: [
       {
         address: {
-          equalTo: address
-        }
+          equalTo: address,
+        },
       },
       {
         method: {
-          in: ['swap', 'transfer', 'depositLiquidity', 'withdrawLiquidity']
-        }
-      }
-    ]
-  }
+          in: ['swap', 'transfer', 'depositLiquidity', 'withdrawLiquidity'],
+        },
+      },
+    ],
+  };
 
   if (assetAddress) {
     filter.and.push({
-      or: createAssetFilters(assetAddress)
-    })
+      or: createAssetFilters(assetAddress),
+    });
   }
 
   if (timestamp) {
     filter.and.push({
       timestamp: {
-        greaterThan: String(timestamp)
-      }
-    })
+        greaterThan: String(timestamp),
+      },
+    });
   }
 
-  return filter
-}
+  return filter;
+};

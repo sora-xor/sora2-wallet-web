@@ -1,6 +1,6 @@
 enum Step {
   Create,
-  Confirm
+  Confirm,
 }
 
 export interface CreateTokenData {
@@ -21,7 +21,7 @@ export const MOCK_CREATE_TOKEN: Array<CreateTokenData> = [
     tokenName: '',
     tokenSupply: '',
     extensibleSupply: false,
-    hasEnoughXor: false
+    hasEnoughXor: false,
   },
   {
     title: 'Confirm Step',
@@ -30,6 +30,6 @@ export const MOCK_CREATE_TOKEN: Array<CreateTokenData> = [
     tokenName: 'Token name',
     tokenSupply: '10000000000',
     extensibleSupply: true,
-    hasEnoughXor: true
-  }
-]
+    hasEnoughXor: true,
+  },
+];

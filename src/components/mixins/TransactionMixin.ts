@@ -1,108 +1,126 @@
-import { Component, Mixins } from 'vue-property-decorator'
-import { History, TransactionStatus, Operation } from '@sora-substrate/util'
-import findLast from 'lodash/fp/findLast'
-import { Action } from 'vuex-class'
+import { Component, Mixins } from 'vue-property-decorator';
+import { History, TransactionStatus, Operation } from '@sora-substrate/util';
+import findLast from 'lodash/fp/findLast';
+import { Action } from 'vuex-class';
 
-import { api } from '../../api'
-import { delay, formatAddress, groupRewardsByAssetsList } from '../../util'
-import TranslationMixin from './TranslationMixin'
-import LoadingMixin from './LoadingMixin'
-import NumberFormatterMixin from './NumberFormatterMixin'
+import { api } from '../../api';
+import { delay, formatAddress, groupRewardsByAssetsList } from '../../util';
+import TranslationMixin from './TranslationMixin';
+import LoadingMixin from './LoadingMixin';
+import NumberFormatterMixin from './NumberFormatterMixin';
 
 @Component
 export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
-  private time = 0
+  private time = 0;
 
-  transaction: Nullable<History> = null // It's used just for sync errors
+  transaction: Nullable<History> = null; // It's used just for sync errors
 
-  @Action addActiveTransaction!: (tx: History) => Promise<void>
-  @Action removeActiveTransaction!: (tx: History) => Promise<void>
+  @Action addActiveTransaction!: (tx: History) => Promise<void>;
+  @Action removeActiveTransaction!: (tx: History) => Promise<void>;
 
-  getMessage (value?: History): string {
+  getMessage(value?: History): string {
     if (!value || !Object.values(Operation).includes(value.type as Operation)) {
-      return ''
+      return '';
     }
-    const params = { ...value } as any
+    const params = { ...value } as any;
     if ([Operation.Transfer, Operation.SwapAndSend].includes(value.type)) {
-      params.address = formatAddress(value.to as string, 10)
+      params.address = formatAddress(value.to as string, 10);
     }
-    if ([Operation.AddLiquidity, Operation.CreatePair, Operation.Transfer, Operation.RemoveLiquidity, Operation.Swap, Operation.SwapAndSend].includes(value.type)) {
-      params.amount = params.amount ? this.formatStringValue(params.amount) : ''
+    if (
+      [
+        Operation.AddLiquidity,
+        Operation.CreatePair,
+        Operation.Transfer,
+        Operation.RemoveLiquidity,
+        Operation.Swap,
+        Operation.SwapAndSend,
+      ].includes(value.type)
+    ) {
+      params.amount = params.amount ? this.formatStringValue(params.amount) : '';
     }
-    if ([Operation.AddLiquidity, Operation.CreatePair, Operation.RemoveLiquidity, Operation.Swap, Operation.SwapAndSend].includes(value.type)) {
-      params.amount2 = params.amount2 ? this.formatStringValue(params.amount2) : ''
+    if (
+      [
+        Operation.AddLiquidity,
+        Operation.CreatePair,
+        Operation.RemoveLiquidity,
+        Operation.Swap,
+        Operation.SwapAndSend,
+      ].includes(value.type)
+    ) {
+      params.amount2 = params.amount2 ? this.formatStringValue(params.amount2) : '';
     }
     if (value.type === Operation.ClaimRewards) {
       params.rewards = groupRewardsByAssetsList(params.rewards)
         .map(({ amount, symbol }) => `${amount} ${symbol}`)
-        .join(` ${this.t('operations.andText')} `)
+        .join(` ${this.t('operations.andText')} `);
     }
-    let status = value.status as TransactionStatus
+    let status = value.status as TransactionStatus;
     if ([TransactionStatus.Invalid, TransactionStatus.Usurped].includes(status)) {
-      status = TransactionStatus.Error
+      status = TransactionStatus.Error;
     } else if (status !== TransactionStatus.Error) {
-      status = TransactionStatus.Finalized
+      status = TransactionStatus.Finalized;
     }
-    return this.t(`operations.${status}.${value.type}`, params)
+    return this.t(`operations.${status}.${value.type}`, params);
   }
 
-  private async getLastTransaction (): Promise<void> {
+  private async getLastTransaction(): Promise<void> {
     // Now we are checking every transaction with 1 second interval
-    const tx = findLast(
-      item => Math.abs(Number(item.startTime) - this.time) < 1000,
-      api.history
-    )
+    const tx = findLast((item) => Math.abs(Number(item.startTime) - this.time) < 1000, api.history);
     if (!tx) {
-      await delay()
-      return await this.getLastTransaction()
+      await delay();
+      return await this.getLastTransaction();
     }
-    this.transaction = tx
-    this.addActiveTransaction(this.transaction)
+    this.transaction = tx;
+    this.addActiveTransaction(this.transaction);
   }
 
   /** Should be used with @Watch like a singletone in a root of the project */
-  handleChangeTransaction (value: History): void {
-    if (!value || !value.status || ![TransactionStatus.Finalized, TransactionStatus.Error].includes(value.status as TransactionStatus)) {
-      return
+  handleChangeTransaction(value: History): void {
+    if (
+      !value ||
+      !value.status ||
+      ![TransactionStatus.Finalized, TransactionStatus.Error].includes(value.status as TransactionStatus)
+    ) {
+      return;
     }
-    const message = this.getMessage(value)
+    const message = this.getMessage(value);
     if (value.status === TransactionStatus.Error) {
       this.$notify({
         message: message || this.t('unknownErrorText'),
         type: 'error',
-        title: ''
-      })
+        title: '',
+      });
     } else if (value.status === TransactionStatus.Finalized) {
       this.$notify({
         message,
         type: 'success',
-        title: ''
-      })
+        title: '',
+      });
     }
-    this.time = 0
-    this.removeActiveTransaction(value)
+    this.time = 0;
+    this.removeActiveTransaction(value);
   }
 
-  async withNotifications (func: AsyncVoidFn): Promise<void> {
+  async withNotifications(func: AsyncVoidFn): Promise<void> {
     await this.withLoading(async () => {
       try {
-        this.time = Date.now()
-        await func()
-        await this.getLastTransaction()
-        this.$notify({ message: this.t('transactionSubmittedText'), title: '' })
+        this.time = Date.now();
+        await func();
+        await this.getLastTransaction();
+        this.$notify({ message: this.t('transactionSubmittedText'), title: '' });
       } catch (error) {
-        const message = this.getMessage(this.transaction as History)
-        this.time = 0
+        const message = this.getMessage(this.transaction as History);
+        this.time = 0;
         if (this.transaction) {
-          this.removeActiveTransaction(this.transaction)
-          this.transaction = null
+          this.removeActiveTransaction(this.transaction);
+          this.transaction = null;
         }
         this.$notify({
           message: message || this.t('unknownErrorText'),
           type: 'error',
-          title: ''
-        })
+          title: '',
+        });
       }
-    })
+    });
   }
 }

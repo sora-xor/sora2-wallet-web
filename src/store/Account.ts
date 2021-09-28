@@ -1,23 +1,32 @@
-import map from 'lodash/fp/map'
-import flatMap from 'lodash/fp/flatMap'
-import fromPairs from 'lodash/fp/fromPairs'
-import flow from 'lodash/fp/flow'
-import concat from 'lodash/fp/concat'
-import omit from 'lodash/fp/omit'
-import { AccountAsset, getWhitelistAssets, getWhitelistIdsBySymbol, WhitelistArrayItem, Whitelist, axiosInstance, History, Asset } from '@sora-substrate/util'
-import type { Subscription } from '@polkadot/x-rxjs'
+import map from 'lodash/fp/map';
+import flatMap from 'lodash/fp/flatMap';
+import fromPairs from 'lodash/fp/fromPairs';
+import flow from 'lodash/fp/flow';
+import concat from 'lodash/fp/concat';
+import omit from 'lodash/fp/omit';
+import {
+  AccountAsset,
+  getWhitelistAssets,
+  getWhitelistIdsBySymbol,
+  WhitelistArrayItem,
+  Whitelist,
+  axiosInstance,
+  History,
+  Asset,
+} from '@sora-substrate/util';
+import type { Subscription } from '@polkadot/x-rxjs';
 
-import { api } from '../api'
-import { storage } from '../util/storage'
-import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util'
-import { SubqueryExplorerService } from '../services/subquery'
-import type { FiatPriceAndApyObject } from '../services/types'
-import type { Account, PolkadotJsAccount } from '../types/common'
+import { api } from '../api';
+import { storage } from '../util/storage';
+import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util';
+import { SubqueryExplorerService } from '../services/subquery';
+import type { FiatPriceAndApyObject } from '../services/types';
+import type { Account, PolkadotJsAccount } from '../types/common';
 
-const HOUR = 60 * 60 * 1000
+const HOUR = 60 * 60 * 1000;
 
 const types = flow(
-  flatMap(x => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
+  flatMap((x) => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
     'RESET_ACCOUNT',
     'RESET_ACCOUNT_ASSETS_SUBSCRIPTION',
@@ -25,9 +34,9 @@ const types = flow(
     'LOGOUT',
     'SYNC_WITH_STORAGE',
     'SET_TRANSACTION_DETAILS_ID',
-    'GET_ACCOUNT_ACTIVITY'
+    'GET_ACCOUNT_ACTIVITY',
   ]),
-  map(x => [x, x]),
+  map((x) => [x, x]),
   fromPairs
 )([
   'GET_ADDRESS',
@@ -41,8 +50,8 @@ const types = flow(
   'GET_SIGNER',
   'GET_POLKADOT_JS_ACCOUNTS',
   'GET_WHITELIST',
-  'GET_FIAT_PRICE_AND_APY_OBJECT'
-])
+  'GET_FIAT_PRICE_AND_APY_OBJECT',
+]);
 
 type AccountState = {
   address: string;
@@ -59,9 +68,9 @@ type AccountState = {
   updateAccountAssetsSubscription: Nullable<Subscription>;
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
   fiatPriceAndApyTimer: Nullable<NodeJS.Timer>;
-}
+};
 
-function initialState (): AccountState {
+function initialState(): AccountState {
   return {
     address: storage.get('address') || '',
     name: storage.get('name') || '',
@@ -76,421 +85,419 @@ function initialState (): AccountState {
     withoutFiatAndApy: false,
     updateAccountAssetsSubscription: null,
     fiatPriceAndApyObject: {},
-    fiatPriceAndApyTimer: null
-  }
+    fiatPriceAndApyTimer: null,
+  };
 }
 
-const state = initialState()
+const state = initialState();
 
 const getters = {
-  isLoggedIn (state: AccountState): boolean {
-    return state.isExternal && !!state.address
+  isLoggedIn(state: AccountState): boolean {
+    return state.isExternal && !!state.address;
   },
-  isExternal (state: AccountState): boolean {
-    return state.isExternal
+  isExternal(state: AccountState): boolean {
+    return state.isExternal;
   },
-  account (state: AccountState): Account {
+  account(state: AccountState): Account {
     return {
       address: state.address,
       name: state.name,
-      isExternal: state.isExternal
-    }
+      isExternal: state.isExternal,
+    };
   },
-  accountAssets (state: AccountState): Array<AccountAsset> {
-    return state.accountAssets
+  accountAssets(state: AccountState): Array<AccountAsset> {
+    return state.accountAssets;
   },
-  accountAssetsAddressTable (state: AccountState): any {
-    return toHashTable(state.accountAssets, 'address')
+  accountAssetsAddressTable(state: AccountState): any {
+    return toHashTable(state.accountAssets, 'address');
   },
-  activity (state: AccountState): Array<History> {
-    return state.activity
+  activity(state: AccountState): Array<History> {
+    return state.activity;
   },
-  assets (state: AccountState): Array<Asset> {
-    return state.assets
+  assets(state: AccountState): Array<Asset> {
+    return state.assets;
   },
-  polkadotJsAccounts (state: AccountState): Array<PolkadotJsAccount> {
-    return state.polkadotJsAccounts
+  polkadotJsAccounts(state: AccountState): Array<PolkadotJsAccount> {
+    return state.polkadotJsAccounts;
   },
-  whitelistArray (state: AccountState): Array<WhitelistArrayItem> {
-    return state.whitelistArray
+  whitelistArray(state: AccountState): Array<WhitelistArrayItem> {
+    return state.whitelistArray;
   },
-  whitelist (state: AccountState): Whitelist {
-    return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistAssets(state.whitelistArray) : {}
+  whitelist(state: AccountState): Whitelist {
+    return state.whitelistArray && state.whitelistArray.length ? getWhitelistAssets(state.whitelistArray) : {};
   },
-  whitelistIdsBySymbol (state: AccountState): any {
-    return (state.whitelistArray && state.whitelistArray.length) ? getWhitelistIdsBySymbol(state.whitelistArray) : {}
+  whitelistIdsBySymbol(state: AccountState): any {
+    return state.whitelistArray && state.whitelistArray.length ? getWhitelistIdsBySymbol(state.whitelistArray) : {};
   },
-  withoutFiatAndApy (state: AccountState): boolean {
-    return state.withoutFiatAndApy
+  withoutFiatAndApy(state: AccountState): boolean {
+    return state.withoutFiatAndApy;
   },
-  fiatPriceAndApyObject (state: AccountState): Nullable<FiatPriceAndApyObject> {
-    return state.fiatPriceAndApyObject
+  fiatPriceAndApyObject(state: AccountState): Nullable<FiatPriceAndApyObject> {
+    return state.fiatPriceAndApyObject;
   },
-  assetsLoading (state: AccountState): boolean {
-    return state.assetsLoading
+  assetsLoading(state: AccountState): boolean {
+    return state.assetsLoading;
   },
-  selectedTransaction (state: AccountState, getters): History {
-    return getters.activity.find(item => item.id === state.selectedTransactionId)
-  }
-}
+  selectedTransaction(state: AccountState, getters): History {
+    return getters.activity.find((item) => item.id === state.selectedTransactionId);
+  },
+};
 
 const mutations = {
-  [types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION] (state: AccountState) {
+  [types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION](state: AccountState) {
     if (state.fiatPriceAndApyTimer) {
-      clearInterval(state.fiatPriceAndApyTimer)
-      state.fiatPriceAndApyTimer = null
+      clearInterval(state.fiatPriceAndApyTimer);
+      state.fiatPriceAndApyTimer = null;
     }
   },
-  [types.RESET_ACCOUNT] (state: AccountState) {
-    const s = omit(['whitelistArray', 'fiatPriceAndApyObject', 'fiatPriceAndApyTimer', 'assets'], initialState())
-    Object.keys(s).forEach(key => {
-      state[key] = s[key]
-    })
+  [types.RESET_ACCOUNT](state: AccountState) {
+    const s = omit(['whitelistArray', 'fiatPriceAndApyObject', 'fiatPriceAndApyTimer', 'assets'], initialState());
+    Object.keys(s).forEach((key) => {
+      state[key] = s[key];
+    });
   },
 
-  [types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION] (state: AccountState) {
+  [types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION](state: AccountState) {
     if (state.updateAccountAssetsSubscription) {
-      state.updateAccountAssetsSubscription.unsubscribe()
-      state.updateAccountAssetsSubscription = null
+      state.updateAccountAssetsSubscription.unsubscribe();
+      state.updateAccountAssetsSubscription = null;
     }
   },
 
-  [types.SYNC_WITH_STORAGE] (state: AccountState) {
-    state.address = storage.get('address') || ''
-    state.name = storage.get('name') || ''
-    state.isExternal = Boolean(storage.get('isExternal')) || false
-    state.accountAssets = api.accountAssets // to save reactivity
-    state.activity = api.accountHistory
+  [types.SYNC_WITH_STORAGE](state: AccountState) {
+    state.address = storage.get('address') || '';
+    state.name = storage.get('name') || '';
+    state.isExternal = Boolean(storage.get('isExternal')) || false;
+    state.accountAssets = api.accountAssets; // to save reactivity
+    state.activity = api.accountHistory;
   },
 
-  [types.GET_ADDRESS_REQUEST] (state: AccountState) {
-    state.address = ''
+  [types.GET_ADDRESS_REQUEST](state: AccountState) {
+    state.address = '';
   },
 
-  [types.GET_ADDRESS_SUCCESS] (state: AccountState, address: string) {
-    state.address = address
+  [types.GET_ADDRESS_SUCCESS](state: AccountState, address: string) {
+    state.address = address;
   },
 
-  [types.GET_ADDRESS_FAILURE] (state: AccountState) {
-    state.address = ''
+  [types.GET_ADDRESS_FAILURE](state: AccountState) {
+    state.address = '';
   },
 
-  [types.GET_ACCOUNT_ASSETS_REQUEST] (state: AccountState) {
-    state.accountAssets = []
+  [types.GET_ACCOUNT_ASSETS_REQUEST](state: AccountState) {
+    state.accountAssets = [];
   },
 
-  [types.GET_ACCOUNT_ASSETS_SUCCESS] (state: AccountState, assets: Array<AccountAsset>) {
-    state.accountAssets = assets
+  [types.GET_ACCOUNT_ASSETS_SUCCESS](state: AccountState, assets: Array<AccountAsset>) {
+    state.accountAssets = assets;
   },
 
-  [types.GET_ACCOUNT_ASSETS_FAILURE] (state: AccountState) {
-    state.accountAssets = []
+  [types.GET_ACCOUNT_ASSETS_FAILURE](state: AccountState) {
+    state.accountAssets = [];
   },
 
-  [types.UPDATE_ACCOUNT_ASSETS_REQUEST] (state: AccountState) {
+  [types.UPDATE_ACCOUNT_ASSETS_REQUEST](state: AccountState) {},
+
+  [types.UPDATE_ACCOUNT_ASSETS_SUCCESS](state: AccountState, assets: Array<AccountAsset>) {
+    state.accountAssets = assets;
   },
 
-  [types.UPDATE_ACCOUNT_ASSETS_SUCCESS] (state: AccountState, assets: Array<AccountAsset>) {
-    state.accountAssets = assets
+  [types.UPDATE_ACCOUNT_ASSETS_FAILURE](state: AccountState) {
+    state.accountAssets = [];
   },
 
-  [types.UPDATE_ACCOUNT_ASSETS_FAILURE] (state: AccountState) {
-    state.accountAssets = []
+  [types.GET_ACCOUNT_ACTIVITY](state: AccountState, activity: Array<History>) {
+    state.activity = activity;
   },
 
-  [types.GET_ACCOUNT_ACTIVITY] (state: AccountState, activity: Array<History>) {
-    state.activity = activity
+  [types.GET_ASSETS_REQUEST](state: AccountState) {
+    state.assets = [];
+    state.assetsLoading = true;
   },
 
-  [types.GET_ASSETS_REQUEST] (state: AccountState) {
-    state.assets = []
-    state.assetsLoading = true
+  [types.GET_ASSETS_SUCCESS](state: AccountState, assets: Array<Asset>) {
+    state.assets = assets;
+    state.assetsLoading = false;
   },
 
-  [types.GET_ASSETS_SUCCESS] (state: AccountState, assets: Array<Asset>) {
-    state.assets = assets
-    state.assetsLoading = false
+  [types.GET_ASSETS_FAILURE](state: AccountState) {
+    state.assets = [];
+    state.assetsLoading = false;
   },
 
-  [types.GET_ASSETS_FAILURE] (state: AccountState) {
-    state.assets = []
-    state.assetsLoading = false
+  [types.GET_WHITELIST_REQUEST](state: AccountState) {
+    state.whitelistArray = [];
   },
 
-  [types.GET_WHITELIST_REQUEST] (state: AccountState) {
-    state.whitelistArray = []
+  [types.GET_WHITELIST_SUCCESS](state: AccountState, whitelistArray: Array<WhitelistArrayItem>) {
+    state.whitelistArray = whitelistArray;
   },
 
-  [types.GET_WHITELIST_SUCCESS] (state: AccountState, whitelistArray: Array<WhitelistArrayItem>) {
-    state.whitelistArray = whitelistArray
+  [types.GET_WHITELIST_FAILURE](state: AccountState) {
+    state.whitelistArray = [];
   },
 
-  [types.GET_WHITELIST_FAILURE] (state: AccountState) {
-    state.whitelistArray = []
+  [types.GET_FIAT_PRICE_AND_APY_OBJECT_REQUEST](state: AccountState) {},
+
+  [types.GET_FIAT_PRICE_AND_APY_OBJECT_SUCCESS](state: AccountState, object: FiatPriceAndApyObject) {
+    state.fiatPriceAndApyObject = object;
+    state.withoutFiatAndApy = false;
   },
 
-  [types.GET_FIAT_PRICE_AND_APY_OBJECT_REQUEST] (state: AccountState) {
+  [types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE](state: AccountState) {
+    state.fiatPriceAndApyObject = {};
+    state.withoutFiatAndApy = true;
   },
 
-  [types.GET_FIAT_PRICE_AND_APY_OBJECT_SUCCESS] (state: AccountState, object: FiatPriceAndApyObject) {
-    state.fiatPriceAndApyObject = object
-    state.withoutFiatAndApy = false
+  [types.SEARCH_ASSET_REQUEST](state: AccountState) {},
+  [types.SEARCH_ASSET_SUCCESS](state: AccountState) {},
+  [types.SEARCH_ASSET_FAILURE](state: AccountState) {},
+
+  [types.ADD_ASSET_REQUEST](state: AccountState) {},
+  [types.ADD_ASSET_SUCCESS](state: AccountState) {},
+  [types.ADD_ASSET_FAILURE](state: AccountState) {},
+
+  [types.TRANSFER_REQUEST](state: AccountState) {},
+  [types.TRANSFER_SUCCESS](state: AccountState) {},
+  [types.TRANSFER_FAILURE](state: AccountState) {},
+
+  [types.GET_SIGNER_REQUEST](state: AccountState) {},
+  [types.GET_SIGNER_SUCCESS](state: AccountState) {},
+  [types.GET_SIGNER_FAILURE](state: AccountState) {},
+
+  [types.GET_POLKADOT_JS_ACCOUNTS_REQUEST](state: AccountState) {
+    state.polkadotJsAccounts = [];
+  },
+  [types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS](state: AccountState, polkadotJsAccounts: Array<PolkadotJsAccount>) {
+    state.polkadotJsAccounts = polkadotJsAccounts;
+  },
+  [types.GET_POLKADOT_JS_ACCOUNTS_FAILURE](state: AccountState) {
+    state.polkadotJsAccounts = [];
   },
 
-  [types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE] (state: AccountState) {
-    state.fiatPriceAndApyObject = {}
-    state.withoutFiatAndApy = true
+  [types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST](state: AccountState) {},
+
+  [types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS](state: AccountState, name: string) {
+    state.address = api.address;
+    state.name = name;
+    state.isExternal = true;
   },
 
-  [types.SEARCH_ASSET_REQUEST] (state: AccountState) {},
-  [types.SEARCH_ASSET_SUCCESS] (state: AccountState) {},
-  [types.SEARCH_ASSET_FAILURE] (state: AccountState) {},
+  [types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE](state: AccountState) {},
 
-  [types.ADD_ASSET_REQUEST] (state: AccountState) {},
-  [types.ADD_ASSET_SUCCESS] (state: AccountState) {},
-  [types.ADD_ASSET_FAILURE] (state: AccountState) {},
-
-  [types.TRANSFER_REQUEST] (state: AccountState) {},
-  [types.TRANSFER_SUCCESS] (state: AccountState) {},
-  [types.TRANSFER_FAILURE] (state: AccountState) {},
-
-  [types.GET_SIGNER_REQUEST] (state: AccountState) {},
-  [types.GET_SIGNER_SUCCESS] (state: AccountState) {},
-  [types.GET_SIGNER_FAILURE] (state: AccountState) {},
-
-  [types.GET_POLKADOT_JS_ACCOUNTS_REQUEST] (state: AccountState) {
-    state.polkadotJsAccounts = []
+  [types.SET_TRANSACTION_DETAILS_ID](state: AccountState, id: string) {
+    state.selectedTransactionId = id;
   },
-  [types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS] (state: AccountState, polkadotJsAccounts: Array<PolkadotJsAccount>) {
-    state.polkadotJsAccounts = polkadotJsAccounts
-  },
-  [types.GET_POLKADOT_JS_ACCOUNTS_FAILURE] (state: AccountState) {
-    state.polkadotJsAccounts = []
-  },
-
-  [types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST] (state: AccountState) {},
-
-  [types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS] (state: AccountState, name: string) {
-    state.address = api.address
-    state.name = name
-    state.isExternal = true
-  },
-
-  [types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE] (state: AccountState) {},
-
-  [types.SET_TRANSACTION_DETAILS_ID] (state: AccountState, id: string) {
-    state.selectedTransactionId = id
-  }
-}
+};
 
 const actions = {
   /** TODO: check its usage */
-  formatAddress ({ commit }, address: string) {
-    return api.formatAddress(address)
+  formatAddress({ commit }, address: string) {
+    return api.formatAddress(address);
   },
-  async checkExtension ({ commit }) {
+  async checkExtension({ commit }) {
     try {
-      await getExtension()
-      return true
+      await getExtension();
+      return true;
     } catch (error) {
-      return false
+      return false;
     }
   },
-  async checkSigner ({ dispatch, getters }) {
+  async checkSigner({ dispatch, getters }) {
     if (getters.isExternal) {
       try {
-        await dispatch('getSigner')
+        await dispatch('getSigner');
       } catch (error) {
-        console.error(error)
-        dispatch('logout')
+        console.error(error);
+        dispatch('logout');
       }
     }
   },
-  async getSigner ({ commit, state: { address } }) {
-    commit(types.GET_SIGNER_REQUEST)
+  async getSigner({ commit, state: { address } }) {
+    commit(types.GET_SIGNER_REQUEST);
     try {
-      await getExtension()
-      const defaultAddress = api.formatAddress(address, false)
-      const signer = await getExtensionSigner(defaultAddress)
-      api.setSigner(signer)
-      commit(types.GET_SIGNER_SUCCESS)
+      await getExtension();
+      const defaultAddress = api.formatAddress(address, false);
+      const signer = await getExtensionSigner(defaultAddress);
+      api.setSigner(signer);
+      commit(types.GET_SIGNER_SUCCESS);
     } catch (error) {
-      commit(types.GET_SIGNER_FAILURE)
-      throw new Error((error as Error).message)
+      commit(types.GET_SIGNER_FAILURE);
+      throw new Error((error as Error).message);
     }
   },
-  async getPolkadotJsAccounts ({ commit }) {
-    commit(types.GET_POLKADOT_JS_ACCOUNTS_REQUEST)
+  async getPolkadotJsAccounts({ commit }) {
+    commit(types.GET_POLKADOT_JS_ACCOUNTS_REQUEST);
     try {
-      const accounts = (await getExtensionInfo()).accounts
-      commit(types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS, accounts)
+      const accounts = (await getExtensionInfo()).accounts;
+      commit(types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS, accounts);
     } catch (error) {
-      commit(types.GET_POLKADOT_JS_ACCOUNTS_FAILURE)
+      commit(types.GET_POLKADOT_JS_ACCOUNTS_FAILURE);
     }
   },
-  async importPolkadotJs ({ commit, dispatch }, address: string) {
-    commit(types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST)
+  async importPolkadotJs({ commit, dispatch }, address: string) {
+    commit(types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST);
     try {
-      const defaultAddress = api.formatAddress(address, false)
-      const info = await getExtensionInfo()
-      const account = info.accounts.find(acc => acc.address === defaultAddress)
+      const defaultAddress = api.formatAddress(address, false);
+      const info = await getExtensionInfo();
+      const account = info.accounts.find((acc) => acc.address === defaultAddress);
       if (!account) {
-        commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE)
-        throw new Error('polkadotjs.noAccount')
+        commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE);
+        throw new Error('polkadotjs.noAccount');
       }
-      api.importByPolkadotJs(account.address, account.name)
-      api.setSigner(info.signer)
-      commit(types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS, account.name)
+      api.importByPolkadotJs(account.address, account.name);
+      api.setSigner(info.signer);
+      commit(types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS, account.name);
       if (!state.updateAccountAssetsSubscription) {
-        await dispatch('getAccountAssets')
-        await dispatch('updateAccountAssets')
+        await dispatch('getAccountAssets');
+        await dispatch('updateAccountAssets');
       }
     } catch (error) {
-      commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE)
-      throw new Error((error as Error).message)
+      commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE);
+      throw new Error((error as Error).message);
     }
   },
-  async getAccountAssets ({ commit, getters }) {
+  async getAccountAssets({ commit, getters }) {
     if (!getters.isLoggedIn) {
-      return
+      return;
     }
-    const assets = storage.get('assets')
+    const assets = storage.get('assets');
     if (assets && getters.accountAssets.length !== 0) {
-      return
+      return;
     }
-    commit(types.GET_ACCOUNT_ASSETS_REQUEST)
+    commit(types.GET_ACCOUNT_ASSETS_REQUEST);
     try {
-      await api.getKnownAccountAssets()
-      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
+      await api.getKnownAccountAssets();
+      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, api.accountAssets);
     } catch (error) {
-      commit(types.GET_ACCOUNT_ASSETS_FAILURE)
+      commit(types.GET_ACCOUNT_ASSETS_FAILURE);
     }
   },
-  async updateAccountAssets ({ commit, getters }) {
+  async updateAccountAssets({ commit, getters }) {
     if (getters.isLoggedIn) {
-      commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST)
+      commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST);
       try {
-        state.updateAccountAssetsSubscription = api.assetsBalanceUpdated.subscribe(data => {
-          commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets)
-        })
-        api.updateAccountAssets()
+        state.updateAccountAssetsSubscription = api.assetsBalanceUpdated.subscribe((data) => {
+          commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets);
+        });
+        api.updateAccountAssets();
       } catch (error) {
-        commit(types.UPDATE_ACCOUNT_ASSETS_FAILURE)
+        commit(types.UPDATE_ACCOUNT_ASSETS_FAILURE);
       }
     }
   },
-  getAccountActivity ({ commit }) {
-    commit(types.GET_ACCOUNT_ACTIVITY, api.accountHistory)
+  getAccountActivity({ commit }) {
+    commit(types.GET_ACCOUNT_ACTIVITY, api.accountHistory);
   },
-  async getWhitelist ({ commit }) {
-    commit(types.GET_WHITELIST_REQUEST)
+  async getWhitelist({ commit }) {
+    commit(types.GET_WHITELIST_REQUEST);
     try {
-      const { data } = await axiosInstance.get('/whitelist.json')
-      commit(types.GET_WHITELIST_SUCCESS, data)
+      const { data } = await axiosInstance.get('/whitelist.json');
+      commit(types.GET_WHITELIST_SUCCESS, data);
     } catch (error) {
-      commit(types.GET_WHITELIST_FAILURE)
+      commit(types.GET_WHITELIST_FAILURE);
     }
   },
-  async getFiatPriceAndApyObject ({ commit }) {
-    commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_REQUEST)
+  async getFiatPriceAndApyObject({ commit }) {
+    commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_REQUEST);
     try {
-      const data = await SubqueryExplorerService.getFiatPriceAndApyObject()
+      const data = await SubqueryExplorerService.getFiatPriceAndApyObject();
       if (!data) {
-        commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE)
-        return
+        commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE);
+        return;
       }
-      commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_SUCCESS, data)
+      commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_SUCCESS, data);
     } catch (error) {
-      commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE)
+      commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE);
     }
   },
-  subscribeOnFiatPriceAndApyObjectUpdates ({ commit, dispatch, state }) {
-    dispatch('getFiatPriceAndApyObject')
+  subscribeOnFiatPriceAndApyObjectUpdates({ commit, dispatch, state }) {
+    dispatch('getFiatPriceAndApyObject');
     state.fiatPriceAndApyTimer = setInterval(() => {
-      dispatch('getFiatPriceAndApyObject')
-    }, HOUR)
+      dispatch('getFiatPriceAndApyObject');
+    }, HOUR);
   },
-  async getAssets ({ commit, getters: { whitelist } }) {
-    commit(types.GET_ASSETS_REQUEST)
+  async getAssets({ commit, getters: { whitelist } }) {
+    commit(types.GET_ASSETS_REQUEST);
     try {
-      const assets = await api.getAssets(whitelist)
-      commit(types.GET_ASSETS_SUCCESS, assets)
+      const assets = await api.getAssets(whitelist);
+      commit(types.GET_ASSETS_SUCCESS, assets);
     } catch (error) {
-      commit(types.GET_ASSETS_FAILURE)
+      commit(types.GET_ASSETS_FAILURE);
     }
   },
-  async searchAsset ({ commit, getters: { whitelist } }, address: string) {
-    commit(types.SEARCH_ASSET_REQUEST)
+  async searchAsset({ commit, getters: { whitelist } }, address: string) {
+    commit(types.SEARCH_ASSET_REQUEST);
     try {
-      const assets = await api.getAssets(whitelist)
-      const asset = assets.find(asset => asset.address === address)
-      commit(types.SEARCH_ASSET_SUCCESS)
-      return asset
+      const assets = await api.getAssets(whitelist);
+      const asset = assets.find((asset) => asset.address === address);
+      commit(types.SEARCH_ASSET_SUCCESS);
+      return asset;
     } catch (error) {
-      commit(types.SEARCH_ASSET_FAILURE)
+      commit(types.SEARCH_ASSET_FAILURE);
     }
   },
-  async addAsset ({ commit }, address: string) {
-    commit(types.ADD_ASSET_REQUEST)
+  async addAsset({ commit }, address: string) {
+    commit(types.ADD_ASSET_REQUEST);
     try {
-      await api.getAccountAsset(address, true)
-      commit(types.ADD_ASSET_SUCCESS)
+      await api.getAccountAsset(address, true);
+      commit(types.ADD_ASSET_SUCCESS);
     } catch (error) {
-      commit(types.ADD_ASSET_FAILURE)
+      commit(types.ADD_ASSET_FAILURE);
     }
   },
-  getTransactionDetails ({ commit }, id: string) {
-    commit(types.SET_TRANSACTION_DETAILS_ID, id)
+  getTransactionDetails({ commit }, id: string) {
+    commit(types.SET_TRANSACTION_DETAILS_ID, id);
   },
-  async transfer ({ commit, getters: { currentRouteParams } }, { to, amount }) {
-    commit(types.TRANSFER_REQUEST)
-    const asset = currentRouteParams.asset as AccountAsset
+  async transfer({ commit, getters: { currentRouteParams } }, { to, amount }) {
+    commit(types.TRANSFER_REQUEST);
+    const asset = currentRouteParams.asset as AccountAsset;
     try {
-      await api.transfer(asset.address, to, amount)
-      commit(types.TRANSFER_SUCCESS)
+      await api.transfer(asset.address, to, amount);
+      commit(types.TRANSFER_SUCCESS);
     } catch (error) {
-      commit(types.TRANSFER_FAILURE)
+      commit(types.TRANSFER_FAILURE);
       if (error.message.includes('Invalid decoded address')) {
-        throw new Error('walletSend.errorAddress')
+        throw new Error('walletSend.errorAddress');
       }
-      throw new Error(error.message)
+      throw new Error(error.message);
     }
   },
-  logout ({ commit }) {
-    api.logout()
-    commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION)
-    commit(types.RESET_ACCOUNT)
+  logout({ commit }) {
+    api.logout();
+    commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION);
+    commit(types.RESET_ACCOUNT);
   },
-  resetAccountAssetsSubscription ({ commit }) {
-    commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION)
+  resetAccountAssetsSubscription({ commit }) {
+    commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION);
   },
-  resetFiatPriceAndApySubscription ({ commit }) {
-    commit(types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION)
+  resetFiatPriceAndApySubscription({ commit }) {
+    commit(types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION);
   },
-  async syncWithStorage ({ commit, state, getters, dispatch }) {
+  async syncWithStorage({ commit, state, getters, dispatch }) {
     // previous state
-    const { isLoggedIn } = getters
-    const { address } = state
+    const { isLoggedIn } = getters;
+    const { address } = state;
 
-    commit(types.SYNC_WITH_STORAGE)
+    commit(types.SYNC_WITH_STORAGE);
 
     // check log in/out state changes after sync
     if (getters.isLoggedIn !== isLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
-        await dispatch('importPolkadotJs', { address: state.address })
+        await dispatch('importPolkadotJs', { address: state.address });
       } else if (api.accountPair) {
-        dispatch('logout')
+        dispatch('logout');
       }
     }
 
-    dispatch('checkCurrentRoute', undefined, { root: true })
-  }
-}
+    dispatch('checkCurrentRoute', undefined, { root: true });
+  },
+};
 
 export default {
   types,
   state,
   getters,
   mutations,
-  actions
-}
+  actions,
+};

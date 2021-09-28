@@ -1,23 +1,23 @@
-import { Vue, Component } from 'vue-property-decorator'
+import { Vue, Component } from 'vue-property-decorator';
 
-import { delay } from '../../util'
-import { api } from '../../api'
+import { delay } from '../../util';
+import { api } from '../../api';
 
-export const isApiConnected = () => api.api && api.api.isConnected
+export const isApiConnected = () => api.api && api.api.isConnected;
 
 @Component
 export default class LoadingMixin extends Vue {
-  loading = false
+  loading = false;
 
-  async withLoading (func: Function): Promise<any> {
-    this.loading = true
+  async withLoading(func: Function): Promise<any> {
+    this.loading = true;
     try {
-      return await func()
+      return await func();
     } catch (e) {
-      console.error(e)
-      throw e
+      console.error(e);
+      throw e;
     } finally {
-      this.loading = false
+      this.loading = false;
     }
   }
 
@@ -26,13 +26,13 @@ export default class LoadingMixin extends Vue {
    * It is guaranteed that api has a connection
    * @param func
    */
-  async withApi (func: Function): Promise<any> {
-    this.loading = true
+  async withApi(func: Function): Promise<any> {
+    this.loading = true;
     if (!isApiConnected()) {
-      await delay()
-      return await this.withApi(func)
+      await delay();
+      return await this.withApi(func);
     } else {
-      return await this.withLoading(func)
+      return await this.withLoading(func);
     }
   }
 }

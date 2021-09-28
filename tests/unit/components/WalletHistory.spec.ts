@@ -17,7 +17,7 @@ describe('WalletBase.vue', () => {
   beforeEach(() => {
     // SoramitsuElementsImport(localVue)
     // TranslationMock(WalletHistory)
-  })
+  });
 
   it('should renders correctly', () => {
     const propsData = {
@@ -29,12 +29,12 @@ describe('WalletBase.vue', () => {
           toSymbol: 'KSM',
           toAmount: 24390.1239,
           status: 'IN_PROGRESS',
-          date: 1605048643745
-        }
-      ]
-    }
+          date: 1605048643745,
+        },
+      ],
+    };
     // const wrapper = shallowMount(WalletHistory, { localVue, propsData })
     // expect(wrapper.element).toMatchSnapshot()
-    expect(true).toBe(true)
-  })
-})
+    expect(true).toBe(true);
+  });
+});

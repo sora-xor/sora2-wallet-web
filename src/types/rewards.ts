@@ -1,4 +1,4 @@
-import { KnownSymbols } from '@sora-substrate/util'
+import { KnownSymbols } from '@sora-substrate/util';
 
 export interface RewardsAmountHeaderItem {
   amount: string;

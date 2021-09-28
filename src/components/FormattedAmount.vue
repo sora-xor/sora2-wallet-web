@@ -12,11 +12,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
-import { FPNumber } from '@sora-substrate/util'
+import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { FPNumber } from '@sora-substrate/util';
 
-import { FontSizeRate, FontWeightRate } from '../consts'
-import NumberFormatterMixin from './mixins/NumberFormatterMixin'
+import { FontSizeRate, FontWeightRate } from '../consts';
+import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 
 interface FormattedAmountValues {
   integer: string;
@@ -28,100 +28,100 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   /**
    * Balance or Amount value.
    */
-  @Prop({ default: '', type: String }) readonly value!: string
+  @Prop({ default: '', type: String }) readonly value!: string;
   /**
    * Font size rate between integer and decimal numbers' parts. Possible values: `"small"`, `"medium"`, `"normal"`.
    * By default it's set to `"normal"` and it means the same font sizes for both numbers' parts.
    */
-  @Prop({ default: FontSizeRate.NORMAL, type: String }) readonly fontSizeRate?: string
+  @Prop({ default: FontSizeRate.NORMAL, type: String }) readonly fontSizeRate?: string;
   /**
    * Font weight rate between integer and decimal numbers' parts. Possible values: `"small"`, `"medium"`, `"normal"`.
    * By default it's set to `"normal"` and it means the same font weights for both numbers' parts.
    */
-  @Prop({ default: FontWeightRate.NORMAL, type: String }) readonly fontWeightRate?: string
+  @Prop({ default: FontWeightRate.NORMAL, type: String }) readonly fontWeightRate?: string;
   /**
    * Amount value's asset symbol.
    */
-  @Prop({ default: '', type: String }) readonly assetSymbol?: string
+  @Prop({ default: '', type: String }) readonly assetSymbol?: string;
   /**
    * Font size of asset symbol is the same with decimal part size.
    * Symbol value located inside formatted-amount__decimal container at the HTML structure.
    */
-  @Prop({ default: false, type: Boolean }) readonly symbolAsDecimal?: boolean
+  @Prop({ default: false, type: Boolean }) readonly symbolAsDecimal?: boolean;
   /**
    * Adds special class and styles to formatted number to convert in to Fiat value.
    */
-  @Prop({ default: false, type: Boolean }) readonly isFiatValue?: boolean
+  @Prop({ default: false, type: Boolean }) readonly isFiatValue?: boolean;
   /**
    * Fills only intger part if we don't need decimals value.
    */
-  @Prop({ default: false, type: Boolean }) readonly integerOnly?: boolean
+  @Prop({ default: false, type: Boolean }) readonly integerOnly?: boolean;
   /**
    * Added special class to left shifting for Fiat value if needed (the shift is the same in all screens).
    */
-  @Prop({ default: false, type: Boolean }) readonly withLeftShift?: boolean
+  @Prop({ default: false, type: Boolean }) readonly withLeftShift?: boolean;
 
-  get unformatted (): string {
+  get unformatted(): string {
     return this.value
       .replace(new RegExp(FPNumber.DELIMITERS_CONFIG.thousand, 'g'), '')
-      .replace(FPNumber.DELIMITERS_CONFIG.decimal, '.')
+      .replace(FPNumber.DELIMITERS_CONFIG.decimal, '.');
   }
 
-  get isFiniteValue (): boolean {
+  get isFiniteValue(): boolean {
     if (+this.value !== Infinity) {
-      return Number.isFinite(+this.unformatted)
+      return Number.isFinite(+this.unformatted);
     }
-    return false
+    return false;
   }
 
-  get formatted (): FormattedAmountValues {
-    let [integer, decimal] = this.value.split(FPNumber.DELIMITERS_CONFIG.decimal)
+  get formatted(): FormattedAmountValues {
+    let [integer, decimal] = this.value.split(FPNumber.DELIMITERS_CONFIG.decimal);
 
     if (!this.integerOnly) {
       if (this.isFiatValue) {
         if (decimal) {
-          decimal = decimal.length === 1 ? decimal + '0' : decimal.substring(0, 2)
+          decimal = decimal.length === 1 ? decimal + '0' : decimal.substring(0, 2);
         } else {
-          decimal = '00'
+          decimal = '00';
         }
       }
 
       if (decimal && decimal.length > 0) {
-        decimal = FPNumber.DELIMITERS_CONFIG.decimal + decimal
+        decimal = FPNumber.DELIMITERS_CONFIG.decimal + decimal;
       }
     }
 
     return {
       integer,
-      decimal
-    }
+      decimal,
+    };
   }
 
-  get computedClasses (): string {
-    const baseClass = 'formatted-amount'
-    const classes = [baseClass]
+  get computedClasses(): string {
+    const baseClass = 'formatted-amount';
+    const classes = [baseClass];
 
     if (this.fontSizeRate !== FontSizeRate.NORMAL) {
-      classes.push(`${baseClass}--font-size-${this.fontSizeRate}`)
+      classes.push(`${baseClass}--font-size-${this.fontSizeRate}`);
     }
 
     if (this.fontWeightRate !== FontWeightRate.NORMAL) {
-      classes.push(`${baseClass}--font-weight-${this.fontWeightRate}`)
+      classes.push(`${baseClass}--font-weight-${this.fontWeightRate}`);
     }
 
     if (this.assetSymbol && this.symbolAsDecimal) {
-      classes.push(`${baseClass}--symbol-as-decimal`)
+      classes.push(`${baseClass}--symbol-as-decimal`);
     }
 
     if (this.isFiatValue) {
-      classes.push(`${baseClass}--fiat-value`)
+      classes.push(`${baseClass}--fiat-value`);
     }
 
     if (this.withLeftShift) {
-      classes.push(`${baseClass}--shifted`)
+      classes.push(`${baseClass}--shifted`);
     }
 
-    return classes.join(' ')
+    return classes.join(' ');
   }
 }
 </script>
@@ -199,7 +199,7 @@ $formatted-amount-class: '.formatted-amount';
     margin-left: $basic-spacing-mini;
   }
   &__prefix {
-    opacity: .6;
+    opacity: 0.6;
     padding-right: #{$basic-spacing-extra-mini};
   }
 }

@@ -1,5 +1,5 @@
-import { Storage } from '@sora-substrate/util'
+import { Storage } from '@sora-substrate/util';
 
-export const storage = new Storage()
+export const storage = new Storage();
 
-export const subqueryStorage = new Storage('subquery')
+export const subqueryStorage = new Storage('subquery');
