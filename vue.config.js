@@ -1,4 +1,9 @@
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+
 module.exports = {
+  configureWebpack: (config) => {
+    config.plugins.push(new NodePolyfillPlugin());
+  },
   css: {
     loaderOptions: {
       sass: {
