@@ -4,7 +4,7 @@ import App from './App.vue';
 import store from './store';
 import i18n from './lang';
 import { connection } from './api';
-import * as env from '../public/env.json';
+import env from '../public/env.json';
 import installWalletPlugins from './plugins';
 
 import './styles';
