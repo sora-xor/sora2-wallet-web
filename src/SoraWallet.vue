@@ -12,24 +12,24 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Getter } from 'vuex-class'
-import { AccountAsset } from '@sora-substrate/util'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
+import { AccountAsset } from '@sora-substrate/util';
 
-import AddAsset from './components/AddAsset.vue'
-import AddAssetDetails from './components/AddAssetDetails.vue'
-import CreateToken from './components/CreateToken.vue'
-import Wallet from './components/Wallet.vue'
-import WalletAssetDetails from './components/WalletAssetDetails.vue'
-import WalletConnection from './components/WalletConnection.vue'
-import WalletSend from './components/WalletSend.vue'
-import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
+import AddAsset from './components/AddAsset.vue';
+import AddAssetDetails from './components/AddAssetDetails.vue';
+import CreateToken from './components/CreateToken.vue';
+import Wallet from './components/Wallet.vue';
+import WalletAssetDetails from './components/WalletAssetDetails.vue';
+import WalletConnection from './components/WalletConnection.vue';
+import WalletSend from './components/WalletSend.vue';
+import WalletTransactionDetails from './components/WalletTransactionDetails.vue';
 
-import LoadingMixin from './components/mixins/LoadingMixin'
-import TranslationMixin from './components/mixins/TranslationMixin'
+import LoadingMixin from './components/mixins/LoadingMixin';
+import TranslationMixin from './components/mixins/TranslationMixin';
 
-import { Operations } from './types/common'
-import type { RouteNames } from './consts'
+import { Operations } from './types/common';
+import type { RouteNames } from './consts';
 
 @Component({
   components: {
@@ -40,36 +40,36 @@ import type { RouteNames } from './consts'
     WalletAssetDetails,
     WalletConnection,
     WalletSend,
-    WalletTransactionDetails
-  }
+    WalletTransactionDetails,
+  },
 })
 export default class SoraWallet extends Mixins(LoadingMixin, TranslationMixin) {
-  readonly Operations = Operations
+  readonly Operations = Operations;
 
-  @Getter currentRoute!: RouteNames
+  @Getter currentRoute!: RouteNames;
 
-  async created (): Promise<void> {
-    this.withApi(() => {}) // We need it just for loading state
+  async created(): Promise<void> {
+    this.withApi(() => {}); // We need it just for loading state
   }
 
-  handleClose (): void {
-    this.$emit('close')
+  handleClose(): void {
+    this.$emit('close');
   }
 
-  handleOperation (operation: Operations, asset: AccountAsset): void {
-    this.$emit(operation, asset)
+  handleOperation(operation: Operations, asset: AccountAsset): void {
+    this.$emit(operation, asset);
   }
 
-  handleLearnMore (): void {
-    this.$emit('learn-more')
+  handleLearnMore(): void {
+    this.$emit('learn-more');
   }
 
-  handleShowAddAssetNotification (): void {
+  handleShowAddAssetNotification(): void {
     this.$notify({
       message: this.t('addAsset.success'),
       type: 'success',
-      title: ''
-    })
+      title: '',
+    });
   }
 }
 </script>
