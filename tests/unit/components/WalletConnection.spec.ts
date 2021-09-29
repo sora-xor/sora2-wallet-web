@@ -15,11 +15,11 @@ describe('WalletConnection.vue', () => {
   beforeEach(() => {
     //     SoramitsuElementsImport(localVue)
     //     TranslationMock(WalletConnection)
-  })
+  });
   //
   it('should renders correctly', () => {
     //     const wrapper = shallowMount(WalletConnection, { localVue })
     //     expect(wrapper.element).toMatchSnapshot()
-    expect(true).toBe(true)
-  })
-})
+    expect(true).toBe(true);
+  });
+});

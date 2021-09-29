@@ -1,10 +1,7 @@
-import { api, connection } from '@sora-substrate/util'
+import { api, connection } from '@sora-substrate/util';
 
-import { storage } from '../util/storage'
+import { storage } from '../util/storage';
 
-api.setStorage(storage)
+api.setStorage(storage);
 
-export {
-  connection,
-  api
-}
+export { connection, api };

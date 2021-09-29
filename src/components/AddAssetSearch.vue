@@ -18,13 +18,14 @@
         class="asset s-flex"
         v-for="asset in foundAssets"
         :key="asset.address"
-        :class="{ 'selected': (selectedAsset || {}).address === asset.address }"
+        :class="{ selected: (selectedAsset || {}).address === asset.address }"
         @click="handleSelectAsset(asset)"
       >
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
         <div class="asset-description s-flex">
           <div class="asset-description_symbol">{{ asset.symbol }}</div>
-          <div class="asset-description_info">{{ formatName(asset) }}
+          <div class="asset-description_info">
+            {{ formatName(asset) }}
             <s-tooltip :content="t('assets.copy')">
               <span class="asset-id" @click="handleCopy(asset, $event)">({{ getFormattedAddress(asset) }})</span>
             </s-tooltip>
@@ -36,107 +37,111 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-import type { AccountAsset, Asset } from '@sora-substrate/util'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
+import type { AccountAsset, Asset } from '@sora-substrate/util';
 
-import TranslationMixin from './mixins/TranslationMixin'
-import LoadingMixin from './mixins/LoadingMixin'
-import { AddAssetTabs, RouteNames } from '../consts'
-import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util'
+import TranslationMixin from './mixins/TranslationMixin';
+import LoadingMixin from './mixins/LoadingMixin';
+import { AddAssetTabs, RouteNames } from '../consts';
+import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
 
 @Component
 export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
-  readonly AddAssetTabs = AddAssetTabs
+  readonly AddAssetTabs = AddAssetTabs;
 
-  @Getter assets!: Array<Asset>
-  @Getter assetsLoading!: boolean
-  @Getter accountAssets!: Array<AccountAsset>
-  @Getter accountAssetsAddressTable!: any
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action getAssets!: AsyncVoidFn
+  @Getter assets!: Array<Asset>;
+  @Getter assetsLoading!: boolean;
+  @Getter accountAssets!: Array<AccountAsset>;
+  @Getter accountAssetsAddressTable!: any;
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Action getAssets!: AsyncVoidFn;
 
-  search = ''
-  selectedAsset: Nullable<Asset> = null
+  search = '';
+  selectedAsset: Nullable<Asset> = null;
 
-  async mounted (): Promise<void> {
-    await this.getAssets()
+  async mounted(): Promise<void> {
+    await this.getAssets();
 
-    const input = this.$refs.search as any
+    const input = this.$refs.search as any;
 
     if (input && typeof input.focus === 'function') {
-      input.focus()
+      input.focus();
     }
   }
 
-  get searchValue (): string {
-    return this.search ? this.search.trim().toLowerCase() : ''
+  get searchValue(): string {
+    return this.search ? this.search.trim().toLowerCase() : '';
   }
 
-  get notAddedAssets (): Array<Asset> {
-    return this.assets.filter(asset => !(asset.address in this.accountAssetsAddressTable))
+  get notAddedAssets(): Array<Asset> {
+    return this.assets.filter((asset) => !(asset.address in this.accountAssetsAddressTable));
   }
 
-  get foundAssets (): Array<Asset> {
-    if (!this.searchValue) return this.notAddedAssets
+  get foundAssets(): Array<Asset> {
+    if (!this.searchValue) return this.notAddedAssets;
 
-    return this.notAddedAssets.filter(({ name, symbol, address }) =>
-      address.toLowerCase() === this.searchValue ||
-      symbol.toLowerCase().includes(this.searchValue) ||
-      name.toLowerCase().includes(this.searchValue)
-    )
+    return this.notAddedAssets.filter(
+      ({ name, symbol, address }) =>
+        address.toLowerCase() === this.searchValue ||
+        symbol.toLowerCase().includes(this.searchValue) ||
+        name.toLowerCase().includes(this.searchValue)
+    );
   }
 
-  get assetIsAlreadyAdded (): boolean {
-    if (!this.searchValue) return false
+  get assetIsAlreadyAdded(): boolean {
+    if (!this.searchValue) return false;
 
-    return this.accountAssets.some(({ name = '', symbol = '', address = '' }) =>
-      address.toLowerCase() === this.searchValue ||
-      symbol.toLowerCase() === this.searchValue ||
-      name.toLowerCase() === this.searchValue
-    )
+    return this.accountAssets.some(
+      ({ name = '', symbol = '', address = '' }) =>
+        address.toLowerCase() === this.searchValue ||
+        symbol.toLowerCase() === this.searchValue ||
+        name.toLowerCase() === this.searchValue
+    );
   }
 
-  handleSearch (): void {
-    if (!this.selectedAsset) return
+  handleSearch(): void {
+    if (!this.selectedAsset) return;
 
-    const isSelectedAssetPresented = !!this.foundAssets.find(({ address }) => (this.selectedAsset || {}).address === address)
+    const isSelectedAssetPresented = !!this.foundAssets.find(
+      ({ address }) => (this.selectedAsset || {}).address === address
+    );
 
     if (!isSelectedAssetPresented) {
-      this.selectedAsset = null
+      this.selectedAsset = null;
     }
   }
 
-  formatName (asset: Asset): string {
-    return asset.name || asset.symbol
+  formatName(asset: Asset): string {
+    return asset.name || asset.symbol;
   }
 
-  handleSelectAsset (asset: Asset): void {
-    this.selectedAsset = asset
-    this.navigate({ name: RouteNames.AddAssetDetails, params: { asset: this.selectedAsset } })
+  handleSelectAsset(asset: Asset): void {
+    this.selectedAsset = asset;
+    this.navigate({ name: RouteNames.AddAssetDetails, params: { asset: this.selectedAsset } });
   }
 
-  getAssetIconStyles = getAssetIconStyles
+  getAssetIconStyles = getAssetIconStyles;
 
-  getFormattedAddress (asset: Asset): string {
-    return formatAddress(asset.address, 10)
+  getFormattedAddress(asset: Asset): string {
+    return formatAddress(asset.address, 10);
   }
 
-  async handleCopy (asset: Asset, event: Event): Promise<void> {
-    event.stopImmediatePropagation()
+  async handleCopy(asset: Asset, event: Event): Promise<void> {
+    event.stopImmediatePropagation();
     try {
-      await copyToClipboard(asset.address)
+      await copyToClipboard(asset.address);
       this.$notify({
         message: this.t('assets.successCopy', { symbol: asset.symbol }),
         type: 'success',
-        title: ''
-      })
+        title: '',
+      });
     } catch (error) {
       this.$notify({
         message: `${this.t('warningText')} ${error}`,
         type: 'warning',
-        title: ''
-      })
+        title: '',
+      });
     }
   }
 }
@@ -173,7 +178,8 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
       align-items: center;
       height: $asset-item-height;
       padding: 0 calc(var(--s-basic-spacing) * 3);
-      &:hover, &.selected {
+      &:hover,
+      &.selected {
         background-color: var(--s-color-base-background-hover);
         cursor: pointer;
       }

@@ -1,23 +1,23 @@
-import { Component, Mixins } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator';
 
-import TranslationMixin from './TranslationMixin'
-import { copyToClipboard, delay } from '../../util'
+import TranslationMixin from './TranslationMixin';
+import { copyToClipboard, delay } from '../../util';
 
 // TODO: make a common solution without 'address' word and use it everywhere
 @Component
 export default class CopyAddressMixin extends Mixins(TranslationMixin) {
-  wasAddressCopied = false
+  wasAddressCopied = false;
 
-  async handleCopyAddress (address: string, event?: Event): Promise<void> {
-    event && event.stopImmediatePropagation()
-    await copyToClipboard(address)
-    this.wasAddressCopied = true
-    await delay(1000)
-    this.wasAddressCopied = false
+  async handleCopyAddress(address: string, event?: Event): Promise<void> {
+    event && event.stopImmediatePropagation();
+    await copyToClipboard(address);
+    this.wasAddressCopied = true;
+    await delay(1000);
+    this.wasAddressCopied = false;
   }
 
-  get copyTooltip (): string {
+  get copyTooltip(): string {
     // TODO: [UI-LIB] add key property with the content value for tooltip in buttons to rerender it each time
-    return this.t(`assets.${!this.wasAddressCopied ? 'receive' : 'copied'}`)
+    return this.t(`assets.${!this.wasAddressCopied ? 'receive' : 'copied'}`);
   }
 }

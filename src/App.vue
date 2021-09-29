@@ -9,55 +9,55 @@
 
 <script lang="ts">
 // This file is only for local usage
-import { Component, Mixins, Watch } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Component, Mixins, Watch } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
 
-import { FPNumber, History } from '@sora-substrate/util'
-import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils'
-import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme'
-import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem'
+import { FPNumber, History } from '@sora-substrate/util';
+import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils';
+import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
+import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
 
-import TransactionMixin from './components/mixins/TransactionMixin'
-import { initWallet } from './index'
-import SoraWallet from './SoraWallet.vue'
-import { SoraNetwork } from './consts'
+import TransactionMixin from './components/mixins/TransactionMixin';
+import { initWallet } from './index';
+import SoraWallet from './SoraWallet.vue';
+import { SoraNetwork } from './consts';
 
 @Component({
-  components: { SoraWallet }
+  components: { SoraWallet },
 })
 export default class App extends Mixins(TransactionMixin) {
-  @Getter libraryDesignSystem!: DesignSystem
-  @Getter libraryTheme!: Theme
-  @Getter firstReadyTransaction!: Nullable<History>
+  @Getter libraryDesignSystem!: DesignSystem;
+  @Getter libraryTheme!: Theme;
+  @Getter firstReadyTransaction!: Nullable<History>;
 
-  @Action trackActiveTransactions!: AsyncVoidFn
-  @Action resetActiveTransactions!: AsyncVoidFn
-  @Action resetAccountAssetsSubscription!: AsyncVoidFn
-  @Action resetFiatPriceAndApySubscription!: AsyncVoidFn
-  @Action setSoraNetwork!: (network: SoraNetwork) => Promise<void>
+  @Action trackActiveTransactions!: AsyncVoidFn;
+  @Action resetActiveTransactions!: AsyncVoidFn;
+  @Action resetAccountAssetsSubscription!: AsyncVoidFn;
+  @Action resetFiatPriceAndApySubscription!: AsyncVoidFn;
+  @Action setSoraNetwork!: (network: SoraNetwork) => Promise<void>;
 
-  async created (): Promise<void> {
-    await this.setSoraNetwork(SoraNetwork.Dev)
-    await initWallet({ withoutStore: true }) // We don't need storage for local development
-    this.trackActiveTransactions()
-    const localeLanguage = navigator.language
-    FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2)
-    FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2)
+  async created(): Promise<void> {
+    await this.setSoraNetwork(SoraNetwork.Dev);
+    await initWallet({ withoutStore: true }); // We don't need storage for local development
+    this.trackActiveTransactions();
+    const localeLanguage = navigator.language;
+    FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2);
+    FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2);
   }
 
   @Watch('firstReadyTransaction', { deep: true })
-  private handleNotifyAboutTransaction (value: History): void {
-    this.handleChangeTransaction(value)
+  private handleNotifyAboutTransaction(value: History): void {
+    this.handleChangeTransaction(value);
   }
 
-  beforeDestroy (): void {
-    this.resetActiveTransactions()
-    this.resetAccountAssetsSubscription()
-    this.resetFiatPriceAndApySubscription()
+  beforeDestroy(): void {
+    this.resetActiveTransactions();
+    this.resetAccountAssetsSubscription();
+    this.resetFiatPriceAndApySubscription();
   }
 
-  changeTheme (): void {
-    switchTheme()
+  changeTheme(): void {
+    switchTheme();
   }
 }
 </script>
@@ -77,7 +77,7 @@ html {
 .el-loading-mask {
   background-color: var(--s-color-utility-body);
   .el-loading-spinner {
-    background-image: url("~@/assets/img/pswap-loader.svg");
+    background-image: url('~@/assets/img/pswap-loader.svg');
     height: var(--s-size-medium);
     width: var(--s-size-medium);
     margin-left: calc(50% - (var(--s-size-medium) / 2));

@@ -27,68 +27,68 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
-import { Getter, Action } from 'vuex-class'
+import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Getter, Action } from 'vuex-class';
 
-import TranslationMixin from './mixins/TranslationMixin'
-import { RouteNames } from '../consts'
-import { copyToClipboard, formatAddress, formatSoraAddress } from '../util'
-import WalletAvatar from './WalletAvatar.vue'
-import type { Account, PolkadotJsAccount } from '../types/common'
+import TranslationMixin from './mixins/TranslationMixin';
+import { RouteNames } from '../consts';
+import { copyToClipboard, formatAddress, formatSoraAddress } from '../util';
+import WalletAvatar from './WalletAvatar.vue';
+import type { Account, PolkadotJsAccount } from '../types/common';
 
 @Component({
   components: {
-    WalletAvatar
-  }
+    WalletAvatar,
+  },
 })
 export default class WalletAccount extends Mixins(TranslationMixin) {
-  @Getter account!: Account
-  @Action logout!: AsyncVoidFn
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Getter account!: Account;
+  @Action logout!: AsyncVoidFn;
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
-  @Prop({ default: false, type: Boolean }) readonly showControls!: boolean
-  @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount
+  @Prop({ default: false, type: Boolean }) readonly showControls!: boolean;
+  @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
 
-  get address (): string {
+  get address(): string {
     if (this.polkadotAccount) {
-      return formatSoraAddress(this.polkadotAccount.address)
+      return formatSoraAddress(this.polkadotAccount.address);
     }
-    return this.account.address
+    return this.account.address;
   }
 
-  get name (): string {
-    return (this.polkadotAccount || this.account).name
+  get name(): string {
+    return (this.polkadotAccount || this.account).name;
   }
 
-  get formattedAddress (): string {
-    return formatAddress(this.address, 24)
+  get formattedAddress(): string {
+    return formatAddress(this.address, 24);
   }
 
-  async handleCopyAddress (event: Event): Promise<void> {
-    event.stopImmediatePropagation()
+  async handleCopyAddress(event: Event): Promise<void> {
+    event.stopImmediatePropagation();
     try {
-      await copyToClipboard(this.address)
+      await copyToClipboard(this.address);
       this.$notify({
         message: this.t('account.successCopy'),
         type: 'success',
-        title: ''
-      })
+        title: '',
+      });
     } catch (error) {
       this.$notify({
         message: `${this.t('warningText')} ${error}`,
         type: 'warning',
-        title: ''
-      })
+        title: '',
+      });
     }
   }
 
-  handleSwitchAccount (): void {
+  handleSwitchAccount(): void {
     const navigationArgs = {
       name: RouteNames.WalletConnection,
-      params: { isAccountSwitch: true }
-    }
-    this.navigate(navigationArgs)
-    this.logout()
+      params: { isAccountSwitch: true },
+    };
+    this.navigate(navigationArgs);
+    this.logout();
   }
 }
 </script>

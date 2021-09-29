@@ -1,41 +1,41 @@
-import dayjs from 'dayjs'
-import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp'
-import { FPNumber, KnownAssets, RewardInfo, RewardsInfo } from '@sora-substrate/util'
+import dayjs from 'dayjs';
+import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
+import { FPNumber, KnownAssets, RewardInfo, RewardsInfo } from '@sora-substrate/util';
 
-import { api } from '../api'
-import store from '../store'
-import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts'
-import type { RewardsAmountHeaderItem } from '../types/rewards'
+import { api } from '../api';
+import store from '../store';
+import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
+import type { RewardsAmountHeaderItem } from '../types/rewards';
 
-export const APP_NAME = 'Sora2 Wallet'
+export const APP_NAME = 'Sora2 Wallet';
 
-export const formatSoraAddress = (address: string) => api.formatAddress(address)
+export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
 export const getExtension = async () => {
-  let extensions: Array<any> = []
+  let extensions: Array<any> = [];
   try {
-    extensions = await web3Enable(APP_NAME)
+    extensions = await web3Enable(APP_NAME);
   } catch (error) {
-    throw new Error('polkadotjs.noExtensions')
+    throw new Error('polkadotjs.noExtensions');
   }
   if (!extensions.length) {
-    throw new Error('polkadotjs.noExtensions')
+    throw new Error('polkadotjs.noExtensions');
   }
-  return extensions[0]
-}
+  return extensions[0];
+};
 
 export const getExtensionInfo = async () => {
-  const extension = await getExtension()
-  const accounts = await extension.accounts.get() as Array<{ address: string; name: string }>
+  const extension = await getExtension();
+  const accounts = (await extension.accounts.get()) as Array<{ address: string; name: string }>;
   if (!accounts.length) {
-    throw new Error('polkadotjs.noAccounts')
+    throw new Error('polkadotjs.noAccounts');
   }
-  return { accounts, signer: extension.signer }
-}
+  return { accounts, signer: extension.signer };
+};
 
 export const getExtensionSigner = async (address: string) => {
-  return (await web3FromAddress(address)).signer
-}
+  return (await web3FromAddress(address)).signer;
+};
 
 /**
  * Returns block explorer link according to appropriate network type.
@@ -47,105 +47,108 @@ export const getExplorerLinks = (soraNetwork?: SoraNetwork): Array<ExplorerLink>
     case SoraNetwork.Prod:
       return [
         { type: ExplorerType.Sorascan, value: 'https://sorascan.com/sora-mainnet' },
-        { type: ExplorerType.Subscan, value: 'https://sora.subscan.io' }
-      ]
+        { type: ExplorerType.Subscan, value: 'https://sora.subscan.io' },
+      ];
     case SoraNetwork.Stage:
-      return [{ type: ExplorerType.Sorascan, value: 'https://test.sorascan.com/sora-staging' }]
+      return [{ type: ExplorerType.Sorascan, value: 'https://test.sorascan.com/sora-staging' }];
     case SoraNetwork.Test:
-      return [{ type: ExplorerType.Sorascan, value: 'https://sorascan.tst.sora2.soramitsu.co.jp/sora-test' }]
+      return [{ type: ExplorerType.Sorascan, value: 'https://sorascan.tst.sora2.soramitsu.co.jp/sora-test' }];
     case SoraNetwork.Dev:
     default:
-      return [{ type: ExplorerType.Sorascan, value: 'https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev' }]
+      return [{ type: ExplorerType.Sorascan, value: 'https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev' }];
   }
-}
+};
 
 export const copyToClipboard = async (text: string) => {
   try {
-    return navigator.clipboard.writeText(text)
+    return navigator.clipboard.writeText(text);
   } catch (err) {
-    console.error('Could not copy text: ', err)
+    console.error('Could not copy text: ', err);
   }
-}
+};
 
 export const formatAddress = (address: string, length = address.length / 2): string => {
-  return `${address.slice(0, length / 2)}...${address.slice(-length / 2)}`
-}
+  return `${address.slice(0, length / 2)}...${address.slice(-length / 2)}`;
+};
 
-export const formatDate = (date: number) => dayjs(date).format('DD.MM.YYYY, h:mm:ss')
+export const formatDate = (date: number) => dayjs(date).format('DD.MM.YYYY, h:mm:ss');
 
 export const getAssetIconStyles = (address: string) => {
   if (!address) {
-    return {}
+    return {};
   }
-  const asset = store.getters.whitelist[address]
+  const asset = store.getters.whitelist[address];
   if (!asset) {
-    return {}
+    return {};
   }
   return {
     'background-size': '100%',
-    'background-image': `url("${asset.icon}")`
-  }
-}
+    'background-image': `url("${asset.icon}")`,
+  };
+};
 
 export const getStatusIcon = (status: string) => {
   // TODO: [1.5] we should check it
   switch (status) {
-    case 'IN_PROGRESS': return 'refresh-16'
-    case 'ERROR': return 'basic-clear-X-xs-24'
-    case 'SUCCESS': return 'status-success-ic-16'
+    case 'IN_PROGRESS':
+      return 'refresh-16';
+    case 'ERROR':
+      return 'basic-clear-X-xs-24';
+    case 'SUCCESS':
+      return 'status-success-ic-16';
   }
-  return ''
-}
+  return '';
+};
 
 export const getStatusClass = (status: string) => {
-  let state = ''
+  let state = '';
   switch (status) {
     case 'IN_PROGRESS':
-      state = 'loading'
-      break
+      state = 'loading';
+      break;
     case 'ERROR':
-      state = 'error'
-      break
+      state = 'error';
+      break;
     case 'SUCCESS':
-      state = 'success'
-      break
+      state = 'success';
+      break;
   }
-  return state ? `info-status info-status--${state}` : 'info-status'
-}
+  return state ? `info-status info-status--${state}` : 'info-status';
+};
 
 export const delay = async (ms = 50) => {
-  await new Promise(resolve => setTimeout(resolve, ms))
-}
+  await new Promise((resolve) => setTimeout(resolve, ms));
+};
 
 export const toHashTable = (list: Array<any>, key: string) => {
   return list.reduce((result, item) => {
-    if (!(key in item)) return result
+    if (!(key in item)) return result;
 
-    return { ...result, [item[key]]: item }
-  }, {})
-}
+    return { ...result, [item[key]]: item };
+  }, {});
+};
 
 export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo>): Array<RewardsAmountHeaderItem> => {
   const rewardsHash = rewards.reduce((result, item) => {
-    const isRewardsInfo = 'rewards' in item
-    const { address, decimals } = isRewardsInfo ? (item as RewardsInfo).rewards[0].asset : (item as RewardInfo).asset
-    const amount = isRewardsInfo ? (item as RewardsInfo).limit : (item as RewardInfo).amount
-    const current = result[address] || new FPNumber(0, decimals)
-    const addValue = FPNumber.fromCodecValue(amount, decimals)
-    result[address] = current.add(addValue)
-    return result
-  }, {})
+    const isRewardsInfo = 'rewards' in item;
+    const { address, decimals } = isRewardsInfo ? (item as RewardsInfo).rewards[0].asset : (item as RewardInfo).asset;
+    const amount = isRewardsInfo ? (item as RewardsInfo).limit : (item as RewardInfo).amount;
+    const current = result[address] || new FPNumber(0, decimals);
+    const addValue = FPNumber.fromCodecValue(amount, decimals);
+    result[address] = current.add(addValue);
+    return result;
+  }, {});
 
   return Object.entries(rewardsHash).reduce((total: Array<RewardsAmountHeaderItem>, [address, amount]) => {
-    if ((amount as FPNumber).isZero()) return total
+    if ((amount as FPNumber).isZero()) return total;
 
     const item = {
       symbol: KnownAssets.get(address).symbol,
-      amount: (amount as FPNumber).toLocaleString()
-    } as RewardsAmountHeaderItem
+      amount: (amount as FPNumber).toLocaleString(),
+    } as RewardsAmountHeaderItem;
 
-    total.push(item)
+    total.push(item);
 
-    return total
-  }, [])
-}
+    return total;
+  }, []);
+};

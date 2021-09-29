@@ -60,7 +60,9 @@
           :loading="loading"
           @click="onCreate"
         >
-          <template v-if="!hasEnoughXor">{{ t('createToken.insufficientBalance', { symbol: KnownSymbols.XOR }) }}</template>
+          <template v-if="!hasEnoughXor">{{
+            t('createToken.insufficientBalance', { symbol: KnownSymbols.XOR })
+          }}</template>
           <template v-else>{{ t('createToken.confirm') }}</template>
         </s-button>
       </template>
@@ -70,109 +72,102 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-import { KnownSymbols, KnownAssets, FPNumber, MaxTotalSupply, NetworkFeesObject } from '@sora-substrate/util'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
+import { KnownSymbols, KnownAssets, FPNumber, MaxTotalSupply, NetworkFeesObject } from '@sora-substrate/util';
 
-import WalletBase from './WalletBase.vue'
-import InfoLine from './InfoLine.vue'
-import WalletFee from './WalletFee.vue'
-import TransactionMixin from './mixins/TransactionMixin'
-import NumberFormatterMixin from './mixins/NumberFormatterMixin'
-import { RouteNames } from '../consts'
-import { api } from '../api'
+import WalletBase from './WalletBase.vue';
+import InfoLine from './InfoLine.vue';
+import WalletFee from './WalletFee.vue';
+import TransactionMixin from './mixins/TransactionMixin';
+import NumberFormatterMixin from './mixins/NumberFormatterMixin';
+import { RouteNames } from '../consts';
+import { api } from '../api';
 
 enum Step {
   Create,
-  Confirm
+  Confirm,
 }
 
 @Component({
   components: {
     WalletBase,
     InfoLine,
-    WalletFee
-  }
+    WalletFee,
+  },
 })
 export default class CreateToken extends Mixins(TransactionMixin, NumberFormatterMixin) {
-  readonly KnownSymbols = KnownSymbols
-  readonly Step = Step
-  readonly decimals = FPNumber.DEFAULT_PRECISION
-  readonly delimiters = FPNumber.DELIMITERS_CONFIG
-  readonly maxTotalSupply = MaxTotalSupply
-  readonly tokenSymbolMask = 'AAAAAAA'
-  readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } }
+  readonly KnownSymbols = KnownSymbols;
+  readonly Step = Step;
+  readonly decimals = FPNumber.DEFAULT_PRECISION;
+  readonly delimiters = FPNumber.DELIMITERS_CONFIG;
+  readonly maxTotalSupply = MaxTotalSupply;
+  readonly tokenSymbolMask = 'AAAAAAA';
+  readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } };
 
-  step = Step.Create
-  tokenSymbol = ''
-  tokenName = ''
-  tokenSupply = ''
-  extensibleSupply = false
+  step = Step.Create;
+  tokenSymbol = '';
+  tokenName = '';
+  tokenSupply = '';
+  extensibleSupply = false;
 
-  @Getter networkFees!: NetworkFeesObject
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Getter networkFees!: NetworkFeesObject;
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
-  handleBack (): void {
+  handleBack(): void {
     if (this.step === Step.Create) {
-      this.navigate({ name: RouteNames.Wallet })
+      this.navigate({ name: RouteNames.Wallet });
     } else {
-      this.step = Step.Create
+      this.step = Step.Create;
     }
   }
 
-  get fee (): FPNumber {
-    return this.getFPNumberFromCodec(this.networkFees.RegisterAsset)
+  get fee(): FPNumber {
+    return this.getFPNumberFromCodec(this.networkFees.RegisterAsset);
   }
 
-  get isCreateDisabled (): boolean {
-    return !(this.tokenSymbol && this.tokenName.trim() && this.tokenSupply)
+  get isCreateDisabled(): boolean {
+    return !(this.tokenSymbol && this.tokenName.trim() && this.tokenSupply);
   }
 
-  get formattedTokenSupply (): string {
-    return this.formatStringValue(this.tokenSupply, this.decimals)
+  get formattedTokenSupply(): string {
+    return this.formatStringValue(this.tokenSupply, this.decimals);
   }
 
-  get hasEnoughXor (): boolean {
-    const xor = KnownAssets.get(KnownSymbols.XOR)
-    const accountXor = api.accountAssets.find(asset => asset.address === xor.address)
+  get hasEnoughXor(): boolean {
+    const xor = KnownAssets.get(KnownSymbols.XOR);
+    const accountXor = api.accountAssets.find((asset) => asset.address === xor.address);
     if (!accountXor || !accountXor.balance || !+accountXor.balance.transferable) {
-      return false
+      return false;
     }
-    const fpAccountXor = this.getFPNumberFromCodec(accountXor.balance.transferable, accountXor.decimals)
-    return FPNumber.gte(fpAccountXor, this.fee)
+    const fpAccountXor = this.getFPNumberFromCodec(accountXor.balance.transferable, accountXor.decimals);
+    return FPNumber.gte(fpAccountXor, this.fee);
   }
 
-  async registerAsset (): Promise<void> {
-    return api.registerAsset(
-      this.tokenSymbol,
-      this.tokenName.trim(),
-      this.tokenSupply,
-      this.extensibleSupply
-    )
+  async registerAsset(): Promise<void> {
+    return api.registerAsset(this.tokenSymbol, this.tokenName.trim(), this.tokenSupply, this.extensibleSupply);
   }
 
-  async onConfirm (): Promise<void> {
+  async onConfirm(): Promise<void> {
     if (!this.tokenSymbol.length || !this.tokenSupply.length) {
-      return
+      return;
     }
-    const tokenSupply = this.getFPNumber(this.tokenSupply, this.decimals)
-    const maxTokenSupply = this.getFPNumber(MaxTotalSupply, this.decimals)
+    const tokenSupply = this.getFPNumber(this.tokenSupply, this.decimals);
+    const maxTokenSupply = this.getFPNumber(MaxTotalSupply, this.decimals);
     if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
-      this.tokenSupply = maxTokenSupply.toString()
+      this.tokenSupply = maxTokenSupply.toString();
     }
-    this.step = Step.Confirm
+    this.step = Step.Confirm;
   }
 
-  async onCreate (): Promise<void> {
-    await this.withNotifications(
-      async () => {
-        if (!this.hasEnoughXor) {
-          throw new Error('walletSend.badAmount')
-        }
-        await this.registerAsset()
-        this.navigate({ name: RouteNames.Wallet })
+  async onCreate(): Promise<void> {
+    await this.withNotifications(async () => {
+      if (!this.hasEnoughXor) {
+        throw new Error('walletSend.badAmount');
       }
-    )
+      await this.registerAsset();
+      this.navigate({ name: RouteNames.Wallet });
+    });
   }
 }
 </script>

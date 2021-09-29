@@ -6,41 +6,41 @@ export enum RouteNames {
   CreateToken = 'CreateToken',
   AddAsset = 'AddAsset',
   WalletTransactionDetails = 'WalletTransactionDetails',
-  AddAssetDetails = 'AddAssetDetails'
+  AddAssetDetails = 'AddAssetDetails',
 }
 
 export enum WalletTabs {
   Assets = 'WalletAssets',
-  Activity = 'WalletActivity'
+  Activity = 'WalletActivity',
 }
 
 export enum AddAssetTabs {
   Search = 'AddAssetSearch',
-  Custom = 'AddAssetCustom'
+  Custom = 'AddAssetCustom',
 }
 
 export enum SoraNetwork {
   Dev = 'Dev',
   Test = 'Test',
   Stage = 'Stage',
-  Prod = 'Prod'
+  Prod = 'Prod',
 }
 
 export enum HashType {
   ID = 'id',
   Block = 'block',
-  Account = 'account'
+  Account = 'account',
 }
 
 export enum ExplorerType {
   Sorascan = 'sorascan',
-  Subscan = 'subscan'
+  Subscan = 'subscan',
 }
 
 export type ExplorerLink = {
   type: ExplorerType;
   value: string;
-}
+};
 
 export interface WalletPermissions {
   sendAssets?: boolean;
@@ -55,11 +55,11 @@ export interface WalletInitOptions {
 export enum FontSizeRate {
   SMALL = 'small',
   MEDIUM = 'medium',
-  NORMAL = 'normal'
+  NORMAL = 'normal',
 }
 
 export enum FontWeightRate {
   SMALL = 'small',
   MEDIUM = 'medium',
-  NORMAL = 'normal'
+  NORMAL = 'normal',
 }
