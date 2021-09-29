@@ -16,7 +16,9 @@
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
           <s-tooltip :content="copyTooltip">
-            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">{{ formattedSoraAddress }}</p>
+            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">
+              {{ formattedSoraAddress }}
+            </p>
           </s-tooltip>
         </template>
         <p v-if="isAccountAddress" class="wallet-send-address-error">{{ t('walletSend.addressError') }}</p>
@@ -37,7 +39,15 @@
             </div>
           </div>
           <div class="asset s-flex" slot="right">
-            <s-button v-if="isMaxButtonAvailable" class="asset-max s-typography-button--small" type="primary" alternative size="mini" border-radius="mini" @click="handleMaxClick">
+            <s-button
+              v-if="isMaxButtonAvailable"
+              class="asset-max s-typography-button--small"
+              type="primary"
+              alternative
+              size="mini"
+              border-radius="mini"
+              @click="handleMaxClick"
+            >
               {{ t('walletSend.max') }}
             </s-button>
             <div class="asset-box">
@@ -50,12 +60,19 @@
             <div class="asset-highlight">
               {{ asset.name || asset.symbol }}
               <s-tooltip :content="copyTooltip">
-                <span class="asset-id" @click="handleCopyAddress(asset.address)">({{ getFormattedAddress(asset) }})</span>
+                <span class="asset-id" @click="handleCopyAddress(asset.address)">
+                  ({{ getFormattedAddress(asset) }})
+                </span>
               </s-tooltip>
             </div>
           </div>
         </s-float-input>
-        <s-button class="wallet-send-action s-typography-button--large" type="primary" :disabled="sendButtonDisabled" @click="step = 2">
+        <s-button
+          class="wallet-send-action s-typography-button--large"
+          type="primary"
+          :disabled="sendButtonDisabled"
+          @click="step = 2"
+        >
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
       </template>
@@ -87,194 +104,203 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-import { AccountAsset, Asset, FPNumber, CodecString, KnownAssets, KnownSymbols, NetworkFeesObject } from '@sora-substrate/util'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
+import {
+  AccountAsset,
+  Asset,
+  FPNumber,
+  CodecString,
+  KnownAssets,
+  KnownSymbols,
+  NetworkFeesObject,
+} from '@sora-substrate/util';
 
-import TransactionMixin from './mixins/TransactionMixin'
-import FormattedAmountMixin from './mixins/FormattedAmountMixin'
-import CopyAddressMixin from './mixins/CopyAddressMixin'
-import WalletBase from './WalletBase.vue'
-import FormattedAmount from './FormattedAmount.vue'
-import WalletFee from './WalletFee.vue'
-import { RouteNames } from '../consts'
-import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util'
-import { api } from '../api'
-import type { Account } from '../types/common'
+import TransactionMixin from './mixins/TransactionMixin';
+import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import WalletBase from './WalletBase.vue';
+import FormattedAmount from './FormattedAmount.vue';
+import WalletFee from './WalletFee.vue';
+import { RouteNames } from '../consts';
+import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
+import { api } from '../api';
+import type { Account } from '../types/common';
 
 @Component({
   components: {
     WalletBase,
     FormattedAmount,
-    WalletFee
-  }
+    WalletFee,
+  },
 })
 export default class WalletSend extends Mixins(TransactionMixin, FormattedAmountMixin, CopyAddressMixin) {
-  readonly delimiters = FPNumber.DELIMITERS_CONFIG
+  readonly delimiters = FPNumber.DELIMITERS_CONFIG;
 
-  @Getter currentRouteParams!: any
-  @Getter account!: Account
-  @Getter accountAssets!: Array<AccountAsset>
-  @Getter networkFees!: NetworkFeesObject
+  @Getter currentRouteParams!: any;
+  @Getter account!: Account;
+  @Getter accountAssets!: Array<AccountAsset>;
+  @Getter networkFees!: NetworkFeesObject;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action transfer!: (options: { to: string; amount: string }) => Promise<void>
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Action transfer!: (options: { to: string; amount: string }) => Promise<void>;
 
-  step = 1
-  address = ''
-  amount = ''
+  step = 1;
+  address = '';
+  amount = '';
 
-  get fee (): FPNumber {
-    return this.getFPNumberFromCodec(this.networkFees.Transfer)
+  get fee(): FPNumber {
+    return this.getFPNumberFromCodec(this.networkFees.Transfer);
   }
 
-  get tooltipContent (): string {
-    return this.step === 1 ? this.t('walletSend.tooltip') : ''
+  get tooltipContent(): string {
+    return this.step === 1 ? this.t('walletSend.tooltip') : '';
   }
 
-  get asset (): AccountAsset {
-    const { address } = this.currentRouteParams.asset
+  get asset(): AccountAsset {
+    const { address } = this.currentRouteParams.asset;
 
-    return this.accountAssets.find(asset => asset.address === address) || this.currentRouteParams.asset
+    return this.accountAssets.find((asset) => asset.address === address) || this.currentRouteParams.asset;
   }
 
-  get balance (): string {
-    return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
+  get balance(): string {
+    return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals);
   }
 
-  get assetFiatPrice (): Nullable<CodecString> {
-    return this.getAssetFiatPrice(this.asset)
+  get assetFiatPrice(): Nullable<CodecString> {
+    return this.getAssetFiatPrice(this.asset);
   }
 
-  get xorAsset (): Asset {
-    return KnownAssets.get(KnownSymbols.XOR)
+  get xorAsset(): Asset {
+    return KnownAssets.get(KnownSymbols.XOR);
   }
 
-  get fiatAmount (): Nullable<string> {
-    return this.getFiatAmountByString(this.amount, this.asset)
+  get fiatAmount(): Nullable<string> {
+    return this.getFiatAmountByString(this.amount, this.asset);
   }
 
-  get emptyAddress (): boolean {
+  get emptyAddress(): boolean {
     if (!this.address.trim()) {
-      return true
+      return true;
     }
-    return false
+    return false;
   }
 
-  get isAccountAddress (): boolean {
-    return [this.address, this.formattedSoraAddress].includes(this.account.address)
+  get isAccountAddress(): boolean {
+    return [this.address, this.formattedSoraAddress].includes(this.account.address);
   }
 
-  get validAddress (): boolean {
+  get validAddress(): boolean {
     if (this.emptyAddress) {
-      return false
+      return false;
     }
-    return api.validateAddress(this.address) && !this.isAccountAddress
+    return api.validateAddress(this.address) && !this.isAccountAddress;
   }
 
-  get formattedSoraAddress (): string {
+  get formattedSoraAddress(): string {
     if (this.emptyAddress) {
-      return ''
+      return '';
     }
     try {
-      return formatSoraAddress(this.address)
+      return formatSoraAddress(this.address);
     } catch {
-      return ''
+      return '';
     }
   }
 
-  get isNotSoraAddress (): boolean {
-    return !!this.formattedSoraAddress && this.address.slice(0, 2) !== 'cn'
+  get isNotSoraAddress(): boolean {
+    return !!this.formattedSoraAddress && this.address.slice(0, 2) !== 'cn';
   }
 
-  get emptyAmount (): boolean {
-    return +this.amount === 0
+  get emptyAmount(): boolean {
+    return +this.amount === 0;
   }
 
-  get validAmount (): boolean {
-    const amount = this.getFPNumber(this.amount, this.asset.decimals)
-    const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, this.asset.decimals)
-    return amount.isFinity() && !amount.isZero() && FPNumber.lte(amount, balance)
+  get validAmount(): boolean {
+    const amount = this.getFPNumber(this.amount, this.asset.decimals);
+    const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, this.asset.decimals);
+    return amount.isFinity() && !amount.isZero() && FPNumber.lte(amount, balance);
   }
 
-  get isMaxButtonAvailable (): boolean {
-    const decimals = this.asset.decimals
-    const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, decimals)
-    const amount = this.getFPNumber(this.amount, decimals)
+  get isMaxButtonAvailable(): boolean {
+    const decimals = this.asset.decimals;
+    const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, decimals);
+    const amount = this.getFPNumber(this.amount, decimals);
     if (this.isXorAccountAsset(this.asset)) {
       if (this.fee.isZero()) {
-        return false
+        return false;
       }
-      return !FPNumber.eq(this.fee, balance.sub(amount)) && FPNumber.gt(balance, this.fee)
+      return !FPNumber.eq(this.fee, balance.sub(amount)) && FPNumber.gt(balance, this.fee);
     }
-    return !FPNumber.eq(balance, amount)
+    return !FPNumber.eq(balance, amount);
   }
 
-  get hasEnoughXor (): boolean {
-    return api.hasEnoughXor(this.asset, this.amount, this.fee)
+  get hasEnoughXor(): boolean {
+    return api.hasEnoughXor(this.asset, this.amount, this.fee);
   }
 
-  get sendButtonDisabled (): boolean {
-    return this.loading || !this.validAddress || !this.validAmount || !this.hasEnoughXor
+  get sendButtonDisabled(): boolean {
+    return this.loading || !this.validAddress || !this.validAmount || !this.hasEnoughXor;
   }
 
-  get sendButtonDisabledText (): string {
+  get sendButtonDisabledText(): string {
     if (!this.validAddress) {
-      return this.t(`walletSend.${this.emptyAddress ? 'enterAddress' : 'badAddress'}`)
+      return this.t(`walletSend.${this.emptyAddress ? 'enterAddress' : 'badAddress'}`);
     }
 
     if (!this.validAmount) {
-      return this.t(`walletSend.${this.emptyAmount ? 'enterAmount' : 'badAmount'}`, this.emptyAmount ? {} : { tokenSymbol: this.asset.symbol })
+      return this.t(
+        `walletSend.${this.emptyAmount ? 'enterAmount' : 'badAmount'}`,
+        this.emptyAmount ? {} : { tokenSymbol: this.asset.symbol }
+      );
     }
 
     if (!this.hasEnoughXor) {
-      return this.t('walletSend.badAmount', { tokenSymbol: KnownSymbols.XOR })
+      return this.t('walletSend.badAmount', { tokenSymbol: KnownSymbols.XOR });
     }
 
-    return ''
+    return '';
   }
 
-  isXorAccountAsset (asset: AccountAsset): boolean {
-    const knownAsset = KnownAssets.get(asset.address)
+  isXorAccountAsset(asset: AccountAsset): boolean {
+    const knownAsset = KnownAssets.get(asset.address);
     if (!knownAsset) {
-      return false
+      return false;
     }
-    return knownAsset.symbol === KnownSymbols.XOR
+    return knownAsset.symbol === KnownSymbols.XOR;
   }
 
-  getAssetIconStyles = getAssetIconStyles
+  getAssetIconStyles = getAssetIconStyles;
 
-  getFormattedAddress (asset: Asset): string {
-    return formatAddress(asset.address, 10)
+  getFormattedAddress(asset: Asset): string {
+    return formatAddress(asset.address, 10);
   }
 
-  handleBack (): void {
+  handleBack(): void {
     if (this.step !== 1) {
-      this.step = 1
-      return
+      this.step = 1;
+      return;
     }
-    this.navigate({ name: RouteNames.Wallet })
+    this.navigate({ name: RouteNames.Wallet });
   }
 
-  async handleMaxClick (): Promise<void> {
+  async handleMaxClick(): Promise<void> {
     if (this.isXorAccountAsset(this.asset)) {
-      const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, this.asset.decimals)
-      this.amount = balance.sub(this.fee).toString()
-      return
+      const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, this.asset.decimals);
+      this.amount = balance.sub(this.fee).toString();
+      return;
     }
-    this.amount = this.getStringFromCodec(this.asset.balance.transferable, this.asset.decimals)
+    this.amount = this.getStringFromCodec(this.asset.balance.transferable, this.asset.decimals);
   }
 
-  async handleSend (): Promise<void> {
-    await this.withNotifications(
-      async () => {
-        if (!this.hasEnoughXor) {
-          throw new Error('walletSend.badAmount')
-        }
-        await this.transfer({ to: this.address, amount: this.amount })
+  async handleSend(): Promise<void> {
+    await this.withNotifications(async () => {
+      if (!this.hasEnoughXor) {
+        throw new Error('walletSend.badAmount');
       }
-    )
-    this.navigate({ name: RouteNames.Wallet })
+      await this.transfer({ to: this.address, amount: this.amount });
+    });
+    this.navigate({ name: RouteNames.Wallet });
   }
 }
 </script>
@@ -336,7 +362,8 @@ $logo-size: var(--s-size-mini);
       height: var(--s-size-mini);
       padding: $basic-spacing-mini var(--s-basic-spacing);
     }
-    &-max, &-name {
+    &-max,
+    &-name {
       font-weight: 800;
     }
     &-name {
@@ -355,7 +382,7 @@ $logo-size: var(--s-size-mini);
       margin-left: auto;
       color: var(--s-color-base-content-secondary);
       font-size: var(--s-font-size-extra-mini);
-      font-weight: 300 ;
+      font-weight: 300;
       line-height: var(--s-line-height-medium);
       letter-spacing: var(--s-letter-spacing-small);
       text-align: right;
@@ -472,7 +499,8 @@ $logo-size: var(--s-size-mini);
       margin-top: var(--s-basic-spacing);
       overflow-wrap: break-word;
     }
-    &-from, &-to {
+    &-from,
+    &-to {
       // It's set to small size cuz we need to show full address
       font-size: var(--s-font-size-mini);
       font-weight: 600;

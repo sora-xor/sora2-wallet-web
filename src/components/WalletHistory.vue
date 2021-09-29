@@ -1,16 +1,8 @@
 <template>
   <div class="history s-flex">
-    <s-form
-      class="history-form"
-      :show-message="false"
-    >
+    <s-form class="history-form" :show-message="false">
       <s-form-item v-if="hasHistory" class="history--search">
-        <s-input
-          v-model="query"
-          :placeholder="t('history.filterPlaceholder')"
-          prefix="s-icon-search-16"
-          size="big"
-        >
+        <s-input v-model="query" :placeholder="t('history.filterPlaceholder')" prefix="s-icon-search-16" size="big">
           <template #suffix v-if="query">
             <s-button class="s-button--clear" :use-design-system="false" @click="handleResetSearch">
               <s-icon name="clear-X-16" />
@@ -29,7 +21,11 @@
             <div class="history-item-info">
               <div class="history-item-operation ch3" :data-type="item.type">{{ t(`operations.${item.type}`) }}</div>
               <div class="history-item-title p4">{{ getMessage(item) }}</div>
-              <s-icon v-if="item.status !== TransactionStatus.Finalized" :class="getStatusClass(item.status)" :name="getStatusIcon(item.status)" />
+              <s-icon
+                v-if="item.status !== TransactionStatus.Finalized"
+                :class="getStatusClass(item.status)"
+                :name="getStatusIcon(item.status)"
+              />
             </div>
             <div class="history-item-date">{{ formatDate(item.startTime) }}</div>
           </div>
@@ -51,176 +47,178 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator'
-import { Getter, Action } from 'vuex-class'
-import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util'
+import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Getter, Action } from 'vuex-class';
+import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util';
 
-import { api } from '../api'
-import LoadingMixin from './mixins/LoadingMixin'
-import TransactionMixin from './mixins/TransactionMixin'
-import { formatDate, getStatusIcon, getStatusClass } from '../util'
-import { subqueryStorage } from '../util/storage'
-import { RouteNames } from '../consts'
-import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery'
-import { historyElementsFilter } from '../services/subquery/queries/historyElements'
-import type { Account } from '../types/common'
+import { api } from '../api';
+import LoadingMixin from './mixins/LoadingMixin';
+import TransactionMixin from './mixins/TransactionMixin';
+import { formatDate, getStatusIcon, getStatusClass } from '../util';
+import { subqueryStorage } from '../util/storage';
+import { RouteNames } from '../consts';
+import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
+import { historyElementsFilter } from '../services/subquery/queries/historyElements';
+import type { Account } from '../types/common';
 
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
-  @Getter activity!: Array<History>
-  @Getter account!: Account
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action getAccountActivity!: AsyncVoidFn
+  @Getter activity!: Array<History>;
+  @Getter account!: Account;
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Action getAccountActivity!: AsyncVoidFn;
 
-  @Prop() readonly asset?: AccountAsset
+  @Prop() readonly asset?: AccountAsset;
 
-  formatDate = formatDate
-  TransactionStatus = TransactionStatus
-  query = ''
-  currentPage = 1
-  pageAmount = 8
+  formatDate = formatDate;
+  TransactionStatus = TransactionStatus;
+  query = '';
+  currentPage = 1;
+  pageAmount = 8;
 
   // for fast search
-  get activityHashTable (): any {
+  get activityHashTable(): any {
     return this.activity.reduce((result, item) => {
-      if (!item.txId) return result
-      return { ...result, [item.txId]: item }
-    }, {})
+      if (!item.txId) return result;
+      return { ...result, [item.txId]: item };
+    }, {});
   }
 
-  get assetAddress (): string | undefined {
-    return this.asset && this.asset.address
+  get assetAddress(): string | undefined {
+    return this.asset && this.asset.address;
   }
 
-  get transactions (): Array<History> {
+  get transactions(): Array<History> {
     if (this.assetAddress) {
-      return this.activity.filter(item => [item.assetAddress, item.asset2Address].includes(this.assetAddress))
+      return this.activity.filter((item) => [item.assetAddress, item.asset2Address].includes(this.assetAddress));
     }
-    return this.activity
+    return this.activity;
   }
 
-  get filteredHistory (): Array<any> {
-    if (!this.hasHistory) return []
-    return this.getFilteredHistory(this.transactions).sort((a: History, b: History) => a.startTime && b.startTime ? b.startTime - a.startTime : 0)
+  get filteredHistory(): Array<any> {
+    if (!this.hasHistory) return [];
+    return this.getFilteredHistory(this.transactions).sort((a: History, b: History) =>
+      a.startTime && b.startTime ? b.startTime - a.startTime : 0
+    );
   }
 
-  get hasHistory (): boolean {
-    return !!(this.transactions && this.transactions.length)
+  get hasHistory(): boolean {
+    return !!(this.transactions && this.transactions.length);
   }
 
-  get total (): number {
-    return this.filteredHistory.length
+  get total(): number {
+    return this.filteredHistory.length;
   }
 
-  async mounted () {
-    await this.updateHistory()
+  async mounted() {
+    await this.updateHistory();
   }
 
-  getFilteredHistory (history: Array<History>): Array<History> {
+  getFilteredHistory(history: Array<History>): Array<History> {
     if (!this.query) {
-      return history
+      return history;
     }
-    const query = this.query.toLowerCase().trim()
-    return history.filter(item =>
-      `${item.assetAddress}`.toLowerCase().includes(query) ||
-      `${item.asset2Address}`.toLowerCase().includes(query) ||
-      `${item.symbol}`.toLowerCase().includes(query) ||
-      `${item.symbol2}`.toLowerCase().includes(query) ||
-      `${item.blockId}`.toLowerCase().includes(query) ||
-      `${item.from}`.toLowerCase().includes(query) ||
-      `${item.to}`.toLowerCase().includes(query) ||
-      this.t(`operations.${item.type}`).toLowerCase().includes(query)
-    )
+    const query = this.query.toLowerCase().trim();
+    return history.filter(
+      (item) =>
+        `${item.assetAddress}`.toLowerCase().includes(query) ||
+        `${item.asset2Address}`.toLowerCase().includes(query) ||
+        `${item.symbol}`.toLowerCase().includes(query) ||
+        `${item.symbol2}`.toLowerCase().includes(query) ||
+        `${item.blockId}`.toLowerCase().includes(query) ||
+        `${item.from}`.toLowerCase().includes(query) ||
+        `${item.to}`.toLowerCase().includes(query) ||
+        this.t(`operations.${item.type}`).toLowerCase().includes(query)
+    );
   }
 
-  getStatus (status: string): string {
+  getStatus(status: string): string {
     if ([TransactionStatus.Error, 'invalid'].includes(status)) {
-      status = TransactionStatus.Error
+      status = TransactionStatus.Error;
     } else if (status !== TransactionStatus.Finalized) {
-      status = 'in_progress'
+      status = 'in_progress';
     }
-    return status.toUpperCase()
+    return status.toUpperCase();
   }
 
-  getStatusClass (status: string): string {
-    return getStatusClass(this.getStatus(status))
+  getStatusClass(status: string): string {
+    return getStatusClass(this.getStatus(status));
   }
 
-  getStatusIcon (status: string): string {
-    return getStatusIcon(this.getStatus(status))
+  getStatusIcon(status: string): string {
+    return getStatusIcon(this.getStatus(status));
   }
 
-  handlePaginationClick (current: number): void {
-    this.currentPage = current
+  handlePaginationClick(current: number): void {
+    this.currentPage = current;
   }
 
-  handleOpenTransactionDetails (id: number): void {
-    this.navigate({ name: RouteNames.WalletTransactionDetails, params: { id, asset: this.asset } })
+  handleOpenTransactionDetails(id: number): void {
+    this.navigate({ name: RouteNames.WalletTransactionDetails, params: { id, asset: this.asset } });
   }
 
-  handleResetSearch (): void {
-    this.query = ''
-    this.currentPage = 1
+  handleResetSearch(): void {
+    this.query = '';
+    this.currentPage = 1;
   }
 
-  async updateHistory (): Promise<void> {
+  async updateHistory(): Promise<void> {
     await this.withLoading(async () => {
-      await this.updateHistoryFromExplorer()
-      await this.getAccountActivity()
-    })
+      await this.updateHistoryFromExplorer();
+      await this.getAccountActivity();
+    });
   }
 
-  async updateHistoryFromExplorer (): Promise<void> {
+  async updateHistoryFromExplorer(): Promise<void> {
     const {
       assetAddress,
       activity,
-      account: { address }
-    } = this
+      account: { address },
+    } = this;
 
-    const operations = SubqueryDataParserService.supportedOperations
-    const parsedHistoryOperations = JSON.parse(subqueryStorage.get('operations'))
+    const operations = SubqueryDataParserService.supportedOperations;
+    const parsedHistoryOperations = JSON.parse(subqueryStorage.get('operations'));
 
-    const operationsChanged = (
+    const operationsChanged =
       !Array.isArray(parsedHistoryOperations) ||
       operations.length !== parsedHistoryOperations.length ||
-      !operations.every(item => !!parsedHistoryOperations.find(el => el === item))
-    )
+      !operations.every((item) => !!parsedHistoryOperations.find((el) => el === item));
 
-    const timestamp = (operationsChanged || !activity.length) ? 0 : api.historySyncTimestamp
-    const filter = historyElementsFilter(address, { assetAddress, timestamp })
+    const timestamp = operationsChanged || !activity.length ? 0 : api.historySyncTimestamp;
+    const filter = historyElementsFilter(address, { assetAddress, timestamp });
     const variables = {
-      filter // filter by account & asset
-    }
+      filter, // filter by account & asset
+    };
 
     try {
-      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables)
+      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
 
       if (edges.length !== 0) {
-        const latestTimestamp = edges[0].node.timestamp
+        const latestTimestamp = edges[0].node.timestamp;
 
-        api.historySyncTimestamp = +latestTimestamp
+        api.historySyncTimestamp = +latestTimestamp;
 
         for (const edge of edges) {
-          const transaction = edge.node
-          const hasHistoryItem = transaction.id in this.activityHashTable
+          const transaction = edge.node;
+          const hasHistoryItem = transaction.id in this.activityHashTable;
 
           if (!hasHistoryItem) {
-            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction)
+            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
 
             if (historyItem) {
-              api.saveHistory(historyItem)
+              api.saveHistory(historyItem);
             }
           }
         }
       } else {
-        api.historySyncTimestamp = timestamp
+        api.historySyncTimestamp = timestamp;
       }
 
       if (operationsChanged) {
-        subqueryStorage.set('operations', JSON.stringify(operations))
+        subqueryStorage.set('operations', JSON.stringify(operations));
       }
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
 }
@@ -313,7 +311,7 @@ $history-item-top-border-height: 1px;
         &.info-status--loading {
           height: var(--s-font-size-small);
         }
-        &--error  {
+        &--error {
           color: var(--s-color-status-error);
         }
       }

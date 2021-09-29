@@ -12,12 +12,7 @@
     <wallet-account show-controls />
     <div class="wallet">
       <s-tabs :value="currentTab" type="rounded" @change="handleChangeTab">
-        <s-tab
-          v-for="tab in WalletTabs"
-          :key="tab"
-          :label="t(`wallet.${tab}`)"
-          :name="tab"
-        />
+        <s-tab v-for="tab in WalletTabs" :key="tab" :label="t(`wallet.${tab}`)" :name="tab" />
       </s-tabs>
       <component :is="currentTab" @swap="handleSwap" />
     </div>
@@ -25,60 +20,60 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
 
-import { api } from '../api'
-import TranslationMixin from './mixins/TranslationMixin'
-import WalletBase from './WalletBase.vue'
-import WalletAccount from './WalletAccount.vue'
-import WalletAssets from './WalletAssets.vue'
-import WalletActivity from './WalletActivity.vue'
-import { RouteNames, WalletTabs } from '../consts'
-import type { Account } from '../types/common'
+import { api } from '../api';
+import TranslationMixin from './mixins/TranslationMixin';
+import WalletBase from './WalletBase.vue';
+import WalletAccount from './WalletAccount.vue';
+import WalletAssets from './WalletAssets.vue';
+import WalletActivity from './WalletActivity.vue';
+import { RouteNames, WalletTabs } from '../consts';
+import type { Account } from '../types/common';
 
 @Component({
   components: {
     WalletBase,
     WalletAccount,
     WalletAssets,
-    WalletActivity
-  }
+    WalletActivity,
+  },
 })
 export default class Wallet extends Mixins(TranslationMixin) {
-  readonly WalletTabs = WalletTabs
+  readonly WalletTabs = WalletTabs;
 
-  @Getter currentRouteParams!: any
-  @Getter account!: Account
-  @Getter activity!: Array<History>
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action getAccountActivity!: AsyncVoidFn
+  @Getter currentRouteParams!: any;
+  @Getter account!: Account;
+  @Getter activity!: Array<History>;
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Action getAccountActivity!: AsyncVoidFn;
 
-  currentTab: WalletTabs = WalletTabs.Assets
+  currentTab: WalletTabs = WalletTabs.Assets;
 
-  mounted () {
-    if (this.currentRouteParams.currentTab) this.currentTab = this.currentRouteParams.currentTab
+  mounted() {
+    if (this.currentRouteParams.currentTab) this.currentTab = this.currentRouteParams.currentTab;
   }
 
-  get isCleanHistoryDisabled (): boolean {
-    return !this.activity.length
+  get isCleanHistoryDisabled(): boolean {
+    return !this.activity.length;
   }
 
-  handleChangeTab (value: WalletTabs): void {
-    this.currentTab = value
+  handleChangeTab(value: WalletTabs): void {
+    this.currentTab = value;
   }
 
-  handleSwap (asset: any): void {
-    this.$emit('swap', asset)
+  handleSwap(asset: any): void {
+    this.$emit('swap', asset);
   }
 
-  handleCreateToken (): void {
-    this.navigate({ name: RouteNames.CreateToken })
+  handleCreateToken(): void {
+    this.navigate({ name: RouteNames.CreateToken });
   }
 
-  handleCleanHistory (): void {
-    api.clearHistory()
-    this.getAccountActivity()
+  handleCleanHistory(): void {
+    api.clearHistory();
+    this.getAccountActivity();
   }
 }
 </script>

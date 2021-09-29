@@ -212,7 +212,9 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
             <span
               class="asset-id"
             >
-              (0x020...00000)
+              
+                (0x020...00000)
+              
             </span>
           </s-tooltip-stub>
         </div>
@@ -376,7 +378,9 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
             <span
               class="asset-id"
             >
-              (0x020...00000)
+              
+                (0x020...00000)
+              
             </span>
           </s-tooltip-stub>
         </div>
@@ -462,7 +466,9 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
       <p
         class="wallet-send-address-formatted"
       >
-        cnV1qZzFyBzkXS4xfmEnXue4SPhAbFNqcvULKSdzkfPEEZsBe
+        
+            cnV1qZzFyBzkXS4xfmEnXue4SPhAbFNqcvULKSdzkfPEEZsBe
+          
       </p>
     </s-tooltip-stub>
      
@@ -565,7 +571,9 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
             <span
               class="asset-id"
             >
-              (0x020...00000)
+              
+                (0x020...00000)
+              
             </span>
           </s-tooltip-stub>
         </div>
@@ -733,7 +741,9 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
             <span
               class="asset-id"
             >
-              (0x020...00000)
+              
+                (0x020...00000)
+              
             </span>
           </s-tooltip-stub>
         </div>

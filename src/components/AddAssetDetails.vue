@@ -6,7 +6,8 @@
           <i class="asset-logo" :style="assetIconStyles" />
           <div class="asset-description s-flex">
             <div class="asset-description_symbol">{{ asset.symbol }}</div>
-            <div class="asset-description_info">{{ formattedName }}
+            <div class="asset-description_info">
+              {{ formattedName }}
               <s-tooltip :content="t('assets.copy')">
                 <span class="asset-id" @click="handleCopy($event)">({{ formattedAddress }})</span>
               </s-tooltip>
@@ -25,7 +26,12 @@
         <s-switch v-model="isConfirmed" :disabled="loading" />
         <span>{{ t('addAsset.understand') }}</span>
       </div>
-      <s-button class="add-asset-details_action s-typography-button--large" type="primary" :disabled="!asset || !isConfirmed || loading" @click="handleAddAsset">
+      <s-button
+        class="add-asset-details_action s-typography-button--large"
+        type="primary"
+        :disabled="!asset || !isConfirmed || loading"
+        @click="handleAddAsset"
+      >
         {{ t('addAsset.action') }}
       </s-button>
     </div>
@@ -33,130 +39,130 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-import { Asset, isWhitelistAsset, isBlacklistAsset, Whitelist } from '@sora-substrate/util'
-import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
+import { Asset, isWhitelistAsset, isBlacklistAsset, Whitelist } from '@sora-substrate/util';
+import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 
-import LoadingMixin from './mixins/LoadingMixin'
-import TranslationMixin from './mixins/TranslationMixin'
-import WalletBase from './WalletBase.vue'
-import { RouteNames } from '../consts'
-import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util'
-import type { WhitelistIdsBySymbol } from '../types/common'
+import LoadingMixin from './mixins/LoadingMixin';
+import TranslationMixin from './mixins/TranslationMixin';
+import WalletBase from './WalletBase.vue';
+import { RouteNames } from '../consts';
+import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
+import type { WhitelistIdsBySymbol } from '../types/common';
 
 @Component({
   components: {
-    WalletBase
-  }
+    WalletBase,
+  },
 })
 export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMixin) {
-  asset: Nullable<Asset> = null
-  isConfirmed = false
+  asset: Nullable<Asset> = null;
+  isConfirmed = false;
 
-  @Getter currentRouteParams!: any
-  @Getter whitelist!: Whitelist
-  @Getter whitelistIdsBySymbol!: WhitelistIdsBySymbol
-  @Getter libraryTheme!: Theme
-  @Action back!: AsyncVoidFn
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action addAsset!: (address?: string) => Promise<void>
+  @Getter currentRouteParams!: any;
+  @Getter whitelist!: Whitelist;
+  @Getter whitelistIdsBySymbol!: WhitelistIdsBySymbol;
+  @Getter libraryTheme!: Theme;
+  @Action back!: AsyncVoidFn;
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Action addAsset!: (address?: string) => Promise<void>;
 
-  created (): void {
+  created(): void {
     if (!this.currentRouteParams.asset) {
-      this.back()
-      return
+      this.back();
+      return;
     }
-    this.asset = this.currentRouteParams.asset
+    this.asset = this.currentRouteParams.asset;
   }
 
-  get isCardPrimary (): boolean {
-    return this.libraryTheme !== Theme.DARK
+  get isCardPrimary(): boolean {
+    return this.libraryTheme !== Theme.DARK;
   }
 
-  get isWhitelist (): boolean {
+  get isWhitelist(): boolean {
     if (!this.asset) {
-      return false
+      return false;
     }
-    return isWhitelistAsset(this.asset, this.whitelist)
+    return isWhitelistAsset(this.asset, this.whitelist);
   }
 
-  get isBlacklist (): boolean {
+  get isBlacklist(): boolean {
     if (!this.asset) {
-      return false
+      return false;
     }
-    return isBlacklistAsset(this.asset, this.whitelistIdsBySymbol)
+    return isBlacklistAsset(this.asset, this.whitelistIdsBySymbol);
   }
 
-  get assetCardStatus (): string {
-    return this.isWhitelist ? 'success' : 'error'
+  get assetCardStatus(): string {
+    return this.isWhitelist ? 'success' : 'error';
   }
 
-  get assetNatureText (): string {
+  get assetNatureText(): string {
     if (!this.asset) {
-      return ''
+      return '';
     }
-    const isWhitelist = this.isWhitelist
-    const isBlacklist = this.isBlacklist
+    const isWhitelist = this.isWhitelist;
+    const isBlacklist = this.isBlacklist;
     if (isWhitelist) {
-      return this.t('addAsset.approved')
+      return this.t('addAsset.approved');
     }
     if (isBlacklist) {
-      return this.t('addAsset.scam')
+      return this.t('addAsset.scam');
     }
-    return this.t('addAsset.unknown')
+    return this.t('addAsset.unknown');
   }
 
-  get formattedName (): string {
+  get formattedName(): string {
     if (!this.asset) {
-      return ''
+      return '';
     }
-    return this.asset.name || this.asset.symbol
+    return this.asset.name || this.asset.symbol;
   }
 
-  get assetIconStyles (): object {
+  get assetIconStyles(): object {
     if (!this.asset) {
-      return {}
+      return {};
     }
-    return getAssetIconStyles(this.asset.address)
+    return getAssetIconStyles(this.asset.address);
   }
 
-  get formattedAddress (): string {
+  get formattedAddress(): string {
     if (!this.asset) {
-      return ''
+      return '';
     }
-    return formatAddress(this.asset.address, 10)
+    return formatAddress(this.asset.address, 10);
   }
 
-  async handleCopy (event: Event): Promise<void> {
-    event.stopImmediatePropagation()
+  async handleCopy(event: Event): Promise<void> {
+    event.stopImmediatePropagation();
     if (!this.asset) {
-      return
+      return;
     }
     try {
-      await copyToClipboard(this.asset.address)
+      await copyToClipboard(this.asset.address);
       this.$notify({
         message: this.t('assets.successCopy', { symbol: this.asset.symbol }),
         type: 'success',
-        title: ''
-      })
+        title: '',
+      });
     } catch (error) {
       this.$notify({
         message: `${this.t('warningText')} ${error}`,
         type: 'warning',
-        title: ''
-      })
+        title: '',
+      });
     }
   }
 
-  handleBack (): void {
-    this.back()
+  handleBack(): void {
+    this.back();
   }
 
-  async handleAddAsset (): Promise<void> {
-    await this.withLoading(async () => await this.addAsset((this.asset || {}).address))
-    this.navigate({ name: RouteNames.Wallet, params: { asset: this.asset } })
-    this.$emit('add-asset')
+  async handleAddAsset(): Promise<void> {
+    await this.withLoading(async () => await this.addAsset((this.asset || {}).address));
+    this.navigate({ name: RouteNames.Wallet, params: { asset: this.asset } });
+    this.$emit('add-asset');
   }
 }
 </script>

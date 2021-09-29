@@ -1,7 +1,7 @@
 enum THEMES {
   POLKADOT = 'polkadot',
   SUBSTRATE = 'substrate',
-  BEACHBALL = 'beachball'
+  BEACHBALL = 'beachball',
 }
 
 interface WalletAvatar {
@@ -11,30 +11,30 @@ interface WalletAvatar {
   address: string;
 }
 
-const address = 'cnWRzNrVQpnMoq4GNDyUjTp1ZTWxTaXNguoRTTqg45j4g23yq'
+const address = 'cnWRzNrVQpnMoq4GNDyUjTp1ZTWxTaXNguoRTTqg45j4g23yq';
 
 export const MOCK_WALLET_AVATAR: Array<WalletAvatar> = [
   {
     title: 'With default Theme (Polkadot) and Size',
-    address: address
+    address: address,
   },
   {
     title: 'With Beachball Theme',
     theme: THEMES.BEACHBALL,
-    address: address
+    address: address,
   },
   {
     title: 'With Substrate Theme',
     theme: THEMES.SUBSTRATE,
-    address: address
+    address: address,
   },
   {
     title: 'With Size 10',
     size: 10,
-    address: address
+    address: address,
   },
   {
     title: 'With Empty Address',
-    address: ''
-  }
-]
+    address: '',
+  },
+];

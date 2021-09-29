@@ -20,7 +20,9 @@ exports[`InfoLine.vue [Label and Value]: should be rendered correctly 1`] = `
     <span
       class="info-line-value"
     >
-      1,234,567.890123
+      
+        1,234,567.890123
+        
       <!---->
     </span>
      
@@ -72,7 +74,9 @@ exports[`InfoLine.vue [With "0" Value]: should be rendered correctly 1`] = `
     <span
       class="info-line-value"
     >
-      0
+      
+        0
+        
       <!---->
     </span>
      
@@ -146,7 +150,9 @@ exports[`InfoLine.vue [With Asset Symbol]: should be rendered correctly 1`] = `
     <span
       class="info-line-value"
     >
-      1,234,567.890123
+      
+        1,234,567.890123
+        
       <span
         class="asset-symbol"
       >
@@ -202,7 +208,9 @@ exports[`InfoLine.vue [With Fiat Value]: should be rendered correctly 1`] = `
     <span
       class="info-line-value"
     >
-      1,234,567.890123
+      
+        1,234,567.890123
+        
       <!---->
     </span>
      
@@ -288,7 +296,9 @@ exports[`InfoLine.vue [With Label Tooltip]: should be rendered correctly 1`] = `
     <span
       class="info-line-value"
     >
-      1,234,567.890123
+      
+        1,234,567.890123
+        
       <!---->
     </span>
      

@@ -7,7 +7,9 @@
           :key="tab"
           :label="t(`addAsset.${tab}.title`)"
           :name="tab"
-          :disabled="tab === AddAssetTabs.Custom /* TODO: uncomment it when we'll know what this tab should actually do */"
+          :disabled="
+            tab === AddAssetTabs.Custom /* TODO: uncomment it when we'll know what this tab should actually do */
+          "
         />
       </s-tabs>
       <component :is="currentTab" />
@@ -16,35 +18,35 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Action } from 'vuex-class'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Action } from 'vuex-class';
 
-import TranslationMixin from './mixins/TranslationMixin'
-import WalletBase from './WalletBase.vue'
-import AddAssetSearch from './AddAssetSearch.vue'
-import AddAssetCustom from './AddAssetCustom.vue'
-import { RouteNames, AddAssetTabs } from '../consts'
+import TranslationMixin from './mixins/TranslationMixin';
+import WalletBase from './WalletBase.vue';
+import AddAssetSearch from './AddAssetSearch.vue';
+import AddAssetCustom from './AddAssetCustom.vue';
+import { RouteNames, AddAssetTabs } from '../consts';
 
 @Component({
   components: {
     WalletBase,
     AddAssetSearch,
-    AddAssetCustom
-  }
+    AddAssetCustom,
+  },
 })
 export default class AddAsset extends Mixins(TranslationMixin) {
-  readonly AddAssetTabs = AddAssetTabs
+  readonly AddAssetTabs = AddAssetTabs;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
-  currentTab = AddAssetTabs.Search
+  currentTab = AddAssetTabs.Search;
 
-  handleChangeTab (value: AddAssetTabs): void {
-    this.currentTab = value
+  handleChangeTab(value: AddAssetTabs): void {
+    this.currentTab = value;
   }
 
-  handleBack (): void {
-    this.navigate({ name: RouteNames.Wallet })
+  handleBack(): void {
+    this.navigate({ name: RouteNames.Wallet });
   }
 }
 </script>

@@ -24,7 +24,12 @@
             <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
           </formatted-amount>
         </div>
-        <formatted-amount v-if="price" :value="getFiatBalance(asset)" is-fiat-value :font-size-rate="FontSizeRate.MEDIUM" />
+        <formatted-amount
+          v-if="price"
+          :value="getFiatBalance(asset)"
+          is-fiat-value
+          :font-size-rate="FontSizeRate.MEDIUM"
+        />
         <div class="asset-details-actions">
           <s-button
             v-for="operation in operations"
@@ -75,20 +80,20 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator'
-import { Action, Getter } from 'vuex-class'
-import { AccountAsset, CodecString, KnownAssets, KnownSymbols, BalanceType, History } from '@sora-substrate/util'
+import { Component, Mixins } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
+import { AccountAsset, CodecString, KnownAssets, KnownSymbols, BalanceType, History } from '@sora-substrate/util';
 
-import { api } from '../api'
-import FormattedAmountMixin from './mixins/FormattedAmountMixin'
-import CopyAddressMixin from './mixins/CopyAddressMixin'
-import WalletBase from './WalletBase.vue'
-import FormattedAmount from './FormattedAmount.vue'
-import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue'
-import WalletHistory from './WalletHistory.vue'
-import { RouteNames, FontSizeRate, FontWeightRate } from '../consts'
-import { getAssetIconStyles } from '../util'
-import { Operations, Account } from '../types/common'
+import { api } from '../api';
+import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import WalletBase from './WalletBase.vue';
+import FormattedAmount from './FormattedAmount.vue';
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import WalletHistory from './WalletHistory.vue';
+import { RouteNames, FontSizeRate, FontWeightRate } from '../consts';
+import { getAssetIconStyles } from '../util';
+import { Operations, Account } from '../types/common';
 
 interface Operation {
   type: Operations;
@@ -100,140 +105,145 @@ interface Operation {
     WalletBase,
     FormattedAmount,
     FormattedAmountWithFiatValue,
-    WalletHistory
-  }
+    WalletHistory,
+  },
 })
 export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin) {
-  readonly balanceTypes = Object.values(BalanceType).filter(type => type !== BalanceType.Total)
+  readonly balanceTypes = Object.values(BalanceType).filter((type) => type !== BalanceType.Total);
   readonly operations = [
     { type: Operations.Send, icon: 'finance-send-24' },
     { type: Operations.Receive, icon: 'basic-receive-24' },
     { type: Operations.Swap, icon: 'arrows-swap-24' },
     { type: Operations.Liquidity, icon: 'basic-drop-24' },
-    { type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' }
-  ] as Array<Operation>
+    { type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' },
+  ] as Array<Operation>;
 
-  readonly BalanceType = BalanceType
-  readonly FontSizeRate = FontSizeRate
-  readonly FontWeightRate = FontWeightRate
+  readonly BalanceType = BalanceType;
+  readonly FontSizeRate = FontSizeRate;
+  readonly FontWeightRate = FontWeightRate;
 
-  @Getter account!: Account
-  @Getter accountAssets!: Array<AccountAsset>
-  @Getter currentRouteParams!: any
-  @Getter activity!: Array<History>
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>
-  @Action getAccountActivity!: AsyncVoidFn
+  @Getter account!: Account;
+  @Getter accountAssets!: Array<AccountAsset>;
+  @Getter currentRouteParams!: any;
+  @Getter activity!: Array<History>;
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Action getAccountActivity!: AsyncVoidFn;
 
-  wasBalanceDetailsClicked = false
+  wasBalanceDetailsClicked = false;
 
-  private formatBalance (value: CodecString): string {
-    return this.formatCodecNumber(value, this.asset.decimals)
+  private formatBalance(value: CodecString): string {
+    return this.formatCodecNumber(value, this.asset.decimals);
   }
 
-  get price (): Nullable<CodecString> {
-    return this.getAssetFiatPrice(this.asset)
+  get price(): Nullable<CodecString> {
+    return this.getAssetFiatPrice(this.asset);
   }
 
-  get asset (): AccountAsset {
+  get asset(): AccountAsset {
     // currentRouteParams.asset was added here to avoid a case when the asset is not found
-    return this.accountAssets.find(({ address }) => address === this.currentRouteParams.asset.address) || this.currentRouteParams.asset as AccountAsset
+    return (
+      this.accountAssets.find(({ address }) => address === this.currentRouteParams.asset.address) ||
+      (this.currentRouteParams.asset as AccountAsset)
+    );
   }
 
-  get balance (): string {
-    return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals)
+  get balance(): string {
+    return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals);
   }
 
-  get totalBalance (): string {
-    return this.formatBalance(this.asset.balance.total)
+  get totalBalance(): string {
+    return this.formatBalance(this.asset.balance.total);
   }
 
-  get isEmptyBalance (): boolean {
-    return this.isCodecZero(this.asset.balance.transferable, this.asset.decimals)
+  get isEmptyBalance(): boolean {
+    return this.isCodecZero(this.asset.balance.transferable, this.asset.decimals);
   }
 
-  get balanceStyles (): object {
-    const balanceLength = this.balance.length
+  get balanceStyles(): object {
+    const balanceLength = this.balance.length;
     // We've decided to calcutate font size values manually
-    let fontSize = 30
+    let fontSize = 30;
     if (balanceLength > 35) {
-      fontSize = 14
+      fontSize = 14;
     } else if (balanceLength > 24 && balanceLength <= 35) {
-      fontSize = 16
+      fontSize = 16;
     } else if (balanceLength > 17 && balanceLength <= 24) {
-      fontSize = 20
+      fontSize = 20;
     }
-    return { fontSize: `${fontSize}px` }
+    return { fontSize: `${fontSize}px` };
   }
 
-  get balanceDetailsClasses (): Array<string> {
-    const cssClasses: Array<string> = ['asset-details-balance', 'd2']
+  get balanceDetailsClasses(): Array<string> {
+    const cssClasses: Array<string> = ['asset-details-balance', 'd2'];
     if (this.isXor) {
-      cssClasses.push('asset-details-balance--clickable')
+      cssClasses.push('asset-details-balance--clickable');
     }
     if (this.wasBalanceDetailsClicked) {
-      cssClasses.push('asset-details-balance--clicked')
+      cssClasses.push('asset-details-balance--clicked');
     }
-    return cssClasses
+    return cssClasses;
   }
 
-  get isXor (): boolean {
-    const asset = KnownAssets.get(this.asset.address)
-    return asset && asset.symbol === KnownSymbols.XOR
+  get isXor(): boolean {
+    const asset = KnownAssets.get(this.asset.address);
+    return asset && asset.symbol === KnownSymbols.XOR;
   }
 
-  get isCleanHistoryDisabled (): boolean {
-    return !this.asset ? true : !this.activity.filter(item => [item.assetAddress, item.asset2Address].includes(this.asset.address)).length
+  get isCleanHistoryDisabled(): boolean {
+    return !this.asset
+      ? true
+      : !this.activity.filter((item) => [item.assetAddress, item.asset2Address].includes(this.asset.address)).length;
   }
 
-  handleBack (): void {
-    this.navigate({ name: RouteNames.Wallet })
+  handleBack(): void {
+    this.navigate({ name: RouteNames.Wallet });
   }
 
-  getOperationTooltip (operation: Operation): string {
+  getOperationTooltip(operation: Operation): string {
     if (operation.type !== Operations.Receive || !this.wasAddressCopied) {
-      return this.t(`assets.${operation.type}`)
+      return this.t(`assets.${operation.type}`);
     }
     // TODO: [UI-LIB] add key property with the content value for tooltip in buttons to rerender it each time
-    return this.t('assets.copied')
+    return this.t('assets.copied');
   }
 
-  isOperationDisabled (operation: Operations): boolean {
-    return operation === Operations.Send && this.isEmptyBalance
+  isOperationDisabled(operation: Operations): boolean {
+    return operation === Operations.Send && this.isEmptyBalance;
   }
 
-  handleOperation (operation: Operations): void {
+  handleOperation(operation: Operations): void {
     switch (operation) {
       case Operations.Send:
-        this.navigate({ name: RouteNames.WalletSend, params: { asset: this.asset } })
-        break
+        this.navigate({ name: RouteNames.WalletSend, params: { asset: this.asset } });
+        break;
       case Operations.Receive:
-        this.handleCopyAddress(this.account.address)
-        break
+        this.handleCopyAddress(this.account.address);
+        break;
       default:
-        this.$emit(operation, this.asset)
-        break
+        this.$emit(operation, this.asset);
+        break;
     }
   }
 
-  handleClickDetailedBalance (): void {
-    this.wasBalanceDetailsClicked = !this.wasBalanceDetailsClicked
+  handleClickDetailedBalance(): void {
+    this.wasBalanceDetailsClicked = !this.wasBalanceDetailsClicked;
   }
 
-  getAssetIconStyles = getAssetIconStyles
+  getAssetIconStyles = getAssetIconStyles;
 
-  getBalance (asset: AccountAsset, type: BalanceType): string {
-    return `${this.formatCodecNumber(asset.balance[type], asset.decimals)}`
+  getBalance(asset: AccountAsset, type: BalanceType): string {
+    return `${this.formatCodecNumber(asset.balance[type], asset.decimals)}`;
   }
 
-  handleRemoveAsset (): void {
-    api.removeAsset(this.asset.address)
-    this.handleBack()
+  handleRemoveAsset(): void {
+    api.removeAsset(this.asset.address);
+    this.handleBack();
   }
 
-  handleCleanHistory (): void {
-    if (!this.asset) return
-    api.clearHistory(this.asset.address)
-    this.getAccountActivity()
+  handleCleanHistory(): void {
+    if (!this.asset) return;
+    api.clearHistory(this.asset.address);
+    this.getAccountActivity();
   }
 }
 </script>

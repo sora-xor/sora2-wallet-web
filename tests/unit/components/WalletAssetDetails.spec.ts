@@ -42,11 +42,11 @@ describe('WalletAssetDetails.vue', () => {
   beforeEach(() => {
     // SoramitsuElementsImport(localVue)
     // TranslationMock(WalletAssetDetails)
-  })
+  });
 
   it('should renders correctly', () => {
     // const wrapper = shallowMount(WalletAssetDetails, { localVue, store })
     // expect(wrapper.element).toMatchSnapshot()
-    expect(true).toBe(true)
-  })
-})
+    expect(true).toBe(true);
+  });
+});

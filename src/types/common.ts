@@ -2,7 +2,7 @@ export enum Modules {
   Account = 'Account',
   Router = 'Router',
   Settings = 'Settings',
-  Transactions = 'Transactions'
+  Transactions = 'Transactions',
 }
 
 export enum Operations {
@@ -10,7 +10,7 @@ export enum Operations {
   Receive = 'receive',
   Swap = 'swap',
   Liquidity = 'liquidity',
-  Bridge = 'bridge'
+  Bridge = 'bridge',
 }
 
 export interface PolkadotJsAccount {
@@ -22,9 +22,9 @@ export interface Account extends PolkadotJsAccount {
   isExternal: boolean;
 }
 
-export type WhitelistIdsBySymbol = { [key: string]: string }
+export type WhitelistIdsBySymbol = { [key: string]: string };
 
 export type Permissions = {
   sendAssets: boolean;
   swapAssets: boolean;
-}
+};

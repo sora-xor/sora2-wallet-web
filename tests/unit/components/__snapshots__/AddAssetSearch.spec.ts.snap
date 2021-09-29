@@ -46,6 +46,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
         <div
           class="asset-description_info"
         >
+          
           Test Asset
           
           <s-tooltip-stub
@@ -159,6 +160,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
         <div
           class="asset-description_info"
         >
+          
           Test Asset
           
           <s-tooltip-stub

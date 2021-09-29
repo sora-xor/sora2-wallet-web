@@ -1,1 +1,1 @@
-import './soramitsu-variables.scss'
+import './soramitsu-variables.scss';

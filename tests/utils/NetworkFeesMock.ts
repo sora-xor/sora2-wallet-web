@@ -1,4 +1,4 @@
-import { Operation } from '@sora-substrate/util'
+import { Operation } from '@sora-substrate/util';
 
 export const MOCK_NETWORK_FEES = {
   [Operation.AddLiquidity]: '7000000000000000',
@@ -11,5 +11,5 @@ export const MOCK_NETWORK_FEES = {
   [Operation.Transfer]: '7000000000000000',
   [Operation.ClaimVestedRewards]: '70000000000000000',
   [Operation.ClaimLiquidityProvisionRewards]: '7000000000000000',
-  [Operation.ClaimExternalRewards]: '7000000000000000'
-}
+  [Operation.ClaimExternalRewards]: '7000000000000000',
+};

@@ -22,7 +22,10 @@
           :font-size-rate="formattedFontSize"
           :font-weight-rate="formattedFontWeight"
         />
-        <span v-else class="info-line-value">{{ value }}<span v-if="assetSymbol" class="asset-symbol">{{ ' ' + assetSymbol }}</span></span>
+        <span v-else class="info-line-value">
+          {{ value }}
+          <span v-if="assetSymbol" class="asset-symbol">{{ ' ' + assetSymbol }}</span>
+        </span>
         <formatted-amount
           v-if="fiatValue"
           :value="fiatValue"
@@ -37,36 +40,36 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator'
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
-import FormattedAmount from './FormattedAmount.vue'
-import { FontSizeRate, FontWeightRate } from '../consts'
+import FormattedAmount from './FormattedAmount.vue';
+import { FontSizeRate, FontWeightRate } from '../consts';
 
 @Component({
-  components: { FormattedAmount }
+  components: { FormattedAmount },
 })
 export default class InfoLine extends Vue {
-  @Prop({ default: '', type: String }) readonly label!: string
-  @Prop({ default: '', type: String }) readonly labelTooltip?: string
-  @Prop({ default: '' }) readonly value!: string
-  @Prop({ default: '', type: String }) readonly assetSymbol?: string
-  @Prop({ default: false, type: Boolean }) readonly isFormatted?: boolean
-  @Prop({ default: '', type: String }) readonly fiatValue?: string
+  @Prop({ default: '', type: String }) readonly label!: string;
+  @Prop({ default: '', type: String }) readonly labelTooltip?: string;
+  @Prop({ default: '' }) readonly value!: string;
+  @Prop({ default: '', type: String }) readonly assetSymbol?: string;
+  @Prop({ default: false, type: Boolean }) readonly isFormatted?: boolean;
+  @Prop({ default: '', type: String }) readonly fiatValue?: string;
 
-  get isValueExists (): boolean {
+  get isValueExists(): boolean {
     if (this.value === 'NaN' || this.value.includes('Infinity')) {
-      console.error(`The ${this.label} value is: ${this.value}.`)
-      return false
+      console.error(`The ${this.label} value is: ${this.value}.`);
+      return false;
     }
-    return !!this.value
+    return !!this.value;
   }
 
-  get formattedFontSize (): Nullable<FontSizeRate> {
-    return this.isFormatted ? FontSizeRate.MEDIUM : null
+  get formattedFontSize(): Nullable<FontSizeRate> {
+    return this.isFormatted ? FontSizeRate.MEDIUM : null;
   }
 
-  get formattedFontWeight (): Nullable<FontWeightRate> {
-    return this.isFormatted ? FontWeightRate.SMALL : null
+  get formattedFontWeight(): Nullable<FontWeightRate> {
+    return this.isFormatted ? FontWeightRate.SMALL : null;
   }
 }
 </script>
