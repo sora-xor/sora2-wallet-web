@@ -20,6 +20,8 @@ export default {
   cancelText: 'Cancel',
   saveText: 'Save',
   sendText: 'Send',
+  sentText: 'Sent',
+  recievedText: 'Recieved',
   addressText: 'Address',
   amountText: 'Amount',
   confirmText: 'Confirm',
@@ -37,7 +39,7 @@ export default {
     [Operation.ClaimRewards]: 'Claim Rewards',
     andText: 'and',
     [TransactionStatus.Finalized]: {
-      [Operation.Transfer]: 'Sent {amount} {symbol} to {address}',
+      [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
       [Operation.Swap]: 'Swapped {amount} {symbol} for {amount2} {symbol2}',
       [Operation.AddLiquidity]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Removed {amount} {symbol} and {amount2} {symbol2}',
