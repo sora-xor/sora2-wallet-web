@@ -56,9 +56,20 @@ export const historyElementsFilter = (address: string, { assetAddress = '', time
   const filter: any = {
     and: [
       {
-        address: {
-          equalTo: address,
-        },
+        or: [
+          {
+            address: {
+              equalTo: address,
+            },
+          },
+          {
+            transfer: {
+              contains: {
+                to: address,
+              },
+            },
+          },
+        ],
       },
       {
         method: {

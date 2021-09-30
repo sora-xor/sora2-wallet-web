@@ -206,7 +206,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
             const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
 
             if (historyItem) {
-              api.saveHistory(historyItem);
+              api.saveHistory(historyItem, { toCurrentAccount: true });
             }
           }
         }

@@ -68,6 +68,7 @@ const getAssetByAddress = async (address: string): Promise<Asset> => {
 
 export default class SubqueryDataParser implements ExplorerDataParser {
   public static SUPPORTED_OPERATIONS = [
+    // "TransferRecievement" as Operation,
     Operation.Transfer,
     Operation.Swap,
     Operation.AddLiquidity,
