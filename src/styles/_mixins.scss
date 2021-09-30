@@ -115,15 +115,28 @@
   }
 }
 
-@mixin scrollbar ($outerRight: 6px, $innerRight: 0) {
+@mixin scrollbar ($marginOffset: 0, $verticalRight: 2px) {
   &.el-scrollbar {
-    margin-right: -#{$outerRight};
+    margin-left: -$marginOffset;
+    margin-right: -$marginOffset;
+
     .el-scrollbar__wrap {
-      padding-right: $outerRight;
       overflow-x: hidden;
+      margin-bottom: 0px !important; // to disable element-ui negative margin
     }
-    > .el-scrollbar__bar.is-vertical {
-      right: $innerRight;
+    .el-scrollbar__wrap, .el-scrollbar__view {
+      display: flex;
+      flex: 1;
+      flex-flow: column nowrap;
+    }
+    .el-scrollbar__view {
+      padding-left: $marginOffset;
+      padding-right: $marginOffset;
+    }
+    .el-scrollbar__bar {
+      &.is-vertical {
+        right: $verticalRight;
+      }
     }
   }
 }
