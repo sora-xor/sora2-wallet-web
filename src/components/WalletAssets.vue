@@ -41,8 +41,8 @@
               v-if="permissions.sendAssets"
               class="wallet-assets__button send"
               type="action"
-              rounded
-              primary
+              size="small"
+              alternative
               :tooltip="t('assets.send')"
               :disabled="isZeroBalance(asset)"
               @click="handleAssetSend(asset)"
@@ -53,8 +53,8 @@
               v-if="permissions.swapAssets"
               class="wallet-assets__button swap"
               type="action"
-              rounded
-              primary
+              size="small"
+              alternative
               :tooltip="t('assets.swap')"
               @click="handleAssetSwap(asset)"
             >
@@ -63,6 +63,7 @@
             <s-button
               class="wallet-assets__button el-button--details"
               type="action"
+              size="small"
               alternative
               @click="handleOpenAssetDetails(asset)"
             >
@@ -218,6 +219,25 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       }
     }
   }
+
+  &__button.el-button.neumorphic.s-action:not(.s-primary).s-alternative {
+    &:disabled {
+      &,
+      & > span > i {
+        color: var(--s-color-base-background);
+      }
+    }
+    &:not(:disabled) {
+      &:hover,
+      &:focus {
+        color: var(--s-color-theme-accent-hover);
+      }
+      &:active,
+      &.s-pressed {
+        color: var(--s-color-theme-accent-pressed);
+      }
+    }
+  }
 }
 </style>
 
@@ -310,7 +330,7 @@ $wallet-assets-count: 5;
   }
   &__button {
     & + & {
-      margin-left: var(--s-basic-spacing);
+      margin-left: 0;
     }
   }
 
