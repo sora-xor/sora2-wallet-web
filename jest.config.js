@@ -7,4 +7,6 @@ module.exports = {
     '^.+\\.tsx?$': 'ts-jest',
   },
   transformIgnorePatterns: ['node_modules/?!(@polkadot/util)'],
+  clearMocks: true,
+  setupFilesAfterEnv: ['jest-extended'],
 };
