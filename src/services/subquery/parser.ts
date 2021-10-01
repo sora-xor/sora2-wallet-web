@@ -83,7 +83,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     const type = getTransactionOperationType(transaction);
     const timestamp = getTransactionTimestamp(transaction);
     const blockHeight = transaction.blockHeight;
-    // TODO: add to subquery blockId
+    const blockId = transaction.blockHash;
 
     if (!type) return null;
 
@@ -92,6 +92,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       id, // history item id will be txId
       type,
       txId: id,
+      blockId,
       blockHeight,
       endTime: timestamp,
       startTime: timestamp,
