@@ -62,7 +62,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     }
     if (value.type === Operation.ClaimRewards) {
       params.rewards = groupRewardsByAssetsList(params.rewards)
-        .map(({ amount, symbol }) => `${amount} ${symbol}`)
+        .map(({ amount, asset }) => `${amount} ${asset.symbol}`)
         .join(` ${this.t('operations.andText')} `);
     }
     let status = value.status as TransactionStatus;
@@ -76,7 +76,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
 
   private async getLastTransaction(): Promise<void> {
     // Now we are checking every transaction with 1 second interval
-    const tx = findLast((item) => Math.abs(Number(item.startTime) - this.time) < 1000, api.history);
+    const tx = findLast((item) => Number(item.startTime) > this.time, api.history);
     if (!tx) {
       await delay();
       return await this.getLastTransaction();
@@ -131,6 +131,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
           type: 'error',
           title: '',
         });
+        throw new Error((error as any).message);
       }
     });
   }

@@ -20,6 +20,7 @@ query HistoryElements (
       cursor 
       node {
         id
+        blockHash
         blockHeight
         module
         method
