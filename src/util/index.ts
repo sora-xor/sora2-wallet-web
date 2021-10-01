@@ -131,9 +131,12 @@ export const toHashTable = (list: Array<any>, key: string) => {
 export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo>): Array<RewardsAmountHeaderItem> => {
   const rewardsHash = rewards.reduce((result, item) => {
     const isRewardsInfo = 'rewards' in item;
+
+    if (isRewardsInfo && !(item as RewardsInfo).rewards.length) return result;
+
     const { address, decimals } = isRewardsInfo ? (item as RewardsInfo).rewards[0].asset : (item as RewardInfo).asset;
     const amount = isRewardsInfo ? (item as RewardsInfo).limit : (item as RewardInfo).amount;
-    const current = result[address] || new FPNumber(0, decimals);
+    const current = result[address] || FPNumber.ZERO;
     const addValue = FPNumber.fromCodecValue(amount, decimals);
     result[address] = current.add(addValue);
     return result;
@@ -143,8 +146,8 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
     if ((amount as FPNumber).isZero()) return total;
 
     const item = {
-      symbol: KnownAssets.get(address).symbol,
-      amount: (amount as FPNumber).toLocaleString(),
+      asset: KnownAssets.get(address),
+      amount: (amount as FPNumber).toString(),
     } as RewardsAmountHeaderItem;
 
     total.push(item);
