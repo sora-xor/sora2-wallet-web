@@ -26,7 +26,7 @@ query HistoryElements (
         method
         address
         networkFee
-        success
+        execution
         timestamp
         swap
         transfer

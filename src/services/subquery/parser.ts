@@ -1,4 +1,5 @@
 import { FPNumber, Operation, TransactionStatus, History, Asset } from '@sora-substrate/util';
+import { BN } from '@polkadot/util';
 
 import store from '../../store';
 import { api } from '../../api';
@@ -53,8 +54,20 @@ const getTransactionTimestamp = (tx: any) => {
   return !Number.isNaN(timestamp) ? timestamp : Date.now();
 };
 
+const getErrorMessage = (id: number, idx: number): string => {
+  try {
+    const [error, index] = [new BN(id), new BN(idx)];
+    const { documentation } = api.api.registry.findMetaError({ error, index });
+
+    return documentation.join(' ').trim();
+  } catch (error) {
+    console.error(id, error);
+    return '';
+  }
+};
+
 const getTransactionStatus = (tx: any): string => {
-  if (tx.success) return TransactionStatus.Finalized;
+  if (tx.execution.success) return TransactionStatus.Finalized;
 
   return TransactionStatus.Error;
 };
@@ -101,9 +114,17 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       status: getTransactionStatus(transaction),
     };
 
-    // TODO: if Subquery will support error message, add it
-    // if (transaction.errorMessage) {
-    //   payload.errorMessage = transaction.errorMessage
+    // if (transaction.execution.error) {
+    //   const {
+    //     moduleErrorId: errorId,
+    //     moduleIndexId: indexId
+    //   } = transaction.execution.error
+
+    //   const message = getErrorMessage(errorId, indexId);
+
+    //   if (message) {
+    //     payload.errorMessage = message;
+    //   }
     // }
 
     switch (type) {
