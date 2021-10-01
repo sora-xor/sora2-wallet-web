@@ -140,3 +140,34 @@
     }
   }
 }
+
+@mixin formatted-amount-tooltip () {
+  $padding-left: 8px;
+  $padding-top: 4px;
+  $border-width: 1px;
+  $border-radius: 8px;
+
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &.formatted-amount--value-wider {
+    &:active, &:hover {
+      overflow: visible;
+  
+      & > span {
+        display: block;
+        position: absolute;
+        z-index: 1;
+        white-space: break-spaces;
+        background: var(--s-color-utility-body);
+        border: $border-width solid var(--s-color-base-border-secondary);
+        border-radius: $border-radius;
+        padding: $padding-top $padding-left;
+        top: -#{$border-width + $padding-top};
+        left: -#{$border-width + $padding-left};
+      }
+    }
+  }
+}
