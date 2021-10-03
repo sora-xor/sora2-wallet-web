@@ -16,7 +16,7 @@
     "serve": "vue-cli-service serve",
     "test:unit": "vue-cli-service test:unit --silent",
     "test:e2e": "vue-cli-service test:e2e",
-    "test:all": "yarn test:unit && yarn test:e2e",
+    "test:all": "yarn test:unit",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
