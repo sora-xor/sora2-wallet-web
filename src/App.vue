@@ -1,6 +1,6 @@
 <template>
   <s-design-system-provider :value="libraryDesignSystem" id="app">
-    <s-button @click="changeTheme">{{ libraryTheme }} theme</s-button>
+    <s-button class="theme-switch" @click="changeTheme">{{ libraryTheme }} theme</s-button>
     <div class="wallet-wrapper s-flex">
       <sora-wallet />
     </div>
