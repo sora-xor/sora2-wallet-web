@@ -114,18 +114,14 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       status: getTransactionStatus(transaction),
     };
 
-    // if (transaction.execution.error) {
-    //   const {
-    //     moduleErrorId: errorId,
-    //     moduleIndexId: indexId
-    //   } = transaction.execution.error
+    if (transaction.execution.error) {
+      const { moduleErrorId, moduleErrorIndex } = transaction.execution.error;
+      const message = getErrorMessage(moduleErrorId, moduleErrorIndex);
 
-    //   const message = getErrorMessage(errorId, indexId);
-
-    //   if (message) {
-    //     payload.errorMessage = message;
-    //   }
-    // }
+      if (message) {
+        payload.errorMessage = message;
+      }
+    }
 
     switch (type) {
       case Operation.Swap: {
