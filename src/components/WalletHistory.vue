@@ -55,7 +55,6 @@ import { api } from '../api';
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 import { formatDate, getStatusIcon, getStatusClass } from '../util';
-import { subqueryStorage } from '../util/storage';
 import { RouteNames } from '../consts';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
 import { historyElementsFilter } from '../services/subquery/queries/historyElements';
@@ -177,7 +176,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     } = this;
 
     const operations = SubqueryDataParserService.supportedOperations;
-    const parsedHistoryOperations = JSON.parse(subqueryStorage.get('operations'));
+    const parsedHistoryOperations = api.historySyncOperations;
 
     const operationsChanged =
       !Array.isArray(parsedHistoryOperations) ||
@@ -206,7 +205,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
             const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
 
             if (historyItem) {
-              api.saveHistory(historyItem);
+              api.saveHistory(historyItem, { toCurrentAccount: true });
             }
           }
         }
@@ -215,7 +214,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       }
 
       if (operationsChanged) {
-        subqueryStorage.set('operations', JSON.stringify(operations));
+        api.historySyncOperations = operations;
       }
     } catch (error) {
       console.error(error);

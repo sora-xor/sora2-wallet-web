@@ -20,16 +20,16 @@ query HistoryElements (
       cursor 
       node {
         id
+        blockHash
         blockHeight
         module
         method
         address
         networkFee
-        success
+        execution
         timestamp
         swap
         transfer
-        irohaMigration
         liquidityOperation
       }
     }
@@ -56,9 +56,20 @@ export const historyElementsFilter = (address: string, { assetAddress = '', time
   const filter: any = {
     and: [
       {
-        address: {
-          equalTo: address,
-        },
+        or: [
+          {
+            address: {
+              equalTo: address,
+            },
+          },
+          {
+            transfer: {
+              contains: {
+                to: address,
+              },
+            },
+          },
+        ],
       },
       {
         method: {

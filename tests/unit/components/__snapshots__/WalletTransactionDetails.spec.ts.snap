@@ -50,22 +50,13 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
       />
        
       <info-line-stub
-        assetsymbol=""
+        assetsymbol="XOR"
         fiatvalue=""
+        isformatted="true"
         label=""
         labeltooltip=""
-        value=""
-      >
-        <formatted-amount-stub
-          assetsymbol="XOR"
-          class="info-line-value"
-          fontsizerate="medium"
-          fontweightrate="small"
-          value="0.1"
-        >
-          <!---->
-        </formatted-amount-stub>
-      </info-line-stub>
+        value="0.1"
+      />
        
       <info-line-stub
         assetsymbol="PSWAP"
@@ -203,32 +194,13 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
       />
        
       <info-line-stub
-        assetsymbol=""
+        assetsymbol="XOR"
         fiatvalue=""
+        isformatted="true"
         label=""
         labeltooltip=""
-        value=""
-      >
-        <formatted-amount-stub
-          assetsymbol="XOR"
-          class="info-line-value"
-          fontsizerate="medium"
-          fontweightrate="small"
-          value="100.123"
-        >
-          <span
-            class="formatted-amount__divider"
-          >
-            
-          </span>
-           
-          <span
-            class="formatted-amount__symbol"
-          >
-            PSWAP
-          </span>
-        </formatted-amount-stub>
-      </info-line-stub>
+        value="100.123"
+      />
        
       <!---->
     </div>
@@ -303,22 +275,13 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
       />
        
       <info-line-stub
-        assetsymbol=""
+        assetsymbol="XOR"
         fiatvalue=""
+        isformatted="true"
         label=""
         labeltooltip=""
-        value=""
-      >
-        <formatted-amount-stub
-          assetsymbol="XOR"
-          class="info-line-value"
-          fontsizerate="medium"
-          fontweightrate="small"
-          value="0.1"
-        >
-          <!---->
-        </formatted-amount-stub>
-      </info-line-stub>
+        value="0.1"
+      />
        
       <info-line-stub
         assetsymbol="PSWAP"
@@ -391,22 +354,13 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
       />
        
       <info-line-stub
-        assetsymbol=""
+        assetsymbol="XOR"
         fiatvalue=""
+        isformatted="true"
         label=""
         labeltooltip=""
-        value=""
-      >
-        <formatted-amount-stub
-          assetsymbol="XOR"
-          class="info-line-value"
-          fontsizerate="medium"
-          fontweightrate="small"
-          value="0.1"
-        >
-          <!---->
-        </formatted-amount-stub>
-      </info-line-stub>
+        value="0.1"
+      />
        
       <!---->
     </div>

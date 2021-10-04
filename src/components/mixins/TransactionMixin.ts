@@ -1,7 +1,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import { History, TransactionStatus, Operation } from '@sora-substrate/util';
 import findLast from 'lodash/fp/findLast';
-import { Action } from 'vuex-class';
+import { Action, Getter } from 'vuex-class';
 
 import { api } from '../../api';
 import { delay, formatAddress, groupRewardsByAssetsList } from '../../util';
@@ -9,11 +9,15 @@ import TranslationMixin from './TranslationMixin';
 import LoadingMixin from './LoadingMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
 
+import type { Account } from '../../types/common';
+
 @Component
 export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
   private time = 0;
 
   transaction: Nullable<History> = null; // It's used just for sync errors
+
+  @Getter account!: Account;
 
   @Action addActiveTransaction!: (tx: History) => Promise<void>;
   @Action removeActiveTransaction!: (tx: History) => Promise<void>;
@@ -24,7 +28,14 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     }
     const params = { ...value } as any;
     if ([Operation.Transfer, Operation.SwapAndSend].includes(value.type)) {
-      params.address = formatAddress(value.to as string, 10);
+      const isRecipient = this.account.address === value.to;
+      const address = isRecipient ? value.from : value.to;
+      const direction = isRecipient ? this.t('transaction.from') : this.t('transaction.to');
+      const action = isRecipient ? this.t('recievedText') : this.t('sentText');
+
+      params.address = formatAddress(address as string, 10);
+      params.direction = direction;
+      params.action = action;
     }
     if (
       [
@@ -51,7 +62,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     }
     if (value.type === Operation.ClaimRewards) {
       params.rewards = groupRewardsByAssetsList(params.rewards)
-        .map(({ amount, symbol }) => `${amount} ${symbol}`)
+        .map(({ amount, asset }) => `${amount} ${asset.symbol}`)
         .join(` ${this.t('operations.andText')} `);
     }
     let status = value.status as TransactionStatus;
@@ -65,7 +76,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
 
   private async getLastTransaction(): Promise<void> {
     // Now we are checking every transaction with 1 second interval
-    const tx = findLast((item) => Math.abs(Number(item.startTime) - this.time) < 1000, api.history);
+    const tx = findLast((item) => Number(item.startTime) > this.time, api.history);
     if (!tx) {
       await delay();
       return await this.getLastTransaction();
@@ -120,6 +131,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
           type: 'error',
           title: '',
         });
+        throw new Error((error as any).message);
       }
     });
   }

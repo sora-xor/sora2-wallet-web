@@ -15,6 +15,7 @@ import TransactionHashView from './components/TransactionHashView.vue';
 // Mixins
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin';
+import TransactionMixin from './components/mixins/TransactionMixin';
 
 import { Modules } from './types/common';
 import en from './lang/en';
@@ -108,6 +109,7 @@ const components = {
 const mixins = {
   NumberFormatterMixin,
   FormattedAmountMixin,
+  TransactionMixin,
 };
 
 export {

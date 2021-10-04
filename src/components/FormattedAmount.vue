@@ -1,13 +1,21 @@
 <template>
-  <span v-if="value && isFiniteValue" :class="computedClasses">
-    <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
-    <span class="formatted-amount__integer">{{ formatted.integer }}</span>
-    <span v-if="!integerOnly" class="formatted-amount__decimal">
-      <span class="formatted-amount__decimal-value">{{ formatted.decimal }}</span>
-      <span v-if="assetSymbol && symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+  <span
+    v-if="value && isFiniteValue"
+    :class="computedClasses"
+    @mouseenter="checkChildElementWidth"
+    @touchstart="checkChildElementWidth"
+    ref="parent"
+  >
+    <span class="formated-amount__value" ref="child">
+      <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
+      <span class="formatted-amount__integer">{{ formatted.integer }}</span>
+      <span v-if="!integerOnly" class="formatted-amount__decimal">
+        <span class="formatted-amount__decimal-value">{{ formatted.decimal }}</span>
+        <span v-if="assetSymbol && symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+      </span>
+      <span v-if="assetSymbol && !symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+      <slot />
     </span>
-    <span v-if="assetSymbol && !symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
-    <slot />
   </span>
 </template>
 
@@ -60,6 +68,8 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    * Added special class to left shifting for Fiat value if needed (the shift is the same in all screens).
    */
   @Prop({ default: false, type: Boolean }) readonly withLeftShift?: boolean;
+
+  isValueWider = false;
 
   get unformatted(): string {
     return this.value
@@ -121,7 +131,25 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
       classes.push(`${baseClass}--shifted`);
     }
 
+    if (this.isValueWider) {
+      classes.push(`${baseClass}--value-wider`);
+    }
+
     return classes.join(' ');
+  }
+
+  /**
+   * If the child element is wider that parent container, update isValueWider property
+   * Note: parent had overflow style
+   */
+  checkChildElementWidth(): void {
+    const { parent, child } = this.$refs;
+    const { offsetWidth: parentWidth } = parent as HTMLSpanElement;
+    const { offsetWidth: childWidth } = child as HTMLSpanElement;
+
+    if (childWidth > parentWidth) {
+      this.isValueWider = true;
+    }
   }
 }
 </script>
@@ -136,11 +164,13 @@ $formatted-amount-class: '.formatted-amount';
   // Trick to fix horizontal spacings bug between elements
   word-spacing: -3px;
   letter-spacing: -3px;
-  span:not(.formatted-amount__decimal) {
+  span {
     display: inline;
-    // Trick to fix horizontal spacings bug between elements
-    word-spacing: normal;
-    letter-spacing: normal;
+    &:not(.formatted-amount__decimal) {
+      // Trick to fix horizontal spacings bug between elements
+      word-spacing: normal;
+      letter-spacing: normal;
+    }
   }
   &--fiat-value {
     color: var(--s-color-fiat-value);
