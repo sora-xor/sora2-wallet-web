@@ -19,25 +19,14 @@
         <info-line v-if="selectedTransaction.errorMessage" :label="t('transaction.errorMessage')">
           <span :class="statusClass">{{ selectedTransaction.errorMessage }}</span>
         </info-line>
+        <info-line v-if="selectedTransaction.startTime" :label="t('transaction.startTime')" :value="transactionDate" />
         <info-line
-          v-if="selectedTransaction.startTime"
-          :label="t('transaction.startTime')"
-          :value="formatDate(selectedTransaction.startTime)"
+          v-if="selectedTransaction.amount"
+          :label="t('transaction.amount')"
+          :value="transactionAmount"
+          :asset-symbol="selectedTransaction.symbol"
+          is-formatted
         />
-        <info-line v-if="selectedTransaction.amount" :label="t('transaction.amount')">
-          <formatted-amount
-            class="info-line-value"
-            :value="transactionAmount"
-            :asset-symbol="selectedTransaction.symbol"
-            :font-size-rate="FontSizeRate.MEDIUM"
-            :font-weight-rate="FontWeightRate.SMALL"
-          >
-            <template v-if="isRemoveLiquidityType">
-              <span class="formatted-amount__divider">{{ t('operations.andText') }}</span>
-              <span class="formatted-amount__symbol">{{ selectedTransaction.symbol2 }}</span>
-            </template>
-          </formatted-amount>
-        </info-line>
         <info-line
           v-if="selectedTransaction.amount2"
           :label="t('transaction.amount2')"
@@ -65,7 +54,8 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { TransactionStatus, AccountAsset, Operation, History } from '@sora-substrate/util';
+import { TransactionStatus } from '@sora-substrate/util';
+import type { AccountAsset, History } from '@sora-substrate/util';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
@@ -73,8 +63,8 @@ import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import TransactionHashView from './TransactionHashView.vue';
-import { RouteNames, WalletTabs, FontSizeRate, FontWeightRate, HashType } from '../consts';
-import { formatDate, getStatusClass } from '../util';
+import { RouteNames, WalletTabs, HashType } from '../consts';
+import { formatDate } from '../util';
 
 @Component({
   components: {
@@ -85,8 +75,6 @@ import { formatDate, getStatusClass } from '../util';
   },
 })
 export default class WalletTransactionDetails extends Mixins(TranslationMixin, NumberFormatterMixin) {
-  readonly FontSizeRate = FontSizeRate;
-  readonly FontWeightRate = FontWeightRate;
   readonly HashType = HashType;
 
   @Getter currentRouteParams!: any;
@@ -95,10 +83,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
   @Action getTransactionDetails!: (id: string) => Promise<void>;
-
-  getStatusClass = getStatusClass;
-  formatDate = formatDate;
-  transaction: any = null;
 
   mounted() {
     const id: string = this.currentRouteParams.id;
@@ -117,7 +101,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
     );
   }
 
-  get statusClass(): string {
+  get statusClass(): Array<string> {
     const baseClass = 'transaction-status';
     const classes = [baseClass];
 
@@ -125,7 +109,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
       classes.push(`${baseClass}--error`);
     }
 
-    return classes.join(' ');
+    return classes;
   }
 
   get isComplete(): boolean {
@@ -153,12 +137,12 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
     return this.formatStringValue(this.selectedTransaction.amount as string);
   }
 
-  get isRemoveLiquidityType(): boolean {
-    return this.selectedTransaction.type === Operation.RemoveLiquidity;
-  }
-
   get transactionAmount2(): string {
     return this.formatStringValue(this.selectedTransaction.amount2 as string);
+  }
+
+  get transactionDate(): string {
+    return formatDate(this.selectedTransaction.startTime as number);
   }
 
   handleBack(): void {
@@ -207,14 +191,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
   }
   &:not(:last-child) {
     margin-bottom: var(--s-basic-spacing);
-  }
-}
-.info-status {
-  &--success {
-    color: var(--s-color-status-success);
-  }
-  &--error {
-    color: var(--s-color-status-error);
   }
 }
 </style>
