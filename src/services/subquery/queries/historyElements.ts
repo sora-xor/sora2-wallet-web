@@ -30,7 +30,6 @@ query HistoryElements (
         timestamp
         swap
         transfer
-        irohaMigration
         liquidityOperation
       }
     }

@@ -3,7 +3,7 @@ import { BN } from '@polkadot/util';
 
 import store from '../../store';
 import { api } from '../../api';
-import type { ExplorerDataParser } from '../types';
+import type { ExplorerDataParser, HistoryElement, HistoryElementError } from '../types';
 
 enum ModuleCallOperation {
   RegisterPair = 'registerPair',
@@ -37,9 +37,9 @@ const OperationByModuleCall = {
   },
 };
 
-const getTransactionId = (tx: any): string => tx.id;
+const getTransactionId = (tx: HistoryElement): string => tx.id;
 
-const getTransactionOperationType = (tx: any): Nullable<Operation> => {
+const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method } = tx;
 
   if (!(module in OperationByModuleCall)) return null;
@@ -48,25 +48,25 @@ const getTransactionOperationType = (tx: any): Nullable<Operation> => {
   return OperationByModuleCall[module][method];
 };
 
-const getTransactionTimestamp = (tx: any) => {
+const getTransactionTimestamp = (tx: HistoryElement) => {
   const timestamp = +tx.timestamp * 1000;
 
   return !Number.isNaN(timestamp) ? timestamp : Date.now();
 };
 
-const getErrorMessage = (id: number, idx: number): string => {
+const getErrorMessage = (historyElementError: HistoryElementError): string => {
   try {
-    const [error, index] = [new BN(id), new BN(idx)];
+    const [error, index] = [new BN(historyElementError.moduleErrorId), new BN(historyElementError.moduleErrorIndex)];
     const { documentation } = api.api.registry.findMetaError({ error, index });
 
     return documentation.join(' ').trim();
   } catch (error) {
-    console.error(id, error);
+    console.error(historyElementError, error);
     return '';
   }
 };
 
-const getTransactionStatus = (tx: any): string => {
+const getTransactionStatus = (tx: HistoryElement): string => {
   if (tx.execution.success) return TransactionStatus.Finalized;
 
   return TransactionStatus.Error;
@@ -77,6 +77,10 @@ const getAssetByAddress = async (address: string): Promise<Asset> => {
     return store.getters.whitelist[address];
   }
   return await api.getAssetInfo(address);
+};
+
+const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {
+  console.error(`Couldn't parse ${operation} data.`, transaction);
 };
 
 export default class SubqueryDataParser implements ExplorerDataParser {
@@ -91,7 +95,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     return SubqueryDataParser.SUPPORTED_OPERATIONS;
   }
 
-  public async parseTransactionAsHistoryItem(transaction): Promise<Nullable<History>> {
+  public async parseTransactionAsHistoryItem(transaction: HistoryElement): Promise<Nullable<History>> {
     const id = getTransactionId(transaction);
     const type = getTransactionOperationType(transaction);
     const timestamp = getTransactionTimestamp(transaction);
@@ -115,8 +119,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     };
 
     if (transaction.execution.error) {
-      const { moduleErrorId, moduleErrorIndex } = transaction.execution.error;
-      const message = getErrorMessage(moduleErrorId, moduleErrorIndex);
+      const message = getErrorMessage(transaction.execution.error);
 
       if (message) {
         payload.errorMessage = message;
@@ -125,6 +128,11 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
     switch (type) {
       case Operation.Swap: {
+        if (!transaction.swap) {
+          logOperationDataParsingError(type, transaction);
+          return null;
+        }
+
         const assetAddress = transaction.swap.baseAssetId;
         const asset2Address = transaction.swap.targetAssetId;
         const asset = await getAssetByAddress(assetAddress);
@@ -143,6 +151,11 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       }
       case Operation.AddLiquidity:
       case Operation.RemoveLiquidity: {
+        if (!transaction.liquidityOperation) {
+          logOperationDataParsingError(type, transaction);
+          return null;
+        }
+
         const assetAddress = transaction.liquidityOperation.baseAssetId;
         const asset2Address = transaction.liquidityOperation.targetAssetId;
         const asset = await getAssetByAddress(assetAddress);
@@ -158,6 +171,11 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         return payload;
       }
       case Operation.Transfer: {
+        if (!transaction.transfer) {
+          logOperationDataParsingError(type, transaction);
+          return null;
+        }
+
         const assetAddress = transaction.transfer.assetId;
         const asset = await getAssetByAddress(assetAddress);
 
