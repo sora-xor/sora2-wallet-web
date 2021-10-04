@@ -5,14 +5,15 @@ import DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
 
 describe('App.vue test', () => {
   it('Check theme switch', () => {
-    cy.visit('/');
+    cy.openApp();
     // Each cy.get('html') takes time so it's better to call it every time
-    cy.get('html').invoke('attr', 'design-system').should('eq', DesignSystem.NEUMORPHIC);
-    cy.get('html').invoke('attr', 'design-system-theme').should('eq', Theme.LIGHT);
+    // because of async theme settings
+    cy.get('html').checkAttr('design-system', DesignSystem.NEUMORPHIC);
+    cy.get('html').checkAttr('design-system-theme', Theme.LIGHT);
     const switchThemeButton = cy.get('.theme-switch');
-    switchThemeButton.contains('light theme');
+    switchThemeButton.contains(`${Theme.LIGHT} theme`);
     switchThemeButton.click();
-    switchThemeButton.contains('dark theme');
-    cy.get('html').invoke('attr', 'design-system-theme').should('eq', Theme.DARK);
+    switchThemeButton.contains(`${Theme.DARK} theme`);
+    cy.get('html').checkAttr('design-system-theme', Theme.DARK);
   });
 });
