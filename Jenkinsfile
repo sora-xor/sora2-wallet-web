@@ -2,6 +2,5 @@
 
 def pipeline = new org.js.LibPipeline(
     steps: this,
-    buildDockerImage: 'build-tools/node:14-ubuntu')
+    buildDockerImage: 'build-tools/node:14-ubuntu-cypress')
 pipeline.runPipeline()
-// https://docs.cypress.io/guides/continuous-integration/introduction#Dependencies
