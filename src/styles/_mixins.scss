@@ -117,8 +117,8 @@
 
 @mixin scrollbar ($marginOffset: 0, $verticalRight: 2px) {
   &.el-scrollbar {
-    margin-left: -$marginOffset;
-    margin-right: -$marginOffset;
+    margin-left: calc(#{$marginOffset} * -1);
+    margin-right: calc(#{$marginOffset} * -1);
 
     .el-scrollbar__wrap {
       overflow-x: hidden;

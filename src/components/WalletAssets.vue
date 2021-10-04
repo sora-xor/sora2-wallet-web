@@ -194,7 +194,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 <style lang="scss">
 .wallet-assets {
   &-scrollbar {
-    @include scrollbar(24px);
+    @include scrollbar($basic-spacing-big);
   }
   .asset {
     .formatted-amount {
@@ -210,7 +210,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       }
     }
     &-value {
-      height: 16px;
+      height: $basic-spacing-medium;
       font-size: var(--s-font-size-medium);
       font-weight: 800;
       letter-spacing: var(--s-letter-spacing-mini);
