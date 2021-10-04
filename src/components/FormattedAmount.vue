@@ -2,11 +2,11 @@
   <span
     v-if="value && isFiniteValue"
     :class="computedClasses"
-    @mouseenter="checkValueVisibility"
-    @touchstart="checkValueVisibility"
+    @mouseenter="checkChildElementWidth"
+    @touchstart="checkChildElementWidth"
     ref="parent"
   >
-    <span class="formated-amount__value" ref="value">
+    <span class="formated-amount__value" ref="child">
       <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
       <span class="formatted-amount__integer">{{ formatted.integer }}</span>
       <span v-if="!integerOnly" class="formatted-amount__decimal">
@@ -138,12 +138,16 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
     return classes.join(' ');
   }
 
-  checkValueVisibility(): void {
-    const { parent, value } = this.$refs;
-    const { offsetWidth: parentWidth } = parent as HTMLElement;
-    const { offsetWidth: valueWidth } = value as HTMLElement;
+  /**
+   * If the child element is wider that parent container, update isValueWider property
+   * Note: parent had overflow style
+   */
+  checkChildElementWidth(): void {
+    const { parent, child } = this.$refs;
+    const { offsetWidth: parentWidth } = parent as HTMLSpanElement;
+    const { offsetWidth: childWidth } = child as HTMLSpanElement;
 
-    if (valueWidth > parentWidth) {
+    if (childWidth > parentWidth) {
       this.isValueWider = true;
     }
   }
