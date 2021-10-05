@@ -1,0 +1,444 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
+<wallet-base-stub
+  actionicon="basic-eye-24"
+  actiontooltip="asset.remove"
+  disabled-clean-history="true"
+  show-clean-history=""
+  showback="true"
+  title="SORA"
+  tooltip=""
+>
+  <s-card-stub
+    borderradius="small"
+    class="asset-details"
+    primary="true"
+    shadow="never"
+    size="medium"
+    status="default"
+    usedesignsystem="true"
+  >
+    <div
+      class="asset-details-container s-flex"
+    >
+      <i
+        class="asset-logo"
+      />
+       
+      <div
+        class="asset-details-balance d2 asset-details-balance--clickable"
+        style="font-size: 30px;"
+      >
+        <formatted-amount-stub
+          assetsymbol="XOR"
+          fontsizerate="small"
+          fontweightrate="normal"
+          symbolasdecimal="true"
+          value="123.4"
+        >
+          <s-icon-stub
+            name="chevron-down-rounded-16"
+            size="18"
+          />
+        </formatted-amount-stub>
+      </div>
+       
+      <formatted-amount-stub
+        assetsymbol=""
+        fontsizerate="medium"
+        fontweightrate="normal"
+        isfiatvalue="true"
+        value="151.782"
+      />
+       
+      <div
+        class="asset-details-actions"
+      >
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="finance-send-24"
+            size="28"
+          />
+        </s-button-stub>
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="basic-receive-24"
+            size="28"
+          />
+        </s-button-stub>
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="arrows-swap-24"
+            size="28"
+          />
+        </s-button-stub>
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="basic-drop-24"
+            size="28"
+          />
+        </s-button-stub>
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="grid-block-distribute-vertically-24"
+            size="28"
+          />
+        </s-button-stub>
+      </div>
+       
+      <!---->
+    </div>
+  </s-card-stub>
+   
+  <wallet-history-stub
+    asset="[object Object]"
+  />
+</wallet-base-stub>
+`;
+
+exports[`WalletAssetDetails.vue when token is XOR and button balance details clicked should show detailed balance info 1`] = `
+<wallet-base-stub
+  actionicon="basic-eye-24"
+  actiontooltip="asset.remove"
+  disabled-clean-history="true"
+  show-clean-history=""
+  showback="true"
+  title="SORA"
+  tooltip=""
+>
+  <s-card-stub
+    borderradius="small"
+    class="asset-details"
+    primary="true"
+    shadow="never"
+    size="medium"
+    status="default"
+    usedesignsystem="true"
+  >
+    <div
+      class="asset-details-container s-flex"
+    >
+      <i
+        class="asset-logo"
+      />
+       
+      <div
+        class="asset-details-balance d2 asset-details-balance--clickable asset-details-balance--clicked"
+        style="font-size: 30px;"
+      >
+        <formatted-amount-stub
+          assetsymbol="XOR"
+          fontsizerate="small"
+          fontweightrate="normal"
+          symbolasdecimal="true"
+          value="123.4"
+        >
+          <s-icon-stub
+            name="chevron-down-rounded-16"
+            size="18"
+          />
+        </formatted-amount-stub>
+      </div>
+       
+      <formatted-amount-stub
+        assetsymbol=""
+        fontsizerate="medium"
+        fontweightrate="normal"
+        isfiatvalue="true"
+        value="151.782"
+      />
+       
+      <div
+        class="asset-details-actions"
+      >
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="finance-send-24"
+            size="28"
+          />
+        </s-button-stub>
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="basic-receive-24"
+            size="28"
+          />
+        </s-button-stub>
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="arrows-swap-24"
+            size="28"
+          />
+        </s-button-stub>
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="basic-drop-24"
+            size="28"
+          />
+        </s-button-stub>
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="grid-block-distribute-vertically-24"
+            size="28"
+          />
+        </s-button-stub>
+      </div>
+       
+      <div
+        class="asset-details-balance-info"
+      >
+        <div
+          class="balance s-flex p4"
+        >
+          <div
+            class="balance-label"
+          >
+            
+          </div>
+           
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="XOR"
+            fiatfontsizerate="normal"
+            fiatfontweightrate="normal"
+            fiatformatasvalue="true"
+            fiatvalue="151.782"
+            fontsizerate="medium"
+            fontweightrate="small"
+            hasfiatvalue="true"
+            value="123.4"
+            valueclass="balance-value"
+            withleftshift="true"
+          />
+        </div>
+        <div
+          class="balance s-flex p4"
+        >
+          <div
+            class="balance-label"
+          >
+            
+          </div>
+           
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="XOR"
+            fiatfontsizerate="normal"
+            fiatfontweightrate="normal"
+            fiatformatasvalue="true"
+            fiatvalue="0"
+            fontsizerate="medium"
+            fontweightrate="small"
+            hasfiatvalue="true"
+            value="0"
+            valueclass="balance-value"
+            withleftshift="true"
+          />
+        </div>
+        <div
+          class="balance s-flex p4"
+        >
+          <div
+            class="balance-label"
+          >
+            
+          </div>
+           
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="XOR"
+            fiatfontsizerate="normal"
+            fiatfontweightrate="normal"
+            fiatformatasvalue="true"
+            fiatvalue="0"
+            fontsizerate="medium"
+            fontweightrate="small"
+            hasfiatvalue="true"
+            value="0"
+            valueclass="balance-value"
+            withleftshift="true"
+          />
+        </div>
+        <div
+          class="balance s-flex p4"
+        >
+          <div
+            class="balance-label"
+          >
+            
+          </div>
+           
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="XOR"
+            fiatfontsizerate="normal"
+            fiatfontweightrate="normal"
+            fiatformatasvalue="true"
+            fiatvalue="0"
+            fontsizerate="medium"
+            fontweightrate="small"
+            hasfiatvalue="true"
+            value="0"
+            valueclass="balance-value"
+            withleftshift="true"
+          />
+        </div>
+         
+        <div
+          class="balance s-flex p4"
+        >
+          <div
+            class="balance-label balance-label--total"
+          >
+            
+          </div>
+           
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="XOR"
+            fiatfontsizerate="normal"
+            fiatfontweightrate="normal"
+            fiatformatasvalue="true"
+            fiatvalue="151.782"
+            fontsizerate="medium"
+            fontweightrate="small"
+            hasfiatvalue="true"
+            value="123.4"
+            valueclass="balance-value"
+            withleftshift="true"
+          />
+        </div>
+      </div>
+    </div>
+  </s-card-stub>
+   
+  <wallet-history-stub
+    asset="[object Object]"
+  />
+</wallet-base-stub>
+`;

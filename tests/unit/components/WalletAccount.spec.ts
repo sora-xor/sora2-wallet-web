@@ -51,7 +51,7 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
     it('should render account switch button while true', () => {
       const switchBtn = wrapper.find('.account-switch');
 
-      expect(switchBtn.exists()).toBe(true);
+      expect(switchBtn.exists()).toBeTrue();
     });
 
     it('should not render account switch button while false', () => {
@@ -65,7 +65,7 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
 
       const switchBtn = wrapper.find('.account-switch');
 
-      expect(switchBtn.exists()).toBe(false);
+      expect(switchBtn.exists()).toBeFalse();
       expect(wrapper.element).toMatchSnapshot();
     });
   });
