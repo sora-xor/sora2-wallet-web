@@ -157,7 +157,7 @@
       overflow: visible;
   
       & > span {
-        display: block;
+        display: inline-table;
         position: absolute;
         z-index: 1;
         white-space: break-spaces;
