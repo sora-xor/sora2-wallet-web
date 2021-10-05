@@ -181,7 +181,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   text-decoration: none;
 }
 .wallet-connection-accounts {
-  @include scrollbar(18px);
+  @include scrollbar($basic-spacing-big);
 }
 </style>
 

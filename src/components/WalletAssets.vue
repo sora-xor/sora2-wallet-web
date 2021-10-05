@@ -30,7 +30,7 @@
               </formatted-amount-with-fiat-value>
               <div class="asset-info">
                 {{ asset.name || asset.symbol }}
-                <s-tooltip :content="copyTooltip">
+                <s-tooltip :content="copyTooltip" :open-delay="200">
                   <span class="asset-id" @click="handleCopyAddress(asset.address)">
                     ({{ getFormattedAddress(asset) }})
                   </span>
@@ -41,8 +41,8 @@
               v-if="permissions.sendAssets"
               class="wallet-assets__button send"
               type="action"
-              rounded
-              primary
+              size="small"
+              alternative
               :tooltip="t('assets.send')"
               :disabled="isZeroBalance(asset)"
               @click="handleAssetSend(asset)"
@@ -53,8 +53,8 @@
               v-if="permissions.swapAssets"
               class="wallet-assets__button swap"
               type="action"
-              rounded
-              primary
+              size="small"
+              alternative
               :tooltip="t('assets.swap')"
               @click="handleAssetSwap(asset)"
             >
@@ -63,6 +63,7 @@
             <s-button
               class="wallet-assets__button el-button--details"
               type="action"
+              size="small"
               alternative
               @click="handleOpenAssetDetails(asset)"
             >
@@ -193,7 +194,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 <style lang="scss">
 .wallet-assets {
   &-scrollbar {
-    @include scrollbar(18px);
+    @include scrollbar($basic-spacing-big);
   }
   .asset {
     .formatted-amount {
@@ -209,12 +210,34 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       }
     }
     &-value {
+      height: $basic-spacing-medium;
       font-size: var(--s-font-size-medium);
       font-weight: 800;
       letter-spacing: var(--s-letter-spacing-mini);
       line-height: var(--s-line-height-reset);
       .formatted-amount__decimal {
         font-weight: 600;
+      }
+
+      @include formatted-amount-tooltip;
+    }
+  }
+
+  &__button.el-button.neumorphic.s-action:not(.s-primary).s-alternative {
+    &:disabled {
+      &,
+      & > span > i {
+        color: var(--s-color-base-background);
+      }
+    }
+    &:not(:disabled) {
+      &:hover,
+      &:focus {
+        color: var(--s-color-theme-accent-hover);
+      }
+      &:active,
+      &.s-pressed {
+        color: var(--s-color-theme-accent-pressed);
       }
     }
   }
@@ -310,7 +333,7 @@ $wallet-assets-count: 5;
   }
   &__button {
     & + & {
-      margin-left: var(--s-basic-spacing);
+      margin-left: 0;
     }
   }
 
