@@ -5,7 +5,7 @@ exports[`FormattedAmount.vue [FontSizeRate Medium]: should be rendered correctly
   class="formatted-amount formatted-amount--font-size-medium"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -38,7 +38,7 @@ exports[`FormattedAmount.vue [FontSizeRate Normal]: should be rendered correctly
   class="formatted-amount"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -71,7 +71,7 @@ exports[`FormattedAmount.vue [FontSizeRate Small]: should be rendered correctly 
   class="formatted-amount formatted-amount--font-size-small"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -104,7 +104,7 @@ exports[`FormattedAmount.vue [FontWeightRate Medium]: should be rendered correct
   class="formatted-amount formatted-amount--font-weight-medium"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -137,7 +137,7 @@ exports[`FormattedAmount.vue [FontWeightRate Normal]: should be rendered correct
   class="formatted-amount"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -170,7 +170,7 @@ exports[`FormattedAmount.vue [FontWeightRate Small]: should be rendered correctl
   class="formatted-amount formatted-amount--font-weight-small"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -203,7 +203,7 @@ exports[`FormattedAmount.vue [Is Fiat Value With One Decimal Symbol]: should be 
   class="formatted-amount formatted-amount--fiat-value"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <span
       class="formatted-amount__prefix"
@@ -240,7 +240,7 @@ exports[`FormattedAmount.vue [Is Fiat Value Without Decimals]: should be rendere
   class="formatted-amount formatted-amount--fiat-value"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <span
       class="formatted-amount__prefix"
@@ -277,7 +277,7 @@ exports[`FormattedAmount.vue [Is Fiat Value]: should be rendered correctly 1`] =
   class="formatted-amount formatted-amount--fiat-value"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <span
       class="formatted-amount__prefix"
@@ -314,7 +314,7 @@ exports[`FormattedAmount.vue [Symbol In Decimal Container]: should be rendered c
   class="formatted-amount formatted-amount--symbol-as-decimal"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -351,7 +351,7 @@ exports[`FormattedAmount.vue [Value only]: should be rendered correctly 1`] = `
   class="formatted-amount"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -384,7 +384,7 @@ exports[`FormattedAmount.vue [With "0" Value]: should be rendered correctly 1`] 
   class="formatted-amount"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -425,7 +425,7 @@ exports[`FormattedAmount.vue [With Integer]: should be rendered correctly 1`] = 
   class="formatted-amount"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -458,7 +458,7 @@ exports[`FormattedAmount.vue [With Left Shift]: should be rendered correctly 1`]
   class="formatted-amount formatted-amount--shifted"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -493,7 +493,7 @@ exports[`FormattedAmount.vue [With asset symbol]: should be rendered correctly 1
   class="formatted-amount"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
@@ -532,7 +532,7 @@ exports[`FormattedAmount.vue [Without Decimals]: should be rendered correctly 1`
   class="formatted-amount"
 >
   <span
-    class="formated-amount__value"
+    class="formatted-amount__value"
   >
     <!---->
      
