@@ -6,7 +6,7 @@
     @touchstart="checkChildElementWidth"
     ref="parent"
   >
-    <span class="formated-amount__value" ref="child">
+    <span class="formatted-amount__value" ref="child">
       <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
       <span class="formatted-amount__integer">{{ formatted.integer }}</span>
       <span v-if="!integerOnly" class="formatted-amount__decimal">
