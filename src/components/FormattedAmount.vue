@@ -6,7 +6,7 @@
     @touchstart="checkChildElementWidth"
     ref="parent"
   >
-    <span class="formated-amount__value" ref="child">
+    <span class="formatted-amount__value" ref="child">
       <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
       <span class="formatted-amount__integer">{{ formatted.integer }}</span>
       <span v-if="!integerOnly" class="formatted-amount__decimal">
@@ -162,16 +162,11 @@ $formatted-amount-class: '.formatted-amount';
   overflow-wrap: anywhere;
   word-break: break-all;
   // Trick to fix horizontal spacings bug between elements
-  word-spacing: -3px;
-  letter-spacing: -3px;
-  span {
-    display: inline;
-    &:not(.formatted-amount__decimal) {
-      // Trick to fix horizontal spacings bug between elements
-      word-spacing: normal;
-      letter-spacing: normal;
-    }
+  &__value,
+  &__decimal {
+    word-spacing: -3px;
   }
+
   &--fiat-value {
     color: var(--s-color-fiat-value);
     font-family: var(--s-font-family-default);
