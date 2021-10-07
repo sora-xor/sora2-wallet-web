@@ -40,8 +40,6 @@
                 with-left-shift
                 value-class="wallet-send-amount-balance-value"
                 :value="balance"
-                :font-size-rate="FontSizeRate.MEDIUM"
-                :font-weight-rate="FontWeightRate.SMALL"
                 :asset-symbol="asset.symbol"
                 :fiat-value="getFiatBalance(asset)"
               />
