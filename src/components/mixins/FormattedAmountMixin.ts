@@ -12,9 +12,13 @@ import {
 
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { FiatPriceAndApyObject } from '../../services/types';
+import { FontSizeRate, FontWeightRate } from '../../consts';
 
 @Component
 export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
+  readonly FontSizeRate = FontSizeRate;
+  readonly FontWeightRate = FontWeightRate;
+
   @Getter fiatPriceAndApyObject!: FiatPriceAndApyObject;
 
   getAssetFiatPrice(accountAsset: Asset | AccountAsset): Nullable<CodecString> {

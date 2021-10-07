@@ -7,13 +7,16 @@
     ref="parent"
   >
     <span class="formatted-amount__value" ref="child">
-      <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
-      <span class="formatted-amount__integer">{{ formatted.integer }}</span>
-      <span v-if="!integerOnly" class="formatted-amount__decimal">
-        <span class="formatted-amount__decimal-value">{{ formatted.decimal }}</span>
-        <span v-if="assetSymbol && symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
-      </span>
-      <span v-if="assetSymbol && !symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+      <template v-if="!isBalance || !shouldBalanceBeHidden">
+        <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
+        <span class="formatted-amount__integer">{{ formatted.integer }}</span>
+        <span v-if="!integerOnly" class="formatted-amount__decimal">
+          <span class="formatted-amount__decimal-value">{{ formatted.decimal }}</span>
+          <span v-if="assetSymbol && symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+        </span>
+        <span v-if="assetSymbol && !symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+      </template>
+      <span v-else class="formatted-amount__integer">{{ HiddenBalance }}</span>
       <slot />
     </span>
   </span>
@@ -21,9 +24,10 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
 import { FPNumber } from '@sora-substrate/util';
 
-import { FontSizeRate, FontWeightRate } from '../consts';
+import { FontSizeRate, FontWeightRate, HiddenBalance } from '../consts';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 
 interface FormattedAmountValues {
@@ -33,6 +37,7 @@ interface FormattedAmountValues {
 
 @Component
 export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
+  readonly HiddenBalance = HiddenBalance;
   /**
    * Balance or Amount value.
    */
@@ -61,6 +66,10 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    */
   @Prop({ default: false, type: Boolean }) readonly isFiatValue?: boolean;
   /**
+   * Define directly that this field displays account balance which can be hidden.
+   */
+  @Prop({ default: false, type: Boolean }) readonly isBalance?: boolean;
+  /**
    * Fills only intger part if we don't need decimals value.
    */
   @Prop({ default: false, type: Boolean }) readonly integerOnly?: boolean;
@@ -68,6 +77,8 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    * Added special class to left shifting for Fiat value if needed (the shift is the same in all screens).
    */
   @Prop({ default: false, type: Boolean }) readonly withLeftShift?: boolean;
+
+  @Getter shouldBalanceBeHidden!: boolean;
 
   isValueWider = false;
 

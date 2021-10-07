@@ -7,6 +7,7 @@
       :font-weight-rate="fontWeightRate"
       :asset-symbol="assetSymbol"
       :symbol-as-decimal="symbolAsDecimal"
+      :is-balance="isBalance"
     >
       <slot />
     </formatted-amount>
@@ -17,6 +18,7 @@
       :font-size-rate="fiatFormatAsValue ? fontSizeRate : fiatFontSizeRate"
       :font-weight-rate="fiatFormatAsValue ? fontWeightRate : fiatFontWeightRate"
       :with-left-shift="withLeftShift"
+      :is-balance="isBalance"
     />
   </div>
 </template>
@@ -72,6 +74,10 @@ export default class FormattedAmountWithFiatValue extends Vue {
    * We could set this flag to true if we have the same FontSizeRate and FontWeightRate with Amount value.
    */
   @Prop({ default: false, type: Boolean }) readonly fiatFormatAsValue?: boolean;
+  /**
+   * Define directly that this field displays account balance which can be hidden.
+   */
+  @Prop({ default: false, type: Boolean }) readonly isBalance?: boolean;
   /**
    * Fiat value's Font size rate between integer and decimal numbers' parts. Possible values: `"small"`, `"medium"`, `"normal"`.
    * By default it's set to `"normal"` and it means the same font sizes for both numbers' parts.
