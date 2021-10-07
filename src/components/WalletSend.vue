@@ -34,8 +34,17 @@
             <div class="wallet-send-amount-title">{{ t('walletSend.amount') }}</div>
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
-              <span class="wallet-send-amount-balance-value">{{ balance }}</span>
-              <formatted-amount v-if="assetFiatPrice" :value="getFiatBalance(asset)" is-fiat-value with-left-shift />
+              <formatted-amount-with-fiat-value
+                is-balance
+                fiat-format-as-value
+                with-left-shift
+                value-class="wallet-send-amount-balance-value"
+                :value="balance"
+                :font-size-rate="FontSizeRate.MEDIUM"
+                :font-weight-rate="FontWeightRate.SMALL"
+                :asset-symbol="asset.symbol"
+                :fiat-value="getFiatBalance(asset)"
+              />
             </div>
           </div>
           <div class="asset s-flex" slot="right">
@@ -121,16 +130,17 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import WalletFee from './WalletFee.vue';
 import { RouteNames } from '../consts';
 import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
 import { api } from '../api';
-import type { Account } from '../types/common';
 
 @Component({
   components: {
     WalletBase,
     FormattedAmount,
+    FormattedAmountWithFiatValue,
     WalletFee,
   },
 })
@@ -138,7 +148,6 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
 
   @Getter currentRouteParams!: any;
-  @Getter account!: Account;
   @Getter accountAssets!: Array<AccountAsset>;
   @Getter networkFees!: NetworkFeesObject;
 

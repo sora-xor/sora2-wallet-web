@@ -63,3 +63,5 @@ export enum FontWeightRate {
   MEDIUM = 'medium',
   NORMAL = 'normal',
 }
+
+export const HiddenBalance = '******';

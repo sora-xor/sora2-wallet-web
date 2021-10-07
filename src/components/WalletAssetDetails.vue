@@ -16,18 +16,20 @@
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
         <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
           <formatted-amount
+            is-balance
+            symbol-as-decimal
             :value="balance"
             :font-size-rate="FontSizeRate.SMALL"
             :asset-symbol="asset.symbol"
-            symbol-as-decimal
           >
             <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
           </formatted-amount>
         </div>
         <formatted-amount
           v-if="price"
-          :value="getFiatBalance(asset)"
+          is-balance
           is-fiat-value
+          :value="getFiatBalance(asset)"
           :font-size-rate="FontSizeRate.MEDIUM"
         />
         <div class="asset-details-actions">
@@ -45,34 +47,42 @@
             <s-icon :name="operation.icon" size="28" />
           </s-button>
         </div>
-        <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
-          <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
-            <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
-            <formatted-amount-with-fiat-value
-              value-class="balance-value"
-              :value="formatBalance(asset.balance[type])"
-              :font-size-rate="FontSizeRate.MEDIUM"
-              :font-weight-rate="FontWeightRate.SMALL"
-              :asset-symbol="asset.symbol"
-              :fiat-value="getFiatBalance(asset, type)"
-              fiat-format-as-value
-              with-left-shift
-            />
+        <transition name="fadeHeight">
+          <div
+            key="asset-details-balance-info"
+            v-if="isXor && wasBalanceDetailsClicked"
+            class="asset-details-balance-info"
+          >
+            <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
+              <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
+              <formatted-amount-with-fiat-value
+                is-balance
+                value-class="balance-value"
+                :value="formatBalance(asset.balance[type])"
+                :font-size-rate="FontSizeRate.MEDIUM"
+                :font-weight-rate="FontWeightRate.SMALL"
+                :asset-symbol="asset.symbol"
+                :fiat-value="getFiatBalance(asset, type)"
+                fiat-format-as-value
+                with-left-shift
+              />
+            </div>
+            <div class="balance s-flex p4">
+              <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
+              <formatted-amount-with-fiat-value
+                is-balance
+                value-class="balance-value"
+                :value="totalBalance"
+                :font-size-rate="FontSizeRate.MEDIUM"
+                :font-weight-rate="FontWeightRate.SMALL"
+                :asset-symbol="asset.symbol"
+                :fiat-value="getFiatBalance(asset, BalanceType.Total)"
+                fiat-format-as-value
+                with-left-shift
+              />
+            </div>
           </div>
-          <div class="balance s-flex p4">
-            <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
-            <formatted-amount-with-fiat-value
-              value-class="balance-value"
-              :value="totalBalance"
-              :font-size-rate="FontSizeRate.MEDIUM"
-              :font-weight-rate="FontWeightRate.SMALL"
-              :asset-symbol="asset.symbol"
-              :fiat-value="getFiatBalance(asset, BalanceType.Total)"
-              fiat-format-as-value
-              with-left-shift
-            />
-          </div>
-        </div>
+        </transition>
       </div>
     </s-card>
     <wallet-history :asset="asset" />
@@ -91,7 +101,7 @@ import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import WalletHistory from './WalletHistory.vue';
-import { RouteNames, FontSizeRate, FontWeightRate } from '../consts';
+import { RouteNames } from '../consts';
 import { getAssetIconStyles } from '../util';
 import { Operations, Account } from '../types/common';
 
@@ -119,8 +129,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   ] as Array<Operation>;
 
   readonly BalanceType = BalanceType;
-  readonly FontSizeRate = FontSizeRate;
-  readonly FontWeightRate = FontWeightRate;
 
   @Getter account!: Account;
   @Getter accountAssets!: Array<AccountAsset>;
@@ -260,6 +268,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   &-container {
     flex-direction: column;
     align-items: center;
+    @include fadeHeight;
     .formatted-amount--fiat-value {
       + .asset-details-actions {
         margin-top: #{$basic-spacing-small};
