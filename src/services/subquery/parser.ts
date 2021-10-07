@@ -89,6 +89,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     Operation.Swap,
     Operation.AddLiquidity,
     Operation.RemoveLiquidity,
+    Operation.RegisterAsset,
   ];
 
   public get supportedOperations(): Array<Operation> {
@@ -186,9 +187,21 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
         return payload;
       }
+      case Operation.RegisterAsset: {
+        if (!transaction.assetRegistration) {
+          logOperationDataParsingError(type, transaction);
+          return null;
+        }
+
+        const assetAddress = transaction.assetRegistration.assetId;
+        const asset = await getAssetByAddress(assetAddress);
+
+        payload.symbol = asset && asset.symbol ? asset.symbol : '';
+
+        return payload;
+      }
       // TODO: wait for Subquery support:
       // Operation.Rewards
-      // Operation.RegisterAsset
       // utility.batch
       default:
         return null;
