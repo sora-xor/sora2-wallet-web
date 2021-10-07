@@ -7,6 +7,7 @@ import type { NetworkFeesObject } from '@sora-substrate/util';
 
 import { api } from '../api';
 import type { WalletPermissions, SoraNetwork } from '../consts';
+import { storage } from '../util/storage';
 
 const types = flow(
   flatMap((x) => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
@@ -30,7 +31,7 @@ function initialState(): SettingsState {
     },
     soraNetwork: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
-    shouldBalanceBeHidden: false,
+    shouldBalanceBeHidden: Boolean(JSON.parse(storage.get('shouldBalanceBeHidden'))) || false,
   };
 }
 
@@ -70,6 +71,7 @@ const mutations = {
 
   [types.TOGGLE_HIDE_BALANCE](state: SettingsState) {
     state.shouldBalanceBeHidden = !state.shouldBalanceBeHidden;
+    storage.set('shouldBalanceBeHidden', state.shouldBalanceBeHidden);
   },
 };
 
