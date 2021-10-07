@@ -215,7 +215,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
         api.historySyncTimestamp = timestamp;
       }
 
-      if (operationsChanged) {
+      if (operationsChanged && !isPartialHistoryRequest) {
         api.historySyncOperations = operations;
       }
     } catch (error) {
