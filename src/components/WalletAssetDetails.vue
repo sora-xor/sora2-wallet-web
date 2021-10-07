@@ -48,11 +48,7 @@
           </s-button>
         </div>
         <transition name="fadeHeight">
-          <div
-            key="asset-details-balance-info"
-            v-if="isXor && wasBalanceDetailsClicked"
-            class="asset-details-balance-info"
-          >
+          <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
             <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
               <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
               <formatted-amount-with-fiat-value

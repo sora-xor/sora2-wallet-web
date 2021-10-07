@@ -1,3 +1,5 @@
+export const HiddenBalance = '******';
+
 export enum RouteNames {
   WalletConnection = 'WalletConnection',
   WalletSend = 'WalletSend',
@@ -63,5 +65,3 @@ export enum FontWeightRate {
   MEDIUM = 'medium',
   NORMAL = 'normal',
 }
-
-export const HiddenBalance = '******';
