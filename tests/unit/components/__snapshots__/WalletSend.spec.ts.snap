@@ -150,8 +150,8 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
             fontsizerate="normal"
             fontweightrate="normal"
             hasfiatvalue="true"
-            isbalance="true"
             value="123.4"
+            valuecanbehidden="true"
             valueclass="wallet-send-amount-balance-value"
             withleftshift="true"
           />
@@ -316,8 +316,8 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
             fontsizerate="normal"
             fontweightrate="normal"
             hasfiatvalue="true"
-            isbalance="true"
             value="123.4"
+            valuecanbehidden="true"
             valueclass="wallet-send-amount-balance-value"
             withleftshift="true"
           />
@@ -509,8 +509,8 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
             fontsizerate="normal"
             fontweightrate="normal"
             hasfiatvalue="true"
-            isbalance="true"
             value="123.4"
+            valuecanbehidden="true"
             valueclass="wallet-send-amount-balance-value"
             withleftshift="true"
           />
@@ -679,8 +679,8 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
             fontsizerate="normal"
             fontweightrate="normal"
             hasfiatvalue="true"
-            isbalance="true"
             value="123.4"
+            valuecanbehidden="true"
             valueclass="wallet-send-amount-balance-value"
             withleftshift="true"
           />
