@@ -31,7 +31,7 @@
               </formatted-amount-with-fiat-value>
               <div class="asset-info">
                 {{ asset.name || asset.symbol }}
-                <s-tooltip :content="copyTooltip" :open-delay="200">
+                <s-tooltip :content="copyTooltip">
                   <span class="asset-id" @click="handleCopyAddress(asset.address)">
                     ({{ getFormattedAddress(asset) }})
                   </span>
