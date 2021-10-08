@@ -21,7 +21,7 @@
           :asset-symbol="assetSymbol"
           :font-size-rate="formattedFontSize"
           :font-weight-rate="formattedFontWeight"
-          :is-balance="valueCanBeHidden"
+          :value-can-be-hidden="valueCanBeHidden"
         />
         <span v-else class="info-line-value">
           {{ value }}
@@ -33,7 +33,7 @@
           with-left-shift
           :value="fiatValue"
           :font-size-rate="formattedFontSize"
-          :is-balance="valueCanBeHidden"
+          :value-can-be-hidden="valueCanBeHidden"
         />
       </template>
       <slot />

@@ -9,7 +9,7 @@
     ref="parent"
   >
     <span class="formatted-amount__value" ref="child">
-      <template v-if="!isBalance || !shouldBalanceBeHidden">
+      <template v-if="!valueCanBeHidden || !shouldBalanceBeHidden">
         <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
         <span class="formatted-amount__integer">{{ formatted.integer }}</span>
         <span v-if="!integerOnly" class="formatted-amount__decimal">
@@ -48,37 +48,37 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    * Font size rate between integer and decimal numbers' parts. Possible values: `"small"`, `"medium"`, `"normal"`.
    * By default it's set to `"normal"` and it means the same font sizes for both numbers' parts.
    */
-  @Prop({ default: FontSizeRate.NORMAL, type: String }) readonly fontSizeRate?: string;
+  @Prop({ default: FontSizeRate.NORMAL, type: String }) readonly fontSizeRate!: string;
   /**
    * Font weight rate between integer and decimal numbers' parts. Possible values: `"small"`, `"medium"`, `"normal"`.
    * By default it's set to `"normal"` and it means the same font weights for both numbers' parts.
    */
-  @Prop({ default: FontWeightRate.NORMAL, type: String }) readonly fontWeightRate?: string;
+  @Prop({ default: FontWeightRate.NORMAL, type: String }) readonly fontWeightRate!: string;
   /**
    * Amount value's asset symbol.
    */
-  @Prop({ default: '', type: String }) readonly assetSymbol?: string;
+  @Prop({ default: '', type: String }) readonly assetSymbol!: string;
   /**
    * Font size of asset symbol is the same with decimal part size.
    * Symbol value located inside formatted-amount__decimal container at the HTML structure.
    */
-  @Prop({ default: false, type: Boolean }) readonly symbolAsDecimal?: boolean;
+  @Prop({ default: false, type: Boolean }) readonly symbolAsDecimal!: boolean;
   /**
    * Adds special class and styles to formatted number to convert in to Fiat value.
    */
-  @Prop({ default: false, type: Boolean }) readonly isFiatValue?: boolean;
+  @Prop({ default: false, type: Boolean }) readonly isFiatValue!: boolean;
   /**
-   * Define directly that this field displays account balance which can be hidden.
+   * Define directly that this field displays value which can be hidden by hide balances button.
    */
-  @Prop({ default: false, type: Boolean }) readonly isBalance?: boolean;
+  @Prop({ default: false, type: Boolean }) readonly valueCanBeHidden!: boolean;
   /**
    * Fills only intger part if we don't need decimals value.
    */
-  @Prop({ default: false, type: Boolean }) readonly integerOnly?: boolean;
+  @Prop({ default: false, type: Boolean }) readonly integerOnly!: boolean;
   /**
    * Added special class to left shifting for Fiat value if needed (the shift is the same in all screens).
    */
-  @Prop({ default: false, type: Boolean }) readonly withLeftShift?: boolean;
+  @Prop({ default: false, type: Boolean }) readonly withLeftShift!: boolean;
 
   @Getter shouldBalanceBeHidden!: boolean;
 

@@ -16,7 +16,7 @@
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
         <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
           <formatted-amount
-            is-balance
+            value-can-be-hidden
             symbol-as-decimal
             :value="balance"
             :font-size-rate="FontSizeRate.SMALL"
@@ -27,7 +27,7 @@
         </div>
         <formatted-amount
           v-if="price"
-          is-balance
+          value-can-be-hidden
           is-fiat-value
           :value="getFiatBalance(asset)"
           :font-size-rate="FontSizeRate.MEDIUM"
@@ -52,7 +52,7 @@
             <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
               <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
               <formatted-amount-with-fiat-value
-                is-balance
+                value-can-be-hidden
                 value-class="balance-value"
                 :value="formatBalance(asset.balance[type])"
                 :font-size-rate="FontSizeRate.MEDIUM"
@@ -66,7 +66,7 @@
             <div class="balance s-flex p4">
               <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
               <formatted-amount-with-fiat-value
-                is-balance
+                value-can-be-hidden
                 value-class="balance-value"
                 :value="totalBalance"
                 :font-size-rate="FontSizeRate.MEDIUM"

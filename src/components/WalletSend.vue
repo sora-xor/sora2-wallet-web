@@ -35,7 +35,7 @@
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <formatted-amount-with-fiat-value
-                is-balance
+                value-can-be-hidden
                 fiat-format-as-value
                 with-left-shift
                 value-class="wallet-send-amount-balance-value"

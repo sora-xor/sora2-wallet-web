@@ -23,7 +23,7 @@
         <info-line
           v-if="selectedTransaction.amount"
           is-formatted
-          is-balance
+          value-can-be-hidden
           :label="t('transaction.amount')"
           :value="transactionAmount"
           :asset-symbol="selectedTransaction.symbol"
@@ -31,7 +31,7 @@
         <info-line
           v-if="selectedTransaction.amount2"
           is-formatted
-          is-balance
+          value-can-be-hidden
           :label="t('transaction.amount2')"
           :value="transactionAmount2"
           :asset-symbol="selectedTransaction.symbol2"
