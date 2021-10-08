@@ -20,7 +20,7 @@
           >
             <div class="history-item-info">
               <div class="history-item-operation ch3" :data-type="item.type">{{ t(`operations.${item.type}`) }}</div>
-              <div class="history-item-title p4">{{ getMessage(item) }}</div>
+              <div class="history-item-title p4">{{ getMessage(item, shouldBalanceBeHidden) }}</div>
               <s-icon
                 v-if="item.status !== TransactionStatus.Finalized"
                 :class="getStatusClass(item.status)"
@@ -34,7 +34,7 @@
       </div>
       <s-pagination
         v-if="hasHistory"
-        :layout="'total, prev, next'"
+        layout="total, prev, next"
         :current-page.sync="currentPage"
         :page-size="pageAmount"
         :total="total"
@@ -58,12 +58,11 @@ import { formatDate, getStatusIcon, getStatusClass } from '../util';
 import { RouteNames } from '../consts';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
 import { historyElementsFilter } from '../services/subquery/queries/historyElements';
-import type { Account } from '../types/common';
 
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
   @Getter activity!: Array<History>;
-  @Getter account!: Account;
+  @Getter shouldBalanceBeHidden!: boolean;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
 
@@ -183,7 +182,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       operations.length !== parsedHistoryOperations.length ||
       !operations.every((item) => !!parsedHistoryOperations.find((el) => el === item));
 
-    const timestamp = operationsChanged || !activity.length ? 0 : api.historySyncTimestamp;
+    const isPartialHistoryRequest = !!assetAddress;
+    const timestamp = isPartialHistoryRequest || operationsChanged || !activity.length ? 0 : api.historySyncTimestamp;
     const filter = historyElementsFilter(address, { assetAddress, timestamp });
     const variables = {
       filter, // filter by account & asset
@@ -193,9 +193,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
 
       if (edges.length !== 0) {
-        const latestTimestamp = edges[0].node.timestamp;
-
-        api.historySyncTimestamp = +latestTimestamp;
+        if (!isPartialHistoryRequest) {
+          const latestTimestamp = edges[0].node.timestamp;
+          api.historySyncTimestamp = +latestTimestamp;
+        }
 
         for (const edge of edges) {
           const transaction = edge.node;
@@ -213,7 +214,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
         api.historySyncTimestamp = timestamp;
       }
 
-      if (operationsChanged) {
+      if (operationsChanged && !isPartialHistoryRequest) {
         api.historySyncOperations = operations;
       }
     } catch (error) {

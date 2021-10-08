@@ -8,6 +8,7 @@ import { delay, formatAddress, groupRewardsByAssetsList } from '../../util';
 import TranslationMixin from './TranslationMixin';
 import LoadingMixin from './LoadingMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
+import { HiddenValue } from '../../consts';
 
 import type { Account } from '../../types/common';
 
@@ -22,7 +23,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
   @Action addActiveTransaction!: (tx: History) => Promise<void>;
   @Action removeActiveTransaction!: (tx: History) => Promise<void>;
 
-  getMessage(value?: History): string {
+  getMessage(value?: History, hideAmountValues = false): string {
     if (!value || !Object.values(Operation).includes(value.type as Operation)) {
       return '';
     }
@@ -62,7 +63,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     }
     if (value.type === Operation.ClaimRewards) {
       params.rewards = groupRewardsByAssetsList(params.rewards)
-        .map(({ amount, asset }) => `${amount} ${asset.symbol}`)
+        .map(({ amount, asset }) => (hideAmountValues ? HiddenValue : `${amount} ${asset.symbol}`))
         .join(` ${this.t('operations.andText')} `);
     }
     let status = value.status as TransactionStatus;
@@ -70,6 +71,12 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       status = TransactionStatus.Error;
     } else if (status !== TransactionStatus.Error) {
       status = TransactionStatus.Finalized;
+    }
+    if (hideAmountValues) {
+      params.amount = HiddenValue;
+      params.amount2 = HiddenValue;
+      params.symbol = value.type === Operation.RegisterAsset ? HiddenValue : '';
+      params.symbol2 = '';
     }
     return this.t(`operations.${status}.${value.type}`, params);
   }

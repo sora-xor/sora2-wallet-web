@@ -58,6 +58,10 @@ export type HistoryElementLiquidityOperation = {
   type: string;
 };
 
+export type HistoryElementAssetRegistration = {
+  assetId: string;
+};
+
 export type HistoryElement = {
   id: string;
   blockHash: string;
@@ -71,4 +75,5 @@ export type HistoryElement = {
   swap: Nullable<HistoryElementSwap>;
   transfer: Nullable<HistoryElementTransfer>;
   liquidityOperation: Nullable<HistoryElementLiquidityOperation>;
+  assetRegistration: Nullable<HistoryElementAssetRegistration>;
 };

@@ -19,7 +19,8 @@
     "types": [
       "webpack-env",
       "element-ui",
-      "jest"
+      "jest",
+      "cypress"
     ],
     "paths": {
       "@/*": [

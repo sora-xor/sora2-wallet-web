@@ -7,10 +7,11 @@ import type { NetworkFeesObject } from '@sora-substrate/util';
 
 import { api } from '../api';
 import type { WalletPermissions, SoraNetwork } from '../consts';
+import { storage } from '../util/storage';
 
 const types = flow(
   flatMap((x) => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
-  concat(['SET_PERMISSIONS', 'SET_SORA_NETWORK', 'UPDATE_NETWORK_FEES']),
+  concat(['SET_PERMISSIONS', 'SET_SORA_NETWORK', 'UPDATE_NETWORK_FEES', 'TOGGLE_HIDE_BALANCE']),
   map((x) => [x, x]),
   fromPairs
 )([]);
@@ -19,6 +20,7 @@ type SettingsState = {
   permissions: WalletPermissions;
   soraNetwork: Nullable<SoraNetwork>;
   networkFees: NetworkFeesObject;
+  shouldBalanceBeHidden: boolean;
 };
 
 function initialState(): SettingsState {
@@ -29,6 +31,7 @@ function initialState(): SettingsState {
     },
     soraNetwork: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
+    shouldBalanceBeHidden: Boolean(JSON.parse(storage.get('shouldBalanceBeHidden'))) || false,
   };
 }
 
@@ -43,6 +46,9 @@ const getters = {
   },
   networkFees(state: SettingsState): NetworkFeesObject {
     return state.networkFees;
+  },
+  shouldBalanceBeHidden(state: SettingsState): boolean {
+    return state.shouldBalanceBeHidden;
   },
 };
 
@@ -62,6 +68,11 @@ const mutations = {
   [types.UPDATE_NETWORK_FEES](state: SettingsState, fees = {} as NetworkFeesObject) {
     state.networkFees = { ...fees };
   },
+
+  [types.TOGGLE_HIDE_BALANCE](state: SettingsState) {
+    state.shouldBalanceBeHidden = !state.shouldBalanceBeHidden;
+    storage.set('shouldBalanceBeHidden', state.shouldBalanceBeHidden);
+  },
 };
 
 const actions = {
@@ -75,6 +86,10 @@ const actions = {
 
   updateNetworkFees({ commit }) {
     commit(types.UPDATE_NETWORK_FEES, api.NetworkFee);
+  },
+
+  toggleHideBalance({ commit }) {
+    commit(types.TOGGLE_HIDE_BALANCE);
   },
 };
 

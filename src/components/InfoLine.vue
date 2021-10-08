@@ -21,6 +21,7 @@
           :asset-symbol="assetSymbol"
           :font-size-rate="formattedFontSize"
           :font-weight-rate="formattedFontWeight"
+          :value-can-be-hidden="valueCanBeHidden"
         />
         <span v-else class="info-line-value">
           {{ value }}
@@ -28,10 +29,11 @@
         </span>
         <formatted-amount
           v-if="fiatValue"
-          :value="fiatValue"
           is-fiat-value
-          :font-size-rate="formattedFontSize"
           with-left-shift
+          :value="fiatValue"
+          :font-size-rate="formattedFontSize"
+          :value-can-be-hidden="valueCanBeHidden"
         />
       </template>
       <slot />
@@ -50,11 +52,15 @@ import { FontSizeRate, FontWeightRate } from '../consts';
 })
 export default class InfoLine extends Vue {
   @Prop({ default: '', type: String }) readonly label!: string;
-  @Prop({ default: '', type: String }) readonly labelTooltip?: string;
+  @Prop({ default: '', type: String }) readonly labelTooltip!: string;
   @Prop({ default: '' }) readonly value!: string;
-  @Prop({ default: '', type: String }) readonly assetSymbol?: string;
-  @Prop({ default: false, type: Boolean }) readonly isFormatted?: boolean;
-  @Prop({ default: '', type: String }) readonly fiatValue?: string;
+  @Prop({ default: '', type: String }) readonly assetSymbol!: string;
+  @Prop({ default: false, type: Boolean }) readonly isFormatted!: boolean;
+  @Prop({ default: '', type: String }) readonly fiatValue!: string;
+  /**
+   * Define directly that this field displays value which can be hidden by hide balances button.
+   */
+  @Prop({ default: false, type: Boolean }) readonly valueCanBeHidden!: boolean;
 
   get isValueExists(): boolean {
     if (this.value === 'NaN' || this.value.includes('Infinity')) {

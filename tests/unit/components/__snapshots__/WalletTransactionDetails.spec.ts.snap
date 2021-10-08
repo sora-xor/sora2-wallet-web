@@ -56,6 +56,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         label=""
         labeltooltip=""
         value="0.1"
+        valuecanbehidden="true"
       />
        
       <info-line-stub
@@ -65,6 +66,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         label=""
         labeltooltip=""
         value="0.9"
+        valuecanbehidden="true"
       />
     </div>
      
@@ -200,6 +202,7 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
         label=""
         labeltooltip=""
         value="100.123"
+        valuecanbehidden="true"
       />
        
       <!---->
@@ -281,6 +284,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         label=""
         labeltooltip=""
         value="0.1"
+        valuecanbehidden="true"
       />
        
       <info-line-stub
@@ -290,6 +294,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         label=""
         labeltooltip=""
         value="0.9"
+        valuecanbehidden="true"
       />
     </div>
      
@@ -360,6 +365,7 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
         label=""
         labeltooltip=""
         value="0.1"
+        valuecanbehidden="true"
       />
        
       <!---->

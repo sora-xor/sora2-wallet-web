@@ -15,6 +15,7 @@ useDescribe('InfoLine.vue', InfoLine, () => {
         assetSymbol: item.assetSymbol,
         isFormatted: item.isFormatted,
         fiatValue: item.fiatValue,
+        valueCanBeHidden: item.valueCanBeHidden,
       };
       const wrapper = shallowMount(InfoLine, {
         localVue,

@@ -1,3 +1,5 @@
+export const HiddenValue = '******';
+
 export enum RouteNames {
   WalletConnection = 'WalletConnection',
   WalletSend = 'WalletSend',
