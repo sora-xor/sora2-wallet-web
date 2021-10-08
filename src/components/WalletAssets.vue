@@ -96,7 +96,7 @@ import LoadingMixin from './mixins/LoadingMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
-import { RouteNames, WalletPermissions, HiddenBalance } from '../consts';
+import { RouteNames, WalletPermissions, HiddenValue } from '../consts';
 import { getAssetIconStyles, formatAddress } from '../util';
 
 @Component({
@@ -170,7 +170,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   formatFrozenBalance(asset: AccountAsset): string {
     if (this.shouldBalanceBeHidden) {
-      return HiddenBalance;
+      return HiddenValue;
     }
     return this.formatCodecNumber(asset.balance.frozen, asset.decimals);
   }

@@ -22,17 +22,19 @@
         <info-line v-if="selectedTransaction.startTime" :label="t('transaction.startTime')" :value="transactionDate" />
         <info-line
           v-if="selectedTransaction.amount"
+          is-formatted
+          is-balance
           :label="t('transaction.amount')"
           :value="transactionAmount"
           :asset-symbol="selectedTransaction.symbol"
-          is-formatted
         />
         <info-line
           v-if="selectedTransaction.amount2"
+          is-formatted
+          is-balance
           :label="t('transaction.amount2')"
           :value="transactionAmount2"
           :asset-symbol="selectedTransaction.symbol2"
-          is-formatted
         />
       </div>
       <transaction-hash-view

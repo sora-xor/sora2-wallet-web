@@ -18,7 +18,7 @@
         </span>
         <span v-if="assetSymbol && !symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
       </template>
-      <span v-else class="formatted-amount__integer">{{ HiddenBalance }}</span>
+      <span v-else class="formatted-amount__integer">{{ HiddenValue }}</span>
       <slot />
     </span>
   </span>
@@ -29,7 +29,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
 import { FPNumber } from '@sora-substrate/util';
 
-import { FontSizeRate, FontWeightRate, HiddenBalance } from '../consts';
+import { FontSizeRate, FontWeightRate, HiddenValue } from '../consts';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 
 interface FormattedAmountValues {
@@ -39,7 +39,7 @@ interface FormattedAmountValues {
 
 @Component
 export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
-  readonly HiddenBalance = HiddenBalance;
+  readonly HiddenValue = HiddenValue;
   /**
    * Balance or Amount value.
    */

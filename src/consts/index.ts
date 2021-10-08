@@ -1,4 +1,4 @@
-export const HiddenBalance = '******';
+export const HiddenValue = '******';
 
 export enum RouteNames {
   WalletConnection = 'WalletConnection',
