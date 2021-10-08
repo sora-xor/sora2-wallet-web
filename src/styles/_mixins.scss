@@ -171,3 +171,17 @@
     }
   }
 }
+
+@mixin fadeHeight ($seconds: .3s) {
+  .fadeHeight-enter-active,
+  .fadeHeight-leave-active {
+    transition: all $seconds;
+    max-height: 200px;
+  }
+  .fadeHeight-enter,
+  .fadeHeight-leave-to
+  {
+    opacity: 0;
+    max-height: 0px;
+  }
+}

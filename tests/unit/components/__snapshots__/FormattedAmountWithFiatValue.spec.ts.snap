@@ -149,6 +149,30 @@ exports[`FormattedAmountWithFiatValue.vue [Symbol In Decimal Container]: should 
 </div>
 `;
 
+exports[`FormattedAmountWithFiatValue.vue [Value and Fiat value only, can be hidden]: should be rendered correctly 1`] = `
+<div
+  class="formatted-amount__container"
+>
+  <formatted-amount-stub
+    assetsymbol=""
+    class=""
+    fontsizerate="normal"
+    fontweightrate="normal"
+    value="1,234,567.890123"
+    valuecanbehidden="true"
+  />
+   
+  <formatted-amount-stub
+    assetsymbol=""
+    fontsizerate="normal"
+    fontweightrate="normal"
+    isfiatvalue="true"
+    value="1,234,567.890123"
+    valuecanbehidden="true"
+  />
+</div>
+`;
+
 exports[`FormattedAmountWithFiatValue.vue [Value and Fiat value only]: should be rendered correctly 1`] = `
 <div
   class="formatted-amount__container"
@@ -167,6 +191,30 @@ exports[`FormattedAmountWithFiatValue.vue [Value and Fiat value only]: should be
     fontweightrate="normal"
     isfiatvalue="true"
     value="1,234,567.890123"
+  />
+</div>
+`;
+
+exports[`FormattedAmountWithFiatValue.vue [Value only, can be hidden]: should be rendered correctly 1`] = `
+<div
+  class="formatted-amount__container"
+>
+  <formatted-amount-stub
+    assetsymbol=""
+    class=""
+    fontsizerate="normal"
+    fontweightrate="normal"
+    value="1,234,567.890123"
+    valuecanbehidden="true"
+  />
+   
+  <formatted-amount-stub
+    assetsymbol=""
+    fontsizerate="normal"
+    fontweightrate="normal"
+    isfiatvalue="true"
+    value=""
+    valuecanbehidden="true"
   />
 </div>
 `;

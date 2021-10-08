@@ -74,7 +74,7 @@ function initialState(): AccountState {
   return {
     address: storage.get('address') || '',
     name: storage.get('name') || '',
-    isExternal: Boolean(storage.get('isExternal')) || false,
+    isExternal: Boolean(JSON.parse(storage.get('isExternal'))) || false,
     accountAssets: [],
     selectedTransactionId: null,
     activity: [], // account history (without bridge)

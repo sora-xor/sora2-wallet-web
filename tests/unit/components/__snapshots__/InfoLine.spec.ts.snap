@@ -226,6 +226,38 @@ exports[`InfoLine.vue [With Fiat Value]: should be rendered correctly 1`] = `
 </div>
 `;
 
+exports[`InfoLine.vue [With Formatted & Hidden value]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <formatted-amount-stub
+      assetsymbol=""
+      class="info-line-value"
+      fontsizerate="medium"
+      fontweightrate="small"
+      value="1,234,567.890123456789"
+      valuecanbehidden="true"
+    />
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
 exports[`InfoLine.vue [With Formatted Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
