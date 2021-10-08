@@ -2,8 +2,10 @@
   <span
     v-if="value && isFiniteValue"
     :class="computedClasses"
-    @mouseenter="checkChildElementWidth"
-    @touchstart="checkChildElementWidth"
+    @mouseenter="checkWiderFlag"
+    @mouseleave="resetWiderFlag"
+    @touchstart="checkWiderFlag"
+    @touchend="resetWiderFlag"
     ref="parent"
   >
     <span class="formatted-amount__value" ref="child">
@@ -153,7 +155,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    * If the child element is wider that parent container, update isValueWider property
    * Note: parent had overflow style
    */
-  checkChildElementWidth(): void {
+  checkWiderFlag(): void {
     const { parent, child } = this.$refs;
     const { offsetWidth: parentWidth } = parent as HTMLSpanElement;
     const { offsetWidth: childWidth } = child as HTMLSpanElement;
@@ -161,6 +163,10 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
     if (childWidth > parentWidth) {
       this.isValueWider = true;
     }
+  }
+
+  resetWiderFlag(): void {
+    this.isValueWider = false;
   }
 }
 </script>
