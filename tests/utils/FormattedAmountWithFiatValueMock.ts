@@ -16,6 +16,7 @@ interface FormattedAmountWithFiatValue {
   fiatFontSizeRate?: FontSizeRate;
   fiatFontWeightRate?: FontWeightRate;
   withLeftShift?: boolean;
+  valueCanBeHidden?: boolean;
 }
 
 export const MOCK_FORMATTED_AMOUNT_WITH_FIAT_VALUE: Array<FormattedAmountWithFiatValue> = [
@@ -28,9 +29,20 @@ export const MOCK_FORMATTED_AMOUNT_WITH_FIAT_VALUE: Array<FormattedAmountWithFia
     value: '1,234,567.890123',
   },
   {
+    title: 'Value only, can be hidden',
+    value: '1,234,567.890123',
+    valueCanBeHidden: true,
+  },
+  {
     title: 'Value and Fiat value only',
     value: '1,234,567.890123',
     fiatValue: '1,234,567.890123',
+  },
+  {
+    title: 'Value and Fiat value only, can be hidden',
+    value: '1,234,567.890123',
+    fiatValue: '1,234,567.890123',
+    valueCanBeHidden: true,
   },
   {
     title: 'With value class',

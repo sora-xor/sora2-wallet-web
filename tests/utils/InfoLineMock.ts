@@ -8,6 +8,7 @@ interface InfoLine {
   assetSymbol?: string;
   isFormatted?: boolean;
   fiatValue?: string;
+  valueCanBeHidden?: boolean;
 }
 
 export const MOCK_INFO_LINE: Array<InfoLine> = [
@@ -38,6 +39,13 @@ export const MOCK_INFO_LINE: Array<InfoLine> = [
     label: 'Label',
     value: '1,234,567.890123456789',
     isFormatted: true,
+  },
+  {
+    title: 'With Formatted & Hidden value',
+    label: 'Label',
+    value: '1,234,567.890123456789',
+    isFormatted: true,
+    valueCanBeHidden: true,
   },
   {
     title: 'With Fiat Value',
