@@ -141,18 +141,18 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
             
           </span>
            
-          <span
-            class="wallet-send-amount-balance-value"
-          >
-            123.4
-          </span>
-           
-          <formatted-amount-stub
-            assetsymbol=""
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="XOR"
+            fiatfontsizerate="normal"
+            fiatfontweightrate="normal"
+            fiatformatasvalue="true"
+            fiatvalue="151.782"
             fontsizerate="normal"
             fontweightrate="normal"
-            isfiatvalue="true"
-            value="151.782"
+            hasfiatvalue="true"
+            value="123.4"
+            valuecanbehidden="true"
+            valueclass="wallet-send-amount-balance-value"
             withleftshift="true"
           />
         </div>
@@ -307,18 +307,18 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
             
           </span>
            
-          <span
-            class="wallet-send-amount-balance-value"
-          >
-            123.4
-          </span>
-           
-          <formatted-amount-stub
-            assetsymbol=""
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="XOR"
+            fiatfontsizerate="normal"
+            fiatfontweightrate="normal"
+            fiatformatasvalue="true"
+            fiatvalue="151.782"
             fontsizerate="normal"
             fontweightrate="normal"
-            isfiatvalue="true"
-            value="151.782"
+            hasfiatvalue="true"
+            value="123.4"
+            valuecanbehidden="true"
+            valueclass="wallet-send-amount-balance-value"
             withleftshift="true"
           />
         </div>
@@ -500,18 +500,18 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
             
           </span>
            
-          <span
-            class="wallet-send-amount-balance-value"
-          >
-            123.4
-          </span>
-           
-          <formatted-amount-stub
-            assetsymbol=""
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="XOR"
+            fiatfontsizerate="normal"
+            fiatfontweightrate="normal"
+            fiatformatasvalue="true"
+            fiatvalue="151.782"
             fontsizerate="normal"
             fontweightrate="normal"
-            isfiatvalue="true"
-            value="151.782"
+            hasfiatvalue="true"
+            value="123.4"
+            valuecanbehidden="true"
+            valueclass="wallet-send-amount-balance-value"
             withleftshift="true"
           />
         </div>
@@ -670,18 +670,18 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
             
           </span>
            
-          <span
-            class="wallet-send-amount-balance-value"
-          >
-            123.4
-          </span>
-           
-          <formatted-amount-stub
-            assetsymbol=""
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="XOR"
+            fiatfontsizerate="normal"
+            fiatfontweightrate="normal"
+            fiatformatasvalue="true"
+            fiatvalue="151.782"
             fontsizerate="normal"
             fontweightrate="normal"
-            isfiatvalue="true"
-            value="151.782"
+            hasfiatvalue="true"
+            value="123.4"
+            valuecanbehidden="true"
+            valueclass="wallet-send-amount-balance-value"
             withleftshift="true"
           />
         </div>

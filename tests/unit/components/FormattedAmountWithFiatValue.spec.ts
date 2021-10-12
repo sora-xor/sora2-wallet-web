@@ -21,6 +21,7 @@ useDescribe('FormattedAmountWithFiatValue.vue', FormattedAmountWithFiatValue, ()
         fiatFontSizeRate: item.fiatFontSizeRate,
         fiatFontWeightRate: item.fiatFontWeightRate,
         withLeftShift: item.withLeftShift,
+        valueCanBeHidden: item.valueCanBeHidden,
       };
       const wrapper = shallowMount(FormattedAmountWithFiatValue, {
         localVue,

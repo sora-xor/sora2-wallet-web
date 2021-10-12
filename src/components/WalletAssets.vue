@@ -3,7 +3,7 @@
     <template v-if="assetsFiatAmount">
       <div class="total-fiat-values">
         <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
-        <formatted-amount :value="assetsFiatAmount" is-fiat-value integer-only with-left-shift />
+        <formatted-amount value-can-be-hidden is-fiat-value integer-only with-left-shift :value="assetsFiatAmount" />
       </div>
       <s-divider class="wallet-assets-item_divider" />
     </template>
@@ -14,6 +14,7 @@
             <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
             <div class="asset s-flex">
               <formatted-amount-with-fiat-value
+                value-can-be-hidden
                 value-class="asset-value"
                 :value="getBalance(asset)"
                 :font-size-rate="FontSizeRate.SMALL"
@@ -30,7 +31,7 @@
               </formatted-amount-with-fiat-value>
               <div class="asset-info">
                 {{ asset.name || asset.symbol }}
-                <s-tooltip :content="copyTooltip" :open-delay="200">
+                <s-tooltip :content="copyTooltip">
                   <span class="asset-id" @click="handleCopyAddress(asset.address)">
                     ({{ getFormattedAddress(asset) }})
                   </span>
@@ -95,7 +96,7 @@ import LoadingMixin from './mixins/LoadingMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
-import { RouteNames, WalletPermissions, FontSizeRate, FontWeightRate } from '../consts';
+import { RouteNames, WalletPermissions, HiddenValue } from '../consts';
 import { getAssetIconStyles, formatAddress } from '../util';
 
 @Component({
@@ -105,12 +106,10 @@ import { getAssetIconStyles, formatAddress } from '../util';
   },
 })
 export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, CopyAddressMixin) {
-  readonly FontSizeRate = FontSizeRate;
-  readonly FontWeightRate = FontWeightRate;
-
   @Getter accountAssets!: Array<AccountAsset>;
   @Getter withoutFiatAndApy!: boolean;
   @Getter permissions!: WalletPermissions;
+  @Getter shouldBalanceBeHidden!: boolean;
   @Action getAccountAssets!: AsyncVoidFn;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
@@ -170,6 +169,9 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   formatFrozenBalance(asset: AccountAsset): string {
+    if (this.shouldBalanceBeHidden) {
+      return HiddenValue;
+    }
     return this.formatCodecNumber(asset.balance.frozen, asset.decimals);
   }
 

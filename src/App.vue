@@ -1,9 +1,12 @@
 <template>
-  <s-design-system-provider :value="libraryDesignSystem" id="app">
+  <s-design-system-provider :value="libraryDesignSystem" id="app" class="app-wrapper">
     <s-button class="theme-switch" @click="changeTheme">{{ libraryTheme }} theme</s-button>
     <div class="wallet-wrapper s-flex">
       <sora-wallet />
     </div>
+    <s-button class="hide-balance-switch" @click="toggleHideBalance">
+      {{ shouldBalanceBeHidden ? 'hidden' : 'visible' }} balances
+    </s-button>
   </s-design-system-provider>
 </template>
 
@@ -26,6 +29,9 @@ import { SoraNetwork } from './consts';
   components: { SoraWallet },
 })
 export default class App extends Mixins(TransactionMixin) {
+  @Getter shouldBalanceBeHidden!: boolean;
+  @Action toggleHideBalance!: AsyncVoidFn;
+
   @Getter libraryDesignSystem!: DesignSystem;
   @Getter libraryTheme!: Theme;
   @Getter firstReadyTransaction!: Nullable<History>;
@@ -147,5 +153,14 @@ html {
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+.app-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.theme-switch,
+.hide-balance-switch {
+  width: 185px;
+  margin: 10px;
 }
 </style>

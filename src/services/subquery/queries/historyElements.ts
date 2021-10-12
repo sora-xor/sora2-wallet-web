@@ -31,6 +31,7 @@ query HistoryElements (
         swap
         transfer
         liquidityOperation
+        assetRegistration
       }
     }
   }
@@ -38,8 +39,11 @@ query HistoryElements (
 `;
 
 const createAssetFilters = (assetAddress: string): Array<any> =>
-  ['swap', 'transfer', 'liquidityOperation'].reduce<any[]>((result, method) => {
-    const attributes = method === 'transfer' ? ['assetId'] : ['baseAssetId', 'targetAssetId'];
+  ['swap', 'transfer', 'liquidityOperation', 'assetRegistration'].reduce<any[]>((result, method) => {
+    const attributes = ['transfer', 'assetRegistration'].includes(method)
+      ? ['assetId']
+      : ['baseAssetId', 'targetAssetId'];
+
     attributes.forEach((attr) => {
       result.push({
         [method]: {
@@ -52,32 +56,35 @@ const createAssetFilters = (assetAddress: string): Array<any> =>
     return result;
   }, []);
 
-export const historyElementsFilter = (address: string, { assetAddress = '', timestamp = 0 }): any => {
+export const historyElementsFilter = (address = '', { assetAddress = '', timestamp = 0 } = {}): any => {
   const filter: any = {
     and: [
       {
-        or: [
-          {
-            address: {
-              equalTo: address,
-            },
-          },
-          {
-            transfer: {
-              contains: {
-                to: address,
-              },
-            },
-          },
-        ],
-      },
-      {
         method: {
-          in: ['swap', 'transfer', 'depositLiquidity', 'withdrawLiquidity'],
+          in: ['swap', 'transfer', 'depositLiquidity', 'withdrawLiquidity', 'register'],
         },
       },
     ],
   };
+
+  if (address) {
+    filter.and.push({
+      or: [
+        {
+          address: {
+            equalTo: address,
+          },
+        },
+        {
+          transfer: {
+            contains: {
+              to: address,
+            },
+          },
+        },
+      ],
+    });
+  }
 
   if (assetAddress) {
     filter.and.push({
