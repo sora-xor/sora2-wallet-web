@@ -48,6 +48,12 @@ export const MOCK_INFO_LINE: Array<InfoLine> = [
     valueCanBeHidden: true,
   },
   {
+    title: 'With Hidden value',
+    label: 'Label',
+    value: '1,234,567.890123456789',
+    valueCanBeHidden: true,
+  },
+  {
     title: 'With Fiat Value',
     label: 'Label',
     value: '1,234,567.890123',

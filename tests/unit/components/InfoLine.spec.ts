@@ -1,3 +1,5 @@
+import omit from 'lodash/fp/omit';
+import Vuex from 'vuex';
 import { shallowMount } from '@vue/test-utils';
 
 import { useDescribe, localVue } from '../../utils';
@@ -6,19 +8,20 @@ import { MOCK_INFO_LINE } from '../../utils/InfoLineMock';
 import InfoLine from '@/components/InfoLine.vue';
 
 useDescribe('InfoLine.vue', InfoLine, () => {
+  const store = new Vuex.Store({
+    getters: {
+      shouldBalanceBeHidden: () => true,
+    },
+  });
+
   MOCK_INFO_LINE.map((item) =>
-    it(`[${item.title}]: should be rendered correctly`, () => {
-      const propsData = {
-        label: item.label,
-        labelTooltip: item.labelTooltip,
-        value: item.value,
-        assetSymbol: item.assetSymbol,
-        isFormatted: item.isFormatted,
-        fiatValue: item.fiatValue,
-        valueCanBeHidden: item.valueCanBeHidden,
-      };
+    it(`[${item.title}${
+      item.valueCanBeHidden ? '; hide balances button was clicked' : ''
+    }]: should be rendered correctly`, () => {
+      const propsData = omit(['title'], item);
       const wrapper = shallowMount(InfoLine, {
         localVue,
+        store,
         propsData,
       });
       expect(wrapper.element).toMatchSnapshot();

@@ -226,7 +226,7 @@ exports[`InfoLine.vue [With Fiat Value]: should be rendered correctly 1`] = `
 </div>
 `;
 
-exports[`InfoLine.vue [With Formatted & Hidden value]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue [With Formatted & Hidden value; hide balances button was clicked]: should be rendered correctly 1`] = `
 <div
   class="info-line"
 >
@@ -282,6 +282,35 @@ exports[`InfoLine.vue [With Formatted Value]: should be rendered correctly 1`] =
       fontweightrate="small"
       value="1,234,567.890123456789"
     />
+     
+    <!---->
+     
+  </div>
+</div>
+`;
+
+exports[`InfoLine.vue [With Hidden value; hide balances button was clicked]: should be rendered correctly 1`] = `
+<div
+  class="info-line"
+>
+   
+  <span
+    class="info-line-label"
+  >
+    Label
+  </span>
+   
+  <!---->
+   
+  <div
+    class="info-line-content"
+  >
+     
+    <span
+      class="info-line-value"
+    >
+      ******
+    </span>
      
     <!---->
      
