@@ -36,6 +36,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
           fontweightrate="normal"
           symbolasdecimal="true"
           value="123.4"
+          valuecanbehidden="true"
         >
           <s-icon-stub
             name="chevron-down-rounded-16"
@@ -50,6 +51,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         fontweightrate="normal"
         isfiatvalue="true"
         value="151.782"
+        valuecanbehidden="true"
       />
        
       <div
@@ -152,7 +154,11 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         </s-button-stub>
       </div>
        
-      <!---->
+      <transition-stub
+        name="fadeHeight"
+      >
+        <!---->
+      </transition-stub>
     </div>
   </s-card-stub>
    
@@ -162,7 +168,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
 </wallet-base-stub>
 `;
 
-exports[`WalletAssetDetails.vue when token is XOR and button balance details clicked should show detailed balance info 1`] = `
+exports[`WalletAssetDetails.vue should show detailed balance info when button clicked 1`] = `
 <wallet-base-stub
   actionicon="basic-eye-24"
   actiontooltip="asset.remove"
@@ -198,6 +204,7 @@ exports[`WalletAssetDetails.vue when token is XOR and button balance details cli
           fontweightrate="normal"
           symbolasdecimal="true"
           value="123.4"
+          valuecanbehidden="true"
         >
           <s-icon-stub
             name="chevron-down-rounded-16"
@@ -212,6 +219,7 @@ exports[`WalletAssetDetails.vue when token is XOR and button balance details cli
         fontweightrate="normal"
         isfiatvalue="true"
         value="151.782"
+        valuecanbehidden="true"
       />
        
       <div
@@ -314,126 +322,135 @@ exports[`WalletAssetDetails.vue when token is XOR and button balance details cli
         </s-button-stub>
       </div>
        
-      <div
-        class="asset-details-balance-info"
+      <transition-stub
+        name="fadeHeight"
       >
         <div
-          class="balance s-flex p4"
+          class="asset-details-balance-info"
         >
           <div
-            class="balance-label"
+            class="balance s-flex p4"
           >
-            
+            <div
+              class="balance-label"
+            >
+              
+            </div>
+             
+            <formatted-amount-with-fiat-value-stub
+              assetsymbol="XOR"
+              fiatfontsizerate="normal"
+              fiatfontweightrate="normal"
+              fiatformatasvalue="true"
+              fiatvalue="151.782"
+              fontsizerate="medium"
+              fontweightrate="small"
+              hasfiatvalue="true"
+              value="123.4"
+              valuecanbehidden="true"
+              valueclass="balance-value"
+              withleftshift="true"
+            />
           </div>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="151.782"
-            fontsizerate="medium"
-            fontweightrate="small"
-            hasfiatvalue="true"
-            value="123.4"
-            valueclass="balance-value"
-            withleftshift="true"
-          />
-        </div>
-        <div
-          class="balance s-flex p4"
-        >
           <div
-            class="balance-label"
+            class="balance s-flex p4"
           >
-            
+            <div
+              class="balance-label"
+            >
+              
+            </div>
+             
+            <formatted-amount-with-fiat-value-stub
+              assetsymbol="XOR"
+              fiatfontsizerate="normal"
+              fiatfontweightrate="normal"
+              fiatformatasvalue="true"
+              fiatvalue="0"
+              fontsizerate="medium"
+              fontweightrate="small"
+              hasfiatvalue="true"
+              value="0"
+              valuecanbehidden="true"
+              valueclass="balance-value"
+              withleftshift="true"
+            />
           </div>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="0"
-            fontsizerate="medium"
-            fontweightrate="small"
-            hasfiatvalue="true"
-            value="0"
-            valueclass="balance-value"
-            withleftshift="true"
-          />
-        </div>
-        <div
-          class="balance s-flex p4"
-        >
           <div
-            class="balance-label"
+            class="balance s-flex p4"
           >
-            
+            <div
+              class="balance-label"
+            >
+              
+            </div>
+             
+            <formatted-amount-with-fiat-value-stub
+              assetsymbol="XOR"
+              fiatfontsizerate="normal"
+              fiatfontweightrate="normal"
+              fiatformatasvalue="true"
+              fiatvalue="0"
+              fontsizerate="medium"
+              fontweightrate="small"
+              hasfiatvalue="true"
+              value="0"
+              valuecanbehidden="true"
+              valueclass="balance-value"
+              withleftshift="true"
+            />
           </div>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="0"
-            fontsizerate="medium"
-            fontweightrate="small"
-            hasfiatvalue="true"
-            value="0"
-            valueclass="balance-value"
-            withleftshift="true"
-          />
-        </div>
-        <div
-          class="balance s-flex p4"
-        >
           <div
-            class="balance-label"
+            class="balance s-flex p4"
           >
-            
+            <div
+              class="balance-label"
+            >
+              
+            </div>
+             
+            <formatted-amount-with-fiat-value-stub
+              assetsymbol="XOR"
+              fiatfontsizerate="normal"
+              fiatfontweightrate="normal"
+              fiatformatasvalue="true"
+              fiatvalue="0"
+              fontsizerate="medium"
+              fontweightrate="small"
+              hasfiatvalue="true"
+              value="0"
+              valuecanbehidden="true"
+              valueclass="balance-value"
+              withleftshift="true"
+            />
           </div>
            
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="0"
-            fontsizerate="medium"
-            fontweightrate="small"
-            hasfiatvalue="true"
-            value="0"
-            valueclass="balance-value"
-            withleftshift="true"
-          />
-        </div>
-         
-        <div
-          class="balance s-flex p4"
-        >
           <div
-            class="balance-label balance-label--total"
+            class="balance s-flex p4"
           >
-            
+            <div
+              class="balance-label balance-label--total"
+            >
+              
+            </div>
+             
+            <formatted-amount-with-fiat-value-stub
+              assetsymbol="XOR"
+              fiatfontsizerate="normal"
+              fiatfontweightrate="normal"
+              fiatformatasvalue="true"
+              fiatvalue="151.782"
+              fontsizerate="medium"
+              fontweightrate="small"
+              hasfiatvalue="true"
+              value="123.4"
+              valuecanbehidden="true"
+              valueclass="balance-value"
+              withleftshift="true"
+            />
           </div>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="151.782"
-            fontsizerate="medium"
-            fontweightrate="small"
-            hasfiatvalue="true"
-            value="123.4"
-            valueclass="balance-value"
-            withleftshift="true"
-          />
         </div>
-      </div>
+      </transition-stub>
     </div>
   </s-card-stub>
    

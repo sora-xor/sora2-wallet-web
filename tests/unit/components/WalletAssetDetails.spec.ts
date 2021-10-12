@@ -10,7 +10,7 @@ const createStore = (isNotXor = false) =>
   new Vuex.Store({
     getters: {
       accountAssets: () => MOCK_ACCOUNT_ASSETS,
-      currentRouteParams: () => ({ asset: MOCK_ACCOUNT_ASSETS[Number(isNotXor) | 0] }),
+      currentRouteParams: () => ({ asset: MOCK_ACCOUNT_ASSETS[Number(isNotXor)] }),
       activity: () => MOCK_HISTORY,
       fiatPriceAndApyObject: () => MOCK_FIAT_PRICE_AND_APY_OBJECT,
       account: () => MOCK_ACCOUNT,
@@ -24,25 +24,21 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  describe('when token is XOR and button balance details clicked', () => {
-    it('should show detailed balance info', async () => {
-      const wrapper = shallowMount(WalletAssetDetails, { localVue, store: createStore() });
-      const el = wrapper.find('.asset-details-balance');
+  it('should show detailed balance info when button clicked', async () => {
+    const wrapper = shallowMount(WalletAssetDetails, { localVue, store: createStore() });
+    const el = wrapper.find('.asset-details-balance');
 
-      await el.trigger('click');
+    await el.trigger('click');
 
-      expect(wrapper.element).toMatchSnapshot();
-    });
+    expect(wrapper.element).toMatchSnapshot();
   });
 
-  describe('when token is not XOR', () => {
-    it('should not show balance details button', () => {
-      const isNotXorToken = true;
-      const store = createStore(isNotXorToken);
-      const wrapper = shallowMount(WalletAssetDetails, { localVue, store });
-      const btnBalanceDetails = wrapper.find('.asset-details-balance--clickable');
+  it('should not show balance details button', () => {
+    const isNotXorToken = true;
+    const store = createStore(isNotXorToken);
+    const wrapper = shallowMount(WalletAssetDetails, { localVue, store });
+    const btnBalanceDetails = wrapper.find('.asset-details-balance--clickable');
 
-      expect(btnBalanceDetails.exists()).toBeFalse();
-    });
+    expect(btnBalanceDetails.exists()).toBeFalse();
   });
 });

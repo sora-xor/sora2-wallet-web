@@ -47,62 +47,56 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  describe('when showControls prop is passed', () => {
-    it('should render account switch button while true', () => {
-      const switchBtn = wrapper.find('.account-switch');
+  it('should render account switch button when prop is true', () => {
+    const switchBtn = wrapper.find('.account-switch');
 
-      expect(switchBtn.exists()).toBeTrue();
-    });
-
-    it('should not render account switch button while false', () => {
-      const wrapper = shallowMount(WalletAccount, {
-        ...wrapperOptions,
-        propsData: {
-          showControls: false,
-          polkadotAccount,
-        },
-      });
-
-      const switchBtn = wrapper.find('.account-switch');
-
-      expect(switchBtn.exists()).toBeFalse();
-      expect(wrapper.element).toMatchSnapshot();
-    });
+    expect(switchBtn.exists()).toBeTrue();
   });
 
-  describe('when polkadotAccount prop is passed', () => {
-    it('account should have name', () => {
-      const div = wrapper.find('.account-credentials_name');
-
-      expect(div.text()).toMatch(MOCK_ACCOUNT_POLKADOT.name);
+  it('should not render account switch button while false', () => {
+    const wrapper = shallowMount(WalletAccount, {
+      ...wrapperOptions,
+      propsData: {
+        showControls: false,
+        polkadotAccount,
+      },
     });
 
-    it('account should have formatted address', () => {
-      const div = wrapper.find('.account-credentials_address');
+    const switchBtn = wrapper.find('.account-switch');
 
-      expect(div.text()).toBe(MOCK_ADDRESS.formatted);
-    });
+    expect(switchBtn.exists()).toBeFalse();
+    expect(wrapper.element).toMatchSnapshot();
   });
 
-  describe('when polkadotAccount prop is not passed', () => {
-    it('should use general account name and address', () => {
-      const wrapper = shallowMount(WalletAccount, {
-        ...wrapperOptions,
-        propsData: {
-          showControls: true,
-          polkadotAccount: null,
-        },
-      });
+  it('account should have name', () => {
+    const div = wrapper.find('.account-credentials_name');
 
-      const divName = wrapper.find('.account-credentials_name');
-      const divAddressText = wrapper.find('.account-credentials_address').text();
-      const startLine = divAddressText.substring(0, 12);
-      const endLine = divAddressText.substring(15);
-      const accountGetter = wrapper.vm.$store.getters.account;
+    expect(div.text()).toMatch(MOCK_ACCOUNT_POLKADOT.name);
+  });
 
-      expect(accountGetter.name).toBe(divName.text());
-      expect(accountGetter.address).toStartWith(startLine);
-      expect(accountGetter.address).toEndWith(endLine);
+  it('account should have formatted address', () => {
+    const div = wrapper.find('.account-credentials_address');
+
+    expect(div.text()).toBe(MOCK_ADDRESS.formatted);
+  });
+
+  it('should use general account name and address', () => {
+    const wrapper = shallowMount(WalletAccount, {
+      ...wrapperOptions,
+      propsData: {
+        showControls: true,
+        polkadotAccount: null,
+      },
     });
+
+    const divName = wrapper.find('.account-credentials_name');
+    const divAddressText = wrapper.find('.account-credentials_address').text();
+    const startLine = divAddressText.substring(0, 12);
+    const endLine = divAddressText.substring(15);
+    const accountGetter = wrapper.vm.$store.getters.account;
+
+    expect(accountGetter.name).toBe(divName.text());
+    expect(accountGetter.address).toStartWith(startLine);
+    expect(accountGetter.address).toEndWith(endLine);
   });
 });
