@@ -23,10 +23,11 @@
           :font-weight-rate="formattedFontWeight"
           :value-can-be-hidden="valueCanBeHidden"
         />
-        <span v-else class="info-line-value">
+        <span v-else-if="!valueCanBeHidden || !shouldBalanceBeHidden" class="info-line-value">
           {{ value }}
           <span v-if="assetSymbol" class="asset-symbol">{{ ' ' + assetSymbol }}</span>
         </span>
+        <span v-else class="info-line-value">{{ HiddenValue }}</span>
         <formatted-amount
           v-if="fiatValue"
           is-fiat-value
@@ -43,14 +44,17 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
 
 import FormattedAmount from './FormattedAmount.vue';
-import { FontSizeRate, FontWeightRate } from '../consts';
+import { FontSizeRate, FontWeightRate, HiddenValue } from '../consts';
 
 @Component({
   components: { FormattedAmount },
 })
 export default class InfoLine extends Vue {
+  readonly HiddenValue = HiddenValue;
+
   @Prop({ default: '', type: String }) readonly label!: string;
   @Prop({ default: '', type: String }) readonly labelTooltip!: string;
   @Prop({ default: '' }) readonly value!: string;
@@ -61,6 +65,8 @@ export default class InfoLine extends Vue {
    * Define directly that this field displays value which can be hidden by hide balances button.
    */
   @Prop({ default: false, type: Boolean }) readonly valueCanBeHidden!: boolean;
+
+  @Getter shouldBalanceBeHidden!: boolean;
 
   get isValueExists(): boolean {
     if (this.value === 'NaN' || this.value.includes('Infinity')) {
