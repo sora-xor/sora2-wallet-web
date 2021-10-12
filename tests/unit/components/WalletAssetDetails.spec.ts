@@ -1,8 +1,8 @@
 import Vuex from 'vuex';
 import { shallowMount } from '@vue/test-utils';
-import { useDescribe, localVue } from '../../utils';
 
 import WalletAssetDetails from '@/components/WalletAssetDetails.vue';
+import { useDescribe, localVue } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_FIAT_PRICE_AND_APY_OBJECT, MOCK_HISTORY } from '../../utils/mock';
 import { MOCK_ACCOUNT } from '../../utils/WalletAccountMock';
 
