@@ -1,0 +1,225 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletHistory.vue should be rendered correctly 1`] = `
+<div
+  class="history s-flex"
+>
+  <s-form-stub
+    class="history-form"
+    labelposition="right"
+    validateonrulechange="true"
+  >
+    <s-form-item-stub
+      class="history--search"
+      prop=""
+      showmessage="true"
+    >
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        form=""
+        label=""
+        name=""
+        placeholder=""
+        prefix="s-icon-search-16"
+        size="big"
+        suffix=""
+        tabindex=""
+        type="text"
+        usedesignsystem="true"
+        value=""
+      />
+    </s-form-item-stub>
+     
+    <div
+      class="history-items"
+    >
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          27.11.2020, 11:59:59
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Swap"
+          >
+            
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            
+          </div>
+           
+          <s-icon-stub
+            class="info-status info-status--error"
+            name="basic-clear-X-xs-24"
+          />
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          27.11.2020, 11:59:59
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="AddLiquidity"
+          >
+            
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          27.11.2020, 11:59:59
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="RemoveLiquidity"
+          >
+            
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          27.11.2020, 11:59:59
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="RegisterAsset"
+          >
+            
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          27.11.2020, 11:59:59
+        </div>
+      </div>
+    </div>
+     
+    <s-pagination-stub
+      borderradius="small"
+      currentpage="1"
+      layout="total, prev, next"
+      nexttext=""
+      oftext="of"
+      pagesize="8"
+      pagesizes="10,20,30,40,50,100"
+      perpagetext="Rows per page"
+      popperclass=""
+      prevtext=""
+      total="5"
+      totaltext="Total"
+    />
+  </s-form-stub>
+</div>
+`;
+
+exports[`WalletHistory.vue should render history empty text when no transacion 1`] = `
+<div
+  class="history s-flex"
+>
+  <s-form-stub
+    class="history-form"
+    labelposition="right"
+    validateonrulechange="true"
+  >
+    <!---->
+     
+    <div
+      class="history-items"
+    >
+      <div
+        class="history-empty p4"
+      >
+        
+      </div>
+    </div>
+     
+    <!---->
+  </s-form-stub>
+</div>
+`;
