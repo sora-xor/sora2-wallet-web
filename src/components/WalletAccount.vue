@@ -130,6 +130,7 @@ $avatar-size: 32px;
     flex: 1;
     flex-direction: column;
     justify-content: center;
+    overflow: hidden;
     &_name,
     &_address {
       overflow: hidden;
@@ -142,7 +143,6 @@ $avatar-size: 32px;
       line-height: var(--s-line-height-medium);
       outline: none;
       white-space: nowrap;
-      overflow: hidden;
       text-overflow: ellipsis;
     }
     &_address {
