@@ -17,13 +17,13 @@ import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin';
 import TransactionMixin from './components/mixins/TransactionMixin';
 
-import { Modules } from './types/common';
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import { storage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks } from './util';
 import * as WALLET_CONSTS from './consts';
+import * as WALLET_TYPES from './types/common';
 
 let store: Store<unknown>;
 let isWalletLoaded = false;
@@ -46,7 +46,7 @@ const SoraWalletElements = {
     if (!options.store) {
       throw new Error('Please provide vuex store.');
     }
-    Object.values(Modules).forEach((module) => {
+    Object.values(WALLET_TYPES.Modules).forEach((module) => {
       options.store.registerModule(module, modules[module]);
     });
     store = options.store;
@@ -121,6 +121,7 @@ export {
   storage,
   getExplorerLinks,
   WALLET_CONSTS,
+  WALLET_TYPES,
   components,
   mixins,
 };
