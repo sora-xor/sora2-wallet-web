@@ -70,7 +70,7 @@ export default class InfoLine extends Vue {
 
   get isValueExists(): boolean {
     if (this.value === 'NaN' || this.value.includes('Infinity')) {
-      console.error(`The ${this.label} value is: ${this.value}.`);
+      console.warn(`The ${this.label} value is: ${this.value}.`);
       return false;
     }
     return !!this.value;
