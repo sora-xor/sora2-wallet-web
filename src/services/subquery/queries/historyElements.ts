@@ -28,33 +28,36 @@ query HistoryElements (
         networkFee
         execution
         timestamp
-        swap
-        transfer
-        liquidityOperation
-        assetRegistration
+        data
       }
     }
   }
 }
 `;
 
-const createAssetFilters = (assetAddress: string): Array<any> =>
-  ['swap', 'transfer', 'liquidityOperation', 'assetRegistration'].reduce<any[]>((result, method) => {
-    const attributes = ['transfer', 'assetRegistration'].includes(method)
-      ? ['assetId']
-      : ['baseAssetId', 'targetAssetId'];
+type AssetFilter = {
+  data: {
+    contains: {
+      [key: string]: string;
+    };
+  };
+};
 
-    attributes.forEach((attr) => {
-      result.push({
-        [method]: {
-          contains: {
-            [attr]: assetAddress,
-          },
+const createAssetFilters = (assetAddress: string): Array<AssetFilter> => {
+  const attributes = ['assetId', 'baseAssetId', 'targetAssetId'];
+
+  return attributes.reduce((result: Array<AssetFilter>, attr) => {
+    result.push({
+      data: {
+        contains: {
+          [attr]: assetAddress,
         },
-      });
+      },
     });
+
     return result;
   }, []);
+};
 
 export const historyElementsFilter = (address = '', { assetAddress = '', timestamp = 0 } = {}): any => {
   const filter: any = {
@@ -76,7 +79,7 @@ export const historyElementsFilter = (address = '', { assetAddress = '', timesta
           },
         },
         {
-          transfer: {
+          data: {
             contains: {
               to: address,
             },

@@ -72,8 +72,7 @@ export type HistoryElement = {
   networkFee: string;
   execution: HistoryElementExecution;
   timestamp: string;
-  swap: Nullable<HistoryElementSwap>;
-  transfer: Nullable<HistoryElementTransfer>;
-  liquidityOperation: Nullable<HistoryElementLiquidityOperation>;
-  assetRegistration: Nullable<HistoryElementAssetRegistration>;
+  data: Nullable<
+    HistoryElementSwap | HistoryElementTransfer | HistoryElementLiquidityOperation | HistoryElementAssetRegistration
+  >;
 };
