@@ -3,7 +3,15 @@ import { BN } from '@polkadot/util';
 
 import store from '../../store';
 import { api } from '../../api';
-import type { ExplorerDataParser, HistoryElement, HistoryElementError } from '../types';
+import type {
+  ExplorerDataParser,
+  HistoryElement,
+  HistoryElementError,
+  HistoryElementSwap,
+  HistoryElementLiquidityOperation,
+  HistoryElementTransfer,
+  HistoryElementAssetRegistration,
+} from '../types';
 
 enum ModuleCallOperation {
   RegisterPair = 'registerPair',
@@ -97,13 +105,19 @@ export default class SubqueryDataParser implements ExplorerDataParser {
   }
 
   public async parseTransactionAsHistoryItem(transaction: HistoryElement): Promise<Nullable<History>> {
-    const id = getTransactionId(transaction);
     const type = getTransactionOperationType(transaction);
+
+    if (!type) return null;
+
+    if (!transaction.data) {
+      logOperationDataParsingError(type, transaction);
+      return null;
+    }
+
+    const id = getTransactionId(transaction);
     const timestamp = getTransactionTimestamp(transaction);
     const blockHeight = transaction.blockHeight;
     const blockId = transaction.blockHash;
-
-    if (!type) return null;
 
     // common attributes
     const payload: History = {
@@ -129,36 +143,30 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
     switch (type) {
       case Operation.Swap: {
-        if (!transaction.swap) {
-          logOperationDataParsingError(type, transaction);
-          return null;
-        }
+        const data = transaction.data as HistoryElementSwap;
 
-        const assetAddress = transaction.swap.baseAssetId;
-        const asset2Address = transaction.swap.targetAssetId;
+        const assetAddress = data.baseAssetId;
+        const asset2Address = data.targetAssetId;
         const asset = await getAssetByAddress(assetAddress);
         const asset2 = await getAssetByAddress(asset2Address);
 
         payload.assetAddress = assetAddress;
         payload.asset2Address = asset2Address;
-        payload.amount = transaction.swap.baseAssetAmount;
-        payload.amount2 = transaction.swap.targetAssetAmount;
+        payload.amount = data.baseAssetAmount;
+        payload.amount2 = data.targetAssetAmount;
         payload.symbol = asset && asset.symbol ? asset.symbol : '';
         payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : '';
-        payload.liquiditySource = transaction.swap.selectedMarket;
-        payload.liquidityProviderFee = new FPNumber(transaction.swap.liquidityProviderFee).toCodecString();
+        payload.liquiditySource = data.selectedMarket;
+        payload.liquidityProviderFee = new FPNumber(data.liquidityProviderFee).toCodecString();
 
         return payload;
       }
       case Operation.AddLiquidity:
       case Operation.RemoveLiquidity: {
-        if (!transaction.liquidityOperation) {
-          logOperationDataParsingError(type, transaction);
-          return null;
-        }
+        const data = transaction.data as HistoryElementLiquidityOperation;
 
-        const assetAddress = transaction.liquidityOperation.baseAssetId;
-        const asset2Address = transaction.liquidityOperation.targetAssetId;
+        const assetAddress = data.baseAssetId;
+        const asset2Address = data.targetAssetId;
         const asset = await getAssetByAddress(assetAddress);
         const asset2 = await getAssetByAddress(asset2Address);
 
@@ -166,34 +174,28 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.asset2Address = asset2Address;
         payload.symbol = asset && asset.symbol ? asset.symbol : '';
         payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : '';
-        payload.amount = transaction.liquidityOperation.baseAssetAmount;
-        payload.amount2 = transaction.liquidityOperation.targetAssetAmount;
+        payload.amount = data.baseAssetAmount;
+        payload.amount2 = data.targetAssetAmount;
 
         return payload;
       }
       case Operation.Transfer: {
-        if (!transaction.transfer) {
-          logOperationDataParsingError(type, transaction);
-          return null;
-        }
+        const data = transaction.data as HistoryElementTransfer;
 
-        const assetAddress = transaction.transfer.assetId;
+        const assetAddress = data.assetId;
         const asset = await getAssetByAddress(assetAddress);
 
         payload.assetAddress = assetAddress;
         payload.symbol = asset && asset.symbol ? asset.symbol : '';
-        payload.to = transaction.transfer.to;
-        payload.amount = transaction.transfer.amount;
+        payload.to = data.to;
+        payload.amount = data.amount;
 
         return payload;
       }
       case Operation.RegisterAsset: {
-        if (!transaction.assetRegistration) {
-          logOperationDataParsingError(type, transaction);
-          return null;
-        }
+        const data = transaction.data as HistoryElementAssetRegistration;
 
-        const assetAddress = transaction.assetRegistration.assetId;
+        const assetAddress = data.assetId;
         const asset = await getAssetByAddress(assetAddress);
 
         payload.symbol = asset && asset.symbol ? asset.symbol : '';
