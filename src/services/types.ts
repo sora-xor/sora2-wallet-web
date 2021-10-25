@@ -12,8 +12,8 @@ export interface Explorer {
 }
 
 export type PoolXYKEntity = {
-  strategicBonusApy: string;
-  priceUSD: string;
+  strategicBonusApy: Nullable<string>;
+  priceUSD: Nullable<string>;
   targetAssetId: string;
 };
 
