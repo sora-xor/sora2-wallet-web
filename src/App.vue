@@ -44,7 +44,7 @@ export default class App extends Mixins(TransactionMixin) {
 
   async created(): Promise<void> {
     await this.setSoraNetwork(SoraNetwork.Dev);
-    await initWallet({ withoutStore: true }); // We don't need storage for local development
+    await initWallet({ withoutStore: true, whiteListOverApi: true }); // We don't need storage for local development
     this.trackActiveTransactions();
     const localeLanguage = navigator.language;
     FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2);

@@ -9,6 +9,9 @@ import type { RewardsAmountHeaderItem } from '../types/rewards';
 
 export const APP_NAME = 'Sora2 Wallet';
 
+export const WHITE_LIST_GITHUB_URL =
+  'https://raw.githubusercontent.com/sora-xor/polkaswap-exchange-web/develop/public/whitelist.json';
+
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
 export const getExtension = async () => {

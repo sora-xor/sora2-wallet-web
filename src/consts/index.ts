@@ -51,6 +51,7 @@ export interface WalletPermissions {
 
 export interface WalletInitOptions {
   withoutStore?: boolean;
+  whiteListOverApi?: boolean;
   permissions?: WalletPermissions;
 }
 
