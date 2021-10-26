@@ -198,6 +198,147 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
 </div>
 `;
 
+exports[`WalletHistory.vue should render error icon when transaction is failed 1`] = `
+<div
+  class="history s-flex"
+>
+  <form
+    class="el-form history-form el-form--label-right"
+  >
+    <div
+      class="el-form-item history--search"
+    >
+      <!---->
+      <div
+        class="el-form-item__content"
+      >
+         
+        <div
+          class="s-input s-border-radius-small s-size-big s-input--prefix"
+        >
+          <!---->
+           
+          <div
+            class="s-input__content"
+          >
+            <!---->
+             
+            <div
+              class="s-input__input"
+            >
+              <!---->
+               
+              <div
+                class="el-input el-input--prefix"
+              >
+                <!---->
+                <input
+                  accept=""
+                  aria-label=""
+                  autocomplete="off"
+                  class="el-input__inner"
+                  name=""
+                  placeholder=""
+                  tabindex=""
+                  type="text"
+                />
+                <span
+                  class="el-input__prefix"
+                >
+                  <i
+                    class="el-input__icon s-icon-search-16"
+                  />
+                </span>
+                <!---->
+                <!---->
+                <!---->
+              </div>
+               
+              <!---->
+            </div>
+             
+            <!---->
+          </div>
+           
+          <!---->
+        </div>
+         
+        <!---->
+        <transition-stub
+          name="el-zoom-in-top"
+        >
+          <!---->
+        </transition-stub>
+      </div>
+    </div>
+     
+    <div
+      class="history-items"
+    >
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            
+          </div>
+           
+          <i
+            class="s-icon-basic-clear-X-xs-24 info-status info-status--error"
+            style="font-size: 24px; color: transparent;"
+          />
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          27.11.2020, 11:59:59
+        </div>
+      </div>
+    </div>
+     
+    <div
+      class="el-pagination s-border-radius-small"
+    >
+      <span
+        class="el-pagination__total"
+      >
+        1—1 of 1
+      </span>
+      <button
+        class="btn-prev"
+        disabled="disabled"
+        type="button"
+      >
+        <i
+          class="el-icon el-icon-arrow-left"
+        />
+      </button>
+      <button
+        class="btn-next"
+        disabled="disabled"
+        type="button"
+      >
+        <i
+          class="el-icon el-icon-arrow-right"
+        />
+      </button>
+    </div>
+  </form>
+</div>
+`;
+
 exports[`WalletHistory.vue should render history empty text when no transacion 1`] = `
 <div
   class="history s-flex"
@@ -221,5 +362,146 @@ exports[`WalletHistory.vue should render history empty text when no transacion 1
      
     <!---->
   </s-form-stub>
+</div>
+`;
+
+exports[`WalletHistory.vue should render spinner when transaction is pending 1`] = `
+<div
+  class="history s-flex"
+>
+  <form
+    class="el-form history-form el-form--label-right"
+  >
+    <div
+      class="el-form-item history--search"
+    >
+      <!---->
+      <div
+        class="el-form-item__content"
+      >
+         
+        <div
+          class="s-input s-border-radius-small s-size-big s-input--prefix"
+        >
+          <!---->
+           
+          <div
+            class="s-input__content"
+          >
+            <!---->
+             
+            <div
+              class="s-input__input"
+            >
+              <!---->
+               
+              <div
+                class="el-input el-input--prefix"
+              >
+                <!---->
+                <input
+                  accept=""
+                  aria-label=""
+                  autocomplete="off"
+                  class="el-input__inner"
+                  name=""
+                  placeholder=""
+                  tabindex=""
+                  type="text"
+                />
+                <span
+                  class="el-input__prefix"
+                >
+                  <i
+                    class="el-input__icon s-icon-search-16"
+                  />
+                </span>
+                <!---->
+                <!---->
+                <!---->
+              </div>
+               
+              <!---->
+            </div>
+             
+            <!---->
+          </div>
+           
+          <!---->
+        </div>
+         
+        <!---->
+        <transition-stub
+          name="el-zoom-in-top"
+        >
+          <!---->
+        </transition-stub>
+      </div>
+    </div>
+     
+    <div
+      class="history-items"
+    >
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            
+          </div>
+           
+          <i
+            class="s-icon-refresh-16 info-status info-status--loading"
+            style="font-size: 16px; color: transparent;"
+          />
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          27.11.2020, 11:59:59
+        </div>
+      </div>
+    </div>
+     
+    <div
+      class="el-pagination s-border-radius-small"
+    >
+      <span
+        class="el-pagination__total"
+      >
+        1—1 of 1
+      </span>
+      <button
+        class="btn-prev"
+        disabled="disabled"
+        type="button"
+      >
+        <i
+          class="el-icon el-icon-arrow-left"
+        />
+      </button>
+      <button
+        class="btn-next"
+        disabled="disabled"
+        type="button"
+      >
+        <i
+          class="el-icon el-icon-arrow-right"
+        />
+      </button>
+    </div>
+  </form>
 </div>
 `;

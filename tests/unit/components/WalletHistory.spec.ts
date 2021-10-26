@@ -1,7 +1,7 @@
 import Vuex from 'vuex';
-import { shallowMount } from '@vue/test-utils';
+import { shallowMount, mount } from '@vue/test-utils';
 import { Account } from '@/types/common';
-import { History } from '@sora-substrate/util';
+import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util';
 
 import WalletHistory from '@/components/WalletHistory.vue';
 import { useDescribe, localVue } from '../../utils';
@@ -47,5 +47,29 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
     });
 
     expect(wrapper.vm.$props.asset).toEqual(MOCK_ACCOUNT_ASSETS[0]);
+  });
+
+  it('should render spinner when transaction is pending', () => {
+    const wrapper = mount(WalletHistory, {
+      localVue,
+      store: createStore([{ ...MOCK_HISTORY[0], status: TransactionStatus.InBlock }]),
+      propsData: { asset: MOCK_ACCOUNT_ASSETS[0] },
+    });
+    const pendingIcon = wrapper.find('.info-status--loading');
+
+    expect(pendingIcon.exists()).toBeTrue();
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('should render error icon when transaction is failed', () => {
+    const wrapper = mount(WalletHistory, {
+      localVue,
+      store: createStore([{ ...MOCK_HISTORY[0], status: TransactionStatus.Error }]),
+      propsData: { asset: MOCK_ACCOUNT_ASSETS[0] },
+    });
+    const errorIcon = wrapper.find('.info-status--error');
+
+    expect(errorIcon.exists()).toBeTrue();
+    expect(wrapper.element).toMatchSnapshot();
   });
 });
