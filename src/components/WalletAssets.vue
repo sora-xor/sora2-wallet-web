@@ -217,6 +217,9 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       font-weight: 800;
       letter-spacing: var(--s-letter-spacing-mini);
       line-height: var(--s-line-height-reset);
+      &-locked {
+        margin-left: $basic-spacing-extra-small;
+      }
       .formatted-amount__decimal {
         font-weight: 600;
       }
