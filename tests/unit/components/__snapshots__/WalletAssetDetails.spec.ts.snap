@@ -4,7 +4,6 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
 <wallet-base-stub
   actionicon="basic-eye-24"
   actiontooltip="asset.remove"
-  disabled-clean-history="true"
   show-clean-history=""
   showback="true"
   title="SORA"
@@ -172,7 +171,6 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
 <wallet-base-stub
   actionicon="basic-eye-24"
   actiontooltip="asset.remove"
-  disabled-clean-history="true"
   show-clean-history=""
   showback="true"
   title="SORA"

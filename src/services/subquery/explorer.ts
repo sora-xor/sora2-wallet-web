@@ -36,6 +36,7 @@ export default class SubqueryExplorer implements Explorer {
    * Get fiat price & APY coefficient for each asset (without historical data)
    */
   public async getFiatPriceAndApyObject(): Promise<Nullable<FiatPriceAndApyObject>> {
+    const format = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
     try {
       const { poolXYKEntities } = await this.request(FiatPriceQuery);
       if (!poolXYKEntities) {
@@ -43,8 +44,8 @@ export default class SubqueryExplorer implements Explorer {
       }
       const data = (poolXYKEntities.nodes[0].pools.edges as Array<any>).reduce((acc, item) => {
         const el: PoolXYKEntity = item.node;
-        const strategicBonusApyFPNumber = new FPNumber(el.strategicBonusApy);
-        const priceFPNumber = new FPNumber(el.priceUSD);
+        const strategicBonusApyFPNumber = format(el.strategicBonusApy);
+        const priceFPNumber = format(el.priceUSD);
         const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
         const isPriceFinity = priceFPNumber.isFinity();
         if (isPriceFinity || isStrategicBonusApyFinity) {

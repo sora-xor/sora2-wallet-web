@@ -476,7 +476,7 @@ $logo-size: var(--s-size-mini);
       margin-bottom: #{$basic-spacing-medium};
       font-size: var(--s-heading2-font-size);
       line-height: var(--s-line-height-small);
-      font-weight: 400;
+      font-weight: 800;
       &-title {
         line-height: 1.33;
         flex: 1;
@@ -494,7 +494,6 @@ $logo-size: var(--s-size-mini);
           &-name {
             font-size: var(--s-heading2-font-size);
             line-height: var(--s-line-height-small);
-            font-weight: 400;
           }
         }
       }
