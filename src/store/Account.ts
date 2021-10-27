@@ -18,7 +18,7 @@ import type { Subscription } from '@polkadot/x-rxjs';
 
 import { api } from '../api';
 import { storage } from '../util/storage';
-import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util';
+import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable, WHITE_LIST_GITHUB_URL } from '../util';
 import { SubqueryExplorerService } from '../services/subquery';
 import type { FiatPriceAndApyObject } from '../services/types';
 import type { Account, PolkadotJsAccount } from '../types/common';
@@ -389,10 +389,11 @@ const actions = {
   getAccountActivity({ commit }) {
     commit(types.GET_ACCOUNT_ACTIVITY, api.accountHistory);
   },
-  async getWhitelist({ commit }) {
+  async getWhitelist({ commit }, { whiteListOverApi }) {
+    const url = whiteListOverApi ? WHITE_LIST_GITHUB_URL : '/whitelist.json';
     commit(types.GET_WHITELIST_REQUEST);
     try {
-      const { data } = await axiosInstance.get('/whitelist.json');
+      const { data } = await axiosInstance.get(url);
       commit(types.GET_WHITELIST_SUCCESS, data);
     } catch (error) {
       commit(types.GET_WHITELIST_FAILURE);

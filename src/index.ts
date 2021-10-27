@@ -59,18 +59,22 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(SoraWalletElements, {});
 }
 
-async function initWallet({ withoutStore = false, permissions }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
+async function initWallet({
+  withoutStore = false,
+  whiteListOverApi = false,
+  permissions,
+}: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
   isWalletLoaded = false;
   if (!withoutStore && !store) {
     await delay();
-    return await initWallet({ withoutStore, permissions });
+    return await initWallet({ withoutStore, whiteListOverApi, permissions });
   } else {
     if (withoutStore) {
       store = internalStore;
     }
     if (connection.loading) {
       await delay();
-      return await initWallet({ withoutStore, permissions });
+      return await initWallet({ withoutStore, whiteListOverApi, permissions });
     }
     if (!connection.api) {
       await connection.open();
@@ -86,7 +90,7 @@ async function initWallet({ withoutStore = false, permissions }: WALLET_CONSTS.W
       throw error;
     }
     await store.dispatch('updateNetworkFees');
-    await store.dispatch('getWhitelist');
+    await store.dispatch('getWhitelist', { whiteListOverApi });
     await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates');
     await store.dispatch('checkSigner');
     await store.dispatch('syncWithStorage');

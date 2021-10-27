@@ -69,6 +69,7 @@ export const MOCK_ASSETS: Array<Asset> = [
 export const MOCK_HISTORY: Array<History> = [
   {
     id: '1',
+    assetAddress: '0x0200000000000000000000000000000000000000000000000000000000000000',
     blockId: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD',
     txId: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7',
     status: TransactionStatus.Finalized,
@@ -80,7 +81,7 @@ export const MOCK_HISTORY: Array<History> = [
     to: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD',
   },
   {
-    id: '1',
+    id: '2',
     blockId: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD',
     status: TransactionStatus.Error,
     errorMessage: 'Test error message!',
@@ -93,7 +94,7 @@ export const MOCK_HISTORY: Array<History> = [
     from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K',
   },
   {
-    id: '1',
+    id: '3',
     blockId: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD',
     status: TransactionStatus.Finalized,
     type: Operation.AddLiquidity,
@@ -105,7 +106,7 @@ export const MOCK_HISTORY: Array<History> = [
     from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K',
   },
   {
-    id: '1',
+    id: '4',
     blockId: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD',
     status: TransactionStatus.Finalized,
     type: Operation.RemoveLiquidity,
@@ -116,7 +117,7 @@ export const MOCK_HISTORY: Array<History> = [
     from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K',
   },
   {
-    id: '1',
+    id: '5',
     blockId: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD',
     status: TransactionStatus.Finalized,
     type: Operation.RegisterAsset,
