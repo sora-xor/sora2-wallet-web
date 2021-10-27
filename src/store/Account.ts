@@ -15,13 +15,14 @@ import {
   Asset,
 } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
+import { createKeyMulti, encodeAddress, sortAddresses } from '@polkadot/util-crypto';
 
 import { api } from '../api';
 import { storage } from '../util/storage';
 import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable } from '../util';
 import { SubqueryExplorerService } from '../services/subquery';
 import type { FiatPriceAndApyObject } from '../services/types';
-import type { Account, PolkadotJsAccount } from '../types/common';
+import type { Account, PolkadotJsAccount, MultisigAccount } from '../types/common';
 
 const HOUR = 60 * 60 * 1000;
 
@@ -49,6 +50,8 @@ const types = flow(
   'IMPORT_POLKADOT_JS_ACCOUNT',
   'GET_SIGNER',
   'GET_POLKADOT_JS_ACCOUNTS',
+  'GET_MULTISIG_ACCOUNTS',
+  'SET_CURRENT_MULTISIG_ACCOUNT',
   'GET_WHITELIST',
   'GET_FIAT_PRICE_AND_APY_OBJECT',
 ]);
@@ -62,6 +65,8 @@ type AccountState = {
   activity: Array<History>;
   assets: Array<Asset>;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
+  multisigAccounts: Array<MultisigAccount>;
+  currentMultisigAccount: Nullable<MultisigAccount>;
   whitelistArray: Array<WhitelistArrayItem>;
   assetsLoading: boolean;
   withoutFiatAndApy: boolean;
@@ -80,6 +85,8 @@ function initialState(): AccountState {
     activity: [], // account history (without bridge)
     assets: [],
     polkadotJsAccounts: [],
+    multisigAccounts: [],
+    currentMultisigAccount: null,
     whitelistArray: [],
     assetsLoading: false,
     withoutFiatAndApy: false,
@@ -119,6 +126,12 @@ const getters = {
   },
   polkadotJsAccounts(state: AccountState): Array<PolkadotJsAccount> {
     return state.polkadotJsAccounts;
+  },
+  multisigAccounts(state: AccountState): Array<MultisigAccount> {
+    return state.multisigAccounts;
+  },
+  currentMultisigAccount(state: AccountState): Nullable<MultisigAccount> {
+    return state.currentMultisigAccount;
   },
   whitelistArray(state: AccountState): Array<WhitelistArrayItem> {
     return state.whitelistArray;
@@ -275,6 +288,26 @@ const mutations = {
     state.polkadotJsAccounts = [];
   },
 
+  [types.GET_MULTISIG_ACCOUNTS_REQUEST](state: AccountState) {
+    state.multisigAccounts = [];
+  },
+  [types.GET_MULTISIG_ACCOUNTS_SUCCESS](state: AccountState, multisigAccounts: Array<MultisigAccount>) {
+    state.multisigAccounts = multisigAccounts;
+  },
+  [types.GET_MULTISIG_ACCOUNTS_FAILURE](state: AccountState) {
+    state.multisigAccounts = [];
+  },
+
+  [types.SET_CURRENT_MULTISIG_ACCOUNT_REQUEST](state: AccountState) {
+    state.currentMultisigAccount = null;
+  },
+  [types.SET_CURRENT_MULTISIG_ACCOUNT_SUCCESS](state: AccountState, currentMultisigAccount: Nullable<MultisigAccount>) {
+    state.currentMultisigAccount = currentMultisigAccount;
+  },
+  [types.SET_CURRENT_MULTISIG_ACCOUNT_FAILURE](state: AccountState) {
+    state.currentMultisigAccount = null;
+  },
+
   [types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST](state: AccountState) {},
 
   [types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS](state: AccountState, name: string) {
@@ -333,6 +366,59 @@ const actions = {
       commit(types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS, accounts);
     } catch (error) {
       commit(types.GET_POLKADOT_JS_ACCOUNTS_FAILURE);
+    }
+  },
+  async getMultisigAccounts({ commit, getters }) {
+    commit(types.GET_MULTISIG_ACCOUNTS_REQUEST);
+    try {
+      // TODO 4 alexnatalia: Get addresses/threshold from the localStorage
+      const mockAddresses: Array<string> = [
+        'cnUoizELoPeeUwosXuYFUW2jJCnbrrfMUtdNtyAsa48FHQxPA',
+        'cnTyegg36B62rNoCqJdzVddzNv7zf32eDQX4G7zF9bVHAP9i3',
+        'cnWRhrPhqeZBaR7LgWPMQLytum7AngL5TL9VPscmy2SRT2Ktv',
+      ];
+      const mockThreshold = 2;
+
+      const multiAddress: Uint8Array = createKeyMulti(mockAddresses, mockThreshold);
+      const ss58Prefix = 69;
+      const ss58Address = encodeAddress(multiAddress, ss58Prefix);
+      console.log(`\nMultisig Address: ${ss58Address}`);
+
+      const multisigAccount = {
+        address: ss58Address,
+        name: 'Test Multisig Account',
+        addresses: mockAddresses,
+        threshold: mockThreshold,
+      };
+
+      const multiAddress1: Uint8Array = createKeyMulti(mockAddresses, mockThreshold - 1);
+      const ss58Address1 = encodeAddress(multiAddress1, ss58Prefix);
+      console.log(`\nMultisig Address1: ${ss58Address1}`);
+
+      const multisigAccount1 = {
+        address: ss58Address1,
+        name: 'Test Multisig Account 1',
+        addresses: mockAddresses,
+        threshold: mockThreshold - 1,
+      };
+
+      // const otherSignatories = multisigAccount.addresses.filter((address) => address !== getters.address);
+      // const otherSignatoriesSorted = sortAddresses(otherSignatories, ss58Prefix);
+      // console.log(`\nOther Signatories: ${otherSignatoriesSorted}\n`);
+
+      commit(types.GET_MULTISIG_ACCOUNTS_SUCCESS, [multisigAccount, multisigAccount1]);
+    } catch (error) {
+      commit(types.GET_MULTISIG_ACCOUNTS_FAILURE);
+    }
+  },
+  async setCurrentMultisigAccount({ commit, getters }, multisigAccount: Nullable<MultisigAccount>) {
+    commit(types.SET_CURRENT_MULTISIG_ACCOUNT_REQUEST);
+    try {
+      if (getters.multisigAccounts.length) {
+        commit(types.SET_CURRENT_MULTISIG_ACCOUNT_SUCCESS, multisigAccount);
+      }
+    } catch (error) {
+      commit(types.SET_CURRENT_MULTISIG_ACCOUNT_FAILURE);
     }
   },
   async importPolkadotJs({ commit, dispatch }, address: string) {

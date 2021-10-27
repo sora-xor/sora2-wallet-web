@@ -18,6 +18,11 @@ export interface PolkadotJsAccount {
   name: string;
 }
 
+export interface MultisigAccount extends PolkadotJsAccount {
+  addresses: Array<string>;
+  threshold: number;
+}
+
 export interface Account extends PolkadotJsAccount {
   isExternal: boolean;
 }

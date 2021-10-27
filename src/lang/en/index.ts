@@ -80,6 +80,29 @@ export default {
       refresh: 'Refresh',
     },
   },
+  mst: {
+    title: 'Multisig accounts',
+    MST: 'MST',
+    multisigAccounts: 'Multisig accounts',
+    indicatorTooltip: 'Multisig approvals pending.',
+    selectAccount: 'Select Multisig account to work with',
+    create: {
+      title: 'Create Multisig account',
+      name: {
+        placeholder: 'Multisig account name',
+        desc: 'Field description',
+      },
+      addresses: {
+        placeholder: 'Addresses (separatet by `,` symbol)',
+        desc: 'Field description',
+      },
+      threshold: {
+        placeholder: 'Threshold',
+        desc: 'Field description',
+      },
+      action: 'Create',
+    },
+  },
   wallet: {
     title: 'SORA Network account',
     [WalletTabs.Assets]: 'Assets',

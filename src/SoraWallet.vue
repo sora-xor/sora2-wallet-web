@@ -19,6 +19,8 @@ import { AccountAsset } from '@sora-substrate/util';
 import AddAsset from './components/AddAsset.vue';
 import AddAssetDetails from './components/AddAssetDetails.vue';
 import CreateToken from './components/CreateToken.vue';
+import MultisigAccount from './components/MultisigAccount.vue';
+import CreateMultisigAccount from './components/CreateMultisigAccount.vue';
 import Wallet from './components/Wallet.vue';
 import WalletAssetDetails from './components/WalletAssetDetails.vue';
 import WalletConnection from './components/WalletConnection.vue';
@@ -36,6 +38,8 @@ import type { RouteNames } from './consts';
     AddAsset,
     AddAssetDetails,
     CreateToken,
+    MultisigAccount,
+    CreateMultisigAccount,
     Wallet,
     WalletAssetDetails,
     WalletConnection,

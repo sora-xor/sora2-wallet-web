@@ -25,6 +25,15 @@
           </s-tooltip>
         </h3>
         <s-button
+          v-if="showMstAction"
+          class="base-title_mst"
+          type="action"
+          :tooltip="mstActionTooltip"
+          @click="handleMstActionClick"
+        >
+          {{ t('mst.MST') }}
+        </s-button>
+        <s-button
           v-if="showAction"
           class="base-title_action"
           type="action"
@@ -69,8 +78,10 @@ export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string;
   @Prop({ default: '', type: String }) readonly tooltip!: string;
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly showMstAction!: boolean;
   @Prop({ default: false, type: Boolean }) readonly showAction!: boolean;
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean;
+  @Prop({ default: '', type: String }) readonly mstActionTooltip!: string;
   @Prop({ default: '', type: String }) readonly actionTooltip!: string;
   @Prop({ default: '', type: String }) readonly actionIcon!: string;
   // @Prop({ default: false, type: Boolean }) readonly disabledCleanHistory!: boolean
@@ -97,6 +108,10 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 
   handleActionClick(): void {
     this.$emit('action');
+  }
+
+  handleMstActionClick(): void {
+    this.$emit('mstAction');
   }
 
   handleCloseClick(): void {
@@ -151,6 +166,9 @@ $button-size: var(--s-size-medium);
       .base-title_action {
         right: calc(#{$button-size} + var(--s-basic-spacing));
       }
+    }
+    .base-title_mst {
+      right: calc(#{$button-size} + var(--s-basic-spacing));
     }
     .el-button {
       position: absolute;

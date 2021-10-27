@@ -1,12 +1,15 @@
 <template>
   <wallet-base
     :title="t('wallet.title')"
+    show-mst-action
     show-action
     :show-clean-history="currentTab === WalletTabs.Activity"
     :disabled-clean-history="isCleanHistoryDisabled"
     action-icon="various-atom-24"
+    :mst-action-tooltip="t('mst.multisigAccounts')"
     action-tooltip="wallet.createToken"
     @action="handleCreateToken"
+    @mstAction="handleMultisigAction"
     @cleanHistory="handleCleanHistory"
   >
     <wallet-account show-controls />
@@ -69,6 +72,10 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   handleCreateToken(): void {
     this.navigate({ name: RouteNames.CreateToken });
+  }
+
+  handleMultisigAction(): void {
+    this.navigate({ name: RouteNames.MultisigAccount });
   }
 
   handleCleanHistory(): void {

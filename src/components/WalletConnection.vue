@@ -186,41 +186,10 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 </style>
 
 <style scoped lang="scss">
-$account-height: 60px;
-$account-margin-bottom: var(--s-basic-spacing);
-$accounts-padding: calc(#{$account-margin-bottom} / 2);
-$accounts-number: 7;
 .wallet-connection {
-  // Margin and padding are set for the loader
-  margin: calc(var(--s-basic-spacing) * -1);
-  min-height: 204px;
-  padding: var(--s-basic-spacing);
-  &-text {
-    font-size: var(--s-font-size-extra-small);
-    font-weight: 300;
-    line-height: var(--s-line-height-base);
-    color: var(--s-color-base-content-primary);
-    margin-bottom: #{$basic-spacing-medium};
-    &.no-permissions {
-      margin-top: var(--s-basic-spacing);
-    }
-  }
-  &-accounts {
-    height: calc(
-      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom}
-    );
-  }
-  &-account {
-    height: $account-height;
-    &:not(:last-child) {
-      margin-bottom: var(--s-basic-spacing);
-    }
-    &:hover {
-      cursor: pointer;
-      .wallet-account {
-        border-color: var(--s-color-base-content-secondary);
-      }
-    }
+  @include account-list;
+  &-text.no-permissions {
+    margin-top: var(--s-basic-spacing);
   }
   &-action {
     width: 100%;

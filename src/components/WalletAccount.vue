@@ -4,7 +4,17 @@
       <wallet-avatar class="account-avatar" :address="address" :size="28" />
       <div class="account-details s-flex">
         <div class="account-credentials s-flex">
-          <div v-if="name" class="account-credentials_name">{{ name }}</div>
+          <div v-if="name" class="account-credentials_name">
+            {{ name }}
+            <!-- TODO 4 alexnatalia: Show pending transactions on click -->
+            <s-tooltip
+              v-if="mstPendingApprovals"
+              class="account-credentials_mst-tx-amount"
+              :content="t('mst.indicatorTooltip')"
+            >
+              <span>{{ mstPendingApprovals }}</span>
+            </s-tooltip>
+          </div>
           <s-tooltip :content="t('account.copy')">
             <div class="account-credentials_address" @click="handleCopyAddress($event)">{{ formattedAddress }}</div>
           </s-tooltip>
@@ -34,7 +44,8 @@ import TranslationMixin from './mixins/TranslationMixin';
 import { RouteNames } from '../consts';
 import { copyToClipboard, formatAddress, formatSoraAddress } from '../util';
 import WalletAvatar from './WalletAvatar.vue';
-import type { Account, PolkadotJsAccount } from '../types/common';
+import { api } from '../api';
+import type { Account, PolkadotJsAccount, MultisigAccount } from '../types/common';
 
 @Component({
   components: {
@@ -43,11 +54,16 @@ import type { Account, PolkadotJsAccount } from '../types/common';
 })
 export default class WalletAccount extends Mixins(TranslationMixin) {
   @Getter account!: Account;
+  @Getter currentMultisigAccount!: Nullable<MultisigAccount>;
+  // TODO 4 alexnatalia: Change type to Array<Multisig>
+  multisigs = [];
+
   @Action logout!: AsyncVoidFn;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
   @Prop({ default: false, type: Boolean }) readonly showControls!: boolean;
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
+  @Prop({ default: false, type: Boolean }) readonly isMultisigAccount!: boolean;
 
   get address(): string {
     if (this.polkadotAccount) {
@@ -62,6 +78,20 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 
   get formattedAddress(): string {
     return formatAddress(this.address, 24);
+  }
+
+  get mstPendingApprovals(): number {
+    return this.multisigs?.length;
+  }
+
+  async created(): Promise<void> {
+    if (this.isMultisigAccount || this.currentMultisigAccount) {
+      this.multisigs = await api.getMultisigs(
+        this.currentMultisigAccount && !this.isMultisigAccount
+          ? this.currentMultisigAccount.address
+          : this.polkadotAccount.address
+      );
+    }
   }
 
   async handleCopyAddress(event: Event): Promise<void> {
@@ -144,6 +174,23 @@ $avatar-size: 32px;
       outline: none;
       white-space: nowrap;
       text-overflow: ellipsis;
+      // TODO: Maybe we need these styles for MST account only
+      display: inline-flex;
+      align-items: center;
+    }
+    &_mst-tx-amount {
+      border-radius: 50%;
+      background-color: var(--s-color-theme-accent);
+      color: var(--s-color-base-on-accent);
+      display: inline-block;
+      // TODO: What we need to do if there are over 10 pending transactions?
+      height: 1.5em;
+      width: 1.5em;
+      margin-left: $basic-spacing-mini;
+      text-align: center;
+      font-size: var(--s-font-size-mini);
+      font-weight: 400;
+      cursor: pointer;
     }
     &_address {
       @include value-prefix(width, fit-content);

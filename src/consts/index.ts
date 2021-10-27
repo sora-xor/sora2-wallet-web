@@ -6,6 +6,8 @@ export enum RouteNames {
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
   CreateToken = 'CreateToken',
+  MultisigAccount = 'MultisigAccount',
+  CreateMultisigAccount = 'CreateMultisigAccount',
   AddAsset = 'AddAsset',
   WalletTransactionDetails = 'WalletTransactionDetails',
   AddAssetDetails = 'AddAssetDetails',
