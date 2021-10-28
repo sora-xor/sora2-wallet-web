@@ -1892,7 +1892,7 @@
     "@polkadot/types" "^4.10.1"
     "@sora-substrate/type-definitions" "^1.6.17"
 
-"@sora-substrate/util@^1.6.17":
+"@sora-substrate/util@1.6.17":
   version "1.6.17"
   resolved "https://registry.yarnpkg.com/@sora-substrate/util/-/util-1.6.17.tgz#4d4dcdce21d607c1f6b3d103a5fbe1077297afc7"
   integrity sha512-ZEJ10KuR4lbifrJyV/zzZmyz1zCferVF1YaNW2Hs/6T77+ukp7518WTAMcSRzz/s0jr+A70WH2qmiTofNbYphg==
