@@ -30,8 +30,9 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
       localVue,
       store: createStore({ ...MOCK_WALLET_PERMISSIONS, sendAssets: false }),
     });
+    const sendBtn = wrapper.find('.send');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(sendBtn.exists()).toBeFalse();
   });
 
   it('should not render swap button when swapAssets property is false', () => {
@@ -39,8 +40,9 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
       localVue,
       store: createStore({ ...MOCK_WALLET_PERMISSIONS, swapAssets: false }),
     });
+    const swapBtn = wrapper.find('.swap');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(swapBtn.exists()).toBeFalse();
   });
 
   it('should not render fiat value when withoutFiatAndApy property is true', () => {
@@ -48,7 +50,8 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
       localVue,
       store: createStore(undefined, true),
     });
+    const fiatValue = wrapper.find('.wallet-assets--fiat');
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(fiatValue.exists()).toBeFalse();
   });
 });
