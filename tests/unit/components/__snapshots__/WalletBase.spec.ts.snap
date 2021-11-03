@@ -1,15 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WalletBase.vue should be rendered correctly 1`] = `
-<s-card-stub
-  borderradius="medium"
-  class="base"
-  primary="true"
-  shadow="always"
-  size="big"
-  status="default"
-  usedesignsystem="true"
+<div
+  class="el-card s-card base is-always-shadow s-status-default s-size-big s-border-radius-medium s-primary"
 >
-   
-</s-card-stub>
+  <div
+    class="el-card__header"
+  >
+    <div
+      class="base-title s-flex"
+    >
+      <!---->
+       
+      <h3
+        class="base-title_text"
+      >
+        
+        
+        
+        <!---->
+      </h3>
+       
+      <!---->
+       
+      <!---->
+    </div>
+  </div>
+  <div
+    class="el-card__body"
+  />
+</div>
 `;
