@@ -16,18 +16,18 @@ import TransactionHashView from './components/TransactionHashView.vue';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin';
 import TransactionMixin from './components/mixins/TransactionMixin';
+import LoadingMixin from './components/mixins/LoadingMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import { storage } from './util/storage';
 import { api, connection } from './api';
-import { delay, getExplorerLinks } from './util';
+import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import * as WALLET_CONSTS from './consts';
 import * as WALLET_TYPES from './types/common';
 
 let store: Store<unknown>;
-let isWalletLoaded = false;
-let unsubscribeStoreFromStorage: Function;
+let unsubscribeStoreFromStorage: VoidFunction;
 
 const subscribeStoreToStorageUpdates = (store) => {
   if (typeof unsubscribeStoreFromStorage === 'function') {
@@ -64,7 +64,6 @@ async function initWallet({
   whiteListOverApi = false,
   permissions,
 }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
-  isWalletLoaded = false;
   if (!withoutStore && !store) {
     await delay();
     return await initWallet({ withoutStore, whiteListOverApi, permissions });
@@ -96,8 +95,8 @@ async function initWallet({
     await store.dispatch('syncWithStorage');
     await store.dispatch('getAccountAssets');
     await store.dispatch('updateAccountAssets');
+    await store.dispatch('setWalletLoaded', true);
     subscribeStoreToStorageUpdates(store);
-    isWalletLoaded = true;
   }
 }
 
@@ -114,16 +113,17 @@ const mixins = {
   NumberFormatterMixin,
   FormattedAmountMixin,
   TransactionMixin,
+  LoadingMixin,
 };
 
 export {
   initWallet,
-  isWalletLoaded,
   en,
   api,
   connection,
   storage,
   getExplorerLinks,
+  groupRewardsByAssetsList,
   WALLET_CONSTS,
   WALLET_TYPES,
   components,
