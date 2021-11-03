@@ -1,15 +1,16 @@
-import { Vue, Component } from 'vue-property-decorator';
-
+import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Getter } from 'vuex-class';
 import { delay } from '../../util';
-import { api } from '../../api';
-
-export const isApiConnected = () => api.api && api.api.isConnected;
 
 @Component
 export default class LoadingMixin extends Vue {
+  @Prop({ type: Boolean, default: false }) readonly parentLoading!: boolean;
+
+  @Getter isWalletLoaded!: boolean;
+
   loading = false;
 
-  async withLoading(func: Function): Promise<any> {
+  async withLoading(func: AsyncVoidFn | VoidFunction): Promise<any> {
     this.loading = true;
     try {
       return await func();
@@ -26,13 +27,23 @@ export default class LoadingMixin extends Vue {
    * It is guaranteed that api has a connection
    * @param func
    */
-  async withApi(func: Function): Promise<any> {
+  async withApi(func: AsyncVoidFn | VoidFunction): Promise<any> {
     this.loading = true;
-    if (!isApiConnected()) {
+
+    if (!this.isWalletLoaded) {
       await delay();
       return await this.withApi(func);
     } else {
       return await this.withLoading(func);
+    }
+  }
+
+  async withParentLoading(func: AsyncVoidFn): Promise<any> {
+    if (this.parentLoading) {
+      await delay();
+      return await this.withParentLoading(func);
+    } else {
+      return await func();
     }
   }
 }
