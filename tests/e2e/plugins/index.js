@@ -1,3 +1,4 @@
+const path = require('path');
 /* eslint-disable arrow-body-style */
 // https://docs.cypress.io/guides/guides/plugins-guide.html
 
@@ -14,6 +15,14 @@ module.exports = (on, config) => {
   //  webpackOptions: require('@vue/cli-service/webpack.config'),
   //  watchOptions: {}
   // }))
+
+  on('before:browser:launch', (browser, launchOptions) => {
+    // supply the absolute path to an unpacked extension's folder
+    // NOTE: extensions cannot be loaded in headless Chrome
+    launchOptions.extensions.push(path.resolve(__dirname, '../../../../polkadot--js--extension'));
+
+    return launchOptions;
+  });
 
   return Object.assign({}, config, {
     fixturesFolder: 'tests/e2e/fixtures',

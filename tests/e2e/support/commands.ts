@@ -27,5 +27,46 @@ declare namespace Cypress {
   }
 }
 
+Cypress.on('window:before:load', (window) => {
+  const accounts = [];
+  // @ts-expect-error
+  window.injectedWeb3 = {};
+
+  function transformAccounts(accounts) {
+    return accounts.map(({ address, name }) => ({
+      address,
+      name,
+    }));
+  }
+
+  // @ts-expect-error
+  window.injectedWeb3.SingleSource = {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars,@typescript-eslint/require-await
+    enable: async (origin) => ({
+      accounts: {
+        // eslint-disable-next-line @typescript-eslint/require-await
+        get: async () => accounts,
+        subscribe: (cb) => {
+          // @ts-expect-error
+          const sub = window.SingleSource.accounts.subscribe((accounts) => {
+            cb(transformAccounts(accounts));
+          });
+          return () => {
+            sub.unsubscribe();
+          };
+        },
+      },
+      // @ts-expect-error
+      signer: window.SingleSource.signer,
+    }),
+    version: '0.0.0',
+  };
+
+  // // @ts-expect-error
+  // window.injectedWeb3.SingleSource.accounts.subscribe((_accounts) => {
+  //   accounts = transformAccounts(_accounts);
+  // }); // decorate the compat interface
+});
+
 Cypress.Commands.add('openApp', openApp);
 Cypress.Commands.add('checkAttr', { prevSubject: true }, checkAttr);
