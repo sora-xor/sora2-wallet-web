@@ -11,12 +11,13 @@ import { storage } from '../util/storage';
 
 const types = flow(
   flatMap((x) => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
-  concat(['SET_PERMISSIONS', 'SET_SORA_NETWORK', 'UPDATE_NETWORK_FEES', 'TOGGLE_HIDE_BALANCE']),
+  concat(['SET_PERMISSIONS', 'SET_SORA_NETWORK', 'UPDATE_NETWORK_FEES', 'TOGGLE_HIDE_BALANCE', 'SET_WALLET_LOADED']),
   map((x) => [x, x]),
   fromPairs
 )([]);
 
 type SettingsState = {
+  isWalletLoaded: boolean;
   permissions: WalletPermissions;
   soraNetwork: Nullable<SoraNetwork>;
   networkFees: NetworkFeesObject;
@@ -25,6 +26,7 @@ type SettingsState = {
 
 function initialState(): SettingsState {
   return {
+    isWalletLoaded: false, // wallet is loading
     permissions: {
       sendAssets: true,
       swapAssets: true,
@@ -38,6 +40,9 @@ function initialState(): SettingsState {
 const state = initialState();
 
 const getters = {
+  isWalletLoaded(state: SettingsState): boolean {
+    return state.isWalletLoaded;
+  },
   permissions(state: SettingsState): WalletPermissions {
     return state.permissions;
   },
@@ -53,6 +58,9 @@ const getters = {
 };
 
 const mutations = {
+  [types.SET_WALLET_LOADED](state: SettingsState, flag: boolean) {
+    state.isWalletLoaded = flag;
+  },
   [types.SET_PERMISSIONS](state: SettingsState, permissions: WalletPermissions) {
     if (typeof permissions !== 'object' || Array.isArray(permissions)) {
       console.error(`Permissions should be an object, ${typeof permissions} is given`);
@@ -76,6 +84,10 @@ const mutations = {
 };
 
 const actions = {
+  setWalletLoaded({ commit }, flag: boolean) {
+    commit(types.SET_WALLET_LOADED, flag);
+  },
+
   setPermissions({ commit }, permissions: WalletPermissions) {
     commit(types.SET_PERMISSIONS, permissions);
   },

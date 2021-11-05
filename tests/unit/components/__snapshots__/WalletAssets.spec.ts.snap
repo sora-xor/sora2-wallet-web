@@ -1,0 +1,427 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletAssets.vue should be rendered correctly 1`] = `
+<div
+  class="wallet-assets wallet-assets--fiat s-flex"
+>
+  <div
+    class="total-fiat-values"
+  >
+    <span
+      class="total-fiat-values__title"
+    >
+      
+    </span>
+     
+    <formatted-amount-stub
+      assetsymbol=""
+      fontsizerate="normal"
+      fontweightrate="normal"
+      integeronly="true"
+      isfiatvalue="true"
+      value="151.782"
+      valuecanbehidden="true"
+      withleftshift="true"
+    />
+  </div>
+   
+  <s-divider-stub
+    class="wallet-assets-item_divider"
+    contentposition="center"
+    direction="horizontal"
+    type="secondary"
+  />
+   
+  <s-scrollbar-stub
+    class="wallet-assets-scrollbar"
+    tag="div"
+  >
+    <div
+      class="wallet-assets-container"
+    >
+      <div
+        class="wallet-assets-item s-flex"
+      >
+        <i
+          class="asset-logo"
+        />
+         
+        <div
+          class="asset s-flex"
+        >
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="XOR"
+            fiatfontsizerate="medium"
+            fiatfontweightrate="medium"
+            fiatvalue="151.782"
+            fontsizerate="small"
+            fontweightrate="normal"
+            hasfiatvalue="true"
+            symbolasdecimal="true"
+            value="123.4"
+            valuecanbehidden="true"
+            valueclass="asset-value"
+          >
+            <!---->
+          </formatted-amount-with-fiat-value-stub>
+           
+          <div
+            class="asset-info"
+          >
+            
+              SORA
+              
+            <s-tooltip-stub
+              animation="el-fade-in-linear"
+              borderradius="small"
+              closedelay="0"
+              content=""
+              hideafter="0"
+              offset="0"
+              opendelay="1000"
+              placement="top"
+              showarrow="true"
+              tabindex="0"
+              theme="auto"
+              usedesignsystem="true"
+            >
+              <span
+                class="asset-id"
+              >
+                
+                  (0x020...00000)
+                
+              </span>
+            </s-tooltip-stub>
+          </div>
+        </div>
+         
+        <s-button-stub
+          alternative="true"
+          borderradius="small"
+          class="wallet-assets__button send"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          size="small"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="finance-send-24"
+            size="28"
+          />
+        </s-button-stub>
+         
+        <s-button-stub
+          alternative="true"
+          borderradius="small"
+          class="wallet-assets__button swap"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          size="small"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="arrows-swap-24"
+            size="28"
+          />
+        </s-button-stub>
+         
+        <s-button-stub
+          alternative="true"
+          borderradius="small"
+          class="wallet-assets__button el-button--details"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          size="small"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="arrows-chevron-right-rounded-24"
+            size="28"
+          />
+        </s-button-stub>
+      </div>
+       
+      <s-divider-stub
+        class="wallet-assets-item_divider"
+        contentposition="center"
+        direction="horizontal"
+        type="secondary"
+      />
+      <div
+        class="wallet-assets-item s-flex"
+      >
+        <i
+          class="asset-logo"
+        />
+         
+        <div
+          class="asset s-flex"
+        >
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="VAL"
+            fiatfontsizerate="medium"
+            fiatfontweightrate="medium"
+            fontsizerate="small"
+            fontweightrate="normal"
+            hasfiatvalue="true"
+            symbolasdecimal="true"
+            value="0"
+            valuecanbehidden="true"
+            valueclass="asset-value"
+          >
+            <!---->
+          </formatted-amount-with-fiat-value-stub>
+           
+          <div
+            class="asset-info"
+          >
+            
+              SORA Validator Token
+              
+            <s-tooltip-stub
+              animation="el-fade-in-linear"
+              borderradius="small"
+              closedelay="0"
+              content=""
+              hideafter="0"
+              offset="0"
+              opendelay="1000"
+              placement="top"
+              showarrow="true"
+              tabindex="0"
+              theme="auto"
+              usedesignsystem="true"
+            >
+              <span
+                class="asset-id"
+              >
+                
+                  (0x020...00000)
+                
+              </span>
+            </s-tooltip-stub>
+          </div>
+        </div>
+         
+        <s-button-stub
+          alternative="true"
+          borderradius="small"
+          class="wallet-assets__button send"
+          disabled="true"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          size="small"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="finance-send-24"
+            size="28"
+          />
+        </s-button-stub>
+         
+        <s-button-stub
+          alternative="true"
+          borderradius="small"
+          class="wallet-assets__button swap"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          size="small"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="arrows-swap-24"
+            size="28"
+          />
+        </s-button-stub>
+         
+        <s-button-stub
+          alternative="true"
+          borderradius="small"
+          class="wallet-assets__button el-button--details"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          size="small"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="arrows-chevron-right-rounded-24"
+            size="28"
+          />
+        </s-button-stub>
+      </div>
+       
+      <s-divider-stub
+        class="wallet-assets-item_divider"
+        contentposition="center"
+        direction="horizontal"
+        type="secondary"
+      />
+      <div
+        class="wallet-assets-item s-flex"
+      >
+        <i
+          class="asset-logo"
+        />
+         
+        <div
+          class="asset s-flex"
+        >
+          <formatted-amount-with-fiat-value-stub
+            assetsymbol="PSWAP"
+            fiatfontsizerate="medium"
+            fiatfontweightrate="medium"
+            fontsizerate="small"
+            fontweightrate="normal"
+            hasfiatvalue="true"
+            symbolasdecimal="true"
+            value="0.000001"
+            valuecanbehidden="true"
+            valueclass="asset-value"
+          >
+            <!---->
+          </formatted-amount-with-fiat-value-stub>
+           
+          <div
+            class="asset-info"
+          >
+            
+              Polkaswap
+              
+            <s-tooltip-stub
+              animation="el-fade-in-linear"
+              borderradius="small"
+              closedelay="0"
+              content=""
+              hideafter="0"
+              offset="0"
+              opendelay="1000"
+              placement="top"
+              showarrow="true"
+              tabindex="0"
+              theme="auto"
+              usedesignsystem="true"
+            >
+              <span
+                class="asset-id"
+              >
+                
+                  (0x020...00000)
+                
+              </span>
+            </s-tooltip-stub>
+          </div>
+        </div>
+         
+        <s-button-stub
+          alternative="true"
+          borderradius="small"
+          class="wallet-assets__button send"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          size="small"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="finance-send-24"
+            size="28"
+          />
+        </s-button-stub>
+         
+        <s-button-stub
+          alternative="true"
+          borderradius="small"
+          class="wallet-assets__button swap"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          size="small"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="arrows-swap-24"
+            size="28"
+          />
+        </s-button-stub>
+         
+        <s-button-stub
+          alternative="true"
+          borderradius="small"
+          class="wallet-assets__button el-button--details"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          size="small"
+          tabindex="0"
+          tooltip=""
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="arrows-chevron-right-rounded-24"
+            size="28"
+          />
+        </s-button-stub>
+      </div>
+       
+      <!---->
+    </div>
+  </s-scrollbar-stub>
+   
+  <s-button-stub
+    borderradius="small"
+    class="wallet-assets-add s-typography-button--large"
+    icon=""
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip=""
+    tooltipplacement="top"
+    type="secondary"
+    usedesignsystem="true"
+  >
+    
+  </s-button-stub>
+</div>
+`;
