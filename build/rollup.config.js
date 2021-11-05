@@ -1,13 +1,13 @@
-import vue from 'rollup-plugin-vue'
-import typescript from 'rollup-plugin-typescript2'
-import pkg from '../package.json'
-import scss from 'rollup-plugin-scss'
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from 'rollup-plugin-commonjs'
-import { terser } from 'rollup-plugin-terser'
-import del from 'rollup-plugin-delete'
-import copy from 'rollup-plugin-copy'
-import json from 'rollup-plugin-json'
+import vue from 'rollup-plugin-vue';
+import typescript from 'rollup-plugin-typescript2';
+import pkg from '../package.json';
+import scss from 'rollup-plugin-scss';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from 'rollup-plugin-commonjs';
+import { terser } from 'rollup-plugin-terser';
+import del from 'rollup-plugin-delete';
+import copy from 'rollup-plugin-copy';
+import json from 'rollup-plugin-json';
 
 export default {
   input: 'src/index.ts',
@@ -16,13 +16,14 @@ export default {
       name: 'SoraNeoWalletWeb',
       file: 'lib/soraneo-wallet-web.esm.js',
       format: 'esm',
-      sourcemap: true
-    }, {
+      sourcemap: true,
+    },
+    {
       name: 'SoraNeoWalletWebUmd',
       format: 'umd',
       file: 'lib/soraneo-wallet-web.umd.js',
-      sourcemap: true
-    }
+      sourcemap: true,
+    },
   ],
   external: [
     ...Object.keys(pkg.dependencies || {}),
@@ -56,7 +57,7 @@ export default {
     'lodash/fp/fromPairs',
     'lodash/fp/flow',
     'lodash/fp/concat',
-    'lodash/fp/omit'
+    'lodash/fp/omit',
   ],
   plugins: [
     typescript({
@@ -65,7 +66,7 @@ export default {
       module: 'esnext',
 
       tsconfig: 'tsconfig.json',
-      tsconfigOverride: { exclude: ['node_modules', 'tests'] }
+      tsconfigOverride: { exclude: ['node_modules', 'tests'] },
     }),
     commonjs(),
     vue({
@@ -78,8 +79,8 @@ export default {
           @import "../styles/_variables.scss";
           @import "../styles/_layout.scss";
           @import "../styles/_mixins.scss";
-        `
-      }
+        `,
+      },
     }),
     scss(),
     resolve(),
@@ -91,10 +92,8 @@ export default {
     copy({
       // TODO: we should find out how to solve an issue with @sora-substrate/util
       // For now build operation can be done like:
-      targets: [
-        { src: 'lib/src/*', dest: 'lib' }
-      ],
-      hook: 'renderChunk'
+      targets: [{ src: 'lib/src/*', dest: 'lib' }],
+      hook: 'renderChunk',
     }),
     del({
       targets: [
@@ -105,9 +104,9 @@ export default {
         'lib/lang',
         'lib/SoraNeoWallet.vue.d.ts',
         'lib/main.d.ts',
-        'lib/soraneo-wallet-web.esm.css'
+        'lib/soraneo-wallet-web.esm.css',
       ],
-      hook: 'writeBundle'
-    })
-  ]
-}
+      hook: 'writeBundle',
+    }),
+  ],
+};
