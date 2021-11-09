@@ -98,7 +98,7 @@ export const historyElementsFilter = (address = '', { assetAddress = '', timesta
   if (timestamp) {
     filter.and.push({
       timestamp: {
-        greaterThan: String(timestamp),
+        greaterThan: timestamp,
       },
     });
   }
