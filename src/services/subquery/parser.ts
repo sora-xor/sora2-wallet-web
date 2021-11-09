@@ -56,8 +56,8 @@ const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> =>
   return OperationByModuleCall[module][method];
 };
 
-const getTransactionTimestamp = (tx: HistoryElement) => {
-  const timestamp = +tx.timestamp * 1000;
+const getTransactionTimestamp = (tx: HistoryElement): number => {
+  const timestamp = tx.timestamp * 1000;
 
   return !Number.isNaN(timestamp) ? timestamp : Date.now();
 };

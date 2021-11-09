@@ -10,7 +10,7 @@ import {
   api,
 } from '@sora-substrate/util';
 
-import { SoraNetwork } from '@/consts';
+import { SoraNetwork, WalletPermissions } from '@/consts';
 import type { Account } from '@/types/common';
 
 export const MOCK_NETWORK_FEE: {} = api.NetworkFee;
@@ -162,4 +162,9 @@ export const MOCK_ACCOUNT: Account = {
   address: '',
   name: '',
   isExternal: true,
+};
+
+export const MOCK_WALLET_PERMISSIONS: WalletPermissions = {
+  sendAssets: true,
+  swapAssets: true,
 };

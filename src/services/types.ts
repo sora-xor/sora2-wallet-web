@@ -71,7 +71,7 @@ export type HistoryElement = {
   address: string;
   networkFee: string;
   execution: HistoryElementExecution;
-  timestamp: string;
+  timestamp: number;
   data: Nullable<
     HistoryElementSwap | HistoryElementTransfer | HistoryElementLiquidityOperation | HistoryElementAssetRegistration
   >;
