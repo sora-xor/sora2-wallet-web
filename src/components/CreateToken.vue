@@ -68,19 +68,34 @@
       </template>
       <wallet-fee v-if="!isCreateDisabled" :value="fee" />
     </div>
+    <network-fee-warning-dialog
+      :visible.sync="showWarningFeeDialog"
+      :fee="fee.toString()"
+      @confirm="confirmNextTxFailure"
+    />
   </wallet-base>
 </template>
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { KnownSymbols, KnownAssets, FPNumber, MaxTotalSupply, NetworkFeesObject } from '@sora-substrate/util';
+import {
+  KnownSymbols,
+  KnownAssets,
+  FPNumber,
+  MaxTotalSupply,
+  NetworkFeesObject,
+  Operation,
+  Asset,
+} from '@sora-substrate/util';
 
 import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
+import NetworkFeeWarningDialog from './NetworkFeeWarningDialog.vue';
 import TransactionMixin from './mixins/TransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
+import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import { RouteNames } from '../consts';
 import { api } from '../api';
 
@@ -94,9 +109,10 @@ enum Step {
     WalletBase,
     InfoLine,
     WalletFee,
+    NetworkFeeWarningDialog,
   },
 })
-export default class CreateToken extends Mixins(TransactionMixin, NumberFormatterMixin) {
+export default class CreateToken extends Mixins(TransactionMixin, NumberFormatterMixin, NetworkFeeWarningMixin) {
   readonly KnownSymbols = KnownSymbols;
   readonly Step = Step;
   readonly decimals = FPNumber.DEFAULT_PRECISION;
@@ -110,6 +126,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   tokenName = '';
   tokenSupply = '';
   extensibleSupply = false;
+  showWarningFeeDialog = false;
 
   @Getter networkFees!: NetworkFeesObject;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
@@ -134,14 +151,25 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     return this.formatStringValue(this.tokenSupply, this.decimals);
   }
 
+  get xorAsset(): Asset {
+    return KnownAssets.get(KnownSymbols.XOR);
+  }
+
   get hasEnoughXor(): boolean {
-    const xor = KnownAssets.get(KnownSymbols.XOR);
+    const xor = this.xorAsset;
     const accountXor = api.accountAssets.find((asset) => asset.address === xor.address);
     if (!accountXor || !accountXor.balance || !+accountXor.balance.transferable) {
       return false;
     }
     const fpAccountXor = this.getFPNumberFromCodec(accountXor.balance.transferable, accountXor.decimals);
     return FPNumber.gte(fpAccountXor, this.fee);
+  }
+
+  get xorBalance(): string {
+    const xor = this.xorAsset;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const accountXor = api.accountAssets.find((asset) => asset.address === xor.address)!;
+    return accountXor.balance.transferable;
   }
 
   async registerAsset(): Promise<void> {
@@ -152,10 +180,24 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     if (!this.tokenSymbol.length || !this.tokenSupply.length) {
       return;
     }
+
     const tokenSupply = this.getFPNumber(this.tokenSupply, this.decimals);
     const maxTokenSupply = this.getFPNumber(MaxTotalSupply, this.decimals);
+
     if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
       this.tokenSupply = maxTokenSupply.toString();
+    }
+
+    if (
+      !this.isXorSufficientForNextTx({
+        type: Operation.RegisterAsset,
+        xorBalance: this.xorBalance,
+        fee: this.fee.toCodecString(),
+      })
+    ) {
+      this.showWarningFeeDialog = true;
+      setTimeout(() => (this.step = Step.Confirm), 100);
+      return;
     }
     this.step = Step.Confirm;
   }
@@ -168,6 +210,10 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
       await this.registerAsset();
       this.navigate({ name: RouteNames.Wallet });
     });
+  }
+
+  confirmNextTxFailure(): void {
+    this.showWarningFeeDialog = false;
   }
 }
 </script>

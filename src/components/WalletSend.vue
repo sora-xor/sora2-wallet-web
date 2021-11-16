@@ -78,7 +78,7 @@
           class="wallet-send-action s-typography-button--large"
           type="primary"
           :disabled="sendButtonDisabled"
-          @click="step = 2"
+          @click="handleSend"
         >
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
@@ -100,12 +100,17 @@
           class="wallet-send-action s-typography-button--large"
           type="primary"
           :disabled="sendButtonDisabled"
-          @click="handleSend"
+          @click="handleConfirm"
         >
           {{ sendButtonDisabledText || t('walletSend.confirm') }}
         </s-button>
       </template>
       <wallet-fee :value="fee" />
+      <network-fee-warning-dialog
+        :visible.sync="showWarningFeeDialog"
+        :fee="fee.toString()"
+        @confirm="confirmNextTxFailure"
+      />
     </div>
   </wallet-base>
 </template>
@@ -121,14 +126,17 @@ import {
   KnownAssets,
   KnownSymbols,
   NetworkFeesObject,
+  Operation,
 } from '@sora-substrate/util';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import NetworkFeeWarningDialog from './NetworkFeeWarningDialog.vue';
 import WalletFee from './WalletFee.vue';
 import { RouteNames } from '../consts';
 import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
@@ -139,10 +147,16 @@ import { api } from '../api';
     WalletBase,
     FormattedAmount,
     FormattedAmountWithFiatValue,
+    NetworkFeeWarningDialog,
     WalletFee,
   },
 })
-export default class WalletSend extends Mixins(TransactionMixin, FormattedAmountMixin, CopyAddressMixin) {
+export default class WalletSend extends Mixins(
+  TransactionMixin,
+  FormattedAmountMixin,
+  CopyAddressMixin,
+  NetworkFeeWarningMixin
+) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
 
   @Getter currentRouteParams!: any;
@@ -155,6 +169,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   step = 1;
   address = '';
   amount = '';
+  showWarningFeeDialog = false;
 
   get fee(): FPNumber {
     return this.getFPNumberFromCodec(this.networkFees.Transfer);
@@ -269,6 +284,13 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     return '';
   }
 
+  get xorBalance(): string {
+    const xor = this.xorAsset;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const accountXor = api.accountAssets.find((asset) => asset.address === xor.address)!;
+    return accountXor.balance.transferable;
+  }
+
   isXorAccountAsset(asset: AccountAsset): boolean {
     const knownAsset = KnownAssets.get(asset.address);
     if (!knownAsset) {
@@ -301,6 +323,24 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   }
 
   async handleSend(): Promise<void> {
+    if (
+      !this.isXorSufficientForNextTx({
+        type: Operation.Transfer,
+        isXorAccountAsset: this.isXorAccountAsset(this.asset),
+        xorBalance: this.xorBalance,
+        amount: this.getFPNumber(this.amount).toCodecString(),
+        fee: this.networkFees.Transfer,
+      })
+    ) {
+      this.showWarningFeeDialog = true;
+      setTimeout(() => (this.step = 2), 100);
+      return;
+    }
+
+    this.step = 2;
+  }
+
+  async handleConfirm(): Promise<void> {
     await this.withNotifications(async () => {
       if (!this.hasEnoughXor) {
         throw new Error('walletSend.badAmount');
@@ -308,6 +348,10 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
       await this.transfer({ to: this.address, amount: this.amount });
     });
     this.navigate({ name: RouteNames.Wallet });
+  }
+
+  confirmNextTxFailure(): void {
+    this.showWarningFeeDialog = false;
   }
 }
 </script>
