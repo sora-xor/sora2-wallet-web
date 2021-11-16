@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="t('createToken.title')" show-back @back="handleBack">
+  <wallet-base :title="t('createToken.title')" show-back :showHeader="showAdditionalInfo" @back="handleBack">
     <div class="wallet-settings-create-token">
       <template v-if="step === Step.Create">
         <s-input
@@ -48,6 +48,9 @@
           <template v-else>{{ t('createToken.action') }}</template>
         </s-button>
       </template>
+      <template v-else-if="step === Step.Warn">
+        <network-fee-warning-dialog :fee="fee.toString()" @confirm="confirmNextTxFailure" />
+      </template>
       <template v-else-if="step === Step.Confirm">
         <info-line :label="t('createToken.tokenSymbol.placeholder')" :value="tokenSymbol" />
         <info-line :label="t('createToken.tokenName.placeholder')" :value="tokenName.trim()" />
@@ -66,13 +69,8 @@
           <template v-else>{{ t('createToken.confirm') }}</template>
         </s-button>
       </template>
-      <wallet-fee v-if="!isCreateDisabled" :value="fee" />
+      <wallet-fee v-if="!isCreateDisabled && showAdditionalInfo" :value="fee" />
     </div>
-    <network-fee-warning-dialog
-      :visible.sync="showWarningFeeDialog"
-      :fee="fee.toString()"
-      @confirm="confirmNextTxFailure"
-    />
   </wallet-base>
 </template>
 
@@ -92,7 +90,7 @@ import {
 import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
-import NetworkFeeWarningDialog from './NetworkFeeWarningDialog.vue';
+import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
 import TransactionMixin from './mixins/TransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
@@ -102,6 +100,7 @@ import { api } from '../api';
 enum Step {
   Create,
   Confirm,
+  Warn,
 }
 
 @Component({
@@ -126,7 +125,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   tokenName = '';
   tokenSupply = '';
   extensibleSupply = false;
-  showWarningFeeDialog = false;
+  showAdditionalInfo = true;
 
   @Getter networkFees!: NetworkFeesObject;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
@@ -135,6 +134,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     if (this.step === Step.Create) {
       this.navigate({ name: RouteNames.Wallet });
     } else {
+      this.showAdditionalInfo = true;
       this.step = Step.Create;
     }
   }
@@ -187,18 +187,20 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
       this.tokenSupply = maxTokenSupply.toString();
     }
-
-    if (
-      !this.isXorSufficientForNextTx({
-        type: Operation.RegisterAsset,
-        xorBalance: this.xorBalance,
-        fee: this.fee.toCodecString(),
-      })
-    ) {
-      this.showWarningFeeDialog = true;
-      setTimeout(() => (this.step = Step.Confirm), 100);
-      return;
+    if (this.hasEnoughXor) {
+      if (
+        !this.isXorSufficientForNextTx({
+          type: Operation.RegisterAsset,
+          xorBalance: this.xorBalance,
+          fee: this.fee.toCodecString(),
+        })
+      ) {
+        this.showAdditionalInfo = false;
+        this.step = Step.Warn;
+        return;
+      }
     }
+
     this.step = Step.Confirm;
   }
 
@@ -213,7 +215,8 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   }
 
   confirmNextTxFailure(): void {
-    this.showWarningFeeDialog = false;
+    this.showAdditionalInfo = true;
+    this.step = Step.Confirm;
   }
 }
 </script>

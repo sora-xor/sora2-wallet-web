@@ -12,7 +12,7 @@ import InfoLine from './components/InfoLine.vue';
 import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';
 import TransactionHashView from './components/TransactionHashView.vue';
-import NetworkFeeWarningDialog from './components/NetworkFeeWarningDialog.vue';
+import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 // Mixins
 import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
@@ -109,7 +109,7 @@ const components = {
   FormattedAmount,
   FormattedAmountWithFiatValue,
   TransactionHashView,
-  NetworkFeeWarningDialog,
+  NetworkFeeWarning,
 };
 
 const mixins = {

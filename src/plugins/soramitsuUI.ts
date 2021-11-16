@@ -23,7 +23,6 @@ import SSwitch from '@soramitsu/soramitsu-js-ui/lib/components/Switch';
 import STab from '@soramitsu/soramitsu-js-ui/lib/components/Tab/STab';
 import STabs from '@soramitsu/soramitsu-js-ui/lib/components/Tab/STabs';
 import STooltip from '@soramitsu/soramitsu-js-ui/lib/components/Tooltip';
-import SDialog from '@soramitsu/soramitsu-js-ui/lib/components/Dialog';
 
 export function install(vue: typeof Vue, store) {
   vue.use(ElementUIPlugin);
@@ -32,7 +31,6 @@ export function install(vue: typeof Vue, store) {
   vue.use(SCard);
   vue.use(SDesignSystemProvider);
   vue.use(SDivider);
-  vue.use(SDialog);
   vue.use(SDropdown);
   vue.use(SDropdownItem);
   vue.use(SIcon);

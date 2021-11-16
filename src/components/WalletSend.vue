@@ -3,6 +3,7 @@
     :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)"
     :tooltip="tooltipContent"
     show-back
+    :showHeader="showAdditionalInfo"
     @back="handleBack"
   >
     <div class="wallet-send">
@@ -83,6 +84,9 @@
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
       </template>
+      <template v-else-if="step === 2">
+        <network-fee-warning :fee="fee.toString()" @confirm="confirmNextTxFailure" />
+      </template>
       <template v-else>
         <div class="confirm">
           <div class="confirm-asset s-flex">
@@ -105,12 +109,7 @@
           {{ sendButtonDisabledText || t('walletSend.confirm') }}
         </s-button>
       </template>
-      <wallet-fee :value="fee" />
-      <network-fee-warning-dialog
-        :visible.sync="showWarningFeeDialog"
-        :fee="fee.toString()"
-        @confirm="confirmNextTxFailure"
-      />
+      <wallet-fee v-if="showAdditionalInfo" :value="fee" />
     </div>
   </wallet-base>
 </template>
@@ -136,7 +135,7 @@ import CopyAddressMixin from './mixins/CopyAddressMixin';
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
-import NetworkFeeWarningDialog from './NetworkFeeWarningDialog.vue';
+import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
 import { RouteNames } from '../consts';
 import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
@@ -147,7 +146,7 @@ import { api } from '../api';
     WalletBase,
     FormattedAmount,
     FormattedAmountWithFiatValue,
-    NetworkFeeWarningDialog,
+    NetworkFeeWarning,
     WalletFee,
   },
 })
@@ -169,7 +168,8 @@ export default class WalletSend extends Mixins(
   step = 1;
   address = '';
   amount = '';
-  showWarningFeeDialog = false;
+  showWarningFeeNotification = false;
+  showAdditionalInfo = true;
 
   get fee(): FPNumber {
     return this.getFPNumberFromCodec(this.networkFees.Transfer);
@@ -307,6 +307,7 @@ export default class WalletSend extends Mixins(
 
   handleBack(): void {
     if (this.step !== 1) {
+      this.showAdditionalInfo = true;
       this.step = 1;
       return;
     }
@@ -332,12 +333,11 @@ export default class WalletSend extends Mixins(
         fee: this.networkFees.Transfer,
       })
     ) {
-      this.showWarningFeeDialog = true;
-      setTimeout(() => (this.step = 2), 100);
+      this.showAdditionalInfo = false;
+      this.step = 2;
       return;
     }
-
-    this.step = 2;
+    this.step = 3;
   }
 
   async handleConfirm(): Promise<void> {
@@ -351,7 +351,8 @@ export default class WalletSend extends Mixins(
   }
 
   confirmNextTxFailure(): void {
-    this.showWarningFeeDialog = false;
+    this.showAdditionalInfo = true;
+    this.step = 3;
   }
 }
 </script>
