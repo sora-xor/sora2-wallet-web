@@ -5,6 +5,7 @@ exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
   actionicon=""
   actiontooltip=""
   showback="true"
+  showheader="true"
   title=""
   tooltip=""
 >
@@ -71,6 +72,7 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
   actionicon=""
   actiontooltip=""
   showback="true"
+  showheader="true"
   title=""
   tooltip=""
 >

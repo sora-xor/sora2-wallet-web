@@ -5,74 +5,16 @@ exports[`WalletSend.vue [Confirm Step]: should be rendered correctly 1`] = `
   actionicon=""
   actiontooltip=""
   showback="true"
+  showheader="true"
   title=""
   tooltip=""
 >
   <div
     class="wallet-send"
   >
-    <div
-      class="confirm"
-    >
-      <div
-        class="confirm-asset s-flex"
-      >
-        <span
-          class="confirm-asset-title"
-        >
-          10,000,000,000
-        </span>
-         
-        <div
-          class="confirm-asset-value s-flex"
-        >
-          <i
-            class="asset-logo"
-          />
-           
-          <span
-            class="asset-name"
-          >
-            XOR
-          </span>
-        </div>
-      </div>
-       
-      <div
-        class="confirm-from"
-      >
-        dfsakljfdlkjfhfkjladshslfjafds
-      </div>
-       
-      <s-icon-stub
-        name="arrows-arrow-bottom-24"
-      />
-       
-      <div
-        class="confirm-to"
-      >
-        
-      </div>
-    </div>
-     
-    <s-button-stub
-      borderradius="small"
-      class="wallet-send-action s-typography-button--large"
-      disabled="true"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
-      usedesignsystem="true"
-    >
-      
-        
-      
-    </s-button-stub>
+    <network-fee-warning-stub
+      fee="0"
+    />
      
     <wallet-fee-stub
       value="0"
@@ -86,6 +28,7 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
   actionicon=""
   actiontooltip=""
   showback="true"
+  showheader="true"
   title=""
   tooltip=""
 >
@@ -252,6 +195,7 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
   actionicon=""
   actiontooltip=""
   showback="true"
+  showheader="true"
   title=""
   tooltip=""
 >
@@ -418,6 +362,7 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
   actionicon=""
   actiontooltip=""
   showback="true"
+  showheader="true"
   title=""
   tooltip=""
 >
@@ -611,6 +556,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
   actionicon=""
   actiontooltip=""
   showback="true"
+  showheader="true"
   title=""
   tooltip=""
 >
