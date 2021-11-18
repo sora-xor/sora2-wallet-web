@@ -1,3 +1,5 @@
+import { Operation } from '@sora-substrate/util';
+
 export const HiddenValue = '******';
 
 export enum RouteNames {
@@ -53,6 +55,15 @@ export interface WalletInitOptions {
   withoutStore?: boolean;
   whiteListOverApi?: boolean;
   permissions?: WalletPermissions;
+}
+
+export interface NetworkFeeWarningOptions {
+  type: Operation;
+  isExternalTx?: boolean;
+  isXorAccountAsset?: boolean;
+  xorBalance: string;
+  amount?: string;
+  fee: string;
 }
 
 export enum FontSizeRate {

@@ -3,6 +3,7 @@
     :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)"
     :tooltip="tooltipContent"
     show-back
+    :showHeader="showAdditionalInfo"
     @back="handleBack"
   >
     <div class="wallet-send">
@@ -78,10 +79,13 @@
           class="wallet-send-action s-typography-button--large"
           type="primary"
           :disabled="sendButtonDisabled"
-          @click="step = 2"
+          @click="handleSend"
         >
           {{ sendButtonDisabledText || t('walletSend.title') }}
         </s-button>
+      </template>
+      <template v-else-if="step === 2">
+        <network-fee-warning :fee="fee.toString()" @confirm="confirmNextTxFailure" />
       </template>
       <template v-else>
         <div class="confirm">
@@ -100,12 +104,12 @@
           class="wallet-send-action s-typography-button--large"
           type="primary"
           :disabled="sendButtonDisabled"
-          @click="handleSend"
+          @click="handleConfirm"
         >
           {{ sendButtonDisabledText || t('walletSend.confirm') }}
         </s-button>
       </template>
-      <wallet-fee :value="fee" />
+      <wallet-fee v-if="showAdditionalInfo" :value="fee" />
     </div>
   </wallet-base>
 </template>
@@ -121,14 +125,17 @@ import {
   KnownAssets,
   KnownSymbols,
   NetworkFeesObject,
+  Operation,
 } from '@sora-substrate/util';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
 import { RouteNames } from '../consts';
 import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
@@ -139,10 +146,16 @@ import { api } from '../api';
     WalletBase,
     FormattedAmount,
     FormattedAmountWithFiatValue,
+    NetworkFeeWarning,
     WalletFee,
   },
 })
-export default class WalletSend extends Mixins(TransactionMixin, FormattedAmountMixin, CopyAddressMixin) {
+export default class WalletSend extends Mixins(
+  TransactionMixin,
+  FormattedAmountMixin,
+  CopyAddressMixin,
+  NetworkFeeWarningMixin
+) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
 
   @Getter currentRouteParams!: any;
@@ -155,6 +168,8 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   step = 1;
   address = '';
   amount = '';
+  showWarningFeeNotification = false;
+  showAdditionalInfo = true;
 
   get fee(): FPNumber {
     return this.getFPNumberFromCodec(this.networkFees.Transfer);
@@ -269,6 +284,13 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
     return '';
   }
 
+  get xorBalance(): string {
+    const xor = this.xorAsset;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const accountXor = api.accountAssets.find((asset) => asset.address === xor.address)!;
+    return accountXor.balance.transferable;
+  }
+
   isXorAccountAsset(asset: AccountAsset): boolean {
     const knownAsset = KnownAssets.get(asset.address);
     if (!knownAsset) {
@@ -285,6 +307,7 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
 
   handleBack(): void {
     if (this.step !== 1) {
+      this.showAdditionalInfo = true;
       this.step = 1;
       return;
     }
@@ -301,6 +324,23 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
   }
 
   async handleSend(): Promise<void> {
+    if (
+      !this.isXorSufficientForNextTx({
+        type: Operation.Transfer,
+        isXorAccountAsset: this.isXorAccountAsset(this.asset),
+        xorBalance: this.xorBalance,
+        amount: this.getFPNumber(this.amount).toCodecString(),
+        fee: this.networkFees.Transfer,
+      })
+    ) {
+      this.showAdditionalInfo = false;
+      this.step = 2;
+      return;
+    }
+    this.step = 3;
+  }
+
+  async handleConfirm(): Promise<void> {
     await this.withNotifications(async () => {
       if (!this.hasEnoughXor) {
         throw new Error('walletSend.badAmount');
@@ -308,6 +348,11 @@ export default class WalletSend extends Mixins(TransactionMixin, FormattedAmount
       await this.transfer({ to: this.address, amount: this.amount });
     });
     this.navigate({ name: RouteNames.Wallet });
+  }
+
+  confirmNextTxFailure(): void {
+    this.showAdditionalInfo = true;
+    this.step = 3;
   }
 }
 </script>
