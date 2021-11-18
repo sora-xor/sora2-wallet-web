@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="t('createToken.title')" show-back @back="handleBack">
+  <wallet-base :title="t('createToken.title')" show-back :showHeader="showAdditionalInfo" @back="handleBack">
     <div class="wallet-settings-create-token">
       <template v-if="step === Step.Create">
         <s-input
@@ -48,6 +48,9 @@
           <template v-else>{{ t('createToken.action') }}</template>
         </s-button>
       </template>
+      <template v-else-if="step === Step.Warn">
+        <network-fee-warning-dialog :fee="fee.toString()" @confirm="confirmNextTxFailure" />
+      </template>
       <template v-else-if="step === Step.Confirm">
         <info-line :label="t('createToken.tokenSymbol.placeholder')" :value="tokenSymbol" />
         <info-line :label="t('createToken.tokenName.placeholder')" :value="tokenName.trim()" />
@@ -66,7 +69,7 @@
           <template v-else>{{ t('createToken.confirm') }}</template>
         </s-button>
       </template>
-      <wallet-fee v-if="!isCreateDisabled" :value="fee" />
+      <wallet-fee v-if="!isCreateDisabled && showAdditionalInfo" :value="fee" />
     </div>
   </wallet-base>
 </template>
@@ -74,19 +77,30 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { KnownSymbols, KnownAssets, FPNumber, MaxTotalSupply, NetworkFeesObject } from '@sora-substrate/util';
+import {
+  KnownSymbols,
+  KnownAssets,
+  FPNumber,
+  MaxTotalSupply,
+  NetworkFeesObject,
+  Operation,
+  Asset,
+} from '@sora-substrate/util';
 
 import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
+import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
 import TransactionMixin from './mixins/TransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
+import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import { RouteNames } from '../consts';
 import { api } from '../api';
 
 enum Step {
   Create,
   Confirm,
+  Warn,
 }
 
 @Component({
@@ -94,9 +108,10 @@ enum Step {
     WalletBase,
     InfoLine,
     WalletFee,
+    NetworkFeeWarningDialog,
   },
 })
-export default class CreateToken extends Mixins(TransactionMixin, NumberFormatterMixin) {
+export default class CreateToken extends Mixins(TransactionMixin, NumberFormatterMixin, NetworkFeeWarningMixin) {
   readonly KnownSymbols = KnownSymbols;
   readonly Step = Step;
   readonly decimals = FPNumber.DEFAULT_PRECISION;
@@ -110,6 +125,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   tokenName = '';
   tokenSupply = '';
   extensibleSupply = false;
+  showAdditionalInfo = true;
 
   @Getter networkFees!: NetworkFeesObject;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
@@ -118,6 +134,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     if (this.step === Step.Create) {
       this.navigate({ name: RouteNames.Wallet });
     } else {
+      this.showAdditionalInfo = true;
       this.step = Step.Create;
     }
   }
@@ -134,14 +151,25 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     return this.formatStringValue(this.tokenSupply, this.decimals);
   }
 
+  get xorAsset(): Asset {
+    return KnownAssets.get(KnownSymbols.XOR);
+  }
+
   get hasEnoughXor(): boolean {
-    const xor = KnownAssets.get(KnownSymbols.XOR);
+    const xor = this.xorAsset;
     const accountXor = api.accountAssets.find((asset) => asset.address === xor.address);
     if (!accountXor || !accountXor.balance || !+accountXor.balance.transferable) {
       return false;
     }
     const fpAccountXor = this.getFPNumberFromCodec(accountXor.balance.transferable, accountXor.decimals);
     return FPNumber.gte(fpAccountXor, this.fee);
+  }
+
+  get xorBalance(): string {
+    const xor = this.xorAsset;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const accountXor = api.accountAssets.find((asset) => asset.address === xor.address)!;
+    return accountXor.balance.transferable;
   }
 
   async registerAsset(): Promise<void> {
@@ -152,11 +180,27 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     if (!this.tokenSymbol.length || !this.tokenSupply.length) {
       return;
     }
+
     const tokenSupply = this.getFPNumber(this.tokenSupply, this.decimals);
     const maxTokenSupply = this.getFPNumber(MaxTotalSupply, this.decimals);
+
     if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
       this.tokenSupply = maxTokenSupply.toString();
     }
+    if (this.hasEnoughXor) {
+      if (
+        !this.isXorSufficientForNextTx({
+          type: Operation.RegisterAsset,
+          xorBalance: this.xorBalance,
+          fee: this.fee.toCodecString(),
+        })
+      ) {
+        this.showAdditionalInfo = false;
+        this.step = Step.Warn;
+        return;
+      }
+    }
+
     this.step = Step.Confirm;
   }
 
@@ -168,6 +212,11 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
       await this.registerAsset();
       this.navigate({ name: RouteNames.Wallet });
     });
+  }
+
+  confirmNextTxFailure(): void {
+    this.showAdditionalInfo = true;
+    this.step = Step.Confirm;
   }
 }
 </script>
