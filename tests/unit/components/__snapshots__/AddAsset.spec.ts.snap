@@ -5,6 +5,7 @@ exports[`AddAsset.vue [Custom Asset Tab]: should be rendered correctly 1`] = `
   actionicon=""
   actiontooltip=""
   showback="true"
+  showheader="true"
   title=""
   tooltip=""
 >
@@ -37,6 +38,7 @@ exports[`AddAsset.vue [Search Tab]: should be rendered correctly 1`] = `
   actionicon=""
   actiontooltip=""
   showback="true"
+  showheader="true"
   title=""
   tooltip=""
 >

@@ -11,7 +11,7 @@
         >
           <s-icon name="arrows-chevron-left-rounded-24" size="28" />
         </s-button>
-        <h3 class="base-title_text">
+        <h3 class="base-title_text" v-show="showHeader">
           {{ title }}
           <s-tooltip
             v-if="tooltip"
@@ -71,6 +71,7 @@ export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean;
   @Prop({ default: false, type: Boolean }) readonly showAction!: boolean;
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean;
+  @Prop({ default: true, type: Boolean }) readonly showHeader!: boolean;
   @Prop({ default: '', type: String }) readonly actionTooltip!: string;
   @Prop({ default: '', type: String }) readonly actionIcon!: string;
   // @Prop({ default: false, type: Boolean }) readonly disabledCleanHistory!: boolean
@@ -87,6 +88,9 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     // if (this.showAction && (this.showClose || this.showCleanHistory)) {
     if (this.showAction && this.showClose) {
       cssClasses.push('base-title--actions');
+    }
+    if (!this.showHeader) {
+      cssClasses.push('base-title--hide');
     }
     return cssClasses;
   }
@@ -151,6 +155,9 @@ $button-size: var(--s-size-medium);
       .base-title_action {
         right: calc(#{$button-size} + var(--s-basic-spacing));
       }
+    }
+    &--hide {
+      position: absolute;
     }
     .el-button {
       position: absolute;

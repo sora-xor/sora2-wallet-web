@@ -69,7 +69,7 @@ export default {
     install:
       'No polkadot.js extension found. Install it and <a href="#" onclick="window.location.reload(true);" class="wallet-connection-link">reload</a> the page.<br/><span class="wallet-connection-link">https://polkadot.js.org/extension/</span>',
     noPermissions:
-      'Accidentally rejected permission request?</br>Currently polkadot{.js} extension doesn’t have permission managment. As a workaround you can restart your browser and revisit this page to proceed with authorization.',
+      'Accidentally denied access for polkadot{.js}?</br>Go to polkadot{.js} settings and open "Manage Website Access" to allow.',
     noAccounts: 'No account found in your polkadot{.js} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
     loadingTitle: 'Waiting for you to allow access to polkadot{.js} extension..',
@@ -228,5 +228,12 @@ export default {
       submitted: 'Transaction submitted with fee of {fee} {symbol}',
       confirmed: 'Transaction confirmed',
     },
+  },
+  confirmNextTxFailure: {
+    header: 'Attention',
+    info: 'Your XOR balance will be less than {fee} XOR after this transaction. You won’t be able to pay for the network fee for another transaction.',
+    payoff:
+      'You would have to use the Bridge to get XOR from other networks, get sent XOR from another SORA account, or swap any other token already in your account into XOR.',
+    button: 'Yes, I understand the risk',
   },
 };
