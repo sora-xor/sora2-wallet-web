@@ -69,7 +69,7 @@ export default {
     install:
       'No polkadot.js extension found. Install it and <a href="#" onclick="window.location.reload(true);" class="wallet-connection-link">reload</a> the page.<br/><span class="wallet-connection-link">https://polkadot.js.org/extension/</span>',
     noPermissions:
-      'Accidentally rejected permission request?</br>Currently polkadot{.js} extension doesn’t have permission managment. As a workaround you can restart your browser and revisit this page to proceed with authorization.',
+      'Accidentally denied access for polkadot{.js}?</br>Go to polkadot{.js} settings and open "Manage Website Access" to allow.',
     noAccounts: 'No account found in your polkadot{.js} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
     loadingTitle: 'Waiting for you to allow access to polkadot{.js} extension..',
