@@ -1,7 +1,7 @@
 <template>
   <div class="content">
-    <div class="content__warning-icon"></div>
-    <h1 class="content__header">{{ t('confirmNextTxFailure.header') }}</h1>
+    <s-icon class="content__warning-icon" name="notifications-alert-triangle-24" size="64px" />
+    <h2 class="content__header">{{ t('confirmNextTxFailure.header') }}</h2>
     <div class="content__info">{{ t('confirmNextTxFailure.info', { fee }) }}</div>
     <div class="content__payoff">{{ t('confirmNextTxFailure.payoff') }}</div>
     <s-button type="primary" class="content__button s-typography-button--large" @click="handleConfirm">
@@ -28,18 +28,14 @@ export default class NetworkFeeWarning extends Mixins(TranslationMixin) {
 $inner-padding: 20px;
 
 .content {
+  font-family: var(--s-font-family-default) !important;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 
   &__warning-icon {
-    background-image: url('~@/assets/img/warning-icon.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    height: 60px;
-    width: 66px;
+    color: var(--s-color-status-error) !important;
     margin-top: var(--s-size-mini);
     margin-bottom: $inner-padding;
   }
