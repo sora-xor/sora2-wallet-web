@@ -49,7 +49,7 @@
         </s-button>
       </template>
       <template v-else-if="step === Step.Warn">
-        <network-fee-warning-dialog :fee="fee.toString()" @confirm="confirmNextTxFailure" />
+        <network-fee-warning-dialog :fee="feeFormatted" @confirm="confirmNextTxFailure" />
       </template>
       <template v-else-if="step === Step.Confirm">
         <info-line :label="t('createToken.tokenSymbol.placeholder')" :value="tokenSymbol" />
@@ -79,12 +79,12 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
 import {
   KnownSymbols,
-  KnownAssets,
   FPNumber,
   MaxTotalSupply,
   NetworkFeesObject,
   Operation,
-  Asset,
+  XOR,
+  CodecString,
 } from '@sora-substrate/util';
 
 import WalletBase from './WalletBase.vue';
@@ -143,6 +143,10 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     return this.getFPNumberFromCodec(this.networkFees.RegisterAsset);
   }
 
+  get feeFormatted(): string {
+    return this.fee.toLocaleString();
+  }
+
   get isCreateDisabled(): boolean {
     return !(this.tokenSymbol && this.tokenName.trim() && this.tokenSupply);
   }
@@ -151,13 +155,8 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     return this.formatStringValue(this.tokenSupply, this.decimals);
   }
 
-  get xorAsset(): Asset {
-    return KnownAssets.get(KnownSymbols.XOR);
-  }
-
   get hasEnoughXor(): boolean {
-    const xor = this.xorAsset;
-    const accountXor = api.accountAssets.find((asset) => asset.address === xor.address);
+    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
     if (!accountXor || !accountXor.balance || !+accountXor.balance.transferable) {
       return false;
     }
@@ -165,11 +164,9 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     return FPNumber.gte(fpAccountXor, this.fee);
   }
 
-  get xorBalance(): string {
-    const xor = this.xorAsset;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const accountXor = api.accountAssets.find((asset) => asset.address === xor.address)!;
-    return accountXor.balance.transferable;
+  get xorBalance(): Nullable<CodecString> {
+    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
+    return accountXor?.balance.transferable;
   }
 
   async registerAsset(): Promise<void> {
@@ -191,7 +188,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
       if (
         !this.isXorSufficientForNextTx({
           type: Operation.RegisterAsset,
-          xorBalance: this.xorBalance,
+          xorBalance: this.xorBalance || '',
           fee: this.fee.toCodecString(),
         })
       ) {

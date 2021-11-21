@@ -85,7 +85,7 @@
         </s-button>
       </template>
       <template v-else-if="step === 2">
-        <network-fee-warning :fee="fee.toString()" @confirm="confirmNextTxFailure" />
+        <network-fee-warning :fee="feeFormatted" @confirm="confirmNextTxFailure" />
       </template>
       <template v-else>
         <div class="confirm">
@@ -126,6 +126,7 @@ import {
   KnownSymbols,
   NetworkFeesObject,
   Operation,
+  XOR,
 } from '@sora-substrate/util';
 
 import TransactionMixin from './mixins/TransactionMixin';
@@ -175,6 +176,10 @@ export default class WalletSend extends Mixins(
     return this.getFPNumberFromCodec(this.networkFees.Transfer);
   }
 
+  get feeFormatted(): string {
+    return this.fee.toLocaleString();
+  }
+
   get tooltipContent(): string {
     return this.step === 1 ? this.t('walletSend.tooltip') : '';
   }
@@ -191,10 +196,6 @@ export default class WalletSend extends Mixins(
 
   get assetFiatPrice(): Nullable<CodecString> {
     return this.getAssetFiatPrice(this.asset);
-  }
-
-  get xorAsset(): Asset {
-    return KnownAssets.get(KnownSymbols.XOR);
   }
 
   get fiatAmount(): Nullable<string> {
@@ -284,11 +285,9 @@ export default class WalletSend extends Mixins(
     return '';
   }
 
-  get xorBalance(): string {
-    const xor = this.xorAsset;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const accountXor = api.accountAssets.find((asset) => asset.address === xor.address)!;
-    return accountXor.balance.transferable;
+  get xorBalance(): Nullable<CodecString> {
+    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
+    return accountXor?.balance.transferable;
   }
 
   isXorAccountAsset(asset: AccountAsset): boolean {
@@ -328,7 +327,7 @@ export default class WalletSend extends Mixins(
       !this.isXorSufficientForNextTx({
         type: Operation.Transfer,
         isXorAccountAsset: this.isXorAccountAsset(this.asset),
-        xorBalance: this.xorBalance,
+        xorBalance: this.xorBalance || '',
         amount: this.getFPNumber(this.amount).toCodecString(),
         fee: this.networkFees.Transfer,
       })
