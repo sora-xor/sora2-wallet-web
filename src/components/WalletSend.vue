@@ -287,7 +287,7 @@ export default class WalletSend extends Mixins(
 
   get xorBalance(): Nullable<CodecString> {
     const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
-    return accountXor?.balance.transferable;
+    return accountXor ? accountXor.balance.transferable : null;
   }
 
   isXorAccountAsset(asset: AccountAsset): boolean {

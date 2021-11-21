@@ -166,7 +166,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
 
   get xorBalance(): Nullable<CodecString> {
     const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
-    return accountXor?.balance.transferable;
+    return accountXor ? accountXor.balance.transferable : null;
   }
 
   async registerAsset(): Promise<void> {
