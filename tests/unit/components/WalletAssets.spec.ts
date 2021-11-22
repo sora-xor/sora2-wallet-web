@@ -45,6 +45,26 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
     expect(swapBtn.exists()).toBeFalse();
   });
 
+  it('should not render asset details button when showAssetDetails property is false', () => {
+    const wrapper = shallowMount(WalletAssets, {
+      localVue,
+      store: createStore({ ...MOCK_WALLET_PERMISSIONS, showAssetDetails: false }),
+    });
+    const detailsBtn = wrapper.find('.el-button--details');
+
+    expect(detailsBtn.exists()).toBeFalse();
+  });
+
+  it('should not render add assets button when addAssets property is false', () => {
+    const wrapper = shallowMount(WalletAssets, {
+      localVue,
+      store: createStore({ ...MOCK_WALLET_PERMISSIONS, addAssets: false }),
+    });
+    const addAssetsBtn = wrapper.find('.wallet-assets-add');
+
+    expect(addAssetsBtn.exists()).toBeFalse();
+  });
+
   it('should not render fiat value when withoutFiatAndApy property is true', () => {
     const wrapper = shallowMount(WalletAssets, {
       localVue,
