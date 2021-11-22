@@ -85,7 +85,7 @@
         </s-button>
       </template>
       <template v-else-if="step === 2">
-        <network-fee-warning :fee="feeFormatted" @confirm="confirmNextTxFailure" />
+        <network-fee-warning :fee="formattedFee" @confirm="confirmNextTxFailure" />
       </template>
       <template v-else>
         <div class="confirm">
@@ -176,7 +176,7 @@ export default class WalletSend extends Mixins(
     return this.getFPNumberFromCodec(this.networkFees.Transfer);
   }
 
-  get feeFormatted(): string {
+  get formattedFee(): string {
     return this.fee.toLocaleString();
   }
 

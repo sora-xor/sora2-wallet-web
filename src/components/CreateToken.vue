@@ -49,7 +49,7 @@
         </s-button>
       </template>
       <template v-else-if="step === Step.Warn">
-        <network-fee-warning-dialog :fee="feeFormatted" @confirm="confirmNextTxFailure" />
+        <network-fee-warning-dialog :fee="formattedFee" @confirm="confirmNextTxFailure" />
       </template>
       <template v-else-if="step === Step.Confirm">
         <info-line :label="t('createToken.tokenSymbol.placeholder')" :value="tokenSymbol" />
@@ -143,7 +143,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     return this.getFPNumberFromCodec(this.networkFees.RegisterAsset);
   }
 
-  get feeFormatted(): string {
+  get formattedFee(): string {
     return this.fee.toLocaleString();
   }
 
