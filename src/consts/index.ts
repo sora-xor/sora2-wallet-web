@@ -1,4 +1,4 @@
-import { Operation } from '@sora-substrate/util';
+import type { Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
@@ -65,7 +65,6 @@ export interface WalletInitOptions {
 
 export interface NetworkFeeWarningOptions {
   type: Operation;
-  isExternalTx?: boolean;
   isXorAccountAsset?: boolean;
   xorBalance: string;
   amount?: string;

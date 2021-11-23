@@ -11,7 +11,7 @@
         >
           <s-icon name="arrows-chevron-left-rounded-24" size="28" />
         </s-button>
-        <h3 class="base-title_text" v-show="showHeader">
+        <h3 class="base-title_text" v-if="showHeader">
           {{ title }}
           <s-tooltip
             v-if="tooltip"
