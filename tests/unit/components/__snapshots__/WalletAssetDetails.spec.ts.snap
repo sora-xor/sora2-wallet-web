@@ -59,6 +59,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
       >
         <s-button-stub
           borderradius="small"
+          class="asset-details-action send"
           icon=""
           iconposition="left"
           nativetype="button"
@@ -78,6 +79,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         </s-button-stub>
         <s-button-stub
           borderradius="small"
+          class="asset-details-action receive"
           icon=""
           iconposition="left"
           nativetype="button"
@@ -97,6 +99,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         </s-button-stub>
         <s-button-stub
           borderradius="small"
+          class="asset-details-action swap"
           icon=""
           iconposition="left"
           nativetype="button"
@@ -116,6 +119,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         </s-button-stub>
         <s-button-stub
           borderradius="small"
+          class="asset-details-action liquidity"
           icon=""
           iconposition="left"
           nativetype="button"
@@ -135,6 +139,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         </s-button-stub>
         <s-button-stub
           borderradius="small"
+          class="asset-details-action bridge"
           icon=""
           iconposition="left"
           nativetype="button"
@@ -227,6 +232,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
       >
         <s-button-stub
           borderradius="small"
+          class="asset-details-action send"
           icon=""
           iconposition="left"
           nativetype="button"
@@ -246,6 +252,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
         </s-button-stub>
         <s-button-stub
           borderradius="small"
+          class="asset-details-action receive"
           icon=""
           iconposition="left"
           nativetype="button"
@@ -265,6 +272,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
         </s-button-stub>
         <s-button-stub
           borderradius="small"
+          class="asset-details-action swap"
           icon=""
           iconposition="left"
           nativetype="button"
@@ -284,6 +292,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
         </s-button-stub>
         <s-button-stub
           borderradius="small"
+          class="asset-details-action liquidity"
           icon=""
           iconposition="left"
           nativetype="button"
@@ -303,6 +312,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
         </s-button-stub>
         <s-button-stub
           borderradius="small"
+          class="asset-details-action bridge"
           icon=""
           iconposition="left"
           nativetype="button"
