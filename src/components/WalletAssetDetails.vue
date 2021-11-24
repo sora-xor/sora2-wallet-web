@@ -36,6 +36,7 @@
           <s-button
             v-for="operation in operations"
             :key="operation.type"
+            :class="['asset-details-action', operation.type]"
             :tooltip="getOperationTooltip(operation)"
             :disabled="isOperationDisabled(operation.type)"
             type="action"
@@ -101,6 +102,8 @@ import { RouteNames } from '../consts';
 import { getAssetIconStyles } from '../util';
 import { Operations, Account } from '../types/common';
 
+import type { WalletPermissions } from '../consts';
+
 interface Operation {
   type: Operations;
   icon: string;
@@ -116,20 +119,13 @@ interface Operation {
 })
 export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin) {
   readonly balanceTypes = Object.values(BalanceType).filter((type) => type !== BalanceType.Total);
-  readonly operations = [
-    { type: Operations.Send, icon: 'finance-send-24' },
-    { type: Operations.Receive, icon: 'basic-receive-24' },
-    { type: Operations.Swap, icon: 'arrows-swap-24' },
-    { type: Operations.Liquidity, icon: 'basic-drop-24' },
-    { type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' },
-  ] as Array<Operation>;
-
   readonly BalanceType = BalanceType;
 
   @Getter account!: Account;
   @Getter accountAssets!: Array<AccountAsset>;
   @Getter currentRouteParams!: any;
   @Getter activity!: Array<History>;
+  @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
 
@@ -137,6 +133,28 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
   private formatBalance(value: CodecString): string {
     return this.formatCodecNumber(value, this.asset.decimals);
+  }
+
+  get operations(): Array<Operation> {
+    const list: Array<Operation> = [];
+
+    if (this.permissions.sendAssets) {
+      list.push({ type: Operations.Send, icon: 'finance-send-24' });
+    }
+    if (this.permissions.copyAssets) {
+      list.push({ type: Operations.Receive, icon: 'basic-receive-24' });
+    }
+    if (this.permissions.swapAssets) {
+      list.push({ type: Operations.Swap, icon: 'arrows-swap-24' });
+    }
+    if (this.permissions.addLiquidity) {
+      list.push({ type: Operations.Liquidity, icon: 'basic-drop-24' });
+    }
+    if (this.permissions.bridgeAssets) {
+      list.push({ type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' });
+    }
+
+    return list;
   }
 
   get price(): Nullable<CodecString> {

@@ -28,8 +28,14 @@ function initialState(): SettingsState {
   return {
     isWalletLoaded: false, // wallet is loading
     permissions: {
+      addAssets: true,
+      addLiquidity: true,
+      bridgeAssets: true,
+      copyAssets: true,
+      createAssets: true,
       sendAssets: true,
       swapAssets: true,
+      showAssetDetails: true,
     },
     soraNetwork: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage

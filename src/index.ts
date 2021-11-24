@@ -7,6 +7,7 @@ import installWalletPlugins from './plugins';
 
 // Components
 import SoraWallet from './SoraWallet.vue';
+import WalletAccount from './components/WalletAccount.vue';
 import WalletAvatar from './components/WalletAvatar.vue';
 import InfoLine from './components/InfoLine.vue';
 import FormattedAmount from './components/FormattedAmount.vue';
@@ -104,6 +105,7 @@ async function initWallet({
 
 const components = {
   SoraWallet,
+  WalletAccount,
   WalletAvatar,
   InfoLine,
   FormattedAmount,

@@ -2,18 +2,21 @@ import Vuex from 'vuex';
 import { shallowMount } from '@vue/test-utils';
 
 import { useDescribe, localVue } from '../../utils';
-import { MOCK_ACCOUNT, MOCK_HISTORY } from '../../utils/mock';
+import { MOCK_ACCOUNT, MOCK_HISTORY, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 
 import Wallet from '@/components/Wallet.vue';
 import { WalletTabs } from '@/consts';
 
-const createStore = (currentTab: WalletTabs) =>
+import type { WalletPermissions } from '../../../src/consts';
+
+const createStore = (currentTab: WalletTabs, permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS) =>
   new Vuex.Store({
     modules: {
       Account: {
         getters: {
           account: () => MOCK_ACCOUNT,
           activity: () => MOCK_HISTORY,
+          permissions: () => permissions,
         },
         actions: {
           getAccountActivity: jest.fn(),
@@ -39,4 +42,18 @@ useDescribe('Wallet.vue', Wallet, () => {
       expect(wrapper.element).toMatchSnapshot();
     })
   );
+
+  it('should not render action button when createAssets property is false', () => {
+    const wrapper = shallowMount(Wallet, {
+      localVue,
+      store: createStore(WalletTabs.Assets, {
+        ...MOCK_WALLET_PERMISSIONS,
+        createAssets: false,
+      }),
+    });
+
+    const actionBtn = wrapper.find('.base-title_action');
+
+    expect(actionBtn.exists()).toBeFalse();
+  });
 });
