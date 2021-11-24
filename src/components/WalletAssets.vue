@@ -62,6 +62,7 @@
               <s-icon name="arrows-swap-24" size="28" />
             </s-button>
             <s-button
+              v-if="permissions.showAssetDetails"
               class="wallet-assets__button el-button--details"
               type="action"
               size="small"
@@ -80,9 +81,11 @@
       </div>
     </s-scrollbar>
     <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
-    <s-button class="wallet-assets-add s-typography-button--large" @click="handleOpenAddAsset">{{
-      t('assets.add')
-    }}</s-button>
+    <s-button
+      v-if="permissions.addAssets"
+      class="wallet-assets-add s-typography-button--large"
+      @click="handleOpenAddAsset"
+    >{{ t('assets.add') }}</s-button>
   </div>
 </template>
 
@@ -96,8 +99,10 @@ import LoadingMixin from './mixins/LoadingMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
-import { RouteNames, WalletPermissions, HiddenValue } from '../consts';
+import { RouteNames, HiddenValue } from '../consts';
 import { getAssetIconStyles, formatAddress } from '../util';
+
+import type { WalletPermissions } from '../consts';
 
 @Component({
   components: {

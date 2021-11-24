@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import TranslationMixin from '@/components/mixins/TranslationMixin';
+import TranslationMixin from '../components/mixins/TranslationMixin';
 
 @Component
 export default class NetworkFeeWarning extends Mixins(TranslationMixin) {
@@ -36,7 +36,7 @@ $inner-padding: 20px;
 
   &__warning-icon {
     color: var(--s-color-status-error) !important;
-    margin-top: var(--s-size-mini);
+    margin-top: calc(var(--s-size-mini) / 3);
     margin-bottom: $inner-padding;
   }
 

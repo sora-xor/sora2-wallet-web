@@ -1,4 +1,4 @@
-import { Operation } from '@sora-substrate/util';
+import type { Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
@@ -47,7 +47,13 @@ export type ExplorerLink = {
 };
 
 export interface WalletPermissions {
+  addAssets?: boolean;
+  addLiquidity?: boolean;
+  bridgeAssets?: boolean;
+  copyAssets?: boolean;
+  createAssets?: boolean;
   sendAssets?: boolean;
+  showAssetDetails?: boolean;
   swapAssets?: boolean;
 }
 
@@ -59,7 +65,6 @@ export interface WalletInitOptions {
 
 export interface NetworkFeeWarningOptions {
   type: Operation;
-  isExternalTx?: boolean;
   isXorAccountAsset?: boolean;
   xorBalance: string;
   amount?: string;

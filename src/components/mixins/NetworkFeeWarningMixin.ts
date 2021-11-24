@@ -7,20 +7,19 @@ import { NetworkFeeWarningOptions } from '@/consts';
 export default class NetworkFeeWarningMixin extends Mixins(NumberFormatterMixin) {
   isXorSufficientForNextTx({
     type,
-    isExternalTx = false,
     isXorAccountAsset,
     xorBalance,
     amount = '0',
     fee,
   }: NetworkFeeWarningOptions): boolean {
-    if (type === Operation.EthBridgeIncoming || isExternalTx) return true;
+    if (type === Operation.EthBridgeIncoming || !xorBalance) return true;
 
     let fpRemainingBalance: FPNumber;
     const fpXorBalance = this.getFPNumberFromCodec(xorBalance);
     const fpAmount = this.getFPNumberFromCodec(amount);
     const fpNetworkFee = this.getFPNumberFromCodec(fee);
 
-    if (type === Operation.Transfer || type === Operation.EthBridgeOutgoing) {
+    if ([Operation.Transfer, Operation.EthBridgeOutgoing].includes(type)) {
       if (isXorAccountAsset) {
         fpRemainingBalance = fpXorBalance.sub(fpAmount).sub(fpNetworkFee);
       } else {
@@ -30,13 +29,13 @@ export default class NetworkFeeWarningMixin extends Mixins(NumberFormatterMixin)
       return FPNumber.gte(fpRemainingBalance, fpNetworkFee);
     }
 
-    if (type === Operation.CreatePair || type === Operation.AddLiquidity) {
+    if ([Operation.CreatePair, Operation.AddLiquidity].includes(type)) {
       fpRemainingBalance = fpXorBalance.sub(fpAmount).sub(fpNetworkFee);
 
       return FPNumber.gte(fpRemainingBalance, fpNetworkFee);
     }
 
-    if (type === Operation.RegisterAsset || type === Operation.RemoveLiquidity) {
+    if ([Operation.RegisterAsset, Operation.RemoveLiquidity].includes(type)) {
       fpRemainingBalance = fpXorBalance.sub(fpNetworkFee);
 
       return FPNumber.gte(fpRemainingBalance, fpNetworkFee);

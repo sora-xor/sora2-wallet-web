@@ -1,7 +1,7 @@
 <template>
   <wallet-base
     :title="t('wallet.title')"
-    show-action
+    :show-action="permissions.createAssets"
     :show-clean-history="currentTab === WalletTabs.Activity"
     :disabled-clean-history="isCleanHistoryDisabled"
     action-icon="various-atom-24"
@@ -31,6 +31,7 @@ import WalletAssets from './WalletAssets.vue';
 import WalletActivity from './WalletActivity.vue';
 import { RouteNames, WalletTabs } from '../consts';
 import type { Account } from '../types/common';
+import type { WalletPermissions } from '../consts';
 
 @Component({
   components: {
@@ -46,6 +47,7 @@ export default class Wallet extends Mixins(TranslationMixin) {
   @Getter currentRouteParams!: any;
   @Getter account!: Account;
   @Getter activity!: Array<History>;
+  @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
 
