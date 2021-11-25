@@ -85,7 +85,9 @@
       v-if="permissions.addAssets"
       class="wallet-assets-add s-typography-button--large"
       @click="handleOpenAddAsset"
-    >{{ t('assets.add') }}</s-button>
+    >
+      {{ t('assets.add') }}
+    </s-button>
   </div>
 </template>
 

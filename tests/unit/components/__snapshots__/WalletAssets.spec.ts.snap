@@ -422,6 +422,8 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
     usedesignsystem="true"
   >
     
+    
+  
   </s-button-stub>
 </div>
 `;
