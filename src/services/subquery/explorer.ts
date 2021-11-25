@@ -1,6 +1,6 @@
 import { axiosInstance, FPNumber } from '@sora-substrate/util';
 
-import { HistoryElementsQuery } from './queries/historyElements';
+import { HistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
 import { SoraNetwork } from '../../consts';
 import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject } from '../types';
 
@@ -63,6 +63,25 @@ export default class SubqueryExplorer implements Explorer {
     } catch (error) {
       console.error('Subquery is not available or data is incorrect!', error);
       return null;
+    }
+  }
+
+  /**
+   * This method should be used **only** for total redeemed value for Noir Exchange
+   * @param accountId Noir Account Id
+   * @param noirAssetId Noir Asset Id
+   */
+  public async getNoirTotalRedeemed(accountId?: string, noirAssetId?: string): Promise<number> {
+    try {
+      const params = {
+        filter: noirHistoryElementsFilter(accountId, noirAssetId),
+      };
+      const { historyElements } = await this.request(HistoryElementsQuery, params);
+
+      return historyElements.edges.length;
+    } catch (error) {
+      console.error(error);
+      return 0;
     }
   }
 

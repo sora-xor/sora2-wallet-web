@@ -26,6 +26,7 @@ import internalStore, { modules } from './store'; // `internalStore` is required
 import { storage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
+import { SubqueryExplorerService } from './services/subquery';
 import * as WALLET_CONSTS from './consts';
 import * as WALLET_TYPES from './types/common';
 
@@ -134,5 +135,6 @@ export {
   WALLET_TYPES,
   components,
   mixins,
+  SubqueryExplorerService,
 };
 export default SoraWalletElements;
