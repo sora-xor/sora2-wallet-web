@@ -105,3 +105,44 @@ export const historyElementsFilter = (address = '', { assetAddress = '', timesta
 
   return filter;
 };
+
+/**
+ * This method should be used **only** for filtering history elements in terms of Noir redeemed value
+ * @param address Noir Account Id
+ * @param noirAssetId Noir Asset Id
+ */
+export const noirHistoryElementsFilter = (
+  address = 'cnW1pm3hDysWLCD4xvQAKFmW9QPjMG5zmnRxBpc6hd3P7CWP3',
+  noirAssetId = ''
+): any => {
+  const filter: any = {
+    and: [
+      {
+        method: {
+          in: ['transfer'],
+        },
+      },
+    ],
+  };
+
+  filter.and.push({
+    or: [
+      {
+        data: {
+          contains: {
+            to: address,
+            // amount: { greaterThan: 1 }, amount is a string so this operator doesn't work
+          },
+        },
+      },
+    ],
+  });
+
+  if (noirAssetId) {
+    filter.and.push({
+      or: createAssetFilters(noirAssetId),
+    });
+  }
+
+  return filter;
+};
