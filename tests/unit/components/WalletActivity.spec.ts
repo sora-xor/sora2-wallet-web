@@ -1,11 +1,9 @@
-import { shallowMount } from '@vue/test-utils';
-
 import WalletActivity from '@/components/WalletActivity.vue';
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, useShallowMount } from '../../utils';
 
 useDescribe('WalletActivity.vue', WalletActivity, () => {
   it('should be rendered correctly', () => {
-    const wrapper = shallowMount(WalletActivity, { localVue });
+    const wrapper = useShallowMount(WalletActivity);
 
     expect(wrapper.element).toMatchSnapshot();
   });

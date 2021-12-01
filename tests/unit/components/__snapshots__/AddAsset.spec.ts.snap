@@ -6,7 +6,7 @@ exports[`AddAsset.vue [Custom Asset Tab]: should be rendered correctly 1`] = `
   actiontooltip=""
   showback="true"
   showheader="true"
-  title=""
+  title="Add asset"
   tooltip=""
 >
   <div
@@ -20,10 +20,12 @@ exports[`AddAsset.vue [Custom Asset Tab]: should be rendered correctly 1`] = `
       value="AddAssetCustom"
     >
       <s-tab-stub
+        label="Search"
         name="AddAssetSearch"
       />
       <s-tab-stub
         disabled="true"
+        label="Custom asset"
         name="AddAssetCustom"
       />
     </s-tabs-stub>
@@ -39,7 +41,7 @@ exports[`AddAsset.vue [Search Tab]: should be rendered correctly 1`] = `
   actiontooltip=""
   showback="true"
   showheader="true"
-  title=""
+  title="Add asset"
   tooltip=""
 >
   <div
@@ -53,10 +55,12 @@ exports[`AddAsset.vue [Search Tab]: should be rendered correctly 1`] = `
       value="AddAssetSearch"
     >
       <s-tab-stub
+        label="Search"
         name="AddAssetSearch"
       />
       <s-tab-stub
         disabled="true"
+        label="Custom asset"
         name="AddAssetCustom"
       />
     </s-tabs-stub>

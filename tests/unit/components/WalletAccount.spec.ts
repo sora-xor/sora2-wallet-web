@@ -1,6 +1,5 @@
 import Vuex from 'vuex';
-import { shallowMount } from '@vue/test-utils';
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, useShallowMount } from '../../utils';
 
 import WalletAccount from '@/components/WalletAccount.vue';
 import { MOCK_ACCOUNT, MOCK_ACCOUNT_POLKADOT, MOCK_ADDRESS } from '../../utils/WalletAccountMock';
@@ -31,7 +30,6 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
   let wrapper;
   const polkadotAccount = MOCK_ACCOUNT_POLKADOT;
   const wrapperOptions = {
-    localVue,
     propsData: {
       showControls: true,
       polkadotAccount,
@@ -40,7 +38,7 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
   };
 
   beforeEach(() => {
-    wrapper = shallowMount(WalletAccount, wrapperOptions);
+    wrapper = useShallowMount(WalletAccount, wrapperOptions);
   });
 
   it('should be rendered correctly', () => {
@@ -54,7 +52,7 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
   });
 
   it('should not render account switch button while false', () => {
-    const wrapper = shallowMount(WalletAccount, {
+    const wrapper = useShallowMount(WalletAccount, {
       ...wrapperOptions,
       propsData: {
         showControls: false,
@@ -81,7 +79,7 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
   });
 
   it('should use general account name and address', () => {
-    const wrapper = shallowMount(WalletAccount, {
+    const wrapper = useShallowMount(WalletAccount, {
       ...wrapperOptions,
       propsData: {
         showControls: true,

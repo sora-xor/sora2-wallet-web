@@ -1,8 +1,7 @@
 import Vuex from 'vuex';
-import { shallowMount } from '@vue/test-utils';
 import { History } from '@sora-substrate/util';
 
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock';
 
 import WalletTransactionDetails from '@/components/WalletTransactionDetails.vue';
@@ -34,7 +33,7 @@ const createStore = (tx: History) =>
 useDescribe('WalletTransactionDetails.vue', WalletTransactionDetails, () => {
   MOCK_HISTORY.map((item) =>
     it(`[${item.type}, ${item.status}]: should be rendered correctly`, () => {
-      const wrapper = shallowMount(WalletTransactionDetails, { localVue, store: createStore(item) });
+      const wrapper = useShallowMount(WalletTransactionDetails, { store: createStore(item) });
       expect(wrapper.element).toMatchSnapshot();
     })
   );
