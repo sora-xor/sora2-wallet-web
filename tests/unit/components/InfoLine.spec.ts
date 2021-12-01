@@ -1,8 +1,7 @@
 import omit from 'lodash/fp/omit';
 import Vuex from 'vuex';
-import { shallowMount } from '@vue/test-utils';
 
-import { useDescribe, localVue, i18n } from '../../utils';
+import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_INFO_LINE } from '../../utils/InfoLineMock';
 
 import InfoLine from '@/components/InfoLine.vue';
@@ -19,9 +18,7 @@ useDescribe('InfoLine.vue', InfoLine, () => {
       item.valueCanBeHidden ? '; hide balances button was clicked' : ''
     }]: should be rendered correctly`, () => {
       const propsData = omit(['title'], item);
-      const wrapper = shallowMount(InfoLine, {
-        localVue,
-        i18n,
+      const wrapper = useShallowMount(InfoLine, {
         store,
         propsData,
       });

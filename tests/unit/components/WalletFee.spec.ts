@@ -1,7 +1,6 @@
 import Vuex from 'vuex';
-import { shallowMount } from '@vue/test-utils';
 
-import { useDescribe, localVue, i18n } from '../../utils';
+import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_FIAT_PRICE_AND_APY_OBJECT } from '../../utils/mock';
 import { MOCK_WALLET_FEE } from '../../utils/WalletFeeMock';
 
@@ -18,9 +17,7 @@ useDescribe('WalletFee.vue', WalletFee, () => {
       const propsData = {
         value: item.value,
       };
-      const wrapper = shallowMount(WalletFee, {
-        localVue,
-        i18n,
+      const wrapper = useShallowMount(WalletFee, {
         store,
         propsData,
       });
@@ -32,7 +29,7 @@ useDescribe('WalletFee.vue', WalletFee, () => {
       value: '123',
     };
     try {
-      shallowMount(WalletFee, { localVue, i18n, store, propsData });
+      useShallowMount(WalletFee, { store, propsData });
     } catch (error) {
       expect((error as Error).message).toBe('[WalletFee.vue]: property "value" should have FPNumber type');
     }
