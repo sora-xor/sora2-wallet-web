@@ -1,10 +1,9 @@
 import Vuex from 'vuex';
-import { shallowMount, mount } from '@vue/test-utils';
 import { Account } from '@/types/common';
-import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util';
+import { History, TransactionStatus } from '@sora-substrate/util';
 
 import WalletHistory from '@/components/WalletHistory.vue';
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, useShallowMount, useMount } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock';
 import { MOCK_ACCOUNT } from '../../utils/WalletAccountMock';
 
@@ -23,8 +22,7 @@ const createStore = (historyArray?: Array<History> | undefined) => {
 
 useDescribe('WalletHistory.vue', WalletHistory, () => {
   it('should be rendered correctly', () => {
-    const wrapper = shallowMount(WalletHistory, {
-      localVue,
+    const wrapper = useShallowMount(WalletHistory, {
       store: createStore(MOCK_HISTORY),
     });
 
@@ -32,7 +30,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
   });
 
   it('should render history empty text when no transacion', () => {
-    const wrapper = shallowMount(WalletHistory, { localVue, store: createStore() });
+    const wrapper = useShallowMount(WalletHistory, { store: createStore() });
     const textMessage = wrapper.find('.history-empty');
 
     expect(textMessage.exists()).toBeTrue();
@@ -40,8 +38,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
   });
 
   it('asset should be readable when passed as prop', () => {
-    const wrapper = shallowMount(WalletHistory, {
-      localVue,
+    const wrapper = useShallowMount(WalletHistory, {
       store: createStore(MOCK_HISTORY),
       propsData: { asset: MOCK_ACCOUNT_ASSETS[0] },
     });
@@ -50,8 +47,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
   });
 
   it('should render spinner when transaction is pending', () => {
-    const wrapper = mount(WalletHistory, {
-      localVue,
+    const wrapper = useMount(WalletHistory, {
       store: createStore([{ ...MOCK_HISTORY[0], status: TransactionStatus.InBlock }]),
       propsData: { asset: MOCK_ACCOUNT_ASSETS[0] },
     });
@@ -62,8 +58,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
   });
 
   it('should render error icon when transaction is failed', () => {
-    const wrapper = mount(WalletHistory, {
-      localVue,
+    const wrapper = useMount(WalletHistory, {
       store: createStore([{ ...MOCK_HISTORY[0], status: TransactionStatus.Error }]),
       propsData: { asset: MOCK_ACCOUNT_ASSETS[0] },
     });

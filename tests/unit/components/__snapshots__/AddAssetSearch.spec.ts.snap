@@ -13,7 +13,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
     label=""
     maxlength="100"
     name=""
-    placeholder=""
+    placeholder="Filter by Asset ID, Name or Ticker Symbol"
     prefix="s-icon-search-16"
     size="big"
     suffix=""
@@ -53,7 +53,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
             animation="el-fade-in-linear"
             borderradius="small"
             closedelay="0"
-            content=""
+            content="Copy Asset ID"
             hideafter="0"
             offset="0"
             opendelay="1000"
@@ -89,7 +89,7 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
     label=""
     maxlength="100"
     name=""
-    placeholder=""
+    placeholder="Filter by Asset ID, Name or Ticker Symbol"
     prefix="s-icon-search-16"
     size="big"
     suffix=""
@@ -107,7 +107,7 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
       class="asset-search-list_empty"
     >
       
-      
+      No tokens found
     
     </div>
   </s-scrollbar-stub>
@@ -127,7 +127,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
     label=""
     maxlength="100"
     name=""
-    placeholder=""
+    placeholder="Filter by Asset ID, Name or Ticker Symbol"
     prefix="s-icon-search-16"
     size="big"
     suffix=""
@@ -167,7 +167,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
             animation="el-fade-in-linear"
             borderradius="small"
             closedelay="0"
-            content=""
+            content="Copy Asset ID"
             hideafter="0"
             offset="0"
             opendelay="1000"

@@ -1,13 +1,14 @@
 import Vue, { VueConstructor } from 'vue';
 import Vuex from 'vuex';
-import { createLocalVue } from '@vue/test-utils';
+import VueI18n from 'vue-i18n';
+import { createLocalVue, shallowMount, mount } from '@vue/test-utils';
 import SoramitsuElements, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui';
+
+import i18n from '../../src/lang';
 
 export const localVue = createLocalVue();
 localVue.use(Vuex);
-
-export const TranslationMock = (vue: VueConstructor) =>
-  vue.mixin({ name: 'TranslationMixin', methods: { t: jest.fn(), tc: jest.fn() } });
+localVue.use(VueI18n);
 
 export const SoramitsuElementsImport = (vue: VueConstructor) => {
   vue.use(SoramitsuElements);
@@ -21,7 +22,22 @@ export const useDescribe = (name: string, component: VueConstructor<Vue>, fn: je
   describe(name, () => {
     beforeAll(() => {
       SoramitsuElementsImport(localVue);
-      TranslationMock(component);
     });
     fn();
   });
+
+export const useShallowMount = (component: VueConstructor<Vue>, options = {}) => {
+  return shallowMount(component, {
+    localVue,
+    i18n,
+    ...options,
+  });
+};
+
+export const useMount = (component: VueConstructor<Vue>, options = {}) => {
+  return mount(component, {
+    localVue,
+    i18n,
+    ...options,
+  });
+};

@@ -1,7 +1,6 @@
 import Vuex from 'vuex';
-import { shallowMount } from '@vue/test-utils';
 
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_ASSETS } from '../../utils/mock';
 import { MOCK_ADD_ASSET_SEARCH } from '../../utils/AddAssetSearchMock';
 
@@ -37,9 +36,8 @@ const createStore = () =>
 useDescribe('AddAssetSearch.vue', AddAssetSearch, () => {
   MOCK_ADD_ASSET_SEARCH.map((item) =>
     it(`[${item.title}]: should be rendered correctly`, () => {
-      const wrapper = shallowMount(AddAssetSearch, {
+      const wrapper = useShallowMount(AddAssetSearch, {
         store: createStore(),
-        localVue,
         data: () => {
           return {
             loading: item.loading,

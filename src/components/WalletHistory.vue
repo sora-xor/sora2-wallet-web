@@ -54,7 +54,7 @@ import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util';
 import { api } from '../api';
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
-import { formatDate, getStatusIcon, getStatusClass } from '../util';
+import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames } from '../consts';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
 import { historyElementsFilter } from '../services/subquery/queries/historyElements';
@@ -68,7 +68,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   @Prop() readonly asset?: AccountAsset;
 
-  formatDate = formatDate;
   TransactionStatus = TransactionStatus;
   query = '';
   currentPage = 1;

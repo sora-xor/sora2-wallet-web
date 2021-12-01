@@ -1,8 +1,7 @@
 import Vuex from 'vuex';
-import { shallowMount } from '@vue/test-utils';
 
 import WalletAssetDetails from '@/components/WalletAssetDetails.vue';
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, useShallowMount } from '../../utils';
 import {
   MOCK_ACCOUNT_ASSETS,
   MOCK_FIAT_PRICE_AND_APY_OBJECT,
@@ -25,13 +24,13 @@ const createStore = ({ permissions = MOCK_WALLET_PERMISSIONS, isNotXor = false }
 
 useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
   it('should be rendered correctly', () => {
-    const wrapper = shallowMount(WalletAssetDetails, { localVue, store: createStore() });
+    const wrapper = useShallowMount(WalletAssetDetails, { store: createStore() });
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('should show detailed balance info when button clicked', async () => {
-    const wrapper = shallowMount(WalletAssetDetails, { localVue, store: createStore() });
+    const wrapper = useShallowMount(WalletAssetDetails, { store: createStore() });
     const el = wrapper.find('.asset-details-balance');
 
     await el.trigger('click');
@@ -42,7 +41,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
   it('should not show balance details button', () => {
     const isNotXor = true;
     const store = createStore({ isNotXor });
-    const wrapper = shallowMount(WalletAssetDetails, { localVue, store });
+    const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btnBalanceDetails = wrapper.find('.asset-details-balance--clickable');
 
     expect(btnBalanceDetails.exists()).toBeFalse();
@@ -50,7 +49,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
 
   it('should not show send action button', () => {
     const store = createStore({ permissions: { ...MOCK_WALLET_PERMISSIONS, sendAssets: false } });
-    const wrapper = shallowMount(WalletAssetDetails, { localVue, store });
+    const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.send');
 
     expect(btn.exists()).toBeFalse();
@@ -58,7 +57,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
 
   it('should not show bridge action button', () => {
     const store = createStore({ permissions: { ...MOCK_WALLET_PERMISSIONS, bridgeAssets: false } });
-    const wrapper = shallowMount(WalletAssetDetails, { localVue, store });
+    const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.bridge');
 
     expect(btn.exists()).toBeFalse();
@@ -66,7 +65,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
 
   it('should not show copy action button', () => {
     const store = createStore({ permissions: { ...MOCK_WALLET_PERMISSIONS, copyAssets: false } });
-    const wrapper = shallowMount(WalletAssetDetails, { localVue, store });
+    const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.recieve');
 
     expect(btn.exists()).toBeFalse();
@@ -74,7 +73,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
 
   it('should not show swap action button', () => {
     const store = createStore({ permissions: { ...MOCK_WALLET_PERMISSIONS, swapAssets: false } });
-    const wrapper = shallowMount(WalletAssetDetails, { localVue, store });
+    const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.swap');
 
     expect(btn.exists()).toBeFalse();
@@ -82,7 +81,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
 
   it('should not show liquidity action button', () => {
     const store = createStore({ permissions: { ...MOCK_WALLET_PERMISSIONS, addLiquidity: false } });
-    const wrapper = shallowMount(WalletAssetDetails, { localVue, store });
+    const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.liquidity');
 
     expect(btn.exists()).toBeFalse();
@@ -90,7 +89,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
 
   it('should not show bridge action button', () => {
     const store = createStore({ permissions: { ...MOCK_WALLET_PERMISSIONS, bridgeAssets: false } });
-    const wrapper = shallowMount(WalletAssetDetails, { localVue, store });
+    const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.bridge');
 
     expect(btn.exists()).toBeFalse();
