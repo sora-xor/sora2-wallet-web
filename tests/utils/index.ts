@@ -4,16 +4,11 @@ import VueI18n from 'vue-i18n';
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils';
 import SoramitsuElements, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui';
 
-import { messages } from '../../src/lang';
+import i18n from '../../src/lang';
 
 export const localVue = createLocalVue();
 localVue.use(Vuex);
 localVue.use(VueI18n);
-
-export const i18n = new VueI18n({
-  locale: 'en',
-  messages,
-});
 
 export const SoramitsuElementsImport = (vue: VueConstructor) => {
   vue.use(SoramitsuElements);
