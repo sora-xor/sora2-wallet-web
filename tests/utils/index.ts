@@ -15,16 +15,6 @@ export const i18n = new VueI18n({
   messages,
 });
 
-export const TranslationMock = (vue: VueConstructor) =>
-  vue.mixin({
-    name: 'TranslationMixin',
-    methods: {
-      t: jest.fn(),
-      tc: jest.fn(),
-      te: jest.fn(),
-    },
-  });
-
 export const SoramitsuElementsImport = (vue: VueConstructor) => {
   vue.use(SoramitsuElements);
   vue.prototype.$prompt = MessageBox.prompt;
@@ -37,7 +27,6 @@ export const useDescribe = (name: string, component: VueConstructor<Vue>, fn: je
   describe(name, () => {
     beforeAll(() => {
       SoramitsuElementsImport(localVue);
-      // TranslationMock(component);
     });
     fn();
   });
