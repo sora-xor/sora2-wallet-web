@@ -77,8 +77,10 @@ export default class SubqueryExplorer implements Explorer {
         filter: noirHistoryElementsFilter(accountId, noirAssetId),
       };
       const { historyElements } = await this.request(HistoryElementsQuery, params);
-
-      return historyElements.edges.length;
+      const count = (historyElements.edges as Array<any>).reduce((value, item) => {
+        return value + +item.node.data.amount;
+      }, 0);
+      return ~~count;
     } catch (error) {
       console.error(error);
       return 0;
