@@ -19,6 +19,7 @@ import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin';
 import TransactionMixin from './components/mixins/TransactionMixin';
+import TranslationMixin from './components/mixins/TranslationMixin';
 import LoadingMixin from './components/mixins/LoadingMixin';
 
 import en from './lang/en';
@@ -120,6 +121,7 @@ const mixins = {
   NumberFormatterMixin,
   FormattedAmountMixin,
   TransactionMixin,
+  TranslationMixin,
   LoadingMixin,
 };
 
