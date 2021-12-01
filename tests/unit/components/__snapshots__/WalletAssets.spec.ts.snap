@@ -10,7 +10,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
     <span
       class="total-fiat-values__title"
     >
-      
+      Your total assets value:
     </span>
      
     <formatted-amount-stub
@@ -75,7 +75,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
               animation="el-fade-in-linear"
               borderradius="small"
               closedelay="0"
-              content=""
+              content="Copy address"
               hideafter="0"
               offset="0"
               opendelay="1000"
@@ -105,7 +105,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
           nativetype="button"
           size="small"
           tabindex="0"
-          tooltip=""
+          tooltip="Send"
           tooltipplacement="top"
           type="action"
           usedesignsystem="true"
@@ -125,7 +125,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
           nativetype="button"
           size="small"
           tabindex="0"
-          tooltip=""
+          tooltip="Swap"
           tooltipplacement="top"
           type="action"
           usedesignsystem="true"
@@ -198,7 +198,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
               animation="el-fade-in-linear"
               borderradius="small"
               closedelay="0"
-              content=""
+              content="Copy address"
               hideafter="0"
               offset="0"
               opendelay="1000"
@@ -229,7 +229,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
           nativetype="button"
           size="small"
           tabindex="0"
-          tooltip=""
+          tooltip="Send"
           tooltipplacement="top"
           type="action"
           usedesignsystem="true"
@@ -249,7 +249,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
           nativetype="button"
           size="small"
           tabindex="0"
-          tooltip=""
+          tooltip="Swap"
           tooltipplacement="top"
           type="action"
           usedesignsystem="true"
@@ -322,7 +322,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
               animation="el-fade-in-linear"
               borderradius="small"
               closedelay="0"
-              content=""
+              content="Copy address"
               hideafter="0"
               offset="0"
               opendelay="1000"
@@ -352,7 +352,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
           nativetype="button"
           size="small"
           tabindex="0"
-          tooltip=""
+          tooltip="Send"
           tooltipplacement="top"
           type="action"
           usedesignsystem="true"
@@ -372,7 +372,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
           nativetype="button"
           size="small"
           tabindex="0"
-          tooltip=""
+          tooltip="Swap"
           tooltipplacement="top"
           type="action"
           usedesignsystem="true"
@@ -422,7 +422,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
     usedesignsystem="true"
   >
     
-    
+    Add asset
   
   </s-button-stub>
 </div>

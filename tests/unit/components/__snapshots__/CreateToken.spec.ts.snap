@@ -6,7 +6,7 @@ exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
   actiontooltip=""
   showback="true"
   showheader="true"
-  title=""
+  title="Create token"
   tooltip=""
 >
   <div
@@ -15,7 +15,7 @@ exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
     <info-line-stub
       assetsymbol=""
       fiatvalue=""
-      label=""
+      label="Token symbol"
       labeltooltip=""
       value="TSYMBOL"
     />
@@ -23,7 +23,7 @@ exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
     <info-line-stub
       assetsymbol=""
       fiatvalue=""
-      label=""
+      label="Token name"
       labeltooltip=""
       value="Token name"
     />
@@ -31,7 +31,7 @@ exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
     <info-line-stub
       assetsymbol=""
       fiatvalue=""
-      label=""
+      label="Token supply"
       labeltooltip=""
       value="10,000,000,000"
     />
@@ -39,7 +39,7 @@ exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
     <info-line-stub
       assetsymbol=""
       fiatvalue=""
-      label=""
+      label="Extensible supply"
       labeltooltip=""
       value="Yes"
     />
@@ -57,7 +57,7 @@ exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
       type="primary"
       usedesignsystem="true"
     >
-      
+      Confirm
     </s-button-stub>
      
     <wallet-fee-stub
@@ -73,7 +73,7 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
   actiontooltip=""
   showback="true"
   showheader="true"
-  title=""
+  title="Create token"
   tooltip=""
 >
   <div
@@ -88,7 +88,7 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
       maxlength="7"
       minlength="1"
       name=""
-      placeholder=""
+      placeholder="Token symbol"
       prefix=""
       size="big"
       suffix=""
@@ -101,7 +101,7 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
     <p
       class="wallet-settings-create-token_desc"
     >
-      
+      This is an identifier for the token. You can use from 1 to 7 characters for the selection.
     </p>
      
     <s-input-stub
@@ -113,7 +113,7 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
       maxlength="33"
       minlength="1"
       name=""
-      placeholder=""
+      placeholder="Token name"
       prefix=""
       size="big"
       suffix=""
@@ -126,7 +126,7 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
     <p
       class="wallet-settings-create-token_desc"
     >
-      
+      This is a name for the token. You can use from 1 to 33 characters for the selection.
     </p>
      
     <s-float-input-stub
@@ -134,13 +134,14 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
       delimiters="[object Object]"
       haslocalestring="true"
       max="170141183460469231731.687303715884105727"
+      placeholder="Token supply"
       value=""
     />
      
     <p
       class="wallet-settings-create-token_desc"
     >
-      
+      You will receive these tokens upon creation.
     </p>
      
     <div
@@ -158,14 +159,14 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
       />
        
       <span>
-        
+        Extensible supply
       </span>
     </div>
      
     <p
       class="wallet-settings-create-token_desc"
     >
-      
+      Ability to mint more tokens.
     </p>
      
     <s-button-stub
@@ -182,7 +183,7 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
       type="primary"
       usedesignsystem="true"
     >
-      
+      Enter token symbol
     </s-button-stub>
      
     <!---->

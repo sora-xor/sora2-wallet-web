@@ -1,9 +1,8 @@
 import Vuex from 'vuex';
-import { shallowMount } from '@vue/test-utils';
 
 import WalletAssets from '@/components/WalletAssets.vue';
 import type { AccountAsset } from '@sora-substrate/util';
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_FIAT_PRICE_AND_APY_OBJECT, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 import { WalletPermissions } from '../../../src/consts';
 import type { FiatPriceAndApyObject } from '../../../src/services/types';
@@ -20,14 +19,13 @@ const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, w
 
 useDescribe('WalletAssets.vue', WalletAssets, () => {
   it('should be rendered correctly', () => {
-    const wrapper = shallowMount(WalletAssets, { localVue, store: createStore() });
+    const wrapper = useShallowMount(WalletAssets, { store: createStore() });
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('should not render send button when sendAssets property is false', () => {
-    const wrapper = shallowMount(WalletAssets, {
-      localVue,
+    const wrapper = useShallowMount(WalletAssets, {
       store: createStore({ ...MOCK_WALLET_PERMISSIONS, sendAssets: false }),
     });
     const sendBtn = wrapper.find('.send');
@@ -36,8 +34,7 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
   });
 
   it('should not render swap button when swapAssets property is false', () => {
-    const wrapper = shallowMount(WalletAssets, {
-      localVue,
+    const wrapper = useShallowMount(WalletAssets, {
       store: createStore({ ...MOCK_WALLET_PERMISSIONS, swapAssets: false }),
     });
     const swapBtn = wrapper.find('.swap');
@@ -46,8 +43,7 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
   });
 
   it('should not render asset details button when showAssetDetails property is false', () => {
-    const wrapper = shallowMount(WalletAssets, {
-      localVue,
+    const wrapper = useShallowMount(WalletAssets, {
       store: createStore({ ...MOCK_WALLET_PERMISSIONS, showAssetDetails: false }),
     });
     const detailsBtn = wrapper.find('.el-button--details');
@@ -56,8 +52,7 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
   });
 
   it('should not render add assets button when addAssets property is false', () => {
-    const wrapper = shallowMount(WalletAssets, {
-      localVue,
+    const wrapper = useShallowMount(WalletAssets, {
       store: createStore({ ...MOCK_WALLET_PERMISSIONS, addAssets: false }),
     });
     const addAssetsBtn = wrapper.find('.wallet-assets-add');
@@ -66,8 +61,7 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
   });
 
   it('should not render fiat value when withoutFiatAndApy property is true', () => {
-    const wrapper = shallowMount(WalletAssets, {
-      localVue,
+    const wrapper = useShallowMount(WalletAssets, {
       store: createStore(undefined, true),
     });
     const fiatValue = wrapper.find('.wallet-assets--fiat');

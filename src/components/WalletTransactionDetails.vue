@@ -66,7 +66,6 @@ import InfoLine from './InfoLine.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import TransactionHashView from './TransactionHashView.vue';
 import { RouteNames, WalletTabs, HashType } from '../consts';
-import { formatDate } from '../util';
 
 @Component({
   components: {
@@ -144,7 +143,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
   }
 
   get transactionDate(): string {
-    return formatDate(this.selectedTransaction.startTime as number);
+    return this.formatDate(this.selectedTransaction.startTime as number);
   }
 
   handleBack(): void {

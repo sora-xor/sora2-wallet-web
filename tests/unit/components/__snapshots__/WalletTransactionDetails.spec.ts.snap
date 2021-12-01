@@ -6,7 +6,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
   actiontooltip=""
   showback="true"
   showheader="true"
-  title=""
+  title="Add Liquidity"
   tooltip=""
 >
   <div
@@ -24,14 +24,14 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Status"
         labeltooltip=""
         value=""
       >
         <span
           class="transaction-status"
         >
-          
+          Complete
         </span>
          
         <s-icon-stub
@@ -45,16 +45,16 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Date"
         labeltooltip=""
-        value="27.11.2020, 11:59:59"
+        value="Nov 27, 2020 11:59:59 PM"
       />
        
       <info-line-stub
         assetsymbol="XOR"
         fiatvalue=""
         isformatted="true"
-        label=""
+        label="Amount"
         labeltooltip=""
         value="0.1"
         valuecanbehidden="true"
@@ -64,7 +64,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         assetsymbol="PSWAP"
         fiatvalue=""
         isformatted="true"
-        label=""
+        label="Amount 2"
         labeltooltip=""
         value="0.9"
         valuecanbehidden="true"
@@ -88,7 +88,7 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
   actiontooltip=""
   showback="true"
   showheader="true"
-  title=""
+  title="Register Asset"
   tooltip=""
 >
   <div
@@ -106,14 +106,14 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Status"
         labeltooltip=""
         value=""
       >
         <span
           class="transaction-status"
         >
-          
+          Complete
         </span>
          
         <s-icon-stub
@@ -127,9 +127,9 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Date"
         labeltooltip=""
-        value="27.11.2020, 11:59:59"
+        value="Nov 27, 2020 11:59:59 PM"
       />
        
       <!---->
@@ -154,7 +154,7 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
   actiontooltip=""
   showback="true"
   showheader="true"
-  title=""
+  title="Remove Liquidity"
   tooltip=""
 >
   <div
@@ -172,14 +172,14 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Status"
         labeltooltip=""
         value=""
       >
         <span
           class="transaction-status"
         >
-          
+          Complete
         </span>
          
         <s-icon-stub
@@ -193,16 +193,16 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Date"
         labeltooltip=""
-        value="27.11.2020, 11:59:59"
+        value="Nov 27, 2020 11:59:59 PM"
       />
        
       <info-line-stub
         assetsymbol="XOR"
         fiatvalue=""
         isformatted="true"
-        label=""
+        label="Amount"
         labeltooltip=""
         value="100.123"
         valuecanbehidden="true"
@@ -228,7 +228,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
   actiontooltip=""
   showback="true"
   showheader="true"
-  title=""
+  title="Swap"
   tooltip=""
 >
   <div
@@ -246,14 +246,14 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Status"
         labeltooltip=""
         value=""
       >
         <span
           class="transaction-status transaction-status--error"
         >
-          
+          Transaction failed
         </span>
          
         <!---->
@@ -262,7 +262,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Error"
         labeltooltip=""
         value=""
       >
@@ -276,16 +276,16 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Date"
         labeltooltip=""
-        value="27.11.2020, 11:59:59"
+        value="Nov 27, 2020 11:59:59 PM"
       />
        
       <info-line-stub
         assetsymbol="XOR"
         fiatvalue=""
         isformatted="true"
-        label=""
+        label="Amount"
         labeltooltip=""
         value="0.1"
         valuecanbehidden="true"
@@ -295,7 +295,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         assetsymbol="PSWAP"
         fiatvalue=""
         isformatted="true"
-        label=""
+        label="Amount 2"
         labeltooltip=""
         value="0.9"
         valuecanbehidden="true"
@@ -319,7 +319,7 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
   actiontooltip=""
   showback="true"
   showheader="true"
-  title=""
+  title="Transfer"
   tooltip=""
 >
   <div
@@ -337,14 +337,14 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Status"
         labeltooltip=""
         value=""
       >
         <span
           class="transaction-status"
         >
-          
+          Complete
         </span>
          
         <s-icon-stub
@@ -358,16 +358,16 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
-        label=""
+        label="Date"
         labeltooltip=""
-        value="27.11.2020, 11:59:59"
+        value="Nov 27, 2020 11:59:59 PM"
       />
        
       <info-line-stub
         assetsymbol="XOR"
         fiatvalue=""
         isformatted="true"
-        label=""
+        label="Amount"
         labeltooltip=""
         value="0.1"
         valuecanbehidden="true"
