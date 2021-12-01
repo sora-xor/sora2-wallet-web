@@ -21,7 +21,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
         form=""
         label=""
         name=""
-        placeholder=""
+        placeholder="Filter by Address, Symbol, Type or Block ID"
         prefix="s-icon-search-16"
         size="big"
         suffix=""
@@ -45,13 +45,13 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
             class="history-item-operation ch3"
             data-type="Transfer"
           >
-            
+            Transfer
           </div>
            
           <div
             class="history-item-title p4"
           >
-            
+            Sent ******  To 0xB8c...6C6DD
           </div>
            
           <!---->
@@ -60,7 +60,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
         <div
           class="history-item-date"
         >
-          27.11.2020, 11:59:59
+          Nov 27, 2020 11:59:59 PM
         </div>
       </div>
       <div
@@ -73,13 +73,13 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
             class="history-item-operation ch3"
             data-type="Swap"
           >
-            
+            Swap
           </div>
            
           <div
             class="history-item-title p4"
           >
-            
+            Failed to swap ******  for ****** 
           </div>
            
           <s-icon-stub
@@ -91,7 +91,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
         <div
           class="history-item-date"
         >
-          27.11.2020, 11:59:59
+          Nov 27, 2020 11:59:59 PM
         </div>
       </div>
       <div
@@ -104,13 +104,13 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
             class="history-item-operation ch3"
             data-type="AddLiquidity"
           >
-            
+            Add Liquidity
           </div>
            
           <div
             class="history-item-title p4"
           >
-            
+            Supplied ******  and ****** 
           </div>
            
           <!---->
@@ -119,7 +119,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
         <div
           class="history-item-date"
         >
-          27.11.2020, 11:59:59
+          Nov 27, 2020 11:59:59 PM
         </div>
       </div>
       <div
@@ -132,13 +132,13 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
             class="history-item-operation ch3"
             data-type="RemoveLiquidity"
           >
-            
+            Remove Liquidity
           </div>
            
           <div
             class="history-item-title p4"
           >
-            
+            Removed ******  and ****** 
           </div>
            
           <!---->
@@ -147,7 +147,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
         <div
           class="history-item-date"
         >
-          27.11.2020, 11:59:59
+          Nov 27, 2020 11:59:59 PM
         </div>
       </div>
       <div
@@ -160,13 +160,13 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
             class="history-item-operation ch3"
             data-type="RegisterAsset"
           >
-            
+            Register Asset
           </div>
            
           <div
             class="history-item-title p4"
           >
-            
+            Registered ****** asset
           </div>
            
           <!---->
@@ -175,7 +175,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
         <div
           class="history-item-date"
         >
-          27.11.2020, 11:59:59
+          Nov 27, 2020 11:59:59 PM
         </div>
       </div>
     </div>
@@ -238,7 +238,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
                   autocomplete="off"
                   class="el-input__inner"
                   name=""
-                  placeholder=""
+                  placeholder="Filter by Address, Symbol, Type or Block ID"
                   tabindex=""
                   type="text"
                 />
@@ -285,13 +285,13 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
             class="history-item-operation ch3"
             data-type="Transfer"
           >
-            
+            Transfer
           </div>
            
           <div
             class="history-item-title p4"
           >
-            
+            Failed to send ******  to 0xB8c...6C6DD
           </div>
            
           <i
@@ -303,7 +303,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
         <div
           class="history-item-date"
         >
-          27.11.2020, 11:59:59
+          Nov 27, 2020 11:59:59 PM
         </div>
       </div>
     </div>
@@ -356,7 +356,7 @@ exports[`WalletHistory.vue should render history empty text when no transacion 1
       <div
         class="history-empty p4"
       >
-        
+        Your transactions will appear here
       </div>
     </div>
      
@@ -405,7 +405,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
                   autocomplete="off"
                   class="el-input__inner"
                   name=""
-                  placeholder=""
+                  placeholder="Filter by Address, Symbol, Type or Block ID"
                   tabindex=""
                   type="text"
                 />
@@ -452,13 +452,13 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
             class="history-item-operation ch3"
             data-type="Transfer"
           >
-            
+            Transfer
           </div>
            
           <div
             class="history-item-title p4"
           >
-            
+            Sent ******  To 0xB8c...6C6DD
           </div>
            
           <i
@@ -470,7 +470,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
         <div
           class="history-item-date"
         >
-          27.11.2020, 11:59:59
+          Nov 27, 2020 11:59:59 PM
         </div>
       </div>
     </div>

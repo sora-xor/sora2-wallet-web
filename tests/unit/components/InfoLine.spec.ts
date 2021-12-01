@@ -2,7 +2,7 @@ import omit from 'lodash/fp/omit';
 import Vuex from 'vuex';
 import { shallowMount } from '@vue/test-utils';
 
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, localVue, i18n } from '../../utils';
 import { MOCK_INFO_LINE } from '../../utils/InfoLineMock';
 
 import InfoLine from '@/components/InfoLine.vue';
@@ -21,6 +21,7 @@ useDescribe('InfoLine.vue', InfoLine, () => {
       const propsData = omit(['title'], item);
       const wrapper = shallowMount(InfoLine, {
         localVue,
+        i18n,
         store,
         propsData,
       });

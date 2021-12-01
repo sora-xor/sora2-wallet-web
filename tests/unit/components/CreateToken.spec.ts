@@ -1,7 +1,7 @@
 import Vuex from 'vuex';
 import { shallowMount } from '@vue/test-utils';
 
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, localVue, i18n } from '../../utils';
 import { MOCK_CREATE_TOKEN } from '../../utils/CreateTokenMock';
 
 import CreateToken from '@/components/CreateToken.vue';
@@ -28,6 +28,7 @@ useDescribe('CreateToken.vue', CreateToken, () => {
     it(`[${item.title}]: should be rendered correctly`, () => {
       const wrapper = shallowMount(CreateToken, {
         localVue,
+        i18n,
         store: createStore(),
         data: () => {
           return {

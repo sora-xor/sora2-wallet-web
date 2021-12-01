@@ -1,7 +1,7 @@
 import Vuex from 'vuex';
 import { shallowMount } from '@vue/test-utils';
 
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, localVue, i18n } from '../../utils';
 import { MOCK_ACCOUNT, MOCK_HISTORY, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 
 import Wallet from '@/components/Wallet.vue';
@@ -38,7 +38,7 @@ const createStore = (currentTab: WalletTabs, permissions: WalletPermissions = MO
 useDescribe('Wallet.vue', Wallet, () => {
   Object.values(WalletTabs).map((item) =>
     it(`[WalletTabs.${item}]: should be rendered correctly`, () => {
-      const wrapper = shallowMount(Wallet, { localVue, store: createStore(item) });
+      const wrapper = shallowMount(Wallet, { localVue, i18n, store: createStore(item) });
       expect(wrapper.element).toMatchSnapshot();
     })
   );
@@ -46,6 +46,7 @@ useDescribe('Wallet.vue', Wallet, () => {
   it('should not render action button when createAssets property is false', () => {
     const wrapper = shallowMount(Wallet, {
       localVue,
+      i18n,
       store: createStore(WalletTabs.Assets, {
         ...MOCK_WALLET_PERMISSIONS,
         createAssets: false,

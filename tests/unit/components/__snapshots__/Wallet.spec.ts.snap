@@ -6,7 +6,7 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`
   actiontooltip="wallet.createToken"
   showaction="true"
   showheader="true"
-  title=""
+  title="SORA Network account"
   tooltip=""
 >
   <wallet-account-stub
@@ -24,9 +24,11 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`
       value="WalletAssets"
     >
       <s-tab-stub
+        label="Assets"
         name="WalletAssets"
       />
       <s-tab-stub
+        label="Activity"
         name="WalletActivity"
       />
     </s-tabs-stub>
@@ -42,7 +44,7 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
   actiontooltip="wallet.createToken"
   showaction="true"
   showheader="true"
-  title=""
+  title="SORA Network account"
   tooltip=""
 >
   <wallet-account-stub
@@ -60,9 +62,11 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
       value="WalletAssets"
     >
       <s-tab-stub
+        label="Assets"
         name="WalletAssets"
       />
       <s-tab-stub
+        label="Activity"
         name="WalletActivity"
       />
     </s-tabs-stub>

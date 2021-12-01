@@ -1,13 +1,29 @@
 import Vue, { VueConstructor } from 'vue';
 import Vuex from 'vuex';
+import VueI18n from 'vue-i18n';
 import { createLocalVue } from '@vue/test-utils';
 import SoramitsuElements, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui';
 
+import { messages } from '../../src/lang';
+
 export const localVue = createLocalVue();
 localVue.use(Vuex);
+localVue.use(VueI18n);
+
+export const i18n = new VueI18n({
+  locale: 'en',
+  messages,
+});
 
 export const TranslationMock = (vue: VueConstructor) =>
-  vue.mixin({ name: 'TranslationMixin', methods: { t: jest.fn(), tc: jest.fn() } });
+  vue.mixin({
+    name: 'TranslationMixin',
+    methods: {
+      t: jest.fn(),
+      tc: jest.fn(),
+      te: jest.fn(),
+    },
+  });
 
 export const SoramitsuElementsImport = (vue: VueConstructor) => {
   vue.use(SoramitsuElements);
@@ -21,7 +37,7 @@ export const useDescribe = (name: string, component: VueConstructor<Vue>, fn: je
   describe(name, () => {
     beforeAll(() => {
       SoramitsuElementsImport(localVue);
-      TranslationMock(component);
+      // TranslationMock(component);
     });
     fn();
   });

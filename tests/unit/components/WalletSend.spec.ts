@@ -1,7 +1,7 @@
 import Vuex from 'vuex';
 import { shallowMount } from '@vue/test-utils';
 
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, localVue, i18n } from '../../utils';
 import {
   MOCK_ACCOUNT_ASSETS,
   MOCK_WHITE_LIST,
@@ -31,6 +31,7 @@ useDescribe('WalletSend.vue', WalletSend, () => {
     it(`[${item.title}]: should be rendered correctly`, () => {
       const wrapper = shallowMount(WalletSend, {
         localVue,
+        i18n,
         store,
         data: () => {
           return {

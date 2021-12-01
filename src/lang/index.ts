@@ -6,7 +6,7 @@ import en from './en';
 
 Vue.use(VueI18n);
 
-const messages = {
+export const messages = {
   en,
 };
 

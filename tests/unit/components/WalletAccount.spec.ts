@@ -1,6 +1,6 @@
 import Vuex from 'vuex';
 import { shallowMount } from '@vue/test-utils';
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, localVue, i18n } from '../../utils';
 
 import WalletAccount from '@/components/WalletAccount.vue';
 import { MOCK_ACCOUNT, MOCK_ACCOUNT_POLKADOT, MOCK_ADDRESS } from '../../utils/WalletAccountMock';
@@ -32,6 +32,7 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
   const polkadotAccount = MOCK_ACCOUNT_POLKADOT;
   const wrapperOptions = {
     localVue,
+    i18n,
     propsData: {
       showControls: true,
       polkadotAccount,

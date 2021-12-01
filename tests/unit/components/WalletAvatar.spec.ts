@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils';
 import Identicon from '@polkadot/vue-identicon';
 
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, localVue, i18n } from '../../utils';
 import { MOCK_WALLET_AVATAR } from '../../utils/WalletAvatarMock';
 
 import WalletAvatar from '@/components/WalletAvatar.vue';
@@ -16,6 +16,7 @@ useDescribe('WalletAvatar.vue', WalletAvatar, () => {
       };
       const wrapper = shallowMount(WalletAvatar, {
         localVue,
+        i18n,
         propsData,
         stubs: {
           Identicon: Identicon,

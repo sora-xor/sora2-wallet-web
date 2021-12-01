@@ -1,7 +1,7 @@
 import Vuex from 'vuex';
 import { shallowMount } from '@vue/test-utils';
 
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, localVue, i18n } from '../../utils';
 import { MOCK_TRANSACTION_HASH_VIEW } from '../../utils/TransactionHashViewMock';
 
 import TransactionHashView from '@/components/TransactionHashView.vue';
@@ -26,6 +26,7 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
     it(`[type: ${item.type}, env: ${SoraNetwork.Dev}]: should be rendered correctly`, () => {
       const wrapper = shallowMount(TransactionHashView, {
         localVue,
+        i18n,
         propsData: item,
         store: createStore(SoraNetwork.Dev),
       });
@@ -43,6 +44,7 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
     it(`[type: ${item.type}, env: ${SoraNetwork.Prod}]: should be rendered correctly`, () => {
       const wrapper = shallowMount(TransactionHashView, {
         localVue,
+        i18n,
         propsData: item,
         store: createStore(SoraNetwork.Prod),
       });

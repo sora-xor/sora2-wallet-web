@@ -1,10 +1,10 @@
 import Vuex from 'vuex';
 import { shallowMount, mount } from '@vue/test-utils';
 import { Account } from '@/types/common';
-import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util';
+import { History, TransactionStatus } from '@sora-substrate/util';
 
 import WalletHistory from '@/components/WalletHistory.vue';
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, localVue, i18n } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock';
 import { MOCK_ACCOUNT } from '../../utils/WalletAccountMock';
 
@@ -26,13 +26,14 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
     const wrapper = shallowMount(WalletHistory, {
       localVue,
       store: createStore(MOCK_HISTORY),
+      i18n,
     });
 
     expect(wrapper.element).toMatchSnapshot();
   });
 
   it('should render history empty text when no transacion', () => {
-    const wrapper = shallowMount(WalletHistory, { localVue, store: createStore() });
+    const wrapper = shallowMount(WalletHistory, { localVue, store: createStore(), i18n });
     const textMessage = wrapper.find('.history-empty');
 
     expect(textMessage.exists()).toBeTrue();
@@ -43,6 +44,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
     const wrapper = shallowMount(WalletHistory, {
       localVue,
       store: createStore(MOCK_HISTORY),
+      i18n,
       propsData: { asset: MOCK_ACCOUNT_ASSETS[0] },
     });
 
@@ -53,6 +55,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
     const wrapper = mount(WalletHistory, {
       localVue,
       store: createStore([{ ...MOCK_HISTORY[0], status: TransactionStatus.InBlock }]),
+      i18n,
       propsData: { asset: MOCK_ACCOUNT_ASSETS[0] },
     });
     const pendingIcon = wrapper.find('.info-status--loading');
@@ -65,6 +68,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
     const wrapper = mount(WalletHistory, {
       localVue,
       store: createStore([{ ...MOCK_HISTORY[0], status: TransactionStatus.Error }]),
+      i18n,
       propsData: { asset: MOCK_ACCOUNT_ASSETS[0] },
     });
     const errorIcon = wrapper.find('.info-status--error');

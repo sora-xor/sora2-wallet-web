@@ -2,7 +2,7 @@ import Vuex from 'vuex';
 import { mount } from '@vue/test-utils';
 import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 
-import { useDescribe, localVue } from '../../utils';
+import { useDescribe, localVue, i18n } from '../../utils';
 import WalletBase from '@/components/WalletBase.vue';
 
 const createStore = () =>
@@ -12,7 +12,7 @@ const createStore = () =>
     },
   });
 
-const useMount = (propsData) => mount(WalletBase, { localVue, store: createStore(), propsData });
+const useMount = (propsData) => mount(WalletBase, { localVue, i18n, store: createStore(), propsData });
 
 useDescribe('WalletBase.vue', WalletBase, () => {
   it('should be rendered correctly', () => {

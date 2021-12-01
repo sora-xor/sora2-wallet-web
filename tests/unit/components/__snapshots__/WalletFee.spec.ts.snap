@@ -9,8 +9,8 @@ exports[`WalletFee.vue [With "0" Value]: should be rendered correctly 1`] = `
     class="wallet-fee"
     fiatvalue="0"
     isformatted="true"
-    label=""
-    labeltooltip=""
+    label="Network fee"
+    labeltooltip="Network fee is used to ensure SORA system's growth and stable performance."
     value="0"
   />
 </div>
@@ -25,8 +25,8 @@ exports[`WalletFee.vue [With "Infinity" Value]: should be rendered correctly 1`]
     class="wallet-fee"
     fiatvalue="Infinity"
     isformatted="true"
-    label=""
-    labeltooltip=""
+    label="Network fee"
+    labeltooltip="Network fee is used to ensure SORA system's growth and stable performance."
     value="Infinity"
   />
 </div>
@@ -41,8 +41,8 @@ exports[`WalletFee.vue [With "NaN" Value]: should be rendered correctly 1`] = `
     class="wallet-fee"
     fiatvalue="NaN"
     isformatted="true"
-    label=""
-    labeltooltip=""
+    label="Network fee"
+    labeltooltip="Network fee is used to ensure SORA system's growth and stable performance."
     value="NaN"
   />
 </div>
@@ -57,8 +57,8 @@ exports[`WalletFee.vue [With Value]: should be rendered correctly 1`] = `
     class="wallet-fee"
     fiatvalue="1,518,518.5048512"
     isformatted="true"
-    label=""
-    labeltooltip=""
+    label="Network fee"
+    labeltooltip="Network fee is used to ensure SORA system's growth and stable performance."
     value="1,234,567.890123"
   />
 </div>
