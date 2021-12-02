@@ -1,9 +1,9 @@
 export const FiatPriceQuery = `
 query PoolXYKEntities (
-  $last: Int = 1)
+  $first: Int = 1)
 {
   poolXYKEntities (
-    last: $last
+    first: $first
   )
   {
     nodes {
