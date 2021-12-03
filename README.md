@@ -40,11 +40,13 @@ import { Action } from 'vuex-class'
 
 @Action resetActiveTransactions
 @Action resetAccountAssetsSubscription
+@Action resetRuntimeVersionSubscription
 @Action resetFiatPriceAndApySubscription
 
 beforeDestroy (): void {
     this.resetActiveTransactions()
     this.resetAccountAssetsSubscription()
+    this.resetRuntimeVersionSubscription()
     this.resetFiatPriceAndApySubscription()
 }
 ```

@@ -39,6 +39,7 @@ export default class App extends Mixins(TransactionMixin) {
   @Action trackActiveTransactions!: AsyncVoidFn;
   @Action resetActiveTransactions!: AsyncVoidFn;
   @Action resetAccountAssetsSubscription!: AsyncVoidFn;
+  @Action resetRuntimeVersionSubscription!: AsyncVoidFn;
   @Action resetFiatPriceAndApySubscription!: AsyncVoidFn;
   @Action setSoraNetwork!: (network: SoraNetwork) => Promise<void>;
 
@@ -59,6 +60,7 @@ export default class App extends Mixins(TransactionMixin) {
   beforeDestroy(): void {
     this.resetActiveTransactions();
     this.resetAccountAssetsSubscription();
+    this.resetRuntimeVersionSubscription();
     this.resetFiatPriceAndApySubscription();
   }
 
