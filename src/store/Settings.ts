@@ -110,7 +110,7 @@ const mutations = {
   [types.UPDATE_NETWORK_FEES](state: SettingsState, fees = {} as NetworkFeesObject) {
     const networkFees = { ...fees };
     state.networkFees = networkFees;
-    runtimeStorage.set('networkFees', networkFees);
+    runtimeStorage.set('networkFees', JSON.stringify(networkFees));
   },
 
   [types.TOGGLE_HIDE_BALANCE](state: SettingsState) {
