@@ -24,7 +24,7 @@ import LoadingMixin from './components/mixins/LoadingMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
-import { storage } from './util/storage';
+import { storage, runtimeStorage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
@@ -88,12 +88,12 @@ async function initWallet({
       store.dispatch('setPermissions', permissions);
     }
     try {
-      await api.initialize();
+      api.initialize();
     } catch (error) {
       console.error('Something went wrong during api initialization', error);
       throw error;
     }
-    await store.dispatch('updateNetworkFees');
+    await store.dispatch('subscribeOnRuntimeVersion');
     await store.dispatch('getWhitelist', { whiteListOverApi });
     await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates');
     await store.dispatch('checkSigner');
@@ -131,6 +131,7 @@ export {
   api,
   connection,
   storage,
+  runtimeStorage,
   getExplorerLinks,
   groupRewardsByAssetsList,
   WALLET_CONSTS,
