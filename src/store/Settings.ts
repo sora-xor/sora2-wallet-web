@@ -3,15 +3,33 @@ import flatMap from 'lodash/fp/flatMap';
 import fromPairs from 'lodash/fp/fromPairs';
 import flow from 'lodash/fp/flow';
 import concat from 'lodash/fp/concat';
+import isEmpty from 'lodash/fp/isEmpty';
+import isEqual from 'lodash/fp/isEqual';
 import type { NetworkFeesObject } from '@sora-substrate/util';
+import type { Subscription } from '@polkadot/x-rxjs';
 
 import { api } from '../api';
 import type { WalletPermissions, SoraNetwork } from '../consts';
-import { storage } from '../util/storage';
+import { storage, runtimeStorage } from '../util/storage';
+
+function areKeysEqual(obj1: object, obj2: object): boolean {
+  const obj1Keys = Object.keys(obj1).sort();
+  const obj2Keys = Object.keys(obj2).sort();
+  return isEqual(obj1Keys, obj2Keys);
+}
 
 const types = flow(
   flatMap((x) => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
-  concat(['SET_PERMISSIONS', 'SET_SORA_NETWORK', 'UPDATE_NETWORK_FEES', 'TOGGLE_HIDE_BALANCE', 'SET_WALLET_LOADED']),
+  concat([
+    'SET_PERMISSIONS',
+    'SET_SORA_NETWORK',
+    'UPDATE_NETWORK_FEES',
+    'SET_RUNTIME_VERSION',
+    'TOGGLE_HIDE_BALANCE',
+    'SET_WALLET_LOADED',
+    'SET_NETWORK_FEES',
+    'RESET_RUNTIME_VERSION_SUBSCRIPTION',
+  ]),
   map((x) => [x, x]),
   fromPairs
 )([]);
@@ -22,6 +40,8 @@ type SettingsState = {
   soraNetwork: Nullable<SoraNetwork>;
   networkFees: NetworkFeesObject;
   shouldBalanceBeHidden: boolean;
+  runtimeVersion: number;
+  runtimeVersionSubscription: Nullable<Subscription>;
 };
 
 function initialState(): SettingsState {
@@ -38,6 +58,8 @@ function initialState(): SettingsState {
       showAssetDetails: true,
     },
     soraNetwork: null,
+    runtimeVersion: Number(JSON.parse(runtimeStorage.get('version'))),
+    runtimeVersionSubscription: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
     shouldBalanceBeHidden: Boolean(JSON.parse(storage.get('shouldBalanceBeHidden'))) || false,
   };
@@ -79,13 +101,33 @@ const mutations = {
     state.soraNetwork = value;
   },
 
+  [types.SET_NETWORK_FEES](state: SettingsState, fees = {} as NetworkFeesObject) {
+    const networkFees = { ...fees };
+    state.networkFees = networkFees;
+    api.NetworkFee = networkFees;
+  },
+
   [types.UPDATE_NETWORK_FEES](state: SettingsState, fees = {} as NetworkFeesObject) {
-    state.networkFees = { ...fees };
+    const networkFees = { ...fees };
+    state.networkFees = networkFees;
+    runtimeStorage.set('networkFees', JSON.stringify(networkFees));
   },
 
   [types.TOGGLE_HIDE_BALANCE](state: SettingsState) {
     state.shouldBalanceBeHidden = !state.shouldBalanceBeHidden;
     storage.set('shouldBalanceBeHidden', state.shouldBalanceBeHidden);
+  },
+
+  [types.SET_RUNTIME_VERSION](state: SettingsState, version: number) {
+    state.runtimeVersion = version;
+    runtimeStorage.set('version', version);
+  },
+
+  [types.RESET_RUNTIME_VERSION_SUBSCRIPTION](state: SettingsState) {
+    if (state.runtimeVersionSubscription) {
+      state.runtimeVersionSubscription.unsubscribe();
+      state.runtimeVersionSubscription = null;
+    }
   },
 };
 
@@ -102,8 +144,24 @@ const actions = {
     commit(types.SET_SORA_NETWORK, network);
   },
 
-  updateNetworkFees({ commit }) {
-    commit(types.UPDATE_NETWORK_FEES, api.NetworkFee);
+  subscribeOnRuntimeVersion({ commit, state }) {
+    state.runtimeVersionSubscription = api.getRuntimeVersionObservable().subscribe(async (version) => {
+      const currentVersion = Number(JSON.parse(runtimeStorage.get('version')));
+      const networkFees = JSON.parse(runtimeStorage.get('networkFees'));
+      if (currentVersion === version && !isEmpty(networkFees) && areKeysEqual(networkFees, api.NetworkFee)) {
+        commit(types.SET_NETWORK_FEES, networkFees);
+        return;
+      }
+      if (currentVersion !== version) {
+        commit(types.SET_RUNTIME_VERSION, version);
+      }
+      await api.calcStaticNetworkFees();
+      commit(types.UPDATE_NETWORK_FEES, api.NetworkFee);
+    });
+  },
+
+  resetRuntimeVersionSubscription({ commit }) {
+    commit(types.RESET_RUNTIME_VERSION_SUBSCRIPTION);
   },
 
   toggleHideBalance({ commit }) {
