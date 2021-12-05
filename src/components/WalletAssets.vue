@@ -311,7 +311,8 @@ $wallet-assets-count: 5;
         align-items: baseline;
         background-color: var(--s-color-base-content-secondary);
         color: var(--s-color-base-on-accent);
-        padding: 0 var(--s-basic-spacing);
+        padding: 2px 7px 1px;
+        line-height: 1;
         border-radius: var(--s-border-radius-mini);
         max-width: 100%;
         > .s-icon-lock-16 {
@@ -320,7 +321,6 @@ $wallet-assets-count: 5;
         > span {
           margin-left: #{$basic-spacing-mini};
           white-space: nowrap;
-          overflow: hidden;
         }
       }
       &-converted {
