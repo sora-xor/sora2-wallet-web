@@ -1,15 +1,12 @@
 <template>
-  <div>
-    <div ref="container" class="qr-code"></div>
-    <button @click="exportCode">save</button>
-  </div>
+  <div ref="container" class="qr-code"></div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Ref, Vue } from 'vue-property-decorator';
+import { Component, Prop, Ref, Vue, Watch } from 'vue-property-decorator';
 import { BrowserQRCodeSvgWriter } from '@zxing/browser';
 
-import { svgSaveAs, IMAGE_EXTENSIONS } from '../util/image';
+const qrCodeWriter = new BrowserQRCodeSvgWriter();
 
 @Component
 export default class QrCode extends Vue {
@@ -17,7 +14,11 @@ export default class QrCode extends Vue {
   @Prop({ default: 300, type: Number }) readonly size!: number;
   @Ref('container') readonly container!: HTMLDivElement;
 
-  readonly codeWriter = new BrowserQRCodeSvgWriter();
+  @Watch('value')
+  private rerender() {
+    this.renderCode();
+  }
+
   element: SVGSVGElement | null = null;
 
   mounted(): void {
@@ -32,14 +33,8 @@ export default class QrCode extends Vue {
 
   renderCode(): void {
     this.clearContainer();
-    this.element = this.codeWriter.write(this.value, this.size, this.size);
+    this.element = qrCodeWriter.write(this.value, this.size, this.size);
     this.container.appendChild(this.element);
-  }
-
-  async exportCode(): Promise<void> {
-    if (!this.element) return;
-
-    await svgSaveAs(this.element, 'transfer', IMAGE_EXTENSIONS.JPEG);
   }
 }
 </script>

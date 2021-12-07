@@ -76,14 +76,16 @@ export const svgSaveAs = async (
   svgElement: SVGSVGElement,
   name: string,
   extension: IMAGE_EXTENSIONS = IMAGE_EXTENSIONS.SVG
-) => {
+): Promise<void> => {
   let blob = createSvgBlob(svgElement);
 
   if (extension !== IMAGE_EXTENSIONS.SVG) {
-    const svgUrl = URL.createObjectURL(blob);
     const mimeType = IMAGE_MIME_TYPES[extension];
+    const url = URL.createObjectURL(blob);
 
-    blob = await createImageBlobByUrl(svgUrl, mimeType);
+    blob = await createImageBlobByUrl(url, mimeType);
+
+    URL.revokeObjectURL(url);
   }
 
   const filename = `${name}${extension}`;
