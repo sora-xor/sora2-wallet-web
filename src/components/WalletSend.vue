@@ -6,6 +6,7 @@
     :showHeader="showAdditionalInfo"
     @back="handleBack"
   >
+    <qr-code value="12312321" />
     <div class="wallet-send">
       <template v-if="step === 1">
         <s-input
@@ -142,6 +143,8 @@ import { RouteNames } from '../consts';
 import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
 import { api } from '../api';
 
+import QrCode from './QrCode.vue';
+
 @Component({
   components: {
     WalletBase,
@@ -149,6 +152,7 @@ import { api } from '../api';
     FormattedAmountWithFiatValue,
     NetworkFeeWarning,
     WalletFee,
+    QrCode,
   },
 })
 export default class WalletSend extends Mixins(
