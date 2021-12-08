@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <div ref="container" class="qr-code"></div>
-    <input type="file" @change="handleQR" />
-  </div>
+  <div ref="container" class="qr-code"></div>
 </template>
 
 <script lang="ts">
@@ -39,36 +36,6 @@ export default class QrCode extends Vue {
     this.clearContainer();
     this.element = writer.write(this.value, this.size, this.size);
     this.container.appendChild(this.element);
-  }
-
-  async handleQR(event): Promise<Nullable<string>> {
-    return new Promise((resolve) => {
-      const input = event.target;
-      const file = input.files[0];
-      const fileReader = new FileReader();
-      const handleResolve = (value) => {
-        input.value = '';
-        resolve(value);
-      };
-
-      if (!file) {
-        console.warn('no file');
-        handleResolve(null);
-      }
-
-      fileReader.addEventListener('load', async () => {
-        try {
-          const base64 = fileReader.result as string;
-          const result = await reader.decodeFromImageUrl(base64);
-          handleResolve(result.getText());
-        } catch (error) {
-          console.warn(error);
-          handleResolve(null);
-        }
-      });
-
-      fileReader.readAsDataURL(file);
-    });
   }
 }
 </script>

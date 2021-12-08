@@ -25,11 +25,11 @@
           </s-tooltip>
         </h3>
         <template v-if="showAction">
-          <qr-code-download />
           <s-button class="base-title_action" type="action" :tooltip="t(actionTooltip)" @click="handleActionClick">
             <s-icon :name="actionIcon" size="28" />
           </s-button>
         </template>
+        <slot name="actions" />
         <!-- <s-button
           v-if="showCleanHistory"
           class="base-title_trash"
@@ -116,6 +116,8 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss">
+$button-size: var(--s-size-medium);
+
 .base {
   .el-loading-mask {
     background-color: var(--s-color-utility-surface);
@@ -123,6 +125,15 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 }
 .base-title_tooltip-popper.neumorphic.info-tooltip {
   max-width: 165px;
+}
+.base-title {
+  .el-button {
+    position: absolute;
+  }
+
+  .base-title_action {
+    right: 0;
+  }
 }
 </style>
 
@@ -154,14 +165,8 @@ $button-size: var(--s-size-medium);
         padding-left: calc(#{$button-size} * 2 + #{$basic-spacing-medium});
       }
       padding-right: calc(#{$button-size} * 2 + #{$basic-spacing-medium});
-      .base-title_action {
-        right: calc(#{$button-size} + var(--s-basic-spacing));
-      }
     }
     &--hide {
-      position: absolute;
-    }
-    .el-button {
       position: absolute;
     }
     &_text {

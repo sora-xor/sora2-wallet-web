@@ -1,10 +1,8 @@
 <template>
-  <div class="qr-code-download">
-    <s-button type="action" size="medium" @click="openFileInput">
-      <s-icon name="finance-send-24" size="28" />
-    </s-button>
-    <input ref="input" type="file" class="qr-code-download__input" @change="handleInput" />
-  </div>
+  <s-button type="action" size="medium" tooltip="Send By QR Code" class="qr-code-download" @click="openFileInput">
+    <s-icon name="basic-scan-24" size="28" />
+    <input ref="input" type="file" class="qr-code-download__input" @change="handleFileInput" />
+  </s-button>
 </template>
 
 <script lang="ts">
@@ -21,34 +19,36 @@ export default class QrCodeDownload extends Vue {
     this.input.click();
   }
 
-  async handleInput(event): Promise<Nullable<string>> {
-    return new Promise((resolve) => {
-      const input = event.target;
-      const file = input.files[0];
-      const fileReader = new FileReader();
-      const handleResolve = (value) => {
-        input.value = '';
-        resolve(value);
-      };
+  async handleFileInput(event: Event): Promise<void> {
+    const value = await new Promise((resolve) => {
+      const input = event.target as HTMLInputElement;
 
-      if (!file) {
-        console.warn('no file');
-        handleResolve(null);
-      }
+      if (!input) return resolve(null);
+
+      const files = input.files;
+
+      if (!(files instanceof FileList)) return resolve(null);
+
+      const file = files[0] as File;
+
+      if (!file) return resolve(null);
+
+      const fileReader = new FileReader();
 
       fileReader.addEventListener('load', async () => {
         try {
           const base64 = fileReader.result as string;
           const result = await reader.decodeFromImageUrl(base64);
-          handleResolve(result.getText());
+          resolve(result.getText());
         } catch (error) {
-          console.warn(error);
-          handleResolve(null);
+          resolve(null);
         }
       });
 
       fileReader.readAsDataURL(file);
     });
+
+    this.$emit('change', value);
   }
 }
 </script>
