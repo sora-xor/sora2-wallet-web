@@ -6,10 +6,6 @@
     :showHeader="showAdditionalInfo"
     @back="handleBack"
   >
-    <template #actions>
-      <qr-code-download class="base-title_action" @change="parseQRCode" />
-    </template>
-
     <qr-code :value="qrCodeTransfer" />
     <div class="wallet-send">
       <template v-if="step === 1">
@@ -150,7 +146,6 @@ import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
 import { api } from '../api';
 
 import QrCode from './QrCode/QrCode.vue';
-import QrCodeDownload from './QrCode/QrCodeDownload.vue';
 
 @Component({
   components: {
@@ -160,7 +155,6 @@ import QrCodeDownload from './QrCode/QrCodeDownload.vue';
     NetworkFeeWarning,
     WalletFee,
     QrCode,
-    QrCodeDownload,
   },
 })
 export default class WalletSend extends Mixins(
@@ -183,6 +177,12 @@ export default class WalletSend extends Mixins(
   amount = '';
   showWarningFeeNotification = false;
   showAdditionalInfo = true;
+
+  created(): void {
+    if (this.currentRouteParams.address) {
+      this.address = this.currentRouteParams.address;
+    }
+  }
 
   get qrCodeTransfer(): string {
     const publicKey = decodeAddress(this.account.address);
@@ -371,10 +371,6 @@ export default class WalletSend extends Mixins(
   confirmNextTxFailure(): void {
     this.showAdditionalInfo = true;
     this.step = 3;
-  }
-
-  parseQRCode(value) {
-    console.log(value);
   }
 }
 </script>

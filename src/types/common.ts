@@ -23,8 +23,3 @@ export interface Account extends PolkadotJsAccount {
 }
 
 export type WhitelistIdsBySymbol = { [key: string]: string };
-
-export type Permissions = {
-  sendAssets: boolean;
-  swapAssets: boolean;
-};

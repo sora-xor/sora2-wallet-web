@@ -2,15 +2,12 @@
   <s-card primary class="base" border-radius="medium" shadow="always" size="big">
     <template #header>
       <div :class="headerClasses">
-        <s-button
-          v-if="showBack"
-          class="base-title_back"
-          type="action"
-          :tooltip="t('backText')"
-          @click="handleBackClick"
-        >
-          <s-icon name="arrows-chevron-left-rounded-24" size="28" />
-        </s-button>
+        <div v-if="showBack" class="base-title_back">
+          <s-button type="action" :tooltip="t('backText')" @click="handleBackClick">
+            <s-icon name="arrows-chevron-left-rounded-24" size="28" />
+          </s-button>
+        </div>
+
         <h3 class="base-title_text" v-if="showHeader">
           {{ title }}
           <s-tooltip
@@ -24,21 +21,11 @@
             <s-icon name="info-16" size="18px" />
           </s-tooltip>
         </h3>
-        <template v-if="showAction">
-          <s-button class="base-title_action" type="action" :tooltip="t(actionTooltip)" @click="handleActionClick">
-            <s-icon :name="actionIcon" size="28" />
-          </s-button>
-        </template>
-        <slot name="actions" />
-        <!-- <s-button
-          v-if="showCleanHistory"
-          class="base-title_trash"
-          type="action"
-          icon="basic-trash-24"
-          :disabled="disabledCleanHistory"
-          :tooltip="t('history.clearHistory')"
-          @click="handleCleanHistoryClick"
-        /> -->
+
+        <div class="base-title_action">
+          <slot name="actions" />
+        </div>
+
         <s-button
           v-if="showClose"
           class="base-title_close"
@@ -60,35 +47,21 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
-import QrCodeDownload from './QrCode/QrCodeDownload.vue';
 
-@Component({
-  components: {
-    QrCodeDownload,
-  },
-})
+@Component
 export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string;
   @Prop({ default: '', type: String }) readonly tooltip!: string;
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly showAction!: boolean;
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean;
   @Prop({ default: true, type: Boolean }) readonly showHeader!: boolean;
-  @Prop({ default: '', type: String }) readonly actionTooltip!: string;
-  @Prop({ default: '', type: String }) readonly actionIcon!: string;
-  // @Prop({ default: false, type: Boolean }) readonly disabledCleanHistory!: boolean
-  // @Prop({ default: false, type: Boolean }) readonly showCleanHistory!: boolean
 
   get headerClasses(): Array<string> {
     const cssClasses: Array<string> = ['base-title', 's-flex'];
     if (this.showBack) {
       cssClasses.push('base-title--center');
     }
-    // if (this.showCleanHistory) {
-    //   cssClasses.push('base-title--has-history')
-    // }
-    // if (this.showAction && (this.showClose || this.showCleanHistory)) {
-    if (this.showAction && this.showClose) {
+    if (this.showClose) {
       cssClasses.push('base-title--actions');
     }
     if (!this.showHeader) {
@@ -101,23 +74,13 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     this.$emit('back');
   }
 
-  handleActionClick(): void {
-    this.$emit('action');
-  }
-
   handleCloseClick(): void {
     this.$emit('close');
   }
-
-  // handleCleanHistoryClick (): void {
-  //   this.$emit('cleanHistory')
-  // }
 }
 </script>
 
 <style lang="scss">
-$button-size: var(--s-size-medium);
-
 .base {
   .el-loading-mask {
     background-color: var(--s-color-utility-surface);
@@ -125,15 +88,6 @@ $button-size: var(--s-size-medium);
 }
 .base-title_tooltip-popper.neumorphic.info-tooltip {
   max-width: 165px;
-}
-.base-title {
-  .el-button {
-    position: absolute;
-  }
-
-  .base-title_action {
-    right: 0;
-  }
 }
 </style>
 
@@ -180,11 +134,13 @@ $button-size: var(--s-size-medium);
       letter-spacing: var(--s-letter-spacing-mini);
     }
     &_back {
+      position: absolute;
       left: 0;
     }
     &_action,
     &_trash,
     &_close {
+      position: absolute;
       right: 0;
     }
     &_tooltip {
