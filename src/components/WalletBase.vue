@@ -24,15 +24,12 @@
             <s-icon name="info-16" size="18px" />
           </s-tooltip>
         </h3>
-        <s-button
-          v-if="showAction"
-          class="base-title_action"
-          type="action"
-          :tooltip="t(actionTooltip)"
-          @click="handleActionClick"
-        >
-          <s-icon :name="actionIcon" size="28" />
-        </s-button>
+        <template v-if="showAction">
+          <qr-code-download />
+          <s-button class="base-title_action" type="action" :tooltip="t(actionTooltip)" @click="handleActionClick">
+            <s-icon :name="actionIcon" size="28" />
+          </s-button>
+        </template>
         <!-- <s-button
           v-if="showCleanHistory"
           class="base-title_trash"
@@ -63,8 +60,13 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
+import QrCodeDownload from './QrCode/QrCodeDownload.vue';
 
-@Component
+@Component({
+  components: {
+    QrCodeDownload,
+  },
+})
 export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string;
   @Prop({ default: '', type: String }) readonly tooltip!: string;

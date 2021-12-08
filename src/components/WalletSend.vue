@@ -145,9 +145,7 @@ import { RouteNames } from '../consts';
 import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
 import { api } from '../api';
 
-import QrCode from './QrCode.vue';
-
-import type { Account } from '../types/common';
+import QrCode from './QrCode/QrCode.vue';
 
 @Component({
   components: {
