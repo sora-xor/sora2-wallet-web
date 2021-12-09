@@ -41,7 +41,7 @@
                 fiat-format-as-value
                 with-left-shift
                 value-class="wallet-send-amount-balance-value"
-                :value="balance"
+                :value="formattedBalance"
                 :asset-symbol="asset.symbol"
                 :fiat-value="getFiatBalance(asset)"
               />
@@ -147,6 +147,9 @@ import { api } from '../api';
 
 import QrCode from './QrCode/QrCode.vue';
 
+import type { Subscription } from '@polkadot/x-rxjs';
+import type { AccountBalance } from '@sora-substrate/util';
+
 @Component({
   components: {
     WalletBase,
@@ -174,6 +177,8 @@ export default class WalletSend extends Mixins(
 
   step = 1;
   address = '';
+  assetBalance: Nullable<AccountBalance> = null;
+  assetBalanceSubscription: Nullable<Subscription> = null;
   amount = '';
   showWarningFeeNotification = false;
   showAdditionalInfo = true;
@@ -182,13 +187,40 @@ export default class WalletSend extends Mixins(
     if (this.currentRouteParams.address) {
       this.address = this.currentRouteParams.address;
     }
+
+    if (this.currentRouteParams.asset) {
+      const asset = { ...this.currentRouteParams.asset };
+      const accountAsset = this.accountAssets.find((accountAsset) => accountAsset.address === asset.address);
+
+      if (accountAsset) {
+        this.assetBalance = accountAsset.balance;
+      } else {
+        this.resetAssetBalanceSubscription();
+        this.assetBalanceSubscription = api.getAssetBalanceObservable(asset).subscribe((balance) => {
+          this.assetBalance = balance;
+        });
+      }
+    }
+  }
+
+  beforeDestroy(): void {
+    this.resetAssetBalanceSubscription();
+  }
+
+  get asset(): AccountAsset {
+    return {
+      ...this.currentRouteParams.asset,
+      balance: this.assetBalance,
+    };
   }
 
   get qrCodeTransfer(): string {
-    const publicKey = decodeAddress(this.account.address);
+    const assetAddress = this.asset.address;
+    const accountAddress = this.account.address;
+    const publicKey = decodeAddress(accountAddress);
     const publicKeyHex = `0x${Buffer.from(publicKey).toString('hex')}`;
 
-    return `substrate:${this.account.address}:${publicKeyHex}::${this.asset.address}`;
+    return `substrate:${accountAddress}:${publicKeyHex}::${assetAddress}`;
   }
 
   get fee(): FPNumber {
@@ -203,14 +235,12 @@ export default class WalletSend extends Mixins(
     return this.step === 1 ? this.t('walletSend.tooltip') : '';
   }
 
-  get asset(): AccountAsset {
-    const { address } = this.currentRouteParams.asset;
-
-    return this.accountAssets.find((asset) => asset.address === address) || this.currentRouteParams.asset;
+  get transferableBalance(): CodecString {
+    return this.assetBalance ? this.assetBalance.transferable : '0';
   }
 
-  get balance(): string {
-    return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals);
+  get formattedBalance(): string {
+    return this.formatCodecNumber(this.transferableBalance, this.asset.decimals);
   }
 
   get assetFiatPrice(): Nullable<CodecString> {
@@ -260,13 +290,13 @@ export default class WalletSend extends Mixins(
 
   get validAmount(): boolean {
     const amount = this.getFPNumber(this.amount, this.asset.decimals);
-    const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, this.asset.decimals);
+    const balance = this.getFPNumberFromCodec(this.transferableBalance, this.asset.decimals);
     return amount.isFinity() && !amount.isZero() && FPNumber.lte(amount, balance);
   }
 
   get isMaxButtonAvailable(): boolean {
     const decimals = this.asset.decimals;
-    const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, decimals);
+    const balance = this.getFPNumberFromCodec(this.transferableBalance, decimals);
     const amount = this.getFPNumber(this.amount, decimals);
     if (this.isXorAccountAsset(this.asset)) {
       if (this.fee.isZero()) {
@@ -334,11 +364,11 @@ export default class WalletSend extends Mixins(
 
   async handleMaxClick(): Promise<void> {
     if (this.isXorAccountAsset(this.asset)) {
-      const balance = this.getFPNumberFromCodec(this.asset.balance.transferable, this.asset.decimals);
+      const balance = this.getFPNumberFromCodec(this.transferableBalance, this.asset.decimals);
       this.amount = balance.sub(this.fee).toString();
       return;
     }
-    this.amount = this.getStringFromCodec(this.asset.balance.transferable, this.asset.decimals);
+    this.amount = this.getStringFromCodec(this.transferableBalance, this.asset.decimals);
   }
 
   async handleSend(): Promise<void> {
@@ -371,6 +401,12 @@ export default class WalletSend extends Mixins(
   confirmNextTxFailure(): void {
     this.showAdditionalInfo = true;
     this.step = 3;
+  }
+
+  resetAssetBalanceSubscription(): void {
+    if (this.assetBalanceSubscription) {
+      this.assetBalanceSubscription.unsubscribe();
+    }
   }
 }
 </script>

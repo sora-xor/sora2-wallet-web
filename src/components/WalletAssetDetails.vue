@@ -1,16 +1,10 @@
 <template>
-  <wallet-base
-    :title="asset.name"
-    show-back
-    show-clean-history
-    :show-action="!isXor"
-    action-icon="basic-eye-24"
-    action-tooltip="asset.remove"
-    :disabled-clean-history="isCleanHistoryDisabled"
-    @back="handleBack"
-    @action="handleRemoveAsset"
-    @cleanHistory="handleCleanHistory"
-  >
+  <wallet-base :title="asset.name" show-back @back="handleBack">
+    <template #actions>
+      <s-button v-if="!isXor" type="action" :tooltip="t('asset.remove')" @click="handleRemoveAsset">
+        <s-icon name="basic-eye-24" size="28" />
+      </s-button>
+    </template>
     <s-card class="asset-details" primary>
       <div class="asset-details-container s-flex">
         <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />

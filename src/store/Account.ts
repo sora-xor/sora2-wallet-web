@@ -43,7 +43,6 @@ const types = flow(
   'GET_ACCOUNT_ASSETS',
   'UPDATE_ACCOUNT_ASSETS',
   'GET_ASSETS',
-  'SEARCH_ASSET',
   'ADD_ASSET',
   'TRANSFER',
   'IMPORT_POLKADOT_JS_ACCOUNT',
@@ -249,10 +248,6 @@ const mutations = {
     state.withoutFiatAndApy = true;
   },
 
-  [types.SEARCH_ASSET_REQUEST](state: AccountState) {},
-  [types.SEARCH_ASSET_SUCCESS](state: AccountState) {},
-  [types.SEARCH_ASSET_FAILURE](state: AccountState) {},
-
   [types.ADD_ASSET_REQUEST](state: AccountState) {},
   [types.ADD_ASSET_SUCCESS](state: AccountState) {},
   [types.ADD_ASSET_FAILURE](state: AccountState) {},
@@ -428,14 +423,16 @@ const actions = {
     }
   },
   async searchAsset({ commit, getters: { whitelist } }, address: string) {
-    commit(types.SEARCH_ASSET_REQUEST);
     try {
-      const assets = await api.getAssets(whitelist);
-      const asset = assets.find((asset) => asset.address === address);
-      commit(types.SEARCH_ASSET_SUCCESS);
-      return asset;
+      if (address in whitelist) {
+        return {
+          ...whitelist[address],
+          address,
+        };
+      }
+      return await api.getAssetInfo(address);
     } catch (error) {
-      commit(types.SEARCH_ASSET_FAILURE);
+      return null;
     }
   },
   async addAsset({ commit }, address: string) {

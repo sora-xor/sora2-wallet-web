@@ -57,7 +57,9 @@ export default class Wallet extends Mixins(TranslationMixin) {
   @Getter account!: Account;
   @Getter activity!: Array<History>;
   @Getter permissions!: WalletPermissions;
+
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Action searchAsset!: (address: string) => Promise<Asset>;
 
   currentTab: WalletTabs = WalletTabs.Assets;
 
@@ -79,14 +81,14 @@ export default class Wallet extends Mixins(TranslationMixin) {
     this.navigate({ name: RouteNames.CreateToken });
   }
 
-  handleQrCode(value: Nullable<string>): void {
+  async handleQrCode(value: Nullable<string>): Promise<void> {
     if (!value) return;
 
     const [base, assetId] = value.split('::');
 
     if (!base || !assetId) return;
 
-    const asset = this.assets.find((asset) => asset.address === assetId);
+    const asset = await this.searchAsset(assetId);
 
     if (!asset) return;
 

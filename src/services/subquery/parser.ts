@@ -81,10 +81,7 @@ const getTransactionStatus = (tx: HistoryElement): string => {
 };
 
 const getAssetByAddress = async (address: string): Promise<Asset> => {
-  if (address in store.getters.whitelist) {
-    return store.getters.whitelist[address];
-  }
-  return await api.getAssetInfo(address);
+  return await store.dispatch('Account/searchAsset', address);
 };
 
 const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {
