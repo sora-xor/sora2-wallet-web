@@ -1,6 +1,14 @@
 <template>
-  <s-button type="action" size="medium" tooltip="Upload QR Code" class="qr-code-download" @click="openFileInput">
+  <s-button
+    type="action"
+    size="medium"
+    tooltip="Upload QR Code"
+    class="qr-code-download"
+    v-bind="$attrs"
+    @click="openFileInput"
+  >
     <s-icon name="basic-scan-24" size="28" />
+    <!-- <s-icon name="finance-receive-show-QR-24" size="28" /> -->
     <input ref="input" type="file" class="qr-code-download__input" @change="handleFileInput" />
   </s-button>
 </template>
@@ -12,7 +20,7 @@ import { BrowserQRCodeReader } from '@zxing/browser';
 const reader = new BrowserQRCodeReader();
 
 @Component
-export default class QrCodeDownload extends Vue {
+export default class QrCodeScanButton extends Vue {
   @Ref('input') readonly input!: HTMLInputElement;
 
   openFileInput() {
