@@ -162,6 +162,7 @@ export default class InfoLine extends Vue {
     white-space: nowrap;
   }
   .el-tooltip {
+    margin-top: -1px;
     margin-right: var(--s-basic-spacing);
     flex-shrink: 0;
     i {
@@ -206,6 +207,9 @@ export default class InfoLine extends Vue {
   }
   p {
     font-size: inherit;
+  }
+  .formatted-amount--fiat-value {
+    line-height: inherit;
   }
 }
 </style>
