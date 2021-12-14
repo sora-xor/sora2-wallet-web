@@ -124,6 +124,7 @@ export default {
     add: '@:addAssetText',
     swap: '@:swapText',
     send: '@:sendText',
+    details: 'Details',
     receive: '@:account.copy',
     liquidity: 'Add liquidity',
     bridge: 'Bridge',

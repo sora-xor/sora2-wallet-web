@@ -67,6 +67,7 @@
               type="action"
               size="small"
               alternative
+              :tooltip="t('assets.details')"
               @click="handleOpenAssetDetails(asset)"
             >
               <s-icon name="arrows-chevron-right-rounded-24" size="28" />
