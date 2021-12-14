@@ -41,6 +41,8 @@
           >
             <s-icon :name="operation.icon" size="28" />
           </s-button>
+
+          <qr-code-scan-button primary @change="parseQrCodeValue" />
         </div>
         <transition name="fadeHeight">
           <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
@@ -83,19 +85,25 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { AccountAsset, CodecString, KnownAssets, KnownSymbols, BalanceType, History } from '@sora-substrate/util';
+import { KnownAssets, KnownSymbols, BalanceType } from '@sora-substrate/util';
 
-import { api } from '../api';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
+import QrCodeParserMixin from './mixins/QrCodeParserMixin';
+
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import WalletHistory from './WalletHistory.vue';
+import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
+
+import { api } from '../api';
 import { RouteNames } from '../consts';
 import { getAssetIconStyles } from '../util';
-import { Operations, Account } from '../types/common';
+import { Operations } from '../types/common';
 
+import type { AccountAsset, CodecString, History } from '@sora-substrate/util';
+import type { Account } from '../types/common';
 import type { WalletPermissions } from '../consts';
 
 interface Operation {
@@ -109,9 +117,10 @@ interface Operation {
     FormattedAmount,
     FormattedAmountWithFiatValue,
     WalletHistory,
+    QrCodeScanButton,
   },
 })
-export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin) {
+export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin, QrCodeParserMixin) {
   readonly balanceTypes = Object.values(BalanceType).filter((type) => type !== BalanceType.Total);
   readonly BalanceType = BalanceType;
 

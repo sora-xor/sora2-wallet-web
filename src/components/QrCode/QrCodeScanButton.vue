@@ -4,6 +4,7 @@
     size="medium"
     tooltip="Upload QR Code"
     class="qr-code-download"
+    rounded
     v-bind="$attrs"
     @click="openFileInput"
   >

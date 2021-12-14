@@ -11,7 +11,7 @@
       </s-button>
     </template>
     <wallet-account>
-      <qr-code-scan-button alternative rounded @change="handleQrCodeUpload" />
+      <qr-code-scan-button alternative @change="parseQrCodeValue" />
 
       <s-button type="action" alternative rounded :tooltip="t('account.switch')" @click="handleSwitchAccount">
         <s-icon name="arrows-refresh-ccw-24" size="28" />
