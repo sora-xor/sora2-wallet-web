@@ -127,7 +127,6 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   extensibleSupply = false;
   showAdditionalInfo = true;
 
-  @Getter networkFees!: NetworkFeesObject;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
   handleBack(): void {

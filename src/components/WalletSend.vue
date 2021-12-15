@@ -300,7 +300,7 @@ export default class WalletSend extends Mixins(
 
   getAssetIconStyles = getAssetIconStyles;
 
-  getFormattedAddress(asset: Asset): string {
+  getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
   }
 
