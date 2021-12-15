@@ -66,7 +66,7 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
 .asset {
   align-items: center;
-  height: $asset-item-height;
+  height: var(--s-asset-item-height);
 
   &-logo {
     flex-shrink: 0;

@@ -9,21 +9,19 @@
       v-model="search"
       @input="handleSearch"
     />
-    <s-scrollbar class="asset-search-list" v-loading="assetsLoading || loading">
-      <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
+    <asset-list :assets="foundAssets" class="asset-search-list">
+      <template #empty>
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
-      </div>
-
-      <template v-else>
+      </template>
+      <template #default="{ asset }">
         <asset-list-item
-          v-for="asset in foundAssets"
-          :key="asset.address"
           :asset="asset"
+          :key="asset.address"
           :class="{ selected: (selectedAsset || {}).address === asset.address }"
           @click="handleSelectAsset(asset)"
         />
       </template>
-    </s-scrollbar>
+    </asset-list>
   </div>
 </template>
 
@@ -32,6 +30,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
 import type { AccountAsset, Asset } from '@sora-substrate/util';
 
+import AssetList from './AssetList.vue';
 import AssetListItem from './AssetListItem.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
@@ -40,6 +39,7 @@ import { AddAssetTabs, RouteNames } from '../consts';
 
 @Component({
   components: {
+    AssetList,
     AssetListItem,
   },
 })
@@ -117,7 +117,10 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 
 <style lang="scss">
 .asset-search-list {
-  @include scrollbar(0);
+  &.el-scrollbar .el-scrollbar__view {
+    padding-left: 0;
+    padding-right: 0;
+  }
 
   .asset {
     padding-left: $basic-spacing-big;
@@ -137,27 +140,13 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 </style>
 
 <style scoped lang="scss">
-@import '../styles/icons';
-
 .asset-search {
   margin-top: #{$basic-spacing-medium};
+
   &-input {
     margin-bottom: #{$basic-spacing-medium};
   }
-  &-list {
-    height: calc(#{$asset-item-height} * 5);
-    overflow-y: auto;
-    margin-left: calc(var(--s-basic-spacing) * -3);
-    margin-right: calc(var(--s-basic-spacing) * -3);
-    &_empty {
-      @include hint-text;
-      padding-left: calc(var(--s-basic-spacing) * 3);
-      padding-right: calc(var(--s-basic-spacing) * 3);
-    }
-    &_empty {
-      text-align: center;
-    }
-  }
+
   .el-button--primary {
     width: 100%;
   }
