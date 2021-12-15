@@ -6,7 +6,6 @@
     :showHeader="showAdditionalInfo"
     @back="handleBack"
   >
-    <qr-code :value="qrCodeTransfer" />
     <div class="wallet-send">
       <template v-if="step === 1">
         <s-input
@@ -130,8 +129,6 @@ import {
   XOR,
 } from '@sora-substrate/util';
 
-import { decodeAddress } from '@polkadot/util-crypto';
-
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
@@ -145,8 +142,6 @@ import { RouteNames } from '../consts';
 import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
 import { api } from '../api';
 
-import QrCode from './QrCode/QrCode.vue';
-
 import type { Subscription } from '@polkadot/x-rxjs';
 import type { AccountBalance } from '@sora-substrate/util';
 
@@ -157,7 +152,6 @@ import type { AccountBalance } from '@sora-substrate/util';
     FormattedAmountWithFiatValue,
     NetworkFeeWarning,
     WalletFee,
-    QrCode,
   },
 })
 export default class WalletSend extends Mixins(
@@ -212,15 +206,6 @@ export default class WalletSend extends Mixins(
       ...this.currentRouteParams.asset,
       balance: this.assetBalance,
     };
-  }
-
-  get qrCodeTransfer(): string {
-    const assetAddress = this.asset.address;
-    const accountAddress = this.account.address;
-    const publicKey = decodeAddress(accountAddress);
-    const publicKeyHex = `0x${Buffer.from(publicKey).toString('hex')}`;
-
-    return `substrate:${accountAddress}:${publicKeyHex}::${assetAddress}`;
   }
 
   get fee(): FPNumber {

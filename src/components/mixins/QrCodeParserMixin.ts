@@ -41,7 +41,7 @@ export default class QrCodeParserMixin extends Mixins() {
 
   recieveByQrCode(asset?: AccountAsset) {
     this.navigate({
-      name: RouteNames.WalletRecieve,
+      name: RouteNames.SelectAsset,
       params: {
         asset,
       },

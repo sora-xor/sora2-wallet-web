@@ -9,12 +9,9 @@
     </div>
 
     <asset-list :assets="formattedAccountAssets" divider class="wallet-assets-list">
-      <template #empty>
-        {{ t('assets.empty') }}
-      </template>
       <template #default="{ asset }">
         <asset-list-item :asset="asset" :key="asset.address" class="wallet-assets-item">
-          <template #default>
+          <template #value>
             <formatted-amount-with-fiat-value
               value-can-be-hidden
               value-class="asset-value"
@@ -32,42 +29,41 @@
               </div>
             </formatted-amount-with-fiat-value>
           </template>
-          <template #actions>
-            <s-button
-              v-if="permissions.sendAssets"
-              class="wallet-assets__button send"
-              type="action"
-              size="small"
-              alternative
-              :tooltip="t('assets.send')"
-              :disabled="isZeroBalance(asset)"
-              @click="handleAssetSend(asset)"
-            >
-              <s-icon name="finance-send-24" size="28" />
-            </s-button>
-            <s-button
-              v-if="permissions.swapAssets"
-              class="wallet-assets__button swap"
-              type="action"
-              size="small"
-              alternative
-              :tooltip="t('assets.swap')"
-              @click="handleAssetSwap(asset)"
-            >
-              <s-icon name="arrows-swap-24" size="28" />
-            </s-button>
-            <s-button
-              v-if="permissions.showAssetDetails"
-              class="wallet-assets__button el-button--details"
-              type="action"
-              size="small"
-              alternative
-              :tooltip="t('assets.details')"
-              @click="handleOpenAssetDetails(asset)"
-            >
-              <s-icon name="arrows-chevron-right-rounded-24" size="28" />
-            </s-button>
-          </template>
+
+          <s-button
+            v-if="permissions.sendAssets"
+            class="wallet-assets__button send"
+            type="action"
+            size="small"
+            alternative
+            :tooltip="t('assets.send')"
+            :disabled="isZeroBalance(asset)"
+            @click="handleAssetSend(asset)"
+          >
+            <s-icon name="finance-send-24" size="28" />
+          </s-button>
+          <s-button
+            v-if="permissions.swapAssets"
+            class="wallet-assets__button swap"
+            type="action"
+            size="small"
+            alternative
+            :tooltip="t('assets.swap')"
+            @click="handleAssetSwap(asset)"
+          >
+            <s-icon name="arrows-swap-24" size="28" />
+          </s-button>
+          <s-button
+            v-if="permissions.showAssetDetails"
+            class="wallet-assets__button el-button--details"
+            type="action"
+            size="small"
+            alternative
+            :tooltip="t('assets.details')"
+            @click="handleOpenAssetDetails(asset)"
+          >
+            <s-icon name="arrows-chevron-right-rounded-24" size="28" />
+          </s-button>
         </asset-list-item>
       </template>
     </asset-list>

@@ -1,5 +1,5 @@
 <template>
-  <s-card shadow="always" size="small" border-radius="medium" class="wallet-account">
+  <s-card v-bind="{ shadow: 'always', size: 'small', borderRadius: 'medium', ...$attrs }" class="wallet-account">
     <div class="account s-flex">
       <wallet-avatar class="account-avatar" :address="address" :size="28" />
       <div class="account-details s-flex">

@@ -18,12 +18,13 @@ import { AccountAsset } from '@sora-substrate/util';
 
 import AddAsset from './components/AddAsset.vue';
 import AddAssetDetails from './components/AddAssetDetails.vue';
+import SelectAsset from './components/SelectAsset.vue';
 import CreateToken from './components/CreateToken.vue';
+import RecieveToken from './components/RecieveToken.vue';
 import Wallet from './components/Wallet.vue';
 import WalletAssetDetails from './components/WalletAssetDetails.vue';
 import WalletConnection from './components/WalletConnection.vue';
 import WalletSend from './components/WalletSend.vue';
-import WalletRecieve from './components/WalletRecieve.vue';
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue';
 
 import LoadingMixin from './components/mixins/LoadingMixin';
@@ -36,12 +37,13 @@ import type { RouteNames } from './consts';
   components: {
     AddAsset,
     AddAssetDetails,
+    SelectAsset,
     CreateToken,
+    RecieveToken,
     Wallet,
     WalletAssetDetails,
     WalletConnection,
     WalletSend,
-    WalletRecieve,
     WalletTransactionDetails,
   },
 })

@@ -10,6 +10,7 @@
         <s-icon name="various-atom-24" size="28" />
       </s-button>
     </template>
+
     <wallet-account>
       <qr-code-scan-button alternative @change="parseQrCodeValue" />
 
@@ -21,6 +22,7 @@
         <s-icon name="arrows-refresh-ccw-24" size="28" />
       </s-button>
     </wallet-account>
+
     <div class="wallet">
       <s-tabs :value="currentTab" type="rounded" @change="handleChangeTab">
         <s-tab v-for="tab in WalletTabs" :key="tab" :label="t(`wallet.${tab}`)" :name="tab" />

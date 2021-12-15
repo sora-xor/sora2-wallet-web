@@ -2,7 +2,7 @@
   <div class="asset s-flex" v-bind="$attrs" v-on="$listeners">
     <i class="asset-logo" :style="iconStyles" />
     <div class="asset-description s-flex">
-      <slot>
+      <slot name="value">
         <div class="asset-symbol">{{ asset.symbol }}</div>
       </slot>
       <div class="asset-info">
@@ -12,7 +12,7 @@
         </s-tooltip>
       </div>
     </div>
-    <slot name="actions" />
+    <slot />
   </div>
 </template>
 

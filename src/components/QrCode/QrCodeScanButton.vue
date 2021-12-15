@@ -2,7 +2,7 @@
   <s-button
     type="action"
     size="medium"
-    tooltip="Upload QR Code"
+    :tooltip="t('asset.code.upload')"
     class="qr-code-download"
     rounded
     v-bind="$attrs"
@@ -14,13 +14,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Ref, Vue } from 'vue-property-decorator';
+import { Component, Ref, Mixins } from 'vue-property-decorator';
 import { BrowserQRCodeReader } from '@zxing/browser';
+
+import TranslationMixin from '../mixins/TranslationMixin';
 
 const reader = new BrowserQRCodeReader();
 
 @Component
-export default class QrCodeScanButton extends Vue {
+export default class QrCodeScanButton extends Mixins(TranslationMixin) {
   @Ref('input') readonly input!: HTMLInputElement;
 
   openFileInput() {

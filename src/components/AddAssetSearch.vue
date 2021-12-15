@@ -7,19 +7,13 @@
       :maxlength="100"
       :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
       v-model="search"
-      @input="handleSearch"
     />
     <asset-list :assets="foundAssets" class="asset-search-list">
       <template #empty>
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </template>
       <template #default="{ asset }">
-        <asset-list-item
-          :asset="asset"
-          :key="asset.address"
-          :class="{ selected: (selectedAsset || {}).address === asset.address }"
-          @click="handleSelectAsset(asset)"
-        />
+        <asset-list-item :asset="asset" :key="asset.address" @click="handleSelectAsset(asset)" />
       </template>
     </asset-list>
   </div>
@@ -54,7 +48,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   @Action getAssets!: AsyncVoidFn;
 
   search = '';
-  selectedAsset: Nullable<Asset> = null;
 
   async mounted(): Promise<void> {
     await this.getAssets();
@@ -96,21 +89,8 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
     );
   }
 
-  handleSearch(): void {
-    if (!this.selectedAsset) return;
-
-    const isSelectedAssetPresented = !!this.foundAssets.find(
-      ({ address }) => (this.selectedAsset || {}).address === address
-    );
-
-    if (!isSelectedAssetPresented) {
-      this.selectedAsset = null;
-    }
-  }
-
   handleSelectAsset(asset: Asset): void {
-    this.selectedAsset = asset;
-    this.navigate({ name: RouteNames.AddAssetDetails, params: { asset: this.selectedAsset } });
+    this.navigate({ name: RouteNames.AddAssetDetails, params: { asset } });
   }
 }
 </script>
@@ -145,10 +125,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 
   &-input {
     margin-bottom: #{$basic-spacing-medium};
-  }
-
-  .el-button--primary {
-    width: 100%;
   }
 }
 </style>

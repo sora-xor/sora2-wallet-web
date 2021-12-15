@@ -1,7 +1,7 @@
 <template>
   <s-scrollbar class="asset-list" :style="style">
     <div v-if="empty" class="asset-list-empty">
-      <slot name="empty" />
+      <slot name="empty">{{ t('assets.empty') }}</slot>
     </div>
 
     <template v-for="(asset, index) in assets">
@@ -15,10 +15,12 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
+import TranslationMixin from './mixins/TranslationMixin';
+
 import type { Asset } from '@sora-substrate/util';
 
 @Component
-export default class AssetList extends Mixins() {
+export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly assets!: Array<Asset>;
   @Prop({ default: 5, type: Number }) readonly items!: number;
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;

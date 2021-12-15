@@ -1,0 +1,60 @@
+<template>
+  <wallet-base :title="t('asset.select')" show-back @back="handleBack">
+    <asset-list :assets="accountAssets" divider>
+      <template #default="{ asset }">
+        <asset-list-item :asset="asset">
+          <s-button
+            type="action"
+            size="small"
+            alternative
+            :tooltip="t('asset.recieve', { symbol: asset.symbol })"
+            @click="selectAsset(asset)"
+          >
+            <s-icon name="arrows-chevron-right-rounded-24" size="28" />
+          </s-button>
+        </asset-list-item>
+      </template>
+    </asset-list>
+  </wallet-base>
+</template>
+
+<script lang="ts">
+import { Component, Mixins } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
+
+import TranslationMixin from './mixins/TranslationMixin';
+
+import WalletBase from './WalletBase.vue';
+import AssetList from './AssetList.vue';
+import AssetListItem from './AssetListItem.vue';
+
+import { RouteNames } from '../consts';
+
+import type { AccountAsset } from '@sora-substrate/util';
+
+@Component({
+  components: {
+    WalletBase,
+    AssetList,
+    AssetListItem,
+  },
+})
+export default class SelectAsset extends Mixins(TranslationMixin) {
+  @Getter accountAssets!: Array<AccountAsset>;
+
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+
+  handleBack(): void {
+    this.navigate({ name: RouteNames.Wallet });
+  }
+
+  selectAsset(asset: AccountAsset): void {
+    this.navigate({
+      name: RouteNames.RecieveToken,
+      params: {
+        asset,
+      },
+    });
+  }
+}
+</script>
