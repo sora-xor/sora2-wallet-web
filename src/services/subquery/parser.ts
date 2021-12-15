@@ -81,7 +81,7 @@ const getTransactionStatus = (tx: HistoryElement): string => {
 };
 
 const getAssetByAddress = async (address: string): Promise<Asset> => {
-  return await store.dispatch('Account/searchAsset', address);
+  return await store.dispatch('searchAsset', address);
 };
 
 const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {

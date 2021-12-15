@@ -23,6 +23,7 @@ import Wallet from './components/Wallet.vue';
 import WalletAssetDetails from './components/WalletAssetDetails.vue';
 import WalletConnection from './components/WalletConnection.vue';
 import WalletSend from './components/WalletSend.vue';
+import WalletRecieve from './components/WalletRecieve.vue';
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue';
 
 import LoadingMixin from './components/mixins/LoadingMixin';
@@ -40,6 +41,7 @@ import type { RouteNames } from './consts';
     WalletAssetDetails,
     WalletConnection,
     WalletSend,
+    WalletRecieve,
     WalletTransactionDetails,
   },
 })

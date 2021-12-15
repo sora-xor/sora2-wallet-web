@@ -1,0 +1,102 @@
+<template>
+  <div class="asset s-flex" v-bind="$attrs" v-on="$listeners">
+    <i class="asset-logo" :style="iconStyles" />
+    <div class="asset-description s-flex">
+      <slot>
+        <div class="asset-symbol">{{ asset.symbol }}</div>
+      </slot>
+      <div class="asset-info">
+        {{ name }}
+        <s-tooltip :content="t('assets.copy')">
+          <span class="asset-id" @click="handleCopy">({{ address }})</span>
+        </s-tooltip>
+      </div>
+    </div>
+    <slot name="actions" />
+  </div>
+</template>
+
+<script lang="ts">
+import { Component, Mixins, Prop } from 'vue-property-decorator';
+
+import TranslationMixin from './mixins/TranslationMixin';
+
+import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
+
+import type { Asset } from '@sora-substrate/util';
+
+@Component
+export default class AssetListItem extends Mixins(TranslationMixin) {
+  @Prop({ required: true, type: Object }) readonly asset!: Asset;
+
+  get iconStyles() {
+    return getAssetIconStyles(this.asset.address);
+  }
+
+  get name(): string {
+    return this.asset.name || this.asset.symbol;
+  }
+
+  get address(): string {
+    return formatAddress(this.asset.address, 10);
+  }
+
+  async handleCopy(event: Event): Promise<void> {
+    event.stopImmediatePropagation();
+    try {
+      await copyToClipboard(this.asset.address);
+      this.$notify({
+        message: this.t('assets.successCopy', { symbol: this.asset.symbol }),
+        type: 'success',
+        title: '',
+      });
+    } catch (error) {
+      this.$notify({
+        message: `${this.t('warningText')} ${error}`,
+        type: 'warning',
+        title: '',
+      });
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+@import '../styles/icons';
+
+.asset {
+  align-items: center;
+  height: $asset-item-height;
+
+  &-logo {
+    flex-shrink: 0;
+    @include asset-logo-styles(42px);
+  }
+
+  &-description {
+    flex: 1;
+    flex-direction: column;
+    line-height: var(--s-line-height-big);
+    padding: 0 $basic-spacing-small;
+    width: 30%;
+  }
+
+  &-symbol {
+    font-size: var(--s-font-size-big);
+    font-weight: 600;
+    letter-spacing: var(--s-letter-spacing-small);
+    line-height: var(--s-line-height-extra-small);
+  }
+
+  &-info {
+    @include hint-text;
+    .asset-id {
+      outline: none;
+      &:hover {
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
+  }
+}
+</style>

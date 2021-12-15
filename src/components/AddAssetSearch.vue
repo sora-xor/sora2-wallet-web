@@ -13,25 +13,16 @@
       <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </div>
-      <div
-        v-else
-        class="asset s-flex"
-        v-for="asset in foundAssets"
-        :key="asset.address"
-        :class="{ selected: (selectedAsset || {}).address === asset.address }"
-        @click="handleSelectAsset(asset)"
-      >
-        <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
-        <div class="asset-description s-flex">
-          <div class="asset-description_symbol">{{ asset.symbol }}</div>
-          <div class="asset-description_info">
-            {{ formatName(asset) }}
-            <s-tooltip :content="t('assets.copy')">
-              <span class="asset-id" @click="handleCopy(asset, $event)">({{ getFormattedAddress(asset) }})</span>
-            </s-tooltip>
-          </div>
-        </div>
-      </div>
+
+      <template v-else>
+        <asset-list-item
+          v-for="asset in foundAssets"
+          :key="asset.address"
+          :asset="asset"
+          :class="{ selected: (selectedAsset || {}).address === asset.address }"
+          @click="handleSelectAsset(asset)"
+        />
+      </template>
     </s-scrollbar>
   </div>
 </template>
@@ -41,12 +32,17 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
 import type { AccountAsset, Asset } from '@sora-substrate/util';
 
+import AssetListItem from './AssetListItem.vue';
+
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import { AddAssetTabs, RouteNames } from '../consts';
-import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
 
-@Component
+@Component({
+  components: {
+    AssetListItem,
+  },
+})
 export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
@@ -112,37 +108,9 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
     }
   }
 
-  formatName(asset: Asset): string {
-    return asset.name || asset.symbol;
-  }
-
   handleSelectAsset(asset: Asset): void {
     this.selectedAsset = asset;
     this.navigate({ name: RouteNames.AddAssetDetails, params: { asset: this.selectedAsset } });
-  }
-
-  getAssetIconStyles = getAssetIconStyles;
-
-  getFormattedAddress(asset: Asset): string {
-    return formatAddress(asset.address, 10);
-  }
-
-  async handleCopy(asset: Asset, event: Event): Promise<void> {
-    event.stopImmediatePropagation();
-    try {
-      await copyToClipboard(asset.address);
-      this.$notify({
-        message: this.t('assets.successCopy', { symbol: asset.symbol }),
-        type: 'success',
-        title: '',
-      });
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: '',
-      });
-    }
   }
 }
 </script>
@@ -150,6 +118,21 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 <style lang="scss">
 .asset-search-list {
   @include scrollbar(0);
+
+  .asset {
+    padding-left: $basic-spacing-big;
+    padding-right: $basic-spacing-big;
+
+    &:hover,
+    &.selected {
+      background-color: var(--s-color-base-background-hover);
+      cursor: pointer;
+    }
+
+    &-symbol {
+      font-size: var(--s-font-size-default);
+    }
+  }
 }
 </style>
 
@@ -173,38 +156,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
     }
     &_empty {
       text-align: center;
-    }
-    .asset {
-      align-items: center;
-      height: $asset-item-height;
-      padding: 0 calc(var(--s-basic-spacing) * 3);
-      &:hover,
-      &.selected {
-        background-color: var(--s-color-base-background-hover);
-        cursor: pointer;
-      }
-      &-logo {
-        margin-right: #{$basic-spacing-medium};
-        @include asset-logo-styles(40px);
-      }
-      &-description {
-        flex: 1;
-        flex-direction: column;
-        line-height: var(--s-line-height-big);
-        &_symbol {
-          font-weight: 600;
-        }
-        &_info {
-          @include hint-text;
-          .asset-id {
-            outline: none;
-            &:hover {
-              text-decoration: underline;
-              cursor: pointer;
-            }
-          }
-        }
-      }
     }
   }
   .el-button--primary {

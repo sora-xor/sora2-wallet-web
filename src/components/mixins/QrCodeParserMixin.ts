@@ -4,7 +4,7 @@ import { Action } from 'vuex-class';
 import { RouteNames } from '../../consts';
 import { api } from '../../api';
 
-import type { Asset } from '@sora-substrate/util';
+import type { Asset, AccountAsset } from '@sora-substrate/util';
 
 @Component
 export default class QrCodeParserMixin extends Mixins() {
@@ -35,6 +35,15 @@ export default class QrCodeParserMixin extends Mixins() {
       params: {
         asset,
         address,
+      },
+    });
+  }
+
+  recieveByQrCode(asset?: AccountAsset) {
+    this.navigate({
+      name: RouteNames.WalletRecieve,
+      params: {
+        asset,
       },
     });
   }

@@ -9,7 +9,6 @@
     @click="openFileInput"
   >
     <s-icon name="basic-scan-24" size="28" />
-    <!-- <s-icon name="finance-receive-show-QR-24" size="28" /> -->
     <input ref="input" type="file" class="qr-code-download__input" @change="handleFileInput" />
   </s-button>
 </template>

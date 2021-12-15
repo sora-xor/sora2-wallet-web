@@ -13,6 +13,10 @@
     <wallet-account>
       <qr-code-scan-button alternative @change="parseQrCodeValue" />
 
+      <s-button type="action" alternative rounded tooltip="Recieve by QR Code" @click="recieveByQrCode">
+        <s-icon name="finance-receive-show-QR-24" size="28" />
+      </s-button>
+
       <s-button type="action" alternative rounded :tooltip="t('account.switch')" @click="handleSwitchAccount">
         <s-icon name="arrows-refresh-ccw-24" size="28" />
       </s-button>
