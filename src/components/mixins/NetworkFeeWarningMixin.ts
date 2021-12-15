@@ -16,7 +16,9 @@ export default class NetworkFeeWarningMixin extends Mixins(NumberFormatterMixin)
 
     let fpRemainingBalance: FPNumber;
 
-    const networkFee = this.getFPNumberFromCodec(this.networkFees[type]);
+    const requiredFeeForNextTx =
+      type === Operation.AddLiquidity ? this.networkFees.RemoveLiquidity : this.networkFees[type];
+    const networkFee = this.getFPNumberFromCodec(requiredFeeForNextTx);
     const fpAmount = amount || this.Zero;
 
     if ([Operation.Transfer, Operation.EthBridgeOutgoing].includes(type)) {
