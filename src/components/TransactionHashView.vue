@@ -38,7 +38,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
 
-import { copyToClipboard, formatAddress, getExplorerLinks } from '../util';
+import { copyToClipboard, formatAddress, getExplorerLinks, formatSoraAddress } from '../util';
 import TranslationMixin from './mixins/TranslationMixin';
 import { ExplorerLink, SoraNetwork, HashType, ExplorerType } from '../consts';
 
@@ -50,10 +50,17 @@ export default class TransactionHashView extends Mixins(TranslationMixin) {
 
   @Getter soraNetwork!: SoraNetwork;
 
+  get formattedValue(): string {
+    if (this.type === HashType.Account) {
+      return formatSoraAddress(this.value);
+    }
+    return this.value;
+  }
+
   get explorerLinks(): Array<ExplorerLink> {
     const baseLinks = getExplorerLinks(this.soraNetwork);
     if ([HashType.Account, HashType.Block].includes(this.type)) {
-      return baseLinks.map(({ type, value }) => ({ type, value: `${value}/${this.type}/${this.value}` }));
+      return baseLinks.map(({ type, value }) => ({ type, value: `${value}/${this.type}/${this.formattedValue}` }));
     }
     return baseLinks.map(({ type, value }) => {
       const link = { type } as ExplorerLink;
@@ -71,12 +78,12 @@ export default class TransactionHashView extends Mixins(TranslationMixin) {
   }
 
   get formattedAddress(): string {
-    return formatAddress(this.value, 24);
+    return formatAddress(this.formattedValue, 24);
   }
 
   async handleCopy(): Promise<void> {
     try {
-      await copyToClipboard(this.value);
+      await copyToClipboard(this.formattedValue);
       this.$notify({
         message: this.t('transaction.successCopy', { value: this.t(this.translation) }),
         type: 'success',
