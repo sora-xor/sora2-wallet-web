@@ -51,7 +51,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           <div
             class="history-item-title p4"
           >
-            Sent ******  To 0xB8c...6C6DD
+            Sent ******  To cnVFi...P2nse
           </div>
            
           <!---->
@@ -291,7 +291,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
           <div
             class="history-item-title p4"
           >
-            Failed to send ******  to 0xB8c...6C6DD
+            Failed to send ******  to cnVFi...P2nse
           </div>
            
           <i
@@ -458,7 +458,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
           <div
             class="history-item-title p4"
           >
-            Sent ******  To 0xB8c...6C6DD
+            Sent ******  To cnVFi...P2nse
           </div>
            
           <i

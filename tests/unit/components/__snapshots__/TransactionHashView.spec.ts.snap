@@ -19,7 +19,7 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
     tabindex=""
     type="text"
     usedesignsystem="true"
-    value="0xB8c77482e4...52C74426C6D7"
+    value="cnToWyQbAUWy...yLGKFBTRYbz8"
   />
    
   <s-button-stub
@@ -55,7 +55,79 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
     <template>
       <a
         class="transaction-link"
-        href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
+        href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
+        rel="nofollow noopener"
+        target="_blank"
+      >
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
+          View in SORAScan
+        
+        </s-dropdown-item-stub>
+      </a>
+    </template>
+  </s-dropdown-stub>
+</div>
+`;
+
+exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered correctly 2`] = `
+<div
+  class="s-input-container"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    form=""
+    label=""
+    name=""
+    placeholder="any"
+    prefix=""
+    readonly="true"
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    usedesignsystem="true"
+    value="cnToWyQbAUWy...yLGKFBTRYbz8"
+  />
+   
+  <s-button-stub
+    alternative="true"
+    borderradius="small"
+    class="s-button--copy"
+    icon="basic-copy-24"
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Copy any"
+    tooltipplacement="top"
+    type="action"
+    usedesignsystem="true"
+  />
+   
+  <s-dropdown-stub
+    borderradius="mini"
+    buttontype="secondary"
+    class="s-dropdown-menu"
+    hideonclick="true"
+    hidetimeout="150"
+    icon="basic-more-vertical-24"
+    placement="bottom-end"
+    popperclass=""
+    showtimeout="250"
+    size="medium"
+    tabindex="0"
+    trigger="hover"
+    type="ellipsis"
+  >
+    <template>
+      <a
+        class="transaction-link"
+        href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
         rel="nofollow noopener"
         target="_blank"
       >
@@ -91,7 +163,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     tabindex=""
     type="text"
     usedesignsystem="true"
-    value="0xB8c77482e4...52C74426C6D7"
+    value="cnToWyQbAUWy...yLGKFBTRYbz8"
   />
    
   <s-button-stub
@@ -127,7 +199,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     <template>
       <a
         class="transaction-link"
-        href="https://sorascan.com/sora-mainnet/account/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
+        href="https://sorascan.com/sora-mainnet/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
         rel="nofollow noopener"
         target="_blank"
       >
@@ -141,7 +213,93 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
       </a>
       <a
         class="transaction-link"
-        href="https://sora.subscan.io/account/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
+        href="https://sora.subscan.io/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
+        rel="nofollow noopener"
+        target="_blank"
+      >
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
+          View in Subscan
+        
+        </s-dropdown-item-stub>
+      </a>
+    </template>
+  </s-dropdown-stub>
+</div>
+`;
+
+exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered correctly 2`] = `
+<div
+  class="s-input-container"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    form=""
+    label=""
+    name=""
+    placeholder="any"
+    prefix=""
+    readonly="true"
+    size="big"
+    suffix=""
+    tabindex=""
+    type="text"
+    usedesignsystem="true"
+    value="cnToWyQbAUWy...yLGKFBTRYbz8"
+  />
+   
+  <s-button-stub
+    alternative="true"
+    borderradius="small"
+    class="s-button--copy"
+    icon="basic-copy-24"
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Copy any"
+    tooltipplacement="top"
+    type="action"
+    usedesignsystem="true"
+  />
+   
+  <s-dropdown-stub
+    borderradius="mini"
+    buttontype="secondary"
+    class="s-dropdown-menu"
+    hideonclick="true"
+    hidetimeout="150"
+    icon="basic-more-vertical-24"
+    placement="bottom-end"
+    popperclass=""
+    showtimeout="250"
+    size="medium"
+    tabindex="0"
+    trigger="hover"
+    type="ellipsis"
+  >
+    <template>
+      <a
+        class="transaction-link"
+        href="https://sorascan.com/sora-mainnet/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
+        rel="nofollow noopener"
+        target="_blank"
+      >
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
+          View in SORAScan
+        
+        </s-dropdown-item-stub>
+      </a>
+      <a
+        class="transaction-link"
+        href="https://sora.subscan.io/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
         rel="nofollow noopener"
         target="_blank"
       >
