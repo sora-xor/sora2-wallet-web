@@ -124,7 +124,6 @@ import {
   CodecString,
   KnownAssets,
   KnownSymbols,
-  NetworkFeesObject,
   Operation,
   XOR,
 } from '@sora-substrate/util';
@@ -133,14 +132,15 @@ import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
+import { RouteNames } from '../consts';
+import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
+import { api } from '../api';
+
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
-import { RouteNames } from '../consts';
-import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
-import { api } from '../api';
 
 @Component({
   components: {
@@ -161,7 +161,6 @@ export default class WalletSend extends Mixins(
 
   @Getter currentRouteParams!: any;
   @Getter accountAssets!: Array<AccountAsset>;
-  @Getter networkFees!: NetworkFeesObject;
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action transfer!: (options: { to: string; amount: string }) => Promise<void>;
@@ -286,6 +285,7 @@ export default class WalletSend extends Mixins(
   }
 
   get xorBalance(): Nullable<CodecString> {
+    // TODO: XOR balance here can be unsyncronized, need to fix
     const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
     return accountXor ? accountXor.balance.transferable : null;
   }
@@ -300,7 +300,7 @@ export default class WalletSend extends Mixins(
 
   getAssetIconStyles = getAssetIconStyles;
 
-  getFormattedAddress(asset: Asset): string {
+  getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
   }
 
@@ -327,9 +327,8 @@ export default class WalletSend extends Mixins(
       !this.isXorSufficientForNextTx({
         type: Operation.Transfer,
         isXorAccountAsset: this.isXorAccountAsset(this.asset),
-        xorBalance: this.xorBalance || '',
-        amount: this.getFPNumber(this.amount).toCodecString(),
-        fee: this.networkFees.Transfer,
+        xorBalance: this.xorBalance ? this.getFPNumberFromCodec(this.xorBalance) : this.Zero,
+        amount: this.getFPNumber(this.amount),
       })
     ) {
       this.showAdditionalInfo = false;

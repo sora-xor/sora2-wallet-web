@@ -1,44 +1,44 @@
 import { Mixins, Component } from 'vue-property-decorator';
-import { FPNumber, Operation } from '@sora-substrate/util';
+import { Getter } from 'vuex-class';
+import { FPNumber, NetworkFeesObject, Operation } from '@sora-substrate/util';
+
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { NetworkFeeWarningOptions } from '@/consts';
 
 @Component
 export default class NetworkFeeWarningMixin extends Mixins(NumberFormatterMixin) {
-  isXorSufficientForNextTx({
-    type,
-    isXorAccountAsset,
-    xorBalance,
-    amount = '0',
-    fee,
-  }: NetworkFeeWarningOptions): boolean {
-    if (type === Operation.EthBridgeIncoming || !xorBalance) return true;
+  @Getter networkFees!: NetworkFeesObject;
+
+  isXorSufficientForNextTx({ type, isXorAccountAsset, xorBalance, amount }: NetworkFeeWarningOptions): boolean {
+    const balanceIsEmpty = !xorBalance || !xorBalance.isFinity();
+
+    if (type === Operation.EthBridgeIncoming || balanceIsEmpty) return true;
 
     let fpRemainingBalance: FPNumber;
-    const fpXorBalance = this.getFPNumberFromCodec(xorBalance);
-    const fpAmount = this.getFPNumberFromCodec(amount);
-    const fpNetworkFee = this.getFPNumberFromCodec(fee);
+
+    const networkFee = this.getFPNumberFromCodec(this.networkFees[type]);
+    const fpAmount = amount || this.Zero;
 
     if ([Operation.Transfer, Operation.EthBridgeOutgoing].includes(type)) {
       if (isXorAccountAsset) {
-        fpRemainingBalance = fpXorBalance.sub(fpAmount).sub(fpNetworkFee);
+        fpRemainingBalance = xorBalance.sub(fpAmount).sub(networkFee);
       } else {
-        fpRemainingBalance = fpXorBalance.sub(fpNetworkFee);
+        fpRemainingBalance = xorBalance.sub(networkFee);
       }
 
-      return FPNumber.gte(fpRemainingBalance, fpNetworkFee);
+      return FPNumber.gte(fpRemainingBalance, networkFee);
     }
 
     if ([Operation.CreatePair, Operation.AddLiquidity].includes(type)) {
-      fpRemainingBalance = fpXorBalance.sub(fpAmount).sub(fpNetworkFee);
+      fpRemainingBalance = xorBalance.sub(fpAmount).sub(networkFee);
 
-      return FPNumber.gte(fpRemainingBalance, fpNetworkFee);
+      return FPNumber.gte(fpRemainingBalance, networkFee);
     }
 
     if ([Operation.RegisterAsset, Operation.RemoveLiquidity].includes(type)) {
-      fpRemainingBalance = fpXorBalance.sub(fpNetworkFee);
+      fpRemainingBalance = xorBalance.sub(networkFee);
 
-      return FPNumber.gte(fpRemainingBalance, fpNetworkFee);
+      return FPNumber.gte(fpRemainingBalance, networkFee);
     }
 
     return true;
