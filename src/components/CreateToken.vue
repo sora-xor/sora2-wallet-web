@@ -165,6 +165,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   }
 
   get xorBalance(): Nullable<CodecString> {
+    // TODO: XOR balance here can be unsyncronized, need to fix
     const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
     return accountXor ? accountXor.balance.transferable : null;
   }
@@ -188,8 +189,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
       if (
         !this.isXorSufficientForNextTx({
           type: Operation.RegisterAsset,
-          xorBalance: this.xorBalance || '',
-          fee: this.fee.toCodecString(),
+          xorBalance: this.xorBalance ? this.getFPNumberFromCodec(this.xorBalance) : this.Zero,
         })
       ) {
         this.showAdditionalInfo = false;
