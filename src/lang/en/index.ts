@@ -143,11 +143,11 @@ export default {
     remove: 'Remove asset',
     select: 'Select an asset',
     recieve: 'Recieve {symbol}',
-    code: {
-      download: 'Download QR Code',
-      upload: 'Upload QR Code',
-      recieve: 'Recieve by QR Code',
-    },
+  },
+  code: {
+    download: 'Download QR Code',
+    upload: 'Upload QR Code',
+    recieve: 'Recieve by QR Code',
   },
   addAsset: {
     title: '@:addAssetText',

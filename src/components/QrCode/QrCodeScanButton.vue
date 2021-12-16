@@ -2,7 +2,7 @@
   <s-button
     type="action"
     size="medium"
-    :tooltip="t('asset.code.upload')"
+    :tooltip="t('code.upload')"
     class="qr-code-download"
     rounded
     v-bind="$attrs"

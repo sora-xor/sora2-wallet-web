@@ -44,7 +44,7 @@
 
           <qr-code-scan-button primary @change="parseQrCodeValue" />
 
-          <s-button type="action" primary rounded :tooltip="t('asset.code.recieve')" @click="recieveByQrCode(asset)">
+          <s-button type="action" primary rounded :tooltip="t('code.recieve')" @click="recieveByQrCode(asset)">
             <s-icon name="finance-receive-show-QR-24" size="28" />
           </s-button>
         </div>
