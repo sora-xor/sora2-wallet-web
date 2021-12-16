@@ -146,6 +146,7 @@ export default {
     code: {
       download: 'Download QR Code',
       upload: 'Upload QR Code',
+      recieve: 'Recieve by QR Code',
     },
   },
   addAsset: {

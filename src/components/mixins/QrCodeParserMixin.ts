@@ -40,8 +40,10 @@ export default class QrCodeParserMixin extends Mixins() {
   }
 
   recieveByQrCode(asset?: AccountAsset) {
+    const name = asset ? RouteNames.RecieveToken : RouteNames.SelectAsset;
+
     this.navigate({
-      name: RouteNames.SelectAsset,
+      name,
       params: {
         asset,
       },

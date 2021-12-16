@@ -40,6 +40,8 @@ import type { Account } from '../types/common';
 export default class RecieveToken extends Mixins(TranslationMixin) {
   @Getter account!: Account;
   @Getter currentRouteParams!: any;
+  @Getter previousRoute!: RouteNames;
+  @Getter previousRouteParams!: any;
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
@@ -75,7 +77,10 @@ export default class RecieveToken extends Mixins(TranslationMixin) {
   }
 
   handleBack(): void {
-    this.navigate({ name: RouteNames.SelectAsset });
+    this.navigate({
+      name: this.previousRoute,
+      params: this.previousRouteParams,
+    });
   }
 }
 </script>

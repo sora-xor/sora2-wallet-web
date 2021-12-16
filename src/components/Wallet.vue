@@ -14,7 +14,7 @@
     <wallet-account>
       <qr-code-scan-button alternative @change="parseQrCodeValue" />
 
-      <s-button type="action" alternative rounded tooltip="Recieve by QR Code" @click="recieveByQrCode">
+      <s-button type="action" alternative rounded :tooltip="t('asset.code.recieve')" @click="recieveByQrCode(null)">
         <s-icon name="finance-receive-show-QR-24" size="28" />
       </s-button>
 
