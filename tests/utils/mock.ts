@@ -27,6 +27,7 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
       reserved: '0',
       frozen: '0',
       locked: '0',
+      bonded: '0',
     },
   },
   {
@@ -40,6 +41,7 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
       reserved: '0',
       frozen: '0',
       locked: '0',
+      bonded: '0',
     },
   },
   {
@@ -53,6 +55,7 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
       reserved: '0',
       frozen: '0',
       locked: '0',
+      bonded: '0',
     },
   },
 ];
