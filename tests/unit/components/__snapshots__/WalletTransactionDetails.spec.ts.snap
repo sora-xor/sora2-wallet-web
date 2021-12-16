@@ -74,7 +74,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
     <transaction-hash-view-stub
       translation="transaction.from"
       type="account"
-      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+      value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
      
     <!---->
@@ -140,7 +140,7 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
     <transaction-hash-view-stub
       translation="transaction.from"
       type="account"
-      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+      value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
      
     <!---->
@@ -214,7 +214,7 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
     <transaction-hash-view-stub
       translation="transaction.from"
       type="account"
-      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+      value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
      
     <!---->
@@ -305,7 +305,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
     <transaction-hash-view-stub
       translation="transaction.from"
       type="account"
-      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+      value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
      
     <!---->
@@ -379,13 +379,13 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
     <transaction-hash-view-stub
       translation="transaction.from"
       type="account"
-      value="5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K"
+      value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
      
     <transaction-hash-view-stub
       translation="transaction.to"
       type="account"
-      value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
+      value="cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse"
     />
   </div>
 </wallet-base-stub>
