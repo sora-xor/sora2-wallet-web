@@ -95,7 +95,7 @@ export default class SubqueryExplorer implements Explorer {
       };
       const { referrerRewards } = await this.request(ReferrerRewardsQuery, params);
       const rewardsInfo: ReferrerRewards = {
-        rewards: new FPNumber(0),
+        rewards: FPNumber.ZERO,
         invitedUserRewards: {},
       };
       if (referrerRewards) {
@@ -103,7 +103,7 @@ export default class SubqueryExplorer implements Explorer {
           rewardsInfo.rewards = rewardsInfo.rewards.add(new FPNumber(item.amount));
           const invitedUser = item.referree;
           if (!rewardsInfo.invitedUserRewards[invitedUser]) {
-            rewardsInfo.invitedUserRewards[invitedUser] = { rewards: new FPNumber(0) };
+            rewardsInfo.invitedUserRewards[invitedUser] = { rewards: FPNumber.ZERO };
           }
           rewardsInfo.invitedUserRewards[invitedUser].rewards = rewardsInfo.invitedUserRewards[invitedUser].rewards.add(
             new FPNumber(item.amount)
