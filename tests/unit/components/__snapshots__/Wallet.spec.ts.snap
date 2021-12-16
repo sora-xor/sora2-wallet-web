@@ -2,16 +2,56 @@
 
 exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon="various-atom-24"
-  actiontooltip="wallet.createToken"
-  showaction="true"
   showheader="true"
   title="SORA Network account"
   tooltip=""
 >
-  <wallet-account-stub
-    showcontrols="true"
-  />
+   
+  <wallet-account-stub>
+    <qr-code-scan-button-stub
+      alternative=""
+    />
+     
+    <s-button-stub
+      alternative="true"
+      borderradius="small"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      rounded="true"
+      size="medium"
+      tabindex="0"
+      tooltip="Recieve by QR Code"
+      tooltipplacement="top"
+      type="action"
+      usedesignsystem="true"
+    >
+      <s-icon-stub
+        name="finance-receive-show-QR-24"
+        size="28"
+      />
+    </s-button-stub>
+     
+    <s-button-stub
+      alternative="true"
+      borderradius="small"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      rounded="true"
+      size="medium"
+      tabindex="0"
+      tooltip="Switch account"
+      tooltipplacement="top"
+      type="action"
+      usedesignsystem="true"
+    >
+      <s-icon-stub
+        name="arrows-refresh-ccw-24"
+        size="28"
+      />
+    </s-button-stub>
+  </wallet-account-stub>
    
   <div
     class="wallet"
@@ -40,16 +80,56 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`
 
 exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon="various-atom-24"
-  actiontooltip="wallet.createToken"
-  showaction="true"
   showheader="true"
   title="SORA Network account"
   tooltip=""
 >
-  <wallet-account-stub
-    showcontrols="true"
-  />
+   
+  <wallet-account-stub>
+    <qr-code-scan-button-stub
+      alternative=""
+    />
+     
+    <s-button-stub
+      alternative="true"
+      borderradius="small"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      rounded="true"
+      size="medium"
+      tabindex="0"
+      tooltip="Recieve by QR Code"
+      tooltipplacement="top"
+      type="action"
+      usedesignsystem="true"
+    >
+      <s-icon-stub
+        name="finance-receive-show-QR-24"
+        size="28"
+      />
+    </s-button-stub>
+     
+    <s-button-stub
+      alternative="true"
+      borderradius="small"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      rounded="true"
+      size="medium"
+      tabindex="0"
+      tooltip="Switch account"
+      tooltipplacement="top"
+      type="action"
+      usedesignsystem="true"
+    >
+      <s-icon-stub
+        name="arrows-refresh-ccw-24"
+        size="28"
+      />
+    </s-button-stub>
+  </wallet-account-stub>
    
   <div
     class="wallet"

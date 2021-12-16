@@ -31,7 +31,6 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
   const polkadotAccount = MOCK_ACCOUNT_POLKADOT;
   const wrapperOptions = {
     propsData: {
-      showControls: true,
       polkadotAccount,
     },
     store: createStore(),
@@ -42,27 +41,6 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
   });
 
   it('should be rendered correctly', () => {
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
-  it('should render account switch button when prop is true', () => {
-    const switchBtn = wrapper.find('.account-switch');
-
-    expect(switchBtn.exists()).toBeTrue();
-  });
-
-  it('should not render account switch button while false', () => {
-    const wrapper = useShallowMount(WalletAccount, {
-      ...wrapperOptions,
-      propsData: {
-        showControls: false,
-        polkadotAccount,
-      },
-    });
-
-    const switchBtn = wrapper.find('.account-switch');
-
-    expect(switchBtn.exists()).toBeFalse();
     expect(wrapper.element).toMatchSnapshot();
   });
 
@@ -82,7 +60,6 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
     const wrapper = useShallowMount(WalletAccount, {
       ...wrapperOptions,
       propsData: {
-        showControls: true,
         polkadotAccount: null,
       },
     });

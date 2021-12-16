@@ -2,8 +2,6 @@
 
 exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon=""
-  actiontooltip=""
   showback="true"
   showheader="true"
   title="Add Liquidity"
@@ -84,8 +82,6 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
 
 exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon=""
-  actiontooltip=""
   showback="true"
   showheader="true"
   title="Register Asset"
@@ -150,8 +146,6 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
 
 exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon=""
-  actiontooltip=""
   showback="true"
   showheader="true"
   title="Remove Liquidity"
@@ -224,8 +218,6 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
 
 exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon=""
-  actiontooltip=""
   showback="true"
   showheader="true"
   title="Swap"
@@ -315,8 +307,6 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
 
 exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon=""
-  actiontooltip=""
   showback="true"
   showheader="true"
   title="Transfer"

@@ -23,10 +23,11 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
     value=""
   />
    
-  <s-scrollbar-stub
-    class="asset-search-list"
-    tag="div"
+  <s-scrollbar
+    class="asset-list asset-search-list"
   >
+    <!---->
+     
     <div
       class="asset s-flex"
     >
@@ -38,41 +39,33 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
         class="asset-description s-flex"
       >
         <div
-          class="asset-description_symbol"
+          class="asset-symbol"
         >
           TEST
         </div>
          
         <div
-          class="asset-description_info"
+          class="asset-info"
         >
           
-          Test Asset
-          
-          <s-tooltip-stub
-            animation="el-fade-in-linear"
-            borderradius="small"
-            closedelay="0"
+      Test Asset
+      
+          <s-tooltip
             content="Copy Asset ID"
-            hideafter="0"
-            offset="0"
-            opendelay="1000"
-            placement="top"
-            showarrow="true"
-            tabindex="0"
-            theme="auto"
-            usedesignsystem="true"
           >
             <span
               class="asset-id"
             >
               (0x021...00000)
             </span>
-          </s-tooltip-stub>
+          </s-tooltip>
         </div>
       </div>
+       
     </div>
-  </s-scrollbar-stub>
+     
+    <!---->
+  </s-scrollbar>
 </div>
 `;
 
@@ -99,18 +92,18 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
     value="123456"
   />
    
-  <s-scrollbar-stub
-    class="asset-search-list"
-    tag="div"
+  <s-scrollbar
+    class="asset-list asset-search-list"
   >
     <div
-      class="asset-search-list_empty"
+      class="asset-list-empty"
     >
       
       No tokens found
     
     </div>
-  </s-scrollbar-stub>
+     
+  </s-scrollbar>
 </div>
 `;
 
@@ -137,10 +130,11 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
     value="TEST"
   />
    
-  <s-scrollbar-stub
-    class="asset-search-list"
-    tag="div"
+  <s-scrollbar
+    class="asset-list asset-search-list"
   >
+    <!---->
+     
     <div
       class="asset s-flex"
     >
@@ -152,40 +146,32 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
         class="asset-description s-flex"
       >
         <div
-          class="asset-description_symbol"
+          class="asset-symbol"
         >
           TEST
         </div>
          
         <div
-          class="asset-description_info"
+          class="asset-info"
         >
           
-          Test Asset
-          
-          <s-tooltip-stub
-            animation="el-fade-in-linear"
-            borderradius="small"
-            closedelay="0"
+      Test Asset
+      
+          <s-tooltip
             content="Copy Asset ID"
-            hideafter="0"
-            offset="0"
-            opendelay="1000"
-            placement="top"
-            showarrow="true"
-            tabindex="0"
-            theme="auto"
-            usedesignsystem="true"
           >
             <span
               class="asset-id"
             >
               (0x021...00000)
             </span>
-          </s-tooltip-stub>
+          </s-tooltip>
         </div>
       </div>
+       
     </div>
-  </s-scrollbar-stub>
+     
+    <!---->
+  </s-scrollbar>
 </div>
 `;

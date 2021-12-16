@@ -2,14 +2,12 @@
 
 exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon="basic-eye-24"
-  actiontooltip="asset.remove"
-  show-clean-history=""
   showback="true"
   showheader="true"
   title="SORA"
   tooltip=""
 >
+   
   <s-card-stub
     borderradius="small"
     class="asset-details"
@@ -157,6 +155,30 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
             size="28"
           />
         </s-button-stub>
+         
+        <qr-code-scan-button-stub
+          primary=""
+        />
+         
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip="Recieve by QR Code"
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="finance-receive-show-QR-24"
+            size="28"
+          />
+        </s-button-stub>
       </div>
        
       <transition-stub
@@ -175,14 +197,12 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
 
 exports[`WalletAssetDetails.vue should show detailed balance info when button clicked 1`] = `
 <wallet-base-stub
-  actionicon="basic-eye-24"
-  actiontooltip="asset.remove"
-  show-clean-history=""
   showback="true"
   showheader="true"
   title="SORA"
   tooltip=""
 >
+   
   <s-card-stub
     borderradius="small"
     class="asset-details"
@@ -327,6 +347,30 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
         >
           <s-icon-stub
             name="grid-block-distribute-vertically-24"
+            size="28"
+          />
+        </s-button-stub>
+         
+        <qr-code-scan-button-stub
+          primary=""
+        />
+         
+        <s-button-stub
+          borderradius="small"
+          icon=""
+          iconposition="left"
+          nativetype="button"
+          primary="true"
+          rounded="true"
+          size="medium"
+          tabindex="0"
+          tooltip="Recieve by QR Code"
+          tooltipplacement="top"
+          type="action"
+          usedesignsystem="true"
+        >
+          <s-icon-stub
+            name="finance-receive-show-QR-24"
             size="28"
           />
         </s-button-stub>
