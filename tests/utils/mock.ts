@@ -77,8 +77,8 @@ export const MOCK_HISTORY: Array<History> = [
     startTime: 1605048643745,
     amount: '0.1',
     symbol: KnownSymbols.XOR,
-    from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K',
-    to: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD',
+    from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
+    to: 'cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse',
   },
   {
     id: '2',
@@ -91,7 +91,7 @@ export const MOCK_HISTORY: Array<History> = [
     amount2: '0.9',
     symbol: KnownSymbols.XOR,
     symbol2: KnownSymbols.PSWAP,
-    from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K',
+    from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
   },
   {
     id: '3',
@@ -103,7 +103,7 @@ export const MOCK_HISTORY: Array<History> = [
     amount2: '0.9',
     symbol: KnownSymbols.XOR,
     symbol2: KnownSymbols.PSWAP,
-    from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K',
+    from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
   },
   {
     id: '4',
@@ -114,7 +114,7 @@ export const MOCK_HISTORY: Array<History> = [
     amount: '100.123',
     symbol: KnownSymbols.XOR,
     symbol2: KnownSymbols.PSWAP,
-    from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K',
+    from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
   },
   {
     id: '5',
@@ -123,7 +123,7 @@ export const MOCK_HISTORY: Array<History> = [
     type: Operation.RegisterAsset,
     startTime: 1605048643745,
     symbol: 'TEST',
-    from: '5HVmWWpBi69cmmDqWE4R6yxxJ2pveRnfozNg5K',
+    from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
   },
 ];
 

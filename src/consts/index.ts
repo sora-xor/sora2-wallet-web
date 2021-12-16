@@ -1,4 +1,4 @@
-import type { Operation } from '@sora-substrate/util';
+import type { FPNumber, Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
@@ -68,9 +68,8 @@ export interface WalletInitOptions {
 export interface NetworkFeeWarningOptions {
   type: Operation;
   isXorAccountAsset?: boolean;
-  xorBalance: string;
-  amount?: string;
-  fee: string;
+  xorBalance: FPNumber;
+  amount?: FPNumber;
 }
 
 export enum FontSizeRate {
