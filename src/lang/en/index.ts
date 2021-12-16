@@ -137,6 +137,7 @@ export default {
       [BalanceType.Locked]: ' - Locked',
       [BalanceType.Reserved]: ' - Reserved',
       [BalanceType.Total]: 'Total',
+      [BalanceType.Bonded]: 'Bonded',
     },
   },
   asset: {
