@@ -11,12 +11,8 @@ import type {
   HistoryElementLiquidityOperation,
   HistoryElementTransfer,
   HistoryElementAssetRegistration,
+  UtilityBatchAllItem,
 } from '../types';
-
-enum ModuleCallOperation {
-  RegisterPair = 'registerPair',
-  InitializePool = 'initializePool',
-}
 
 enum ModuleNames {
   Assets = 'assets',
@@ -27,33 +23,45 @@ enum ModuleNames {
   Utility = 'utility',
 }
 
-const OperationByModuleCall = {
-  [ModuleNames.Assets]: {
-    transfer: Operation.Transfer,
-    register: Operation.RegisterAsset,
-  },
-  [ModuleNames.LiquidityProxy]: {
-    swap: Operation.Swap,
-  },
-  [ModuleNames.PoolXYK]: {
-    depositLiquidity: Operation.AddLiquidity,
-    withdrawLiquidity: Operation.RemoveLiquidity,
-    initializePool: ModuleCallOperation.InitializePool,
-  },
-  [ModuleNames.TradingPair]: {
-    register: ModuleCallOperation.RegisterPair,
-  },
-};
-
 const getTransactionId = (tx: HistoryElement): string => tx.id;
 
+const getCall = (data, { module, method }) => data.find((item) => item.module === module && item.method === method);
+
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
-  const { module, method } = tx;
+  const { module, method, data } = tx;
 
-  if (!(module in OperationByModuleCall)) return null;
-  if (!(method in OperationByModuleCall[module])) return null;
+  if (module === ModuleNames.Utility) {
+    if (method === 'batchAll') {
+      if (!Array.isArray(data)) return null;
 
-  return OperationByModuleCall[module][method];
+      if (
+        getCall(data, { module: ModuleNames.PoolXYK, method: 'initializePool' }) &&
+        getCall(data, { module: ModuleNames.PoolXYK, method: 'depositLiquidity' })
+      ) {
+        return Operation.CreatePair;
+      }
+    }
+  } else if (module === ModuleNames.Assets) {
+    if (method === 'tranfer') {
+      return Operation.Transfer;
+    }
+    if (method === 'register') {
+      return Operation.RegisterAsset;
+    }
+  } else if (module === ModuleNames.LiquidityProxy) {
+    if (method === 'swap') {
+      return Operation.Swap;
+    }
+  } else if (module === ModuleNames.PoolXYK) {
+    if (method === 'depositLiquidity') {
+      return Operation.AddLiquidity;
+    }
+    if (method === 'withdrawLiquidity') {
+      return Operation.RemoveLiquidity;
+    }
+  }
+
+  return null;
 };
 
 const getTransactionTimestamp = (tx: HistoryElement): number => {
@@ -95,6 +103,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
   public static SUPPORTED_OPERATIONS = [
     Operation.Transfer,
     Operation.Swap,
+    Operation.CreatePair,
     Operation.AddLiquidity,
     Operation.RemoveLiquidity,
     Operation.RegisterAsset,
@@ -176,6 +185,29 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : '';
         payload.amount = data.baseAssetAmount;
         payload.amount2 = data.targetAssetAmount;
+
+        return payload;
+      }
+      case Operation.CreatePair: {
+        const data = transaction.data as UtilityBatchAllItem[];
+        const call: UtilityBatchAllItem = getCall(data, { module: ModuleNames.PoolXYK, method: 'depositLiquidity' });
+
+        const {
+          input_asset_a: assetAddress,
+          input_asset_b: asset2Address,
+          input_a_desired: amount,
+          input_b_desired: amount2,
+        } = call.data.args;
+
+        const asset = await getAssetByAddress(assetAddress as string);
+        const asset2 = await getAssetByAddress(asset2Address as string);
+
+        payload.assetAddress = asset.address;
+        payload.asset2Address = asset2.address;
+        payload.symbol = asset && asset.symbol ? asset.symbol : '';
+        payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : '';
+        payload.amount = FPNumber.fromCodecValue(amount).toString();
+        payload.amount2 = FPNumber.fromCodecValue(amount2).toString();
 
         return payload;
       }

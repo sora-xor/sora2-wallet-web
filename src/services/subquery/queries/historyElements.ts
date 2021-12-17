@@ -63,9 +63,56 @@ export const historyElementsFilter = (address = '', { assetAddress = '', timesta
   const filter: any = {
     and: [
       {
-        method: {
-          in: ['swap', 'transfer', 'depositLiquidity', 'withdrawLiquidity', 'register'],
-        },
+        or: [
+          {
+            module: {
+              equalTo: 'liquidityProxy',
+            },
+            method: {
+              equalTo: 'swap',
+            },
+          },
+          {
+            module: {
+              equalTo: 'assets',
+            },
+            method: {
+              equalTo: 'transfer',
+            },
+          },
+          {
+            module: {
+              equalTo: 'assets',
+            },
+            method: {
+              equalTo: 'register',
+            },
+          },
+          {
+            module: {
+              equalTo: 'poolXyk',
+            },
+            method: {
+              equalTo: 'depositLiquidity',
+            },
+          },
+          {
+            module: {
+              equalTo: 'poolXyk',
+            },
+            method: {
+              equalTo: 'withdrawLiquidity',
+            },
+          },
+          {
+            module: {
+              equalTo: 'utility',
+            },
+            method: {
+              equalTo: 'batchAll',
+            },
+          },
+        ],
       },
     ],
   };

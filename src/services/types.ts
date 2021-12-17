@@ -62,6 +62,19 @@ export type HistoryElementAssetRegistration = {
   assetId: string;
 };
 
+export type UtilityBatchAllItem = {
+  data: {
+    args: {
+      [key: string]: string | number;
+    };
+    callIndex: string;
+  };
+  hash: string;
+  callId: string;
+  module: string;
+  method: string;
+};
+
 export type HistoryElement = {
   id: string;
   blockHash: string;
@@ -73,6 +86,10 @@ export type HistoryElement = {
   execution: HistoryElementExecution;
   timestamp: number;
   data: Nullable<
-    HistoryElementSwap | HistoryElementTransfer | HistoryElementLiquidityOperation | HistoryElementAssetRegistration
+    | HistoryElementSwap
+    | HistoryElementTransfer
+    | HistoryElementLiquidityOperation
+    | HistoryElementAssetRegistration
+    | UtilityBatchAllItem[]
   >;
 };
