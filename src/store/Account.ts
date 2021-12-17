@@ -70,7 +70,7 @@ type AccountState = {
   updateAccountAssetsSubscription: Nullable<Subscription>;
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
   fiatPriceAndApyTimer: Nullable<NodeJS.Timer>;
-  referralRewards: Nullable<ReferrerRewards>;
+  referralRewards: ReferrerRewards;
 };
 
 function initialState(): AccountState {
@@ -90,7 +90,7 @@ function initialState(): AccountState {
     fiatPriceAndApyObject: {},
     fiatPriceAndApyTimer: null,
     referralRewards: {
-      rewards: new FPNumber(0),
+      rewards: FPNumber.ZERO,
       invitedUserRewards: {},
     },
   };

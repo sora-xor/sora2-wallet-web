@@ -79,7 +79,11 @@ export type HistoryElement = {
 
 export type ReferrerRewards = {
   rewards: FPNumber;
-  invitedUserRewards: any;
+  invitedUserRewards: {
+    [key: string]: {
+      rewards: FPNumber;
+    };
+  };
 };
 
 export type ReferrerReward = {
