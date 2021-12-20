@@ -26,6 +26,11 @@ import type { Account, PolkadotJsAccount } from '../types/common';
 
 const HOUR = 60 * 60 * 1000;
 
+const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {
+  rewards: FPNumber.ZERO,
+  invitedUserRewards: {},
+};
+
 const types = flow(
   flatMap((x) => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
@@ -89,10 +94,7 @@ function initialState(): AccountState {
     updateAccountAssetsSubscription: null,
     fiatPriceAndApyObject: {},
     fiatPriceAndApyTimer: null,
-    referralRewards: {
-      rewards: FPNumber.ZERO,
-      invitedUserRewards: {},
-    },
+    referralRewards: EMPTY_REFERRAL_REWARDS,
   };
 }
 
@@ -161,10 +163,7 @@ const mutations = {
     }
   },
   [types.RESET_ACCOUNT](state: AccountState) {
-    const s = omit(
-      ['whitelistArray', 'fiatPriceAndApyObject', 'fiatPriceAndApyTimer', 'referralRewards', 'assets'],
-      initialState()
-    );
+    const s = omit(['whitelistArray', 'fiatPriceAndApyObject', 'fiatPriceAndApyTimer', 'assets'], initialState());
     Object.keys(s).forEach((key) => {
       state[key] = s[key];
     });
@@ -263,13 +262,13 @@ const mutations = {
   },
 
   [types.GET_REFERRAL_REWARDS_REQUEST](state: AccountState) {
-    state.referralRewards = initialState().referralRewards;
+    state.referralRewards = EMPTY_REFERRAL_REWARDS;
   },
   [types.GET_REFERRAL_REWARDS_SUCCESS](state: AccountState, referralRewards: ReferrerRewards) {
     state.referralRewards = referralRewards;
   },
   [types.GET_REFERRAL_REWARDS_FAILURE](state: AccountState) {
-    state.referralRewards = initialState().referralRewards;
+    state.referralRewards = EMPTY_REFERRAL_REWARDS;
   },
 
   [types.SEARCH_ASSET_REQUEST](state: AccountState) {},

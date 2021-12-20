@@ -12,7 +12,7 @@ query($filter: ReferrerRewardFilter) {
   }
 }`;
 
-export const referrerRewardsFilter = (referrer = ''): any => {
+export const referrerRewardsFilter = (referrer = '') => {
   return {
     referrer: {
       equalTo: referrer,

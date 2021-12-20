@@ -1,13 +1,11 @@
 import { Component, Vue } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
 
+import type { ReferrerRewards } from '../../services/types';
+
 @Component
 export default class ReferralRewardsMixin extends Vue {
-  @Getter referralRewards!: any;
+  @Getter referralRewards!: Nullable<ReferrerRewards>;
 
-  @Action getAccountReferralRewards!: () => Promise<void>;
-
-  getReferralRewards(): void {
-    this.getAccountReferralRewards();
-  }
+  @Action getAccountReferralRewards!: AsyncVoidFn;
 }
