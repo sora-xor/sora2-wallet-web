@@ -150,7 +150,7 @@ const getters = {
   selectedTransaction(state: AccountState, getters): History {
     return getters.activity.find((item) => item.id === state.selectedTransactionId);
   },
-  referralRewards(state: AccountState): Nullable<ReferrerRewards> {
+  referralRewards(state: AccountState): ReferrerRewards {
     return state.referralRewards;
   },
 };
