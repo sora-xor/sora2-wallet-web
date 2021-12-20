@@ -13,6 +13,7 @@ import {
   axiosInstance,
   History,
   Asset,
+  FPNumber,
 } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
 
@@ -20,10 +21,15 @@ import { api } from '../api';
 import { storage } from '../util/storage';
 import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable, WHITE_LIST_GITHUB_URL } from '../util';
 import { SubqueryExplorerService } from '../services/subquery';
-import type { FiatPriceAndApyObject } from '../services/types';
+import type { FiatPriceAndApyObject, ReferrerRewards } from '../services/types';
 import type { Account, PolkadotJsAccount } from '../types/common';
 
 const HOUR = 60 * 60 * 1000;
+
+const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {
+  rewards: FPNumber.ZERO,
+  invitedUserRewards: {},
+};
 
 const types = flow(
   flatMap((x) => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
@@ -51,6 +57,7 @@ const types = flow(
   'GET_POLKADOT_JS_ACCOUNTS',
   'GET_WHITELIST',
   'GET_FIAT_PRICE_AND_APY_OBJECT',
+  'GET_REFERRAL_REWARDS',
 ]);
 
 type AccountState = {
@@ -68,6 +75,7 @@ type AccountState = {
   updateAccountAssetsSubscription: Nullable<Subscription>;
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
   fiatPriceAndApyTimer: Nullable<NodeJS.Timer>;
+  referralRewards: ReferrerRewards;
 };
 
 function initialState(): AccountState {
@@ -86,6 +94,7 @@ function initialState(): AccountState {
     updateAccountAssetsSubscription: null,
     fiatPriceAndApyObject: {},
     fiatPriceAndApyTimer: null,
+    referralRewards: EMPTY_REFERRAL_REWARDS,
   };
 }
 
@@ -140,6 +149,9 @@ const getters = {
   },
   selectedTransaction(state: AccountState, getters): History {
     return getters.activity.find((item) => item.id === state.selectedTransactionId);
+  },
+  referralRewards(state: AccountState): ReferrerRewards {
+    return state.referralRewards;
   },
 };
 
@@ -247,6 +259,16 @@ const mutations = {
   [types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE](state: AccountState) {
     state.fiatPriceAndApyObject = {};
     state.withoutFiatAndApy = true;
+  },
+
+  [types.GET_REFERRAL_REWARDS_REQUEST](state: AccountState) {
+    state.referralRewards = EMPTY_REFERRAL_REWARDS;
+  },
+  [types.GET_REFERRAL_REWARDS_SUCCESS](state: AccountState, referralRewards: ReferrerRewards) {
+    state.referralRewards = referralRewards;
+  },
+  [types.GET_REFERRAL_REWARDS_FAILURE](state: AccountState) {
+    state.referralRewards = EMPTY_REFERRAL_REWARDS;
   },
 
   [types.SEARCH_ASSET_REQUEST](state: AccountState) {},
@@ -417,6 +439,19 @@ const actions = {
     state.fiatPriceAndApyTimer = setInterval(() => {
       dispatch('getFiatPriceAndApyObject');
     }, HOUR);
+  },
+  async getAccountReferralRewards({ commit }) {
+    commit(types.GET_REFERRAL_REWARDS_REQUEST);
+    try {
+      const data = await SubqueryExplorerService.getAccountReferralRewards(state.address);
+      if (!data) {
+        commit(types.GET_REFERRAL_REWARDS_FAILURE);
+        return;
+      }
+      commit(types.GET_REFERRAL_REWARDS_SUCCESS, data);
+    } catch (error) {
+      commit(types.GET_REFERRAL_REWARDS_FAILURE);
+    }
   },
   async getAssets({ commit, getters: { whitelist } }) {
     commit(types.GET_ASSETS_REQUEST);
