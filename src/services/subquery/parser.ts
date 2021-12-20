@@ -1,8 +1,10 @@
 import { FPNumber, Operation, TransactionStatus, History, Asset } from '@sora-substrate/util';
 import { BN } from '@polkadot/util';
+import getOr from 'lodash/fp/getOr';
 
 import store from '../../store';
 import { api } from '../../api';
+import { ModuleNames, ModuleMethods } from '../types';
 import type {
   ExplorerDataParser,
   HistoryElement,
@@ -14,18 +16,38 @@ import type {
   UtilityBatchAllItem,
 } from '../types';
 
-enum ModuleNames {
-  Assets = 'assets',
-  LiquidityProxy = 'liquidityProxy',
-  Rewards = 'rewards',
-  PoolXYK = 'poolXyk',
-  TradingPair = 'tradingPair',
-  Utility = 'utility',
-}
+const OperationsMap = {
+  [ModuleNames.Assets]: {
+    [ModuleMethods.AssetsRegister]: () => Operation.RegisterAsset,
+    [ModuleMethods.AssetsTransfer]: () => Operation.Transfer,
+  },
+  [ModuleNames.PoolXYK]: {
+    [ModuleMethods.PoolXYKDepositLiquidity]: () => Operation.AddLiquidity,
+    [ModuleMethods.PoolXYKWithdrawLiquidity]: () => Operation.RemoveLiquidity,
+  },
+  [ModuleNames.LiquidityProxy]: {
+    [ModuleMethods.LiquidityProxySwap]: () => Operation.Swap,
+  },
+  [ModuleNames.Utility]: {
+    [ModuleMethods.UtilityBatchAll]: (data: HistoryElement['data']) => {
+      if (
+        Array.isArray(data) &&
+        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKInitializePool }) &&
+        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity })
+      ) {
+        return Operation.CreatePair;
+      }
+
+      return null;
+    },
+  },
+};
 
 const getAssetSymbol = (asset: Nullable<Asset>): string => (asset && asset.symbol ? asset.symbol : '');
 
 const getTransactionId = (tx: HistoryElement): string => tx.id;
+
+const emptyFn = () => null;
 
 const getBatchCall = (data: Array<UtilityBatchAllItem>, { module, method }): Nullable<UtilityBatchAllItem> =>
   data.find((item) => item.module === module && item.method === method);
@@ -33,38 +55,9 @@ const getBatchCall = (data: Array<UtilityBatchAllItem>, { module, method }): Nul
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
 
-  if (module === ModuleNames.Utility) {
-    if (method === 'batchAll') {
-      if (!Array.isArray(data)) return null;
+  const operationGetter = getOr(emptyFn, [module, method], OperationsMap);
 
-      if (
-        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: 'initializePool' }) &&
-        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: 'depositLiquidity' })
-      ) {
-        return Operation.CreatePair;
-      }
-    }
-  } else if (module === ModuleNames.Assets) {
-    if (method === 'tranfer') {
-      return Operation.Transfer;
-    }
-    if (method === 'register') {
-      return Operation.RegisterAsset;
-    }
-  } else if (module === ModuleNames.LiquidityProxy) {
-    if (method === 'swap') {
-      return Operation.Swap;
-    }
-  } else if (module === ModuleNames.PoolXYK) {
-    if (method === 'depositLiquidity') {
-      return Operation.AddLiquidity;
-    }
-    if (method === 'withdrawLiquidity') {
-      return Operation.RemoveLiquidity;
-    }
-  }
-
-  return null;
+  return operationGetter(data);
 };
 
 const getTransactionTimestamp = (tx: HistoryElement): number => {
@@ -193,7 +186,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       }
       case Operation.CreatePair: {
         const data = transaction.data as UtilityBatchAllItem[];
-        const call = getBatchCall(data, { module: ModuleNames.PoolXYK, method: 'depositLiquidity' });
+        const call = getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity });
 
         if (!call) {
           logOperationDataParsingError(type, transaction);

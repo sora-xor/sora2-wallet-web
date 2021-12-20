@@ -11,6 +11,25 @@ export interface Explorer {
   getAccountTransactions: (params?: any) => Promise<any>;
 }
 
+export enum ModuleNames {
+  Assets = 'assets',
+  LiquidityProxy = 'liquidityProxy',
+  Rewards = 'rewards',
+  PoolXYK = 'poolXyk',
+  TradingPair = 'tradingPair',
+  Utility = 'utility',
+}
+
+export enum ModuleMethods {
+  AssetsRegister = 'register',
+  AssetsTransfer = 'transfer',
+  PoolXYKInitializePool = 'initializePool',
+  PoolXYKDepositLiquidity = 'depositLiquidity',
+  PoolXYKWithdrawLiquidity = 'withdrawLiquidity',
+  LiquidityProxySwap = 'swap',
+  UtilityBatchAll = 'batchAll',
+}
+
 export type PoolXYKEntity = {
   strategicBonusApy: Nullable<string>;
   priceUSD: Nullable<string>;

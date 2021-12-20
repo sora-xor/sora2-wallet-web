@@ -1,3 +1,5 @@
+import { ModuleNames, ModuleMethods } from '../../types';
+
 export const HistoryElementsQuery = `
 query HistoryElements (
   $first: Int = null,
@@ -66,50 +68,34 @@ export const historyElementsFilter = (address = '', { assetAddress = '', timesta
         or: [
           {
             module: {
-              equalTo: 'liquidityProxy',
+              equalTo: ModuleNames.LiquidityProxy,
             },
             method: {
-              equalTo: 'swap',
+              equalTo: ModuleMethods.LiquidityProxySwap,
             },
           },
           {
             module: {
-              equalTo: 'assets',
+              equalTo: ModuleNames.Assets,
             },
             method: {
-              equalTo: 'transfer',
+              in: [ModuleMethods.AssetsTransfer, ModuleMethods.AssetsRegister],
             },
           },
           {
             module: {
-              equalTo: 'assets',
+              equalTo: ModuleNames.PoolXYK,
             },
             method: {
-              equalTo: 'register',
+              in: [ModuleMethods.PoolXYKDepositLiquidity, ModuleMethods.PoolXYKWithdrawLiquidity],
             },
           },
           {
             module: {
-              equalTo: 'poolXyk',
+              equalTo: ModuleNames.Utility,
             },
             method: {
-              equalTo: 'depositLiquidity',
-            },
-          },
-          {
-            module: {
-              equalTo: 'poolXyk',
-            },
-            method: {
-              equalTo: 'withdrawLiquidity',
-            },
-          },
-          {
-            module: {
-              equalTo: 'utility',
-            },
-            method: {
-              equalTo: 'batchAll',
+              equalTo: ModuleMethods.UtilityBatchAll,
             },
           },
         ],
