@@ -23,9 +23,12 @@ enum ModuleNames {
   Utility = 'utility',
 }
 
+const getAssetSymbol = (asset: Nullable<Asset>): string => (asset && asset.symbol ? asset.symbol : '');
+
 const getTransactionId = (tx: HistoryElement): string => tx.id;
 
-const getCall = (data, { module, method }) => data.find((item) => item.module === module && item.method === method);
+const getBatchCall = (data: Array<UtilityBatchAllItem>, { module, method }): Nullable<UtilityBatchAllItem> =>
+  data.find((item) => item.module === module && item.method === method);
 
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
@@ -35,8 +38,8 @@ const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> =>
       if (!Array.isArray(data)) return null;
 
       if (
-        getCall(data, { module: ModuleNames.PoolXYK, method: 'initializePool' }) &&
-        getCall(data, { module: ModuleNames.PoolXYK, method: 'depositLiquidity' })
+        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: 'initializePool' }) &&
+        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: 'depositLiquidity' })
       ) {
         return Operation.CreatePair;
       }
@@ -163,8 +166,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.asset2Address = asset2Address;
         payload.amount = data.baseAssetAmount;
         payload.amount2 = data.targetAssetAmount;
-        payload.symbol = asset && asset.symbol ? asset.symbol : '';
-        payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : '';
+        payload.symbol = getAssetSymbol(asset);
+        payload.symbol2 = getAssetSymbol(asset2);
         payload.liquiditySource = data.selectedMarket;
         payload.liquidityProviderFee = new FPNumber(data.liquidityProviderFee).toCodecString();
 
@@ -181,8 +184,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
         payload.assetAddress = assetAddress;
         payload.asset2Address = asset2Address;
-        payload.symbol = asset && asset.symbol ? asset.symbol : '';
-        payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : '';
+        payload.symbol = getAssetSymbol(asset);
+        payload.symbol2 = getAssetSymbol(asset2);
         payload.amount = data.baseAssetAmount;
         payload.amount2 = data.targetAssetAmount;
 
@@ -190,7 +193,12 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       }
       case Operation.CreatePair: {
         const data = transaction.data as UtilityBatchAllItem[];
-        const call: UtilityBatchAllItem = getCall(data, { module: ModuleNames.PoolXYK, method: 'depositLiquidity' });
+        const call = getBatchCall(data, { module: ModuleNames.PoolXYK, method: 'depositLiquidity' });
+
+        if (!call) {
+          logOperationDataParsingError(type, transaction);
+          return null;
+        }
 
         const {
           input_asset_a: assetAddress,
@@ -204,8 +212,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
         payload.assetAddress = asset.address;
         payload.asset2Address = asset2.address;
-        payload.symbol = asset && asset.symbol ? asset.symbol : '';
-        payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : '';
+        payload.symbol = getAssetSymbol(asset);
+        payload.symbol2 = getAssetSymbol(asset2);
         payload.amount = FPNumber.fromCodecValue(amount).toString();
         payload.amount2 = FPNumber.fromCodecValue(amount2).toString();
 
@@ -218,7 +226,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const asset = await getAssetByAddress(assetAddress);
 
         payload.assetAddress = assetAddress;
-        payload.symbol = asset && asset.symbol ? asset.symbol : '';
+        payload.symbol = getAssetSymbol(asset);
         payload.to = data.to;
         payload.amount = data.amount;
 
@@ -230,7 +238,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const assetAddress = data.assetId;
         const asset = await getAssetByAddress(assetAddress);
 
-        payload.symbol = asset && asset.symbol ? asset.symbol : '';
+        payload.symbol = getAssetSymbol(asset);
 
         return payload;
       }
