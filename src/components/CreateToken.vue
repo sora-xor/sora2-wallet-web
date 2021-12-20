@@ -1,91 +1,81 @@
 <template>
-  <wallet-base :title="t('createToken.title')" show-back :showHeader="showAdditionalInfo" @back="handleBack">
-    <div class="wallet-settings-create-token">
-      <template v-if="step === Step.Create">
-        <s-input
-          :placeholder="t('createToken.tokenSymbol.placeholder')"
-          :minlength="1"
-          :maxlength="7"
-          :disabled="loading"
-          v-maska="tokenSymbolMask"
-          v-model="tokenSymbol"
-        />
-        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSymbol.desc') }}</p>
-        <s-input
-          :placeholder="t('createToken.tokenName.placeholder')"
-          :minlength="1"
-          :maxlength="33"
-          :disabled="loading"
-          v-maska="tokenNameMask"
-          v-model="tokenName"
-        />
-        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
-        <s-float-input
-          v-model="tokenSupply"
-          :placeholder="t('createToken.tokenSupply.placeholder')"
-          :decimals="decimals"
-          has-locale-string
-          :delimiters="delimiters"
-          :max="maxTotalSupply"
-          :disabled="loading"
-        />
-        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSupply.desc') }}</p>
-        <div class="wallet-settings-create-token_supply-block">
-          <s-switch v-model="extensibleSupply" :disabled="loading" />
-          <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
-        </div>
-        <p class="wallet-settings-create-token_desc">{{ t('createToken.extensibleSupply.desc') }}</p>
-        <s-button
-          class="wallet-settings-create-token_action s-typography-button--large"
-          type="primary"
-          :loading="loading"
-          :disabled="isCreateDisabled"
-          @click="onConfirm"
-        >
-          <template v-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
-          <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
-          <template v-else-if="!tokenSupply">{{ t('createToken.enterSupply') }}</template>
-          <template v-else>{{ t('createToken.action') }}</template>
-        </s-button>
-      </template>
-      <template v-else-if="step === Step.Warn">
-        <network-fee-warning-dialog :fee="formattedFee" @confirm="confirmNextTxFailure" />
-      </template>
-      <template v-else-if="step === Step.Confirm">
-        <info-line :label="t('createToken.tokenSymbol.placeholder')" :value="tokenSymbol" />
-        <info-line :label="t('createToken.tokenName.placeholder')" :value="tokenName.trim()" />
-        <info-line :label="t('createToken.tokenSupply.placeholder')" :value="formattedTokenSupply" />
-        <info-line :label="t('createToken.extensibleSupply.placeholder')" :value="extensibleSupply ? 'Yes' : 'No'" />
-        <s-button
-          class="wallet-settings-create-token_action s-typography-button--large"
-          type="primary"
-          :disabled="!hasEnoughXor"
-          :loading="loading"
-          @click="onCreate"
-        >
-          <template v-if="!hasEnoughXor">{{
-            t('createToken.insufficientBalance', { symbol: KnownSymbols.XOR })
-          }}</template>
-          <template v-else>{{ t('createToken.confirm') }}</template>
-        </s-button>
-      </template>
-      <wallet-fee v-if="!isCreateDisabled && showAdditionalInfo" :value="fee" />
-    </div>
-  </wallet-base>
+  <div class="wallet-settings-create-token">
+    <template v-if="step === Step.CreateToken">
+      <s-input
+        :placeholder="t('createToken.tokenSymbol.placeholder')"
+        :minlength="1"
+        :maxlength="7"
+        :disabled="loading"
+        v-maska="tokenSymbolMask"
+        v-model="tokenSymbol"
+      />
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSymbol.desc') }}</p>
+      <s-input
+        :placeholder="t('createToken.tokenName.placeholder')"
+        :minlength="1"
+        :maxlength="33"
+        :disabled="loading"
+        v-maska="tokenNameMask"
+        v-model="tokenName"
+      />
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
+      <s-float-input
+        v-model="tokenSupply"
+        :placeholder="t('createToken.tokenSupply.placeholder')"
+        :decimals="decimals"
+        has-locale-string
+        :delimiters="delimiters"
+        :max="maxTotalSupply"
+        :disabled="loading"
+      />
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSupply.desc') }}</p>
+      <div class="wallet-settings-create-token_supply-block">
+        <s-switch v-model="extensibleSupply" :disabled="loading" />
+        <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
+      </div>
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.extensibleSupply.desc') }}</p>
+      <s-button
+        class="wallet-settings-create-token_action s-typography-button--large"
+        type="primary"
+        :loading="loading"
+        :disabled="isCreateDisabled"
+        @click="onConfirm"
+      >
+        <template v-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
+        <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
+        <template v-else-if="!tokenSupply">{{ t('createToken.enterSupply') }}</template>
+        <template v-else>{{ t('createToken.action') }}</template>
+      </s-button>
+    </template>
+    <!-- <template v-else-if="step === Step.Warn">
+      <network-fee-warning-dialog :fee="formattedFee" @confirm="confirmNextTxFailure" />
+    </template> -->
+    <template v-else-if="step === Step.ConfirmToken">
+      <info-line :label="t('createToken.tokenSymbol.placeholder')" :value="tokenSymbol" />
+      <info-line :label="t('createToken.tokenName.placeholder')" :value="tokenName.trim()" />
+      <info-line :label="t('createToken.tokenSupply.placeholder')" :value="formattedTokenSupply" />
+      <info-line :label="t('createToken.extensibleSupply.placeholder')" :value="extensibleSupply ? 'Yes' : 'No'" />
+      <s-button
+        class="wallet-settings-create-token_action s-typography-button--large"
+        type="primary"
+        :disabled="!hasEnoughXor"
+        :loading="loading"
+        @click="onCreate"
+      >
+        <template v-if="!hasEnoughXor">{{
+          t('createToken.insufficientBalance', { symbol: KnownSymbols.XOR })
+        }}</template>
+        <template v-else>{{ t('createToken.confirm') }}</template>
+      </s-button>
+    </template>
+    <wallet-fee v-if="!isCreateDisabled && showAdditionalInfo" :value="fee" />
+  </div>
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
-import {
-  KnownSymbols,
-  FPNumber,
-  MaxTotalSupply,
-  NetworkFeesObject,
-  Operation,
-  XOR,
-  CodecString,
-} from '@sora-substrate/util';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Action } from 'vuex-class';
+import { KnownSymbols, FPNumber, MaxTotalSupply, Operation, XOR, CodecString } from '@sora-substrate/util';
 
 import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
@@ -94,14 +84,8 @@ import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
 import TransactionMixin from './mixins/TransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
-import { RouteNames } from '../consts';
+import { RouteNames, Step } from '../consts';
 import { api } from '../api';
-
-enum Step {
-  Create,
-  Confirm,
-  Warn,
-}
 
 @Component({
   components: {
@@ -120,7 +104,6 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   readonly tokenSymbolMask = 'AAAAAAA';
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } };
 
-  step = Step.Create;
   tokenSymbol = '';
   tokenName = '';
   tokenSupply = '';
@@ -129,14 +112,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
-  handleBack(): void {
-    if (this.step === Step.Create) {
-      this.navigate({ name: RouteNames.Wallet });
-    } else {
-      this.showAdditionalInfo = true;
-      this.step = Step.Create;
-    }
-  }
+  @Prop({ default: Step.CreateToken, type: String }) step!: Step;
 
   get fee(): FPNumber {
     return this.getFPNumberFromCodec(this.networkFees.RegisterAsset);
@@ -177,6 +153,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     if (!this.tokenSymbol.length || !this.tokenSupply.length) {
       return;
     }
+    console.log('onConfirm');
 
     const tokenSupply = this.getFPNumber(this.tokenSupply, this.decimals);
     const maxTokenSupply = this.getFPNumber(MaxTotalSupply, this.decimals);
@@ -196,8 +173,8 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
         return;
       }
     }
-
-    this.step = Step.Confirm;
+    this.$emit('showTabs');
+    this.$emit('stepChange', Step.ConfirmToken);
   }
 
   async onCreate(): Promise<void> {
@@ -211,8 +188,8 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   }
 
   confirmNextTxFailure(): void {
-    this.showAdditionalInfo = true;
-    this.step = Step.Confirm;
+    // this.showAdditionalInfo = true;
+    // this.step = Step.ConfirmToken;
   }
 }
 </script>

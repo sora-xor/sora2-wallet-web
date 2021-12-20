@@ -7,7 +7,9 @@ export enum RouteNames {
   WalletSend = 'WalletSend',
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
+  Token = 'Token',
   CreateToken = 'CreateToken',
+  CreateNFT = 'CreateNFT',
   AddAsset = 'AddAsset',
   WalletTransactionDetails = 'WalletTransactionDetails',
   AddAssetDetails = 'AddAssetDetails',
@@ -16,6 +18,11 @@ export enum RouteNames {
 export enum WalletTabs {
   Assets = 'WalletAssets',
   Activity = 'WalletActivity',
+}
+
+export enum TokenTabs {
+  Token = 'CreateToken',
+  NonFungibleToken = 'CreateNFT',
 }
 
 export enum AddAssetTabs {
@@ -45,6 +52,14 @@ export type ExplorerLink = {
   type: ExplorerType;
   value: string;
 };
+
+export enum Step {
+  CreateToken = 'CreateToken',
+  ConfirmToken = 'ConfirmToken',
+  CreateNFT = 'CreateNFT',
+  ConfirmNFT = 'ConfirmNFT',
+  Warn = 'Warn',
+}
 
 export interface WalletPermissions {
   addAssets?: boolean;

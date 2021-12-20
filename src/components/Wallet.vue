@@ -70,7 +70,7 @@ export default class Wallet extends Mixins(TranslationMixin) {
   }
 
   handleCreateToken(): void {
-    this.navigate({ name: RouteNames.CreateToken });
+    this.navigate({ name: RouteNames.Token });
   }
 
   handleCleanHistory(): void {

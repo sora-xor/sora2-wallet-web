@@ -1,6 +1,6 @@
 import { Operation, TransactionStatus, BalanceType } from '@sora-substrate/util';
 
-import { AddAssetTabs, WalletTabs } from '../../consts';
+import { AddAssetTabs, TokenTabs, WalletTabs } from '../../consts';
 
 export default {
   closeText: 'Close',
@@ -11,7 +11,7 @@ export default {
   importText: 'Import',
   settingsText: 'Settings',
   addAssetText: 'Add asset',
-  createTokenText: 'Create token',
+  createTokenText: 'Create',
   comingSoonText: 'Coming soon',
   successText: 'Success',
   warningText: 'Warning',
@@ -173,6 +173,17 @@ export default {
     enterSymbol: 'Enter token symbol',
     enterName: 'Enter token name',
     enterSupply: 'Enter token supply',
+    [TokenTabs.Token]: 'Token',
+    [TokenTabs.NonFungibleToken]: 'NFT',
+    nft: {
+      link: {
+        placeholder: 'Enter link here...',
+        placeholderShort: 'Link',
+      },
+      image: {
+        placeholder: 'Preview of the link will be shown here',
+      },
+    },
     confirm: '@:confirmText',
     success: {
       title: 'Transaction submitted',
