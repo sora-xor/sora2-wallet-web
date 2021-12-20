@@ -434,6 +434,30 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
               withleftshift="true"
             />
           </div>
+          <div
+            class="balance s-flex p4"
+          >
+            <div
+              class="balance-label"
+            >
+              Bonded
+            </div>
+             
+            <formatted-amount-with-fiat-value-stub
+              assetsymbol="XOR"
+              fiatfontsizerate="normal"
+              fiatfontweightrate="normal"
+              fiatformatasvalue="true"
+              fiatvalue="0"
+              fontsizerate="medium"
+              fontweightrate="small"
+              hasfiatvalue="true"
+              value="0"
+              valuecanbehidden="true"
+              valueclass="balance-value"
+              withleftshift="true"
+            />
+          </div>
            
           <div
             class="balance s-flex p4"
