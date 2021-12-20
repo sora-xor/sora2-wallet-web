@@ -11,6 +11,25 @@ export interface Explorer {
   getAccountTransactions: (params?: any) => Promise<any>;
 }
 
+export enum ModuleNames {
+  Assets = 'assets',
+  LiquidityProxy = 'liquidityProxy',
+  Rewards = 'rewards',
+  PoolXYK = 'poolXyk',
+  TradingPair = 'tradingPair',
+  Utility = 'utility',
+}
+
+export enum ModuleMethods {
+  AssetsRegister = 'register',
+  AssetsTransfer = 'transfer',
+  PoolXYKInitializePool = 'initializePool',
+  PoolXYKDepositLiquidity = 'depositLiquidity',
+  PoolXYKWithdrawLiquidity = 'withdrawLiquidity',
+  LiquidityProxySwap = 'swap',
+  UtilityBatchAll = 'batchAll',
+}
+
 export type PoolXYKEntity = {
   strategicBonusApy: Nullable<string>;
   priceUSD: Nullable<string>;
@@ -62,6 +81,19 @@ export type HistoryElementAssetRegistration = {
   assetId: string;
 };
 
+export type UtilityBatchAllItem = {
+  data: {
+    args: {
+      [key: string]: string | number;
+    };
+    callIndex: string;
+  };
+  hash: string;
+  callId: string;
+  module: string;
+  method: string;
+};
+
 export type HistoryElement = {
   id: string;
   blockHash: string;
@@ -73,7 +105,11 @@ export type HistoryElement = {
   execution: HistoryElementExecution;
   timestamp: number;
   data: Nullable<
-    HistoryElementSwap | HistoryElementTransfer | HistoryElementLiquidityOperation | HistoryElementAssetRegistration
+    | HistoryElementSwap
+    | HistoryElementTransfer
+    | HistoryElementLiquidityOperation
+    | HistoryElementAssetRegistration
+    | UtilityBatchAllItem[]
   >;
 };
 
