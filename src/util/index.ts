@@ -17,6 +17,7 @@ export const getExtension = async () => {
   let extensions: Array<any> = [];
   try {
     extensions = await web3Enable(APP_NAME);
+    console.log(extensions);
   } catch (error) {
     throw new Error('polkadotjs.noExtensions');
   }
