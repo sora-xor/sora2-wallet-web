@@ -1,4 +1,4 @@
-import type { History, CodecString } from '@sora-substrate/util';
+import type { History, CodecString, FPNumber } from '@sora-substrate/util';
 
 import type { SoraNetwork } from '../consts';
 
@@ -111,4 +111,22 @@ export type HistoryElement = {
     | HistoryElementAssetRegistration
     | UtilityBatchAllItem[]
   >;
+};
+
+export type ReferrerRewards = {
+  rewards: FPNumber;
+  invitedUserRewards: {
+    [key: string]: {
+      rewards: FPNumber;
+    };
+  };
+};
+
+export type ReferrerReward = {
+  id: string;
+  blockHeight: string;
+  referrer: string;
+  referree: string;
+  timestamp: number;
+  amount: string;
 };
