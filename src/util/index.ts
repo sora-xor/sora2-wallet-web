@@ -1,10 +1,13 @@
-import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
+import { web3Enable, web3FromAddress, web3AccountsSubscribe } from '@polkadot/extension-dapp';
 import { FPNumber, KnownAssets, RewardInfo, RewardsInfo } from '@sora-substrate/util';
+
+import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
 
 import { api } from '../api';
 import store from '../store';
 import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
+import type { PolkadotJsAccount } from '../types/common';
 
 export const APP_NAME = 'Sora2 Wallet';
 
@@ -13,11 +16,25 @@ export const WHITE_LIST_GITHUB_URL =
 
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
+export const subscribeToPolkadotJsAccounts = async (
+  callback: (accounts: PolkadotJsAccount[]) => void
+): Promise<VoidFunction> => {
+  const unsubscribe = await web3AccountsSubscribe((injectedAccounts) => {
+    const polkadotJsAccounts = injectedAccounts.map((account) => ({
+      address: account.address,
+      name: account.meta.name || '',
+    }));
+
+    callback(polkadotJsAccounts);
+  });
+
+  return unsubscribe;
+};
+
 export const getExtension = async () => {
   let extensions: Array<any> = [];
   try {
     extensions = await web3Enable(APP_NAME);
-    console.log(extensions);
   } catch (error) {
     throw new Error('polkadotjs.noExtensions');
   }

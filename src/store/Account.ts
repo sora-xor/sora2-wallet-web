@@ -19,7 +19,14 @@ import type { Subscription } from '@polkadot/x-rxjs';
 
 import { api } from '../api';
 import { storage } from '../util/storage';
-import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable, WHITE_LIST_GITHUB_URL } from '../util';
+import {
+  getExtension,
+  getExtensionSigner,
+  getExtensionInfo,
+  subscribeToPolkadotJsAccounts,
+  toHashTable,
+  WHITE_LIST_GITHUB_URL,
+} from '../util';
 import { SubqueryExplorerService } from '../services/subquery';
 import type { FiatPriceAndApyObject, ReferrerRewards } from '../services/types';
 import type { Account, PolkadotJsAccount } from '../types/common';
@@ -41,6 +48,9 @@ const types = flow(
     'SYNC_WITH_STORAGE',
     'SET_TRANSACTION_DETAILS_ID',
     'GET_ACCOUNT_ACTIVITY',
+    'SET_POLKADOT_JS_ACCOUNTS',
+    'SET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
+    'REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
   ]),
   map((x) => [x, x]),
   fromPairs
@@ -54,7 +64,6 @@ const types = flow(
   'TRANSFER',
   'IMPORT_POLKADOT_JS_ACCOUNT',
   'GET_SIGNER',
-  'GET_POLKADOT_JS_ACCOUNTS',
   'GET_WHITELIST',
   'GET_FIAT_PRICE_AND_APY_OBJECT',
   'GET_REFERRAL_REWARDS',
@@ -69,6 +78,7 @@ type AccountState = {
   activity: Array<History>;
   assets: Array<Asset>;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
+  polkadotJsAccountsSubscription: Nullable<VoidFunction>;
   whitelistArray: Array<WhitelistArrayItem>;
   assetsLoading: boolean;
   withoutFiatAndApy: boolean;
@@ -88,6 +98,7 @@ function initialState(): AccountState {
     activity: [], // account history (without bridge)
     assets: [],
     polkadotJsAccounts: [],
+    polkadotJsAccountsSubscription: null,
     whitelistArray: [],
     assetsLoading: false,
     withoutFiatAndApy: false,
@@ -287,14 +298,19 @@ const mutations = {
   [types.GET_SIGNER_SUCCESS](state: AccountState) {},
   [types.GET_SIGNER_FAILURE](state: AccountState) {},
 
-  [types.GET_POLKADOT_JS_ACCOUNTS_REQUEST](state: AccountState) {
-    state.polkadotJsAccounts = [];
-  },
-  [types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS](state: AccountState, polkadotJsAccounts: Array<PolkadotJsAccount>) {
+  [types.SET_POLKADOT_JS_ACCOUNTS](state: AccountState, polkadotJsAccounts: Array<PolkadotJsAccount>) {
     state.polkadotJsAccounts = polkadotJsAccounts;
   },
-  [types.GET_POLKADOT_JS_ACCOUNTS_FAILURE](state: AccountState) {
-    state.polkadotJsAccounts = [];
+
+  [types.SET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION](state: AccountState, polkadotJsAccountsSubscription: VoidFunction) {
+    state.polkadotJsAccountsSubscription = polkadotJsAccountsSubscription;
+  },
+
+  [types.REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION](state: AccountState) {
+    if (state.polkadotJsAccountsSubscription) {
+      state.polkadotJsAccountsSubscription();
+      state.polkadotJsAccountsSubscription = null;
+    }
   },
 
   [types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST](state: AccountState) {},
@@ -348,15 +364,22 @@ const actions = {
       throw new Error((error as Error).message);
     }
   },
-  async getPolkadotJsAccounts({ commit }) {
-    commit(types.GET_POLKADOT_JS_ACCOUNTS_REQUEST);
-    try {
-      const accounts = (await getExtensionInfo()).accounts;
-      commit(types.GET_POLKADOT_JS_ACCOUNTS_SUCCESS, accounts);
-    } catch (error) {
-      commit(types.GET_POLKADOT_JS_ACCOUNTS_FAILURE);
-    }
+
+  async subscribeToPolkadotJsAccounts({ commit, dispatch }) {
+    dispatch('unsubscribeFromPolkadotJsAccounts');
+
+    const unsubscribe = await subscribeToPolkadotJsAccounts((accounts) => {
+      commit(types.SET_POLKADOT_JS_ACCOUNTS, accounts);
+    });
+
+    commit(types.SET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION, unsubscribe);
   },
+
+  unsubscribeFromPolkadotJsAccounts({ commit }) {
+    commit(types.SET_POLKADOT_JS_ACCOUNTS, []);
+    commit(types.REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION);
+  },
+
   async importPolkadotJs({ commit, dispatch }, address: string) {
     commit(types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST);
     try {

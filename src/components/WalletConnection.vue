@@ -12,7 +12,7 @@
           </p>
         </template>
 
-        <template v-if="!polkadotJsAccounts.length">
+        <template v-if="step === Step.First || (step === Step.Second && !polkadotJsAccounts.length)">
           <s-button
             class="wallet-connection-action s-typography-button--large"
             type="primary"
@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
 
 import TranslationMixin from './mixins/TranslationMixin';
@@ -69,6 +69,8 @@ enum Step {
   Second = 2,
 }
 
+const CHECK_EXTENSION_TIMEOUT = 2000;
+
 @Component({
   components: { WalletBase, WalletAccount },
 })
@@ -76,6 +78,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   readonly RouteNames = RouteNames;
   readonly Step = Step;
 
+  extensionTimer: Nullable<NodeJS.Timer> = null;
   isExtensionAvailable = false;
   step = Step.First;
   loading = true;
@@ -85,16 +88,26 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action checkExtension!: () => Promise<boolean>;
-  @Action getPolkadotJsAccounts!: AsyncVoidFn;
   @Action importPolkadotJs!: (address: string) => Promise<void>;
+  @Action subscribeToPolkadotJsAccounts!: AsyncVoidFn;
+  @Action unsubscribeFromPolkadotJsAccounts!: AsyncVoidFn;
+
+  @Watch('isExtensionAvailable')
+  private async updatePolkadotJsAccountsSubscription(value: boolean) {
+    if (value) {
+      await this.subscribeToPolkadotJsAccounts();
+    } else {
+      await this.unsubscribeFromPolkadotJsAccounts();
+    }
+  }
 
   get isAccountSwitch(): boolean {
     return (this.currentRouteParams || {}).isAccountSwitch;
   }
 
   async created(): Promise<void> {
-    await this.withLoading(async () => {
-      this.isExtensionAvailable = await this.checkExtension();
+    await this.withApi(async () => {
+      await this.updateExtensionTimer();
 
       if (this.isAccountSwitch) {
         await this.navigateToAccountList();
@@ -138,13 +151,31 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   private async navigateToAccountList(): Promise<void> {
-    await this.getPolkadotJsAccounts();
-
     this.step = Step.Second;
+  }
+
+  private async updateExtensionTimer(): Promise<void> {
+    this.isExtensionAvailable = await this.checkExtension();
+
+    this.extensionTimer = setTimeout(async () => {
+      await this.updateExtensionTimer();
+    }, CHECK_EXTENSION_TIMEOUT);
+  }
+
+  private clearExtensionTimer(): void {
+    if (this.extensionTimer) {
+      clearTimeout(this.extensionTimer);
+      this.extensionTimer = null;
+    }
   }
 
   handleLearnMoreClick(): void {
     this.$emit('learn-more');
+  }
+
+  async beforeDestroy(): Promise<void> {
+    this.clearExtensionTimer();
+    await this.unsubscribeFromPolkadotJsAccounts();
   }
 }
 </script>
