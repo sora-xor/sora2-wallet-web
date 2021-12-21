@@ -110,7 +110,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
       await this.updateExtensionTimer();
 
       if (this.isAccountSwitch) {
-        await this.navigateToAccountList();
+        this.navigateToAccountList();
       }
     });
   }
@@ -125,7 +125,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     return 'connection.action.connect';
   }
 
-  async handleActionClick(): Promise<void> {
+  handleActionClick(): void {
     if (this.step === Step.First && !this.isExtensionAvailable) {
       window.open('https://polkadot.js.org/extension/', '_blank');
       return;
@@ -135,7 +135,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
       return;
     }
 
-    await this.navigateToAccountList();
+    this.navigateToAccountList();
   }
 
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
@@ -150,7 +150,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     });
   }
 
-  private async navigateToAccountList(): Promise<void> {
+  private navigateToAccountList(): void {
     this.step = Step.Second;
   }
 
@@ -195,20 +195,22 @@ $account-height: 60px;
 $account-margin-bottom: var(--s-basic-spacing);
 $accounts-padding: calc(#{$account-margin-bottom} / 2);
 $accounts-number: 7;
+
 .wallet-connection {
   // Margin and padding are set for the loader
   margin: calc(var(--s-basic-spacing) * -1);
   min-height: 204px;
   padding: var(--s-basic-spacing);
+
+  & > *:not(:first-child) {
+    margin-top: $basic-spacing-medium;
+  }
+
   &-text {
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
     color: var(--s-color-base-content-primary);
-    margin-bottom: #{$basic-spacing-medium};
-    &.no-permissions {
-      margin-top: var(--s-basic-spacing);
-    }
   }
   &-accounts {
     height: calc(
@@ -230,10 +232,6 @@ $accounts-number: 7;
   &-action {
     width: 100%;
     & + & {
-      margin-left: 0;
-      margin-top: #{$basic-spacing-medium};
-    }
-    &.s-secondary {
       margin-left: 0;
     }
   }
