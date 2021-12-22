@@ -543,7 +543,7 @@ const actions = {
     // check log in/out state changes after sync
     if (getters.isLoggedIn !== isLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
-        await dispatch('importPolkadotJs', { address: state.address });
+        await dispatch('importPolkadotJs', state.address);
       } else if (api.accountPair) {
         dispatch('logout');
       }
