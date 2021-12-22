@@ -403,11 +403,7 @@ const actions = {
     }
   },
   async getAccountAssets({ commit, getters }) {
-    if (!getters.isLoggedIn) {
-      return;
-    }
-    const assets = storage.get('assets');
-    if (assets && getters.accountAssets.length !== 0) {
+    if (!getters.isLoggedIn || (api.accountAssets.length && getters.accountAssets.length !== 0)) {
       return;
     }
     commit(types.GET_ACCOUNT_ASSETS_REQUEST);
@@ -534,9 +530,12 @@ const actions = {
     commit(types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION);
   },
   async syncWithStorage({ commit, state, getters, dispatch }) {
+    const getAccountAssetsAddresses = () => Object.keys(getters.accountAssetsAddressTable);
+
     // previous state
     const { isLoggedIn } = getters;
     const { address } = state;
+    const prevAccountAssetsAddresses = getAccountAssetsAddresses();
 
     commit(types.SYNC_WITH_STORAGE);
 
@@ -546,6 +545,17 @@ const actions = {
         await dispatch('importPolkadotJs', state.address);
       } else if (api.accountPair) {
         dispatch('logout');
+      }
+    }
+
+    // still logged in after sync
+    if (getters.isLoggedIn && isLoggedIn) {
+      const currentAccountAssetsAddresses = getAccountAssetsAddresses();
+      const uniqueSize = new Set([...prevAccountAssetsAddresses, ...currentAccountAssetsAddresses]).size;
+
+      // asset(s) in api.accountAssets changed
+      if (prevAccountAssetsAddresses.length !== uniqueSize || currentAccountAssetsAddresses.length !== uniqueSize) {
+        api.updateAccountAssets();
       }
     }
 
