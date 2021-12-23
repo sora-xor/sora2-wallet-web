@@ -307,7 +307,7 @@ const mutations = {
   },
 
   [types.REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION](state: AccountState) {
-    if (state.polkadotJsAccountsSubscription) {
+    if (typeof state.polkadotJsAccountsSubscription === 'function') {
       state.polkadotJsAccountsSubscription();
       state.polkadotJsAccountsSubscription = null;
     }
@@ -362,6 +362,15 @@ const actions = {
     } catch (error) {
       commit(types.GET_SIGNER_FAILURE);
       throw new Error((error as Error).message);
+    }
+  },
+
+  async getPolkadotJsAccounts({ commit }) {
+    try {
+      const accounts = (await getExtensionInfo()).accounts;
+      commit(types.SET_POLKADOT_JS_ACCOUNTS, accounts);
+    } catch (error) {
+      commit(types.SET_POLKADOT_JS_ACCOUNTS, []);
     }
   },
 
@@ -533,14 +542,14 @@ const actions = {
     const getAccountAssetsAddresses = () => Object.keys(getters.accountAssetsAddressTable);
 
     // previous state
-    const { isLoggedIn } = getters;
+    const { isLoggedIn: wasLoggedIn } = getters;
     const { address } = state;
-    const prevAccountAssetsAddresses = getAccountAssetsAddresses();
+    const prevAddresses = getAccountAssetsAddresses();
 
     commit(types.SYNC_WITH_STORAGE);
 
     // check log in/out state changes after sync
-    if (getters.isLoggedIn !== isLoggedIn || state.address !== address) {
+    if (getters.isLoggedIn !== wasLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
         await dispatch('importPolkadotJs', state.address);
       } else if (api.accountPair) {
@@ -549,12 +558,13 @@ const actions = {
     }
 
     // still logged in after sync
-    if (getters.isLoggedIn && isLoggedIn) {
-      const currentAccountAssetsAddresses = getAccountAssetsAddresses();
-      const uniqueSize = new Set([...prevAccountAssetsAddresses, ...currentAccountAssetsAddresses]).size;
+    if (getters.isLoggedIn && wasLoggedIn) {
+      const currentAddresses = getAccountAssetsAddresses();
+      // unique addresses size of two states
+      const delta = new Set([...prevAddresses, ...currentAddresses]).size;
 
-      // asset(s) in api.accountAssets changed
-      if (prevAccountAssetsAddresses.length !== uniqueSize || currentAccountAssetsAddresses.length !== uniqueSize) {
+      // if asset(s) in api.accountAssets changed, we should update subscription
+      if (prevAddresses.length !== delta || currentAddresses.length !== delta) {
         api.updateAccountAssets();
       }
     }

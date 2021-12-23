@@ -75,13 +75,11 @@ const CHECK_EXTENSION_TIMEOUT = 2000;
   components: { WalletBase, WalletAccount },
 })
 export default class WalletConnection extends Mixins(TranslationMixin, LoadingMixin) {
-  readonly RouteNames = RouteNames;
   readonly Step = Step;
 
   extensionTimer: Nullable<NodeJS.Timer> = null;
   isExtensionAvailable = false;
   step = Step.First;
-  loading = true;
 
   @Getter currentRouteParams!: any;
   @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
@@ -89,6 +87,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action checkExtension!: () => Promise<boolean>;
   @Action importPolkadotJs!: (address: string) => Promise<void>;
+  @Action getPolkadotJsAccounts!: AsyncVoidFn;
   @Action subscribeToPolkadotJsAccounts!: AsyncVoidFn;
   @Action unsubscribeFromPolkadotJsAccounts!: AsyncVoidFn;
 
@@ -110,6 +109,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
       await this.updateExtensionTimer();
 
       if (this.isAccountSwitch) {
+        await this.getPolkadotJsAccounts();
         this.navigateToAccountList();
       }
     });
@@ -157,9 +157,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   private async updateExtensionTimer(): Promise<void> {
     this.isExtensionAvailable = await this.checkExtension();
 
-    this.extensionTimer = setTimeout(async () => {
-      await this.updateExtensionTimer();
-    }, CHECK_EXTENSION_TIMEOUT);
+    this.extensionTimer = setTimeout(this.updateExtensionTimer, CHECK_EXTENSION_TIMEOUT);
   }
 
   private clearExtensionTimer(): void {

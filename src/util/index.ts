@@ -1,8 +1,6 @@
 import { web3Enable, web3FromAddress, web3AccountsSubscribe } from '@polkadot/extension-dapp';
 import { FPNumber, KnownAssets, RewardInfo, RewardsInfo } from '@sora-substrate/util';
 
-import type { InjectedAccountWithMeta } from '@polkadot/extension-inject/types';
-
 import { api } from '../api';
 import store from '../store';
 import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
