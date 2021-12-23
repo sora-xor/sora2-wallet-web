@@ -12,6 +12,7 @@ export default {
   settingsText: 'Settings',
   addAssetText: 'Add asset',
   createTokenText: 'Create',
+  createTokenTextNFT: 'Create NFT',
   comingSoonText: 'Coming soon',
   successText: 'Success',
   warningText: 'Warning',
@@ -170,9 +171,12 @@ export default {
     title: '@:createTokenText',
     desc: 'Create and deploy custom asset on SORA',
     action: '@:createTokenText',
+    actionNFT: '@:createTokenTextNFT',
     enterSymbol: 'Enter token symbol',
     enterName: 'Enter token name',
     enterSupply: 'Enter token supply',
+    enterLink: 'Enter content link',
+    enterTokenDescription: 'Enter description',
     [TokenTabs.Token]: 'Token',
     [TokenTabs.NonFungibleToken]: 'NFT',
     nft: {
@@ -182,6 +186,21 @@ export default {
       },
       image: {
         placeholder: 'Preview of the link will be shown here',
+      },
+      name: {
+        placeholder: 'Name',
+        desc: 'Name for the token. You can use from 1 to 33 characters for the selection.',
+      },
+      symbol: {
+        placeholder: 'Symbol',
+        desc: 'Identifier for the token. You can use from 3 to 5 alphanumeric characters for the selection.',
+      },
+      supply: {
+        placeholder: 'Token supply',
+        desc: 'Amount of NFTs you’re going to get.',
+      },
+      description: {
+        placeholder: 'Description',
       },
     },
     confirm: '@:confirmText',
