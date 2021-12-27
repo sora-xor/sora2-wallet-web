@@ -37,9 +37,13 @@ const OperationsMap = {
       ) {
         return Operation.CreatePair;
       }
-
       return null;
     },
+  },
+  [ModuleNames.Referrals]: {
+    [ModuleMethods.ReferralsSetReferrer]: () => Operation.ReferralSetInvitedUser,
+    [ModuleMethods.ReferralsReserve]: () => Operation.ReferralReserveXor,
+    [ModuleMethods.ReferralsUnreserve]: () => Operation.ReferralUnreserveXor,
   },
 };
 
@@ -103,6 +107,9 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     Operation.AddLiquidity,
     Operation.RemoveLiquidity,
     Operation.RegisterAsset,
+    Operation.ReferralSetInvitedUser,
+    Operation.ReferralReserveXor,
+    Operation.ReferralUnreserveXor,
   ];
 
   public get supportedOperations(): Array<Operation> {

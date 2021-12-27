@@ -18,6 +18,7 @@ export enum ModuleNames {
   PoolXYK = 'poolXyk',
   TradingPair = 'tradingPair',
   Utility = 'utility',
+  Referrals = 'referrals',
 }
 
 export enum ModuleMethods {
@@ -28,6 +29,9 @@ export enum ModuleMethods {
   PoolXYKWithdrawLiquidity = 'withdrawLiquidity',
   LiquidityProxySwap = 'swap',
   UtilityBatchAll = 'batchAll',
+  ReferralsSetReferrer = 'setReferrer',
+  ReferralsReserve = 'reserve',
+  ReferralsUnreserve = 'unreserve',
 }
 
 export type PoolXYKEntity = {
