@@ -4,7 +4,7 @@
       <template v-if="!loading">
         <template v-if="step === Step.First">
           <p class="wallet-connection-text">{{ t('connection.text') }}</p>
-          <p v-if="!isExtensionAvailable" class="wallet-connection-text" v-html="t('connection.install')" />
+          <p v-if="!extensionAvailability" class="wallet-connection-text" v-html="t('connection.install')" />
         </template>
         <template v-else>
           <p class="wallet-connection-text">
@@ -31,7 +31,7 @@
             {{ t('connection.action.learnMore') }}
           </s-button>
           <p
-            v-if="!isExtensionAvailable"
+            v-if="!extensionAvailability"
             class="wallet-connection-text no-permissions"
             v-html="t('connection.noPermissions')"
           />
@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Watch } from 'vue-property-decorator';
+import { Component, Mixins } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
 
 import TranslationMixin from './mixins/TranslationMixin';
@@ -69,36 +69,20 @@ enum Step {
   Second = 2,
 }
 
-const CHECK_EXTENSION_TIMEOUT = 2000;
-
 @Component({
   components: { WalletBase, WalletAccount },
 })
 export default class WalletConnection extends Mixins(TranslationMixin, LoadingMixin) {
   readonly Step = Step;
 
-  extensionTimer: Nullable<NodeJS.Timer> = null;
-  isExtensionAvailable = false;
   step = Step.First;
 
   @Getter currentRouteParams!: any;
   @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @Getter extensionAvailability!: boolean;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action checkExtension!: () => Promise<boolean>;
   @Action importPolkadotJs!: (address: string) => Promise<void>;
   @Action getPolkadotJsAccounts!: AsyncVoidFn;
-  @Action subscribeToPolkadotJsAccounts!: AsyncVoidFn;
-  @Action unsubscribeFromPolkadotJsAccounts!: AsyncVoidFn;
-
-  @Watch('isExtensionAvailable')
-  private async updatePolkadotJsAccountsSubscription(value: boolean) {
-    if (value) {
-      await this.subscribeToPolkadotJsAccounts();
-    } else {
-      await this.unsubscribeFromPolkadotJsAccounts();
-    }
-  }
 
   get isAccountSwitch(): boolean {
     return (this.currentRouteParams || {}).isAccountSwitch;
@@ -106,8 +90,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   async created(): Promise<void> {
     await this.withApi(async () => {
-      await this.updateExtensionTimer();
-
       if (this.isAccountSwitch) {
         await this.getPolkadotJsAccounts();
         this.navigateToAccountList();
@@ -116,7 +98,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   get actionButtonText(): string {
-    if (this.step === Step.First && !this.isExtensionAvailable) {
+    if (this.step === Step.First && !this.extensionAvailability) {
       return 'connection.action.install';
     }
     if (this.step === Step.Second && !this.polkadotJsAccounts.length) {
@@ -126,7 +108,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   handleActionClick(): void {
-    if (this.step === Step.First && !this.isExtensionAvailable) {
+    if (this.step === Step.First && !this.extensionAvailability) {
       window.open('https://polkadot.js.org/extension/', '_blank');
       return;
     }
@@ -142,7 +124,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     await this.withLoading(async () => {
       try {
         await this.importPolkadotJs(account.address);
-        this.navigate({ name: RouteNames.Wallet });
       } catch (error) {
         this.$alert(this.t((error as Error).message), this.t('errorText'));
         this.step = Step.First;
@@ -154,26 +135,8 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     this.step = Step.Second;
   }
 
-  private async updateExtensionTimer(): Promise<void> {
-    this.isExtensionAvailable = await this.checkExtension();
-
-    this.extensionTimer = setTimeout(this.updateExtensionTimer, CHECK_EXTENSION_TIMEOUT);
-  }
-
-  private clearExtensionTimer(): void {
-    if (this.extensionTimer) {
-      clearTimeout(this.extensionTimer);
-      this.extensionTimer = null;
-    }
-  }
-
   handleLearnMoreClick(): void {
     this.$emit('learn-more');
-  }
-
-  async beforeDestroy(): Promise<void> {
-    this.clearExtensionTimer();
-    await this.unsubscribeFromPolkadotJsAccounts();
   }
 }
 </script>

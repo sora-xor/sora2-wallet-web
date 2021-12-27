@@ -32,6 +32,7 @@ import type { FiatPriceAndApyObject, ReferrerRewards } from '../services/types';
 import type { Account, PolkadotJsAccount } from '../types/common';
 
 const HOUR = 60 * 60 * 1000;
+const CHECK_EXTENSION_INTERVAL = 5 * 1000;
 
 const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {
   rewards: FPNumber.ZERO,
@@ -51,11 +52,12 @@ const types = flow(
     'SET_POLKADOT_JS_ACCOUNTS',
     'SET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
     'REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
+    'SET_EXTENSION_AVAILABILIY',
+    'RESET_EXTENSION_AVAILABILIY_SUBSCRIPTION',
   ]),
   map((x) => [x, x]),
   fromPairs
 )([
-  'GET_ADDRESS',
   'GET_ACCOUNT_ASSETS',
   'UPDATE_ACCOUNT_ASSETS',
   'GET_ASSETS',
@@ -77,15 +79,17 @@ type AccountState = {
   selectedTransactionId: Nullable<string>;
   activity: Array<History>;
   assets: Array<Asset>;
+  assetsLoading: boolean;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
   polkadotJsAccountsSubscription: Nullable<VoidFunction>;
   whitelistArray: Array<WhitelistArrayItem>;
-  assetsLoading: boolean;
   withoutFiatAndApy: boolean;
-  updateAccountAssetsSubscription: Nullable<Subscription>;
+  accountAssetsSubscription: Nullable<Subscription>;
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
   fiatPriceAndApyTimer: Nullable<NodeJS.Timer>;
   referralRewards: ReferrerRewards;
+  extensionAvailability: boolean;
+  extensionAvailabilityTimer: Nullable<NodeJS.Timeout>;
 };
 
 function initialState(): AccountState {
@@ -97,15 +101,17 @@ function initialState(): AccountState {
     selectedTransactionId: null,
     activity: [], // account history (without bridge)
     assets: [],
+    assetsLoading: false,
     polkadotJsAccounts: [],
     polkadotJsAccountsSubscription: null,
     whitelistArray: [],
-    assetsLoading: false,
     withoutFiatAndApy: false,
-    updateAccountAssetsSubscription: null,
+    accountAssetsSubscription: null,
     fiatPriceAndApyObject: {},
     fiatPriceAndApyTimer: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
+    extensionAvailability: false,
+    extensionAvailabilityTimer: null,
   };
 }
 
@@ -164,6 +170,9 @@ const getters = {
   referralRewards(state: AccountState): ReferrerRewards {
     return state.referralRewards;
   },
+  extensionAvailability(state: AccountState): boolean {
+    return state.extensionAvailability;
+  },
 };
 
 const mutations = {
@@ -173,17 +182,30 @@ const mutations = {
       state.fiatPriceAndApyTimer = null;
     }
   },
+
   [types.RESET_ACCOUNT](state: AccountState) {
-    const s = omit(['whitelistArray', 'fiatPriceAndApyObject', 'fiatPriceAndApyTimer', 'assets'], initialState());
+    const s = omit(
+      [
+        'whitelistArray',
+        'fiatPriceAndApyObject',
+        'fiatPriceAndApyTimer',
+        'assets',
+        'polkadotJsAccounts',
+        'polkadotJsAccountsSubscription',
+        'extensionAvailability',
+        'extensionAvailabilityTimer',
+      ],
+      initialState()
+    );
     Object.keys(s).forEach((key) => {
       state[key] = s[key];
     });
   },
 
   [types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION](state: AccountState) {
-    if (state.updateAccountAssetsSubscription) {
-      state.updateAccountAssetsSubscription.unsubscribe();
-      state.updateAccountAssetsSubscription = null;
+    if (state.accountAssetsSubscription) {
+      state.accountAssetsSubscription.unsubscribe();
+      state.accountAssetsSubscription = null;
     }
   },
 
@@ -193,18 +215,6 @@ const mutations = {
     state.isExternal = Boolean(storage.get('isExternal')) || false;
     state.accountAssets = api.accountAssets; // to save reactivity
     state.activity = api.accountHistory;
-  },
-
-  [types.GET_ADDRESS_REQUEST](state: AccountState) {
-    state.address = '';
-  },
-
-  [types.GET_ADDRESS_SUCCESS](state: AccountState, address: string) {
-    state.address = address;
-  },
-
-  [types.GET_ADDRESS_FAILURE](state: AccountState) {
-    state.address = '';
   },
 
   [types.GET_ACCOUNT_ASSETS_REQUEST](state: AccountState) {
@@ -326,6 +336,17 @@ const mutations = {
   [types.SET_TRANSACTION_DETAILS_ID](state: AccountState, id: string) {
     state.selectedTransactionId = id;
   },
+
+  [types.SET_EXTENSION_AVAILABILIY](state: AccountState, availability: boolean) {
+    state.extensionAvailability = availability;
+  },
+
+  [types.RESET_EXTENSION_AVAILABILIY_SUBSCRIPTION](state: AccountState) {
+    if (state.extensionAvailabilityTimer) {
+      clearInterval(state.extensionAvailabilityTimer);
+      state.extensionAvailabilityTimer = null;
+    }
+  },
 };
 
 const actions = {
@@ -333,14 +354,16 @@ const actions = {
   formatAddress({ commit }, address: string) {
     return api.formatAddress(address);
   },
+
   async checkExtension({ commit }) {
     try {
       await getExtension();
-      return true;
+      commit(types.SET_EXTENSION_AVAILABILIY, true);
     } catch (error) {
-      return false;
+      commit(types.SET_EXTENSION_AVAILABILIY, false);
     }
   },
+
   async checkSigner({ dispatch, getters }) {
     if (getters.isExternal) {
       try {
@@ -351,6 +374,7 @@ const actions = {
       }
     }
   },
+
   async getSigner({ commit, state: { address } }) {
     commit(types.GET_SIGNER_REQUEST);
     try {
@@ -365,6 +389,18 @@ const actions = {
     }
   },
 
+  subscribeOnExtensionAvailability({ dispatch, state }) {
+    dispatch('checkExtension');
+
+    state.extensionAvailabilityTimer = setInterval(() => {
+      dispatch('checkExtension');
+    }, CHECK_EXTENSION_INTERVAL);
+  },
+
+  resetExtensionAvailabilitySubscription({ commit }) {
+    commit(types.RESET_EXTENSION_AVAILABILIY_SUBSCRIPTION);
+  },
+
   async getPolkadotJsAccounts({ commit }) {
     try {
       const accounts = (await getExtensionInfo()).accounts;
@@ -375,7 +411,7 @@ const actions = {
   },
 
   async subscribeToPolkadotJsAccounts({ commit, dispatch }) {
-    dispatch('unsubscribeFromPolkadotJsAccounts');
+    dispatch('resetPolkadotJsAccountsSubscription');
 
     const unsubscribe = await subscribeToPolkadotJsAccounts((accounts) => {
       commit(types.SET_POLKADOT_JS_ACCOUNTS, accounts);
@@ -384,12 +420,12 @@ const actions = {
     commit(types.SET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION, unsubscribe);
   },
 
-  unsubscribeFromPolkadotJsAccounts({ commit }) {
+  resetPolkadotJsAccountsSubscription({ commit }) {
     commit(types.SET_POLKADOT_JS_ACCOUNTS, []);
     commit(types.REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION);
   },
 
-  async importPolkadotJs({ commit, dispatch }, address: string) {
+  async importPolkadotJs({ commit }, address: string) {
     commit(types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST);
     try {
       const defaultAddress = api.formatAddress(address, false);
@@ -401,16 +437,14 @@ const actions = {
       }
       api.importByPolkadotJs(account.address, account.name);
       api.setSigner(info.signer);
+
       commit(types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS, account.name);
-      if (!state.updateAccountAssetsSubscription) {
-        await dispatch('getAccountAssets');
-        await dispatch('updateAccountAssets');
-      }
     } catch (error) {
       commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE);
       throw new Error((error as Error).message);
     }
   },
+
   async getAccountAssets({ commit, getters }) {
     if (!getters.isLoggedIn || (api.accountAssets.length && getters.accountAssets.length !== 0)) {
       return;
@@ -423,11 +457,14 @@ const actions = {
       commit(types.GET_ACCOUNT_ASSETS_FAILURE);
     }
   },
-  async updateAccountAssets({ commit, getters }) {
+
+  async subscribeOnAccountAssets({ commit, dispatch, getters }) {
+    dispatch('resetAccountAssetsSubscription');
+
     if (getters.isLoggedIn) {
       commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST);
       try {
-        state.updateAccountAssetsSubscription = api.assetsBalanceUpdated.subscribe((data) => {
+        state.accountAssetsSubscription = api.assetsBalanceUpdated.subscribe((data) => {
           commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets);
         });
         api.updateAccountAssets();
@@ -436,6 +473,11 @@ const actions = {
       }
     }
   },
+
+  resetAccountAssetsSubscription({ commit }) {
+    commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION);
+  },
+
   getAccountActivity({ commit }) {
     commit(types.GET_ACCOUNT_ACTIVITY, api.accountHistory);
   },
@@ -462,12 +504,18 @@ const actions = {
       commit(types.GET_FIAT_PRICE_AND_APY_OBJECT_FAILURE);
     }
   },
-  subscribeOnFiatPriceAndApyObjectUpdates({ commit, dispatch, state }) {
+
+  subscribeOnFiatPriceAndApyObjectUpdates({ dispatch, state }) {
     dispatch('getFiatPriceAndApyObject');
     state.fiatPriceAndApyTimer = setInterval(() => {
       dispatch('getFiatPriceAndApyObject');
     }, HOUR);
   },
+
+  resetFiatPriceAndApySubscription({ commit }) {
+    commit(types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION);
+  },
+
   async getAccountReferralRewards({ commit }) {
     commit(types.GET_REFERRAL_REWARDS_REQUEST);
     try {
@@ -527,17 +575,12 @@ const actions = {
       throw new Error(error.message);
     }
   },
+
   logout({ commit }) {
     api.logout();
-    commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION);
     commit(types.RESET_ACCOUNT);
   },
-  resetAccountAssetsSubscription({ commit }) {
-    commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION);
-  },
-  resetFiatPriceAndApySubscription({ commit }) {
-    commit(types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION);
-  },
+
   async syncWithStorage({ commit, state, getters, dispatch }) {
     const getAccountAssetsAddresses = () => Object.keys(getters.accountAssetsAddressTable);
 
@@ -568,8 +611,6 @@ const actions = {
         api.updateAccountAssets();
       }
     }
-
-    dispatch('checkCurrentRoute', undefined, { root: true });
   },
 };
 

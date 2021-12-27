@@ -97,10 +97,8 @@ async function initWallet({
     await store.dispatch('subscribeOnRuntimeVersion');
     await store.dispatch('getWhitelist', { whiteListOverApi });
     await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates');
+    await store.dispatch('subscribeOnExtensionAvailability');
     await store.dispatch('checkSigner');
-    await store.dispatch('getAccountAssets');
-    await store.dispatch('updateAccountAssets');
-    await store.dispatch('checkCurrentRoute');
     await store.dispatch('setWalletLoaded', true);
     subscribeStoreToStorageUpdates(store);
   }
