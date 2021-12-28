@@ -50,7 +50,6 @@ const types = flow(
     'SET_TRANSACTION_DETAILS_ID',
     'GET_ACCOUNT_ACTIVITY',
     'SET_POLKADOT_JS_ACCOUNTS',
-    'SET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
     'REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
     'SET_EXTENSION_AVAILABILIY',
     'RESET_EXTENSION_AVAILABILIY_SUBSCRIPTION',
@@ -65,7 +64,6 @@ const types = flow(
   'ADD_ASSET',
   'TRANSFER',
   'IMPORT_POLKADOT_JS_ACCOUNT',
-  'GET_SIGNER',
   'GET_WHITELIST',
   'GET_FIAT_PRICE_AND_APY_OBJECT',
   'GET_REFERRAL_REWARDS',
@@ -304,23 +302,15 @@ const mutations = {
   [types.TRANSFER_SUCCESS](state: AccountState) {},
   [types.TRANSFER_FAILURE](state: AccountState) {},
 
-  [types.GET_SIGNER_REQUEST](state: AccountState) {},
-  [types.GET_SIGNER_SUCCESS](state: AccountState) {},
-  [types.GET_SIGNER_FAILURE](state: AccountState) {},
-
   [types.SET_POLKADOT_JS_ACCOUNTS](state: AccountState, polkadotJsAccounts: Array<PolkadotJsAccount>) {
     state.polkadotJsAccounts = polkadotJsAccounts;
-  },
-
-  [types.SET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION](state: AccountState, polkadotJsAccountsSubscription: VoidFunction) {
-    state.polkadotJsAccountsSubscription = polkadotJsAccountsSubscription;
   },
 
   [types.REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION](state: AccountState) {
     if (typeof state.polkadotJsAccountsSubscription === 'function') {
       state.polkadotJsAccountsSubscription();
-      state.polkadotJsAccountsSubscription = null;
     }
+    state.polkadotJsAccountsSubscription = null;
   },
 
   [types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST](state: AccountState) {},
@@ -374,6 +364,7 @@ const actions = {
       await dispatch('getAccountAssets');
       await dispatch('subscribeOnAccountAssets');
     }
+
     await dispatch('checkCurrentRoute', undefined, { root: true });
   },
 
@@ -390,9 +381,12 @@ const actions = {
   },
 
   async checkSigner({ dispatch, getters }) {
-    if (getters.isExternal) {
+    if (getters.isLoggedIn) {
       try {
-        await dispatch('getSigner');
+        const signer = await dispatch('getSigner');
+
+        api.setSigner(signer);
+
         await dispatch('afterLogin');
       } catch (error) {
         console.error(error);
@@ -401,18 +395,11 @@ const actions = {
     }
   },
 
-  async getSigner({ commit, state: { address } }) {
-    commit(types.GET_SIGNER_REQUEST);
-    try {
-      await getExtension();
-      const defaultAddress = api.formatAddress(address, false);
-      const signer = await getExtensionSigner(defaultAddress);
-      api.setSigner(signer);
-      commit(types.GET_SIGNER_SUCCESS);
-    } catch (error) {
-      commit(types.GET_SIGNER_FAILURE);
-      throw new Error((error as Error).message);
-    }
+  async getSigner({ state: { address } }) {
+    const defaultAddress = api.formatAddress(address, false);
+    const signer = await getExtensionSigner(defaultAddress);
+
+    return signer;
   },
 
   subscribeOnExtensionAvailability({ dispatch, state }) {
@@ -429,27 +416,24 @@ const actions = {
     await dispatch('resetPolkadotJsAccountsSubscription');
   },
 
-  async updatePolkadotJsAccounts({ commit, dispatch, getters, state }, accounts: Array<PolkadotJsAccount>) {
+  async updatePolkadotJsAccounts({ commit, dispatch, getters }, accounts: Array<PolkadotJsAccount>) {
     commit(types.SET_POLKADOT_JS_ACCOUNTS, accounts);
 
-    if (!getters.isLoggedIn) return;
-
-    const defaultAddress = api.formatAddress(state.address, false);
-    const currentAccount = !!accounts.find((acc) => acc.address === defaultAddress);
-
-    if (currentAccount) return;
-
-    await dispatch('logout');
+    if (getters.isLoggedIn) {
+      try {
+        await dispatch('getSigner');
+      } catch (error) {
+        await dispatch('logout');
+      }
+    }
   },
 
-  async subscribeToPolkadotJsAccounts({ commit, dispatch }) {
+  async subscribeToPolkadotJsAccounts({ dispatch, state }) {
     dispatch('resetPolkadotJsAccountsSubscription');
 
-    const unsubscribe = await subscribeToPolkadotJsAccounts(async (accounts) => {
+    state.polkadotJsAccountsSubscription = await subscribeToPolkadotJsAccounts(async (accounts) => {
       await dispatch('updatePolkadotJsAccounts', accounts);
     });
-
-    commit(types.SET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION, unsubscribe);
   },
 
   resetPolkadotJsAccountsSubscription({ commit }) {
