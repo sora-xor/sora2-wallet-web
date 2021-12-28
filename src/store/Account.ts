@@ -355,22 +355,47 @@ const actions = {
     return api.formatAddress(address);
   },
 
-  async checkExtension({ commit }) {
+  async checkExtension({ commit, dispatch, state }) {
     try {
       await getExtension();
       commit(types.SET_EXTENSION_AVAILABILIY, true);
+
+      if (!state.polkadotJsAccountsSubscription) {
+        await dispatch('subscribeToPolkadotJsAccounts');
+      }
     } catch (error) {
       commit(types.SET_EXTENSION_AVAILABILIY, false);
+
+      await dispatch('resetPolkadotJsAccountsSubscription');
     }
+  },
+
+  async afterLogin({ dispatch }) {
+    if (!state.accountAssetsSubscription) {
+      await dispatch('getAccountAssets');
+      await dispatch('subscribeOnAccountAssets');
+    }
+    await dispatch('checkCurrentRoute', undefined, { root: true });
+  },
+
+  async logout({ commit, dispatch }) {
+    api.logout();
+
+    await dispatch('resetAccountAssetsSubscription');
+
+    commit(types.RESET_ACCOUNT);
+
+    await dispatch('checkCurrentRoute', undefined, { root: true });
   },
 
   async checkSigner({ dispatch, getters }) {
     if (getters.isExternal) {
       try {
         await dispatch('getSigner');
+        await dispatch('afterLogin');
       } catch (error) {
         console.error(error);
-        dispatch('logout');
+        await dispatch('logout');
       }
     }
   },
@@ -425,7 +450,7 @@ const actions = {
     commit(types.REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION);
   },
 
-  async importPolkadotJs({ commit }, address: string) {
+  async importPolkadotJs({ commit, dispatch }, address: string) {
     commit(types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST);
     try {
       const defaultAddress = api.formatAddress(address, false);
@@ -439,6 +464,8 @@ const actions = {
       api.setSigner(info.signer);
 
       commit(types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS, account.name);
+
+      await dispatch('afterLogin');
     } catch (error) {
       commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE);
       throw new Error((error as Error).message);
@@ -576,11 +603,6 @@ const actions = {
     }
   },
 
-  logout({ commit }) {
-    api.logout();
-    commit(types.RESET_ACCOUNT);
-  },
-
   async syncWithStorage({ commit, state, getters, dispatch }) {
     const getAccountAssetsAddresses = () => Object.keys(getters.accountAssetsAddressTable);
 
@@ -596,7 +618,7 @@ const actions = {
       if (getters.isLoggedIn) {
         await dispatch('importPolkadotJs', state.address);
       } else if (api.accountPair) {
-        dispatch('logout');
+        await dispatch('logout');
       }
     }
 

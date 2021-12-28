@@ -62,15 +62,15 @@ export default class App extends Mixins(TransactionMixin) {
     this.handleChangeTransaction(value);
   }
 
-  @Watch('extensionAvailability')
-  private async updatePolkadotJsAccountsSubscription(value: boolean) {
-    if (value) {
-      await this.subscribeToPolkadotJsAccounts();
-    } else {
-      await this.resetPolkadotJsAccountsSubscription();
-      await this.logout();
-    }
-  }
+  // @Watch('extensionAvailability')
+  // private async updatePolkadotJsAccountsSubscription(value: boolean) {
+  //   if (value) {
+  //     await this.subscribeToPolkadotJsAccounts();
+  //   } else {
+  //     await this.resetPolkadotJsAccountsSubscription();
+  //     await this.logout();
+  //   }
+  // }
 
   beforeDestroy(): void {
     this.resetActiveTransactions();
