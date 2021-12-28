@@ -35,7 +35,6 @@ export default class App extends Mixins(TransactionMixin) {
   @Getter libraryDesignSystem!: DesignSystem;
   @Getter libraryTheme!: Theme;
   @Getter firstReadyTransaction!: Nullable<History>;
-  @Getter extensionAvailability!: boolean;
 
   @Action logout!: AsyncVoidFn;
   @Action trackActiveTransactions!: AsyncVoidFn;
@@ -43,8 +42,6 @@ export default class App extends Mixins(TransactionMixin) {
   @Action resetAccountAssetsSubscription!: AsyncVoidFn;
   @Action resetRuntimeVersionSubscription!: AsyncVoidFn;
   @Action resetFiatPriceAndApySubscription!: AsyncVoidFn;
-  @Action subscribeToPolkadotJsAccounts!: AsyncVoidFn;
-  @Action resetPolkadotJsAccountsSubscription!: AsyncVoidFn;
   @Action resetExtensionAvailabilitySubscription!: AsyncVoidFn;
   @Action setSoraNetwork!: (network: SoraNetwork) => Promise<void>;
 
@@ -62,23 +59,12 @@ export default class App extends Mixins(TransactionMixin) {
     this.handleChangeTransaction(value);
   }
 
-  // @Watch('extensionAvailability')
-  // private async updatePolkadotJsAccountsSubscription(value: boolean) {
-  //   if (value) {
-  //     await this.subscribeToPolkadotJsAccounts();
-  //   } else {
-  //     await this.resetPolkadotJsAccountsSubscription();
-  //     await this.logout();
-  //   }
-  // }
-
   beforeDestroy(): void {
     this.resetActiveTransactions();
     this.resetAccountAssetsSubscription();
     this.resetRuntimeVersionSubscription();
     this.resetFiatPriceAndApySubscription();
     this.resetExtensionAvailabilitySubscription();
-    this.resetPolkadotJsAccountsSubscription();
   }
 
   changeTheme(): void {

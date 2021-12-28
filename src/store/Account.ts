@@ -350,12 +350,7 @@ const mutations = {
 };
 
 const actions = {
-  /** TODO: check its usage */
-  formatAddress({ commit }, address: string) {
-    return api.formatAddress(address);
-  },
-
-  async checkExtension({ commit, dispatch, state }) {
+  async checkExtension({ commit, dispatch, state, getters }) {
     try {
       await getExtension();
       commit(types.SET_EXTENSION_AVAILABILIY, true);
@@ -367,6 +362,10 @@ const actions = {
       commit(types.SET_EXTENSION_AVAILABILIY, false);
 
       await dispatch('resetPolkadotJsAccountsSubscription');
+
+      if (getters.isLoggedIn) {
+        await dispatch('logout');
+      }
     }
   },
 
@@ -379,7 +378,9 @@ const actions = {
   },
 
   async logout({ commit, dispatch }) {
-    api.logout();
+    if (api.accountPair) {
+      api.logout();
+    }
 
     await dispatch('resetAccountAssetsSubscription');
 
@@ -422,24 +423,30 @@ const actions = {
     }, CHECK_EXTENSION_INTERVAL);
   },
 
-  resetExtensionAvailabilitySubscription({ commit }) {
+  async resetExtensionAvailabilitySubscription({ commit, dispatch }) {
     commit(types.RESET_EXTENSION_AVAILABILIY_SUBSCRIPTION);
+
+    await dispatch('resetPolkadotJsAccountsSubscription');
   },
 
-  async getPolkadotJsAccounts({ commit }) {
-    try {
-      const accounts = (await getExtensionInfo()).accounts;
-      commit(types.SET_POLKADOT_JS_ACCOUNTS, accounts);
-    } catch (error) {
-      commit(types.SET_POLKADOT_JS_ACCOUNTS, []);
-    }
+  async updatePolkadotJsAccounts({ commit, dispatch, getters, state }, accounts: Array<PolkadotJsAccount>) {
+    commit(types.SET_POLKADOT_JS_ACCOUNTS, accounts);
+
+    if (!getters.isLoggedIn) return;
+
+    const defaultAddress = api.formatAddress(state.address, false);
+    const currentAccount = !!accounts.find((acc) => acc.address === defaultAddress);
+
+    if (currentAccount) return;
+
+    await dispatch('logout');
   },
 
   async subscribeToPolkadotJsAccounts({ commit, dispatch }) {
     dispatch('resetPolkadotJsAccountsSubscription');
 
-    const unsubscribe = await subscribeToPolkadotJsAccounts((accounts) => {
-      commit(types.SET_POLKADOT_JS_ACCOUNTS, accounts);
+    const unsubscribe = await subscribeToPolkadotJsAccounts(async (accounts) => {
+      await dispatch('updatePolkadotJsAccounts', accounts);
     });
 
     commit(types.SET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION, unsubscribe);
@@ -617,7 +624,7 @@ const actions = {
     if (getters.isLoggedIn !== wasLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
         await dispatch('importPolkadotJs', state.address);
-      } else if (api.accountPair) {
+      } else {
         await dispatch('logout');
       }
     }

@@ -82,7 +82,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   @Getter extensionAvailability!: boolean;
 
   @Action importPolkadotJs!: (address: string) => Promise<void>;
-  @Action getPolkadotJsAccounts!: AsyncVoidFn;
 
   get isAccountSwitch(): boolean {
     return (this.currentRouteParams || {}).isAccountSwitch;
@@ -91,7 +90,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   async created(): Promise<void> {
     await this.withApi(async () => {
       if (this.isAccountSwitch) {
-        await this.getPolkadotJsAccounts();
         this.navigateToAccountList();
       }
     });
