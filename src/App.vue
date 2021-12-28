@@ -36,7 +36,6 @@ export default class App extends Mixins(TransactionMixin) {
   @Getter libraryTheme!: Theme;
   @Getter firstReadyTransaction!: Nullable<History>;
 
-  @Action logout!: AsyncVoidFn;
   @Action trackActiveTransactions!: AsyncVoidFn;
   @Action resetActiveTransactions!: AsyncVoidFn;
   @Action resetAccountAssetsSubscription!: AsyncVoidFn;

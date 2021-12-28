@@ -50,7 +50,7 @@ const types = flow(
     'SET_TRANSACTION_DETAILS_ID',
     'GET_ACCOUNT_ACTIVITY',
     'SET_POLKADOT_JS_ACCOUNTS',
-    'REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
+    'RESET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
     'SET_EXTENSION_AVAILABILIY',
     'RESET_EXTENSION_AVAILABILIY_SUBSCRIPTION',
   ]),
@@ -306,7 +306,7 @@ const mutations = {
     state.polkadotJsAccounts = polkadotJsAccounts;
   },
 
-  [types.REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION](state: AccountState) {
+  [types.RESET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION](state: AccountState) {
     if (typeof state.polkadotJsAccountsSubscription === 'function') {
       state.polkadotJsAccountsSubscription();
     }
@@ -438,7 +438,7 @@ const actions = {
 
   resetPolkadotJsAccountsSubscription({ commit }) {
     commit(types.SET_POLKADOT_JS_ACCOUNTS, []);
-    commit(types.REMOVE_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION);
+    commit(types.RESET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION);
   },
 
   async importPolkadotJs({ commit, dispatch }, address: string) {
