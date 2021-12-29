@@ -114,6 +114,8 @@ export type HistoryElement = {
     | HistoryElementLiquidityOperation
     | HistoryElementAssetRegistration
     | UtilityBatchAllItem[]
+    | ReferrerSetReferrer
+    | ReferrerReserve
   >;
 };
 
@@ -132,5 +134,13 @@ export type ReferrerReward = {
   referrer: string;
   referree: string;
   timestamp: number;
+  amount: string;
+};
+
+export type ReferrerSetReferrer = {
+  referrer: string;
+};
+
+export type ReferrerReserve = {
   amount: string;
 };
