@@ -284,12 +284,6 @@ export default class WalletSend extends Mixins(
     return '';
   }
 
-  get xorBalance(): Nullable<CodecString> {
-    // TODO: XOR balance here can be unsyncronized, need to fix
-    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
-    return accountXor ? accountXor.balance.transferable : null;
-  }
-
   isXorAccountAsset(asset: AccountAsset): boolean {
     const knownAsset = KnownAssets.get(asset.address);
     if (!knownAsset) {
@@ -327,7 +321,6 @@ export default class WalletSend extends Mixins(
       !this.isXorSufficientForNextTx({
         type: Operation.Transfer,
         isXorAccountAsset: this.isXorAccountAsset(this.asset),
-        xorBalance: this.xorBalance ? this.getFPNumberFromCodec(this.xorBalance) : this.Zero,
         amount: this.getFPNumber(this.amount),
       })
     ) {

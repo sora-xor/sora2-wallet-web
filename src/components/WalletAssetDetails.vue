@@ -13,20 +13,31 @@
   >
     <s-card class="asset-details" primary>
       <div class="asset-details-container s-flex">
-        <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
-        <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
-          <formatted-amount
-            value-can-be-hidden
-            symbol-as-decimal
-            :value="balance"
-            :font-size-rate="FontSizeRate.SMALL"
-            :asset-symbol="asset.symbol"
-          >
-            <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
-          </formatted-amount>
+        <nft-details
+          v-if="isNft"
+          :contentLink="contentLink"
+          :tokenName="asset.name"
+          :tokenSymbol="asset.symbol"
+          :tokenDescription="tokenDescription"
+          :showDropdownIcon="true"
+          @iconClick="handleClickDetailedBalance"
+        />
+        <div v-else>
+          <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+          <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
+            <formatted-amount
+              value-can-be-hidden
+              symbol-as-decimal
+              :value="balance"
+              :font-size-rate="FontSizeRate.SMALL"
+              :asset-symbol="asset.symbol"
+            >
+              <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
+            </formatted-amount>
+          </div>
         </div>
         <formatted-amount
-          v-if="price"
+          v-if="price && !isNft"
           value-can-be-hidden
           is-fiat-value
           :value="getFiatBalance(asset)"
@@ -82,6 +93,12 @@
         </transition>
       </div>
     </s-card>
+    <transition name="fadeHeight">
+      <div v-if="isNft && wasBalanceDetailsClicked" class="info-line-container">
+        <info-line :label="t('createToken.nft.supply.quantity')" :value="balance"></info-line>
+        <info-line :label="t('createToken.nft.source.label')" :value="contentSource"></info-line>
+      </div>
+    </transition>
     <wallet-history :asset="asset" />
   </wallet-base>
 </template>
@@ -96,10 +113,12 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
+import NftDetails from './NftDetails.vue';
+import InfoLine from './InfoLine.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import WalletHistory from './WalletHistory.vue';
 import { RouteNames } from '../consts';
-import { getAssetIconStyles } from '../util';
+import { constructFullIpfsURL, getAssetIconStyles, getUrlContentSource } from '../util';
 import { Operations, Account } from '../types/common';
 
 import type { WalletPermissions } from '../consts';
@@ -115,6 +134,8 @@ interface Operation {
     FormattedAmount,
     FormattedAmountWithFiatValue,
     WalletHistory,
+    NftDetails,
+    InfoLine,
   },
 })
 export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin) {
@@ -130,6 +151,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @Action getAccountActivity!: AsyncVoidFn;
 
   wasBalanceDetailsClicked = false;
+  contentLink = '';
+  tokenDescription = '';
+  isNft = false;
 
   private formatBalance(value: CodecString): string {
     return this.formatCodecNumber(value, this.asset.decimals);
@@ -144,13 +168,13 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     if (this.permissions.copyAssets) {
       list.push({ type: Operations.Receive, icon: 'basic-receive-24' });
     }
-    if (this.permissions.swapAssets) {
+    if (this.permissions.swapAssets && !this.isNft) {
       list.push({ type: Operations.Swap, icon: 'arrows-swap-24' });
     }
-    if (this.permissions.addLiquidity) {
+    if (this.permissions.addLiquidity && !this.isNft) {
       list.push({ type: Operations.Liquidity, icon: 'basic-drop-24' });
     }
-    if (this.permissions.bridgeAssets) {
+    if (this.permissions.bridgeAssets && !this.isNft) {
       list.push({ type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' });
     }
 
@@ -204,6 +228,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
       cssClasses.push('asset-details-balance--clicked');
     }
     return cssClasses;
+  }
+
+  get contentSource(): string {
+    return getUrlContentSource(this.contentLink);
   }
 
   get isXor(): boolean {
@@ -267,6 +295,19 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     api.clearHistory(this.asset.address);
     this.getAccountActivity();
   }
+
+  async setNftMeta(): Promise<void> {
+    const ipfsPath = await api.getNftContent(this.currentRouteParams.asset.address);
+    this.contentLink = constructFullIpfsURL(ipfsPath);
+    this.tokenDescription = await api.getNftDescription(this.currentRouteParams.asset.address);
+  }
+
+  mounted(): void {
+    const isNft = this.currentRouteParams.asset.decimals === 0;
+    this.isNft = isNft;
+
+    if (isNft) this.setNftMeta();
+  }
 }
 </script>
 
@@ -274,6 +315,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 @import '../styles/icons';
 
 .asset-details {
+  padding: 0 !important;
   margin-bottom: 0;
   &.s-card.neumorphic {
     padding-top: 0;
@@ -345,5 +387,26 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   .asset-logo {
     @include asset-logo-styles(48px);
   }
+}
+
+.preview-image {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  background: var(--s-color-base-background);
+  box-shadow: var(--s-shadow-element);
+  border-radius: var(--s-border-radius-small);
+  margin: #{$basic-spacing-medium} 0;
+  width: 100%;
+  height: 200px;
+
+  &__content {
+    height: 200px;
+  }
+}
+
+.info-line-container {
+  @include fadeHeight;
 }
 </style>

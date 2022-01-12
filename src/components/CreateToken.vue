@@ -39,7 +39,7 @@
         type="primary"
         :loading="loading"
         :disabled="isCreateDisabled"
-        @click="onConfirm"
+        @click="onCreate"
       >
         <template v-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
         <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
@@ -47,9 +47,9 @@
         <template v-else>{{ t('createToken.action') }}</template>
       </s-button>
     </template>
-    <!-- <template v-else-if="step === Step.Warn">
+    <template v-else-if="step === Step.Warn">
       <network-fee-warning-dialog :fee="formattedFee" @confirm="confirmNextTxFailure" />
-    </template> -->
+    </template>
     <template v-else-if="step === Step.ConfirmToken">
       <info-line :label="t('createToken.tokenSymbol.placeholder')" :value="tokenSymbol" />
       <info-line :label="t('createToken.tokenName.placeholder')" :value="tokenName.trim()" />
@@ -60,7 +60,7 @@
         type="primary"
         :disabled="!hasEnoughXor"
         :loading="loading"
-        @click="onCreate"
+        @click="onConfirm"
       >
         <template v-if="!hasEnoughXor">{{
           t('createToken.insufficientBalance', { symbol: KnownSymbols.XOR })
@@ -68,7 +68,7 @@
         <template v-else>{{ t('createToken.confirm') }}</template>
       </s-button>
     </template>
-    <wallet-fee v-if="!isCreateDisabled && showAdditionalInfo" :value="fee" />
+    <wallet-fee v-if="!isCreateDisabled && showFee" :value="fee" />
   </div>
 </template>
 
@@ -81,9 +81,9 @@ import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
 import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
+import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
-import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import { RouteNames, Step } from '../consts';
 import { api } from '../api';
 
@@ -108,7 +108,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   tokenName = '';
   tokenSupply = '';
   extensibleSupply = false;
-  showAdditionalInfo = true;
+  showFee = true;
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
@@ -139,45 +139,31 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
     return FPNumber.gte(fpAccountXor, this.fee);
   }
 
-  get xorBalance(): Nullable<CodecString> {
-    // TODO: XOR balance here can be unsyncronized, need to fix
-    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
-    return accountXor ? accountXor.balance.transferable : null;
-  }
-
   async registerAsset(): Promise<void> {
     return api.registerAsset(this.tokenSymbol, this.tokenName.trim(), this.tokenSupply, this.extensibleSupply);
   }
 
-  async onConfirm(): Promise<void> {
-    if (!this.tokenSymbol.length || !this.tokenSupply.length) {
+  async onCreate(): Promise<void> {
+    if (!this.tokenSymbol.length || !this.tokenSupply.length || !this.tokenName.length) {
       return;
     }
-    console.log('onConfirm');
 
-    const tokenSupply = this.getFPNumber(this.tokenSupply, this.decimals);
-    const maxTokenSupply = this.getFPNumber(MaxTotalSupply, this.decimals);
+    this.tokenSupply = this.getCorrectSupply(this.tokenSupply, this.decimals);
 
-    if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
-      this.tokenSupply = maxTokenSupply.toString();
-    }
-    if (this.hasEnoughXor) {
-      if (
-        !this.isXorSufficientForNextTx({
-          type: Operation.RegisterAsset,
-          xorBalance: this.xorBalance ? this.getFPNumberFromCodec(this.xorBalance) : this.Zero,
-        })
-      ) {
-        this.showAdditionalInfo = false;
-        this.step = Step.Warn;
-        return;
-      }
-    }
     this.$emit('showTabs');
+
+    if (this.hasEnoughXor && !this.isXorSufficientForNextTx({ type: Operation.RegisterAsset })) {
+      this.$emit('showHeader');
+      this.showFee = false;
+      this.$emit('stepChange', Step.Warn);
+      return;
+    }
+
+    this.showFee = true;
     this.$emit('stepChange', Step.ConfirmToken);
   }
 
-  async onCreate(): Promise<void> {
+  async onConfirm(): Promise<void> {
     await this.withNotifications(async () => {
       if (!this.hasEnoughXor) {
         throw new Error('walletSend.badAmount');
@@ -188,8 +174,9 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   }
 
   confirmNextTxFailure(): void {
-    // this.showAdditionalInfo = true;
-    // this.step = Step.ConfirmToken;
+    this.$emit('showHeader');
+    this.showFee = true;
+    this.$emit('stepChange', Step.ConfirmToken);
   }
 }
 </script>

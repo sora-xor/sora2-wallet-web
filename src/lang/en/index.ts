@@ -169,23 +169,34 @@ export default {
   },
   createToken: {
     title: '@:createTokenText',
+    titleCommon: 'Create',
+    confirmTokenTitleCommon: 'Create Token',
+    confirmTokenTitleNFT: 'Create NFT',
     desc: 'Create and deploy custom asset on SORA',
     action: '@:createTokenText',
     actionNFT: '@:createTokenTextNFT',
     enterSymbol: 'Enter token symbol',
     enterName: 'Enter token name',
     enterSupply: 'Enter token supply',
-    enterLink: 'Enter content link',
+    provideContent: 'Provide content',
+    selectLocalFile: 'Select local file',
     enterTokenDescription: 'Enter description',
     [TokenTabs.Token]: 'Token',
     [TokenTabs.NonFungibleToken]: 'NFT',
     nft: {
+      source: {
+        label: 'Source',
+        value: 'Local files',
+      },
       link: {
         placeholder: 'Enter link here...',
         placeholderShort: 'Link',
+        source: 'Source',
       },
       image: {
-        placeholder: 'Preview of the link will be shown here',
+        placeholderNoImage: 'Upload the file by either entering a link or choosing from local storage',
+        placeholderBadSource: 'There’s no image',
+        placeholderBadSourceAddition: 'or it’s not uploaded to IPFS yet',
       },
       name: {
         placeholder: 'Name',
@@ -198,6 +209,7 @@ export default {
       supply: {
         placeholder: 'Token supply',
         desc: 'Amount of NFTs you’re going to get.',
+        quantity: 'Quantity',
       },
       description: {
         placeholder: 'Description',

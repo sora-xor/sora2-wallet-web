@@ -8,8 +8,6 @@ export enum RouteNames {
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
   Token = 'Token',
-  CreateToken = 'CreateToken',
-  CreateNFT = 'CreateNFT',
   AddAsset = 'AddAsset',
   WalletTransactionDetails = 'WalletTransactionDetails',
   AddAssetDetails = 'AddAssetDetails',
@@ -81,7 +79,6 @@ export interface WalletInitOptions {
 export interface NetworkFeeWarningOptions {
   type: Operation;
   isXorAccountAsset?: boolean;
-  xorBalance: FPNumber;
   amount?: FPNumber;
 }
 

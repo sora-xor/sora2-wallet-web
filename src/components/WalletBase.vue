@@ -89,9 +89,7 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     if (this.showAction && this.showClose) {
       cssClasses.push('base-title--actions');
     }
-    if (!this.showHeader) {
-      cssClasses.push('base-title--hide');
-    }
+
     return cssClasses;
   }
 
@@ -155,9 +153,6 @@ $button-size: var(--s-size-medium);
       .base-title_action {
         right: calc(#{$button-size} + var(--s-basic-spacing));
       }
-    }
-    &--hide {
-      position: absolute;
     }
     .el-button {
       position: absolute;

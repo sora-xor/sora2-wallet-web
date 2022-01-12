@@ -11,7 +11,7 @@
       <div class="wallet-assets-container">
         <template v-for="(asset, index) in formattedAccountAssets">
           <div class="wallet-assets-item s-flex" :key="asset.address">
-            <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+            <i class="asset-logo" :class="nftIconClass(asset)" :style="getAssetIconStyles(asset.address)" />
             <div class="asset s-flex">
               <formatted-amount-with-fiat-value
                 value-can-be-hidden
@@ -156,6 +156,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
         : sum;
     }, new FPNumber(0));
     return fiatAmount ? fiatAmount.toLocaleString() : null;
+  }
+
+  nftIconClass(asset): string {
+    return asset.decimals === 0 ? 'nft-asset' : '';
   }
 
   getFormattedAddress(asset: AccountAsset): string {
@@ -370,6 +374,22 @@ $wallet-assets-count: 5;
       font-size: var(--s-font-size-medium);
       font-weight: 600;
     }
+  }
+}
+
+.nft-asset {
+  background-image: none !important;
+  background-color: #f4f0f1 !important;
+  position: relative;
+  font-style: unset;
+
+  &::before {
+    content: 'NFT';
+    position: absolute;
+    font-weight: 800;
+    top: 28%;
+    left: 14%;
+    color: var(--s-color-base-content-tertiary);
   }
 }
 </style>

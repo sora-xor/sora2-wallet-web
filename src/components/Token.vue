@@ -1,10 +1,16 @@
 <template>
-  <wallet-base :title="t('createToken.title')" show-back :showHeader="showAdditionalInfo" @back="handleBack">
+  <wallet-base :title="createTokenTitle" show-back :showHeader="showHeader" @back="handleBack">
     <div class="token">
       <s-tabs v-if="showTabs" :value="currentTab" type="rounded" @change="handleChangeTab" class="token__tab">
         <s-tab v-for="tab in TokenTabs" :key="tab" :label="t(`createToken.${tab}`)" :name="tab" />
       </s-tabs>
-      <component :is="currentTab" @showTabs="setTabVisibility" @stepChange="setStep" :step="currentStep" />
+      <component
+        :is="currentTab"
+        @showTabs="setTabVisibility"
+        @showHeader="setHeaderVisibility"
+        @stepChange="setStep"
+        :step="currentStep"
+      />
     </div>
   </wallet-base>
 </template>
@@ -33,15 +39,17 @@ export default class Token extends Mixins(TranslationMixin) {
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
   step: Step = Step.CreateToken;
-  currentTab: TokenTabs = TokenTabs.Token;
+  currentTab: Step = Step.CreateToken;
   showTabs = true;
-  showAdditionalInfo = true;
+  showHeader = true;
+  createTokenTitle = this.t('createToken.titleCommon');
 
   get currentStep(): Step {
     return this.step;
   }
 
-  handleChangeTab(value: TokenTabs): void {
+  handleChangeTab(value: Step): void {
+    this.step = value;
     this.currentTab = value;
   }
 
@@ -49,28 +57,38 @@ export default class Token extends Mixins(TranslationMixin) {
     this.showTabs = !this.showTabs;
   }
 
+  setHeaderVisibility(): void {
+    this.showHeader = !this.showHeader;
+  }
+
   setStep(step: Step): void {
     if ([Step.CreateToken, Step.CreateNFT].includes(step)) this.setTabVisibility();
+    if (step === Step.ConfirmToken) this.createTokenTitle = this.t('createToken.confirmTokenTitleCommon');
+    if (step === Step.ConfirmNFT) this.createTokenTitle = this.t('createToken.confirmTokenTitleNFT');
     this.step = step;
   }
 
   handleBack(): void {
     if ([Step.CreateToken, Step.CreateNFT].includes(this.step)) {
       this.navigate({ name: RouteNames.Wallet });
+      return;
     }
 
-    if (this.step === Step.ConfirmToken) {
-      this.showTabs = true;
-      this.step = Step.CreateToken;
-      // this.showAdditionalInfo = true;
-      this.navigate({ name: RouteNames.Token });
+    if ([Step.ConfirmToken, Step.ConfirmNFT].includes(this.step)) {
+      if (this.step === Step.ConfirmToken) this.step = Step.CreateToken;
+      if (this.step === Step.ConfirmNFT) this.step = Step.CreateNFT;
+
+      this.createTokenTitle = this.t('createToken.titleCommon');
     }
 
-    if (this.step === Step.ConfirmNFT) {
-      this.showTabs = true;
-      // this.showAdditionalInfo = true;
-      this.step = Step.CreateNFT;
+    if (this.step === Step.Warn) {
+      if (this.currentTab === Step.CreateToken) this.step = Step.CreateToken;
+      if (this.currentTab === Step.CreateNFT) this.step = Step.CreateNFT;
     }
+
+    this.showTabs = true;
+    this.showHeader = true;
+    this.navigate({ name: RouteNames.Token });
   }
 }
 </script>
