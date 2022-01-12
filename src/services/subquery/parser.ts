@@ -1,8 +1,10 @@
 import { FPNumber, Operation, TransactionStatus, History, Asset } from '@sora-substrate/util';
 import { BN } from '@polkadot/util';
+import getOr from 'lodash/fp/getOr';
 
 import store from '../../store';
 import { api } from '../../api';
+import { ModuleNames, ModuleMethods } from '../types';
 import type {
   ExplorerDataParser,
   HistoryElement,
@@ -11,49 +13,51 @@ import type {
   HistoryElementLiquidityOperation,
   HistoryElementTransfer,
   HistoryElementAssetRegistration,
+  UtilityBatchAllItem,
 } from '../types';
 
-enum ModuleCallOperation {
-  RegisterPair = 'registerPair',
-  InitializePool = 'initializePool',
-}
-
-enum ModuleNames {
-  Assets = 'assets',
-  LiquidityProxy = 'liquidityProxy',
-  Rewards = 'rewards',
-  PoolXYK = 'poolXyk',
-  TradingPair = 'tradingPair',
-  Utility = 'utility',
-}
-
-const OperationByModuleCall = {
+const OperationsMap = {
   [ModuleNames.Assets]: {
-    transfer: Operation.Transfer,
-    register: Operation.RegisterAsset,
-  },
-  [ModuleNames.LiquidityProxy]: {
-    swap: Operation.Swap,
+    [ModuleMethods.AssetsRegister]: () => Operation.RegisterAsset,
+    [ModuleMethods.AssetsTransfer]: () => Operation.Transfer,
   },
   [ModuleNames.PoolXYK]: {
-    depositLiquidity: Operation.AddLiquidity,
-    withdrawLiquidity: Operation.RemoveLiquidity,
-    initializePool: ModuleCallOperation.InitializePool,
+    [ModuleMethods.PoolXYKDepositLiquidity]: () => Operation.AddLiquidity,
+    [ModuleMethods.PoolXYKWithdrawLiquidity]: () => Operation.RemoveLiquidity,
   },
-  [ModuleNames.TradingPair]: {
-    register: ModuleCallOperation.RegisterPair,
+  [ModuleNames.LiquidityProxy]: {
+    [ModuleMethods.LiquidityProxySwap]: () => Operation.Swap,
+  },
+  [ModuleNames.Utility]: {
+    [ModuleMethods.UtilityBatchAll]: (data: HistoryElement['data']) => {
+      if (
+        Array.isArray(data) &&
+        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKInitializePool }) &&
+        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity })
+      ) {
+        return Operation.CreatePair;
+      }
+
+      return null;
+    },
   },
 };
 
+const getAssetSymbol = (asset: Nullable<Asset>): string => (asset && asset.symbol ? asset.symbol : '');
+
 const getTransactionId = (tx: HistoryElement): string => tx.id;
 
+const emptyFn = () => null;
+
+const getBatchCall = (data: Array<UtilityBatchAllItem>, { module, method }): Nullable<UtilityBatchAllItem> =>
+  data.find((item) => item.module === module && item.method === method);
+
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
-  const { module, method } = tx;
+  const { module, method, data } = tx;
 
-  if (!(module in OperationByModuleCall)) return null;
-  if (!(method in OperationByModuleCall[module])) return null;
+  const operationGetter = getOr(emptyFn, [module, method], OperationsMap);
 
-  return OperationByModuleCall[module][method];
+  return operationGetter(data);
 };
 
 const getTransactionTimestamp = (tx: HistoryElement): number => {
@@ -95,6 +99,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
   public static SUPPORTED_OPERATIONS = [
     Operation.Transfer,
     Operation.Swap,
+    Operation.CreatePair,
     Operation.AddLiquidity,
     Operation.RemoveLiquidity,
     Operation.RegisterAsset,
@@ -154,8 +159,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.asset2Address = asset2Address;
         payload.amount = data.baseAssetAmount;
         payload.amount2 = data.targetAssetAmount;
-        payload.symbol = asset && asset.symbol ? asset.symbol : '';
-        payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : '';
+        payload.symbol = getAssetSymbol(asset);
+        payload.symbol2 = getAssetSymbol(asset2);
         payload.liquiditySource = data.selectedMarket;
         payload.liquidityProviderFee = new FPNumber(data.liquidityProviderFee).toCodecString();
 
@@ -172,10 +177,38 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
         payload.assetAddress = assetAddress;
         payload.asset2Address = asset2Address;
-        payload.symbol = asset && asset.symbol ? asset.symbol : '';
-        payload.symbol2 = asset2 && asset2.symbol ? asset2.symbol : '';
+        payload.symbol = getAssetSymbol(asset);
+        payload.symbol2 = getAssetSymbol(asset2);
         payload.amount = data.baseAssetAmount;
         payload.amount2 = data.targetAssetAmount;
+
+        return payload;
+      }
+      case Operation.CreatePair: {
+        const data = transaction.data as UtilityBatchAllItem[];
+        const call = getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity });
+
+        if (!call) {
+          logOperationDataParsingError(type, transaction);
+          return null;
+        }
+
+        const {
+          input_asset_a: assetAddress,
+          input_asset_b: asset2Address,
+          input_a_desired: amount,
+          input_b_desired: amount2,
+        } = call.data.args;
+
+        const asset = await getAssetByAddress(assetAddress as string);
+        const asset2 = await getAssetByAddress(asset2Address as string);
+
+        payload.assetAddress = asset.address;
+        payload.asset2Address = asset2.address;
+        payload.symbol = getAssetSymbol(asset);
+        payload.symbol2 = getAssetSymbol(asset2);
+        payload.amount = FPNumber.fromCodecValue(amount).toString();
+        payload.amount2 = FPNumber.fromCodecValue(amount2).toString();
 
         return payload;
       }
@@ -186,7 +219,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const asset = await getAssetByAddress(assetAddress);
 
         payload.assetAddress = assetAddress;
-        payload.symbol = asset && asset.symbol ? asset.symbol : '';
+        payload.symbol = getAssetSymbol(asset);
         payload.to = data.to;
         payload.amount = data.amount;
 
@@ -198,7 +231,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const assetAddress = data.assetId;
         const asset = await getAssetByAddress(assetAddress);
 
-        payload.symbol = asset && asset.symbol ? asset.symbol : '';
+        payload.symbol = getAssetSymbol(asset);
 
         return payload;
       }

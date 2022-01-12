@@ -38,6 +38,10 @@ export default {
     [Operation.CreatePair]: 'Create Pair',
     [Operation.RegisterAsset]: 'Register Asset',
     [Operation.ClaimRewards]: 'Claim Rewards',
+    [Operation.ClaimRewards]: 'Claim Rewards',
+    [Operation.ReferralReserveXor]: 'Bond XOR',
+    [Operation.ReferralUnreserveXor]: 'Unbond XOR',
+    [Operation.ReferralSetInvitedUser]: 'Set Referral',
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
@@ -47,6 +51,9 @@ export default {
       [Operation.CreatePair]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RegisterAsset]: 'Registered {symbol} asset',
       [Operation.ClaimRewards]: 'Reward claimed successfully {rewards}',
+      [Operation.ReferralReserveXor]: 'Bonded XOR successfully',
+      [Operation.ReferralUnreserveXor]: 'Unbonded XOR successfully',
+      [Operation.ReferralSetInvitedUser]: 'Set Referral',
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
@@ -56,6 +63,9 @@ export default {
       [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RegisterAsset]: 'Failed to register {symbol} asset',
       [Operation.ClaimRewards]: 'Failed to claim rewards {rewards}',
+      [Operation.ReferralReserveXor]: 'Failed to bond XOR',
+      [Operation.ReferralUnreserveXor]: 'Failed to unbonded XOR',
+      [Operation.ReferralSetInvitedUser]: 'Failed to set referral',
     },
   },
   polkadotjs: {
@@ -138,6 +148,7 @@ export default {
       [BalanceType.Locked]: ' - Locked',
       [BalanceType.Reserved]: ' - Reserved',
       [BalanceType.Total]: 'Total',
+      [BalanceType.Bonded]: 'Bonded',
     },
   },
   asset: {
