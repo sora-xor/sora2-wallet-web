@@ -104,7 +104,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
 
   &__symbol {
     font-weight: 400;
-    font-size: 16px;
+    font-size: calc(var(--s-size-small) / 2);
     color: var(--s-color-brand-day);
   }
 
@@ -113,14 +113,6 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     color: var(--s-color-brand-day);
     text-align: center;
     margin-bottom: 10px;
-  }
-
-  &__link {
-    display: flex;
-    padding: 0;
-    text-decoration: none;
-    color: #2a171f;
-    text-transform: capitalize;
   }
 
   &__link-text {

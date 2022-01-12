@@ -202,7 +202,6 @@ export default {
       link: {
         placeholder: 'Enter link here...',
         placeholderShort: 'Link',
-        source: 'Source',
       },
       image: {
         placeholderNoImage: 'Upload the file by either entering a link or choosing from local storage',

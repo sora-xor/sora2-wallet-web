@@ -341,13 +341,13 @@ export default class CreateNFT extends Mixins(
   }
 
   &__btn {
-    background: #d5cdd0 !important;
+    background: var(--s-color-base-content-tertiary) !important;
     margin-top: #{$basic-spacing-medium};
     padding: 0 !important;
   }
 
   &__label {
-    padding: 16px;
+    padding: calc(var(--s-size-small) / 2);
 
     &:hover {
       cursor: pointer;
@@ -362,7 +362,7 @@ export default class CreateNFT extends Mixins(
 
 .info-line-container {
   text-transform: uppercase;
-  margin-bottom: 16px;
+  margin-bottom: calc(var(--s-size-small) / 2);
 }
 </style>
 
@@ -400,7 +400,7 @@ export default class CreateNFT extends Mixins(
   justify-content: center;
   flex-direction: column;
   overflow: hidden;
-  border: 2px dashed #d5cdd0;
+  border: 2px dashed var(--s-color-base-content-tertiary);
   border-radius: var(--s-border-radius-small);
   margin: #{$basic-spacing-medium} 0;
   height: 200px;
@@ -433,7 +433,7 @@ export default class CreateNFT extends Mixins(
     letter-spacing: var(--s-letter-spacing-small);
     color: var(--s-color-base-content-secondary);
     font-weight: 400 !important;
-    font-size: 16px;
+    font-size: calc(var(--s-size-small) / 2);
     text-align: center;
     padding: 0 50px;
     color: #2a171f;
