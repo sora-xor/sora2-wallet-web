@@ -130,22 +130,6 @@ export const toHashTable = (list: Array<any>, key: string) => {
   }, {});
 };
 
-export const fileToBase64 = (file: File): Promise<string | null> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result?.toString() || '');
-    reader.onerror = (e) => reject(e);
-  });
-
-export const fileToBuffer = (file: File): Promise<string | ArrayBuffer | null> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (e) => reject(e);
-  });
-
 export const getIpfsPath = (url: string): string => {
   const path = new URL(url).pathname;
   return path.replace(/\/ipfs\//, '');

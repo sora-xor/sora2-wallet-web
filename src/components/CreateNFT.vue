@@ -136,7 +136,8 @@ import { FPNumber, MaxTotalSupply, Operation, XOR } from '@sora-substrate/util';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
 import { api, nftClient, ImageNFT } from '../api';
-import { fileToBase64, fileToBuffer, getIpfsPath, getUrlContentSource, shortenFileName } from '../util';
+import { getIpfsPath, getUrlContentSource, shortenFileName } from '../util';
+import { IpfsStorage } from '../util/ipfsStorage';
 
 @Component({
   components: {
@@ -221,7 +222,7 @@ export default class CreateNFT extends Mixins(
     }
     this.file = file;
     this.fileName = file.name;
-    this.contentSrcLink = (await fileToBase64(file)) as string;
+    this.contentSrcLink = (await IpfsStorage.fileToBase64(file)) as string;
     this.badSource = false;
     this.imageLoading = false;
     this.tokenContentLink = '';
@@ -238,15 +239,20 @@ export default class CreateNFT extends Mixins(
   }
 
   async checkImageFromSource(url: string): Promise<void> {
-    const response = await fetch(url);
-    const buffer = await response.blob();
-    this.imageLoading = false;
+    try {
+      const response = await fetch(url);
+      const buffer = await response.blob();
+      this.imageLoading = false;
 
-    if (buffer.type.startsWith('image/')) {
-      this.badSource = false;
-      this.contentSrcLink = url;
-      this.tokenContentIpfsParsed = getIpfsPath(url);
-    } else {
+      if (buffer.type.startsWith('image/')) {
+        this.badSource = false;
+        this.contentSrcLink = url;
+        this.tokenContentIpfsParsed = getIpfsPath(url);
+      } else {
+        this.badSource = true;
+        this.contentSrcLink = '';
+      }
+    } catch {
       this.badSource = true;
       this.contentSrcLink = '';
     }
@@ -268,7 +274,7 @@ export default class CreateNFT extends Mixins(
   }
 
   async storeNftImage(file: File): Promise<void> {
-    const content = (await fileToBuffer(file)) as ArrayBuffer;
+    const content = (await IpfsStorage.fileToBuffer(file)) as ArrayBuffer;
 
     const metadata = await nftClient.store({
       name: file.name,
@@ -431,12 +437,11 @@ export default class CreateNFT extends Mixins(
 
   &__placeholder {
     letter-spacing: var(--s-letter-spacing-small);
-    color: var(--s-color-base-content-secondary);
+    color: var(--s-color-base-content-primary);
     font-weight: 400 !important;
     font-size: calc(var(--s-size-small) / 2);
     text-align: center;
     padding: 0 50px;
-    color: #2a171f;
   }
 
   &__clear-btn {
