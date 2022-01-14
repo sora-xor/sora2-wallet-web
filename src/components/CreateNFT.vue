@@ -60,7 +60,6 @@
       <p class="wallet-settings-create-token_desc">{{ t('createToken.nft.symbol.desc') }}</p>
       <s-input
         type="textarea"
-        :value="String('Description')"
         v-model="tokenDescription"
         :placeholder="t('createToken.nft.description.placeholder')"
         class="input-textarea"
@@ -136,7 +135,7 @@ import { FPNumber, MaxTotalSupply, Operation, XOR } from '@sora-substrate/util';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
 import { api, nftClient, ImageNFT } from '../api';
-import { getIpfsPath, getUrlContentSource, shortenFileName } from '../util';
+import { shortenFileName } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 
 @Component({
@@ -200,7 +199,7 @@ export default class CreateNFT extends Mixins(
 
   get contentSource(): string {
     if (this.file) return this.t('createToken.nft.source.value');
-    return getUrlContentSource(this.tokenContentLink);
+    return IpfsStorage.getStorageHostname(this.tokenContentLink);
   }
 
   get hasEnoughXor(): boolean {
@@ -247,7 +246,7 @@ export default class CreateNFT extends Mixins(
       if (buffer.type.startsWith('image/')) {
         this.badSource = false;
         this.contentSrcLink = url;
-        this.tokenContentIpfsParsed = getIpfsPath(url);
+        this.tokenContentIpfsParsed = IpfsStorage.getIpfsPath(url);
       } else {
         this.badSource = true;
         this.contentSrcLink = '';
@@ -282,7 +281,7 @@ export default class CreateNFT extends Mixins(
       image: new ImageNFT([content], file.name, { type: file.type }),
     });
 
-    this.tokenContentIpfsParsed = getIpfsPath(metadata.embed().image.href);
+    this.tokenContentIpfsParsed = IpfsStorage.getIpfsPath(metadata.embed().image.href);
   }
 
   async registerNftAsset(): Promise<void> {

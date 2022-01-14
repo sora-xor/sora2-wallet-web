@@ -8,8 +8,6 @@ import type { RewardsAmountHeaderItem } from '../types/rewards';
 
 export const APP_NAME = 'Sora2 Wallet';
 
-const IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
-
 export const WHITE_LIST_GITHUB_URL =
   'https://raw.githubusercontent.com/sora-xor/polkaswap-exchange-web/develop/public/whitelist.json';
 
@@ -128,20 +126,6 @@ export const toHashTable = (list: Array<any>, key: string) => {
 
     return { ...result, [item[key]]: item };
   }, {});
-};
-
-export const getIpfsPath = (url: string): string => {
-  const path = new URL(url).pathname;
-  return path.replace(/\/ipfs\//, '');
-};
-
-export const getUrlContentSource = (link: string): string => {
-  if (!link) return '';
-  return new URL(link).hostname;
-};
-
-export const constructFullIpfsURL = (path: string) => {
-  return IPFS_GATEWAY + path;
 };
 
 export const shortenFileName = (fileName: string, length = fileName.length / 2): string => {

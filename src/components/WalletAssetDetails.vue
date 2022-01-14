@@ -118,7 +118,8 @@ import InfoLine from './InfoLine.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import WalletHistory from './WalletHistory.vue';
 import { RouteNames } from '../consts';
-import { constructFullIpfsURL, getAssetIconStyles, getUrlContentSource } from '../util';
+import { getAssetIconStyles } from '../util';
+import { IpfsStorage } from '../util/ipfsStorage';
 import { Operations, Account } from '../types/common';
 
 import type { WalletPermissions } from '../consts';
@@ -231,7 +232,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   get contentSource(): string {
-    return getUrlContentSource(this.contentLink);
+    return IpfsStorage.getStorageHostname(this.contentLink);
   }
 
   get isXor(): boolean {
@@ -298,7 +299,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
   async setNftMeta(): Promise<void> {
     const ipfsPath = await api.getNftContent(this.currentRouteParams.asset.address);
-    this.contentLink = constructFullIpfsURL(ipfsPath);
+    this.contentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
     this.tokenDescription = await api.getNftDescription(this.currentRouteParams.asset.address);
   }
 
