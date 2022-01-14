@@ -15,11 +15,13 @@ export class IpfsStorage {
     return path.replace(/\/ipfs\//, '');
   }
 
-  static fileToBase64(file: File): Promise<string | null> {
+  static fileToBase64(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result?.toString() || '');
+      reader.onload = () => {
+        if (reader.result !== null) resolve(reader.result.toString() || '');
+      };
       reader.onerror = (e) => reject(e);
     });
   }
