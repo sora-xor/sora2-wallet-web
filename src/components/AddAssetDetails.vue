@@ -41,14 +41,15 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { Asset, isWhitelistAsset, isBlacklistAsset, Whitelist } from '@sora-substrate/util';
 import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
+import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 import WalletBase from './WalletBase.vue';
 import { RouteNames } from '../consts';
 import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
+import { api } from '../api';
 import type { WhitelistIdsBySymbol } from '../types/common';
 
 @Component({
@@ -84,14 +85,14 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     if (!this.asset) {
       return false;
     }
-    return isWhitelistAsset(this.asset, this.whitelist);
+    return api.assets.isWhitelist(this.asset, this.whitelist);
   }
 
   get isBlacklist(): boolean {
     if (!this.asset) {
       return false;
     }
-    return isBlacklistAsset(this.asset, this.whitelistIdsBySymbol);
+    return api.assets.isBlacklist(this.asset, this.whitelistIdsBySymbol);
   }
 
   get assetCardStatus(): string {
