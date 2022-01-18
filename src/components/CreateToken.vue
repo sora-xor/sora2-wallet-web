@@ -76,16 +76,9 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
-import {
-  KnownSymbols,
-  FPNumber,
-  MaxTotalSupply,
-  NetworkFeesObject,
-  Operation,
-  XOR,
-  CodecString,
-} from '@sora-substrate/util';
+import { Action } from 'vuex-class';
+import { FPNumber, Operation, CodecString } from '@sora-substrate/util';
+import { KnownSymbols, MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
 
 import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
@@ -155,7 +148,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   }
 
   get hasEnoughXor(): boolean {
-    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
+    const accountXor = api.assets.accountAssets.find((asset) => asset.address === XOR.address);
     if (!accountXor || !accountXor.balance || !+accountXor.balance.transferable) {
       return false;
     }
@@ -165,12 +158,12 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
 
   get xorBalance(): Nullable<CodecString> {
     // TODO: XOR balance here can be unsyncronized, need to fix
-    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
+    const accountXor = api.assets.accountAssets.find((asset) => asset.address === XOR.address);
     return accountXor ? accountXor.balance.transferable : null;
   }
 
   async registerAsset(): Promise<void> {
-    return api.registerAsset(this.tokenSymbol, this.tokenName.trim(), this.tokenSupply, this.extensibleSupply);
+    return api.assets.register(this.tokenSymbol, this.tokenName.trim(), this.tokenSupply, this.extensibleSupply);
   }
 
   async onConfirm(): Promise<void> {

@@ -1,11 +1,11 @@
 import Vuex from 'vuex';
-import { Account } from '@/types/common';
 import { History, TransactionStatus } from '@sora-substrate/util';
 
 import WalletHistory from '@/components/WalletHistory.vue';
 import { useDescribe, useShallowMount, useMount } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock';
 import { MOCK_ACCOUNT } from '../../utils/WalletAccountMock';
+import type { Account } from '@/types/common';
 
 const createStore = (historyArray?: Array<History> | undefined) => {
   return new Vuex.Store({
