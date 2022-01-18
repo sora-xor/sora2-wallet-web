@@ -1,14 +1,6 @@
-import {
-  Asset,
-  AccountAsset,
-  FPNumber,
-  KnownSymbols,
-  History,
-  TransactionStatus,
-  Operation,
-  WhitelistArrayItem,
-  api,
-} from '@sora-substrate/util';
+import { FPNumber, History, TransactionStatus, Operation, api } from '@sora-substrate/util';
+import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
+import type { AccountAsset, Asset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { SoraNetwork, WalletPermissions } from '@/consts';
 import type { Account } from '@/types/common';
