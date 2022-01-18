@@ -1,5 +1,5 @@
 import Vuex from 'vuex';
-import { History } from '@sora-substrate/util';
+import type { History } from '@sora-substrate/util';
 
 import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock';
