@@ -131,7 +131,8 @@ import LoadingMixin from '../components/mixins/LoadingMixin';
 import TransactionMixin from '../components/mixins/TransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import { RouteNames, Step } from '../consts';
-import { FPNumber, MaxTotalSupply, Operation, XOR } from '@sora-substrate/util';
+import { FPNumber, Operation } from '@sora-substrate/util';
+import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
 import { File as ImageNFT } from 'nft.storage';
@@ -205,7 +206,7 @@ export default class CreateNFT extends Mixins(
   }
 
   get hasEnoughXor(): boolean {
-    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
+    const accountXor = api.assets.accountAssets.find((asset) => asset.address === XOR.address);
     if (!accountXor || !accountXor.balance || !+accountXor.balance.transferable) {
       return false;
     }
@@ -287,7 +288,7 @@ export default class CreateNFT extends Mixins(
   }
 
   async registerNftAsset(): Promise<void> {
-    return api.registerAsset(this.tokenSymbol, this.tokenName.trim(), this.tokenSupply, undefined, {
+    return api.assets.register(this.tokenSymbol, this.tokenName.trim(), this.tokenSupply, undefined, {
       isNft: true,
       content: this.tokenContentIpfsParsed,
       description: this.tokenDescription,

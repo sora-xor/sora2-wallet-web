@@ -300,9 +300,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   async setNftMeta(): Promise<void> {
-    const ipfsPath = await api.getNftContent(this.currentRouteParams.asset.address);
+    const ipfsPath = await api.assets.getNftContent(this.currentRouteParams.asset.address);
     this.contentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
-    this.tokenDescription = await api.getNftDescription(this.currentRouteParams.asset.address);
+    this.tokenDescription = await api.assets.getNftDescription(this.currentRouteParams.asset.address);
   }
 
   mounted(): void {

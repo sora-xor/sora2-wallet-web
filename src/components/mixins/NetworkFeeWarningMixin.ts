@@ -1,6 +1,7 @@
 import { Mixins, Component } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
-import { FPNumber, NetworkFeesObject, Operation, CodecString, XOR } from '@sora-substrate/util';
+import { FPNumber, NetworkFeesObject, Operation, CodecString } from '@sora-substrate/util';
+import { XOR } from '@sora-substrate/util/build/assets/consts';
 import { api } from '../../api';
 
 import NumberFormatterMixin from './NumberFormatterMixin';
@@ -11,7 +12,7 @@ export default class NetworkFeeWarningMixin extends Mixins(NumberFormatterMixin)
   @Getter networkFees!: NetworkFeesObject;
 
   get xorBalance(): FPNumber {
-    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
+    const accountXor = api.assets.accountAssets.find((asset) => asset.address === XOR.address);
 
     if (accountXor) {
       return this.getFPNumberFromCodec(accountXor.balance.transferable);
