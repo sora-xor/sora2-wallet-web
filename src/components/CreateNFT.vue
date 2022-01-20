@@ -122,7 +122,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { Action } from 'vuex-class';
+import { Action, Getter } from 'vuex-class';
 import NftDetails from './NftDetails.vue';
 import TranslationMixin from '../components/mixins/TranslationMixin';
 import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
@@ -134,7 +134,8 @@ import { RouteNames, Step } from '../consts';
 import { FPNumber, MaxTotalSupply, Operation, XOR } from '@sora-substrate/util';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
-import { api, nftClient, ImageNFT } from '../api';
+import { File as ImageNFT } from 'nft.storage';
+import { api } from '../api';
 import { shortenFileName } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 
@@ -162,6 +163,7 @@ export default class CreateNFT extends Mixins(
   readonly XOR = XOR;
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Getter nftStorage!: any;
 
   @Prop({ default: Step.CreateToken, type: String }) step!: Step;
 
@@ -275,7 +277,7 @@ export default class CreateNFT extends Mixins(
   async storeNftImage(file: File): Promise<void> {
     const content = (await IpfsStorage.fileToBuffer(file)) as ArrayBuffer;
 
-    const metadata = await nftClient.store({
+    const metadata = await this.nftStorage.store({
       name: file.name,
       description: this.tokenDescription,
       image: new ImageNFT([content], file.name, { type: file.type }),

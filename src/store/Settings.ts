@@ -5,6 +5,7 @@ import flow from 'lodash/fp/flow';
 import concat from 'lodash/fp/concat';
 import isEmpty from 'lodash/fp/isEmpty';
 import isEqual from 'lodash/fp/isEqual';
+import { NFTStorage } from 'nft.storage';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
 
@@ -29,6 +30,8 @@ const types = flow(
     'SET_WALLET_LOADED',
     'SET_NETWORK_FEES',
     'RESET_RUNTIME_VERSION_SUBSCRIPTION',
+    'SET_NFT_API_KEY',
+    'SET_NFT_STORAGE',
   ]),
   map((x) => [x, x]),
   fromPairs
@@ -42,6 +45,8 @@ type SettingsState = {
   shouldBalanceBeHidden: boolean;
   runtimeVersion: number;
   runtimeVersionSubscription: Nullable<Subscription>;
+  nftStorageApiKey: string | null;
+  nftStorage: any;
 };
 
 function initialState(): SettingsState {
@@ -58,6 +63,8 @@ function initialState(): SettingsState {
       showAssetDetails: true,
     },
     soraNetwork: null,
+    nftStorageApiKey: null,
+    nftStorage: null,
     runtimeVersion: Number(JSON.parse(runtimeStorage.get('version'))),
     runtimeVersionSubscription: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
@@ -82,6 +89,12 @@ const getters = {
   },
   shouldBalanceBeHidden(state: SettingsState): boolean {
     return state.shouldBalanceBeHidden;
+  },
+  nftStorageKey(state: SettingsState): string | null {
+    return state.nftStorageApiKey;
+  },
+  nftStorage(state: SettingsState): any {
+    return state.nftStorage;
   },
 };
 
@@ -129,6 +142,14 @@ const mutations = {
       state.runtimeVersionSubscription = null;
     }
   },
+
+  [types.SET_NFT_API_KEY](state: SettingsState, apiKey: string) {
+    state.nftStorageApiKey = apiKey;
+  },
+
+  [types.SET_NFT_STORAGE](state: SettingsState, nftStorage: any) {
+    state.nftStorage = nftStorage;
+  },
 };
 
 const actions = {
@@ -142,6 +163,16 @@ const actions = {
 
   setSoraNetwork({ commit }, network: Nullable<SoraNetwork>) {
     commit(types.SET_SORA_NETWORK, network);
+  },
+
+  setNftStorageKey({ commit, dispatch }, apiKey: string) {
+    commit(types.SET_NFT_API_KEY, apiKey);
+    dispatch('setNftStorage');
+  },
+
+  setNftStorage({ commit, getters }) {
+    const nftStorage = new NFTStorage({ token: getters.nftStorageKey });
+    commit(types.SET_NFT_STORAGE, nftStorage);
   },
 
   subscribeOnRuntimeVersion({ commit, state }) {

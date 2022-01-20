@@ -1,7 +1,4 @@
 import { Storage } from '@sora-substrate/util';
-import env from '../../public/env.json';
-
-export const nftStorageApiKey = env.API_KEYS.nftStorage;
 
 export const storage = new Storage();
 
