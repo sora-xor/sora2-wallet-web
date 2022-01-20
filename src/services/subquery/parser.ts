@@ -1,6 +1,7 @@
-import { FPNumber, Operation, TransactionStatus, History, Asset } from '@sora-substrate/util';
+import { FPNumber, Operation, TransactionStatus, History } from '@sora-substrate/util';
 import { BN } from '@polkadot/util';
 import getOr from 'lodash/fp/getOr';
+import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 import store from '../../store';
 import { api } from '../../api';
@@ -94,7 +95,7 @@ const getAssetByAddress = async (address: string): Promise<Asset> => {
   if (address in store.getters.whitelist) {
     return store.getters.whitelist[address];
   }
-  return await api.getAssetInfo(address);
+  return await api.assets.getAssetInfo(address);
 };
 
 const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {

@@ -95,7 +95,8 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
-import { AccountAsset, FPNumber } from '@sora-substrate/util';
+import { FPNumber } from '@sora-substrate/util';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -104,7 +105,6 @@ import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import { RouteNames, HiddenValue } from '../consts';
 import { getAssetIconStyles, formatAddress } from '../util';
-
 import type { WalletPermissions } from '../consts';
 
 @Component({

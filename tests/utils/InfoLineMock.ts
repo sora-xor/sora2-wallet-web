@@ -1,4 +1,4 @@
-import { KnownSymbols } from '@sora-substrate/util';
+import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 
 interface InfoLine {
   title: string;
