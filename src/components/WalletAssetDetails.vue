@@ -106,7 +106,9 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { AccountAsset, CodecString, KnownAssets, KnownSymbols, BalanceType, History } from '@sora-substrate/util';
+import { CodecString, History } from '@sora-substrate/util';
+import { KnownAssets, KnownSymbols, BalanceType } from '@sora-substrate/util/build/assets/consts';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import { api } from '../api';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -156,7 +158,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   tokenDescription = '';
   isNft = false;
 
-  private formatBalance(value: CodecString): string {
+  formatBalance(value: CodecString): string {
     return this.formatCodecNumber(value, this.asset.decimals);
   }
 
@@ -287,7 +289,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   handleRemoveAsset(): void {
-    api.removeAsset(this.asset.address);
+    api.assets.removeAsset(this.asset.address);
     this.handleBack();
   }
 

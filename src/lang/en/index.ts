@@ -1,4 +1,5 @@
-import { Operation, TransactionStatus, BalanceType } from '@sora-substrate/util';
+import { Operation, TransactionStatus } from '@sora-substrate/util';
+import { BalanceType } from '@sora-substrate/util/build/assets/consts';
 
 import { AddAssetTabs, TokenTabs, WalletTabs } from '../../consts';
 

@@ -49,7 +49,8 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
-import { AccountAsset, History, TransactionStatus } from '@sora-substrate/util';
+import { History, TransactionStatus } from '@sora-substrate/util';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import { api } from '../api';
 import LoadingMixin from './mixins/LoadingMixin';

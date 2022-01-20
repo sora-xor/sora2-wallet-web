@@ -1,5 +1,7 @@
 import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
-import { FPNumber, KnownAssets, RewardInfo, RewardsInfo } from '@sora-substrate/util';
+import { FPNumber } from '@sora-substrate/util';
+import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
+import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
 import { api } from '../api';
 import store from '../store';

@@ -117,16 +117,9 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import {
-  AccountAsset,
-  Asset,
-  FPNumber,
-  CodecString,
-  KnownAssets,
-  KnownSymbols,
-  Operation,
-  XOR,
-} from '@sora-substrate/util';
+import { FPNumber, CodecString, Operation } from '@sora-substrate/util';
+import { KnownAssets, KnownSymbols, XOR } from '@sora-substrate/util/build/assets/consts';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';

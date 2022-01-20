@@ -75,7 +75,8 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { Action } from 'vuex-class';
-import { KnownSymbols, FPNumber, MaxTotalSupply, Operation, XOR, CodecString } from '@sora-substrate/util';
+import { FPNumber, Operation } from '@sora-substrate/util';
+import { KnownSymbols, MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
 
 import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
@@ -131,7 +132,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   }
 
   get hasEnoughXor(): boolean {
-    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
+    const accountXor = api.assets.accountAssets.find((asset) => asset.address === XOR.address);
     if (!accountXor || !accountXor.balance || !+accountXor.balance.transferable) {
       return false;
     }
@@ -140,7 +141,7 @@ export default class CreateToken extends Mixins(TransactionMixin, NumberFormatte
   }
 
   async registerAsset(): Promise<void> {
-    return api.registerAsset(this.tokenSymbol, this.tokenName.trim(), this.tokenSupply, this.extensibleSupply);
+    return api.assets.register(this.tokenSymbol, this.tokenName.trim(), this.tokenSupply, this.extensibleSupply);
   }
 
   async onCreate(): Promise<void> {
