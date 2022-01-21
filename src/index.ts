@@ -22,6 +22,7 @@ import TransactionMixin from './components/mixins/TransactionMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
 import LoadingMixin from './components/mixins/LoadingMixin';
 import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
+import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
@@ -125,6 +126,7 @@ const mixins = {
   TranslationMixin,
   LoadingMixin,
   ReferralRewardsMixin,
+  PaginationSearchMixin,
 };
 
 export {

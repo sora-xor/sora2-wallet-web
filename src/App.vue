@@ -44,7 +44,7 @@ export default class App extends Mixins(TransactionMixin) {
   @Action setSoraNetwork!: (network: SoraNetwork) => Promise<void>;
 
   async created(): Promise<void> {
-    await this.setSoraNetwork(SoraNetwork.Dev);
+    await this.setSoraNetwork(SoraNetwork.Stage);
     await initWallet({ withoutStore: true, whiteListOverApi: true }); // We don't need storage for local development
     this.trackActiveTransactions();
     const localeLanguage = navigator.language;

@@ -14,7 +14,7 @@
         <template v-if="filteredHistory.length">
           <div
             class="history-item s-flex"
-            v-for="item in filteredHistory.slice((currentPage - 1) * pageAmount, currentPage * pageAmount)"
+            v-for="item in historyItems"
             :key="`history-${item.id}`"
             @click="handleOpenTransactionDetails(item.id)"
           >
@@ -39,8 +39,8 @@
         :page-size="pageAmount"
         :total="total"
         :disabled="loading"
-        @prev-click="handlePaginationClick"
-        @next-click="handlePaginationClick"
+        @prev-click="handlePrevClick"
+        @next-click="handleNextClick"
       />
     </s-form>
   </div>
@@ -56,13 +56,14 @@ import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 import { api } from '../api';
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
+import PaginationSearchMixin from './mixins/PaginationSearchMixin';
 import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames } from '../consts';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
 import { historyElementsFilter } from '../services/subquery/queries/historyElements';
 
 @Component
-export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
+export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
   @Getter activity!: AccountHistory<HistoryItem>;
   @Getter shouldBalanceBeHidden!: boolean;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
@@ -71,9 +72,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   @Prop() readonly asset?: AccountAsset;
 
   TransactionStatus = TransactionStatus;
-  query = '';
-  currentPage = 1;
-  pageAmount = 8;
+
+  pageAmount = 8; // override PaginationSearchMixin
 
   get assetAddress(): string | undefined {
     return this.asset && this.asset.address;
@@ -89,11 +89,15 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return Object.values(this.activity);
   }
 
-  get filteredHistory(): Array<any> {
+  get filteredHistory(): Array<History> {
     if (!this.hasHistory) return [];
     return this.getFilteredHistory(this.transactions).sort((a: History, b: History) =>
       a.startTime && b.startTime ? b.startTime - a.startTime : 0
     );
+  }
+
+  get historyItems(): Array<History> {
+    return this.getPageItems(this.filteredHistory);
   }
 
   get hasHistory(): boolean {
@@ -143,17 +147,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return getStatusIcon(this.getStatus(status));
   }
 
-  handlePaginationClick(current: number): void {
-    this.currentPage = current;
-  }
-
   handleOpenTransactionDetails(id: number): void {
     this.navigate({ name: RouteNames.WalletTransactionDetails, params: { id, asset: this.asset } });
-  }
-
-  handleResetSearch(): void {
-    this.query = '';
-    this.currentPage = 1;
   }
 
   async updateHistory(): Promise<void> {
