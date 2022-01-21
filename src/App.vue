@@ -24,7 +24,7 @@ import TransactionMixin from './components/mixins/TransactionMixin';
 import { initWallet } from './index';
 import SoraWallet from './SoraWallet.vue';
 import { SoraNetwork, NFT_STORAGE_API_KEY } from './consts';
-import { ApiKeysObject } from './store/Settings';
+import { ApiKeysObject } from './types/common';
 
 @Component({
   components: { SoraWallet },

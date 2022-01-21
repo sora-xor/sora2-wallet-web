@@ -28,3 +28,7 @@ export type Permissions = {
   sendAssets: boolean;
   swapAssets: boolean;
 };
+
+export type ApiKeysObject = {
+  [key: string]: string;
+};

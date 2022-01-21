@@ -12,6 +12,7 @@ import type { Subscription } from '@polkadot/x-rxjs';
 import { api } from '../api';
 import type { WalletPermissions, SoraNetwork } from '../consts';
 import { storage, runtimeStorage } from '../util/storage';
+import { ApiKeysObject } from '../types/common';
 
 function areKeysEqual(obj1: object, obj2: object): boolean {
   const obj1Keys = Object.keys(obj1).sort();
@@ -36,10 +37,6 @@ const types = flow(
   map((x) => [x, x]),
   fromPairs
 )([]);
-
-export type ApiKeysObject = {
-  [key: string]: string;
-};
 
 type SettingsState = {
   apiKeys: ApiKeysObject;
