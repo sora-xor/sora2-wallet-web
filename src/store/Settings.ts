@@ -30,14 +30,19 @@ const types = flow(
     'SET_WALLET_LOADED',
     'SET_NETWORK_FEES',
     'RESET_RUNTIME_VERSION_SUBSCRIPTION',
-    'SET_NFT_API_KEY',
     'SET_NFT_STORAGE',
+    'SET_API_KEYS',
   ]),
   map((x) => [x, x]),
   fromPairs
 )([]);
 
+export type ApiKeysObject = {
+  [key: string]: string;
+};
+
 type SettingsState = {
+  apiKeys: ApiKeysObject;
   isWalletLoaded: boolean;
   permissions: WalletPermissions;
   soraNetwork: Nullable<SoraNetwork>;
@@ -45,12 +50,12 @@ type SettingsState = {
   shouldBalanceBeHidden: boolean;
   runtimeVersion: number;
   runtimeVersionSubscription: Nullable<Subscription>;
-  nftStorageApiKey: string | null;
   nftStorage: any;
 };
 
 function initialState(): SettingsState {
   return {
+    apiKeys: {} as ApiKeysObject,
     isWalletLoaded: false, // wallet is loading
     permissions: {
       addAssets: true,
@@ -63,7 +68,6 @@ function initialState(): SettingsState {
       showAssetDetails: true,
     },
     soraNetwork: null,
-    nftStorageApiKey: null,
     nftStorage: null,
     runtimeVersion: Number(JSON.parse(runtimeStorage.get('version'))),
     runtimeVersionSubscription: null,
@@ -75,6 +79,9 @@ function initialState(): SettingsState {
 const state = initialState();
 
 const getters = {
+  apiKeys(state: SettingsState): ApiKeysObject {
+    return state.apiKeys;
+  },
   isWalletLoaded(state: SettingsState): boolean {
     return state.isWalletLoaded;
   },
@@ -89,9 +96,6 @@ const getters = {
   },
   shouldBalanceBeHidden(state: SettingsState): boolean {
     return state.shouldBalanceBeHidden;
-  },
-  nftStorageKey(state: SettingsState): string | null {
-    return state.nftStorageApiKey;
   },
   nftStorage(state: SettingsState): any {
     return state.nftStorage;
@@ -143,8 +147,8 @@ const mutations = {
     }
   },
 
-  [types.SET_NFT_API_KEY](state: SettingsState, apiKey: string) {
-    state.nftStorageApiKey = apiKey;
+  [types.SET_API_KEYS](state, keys = {}) {
+    state.apiKeys = { ...state.apiKeys, ...keys };
   },
 
   [types.SET_NFT_STORAGE](state: SettingsState, nftStorage: any) {
@@ -165,13 +169,14 @@ const actions = {
     commit(types.SET_SORA_NETWORK, network);
   },
 
-  setNftStorageKey({ commit, dispatch }, apiKey: string) {
-    commit(types.SET_NFT_API_KEY, apiKey);
+  setApiKeys({ commit, dispatch }, keys) {
+    commit(types.SET_API_KEYS, keys);
+
     dispatch('setNftStorage');
   },
 
-  setNftStorage({ commit, getters }) {
-    const nftStorage = new NFTStorage({ token: getters.nftStorageKey });
+  setNftStorage({ commit, state }) {
+    const nftStorage = new NFTStorage({ token: state.apiKeys.nftStorage });
     commit(types.SET_NFT_STORAGE, nftStorage);
   },
 
