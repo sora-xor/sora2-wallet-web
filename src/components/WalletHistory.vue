@@ -91,9 +91,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   get filteredHistory(): Array<History> {
     if (!this.hasHistory) return [];
-    return this.getFilteredHistory(this.transactions).sort((a: History, b: History) =>
-      a.startTime && b.startTime ? b.startTime - a.startTime : 0
-    );
+    return this.transactions;
+    // return this.getFilteredHistory(this.transactions).sort((a: History, b: History) =>
+    //   a.startTime && b.startTime ? b.startTime - a.startTime : 0
+    // );
   }
 
   get historyItems(): Array<History> {

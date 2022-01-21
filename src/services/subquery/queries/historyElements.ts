@@ -1,3 +1,4 @@
+import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../../types';
 
 export const HistoryElementsQuery = `
@@ -61,46 +62,48 @@ const createAssetFilters = (assetAddress: string): Array<AssetFilter> => {
   }, []);
 };
 
-export const historyElementsFilter = (address = '', { assetAddress = '', timestamp = 0 } = {}): any => {
-  const filter: any = {
-    and: [
+const createOperationsFilter = () => {
+  return {
+    or: [
       {
-        or: [
-          {
-            module: {
-              equalTo: ModuleNames.LiquidityProxy,
-            },
-            method: {
-              equalTo: ModuleMethods.LiquidityProxySwap,
-            },
-          },
-          {
-            module: {
-              equalTo: ModuleNames.Assets,
-            },
-            method: {
-              in: [ModuleMethods.AssetsTransfer, ModuleMethods.AssetsRegister],
-            },
-          },
-          {
-            module: {
-              equalTo: ModuleNames.PoolXYK,
-            },
-            method: {
-              in: [ModuleMethods.PoolXYKDepositLiquidity, ModuleMethods.PoolXYKWithdrawLiquidity],
-            },
-          },
-          {
-            module: {
-              equalTo: ModuleNames.Utility,
-            },
-            method: {
-              equalTo: ModuleMethods.UtilityBatchAll,
-            },
-          },
-        ],
+        module: {
+          equalTo: ModuleNames.LiquidityProxy,
+        },
+        method: {
+          equalTo: ModuleMethods.LiquidityProxySwap,
+        },
+      },
+      {
+        module: {
+          equalTo: ModuleNames.Assets,
+        },
+        method: {
+          in: [ModuleMethods.AssetsTransfer, ModuleMethods.AssetsRegister],
+        },
+      },
+      {
+        module: {
+          equalTo: ModuleNames.PoolXYK,
+        },
+        method: {
+          in: [ModuleMethods.PoolXYKDepositLiquidity, ModuleMethods.PoolXYKWithdrawLiquidity],
+        },
+      },
+      {
+        module: {
+          equalTo: ModuleNames.Utility,
+        },
+        method: {
+          equalTo: ModuleMethods.UtilityBatchAll,
+        },
       },
     ],
+  };
+};
+
+export const historyElementsFilter = (address = '', { assetAddress = '', timestamp = 0 } = {}): any => {
+  const filter: any = {
+    and: [createOperationsFilter()],
   };
 
   if (address) {
