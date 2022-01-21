@@ -6,7 +6,7 @@
     :show-action="!isXor"
     action-icon="basic-eye-24"
     action-tooltip="asset.remove"
-    :disabled-clean-history="isCleanHistoryDisabled"
+    :disabled-clean-history="!isCleanHistoryEnabled"
     @back="handleBack"
     @action="handleRemoveAsset"
     @cleanHistory="handleCleanHistory"
@@ -89,9 +89,9 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { CodecString, History } from '@sora-substrate/util';
 import { KnownAssets, KnownSymbols, BalanceType } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../api';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -126,7 +126,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @Getter account!: Account;
   @Getter accountAssets!: Array<AccountAsset>;
   @Getter currentRouteParams!: any;
-  @Getter activity!: Array<History>;
+  @Getter activity!: AccountHistory<HistoryItem>;
   @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
@@ -213,10 +213,12 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     return asset && asset.symbol === KnownSymbols.XOR;
   }
 
-  get isCleanHistoryDisabled(): boolean {
-    return !this.asset
-      ? true
-      : !this.activity.filter((item) => [item.assetAddress, item.asset2Address].includes(this.asset.address)).length;
+  get isCleanHistoryEnabled(): boolean {
+    if (!this.asset) return false;
+
+    return Object.values(this.activity).some((item) =>
+      [item.assetAddress, item.asset2Address].includes(this.asset.address)
+    );
   }
 
   handleBack(): void {

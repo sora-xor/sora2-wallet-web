@@ -51,6 +51,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
 import { History, TransactionStatus } from '@sora-substrate/util';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../api';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -62,7 +63,7 @@ import { historyElementsFilter } from '../services/subquery/queries/historyEleme
 
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
-  @Getter activity!: Array<History>;
+  @Getter activity!: AccountHistory<HistoryItem>;
   @Getter shouldBalanceBeHidden!: boolean;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
@@ -74,23 +75,18 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   currentPage = 1;
   pageAmount = 8;
 
-  // for fast search
-  get activityHashTable(): any {
-    return this.activity.reduce((result, item) => {
-      if (!item.txId) return result;
-      return { ...result, [item.txId]: item };
-    }, {});
-  }
-
   get assetAddress(): string | undefined {
     return this.asset && this.asset.address;
   }
 
   get transactions(): Array<History> {
     if (this.assetAddress) {
-      return this.activity.filter((item) => [item.assetAddress, item.asset2Address].includes(this.assetAddress));
+      return Object.values(this.activity).filter((item) =>
+        [item.assetAddress, item.asset2Address].includes(this.assetAddress)
+      );
     }
-    return this.activity;
+
+    return Object.values(this.activity);
   }
 
   get filteredHistory(): Array<any> {
@@ -200,7 +196,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
         for (const edge of edges) {
           const transaction = edge.node;
-          const hasHistoryItem = transaction.id in this.activityHashTable;
+          const hasHistoryItem = transaction.id in this.activity;
 
           if (!hasHistoryItem) {
             const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);

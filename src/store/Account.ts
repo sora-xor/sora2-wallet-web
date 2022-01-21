@@ -4,8 +4,9 @@ import fromPairs from 'lodash/fp/fromPairs';
 import flow from 'lodash/fp/flow';
 import concat from 'lodash/fp/concat';
 import omit from 'lodash/fp/omit';
-import { axiosInstance, History, FPNumber } from '@sora-substrate/util';
+import { axiosInstance, FPNumber } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
+import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 import type { AccountAsset, Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { api } from '../api';
@@ -57,7 +58,7 @@ type AccountState = {
   isExternal: boolean;
   accountAssets: Array<AccountAsset>;
   selectedTransactionId: Nullable<string>;
-  activity: Array<History>;
+  activity: AccountHistory<HistoryItem>;
   assets: Array<Asset>;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
   whitelistArray: Array<WhitelistArrayItem>;
@@ -76,7 +77,7 @@ function initialState(): AccountState {
     isExternal: Boolean(JSON.parse(storage.get('isExternal'))) || false,
     accountAssets: [],
     selectedTransactionId: null,
-    activity: [], // account history (without bridge)
+    activity: {}, // account history (without bridge)
     assets: [],
     polkadotJsAccounts: [],
     whitelistArray: [],
@@ -111,7 +112,7 @@ const getters = {
   accountAssetsAddressTable(state: AccountState): any {
     return toHashTable(state.accountAssets, 'address');
   },
-  activity(state: AccountState): Array<History> {
+  activity(state: AccountState): AccountHistory<HistoryItem> {
     return state.activity;
   },
   assets(state: AccountState): Array<Asset> {
@@ -140,8 +141,10 @@ const getters = {
   assetsLoading(state: AccountState): boolean {
     return state.assetsLoading;
   },
-  selectedTransaction(state: AccountState, getters): History {
-    return getters.activity.find((item) => item.id === state.selectedTransactionId);
+  selectedTransaction(state: AccountState, getters): Nullable<HistoryItem> {
+    if (!state.selectedTransactionId) return null;
+
+    return getters.activity[state.selectedTransactionId];
   },
   referralRewards(state: AccountState): ReferrerRewards {
     return state.referralRewards;
@@ -174,7 +177,7 @@ const mutations = {
     state.name = storage.get('name') || '';
     state.isExternal = Boolean(storage.get('isExternal')) || false;
     state.accountAssets = api.assets.accountAssets; // to save reactivity
-    state.activity = api.accountHistory;
+    state.activity = api.history;
   },
 
   [types.GET_ADDRESS_REQUEST](state: AccountState) {
@@ -211,7 +214,7 @@ const mutations = {
     state.accountAssets = [];
   },
 
-  [types.GET_ACCOUNT_ACTIVITY](state: AccountState, activity: Array<History>) {
+  [types.GET_ACCOUNT_ACTIVITY](state: AccountState, activity: AccountHistory<HistoryItem>) {
     state.activity = activity;
   },
 
@@ -402,7 +405,7 @@ const actions = {
     }
   },
   getAccountActivity({ commit }) {
-    commit(types.GET_ACCOUNT_ACTIVITY, api.accountHistory);
+    commit(types.GET_ACCOUNT_ACTIVITY, api.history);
   },
   async getWhitelist({ commit }, { whiteListOverApi }) {
     const url = whiteListOverApi ? WHITE_LIST_GITHUB_URL : '/whitelist.json';

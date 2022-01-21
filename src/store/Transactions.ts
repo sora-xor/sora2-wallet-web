@@ -70,14 +70,13 @@ const mutations = {
     state.activeTransactions = state.activeTransactions.filter((t: History) => t.id !== tx.id);
   },
 
+  // TODO: refactoring
   [types.UPDATE_ACTIVE_TRANSACTIONS](state: TransactionsState) {
-    if (!api.history.length) {
-      return;
-    }
     const history = api.history;
 
     state.activeTransactions = state.activeTransactions.map((tx) => {
-      return history.find((item) => item.id === tx.id) || tx;
+      if (!tx.id) return tx;
+      return history[tx.id] || tx;
     });
   },
 };

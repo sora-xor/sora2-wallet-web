@@ -22,6 +22,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
+import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../api';
 import TranslationMixin from './mixins/TranslationMixin';
@@ -46,7 +47,7 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   @Getter currentRouteParams!: any;
   @Getter account!: Account;
-  @Getter activity!: Array<History>;
+  @Getter activity!: AccountHistory<HistoryItem>;
   @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
@@ -58,7 +59,7 @@ export default class Wallet extends Mixins(TranslationMixin) {
   }
 
   get isCleanHistoryDisabled(): boolean {
-    return !this.activity.length;
+    return !Object.keys(this.activity).length;
   }
 
   handleChangeTab(value: WalletTabs): void {
