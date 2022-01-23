@@ -96,7 +96,13 @@
     <transition name="fadeHeight">
       <div v-if="isNft && wasBalanceDetailsClicked" class="info-line-container">
         <info-line :label="t('createToken.nft.supply.quantity')" :value="balance"></info-line>
-        <info-line :label="t('createToken.nft.source.label')" :value="contentSource"></info-line>
+        <info-line
+          :label="t('createToken.nft.source.label')"
+          :value="contentSource"
+          @click.native="handleCopyLink"
+          class="external-link"
+          :withValueTooltip="linkTooltipText"
+        ></info-line>
       </div>
     </transition>
     <wallet-history :asset="asset" />
@@ -120,7 +126,7 @@ import InfoLine from './InfoLine.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import WalletHistory from './WalletHistory.vue';
 import { RouteNames } from '../consts';
-import { getAssetIconStyles } from '../util';
+import { copyToClipboard, getAssetIconStyles, shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 import { Operations, Account } from '../types/common';
 
@@ -157,6 +163,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   contentLink = '';
   tokenDescription = '';
   isNft = false;
+  linkTooltipText = this.t('createToken.nft.link.copyLink');
 
   formatBalance(value: CodecString): string {
     return this.formatCodecNumber(value, this.asset.decimals);
@@ -234,7 +241,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   get contentSource(): string {
-    return IpfsStorage.getStorageHostname(this.contentLink);
+    const hostname = IpfsStorage.getStorageHostname(this.contentLink);
+    const path = IpfsStorage.getIpfsPath(this.contentLink);
+    return shortenValue(hostname + '/ipfs/' + path, 25);
   }
 
   get isXor(): boolean {
@@ -303,6 +312,11 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     const ipfsPath = await api.assets.getNftContent(this.currentRouteParams.asset.address);
     this.contentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
     this.tokenDescription = await api.assets.getNftDescription(this.currentRouteParams.asset.address);
+  }
+
+  async handleCopyLink(): Promise<void> {
+    await copyToClipboard(this.contentLink);
+    this.linkTooltipText = this.t('assets.copied');
   }
 
   mounted(): void {
@@ -411,5 +425,13 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
 .info-line-container {
   @include fadeHeight;
+}
+</style>
+
+<style lang="scss">
+.external-link {
+  .info-line-value {
+    cursor: pointer;
+  }
 }
 </style>

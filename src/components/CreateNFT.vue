@@ -139,7 +139,7 @@ import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
 import { File as ImageNFT } from 'nft.storage';
 import { api } from '../api';
-import { shortenFileName } from '../util';
+import { shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 
 @Component({
@@ -201,7 +201,7 @@ export default class CreateNFT extends Mixins(
   }
 
   get formattedFileName(): string {
-    return shortenFileName(this.fileName);
+    return shortenValue(this.fileName);
   }
 
   get contentSource(): string {

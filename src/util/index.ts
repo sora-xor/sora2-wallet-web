@@ -130,10 +130,10 @@ export const toHashTable = (list: Array<any>, key: string) => {
   }, {});
 };
 
-export const shortenFileName = (fileName: string, length = fileName.length / 2): string => {
-  if (!fileName) return '';
-  if (fileName.length < 35) return fileName;
-  return `${fileName.slice(0, length / 2)}...${fileName.slice(-length / 2)}`;
+export const shortenValue = (string: string, length = string.length / 2): string => {
+  if (!string) return '';
+  if (string.length < 35) return string;
+  return `${string.slice(0, length / 2)}...${string.slice(-length / 2)}`;
 };
 
 export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo>): Array<RewardsAmountHeaderItem> => {
