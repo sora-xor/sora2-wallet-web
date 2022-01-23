@@ -14,6 +14,7 @@
     <div class="nft-info">
       <div class="nft-info__name">
         {{ tokenName }}
+        <span v-if="showDropdownIcon">{{ tokenSymbol }}</span>
         <div v-if="showDropdownIcon" @click="handleIconClick" :class="balanceDetailsClasses" class="icon">
           <s-icon name="chevron-down-rounded-16" size="18" />
         </div>
