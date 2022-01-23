@@ -41,28 +41,30 @@
         </div>
       </div>
       <s-input
-        :placeholder="t('createToken.nft.name.placeholder')"
+        :placeholder="t('createToken.tokenSymbol.placeholder')"
+        :minlength="1"
+        :maxlength="7"
+        :disabled="loading"
+        v-maska="tokenSymbolMask"
+        v-model="tokenSymbol"
+      />
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSymbol.desc') }}</p>
+      <s-input
+        :placeholder="t('createToken.tokenName.placeholder')"
         :minlength="1"
         :maxlength="33"
         :disabled="loading"
         v-maska="tokenNameMask"
         v-model="tokenName"
       />
-      <p class="wallet-settings-create-token_desc">{{ t('createToken.nft.name.desc') }}</p>
-      <s-input
-        :placeholder="t('createToken.nft.symbol.placeholder')"
-        :minlength="1"
-        :maxlength="5"
-        :disabled="loading"
-        v-maska="tokenSymbolMask"
-        v-model="tokenSymbol"
-      />
-      <p class="wallet-settings-create-token_desc">{{ t('createToken.nft.symbol.desc') }}</p>
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
       <s-input
         type="textarea"
-        v-model="tokenDescription"
         :placeholder="t('createToken.nft.description.placeholder')"
         class="input-textarea"
+        :disabled="loading"
+        :maxlength="255"
+        v-model="tokenDescription"
       />
       <s-float-input
         v-model="tokenSupply"
@@ -155,7 +157,7 @@ export default class CreateNFT extends Mixins(
   NumberFormatterMixin,
   NetworkFeeWarningMixin
 ) {
-  readonly tokenSymbolMask = 'AAAAA';
+  readonly tokenSymbolMask = 'AAAAAAA';
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } };
   readonly maxTotalSupply = MaxTotalSupply;
   readonly decimals = 0;
@@ -184,7 +186,9 @@ export default class CreateNFT extends Mixins(
 
   get isCreateDisabled(): boolean {
     return (
-      !(this.tokenSymbol && this.tokenName.trim() && this.tokenSupply && this.tokenDescription.trim()) || this.badSource
+      !(this.tokenSymbol && this.tokenName.trim() && this.tokenSupply && this.tokenDescription.trim()) ||
+      this.badSource ||
+      !(this.file || this.tokenContentLink)
     );
   }
 

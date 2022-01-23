@@ -209,14 +209,6 @@ export default {
         placeholderBadSource: 'There’s no image',
         placeholderBadSourceAddition: 'or it’s not uploaded to IPFS yet',
       },
-      name: {
-        placeholder: 'Name',
-        desc: 'Name for the token. You can use from 1 to 33 characters for the selection.',
-      },
-      symbol: {
-        placeholder: 'Symbol',
-        desc: 'Identifier for the token. You can use from 3 to 5 alphanumeric characters for the selection.',
-      },
       supply: {
         placeholder: 'Token supply',
         desc: 'Amount of NFTs you’re going to get.',

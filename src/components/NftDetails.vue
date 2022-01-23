@@ -4,9 +4,9 @@
       <div v-if="imageLoading" v-loading="imageLoading" />
       <div v-else-if="badLink" class="placeholder">
         <s-icon class="preview-image__icon" name="basic-clear-X-24" size="64px" />
-        <span class="preview-image__placeholder">{{ this.t('createToken.nft.image.placeholderBadSource') }}</span>
+        <span class="preview-image__placeholder">{{ t('createToken.nft.image.placeholderBadSource') }}</span>
         <span v-if="showDropdownIcon" class="preview-image__placeholder">{{
-          this.t('createToken.nft.image.placeholderBadSourceAddition')
+          t('createToken.nft.image.placeholderBadSourceAddition')
         }}</span>
       </div>
       <img v-else class="preview-image__content" :src="contentLink" />
@@ -112,19 +112,6 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     font-size: 14px;
     color: var(--s-color-brand-day);
     text-align: center;
-    margin-bottom: 10px;
-  }
-
-  &__link-text {
-    height: 12px;
-    font-weight: 400 !important;
-  }
-
-  &__link-btn {
-    background: #f6f0f4 !important;
-    color: black !important;
-    height: 22px !important;
-    width: 82px !important;
     margin-bottom: 10px;
   }
 
