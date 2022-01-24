@@ -58,15 +58,6 @@
         v-model="tokenName"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
-      <s-input
-        type="textarea"
-        :placeholder="t('createToken.nft.description.placeholder')"
-        class="input-textarea"
-        :disabled="loading"
-        :maxlength="255"
-        v-model="tokenDescription"
-        @keypress.native="handleTextAreaInput($event)"
-      />
       <s-float-input
         v-model="tokenSupply"
         :placeholder="t('createToken.nft.supply.placeholder')"
@@ -77,6 +68,15 @@
         :disabled="loading"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.nft.supply.desc') }}</p>
+      <s-input
+        type="textarea"
+        :placeholder="t('createToken.nft.description.placeholder')"
+        class="input-textarea"
+        :disabled="loading"
+        :maxlength="255"
+        v-model="tokenDescription"
+        @keypress.native="handleTextAreaInput($event)"
+      />
       <s-button
         class="wallet-settings-create-token_action s-typography-button--large"
         type="primary"
