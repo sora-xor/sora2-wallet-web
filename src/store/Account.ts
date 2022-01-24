@@ -215,7 +215,8 @@ const mutations = {
   },
 
   [types.GET_ACCOUNT_ACTIVITY](state: AccountState, activity: AccountHistory<HistoryItem>) {
-    state.activity = activity;
+    // increasing performance: Object.freeze - to remove vue reactivity from 'activity' attributes
+    state.activity = Object.freeze(activity);
   },
 
   [types.GET_ASSETS_REQUEST](state: AccountState) {

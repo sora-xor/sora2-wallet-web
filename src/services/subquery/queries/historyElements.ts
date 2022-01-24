@@ -1,4 +1,3 @@
-import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../../types';
 
 export const HistoryElementsQuery = `
@@ -20,7 +19,7 @@ query HistoryElements (
   )
   {
     edges {
-      cursor 
+      cursor
       node {
         id
         blockHash
@@ -34,6 +33,13 @@ query HistoryElements (
         data
       }
     }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+    totalCount
   }
 }
 `;
