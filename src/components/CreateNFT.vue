@@ -65,6 +65,7 @@
         :disabled="loading"
         :maxlength="255"
         v-model="tokenDescription"
+        @keypress.native="handleTextAreaInput($event)"
       />
       <s-float-input
         v-model="tokenSupply"
@@ -242,6 +243,12 @@ export default class CreateNFT extends Mixins(
       : this.t('createToken.nft.link.placeholder');
 
     this.checkImageFromSource(link);
+  }
+
+  handleTextAreaInput(e): boolean | void {
+    const char = String.fromCharCode(e.keyCode);
+    if (/^[A-Za-z0-9 _',.#]+$/.test(char)) return true;
+    e.preventDefault();
   }
 
   async checkImageFromSource(url: string): Promise<void> {
