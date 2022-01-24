@@ -50,6 +50,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   }
 
   async checkImageAvailability(): Promise<void> {
+    if (!this.contentLink) return;
     const response = await fetch(this.contentLink);
     const buffer = await response.blob();
     this.imageLoading = false;
