@@ -77,7 +77,7 @@ function initialState(): AccountState {
     isExternal: Boolean(JSON.parse(storage.get('isExternal'))) || false,
     accountAssets: [],
     selectedTransactionId: null,
-    activity: {}, // account history (without bridge)
+    activity: {}, // history items what not synced with subquery
     assets: [],
     polkadotJsAccounts: [],
     whitelistArray: [],

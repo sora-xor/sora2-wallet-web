@@ -15,7 +15,7 @@
         <template v-if="filteredHistory.length">
           <div
             class="history-item s-flex"
-            v-for="item in historyItems"
+            v-for="item in filteredHistory"
             :key="`history-${item.id}`"
             @click="handleOpenTransactionDetails(item.id)"
           >
@@ -48,6 +48,7 @@
 </template>
 
 <script lang="ts">
+import omit from 'lodash/fp/omit';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
 import { History, TransactionStatus } from '@sora-substrate/util';
@@ -77,35 +78,32 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   pageAmount = 8; // override PaginationSearchMixin
   pageInfo: any = {};
   totalCount = 0;
+  externalHistory: Array<History> = [];
 
   get assetAddress(): string {
     return (this.asset && this.asset.address) || '';
   }
 
-  get transactions(): Array<History> {
+  get internalHistory(): Array<History> {
     return Object.values(this.activity);
   }
 
-  get sortedTransactions(): Array<History> {
-    const start = performance.now();
-    const result = [...this.transactions].sort((a: History, b: History) =>
-      a.startTime && b.startTime ? b.startTime - a.startTime : 0
-    );
-    const duration = performance.now() - start;
-    console.log(duration);
-    return result;
-  }
-
-  get filteredHistory(): Array<History> {
-    return this.getFilteredHistory(this.sortedTransactions);
-  }
-
-  get historyItems(): Array<History> {
-    return this.getPageItems(this.filteredHistory);
+  get transactions(): Array<History> {
+    return [...this.internalHistory, ...this.externalHistory];
   }
 
   get hasHistory(): boolean {
     return !!(this.transactions && this.transactions.length);
+  }
+
+  get sortedTransactions(): Array<History> {
+    return [...this.transactions].sort((a: History, b: History) =>
+      a.startTime && b.startTime ? b.startTime - a.startTime : 0
+    );
+  }
+
+  get filteredHistory(): Array<History> {
+    return this.getFilteredHistory(this.sortedTransactions);
   }
 
   get total(): number {
@@ -113,7 +111,31 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   async mounted() {
+    await this.clearSyncedActivity();
     await this.updateHistory();
+  }
+
+  async clearSyncedActivity(): Promise<void> {
+    await this.withLoading(async () => {
+      const timestamp = api.historySyncTimestamp || 0;
+      const filter = historyElementsFilter(this.account.address, { timestamp });
+      const variables = { filter };
+      const removeHistoryIds = [];
+      try {
+        const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
+        for (const edge of edges) {
+          const historyId = edge.node.id;
+
+          if (historyId in this.activity) {
+            removeHistoryIds.push(historyId);
+          }
+        }
+        // api.removeHistory(removeHistoryIds);
+        // api.historySyncTimestamp = Date.now();
+      } catch (error) {
+        console.error(error);
+      }
+    });
   }
 
   testItems() {
@@ -190,7 +212,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   async updateHistoryFromExplorer(nextPage = true): Promise<void> {
     const {
       assetAddress,
-      activity,
       account: { address },
       pageAmount,
       pageInfo,
@@ -198,57 +219,40 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
     if (this.totalCount && this.startIndex > this.totalCount) return;
 
-    const operations = SubqueryDataParserService.supportedOperations;
-    const parsedHistoryOperations = api.historySyncOperations;
-
-    const operationsChanged =
-      !Array.isArray(parsedHistoryOperations) ||
-      operations.length !== parsedHistoryOperations.length ||
-      !operations.every((item) => !!parsedHistoryOperations.find((el) => el === item));
-
-    const isPartialHistoryRequest = !!assetAddress;
-    const timestamp = isPartialHistoryRequest || operationsChanged || !activity.length ? 0 : api.historySyncTimestamp;
-    const filter = historyElementsFilter(address, { assetAddress, timestamp });
-    const directionKey = nextPage ? 'after' : 'before';
-    const directionValue = (nextPage ? pageInfo.endCursor : pageInfo.startCursor) ?? '';
+    const filter = historyElementsFilter(address, { assetAddress });
+    const pagination = {
+      [nextPage ? 'after' : 'before']: (nextPage ? pageInfo.endCursor : pageInfo.startCursor) || '',
+    };
 
     const variables = {
       first: pageAmount,
       filter, // filter by account & asset
-      [directionKey]: directionValue,
+      ...pagination,
     };
+
+    this.externalHistory = [];
 
     try {
       const { edges, pageInfo, totalCount } = await SubqueryExplorerService.getAccountTransactions(variables);
+      const buffer: Array<History> = [];
 
       this.pageInfo = pageInfo;
       this.totalCount = totalCount;
 
-      if (edges.length !== 0) {
-        if (!isPartialHistoryRequest) {
-          const latestTimestamp = edges[0].node.timestamp;
-          api.historySyncTimestamp = +latestTimestamp;
+      for (const edge of edges) {
+        const transaction = edge.node;
+        const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
+
+        if (historyItem) {
+          buffer.push(historyItem);
         }
 
-        for (const edge of edges) {
-          const transaction = edge.node;
-          const hasHistoryItem = transaction.id in this.activity;
-
-          if (!hasHistoryItem) {
-            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
-
-            if (historyItem) {
-              api.saveHistory(historyItem, { toCurrentAccount: true });
-            }
-          }
+        if (transaction.id in this.activity) {
+          api.removeHistory(transaction.id);
         }
-      } else {
-        api.historySyncTimestamp = timestamp;
       }
 
-      if (operationsChanged && !isPartialHistoryRequest) {
-        api.historySyncOperations = operations;
-      }
+      this.externalHistory = buffer;
     } catch (error) {
       console.error(error);
     }
