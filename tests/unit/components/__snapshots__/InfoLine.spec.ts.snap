@@ -17,14 +17,20 @@ exports[`InfoLine.vue [Label and Value]: should be rendered correctly 1`] = `
     class="info-line-content"
   >
      
-    <span
-      class="info-line-value"
-    >
-      
-        1,234,567.890123
-        
-      <!---->
-    </span>
+    <div>
+      <div
+        content=""
+      >
+        <span
+          class="info-line-value"
+        >
+          
+            1,234,567.890123
+            
+          <!---->
+        </span>
+      </div>
+    </div>
      
     <!---->
      
@@ -71,14 +77,20 @@ exports[`InfoLine.vue [With "0" Value]: should be rendered correctly 1`] = `
     class="info-line-content"
   >
      
-    <span
-      class="info-line-value"
-    >
-      
-        0
-        
-      <!---->
-    </span>
+    <div>
+      <div
+        content=""
+      >
+        <span
+          class="info-line-value"
+        >
+          
+            0
+            
+          <!---->
+        </span>
+      </div>
+    </div>
      
     <!---->
      
@@ -147,18 +159,24 @@ exports[`InfoLine.vue [With Asset Symbol]: should be rendered correctly 1`] = `
     class="info-line-content"
   >
      
-    <span
-      class="info-line-value"
-    >
-      
-        1,234,567.890123
-        
-      <span
-        class="asset-symbol"
+    <div>
+      <div
+        content=""
       >
-         XOR
-      </span>
-    </span>
+        <span
+          class="info-line-value"
+        >
+          
+            1,234,567.890123
+            
+          <span
+            class="asset-symbol"
+          >
+             XOR
+          </span>
+        </span>
+      </div>
+    </div>
      
     <!---->
      
@@ -205,14 +223,20 @@ exports[`InfoLine.vue [With Fiat Value]: should be rendered correctly 1`] = `
     class="info-line-content"
   >
      
-    <span
-      class="info-line-value"
-    >
-      
-        1,234,567.890123
-        
-      <!---->
-    </span>
+    <div>
+      <div
+        content=""
+      >
+        <span
+          class="info-line-value"
+        >
+          
+            1,234,567.890123
+            
+          <!---->
+        </span>
+      </div>
+    </div>
      
     <formatted-amount-stub
       assetsymbol=""
@@ -354,14 +378,20 @@ exports[`InfoLine.vue [With Label Tooltip]: should be rendered correctly 1`] = `
     class="info-line-content"
   >
      
-    <span
-      class="info-line-value"
-    >
-      
-        1,234,567.890123
-        
-      <!---->
-    </span>
+    <div>
+      <div
+        content=""
+      >
+        <span
+          class="info-line-value"
+        >
+          
+            1,234,567.890123
+            
+          <!---->
+        </span>
+      </div>
+    </div>
      
     <!---->
      

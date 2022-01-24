@@ -5,12 +5,14 @@ import flow from 'lodash/fp/flow';
 import concat from 'lodash/fp/concat';
 import isEmpty from 'lodash/fp/isEmpty';
 import isEqual from 'lodash/fp/isEqual';
+import { NFTStorage } from 'nft.storage';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
 
 import { api } from '../api';
 import type { WalletPermissions, SoraNetwork } from '../consts';
 import { storage, runtimeStorage } from '../util/storage';
+import { ApiKeysObject } from '../types/common';
 
 function areKeysEqual(obj1: object, obj2: object): boolean {
   const obj1Keys = Object.keys(obj1).sort();
@@ -29,12 +31,15 @@ const types = flow(
     'SET_WALLET_LOADED',
     'SET_NETWORK_FEES',
     'RESET_RUNTIME_VERSION_SUBSCRIPTION',
+    'SET_NFT_STORAGE',
+    'SET_API_KEYS',
   ]),
   map((x) => [x, x]),
   fromPairs
 )([]);
 
 type SettingsState = {
+  apiKeys: ApiKeysObject;
   isWalletLoaded: boolean;
   permissions: WalletPermissions;
   soraNetwork: Nullable<SoraNetwork>;
@@ -42,10 +47,12 @@ type SettingsState = {
   shouldBalanceBeHidden: boolean;
   runtimeVersion: number;
   runtimeVersionSubscription: Nullable<Subscription>;
+  nftStorage: any;
 };
 
 function initialState(): SettingsState {
   return {
+    apiKeys: {} as ApiKeysObject,
     isWalletLoaded: false, // wallet is loading
     permissions: {
       addAssets: true,
@@ -58,6 +65,7 @@ function initialState(): SettingsState {
       showAssetDetails: true,
     },
     soraNetwork: null,
+    nftStorage: null,
     runtimeVersion: Number(JSON.parse(runtimeStorage.get('version'))),
     runtimeVersionSubscription: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
@@ -68,6 +76,9 @@ function initialState(): SettingsState {
 const state = initialState();
 
 const getters = {
+  apiKeys(state: SettingsState): ApiKeysObject {
+    return state.apiKeys;
+  },
   isWalletLoaded(state: SettingsState): boolean {
     return state.isWalletLoaded;
   },
@@ -82,6 +93,9 @@ const getters = {
   },
   shouldBalanceBeHidden(state: SettingsState): boolean {
     return state.shouldBalanceBeHidden;
+  },
+  nftStorage(state: SettingsState): any {
+    return state.nftStorage;
   },
 };
 
@@ -129,6 +143,14 @@ const mutations = {
       state.runtimeVersionSubscription = null;
     }
   },
+
+  [types.SET_API_KEYS](state, keys = {}) {
+    state.apiKeys = { ...state.apiKeys, ...keys };
+  },
+
+  [types.SET_NFT_STORAGE](state: SettingsState, nftStorage: any) {
+    state.nftStorage = nftStorage;
+  },
 };
 
 const actions = {
@@ -142,6 +164,17 @@ const actions = {
 
   setSoraNetwork({ commit }, network: Nullable<SoraNetwork>) {
     commit(types.SET_SORA_NETWORK, network);
+  },
+
+  setApiKeys({ commit, dispatch }, keys) {
+    commit(types.SET_API_KEYS, keys);
+
+    dispatch('setNftStorage');
+  },
+
+  setNftStorage({ commit, state }) {
+    const nftStorage = new NFTStorage({ token: state.apiKeys.nftStorage });
+    commit(types.SET_NFT_STORAGE, nftStorage);
   },
 
   subscribeOnRuntimeVersion({ commit, state }) {

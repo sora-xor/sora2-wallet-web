@@ -23,10 +23,14 @@
           :font-weight-rate="formattedFontWeight"
           :value-can-be-hidden="valueCanBeHidden"
         />
-        <span v-else-if="!valueCanBeHidden || !shouldBalanceBeHidden" class="info-line-value">
-          {{ value }}
-          <span v-if="assetSymbol" class="asset-symbol">{{ ' ' + assetSymbol }}</span>
-        </span>
+        <div v-else-if="!valueCanBeHidden || !shouldBalanceBeHidden">
+          <component v-bind:is="currentComponent" :content="withValueTooltip">
+            <span class="info-line-value">
+              {{ value }}
+              <span v-if="assetSymbol" class="asset-symbol">{{ ' ' + assetSymbol }}</span>
+            </span>
+          </component>
+        </div>
         <span v-else class="info-line-value">{{ HiddenValue }}</span>
         <formatted-amount
           v-if="fiatValue"
@@ -61,6 +65,7 @@ export default class InfoLine extends Vue {
   @Prop({ default: '', type: String }) readonly assetSymbol!: string;
   @Prop({ default: false, type: Boolean }) readonly isFormatted!: boolean;
   @Prop({ default: '', type: String }) readonly fiatValue!: string;
+  @Prop({ default: '', type: String }) readonly withValueTooltip!: string;
   /**
    * Define directly that this field displays value which can be hidden by hide balances button.
    */
@@ -82,6 +87,10 @@ export default class InfoLine extends Vue {
 
   get formattedFontWeight(): Nullable<FontWeightRate> {
     return this.isFormatted ? FontWeightRate.SMALL : null;
+  }
+
+  get currentComponent(): string {
+    return this.withValueTooltip ? 's-tooltip' : 'div';
   }
 }
 </script>
@@ -211,5 +220,9 @@ export default class InfoLine extends Vue {
   .formatted-amount--fiat-value {
     line-height: inherit;
   }
+}
+
+.el-tooltip {
+  margin-right: 0 !important;
 }
 </style>

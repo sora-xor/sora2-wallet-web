@@ -23,7 +23,8 @@ import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem
 import TransactionMixin from './components/mixins/TransactionMixin';
 import { initWallet } from './index';
 import SoraWallet from './SoraWallet.vue';
-import { SoraNetwork } from './consts';
+import { SoraNetwork, NFT_STORAGE_API_KEY } from './consts';
+import { ApiKeysObject } from './types/common';
 
 @Component({
   components: { SoraWallet },
@@ -41,9 +42,11 @@ export default class App extends Mixins(TransactionMixin) {
   @Action resetAccountAssetsSubscription!: AsyncVoidFn;
   @Action resetRuntimeVersionSubscription!: AsyncVoidFn;
   @Action resetFiatPriceAndApySubscription!: AsyncVoidFn;
+  @Action setApiKeys!: (apiKeys: ApiKeysObject) => AsyncVoidFn;
   @Action setSoraNetwork!: (network: SoraNetwork) => Promise<void>;
 
   async created(): Promise<void> {
+    await this.setApiKeys({ nftStorage: NFT_STORAGE_API_KEY });
     await this.setSoraNetwork(SoraNetwork.Dev);
     await initWallet({ withoutStore: true, whiteListOverApi: true }); // We don't need storage for local development
     this.trackActiveTransactions();

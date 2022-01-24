@@ -23,6 +23,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
         name=""
         placeholder="Filter by Address, Symbol, Type or Block ID"
         prefix="s-icon-search-16"
+        rows="2"
         size="big"
         suffix=""
         tabindex=""
@@ -239,6 +240,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
                   class="el-input__inner"
                   name=""
                   placeholder="Filter by Address, Symbol, Type or Block ID"
+                  rows="2"
                   tabindex=""
                   type="text"
                 />
@@ -406,6 +408,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
                   class="el-input__inner"
                   name=""
                   placeholder="Filter by Address, Symbol, Type or Block ID"
+                  rows="2"
                   tabindex=""
                   type="text"
                 />
