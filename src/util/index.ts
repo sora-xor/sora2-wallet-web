@@ -130,6 +130,12 @@ export const toHashTable = (list: Array<any>, key: string) => {
   }, {});
 };
 
+export const shortenValue = (string: string, length = string.length / 2): string => {
+  if (!string) return '';
+  if (string.length < 35) return string;
+  return `${string.slice(0, length / 2)}...${string.slice(-length / 2)}`;
+};
+
 export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo>): Array<RewardsAmountHeaderItem> => {
   const rewardsHash = rewards.reduce((result, item) => {
     const isRewardsInfo = 'rewards' in item;

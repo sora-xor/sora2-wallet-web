@@ -18,12 +18,16 @@ exports[`InfoLine.vue [Label and Value]: should be rendered correctly 1`] = `
   >
      
     <span
-      class="info-line-value"
+      content=""
     >
-      
-        1,234,567.890123
+      <span
+        class="info-line-value"
+      >
         
-      <!---->
+          1,234,567.890123
+          
+        <!---->
+      </span>
     </span>
      
     <!---->
@@ -72,12 +76,16 @@ exports[`InfoLine.vue [With "0" Value]: should be rendered correctly 1`] = `
   >
      
     <span
-      class="info-line-value"
+      content=""
     >
-      
-        0
+      <span
+        class="info-line-value"
+      >
         
-      <!---->
+          0
+          
+        <!---->
+      </span>
     </span>
      
     <!---->
@@ -148,15 +156,19 @@ exports[`InfoLine.vue [With Asset Symbol]: should be rendered correctly 1`] = `
   >
      
     <span
-      class="info-line-value"
+      content=""
     >
-      
-        1,234,567.890123
-        
       <span
-        class="asset-symbol"
+        class="info-line-value"
       >
-         XOR
+        
+          1,234,567.890123
+          
+        <span
+          class="asset-symbol"
+        >
+           XOR
+        </span>
       </span>
     </span>
      
@@ -206,12 +218,16 @@ exports[`InfoLine.vue [With Fiat Value]: should be rendered correctly 1`] = `
   >
      
     <span
-      class="info-line-value"
+      content=""
     >
-      
-        1,234,567.890123
+      <span
+        class="info-line-value"
+      >
         
-      <!---->
+          1,234,567.890123
+          
+        <!---->
+      </span>
     </span>
      
     <formatted-amount-stub
@@ -355,12 +371,16 @@ exports[`InfoLine.vue [With Label Tooltip]: should be rendered correctly 1`] = `
   >
      
     <span
-      class="info-line-value"
+      content=""
     >
-      
-        1,234,567.890123
+      <span
+        class="info-line-value"
+      >
         
-      <!---->
+          1,234,567.890123
+          
+        <!---->
+      </span>
     </span>
      
     <!---->
