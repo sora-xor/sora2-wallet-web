@@ -41,4 +41,15 @@ export default class NumberFormatterMixin extends Vue {
     }
     return knownAsset.totalSupply || MaxTotalSupply;
   }
+
+  getCorrectSupply(tokenSupply: string, decimals: number): string {
+    const fpnTokenSupply = this.getFPNumber(tokenSupply, decimals);
+    const fpnMaxTokenSupply = this.getFPNumber(MaxTotalSupply, decimals);
+
+    if (FPNumber.gt(fpnTokenSupply, fpnMaxTokenSupply)) {
+      return fpnMaxTokenSupply.toString();
+    }
+
+    return tokenSupply;
+  }
 }

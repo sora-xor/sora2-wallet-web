@@ -13,7 +13,7 @@ import { storage } from '../util/storage';
 import { getExtension, getExtensionSigner, getExtensionInfo, toHashTable, WHITE_LIST_GITHUB_URL } from '../util';
 import { SubqueryExplorerService } from '../services/subquery';
 import type { FiatPriceAndApyObject, ReferrerRewards } from '../services/types';
-import type { Account, PolkadotJsAccount } from '../types/common';
+import type { Account, PolkadotJsAccount, AccountAssetsTable } from '../types/common';
 
 const HOUR = 60 * 60 * 1000;
 
@@ -108,7 +108,7 @@ const getters = {
   accountAssets(state: AccountState): Array<AccountAsset> {
     return state.accountAssets;
   },
-  accountAssetsAddressTable(state: AccountState): any {
+  accountAssetsAddressTable(state: AccountState): AccountAssetsTable {
     return toHashTable(state.accountAssets, 'address');
   },
   activity(state: AccountState): Array<History> {
