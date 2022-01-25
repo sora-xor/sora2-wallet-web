@@ -77,7 +77,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   // TODO: debounce
   @Watch('searchQuery')
   private async fetchHistoryBySearchQuery() {
-    console.log('123213');
+    this.resetPaginationMeta();
     await this.fetchHistory();
   }
 
@@ -121,6 +121,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get searchQueryOperations(): Array<Operation> {
+    if (!this.searchQuery) return [];
+
     return SubqueryDataParserService.supportedOperations.filter((operation) =>
       this.t(`operations.${operation}`).toLowerCase().includes(this.searchQuery)
     );
@@ -147,6 +149,11 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   resetSearch() {
     this.handleResetSearch();
+  }
+
+  resetPaginationMeta() {
+    this.pageInfo = {};
+    this.totalCount = 0;
   }
 
   getFilteredHistory(history: Array<History>): Array<History> {
@@ -209,12 +216,14 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       account: { address },
       pageAmount,
       pageInfo,
-      searchQueryOperations: operations,
+      searchQuery: query,
+      searchQueryOperations: queryOperations,
+      searchQueryAssetsAddresses: queryAssetsAddresses,
     } = this;
 
     if (this.totalCount && this.startIndex > this.totalCount) return;
 
-    const filter = historyElementsFilter(address, { assetAddress, operations });
+    const filter = historyElementsFilter(address, { assetAddress, query, queryOperations, queryAssetsAddresses });
     const pagination = {
       [nextPage ? 'after' : 'before']: (nextPage ? pageInfo.endCursor : pageInfo.startCursor) || '',
     };

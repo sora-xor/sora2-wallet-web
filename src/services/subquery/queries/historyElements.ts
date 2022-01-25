@@ -1,5 +1,6 @@
 import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../../types';
+import { SubqueryDataParserService } from '../index';
 
 export const createHistoryElementsQuery = ({ data = true } = {}) => {
   return `
@@ -119,15 +120,13 @@ const OperationFilterMap = {
 };
 
 const createOperationsFilter = (operations: Array<Operation>) => {
-  return {
-    or: operations.reduce((buffer: Array<any>, operation) => {
-      if (!(operation in OperationFilterMap)) return buffer;
+  return operations.reduce((buffer: Array<any>, operation) => {
+    if (!(operation in OperationFilterMap)) return buffer;
 
-      buffer.push(OperationFilterMap[operation]);
+    buffer.push(OperationFilterMap[operation]);
 
-      return buffer;
-    }, []),
-  };
+    return buffer;
+  }, []);
 };
 
 const createAssetFilters = (assetAddress: string): Array<AssetFilter> => {
@@ -146,46 +145,56 @@ const createAssetFilters = (assetAddress: string): Array<AssetFilter> => {
   }, []);
 };
 
-const createAccountAddressFilter = (address: string) => {
-  return {
-    or: [
-      {
-        address: {
-          equalTo: address,
+const createAccountAddressFilters = (address: string) => {
+  return [
+    {
+      address: {
+        equalTo: address,
+      },
+    },
+    {
+      data: {
+        contains: {
+          to: address,
         },
       },
-      {
-        data: {
-          contains: {
-            to: address,
-          },
-        },
-      },
-    ],
-  };
+    },
+  ];
 };
 
+const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
+const isAssetAddress = (value: string) => value.startsWith('0x') && value.length === 66;
+
 type HistoryElementsFilterOptions = {
-  operations?: Array<Operation>;
   assetAddress?: string;
   timestamp?: number;
   query?: string;
+  queryOperations?: Array<Operation>;
+  queryAssetsAddresses?: Array<string>;
 };
 
 export const historyElementsFilter = (
   address = '',
-  { operations = [], assetAddress = '', timestamp = 0, query = '' }: HistoryElementsFilterOptions = {}
+  {
+    assetAddress = '',
+    timestamp = 0,
+    query = '',
+    queryOperations = [],
+    queryAssetsAddresses = [],
+  }: HistoryElementsFilterOptions = {}
 ): any => {
   const filter: any = {
     and: [],
   };
 
-  if (address) {
-    filter.and.push(createAccountAddressFilter(address));
-  }
+  filter.and.push({
+    or: createOperationsFilter(SubqueryDataParserService.supportedOperations),
+  });
 
-  if (operations) {
-    filter.and.push(createOperationsFilter(operations));
+  if (address) {
+    filter.and.push({
+      or: createAccountAddressFilters(address),
+    });
   }
 
   if (assetAddress) {
@@ -202,32 +211,52 @@ export const historyElementsFilter = (
     });
   }
 
+  const queryFilters: Array<any> = [];
+
   if (query) {
-    filter.and.push({
-      or: [
-        {
-          blockHash: {
-            includesInsensitive: query,
+    queryFilters.push({
+      blockHash: {
+        includesInsensitive: query,
+      },
+    });
+
+    // if account address entered
+    if (isAccountAddress(query)) {
+      queryFilters.push({
+        data: {
+          contains: {
+            from: query,
           },
         },
-        {
-          data: {
-            contains: {
-              from: query,
-            },
+      });
+      queryFilters.push({
+        data: {
+          contains: {
+            to: query,
           },
         },
-        {
-          data: {
-            contains: {
-              to: query,
-            },
-          },
-        },
-        ...createAssetFilters(query),
-      ],
+      });
+      // if asset address entered
+    } else if (isAssetAddress(query)) {
+      queryFilters.push(...createAssetFilters(query));
+    }
+  }
+
+  // mapping operation names to operations
+  if (queryOperations.length) {
+    queryFilters.push(...createOperationsFilter(queryOperations));
+  }
+
+  // mapping symbol to addresses
+  if (queryAssetsAddresses.length) {
+    queryAssetsAddresses.forEach((address) => {
+      queryFilters.push(...createAssetFilters(address));
     });
   }
+
+  filter.and.push({
+    or: queryFilters,
+  });
 
   return filter;
 };
