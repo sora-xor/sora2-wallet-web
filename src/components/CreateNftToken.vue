@@ -115,7 +115,7 @@
         :loading="loading"
         @click="onConfirm"
       >
-        <template v-if="!hasEnoughXor">{{ t('createToken.insufficientBalance', { symbol: XOR_ADDRESS }) }}</template>
+        <template v-if="!hasEnoughXor">{{ t('createToken.insufficientBalance', { symbol: XOR_SYMBOL }) }}</template>
         <template v-else>{{ t('createToken.confirm') }}</template>
       </s-button>
     </template>
@@ -166,7 +166,7 @@ export default class CreateNftToken extends Mixins(
   readonly decimals = 0;
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
   readonly Step = Step;
-  readonly XOR_ADDRESS = XOR;
+  readonly XOR_SYMBOL = XOR.symbol;
 
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
