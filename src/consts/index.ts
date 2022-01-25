@@ -10,7 +10,7 @@ export enum RouteNames {
   WalletSend = 'WalletSend',
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
-  Token = 'Token',
+  CreateToken = 'CreateToken',
   AddAsset = 'AddAsset',
   WalletTransactionDetails = 'WalletTransactionDetails',
   AddAssetDetails = 'AddAssetDetails',
@@ -22,8 +22,8 @@ export enum WalletTabs {
 }
 
 export enum TokenTabs {
-  Token = 'CreateToken',
-  NonFungibleToken = 'CreateNFT',
+  Token = 'CreateSimpleToken',
+  NonFungibleToken = 'CreateNftToken',
 }
 
 export enum AddAssetTabs {
@@ -55,10 +55,10 @@ export type ExplorerLink = {
 };
 
 export enum Step {
-  CreateToken = 'CreateToken',
-  ConfirmToken = 'ConfirmToken',
-  CreateNFT = 'CreateNFT',
-  ConfirmNFT = 'ConfirmNFT',
+  CreateSimpleToken = 'CreateSimpleToken',
+  ConfirmSimpleToken = 'ConfirmSimpleToken',
+  CreateNftToken = 'CreateNftToken',
+  ConfirmNftToken = 'ConfirmNftToken',
   Warn = 'Warn',
 }
 

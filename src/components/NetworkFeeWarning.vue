@@ -28,7 +28,6 @@ export default class NetworkFeeWarning extends Mixins(TranslationMixin) {
 $inner-padding: 20px;
 
 .content {
-  margin-top: -40px;
   font-family: var(--s-font-family-default) !important;
   display: flex;
   flex-direction: column;

@@ -42,7 +42,7 @@ export default class NumberFormatterMixin extends Vue {
     return knownAsset.totalSupply || MaxTotalSupply;
   }
 
-  getCorrectSupply(tokenSupply, decimals): string {
+  getCorrectSupply(tokenSupply: string, decimals: number): string {
     const fpnTokenSupply = this.getFPNumber(tokenSupply, decimals);
     const fpnMaxTokenSupply = this.getFPNumber(MaxTotalSupply, decimals);
 

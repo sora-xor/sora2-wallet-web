@@ -1,7 +1,8 @@
 <template>
   <div class="wallet-settings-create-token">
-    <template v-if="step === Step.CreateNFT">
+    <template v-if="step === Step.CreateNftToken">
       <s-input
+        v-if="false /* TODO: [NFT] fix issues in handleInputLinkChange */"
         :placeholder="linkPlaceholder"
         :minlength="1"
         :maxlength="200"
@@ -14,11 +15,11 @@
           <label class="image-upload__label" for="image">{{ t('createToken.selectLocalFile') }}</label>
           <input
             class="image-upload__input"
-            @change="handleFileUpload"
             ref="fileInput"
             type="file"
             id="image"
             accept="image/*"
+            @change="handleFileUpload"
           />
         </s-button>
         <span class="image-upload__filename">{{ formattedFileName }}</span>
@@ -58,25 +59,25 @@
         v-model="tokenName"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
+      <s-float-input
+        has-locale-string
+        :placeholder="t('createToken.nft.supply.placeholder')"
+        :decimals="decimals"
+        :delimiters="delimiters"
+        :max="maxTotalSupply"
+        :disabled="loading"
+        v-model="tokenSupply"
+      />
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.nft.supply.desc') }}</p>
       <s-input
+        class="input-textarea"
         type="textarea"
         :placeholder="t('createToken.nft.description.placeholder')"
-        class="input-textarea"
         :disabled="loading"
         :maxlength="255"
         v-model="tokenDescription"
         @keypress.native="handleTextAreaInput($event)"
       />
-      <s-float-input
-        v-model="tokenSupply"
-        :placeholder="t('createToken.nft.supply.placeholder')"
-        :decimals="decimals"
-        has-locale-string
-        :delimiters="delimiters"
-        :max="maxTotalSupply"
-        :disabled="loading"
-      />
-      <p class="wallet-settings-create-token_desc">{{ t('createToken.nft.supply.desc') }}</p>
       <s-button
         class="wallet-settings-create-token_action s-typography-button--large"
         type="primary"
@@ -96,12 +97,12 @@
     <template v-else-if="step === Step.Warn">
       <network-fee-warning-dialog :fee="formattedFee" @confirm="confirmNextTxFailure" />
     </template>
-    <template v-else-if="step === Step.ConfirmNFT">
+    <template v-else-if="step === Step.ConfirmNftToken">
       <nft-details
-        :contentLink="contentSrcLink"
-        :tokenName="tokenName"
-        :tokenSymbol="tokenSymbol"
-        :tokenDescription="tokenDescription"
+        :content-link="contentSrcLink"
+        :token-name="tokenName"
+        :token-symbol="tokenSymbol"
+        :token-description="tokenDescription"
       />
       <div class="info-line-container">
         <info-line :label="t('createToken.nft.source.label')" :value="contentSource"></info-line>
@@ -114,7 +115,7 @@
         :loading="loading"
         @click="onConfirm"
       >
-        <template v-if="!hasEnoughXor">{{ t('createToken.insufficientBalance', { symbol: XOR }) }}</template>
+        <template v-if="!hasEnoughXor">{{ t('createToken.insufficientBalance', { symbol: XOR_SYMBOL }) }}</template>
         <template v-else>{{ t('createToken.confirm') }}</template>
       </s-button>
     </template>
@@ -126,19 +127,20 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
+import { File as ImageNFT, NFTStorage } from 'nft.storage';
+import { FPNumber, Operation } from '@sora-substrate/util';
+import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
+
 import NftDetails from './NftDetails.vue';
-import TranslationMixin from '../components/mixins/TranslationMixin';
 import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
+import InfoLine from './InfoLine.vue';
+import WalletFee from './WalletFee.vue';
+import TranslationMixin from '../components/mixins/TranslationMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import LoadingMixin from '../components/mixins/LoadingMixin';
 import TransactionMixin from '../components/mixins/TransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import { RouteNames, Step } from '../consts';
-import { FPNumber, Operation } from '@sora-substrate/util';
-import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
-import InfoLine from './InfoLine.vue';
-import WalletFee from './WalletFee.vue';
-import { File as ImageNFT } from 'nft.storage';
 import { api } from '../api';
 import { shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
@@ -151,7 +153,7 @@ import { IpfsStorage } from '../util/ipfsStorage';
     NetworkFeeWarningDialog,
   },
 })
-export default class CreateNFT extends Mixins(
+export default class CreateNftToken extends Mixins(
   TranslationMixin,
   TransactionMixin,
   LoadingMixin,
@@ -164,12 +166,12 @@ export default class CreateNFT extends Mixins(
   readonly decimals = 0;
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
   readonly Step = Step;
-  readonly XOR = XOR;
+  readonly XOR_SYMBOL = XOR.symbol;
 
+  @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
+
+  @Getter nftStorage!: NFTStorage;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Getter nftStorage!: any;
-
-  @Prop({ default: Step.CreateToken, type: String }) step!: Step;
 
   imageLoading = false;
   badSource = false;
@@ -182,7 +184,7 @@ export default class CreateNFT extends Mixins(
   tokenSupply = '';
   linkPlaceholder = this.t('createToken.nft.link.placeholder');
   showFee = true;
-  file: any = null;
+  file: Nullable<File> = null;
   fileName = '';
 
   get isCreateDisabled(): boolean {
@@ -222,14 +224,18 @@ export default class CreateNFT extends Mixins(
   async handleFileUpload(): Promise<void> {
     this.imageLoading = true;
     const fileInput = this.$refs.fileInput as HTMLInputElement;
-    const file = (fileInput.files as FileList)[0];
+    if (!(fileInput && fileInput.files)) {
+      this.resetFileInput();
+      return;
+    }
+    const file = fileInput.files[0];
     if (!file) {
       this.resetFileInput();
       return;
     }
     this.file = file;
     this.fileName = file.name;
-    this.contentSrcLink = (await IpfsStorage.fileToBase64(file)) as string;
+    this.contentSrcLink = await IpfsStorage.fileToBase64(file);
     this.badSource = false;
     this.imageLoading = false;
     this.tokenContentLink = '';
@@ -245,13 +251,13 @@ export default class CreateNFT extends Mixins(
     this.checkImageFromSource(link);
   }
 
-  handleTextAreaInput(e): boolean | void {
-    const char = String.fromCharCode(e.keyCode);
-    if (/^[A-Za-z0-9 _',.#]+$/.test(char)) return true;
+  handleTextAreaInput(e: KeyboardEvent): boolean | void {
+    if (/^[A-Za-z0-9 _',.#]+$/.test(e.key)) return true;
     e.preventDefault();
   }
 
   async checkImageFromSource(url: string): Promise<void> {
+    // it's better to use debounce fn. Also, need to fix base url
     try {
       const response = await fetch(url);
       const buffer = await response.blob();
@@ -265,7 +271,7 @@ export default class CreateNFT extends Mixins(
         this.badSource = true;
         this.contentSrcLink = '';
       }
-    } catch {
+    } catch (error) {
       this.badSource = true;
       this.contentSrcLink = '';
     }
@@ -279,7 +285,7 @@ export default class CreateNFT extends Mixins(
     this.resetFileInput();
   }
 
-  resetFileInput() {
+  resetFileInput(): void {
     this.file = null;
     this.fileName = '';
     (this.$refs.fileInput as HTMLInputElement).value = '';
@@ -329,7 +335,7 @@ export default class CreateNFT extends Mixins(
     }
 
     this.showFee = true;
-    this.$emit('stepChange', Step.ConfirmNFT);
+    this.$emit('stepChange', Step.ConfirmNftToken);
   }
 
   async onConfirm(): Promise<void> {
@@ -348,7 +354,7 @@ export default class CreateNFT extends Mixins(
   confirmNextTxFailure(): void {
     this.$emit('showHeader');
     this.showFee = true;
-    this.$emit('stepChange', Step.ConfirmNFT);
+    this.$emit('stepChange', Step.ConfirmNftToken);
   }
 }
 </script>

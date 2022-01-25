@@ -169,11 +169,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
     </div>
   </s-card-stub>
    
-  <transition-stub
-    name="fadeHeight"
-  >
-    <!---->
-  </transition-stub>
+  <!---->
    
   <wallet-history-stub
     asset="[object Object]"
@@ -498,11 +494,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
     </div>
   </s-card-stub>
    
-  <transition-stub
-    name="fadeHeight"
-  >
-    <!---->
-  </transition-stub>
+  <!---->
    
   <wallet-history-stub
     asset="[object Object]"

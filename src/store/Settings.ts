@@ -47,7 +47,7 @@ type SettingsState = {
   shouldBalanceBeHidden: boolean;
   runtimeVersion: number;
   runtimeVersionSubscription: Nullable<Subscription>;
-  nftStorage: any;
+  nftStorage: Nullable<NFTStorage>;
 };
 
 function initialState(): SettingsState {
@@ -94,7 +94,7 @@ const getters = {
   shouldBalanceBeHidden(state: SettingsState): boolean {
     return state.shouldBalanceBeHidden;
   },
-  nftStorage(state: SettingsState): any {
+  nftStorage(state: SettingsState): Nullable<NFTStorage> {
     return state.nftStorage;
   },
 };
@@ -148,7 +148,7 @@ const mutations = {
     state.apiKeys = { ...state.apiKeys, ...keys };
   },
 
-  [types.SET_NFT_STORAGE](state: SettingsState, nftStorage: any) {
+  [types.SET_NFT_STORAGE](state: SettingsState, nftStorage: NFTStorage) {
     state.nftStorage = nftStorage;
   },
 };
