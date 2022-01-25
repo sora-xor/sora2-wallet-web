@@ -20,15 +20,11 @@
           :token-name="asset.name"
           :token-symbol="asset.symbol"
           :token-description="nftTokenDescription"
-          @icon-click="handleClickDetailedBalanceOrNft"
+          @click-details="handleClickNftDetails"
         />
         <div v-else>
           <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
-          <div
-            :style="balanceStyles"
-            :class="balanceDetailsClasses"
-            @click="isXor && handleClickDetailedBalanceOrNft()"
-          >
+          <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
             <formatted-amount
               value-can-be-hidden
               symbol-as-decimal
@@ -64,7 +60,7 @@
           </s-button>
         </div>
         <transition name="fadeHeight">
-          <div v-if="isXor && wasBalanceOrNftDetailsClicked" class="asset-details-balance-info">
+          <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
             <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
               <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
               <formatted-amount-with-fiat-value
@@ -97,18 +93,20 @@
         </transition>
       </div>
     </s-card>
-    <transition name="fadeHeight">
-      <div v-if="isNft && wasBalanceOrNftDetailsClicked" class="info-line-container">
-        <info-line :label="t('createToken.nft.supply.quantity')" :value="balance" />
-        <info-line
-          class="external-link"
-          :label="t('createToken.nft.source.label')"
-          :value="displayedNftContentLink"
-          :value-tooltip="nftLinkTooltipText"
-          @click.native="handleCopyNftLink"
-        />
-      </div>
-    </transition>
+    <div v-if="isNft" class="asset-details-nft-container">
+      <transition name="fadeHeight">
+        <div v-if="wasNftDetailsClicked" class="info-line-container">
+          <info-line :label="t('createToken.nft.supply.quantity')" :value="balance" />
+          <info-line
+            class="external-link"
+            :label="t('createToken.nft.source.label')"
+            :value="displayedNftContentLink"
+            :value-tooltip="nftLinkTooltipText"
+            @click.native="handleCopyNftLink"
+          />
+        </div>
+      </transition>
+    </div>
     <wallet-history :asset="asset" />
   </wallet-base>
 </template>
@@ -162,10 +160,11 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
 
-  wasBalanceOrNftDetailsClicked = false;
+  wasBalanceDetailsClicked = false;
 
   // ____________________NFT Token Details_____________________________
   private wasNftLinkCopied = false;
+  wasNftDetailsClicked = false;
   nftContentLink = '';
   nftTokenDescription = '';
 
@@ -187,6 +186,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     const ipfsPath = await api.assets.getNftContent(this.currentRouteParams.asset.address);
     this.nftContentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
     this.nftTokenDescription = await api.assets.getNftDescription(this.currentRouteParams.asset.address);
+  }
+
+  handleClickNftDetails(): void {
+    this.wasNftDetailsClicked = !this.wasNftDetailsClicked;
   }
 
   async handleCopyNftLink(event?: Event): Promise<void> {
@@ -273,7 +276,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     if (this.isXor) {
       cssClasses.push('asset-details-balance--clickable');
     }
-    if (this.wasBalanceOrNftDetailsClicked) {
+    if (this.wasBalanceDetailsClicked) {
       cssClasses.push('asset-details-balance--clicked');
     }
     return cssClasses;
@@ -320,8 +323,8 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     }
   }
 
-  handleClickDetailedBalanceOrNft(): void {
-    this.wasBalanceOrNftDetailsClicked = !this.wasBalanceOrNftDetailsClicked;
+  handleClickDetailedBalance(): void {
+    this.wasBalanceDetailsClicked = !this.wasBalanceDetailsClicked;
   }
 
   getAssetIconStyles = getAssetIconStyles;
@@ -362,6 +365,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
         margin-top: #{$basic-spacing-small};
       }
     }
+  }
+  &-nft-container {
+    @include fadeHeight(50px);
   }
   &-balance {
     width: 100%;

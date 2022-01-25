@@ -13,12 +13,10 @@
     </div>
     <div class="nft-info">
       <div class="nft-info__name">
-        <template v-if="isAssetDetails">
+        <div v-if="isAssetDetails" :class="nftDetailsSectionClasses" @click="handleDetailsClick">
           <span>{{ tokenSymbol }}</span>
-          <div @click="handleIconClick" :class="iconClasses" class="icon">
-            <s-icon name="chevron-down-rounded-16" size="18" />
-          </div>
-        </template>
+          <s-icon name="chevron-down-rounded-16" size="18" />
+        </div>
         <template v-else>
           {{ tokenName /* TODO: [NFT] name should be cropped via styles */ }}
           <span class="nft-info__symbol">{{ tokenSymbol }}</span>
@@ -42,15 +40,16 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly tokenDescription!: string;
   @Prop({ default: false, type: Boolean }) readonly isAssetDetails!: boolean;
 
-  private iconClicked = false;
+  private nftDetailsClicked = false;
   badLink = false;
   imageLoading = true;
 
-  get iconClasses(): string {
-    if (this.iconClicked) {
-      return 'icon--clicked';
+  get nftDetailsSectionClasses(): Array<string> {
+    const cssClasses: Array<string> = ['nft-info__name--clickable'];
+    if (this.nftDetailsClicked) {
+      cssClasses.push('nft-info__name--clicked');
     }
-    return '';
+    return cssClasses;
   }
 
   async checkImageAvailability(): Promise<void> {
@@ -61,9 +60,9 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     this.badLink = !buffer.type.startsWith('image/');
   }
 
-  handleIconClick(): void {
-    this.iconClicked = !this.iconClicked;
-    this.$emit('icon-click');
+  handleDetailsClick(): void {
+    this.nftDetailsClicked = !this.nftDetailsClicked;
+    this.$emit('click-details');
   }
 
   beforeUpdate(): void {
@@ -102,6 +101,15 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     font-weight: 700;
     font-size: 24px;
     text-transform: capitalize;
+
+    &--clickable {
+      cursor: pointer;
+    }
+
+    &--clicked .s-icon-chevron-down-rounded-16 {
+      padding-right: #{$basic-spacing-small};
+      transform: rotate(180deg);
+    }
   }
 
   &__symbol {
@@ -135,15 +143,5 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   color: var(--s-color-base-on-accent);
   border-radius: 50%;
   text-align: left;
-  cursor: pointer;
-}
-
-.icon {
-  display: inline-block;
-
-  &--clicked {
-    padding-right: #{$basic-spacing-small};
-    transform: rotate(180deg);
-  }
 }
 </style>
