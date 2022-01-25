@@ -367,7 +367,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     }
   }
   &-nft-container {
-    @include fadeHeight(50px);
+    @include fadeHeight(50px, 0.1s);
   }
   &-balance {
     width: 100%;
