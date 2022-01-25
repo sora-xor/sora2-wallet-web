@@ -18,7 +18,7 @@ import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import AddAsset from './components/AddAsset.vue';
 import AddAssetDetails from './components/AddAssetDetails.vue';
-import Token from './components/Token.vue';
+import CreateToken from './components/CreateToken.vue';
 import Wallet from './components/Wallet.vue';
 import WalletAssetDetails from './components/WalletAssetDetails.vue';
 import WalletConnection from './components/WalletConnection.vue';
@@ -35,7 +35,7 @@ import type { RouteNames } from './consts';
   components: {
     AddAsset,
     AddAssetDetails,
-    Token,
+    CreateToken,
     Wallet,
     WalletAssetDetails,
     WalletConnection,

@@ -1,6 +1,6 @@
 <template>
   <div class="wallet-settings-create-token">
-    <template v-if="step === Step.CreateNFT">
+    <template v-if="step === Step.CreateNftToken">
       <s-input
         :placeholder="linkPlaceholder"
         :minlength="1"
@@ -96,7 +96,7 @@
     <template v-else-if="step === Step.Warn">
       <network-fee-warning-dialog :fee="formattedFee" @confirm="confirmNextTxFailure" />
     </template>
-    <template v-else-if="step === Step.ConfirmNFT">
+    <template v-else-if="step === Step.ConfirmNftToken">
       <nft-details
         :contentLink="contentSrcLink"
         :tokenName="tokenName"
@@ -151,7 +151,7 @@ import { IpfsStorage } from '../util/ipfsStorage';
     NetworkFeeWarningDialog,
   },
 })
-export default class CreateNFT extends Mixins(
+export default class CreateNftToken extends Mixins(
   TranslationMixin,
   TransactionMixin,
   LoadingMixin,
@@ -169,7 +169,7 @@ export default class CreateNFT extends Mixins(
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Getter nftStorage!: any;
 
-  @Prop({ default: Step.CreateToken, type: String }) step!: Step;
+  @Prop({ default: Step.CreateSimpleToken, type: String }) step!: Step;
 
   imageLoading = false;
   badSource = false;
@@ -329,7 +329,7 @@ export default class CreateNFT extends Mixins(
     }
 
     this.showFee = true;
-    this.$emit('stepChange', Step.ConfirmNFT);
+    this.$emit('stepChange', Step.ConfirmNftToken);
   }
 
   async onConfirm(): Promise<void> {
@@ -348,7 +348,7 @@ export default class CreateNFT extends Mixins(
   confirmNextTxFailure(): void {
     this.$emit('showHeader');
     this.showFee = true;
-    this.$emit('stepChange', Step.ConfirmNFT);
+    this.$emit('stepChange', Step.ConfirmNftToken);
   }
 }
 </script>
