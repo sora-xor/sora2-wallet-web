@@ -15,16 +15,20 @@
       <div class="asset-details-container s-flex">
         <nft-details
           v-if="isNft"
-          :contentLink="contentLink"
-          :tokenName="asset.name"
-          :tokenSymbol="asset.symbol"
-          :tokenDescription="tokenDescription"
-          :showDropdownIcon="true"
-          @iconClick="handleClickDetailedBalance"
+          is-asset-details
+          :content-link="nftContentLink"
+          :token-name="asset.name"
+          :token-symbol="asset.symbol"
+          :token-description="nftTokenDescription"
+          @icon-click="handleClickDetailedBalanceOrNft"
         />
         <div v-else>
           <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
-          <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
+          <div
+            :style="balanceStyles"
+            :class="balanceDetailsClasses"
+            @click="isXor && handleClickDetailedBalanceOrNft()"
+          >
             <formatted-amount
               value-can-be-hidden
               symbol-as-decimal
@@ -60,7 +64,7 @@
           </s-button>
         </div>
         <transition name="fadeHeight">
-          <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
+          <div v-if="isXor && wasBalanceOrNftDetailsClicked" class="asset-details-balance-info">
             <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
               <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
               <formatted-amount-with-fiat-value
@@ -94,15 +98,15 @@
       </div>
     </s-card>
     <transition name="fadeHeight">
-      <div v-if="isNft && wasBalanceDetailsClicked" class="info-line-container">
-        <info-line :label="t('createToken.nft.supply.quantity')" :value="balance"></info-line>
+      <div v-if="isNft && wasBalanceOrNftDetailsClicked" class="info-line-container">
+        <info-line :label="t('createToken.nft.supply.quantity')" :value="balance" />
         <info-line
-          :label="t('createToken.nft.source.label')"
-          :value="contentSource"
-          @click.native="handleCopyLink"
           class="external-link"
-          :valueTooltip="linkTooltipText"
-        ></info-line>
+          :label="t('createToken.nft.source.label')"
+          :value="displayedNftContentLink"
+          :value-tooltip="nftLinkTooltipText"
+          @click.native="handleCopyNftLink"
+        />
       </div>
     </transition>
     <wallet-history :asset="asset" />
@@ -116,20 +120,19 @@ import { CodecString, History } from '@sora-substrate/util';
 import { KnownAssets, KnownSymbols, BalanceType } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
-import { api } from '../api';
-import FormattedAmountMixin from './mixins/FormattedAmountMixin';
-import CopyAddressMixin from './mixins/CopyAddressMixin';
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import NftDetails from './NftDetails.vue';
 import InfoLine from './InfoLine.vue';
-import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import WalletHistory from './WalletHistory.vue';
+import { api } from '../api';
+import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import { RouteNames } from '../consts';
-import { copyToClipboard, getAssetIconStyles, shortenValue } from '../util';
+import { copyToClipboard, delay, getAssetIconStyles, shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 import { Operations, Account } from '../types/common';
-
 import type { WalletPermissions } from '../consts';
 
 interface Operation {
@@ -159,11 +162,47 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
 
-  wasBalanceDetailsClicked = false;
-  contentLink = '';
-  tokenDescription = '';
-  isNft = false;
-  linkTooltipText = this.t('createToken.nft.link.copyLink');
+  wasBalanceOrNftDetailsClicked = false;
+
+  // ____________________NFT Token Details_____________________________
+  private wasNftLinkCopied = false;
+  nftContentLink = '';
+  nftTokenDescription = '';
+
+  get isNft(): boolean {
+    return this.currentRouteParams.asset.decimals === 0;
+  }
+
+  get nftLinkTooltipText(): string {
+    return this.wasNftLinkCopied ? this.t('assets.copied') : this.t('createToken.nft.link.copyLink');
+  }
+
+  get displayedNftContentLink(): string {
+    const hostname = IpfsStorage.getStorageHostname(this.nftContentLink);
+    const path = IpfsStorage.getIpfsPath(this.nftContentLink);
+    return shortenValue(hostname + '/ipfs/' + path, 25);
+  }
+
+  private async setNftMeta(): Promise<void> {
+    const ipfsPath = await api.assets.getNftContent(this.currentRouteParams.asset.address);
+    this.nftContentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
+    this.nftTokenDescription = await api.assets.getNftDescription(this.currentRouteParams.asset.address);
+  }
+
+  async handleCopyNftLink(event?: Event): Promise<void> {
+    event && event.stopImmediatePropagation();
+    await copyToClipboard(this.nftContentLink);
+    this.wasNftLinkCopied = true;
+    await delay(1000);
+    this.wasNftLinkCopied = false;
+  }
+
+  mounted(): void {
+    if (this.isNft) {
+      this.setNftMeta();
+    }
+  }
+  // __________________________________________________________
 
   formatBalance(value: CodecString): string {
     return this.formatCodecNumber(value, this.asset.decimals);
@@ -234,16 +273,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     if (this.isXor) {
       cssClasses.push('asset-details-balance--clickable');
     }
-    if (this.wasBalanceDetailsClicked) {
+    if (this.wasBalanceOrNftDetailsClicked) {
       cssClasses.push('asset-details-balance--clicked');
     }
     return cssClasses;
-  }
-
-  get contentSource(): string {
-    const hostname = IpfsStorage.getStorageHostname(this.contentLink);
-    const path = IpfsStorage.getIpfsPath(this.contentLink);
-    return shortenValue(hostname + '/ipfs/' + path, 25);
   }
 
   get isXor(): boolean {
@@ -287,8 +320,8 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     }
   }
 
-  handleClickDetailedBalance(): void {
-    this.wasBalanceDetailsClicked = !this.wasBalanceDetailsClicked;
+  handleClickDetailedBalanceOrNft(): void {
+    this.wasBalanceOrNftDetailsClicked = !this.wasBalanceOrNftDetailsClicked;
   }
 
   getAssetIconStyles = getAssetIconStyles;
@@ -306,24 +339,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     if (!this.asset) return;
     api.clearHistory(this.asset.address);
     this.getAccountActivity();
-  }
-
-  async setNftMeta(): Promise<void> {
-    const ipfsPath = await api.assets.getNftContent(this.currentRouteParams.asset.address);
-    this.contentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
-    this.tokenDescription = await api.assets.getNftDescription(this.currentRouteParams.asset.address);
-  }
-
-  async handleCopyLink(): Promise<void> {
-    await copyToClipboard(this.contentLink);
-    this.linkTooltipText = this.t('assets.copied');
-  }
-
-  mounted(): void {
-    const isNft = this.currentRouteParams.asset.decimals === 0;
-    this.isNft = isNft;
-
-    if (isNft) this.setNftMeta();
   }
 }
 </script>

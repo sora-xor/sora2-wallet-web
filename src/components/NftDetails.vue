@@ -5,7 +5,7 @@
       <div v-else-if="badLink" class="placeholder">
         <s-icon class="preview-image__icon" name="basic-clear-X-24" size="64px" />
         <span class="preview-image__placeholder">{{ t('createToken.nft.image.placeholderBadSource') }}</span>
-        <span v-if="showDropdownIcon" class="preview-image__placeholder">{{
+        <span v-if="isAssetDetails" class="preview-image__placeholder">{{
           t('createToken.nft.image.placeholderBadSourceAddition')
         }}</span>
       </div>
@@ -13,12 +13,16 @@
     </div>
     <div class="nft-info">
       <div class="nft-info__name">
-        {{ tokenName }}
-        <span v-if="showDropdownIcon">{{ tokenSymbol }}</span>
-        <div v-if="showDropdownIcon" @click="handleIconClick" :class="balanceDetailsClasses" class="icon">
-          <s-icon name="chevron-down-rounded-16" size="18" />
-        </div>
-        <span v-else class="nft-info__symbol">{{ tokenSymbol }}</span>
+        <template v-if="isAssetDetails">
+          <span>{{ tokenSymbol }}</span>
+          <div @click="handleIconClick" :class="iconClasses" class="icon">
+            <s-icon name="chevron-down-rounded-16" size="18" />
+          </div>
+        </template>
+        <template v-else>
+          {{ tokenName /* TODO: [NFT] name should be cropped via styles */ }}
+          <span class="nft-info__symbol">{{ tokenSymbol }}</span>
+        </template>
       </div>
       <div class="nft-info__desc">{{ tokenDescription }}</div>
     </div>
@@ -27,25 +31,25 @@
 
 <script lang="ts">
 import { Prop, Component, Mixins } from 'vue-property-decorator';
+
 import TranslationMixin from './mixins/TranslationMixin';
 
 @Component
 export default class NftDetails extends Mixins(TranslationMixin) {
-  @Prop({ default: '', type: String }) contentLink!: string;
-  @Prop({ default: '', type: String }) tokenName!: string;
-  @Prop({ default: '', type: String }) tokenSymbol!: string;
-  @Prop({ default: '', type: String }) tokenDescription!: string;
-  @Prop({ default: false, type: Boolean }) showDropdownIcon!: boolean;
+  @Prop({ default: '', type: String }) readonly contentLink!: string;
+  @Prop({ default: '', type: String }) readonly tokenName!: string;
+  @Prop({ default: '', type: String }) readonly tokenSymbol!: string;
+  @Prop({ default: '', type: String }) readonly tokenDescription!: string;
+  @Prop({ default: false, type: Boolean }) readonly isAssetDetails!: boolean;
 
+  private iconClicked = false;
   badLink = false;
-  iconClicked = false;
   imageLoading = true;
 
-  get balanceDetailsClasses(): string {
+  get iconClasses(): string {
     if (this.iconClicked) {
       return 'icon--clicked';
     }
-
     return '';
   }
 
@@ -54,16 +58,12 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     const response = await fetch(this.contentLink);
     const buffer = await response.blob();
     this.imageLoading = false;
-    if (buffer.type.startsWith('image/')) {
-      this.badLink = false;
-    } else {
-      this.badLink = true;
-    }
+    this.badLink = !buffer.type.startsWith('image/');
   }
 
   handleIconClick(): void {
     this.iconClicked = !this.iconClicked;
-    this.$emit('iconClick');
+    this.$emit('icon-click');
   }
 
   beforeUpdate(): void {
