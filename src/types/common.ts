@@ -1,3 +1,5 @@
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+
 export enum Modules {
   Account = 'Account',
   Router = 'Router',
@@ -31,4 +33,8 @@ export type Permissions = {
 
 export type ApiKeysObject = {
   [key: string]: string;
+};
+
+export type AccountAssetsTable = {
+  [key: string]: AccountAsset;
 };

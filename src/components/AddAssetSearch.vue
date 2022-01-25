@@ -46,6 +46,8 @@ import LoadingMixin from './mixins/LoadingMixin';
 import { AddAssetTabs, RouteNames } from '../consts';
 import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
 
+import type { AccountAssetsTable } from '../types/common';
+
 @Component
 export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
   readonly AddAssetTabs = AddAssetTabs;
@@ -53,7 +55,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   @Getter assets!: Array<Asset>;
   @Getter assetsLoading!: boolean;
   @Getter accountAssets!: Array<AccountAsset>;
-  @Getter accountAssetsAddressTable!: any;
+  @Getter accountAssetsAddressTable!: AccountAssetsTable;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAssets!: AsyncVoidFn;
 

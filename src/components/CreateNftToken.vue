@@ -213,12 +213,7 @@ export default class CreateNftToken extends Mixins(
   }
 
   get hasEnoughXor(): boolean {
-    const accountXor = api.assets.accountAssets.find((asset) => asset.address === XOR.address);
-    if (!accountXor || !accountXor.balance || !+accountXor.balance.transferable) {
-      return false;
-    }
-    const fpAccountXor = this.getFPNumberFromCodec(accountXor.balance.transferable, accountXor.decimals);
-    return FPNumber.gte(fpAccountXor, this.fee);
+    return FPNumber.gte(this.xorBalance, this.fee); // xorBalance -> NetworkFeeWarningMixin
   }
 
   async handleFileUpload(): Promise<void> {
