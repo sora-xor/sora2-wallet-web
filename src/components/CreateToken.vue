@@ -1,15 +1,15 @@
 <template>
-  <wallet-base :title="createTokenTitle" show-back :showHeader="showHeader" @back="handleBack">
+  <wallet-base show-back :title="createTokenTitle" :show-header="showHeader" @back="handleBack">
     <div class="token">
-      <s-tabs v-if="showTabs" :value="currentTab" type="rounded" @change="handleChangeTab" class="token__tab">
+      <s-tabs v-if="showTabs" class="token__tab" type="rounded" :value="currentTab" @change="handleChangeTab">
         <s-tab v-for="tab in TokenTabs" :key="tab" :label="t(`createToken.${tab}`)" :name="tab" />
       </s-tabs>
       <component
         :is="currentTab"
+        :step="currentStep"
         @showTabs="setTabVisibility"
         @showHeader="setHeaderVisibility"
         @stepChange="setStep"
-        :step="currentStep"
       />
     </div>
   </wallet-base>
@@ -18,11 +18,11 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action } from 'vuex-class';
-import TranslationMixin from './mixins/TranslationMixin';
+
 import CreateSimpleToken from './CreateSimpleToken.vue';
 import CreateNftToken from './CreateNftToken.vue';
 import WalletBase from './WalletBase.vue';
-
+import TranslationMixin from './mixins/TranslationMixin';
 import { TokenTabs, Step, RouteNames } from '../consts';
 
 @Component({
@@ -37,7 +37,7 @@ export default class CreateToken extends Mixins(TranslationMixin) {
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
-  step: Step = Step.CreateSimpleToken;
+  private step: Step = Step.CreateSimpleToken;
   currentTab: Step = Step.CreateSimpleToken;
   showTabs = true;
   showHeader = true;
@@ -76,7 +76,6 @@ export default class CreateToken extends Mixins(TranslationMixin) {
     if ([Step.ConfirmSimpleToken, Step.ConfirmNftToken].includes(this.step)) {
       if (this.step === Step.ConfirmSimpleToken) this.step = Step.CreateSimpleToken;
       if (this.step === Step.ConfirmNftToken) this.step = Step.CreateNftToken;
-
       this.createTokenTitle = this.t('createToken.titleCommon');
     } else if (this.step === Step.Warn) {
       if (this.currentTab === Step.CreateSimpleToken) this.step = Step.CreateSimpleToken;

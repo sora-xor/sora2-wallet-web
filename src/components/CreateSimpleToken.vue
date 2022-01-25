@@ -105,15 +105,15 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
   readonly tokenSymbolMask = 'AAAAAAA';
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } };
 
+  @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
+
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+
   tokenSymbol = '';
   tokenName = '';
   tokenSupply = '';
   extensibleSupply = false;
   showFee = true;
-
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-
-  @Prop({ default: Step.CreateSimpleToken, type: String }) step!: Step;
 
   get fee(): FPNumber {
     return this.getFPNumberFromCodec(this.networkFees.RegisterAsset);
