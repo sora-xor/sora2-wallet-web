@@ -34,7 +34,6 @@ import { TokenTabs, Step, RouteNames } from '../consts';
 })
 export default class Token extends Mixins(TranslationMixin) {
   readonly TokenTabs = TokenTabs;
-  readonly Step = Step;
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
@@ -79,9 +78,7 @@ export default class Token extends Mixins(TranslationMixin) {
       if (this.step === Step.ConfirmNFT) this.step = Step.CreateNFT;
 
       this.createTokenTitle = this.t('createToken.titleCommon');
-    }
-
-    if (this.step === Step.Warn) {
+    } else if (this.step === Step.Warn) {
       if (this.currentTab === Step.CreateToken) this.step = Step.CreateToken;
       if (this.currentTab === Step.CreateNFT) this.step = Step.CreateNFT;
     }

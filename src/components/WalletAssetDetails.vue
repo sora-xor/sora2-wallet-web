@@ -101,7 +101,7 @@
           :value="contentSource"
           @click.native="handleCopyLink"
           class="external-link"
-          :withValueTooltip="linkTooltipText"
+          :valueTooltip="linkTooltipText"
         ></info-line>
       </div>
     </transition>
