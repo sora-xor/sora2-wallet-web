@@ -1,6 +1,6 @@
 import { axiosInstance, FPNumber } from '@sora-substrate/util';
 
-import { HistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
+import { createHistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
 import { SoraNetwork } from '../../consts';
 import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject, ReferrerRewards, ReferrerReward } from '../types';
@@ -27,8 +27,8 @@ export default class SubqueryExplorer implements Explorer {
     return store.getters.soraNetwork;
   }
 
-  public async getAccountTransactions(params = {}): Promise<any> {
-    const { historyElements } = await this.request(HistoryElementsQuery, params);
+  public async getAccountTransactions(params = {}, queryParams = {}): Promise<any> {
+    const { historyElements } = await this.request(createHistoryElementsQuery(queryParams), params);
 
     return historyElements;
   }
@@ -77,7 +77,7 @@ export default class SubqueryExplorer implements Explorer {
       const params = {
         filter: noirHistoryElementsFilter(accountId, noirAssetId),
       };
-      const { historyElements } = await this.request(HistoryElementsQuery, params);
+      const { historyElements } = await this.request(createHistoryElementsQuery(), params);
       const count = (historyElements.edges as Array<any>).reduce((value, item) => {
         return value + +item.node.data.amount;
       }, 0);

@@ -10,7 +10,6 @@
           </template>
         </s-input>
       </s-form-item>
-      <button type="button" @click="testItems">Test items</button>
       <div class="history-items" v-loading="loading">
         <template v-if="filteredHistory.length">
           <div
@@ -48,12 +47,12 @@
 </template>
 
 <script lang="ts">
-import omit from 'lodash/fp/omit';
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import debounce from 'lodash/debounce';
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
 import { History, TransactionStatus } from '@sora-substrate/util';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
-import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
+import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
+import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
 
 import { api } from '../api';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -66,12 +65,21 @@ import { historyElementsFilter } from '../services/subquery/queries/historyEleme
 
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
+  @Getter assets!: Array<Asset>;
   @Getter activity!: AccountHistory<HistoryItem>;
   @Getter shouldBalanceBeHidden!: boolean;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
+  @Action getAssets!: AsyncVoidFn;
 
   @Prop() readonly asset?: AccountAsset;
+
+  // TODO: debounce
+  @Watch('searchQuery')
+  private async fetchHistoryBySearchQuery() {
+    console.log('123213');
+    await this.fetchHistory();
+  }
 
   TransactionStatus = TransactionStatus;
 
@@ -80,12 +88,18 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   totalCount = 0;
   externalHistory: Array<History> = [];
 
+  fetchHistory = debounce(this.updateHistory, 500);
+
   get assetAddress(): string {
     return (this.asset && this.asset.address) || '';
   }
 
   get internalHistory(): Array<History> {
-    return Object.values(this.activity);
+    return this.getFilteredHistory(Object.values(this.activity));
+  }
+
+  get filteredHistory(): Array<History> {
+    return this.getFilteredHistory(this.sortedTransactions);
   }
 
   get transactions(): Array<History> {
@@ -102,53 +116,33 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     );
   }
 
-  get filteredHistory(): Array<History> {
-    return this.getFilteredHistory(this.sortedTransactions);
-  }
-
   get total(): number {
     return Math.max(this.filteredHistory.length, this.totalCount);
   }
 
-  async mounted() {
-    await this.clearSyncedActivity();
-    await this.updateHistory();
+  get searchQueryOperations(): Array<Operation> {
+    return SubqueryDataParserService.supportedOperations.filter((operation) =>
+      this.t(`operations.${operation}`).toLowerCase().includes(this.searchQuery)
+    );
   }
 
-  async clearSyncedActivity(): Promise<void> {
-    await this.withLoading(async () => {
-      const timestamp = api.historySyncTimestamp || 0;
-      const filter = historyElementsFilter(this.account.address, { timestamp });
-      const variables = { filter };
-      const removeHistoryIds = [];
-      try {
-        const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
-        for (const edge of edges) {
-          const historyId = edge.node.id;
+  get searchQueryAssetsAddresses(): Array<string> {
+    if (!this.searchQuery) return [];
 
-          if (historyId in this.activity) {
-            removeHistoryIds.push(historyId);
-          }
-        }
-        // api.removeHistory(removeHistoryIds);
-        // api.historySyncTimestamp = Date.now();
-      } catch (error) {
-        console.error(error);
+    return this.assets.reduce((buffer: Array<string>, asset) => {
+      if (asset.symbol.toLowerCase().includes(this.searchQuery)) {
+        buffer.push(asset.address);
       }
-    });
+      return buffer;
+    }, []);
   }
 
-  testItems() {
-    const testItem = this.transactions[0];
-    const result = { ...this.activity };
+  async mounted() {
+    await this.withLoading(async () => {
+      await Promise.all([await this.getAssets(), await this.clearSyncedActivity()]);
 
-    for (let i = 0; i <= 1000; i++) {
-      const startTime = Date.now() + Math.floor(Math.random() * 100);
-      const id = api.encrypt(String(startTime));
-      result[id] = { ...testItem, id, startTime, endTime: startTime + 1 };
-    }
-
-    api.history = result;
+      await this.updateHistory();
+    });
   }
 
   resetSearch() {
@@ -156,22 +150,22 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   getFilteredHistory(history: Array<History>): Array<History> {
-    if (!this.query) {
+    if (!this.searchQuery) {
       return history;
     }
-    const query = this.query.toLowerCase().trim();
+
     return history.filter(
       (item) =>
         (this.assetAddress ? `${item.assetAddress}`.toLowerCase().includes(this.assetAddress) : false) ||
         (this.assetAddress ? `${item.asset2Address}`.toLowerCase().includes(this.assetAddress) : false) ||
-        `${item.assetAddress}`.toLowerCase().includes(query) ||
-        `${item.asset2Address}`.toLowerCase().includes(query) ||
-        `${item.symbol}`.toLowerCase().includes(query) ||
-        `${item.symbol2}`.toLowerCase().includes(query) ||
-        `${item.blockId}`.toLowerCase().includes(query) ||
-        `${item.from}`.toLowerCase().includes(query) ||
-        `${item.to}`.toLowerCase().includes(query) ||
-        this.t(`operations.${item.type}`).toLowerCase().includes(query)
+        `${item.assetAddress}`.toLowerCase().includes(this.searchQuery) ||
+        `${item.asset2Address}`.toLowerCase().includes(this.searchQuery) ||
+        `${item.symbol}`.toLowerCase().includes(this.searchQuery) ||
+        `${item.symbol2}`.toLowerCase().includes(this.searchQuery) ||
+        `${item.blockId}`.toLowerCase().includes(this.searchQuery) ||
+        `${item.from}`.toLowerCase().includes(this.searchQuery) ||
+        `${item.to}`.toLowerCase().includes(this.searchQuery) ||
+        this.t(`operations.${item.type}`).toLowerCase().includes(this.searchQuery)
     );
   }
 
@@ -215,18 +209,19 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       account: { address },
       pageAmount,
       pageInfo,
+      searchQueryOperations: operations,
     } = this;
 
     if (this.totalCount && this.startIndex > this.totalCount) return;
 
-    const filter = historyElementsFilter(address, { assetAddress });
+    const filter = historyElementsFilter(address, { assetAddress, operations });
     const pagination = {
       [nextPage ? 'after' : 'before']: (nextPage ? pageInfo.endCursor : pageInfo.startCursor) || '',
     };
 
     const variables = {
+      filter,
       first: pageAmount,
-      filter, // filter by account & asset
       ...pagination,
     };
 
@@ -235,9 +230,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     try {
       const { edges, pageInfo, totalCount } = await SubqueryExplorerService.getAccountTransactions(variables);
       const buffer: Array<History> = [];
-
-      this.pageInfo = pageInfo;
-      this.totalCount = totalCount;
 
       for (const edge of edges) {
         const transaction = edge.node;
@@ -253,6 +245,36 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       }
 
       this.externalHistory = buffer;
+      this.pageInfo = pageInfo;
+      this.totalCount = totalCount;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  /**
+   * Clear history items from accountStorage, what exists in subquery
+   * This is necessary to get the correct 'total' value.
+   */
+  // TODO: move to store?
+  private async clearSyncedActivity(): Promise<void> {
+    const timestamp = api.historySyncTimestamp || 0;
+    const filter = historyElementsFilter(this.account.address, { timestamp });
+    const variables = { filter };
+    const removeHistoryIds: Array<string> = [];
+    try {
+      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables, { data: false });
+      for (const edge of edges) {
+        const historyId = edge.node.id;
+
+        if (historyId in this.activity) {
+          removeHistoryIds.push(historyId);
+        }
+      }
+      api.removeHistory(...removeHistoryIds);
+      api.historySyncTimestamp = Math.round(Date.now() / 1000);
+
+      await this.getAccountActivity();
     } catch (error) {
       console.error(error);
     }

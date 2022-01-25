@@ -14,6 +14,10 @@ export default class PaginationSearchMixin extends Vue {
     return this.currentPage * this.pageAmount;
   }
 
+  get searchQuery(): string {
+    return this.query.toLowerCase().trim();
+  }
+
   handlePrevClick(current: number): void {
     this.currentPage = current;
   }

@@ -1,54 +1,132 @@
+import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../../types';
 
-export const HistoryElementsQuery = `
-query HistoryElements (
-  $first: Int = null,
-  $last: Int = null,
-  $after: Cursor = "",
-  $before: Cursor = "",
-  $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC,
-  $filter: HistoryElementFilter)
-{
-  historyElements (
-    first: $first
-    last: $last
-    before: $before
-    after: $after
-    orderBy: $orderBy
-    filter: $filter
-  )
+export const createHistoryElementsQuery = ({ data = true } = {}) => {
+  return `
+  query HistoryElements (
+    $first: Int = null,
+    $last: Int = null,
+    $after: Cursor = "",
+    $before: Cursor = "",
+    $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC,
+    $filter: HistoryElementFilter)
   {
-    edges {
-      cursor
-      node {
-        id
-        blockHash
-        blockHeight
-        module
-        method
-        address
-        networkFee
-        execution
-        timestamp
+    historyElements (
+      first: $first
+      last: $last
+      before: $before
+      after: $after
+      orderBy: $orderBy
+      filter: $filter
+    )
+    {
+      edges {${
         data
+          ? `
+        cursor`
+          : ''
+      }
+        node {
+          id${
+            data
+              ? `
+          blockHash
+          blockHeight
+          module
+          method
+          address
+          networkFee
+          execution
+          timestamp
+          data`
+              : ''
+          }
+        }
+      }${
+        data
+          ? `
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
+        startCursor
+        endCursor
+      }
+      totalCount`
+          : ''
       }
     }
-    pageInfo {
-      hasNextPage
-      hasPreviousPage
-      startCursor
-      endCursor
-    }
-    totalCount
   }
-}
 `;
+};
 
 type AssetFilter = {
   data: {
     contains: {
       [key: string]: string;
     };
+  };
+};
+
+const OperationFilterMap = {
+  [Operation.Swap]: {
+    module: {
+      equalTo: ModuleNames.LiquidityProxy,
+    },
+    method: {
+      equalTo: ModuleMethods.LiquidityProxySwap,
+    },
+  },
+  [Operation.Transfer]: {
+    module: {
+      equalTo: ModuleNames.Assets,
+    },
+    method: {
+      equalTo: ModuleMethods.AssetsTransfer,
+    },
+  },
+  [Operation.RegisterAsset]: {
+    module: {
+      equalTo: ModuleNames.Assets,
+    },
+    method: {
+      equalTo: ModuleMethods.AssetsRegister,
+    },
+  },
+  [Operation.CreatePair]: {
+    module: {
+      equalTo: ModuleNames.Utility,
+    },
+    method: {
+      equalTo: ModuleMethods.UtilityBatchAll,
+    },
+  },
+  [Operation.AddLiquidity]: {
+    module: {
+      equalTo: ModuleNames.PoolXYK,
+    },
+    method: {
+      equalTo: ModuleMethods.PoolXYKDepositLiquidity,
+    },
+  },
+  [Operation.RemoveLiquidity]: {
+    module: {
+      equalTo: ModuleNames.PoolXYK,
+    },
+    method: {
+      equalTo: ModuleMethods.PoolXYKWithdrawLiquidity,
+    },
+  },
+};
+
+const createOperationsFilter = (operations: Array<Operation>) => {
+  return {
+    or: operations.reduce((buffer: Array<any>, operation) => {
+      if (!(operation in OperationFilterMap)) return buffer;
+
+      buffer.push(OperationFilterMap[operation]);
+
+      return buffer;
+    }, []),
   };
 };
 
@@ -68,67 +146,46 @@ const createAssetFilters = (assetAddress: string): Array<AssetFilter> => {
   }, []);
 };
 
-const createOperationsFilter = () => {
+const createAccountAddressFilter = (address: string) => {
   return {
     or: [
       {
-        module: {
-          equalTo: ModuleNames.LiquidityProxy,
-        },
-        method: {
-          equalTo: ModuleMethods.LiquidityProxySwap,
+        address: {
+          equalTo: address,
         },
       },
       {
-        module: {
-          equalTo: ModuleNames.Assets,
-        },
-        method: {
-          in: [ModuleMethods.AssetsTransfer, ModuleMethods.AssetsRegister],
-        },
-      },
-      {
-        module: {
-          equalTo: ModuleNames.PoolXYK,
-        },
-        method: {
-          in: [ModuleMethods.PoolXYKDepositLiquidity, ModuleMethods.PoolXYKWithdrawLiquidity],
-        },
-      },
-      {
-        module: {
-          equalTo: ModuleNames.Utility,
-        },
-        method: {
-          equalTo: ModuleMethods.UtilityBatchAll,
+        data: {
+          contains: {
+            to: address,
+          },
         },
       },
     ],
   };
 };
 
-export const historyElementsFilter = (address = '', { assetAddress = '', timestamp = 0 } = {}): any => {
+type HistoryElementsFilterOptions = {
+  operations?: Array<Operation>;
+  assetAddress?: string;
+  timestamp?: number;
+  query?: string;
+};
+
+export const historyElementsFilter = (
+  address = '',
+  { operations = [], assetAddress = '', timestamp = 0, query = '' }: HistoryElementsFilterOptions = {}
+): any => {
   const filter: any = {
-    and: [createOperationsFilter()],
+    and: [],
   };
 
   if (address) {
-    filter.and.push({
-      or: [
-        {
-          address: {
-            equalTo: address,
-          },
-        },
-        {
-          data: {
-            contains: {
-              to: address,
-            },
-          },
-        },
-      ],
-    });
+    filter.and.push(createAccountAddressFilter(address));
+  }
+
+  if (operations) {
+    filter.and.push(createOperationsFilter(operations));
   }
 
   if (assetAddress) {
@@ -142,6 +199,33 @@ export const historyElementsFilter = (address = '', { assetAddress = '', timesta
       timestamp: {
         greaterThan: timestamp,
       },
+    });
+  }
+
+  if (query) {
+    filter.and.push({
+      or: [
+        {
+          blockHash: {
+            includesInsensitive: query,
+          },
+        },
+        {
+          data: {
+            contains: {
+              from: query,
+            },
+          },
+        },
+        {
+          data: {
+            contains: {
+              to: query,
+            },
+          },
+        },
+        ...createAssetFilters(query),
+      ],
     });
   }
 
