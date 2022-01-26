@@ -18,8 +18,10 @@
           <s-icon name="chevron-down-rounded-16" size="18" />
         </div>
         <template v-else>
-          {{ tokenName /* TODO: [NFT] name should be cropped via styles */ }}
-          <span class="nft-info__symbol">{{ tokenSymbol }}</span>
+          <div>
+            {{ tokenName /* TODO: [NFT] name should be cropped via styles */ }}
+            <span class="nft-info__symbol">{{ tokenSymbol }}</span>
+          </div>
         </template>
       </div>
       <div class="nft-info__desc">{{ tokenDescription }}</div>

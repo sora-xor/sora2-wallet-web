@@ -2,7 +2,6 @@
   <div class="wallet-settings-create-token">
     <template v-if="step === Step.CreateNftToken">
       <s-input
-        v-if="false /* TODO: [NFT] fix issues in handleInputLinkChange */"
         :placeholder="linkPlaceholder"
         :minlength="1"
         :maxlength="200"
@@ -86,10 +85,10 @@
         @click="onCreate"
       >
         <template v-if="!tokenContentLink.trim() && !file">{{ t('createToken.provideContent') }}</template>
-        <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
         <template v-else-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
-        <template v-else-if="!tokenDescription">{{ t('createToken.enterTokenDescription') }}</template>
+        <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
         <template v-else-if="!tokenSupply">{{ t('createToken.enterSupply') }}</template>
+        <template v-else-if="!tokenDescription">{{ t('createToken.enterTokenDescription') }}</template>
         <template v-else-if="badSource">{{ t('createToken.provideContent') }}</template>
         <template v-else>{{ t('createToken.actionNFT') }}</template>
       </s-button>
@@ -237,6 +236,13 @@ export default class CreateNftToken extends Mixins(
   }
 
   handleInputLinkChange(link: string): void {
+    try {
+      const url = new URL(link);
+    } catch {
+      this.badSource = true;
+      return;
+    }
+
     this.imageLoading = true;
     this.badSource = false;
     this.linkPlaceholder = link
@@ -252,7 +258,6 @@ export default class CreateNftToken extends Mixins(
   }
 
   async checkImageFromSource(url: string): Promise<void> {
-    // it's better to use debounce fn. Also, need to fix base url
     try {
       const response = await fetch(url);
       const buffer = await response.blob();
