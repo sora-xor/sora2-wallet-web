@@ -1,7 +1,7 @@
 <template>
   <div class="history s-flex">
     <s-form class="history-form" :show-message="false">
-      <s-form-item v-if="searchInputVisible" class="history--search">
+      <s-form-item v-if="hasTransactions" class="history--search">
         <s-input v-model="query" :placeholder="t('history.filterPlaceholder')" prefix="s-icon-search-16" size="big">
           <template #suffix v-if="query">
             <s-button class="s-button--clear" :use-design-system="false" @click="resetSearch">
@@ -33,7 +33,7 @@
         <div v-else class="history-empty p4">{{ t(`history.${hasTransactions ? 'emptySearch' : 'empty'}`) }}</div>
       </div>
       <s-pagination
-        v-if="hasTransactions"
+        v-if="transactions.length"
         layout="total, prev, next"
         :current-page.sync="currentPage"
         :page-size="pageAmount"
@@ -128,11 +128,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get hasTransactions(): boolean {
-    return !!(this.transactions && this.transactions.length);
-  }
-
-  get searchInputVisible(): boolean {
-    return this.hasTransactions || !!this.searchQuery;
+    return !!(this.transactions && this.transactions.length) || !!this.searchQuery;
   }
 
   get searchQueryOperations(): Array<Operation> {
@@ -156,8 +152,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   async mounted() {
     await this.withLoading(async () => {
-      await Promise.all([await this.getAssets(), await this.clearSyncedActivity()]);
-
+      await Promise.all([this.getAssets(), this.clearSyncedActivity()]);
       await this.updateHistory();
     });
   }
