@@ -26,9 +26,12 @@ export default class PaginationSearchMixin extends Vue {
     this.currentPage = current;
   }
 
-  handleResetSearch(): void {
-    this.query = '';
+  resetPage(): void {
     this.currentPage = 1;
+  }
+
+  resetSearch(): void {
+    this.query = '';
   }
 
   getPageItems(items: Array<any>): Array<any> {

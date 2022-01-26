@@ -1,7 +1,7 @@
 <template>
   <div class="history s-flex">
     <s-form class="history-form" :show-message="false">
-      <s-form-item v-if="hasHistory" class="history--search">
+      <s-form-item v-if="searchInputVisible" class="history--search">
         <s-input v-model="query" :placeholder="t('history.filterPlaceholder')" prefix="s-icon-search-16" size="big">
           <template #suffix v-if="query">
             <s-button class="s-button--clear" :use-design-system="false" @click="resetSearch">
@@ -30,10 +30,10 @@
             <div class="history-item-date">{{ formatDate(item.startTime) }}</div>
           </div>
         </template>
-        <div v-else class="history-empty p4">{{ t(`history.${hasHistory ? 'emptySearch' : 'empty'}`) }}</div>
+        <div v-else class="history-empty p4">{{ t(`history.${hasTransactions ? 'emptySearch' : 'empty'}`) }}</div>
       </div>
       <s-pagination
-        v-if="hasHistory"
+        v-if="hasTransactions"
         layout="total, prev, next"
         :current-page.sync="currentPage"
         :page-size="pageAmount"
@@ -63,6 +63,13 @@ import { RouteNames } from '../consts';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
 import { historyElementsFilter } from '../services/subquery/queries/historyElements';
 
+type PageInfo = {
+  startCursor: string;
+  endCursor: string;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+};
+
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
   @Getter assets!: Array<Asset>;
@@ -74,49 +81,58 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   @Prop() readonly asset?: AccountAsset;
 
-  // TODO: debounce
   @Watch('searchQuery')
-  private async fetchHistoryBySearchQuery() {
-    this.resetPaginationMeta();
-    await this.fetchHistory();
+  private async updateHistoryBySearchQuery() {
+    await this.updateCommonHistory();
   }
 
   TransactionStatus = TransactionStatus;
 
   pageAmount = 8; // override PaginationSearchMixin
-  pageInfo: any = {};
-  totalCount = 0;
-  externalHistory: Array<History> = [];
 
-  fetchHistory = debounce(this.updateHistory, 500);
+  externalActivity: AccountHistory<HistoryItem> = {};
+  externalActivityTotalCount = 0;
+  pageInfo: Nullable<PageInfo> = null;
+
+  updateCommonHistory = debounce(() => this.updateHistory(true, true), 500);
+  filteredInternalHistory: Array<History> = [];
 
   get assetAddress(): string {
     return (this.asset && this.asset.address) || '';
   }
 
   get internalHistory(): Array<History> {
-    const activities = Object.values(this.activity).filter((item) =>
-      [item.assetAddress, item.asset2Address].includes(this.assetAddress)
-    );
-    return this.getFilteredHistory(activities);
+    const activityList = Object.values(this.activity);
+    const prefiltered = this.assetAddress
+      ? activityList.filter((item) => {
+          return [item.assetAddress, item.asset2Address].includes(this.assetAddress);
+        })
+      : activityList;
+
+    return prefiltered;
+  }
+
+  get filteredExternalHistory(): Array<History> {
+    return Object.values(this.externalActivity);
   }
 
   get transactions(): Array<History> {
-    return [...this.internalHistory, ...this.externalHistory];
-  }
+    const merged = [...this.filteredInternalHistory, ...this.filteredExternalHistory];
+    const sorted = this.sortTransactions(merged);
 
-  get hasHistory(): boolean {
-    return !!(this.transactions && this.transactions.length);
-  }
-
-  get sortedTransactions(): Array<History> {
-    return [...this.transactions].sort((a: History, b: History) =>
-      a.startTime && b.startTime ? b.startTime - a.startTime : 0
-    );
+    return this.getPageItems(sorted);
   }
 
   get total(): number {
-    return Math.max(this.transactions.length, this.totalCount);
+    return this.externalActivityTotalCount + this.internalHistory.length;
+  }
+
+  get hasTransactions(): boolean {
+    return !!(this.transactions && this.transactions.length);
+  }
+
+  get searchInputVisible(): boolean {
+    return this.hasTransactions || !!this.searchQuery;
   }
 
   get searchQueryOperations(): Array<Operation> {
@@ -146,13 +162,11 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     });
   }
 
-  resetSearch() {
-    this.handleResetSearch();
-  }
-
-  resetPaginationMeta() {
-    this.pageInfo = {};
-    this.totalCount = 0;
+  resetSearchQueryDependencies(): void {
+    this.resetPage();
+    this.externalActivity = {};
+    this.externalActivityTotalCount = 0;
+    this.pageInfo = null;
   }
 
   getFilteredHistory(history: Array<History>): Array<History> {
@@ -176,6 +190,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
         // operations criteria
         this.t(`operations.${item.type}`).toLowerCase().includes(this.searchQuery)
     );
+  }
+
+  sortTransactions(transactions: Array<History>): Array<History> {
+    return transactions.sort((a: History, b: History) => (a.startTime && b.startTime ? b.startTime - a.startTime : 0));
   }
 
   getStatus(status: string): string {
@@ -205,14 +223,31 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     await this.updateHistory(isNext);
   }
 
-  async updateHistory(nextPage = true): Promise<void> {
+  /**
+   * Update external & internal history
+   */
+  async updateHistory(nextPage = true, reset = false): Promise<void> {
     await this.withLoading(async () => {
-      await this.updateHistoryFromExplorer(nextPage);
-      await this.getAccountActivity();
+      if (reset) {
+        this.resetSearchQueryDependencies();
+      }
+      await this.updateExternalHistory(nextPage);
+      await this.updateInternalHistory();
     });
   }
 
-  async updateHistoryFromExplorer(nextPage = true): Promise<void> {
+  /**
+   * Get history from accountStorage, then filter it
+   */
+  async updateInternalHistory(): Promise<void> {
+    await this.getAccountActivity();
+    this.filteredInternalHistory = this.getFilteredHistory(this.internalHistory);
+  }
+
+  /**
+   * Get history from explorer, already filtered
+   */
+  async updateExternalHistory(isNextPage = true): Promise<void> {
     const {
       assetAddress,
       account: { address },
@@ -223,11 +258,11 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       searchQueryAssetsAddresses: assetsAddresses,
     } = this;
 
-    if (this.totalCount && this.startIndex > this.totalCount) return;
+    if (pageInfo && ((isNextPage && !pageInfo.hasNextPage) || (!isNextPage && !pageInfo.hasPreviousPage))) return;
 
     const filter = historyElementsFilter(address, { assetAddress, query: { search, operations, assetsAddresses } });
     const pagination = {
-      [nextPage ? 'after' : 'before']: (nextPage ? pageInfo.endCursor : pageInfo.startCursor) || '',
+      [isNextPage ? 'after' : 'before']: pageInfo ? (isNextPage ? pageInfo.endCursor : pageInfo.startCursor) || '' : '',
     };
 
     const variables = {
@@ -236,41 +271,44 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       ...pagination,
     };
 
-    this.externalHistory = [];
-
     try {
       const { edges, pageInfo, totalCount } = await SubqueryExplorerService.getAccountTransactions(variables);
-      const buffer: Array<History> = [];
 
       for (const edge of edges) {
         const transaction = edge.node;
-        const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
+        const { id } = transaction;
 
-        if (historyItem) {
-          buffer.push(historyItem);
+        if (!(id in this.externalActivity)) {
+          const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
+
+          if (historyItem) {
+            this.externalActivity = { ...this.externalActivity, [id]: historyItem };
+          }
         }
 
-        if (transaction.id in this.activity) {
+        if (id in this.activity) {
           api.removeHistory(transaction.id);
         }
       }
 
-      this.externalHistory = buffer;
       this.pageInfo = pageInfo;
-      this.totalCount = totalCount;
+      this.externalActivityTotalCount = totalCount;
     } catch (error) {
       console.error(error);
     }
   }
 
   /**
-   * Clear history items from accountStorage, what exists in subquery
+   * Clear history items from accountStorage, what exists in explorer
    * This is necessary to get the correct 'total' value.
    */
-  // TODO: move to store?
   private async clearSyncedActivity(): Promise<void> {
+    const {
+      assetAddress,
+      account: { address },
+    } = this;
     const timestamp = api.historySyncTimestamp || 0;
-    const filter = historyElementsFilter(this.account.address, { timestamp });
+    const filter = historyElementsFilter(address, { assetAddress, timestamp });
     const variables = { filter };
     const removeHistoryIds: Array<string> = [];
     try {
