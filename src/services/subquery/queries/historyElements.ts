@@ -60,7 +60,7 @@ export const createHistoryElementsQuery = ({ data = true } = {}) => {
 `;
 };
 
-type AssetFilter = {
+type DataCriteria = {
   data: {
     contains: {
       [key: string]: string;
@@ -119,7 +119,7 @@ const OperationFilterMap = {
   },
 };
 
-const createOperationsFilter = (operations: Array<Operation>) => {
+const createOperationsCriteria = (operations: Array<Operation>) => {
   return operations.reduce((buffer: Array<any>, operation) => {
     if (!(operation in OperationFilterMap)) return buffer;
 
@@ -129,10 +129,10 @@ const createOperationsFilter = (operations: Array<Operation>) => {
   }, []);
 };
 
-const createAssetFilters = (assetAddress: string): Array<AssetFilter> => {
+const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
   const attributes = ['assetId', 'baseAssetId', 'targetAssetId'];
 
-  return attributes.reduce((result: Array<AssetFilter>, attr) => {
+  return attributes.reduce((result: Array<DataCriteria>, attr) => {
     result.push({
       data: {
         contains: {
@@ -145,7 +145,7 @@ const createAssetFilters = (assetAddress: string): Array<AssetFilter> => {
   }, []);
 };
 
-const createAccountAddressFilters = (address: string) => {
+const createAccountAddressCriteria = (address: string) => {
   return [
     {
       address: {
@@ -168,19 +168,19 @@ const isAssetAddress = (value: string) => value.startsWith('0x') && value.length
 type HistoryElementsFilterOptions = {
   assetAddress?: string;
   timestamp?: number;
-  query?: string;
-  queryOperations?: Array<Operation>;
-  queryAssetsAddresses?: Array<string>;
+  query?: {
+    search?: string;
+    operations?: Array<Operation>;
+    assetsAddresses?: Array<string>;
+  };
 };
 
 export const historyElementsFilter = (
-  address = '',
+  accountAddress = '',
   {
     assetAddress = '',
     timestamp = 0,
-    query = '',
-    queryOperations = [],
-    queryAssetsAddresses = [],
+    query: { search = '', operations = [], assetsAddresses = [] } = {},
   }: HistoryElementsFilterOptions = {}
 ): any => {
   const filter: any = {
@@ -188,18 +188,18 @@ export const historyElementsFilter = (
   };
 
   filter.and.push({
-    or: createOperationsFilter(SubqueryDataParserService.supportedOperations),
+    or: createOperationsCriteria(SubqueryDataParserService.supportedOperations),
   });
 
-  if (address) {
+  if (accountAddress) {
     filter.and.push({
-      or: createAccountAddressFilters(address),
+      or: createAccountAddressCriteria(accountAddress),
     });
   }
 
   if (assetAddress) {
     filter.and.push({
-      or: createAssetFilters(assetAddress),
+      or: createAssetCriteria(assetAddress),
     });
   }
 
@@ -213,44 +213,45 @@ export const historyElementsFilter = (
 
   const queryFilters: Array<any> = [];
 
-  if (query) {
+  if (search) {
+    // search criteria
     queryFilters.push({
       blockHash: {
-        includesInsensitive: query,
+        includesInsensitive: search,
       },
     });
 
-    // if account address entered
-    if (isAccountAddress(query)) {
+    // account address criteria
+    if (isAccountAddress(search)) {
       queryFilters.push({
         data: {
           contains: {
-            from: query,
+            from: search,
           },
         },
       });
       queryFilters.push({
         data: {
           contains: {
-            to: query,
+            to: search,
           },
         },
       });
-      // if asset address entered
-    } else if (isAssetAddress(query)) {
-      queryFilters.push(...createAssetFilters(query));
+      // asset address criteria
+    } else if (isAssetAddress(search)) {
+      queryFilters.push(...createAssetCriteria(search));
     }
   }
 
-  // mapping operation names to operations
-  if (queryOperations.length) {
-    queryFilters.push(...createOperationsFilter(queryOperations));
+  // operations criteria
+  if (operations.length) {
+    queryFilters.push(...createOperationsCriteria(operations));
   }
 
-  // mapping symbol to addresses
-  if (queryAssetsAddresses.length) {
-    queryAssetsAddresses.forEach((address) => {
-      queryFilters.push(...createAssetFilters(address));
+  // symbol criteria
+  if (assetsAddresses.length) {
+    assetsAddresses.forEach((address) => {
+      queryFilters.push(...createAssetCriteria(address));
     });
   }
 
@@ -295,7 +296,7 @@ export const noirHistoryElementsFilter = (
 
   if (noirAssetId) {
     filter.and.push({
-      or: createAssetFilters(noirAssetId),
+      or: createAssetCriteria(noirAssetId),
     });
   }
 

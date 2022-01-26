@@ -11,10 +11,10 @@
         </s-input>
       </s-form-item>
       <div class="history-items" v-loading="loading">
-        <template v-if="filteredHistory.length">
+        <template v-if="transactions.length">
           <div
             class="history-item s-flex"
-            v-for="item in filteredHistory"
+            v-for="item in transactions"
             :key="`history-${item.id}`"
             @click="handleOpenTransactionDetails(item.id)"
           >
@@ -95,11 +95,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get internalHistory(): Array<History> {
-    return this.getFilteredHistory(Object.values(this.activity));
-  }
-
-  get filteredHistory(): Array<History> {
-    return this.getFilteredHistory(this.sortedTransactions);
+    const activities = Object.values(this.activity).filter((item) =>
+      [item.assetAddress, item.asset2Address].includes(this.assetAddress)
+    );
+    return this.getFilteredHistory(activities);
   }
 
   get transactions(): Array<History> {
@@ -117,7 +116,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get total(): number {
-    return Math.max(this.filteredHistory.length, this.totalCount);
+    return Math.max(this.transactions.length, this.totalCount);
   }
 
   get searchQueryOperations(): Array<Operation> {
@@ -163,15 +162,18 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
     return history.filter(
       (item) =>
-        (this.assetAddress ? `${item.assetAddress}`.toLowerCase().includes(this.assetAddress) : false) ||
-        (this.assetAddress ? `${item.asset2Address}`.toLowerCase().includes(this.assetAddress) : false) ||
-        `${item.assetAddress}`.toLowerCase().includes(this.searchQuery) ||
-        `${item.asset2Address}`.toLowerCase().includes(this.searchQuery) ||
+        // asset address criteria
+        `${item.assetAddress}`.toLowerCase() === this.searchQuery ||
+        `${item.asset2Address}`.toLowerCase() === this.searchQuery ||
+        // symbol criteria
         `${item.symbol}`.toLowerCase().includes(this.searchQuery) ||
         `${item.symbol2}`.toLowerCase().includes(this.searchQuery) ||
+        // search qriteria
         `${item.blockId}`.toLowerCase().includes(this.searchQuery) ||
-        `${item.from}`.toLowerCase().includes(this.searchQuery) ||
-        `${item.to}`.toLowerCase().includes(this.searchQuery) ||
+        // account address criteria
+        `${item.from}`.toLowerCase() === this.searchQuery ||
+        `${item.to}`.toLowerCase() === this.searchQuery ||
+        // operations criteria
         this.t(`operations.${item.type}`).toLowerCase().includes(this.searchQuery)
     );
   }
@@ -216,14 +218,14 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       account: { address },
       pageAmount,
       pageInfo,
-      searchQuery: query,
-      searchQueryOperations: queryOperations,
-      searchQueryAssetsAddresses: queryAssetsAddresses,
+      searchQuery: search,
+      searchQueryOperations: operations,
+      searchQueryAssetsAddresses: assetsAddresses,
     } = this;
 
     if (this.totalCount && this.startIndex > this.totalCount) return;
 
-    const filter = historyElementsFilter(address, { assetAddress, query, queryOperations, queryAssetsAddresses });
+    const filter = historyElementsFilter(address, { assetAddress, query: { search, operations, assetsAddresses } });
     const pagination = {
       [nextPage ? 'after' : 'before']: (nextPage ? pageInfo.endCursor : pageInfo.startCursor) || '',
     };
