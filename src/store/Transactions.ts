@@ -3,7 +3,7 @@ import flatMap from 'lodash/fp/flatMap';
 import fromPairs from 'lodash/fp/fromPairs';
 import flow from 'lodash/fp/flow';
 import concat from 'lodash/fp/concat';
-import { History, TransactionStatus } from '@sora-substrate/util';
+import { TransactionStatus } from '@sora-substrate/util';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../api';
@@ -76,7 +76,7 @@ const getters = {
       [TransactionStatus.Finalized, TransactionStatus.Error].includes(t.status as TransactionStatus)
     );
   },
-  selectedTransaction(state: TransactionsState): Nullable<History> {
+  selectedTransaction(state: TransactionsState): Nullable<HistoryItem> {
     if (!state.selectedTransactionId) return null;
 
     return state.activity[state.selectedTransactionId] || state.externalActivity[state.selectedTransactionId];

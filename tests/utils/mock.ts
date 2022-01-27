@@ -122,6 +122,78 @@ export const MOCK_HISTORY: Array<History> = [
   },
 ];
 
+export const MOCK_ACCOUNT_ACTIVITY = MOCK_HISTORY.reduce((result, item) => {
+  if (!item.id) return result;
+  return { ...result, [item.id]: item };
+}, {});
+
+export const MOCK_EXTERNAL_ACTIVITY = {
+  '0x19cd61b49e9b3549a2718e1edae8828c7915a186b065044145a5e2e67d736069': {
+    id: '0x19cd61b49e9b3549a2718e1edae8828c7915a186b065044145a5e2e67d736069',
+    type: 'Transfer',
+    txId: '0x19cd61b49e9b3549a2718e1edae8828c7915a186b065044145a5e2e67d736069',
+    blockId: '0x405d48a0c9479dc9f7f1631078cd6edbb9993edc70ecf579560d54094ae406b0',
+    blockHeight: '3489592',
+    endTime: 1643294376000,
+    startTime: 1643294376000,
+    from: 'cnSddhDaRYhonByujX98GYrCgmHPUxmpnLg5mTKkHEYcrf3jB',
+    soraNetworkFee: '700000000000000',
+    status: 'finalized',
+    assetAddress: '0x0200040000000000000000000000000000000000000000000000000000000000',
+    symbol: 'VAL',
+    to: 'cnW4qGRcbepL9bZRw7DS2RdYgRyiW2zsKoq1cdZVZQpRL2ftG',
+    amount: '1.660532900136096932',
+  },
+  '0xc991cf9f6eb03b019f0f87ea59a9bc4c0d325ee53f63d86121eedebf09d2dcfc': {
+    id: '0xc991cf9f6eb03b019f0f87ea59a9bc4c0d325ee53f63d86121eedebf09d2dcfc',
+    type: 'Transfer',
+    txId: '0xc991cf9f6eb03b019f0f87ea59a9bc4c0d325ee53f63d86121eedebf09d2dcfc',
+    blockId: '0xd4b2a10b260789689e219fe7b1d50dd3460443801f14c287241a886c94955f30',
+    blockHeight: '3489549',
+    endTime: 1643294118000,
+    startTime: 1643294118000,
+    from: 'cnSddhDaRYhonByujX98GYrCgmHPUxmpnLg5mTKkHEYcrf3jB',
+    soraNetworkFee: '700000000000000',
+    status: 'finalized',
+    assetAddress: '0x0200000000000000000000000000000000000000000000000000000000000000',
+    symbol: 'XOR',
+    to: 'cnW4qGRcbepL9bZRw7DS2RdYgRyiW2zsKoq1cdZVZQpRL2ftG',
+    amount: '2.000000000000000000',
+  },
+  '0x39d9cd49d00fb4267e03c8c0355e4758546b0637845a05fac2ccce09eadfcda1': {
+    id: '0x39d9cd49d00fb4267e03c8c0355e4758546b0637845a05fac2ccce09eadfcda1',
+    type: 'Transfer',
+    txId: '0x39d9cd49d00fb4267e03c8c0355e4758546b0637845a05fac2ccce09eadfcda1',
+    blockId: '0xafd1838fed15589869e48a7bd97b41eb6fdf9881a3e131add95d4e554a33fb1b',
+    blockHeight: '3489367',
+    endTime: 1643293026000,
+    startTime: 1643293026000,
+    from: 'cnSddhDaRYhonByujX98GYrCgmHPUxmpnLg5mTKkHEYcrf3jB',
+    soraNetworkFee: '700000000000000',
+    status: 'finalized',
+    assetAddress: '0x0200000000000000000000000000000000000000000000000000000000000000',
+    symbol: 'XOR',
+    to: 'cnW4qGRcbepL9bZRw7DS2RdYgRyiW2zsKoq1cdZVZQpRL2ftG',
+    amount: '1.000000000000000000',
+  },
+  '0x4e3de4b012fe63e2fd8ec2ef096bf2def66d05cd0a81dbcb37a65d110e937ec3': {
+    id: '0x4e3de4b012fe63e2fd8ec2ef096bf2def66d05cd0a81dbcb37a65d110e937ec3',
+    type: 'Transfer',
+    txId: '0x4e3de4b012fe63e2fd8ec2ef096bf2def66d05cd0a81dbcb37a65d110e937ec3',
+    blockId: '0x7afd56cbf423c008d87930783389915fb19ae9eb8d5cf997e6a0efd4fa53ad72',
+    blockHeight: '3489352',
+    endTime: 1643292936000,
+    startTime: 1643292936000,
+    from: 'cnSddhDaRYhonByujX98GYrCgmHPUxmpnLg5mTKkHEYcrf3jB',
+    soraNetworkFee: '700000000000000',
+    status: 'finalized',
+    assetAddress: '0x0200040000000000000000000000000000000000000000000000000000000000',
+    symbol: 'VAL',
+    to: 'cnW4qGRcbepL9bZRw7DS2RdYgRyiW2zsKoq1cdZVZQpRL2ftG',
+    amount: '2.000000000000000000',
+  },
+};
+
 export const MOCK_ACCOUNTS: any = [
   {
     address: 'dfsakljfdlkjfhfkjladshslfjafds',

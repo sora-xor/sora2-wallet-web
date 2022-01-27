@@ -143,7 +143,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     }, []);
   }
 
-  async created() {
+  async mounted() {
     await this.withLoading(async () => {
       await this.reset();
       await Promise.all([this.getAssets(), this.syncAndUpdateHistory()]);

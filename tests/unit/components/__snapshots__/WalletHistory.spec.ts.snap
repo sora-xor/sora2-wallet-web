@@ -52,6 +52,118 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           <div
             class="history-item-title p4"
           >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
             Sent ******  To cnVFi...P2nse
           </div>
            
@@ -151,34 +263,6 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           Nov 27, 2020 11:59:59 PM
         </div>
       </div>
-      <div
-        class="history-item s-flex"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="RegisterAsset"
-          >
-            Register Asset
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Registered ****** asset
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
     </div>
      
     <s-pagination-stub
@@ -192,7 +276,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       perpagetext="Rows per page"
       popperclass=""
       prevtext=""
-      total="5"
+      total="9"
       totaltext="Total"
     />
   </s-form-stub>
@@ -293,6 +377,118 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
           <div
             class="history-item-title p4"
           >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
             Failed to send ******  to cnVFi...P2nse
           </div>
            
@@ -316,7 +512,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       <span
         class="el-pagination__total"
       >
-        1—1 of 1
+        1—5 of 5
       </span>
       <button
         class="btn-prev"
@@ -461,6 +657,118 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
           <div
             class="history-item-title p4"
           >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
+            Sent ******  To cnW4q...L2ftG
+          </div>
+           
+          <!---->
+        </div>
+         
+        <div
+          class="history-item-date"
+        >
+          Nov 27, 2020 11:59:59 PM
+        </div>
+      </div>
+      <div
+        class="history-item s-flex"
+      >
+        <div
+          class="history-item-info"
+        >
+          <div
+            class="history-item-operation ch3"
+            data-type="Transfer"
+          >
+            Transfer
+          </div>
+           
+          <div
+            class="history-item-title p4"
+          >
             Sent ******  To cnVFi...P2nse
           </div>
            
@@ -484,7 +792,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       <span
         class="el-pagination__total"
       >
-        1—1 of 1
+        1—5 of 5
       </span>
       <button
         class="btn-prev"
