@@ -14,7 +14,8 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { FPNumber, KnownSymbols } from '@sora-substrate/util';
+import { FPNumber } from '@sora-substrate/util';
+import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';

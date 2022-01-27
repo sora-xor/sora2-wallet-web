@@ -4,18 +4,9 @@ import fromPairs from 'lodash/fp/fromPairs';
 import flow from 'lodash/fp/flow';
 import concat from 'lodash/fp/concat';
 import omit from 'lodash/fp/omit';
-import {
-  AccountAsset,
-  getWhitelistAssets,
-  getWhitelistIdsBySymbol,
-  WhitelistArrayItem,
-  Whitelist,
-  axiosInstance,
-  History,
-  Asset,
-  FPNumber,
-} from '@sora-substrate/util';
+import { axiosInstance, History, FPNumber } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
+import type { AccountAsset, Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { api } from '../api';
 import { storage } from '../util/storage';
@@ -29,7 +20,7 @@ import {
 } from '../util';
 import { SubqueryExplorerService } from '../services/subquery';
 import type { FiatPriceAndApyObject, ReferrerRewards } from '../services/types';
-import type { Account, PolkadotJsAccount } from '../types/common';
+import type { Account, PolkadotJsAccount, AccountAssetsTable } from '../types/common';
 
 const HOUR = 60 * 60 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5 * 1000;
@@ -132,7 +123,7 @@ const getters = {
   accountAssets(state: AccountState): Array<AccountAsset> {
     return state.accountAssets;
   },
-  accountAssetsAddressTable(state: AccountState): any {
+  accountAssetsAddressTable(state: AccountState): AccountAssetsTable {
     return toHashTable(state.accountAssets, 'address');
   },
   activity(state: AccountState): Array<History> {
@@ -148,10 +139,12 @@ const getters = {
     return state.whitelistArray;
   },
   whitelist(state: AccountState): Whitelist {
-    return state.whitelistArray && state.whitelistArray.length ? getWhitelistAssets(state.whitelistArray) : {};
+    return state.whitelistArray && state.whitelistArray.length ? api.assets.getWhitelist(state.whitelistArray) : {};
   },
   whitelistIdsBySymbol(state: AccountState): any {
-    return state.whitelistArray && state.whitelistArray.length ? getWhitelistIdsBySymbol(state.whitelistArray) : {};
+    return state.whitelistArray && state.whitelistArray.length
+      ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray)
+      : {};
   },
   withoutFiatAndApy(state: AccountState): boolean {
     return state.withoutFiatAndApy;
@@ -211,7 +204,7 @@ const mutations = {
     state.address = storage.get('address') || '';
     state.name = storage.get('name') || '';
     state.isExternal = Boolean(storage.get('isExternal')) || false;
-    state.accountAssets = api.accountAssets; // to save reactivity
+    state.accountAssets = api.assets.accountAssets; // to save reactivity
     state.activity = api.accountHistory;
   },
 
@@ -464,13 +457,13 @@ const actions = {
   },
 
   async getAccountAssets({ commit, getters }) {
-    if (!getters.isLoggedIn || (api.accountAssets.length && getters.accountAssets.length !== 0)) {
+    if (!getters.isLoggedIn || (api.assets.accountAssets.length && getters.accountAssets.length !== 0)) {
       return;
     }
     commit(types.GET_ACCOUNT_ASSETS_REQUEST);
     try {
-      await api.getKnownAccountAssets();
-      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, api.accountAssets);
+      await api.assets.getKnownAccountAssets();
+      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, api.assets.accountAssets);
     } catch (error) {
       commit(types.GET_ACCOUNT_ASSETS_FAILURE);
     }
@@ -482,10 +475,10 @@ const actions = {
     if (getters.isLoggedIn) {
       commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST);
       try {
-        state.accountAssetsSubscription = api.assetsBalanceUpdated.subscribe((data) => {
-          commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.accountAssets);
+        state.accountAssetsSubscription = api.assets.balanceUpdated.subscribe((data) => {
+          commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.assets.accountAssets);
         });
-        api.updateAccountAssets();
+        api.assets.updateAccountAssets();
       } catch (error) {
         commit(types.UPDATE_ACCOUNT_ASSETS_FAILURE);
       }
@@ -550,7 +543,7 @@ const actions = {
   async getAssets({ commit, getters: { whitelist } }) {
     commit(types.GET_ASSETS_REQUEST);
     try {
-      const assets = await api.getAssets(whitelist);
+      const assets = await api.assets.getAssets(whitelist);
       commit(types.GET_ASSETS_SUCCESS, assets);
     } catch (error) {
       commit(types.GET_ASSETS_FAILURE);
@@ -559,7 +552,7 @@ const actions = {
   async searchAsset({ commit, getters: { whitelist } }, address: string) {
     commit(types.SEARCH_ASSET_REQUEST);
     try {
-      const assets = await api.getAssets(whitelist);
+      const assets = await api.assets.getAssets(whitelist);
       const asset = assets.find((asset) => asset.address === address);
       commit(types.SEARCH_ASSET_SUCCESS);
       return asset;
@@ -570,7 +563,7 @@ const actions = {
   async addAsset({ commit }, address: string) {
     commit(types.ADD_ASSET_REQUEST);
     try {
-      await api.getAccountAsset(address, true);
+      await api.assets.getAccountAsset(address, true);
       commit(types.ADD_ASSET_SUCCESS);
     } catch (error) {
       commit(types.ADD_ASSET_FAILURE);
@@ -583,7 +576,7 @@ const actions = {
     commit(types.TRANSFER_REQUEST);
     const asset = currentRouteParams.asset as AccountAsset;
     try {
-      await api.transfer(asset.address, to, amount);
+      await api.transfer(asset, to, amount);
       commit(types.TRANSFER_SUCCESS);
     } catch (error) {
       commit(types.TRANSFER_FAILURE);
@@ -621,7 +614,7 @@ const actions = {
 
       // if asset(s) in api.accountAssets changed, we should update subscription
       if (prevAddresses.length !== delta || currentAddresses.length !== delta) {
-        api.updateAccountAssets();
+        api.assets.updateAccountAssets();
       }
     }
   },

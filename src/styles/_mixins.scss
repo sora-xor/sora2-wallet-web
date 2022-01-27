@@ -172,11 +172,11 @@
   }
 }
 
-@mixin fadeHeight ($seconds: .3s) {
+@mixin fadeHeight ($max-height: 200px, $seconds: .3s) {
   .fadeHeight-enter-active,
   .fadeHeight-leave-active {
     transition: all $seconds;
-    max-height: 200px;
+    max-height: $max-height;
   }
   .fadeHeight-enter,
   .fadeHeight-leave-to

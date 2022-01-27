@@ -1,6 +1,7 @@
-import { Operation, TransactionStatus, BalanceType } from '@sora-substrate/util';
+import { Operation, TransactionStatus } from '@sora-substrate/util';
+import { BalanceType } from '@sora-substrate/util/build/assets/consts';
 
-import { AddAssetTabs, WalletTabs } from '../../consts';
+import { AddAssetTabs, TokenTabs, WalletTabs } from '../../consts';
 
 export default {
   closeText: 'Close',
@@ -11,7 +12,8 @@ export default {
   importText: 'Import',
   settingsText: 'Settings',
   addAssetText: 'Add asset',
-  createTokenText: 'Create token',
+  createTokenText: 'Create',
+  createTokenTextNFT: 'Create NFT',
   comingSoonText: 'Coming soon',
   successText: 'Success',
   warningText: 'Warning',
@@ -179,11 +181,44 @@ export default {
   },
   createToken: {
     title: '@:createTokenText',
+    titleCommon: 'Create',
+    confirmTokenTitleCommon: 'Create Token',
+    confirmTokenTitleNFT: 'Create NFT',
     desc: 'Create and deploy custom asset on SORA',
     action: '@:createTokenText',
+    actionNFT: '@:createTokenTextNFT',
     enterSymbol: 'Enter token symbol',
     enterName: 'Enter token name',
     enterSupply: 'Enter token supply',
+    provideContent: 'Provide content',
+    selectLocalFile: 'Select local file',
+    enterTokenDescription: 'Enter description',
+    [TokenTabs.Token]: 'Token',
+    [TokenTabs.NonFungibleToken]: 'NFT',
+    nft: {
+      source: {
+        label: 'Source',
+        value: 'Local files',
+      },
+      link: {
+        placeholder: 'Enter link here...',
+        placeholderShort: 'Link',
+        copyLink: 'Copy link',
+      },
+      image: {
+        placeholderNoImage: 'Upload the file by either entering a link or choosing from local storage',
+        placeholderBadSource: 'There’s no image',
+        placeholderBadSourceAddition: 'or it’s not uploaded to IPFS yet',
+      },
+      supply: {
+        placeholder: 'Token supply',
+        desc: 'Amount of NFTs you’re going to get.',
+        quantity: 'Quantity',
+      },
+      description: {
+        placeholder: 'Description',
+      },
+    },
     confirm: '@:confirmText',
     success: {
       title: 'Transaction submitted',

@@ -22,27 +22,29 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
     <div
       class="asset-details-container s-flex"
     >
-      <i
-        class="asset-logo"
-      />
-       
-      <div
-        class="asset-details-balance d2 asset-details-balance--clickable"
-        style="font-size: 30px;"
-      >
-        <formatted-amount-stub
-          assetsymbol="XOR"
-          fontsizerate="small"
-          fontweightrate="normal"
-          symbolasdecimal="true"
-          value="123.4"
-          valuecanbehidden="true"
+      <div>
+        <i
+          class="asset-logo"
+        />
+         
+        <div
+          class="asset-details-balance d2 asset-details-balance--clickable"
+          style="font-size: 30px;"
         >
-          <s-icon-stub
-            name="chevron-down-rounded-16"
-            size="18"
-          />
-        </formatted-amount-stub>
+          <formatted-amount-stub
+            assetsymbol="XOR"
+            fontsizerate="small"
+            fontweightrate="normal"
+            symbolasdecimal="true"
+            value="123.4"
+            valuecanbehidden="true"
+          >
+            <s-icon-stub
+              name="chevron-down-rounded-16"
+              size="18"
+            />
+          </formatted-amount-stub>
+        </div>
       </div>
        
       <formatted-amount-stub
@@ -167,6 +169,8 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
     </div>
   </s-card-stub>
    
+  <!---->
+   
   <wallet-history-stub
     asset="[object Object]"
   />
@@ -195,27 +199,29 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
     <div
       class="asset-details-container s-flex"
     >
-      <i
-        class="asset-logo"
-      />
-       
-      <div
-        class="asset-details-balance d2 asset-details-balance--clickable asset-details-balance--clicked"
-        style="font-size: 30px;"
-      >
-        <formatted-amount-stub
-          assetsymbol="XOR"
-          fontsizerate="small"
-          fontweightrate="normal"
-          symbolasdecimal="true"
-          value="123.4"
-          valuecanbehidden="true"
+      <div>
+        <i
+          class="asset-logo"
+        />
+         
+        <div
+          class="asset-details-balance d2 asset-details-balance--clickable asset-details-balance--clicked"
+          style="font-size: 30px;"
         >
-          <s-icon-stub
-            name="chevron-down-rounded-16"
-            size="18"
-          />
-        </formatted-amount-stub>
+          <formatted-amount-stub
+            assetsymbol="XOR"
+            fontsizerate="small"
+            fontweightrate="normal"
+            symbolasdecimal="true"
+            value="123.4"
+            valuecanbehidden="true"
+          >
+            <s-icon-stub
+              name="chevron-down-rounded-16"
+              size="18"
+            />
+          </formatted-amount-stub>
+        </div>
       </div>
        
       <formatted-amount-stub
@@ -487,6 +493,8 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
       </transition-stub>
     </div>
   </s-card-stub>
+   
+  <!---->
    
   <wallet-history-stub
     asset="[object Object]"

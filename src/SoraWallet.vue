@@ -14,7 +14,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
-import { AccountAsset } from '@sora-substrate/util';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import AddAsset from './components/AddAsset.vue';
 import AddAssetDetails from './components/AddAssetDetails.vue';
