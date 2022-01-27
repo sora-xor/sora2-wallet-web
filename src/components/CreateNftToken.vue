@@ -24,20 +24,22 @@
         </s-button>
         <span class="image-upload__filename">{{ formattedFileName }}</span>
       </div>
-      <div class="preview-image">
+      <div class="preview-image-create-nft">
         <div v-if="imageLoading" v-loading="imageLoading" />
         <div v-else-if="!tokenContentLink && !file" class="placeholder">
-          <s-icon class="preview-image__icon" name="camera-16" size="64px" />
-          <span class="preview-image__placeholder">{{ t('createToken.nft.image.placeholderNoImage') }}</span>
+          <s-icon class="preview-image-create-nft__icon" name="camera-16" size="64px" />
+          <span class="preview-image-create-nft__placeholder">{{ t('createToken.nft.image.placeholderNoImage') }}</span>
         </div>
         <div v-else-if="badSource && !file" class="placeholder">
-          <s-icon class="preview-image__icon" name="basic-clear-X-24" size="64px" />
-          <span class="preview-image__placeholder">{{ t('createToken.nft.image.placeholderBadSource') }}</span>
+          <s-icon class="preview-image-create-nft__icon" name="basic-clear-X-24" size="64px" />
+          <span class="preview-image-create-nft__placeholder">{{
+            t('createToken.nft.image.placeholderBadSource')
+          }}</span>
         </div>
         <div v-else class="image">
-          <img class="preview-image__content" :src="contentSrcLink" />
+          <img class="preview-image-create-nft__content" :src="contentSrcLink" />
           <div @click="clearContent">
-            <s-icon class="preview-image__clear-btn" name="basic-clear-X-24" size="64px" />
+            <s-icon class="preview-image-create-nft__clear-btn" name="basic-clear-X-24" size="64px" />
           </div>
         </div>
       </div>
@@ -86,10 +88,10 @@
         @click="onCreate"
       >
         <template v-if="!tokenContentLink.trim() && !file">{{ t('createToken.provideContent') }}</template>
-        <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
         <template v-else-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
-        <template v-else-if="!tokenDescription">{{ t('createToken.enterTokenDescription') }}</template>
+        <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
         <template v-else-if="!tokenSupply">{{ t('createToken.enterSupply') }}</template>
+        <template v-else-if="!tokenDescription">{{ t('createToken.enterTokenDescription') }}</template>
         <template v-else-if="badSource">{{ t('createToken.provideContent') }}</template>
         <template v-else>{{ t('createToken.actionNFT') }}</template>
       </s-button>
@@ -408,18 +410,16 @@ export default class CreateNftToken extends Mixins(
 
 .el-textarea {
   height: 54px;
-  // margin-top: 6px;
 
   &__inner {
     resize: none !important;
   }
 }
 
-.preview-image {
+.preview-image-create-nft {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  overflow: hidden;
   border: 2px dashed var(--s-color-base-content-tertiary);
   border-radius: var(--s-border-radius-small);
   margin: #{$basic-spacing-medium} 0;
@@ -428,6 +428,7 @@ export default class CreateNftToken extends Mixins(
 
   .image {
     margin: 0 auto;
+    height: 176px;
   }
 
   .placeholder {
@@ -452,7 +453,6 @@ export default class CreateNftToken extends Mixins(
   &__placeholder {
     letter-spacing: var(--s-letter-spacing-small);
     color: var(--s-color-base-content-primary);
-    font-weight: 400 !important;
     font-size: calc(var(--s-size-small) / 2);
     text-align: center;
     padding: 0 50px;
