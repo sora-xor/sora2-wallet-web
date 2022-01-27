@@ -1,4 +1,4 @@
-export type PageInfo = {
+export type CursorPagination = {
   startCursor: string;
   endCursor: string;
   hasPreviousPage: boolean;

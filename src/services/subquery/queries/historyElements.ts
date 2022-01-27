@@ -255,9 +255,11 @@ export const historyElementsFilter = (
     });
   }
 
-  filter.and.push({
-    or: queryFilters,
-  });
+  if (queryFilters.length) {
+    filter.and.push({
+      or: queryFilters,
+    });
+  }
 
   return filter;
 };

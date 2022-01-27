@@ -9,7 +9,7 @@ import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 import { api } from '../api';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
 import { historyElementsFilter } from '../services/subquery/queries/historyElements';
-import type { PageInfo } from '../types/history';
+import type { CursorPagination } from '../types/history';
 
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2 * 1000;
 
@@ -23,7 +23,7 @@ const types = flow(
     'GET_ACTIVITY',
     'SET_EXTERNAL_ACTIVITY',
     'SET_EXTERNAL_ACTIVITY_TOTAL',
-    'SET_EXTERNAL_ACTIVITY_PAGE_INFO',
+    'SET_EXTERNAL_ACTIVITY_PAGINATION',
   ]),
   map((x) => [x, x]),
   fromPairs
@@ -33,7 +33,7 @@ type TransactionsState = {
   activity: AccountHistory<HistoryItem>;
   externalActivity: AccountHistory<HistoryItem>;
   externalActivityTotal: number;
-  externalActivityPageInfo: Nullable<PageInfo>;
+  externalActivityPagination: Nullable<CursorPagination>;
   activeTransactionsIds: Array<string>;
   updateActiveTransactionsId: Nullable<NodeJS.Timeout>;
   selectedTransactionId: Nullable<string>;
@@ -44,7 +44,7 @@ function initialState(): TransactionsState {
     activity: {}, // history items what not synced with subquery
     externalActivity: {},
     externalActivityTotal: 0,
-    externalActivityPageInfo: null,
+    externalActivityPagination: null,
     activeTransactionsIds: [],
     updateActiveTransactionsId: null,
     selectedTransactionId: null,
@@ -117,8 +117,8 @@ const mutations = {
     state.externalActivityTotal = count;
   },
 
-  [types.SET_EXTERNAL_ACTIVITY_PAGE_INFO](state: TransactionsState, pageInfo: Nullable<PageInfo>) {
-    state.externalActivityPageInfo = pageInfo;
+  [types.SET_EXTERNAL_ACTIVITY_PAGINATION](state: TransactionsState, pageInfo: Nullable<CursorPagination>) {
+    state.externalActivityPagination = pageInfo;
   },
 };
 
@@ -133,8 +133,9 @@ const actions = {
   trackActiveTransactions({ commit, dispatch, state }) {
     commit(types.RESET_ACTIVE_TRANSACTIONS);
     state.updateActiveTransactionsId = setInterval(() => {
-      // to update app activities (history)
-      dispatch('getAccountActivity');
+      if (state.activeTransactionsIds.length) {
+        dispatch('getAccountActivity');
+      }
     }, UPDATE_ACTIVE_TRANSACTIONS_INTERVAL);
   },
   resetActiveTransactions({ commit }) {
@@ -149,7 +150,7 @@ const actions = {
   resetExternalActivity({ commit }) {
     commit(types.SET_EXTERNAL_ACTIVITY, {});
     commit(types.SET_EXTERNAL_ACTIVITY_TOTAL, 0);
-    commit(types.SET_EXTERNAL_ACTIVITY_PAGE_INFO, null);
+    commit(types.SET_EXTERNAL_ACTIVITY_PAGINATION, null);
   },
 
   /**
@@ -175,9 +176,10 @@ const actions = {
           }
         }
 
-        api.removeHistory(...removeHistoryIds);
-
-        await dispatch('getAccountActivity');
+        if (removeHistoryIds.length) {
+          api.removeHistory(...removeHistoryIds);
+          await dispatch('getAccountActivity');
+        }
       }
 
       api.historySyncTimestamp = Math.round(Date.now() / 1000);
@@ -190,7 +192,7 @@ const actions = {
    * Get history from explorer, already filtered
    */
   async getExternalActivity(
-    { commit, state },
+    { commit, state: { externalActivityPagination: pagination, externalActivity, activity } },
     {
       next = true,
       address = '',
@@ -199,50 +201,50 @@ const actions = {
       query: { search = '', operations = [], assetsAddresses = [] } = {},
     } = {}
   ): Promise<void> {
-    if (
-      state.externalActivityPageInfo &&
-      ((next && !state.externalActivityPageInfo.hasNextPage) ||
-        (!next && !state.externalActivityPageInfo.hasPreviousPage))
-    )
-      return;
+    if (pagination && ((next && !pagination.hasNextPage) || (!next && !pagination.hasPreviousPage))) return;
 
     const filter = historyElementsFilter(address, { assetAddress, query: { search, operations, assetsAddresses } });
-    const pagination = {
-      [next ? 'after' : 'before']: state.externalActivityPageInfo
-        ? (next ? state.externalActivityPageInfo.endCursor : state.externalActivityPageInfo.startCursor) || ''
-        : '',
+    const cursor = {
+      [next ? 'after' : 'before']: pagination ? (next ? pagination.endCursor : pagination.startCursor) || '' : '',
     };
 
     const variables = {
       filter,
       first: pageAmount,
-      ...pagination,
+      ...cursor,
     };
 
     try {
       const { edges, pageInfo, totalCount } = await SubqueryExplorerService.getAccountTransactions(variables);
       const buffer = {};
+      const removeHistoryIds: Array<string> = [];
 
-      for (const edge of edges) {
-        const transaction = edge.node;
-        const { id } = transaction;
+      if (edges.length) {
+        for (const edge of edges) {
+          const transaction = edge.node;
+          const { id } = transaction;
 
-        if (!(id in state.externalActivity)) {
-          const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
+          if (!(id in externalActivity)) {
+            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
 
-          if (historyItem) {
-            buffer[id] = historyItem;
+            if (historyItem) {
+              buffer[id] = historyItem;
+            }
+          }
+
+          if (id in activity) {
+            removeHistoryIds.push(id);
           }
         }
 
-        if (id in state.activity) {
-          api.removeHistory(transaction.id);
+        if (removeHistoryIds.length) {
+          api.removeHistory(...removeHistoryIds);
         }
       }
 
-      commit(types.SET_EXTERNAL_ACTIVITY, { ...state.externalActivity, ...buffer });
+      commit(types.SET_EXTERNAL_ACTIVITY, { ...externalActivity, ...buffer });
       commit(types.SET_EXTERNAL_ACTIVITY_TOTAL, totalCount);
-      commit(types.SET_EXTERNAL_ACTIVITY_PAGE_INFO, pageInfo);
+      commit(types.SET_EXTERNAL_ACTIVITY_PAGINATION, pageInfo);
     } catch (error) {
       console.error(error);
     }

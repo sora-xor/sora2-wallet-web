@@ -82,7 +82,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
   @Getter selectedTransaction!: History;
   @Getter accountAssets!: Array<AccountAsset>;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAccountActivity!: AsyncVoidFn;
   @Action getTransactionDetails!: (id: string) => Promise<void>;
 
   mounted() {
@@ -90,7 +89,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
     if (!id) {
       this.navigate({ name: RouteNames.Wallet });
     }
-    this.getAccountActivity();
     this.getTransactionDetails(id);
   }
 
