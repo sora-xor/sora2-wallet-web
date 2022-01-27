@@ -14,7 +14,7 @@
 
         <template v-if="step === Step.First || (step === Step.Second && !polkadotJsAccounts.length)">
           <s-button
-            class="wallet-connection-action s-typography-button--large"
+            class="wallet-connection-action s-typography-button--large action-btn"
             type="primary"
             :loading="loading"
             @click="handleActionClick"
@@ -22,7 +22,7 @@
             {{ t(actionButtonText) }}
           </s-button>
           <s-button
-            class="wallet-connection-action s-typography-button--large"
+            class="wallet-connection-action s-typography-button--large learn-more-btn"
             type="tertiary"
             icon="question-circle-16"
             icon-position="right"
@@ -60,7 +60,6 @@ import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
-import { RouteNames } from '../consts';
 
 import type { PolkadotJsAccount } from '../types/common';
 
@@ -87,7 +86,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     return (this.currentRouteParams || {}).isAccountSwitch;
   }
 
-  async created(): Promise<void> {
+  async mounted(): Promise<void> {
     await this.withApi(async () => {
       if (this.isAccountSwitch) {
         this.navigateToAccountList();
