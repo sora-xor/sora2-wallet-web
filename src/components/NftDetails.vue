@@ -96,7 +96,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     height: 250px;
     width: 250px;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: calc(var(--s-border-radius-mini) * 0.75);
   }
 
   &__icon {

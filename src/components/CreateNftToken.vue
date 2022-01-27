@@ -441,7 +441,7 @@ export default class CreateNftToken extends Mixins(
     height: 176px;
     width: 176px;
     object-fit: cover;
-    border-radius: 12px;
+    border-radius: calc(var(--s-border-radius-mini) * 0.75);
   }
 
   &__icon {
