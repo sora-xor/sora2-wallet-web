@@ -143,7 +143,6 @@ export default class NftDetails extends Mixins(TranslationMixin) {
       color: var(--s-color-base-on-accent) !important;
       border-radius: 50%;
       text-align: left;
-      line-height: 22px;
     }
 
     &--clicked .s-icon-chevron-down-rounded-16 {
