@@ -54,40 +54,26 @@ import { History, TransactionStatus } from '@sora-substrate/util';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
 
-import { api } from '../api';
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 import PaginationSearchMixin from './mixins/PaginationSearchMixin';
 import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames } from '../consts';
-import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
-import { historyElementsFilter } from '../services/subquery/queries/historyElements';
-
-type PageInfo = {
-  startCursor: string;
-  endCursor: string;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
-};
+import { SubqueryDataParserService } from '../services/subquery';
 
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
   @Getter assets!: Array<Asset>;
   @Getter activity!: AccountHistory<HistoryItem>;
   @Getter externalActivity!: AccountHistory<HistoryItem>;
+  @Getter externalActivityTotal!: number;
   @Getter shouldBalanceBeHidden!: boolean;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAccountActivity!: AsyncVoidFn;
-  @Action updateExternalActivity!: (activity: AccountHistory<HistoryItem>) => Promise<void>;
-  @Action clearSyncedAccountActivity!: ({
-    address,
-    assetAddress,
-  }: {
-    address: string;
-    assetAddress?: string;
-  }) => Promise<void>;
-
   @Action getAssets!: AsyncVoidFn;
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @Action getExternalActivity!: (options?: any) => Promise<void>;
+  @Action resetExternalActivity!: AsyncVoidFn;
+  @Action getAccountActivity!: AsyncVoidFn;
+  @Action clearSyncedAccountActivity!: (options: { address: string; assetAddress?: string }) => Promise<void>;
 
   @Prop() readonly asset?: AccountAsset;
 
@@ -96,14 +82,9 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     await this.updateCommonHistory();
   }
 
-  TransactionStatus = TransactionStatus;
-
-  pageAmount = 8; // override PaginationSearchMixin
-
-  externalActivityTotalCount = 0;
-  pageInfo: Nullable<PageInfo> = null;
-
-  updateCommonHistory = debounce(() => this.updateHistory(true, true), 500);
+  readonly TransactionStatus = TransactionStatus;
+  readonly pageAmount = 8; // override PaginationSearchMixin
+  readonly updateCommonHistory = debounce(() => this.updateHistory(true, true), 500);
 
   get assetAddress(): string {
     return (this.asset && this.asset.address) || '';
@@ -136,7 +117,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get total(): number {
-    return this.externalActivityTotalCount + this.internalHistory.length;
+    return this.externalActivityTotal + this.internalHistory.length;
   }
 
   get hasTransactions(): boolean {
@@ -164,17 +145,15 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   async created() {
     await this.withLoading(async () => {
-      this.resetExternalActivity();
+      this.reset();
 
       await Promise.all([this.getAssets(), this.syncAndUpdateHistory()]);
     });
   }
 
-  resetExternalActivity(): void {
+  reset(): void {
     this.resetPage();
-    this.updateExternalActivity({});
-    this.externalActivityTotalCount = 0;
-    this.pageInfo = null;
+    this.resetExternalActivity();
   }
 
   getFilteredHistory(history: Array<History>): Array<History> {
@@ -229,8 +208,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   async handlePaginationClick(current: number): Promise<void> {
     const isNext = current > this.currentPage;
-    this.currentPage = current;
     await this.updateHistory(isNext);
+    this.currentPage = current;
   }
 
   private async syncAndUpdateHistory(): Promise<void> {
@@ -241,70 +220,24 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   /**
    * Update external & internal history
    */
-  private async updateHistory(nextPage = true, reset = false): Promise<void> {
+  private async updateHistory(next = true, withReset = false): Promise<void> {
     await this.withLoading(async () => {
-      if (reset) {
-        this.resetExternalActivity();
+      if (withReset) {
+        this.reset();
       }
-      await this.updateExternalHistory(nextPage);
+      await this.getExternalActivity({
+        next,
+        address: this.account.address,
+        assetAddress: this.assetAddress,
+        pageAmount: this.pageAmount,
+        query: {
+          search: this.searchQuery,
+          operations: this.searchQueryOperations,
+          assetsAddresses: this.searchQueryAssetsAddresses,
+        },
+      });
       await this.getAccountActivity();
     });
-  }
-
-  /**
-   * Get history from explorer, already filtered
-   */
-  private async updateExternalHistory(isNextPage = true): Promise<void> {
-    const {
-      assetAddress,
-      account: { address },
-      pageAmount,
-      pageInfo,
-      searchQuery: search,
-      searchQueryOperations: operations,
-      searchQueryAssetsAddresses: assetsAddresses,
-    } = this;
-
-    if (pageInfo && ((isNextPage && !pageInfo.hasNextPage) || (!isNextPage && !pageInfo.hasPreviousPage))) return;
-
-    const filter = historyElementsFilter(address, { assetAddress, query: { search, operations, assetsAddresses } });
-    const pagination = {
-      [isNextPage ? 'after' : 'before']: pageInfo ? (isNextPage ? pageInfo.endCursor : pageInfo.startCursor) || '' : '',
-    };
-
-    const variables = {
-      filter,
-      first: pageAmount,
-      ...pagination,
-    };
-
-    try {
-      const { edges, pageInfo, totalCount } = await SubqueryExplorerService.getAccountTransactions(variables);
-      const buffer = {};
-
-      for (const edge of edges) {
-        const transaction = edge.node;
-        const { id } = transaction;
-
-        if (!(id in this.externalActivity)) {
-          const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
-
-          if (historyItem) {
-            buffer[id] = historyItem;
-          }
-        }
-
-        if (id in this.activity) {
-          api.removeHistory(transaction.id);
-        }
-      }
-
-      this.updateExternalActivity({ ...this.externalActivity, ...buffer });
-      this.externalActivityTotalCount = totalCount;
-      this.pageInfo = pageInfo;
-    } catch (error) {
-      console.error(error);
-    }
   }
 }
 </script>
