@@ -31,8 +31,6 @@ const types = flow(
     'RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION',
     'LOGOUT',
     'SYNC_WITH_STORAGE',
-    'SET_TRANSACTION_DETAILS_ID',
-    'GET_ACCOUNT_ACTIVITY',
   ]),
   map((x) => [x, x]),
   fromPairs
@@ -57,8 +55,6 @@ type AccountState = {
   name: string;
   isExternal: boolean;
   accountAssets: Array<AccountAsset>;
-  selectedTransactionId: Nullable<string>;
-  activity: AccountHistory<HistoryItem>;
   assets: Array<Asset>;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
   whitelistArray: Array<WhitelistArrayItem>;
@@ -76,8 +72,6 @@ function initialState(): AccountState {
     name: storage.get('name') || '',
     isExternal: Boolean(JSON.parse(storage.get('isExternal'))) || false,
     accountAssets: [],
-    selectedTransactionId: null,
-    activity: {}, // history items what not synced with subquery
     assets: [],
     polkadotJsAccounts: [],
     whitelistArray: [],
@@ -112,9 +106,6 @@ const getters = {
   accountAssetsAddressTable(state: AccountState): AccountAssetsTable {
     return toHashTable(state.accountAssets, 'address');
   },
-  activity(state: AccountState): AccountHistory<HistoryItem> {
-    return state.activity;
-  },
   assets(state: AccountState): Array<Asset> {
     return state.assets;
   },
@@ -140,11 +131,6 @@ const getters = {
   },
   assetsLoading(state: AccountState): boolean {
     return state.assetsLoading;
-  },
-  selectedTransaction(state: AccountState, getters): Nullable<HistoryItem> {
-    if (!state.selectedTransactionId) return null;
-
-    return getters.activity[state.selectedTransactionId];
   },
   referralRewards(state: AccountState): ReferrerRewards {
     return state.referralRewards;
@@ -177,7 +163,6 @@ const mutations = {
     state.name = storage.get('name') || '';
     state.isExternal = Boolean(storage.get('isExternal')) || false;
     state.accountAssets = api.assets.accountAssets; // to save reactivity
-    state.activity = api.history;
   },
 
   [types.GET_ADDRESS_REQUEST](state: AccountState) {
@@ -212,11 +197,6 @@ const mutations = {
 
   [types.UPDATE_ACCOUNT_ASSETS_FAILURE](state: AccountState) {
     state.accountAssets = [];
-  },
-
-  [types.GET_ACCOUNT_ACTIVITY](state: AccountState, activity: AccountHistory<HistoryItem>) {
-    // increasing performance: Object.freeze - to remove vue reactivity from 'activity' attributes
-    state.activity = Object.freeze(activity);
   },
 
   [types.GET_ASSETS_REQUEST](state: AccountState) {
@@ -303,10 +283,6 @@ const mutations = {
   },
 
   [types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE](state: AccountState) {},
-
-  [types.SET_TRANSACTION_DETAILS_ID](state: AccountState, id: string) {
-    state.selectedTransactionId = id;
-  },
 };
 
 const actions = {
@@ -405,9 +381,6 @@ const actions = {
       }
     }
   },
-  getAccountActivity({ commit }) {
-    commit(types.GET_ACCOUNT_ACTIVITY, api.history);
-  },
   async getWhitelist({ commit }, { whiteListOverApi }) {
     const url = whiteListOverApi ? WHITE_LIST_GITHUB_URL : '/whitelist.json';
     commit(types.GET_WHITELIST_REQUEST);
@@ -479,9 +452,7 @@ const actions = {
       commit(types.ADD_ASSET_FAILURE);
     }
   },
-  getTransactionDetails({ commit }, id: string) {
-    commit(types.SET_TRANSACTION_DETAILS_ID, id);
-  },
+
   async transfer({ commit, getters: { currentRouteParams } }, { to, amount }) {
     commit(types.TRANSFER_REQUEST);
     const asset = currentRouteParams.asset as AccountAsset;

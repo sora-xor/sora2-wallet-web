@@ -14,8 +14,8 @@
         <template v-if="transactions.length">
           <div
             class="history-item s-flex"
-            v-for="item in transactions"
-            :key="`history-${item.id}`"
+            v-for="(item, index) in transactions"
+            :key="index"
             @click="handleOpenTransactionDetails(item.id)"
           >
             <div class="history-item-info">
@@ -74,9 +74,19 @@ type PageInfo = {
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
   @Getter assets!: Array<Asset>;
   @Getter activity!: AccountHistory<HistoryItem>;
+  @Getter externalActivity!: AccountHistory<HistoryItem>;
   @Getter shouldBalanceBeHidden!: boolean;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAccountActivity!: AsyncVoidFn;
+  @Action updateExternalActivity!: (activity: AccountHistory<HistoryItem>) => Promise<void>;
+  @Action clearSyncedAccountActivity!: ({
+    address,
+    assetAddress,
+  }: {
+    address: string;
+    assetAddress?: string;
+  }) => Promise<void>;
+
   @Action getAssets!: AsyncVoidFn;
 
   @Prop() readonly asset?: AccountAsset;
@@ -90,12 +100,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   pageAmount = 8; // override PaginationSearchMixin
 
-  externalActivity: AccountHistory<HistoryItem> = {};
   externalActivityTotalCount = 0;
   pageInfo: Nullable<PageInfo> = null;
 
   updateCommonHistory = debounce(() => this.updateHistory(true, true), 500);
-  filteredInternalHistory: Array<History> = [];
 
   get assetAddress(): string {
     return (this.asset && this.asset.address) || '';
@@ -110,6 +118,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       : activityList;
 
     return prefiltered;
+  }
+
+  get filteredInternalHistory(): Array<History> {
+    return this.getFilteredHistory(this.internalHistory);
   }
 
   get filteredExternalHistory(): Array<History> {
@@ -135,7 +147,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     if (!this.searchQuery) return [];
 
     return SubqueryDataParserService.supportedOperations.filter((operation) =>
-      this.t(`operations.${operation}`).toLowerCase().includes(this.searchQuery)
+      this.t(`operations.${operation}`).toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 
@@ -143,23 +155,24 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     if (!this.searchQuery) return [];
 
     return this.assets.reduce((buffer: Array<string>, asset) => {
-      if (asset.symbol.toLowerCase().includes(this.searchQuery)) {
+      if (asset.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())) {
         buffer.push(asset.address);
       }
       return buffer;
     }, []);
   }
 
-  async mounted() {
+  async created() {
     await this.withLoading(async () => {
-      await Promise.all([this.getAssets(), this.clearSyncedActivity()]);
-      await this.updateHistory();
+      this.resetExternalActivity();
+
+      await Promise.all([this.getAssets(), this.syncAndUpdateHistory()]);
     });
   }
 
-  resetSearchQueryDependencies(): void {
+  resetExternalActivity(): void {
     this.resetPage();
-    this.externalActivity = {};
+    this.updateExternalActivity({});
     this.externalActivityTotalCount = 0;
     this.pageInfo = null;
   }
@@ -169,21 +182,23 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       return history;
     }
 
+    const query = this.searchQuery.toLowerCase();
+
     return history.filter(
       (item) =>
         // asset address criteria
-        `${item.assetAddress}`.toLowerCase() === this.searchQuery ||
-        `${item.asset2Address}`.toLowerCase() === this.searchQuery ||
+        `${item.assetAddress}`.toLowerCase() === query ||
+        `${item.asset2Address}`.toLowerCase() === query ||
         // symbol criteria
-        `${item.symbol}`.toLowerCase().includes(this.searchQuery) ||
-        `${item.symbol2}`.toLowerCase().includes(this.searchQuery) ||
+        `${item.symbol}`.toLowerCase().includes(query) ||
+        `${item.symbol2}`.toLowerCase().includes(query) ||
         // search qriteria
-        `${item.blockId}`.toLowerCase().includes(this.searchQuery) ||
+        `${item.blockId}`.toLowerCase().includes(query) ||
         // account address criteria
-        `${item.from}`.toLowerCase() === this.searchQuery ||
-        `${item.to}`.toLowerCase() === this.searchQuery ||
+        `${item.from}`.toLowerCase() === query ||
+        `${item.to}`.toLowerCase() === query ||
         // operations criteria
-        this.t(`operations.${item.type}`).toLowerCase().includes(this.searchQuery)
+        this.t(`operations.${item.type}`).toLowerCase().includes(query)
     );
   }
 
@@ -218,31 +233,28 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     await this.updateHistory(isNext);
   }
 
-  /**
-   * Update external & internal history
-   */
-  async updateHistory(nextPage = true, reset = false): Promise<void> {
-    await this.withLoading(async () => {
-      if (reset) {
-        this.resetSearchQueryDependencies();
-      }
-      await this.updateExternalHistory(nextPage);
-      await this.updateInternalHistory();
-    });
+  private async syncAndUpdateHistory(): Promise<void> {
+    await this.clearSyncedAccountActivity({ address: this.account.address, assetAddress: this.assetAddress });
+    await this.updateHistory();
   }
 
   /**
-   * Get history from accountStorage, then filter it
+   * Update external & internal history
    */
-  async updateInternalHistory(): Promise<void> {
-    await this.getAccountActivity();
-    this.filteredInternalHistory = this.getFilteredHistory(this.internalHistory);
+  private async updateHistory(nextPage = true, reset = false): Promise<void> {
+    await this.withLoading(async () => {
+      if (reset) {
+        this.resetExternalActivity();
+      }
+      await this.updateExternalHistory(nextPage);
+      await this.getAccountActivity();
+    });
   }
 
   /**
    * Get history from explorer, already filtered
    */
-  async updateExternalHistory(isNextPage = true): Promise<void> {
+  private async updateExternalHistory(isNextPage = true): Promise<void> {
     const {
       assetAddress,
       account: { address },
@@ -268,6 +280,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
     try {
       const { edges, pageInfo, totalCount } = await SubqueryExplorerService.getAccountTransactions(variables);
+      const buffer = {};
 
       for (const edge of edges) {
         const transaction = edge.node;
@@ -277,7 +290,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
           const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
 
           if (historyItem) {
-            this.externalActivity = { ...this.externalActivity, [id]: historyItem };
+            buffer[id] = historyItem;
           }
         }
 
@@ -286,39 +299,9 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
         }
       }
 
-      this.pageInfo = pageInfo;
+      this.updateExternalActivity({ ...this.externalActivity, ...buffer });
       this.externalActivityTotalCount = totalCount;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  /**
-   * Clear history items from accountStorage, what exists in explorer
-   * This is necessary to get the correct 'total' value.
-   */
-  private async clearSyncedActivity(): Promise<void> {
-    const {
-      assetAddress,
-      account: { address },
-    } = this;
-    const timestamp = api.historySyncTimestamp || 0;
-    const filter = historyElementsFilter(address, { assetAddress, timestamp });
-    const variables = { filter };
-    const removeHistoryIds: Array<string> = [];
-    try {
-      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables, { data: false });
-      for (const edge of edges) {
-        const historyId = edge.node.id;
-
-        if (historyId in this.activity) {
-          removeHistoryIds.push(historyId);
-        }
-      }
-      api.removeHistory(...removeHistoryIds);
-      api.historySyncTimestamp = Math.round(Date.now() / 1000);
-
-      await this.getAccountActivity();
+      this.pageInfo = pageInfo;
     } catch (error) {
       console.error(error);
     }

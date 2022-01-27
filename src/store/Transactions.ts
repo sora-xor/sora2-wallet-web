@@ -4,8 +4,11 @@ import fromPairs from 'lodash/fp/fromPairs';
 import flow from 'lodash/fp/flow';
 import concat from 'lodash/fp/concat';
 import { History, TransactionStatus } from '@sora-substrate/util';
+import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../api';
+import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
+import { historyElementsFilter } from '../services/subquery/queries/historyElements';
 
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2 * 1000;
 
@@ -15,33 +18,58 @@ const types = flow(
     'RESET_ACTIVE_TRANSACTIONS',
     'ADD_ACTIVE_TRANSACTION',
     'REMOVE_ACTIVE_TRANSACTION',
-    'UPDATE_ACTIVE_TRANSACTIONS',
+    'SET_TRANSACTION_DETAILS_ID',
+    'GET_ACTIVITY',
+    'SET_EXTERNAL_ACTIVITY',
   ]),
   map((x) => [x, x]),
   fromPairs
 )([]);
 
-const isValidTransaction = (tx: History) => tx && tx.id !== undefined;
-
 type TransactionsState = {
-  activeTransactions: Array<History>;
+  activity: AccountHistory<HistoryItem>;
+  externalActivity: AccountHistory<HistoryItem>;
+  activeTransactionsIds: Array<string>;
   updateActiveTransactionsId: Nullable<NodeJS.Timeout>;
+  selectedTransactionId: Nullable<string>;
 };
 
 function initialState(): TransactionsState {
   return {
-    activeTransactions: [],
+    activity: {}, // history items what not synced with subquery
+    externalActivity: {},
+    activeTransactionsIds: [],
     updateActiveTransactionsId: null,
+    selectedTransactionId: null,
   };
 }
 
 const state = initialState();
 
 const getters = {
-  firstReadyTransaction(state: TransactionsState) {
-    return state.activeTransactions.find((t) =>
+  activity(state: TransactionsState): AccountHistory<HistoryItem> {
+    return state.activity;
+  },
+  externalActivity(state: TransactionsState): AccountHistory<HistoryItem> {
+    return state.externalActivity;
+  },
+  activeTransactions(state: TransactionsState): Array<HistoryItem> {
+    return state.activeTransactionsIds.reduce((buffer: Array<HistoryItem>, id: string) => {
+      if (id in state.activity) {
+        buffer.push(state.activity[id]);
+      }
+      return buffer;
+    }, []);
+  },
+  firstReadyTransaction(state: TransactionsState, getters) {
+    return getters.activeTransactions.find((t) =>
       [TransactionStatus.Finalized, TransactionStatus.Error].includes(t.status as TransactionStatus)
     );
+  },
+  selectedTransaction(state: TransactionsState): Nullable<History> {
+    if (!state.selectedTransactionId) return null;
+
+    return state.activity[state.selectedTransactionId] || state.externalActivity[state.selectedTransactionId];
   },
 };
 
@@ -50,55 +78,92 @@ const mutations = {
     if (state.updateActiveTransactionsId) {
       clearInterval(state.updateActiveTransactionsId);
     }
-    const s = initialState();
-    Object.keys(s).forEach((key) => {
-      state[key] = s[key];
-    });
+    state.activeTransactionsIds = [];
   },
 
-  [types.ADD_ACTIVE_TRANSACTION](state: TransactionsState, tx: History) {
-    if (!isValidTransaction(tx) || state.activeTransactions.find((t: History) => t.id === tx.id)) {
-      return;
-    }
-    state.activeTransactions.push(tx);
+  [types.ADD_ACTIVE_TRANSACTION](state: TransactionsState, id: string) {
+    state.activeTransactionsIds = [...new Set([...state.activeTransactionsIds, id])];
   },
 
-  [types.REMOVE_ACTIVE_TRANSACTION](state: TransactionsState, tx: History) {
-    if (!isValidTransaction(tx)) {
-      return;
-    }
-    state.activeTransactions = state.activeTransactions.filter((t: History) => t.id !== tx.id);
+  [types.REMOVE_ACTIVE_TRANSACTION](state: TransactionsState, id: string) {
+    state.activeTransactionsIds = state.activeTransactionsIds.filter((txId) => txId !== id);
   },
 
-  // TODO: refactoring
-  [types.UPDATE_ACTIVE_TRANSACTIONS](state: TransactionsState) {
-    const history = api.history;
+  [types.SET_TRANSACTION_DETAILS_ID](state: TransactionsState, id: string) {
+    state.selectedTransactionId = id;
+  },
 
-    state.activeTransactions = state.activeTransactions.map((tx) => {
-      if (!tx.id) return tx;
-      return history[tx.id] || tx;
-    });
+  [types.GET_ACTIVITY](state: TransactionsState, activity: AccountHistory<HistoryItem>) {
+    // increasing performance: Object.freeze - to remove vue reactivity from 'activity' attributes
+    state.activity = Object.freeze(activity);
+  },
+
+  [types.SET_EXTERNAL_ACTIVITY](state: TransactionsState, activity: AccountHistory<HistoryItem>) {
+    // increasing performance: Object.freeze - to remove vue reactivity from 'activity' attributes
+    state.externalActivity = Object.freeze(activity);
   },
 };
 
 const actions = {
-  addActiveTransaction({ commit }, tx: History) {
-    commit(types.ADD_ACTIVE_TRANSACTION, tx);
+  addActiveTransaction({ commit }, id: string) {
+    commit(types.ADD_ACTIVE_TRANSACTION, id);
   },
-  removeActiveTransaction({ commit }, tx: History) {
-    commit(types.REMOVE_ACTIVE_TRANSACTION, tx);
+  removeActiveTransaction({ commit }, id: string) {
+    commit(types.REMOVE_ACTIVE_TRANSACTION, id);
   },
   // Should be used once in a root of the project
   trackActiveTransactions({ commit, dispatch, state }) {
     commit(types.RESET_ACTIVE_TRANSACTIONS);
     state.updateActiveTransactionsId = setInterval(() => {
       // to update app activities (history)
-      dispatch('getAccountActivity', undefined, { root: true });
-      commit(types.UPDATE_ACTIVE_TRANSACTIONS);
+      dispatch('getAccountActivity');
     }, UPDATE_ACTIVE_TRANSACTIONS_INTERVAL);
   },
   resetActiveTransactions({ commit }) {
     commit(types.RESET_ACTIVE_TRANSACTIONS);
+  },
+  getTransactionDetails({ commit }, id: string) {
+    commit(types.SET_TRANSACTION_DETAILS_ID, id);
+  },
+  getAccountActivity({ commit }) {
+    commit(types.GET_ACTIVITY, api.history);
+  },
+  updateExternalActivity({ commit }, activity: AccountHistory<History>) {
+    commit(types.SET_EXTERNAL_ACTIVITY, activity);
+  },
+
+  /**
+   * Clear history items from accountStorage, what exists in explorer
+   */
+  async clearSyncedAccountActivity(
+    { dispatch, state },
+    { address, assetAddress }: { address: string; assetAddress?: string }
+  ) {
+    const timestamp = api.historySyncTimestamp || 0;
+    const filter = historyElementsFilter(address, { assetAddress, timestamp });
+    const variables = { filter };
+    const removeHistoryIds: Array<string> = [];
+    try {
+      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables, { data: false });
+
+      if (edges.length) {
+        for (const edge of edges) {
+          const historyId = edge.node.id;
+
+          if (historyId in state.activity) {
+            removeHistoryIds.push(historyId);
+          }
+        }
+
+        api.removeHistory(...removeHistoryIds);
+
+        await dispatch('getAccountActivity');
+      }
+
+      api.historySyncTimestamp = Math.round(Date.now() / 1000);
+    } catch (error) {
+      console.error(error);
+    }
   },
 };
 

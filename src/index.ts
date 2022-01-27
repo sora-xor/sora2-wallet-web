@@ -41,7 +41,10 @@ const subscribeStoreToStorageUpdates = (store) => {
     unsubscribeStoreFromStorage();
   }
 
-  const syncWithStorageHandler = debounce(100)(() => store.dispatch('syncWithStorage'));
+  const syncWithStorageHandler = debounce(100)(() => {
+    store.dispatch('syncWithStorage');
+    store.dispatch('getAccountActivity');
+  });
 
   window.addEventListener('storage', syncWithStorageHandler);
 
