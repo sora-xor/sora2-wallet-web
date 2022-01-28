@@ -21,7 +21,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@polkadot/extension-dapp": "^0.35.0-beta.35",
+    "@polkadot/extension-dapp": "^0.42.2",
     "@polkadot/vue-identicon": "^0.72.1",
     "@sora-substrate/util": "^1.7.19",
     "@soramitsu/soramitsu-js-ui": "^1.0.26",
