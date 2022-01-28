@@ -1,15 +1,17 @@
 <template>
   <div class="nft-details-container">
-    <div class="preview-image">
+    <div class="preview-image-confirm-nft">
       <div v-if="imageLoading" v-loading="imageLoading" />
       <div v-else-if="badLink" class="placeholder">
-        <s-icon class="preview-image__icon" name="basic-clear-X-24" size="64px" />
-        <span class="preview-image__placeholder">{{ t('createToken.nft.image.placeholderBadSource') }}</span>
-        <span v-if="isAssetDetails" class="preview-image__placeholder">{{
+        <s-icon class="preview-image-confirm-nft__icon" name="basic-clear-X-24" size="64px" />
+        <span class="preview-image-confirm-nft__placeholder">{{
+          t('createToken.nft.image.placeholderBadSource')
+        }}</span>
+        <span v-if="isAssetDetails" class="preview-image-confirm-nft__placeholder">{{
           t('createToken.nft.image.placeholderBadSourceAddition')
         }}</span>
       </div>
-      <img v-else class="preview-image__content" :src="contentLink" />
+      <img v-else class="preview-image-confirm-nft__content" :src="contentLink" />
     </div>
     <div class="nft-info">
       <div class="nft-info__name">
@@ -75,15 +77,40 @@ export default class NftDetails extends Mixins(TranslationMixin) {
 }
 </script>
 
-<style lang="scss" scoped>
-.preview-image {
-  border: none;
+<style lang="scss">
+.preview-image-confirm-nft {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-bottom: var(--s-size-mini);
   height: 250px;
+
+  .placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
   &__content {
     margin: 0 auto;
     height: 250px;
     width: 250px;
+    object-fit: cover;
+    border-radius: calc(var(--s-border-radius-mini) * 0.75);
+  }
+
+  &__icon {
+    color: var(--s-color-base-content-tertiary) !important;
+    font-size: var(--s-size-small) !important;
+    margin-bottom: calc(var(--s-size-small) / 2);
+  }
+
+  &__placeholder {
+    letter-spacing: var(--s-letter-spacing-small);
+    color: var(--s-color-base-content-primary);
+    font-size: calc(var(--s-size-small) / 2);
+    text-align: center;
+    padding: 0 50px;
   }
 }
 
@@ -104,6 +131,18 @@ export default class NftDetails extends Mixins(TranslationMixin) {
 
     &--clickable {
       cursor: pointer;
+    }
+
+    .s-icon-chevron-down-rounded-16 {
+      display: inline-block;
+      margin-left: var(--s-basic-spacing);
+      height: var(--s-icon-font-size-small);
+      width: var(--s-icon-font-size-small);
+      transition: transform 0.3s;
+      background-color: var(--s-color-base-content-secondary);
+      color: var(--s-color-base-on-accent) !important;
+      border-radius: 50%;
+      text-align: left;
     }
 
     &--clicked .s-icon-chevron-down-rounded-16 {
@@ -131,17 +170,5 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     border-bottom: none;
     margin-bottom: 20px;
   }
-}
-
-.s-icon-chevron-down-rounded-16 {
-  display: inline-block;
-  margin-left: var(--s-basic-spacing);
-  height: var(--s-icon-font-size-small);
-  width: var(--s-icon-font-size-small);
-  transition: transform 0.3s;
-  background-color: var(--s-color-base-content-secondary);
-  color: var(--s-color-base-on-accent);
-  border-radius: 50%;
-  text-align: left;
 }
 </style>
