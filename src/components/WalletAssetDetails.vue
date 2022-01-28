@@ -428,23 +428,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 }
 
-.preview-image {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  background: var(--s-color-base-background);
-  box-shadow: var(--s-shadow-element);
-  border-radius: var(--s-border-radius-small);
-  margin: #{$basic-spacing-medium} 0;
-  width: 100%;
-  height: 200px;
-
-  &__content {
-    height: 200px;
-  }
-}
-
 .info-line-container {
   @include fadeHeight;
 }
