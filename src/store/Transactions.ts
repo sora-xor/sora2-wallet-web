@@ -147,6 +147,10 @@ const actions = {
   getAccountActivity({ commit }) {
     commit(types.GET_ACTIVITY, api.history);
   },
+  async clearAccountActivity({ dispatch }, assetAddress?: string) {
+    api.clearHistory(assetAddress);
+    await dispatch('getAccountActivity');
+  },
   resetExternalActivity({ commit }) {
     commit(types.SET_EXTERNAL_ACTIVITY, {});
     commit(types.SET_EXTERNAL_ACTIVITY_TOTAL, 0);
@@ -155,6 +159,7 @@ const actions = {
 
   /**
    * Clear history items from accountStorage, what exists in explorer
+   * Getting only the IDs & timestamp of elements whose start time is greater than api.historySyncTimestamp
    */
   async clearSyncedAccountActivity(
     { dispatch, state },
@@ -168,6 +173,8 @@ const actions = {
       const { edges } = await SubqueryExplorerService.getAccountTransactions(variables, { data: false });
 
       if (edges.length) {
+        api.historySyncTimestamp = +edges[0].node.timestamp;
+
         for (const edge of edges) {
           const historyId = edge.node.id;
 
@@ -181,15 +188,13 @@ const actions = {
           await dispatch('getAccountActivity');
         }
       }
-
-      api.historySyncTimestamp = Math.round(Date.now() / 1000);
     } catch (error) {
       console.error(error);
     }
   },
 
   /**
-   * Get history from explorer, already filtered
+   * Get history items from explorer, already filtered
    */
   async getExternalActivity(
     { commit, state: { externalActivityPagination: pagination, externalActivity, activity } },

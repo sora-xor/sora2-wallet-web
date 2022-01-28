@@ -28,7 +28,8 @@ export const createHistoryElementsQuery = ({ data = true } = {}) => {
           : ''
       }
         node {
-          id${
+          id
+          timestamp${
             data
               ? `
           blockHash
@@ -38,7 +39,6 @@ export const createHistoryElementsQuery = ({ data = true } = {}) => {
           address
           networkFee
           execution
-          timestamp
           data`
               : ''
           }

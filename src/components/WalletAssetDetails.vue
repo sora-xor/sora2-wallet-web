@@ -158,7 +158,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @Getter activity!: AccountHistory<HistoryItem>;
   @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAccountActivity!: AsyncVoidFn;
+  @Action clearAccountActivity!: (assetAddress?: string) => Promise<void>;
 
   wasBalanceDetailsClicked = false;
 
@@ -340,10 +340,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     this.handleBack();
   }
 
-  handleCleanHistory(): void {
+  async handleCleanHistory(): Promise<void> {
     if (!this.asset) return;
-    api.clearHistory(this.asset.address);
-    this.getAccountActivity();
+    await this.clearAccountActivity(this.asset.address);
   }
 }
 </script>

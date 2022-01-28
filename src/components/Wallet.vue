@@ -7,7 +7,7 @@
     action-icon="various-atom-24"
     action-tooltip="wallet.createToken"
     @action="handleCreateToken"
-    @cleanHistory="handleCleanHistory"
+    @cleanHistory="clearAccountActivity"
   >
     <wallet-account show-controls />
     <div class="wallet">
@@ -24,7 +24,6 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
-import { api } from '../api';
 import TranslationMixin from './mixins/TranslationMixin';
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
@@ -50,7 +49,7 @@ export default class Wallet extends Mixins(TranslationMixin) {
   @Getter activity!: AccountHistory<HistoryItem>;
   @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAccountActivity!: AsyncVoidFn;
+  @Action clearAccountActivity!: (assetAddress?: string) => Promise<void>;
 
   currentTab: WalletTabs = WalletTabs.Assets;
 
@@ -72,11 +71,6 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   handleCreateToken(): void {
     this.navigate({ name: RouteNames.CreateToken });
-  }
-
-  handleCleanHistory(): void {
-    api.clearHistory();
-    this.getAccountActivity();
   }
 }
 </script>

@@ -47,7 +47,7 @@ export default class App extends Mixins(TransactionMixin) {
 
   async created(): Promise<void> {
     await this.setApiKeys({ nftStorage: NFT_STORAGE_API_KEY });
-    await this.setSoraNetwork(SoraNetwork.Stage);
+    await this.setSoraNetwork(SoraNetwork.Dev);
     await initWallet({ withoutStore: true, whiteListOverApi: true }); // We don't need storage for local development
     this.trackActiveTransactions();
     const localeLanguage = navigator.language;
