@@ -2,15 +2,15 @@ import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../../types';
 import { SubqueryDataParserService } from '../index';
 
-export const createHistoryElementsQuery = ({ data = true } = {}) => {
-  return `
+export const HistoryElementsQuery = `
   query HistoryElements (
     $first: Int = null,
     $last: Int = null,
     $after: Cursor = "",
     $before: Cursor = "",
     $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC,
-    $filter: HistoryElementFilter)
+    $filter: HistoryElementFilter
+    $idsOnly: Boolean! = false)
   {
     historyElements (
       first: $first
@@ -21,44 +21,31 @@ export const createHistoryElementsQuery = ({ data = true } = {}) => {
       filter: $filter
     )
     {
-      edges {${
-        data
-          ? `
-        cursor`
-          : ''
-      }
+      edges {
+        cursor @skip(if: $idsOnly)
         node {
           id
-          timestamp${
-            data
-              ? `
-          blockHash
-          blockHeight
-          module
-          method
-          address
-          networkFee
-          execution
-          data`
-              : ''
-          }
+          timestamp
+          blockHash @skip(if: $idsOnly)
+          blockHeight @skip(if: $idsOnly)
+          module @skip(if: $idsOnly)
+          method @skip(if: $idsOnly)
+          address @skip(if: $idsOnly)
+          networkFee @skip(if: $idsOnly)
+          execution @skip(if: $idsOnly)
+          data @skip(if: $idsOnly)
         }
-      }${
-        data
-          ? `
-      pageInfo {
+      }
+      pageInfo @skip(if: $idsOnly) {
         hasNextPage
         hasPreviousPage
         startCursor
         endCursor
       }
-      totalCount`
-          : ''
-      }
+      totalCount @skip(if: $idsOnly)
     }
   }
 `;
-};
 
 type DataCriteria = {
   data: {

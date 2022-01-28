@@ -167,10 +167,10 @@ const actions = {
   ) {
     const timestamp = api.historySyncTimestamp || 0;
     const filter = historyElementsFilter(address, { assetAddress, timestamp });
-    const variables = { filter };
+    const variables = { filter, idsOnly: true };
     const removeHistoryIds: Array<string> = [];
     try {
-      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables, { data: false });
+      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
 
       if (edges.length) {
         api.historySyncTimestamp = +edges[0].node.timestamp;

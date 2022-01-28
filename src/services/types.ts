@@ -8,7 +8,7 @@ export interface ExplorerDataParser {
 
 export interface Explorer {
   soraNetwork: SoraNetwork;
-  getAccountTransactions: (params?: any) => Promise<any>;
+  getAccountTransactions: (variables?: any) => Promise<any>;
 }
 
 export enum ModuleNames {
