@@ -205,7 +205,7 @@ const mutations = {
     state.name = storage.get('name') || '';
     state.isExternal = Boolean(storage.get('isExternal')) || false;
     state.accountAssets = api.assets.accountAssets; // to save reactivity
-    state.activity = api.accountHistory;
+    state.activity = api.historyList;
   },
 
   [types.GET_ACCOUNT_ASSETS_REQUEST](state: AccountState) {
@@ -490,7 +490,7 @@ const actions = {
   },
 
   getAccountActivity({ commit }) {
-    commit(types.GET_ACCOUNT_ACTIVITY, api.accountHistory);
+    commit(types.GET_ACCOUNT_ACTIVITY, api.historyList);
   },
   async getWhitelist({ commit }, { whiteListOverApi }) {
     const url = whiteListOverApi ? WHITE_LIST_GITHUB_URL : '/whitelist.json';
