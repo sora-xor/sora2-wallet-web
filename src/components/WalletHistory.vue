@@ -174,16 +174,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       account: { address },
     } = this;
 
-    const operations = SubqueryDataParserService.supportedOperations;
-    const parsedHistoryOperations = api.historySyncOperations;
-
-    const operationsChanged =
-      !Array.isArray(parsedHistoryOperations) ||
-      operations.length !== parsedHistoryOperations.length ||
-      !operations.every((item) => !!parsedHistoryOperations.find((el) => el === item));
-
     const isPartialHistoryRequest = !!assetAddress;
-    const timestamp = isPartialHistoryRequest || operationsChanged || !activity.length ? 0 : api.historySyncTimestamp;
+    const timestamp = isPartialHistoryRequest || !activity.length ? 0 : api.historySyncTimestamp;
     const filter = historyElementsFilter(address, { assetAddress, timestamp });
     const variables = {
       filter, // filter by account & asset
@@ -193,11 +185,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
 
       if (edges.length !== 0) {
-        if (!isPartialHistoryRequest) {
-          const latestTimestamp = edges[0].node.timestamp;
-          api.historySyncTimestamp = +latestTimestamp;
-        }
-
         for (const edge of edges) {
           const transaction = edge.node;
           const hasHistoryItem = transaction.id in this.activityHashTable;
@@ -210,12 +197,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
             }
           }
         }
-      } else {
-        api.historySyncTimestamp = timestamp;
-      }
-
-      if (operationsChanged && !isPartialHistoryRequest) {
-        api.historySyncOperations = operations;
       }
     } catch (error) {
       console.error(error);

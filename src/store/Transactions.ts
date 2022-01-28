@@ -71,10 +71,11 @@ const mutations = {
   },
 
   [types.UPDATE_ACTIVE_TRANSACTIONS](state: TransactionsState) {
-    if (!api.history.length) {
+    const history = api.historyList;
+
+    if (!history.length) {
       return;
     }
-    const history = api.history;
 
     state.activeTransactions = state.activeTransactions.map((tx) => {
       return history.find((item) => item.id === tx.id) || tx;
