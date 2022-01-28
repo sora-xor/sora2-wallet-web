@@ -22,7 +22,7 @@
               <div class="history-item-operation ch3" :data-type="item.type">{{ t(`operations.${item.type}`) }}</div>
               <div class="history-item-title p4">{{ getMessage(item, shouldBalanceBeHidden) }}</div>
               <s-icon
-                v-if="item.status !== TransactionStatus.Finalized"
+                v-if="!isFinalizedStatus(item.status)"
                 :class="getStatusClass(item.status)"
                 :name="getStatusIcon(item.status)"
               />
@@ -82,7 +82,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     await this.updateCommonHistory();
   }
 
-  readonly TransactionStatus = TransactionStatus;
   readonly pageAmount = 8; // override PaginationSearchMixin
   readonly updateCommonHistory = debounce(() => this.updateHistory(true, true), 500);
 
@@ -199,6 +198,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   getStatusIcon(status: string): string {
     return getStatusIcon(this.getStatus(status));
+  }
+
+  isFinalizedStatus(status: string): boolean {
+    return status === TransactionStatus.Finalized;
   }
 
   handleOpenTransactionDetails(id: number): void {
