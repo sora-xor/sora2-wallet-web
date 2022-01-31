@@ -353,11 +353,8 @@ const actions = {
   },
 
   async afterLogin({ dispatch }) {
-    if (!state.accountAssetsSubscription) {
-      await dispatch('getAccountAssets');
-      await dispatch('subscribeOnAccountAssets');
-    }
-
+    await dispatch('getAccountAssets');
+    await dispatch('subscribeOnAccountAssets');
     await dispatch('checkCurrentRoute', undefined, { root: true });
   },
 
@@ -469,8 +466,8 @@ const actions = {
     }
   },
 
-  async subscribeOnAccountAssets({ commit, dispatch, getters }) {
-    dispatch('resetAccountAssetsSubscription');
+  async subscribeOnAccountAssets({ commit, dispatch, getters, state }) {
+    await dispatch('resetAccountAssetsSubscription');
 
     if (getters.isLoggedIn) {
       commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST);
