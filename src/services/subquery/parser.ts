@@ -15,7 +15,7 @@ import type {
   HistoryElementTransfer,
   HistoryElementAssetRegistration,
   UtilityBatchAllItem,
-  ReferrerSetReferrer,
+  ReferralSetReferrer,
   ReferrerReserve,
 } from '../types';
 
@@ -249,8 +249,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       // Operation.Rewards
       // utility.batch
       case Operation.ReferralSetInvitedUser: {
-        const data = transaction.data as ReferrerSetReferrer;
-        payload.to = data.referrer;
+        const data = transaction.data as ReferralSetReferrer;
+        payload.to = data.to;
         return payload;
       }
       case Operation.ReferralReserveXor: {
