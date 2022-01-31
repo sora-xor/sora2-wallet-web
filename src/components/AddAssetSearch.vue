@@ -39,12 +39,14 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import type { AccountAsset, Asset } from '@sora-substrate/util';
+import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import { AddAssetTabs, RouteNames } from '../consts';
 import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
+
+import type { AccountAssetsTable } from '../types/common';
 
 @Component
 export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
@@ -53,7 +55,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   @Getter assets!: Array<Asset>;
   @Getter assetsLoading!: boolean;
   @Getter accountAssets!: Array<AccountAsset>;
-  @Getter accountAssetsAddressTable!: any;
+  @Getter accountAssetsAddressTable!: AccountAssetsTable;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getAssets!: AsyncVoidFn;
 

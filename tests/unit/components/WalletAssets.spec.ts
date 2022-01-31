@@ -1,7 +1,7 @@
 import Vuex from 'vuex';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import WalletAssets from '@/components/WalletAssets.vue';
-import type { AccountAsset } from '@sora-substrate/util';
 import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_FIAT_PRICE_AND_APY_OBJECT, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 import { WalletPermissions } from '../../../src/consts';

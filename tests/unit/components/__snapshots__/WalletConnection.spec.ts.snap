@@ -1,0 +1,309 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletConnection.vue [Extension available]: Accounts should be rendered 1`] = `
+<s-card
+  border-radius="medium"
+  class="base"
+  primary=""
+  shadow="always"
+  size="big"
+>
+   
+  <div
+    class="wallet-connection el-loading-parent--relative"
+  >
+    <p
+      class="wallet-connection-text"
+    >
+      
+          Select account to work with
+        
+    </p>
+     
+    <s-scrollbar-stub
+      class="wallet-connection-accounts"
+      tag="div"
+    >
+      <div
+        class="wallet-connection-account"
+      >
+        <wallet-account-stub
+          polkadotaccount="[object Object]"
+        />
+      </div>
+      <div
+        class="wallet-connection-account"
+      >
+        <wallet-account-stub
+          polkadotaccount="[object Object]"
+        />
+      </div>
+      <div
+        class="wallet-connection-account"
+      >
+        <wallet-account-stub
+          polkadotaccount="[object Object]"
+        />
+      </div>
+      <div
+        class="wallet-connection-account"
+      >
+        <wallet-account-stub
+          polkadotaccount="[object Object]"
+        />
+      </div>
+    </s-scrollbar-stub>
+    <div
+      class="el-loading-mask"
+      style="display: none;"
+    >
+      <div
+        class="el-loading-spinner"
+      >
+        <svg
+          class="circular"
+          viewBox="25 25 50 50"
+        >
+          <circle
+            class="path"
+            cx="50"
+            cy="50"
+            fill="none"
+            r="20"
+          />
+        </svg>
+        <!---->
+      </div>
+    </div>
+  </div>
+</s-card>
+`;
+
+exports[`WalletConnection.vue [Extension available]: Connect account screen should be rendered 1`] = `
+<s-card
+  border-radius="medium"
+  class="base"
+  primary=""
+  shadow="always"
+  size="big"
+>
+   
+  <div
+    class="wallet-connection"
+  >
+    <p
+      class="wallet-connection-text"
+    >
+      Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.
+    </p>
+     
+    <!---->
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-connection-action s-typography-button--large action-btn"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+      usedesignsystem="true"
+    >
+      
+          Connect account
+        
+    </s-button-stub>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-connection-action s-typography-button--large learn-more-btn"
+      icon="question-circle-16"
+      iconposition="right"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="tertiary"
+      usedesignsystem="true"
+    >
+      
+          Learn more
+        
+    </s-button-stub>
+     
+    <!---->
+  </div>
+</s-card>
+`;
+
+exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen should be rendered 1`] = `
+<s-card
+  border-radius="medium"
+  class="base"
+  primary=""
+  shadow="always"
+  size="big"
+>
+   
+  <div
+    class="wallet-connection el-loading-parent--relative"
+  >
+    <p
+      class="wallet-connection-text"
+    >
+      
+          No account found in your polkadot{.js} browser extension. Please add an account and try again.
+        
+    </p>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-connection-action s-typography-button--large action-btn"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+      usedesignsystem="true"
+    >
+      
+          Refresh
+        
+    </s-button-stub>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-connection-action s-typography-button--large learn-more-btn"
+      icon="question-circle-16"
+      iconposition="right"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="tertiary"
+      usedesignsystem="true"
+    >
+      
+          Learn more
+        
+    </s-button-stub>
+     
+    <!---->
+    <div
+      class="el-loading-mask"
+      style="display: none;"
+    >
+      <div
+        class="el-loading-spinner"
+      >
+        <svg
+          class="circular"
+          viewBox="25 25 50 50"
+        >
+          <circle
+            class="path"
+            cx="50"
+            cy="50"
+            fill="none"
+            r="20"
+          />
+        </svg>
+        <!---->
+      </div>
+    </div>
+  </div>
+</s-card>
+`;
+
+exports[`WalletConnection.vue [Extension is not available]: Install extension screen should be rendered 1`] = `
+<s-card
+  border-radius="medium"
+  class="base"
+  primary=""
+  shadow="always"
+  size="big"
+>
+   
+  <div
+    class="wallet-connection"
+  >
+    <p
+      class="wallet-connection-text"
+    >
+      Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.
+    </p>
+     
+    <p
+      class="wallet-connection-text"
+    >
+      No polkadot.js extension found. Install it and 
+      <a
+        class="wallet-connection-link"
+        href="#"
+        onclick="window.location.reload(true);"
+      >
+        reload
+      </a>
+       the page.
+      <br />
+      <span
+        class="wallet-connection-link"
+      >
+        https://polkadot.js.org/extension/
+      </span>
+    </p>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-connection-action s-typography-button--large action-btn"
+      icon=""
+      iconposition="left"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="primary"
+      usedesignsystem="true"
+    >
+      
+          Install extension
+        
+    </s-button-stub>
+     
+    <s-button-stub
+      borderradius="small"
+      class="wallet-connection-action s-typography-button--large learn-more-btn"
+      icon="question-circle-16"
+      iconposition="right"
+      nativetype="button"
+      size="medium"
+      tabindex="0"
+      tooltip=""
+      tooltipplacement="top"
+      type="tertiary"
+      usedesignsystem="true"
+    >
+      
+          Learn more
+        
+    </s-button-stub>
+     
+    <p
+      class="wallet-connection-text no-permissions"
+    >
+      Accidentally denied access for polkadot{.js}?
+      <br />
+      Go to polkadot{.js} settings and open "Manage Website Access" to allow.
+    </p>
+  </div>
+</s-card>
+`;

@@ -1,6 +1,7 @@
-import { FPNumber, Operation, TransactionStatus, History, Asset } from '@sora-substrate/util';
+import { FPNumber, Operation, TransactionStatus, History } from '@sora-substrate/util';
 import { BN } from '@polkadot/util';
 import getOr from 'lodash/fp/getOr';
+import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 import store from '../../store';
 import { api } from '../../api';
@@ -14,6 +15,8 @@ import type {
   HistoryElementTransfer,
   HistoryElementAssetRegistration,
   UtilityBatchAllItem,
+  ReferralSetReferrer,
+  ReferrerReserve,
 } from '../types';
 
 const OperationsMap = {
@@ -37,9 +40,13 @@ const OperationsMap = {
       ) {
         return Operation.CreatePair;
       }
-
       return null;
     },
+  },
+  [ModuleNames.Referrals]: {
+    [ModuleMethods.ReferralsSetReferrer]: () => Operation.ReferralSetInvitedUser,
+    [ModuleMethods.ReferralsReserve]: () => Operation.ReferralReserveXor,
+    [ModuleMethods.ReferralsUnreserve]: () => Operation.ReferralUnreserveXor,
   },
 };
 
@@ -88,7 +95,7 @@ const getAssetByAddress = async (address: string): Promise<Asset> => {
   if (address in store.getters.whitelist) {
     return store.getters.whitelist[address];
   }
-  return await api.getAssetInfo(address);
+  return await api.assets.getAssetInfo(address);
 };
 
 const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {
@@ -103,6 +110,9 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     Operation.AddLiquidity,
     Operation.RemoveLiquidity,
     Operation.RegisterAsset,
+    Operation.ReferralSetInvitedUser,
+    Operation.ReferralReserveXor,
+    Operation.ReferralUnreserveXor,
   ];
 
   public get supportedOperations(): Array<Operation> {
@@ -238,6 +248,21 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       // TODO: wait for Subquery support:
       // Operation.Rewards
       // utility.batch
+      case Operation.ReferralSetInvitedUser: {
+        const data = transaction.data as ReferralSetReferrer;
+        payload.to = data.to;
+        return payload;
+      }
+      case Operation.ReferralReserveXor: {
+        const data = transaction.data as ReferrerReserve;
+        payload.amount = data.amount;
+        return payload;
+      }
+      case Operation.ReferralUnreserveXor: {
+        const data = transaction.data as ReferrerReserve;
+        payload.amount = data.amount;
+        return payload;
+      }
       default:
         return null;
     }

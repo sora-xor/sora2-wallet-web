@@ -98,6 +98,18 @@ export const historyElementsFilter = (address = '', { assetAddress = '', timesta
               equalTo: ModuleMethods.UtilityBatchAll,
             },
           },
+          {
+            module: {
+              equalTo: ModuleNames.Referrals,
+            },
+            method: {
+              in: [
+                ModuleMethods.ReferralsSetReferrer,
+                ModuleMethods.ReferralsReserve,
+                ModuleMethods.ReferralsUnreserve,
+              ],
+            },
+          },
         ],
       },
     ],

@@ -38,14 +38,14 @@
         />
       </div>
       <transaction-hash-view
-        v-if="selectedTransaction.from"
+        v-if="selectedTransaction.from && !isSetReferralOperation"
         translation="transaction.from"
         :value="selectedTransaction.from"
         :type="HashType.Account"
       />
       <transaction-hash-view
         v-if="selectedTransaction.to"
-        translation="transaction.to"
+        :translation="`transaction.${isSetReferralOperation ? 'referral' : 'to'}`"
         :value="selectedTransaction.to"
         :type="HashType.Account"
       />
@@ -56,8 +56,8 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { TransactionStatus } from '@sora-substrate/util';
-import type { AccountAsset, History } from '@sora-substrate/util';
+import { TransactionStatus, History, Operation } from '@sora-substrate/util';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
@@ -144,6 +144,10 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
 
   get transactionDate(): string {
     return this.formatDate(this.selectedTransaction.startTime as number);
+  }
+
+  get isSetReferralOperation(): boolean {
+    return this.selectedTransaction.type === Operation.ReferralSetInvitedUser;
   }
 
   handleBack(): void {

@@ -48,7 +48,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         Operation.SwapAndSend,
       ].includes(value.type)
     ) {
-      params.amount = params.amount ? this.formatStringValue(params.amount) : '';
+      params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
     }
     if (
       [
@@ -59,7 +59,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         Operation.SwapAndSend,
       ].includes(value.type)
     ) {
-      params.amount2 = params.amount2 ? this.formatStringValue(params.amount2) : '';
+      params.amount2 = params.amount2 ? this.formatStringValue(params.amount2, params.decimals2) : '';
     }
     if (value.type === Operation.ClaimRewards) {
       params.rewards = groupRewardsByAssetsList(params.rewards)
@@ -86,7 +86,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
 
   private async getLastTransaction(): Promise<void> {
     // Now we are checking every transaction with 1 second interval
-    const tx = findLast((item) => Number(item.startTime) > this.time, api.history);
+    const tx = findLast((item) => Number(item.startTime) > this.time, api.historyList);
     if (!tx) {
       await delay();
       return await this.getLastTransaction();

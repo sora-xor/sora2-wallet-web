@@ -1,10 +1,13 @@
-import { web3Enable, web3FromAddress } from '@polkadot/extension-dapp';
-import { FPNumber, KnownAssets, RewardInfo, RewardsInfo } from '@sora-substrate/util';
+import { web3Enable, web3FromAddress, web3AccountsSubscribe } from '@polkadot/extension-dapp';
+import { FPNumber } from '@sora-substrate/util';
+import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
+import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
 import { api } from '../api';
 import store from '../store';
 import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
+import type { PolkadotJsAccount } from '../types/common';
 
 export const APP_NAME = 'Sora2 Wallet';
 
@@ -12,6 +15,21 @@ export const WHITE_LIST_GITHUB_URL =
   'https://raw.githubusercontent.com/sora-xor/polkaswap-exchange-web/develop/public/whitelist.json';
 
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
+
+export const subscribeToPolkadotJsAccounts = async (
+  callback: (accounts: PolkadotJsAccount[]) => void
+): Promise<VoidFunction> => {
+  const unsubscribe = await web3AccountsSubscribe((injectedAccounts) => {
+    const polkadotJsAccounts = injectedAccounts.map((account) => ({
+      address: account.address,
+      name: account.meta.name || '',
+    }));
+
+    callback(polkadotJsAccounts);
+  });
+
+  return unsubscribe;
+};
 
 export const getExtension = async () => {
   let extensions: Array<any> = [];
@@ -126,6 +144,12 @@ export const toHashTable = (list: Array<any>, key: string) => {
 
     return { ...result, [item[key]]: item };
   }, {});
+};
+
+export const shortenValue = (string: string, length = string.length / 2): string => {
+  if (!string) return '';
+  if (string.length < 35) return string;
+  return `${string.slice(0, length / 2)}...${string.slice(-length / 2)}`;
 };
 
 export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo>): Array<RewardsAmountHeaderItem> => {
