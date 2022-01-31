@@ -86,7 +86,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
 
   private async getLastTransaction(): Promise<void> {
     // Now we are checking every transaction with 1 second interval
-    const tx = findLast((item) => Number(item.startTime) > this.time, api.history);
+    const tx = findLast((item) => Number(item.startTime) > this.time, api.historyList);
     if (!tx) {
       await delay();
       return await this.getLastTransaction();
