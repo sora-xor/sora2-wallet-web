@@ -147,6 +147,7 @@ export default class InfoLine extends Vue {
     margin-right: var(--s-basic-spacing);
     word-break: keep-all;
     text-transform: uppercase;
+    text-align: left;
   }
   &-content {
     display: flex;
