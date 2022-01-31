@@ -18,6 +18,7 @@ export enum ModuleNames {
   PoolXYK = 'poolXyk',
   TradingPair = 'tradingPair',
   Utility = 'utility',
+  Referrals = 'referrals',
 }
 
 export enum ModuleMethods {
@@ -28,6 +29,9 @@ export enum ModuleMethods {
   PoolXYKWithdrawLiquidity = 'withdrawLiquidity',
   LiquidityProxySwap = 'swap',
   UtilityBatchAll = 'batchAll',
+  ReferralsSetReferrer = 'setReferrer',
+  ReferralsReserve = 'reserve',
+  ReferralsUnreserve = 'unreserve',
 }
 
 export type PoolXYKEntity = {
@@ -110,6 +114,8 @@ export type HistoryElement = {
     | HistoryElementLiquidityOperation
     | HistoryElementAssetRegistration
     | UtilityBatchAllItem[]
+    | ReferralSetReferrer
+    | ReferrerReserve
   >;
 };
 
@@ -128,5 +134,16 @@ export type ReferrerReward = {
   referrer: string;
   referree: string;
   timestamp: number;
+  amount: string;
+};
+
+export type ReferralSetReferrer = {
+  from: string; // referral
+  to: string; // referrer
+};
+
+export type ReferrerReserve = {
+  from: string;
+  to: string;
   amount: string;
 };
