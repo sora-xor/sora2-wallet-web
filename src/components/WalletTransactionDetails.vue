@@ -45,7 +45,7 @@
       />
       <transaction-hash-view
         v-if="selectedTransaction.to"
-        :translation="`transaction.${isSetReferralOperation ? 'referral' : 'to'}`"
+        :translation="`transaction.${isSetReferralOperation ? 'referrer' : 'to'}`"
         :value="selectedTransaction.to"
         :type="HashType.Account"
       />
