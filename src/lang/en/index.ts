@@ -264,7 +264,7 @@ export default {
     total: 'Total',
     from: 'From',
     to: 'To',
-    referral: 'Referral',
+    referrer: 'Referrer',
     viewIn: {
       sorascan: 'View in SORAScan',
       subscan: 'View in Subscan',
