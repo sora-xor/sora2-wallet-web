@@ -2,7 +2,6 @@
   <div class="wallet-settings-create-token">
     <template v-if="step === Step.CreateNftToken">
       <s-input
-        v-if="false /* TODO: [NFT] fix issues in handleInputLinkChange */"
         :placeholder="linkPlaceholder"
         :minlength="1"
         :maxlength="200"
@@ -10,21 +9,16 @@
         v-model="tokenContentLink"
         @input="handleInputLinkChange"
       />
-      <div class="image-upload">
-        <s-button class="image-upload__btn">
-          <label class="image-upload__label" for="image">{{ t('createToken.selectLocalFile') }}</label>
-          <input
-            class="image-upload__input"
-            ref="fileInput"
-            type="file"
-            id="image"
-            accept="image/*"
-            @change="handleFileUpload"
-          />
-        </s-button>
-        <span class="image-upload__filename">{{ formattedFileName }}</span>
-      </div>
-      <div class="preview-image-create-nft">
+      <div
+        @drop="dropImage"
+        @dragenter.prevent
+        @dragover.prevent="dragOver"
+        @dragleave="dragCancelled"
+        @dragend="dragCancelled"
+        @click="openFileUpload"
+        class="preview-image-create-nft drop-zone"
+        :class="dropZoneClass"
+      >
         <div v-if="imageLoading" v-loading="imageLoading" />
         <div v-else-if="!tokenContentLink && !file" class="placeholder">
           <s-icon class="preview-image-create-nft__icon" name="camera-16" size="64px" />
@@ -42,6 +36,15 @@
             <s-icon class="preview-image-create-nft__clear-btn" name="basic-clear-X-24" size="64px" />
           </div>
         </div>
+
+        <input
+          class="drop-zone__input"
+          ref="fileInput"
+          type="file"
+          id="image"
+          accept="image/*"
+          @change="handleFileUpload"
+        />
       </div>
       <s-input
         :placeholder="t('createToken.tokenSymbol.placeholder')"
@@ -176,6 +179,7 @@ export default class CreateNftToken extends Mixins(
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
   imageLoading = false;
+  isImgDraggedOver = false;
   badSource = false;
   contentSrcLink = '';
   tokenContentIpfsParsed = '';
@@ -218,14 +222,42 @@ export default class CreateNftToken extends Mixins(
     return FPNumber.gte(this.xorBalance, this.fee); // xorBalance -> NetworkFeeWarningMixin
   }
 
+  get fileInput(): HTMLInputElement {
+    return this.$refs.fileInput as HTMLInputElement;
+  }
+
+  get dropZoneClass(): string {
+    return this.isImgDraggedOver || this.contentSrcLink ? 'drop-zone--over' : '';
+  }
+
+  dropImage(e): void {
+    e.preventDefault();
+    if (e.dataTransfer.files[0].type.startsWith('image/')) {
+      this.fileInput.files = e.dataTransfer.files;
+      this.handleFileUpload();
+    }
+  }
+
+  dragOver(): void {
+    this.isImgDraggedOver = true;
+  }
+
+  dragCancelled(): void {
+    this.isImgDraggedOver = false;
+  }
+
+  openFileUpload(): void {
+    if (this.contentSrcLink) return;
+    this.fileInput.click();
+  }
+
   async handleFileUpload(): Promise<void> {
     this.imageLoading = true;
-    const fileInput = this.$refs.fileInput as HTMLInputElement;
-    if (!(fileInput && fileInput.files)) {
+    if (!(this.fileInput && this.fileInput.files)) {
       this.resetFileInput();
       return;
     }
-    const file = fileInput.files[0];
+    const file = this.fileInput.files[0];
     if (!file) {
       this.resetFileInput();
       return;
@@ -239,6 +271,13 @@ export default class CreateNftToken extends Mixins(
   }
 
   handleInputLinkChange(link: string): void {
+    try {
+      const url = new URL(link);
+    } catch {
+      this.badSource = true;
+      return;
+    }
+
     this.imageLoading = true;
     this.badSource = false;
     this.linkPlaceholder = link
@@ -254,7 +293,6 @@ export default class CreateNftToken extends Mixins(
   }
 
   async checkImageFromSource(url: string): Promise<void> {
-    // it's better to use debounce fn. Also, need to fix base url
     try {
       const response = await fetch(url);
       const buffer = await response.blob();
@@ -276,16 +314,18 @@ export default class CreateNftToken extends Mixins(
     this.resetFileInput();
   }
 
-  clearContent(): void {
+  clearContent(e: Event): void {
+    e.stopPropagation();
     this.tokenContentLink = '';
     this.contentSrcLink = '';
+    this.isImgDraggedOver = false;
     this.resetFileInput();
   }
 
   resetFileInput(): void {
     this.file = null;
     this.fileName = '';
-    (this.$refs.fileInput as HTMLInputElement).value = '';
+    this.fileInput.value = '';
     this.imageLoading = false;
   }
 
@@ -357,31 +397,6 @@ export default class CreateNftToken extends Mixins(
 </script>
 
 <style lang="scss" scoped>
-.image-upload {
-  &__input {
-    display: none;
-  }
-
-  &__btn {
-    background: var(--s-color-base-content-tertiary) !important;
-    margin-top: #{$basic-spacing-medium};
-    padding: 0 !important;
-  }
-
-  &__label {
-    padding: calc(var(--s-size-small) / 2);
-
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  &__filename {
-    margin-left: 10px;
-    font-size: 12px;
-  }
-}
-
 .info-line-container {
   text-transform: uppercase;
   margin-bottom: calc(var(--s-size-small) / 2);
@@ -389,6 +404,18 @@ export default class CreateNftToken extends Mixins(
 </style>
 
 <style lang="scss">
+.drop-zone {
+  cursor: pointer;
+  border: 2px dashed var(--s-color-base-content-tertiary);
+  &--over {
+    border-style: solid;
+    cursor: initial;
+  }
+  &__input {
+    display: none;
+  }
+}
+
 .wallet-settings-create-token {
   &_desc {
     color: var(--s-color-base-content-primary);
@@ -420,7 +447,6 @@ export default class CreateNftToken extends Mixins(
   display: flex;
   justify-content: center;
   flex-direction: column;
-  border: 2px dashed var(--s-color-base-content-tertiary);
   border-radius: var(--s-border-radius-small);
   margin: #{$basic-spacing-medium} 0;
   height: 200px;
