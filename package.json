@@ -27,6 +27,7 @@
     "@soramitsu/soramitsu-js-ui": "^1.0.26",
     "core-js": "^3.6.4",
     "dayjs": "^1.10.5",
+    "is-electron": "^2.2.1",
     "lodash": "^4.17.21",
     "maska": "^1.4.0",
     "nft.storage": "^5.2.0",

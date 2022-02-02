@@ -284,4 +284,12 @@ export default {
       'You would have to use the Bridge to get XOR from other networks, get sent XOR from another SORA account, or swap any other token already in your account into XOR.',
     button: 'Yes, I understand the risk',
   },
+  desktop: {
+    welcome: {
+      header: 'Welcome to Polkaswap! Let’s set up your account',
+      text: 'Create your SORA Network account or log into the old ones using mnemonic phrase or .json import. This allows you to securely sign transactions and manage assets in SORA Network.',
+      createAccount: 'Create an account',
+      importAccount: 'Import Account',
+    },
+  },
 };

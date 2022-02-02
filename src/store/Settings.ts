@@ -6,6 +6,7 @@ import concat from 'lodash/fp/concat';
 import isEmpty from 'lodash/fp/isEmpty';
 import isEqual from 'lodash/fp/isEqual';
 import { NFTStorage } from 'nft.storage';
+import isElectron from 'is-electron';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
 
@@ -48,6 +49,7 @@ type SettingsState = {
   runtimeVersion: number;
   runtimeVersionSubscription: Nullable<Subscription>;
   nftStorage: Nullable<NFTStorage>;
+  isDesktop: boolean;
 };
 
 function initialState(): SettingsState {
@@ -70,6 +72,7 @@ function initialState(): SettingsState {
     runtimeVersionSubscription: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
     shouldBalanceBeHidden: Boolean(JSON.parse(storage.get('shouldBalanceBeHidden'))) || false,
+    isDesktop: isElectron(),
   };
 }
 
