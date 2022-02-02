@@ -130,7 +130,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
 import { File as ImageNFT, NFTStorage } from 'nft.storage';
 import { FPNumber, Operation } from '@sora-substrate/util';
@@ -178,6 +178,8 @@ export default class CreateNftToken extends Mixins(
   @Getter nftStorage!: NFTStorage;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
+  @Ref('fileInput') readonly fileInput!: HTMLInputElement;
+
   imageLoading = false;
   isImgDraggedOver = false;
   badSource = false;
@@ -220,10 +222,6 @@ export default class CreateNftToken extends Mixins(
 
   get hasEnoughXor(): boolean {
     return FPNumber.gte(this.xorBalance, this.fee); // xorBalance -> NetworkFeeWarningMixin
-  }
-
-  get fileInput(): HTMLInputElement {
-    return this.$refs.fileInput as HTMLInputElement;
   }
 
   get dropZoneClass(): string {
