@@ -9,15 +9,11 @@
         v-model="tokenContentLink"
         @input="handleInputLinkChange"
       />
-      <div
-        @drop="dropImage"
-        @dragenter.prevent
-        @dragover.prevent="dragOver"
-        @dragleave="dragCancelled"
-        @dragend="dragCancelled"
-        @click="openFileUpload"
-        class="preview-image-create-nft drop-zone"
-        :class="dropZoneClass"
+      <upload-nft-image
+        @handleFileUpload="handleFileUpload"
+        @clearContent="clearContent"
+        class="preview-image-create-nft"
+        :isLinkProvided="!!contentSrcLink"
       >
         <div v-if="imageLoading" v-loading="imageLoading" />
         <div v-else-if="!tokenContentLink && !file" class="placeholder">
@@ -32,20 +28,8 @@
         </div>
         <div v-else class="image">
           <img class="preview-image-create-nft__content" :src="contentSrcLink" />
-          <div @click="clearContent">
-            <s-icon class="preview-image-create-nft__clear-btn" name="basic-clear-X-24" size="64px" />
-          </div>
         </div>
-
-        <input
-          class="drop-zone__input"
-          ref="fileInput"
-          type="file"
-          id="image"
-          accept="image/*"
-          @change="handleFileUpload"
-        />
-      </div>
+      </upload-nft-image>
       <s-input
         :placeholder="t('createToken.tokenSymbol.placeholder')"
         :minlength="1"
@@ -138,6 +122,7 @@ import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
 
 import NftDetails from './NftDetails.vue';
 import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
+import UploadNftImage from './UploadNftImage.vue';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
 import TranslationMixin from '../components/mixins/TranslationMixin';
@@ -147,7 +132,6 @@ import TransactionMixin from '../components/mixins/TransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import { RouteNames, Step } from '../consts';
 import { api } from '../api';
-import { shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 
 @Component({
@@ -156,6 +140,7 @@ import { IpfsStorage } from '../util/ipfsStorage';
     WalletFee,
     NftDetails,
     NetworkFeeWarningDialog,
+    UploadNftImage,
   },
 })
 export default class CreateNftToken extends Mixins(
@@ -181,7 +166,6 @@ export default class CreateNftToken extends Mixins(
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
   imageLoading = false;
-  isImgDraggedOver = false;
   badSource = false;
   contentSrcLink = '';
   tokenContentIpfsParsed = '';
@@ -193,7 +177,6 @@ export default class CreateNftToken extends Mixins(
   linkPlaceholder = this.t('createToken.nft.link.placeholder');
   showFee = true;
   file: Nullable<File> = null;
-  fileName = '';
 
   get isCreateDisabled(): boolean {
     return (
@@ -211,10 +194,6 @@ export default class CreateNftToken extends Mixins(
     return this.fee.toLocaleString();
   }
 
-  get formattedFileName(): string {
-    return shortenValue(this.fileName);
-  }
-
   get contentSource(): string {
     if (this.file) return this.t('createToken.nft.source.value');
     return IpfsStorage.getStorageHostname(this.tokenContentLink);
@@ -224,44 +203,8 @@ export default class CreateNftToken extends Mixins(
     return FPNumber.gte(this.xorBalance, this.fee); // xorBalance -> NetworkFeeWarningMixin
   }
 
-  get dropZoneClass(): string {
-    return this.isImgDraggedOver || this.contentSrcLink ? 'drop-zone--over' : '';
-  }
-
-  dropImage(e): void {
-    e.preventDefault();
-    if (e.dataTransfer.files[0].type.startsWith('image/')) {
-      this.fileInput.files = e.dataTransfer.files;
-      this.handleFileUpload();
-    }
-  }
-
-  dragOver(): void {
-    this.isImgDraggedOver = true;
-  }
-
-  dragCancelled(): void {
-    this.isImgDraggedOver = false;
-  }
-
-  openFileUpload(): void {
-    if (this.contentSrcLink) return;
-    this.fileInput.click();
-  }
-
-  async handleFileUpload(): Promise<void> {
-    this.imageLoading = true;
-    if (!(this.fileInput && this.fileInput.files)) {
-      this.resetFileInput();
-      return;
-    }
-    const file = this.fileInput.files[0];
-    if (!file) {
-      this.resetFileInput();
-      return;
-    }
+  async handleFileUpload(file: File): Promise<void> {
     this.file = file;
-    this.fileName = file.name;
     this.contentSrcLink = await IpfsStorage.fileToBase64(file);
     this.badSource = false;
     this.imageLoading = false;
@@ -312,18 +255,14 @@ export default class CreateNftToken extends Mixins(
     this.resetFileInput();
   }
 
-  clearContent(e: Event): void {
-    e.stopPropagation();
+  clearContent(): void {
     this.tokenContentLink = '';
     this.contentSrcLink = '';
-    this.isImgDraggedOver = false;
     this.resetFileInput();
   }
 
   resetFileInput(): void {
     this.file = null;
-    this.fileName = '';
-    this.fileInput.value = '';
     this.imageLoading = false;
   }
 
@@ -402,18 +341,6 @@ export default class CreateNftToken extends Mixins(
 </style>
 
 <style lang="scss">
-.drop-zone {
-  cursor: pointer;
-  border: 2px dashed var(--s-color-base-content-tertiary);
-  &--over {
-    border-style: solid;
-    cursor: initial;
-  }
-  &__input {
-    display: none;
-  }
-}
-
 .wallet-settings-create-token {
   &_desc {
     color: var(--s-color-base-content-primary);
@@ -480,18 +407,6 @@ export default class CreateNftToken extends Mixins(
     font-size: calc(var(--s-size-small) / 2);
     text-align: center;
     padding: 0 50px;
-  }
-
-  &__clear-btn {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    color: var(--s-color-base-content-tertiary) !important;
-    font-size: var(--s-size-small) !important;
-    margin-bottom: calc(var(--s-size-small) / 2);
-    &:hover {
-      cursor: pointer;
-    }
   }
 }
 </style>
