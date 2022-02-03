@@ -58,7 +58,7 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
   }
 
   openFileUpload(): void {
-    if (this.fileInput.files?.[0] || this.isLinkProvided) {
+    if ((this.fileInput.files as FileList)[0] || this.isLinkProvided) {
       return;
     }
     this.fileInput.click();
