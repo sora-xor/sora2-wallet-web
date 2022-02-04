@@ -132,7 +132,7 @@ export type ReferrerReward = {
   id: string;
   blockHeight: string;
   referrer: string;
-  referree: string;
+  referral: string;
   timestamp: number;
   amount: string;
 };
