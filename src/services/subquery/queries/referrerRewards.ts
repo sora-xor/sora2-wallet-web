@@ -4,8 +4,8 @@ query($filter: ReferrerRewardFilter) {
     nodes {
       id
       blockHeight
+      referral
       referrer
-      referree
       timestamp
       amount
     }
