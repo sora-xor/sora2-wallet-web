@@ -10,10 +10,10 @@
     :class="dropZoneClass"
   >
     <slot />
-    <div v-if="clearBtnShown" @click="clearContent">
+    <div v-if="clearBtnShown" @click="clear">
       <s-icon class="clear-file-input-btn" name="basic-clear-X-24" size="64px" />
     </div>
-    <input class="drop-zone__input" ref="fileInput" type="file" accept="image/*" @change="handleFileUpload" />
+    <input class="drop-zone__input" ref="fileInput" type="file" :accept="allowedTypes" @change="upload" />
   </div>
 </template>
 
@@ -25,6 +25,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 @Component
 export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly isLinkProvided!: boolean;
+  @Prop({ default: 'image/*', type: String }) readonly allowedTypes!: string;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
@@ -43,8 +44,8 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
     event.preventDefault();
 
     if (event.dataTransfer.files[0].type.startsWith('image/')) {
-      this.fileInput.files = event.dataTransfer.files;
-      this.handleFileUpload();
+      this.fileInput.files = event.dataTransfer.files as FileList;
+      this.upload();
       this.isClearBtnShown = true;
     }
   }
@@ -64,7 +65,7 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
     this.fileInput.click();
   }
 
-  handleFileUpload(): void {
+  upload(): void {
     if (!(this.fileInput && this.fileInput.files)) {
       this.resetFileInput();
       return;
@@ -75,15 +76,15 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
       this.resetFileInput();
       return;
     }
-    this.$emit('handleFileUpload', file);
+    this.$emit('upload', file);
     this.isImgDraggedOver = true;
     this.isClearBtnShown = true;
   }
 
-  clearContent(e: Event): void {
+  clear(e: Event): void {
     e.stopPropagation();
     this.resetFileInput();
-    this.$emit('clearContent');
+    this.$emit('clear');
   }
 
   resetFileInput(): void {

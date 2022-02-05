@@ -9,9 +9,9 @@
         v-model="tokenContentLink"
         @input="handleInputLinkChange"
       />
-      <upload-nft-image
-        @handleFileUpload="handleFileUpload"
-        @clearContent="clearContent"
+      <file-uploader
+        @upload="upload"
+        @clear="clear"
         class="preview-image-create-nft"
         :isLinkProvided="!!contentSrcLink"
       >
@@ -29,7 +29,7 @@
         <div v-else class="image">
           <img class="preview-image-create-nft__content" :src="contentSrcLink" />
         </div>
-      </upload-nft-image>
+      </file-uploader>
       <s-input
         :placeholder="t('createToken.tokenSymbol.placeholder')"
         :minlength="1"
@@ -122,7 +122,7 @@ import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
 
 import NftDetails from './NftDetails.vue';
 import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
-import UploadNftImage from './UploadNftImage.vue';
+import FileUploader from './FileUploader.vue';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
 import TranslationMixin from '../components/mixins/TranslationMixin';
@@ -140,7 +140,7 @@ import { IpfsStorage } from '../util/ipfsStorage';
     WalletFee,
     NftDetails,
     NetworkFeeWarningDialog,
-    UploadNftImage,
+    FileUploader,
   },
 })
 export default class CreateNftToken extends Mixins(
@@ -203,7 +203,7 @@ export default class CreateNftToken extends Mixins(
     return FPNumber.gte(this.xorBalance, this.fee); // xorBalance -> NetworkFeeWarningMixin
   }
 
-  async handleFileUpload(file: File): Promise<void> {
+  async upload(file: File): Promise<void> {
     this.file = file;
     this.contentSrcLink = await IpfsStorage.fileToBase64(file);
     this.badSource = false;
@@ -255,7 +255,7 @@ export default class CreateNftToken extends Mixins(
     this.resetFileInput();
   }
 
-  clearContent(): void {
+  clear(): void {
     this.tokenContentLink = '';
     this.contentSrcLink = '';
     this.resetFileInput();
