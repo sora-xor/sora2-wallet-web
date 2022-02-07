@@ -286,10 +286,17 @@ export default {
   },
   desktop: {
     welcome: {
-      header: 'Welcome to Polkaswap! Let’s set up your account',
+      header: 'Welcome to Polkaswap!',
+      advice: 'Let’s set up your account',
       text: 'Create your SORA Network account or log into the old ones using mnemonic phrase or .json import. This allows you to securely sign transactions and manage assets in SORA Network.',
       createAccount: 'Create an account',
       importAccount: 'Import Account',
+    },
+    heading: {
+      seedPhraseTitle: 'Seed phrase',
+      confirmSeedTitle: 'Confirm seed phrase',
+      accountDetailsTitle: 'Account Details',
+      importTitle: 'Import account',
     },
   },
 };

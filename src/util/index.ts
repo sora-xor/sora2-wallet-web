@@ -5,7 +5,7 @@ import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards
 
 import { api } from '../api';
 import store from '../store';
-import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
+import { ExplorerLink, SoraNetwork, ExplorerType, LoginStep } from '../consts';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { PolkadotJsAccount } from '../types/common';
 
@@ -178,4 +178,32 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
 
     return total;
   }, []);
+};
+
+export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
+  let currentStepIndex: number;
+
+  const createFlow = [
+    LoginStep.Welcome,
+    LoginStep.Create,
+    LoginStep.SeedPhrase,
+    LoginStep.ConfirmSeedPhrase,
+    LoginStep.CreateCredentials,
+  ] as Array<LoginStep>;
+
+  currentStepIndex = createFlow.findIndex((stepValue) => stepValue === currentStep);
+
+  if (currentStepIndex !== -1) {
+    return createFlow[currentStepIndex - 1];
+  }
+
+  const importFlow = [LoginStep.Welcome, LoginStep.Import, LoginStep.ImportCredentials] as Array<LoginStep>;
+
+  currentStepIndex = importFlow.findIndex((stepValue) => stepValue === currentStep);
+
+  if (currentStepIndex !== -1) {
+    return createFlow[currentStepIndex - 1];
+  }
+
+  return LoginStep.Welcome;
 };
