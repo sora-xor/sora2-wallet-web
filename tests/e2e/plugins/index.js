@@ -15,6 +15,21 @@ module.exports = (on, config) => {
   //  watchOptions: {}
   // }))
 
+  on('before:browser:launch', (browser, launchOptions) => {
+    // supply the absolute path to an unpacked extension's folder
+    // NOTE: extensions cannot be loaded in headless Chrome
+    // launchOptions.extensions.push(
+    //   path.resolve(__dirname, 'C:\\Users\\mishu\\Docker\\extension-master\\packages\\extension\\build')
+    // );
+    launchOptions.args.push(
+      '--start-maximized',
+      `--disable-extensions-except=C:\\Users\\mishu\\Docker\\extension-master\\packages\\extension\\build`,
+      `--load-extension=C:\\Users\\mishu\\Docker\\extension-master\\packages\\extension\\build`
+    );
+    launchOptions.preferences.devTools = true;
+    return launchOptions;
+  });
+
   return Object.assign({}, config, {
     fixturesFolder: 'tests/e2e/fixtures',
     integrationFolder: 'tests/e2e/specs',
