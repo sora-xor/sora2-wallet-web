@@ -185,7 +185,6 @@ export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
 
   const createFlow = [
     LoginStep.Welcome,
-    LoginStep.Create,
     LoginStep.SeedPhrase,
     LoginStep.ConfirmSeedPhrase,
     LoginStep.CreateCredentials,
@@ -202,7 +201,7 @@ export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
   currentStepIndex = importFlow.findIndex((stepValue) => stepValue === currentStep);
 
   if (currentStepIndex !== -1) {
-    return createFlow[currentStepIndex - 1];
+    return importFlow[currentStepIndex - 1];
   }
 
   return LoginStep.Welcome;

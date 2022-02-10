@@ -298,5 +298,28 @@ export default {
       accountDetailsTitle: 'Account Details',
       importTitle: 'Import account',
     },
+    button: {
+      next: 'Next step',
+      skip: 'Skip',
+      createAccount: 'Create Account',
+      importAccount: 'Import account',
+    },
+    accountName: {
+      placeholder: 'Wallet name',
+      desc: 'This is the public name of your wallet which will be visible to everyone',
+    },
+    password: {
+      placeholder: 'Password',
+      desc: 'Ensure you are using a strong password for proper protection',
+    },
+    confirmPassword: {
+      placeholder: 'Confirm password',
+    },
+    accountMnemonic: {
+      placeholder: 'Enter mnemonic phrase',
+    },
+    seedAdviceText:
+      'This is a secret seed of your account. Make sure to store it on a non-digital carrier, for example - paper',
+    confirmSeedText: 'Confirm the seed phrase by clicking words in the correct order',
   },
 };

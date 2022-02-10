@@ -66,7 +66,6 @@ export enum LoginStep {
   Welcome = 'Welcome',
   Import = 'Import',
   ImportCredentials = 'Import/Credentials',
-  Create = 'Create',
   SeedPhrase = 'Create/SeedPhrase',
   ConfirmSeedPhrase = 'Create/ConfirmSeedPhrase',
   CreateCredentials = 'Create/Credentials',
