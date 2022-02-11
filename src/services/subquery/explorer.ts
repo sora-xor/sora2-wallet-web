@@ -101,7 +101,7 @@ export default class SubqueryExplorer implements Explorer {
       if (referrerRewards) {
         (referrerRewards.nodes as Array<ReferrerReward>).forEach((item) => {
           rewardsInfo.rewards = rewardsInfo.rewards.add(new FPNumber(item.amount));
-          const invitedUser = item.referree;
+          const invitedUser = item.referral;
           if (!rewardsInfo.invitedUserRewards[invitedUser]) {
             rewardsInfo.invitedUserRewards[invitedUser] = { rewards: FPNumber.ZERO };
           }
