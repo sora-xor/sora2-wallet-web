@@ -14,13 +14,13 @@
       <img v-else class="preview-image-confirm-nft__content" :src="contentLink" />
     </div>
     <div class="nft-info">
-      <div class="nft-info__name">
+      <div class="nft-info__header">
         <div v-if="isAssetDetails" :class="nftDetailsSectionClasses" @click="handleDetailsClick">
           <span>{{ tokenSymbol }}</span>
           <s-icon name="chevron-down-rounded-16" size="18" />
         </div>
         <template v-else>
-          {{ tokenName /* TODO: [NFT] name should be cropped via styles */ }}
+          <span class="nft-info__name">{{ tokenName }}</span>
           <span class="nft-info__symbol">{{ tokenSymbol }}</span>
         </template>
       </div>
@@ -47,9 +47,9 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   imageLoading = true;
 
   get nftDetailsSectionClasses(): Array<string> {
-    const cssClasses: Array<string> = ['nft-info__name--clickable'];
+    const cssClasses: Array<string> = ['nft-info__header--clickable'];
     if (this.nftDetailsClicked) {
-      cssClasses.push('nft-info__name--clicked');
+      cssClasses.push('nft-info__header--clicked');
     }
     return cssClasses;
   }
@@ -124,7 +124,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   justify-content: center;
   align-items: center;
 
-  &__name {
+  &__header {
     font-weight: 700;
     font-size: 24px;
     text-transform: capitalize;
@@ -151,10 +151,23 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     }
   }
 
+  &__name {
+    display: inline-block;
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 6px;
+    line-height: var(--s-size-mini);
+  }
+
   &__symbol {
+    display: inline-block;
     font-weight: 400;
+    overflow: hidden;
     font-size: calc(var(--s-size-small) / 2);
     color: var(--s-color-brand-day);
+    line-height: calc(var(--s-size-mini) / 1.2);
   }
 
   &__desc {
