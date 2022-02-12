@@ -12,6 +12,7 @@
       <file-uploader
         @upload="upload"
         @clear="clear"
+        :bus="EventBus"
         class="preview-image-create-nft"
         :isLinkProvided="!!contentSrcLink"
       >
@@ -114,7 +115,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Ref, Vue } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
 import { File as ImageNFT, NFTStorage } from 'nft.storage';
 import { FPNumber, Operation } from '@sora-substrate/util';
@@ -157,6 +158,7 @@ export default class CreateNftToken extends Mixins(
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
   readonly Step = Step;
   readonly XOR_SYMBOL = XOR.symbol;
+  readonly EventBus = new Vue();
 
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
@@ -212,6 +214,10 @@ export default class CreateNftToken extends Mixins(
   }
 
   handleInputLinkChange(link: string): void {
+    this.EventBus.$emit('resetFileInput');
+    this.resetFileInput();
+    this.contentSrcLink = '';
+
     try {
       const url = new URL(link);
     } catch {
