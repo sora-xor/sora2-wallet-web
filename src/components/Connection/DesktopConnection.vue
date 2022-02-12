@@ -54,7 +54,6 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
 
   handleBack(): void {
     const step = getPreviousLoginStep(this.step);
-    console.log('step', step);
     this.step = step;
   }
 }

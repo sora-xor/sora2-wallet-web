@@ -9,7 +9,7 @@
         :disabled="loading"
         :maxlength="255"
         v-model="mnemonicPhrase"
-        @keypress.native="handleTextAreaInput($event)"
+        @input="handleMnemonicInput"
       />
       <p class="line1">or</p>
       <s-button @click="nextStep" class="s-typography-button--large login-btn"> Import .JSON </s-button>
@@ -58,6 +58,12 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
   get disabled(): boolean {
     return false;
+  }
+
+  handleMnemonicInput(char) {
+    const letter = char.replace('.', '').replace('  ', ' ');
+
+    if (/^[a-z ]+$/.test(letter)) this.mnemonicPhrase = letter;
   }
 
   nextStep(): void {
