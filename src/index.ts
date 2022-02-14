@@ -94,8 +94,10 @@ async function initWallet({
       console.error('Something went wrong during api initialization', error);
       throw error;
     }
-    await store.dispatch('subscribeOnRuntimeVersion');
     await store.dispatch('getWhitelist', { whiteListOverApi });
+    await store.dispatch('subscribeOnSystemEvents');
+    await store.dispatch('subscribeOnRuntimeVersion');
+    await store.dispatch('subscribeOnAssets');
     await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates');
     await store.dispatch('subscribeOnExtensionAvailability');
     await store.dispatch('checkSigner');

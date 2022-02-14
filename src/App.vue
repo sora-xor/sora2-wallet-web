@@ -39,6 +39,8 @@ export default class App extends Mixins(TransactionMixin) {
 
   @Action trackActiveTransactions!: AsyncVoidFn;
   @Action resetActiveTransactions!: AsyncVoidFn;
+  @Action resetSystemEventsSubscription!: AsyncVoidFn;
+  @Action resetAssetsSubscription!: AsyncVoidFn;
   @Action resetAccountAssetsSubscription!: AsyncVoidFn;
   @Action resetRuntimeVersionSubscription!: AsyncVoidFn;
   @Action resetFiatPriceAndApySubscription!: AsyncVoidFn;
@@ -63,6 +65,8 @@ export default class App extends Mixins(TransactionMixin) {
 
   beforeDestroy(): void {
     this.resetActiveTransactions();
+    this.resetSystemEventsSubscription();
+    this.resetAssetsSubscription();
     this.resetAccountAssetsSubscription();
     this.resetRuntimeVersionSubscription();
     this.resetFiatPriceAndApySubscription();
