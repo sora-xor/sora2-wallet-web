@@ -436,6 +436,7 @@ const actions = {
     try {
       const defaultAddress = api.formatAddress(address, false);
       const info = await getExtensionInfo();
+      console.log('info', info);
       const account = info.accounts.find((acc) => acc.address === defaultAddress);
       if (!account) {
         commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE);

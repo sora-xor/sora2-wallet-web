@@ -11,7 +11,7 @@
         v-model="mnemonicPhrase"
         @input="handleMnemonicInput"
       />
-      <p class="line1">or</p>
+      <p class="line">or</p>
       <s-button @click="nextStep" class="s-typography-button--large login-btn"> Import .JSON </s-button>
       <s-button @click="nextStep" :disabled="disabled" class="s-typography-button--large login-btn" type="primary">
         {{ t('desktop.button.next') }}
@@ -27,7 +27,7 @@
         <s-input :placeholder="t('desktop.password.placeholder')" v-model="accountPassword" :disabled="loading">
         </s-input>
       </div>
-      <s-button @click="nextStep" :disabled="disabled" class="s-typography-button--large login-btn" type="primary">
+      <s-button @click="importAccount" :disabled="disabled" class="s-typography-button--large login-btn" type="primary">
         {{ t('desktop.button.importAccount') }}
       </s-button>
     </template>
@@ -69,6 +69,10 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   nextStep(): void {
     this.$emit('stepChange', LoginStep.ImportCredentials);
   }
+
+  importAccount(): void {
+    // api call to import account
+  }
 }
 </script>
 
@@ -78,7 +82,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     margin-top: 24px;
   }
 }
-.line1 {
+.line {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -86,8 +90,8 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   color: var(--s-color-base-content-secondary);
 }
 
-.line1::before,
-.line1::after {
+.line::before,
+.line::after {
   content: '';
   flex: 1 1;
   border-bottom: 2px solid var(--s-color-base-content-tertiary);

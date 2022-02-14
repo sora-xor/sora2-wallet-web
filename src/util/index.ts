@@ -25,6 +25,8 @@ export const subscribeToPolkadotJsAccounts = async (
       name: account.meta.name || '',
     }));
 
+    console.log('polkadotJsAccounts', polkadotJsAccounts);
+
     callback(polkadotJsAccounts);
   });
 
