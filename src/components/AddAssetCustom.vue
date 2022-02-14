@@ -34,9 +34,9 @@ import { AddAssetTabs, RouteNames } from '../consts';
 export default class AddAssetCustom extends Mixins(TranslationMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
+  @Getter assets!: Array<Asset>;
   @Getter accountAssets!: Array<AccountAsset>;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action searchAsset!: (address: string) => Promise<Asset>;
 
   address = '';
   selectedAsset: Nullable<Asset> = null;
@@ -57,7 +57,7 @@ export default class AddAssetCustom extends Mixins(TranslationMixin) {
       return;
     }
     const search = value.trim().toLowerCase();
-    const asset = await this.searchAsset(search);
+    const asset = this.assets.find((asset) => asset.address.toLowerCase() === search);
     if (this.accountAssets.find(({ address }) => address.toLowerCase() === search)) {
       this.selectedAsset = null;
       this.alreadyAttached = true;

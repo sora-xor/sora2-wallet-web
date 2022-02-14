@@ -37,12 +37,8 @@ export default class App extends Mixins(TransactionMixin) {
   @Getter libraryTheme!: Theme;
   @Getter firstReadyTransaction!: Nullable<History>;
 
-  @Action trackActiveTransactions!: AsyncVoidFn;
-  @Action resetActiveTransactions!: AsyncVoidFn;
-  @Action resetAccountAssetsSubscription!: AsyncVoidFn;
-  @Action resetRuntimeVersionSubscription!: AsyncVoidFn;
-  @Action resetFiatPriceAndApySubscription!: AsyncVoidFn;
-  @Action resetExtensionAvailabilitySubscription!: AsyncVoidFn;
+  @Action resetNetworkSubscriptions!: AsyncVoidFn;
+  @Action resetInternalSubscriptions!: AsyncVoidFn;
   @Action setApiKeys!: (apiKeys: ApiKeysObject) => AsyncVoidFn;
   @Action setSoraNetwork!: (network: SoraNetwork) => Promise<void>;
 
@@ -50,7 +46,6 @@ export default class App extends Mixins(TransactionMixin) {
     await this.setApiKeys({ nftStorage: NFT_STORAGE_API_KEY });
     await this.setSoraNetwork(SoraNetwork.Dev);
     await initWallet({ withoutStore: true, whiteListOverApi: true }); // We don't need storage for local development
-    this.trackActiveTransactions();
     const localeLanguage = navigator.language;
     FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2);
     FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2);
@@ -62,11 +57,8 @@ export default class App extends Mixins(TransactionMixin) {
   }
 
   beforeDestroy(): void {
-    this.resetActiveTransactions();
-    this.resetAccountAssetsSubscription();
-    this.resetRuntimeVersionSubscription();
-    this.resetFiatPriceAndApySubscription();
-    this.resetExtensionAvailabilitySubscription();
+    this.resetNetworkSubscriptions();
+    this.resetInternalSubscriptions();
   }
 
   changeTheme(): void {
