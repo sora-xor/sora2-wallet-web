@@ -9,7 +9,7 @@
       v-model="search"
       @input="handleSearch"
     />
-    <s-scrollbar class="asset-search-list" v-loading="assetsLoading || loading">
+    <s-scrollbar class="asset-search-list" v-loading="loading">
       <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </div>
@@ -53,18 +53,14 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   readonly AddAssetTabs = AddAssetTabs;
 
   @Getter assets!: Array<Asset>;
-  @Getter assetsLoading!: boolean;
   @Getter accountAssets!: Array<AccountAsset>;
   @Getter accountAssetsAddressTable!: AccountAssetsTable;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAssets!: AsyncVoidFn;
 
   search = '';
   selectedAsset: Nullable<Asset> = null;
 
   async mounted(): Promise<void> {
-    await this.getAssets();
-
     const input = this.$refs.search as any;
 
     if (input && typeof input.focus === 'function') {
