@@ -387,9 +387,13 @@ const actions = {
   },
 
   async resetExtensionAvailabilitySubscription({ commit, dispatch }) {
-    commit(types.RESET_EXTENSION_AVAILABILIY_SUBSCRIPTION);
+    try {
+      commit(types.RESET_EXTENSION_AVAILABILIY_SUBSCRIPTION);
 
-    await dispatch('resetPolkadotJsAccountsSubscription');
+      await dispatch('resetPolkadotJsAccountsSubscription');
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   async updatePolkadotJsAccounts({ commit, dispatch, getters }, accounts: Array<PolkadotJsAccount>) {
@@ -477,7 +481,11 @@ const actions = {
   },
 
   resetAssetsSubscription({ commit }) {
-    commit(types.RESET_ASSETS_SUBSCRIPTION);
+    try {
+      commit(types.RESET_ASSETS_SUBSCRIPTION);
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   async subscribeOnAccountAssets({ commit, dispatch, getters, state }) {
@@ -490,13 +498,18 @@ const actions = {
         });
         api.assets.updateAccountAssets();
       } catch (error) {
+        console.error(error);
         commit(types.UPDATE_ACCOUNT_ASSETS, []);
       }
     }
   },
 
   resetAccountAssetsSubscription({ commit }) {
-    commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION);
+    try {
+      commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION);
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   getAccountActivity({ commit }) {
@@ -534,7 +547,11 @@ const actions = {
   },
 
   resetFiatPriceAndApySubscription({ commit }) {
-    commit(types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION);
+    try {
+      commit(types.RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION);
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   async getAccountReferralRewards({ commit }) {

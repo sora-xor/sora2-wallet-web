@@ -8,18 +8,10 @@ import Transactions from './Transactions';
 
 Vue.use(Vuex);
 
-const runParallel = async (actions: Array<AsyncVoidFn>) => {
-  try {
-    await Promise.all(actions);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 const actions = {
   // Subscriptions dependent on chain state
   async activateNetwokSubscriptions({ dispatch }) {
-    await runParallel([
+    await Promise.all([
       dispatch('subscribeOnSystemEvents'),
       dispatch('subscribeOnRuntimeVersion'),
       dispatch('subscribeOnAssets'),
@@ -27,7 +19,7 @@ const actions = {
     ]);
   },
   async resetNetworkSubscriptions({ dispatch }) {
-    await runParallel([
+    await Promise.all([
       dispatch('resetSystemEventsSubscription'),
       dispatch('resetRuntimeVersionSubscription'),
       dispatch('resetAssetsSubscription'),
@@ -36,14 +28,14 @@ const actions = {
   },
   // Internal subscriptions & timers
   async activateInternalSubscriptions({ dispatch }) {
-    await runParallel([
+    await Promise.all([
       dispatch('trackActiveTransactions'),
       dispatch('subscribeOnFiatPriceAndApyObjectUpdates'),
       dispatch('subscribeOnExtensionAvailability'),
     ]);
   },
   async resetInternalSubscriptions({ dispatch }) {
-    await runParallel([
+    await Promise.all([
       dispatch('resetActiveTransactions'),
       dispatch('resetFiatPriceAndApySubscription'),
       dispatch('resetExtensionAvailabilitySubscription'),

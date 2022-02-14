@@ -188,32 +188,48 @@ const actions = {
   },
 
   async subscribeOnSystemEvents({ state, dispatch }) {
-    await dispatch('resetSystemEventsSubscription');
-    state.systemEventsSubscription = api.system.getEventsSubscription();
+    try {
+      await dispatch('resetSystemEventsSubscription');
+      state.systemEventsSubscription = api.system.getEventsSubscription();
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   resetSystemEventsSubscription({ commit }) {
-    commit(types.RESET_SYSTEM_EVENTS_SUBSCRIPTION);
+    try {
+      commit(types.RESET_SYSTEM_EVENTS_SUBSCRIPTION);
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   subscribeOnRuntimeVersion({ commit, state }) {
-    state.runtimeVersionSubscription = api.system.getRuntimeVersionObservable().subscribe(async (version) => {
-      const currentVersion = Number(JSON.parse(runtimeStorage.get('version')));
-      const networkFees = JSON.parse(runtimeStorage.get('networkFees'));
-      if (currentVersion === version && !isEmpty(networkFees) && areKeysEqual(networkFees, api.NetworkFee)) {
-        commit(types.SET_NETWORK_FEES, networkFees);
-        return;
-      }
-      if (currentVersion !== version) {
-        commit(types.SET_RUNTIME_VERSION, version);
-      }
-      await api.calcStaticNetworkFees();
-      commit(types.UPDATE_NETWORK_FEES, api.NetworkFee);
-    });
+    try {
+      state.runtimeVersionSubscription = api.system.getRuntimeVersionObservable().subscribe(async (version) => {
+        const currentVersion = Number(JSON.parse(runtimeStorage.get('version')));
+        const networkFees = JSON.parse(runtimeStorage.get('networkFees'));
+        if (currentVersion === version && !isEmpty(networkFees) && areKeysEqual(networkFees, api.NetworkFee)) {
+          commit(types.SET_NETWORK_FEES, networkFees);
+          return;
+        }
+        if (currentVersion !== version) {
+          commit(types.SET_RUNTIME_VERSION, version);
+        }
+        await api.calcStaticNetworkFees();
+        commit(types.UPDATE_NETWORK_FEES, api.NetworkFee);
+      });
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   resetRuntimeVersionSubscription({ commit }) {
-    commit(types.RESET_RUNTIME_VERSION_SUBSCRIPTION);
+    try {
+      commit(types.RESET_RUNTIME_VERSION_SUBSCRIPTION);
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   toggleHideBalance({ commit }) {

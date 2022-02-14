@@ -91,16 +91,25 @@ const actions = {
     commit(types.REMOVE_ACTIVE_TRANSACTION, tx);
   },
   // Should be used once in a root of the project
-  trackActiveTransactions({ commit, dispatch, state }) {
-    commit(types.RESET_ACTIVE_TRANSACTIONS);
-    state.updateActiveTransactionsId = setInterval(() => {
-      // to update app activities (history)
-      dispatch('getAccountActivity', undefined, { root: true });
-      commit(types.UPDATE_ACTIVE_TRANSACTIONS);
+  async trackActiveTransactions({ commit, dispatch, state }) {
+    await dispatch('resetActiveTransactions');
+
+    state.updateActiveTransactionsId = setInterval(async () => {
+      try {
+        // to update app activities (history)
+        await dispatch('getAccountActivity', undefined, { root: true });
+        commit(types.UPDATE_ACTIVE_TRANSACTIONS);
+      } catch (error) {
+        console.error(error);
+      }
     }, UPDATE_ACTIVE_TRANSACTIONS_INTERVAL);
   },
   resetActiveTransactions({ commit }) {
-    commit(types.RESET_ACTIVE_TRANSACTIONS);
+    try {
+      commit(types.RESET_ACTIVE_TRANSACTIONS);
+    } catch (error) {
+      console.error(error);
+    }
   },
 };
 
