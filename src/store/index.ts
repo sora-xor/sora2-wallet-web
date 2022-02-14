@@ -9,11 +9,13 @@ import Transactions from './Transactions';
 Vue.use(Vuex);
 
 const runParallel = async (actions: Array<AsyncVoidFn>) => {
-  try {
-    await Promise.all(actions);
-  } catch (error) {
-    console.error(error);
-  }
+  const results = await Promise.allSettled(actions);
+
+  results.forEach((result) => {
+    if (result.status === 'rejected') {
+      console.error(result.reason);
+    }
+  });
 };
 
 const actions = {

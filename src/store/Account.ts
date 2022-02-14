@@ -462,18 +462,14 @@ const actions = {
   },
 
   async subscribeOnAssets({ dispatch, state }) {
-    try {
-      await dispatch('resetAssetsSubscription');
-      await dispatch('getAssets');
+    await dispatch('resetAssetsSubscription');
+    await dispatch('getAssets');
 
-      state.assetsSubscription = api.system.updated.subscribe((events) => {
-        if (events.find((e) => e.event.section === 'assets' && e.event.method === 'AssetRegistered')) {
-          dispatch('getAssets');
-        }
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    state.assetsSubscription = api.system.updated.subscribe((events) => {
+      if (events.find((e) => e.event.section === 'assets' && e.event.method === 'AssetRegistered')) {
+        dispatch('getAssets');
+      }
+    });
   },
 
   resetAssetsSubscription({ commit }) {
