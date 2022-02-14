@@ -8,38 +8,54 @@ import Transactions from './Transactions';
 
 Vue.use(Vuex);
 
+const runParallel = async (actions: Array<AsyncVoidFn>) => {
+  try {
+    await Promise.all(actions);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const actions = {
+  // Subscriptions dependent on chain state
+  async activateNetwokSubscriptions({ dispatch }) {
+    await runParallel([
+      dispatch('subscribeOnSystemEvents'),
+      dispatch('subscribeOnRuntimeVersion'),
+      dispatch('subscribeOnAssets'),
+      dispatch('subscribeOnAccountAssets'),
+    ]);
+  },
+  async resetNetworkSubscriptions({ dispatch }) {
+    await runParallel([
+      dispatch('resetSystemEventsSubscription'),
+      dispatch('resetRuntimeVersionSubscription'),
+      dispatch('resetAssetsSubscription'),
+      dispatch('resetAccountAssetsSubscription'),
+    ]);
+  },
+  // Internal subscriptions & timers
+  async activateInternalSubscriptions({ dispatch }) {
+    await runParallel([
+      dispatch('trackActiveTransactions'),
+      dispatch('subscribeOnFiatPriceAndApyObjectUpdates'),
+      dispatch('subscribeOnExtensionAvailability'),
+    ]);
+  },
+  async resetInternalSubscriptions({ dispatch }) {
+    await runParallel([
+      dispatch('resetActiveTransactions'),
+      dispatch('resetFiatPriceAndApySubscription'),
+      dispatch('resetExtensionAvailabilitySubscription'),
+    ]);
+  },
+};
+
 const modules = {
   Account,
   Router,
   Settings,
   Transactions,
-};
-
-const actions = {
-  // Subscriptions dependent on chain state
-  activateNetwokSubscriptions({ dispatch }) {
-    dispatch('subscribeOnSystemEvents');
-    dispatch('subscribeOnRuntimeVersion');
-    dispatch('subscribeOnAssets');
-    dispatch('subscribeOnAccountAssets');
-  },
-  resetNetworkSubscriptions({ dispatch }) {
-    dispatch('resetSystemEventsSubscription');
-    dispatch('resetRuntimeVersionSubscription');
-    dispatch('resetAssetsSubscription');
-    dispatch('resetAccountAssetsSubscription');
-  },
-  // Internal subscriptions & timers
-  activateInternalSubscriptions({ dispatch }) {
-    dispatch('trackActiveTransactions');
-    dispatch('subscribeOnFiatPriceAndApyObjectUpdates');
-    dispatch('subscribeOnExtensionAvailability');
-  },
-  resetInternalSubscriptions({ dispatch }) {
-    dispatch('resetActiveTransactions');
-    dispatch('resetFiatPriceAndApySubscription');
-    dispatch('resetExtensionAvailabilitySubscription');
-  },
 };
 
 const store = new Vuex.Store({
