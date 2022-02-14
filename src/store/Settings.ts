@@ -188,48 +188,32 @@ const actions = {
   },
 
   async subscribeOnSystemEvents({ state, dispatch }) {
-    try {
-      await dispatch('resetSystemEventsSubscription');
-      state.systemEventsSubscription = api.system.getEventsSubscription();
-    } catch (error) {
-      console.error(error);
-    }
+    await dispatch('resetSystemEventsSubscription');
+    state.systemEventsSubscription = api.system.getEventsSubscription();
   },
 
   resetSystemEventsSubscription({ commit }) {
-    try {
-      commit(types.RESET_SYSTEM_EVENTS_SUBSCRIPTION);
-    } catch (error) {
-      console.error(error);
-    }
+    commit(types.RESET_SYSTEM_EVENTS_SUBSCRIPTION);
   },
 
   subscribeOnRuntimeVersion({ commit, state }) {
-    try {
-      state.runtimeVersionSubscription = api.system.getRuntimeVersionObservable().subscribe(async (version) => {
-        const currentVersion = Number(JSON.parse(runtimeStorage.get('version')));
-        const networkFees = JSON.parse(runtimeStorage.get('networkFees'));
-        if (currentVersion === version && !isEmpty(networkFees) && areKeysEqual(networkFees, api.NetworkFee)) {
-          commit(types.SET_NETWORK_FEES, networkFees);
-          return;
-        }
-        if (currentVersion !== version) {
-          commit(types.SET_RUNTIME_VERSION, version);
-        }
-        await api.calcStaticNetworkFees();
-        commit(types.UPDATE_NETWORK_FEES, api.NetworkFee);
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    state.runtimeVersionSubscription = api.system.getRuntimeVersionObservable().subscribe(async (version) => {
+      const currentVersion = Number(JSON.parse(runtimeStorage.get('version')));
+      const networkFees = JSON.parse(runtimeStorage.get('networkFees'));
+      if (currentVersion === version && !isEmpty(networkFees) && areKeysEqual(networkFees, api.NetworkFee)) {
+        commit(types.SET_NETWORK_FEES, networkFees);
+        return;
+      }
+      if (currentVersion !== version) {
+        commit(types.SET_RUNTIME_VERSION, version);
+      }
+      await api.calcStaticNetworkFees();
+      commit(types.UPDATE_NETWORK_FEES, api.NetworkFee);
+    });
   },
 
   resetRuntimeVersionSubscription({ commit }) {
-    try {
-      commit(types.RESET_RUNTIME_VERSION_SUBSCRIPTION);
-    } catch (error) {
-      console.error(error);
-    }
+    commit(types.RESET_RUNTIME_VERSION_SUBSCRIPTION);
   },
 
   toggleHideBalance({ commit }) {

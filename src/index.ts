@@ -95,7 +95,8 @@ async function initWallet({
       throw error;
     }
     await store.dispatch('getWhitelist', { whiteListOverApi });
-    await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
+    await store.dispatch('activateNetwokSubscriptions');
+    await store.dispatch('activateInternalSubscriptions');
     await store.dispatch('checkSigner');
     await store.dispatch('setWalletLoaded', true);
     subscribeStoreToStorageUpdates(store);
