@@ -165,8 +165,9 @@ const actions = {
     { dispatch, state },
     { address, assetAddress }: { address: string; assetAddress?: string }
   ) {
+    const operations = SubqueryDataParserService.supportedOperations;
     const timestamp = api.historySyncTimestamp || 0;
-    const filter = historyElementsFilter(address, { assetAddress, timestamp });
+    const filter = historyElementsFilter({ address, assetAddress, timestamp, operations });
     const variables = { filter, idsOnly: true };
     const removeHistoryIds: Array<string> = [];
     try {
@@ -203,12 +204,18 @@ const actions = {
       address = '',
       assetAddress = '',
       pageAmount = 8,
-      query: { search = '', operations = [], assetsAddresses = [] } = {},
+      query: { search = '', operationNames = [], assetsAddresses = [] } = {},
     } = {}
   ): Promise<void> {
     if (pagination && ((next && !pagination.hasNextPage) || (!next && !pagination.hasPreviousPage))) return;
 
-    const filter = historyElementsFilter(address, { assetAddress, query: { search, operations, assetsAddresses } });
+    const operations = SubqueryDataParserService.supportedOperations;
+    const filter = historyElementsFilter({
+      address,
+      assetAddress,
+      operations,
+      query: { search, operationNames, assetsAddresses },
+    });
     const cursor = {
       [next ? 'after' : 'before']: pagination ? (next ? pagination.endCursor : pagination.startCursor) || '' : '',
     };

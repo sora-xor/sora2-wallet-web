@@ -19,6 +19,8 @@ export enum ModuleNames {
   TradingPair = 'tradingPair',
   Utility = 'utility',
   Referrals = 'referrals',
+  EthBridge = 'ethBridge',
+  BridgeMultisig = 'bridgeMultisig',
 }
 
 export enum ModuleMethods {
@@ -32,6 +34,8 @@ export enum ModuleMethods {
   ReferralsSetReferrer = 'setReferrer',
   ReferralsReserve = 'reserve',
   ReferralsUnreserve = 'unreserve',
+  EthBridgeTransferToSidechain = 'transferToSidechain',
+  BridgeMultisigAsMulti = 'asMulti',
 }
 
 export type PoolXYKEntity = {
@@ -98,6 +102,20 @@ export type UtilityBatchAllItem = {
   method: string;
 };
 
+export type HistoryElementEthBridgeOutgoing = {
+  amount: string;
+  assetId: string;
+  sidechainAddress: string;
+  requestHash?: string;
+};
+
+export type HistoryElementEthBridgeIncoming = {
+  amount: string;
+  assetId: string;
+  requestHash: string;
+  to: string;
+};
+
 export type HistoryElement = {
   id: string;
   blockHash: string;
@@ -116,6 +134,8 @@ export type HistoryElement = {
     | UtilityBatchAllItem[]
     | ReferralSetReferrer
     | ReferrerReserve
+    | HistoryElementEthBridgeOutgoing
+    | HistoryElementEthBridgeIncoming
   >;
 };
 

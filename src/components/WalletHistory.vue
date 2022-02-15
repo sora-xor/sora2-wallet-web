@@ -123,7 +123,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return !!(this.transactions && this.transactions.length) || !!this.searchQuery;
   }
 
-  get searchQueryOperations(): Array<Operation> {
+  get queryOperationNames(): Array<Operation> {
     if (!this.searchQuery) return [];
 
     return SubqueryDataParserService.supportedOperations.filter((operation) =>
@@ -131,7 +131,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     );
   }
 
-  get searchQueryAssetsAddresses(): Array<string> {
+  get queryAssetsAddresses(): Array<string> {
     if (!this.searchQuery) return [];
 
     return this.assets.reduce((buffer: Array<string>, asset) => {
@@ -174,7 +174,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
         // account address criteria
         `${item.from}`.toLowerCase() === query ||
         `${item.to}`.toLowerCase() === query ||
-        // operations criteria
+        // operation names criteria
         this.t(`operations.${item.type}`).toLowerCase().includes(query)
     );
   }
@@ -234,8 +234,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
         pageAmount: this.pageAmount,
         query: {
           search: this.searchQuery,
-          operations: this.searchQueryOperations,
-          assetsAddresses: this.searchQueryAssetsAddresses,
+          operationNames: this.queryOperationNames,
+          assetsAddresses: this.queryAssetsAddresses,
         },
       });
       await this.getAccountActivity();

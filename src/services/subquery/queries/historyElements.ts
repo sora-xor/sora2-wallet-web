@@ -104,6 +104,46 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.PoolXYKWithdrawLiquidity,
     },
   },
+  [Operation.ReferralSetInvitedUser]: {
+    module: {
+      equalTo: ModuleNames.Referrals,
+    },
+    method: {
+      equalTo: ModuleMethods.ReferralsSetReferrer,
+    },
+  },
+  [Operation.ReferralReserveXor]: {
+    module: {
+      equalTo: ModuleNames.Referrals,
+    },
+    method: {
+      equalTo: ModuleMethods.ReferralsReserve,
+    },
+  },
+  [Operation.ReferralUnreserveXor]: {
+    module: {
+      equalTo: ModuleNames.Referrals,
+    },
+    method: {
+      equalTo: ModuleMethods.ReferralsUnreserve,
+    },
+  },
+  [Operation.EthBridgeOutgoing]: {
+    module: {
+      equalTo: ModuleNames.EthBridge,
+    },
+    method: {
+      equalTo: ModuleMethods.EthBridgeTransferToSidechain,
+    },
+  },
+  [Operation.EthBridgeIncoming]: {
+    module: {
+      equalTo: ModuleNames.BridgeMultisig,
+    },
+    method: {
+      equalTo: ModuleMethods.BridgeMultisigAsMulti,
+    },
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
@@ -153,34 +193,31 @@ const isAccountAddress = (value: string) => value.startsWith('cn') && value.leng
 const isAssetAddress = (value: string) => value.startsWith('0x') && value.length === 66;
 
 type HistoryElementsFilterOptions = {
+  address?: string;
   assetAddress?: string;
   timestamp?: number;
+  operations?: Array<Operation>;
   query?: {
     search?: string;
-    operations?: Array<Operation>;
+    operationNames?: Array<Operation>;
     assetsAddresses?: Array<string>;
   };
 };
 
-export const historyElementsFilter = (
-  accountAddress = '',
-  {
-    assetAddress = '',
-    timestamp = 0,
-    query: { search = '', operations = [], assetsAddresses = [] } = {},
-  }: HistoryElementsFilterOptions = {}
-): any => {
+export const historyElementsFilter = ({
+  address = '',
+  assetAddress = '',
+  timestamp = 0,
+  operations = [],
+  query: { search = '', operationNames = [], assetsAddresses = [] } = {},
+}: HistoryElementsFilterOptions = {}): any => {
   const filter: any = {
     and: [],
   };
 
-  filter.and.push({
-    or: createOperationsCriteria(SubqueryDataParserService.supportedOperations),
-  });
-
-  if (accountAddress) {
+  if (address) {
     filter.and.push({
-      or: createAccountAddressCriteria(accountAddress),
+      or: createAccountAddressCriteria(address),
     });
   }
 
@@ -195,6 +232,12 @@ export const historyElementsFilter = (
       timestamp: {
         greaterThan: timestamp,
       },
+    });
+  }
+
+  if (operations.length) {
+    filter.and.push({
+      or: createOperationsCriteria(operations),
     });
   }
 
@@ -230,8 +273,8 @@ export const historyElementsFilter = (
     }
   }
 
-  // operations criteria
-  if (operations.length) {
+  // operation names criteria
+  if (operationNames.length) {
     queryFilters.push(...createOperationsCriteria(operations));
   }
 

@@ -30,6 +30,7 @@ import { storage, runtimeStorage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
+import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import * as WALLET_CONSTS from './consts';
 import * as WALLET_TYPES from './types/common';
 
@@ -141,6 +142,7 @@ export {
   WALLET_TYPES,
   components,
   mixins,
+  historyElementsFilter,
   SubqueryExplorerService,
 };
 export default SoraWalletElements;

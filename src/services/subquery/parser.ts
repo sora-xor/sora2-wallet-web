@@ -103,6 +103,7 @@ const logOperationDataParsingError = (operation: Operation, transaction: History
 };
 
 export default class SubqueryDataParser implements ExplorerDataParser {
+  // Operations visible in wallet
   public static SUPPORTED_OPERATIONS = [
     Operation.Transfer,
     Operation.Swap,
@@ -253,11 +254,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.to = data.to;
         return payload;
       }
-      case Operation.ReferralReserveXor: {
-        const data = transaction.data as ReferrerReserve;
-        payload.amount = data.amount;
-        return payload;
-      }
+      case Operation.ReferralReserveXor:
       case Operation.ReferralUnreserveXor: {
         const data = transaction.data as ReferrerReserve;
         payload.amount = data.amount;
