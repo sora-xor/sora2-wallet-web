@@ -35,6 +35,7 @@ const types = flow(
   flatMap((x) => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
     'RESET_ACCOUNT',
+    'RESET_ASSETS_SUBSCRIPTION',
     'RESET_ACCOUNT_ASSETS_SUBSCRIPTION',
     'RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION',
     'LOGOUT',
@@ -43,14 +44,13 @@ const types = flow(
     'RESET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
     'SET_EXTENSION_AVAILABILIY',
     'RESET_EXTENSION_AVAILABILIY_SUBSCRIPTION',
+    'UPDATE_ASSETS',
+    'UPDATE_ACCOUNT_ASSETS',
   ]),
   map((x) => [x, x]),
   fromPairs
 )([
   'GET_ACCOUNT_ASSETS',
-  'UPDATE_ACCOUNT_ASSETS',
-  'GET_ASSETS',
-  'SEARCH_ASSET',
   'ADD_ASSET',
   'TRANSFER',
   'IMPORT_POLKADOT_JS_ACCOUNT',
@@ -63,14 +63,14 @@ type AccountState = {
   address: string;
   name: string;
   isExternal: boolean;
-  accountAssets: Array<AccountAsset>;
   assets: Array<Asset>;
-  assetsLoading: boolean;
+  assetsSubscription: Nullable<Subscription>;
+  accountAssets: Array<AccountAsset>;
+  accountAssetsSubscription: Nullable<Subscription>;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
   polkadotJsAccountsSubscription: Nullable<VoidFunction>;
   whitelistArray: Array<WhitelistArrayItem>;
   withoutFiatAndApy: boolean;
-  accountAssetsSubscription: Nullable<Subscription>;
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
   fiatPriceAndApyTimer: Nullable<NodeJS.Timer>;
   referralRewards: ReferrerRewards;
@@ -83,14 +83,16 @@ function initialState(): AccountState {
     address: storage.get('address') || '',
     name: storage.get('name') || '',
     isExternal: Boolean(JSON.parse(storage.get('isExternal'))) || false,
-    accountAssets: [],
     assets: [],
-    assetsLoading: false,
+    assetsSubscription: null,
+    // account assets & subscription
+    accountAssets: [],
+    accountAssetsSubscription: null,
+    // polkadot js accounts & subscription
     polkadotJsAccounts: [],
     polkadotJsAccountsSubscription: null,
     whitelistArray: [],
     withoutFiatAndApy: false,
-    accountAssetsSubscription: null,
     fiatPriceAndApyObject: {},
     fiatPriceAndApyTimer: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
@@ -144,9 +146,6 @@ const getters = {
   fiatPriceAndApyObject(state: AccountState): Nullable<FiatPriceAndApyObject> {
     return state.fiatPriceAndApyObject;
   },
-  assetsLoading(state: AccountState): boolean {
-    return state.assetsLoading;
-  },
   referralRewards(state: AccountState): ReferrerRewards {
     return state.referralRewards;
   },
@@ -182,6 +181,13 @@ const mutations = {
     });
   },
 
+  [types.RESET_ASSETS_SUBSCRIPTION](state: AccountState) {
+    if (state.assetsSubscription) {
+      state.assetsSubscription.unsubscribe();
+      state.assetsSubscription = null;
+    }
+  },
+
   [types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION](state: AccountState) {
     if (state.accountAssetsSubscription) {
       state.accountAssetsSubscription.unsubscribe();
@@ -208,29 +214,12 @@ const mutations = {
     state.accountAssets = [];
   },
 
-  [types.UPDATE_ACCOUNT_ASSETS_REQUEST](state: AccountState) {},
-
-  [types.UPDATE_ACCOUNT_ASSETS_SUCCESS](state: AccountState, assets: Array<AccountAsset>) {
-    state.accountAssets = assets;
-  },
-
-  [types.UPDATE_ACCOUNT_ASSETS_FAILURE](state: AccountState) {
-    state.accountAssets = [];
-  },
-
-  [types.GET_ASSETS_REQUEST](state: AccountState) {
-    state.assets = [];
-    state.assetsLoading = true;
-  },
-
-  [types.GET_ASSETS_SUCCESS](state: AccountState, assets: Array<Asset>) {
+  [types.UPDATE_ASSETS](state: AccountState, assets: Array<Asset>) {
     state.assets = assets;
-    state.assetsLoading = false;
   },
 
-  [types.GET_ASSETS_FAILURE](state: AccountState) {
-    state.assets = [];
-    state.assetsLoading = false;
+  [types.UPDATE_ACCOUNT_ASSETS](state: AccountState, assets: Array<AccountAsset>) {
+    state.accountAssets = assets;
   },
 
   [types.GET_WHITELIST_REQUEST](state: AccountState) {
@@ -266,10 +255,6 @@ const mutations = {
   [types.GET_REFERRAL_REWARDS_FAILURE](state: AccountState) {
     state.referralRewards = EMPTY_REFERRAL_REWARDS;
   },
-
-  [types.SEARCH_ASSET_REQUEST](state: AccountState) {},
-  [types.SEARCH_ASSET_SUCCESS](state: AccountState) {},
-  [types.SEARCH_ASSET_FAILURE](state: AccountState) {},
 
   [types.ADD_ASSET_REQUEST](state: AccountState) {},
   [types.ADD_ASSET_SUCCESS](state: AccountState) {},
@@ -446,18 +431,41 @@ const actions = {
     }
   },
 
+  async getAssets({ commit, getters: { whitelist } }) {
+    try {
+      const assets = await api.assets.getAssets(whitelist);
+      commit(types.UPDATE_ASSETS, assets);
+    } catch (error) {
+      commit(types.UPDATE_ASSETS, []);
+    }
+  },
+
+  async subscribeOnAssets({ dispatch, state }) {
+    await dispatch('resetAssetsSubscription');
+    await dispatch('getAssets');
+
+    state.assetsSubscription = api.system.updated.subscribe((events) => {
+      if (events.find((e) => e.event.section === 'assets' && e.event.method === 'AssetRegistered')) {
+        dispatch('getAssets');
+      }
+    });
+  },
+
+  resetAssetsSubscription({ commit }) {
+    commit(types.RESET_ASSETS_SUBSCRIPTION);
+  },
+
   async subscribeOnAccountAssets({ commit, dispatch, getters, state }) {
     await dispatch('resetAccountAssetsSubscription');
 
     if (getters.isLoggedIn) {
-      commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST);
       try {
         state.accountAssetsSubscription = api.assets.balanceUpdated.subscribe((data) => {
-          commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.assets.accountAssets);
+          commit(types.UPDATE_ACCOUNT_ASSETS, api.assets.accountAssets);
         });
         api.assets.updateAccountAssets();
       } catch (error) {
-        commit(types.UPDATE_ACCOUNT_ASSETS_FAILURE);
+        commit(types.UPDATE_ACCOUNT_ASSETS, []);
       }
     }
   },
@@ -514,26 +522,7 @@ const actions = {
       commit(types.GET_REFERRAL_REWARDS_FAILURE);
     }
   },
-  async getAssets({ commit, getters: { whitelist } }) {
-    commit(types.GET_ASSETS_REQUEST);
-    try {
-      const assets = await api.assets.getAssets(whitelist);
-      commit(types.GET_ASSETS_SUCCESS, assets);
-    } catch (error) {
-      commit(types.GET_ASSETS_FAILURE);
-    }
-  },
-  async searchAsset({ commit, getters: { whitelist } }, address: string) {
-    commit(types.SEARCH_ASSET_REQUEST);
-    try {
-      const assets = await api.assets.getAssets(whitelist);
-      const asset = assets.find((asset) => asset.address === address);
-      commit(types.SEARCH_ASSET_SUCCESS);
-      return asset;
-    } catch (error) {
-      commit(types.SEARCH_ASSET_FAILURE);
-    }
-  },
+
   async addAsset({ commit }, address: string) {
     commit(types.ADD_ASSET_REQUEST);
     try {
