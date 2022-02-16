@@ -24,7 +24,7 @@
           <span class="nft-info__symbol">{{ tokenSymbol }}</span>
         </template>
       </div>
-      <div class="nft-info__desc">{{ tokenDescription.toString() }}</div>
+      <div class="nft-info__desc">{{ tokenDescription }}</div>
     </div>
   </div>
 </template>

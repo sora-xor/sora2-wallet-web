@@ -30,6 +30,8 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
+  readonly FILE_SIZE_LIMIT = 104857600; // 100MB in bytes
+
   isImgDraggedOver = false;
   isClearBtnShown = false;
 
@@ -44,7 +46,14 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
   dropImage(event): void {
     event.preventDefault();
 
-    if (event.dataTransfer.files[0].type.startsWith('image/')) {
+    const file = event.dataTransfer.files[0];
+
+    if (file.size > this.FILE_SIZE_LIMIT) {
+      this.dragCancelled();
+      return;
+    }
+
+    if (file.type.startsWith('image/')) {
       this.fileInput.files = event.dataTransfer.files as FileList;
       this.upload();
       this.isClearBtnShown = true;
@@ -73,6 +82,12 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
     }
 
     const file = this.fileInput.files[0];
+
+    if (file.size > this.FILE_SIZE_LIMIT) {
+      this.resetFileInput();
+      return;
+    }
+
     if (!file) {
       this.resetFileInput();
       return;

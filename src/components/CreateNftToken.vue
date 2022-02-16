@@ -214,6 +214,7 @@ export default class CreateNftToken extends Mixins(
   }
 
   async upload(file: File): Promise<void> {
+    this.imageLoading = true;
     this.file = file;
     this.contentSrcLink = await IpfsStorage.fileToBase64(file);
     this.badSource = false;
@@ -233,9 +234,6 @@ export default class CreateNftToken extends Mixins(
       return;
     }
 
-    this.imageLoading = true;
-    this.badSource = false;
-
     this.checkImageFromSource(link);
   }
 
@@ -245,6 +243,9 @@ export default class CreateNftToken extends Mixins(
   }
 
   async checkImageFromSource(url: string): Promise<void> {
+    this.imageLoading = true;
+    this.badSource = false;
+
     try {
       const response = await fetch(url);
       const buffer = await response.blob();
