@@ -94,10 +94,8 @@ async function initWallet({
       console.error('Something went wrong during api initialization', error);
       throw error;
     }
-    await store.dispatch('subscribeOnRuntimeVersion');
     await store.dispatch('getWhitelist', { whiteListOverApi });
-    await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates');
-    await store.dispatch('subscribeOnExtensionAvailability');
+    await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
     await store.dispatch('checkSigner');
     await store.dispatch('setWalletLoaded', true);
     subscribeStoreToStorageUpdates(store);

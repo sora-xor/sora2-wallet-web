@@ -5,6 +5,7 @@ export enum Modules {
   Router = 'Router',
   Settings = 'Settings',
   Transactions = 'Transactions',
+  Subscriptions = 'Subscriptions',
 }
 
 export enum Operations {

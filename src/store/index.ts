@@ -5,15 +5,17 @@ import Account from './Account';
 import Router from './Router';
 import Settings from './Settings';
 import Transactions from './Transactions';
+import Subscriptions from './Subscriptions';
+
+Vue.use(Vuex);
 
 const modules = {
   Account,
   Router,
   Settings,
   Transactions,
+  Subscriptions,
 };
-
-Vue.use(Vuex);
 
 const store = new Vuex.Store({
   modules,
