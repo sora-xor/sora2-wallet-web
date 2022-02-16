@@ -1,6 +1,5 @@
 import { Operation } from '@sora-substrate/util';
-import { ModuleNames, ModuleMethods } from '../../types';
-import { SubqueryDataParserService } from '../index';
+import { ModuleNames, ModuleMethods } from '../types';
 
 export const HistoryElementsQuery = `
   query HistoryElements (
@@ -215,6 +214,12 @@ export const historyElementsFilter = ({
     and: [],
   };
 
+  if (operations.length) {
+    filter.and.push({
+      or: createOperationsCriteria(operations),
+    });
+  }
+
   if (address) {
     filter.and.push({
       or: createAccountAddressCriteria(address),
@@ -232,12 +237,6 @@ export const historyElementsFilter = ({
       timestamp: {
         greaterThan: timestamp,
       },
-    });
-  }
-
-  if (operations.length) {
-    filter.and.push({
-      or: createOperationsCriteria(operations),
     });
   }
 

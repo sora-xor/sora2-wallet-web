@@ -6,7 +6,7 @@ import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/type
 
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { FontSizeRate, FontWeightRate } from '../../consts';
-import type { FiatPriceAndApyObject } from '../../services/types';
+import type { FiatPriceAndApyObject } from '../../services/subquery/types';
 
 @Component
 export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {

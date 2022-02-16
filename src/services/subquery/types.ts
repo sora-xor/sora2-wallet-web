@@ -1,6 +1,6 @@
 import type { History, CodecString, FPNumber } from '@sora-substrate/util';
 
-import type { SoraNetwork } from '../consts';
+import type { SoraNetwork } from '../../consts';
 
 export interface ExplorerDataParser {
   parseTransactionAsHistoryItem: (transaction: any) => Promise<Nullable<History>>;

@@ -5,7 +5,7 @@ import WalletAssets from '@/components/WalletAssets.vue';
 import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_FIAT_PRICE_AND_APY_OBJECT, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 import { WalletPermissions } from '../../../src/consts';
-import type { FiatPriceAndApyObject } from '../../../src/services/types';
+import type { FiatPriceAndApyObject } from '../../../src/services/subquery/types';
 
 const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, withoutFiatAndApy = false) =>
   new Vuex.Store({

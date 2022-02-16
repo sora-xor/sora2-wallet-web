@@ -3,7 +3,7 @@ import { axiosInstance, FPNumber } from '@sora-substrate/util';
 import { HistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
 import { SoraNetwork } from '../../consts';
-import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject, ReferrerRewards, ReferrerReward } from '../types';
+import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject, ReferrerRewards, ReferrerReward } from './types';
 
 import store from '../../store';
 import { FiatPriceQuery } from './queries/fiatPriceAndApy';

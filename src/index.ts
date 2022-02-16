@@ -1,4 +1,3 @@
-import debounce from 'lodash/fp/debounce';
 import type Vue from 'vue';
 import type { Store } from 'vuex';
 
@@ -31,26 +30,11 @@ import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
+import * as SUBQUERY_TYPES from './services/subquery/types';
 import * as WALLET_CONSTS from './consts';
 import * as WALLET_TYPES from './types/common';
 
 let store: Store<unknown>;
-let unsubscribeStoreFromStorage: VoidFunction;
-
-const subscribeStoreToStorageUpdates = (store) => {
-  if (typeof unsubscribeStoreFromStorage === 'function') {
-    unsubscribeStoreFromStorage();
-  }
-
-  const syncWithStorageHandler = debounce(100)(() => {
-    store.dispatch('syncWithStorage');
-    store.dispatch('getAccountActivity');
-  });
-
-  window.addEventListener('storage', syncWithStorageHandler);
-
-  unsubscribeStoreFromStorage = () => window.removeEventListener('storage', syncWithStorageHandler);
-};
 
 const SoraWalletElements = {
   install(vue: typeof Vue, options: any): void {
@@ -103,7 +87,6 @@ async function initWallet({
     await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
     await store.dispatch('checkSigner');
     await store.dispatch('setWalletLoaded', true);
-    subscribeStoreToStorageUpdates(store);
   }
 }
 
@@ -144,5 +127,6 @@ export {
   mixins,
   historyElementsFilter,
   SubqueryExplorerService,
+  SUBQUERY_TYPES,
 };
 export default SoraWalletElements;

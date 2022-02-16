@@ -6,7 +6,6 @@ import concat from 'lodash/fp/concat';
 import omit from 'lodash/fp/omit';
 import { axiosInstance, FPNumber } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
-import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 import type { AccountAsset, Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { api } from '../api';
@@ -20,7 +19,7 @@ import {
   WHITE_LIST_GITHUB_URL,
 } from '../util';
 import { SubqueryExplorerService } from '../services/subquery';
-import type { FiatPriceAndApyObject, ReferrerRewards } from '../services/types';
+import type { FiatPriceAndApyObject, ReferrerRewards } from '../services/subquery/types';
 import type { Account, PolkadotJsAccount, AccountAssetsTable } from '../types/common';
 
 const HOUR = 60 * 60 * 1000;
