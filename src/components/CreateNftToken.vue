@@ -2,13 +2,22 @@
   <div class="wallet-settings-create-token">
     <template v-if="step === Step.CreateNftToken">
       <s-input
-        :placeholder="linkPlaceholder"
+        :placeholder="t('createToken.nft.link.placeholder')"
         :minlength="1"
         :maxlength="200"
         :disabled="loading"
         v-model="tokenContentLink"
         @input="handleInputLinkChange"
-      />
+      >
+        <s-tooltip
+          slot="suffix"
+          popper-class="ipfs-tooltip"
+          :content="t('createToken.nft.link.tooltip')"
+          placement="bottom"
+        >
+          <s-icon class="ipfs-tooltip__icon" name="info-16" size="18px" />
+        </s-tooltip>
+      </s-input>
       <file-uploader
         @upload="upload"
         @clear="clear"
@@ -64,7 +73,7 @@
         type="textarea"
         :placeholder="t('createToken.nft.description.placeholder')"
         :disabled="loading"
-        :maxlength="255"
+        :maxlength="200"
         v-model="tokenDescription"
         @keypress.native="handleTextAreaInput($event)"
       />
@@ -176,7 +185,6 @@ export default class CreateNftToken extends Mixins(
   tokenName = '';
   tokenDescription = '';
   tokenSupply = '';
-  linkPlaceholder = this.t('createToken.nft.link.placeholder');
   showFee = true;
   file: Nullable<File> = null;
 
@@ -227,9 +235,6 @@ export default class CreateNftToken extends Mixins(
 
     this.imageLoading = true;
     this.badSource = false;
-    this.linkPlaceholder = link
-      ? this.t('createToken.nft.link.placeholderShort')
-      : this.t('createToken.nft.link.placeholder');
 
     this.checkImageFromSource(link);
   }
@@ -347,6 +352,17 @@ export default class CreateNftToken extends Mixins(
 </style>
 
 <style lang="scss">
+.ipfs-tooltip {
+  font-size: 10px !important;
+  padding: 10px 15px !important;
+  &__icon {
+    color: var(--color-base-content-tertiary) !important;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
 .wallet-settings-create-token {
   &_desc {
     color: var(--s-color-base-content-primary);
@@ -371,6 +387,24 @@ export default class CreateNftToken extends Mixins(
 
   &__inner {
     resize: none !important;
+    scrollbar-width: none; /* Firefox - not customizable */
+
+    &:hover::-webkit-scrollbar {
+      width: 4px;
+
+      &-thumb {
+        background-color: var(--s-color-base-content-tertiary);
+        border-radius: 6px;
+      }
+    }
+
+    &::-webkit-scrollbar {
+      width: 4px;
+
+      &-track {
+        margin-bottom: calc(var(--s-size-small) * 0.25);
+      }
+    }
   }
 }
 

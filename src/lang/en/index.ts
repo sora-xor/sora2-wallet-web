@@ -201,9 +201,10 @@ export default {
         value: 'Local files',
       },
       link: {
-        placeholder: 'Enter link here...',
-        placeholderShort: 'Link',
+        placeholder: 'IPFS link',
         copyLink: 'Copy link',
+        tooltip:
+          "IPFS is a distributed system for storing and accessing files, making it possible to access files from many locations that aren't managed by one organization.",
       },
       image: {
         placeholderNoImage: 'Upload the file by either entering a link or choosing from local storage',

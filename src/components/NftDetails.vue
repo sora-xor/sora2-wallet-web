@@ -24,7 +24,7 @@
           <span class="nft-info__symbol">{{ tokenSymbol }}</span>
         </template>
       </div>
-      <div class="nft-info__desc">{{ tokenDescription }}</div>
+      <div class="nft-info__desc">{{ tokenDescription.toString() }}</div>
     </div>
   </div>
 </template>
@@ -175,6 +175,8 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     color: var(--s-color-brand-day);
     text-align: center;
     margin-bottom: 10px;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   &__supply {
