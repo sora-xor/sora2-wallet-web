@@ -49,7 +49,6 @@ const types = flow(
   map((x) => [x, x]),
   fromPairs
 )([
-  'GET_ACCOUNT_ASSETS',
   'ADD_ASSET',
   'TRANSFER',
   'IMPORT_POLKADOT_JS_ACCOUNT',
@@ -198,19 +197,6 @@ const mutations = {
     state.address = storage.get('address') || '';
     state.name = storage.get('name') || '';
     state.isExternal = Boolean(storage.get('isExternal')) || false;
-    state.accountAssets = api.assets.accountAssets; // to save reactivity
-  },
-
-  [types.GET_ACCOUNT_ASSETS_REQUEST](state: AccountState) {
-    state.accountAssets = [];
-  },
-
-  [types.GET_ACCOUNT_ASSETS_SUCCESS](state: AccountState, assets: Array<AccountAsset>) {
-    state.accountAssets = assets;
-  },
-
-  [types.GET_ACCOUNT_ASSETS_FAILURE](state: AccountState) {
-    state.accountAssets = [];
   },
 
   [types.UPDATE_ASSETS](state: AccountState, assets: Array<Asset>) {
@@ -317,7 +303,6 @@ const actions = {
   },
 
   async afterLogin({ dispatch }) {
-    await dispatch('getAccountAssets');
     await dispatch('subscribeOnAccountAssets');
     await dispatch('checkCurrentRoute', undefined, { root: true });
   },
@@ -417,19 +402,6 @@ const actions = {
     }
   },
 
-  async getAccountAssets({ commit, getters }) {
-    if (!getters.isLoggedIn || (api.assets.accountAssets.length && getters.accountAssets.length !== 0)) {
-      return;
-    }
-    commit(types.GET_ACCOUNT_ASSETS_REQUEST);
-    try {
-      await api.assets.getKnownAccountAssets();
-      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, api.assets.accountAssets);
-    } catch (error) {
-      commit(types.GET_ACCOUNT_ASSETS_FAILURE);
-    }
-  },
-
   async getAssets({ commit, getters: { whitelist } }) {
     try {
       const assets = await api.assets.getAssets(whitelist);
@@ -462,7 +434,8 @@ const actions = {
         state.accountAssetsSubscription = api.assets.balanceUpdated.subscribe((data) => {
           commit(types.UPDATE_ACCOUNT_ASSETS, api.assets.accountAssets);
         });
-        api.assets.updateAccountAssets();
+
+        await api.assets.updateAccountAssets();
       } catch (error) {
         commit(types.UPDATE_ACCOUNT_ASSETS, []);
       }
@@ -525,7 +498,7 @@ const actions = {
   async addAsset({ commit }, address: string) {
     commit(types.ADD_ASSET_REQUEST);
     try {
-      await api.assets.getAccountAsset(address, true);
+      await api.assets.addAccountAsset(address);
       commit(types.ADD_ASSET_SUCCESS);
     } catch (error) {
       commit(types.ADD_ASSET_FAILURE);
@@ -548,12 +521,9 @@ const actions = {
   },
 
   async syncWithStorage({ commit, state, getters, dispatch }) {
-    const getAccountAssetsAddresses = () => Object.keys(getters.accountAssetsAddressTable);
-
     // previous state
     const { isLoggedIn: wasLoggedIn } = getters;
     const { address } = state;
-    const prevAddresses = getAccountAssetsAddresses();
 
     commit(types.SYNC_WITH_STORAGE);
 
@@ -568,14 +538,7 @@ const actions = {
 
     // still logged in after sync
     if (getters.isLoggedIn && wasLoggedIn) {
-      const currentAddresses = getAccountAssetsAddresses();
-      // unique addresses size of two states
-      const delta = new Set([...prevAddresses, ...currentAddresses]).size;
-
-      // if asset(s) in api.accountAssets changed, we should update subscription
-      if (prevAddresses.length !== delta || currentAddresses.length !== delta) {
-        api.assets.updateAccountAssets();
-      }
+      await api.assets.updateAccountAssets();
     }
   },
 };

@@ -22,7 +22,7 @@
           :token-description="nftTokenDescription"
           @click-details="handleClickNftDetails"
         />
-        <div v-else>
+        <template v-else>
           <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
           <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
             <formatted-amount
@@ -35,7 +35,7 @@
               <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
             </formatted-amount>
           </div>
-        </div>
+        </template>
         <formatted-amount
           v-if="price && !isNft"
           value-can-be-hidden
@@ -336,7 +336,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   handleRemoveAsset(): void {
-    api.assets.removeAsset(this.asset.address);
+    api.assets.removeAccountAsset(this.asset.address);
     this.handleBack();
   }
 
