@@ -1,5 +1,5 @@
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action } from 'vuex-class';
+import { Action, Getter } from 'vuex-class';
 
 import { RouteNames } from '../../consts';
 import { api } from '../../api';
@@ -8,8 +8,8 @@ import type { Asset, AccountAsset } from '@sora-substrate/util/build/assets/type
 
 @Component
 export default class QrCodeParserMixin extends Mixins() {
+  @Getter assets!: Array<Asset>;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action searchAsset!: (address: string) => Promise<Asset>;
 
   async parseQrCodeValue(value: Nullable<string>): Promise<void> {
     if (!value) return;
@@ -18,7 +18,7 @@ export default class QrCodeParserMixin extends Mixins() {
 
     if (!base || !assetId) return;
 
-    const asset = await this.searchAsset(assetId);
+    const asset = this.assets.find((asset) => asset.address === assetId);
 
     if (!asset) return;
 
@@ -26,9 +26,9 @@ export default class QrCodeParserMixin extends Mixins() {
 
     if (chain !== 'substrate') return;
 
-    const pKeyHex = `0x${api.getPublicKeyByAddress(address)}`;
+    const publicKeyHex = `0x${api.getPublicKeyByAddress(address)}`;
 
-    if (pKeyHex !== publicKey) return;
+    if (publicKeyHex !== publicKey) return;
 
     this.navigate({
       name: RouteNames.WalletSend,
