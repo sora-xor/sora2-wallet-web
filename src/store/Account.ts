@@ -210,6 +210,7 @@ const mutations = {
     state.address = storage.get('address') || '';
     state.name = storage.get('name') || '';
     state.isExternal = Boolean(storage.get('isExternal')) || false;
+    state.activity = api.historyList; // TODO: remove after history PR
   },
 
   [types.UPDATE_ASSETS](state: AccountState, assets: Array<Asset>) {
