@@ -7,20 +7,31 @@
     </template>
     <s-card class="asset-details" primary>
       <div class="asset-details-container s-flex">
-        <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
-        <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
-          <formatted-amount
-            value-can-be-hidden
-            symbol-as-decimal
-            :value="balance"
-            :font-size-rate="FontSizeRate.SMALL"
-            :asset-symbol="asset.symbol"
-          >
-            <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
-          </formatted-amount>
+        <nft-details
+          v-if="isNft"
+          is-asset-details
+          :content-link="nftContentLink"
+          :token-name="asset.name"
+          :token-symbol="asset.symbol"
+          :token-description="nftTokenDescription"
+          @click-details="handleClickNftDetails"
+        />
+        <div v-else>
+          <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+          <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
+            <formatted-amount
+              value-can-be-hidden
+              symbol-as-decimal
+              :value="balance"
+              :font-size-rate="FontSizeRate.SMALL"
+              :asset-symbol="asset.symbol"
+            >
+              <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
+            </formatted-amount>
+          </div>
         </div>
         <formatted-amount
-          v-if="price"
+          v-if="price && !isNft"
           value-can-be-hidden
           is-fiat-value
           :value="getFiatBalance(asset)"
@@ -82,6 +93,20 @@
         </transition>
       </div>
     </s-card>
+    <div v-if="isNft" class="asset-details-nft-container">
+      <transition name="fadeHeight">
+        <div v-if="wasNftDetailsClicked" class="info-line-container">
+          <info-line :label="t('createToken.nft.supply.quantity')" :value="balance" />
+          <info-line
+            class="external-link"
+            :label="t('createToken.nft.source.label')"
+            :value="displayedNftContentLink"
+            :value-tooltip="nftLinkTooltipText"
+            @click.native="handleCopyNftLink"
+          />
+        </div>
+      </transition>
+    </div>
     <wallet-history :asset="asset" />
   </wallet-base>
 </template>
@@ -89,25 +114,25 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { KnownAssets, KnownSymbols, BalanceType } from '@sora-substrate/util';
-
-import FormattedAmountMixin from './mixins/FormattedAmountMixin';
-import CopyAddressMixin from './mixins/CopyAddressMixin';
-import QrCodeParserMixin from './mixins/QrCodeParserMixin';
+import { CodecString, History } from '@sora-substrate/util';
+import { KnownAssets, KnownSymbols, BalanceType } from '@sora-substrate/util/build/assets/consts';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
-import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import NftDetails from './NftDetails.vue';
+import InfoLine from './InfoLine.vue';
 import WalletHistory from './WalletHistory.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
-
 import { api } from '../api';
+import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import { RouteNames } from '../consts';
-import { getAssetIconStyles } from '../util';
-import { Operations } from '../types/common';
-
-import type { AccountAsset, CodecString, History } from '@sora-substrate/util';
-import type { Account } from '../types/common';
+import { copyToClipboard, delay, getAssetIconStyles, shortenValue } from '../util';
+import { IpfsStorage } from '../util/ipfsStorage';
+import { Operations, Account } from '../types/common';
 import type { WalletPermissions } from '../consts';
 
 interface Operation {
@@ -122,6 +147,8 @@ interface Operation {
     FormattedAmountWithFiatValue,
     WalletHistory,
     QrCodeScanButton,
+    NftDetails,
+    InfoLine,
   },
 })
 export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin, QrCodeParserMixin) {
@@ -138,7 +165,52 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
   wasBalanceDetailsClicked = false;
 
-  private formatBalance(value: CodecString): string {
+  // ____________________NFT Token Details_____________________________
+  private wasNftLinkCopied = false;
+  wasNftDetailsClicked = false;
+  nftContentLink = '';
+  nftTokenDescription = '';
+
+  get isNft(): boolean {
+    return this.currentRouteParams.asset.decimals === 0;
+  }
+
+  get nftLinkTooltipText(): string {
+    return this.wasNftLinkCopied ? this.t('assets.copied') : this.t('createToken.nft.link.copyLink');
+  }
+
+  get displayedNftContentLink(): string {
+    const hostname = IpfsStorage.getStorageHostname(this.nftContentLink);
+    const path = IpfsStorage.getIpfsPath(this.nftContentLink);
+    return shortenValue(hostname + '/ipfs/' + path, 25);
+  }
+
+  private async setNftMeta(): Promise<void> {
+    const ipfsPath = await api.assets.getNftContent(this.currentRouteParams.asset.address);
+    this.nftContentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
+    this.nftTokenDescription = await api.assets.getNftDescription(this.currentRouteParams.asset.address);
+  }
+
+  handleClickNftDetails(): void {
+    this.wasNftDetailsClicked = !this.wasNftDetailsClicked;
+  }
+
+  async handleCopyNftLink(event?: Event): Promise<void> {
+    event && event.stopImmediatePropagation();
+    await copyToClipboard(this.nftContentLink);
+    this.wasNftLinkCopied = true;
+    await delay(1000);
+    this.wasNftLinkCopied = false;
+  }
+
+  mounted(): void {
+    if (this.isNft) {
+      this.setNftMeta();
+    }
+  }
+  // __________________________________________________________
+
+  formatBalance(value: CodecString): string {
     return this.formatCodecNumber(value, this.asset.decimals);
   }
 
@@ -151,13 +223,13 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     if (this.permissions.copyAssets) {
       list.push({ type: Operations.Receive, icon: 'basic-receive-24' });
     }
-    if (this.permissions.swapAssets) {
+    if (this.permissions.swapAssets && !this.isNft) {
       list.push({ type: Operations.Swap, icon: 'arrows-swap-24' });
     }
-    if (this.permissions.addLiquidity) {
+    if (this.permissions.addLiquidity && !this.isNft) {
       list.push({ type: Operations.Liquidity, icon: 'basic-drop-24' });
     }
-    if (this.permissions.bridgeAssets) {
+    if (this.permissions.bridgeAssets && !this.isNft) {
       list.push({ type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' });
     }
 
@@ -265,7 +337,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   handleRemoveAsset(): void {
-    api.removeAsset(this.asset.address);
+    api.assets.removeAsset(this.asset.address);
     this.handleBack();
   }
 
@@ -281,6 +353,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 @import '../styles/icons';
 
 .asset-details {
+  padding: 0 !important;
   margin-bottom: 0;
   &.s-card.neumorphic {
     padding-top: 0;
@@ -295,6 +368,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
         margin-top: #{$basic-spacing-small};
       }
     }
+  }
+  &-nft-container {
+    @include fadeHeight(50px, 0.1s);
   }
   &-balance {
     width: 100%;
@@ -351,6 +427,18 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
   .asset-logo {
     @include asset-logo-styles(48px);
+  }
+}
+
+.info-line-container {
+  @include fadeHeight;
+}
+</style>
+
+<style lang="scss">
+.external-link {
+  .info-line-value {
+    cursor: pointer;
   }
 }
 </style>

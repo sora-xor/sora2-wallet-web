@@ -117,16 +117,8 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import {
-  AccountAsset,
-  Asset,
-  FPNumber,
-  CodecString,
-  KnownAssets,
-  KnownSymbols,
-  Operation,
-  XOR,
-} from '@sora-substrate/util';
+import { FPNumber, CodecString, Operation } from '@sora-substrate/util';
+import { KnownAssets, KnownSymbols, XOR } from '@sora-substrate/util/build/assets/consts';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -143,7 +135,7 @@ import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
 
 import type { Subscription } from '@polkadot/x-rxjs';
-import type { AccountBalance } from '@sora-substrate/util';
+import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {
@@ -189,7 +181,7 @@ export default class WalletSend extends Mixins(
         this.assetBalance = accountAsset.balance;
       } else {
         this.resetAssetBalanceSubscription();
-        this.assetBalanceSubscription = api.getAssetBalanceObservable(asset).subscribe((balance) => {
+        this.assetBalanceSubscription = api.assets.getAssetBalanceObservable(asset).subscribe((balance) => {
           this.assetBalance = balance;
         });
       }
@@ -318,12 +310,6 @@ export default class WalletSend extends Mixins(
     return '';
   }
 
-  get xorBalance(): Nullable<CodecString> {
-    // TODO: XOR balance here can be unsyncronized, need to fix
-    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
-    return accountXor ? accountXor.balance.transferable : null;
-  }
-
   isXorAccountAsset(asset: AccountAsset): boolean {
     const knownAsset = KnownAssets.get(asset.address);
     if (!knownAsset) {
@@ -361,7 +347,6 @@ export default class WalletSend extends Mixins(
       !this.isXorSufficientForNextTx({
         type: Operation.Transfer,
         isXorAccountAsset: this.isXorAccountAsset(this.asset),
-        xorBalance: this.xorBalance ? this.getFPNumberFromCodec(this.xorBalance) : this.Zero,
         amount: this.getFPNumber(this.amount),
       })
     ) {

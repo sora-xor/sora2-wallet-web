@@ -27,7 +27,7 @@ import { api } from '../api';
 import { RouteNames } from '../consts';
 import { svgSaveAs, IMAGE_EXTENSIONS } from '../util/image';
 
-import type { AccountAsset } from '@sora-substrate/util';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 import type { Account } from '../types/common';
 
 @Component({

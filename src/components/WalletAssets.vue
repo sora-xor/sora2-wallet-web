@@ -81,7 +81,8 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
-import { AccountAsset, FPNumber } from '@sora-substrate/util';
+import { FPNumber } from '@sora-substrate/util';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -91,7 +92,7 @@ import AssetListItem from './AssetListItem.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import { RouteNames, HiddenValue } from '../consts';
-
+import { getAssetIconStyles, formatAddress } from '../util';
 import type { WalletPermissions } from '../consts';
 
 @Component({
@@ -146,6 +147,16 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     }, new FPNumber(0));
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
+
+  nftIconClass(asset): string {
+    return asset.decimals === 0 ? 'nft-asset' : '';
+  }
+
+  getFormattedAddress(asset: AccountAsset): string {
+    return formatAddress(asset.address, 10);
+  }
+
+  getAssetIconStyles = getAssetIconStyles;
 
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
@@ -319,6 +330,22 @@ $wallet-assets-count: 5;
       font-size: var(--s-font-size-medium);
       font-weight: 600;
     }
+  }
+}
+
+.nft-asset {
+  background-image: none !important;
+  background-color: #f4f0f1 !important;
+  position: relative;
+  font-style: unset;
+
+  &::before {
+    content: 'NFT';
+    position: absolute;
+    font-weight: 800;
+    top: 28%;
+    left: 14%;
+    color: var(--s-color-base-content-tertiary);
   }
 }
 </style>

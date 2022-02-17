@@ -1,241 +1,100 @@
 <template>
-  <wallet-base :title="t('createToken.title')" show-back :showHeader="showAdditionalInfo" @back="handleBack">
-    <div class="wallet-settings-create-token">
-      <template v-if="step === Step.Create">
-        <s-input
-          :placeholder="t('createToken.tokenSymbol.placeholder')"
-          :minlength="1"
-          :maxlength="7"
-          :disabled="loading"
-          v-maska="tokenSymbolMask"
-          v-model="tokenSymbol"
-        />
-        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSymbol.desc') }}</p>
-        <s-input
-          :placeholder="t('createToken.tokenName.placeholder')"
-          :minlength="1"
-          :maxlength="33"
-          :disabled="loading"
-          v-maska="tokenNameMask"
-          v-model="tokenName"
-        />
-        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
-        <s-float-input
-          v-model="tokenSupply"
-          :placeholder="t('createToken.tokenSupply.placeholder')"
-          :decimals="decimals"
-          has-locale-string
-          :delimiters="delimiters"
-          :max="maxTotalSupply"
-          :disabled="loading"
-        />
-        <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSupply.desc') }}</p>
-        <div class="wallet-settings-create-token_supply-block">
-          <s-switch v-model="extensibleSupply" :disabled="loading" />
-          <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
-        </div>
-        <p class="wallet-settings-create-token_desc">{{ t('createToken.extensibleSupply.desc') }}</p>
-        <s-button
-          class="wallet-settings-create-token_action s-typography-button--large"
-          type="primary"
-          :loading="loading"
-          :disabled="isCreateDisabled"
-          @click="onConfirm"
-        >
-          <template v-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
-          <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
-          <template v-else-if="!tokenSupply">{{ t('createToken.enterSupply') }}</template>
-          <template v-else>{{ t('createToken.action') }}</template>
-        </s-button>
-      </template>
-      <template v-else-if="step === Step.Warn">
-        <network-fee-warning-dialog :fee="formattedFee" @confirm="confirmNextTxFailure" />
-      </template>
-      <template v-else-if="step === Step.Confirm">
-        <info-line :label="t('createToken.tokenSymbol.placeholder')" :value="tokenSymbol" />
-        <info-line :label="t('createToken.tokenName.placeholder')" :value="tokenName.trim()" />
-        <info-line :label="t('createToken.tokenSupply.placeholder')" :value="formattedTokenSupply" />
-        <info-line :label="t('createToken.extensibleSupply.placeholder')" :value="extensibleSupply ? 'Yes' : 'No'" />
-        <s-button
-          class="wallet-settings-create-token_action s-typography-button--large"
-          type="primary"
-          :disabled="!hasEnoughXor"
-          :loading="loading"
-          @click="onCreate"
-        >
-          <template v-if="!hasEnoughXor">{{
-            t('createToken.insufficientBalance', { symbol: KnownSymbols.XOR })
-          }}</template>
-          <template v-else>{{ t('createToken.confirm') }}</template>
-        </s-button>
-      </template>
-      <wallet-fee v-if="!isCreateDisabled && showAdditionalInfo" :value="fee" />
+  <wallet-base show-back :title="createTokenTitle" :show-header="showHeader" @back="handleBack">
+    <div class="token">
+      <s-tabs v-if="showTabs" class="token__tab" type="rounded" :value="currentTab" @change="handleChangeTab">
+        <s-tab v-for="tab in TokenTabs" :key="tab" :label="t(`createToken.${tab}`)" :name="tab" />
+      </s-tabs>
+      <component
+        :is="currentTab"
+        :step="currentStep"
+        @showTabs="setTabVisibility"
+        @showHeader="setHeaderVisibility"
+        @stepChange="setStep"
+      />
     </div>
   </wallet-base>
 </template>
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
-import {
-  KnownSymbols,
-  FPNumber,
-  MaxTotalSupply,
-  NetworkFeesObject,
-  Operation,
-  XOR,
-  CodecString,
-} from '@sora-substrate/util';
+import { Action } from 'vuex-class';
 
+import CreateSimpleToken from './CreateSimpleToken.vue';
+import CreateNftToken from './CreateNftToken.vue';
 import WalletBase from './WalletBase.vue';
-import InfoLine from './InfoLine.vue';
-import WalletFee from './WalletFee.vue';
-import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
-import TransactionMixin from './mixins/TransactionMixin';
-import NumberFormatterMixin from './mixins/NumberFormatterMixin';
-import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
-import { RouteNames } from '../consts';
-import { api } from '../api';
-
-enum Step {
-  Create,
-  Confirm,
-  Warn,
-}
+import TranslationMixin from './mixins/TranslationMixin';
+import { TokenTabs, Step, RouteNames } from '../consts';
 
 @Component({
   components: {
     WalletBase,
-    InfoLine,
-    WalletFee,
-    NetworkFeeWarningDialog,
+    CreateSimpleToken,
+    CreateNftToken,
   },
 })
-export default class CreateToken extends Mixins(TransactionMixin, NumberFormatterMixin, NetworkFeeWarningMixin) {
-  readonly KnownSymbols = KnownSymbols;
-  readonly Step = Step;
-  readonly decimals = FPNumber.DEFAULT_PRECISION;
-  readonly delimiters = FPNumber.DELIMITERS_CONFIG;
-  readonly maxTotalSupply = MaxTotalSupply;
-  readonly tokenSymbolMask = 'AAAAAAA';
-  readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } };
-
-  step = Step.Create;
-  tokenSymbol = '';
-  tokenName = '';
-  tokenSupply = '';
-  extensibleSupply = false;
-  showAdditionalInfo = true;
+export default class CreateToken extends Mixins(TranslationMixin) {
+  readonly TokenTabs = TokenTabs;
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
+  private step: Step = Step.CreateSimpleToken;
+  currentTab: Step = Step.CreateSimpleToken;
+  showTabs = true;
+  showHeader = true;
+  createTokenTitle = this.t('createToken.titleCommon');
+
+  get currentStep(): Step {
+    return this.step;
+  }
+
+  handleChangeTab(value: Step): void {
+    this.step = value;
+    this.currentTab = value;
+  }
+
+  setTabVisibility(): void {
+    this.showTabs = !this.showTabs;
+  }
+
+  setHeaderVisibility(): void {
+    this.showHeader = !this.showHeader;
+  }
+
+  setStep(step: Step): void {
+    if ([Step.CreateSimpleToken, Step.CreateNftToken].includes(step)) this.setTabVisibility();
+    if (step === Step.ConfirmSimpleToken) this.createTokenTitle = this.t('createToken.confirmTokenTitleCommon');
+    if (step === Step.ConfirmNftToken) this.createTokenTitle = this.t('createToken.confirmTokenTitleNFT');
+    this.step = step;
+  }
+
   handleBack(): void {
-    if (this.step === Step.Create) {
+    if ([Step.CreateSimpleToken, Step.CreateNftToken].includes(this.step)) {
       this.navigate({ name: RouteNames.Wallet });
-    } else {
-      this.showAdditionalInfo = true;
-      this.step = Step.Create;
-    }
-  }
-
-  get fee(): FPNumber {
-    return this.getFPNumberFromCodec(this.networkFees.RegisterAsset);
-  }
-
-  get formattedFee(): string {
-    return this.fee.toLocaleString();
-  }
-
-  get isCreateDisabled(): boolean {
-    return !(this.tokenSymbol && this.tokenName.trim() && this.tokenSupply);
-  }
-
-  get formattedTokenSupply(): string {
-    return this.formatStringValue(this.tokenSupply, this.decimals);
-  }
-
-  get hasEnoughXor(): boolean {
-    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
-    if (!accountXor || !accountXor.balance || !+accountXor.balance.transferable) {
-      return false;
-    }
-    const fpAccountXor = this.getFPNumberFromCodec(accountXor.balance.transferable, accountXor.decimals);
-    return FPNumber.gte(fpAccountXor, this.fee);
-  }
-
-  get xorBalance(): Nullable<CodecString> {
-    // TODO: XOR balance here can be unsyncronized, need to fix
-    const accountXor = api.accountAssets.find((asset) => asset.address === XOR.address);
-    return accountXor ? accountXor.balance.transferable : null;
-  }
-
-  async registerAsset(): Promise<void> {
-    return api.registerAsset(this.tokenSymbol, this.tokenName.trim(), this.tokenSupply, this.extensibleSupply);
-  }
-
-  async onConfirm(): Promise<void> {
-    if (!this.tokenSymbol.length || !this.tokenSupply.length) {
       return;
     }
 
-    const tokenSupply = this.getFPNumber(this.tokenSupply, this.decimals);
-    const maxTokenSupply = this.getFPNumber(MaxTotalSupply, this.decimals);
-
-    if (FPNumber.gt(tokenSupply, maxTokenSupply)) {
-      this.tokenSupply = maxTokenSupply.toString();
-    }
-    if (this.hasEnoughXor) {
-      if (
-        !this.isXorSufficientForNextTx({
-          type: Operation.RegisterAsset,
-          xorBalance: this.xorBalance ? this.getFPNumberFromCodec(this.xorBalance) : this.Zero,
-        })
-      ) {
-        this.showAdditionalInfo = false;
-        this.step = Step.Warn;
-        return;
-      }
+    if ([Step.ConfirmSimpleToken, Step.ConfirmNftToken].includes(this.step)) {
+      if (this.step === Step.ConfirmSimpleToken) this.step = Step.CreateSimpleToken;
+      if (this.step === Step.ConfirmNftToken) this.step = Step.CreateNftToken;
+      this.createTokenTitle = this.t('createToken.titleCommon');
+    } else if (this.step === Step.Warn) {
+      if (this.currentTab === Step.CreateSimpleToken) this.step = Step.CreateSimpleToken;
+      if (this.currentTab === Step.CreateNftToken) this.step = Step.CreateNftToken;
     }
 
-    this.step = Step.Confirm;
-  }
-
-  async onCreate(): Promise<void> {
-    await this.withNotifications(async () => {
-      if (!this.hasEnoughXor) {
-        throw new Error('walletSend.badAmount');
-      }
-      await this.registerAsset();
-      this.navigate({ name: RouteNames.Wallet });
-    });
-  }
-
-  confirmNextTxFailure(): void {
-    this.showAdditionalInfo = true;
-    this.step = Step.Confirm;
+    this.showTabs = true;
+    this.showHeader = true;
+    this.navigate({ name: RouteNames.CreateToken });
   }
 }
 </script>
 
-<style scoped lang="scss">
-.wallet-settings-create-token {
-  &_desc {
-    color: var(--s-color-base-content-primary);
-    font-size: var(--s-font-size-extra-small);
-    font-weight: 300;
-    line-height: var(--s-line-height-base);
-    padding: var(--s-basic-spacing) #{$basic-spacing-small} #{$basic-spacing-medium};
-  }
-  &_supply-block {
-    @include switch-block;
-    padding: 0 #{$basic-spacing-small};
-  }
-  &_action {
-    margin-top: #{$basic-spacing-medium};
-    width: 100%;
-  }
-  &_divider {
-    margin: unset;
+<style lang="scss">
+.token {
+  @include custom-tabs;
+
+  &__tab {
+    margin-bottom: #{$basic-spacing-medium};
   }
 }
 </style>

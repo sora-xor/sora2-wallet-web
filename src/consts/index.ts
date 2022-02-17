@@ -2,6 +2,9 @@ import type { FPNumber, Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
+export const NFT_STORAGE_API_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDBmMzgwOTMyQTNDODM3ZDNiN2JEYzBBNTc0NmNkMDlBRGIyNUZGMzQiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY0MjU4OTQ2ODA4MSwibmFtZSI6Im5mdC1zdG9yYWdlLWRldiJ9.hkvzea9ltcriXXHKoYd3F2Iu1Y8X5H-zunAQboC_3vw';
+
 export enum RouteNames {
   WalletConnection = 'WalletConnection',
   WalletSend = 'WalletSend',
@@ -18,6 +21,11 @@ export enum RouteNames {
 export enum WalletTabs {
   Assets = 'WalletAssets',
   Activity = 'WalletActivity',
+}
+
+export enum TokenTabs {
+  Token = 'CreateSimpleToken',
+  NonFungibleToken = 'CreateNftToken',
 }
 
 export enum AddAssetTabs {
@@ -48,6 +56,14 @@ export type ExplorerLink = {
   value: string;
 };
 
+export enum Step {
+  CreateSimpleToken = 'CreateSimpleToken',
+  ConfirmSimpleToken = 'ConfirmSimpleToken',
+  CreateNftToken = 'CreateNftToken',
+  ConfirmNftToken = 'ConfirmNftToken',
+  Warn = 'Warn',
+}
+
 export interface WalletPermissions {
   addAssets?: boolean;
   addLiquidity?: boolean;
@@ -68,7 +84,6 @@ export interface WalletInitOptions {
 export interface NetworkFeeWarningOptions {
   type: Operation;
   isXorAccountAsset?: boolean;
-  xorBalance: FPNumber;
   amount?: FPNumber;
 }
 

@@ -17,7 +17,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
 
-import type { Asset } from '@sora-substrate/util';
+import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component
 export default class AssetList extends Mixins(TranslationMixin) {

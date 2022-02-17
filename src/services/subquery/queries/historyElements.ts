@@ -1,3 +1,5 @@
+import { ModuleNames, ModuleMethods } from '../../types';
+
 export const HistoryElementsQuery = `
 query HistoryElements (
   $first: Int = null,
@@ -63,9 +65,52 @@ export const historyElementsFilter = (address = '', { assetAddress = '', timesta
   const filter: any = {
     and: [
       {
-        method: {
-          in: ['swap', 'transfer', 'depositLiquidity', 'withdrawLiquidity', 'register'],
-        },
+        or: [
+          {
+            module: {
+              equalTo: ModuleNames.LiquidityProxy,
+            },
+            method: {
+              equalTo: ModuleMethods.LiquidityProxySwap,
+            },
+          },
+          {
+            module: {
+              equalTo: ModuleNames.Assets,
+            },
+            method: {
+              in: [ModuleMethods.AssetsTransfer, ModuleMethods.AssetsRegister],
+            },
+          },
+          {
+            module: {
+              equalTo: ModuleNames.PoolXYK,
+            },
+            method: {
+              in: [ModuleMethods.PoolXYKDepositLiquidity, ModuleMethods.PoolXYKWithdrawLiquidity],
+            },
+          },
+          {
+            module: {
+              equalTo: ModuleNames.Utility,
+            },
+            method: {
+              equalTo: ModuleMethods.UtilityBatchAll,
+            },
+          },
+          {
+            module: {
+              equalTo: ModuleNames.Referrals,
+            },
+            method: {
+              in: [
+                ModuleMethods.ReferralsSetReferrer,
+                ModuleMethods.ReferralsReserve,
+                ModuleMethods.ReferralsUnreserve,
+              ],
+            },
+          },
+        ],
       },
     ],
   };

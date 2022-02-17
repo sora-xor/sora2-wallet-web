@@ -1,6 +1,7 @@
-import { Operation, TransactionStatus, BalanceType } from '@sora-substrate/util';
+import { Operation, TransactionStatus } from '@sora-substrate/util';
+import { BalanceType } from '@sora-substrate/util/build/assets/consts';
 
-import { AddAssetTabs, WalletTabs } from '../../consts';
+import { AddAssetTabs, TokenTabs, WalletTabs } from '../../consts';
 
 export default {
   closeText: 'Close',
@@ -11,7 +12,8 @@ export default {
   importText: 'Import',
   settingsText: 'Settings',
   addAssetText: 'Add asset',
-  createTokenText: 'Create token',
+  createTokenText: 'Create',
+  createTokenTextNFT: 'Create NFT',
   comingSoonText: 'Coming soon',
   successText: 'Success',
   warningText: 'Warning',
@@ -37,6 +39,10 @@ export default {
     [Operation.CreatePair]: 'Create Pair',
     [Operation.RegisterAsset]: 'Register Asset',
     [Operation.ClaimRewards]: 'Claim Rewards',
+    [Operation.ClaimRewards]: 'Claim Rewards',
+    [Operation.ReferralReserveXor]: 'Bond XOR',
+    [Operation.ReferralUnreserveXor]: 'Unbond XOR',
+    [Operation.ReferralSetInvitedUser]: 'Set Referral',
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
@@ -46,6 +52,9 @@ export default {
       [Operation.CreatePair]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RegisterAsset]: 'Registered {symbol} asset',
       [Operation.ClaimRewards]: 'Reward claimed successfully {rewards}',
+      [Operation.ReferralReserveXor]: 'Bonded XOR successfully',
+      [Operation.ReferralUnreserveXor]: 'Unbonded XOR successfully',
+      [Operation.ReferralSetInvitedUser]: 'Set Referral',
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
@@ -55,6 +64,9 @@ export default {
       [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RegisterAsset]: 'Failed to register {symbol} asset',
       [Operation.ClaimRewards]: 'Failed to claim rewards {rewards}',
+      [Operation.ReferralReserveXor]: 'Failed to bond XOR',
+      [Operation.ReferralUnreserveXor]: 'Failed to unbonded XOR',
+      [Operation.ReferralSetInvitedUser]: 'Failed to set referral',
     },
   },
   polkadotjs: {
@@ -137,6 +149,7 @@ export default {
       [BalanceType.Locked]: ' - Locked',
       [BalanceType.Reserved]: ' - Reserved',
       [BalanceType.Total]: 'Total',
+      [BalanceType.Bonded]: 'Bonded',
     },
   },
   asset: {
@@ -175,11 +188,44 @@ export default {
   },
   createToken: {
     title: '@:createTokenText',
+    titleCommon: 'Create',
+    confirmTokenTitleCommon: 'Create Token',
+    confirmTokenTitleNFT: 'Create NFT',
     desc: 'Create and deploy custom asset on SORA',
     action: '@:createTokenText',
+    actionNFT: '@:createTokenTextNFT',
     enterSymbol: 'Enter token symbol',
     enterName: 'Enter token name',
     enterSupply: 'Enter token supply',
+    provideContent: 'Provide content',
+    selectLocalFile: 'Select local file',
+    enterTokenDescription: 'Enter description',
+    [TokenTabs.Token]: 'Token',
+    [TokenTabs.NonFungibleToken]: 'NFT',
+    nft: {
+      source: {
+        label: 'Source',
+        value: 'Local files',
+      },
+      link: {
+        placeholder: 'Enter link here...',
+        placeholderShort: 'Link',
+        copyLink: 'Copy link',
+      },
+      image: {
+        placeholderNoImage: 'Upload the file by either entering a link or choosing from local storage',
+        placeholderBadSource: 'There’s no image',
+        placeholderBadSourceAddition: 'or it’s not uploaded to IPFS yet',
+      },
+      supply: {
+        placeholder: 'Token supply',
+        desc: 'Amount of NFTs you’re going to get.',
+        quantity: 'Quantity',
+      },
+      description: {
+        placeholder: 'Description',
+      },
+    },
     confirm: '@:confirmText',
     success: {
       title: 'Transaction submitted',
@@ -225,6 +271,7 @@ export default {
     total: 'Total',
     from: 'From',
     to: 'To',
+    referrer: 'Referrer',
     viewIn: {
       sorascan: 'View in SORAScan',
       subscan: 'View in Subscan',

@@ -1,8 +1,11 @@
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+
 export enum Modules {
   Account = 'Account',
   Router = 'Router',
   Settings = 'Settings',
   Transactions = 'Transactions',
+  Subscriptions = 'Subscriptions',
 }
 
 export enum Operations {
@@ -23,3 +26,16 @@ export interface Account extends PolkadotJsAccount {
 }
 
 export type WhitelistIdsBySymbol = { [key: string]: string };
+
+export type Permissions = {
+  sendAssets: boolean;
+  swapAssets: boolean;
+};
+
+export type ApiKeysObject = {
+  [key: string]: string;
+};
+
+export type AccountAssetsTable = {
+  [key: string]: AccountAsset;
+};

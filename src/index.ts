@@ -23,6 +23,7 @@ import FormattedAmountMixin from './components/mixins/FormattedAmountMixin';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
 import LoadingMixin from './components/mixins/LoadingMixin';
+import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
@@ -95,13 +96,9 @@ async function initWallet({
       console.error('Something went wrong during api initialization', error);
       throw error;
     }
-    await store.dispatch('subscribeOnRuntimeVersion');
     await store.dispatch('getWhitelist', { whiteListOverApi });
-    await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates');
+    await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
     await store.dispatch('checkSigner');
-    await store.dispatch('syncWithStorage');
-    await store.dispatch('getAccountAssets');
-    await store.dispatch('updateAccountAssets');
     await store.dispatch('setWalletLoaded', true);
     subscribeStoreToStorageUpdates(store);
   }
@@ -127,6 +124,7 @@ const mixins = {
   TransactionMixin,
   TranslationMixin,
   LoadingMixin,
+  ReferralRewardsMixin,
 };
 
 export {

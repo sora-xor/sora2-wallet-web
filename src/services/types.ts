@@ -1,4 +1,4 @@
-import type { History, CodecString } from '@sora-substrate/util';
+import type { History, CodecString, FPNumber } from '@sora-substrate/util';
 
 import type { SoraNetwork } from '../consts';
 
@@ -9,6 +9,29 @@ export interface ExplorerDataParser {
 export interface Explorer {
   soraNetwork: SoraNetwork;
   getAccountTransactions: (params?: any) => Promise<any>;
+}
+
+export enum ModuleNames {
+  Assets = 'assets',
+  LiquidityProxy = 'liquidityProxy',
+  Rewards = 'rewards',
+  PoolXYK = 'poolXyk',
+  TradingPair = 'tradingPair',
+  Utility = 'utility',
+  Referrals = 'referrals',
+}
+
+export enum ModuleMethods {
+  AssetsRegister = 'register',
+  AssetsTransfer = 'transfer',
+  PoolXYKInitializePool = 'initializePool',
+  PoolXYKDepositLiquidity = 'depositLiquidity',
+  PoolXYKWithdrawLiquidity = 'withdrawLiquidity',
+  LiquidityProxySwap = 'swap',
+  UtilityBatchAll = 'batchAll',
+  ReferralsSetReferrer = 'setReferrer',
+  ReferralsReserve = 'reserve',
+  ReferralsUnreserve = 'unreserve',
 }
 
 export type PoolXYKEntity = {
@@ -62,6 +85,19 @@ export type HistoryElementAssetRegistration = {
   assetId: string;
 };
 
+export type UtilityBatchAllItem = {
+  data: {
+    args: {
+      [key: string]: string | number;
+    };
+    callIndex: string;
+  };
+  hash: string;
+  callId: string;
+  module: string;
+  method: string;
+};
+
 export type HistoryElement = {
   id: string;
   blockHash: string;
@@ -73,6 +109,41 @@ export type HistoryElement = {
   execution: HistoryElementExecution;
   timestamp: number;
   data: Nullable<
-    HistoryElementSwap | HistoryElementTransfer | HistoryElementLiquidityOperation | HistoryElementAssetRegistration
+    | HistoryElementSwap
+    | HistoryElementTransfer
+    | HistoryElementLiquidityOperation
+    | HistoryElementAssetRegistration
+    | UtilityBatchAllItem[]
+    | ReferralSetReferrer
+    | ReferrerReserve
   >;
+};
+
+export type ReferrerRewards = {
+  rewards: FPNumber;
+  invitedUserRewards: {
+    [key: string]: {
+      rewards: FPNumber;
+    };
+  };
+};
+
+export type ReferrerReward = {
+  id: string;
+  blockHeight: string;
+  referrer: string;
+  referral: string;
+  timestamp: number;
+  amount: string;
+};
+
+export type ReferralSetReferrer = {
+  from: string; // referral
+  to: string; // referrer
+};
+
+export type ReferrerReserve = {
+  from: string;
+  to: string;
+  amount: string;
 };

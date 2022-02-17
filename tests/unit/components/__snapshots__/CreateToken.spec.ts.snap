@@ -4,62 +4,32 @@ exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
 <wallet-base-stub
   showback="true"
   showheader="true"
-  title="Create token"
+  title="Create"
   tooltip=""
 >
   <div
-    class="wallet-settings-create-token"
+    class="token"
   >
-    <info-line-stub
-      assetsymbol=""
-      fiatvalue=""
-      label="Token symbol"
-      labeltooltip=""
-      value="TSYMBOL"
-    />
-     
-    <info-line-stub
-      assetsymbol=""
-      fiatvalue=""
-      label="Token name"
-      labeltooltip=""
-      value="Token name"
-    />
-     
-    <info-line-stub
-      assetsymbol=""
-      fiatvalue=""
-      label="Token supply"
-      labeltooltip=""
-      value="10,000,000,000"
-    />
-     
-    <info-line-stub
-      assetsymbol=""
-      fiatvalue=""
-      label="Extensible supply"
-      labeltooltip=""
-      value="Yes"
-    />
-     
-    <s-button-stub
+    <s-tabs-stub
       borderradius="small"
-      class="wallet-settings-create-token_action s-typography-button--large"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
+      class="token__tab"
+      position="top"
+      type="rounded"
       usedesignsystem="true"
+      value="CreateSimpleToken"
     >
-      Confirm
-    </s-button-stub>
+      <s-tab-stub
+        label="Token"
+        name="CreateSimpleToken"
+      />
+      <s-tab-stub
+        label="NFT"
+        name="CreateNftToken"
+      />
+    </s-tabs-stub>
      
-    <wallet-fee-stub
-      value="0.007"
+    <createsimpletoken-stub
+      step="1"
     />
   </div>
 </wallet-base-stub>
@@ -69,120 +39,33 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
 <wallet-base-stub
   showback="true"
   showheader="true"
-  title="Create token"
+  title="Create"
   tooltip=""
 >
   <div
-    class="wallet-settings-create-token"
+    class="token"
   >
-    <s-input-stub
-      accept=""
-      autocomplete="off"
+    <s-tabs-stub
       borderradius="small"
-      form=""
-      label=""
-      maxlength="7"
-      minlength="1"
-      name=""
-      placeholder="Token symbol"
-      prefix=""
-      size="big"
-      suffix=""
-      tabindex=""
-      type="text"
+      class="token__tab"
+      position="top"
+      type="rounded"
       usedesignsystem="true"
-      value=""
-    />
-     
-    <p
-      class="wallet-settings-create-token_desc"
+      value="CreateSimpleToken"
     >
-      This is an identifier for the token. You can use from 1 to 7 characters for the selection.
-    </p>
-     
-    <s-input-stub
-      accept=""
-      autocomplete="off"
-      borderradius="small"
-      form=""
-      label=""
-      maxlength="33"
-      minlength="1"
-      name=""
-      placeholder="Token name"
-      prefix=""
-      size="big"
-      suffix=""
-      tabindex=""
-      type="text"
-      usedesignsystem="true"
-      value=""
-    />
-     
-    <p
-      class="wallet-settings-create-token_desc"
-    >
-      This is a name for the token. You can use from 1 to 33 characters for the selection.
-    </p>
-     
-    <s-float-input-stub
-      decimals="18"
-      delimiters="[object Object]"
-      haslocalestring="true"
-      max="170141183460469231731.687303715884105727"
-      placeholder="Token supply"
-      value=""
-    />
-     
-    <p
-      class="wallet-settings-create-token_desc"
-    >
-      You will receive these tokens upon creation.
-    </p>
-     
-    <div
-      class="wallet-settings-create-token_supply-block"
-    >
-      <s-switch-stub
-        activeiconСlass=""
-        activetext=""
-        activevalue="true"
-        inactiveiconСlass=""
-        inactivetext=""
-        name=""
-        usedesignsystem="true"
-        width="40"
+      <s-tab-stub
+        label="Token"
+        name="CreateSimpleToken"
       />
-       
-      <span>
-        Extensible supply
-      </span>
-    </div>
+      <s-tab-stub
+        label="NFT"
+        name="CreateNftToken"
+      />
+    </s-tabs-stub>
      
-    <p
-      class="wallet-settings-create-token_desc"
-    >
-      Ability to mint more tokens.
-    </p>
-     
-    <s-button-stub
-      borderradius="small"
-      class="wallet-settings-create-token_action s-typography-button--large"
-      disabled="true"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
-      usedesignsystem="true"
-    >
-      Enter token symbol
-    </s-button-stub>
-     
-    <!---->
+    <createsimpletoken-stub
+      step="0"
+    />
   </div>
 </wallet-base-stub>
 `;

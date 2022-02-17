@@ -23,7 +23,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 
 import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
 
-import type { Asset } from '@sora-substrate/util';
+import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component
 export default class AssetListItem extends Mixins(TranslationMixin) {

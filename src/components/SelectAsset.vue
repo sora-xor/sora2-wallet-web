@@ -30,7 +30,7 @@ import AssetListItem from './AssetListItem.vue';
 
 import { RouteNames } from '../consts';
 
-import type { AccountAsset } from '@sora-substrate/util';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {

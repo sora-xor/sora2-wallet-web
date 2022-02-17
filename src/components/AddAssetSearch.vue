@@ -22,7 +22,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import type { AccountAsset, Asset } from '@sora-substrate/util';
+import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from './AssetList.vue';
 import AssetListItem from './AssetListItem.vue';
@@ -30,6 +30,7 @@ import AssetListItem from './AssetListItem.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import { AddAssetTabs, RouteNames } from '../consts';
+import type { AccountAssetsTable } from '../types/common';
 
 @Component({
   components: {
@@ -41,17 +42,13 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   readonly AddAssetTabs = AddAssetTabs;
 
   @Getter assets!: Array<Asset>;
-  @Getter assetsLoading!: boolean;
   @Getter accountAssets!: Array<AccountAsset>;
-  @Getter accountAssetsAddressTable!: any;
+  @Getter accountAssetsAddressTable!: AccountAssetsTable;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAssets!: AsyncVoidFn;
 
   search = '';
 
   async mounted(): Promise<void> {
-    await this.getAssets();
-
     const input = this.$refs.search as any;
 
     if (input && typeof input.focus === 'function') {

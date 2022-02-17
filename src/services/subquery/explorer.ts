@@ -1,8 +1,9 @@
 import { axiosInstance, FPNumber } from '@sora-substrate/util';
 
 import { HistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
+import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
 import { SoraNetwork } from '../../consts';
-import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject } from '../types';
+import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject, ReferrerRewards, ReferrerReward } from '../types';
 
 import store from '../../store';
 import { FiatPriceQuery } from './queries/fiatPriceAndApy';
@@ -87,13 +88,40 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
+  public async getAccountReferralRewards(referrer?: string): Promise<any> {
+    try {
+      const params = {
+        filter: referrerRewardsFilter(referrer),
+      };
+      const { referrerRewards } = await this.request(ReferrerRewardsQuery, params);
+      const rewardsInfo: ReferrerRewards = {
+        rewards: FPNumber.ZERO,
+        invitedUserRewards: {},
+      };
+      if (referrerRewards) {
+        (referrerRewards.nodes as Array<ReferrerReward>).forEach((item) => {
+          rewardsInfo.rewards = rewardsInfo.rewards.add(new FPNumber(item.amount));
+          const invitedUser = item.referral;
+          if (!rewardsInfo.invitedUserRewards[invitedUser]) {
+            rewardsInfo.invitedUserRewards[invitedUser] = { rewards: FPNumber.ZERO };
+          }
+          rewardsInfo.invitedUserRewards[invitedUser].rewards = rewardsInfo.invitedUserRewards[invitedUser].rewards.add(
+            new FPNumber(item.amount)
+          );
+        });
+      }
+      return rewardsInfo;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   public async request(scheme: any, params = {}): Promise<any> {
     const url = SubqueryExplorer.getApiUrl(this.soraNetwork);
     const response = await axiosInstance.post(url, {
       query: scheme,
       variables: params,
     });
-
     return response.data.data;
   }
 }

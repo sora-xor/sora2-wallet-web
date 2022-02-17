@@ -25,6 +25,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         label="Status"
         labeltooltip=""
         value=""
+        valuetooltip=""
       >
         <span
           class="transaction-status"
@@ -46,6 +47,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         label="Date"
         labeltooltip=""
         value="Nov 27, 2020 11:59:59 PM"
+        valuetooltip=""
       />
        
       <info-line-stub
@@ -56,6 +58,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         labeltooltip=""
         value="0.1"
         valuecanbehidden="true"
+        valuetooltip=""
       />
        
       <info-line-stub
@@ -66,6 +69,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         labeltooltip=""
         value="0.9"
         valuecanbehidden="true"
+        valuetooltip=""
       />
     </div>
      
@@ -105,6 +109,7 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
         label="Status"
         labeltooltip=""
         value=""
+        valuetooltip=""
       >
         <span
           class="transaction-status"
@@ -126,6 +131,7 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
         label="Date"
         labeltooltip=""
         value="Nov 27, 2020 11:59:59 PM"
+        valuetooltip=""
       />
        
       <!---->
@@ -169,6 +175,7 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
         label="Status"
         labeltooltip=""
         value=""
+        valuetooltip=""
       >
         <span
           class="transaction-status"
@@ -190,6 +197,7 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
         label="Date"
         labeltooltip=""
         value="Nov 27, 2020 11:59:59 PM"
+        valuetooltip=""
       />
        
       <info-line-stub
@@ -200,6 +208,7 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
         labeltooltip=""
         value="100.123"
         valuecanbehidden="true"
+        valuetooltip=""
       />
        
       <!---->
@@ -241,6 +250,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         label="Status"
         labeltooltip=""
         value=""
+        valuetooltip=""
       >
         <span
           class="transaction-status transaction-status--error"
@@ -257,6 +267,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         label="Error"
         labeltooltip=""
         value=""
+        valuetooltip=""
       >
         <span
           class="transaction-status transaction-status--error"
@@ -271,6 +282,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         label="Date"
         labeltooltip=""
         value="Nov 27, 2020 11:59:59 PM"
+        valuetooltip=""
       />
        
       <info-line-stub
@@ -281,6 +293,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         labeltooltip=""
         value="0.1"
         valuecanbehidden="true"
+        valuetooltip=""
       />
        
       <info-line-stub
@@ -291,6 +304,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         labeltooltip=""
         value="0.9"
         valuecanbehidden="true"
+        valuetooltip=""
       />
     </div>
      
@@ -330,6 +344,7 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
         label="Status"
         labeltooltip=""
         value=""
+        valuetooltip=""
       >
         <span
           class="transaction-status"
@@ -351,6 +366,7 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
         label="Date"
         labeltooltip=""
         value="Nov 27, 2020 11:59:59 PM"
+        valuetooltip=""
       />
        
       <info-line-stub
@@ -361,6 +377,7 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
         labeltooltip=""
         value="0.1"
         valuecanbehidden="true"
+        valuetooltip=""
       />
        
       <!---->

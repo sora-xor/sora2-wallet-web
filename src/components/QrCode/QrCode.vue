@@ -11,7 +11,7 @@ const writer = new BrowserQRCodeSvgWriter();
 @Component
 export default class QrCode extends Vue {
   @Prop({ default: '', type: String }) readonly value!: string;
-  @Prop({ default: 240, type: Number }) readonly size!: number;
+  @Prop({ default: 260, type: Number }) readonly size!: number;
   @Ref('container') readonly container!: HTMLDivElement;
 
   @Watch('value')

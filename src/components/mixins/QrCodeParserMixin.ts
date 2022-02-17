@@ -4,7 +4,7 @@ import { Action } from 'vuex-class';
 import { RouteNames } from '../../consts';
 import { api } from '../../api';
 
-import type { Asset, AccountAsset } from '@sora-substrate/util';
+import type { Asset, AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 @Component
 export default class QrCodeParserMixin extends Mixins() {
