@@ -522,12 +522,13 @@ const actions = {
   async addAsset({ commit }, address: string) {
     commit(types.ADD_ASSET_REQUEST);
     try {
-      await api.assets.getAccountAsset(address, true);
+      await api.assets.addAccountAsset(address);
       commit(types.ADD_ASSET_SUCCESS);
     } catch (error) {
       commit(types.ADD_ASSET_FAILURE);
     }
   },
+
   getTransactionDetails({ commit }, id: string) {
     commit(types.SET_TRANSACTION_DETAILS_ID, id);
   },
@@ -550,7 +551,6 @@ const actions = {
     // previous state
     const { isLoggedIn: wasLoggedIn } = getters;
     const { address } = state;
-    const prevAddresses = Object.keys(getters.accountAssetsAddressTable);
 
     commit(types.SYNC_WITH_STORAGE);
 

@@ -334,7 +334,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   handleRemoveAsset(): void {
-    api.assets.removeAsset(this.asset.address);
+    api.assets.removeAccountAsset(this.asset.address);
     this.handleBack();
   }
 
