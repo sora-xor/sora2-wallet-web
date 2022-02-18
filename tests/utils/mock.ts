@@ -122,12 +122,12 @@ export const MOCK_HISTORY: Array<History> = [
   },
 ];
 
-export const MOCK_ACCOUNT_ACTIVITY = MOCK_HISTORY.reduce((result, item) => {
+export const MOCK_ACCOUNT_HISTORY = MOCK_HISTORY.reduce((result, item) => {
   if (!item.id) return result;
   return { ...result, [item.id]: item };
 }, {});
 
-export const MOCK_EXTERNAL_ACTIVITY = {
+export const MOCK_EXTERNAL_HISTORY = {
   '0x19cd61b49e9b3549a2718e1edae8828c7915a186b065044145a5e2e67d736069': {
     id: '0x19cd61b49e9b3549a2718e1edae8828c7915a186b065044145a5e2e67d736069',
     type: 'Transfer',
