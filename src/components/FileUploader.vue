@@ -26,7 +26,6 @@ import TranslationMixin from './mixins/TranslationMixin';
 export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly isLinkProvided!: boolean;
   @Prop({ default: 'image/*', type: String }) readonly allowedTypes!: string;
-  @Prop() readonly bus!: Vue;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
