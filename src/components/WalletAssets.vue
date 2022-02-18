@@ -118,12 +118,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @Getter withoutFiatAndApy!: boolean;
   @Getter permissions!: WalletPermissions;
   @Getter shouldBalanceBeHidden!: boolean;
-  @Action getAccountAssets!: AsyncVoidFn;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-
-  async mounted(): Promise<void> {
-    this.withApi(this.getAccountAssets);
-  }
 
   get computedClasses(): string {
     const baseClass = 'wallet-assets';

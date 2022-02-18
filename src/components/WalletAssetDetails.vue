@@ -19,10 +19,10 @@
           :content-link="nftContentLink"
           :token-name="asset.name"
           :token-symbol="asset.symbol"
-          :token-description="nftTokenDescription"
+          :token-description="asset.description"
           @click-details="handleClickNftDetails"
         />
-        <div v-else>
+        <template v-else>
           <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
           <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
             <formatted-amount
@@ -35,7 +35,7 @@
               <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
             </formatted-amount>
           </div>
-        </div>
+        </template>
         <formatted-amount
           v-if="price && !isNft"
           value-can-be-hidden
@@ -166,10 +166,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   private wasNftLinkCopied = false;
   wasNftDetailsClicked = false;
   nftContentLink = '';
-  nftTokenDescription = '';
 
   get isNft(): boolean {
-    return this.currentRouteParams.asset.decimals === 0;
+    return api.assets.isNft(this.asset);
   }
 
   get nftLinkTooltipText(): string {
@@ -183,9 +182,8 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   private async setNftMeta(): Promise<void> {
-    const ipfsPath = await api.assets.getNftContent(this.currentRouteParams.asset.address);
+    const ipfsPath = this.asset.content as string;
     this.nftContentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
-    this.nftTokenDescription = await api.assets.getNftDescription(this.currentRouteParams.asset.address);
   }
 
   handleClickNftDetails(): void {
@@ -334,7 +332,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   handleRemoveAsset(): void {
-    api.assets.removeAsset(this.asset.address);
+    api.assets.removeAccountAsset(this.asset.address);
     this.handleBack();
   }
 
