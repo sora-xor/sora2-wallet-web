@@ -14,11 +14,11 @@ const createStore = (currentTab: WalletTabs, permissions: WalletPermissions = MO
       Account: {
         getters: {
           account: () => MOCK_ACCOUNT,
-          activity: () => MOCK_HISTORY,
+          history: () => MOCK_HISTORY,
           permissions: () => permissions,
         },
         actions: {
-          getAccountActivity: jest.fn(),
+          getAccountHistory: jest.fn(),
         },
       },
       Router: {
