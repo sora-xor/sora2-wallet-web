@@ -30,7 +30,7 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
-  readonly FILE_SIZE_LIMIT = 104857600; // 100MB in bytes
+  readonly FILE_SIZE_LIMIT = 100 * 1024 * 1024; // 100MB in bytes
 
   isImgDraggedOver = false;
   isClearBtnShown = false;
@@ -55,7 +55,7 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
 
     if (file.size > this.FILE_SIZE_LIMIT) {
       this.dragCancelled();
-      this.$emit('showLimitStub');
+      this.$emit('showLimit');
       this.resetFileInput();
       return;
     }
@@ -88,7 +88,7 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
       return;
     }
 
-    this.$emit('hideLimitStub');
+    this.$emit('hideLimit');
     const file = this.fileInput.files[0];
 
     if (!file) {
@@ -97,7 +97,7 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
     }
 
     if (file.size > this.FILE_SIZE_LIMIT) {
-      this.$emit('showLimitStub');
+      this.$emit('showLimit');
       this.resetFileInput();
       return;
     }
@@ -117,10 +117,6 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
     this.fileInput.value = '';
     this.isClearBtnShown = false;
     this.isImgDraggedOver = false;
-  }
-
-  mounted(): void {
-    this.$props.bus.$on('resetFileInput', this.resetFileInput);
   }
 }
 </script>

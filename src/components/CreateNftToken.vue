@@ -21,9 +21,9 @@
       <file-uploader
         @upload="upload"
         @clear="clear"
-        @showLimitStub="showFileLimitStub"
-        @hideLimitStub="hideFileLimitStub"
-        :bus="EventBus"
+        @showLimit="showLimit"
+        @hideLimit="hideLimit"
+        ref="uploader"
         class="preview-image-create-nft"
         :isLinkProvided="!!contentSrcLink"
       >
@@ -131,7 +131,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Ref, Vue } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
 import { File as ImageNFT, NFTStorage } from 'nft.storage';
 import { FPNumber, Operation } from '@sora-substrate/util';
@@ -174,7 +174,6 @@ export default class CreateNftToken extends Mixins(
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
   readonly Step = Step;
   readonly XOR_SYMBOL = XOR.symbol;
-  readonly EventBus = new Vue();
   readonly FILE_SIZE_LIMIT = 100; // in megabytes
 
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
@@ -231,18 +230,18 @@ export default class CreateNftToken extends Mixins(
     this.tokenContentLink = '';
   }
 
-  showFileLimitStub(): void {
+  showLimit(): void {
     this.contentSrcLink = '';
     this.fileExceedsLimit = true;
   }
 
-  hideFileLimitStub(): void {
+  hideLimit(): void {
     this.contentSrcLink = '';
     this.fileExceedsLimit = false;
   }
 
   handleInputLinkChange(link: string): void {
-    this.EventBus.$emit('resetFileInput');
+    (this.$refs.uploader as HTMLFormElement).resetFileInput();
     this.resetFileInput();
     this.fileExceedsLimit = false;
     this.contentSrcLink = '';
