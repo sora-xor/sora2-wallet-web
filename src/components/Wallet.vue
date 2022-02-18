@@ -7,7 +7,7 @@
     action-icon="various-atom-24"
     action-tooltip="wallet.createToken"
     @action="handleCreateToken"
-    @cleanHistory="handleCleanHistory"
+    @cleanHistory="clearAccountHistory"
   >
     <wallet-account show-controls />
     <div class="wallet">
@@ -22,8 +22,8 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
+import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
-import { api } from '../api';
 import TranslationMixin from './mixins/TranslationMixin';
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
@@ -46,10 +46,10 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   @Getter currentRouteParams!: any;
   @Getter account!: Account;
-  @Getter activity!: Array<History>;
+  @Getter history!: AccountHistory<HistoryItem>;
   @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAccountActivity!: AsyncVoidFn;
+  @Action clearAccountHistory!: (assetAddress?: string) => Promise<void>;
 
   currentTab: WalletTabs = WalletTabs.Assets;
 
@@ -58,7 +58,7 @@ export default class Wallet extends Mixins(TranslationMixin) {
   }
 
   get isCleanHistoryDisabled(): boolean {
-    return !this.activity.length;
+    return !Object.keys(this.history).length;
   }
 
   handleChangeTab(value: WalletTabs): void {
@@ -71,11 +71,6 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   handleCreateToken(): void {
     this.navigate({ name: RouteNames.CreateToken });
-  }
-
-  handleCleanHistory(): void {
-    api.clearHistory();
-    this.getAccountActivity();
   }
 }
 </script>
