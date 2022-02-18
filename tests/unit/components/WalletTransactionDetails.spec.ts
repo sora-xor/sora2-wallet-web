@@ -16,7 +16,7 @@ const createStore = (tx: History) =>
         },
         actions: {
           getTransactionDetails: jest.fn(),
-          getAccountActivity: jest.fn(),
+          getAccountHistory: jest.fn(),
         },
       },
       Router: {

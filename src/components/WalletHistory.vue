@@ -1,28 +1,28 @@
 <template>
   <div class="history s-flex">
     <s-form class="history-form" :show-message="false">
-      <s-form-item v-if="hasHistory" class="history--search">
+      <s-form-item v-if="hasTransactions" class="history--search">
         <s-input v-model="query" :placeholder="t('history.filterPlaceholder')" prefix="s-icon-search-16" size="big">
           <template #suffix v-if="query">
-            <s-button class="s-button--clear" :use-design-system="false" @click="handleResetSearch">
+            <s-button class="s-button--clear" :use-design-system="false" @click="resetSearch">
               <s-icon name="clear-X-16" />
             </s-button>
           </template>
         </s-input>
       </s-form-item>
       <div class="history-items" v-loading="loading">
-        <template v-if="filteredHistory.length">
+        <template v-if="hasVisibleTransactions">
           <div
             class="history-item s-flex"
-            v-for="item in filteredHistory.slice((currentPage - 1) * pageAmount, currentPage * pageAmount)"
-            :key="`history-${item.id}`"
+            v-for="(item, index) in transactions"
+            :key="index"
             @click="handleOpenTransactionDetails(item.id)"
           >
             <div class="history-item-info">
               <div class="history-item-operation ch3" :data-type="item.type">{{ t(`operations.${item.type}`) }}</div>
               <div class="history-item-title p4">{{ getMessage(item, shouldBalanceBeHidden) }}</div>
               <s-icon
-                v-if="item.status !== TransactionStatus.Finalized"
+                v-if="!isFinalizedStatus(item.status)"
                 :class="getStatusClass(item.status)"
                 :name="getStatusIcon(item.status)"
               />
@@ -30,10 +30,10 @@
             <div class="history-item-date">{{ formatDate(item.startTime) }}</div>
           </div>
         </template>
-        <div v-else class="history-empty p4">{{ t(`history.${hasHistory ? 'emptySearch' : 'empty'}`) }}</div>
+        <div v-else class="history-empty p4">{{ t(`history.${hasTransactions ? 'emptySearch' : 'empty'}`) }}</div>
       </div>
       <s-pagination
-        v-if="hasHistory"
+        v-if="hasVisibleTransactions"
         layout="total, prev, next"
         :current-page.sync="currentPage"
         :page-size="pageAmount"
@@ -47,87 +47,145 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import debounce from 'lodash/debounce';
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
 import { History, TransactionStatus } from '@sora-substrate/util';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
+import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
 
-import { api } from '../api';
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
+import PaginationSearchMixin from './mixins/PaginationSearchMixin';
 import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames } from '../consts';
-import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
-import { historyElementsFilter } from '../services/subquery/queries/historyElements';
+import { SubqueryDataParserService } from '../services/subquery';
+import type { ExternalHistoryParams } from '../types/history';
 
 @Component
-export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin) {
-  @Getter activity!: Array<History>;
+export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
+  @Getter assets!: Array<Asset>;
+  @Getter history!: AccountHistory<HistoryItem>;
+  @Getter externalHistory!: AccountHistory<HistoryItem>;
+  @Getter externalHistoryTotal!: number;
   @Getter shouldBalanceBeHidden!: boolean;
+  @Action getAssets!: AsyncVoidFn;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAccountActivity!: AsyncVoidFn;
+  @Action getExternalHistory!: (options?: ExternalHistoryParams) => Promise<void>;
+  @Action resetExternalHistory!: AsyncVoidFn;
+  @Action getAccountHistory!: AsyncVoidFn;
+  @Action clearSyncedAccountHistory!: (options: { address: string; assetAddress?: string }) => Promise<void>;
 
   @Prop() readonly asset?: AccountAsset;
 
-  TransactionStatus = TransactionStatus;
-  query = '';
-  currentPage = 1;
-  pageAmount = 8;
-
-  // for fast search
-  get activityHashTable(): any {
-    return this.activity.reduce((result, item) => {
-      if (!item.txId) return result;
-      return { ...result, [item.txId]: item };
-    }, {});
+  @Watch('searchQuery')
+  private async updateHistoryBySearchQuery() {
+    await this.updateCommonHistory();
   }
 
-  get assetAddress(): string | undefined {
-    return this.asset && this.asset.address;
+  readonly pageAmount = 8; // override PaginationSearchMixin
+  readonly updateCommonHistory = debounce(() => this.updateHistory(true, true), 500);
+
+  get assetAddress(): string {
+    return (this.asset && this.asset.address) || '';
+  }
+
+  get internalHistory(): Array<History> {
+    const historyList = Object.values(this.history);
+    const prefiltered = this.assetAddress
+      ? historyList.filter((item) => {
+          return [item.assetAddress, item.asset2Address].includes(this.assetAddress);
+        })
+      : historyList;
+
+    return prefiltered;
+  }
+
+  get filteredInternalHistory(): Array<History> {
+    return this.getFilteredHistory(this.internalHistory);
+  }
+
+  get filteredExternalHistory(): Array<History> {
+    return Object.values(this.externalHistory);
   }
 
   get transactions(): Array<History> {
-    if (this.assetAddress) {
-      return this.activity.filter((item) => [item.assetAddress, item.asset2Address].includes(this.assetAddress));
-    }
-    return this.activity;
-  }
+    const merged = [...this.filteredInternalHistory, ...this.filteredExternalHistory];
+    const sorted = this.sortTransactions(merged);
 
-  get filteredHistory(): Array<any> {
-    if (!this.hasHistory) return [];
-    return this.getFilteredHistory(this.transactions).sort((a: History, b: History) =>
-      a.startTime && b.startTime ? b.startTime - a.startTime : 0
-    );
-  }
-
-  get hasHistory(): boolean {
-    return !!(this.transactions && this.transactions.length);
+    return this.getPageItems(sorted);
   }
 
   get total(): number {
-    return this.filteredHistory.length;
+    return this.externalHistoryTotal + this.internalHistory.length;
+  }
+
+  get hasVisibleTransactions(): boolean {
+    return !!this.transactions.length;
+  }
+
+  get hasTransactions(): boolean {
+    return this.hasVisibleTransactions || !!this.searchQuery;
+  }
+
+  get queryOperationNames(): Array<Operation> {
+    if (!this.searchQuery) return [];
+
+    return SubqueryDataParserService.supportedOperations.filter((operation) =>
+      this.t(`operations.${operation}`).toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+  }
+
+  get queryAssetsAddresses(): Array<string> {
+    if (!this.searchQuery) return [];
+
+    return this.assets.reduce((buffer: Array<string>, asset) => {
+      if (asset.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+        buffer.push(asset.address);
+      }
+      return buffer;
+    }, []);
   }
 
   async mounted() {
-    await this.updateHistory();
+    await this.withLoading(async () => {
+      await this.reset();
+      await Promise.all([this.getAssets(), this.syncAndUpdateHistory()]);
+    });
+  }
+
+  async reset(): Promise<void> {
+    this.resetPage();
+    await this.resetExternalHistory();
   }
 
   getFilteredHistory(history: Array<History>): Array<History> {
-    if (!this.query) {
+    if (!this.searchQuery) {
       return history;
     }
-    const query = this.query.toLowerCase().trim();
+
+    const query = this.searchQuery.toLowerCase();
+
     return history.filter(
       (item) =>
-        `${item.assetAddress}`.toLowerCase().includes(query) ||
-        `${item.asset2Address}`.toLowerCase().includes(query) ||
+        // asset address criteria
+        `${item.assetAddress}`.toLowerCase() === query ||
+        `${item.asset2Address}`.toLowerCase() === query ||
+        // symbol criteria
         `${item.symbol}`.toLowerCase().includes(query) ||
         `${item.symbol2}`.toLowerCase().includes(query) ||
+        // search qriteria
         `${item.blockId}`.toLowerCase().includes(query) ||
-        `${item.from}`.toLowerCase().includes(query) ||
-        `${item.to}`.toLowerCase().includes(query) ||
+        // account address criteria
+        `${item.from}`.toLowerCase() === query ||
+        `${item.to}`.toLowerCase() === query ||
+        // operation names criteria
         this.t(`operations.${item.type}`).toLowerCase().includes(query)
     );
+  }
+
+  sortTransactions(transactions: Array<History>): Array<History> {
+    return transactions.sort((a: History, b: History) => (a.startTime && b.startTime ? b.startTime - a.startTime : 0));
   }
 
   getStatus(status: string): string {
@@ -147,60 +205,48 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return getStatusIcon(this.getStatus(status));
   }
 
-  handlePaginationClick(current: number): void {
-    this.currentPage = current;
+  isFinalizedStatus(status: string): boolean {
+    return status === TransactionStatus.Finalized;
   }
 
   handleOpenTransactionDetails(id: number): void {
     this.navigate({ name: RouteNames.WalletTransactionDetails, params: { id, asset: this.asset } });
   }
 
-  handleResetSearch(): void {
-    this.query = '';
-    this.currentPage = 1;
+  async handlePaginationClick(current: number): Promise<void> {
+    const isNext = current > this.currentPage;
+    await this.updateHistory(isNext);
+    this.currentPage = current;
   }
 
-  async updateHistory(): Promise<void> {
+  private async syncAndUpdateHistory(): Promise<void> {
+    await this.clearSyncedAccountHistory({ address: this.account.address, assetAddress: this.assetAddress });
+    await this.updateHistory();
+  }
+
+  /**
+   * Update external & internal history
+   * @param next - if true, fetch next page, else previous
+   * @param withReset - reset current page number & clear external history
+   */
+  private async updateHistory(next = true, withReset = false): Promise<void> {
     await this.withLoading(async () => {
-      await this.updateHistoryFromExplorer();
-      await this.getAccountActivity();
-    });
-  }
-
-  async updateHistoryFromExplorer(): Promise<void> {
-    const {
-      assetAddress,
-      activity,
-      account: { address },
-    } = this;
-
-    const isPartialHistoryRequest = !!assetAddress;
-    const timestamp = isPartialHistoryRequest || !activity.length ? 0 : api.historySyncTimestamp;
-    const filter = historyElementsFilter(address, { assetAddress, timestamp });
-    const variables = {
-      filter, // filter by account & asset
-    };
-
-    try {
-      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
-
-      if (edges.length !== 0) {
-        for (const edge of edges) {
-          const transaction = edge.node;
-          const hasHistoryItem = transaction.id in this.activityHashTable;
-
-          if (!hasHistoryItem) {
-            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
-
-            if (historyItem) {
-              api.saveHistory(historyItem, { toCurrentAccount: true });
-            }
-          }
-        }
+      if (withReset) {
+        this.reset();
       }
-    } catch (error) {
-      console.error(error);
-    }
+      await this.getExternalHistory({
+        next,
+        address: this.account.address,
+        assetAddress: this.assetAddress,
+        pageAmount: this.pageAmount,
+        query: {
+          search: this.searchQuery,
+          operationNames: this.queryOperationNames,
+          assetsAddresses: this.queryAssetsAddresses,
+        },
+      });
+      await this.getAccountHistory();
+    });
   }
 }
 </script>
