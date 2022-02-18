@@ -19,7 +19,7 @@
           :content-link="nftContentLink"
           :token-name="asset.name"
           :token-symbol="asset.symbol"
-          :token-description="nftTokenDescription"
+          :token-description="asset.description"
           @click-details="handleClickNftDetails"
         />
         <template v-else>
@@ -166,10 +166,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   private wasNftLinkCopied = false;
   wasNftDetailsClicked = false;
   nftContentLink = '';
-  nftTokenDescription = '';
 
   get isNft(): boolean {
-    return this.currentRouteParams.asset.decimals === 0;
+    return api.assets.isNft(this.asset);
   }
 
   get nftLinkTooltipText(): string {
@@ -183,9 +182,8 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   private async setNftMeta(): Promise<void> {
-    const ipfsPath = await api.assets.getNftContent(this.currentRouteParams.asset.address);
+    const ipfsPath = this.asset.content as string;
     this.nftContentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
-    this.nftTokenDescription = await api.assets.getNftDescription(this.currentRouteParams.asset.address);
   }
 
   handleClickNftDetails(): void {
