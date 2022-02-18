@@ -97,6 +97,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { Getter, Action } from 'vuex-class';
 import { FPNumber } from '@sora-substrate/util';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import { api } from '../api';
 
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -154,7 +155,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   nftIconClass(asset): string {
-    return asset.decimals === 0 ? 'nft-asset' : '';
+    return api.assets.isNft(asset) ? 'nft-asset' : '';
   }
 
   getFormattedAddress(asset: AccountAsset): string {
