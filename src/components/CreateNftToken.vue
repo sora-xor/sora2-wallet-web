@@ -21,17 +21,24 @@
       <file-uploader
         @upload="upload"
         @clear="clear"
+        @showLimitStub="showFileLimitStub"
+        @hideLimitStub="hideFileLimitStub"
         :bus="EventBus"
         class="preview-image-create-nft"
         :isLinkProvided="!!contentSrcLink"
       >
         <div v-if="imageLoading" v-loading="imageLoading" />
+        <div v-else-if="fileExceedsLimit" class="placeholder">
+          <s-icon class="preview-image-create-nft__icon icon--error" name="basic-clear-X-24" size="64px" />
+          <span>{{ t('createToken.nft.image.placeholderFileLimit', { value: 100 }) }}</span>
+          <s-button class="preview-image-create-nft__btn">{{ t('createToken.nft.source.limit') }}</s-button>
+        </div>
         <div v-else-if="!tokenContentLink && !file" class="placeholder">
           <s-icon class="preview-image-create-nft__icon" name="camera-16" size="64px" />
           <span class="preview-image-create-nft__placeholder">{{ t('createToken.nft.image.placeholderNoImage') }}</span>
         </div>
         <div v-else-if="badSource && !file" class="placeholder">
-          <s-icon class="preview-image-create-nft__icon" name="basic-clear-X-24" size="64px" />
+          <s-icon class="preview-image-create-nft__icon icon--error" name="basic-clear-X-24" size="64px" />
           <span class="preview-image-create-nft__placeholder">{{
             t('createToken.nft.image.placeholderBadSource')
           }}</span>
@@ -168,6 +175,7 @@ export default class CreateNftToken extends Mixins(
   readonly Step = Step;
   readonly XOR_SYMBOL = XOR.symbol;
   readonly EventBus = new Vue();
+  readonly FILE_SIZE_LIMIT = 100; // megabytes
 
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
@@ -177,6 +185,7 @@ export default class CreateNftToken extends Mixins(
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
   imageLoading = false;
+  fileExceedsLimit = false;
   badSource = false;
   contentSrcLink = '';
   tokenContentIpfsParsed = '';
@@ -222,9 +231,20 @@ export default class CreateNftToken extends Mixins(
     this.tokenContentLink = '';
   }
 
+  showFileLimitStub(): void {
+    this.contentSrcLink = '';
+    this.fileExceedsLimit = true;
+  }
+
+  hideFileLimitStub(): void {
+    this.contentSrcLink = '';
+    this.fileExceedsLimit = false;
+  }
+
   handleInputLinkChange(link: string): void {
     this.EventBus.$emit('resetFileInput');
     this.resetFileInput();
+    this.fileExceedsLimit = false;
     this.contentSrcLink = '';
 
     try {
@@ -440,6 +460,15 @@ export default class CreateNftToken extends Mixins(
     color: var(--s-color-base-content-tertiary) !important;
     font-size: var(--s-size-small) !important;
     margin-bottom: calc(var(--s-size-small) / 2);
+  }
+
+  &__icon.icon--error {
+    color: var(--s-color-theme-accent) !important;
+  }
+
+  &__btn {
+    margin-top: calc(var(--s-size-small) / 2) !important;
+    height: 32px !important;
   }
 
   &__placeholder {

@@ -199,6 +199,7 @@ export default {
       source: {
         label: 'Source',
         value: 'Local files',
+        limit: 'Choose another file',
       },
       link: {
         placeholder: 'IPFS link',
@@ -208,8 +209,9 @@ export default {
       },
       image: {
         placeholderNoImage: 'Upload the file by either entering a link or choosing from local storage',
-        placeholderBadSource: 'There’s no image',
+        placeholderBadSource: 'The file failed to be processed',
         placeholderBadSourceAddition: 'or it’s not uploaded to IPFS yet',
+        placeholderFileLimit: 'The file size exceeds the limit of {value}mb',
       },
       supply: {
         placeholder: 'Token supply',
