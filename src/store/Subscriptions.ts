@@ -34,7 +34,7 @@ const actions = {
 
     state.storageUpdatesSubscription = debounce(100)(() => {
       dispatch('syncWithStorage', undefined, { root: true });
-      dispatch('getAccountActivity', undefined, { root: true });
+      dispatch('getAccountHistory', undefined, { root: true });
     });
 
     window.addEventListener('storage', state.storageUpdatesSubscription);

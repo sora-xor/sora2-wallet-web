@@ -11,7 +11,7 @@
         </s-input>
       </s-form-item>
       <div class="history-items" v-loading="loading">
-        <template v-if="transactions.length">
+        <template v-if="hasVisibleTransactions">
           <div
             class="history-item s-flex"
             v-for="(item, index) in transactions"
@@ -33,7 +33,7 @@
         <div v-else class="history-empty p4">{{ t(`history.${hasTransactions ? 'emptySearch' : 'empty'}`) }}</div>
       </div>
       <s-pagination
-        v-if="transactions.length"
+        v-if="hasVisibleTransactions"
         layout="total, prev, next"
         :current-page.sync="currentPage"
         :page-size="pageAmount"
@@ -60,20 +60,21 @@ import PaginationSearchMixin from './mixins/PaginationSearchMixin';
 import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames } from '../consts';
 import { SubqueryDataParserService } from '../services/subquery';
+import type { ExternalHistoryParams } from '../types/history';
 
 @Component
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
   @Getter assets!: Array<Asset>;
-  @Getter activity!: AccountHistory<HistoryItem>;
-  @Getter externalActivity!: AccountHistory<HistoryItem>;
-  @Getter externalActivityTotal!: number;
+  @Getter history!: AccountHistory<HistoryItem>;
+  @Getter externalHistory!: AccountHistory<HistoryItem>;
+  @Getter externalHistoryTotal!: number;
   @Getter shouldBalanceBeHidden!: boolean;
   @Action getAssets!: AsyncVoidFn;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getExternalActivity!: (options?: any) => Promise<void>;
-  @Action resetExternalActivity!: AsyncVoidFn;
-  @Action getAccountActivity!: AsyncVoidFn;
-  @Action clearSyncedAccountActivity!: (options: { address: string; assetAddress?: string }) => Promise<void>;
+  @Action getExternalHistory!: (options?: ExternalHistoryParams) => Promise<void>;
+  @Action resetExternalHistory!: AsyncVoidFn;
+  @Action getAccountHistory!: AsyncVoidFn;
+  @Action clearSyncedAccountHistory!: (options: { address: string; assetAddress?: string }) => Promise<void>;
 
   @Prop() readonly asset?: AccountAsset;
 
@@ -90,12 +91,12 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get internalHistory(): Array<History> {
-    const activityList = Object.values(this.activity);
+    const historyList = Object.values(this.history);
     const prefiltered = this.assetAddress
-      ? activityList.filter((item) => {
+      ? historyList.filter((item) => {
           return [item.assetAddress, item.asset2Address].includes(this.assetAddress);
         })
-      : activityList;
+      : historyList;
 
     return prefiltered;
   }
@@ -105,7 +106,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get filteredExternalHistory(): Array<History> {
-    return Object.values(this.externalActivity);
+    return Object.values(this.externalHistory);
   }
 
   get transactions(): Array<History> {
@@ -116,11 +117,15 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get total(): number {
-    return this.externalActivityTotal + this.internalHistory.length;
+    return this.externalHistoryTotal + this.internalHistory.length;
+  }
+
+  get hasVisibleTransactions(): boolean {
+    return !!this.transactions.length;
   }
 
   get hasTransactions(): boolean {
-    return !!(this.transactions && this.transactions.length) || !!this.searchQuery;
+    return this.hasVisibleTransactions || !!this.searchQuery;
   }
 
   get queryOperationNames(): Array<Operation> {
@@ -151,7 +156,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   async reset(): Promise<void> {
     this.resetPage();
-    await this.resetExternalActivity();
+    await this.resetExternalHistory();
   }
 
   getFilteredHistory(history: Array<History>): Array<History> {
@@ -215,19 +220,21 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   private async syncAndUpdateHistory(): Promise<void> {
-    await this.clearSyncedAccountActivity({ address: this.account.address, assetAddress: this.assetAddress });
+    await this.clearSyncedAccountHistory({ address: this.account.address, assetAddress: this.assetAddress });
     await this.updateHistory();
   }
 
   /**
    * Update external & internal history
+   * @param next - if true, fetch next page, else previous
+   * @param withReset - reset current page number & clear external history
    */
   private async updateHistory(next = true, withReset = false): Promise<void> {
     await this.withLoading(async () => {
       if (withReset) {
         this.reset();
       }
-      await this.getExternalActivity({
+      await this.getExternalHistory({
         next,
         address: this.account.address,
         assetAddress: this.assetAddress,
@@ -238,7 +245,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
           assetsAddresses: this.queryAssetsAddresses,
         },
       });
-      await this.getAccountActivity();
+      await this.getAccountHistory();
     });
   }
 }

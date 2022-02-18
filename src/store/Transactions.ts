@@ -9,7 +9,7 @@ import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 import { api } from '../api';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
 import { historyElementsFilter } from '../services/subquery/queries/historyElements';
-import type { CursorPagination } from '../types/history';
+import type { CursorPagination, ExternalHistoryParams } from '../types/history';
 
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2 * 1000;
 
@@ -20,20 +20,20 @@ const types = flow(
     'ADD_ACTIVE_TRANSACTION',
     'REMOVE_ACTIVE_TRANSACTION',
     'SET_TRANSACTION_DETAILS_ID',
-    'GET_ACTIVITY',
-    'SET_EXTERNAL_ACTIVITY',
-    'SET_EXTERNAL_ACTIVITY_TOTAL',
-    'SET_EXTERNAL_ACTIVITY_PAGINATION',
+    'SET_HISTORY',
+    'SET_EXTERNAL_HISTORY',
+    'SET_EXTERNAL_HISTORY_TOTAL',
+    'SET_EXTERNAL_HISTORY_PAGINATION',
   ]),
   map((x) => [x, x]),
   fromPairs
 )([]);
 
 type TransactionsState = {
-  activity: AccountHistory<HistoryItem>;
-  externalActivity: AccountHistory<HistoryItem>;
-  externalActivityTotal: number;
-  externalActivityPagination: Nullable<CursorPagination>;
+  history: AccountHistory<HistoryItem>;
+  externalHistory: AccountHistory<HistoryItem>;
+  externalHistoryTotal: number;
+  externalHistoryPagination: Nullable<CursorPagination>;
   activeTransactionsIds: Array<string>;
   updateActiveTransactionsId: Nullable<NodeJS.Timeout>;
   selectedTransactionId: Nullable<string>;
@@ -41,10 +41,10 @@ type TransactionsState = {
 
 function initialState(): TransactionsState {
   return {
-    activity: {}, // history items what not synced with subquery
-    externalActivity: {},
-    externalActivityTotal: 0,
-    externalActivityPagination: null,
+    history: {}, // history items what not synced with subquery
+    externalHistory: {},
+    externalHistoryTotal: 0,
+    externalHistoryPagination: null,
     activeTransactionsIds: [],
     updateActiveTransactionsId: null,
     selectedTransactionId: null,
@@ -54,19 +54,19 @@ function initialState(): TransactionsState {
 const state = initialState();
 
 const getters = {
-  activity(state: TransactionsState): AccountHistory<HistoryItem> {
-    return state.activity;
+  history(state: TransactionsState): AccountHistory<HistoryItem> {
+    return state.history;
   },
-  externalActivity(state: TransactionsState): AccountHistory<HistoryItem> {
-    return state.externalActivity;
+  externalHistory(state: TransactionsState): AccountHistory<HistoryItem> {
+    return state.externalHistory;
   },
-  externalActivityTotal(state: TransactionsState): number {
-    return state.externalActivityTotal;
+  externalHistoryTotal(state: TransactionsState): number {
+    return state.externalHistoryTotal;
   },
   activeTransactions(state: TransactionsState): Array<HistoryItem> {
     return state.activeTransactionsIds.reduce((buffer: Array<HistoryItem>, id: string) => {
-      if (id in state.activity) {
-        buffer.push(state.activity[id]);
+      if (id in state.history) {
+        buffer.push(state.history[id]);
       }
       return buffer;
     }, []);
@@ -79,7 +79,7 @@ const getters = {
   selectedTransaction(state: TransactionsState): Nullable<HistoryItem> {
     if (!state.selectedTransactionId) return null;
 
-    return state.activity[state.selectedTransactionId] || state.externalActivity[state.selectedTransactionId];
+    return state.history[state.selectedTransactionId] || state.externalHistory[state.selectedTransactionId];
   },
 };
 
@@ -103,22 +103,22 @@ const mutations = {
     state.selectedTransactionId = id;
   },
 
-  [types.GET_ACTIVITY](state: TransactionsState, activity: AccountHistory<HistoryItem>) {
-    // increasing performance: Object.freeze - to remove vue reactivity from 'activity' attributes
-    state.activity = Object.freeze(activity);
+  [types.SET_HISTORY](state: TransactionsState, history: AccountHistory<HistoryItem>) {
+    // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes
+    state.history = Object.freeze(history);
   },
 
-  [types.SET_EXTERNAL_ACTIVITY](state: TransactionsState, activity: AccountHistory<HistoryItem>) {
-    // increasing performance: Object.freeze - to remove vue reactivity from 'activity' attributes
-    state.externalActivity = Object.freeze(activity);
+  [types.SET_EXTERNAL_HISTORY](state: TransactionsState, history: AccountHistory<HistoryItem>) {
+    // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes
+    state.externalHistory = Object.freeze(history);
   },
 
-  [types.SET_EXTERNAL_ACTIVITY_TOTAL](state: TransactionsState, count: number) {
-    state.externalActivityTotal = count;
+  [types.SET_EXTERNAL_HISTORY_TOTAL](state: TransactionsState, count: number) {
+    state.externalHistoryTotal = count;
   },
 
-  [types.SET_EXTERNAL_ACTIVITY_PAGINATION](state: TransactionsState, pageInfo: Nullable<CursorPagination>) {
-    state.externalActivityPagination = pageInfo;
+  [types.SET_EXTERNAL_HISTORY_PAGINATION](state: TransactionsState, pageInfo: Nullable<CursorPagination>) {
+    state.externalHistoryPagination = pageInfo;
   },
 };
 
@@ -134,7 +134,7 @@ const actions = {
     commit(types.RESET_ACTIVE_TRANSACTIONS);
     state.updateActiveTransactionsId = setInterval(() => {
       if (state.activeTransactionsIds.length) {
-        dispatch('getAccountActivity');
+        dispatch('getAccountHistory');
       }
     }, UPDATE_ACTIVE_TRANSACTIONS_INTERVAL);
   },
@@ -144,24 +144,24 @@ const actions = {
   getTransactionDetails({ commit }, id: string) {
     commit(types.SET_TRANSACTION_DETAILS_ID, id);
   },
-  getAccountActivity({ commit }) {
-    commit(types.GET_ACTIVITY, api.history);
+  getAccountHistory({ commit }) {
+    commit(types.SET_HISTORY, api.history);
   },
-  async clearAccountActivity({ dispatch }, assetAddress?: string) {
+  async clearAccountHistory({ dispatch }, assetAddress?: string) {
     api.clearHistory(assetAddress);
-    await dispatch('getAccountActivity');
+    await dispatch('getAccountHistory');
   },
-  resetExternalActivity({ commit }) {
-    commit(types.SET_EXTERNAL_ACTIVITY, {});
-    commit(types.SET_EXTERNAL_ACTIVITY_TOTAL, 0);
-    commit(types.SET_EXTERNAL_ACTIVITY_PAGINATION, null);
+  resetExternalHistory({ commit }) {
+    commit(types.SET_EXTERNAL_HISTORY, {});
+    commit(types.SET_EXTERNAL_HISTORY_TOTAL, 0);
+    commit(types.SET_EXTERNAL_HISTORY_PAGINATION, null);
   },
 
   /**
    * Clear history items from accountStorage, what exists in explorer
    * Getting only the IDs & timestamp of elements whose start time is greater than api.historySyncTimestamp
    */
-  async clearSyncedAccountActivity(
+  async clearSyncedAccountHistory(
     { dispatch, state },
     { address, assetAddress }: { address: string; assetAddress?: string }
   ) {
@@ -179,14 +179,14 @@ const actions = {
         for (const edge of edges) {
           const historyId = edge.node.id;
 
-          if (historyId in state.activity) {
+          if (historyId in state.history) {
             removeHistoryIds.push(historyId);
           }
         }
 
         if (removeHistoryIds.length) {
           api.removeHistory(...removeHistoryIds);
-          await dispatch('getAccountActivity');
+          await dispatch('getAccountHistory');
         }
       }
     } catch (error) {
@@ -197,15 +197,15 @@ const actions = {
   /**
    * Get history items from explorer, already filtered
    */
-  async getExternalActivity(
-    { commit, state: { externalActivityPagination: pagination, externalActivity, activity } },
+  async getExternalHistory(
+    { commit, state: { externalHistoryPagination: pagination, externalHistory, history } },
     {
       next = true,
       address = '',
       assetAddress = '',
       pageAmount = 8,
       query: { search = '', operationNames = [], assetsAddresses = [] } = {},
-    } = {}
+    }: ExternalHistoryParams = {}
   ): Promise<void> {
     if (pagination && ((next && !pagination.hasNextPage) || (!next && !pagination.hasPreviousPage))) return;
 
@@ -236,7 +236,7 @@ const actions = {
           const transaction = edge.node;
           const { id } = transaction;
 
-          if (!(id in externalActivity)) {
+          if (!(id in externalHistory)) {
             const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
 
             if (historyItem) {
@@ -244,7 +244,7 @@ const actions = {
             }
           }
 
-          if (id in activity) {
+          if (id in history) {
             removeHistoryIds.push(id);
           }
         }
@@ -254,9 +254,9 @@ const actions = {
         }
       }
 
-      commit(types.SET_EXTERNAL_ACTIVITY, { ...externalActivity, ...buffer });
-      commit(types.SET_EXTERNAL_ACTIVITY_TOTAL, totalCount);
-      commit(types.SET_EXTERNAL_ACTIVITY_PAGINATION, pageInfo);
+      commit(types.SET_EXTERNAL_HISTORY, { ...externalHistory, ...buffer });
+      commit(types.SET_EXTERNAL_HISTORY_TOTAL, totalCount);
+      commit(types.SET_EXTERNAL_HISTORY_PAGINATION, pageInfo);
     } catch (error) {
       console.error(error);
     }

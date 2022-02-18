@@ -6,7 +6,7 @@
     :show-action="!isXor"
     action-icon="basic-eye-24"
     action-tooltip="asset.remove"
-    :disabled-clean-history="!isCleanHistoryEnabled"
+    :disabled-clean-history="isCleanHistoryDisabled"
     @back="handleBack"
     @action="handleRemoveAsset"
     @cleanHistory="handleCleanHistory"
@@ -155,10 +155,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @Getter account!: Account;
   @Getter accountAssets!: Array<AccountAsset>;
   @Getter currentRouteParams!: any;
-  @Getter activity!: AccountHistory<HistoryItem>;
+  @Getter history!: AccountHistory<HistoryItem>;
   @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action clearAccountActivity!: (assetAddress?: string) => Promise<void>;
+  @Action clearAccountHistory!: (assetAddress?: string) => Promise<void>;
 
   wasBalanceDetailsClicked = false;
 
@@ -287,11 +287,11 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     return asset && asset.symbol === KnownSymbols.XOR;
   }
 
-  get isCleanHistoryEnabled(): boolean {
-    if (!this.asset) return false;
+  get isCleanHistoryDisabled(): boolean {
+    if (!this.asset) return true;
 
-    return Object.values(this.activity).some((item) =>
-      [item.assetAddress, item.asset2Address].includes(this.asset.address)
+    return Object.values(this.history).every(
+      (item) => ![item.assetAddress, item.asset2Address].includes(this.asset.address)
     );
   }
 
@@ -342,7 +342,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
   async handleCleanHistory(): Promise<void> {
     if (!this.asset) return;
-    await this.clearAccountActivity(this.asset.address);
+    await this.clearAccountHistory(this.asset.address);
   }
 }
 </script>

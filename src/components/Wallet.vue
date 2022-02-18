@@ -7,7 +7,7 @@
     action-icon="various-atom-24"
     action-tooltip="wallet.createToken"
     @action="handleCreateToken"
-    @cleanHistory="clearAccountActivity"
+    @cleanHistory="clearAccountHistory"
   >
     <wallet-account show-controls />
     <div class="wallet">
@@ -46,10 +46,10 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   @Getter currentRouteParams!: any;
   @Getter account!: Account;
-  @Getter activity!: AccountHistory<HistoryItem>;
+  @Getter history!: AccountHistory<HistoryItem>;
   @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action clearAccountActivity!: (assetAddress?: string) => Promise<void>;
+  @Action clearAccountHistory!: (assetAddress?: string) => Promise<void>;
 
   currentTab: WalletTabs = WalletTabs.Assets;
 
@@ -58,7 +58,7 @@ export default class Wallet extends Mixins(TranslationMixin) {
   }
 
   get isCleanHistoryDisabled(): boolean {
-    return !Object.keys(this.activity).length;
+    return !Object.keys(this.history).length;
   }
 
   handleChangeTab(value: WalletTabs): void {
