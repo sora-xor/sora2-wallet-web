@@ -15,7 +15,7 @@ const createStore = ({ permissions = MOCK_WALLET_PERMISSIONS, isNotXor = false }
     getters: {
       accountAssets: () => MOCK_ACCOUNT_ASSETS,
       currentRouteParams: () => ({ asset: MOCK_ACCOUNT_ASSETS[Number(isNotXor)] }),
-      activity: () => MOCK_HISTORY,
+      history: () => MOCK_HISTORY,
       fiatPriceAndApyObject: () => MOCK_FIAT_PRICE_AND_APY_OBJECT,
       account: () => MOCK_ACCOUNT,
       permissions: () => permissions,

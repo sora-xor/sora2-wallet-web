@@ -1,4 +1,3 @@
-import debounce from 'lodash/fp/debounce';
 import type Vue from 'vue';
 import type { Store } from 'vuex';
 
@@ -22,6 +21,7 @@ import TransactionMixin from './components/mixins/TransactionMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
 import LoadingMixin from './components/mixins/LoadingMixin';
 import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
+import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
@@ -29,23 +29,12 @@ import { storage, runtimeStorage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
+import { historyElementsFilter } from './services/subquery/queries/historyElements';
+import * as SUBQUERY_TYPES from './services/subquery/types';
 import * as WALLET_CONSTS from './consts';
 import * as WALLET_TYPES from './types/common';
 
 let store: Store<unknown>;
-let unsubscribeStoreFromStorage: VoidFunction;
-
-const subscribeStoreToStorageUpdates = (store) => {
-  if (typeof unsubscribeStoreFromStorage === 'function') {
-    unsubscribeStoreFromStorage();
-  }
-
-  const syncWithStorageHandler = debounce(100)(() => store.dispatch('syncWithStorage'));
-
-  window.addEventListener('storage', syncWithStorageHandler);
-
-  unsubscribeStoreFromStorage = () => window.removeEventListener('storage', syncWithStorageHandler);
-};
 
 const SoraWalletElements = {
   install(vue: typeof Vue, options: any): void {
@@ -98,7 +87,6 @@ async function initWallet({
     await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
     await store.dispatch('checkSigner');
     await store.dispatch('setWalletLoaded', true);
-    subscribeStoreToStorageUpdates(store);
   }
 }
 
@@ -121,6 +109,7 @@ const mixins = {
   TranslationMixin,
   LoadingMixin,
   ReferralRewardsMixin,
+  PaginationSearchMixin,
 };
 
 export {
@@ -136,6 +125,8 @@ export {
   WALLET_TYPES,
   components,
   mixins,
+  historyElementsFilter,
   SubqueryExplorerService,
+  SUBQUERY_TYPES,
 };
 export default SoraWalletElements;

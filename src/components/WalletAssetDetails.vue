@@ -114,9 +114,9 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { CodecString, History } from '@sora-substrate/util';
 import { KnownAssets, KnownSymbols, BalanceType } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
@@ -155,10 +155,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @Getter account!: Account;
   @Getter accountAssets!: Array<AccountAsset>;
   @Getter currentRouteParams!: any;
-  @Getter activity!: Array<History>;
+  @Getter history!: AccountHistory<HistoryItem>;
   @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAccountActivity!: AsyncVoidFn;
+  @Action clearAccountHistory!: (assetAddress?: string) => Promise<void>;
 
   wasBalanceDetailsClicked = false;
 
@@ -286,9 +286,11 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   get isCleanHistoryDisabled(): boolean {
-    return !this.asset
-      ? true
-      : !this.activity.filter((item) => [item.assetAddress, item.asset2Address].includes(this.asset.address)).length;
+    if (!this.asset) return true;
+
+    return Object.values(this.history).every(
+      (item) => ![item.assetAddress, item.asset2Address].includes(this.asset.address)
+    );
   }
 
   handleBack(): void {
@@ -336,10 +338,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     this.handleBack();
   }
 
-  handleCleanHistory(): void {
+  async handleCleanHistory(): Promise<void> {
     if (!this.asset) return;
-    api.clearHistory(this.asset.address);
-    this.getAccountActivity();
+    await this.clearAccountHistory(this.asset.address);
   }
 }
 </script>
