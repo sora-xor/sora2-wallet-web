@@ -30,7 +30,7 @@
         <div v-if="imageLoading" v-loading="imageLoading" />
         <div v-else-if="fileExceedsLimit" class="placeholder">
           <s-icon class="preview-image-create-nft__icon icon--error" name="basic-clear-X-24" size="64px" />
-          <span>{{ t('createToken.nft.image.placeholderFileLimit', { value: 100 }) }}</span>
+          <span>{{ t('createToken.nft.image.placeholderFileLimit', { value: FILE_SIZE_LIMIT }) }}</span>
           <s-button class="preview-image-create-nft__btn">{{ t('createToken.nft.source.limit') }}</s-button>
         </div>
         <div v-else-if="!tokenContentLink && !file" class="placeholder">
@@ -175,7 +175,7 @@ export default class CreateNftToken extends Mixins(
   readonly Step = Step;
   readonly XOR_SYMBOL = XOR.symbol;
   readonly EventBus = new Vue();
-  readonly FILE_SIZE_LIMIT = 100; // megabytes
+  readonly FILE_SIZE_LIMIT = 100; // in megabytes
 
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
