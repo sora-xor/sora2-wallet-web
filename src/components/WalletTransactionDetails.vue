@@ -38,13 +38,13 @@
         />
       </div>
       <transaction-hash-view
-        v-if="selectedTransaction.from && !isSetReferralOperation"
-        translation="transaction.from"
+        v-if="selectedTransaction.from && (!isSetReferralOperation || !isInvitedUser)"
+        :translation="`transaction.${isSetReferralOperation ? 'referral' : 'from'}`"
         :value="selectedTransaction.from"
         :type="HashType.Account"
       />
       <transaction-hash-view
-        v-if="selectedTransaction.to"
+        v-if="selectedTransaction.to && (!isSetReferralOperation || !isReferrer)"
         :translation="`transaction.${isSetReferralOperation ? 'referrer' : 'to'}`"
         :value="selectedTransaction.to"
         :type="HashType.Account"
@@ -67,6 +67,8 @@ import FormattedAmount from './FormattedAmount.vue';
 import TransactionHashView from './TransactionHashView.vue';
 import { RouteNames, WalletTabs, HashType } from '../consts';
 
+import type { Account } from '../types/common';
+
 @Component({
   components: {
     WalletBase,
@@ -80,6 +82,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
 
   @Getter currentRouteParams!: any;
   @Getter selectedTransaction!: History;
+  @Getter account!: Account;
   @Getter accountAssets!: Array<AccountAsset>;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getTransactionDetails!: (id: string) => Promise<void>;
@@ -146,6 +149,14 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
 
   get isSetReferralOperation(): boolean {
     return this.selectedTransaction.type === Operation.ReferralSetInvitedUser;
+  }
+
+  get isReferrer(): boolean {
+    return this.isSetReferralOperation && this.account.address === this.selectedTransaction.to;
+  }
+
+  get isInvitedUser(): boolean {
+    return this.isSetReferralOperation && this.account.address === this.selectedTransaction.from;
   }
 
   handleBack(): void {
