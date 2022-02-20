@@ -13,21 +13,40 @@
       />
       <p class="line">or</p>
       <s-button @click="nextStep" class="s-typography-button--large login-btn"> Import .JSON </s-button>
-      <s-button @click="nextStep" :disabled="disabled" class="s-typography-button--large login-btn" type="primary">
+      <s-button
+        @click="nextStep"
+        key="step1"
+        :disabled="disabled"
+        class="s-typography-button--large login-btn"
+        type="primary"
+      >
         {{ t('desktop.button.next') }}
       </s-button>
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
-      <div class="login__inputs">
+      <s-form class="login__inputs">
         <s-input
           :placeholder="t('desktop.accountName.placeholder')"
           v-model="accountName"
           :disabled="loading"
         ></s-input>
-        <s-input :placeholder="t('desktop.password.placeholder')" v-model="accountPassword" :disabled="loading">
+        <s-input
+          :type="inputType"
+          :placeholder="t('desktop.password.placeholder')"
+          v-model="accountPassword"
+          :disabled="loading"
+        >
+          <s-icon :name="iconPasswordStyle" class="eye-icon" size="18" slot="suffix" @click.native="toggleVisibility" />
         </s-input>
-      </div>
-      <s-button @click="importAccount" :disabled="disabled" class="s-typography-button--large login-btn" type="primary">
+      </s-form>
+
+      <s-button
+        @click="importAccount"
+        key="step2"
+        :disabled="disabled"
+        class="s-typography-button--large login-btn"
+        type="primary"
+      >
         {{ t('desktop.button.importAccount') }}
       </s-button>
     </template>
@@ -50,6 +69,8 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   accountName = '';
   accountPassword = '';
 
+  hiddenInput = true;
+
   get title(): string {
     if (this.step === LoginStep.Import) return this.t('desktop.heading.importTitle');
     if (this.step === LoginStep.ImportCredentials) return this.t('desktop.heading.accountDetailsTitle');
@@ -60,8 +81,21 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     return false;
   }
 
+  get inputType(): string {
+    return this.hiddenInput ? 'password' : 'text';
+  }
+
+  get iconPasswordStyle(): string {
+    return this.hiddenInput ? 'basic-eye-no-24' : 'basic-filterlist-24';
+  }
+
+  toggleVisibility(): void {
+    this.hiddenInput = !this.hiddenInput;
+  }
+
   handleMnemonicInput(char) {
     const letter = char.replace('.', '').replace('  ', ' ');
+    // letter = letter.replace(/[0-9]/, '');
 
     if (/^[a-z ]+$/.test(letter)) this.mnemonicPhrase = letter;
   }
@@ -80,6 +114,9 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 .login {
   &__inputs {
     margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 }
 .line {
@@ -102,5 +139,9 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
 .input-textarea {
   margin-top: 30px !important;
+}
+
+.eye-icon:hover {
+  cursor: pointer;
 }
 </style>

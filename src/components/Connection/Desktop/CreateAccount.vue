@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="login__title">{{ title }}</div>
-    <div class="login__step-count">Step {{ stepNumber }}/3</div>
+    <div class="login__step-count">Step {{ stepNumber }} / 3</div>
     <template v-if="step === LoginStep.SeedPhrase">
       <div class="seed-grid">
         <div v-for="column in 3" :key="column" class="seed-grid__column">
@@ -59,26 +59,51 @@
           </s-button>
         </div>
       </div>
-      <s-button key="step2" @click="skip" class="s-typography-button--large login-btn" :type="btnTypeConfirmStep">
+      <div class="login__error">
+        <transition name="fade">
+          <span v-if="showErrorMessage" class="login__error-text">{{ t('desktop.errorMnemonicText') }}</span>
+        </transition>
+      </div>
+      <s-button
+        key="step2"
+        @click="handleMnemonicCheck"
+        class="s-typography-button--large login-btn"
+        :type="btnTypeConfirmStep"
+      >
         {{ btnTextConfirmStep }}
       </s-button>
     </template>
     <template v-else-if="step === LoginStep.CreateCredentials">
       <div class="login__inputs">
-        <s-input
-          :placeholder="t('desktop.accountName.placeholder')"
-          v-model="accountName"
-          :disabled="loading"
-        ></s-input>
-        <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
-        <s-input :placeholder="t('desktop.password.placeholder')" v-model="accountPassword" :disabled="loading">
-        </s-input>
-        <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
-        <s-input
-          :placeholder="t('desktop.confirmPassword.placeholder')"
-          v-model="accountPasswordConfirm"
-          :disabled="loading"
-        ></s-input>
+        <s-form>
+          <s-input
+            :placeholder="t('desktop.accountName.placeholder')"
+            v-model="accountName"
+            :disabled="loading"
+          ></s-input>
+          <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+          <s-input
+            :type="inputType"
+            :placeholder="t('desktop.password.placeholder')"
+            v-model="accountPassword"
+            :disabled="loading"
+          >
+            <s-icon
+              :name="iconPasswordStyle"
+              size="18"
+              class="eye-icon"
+              slot="suffix"
+              @click.native="toggleVisibility"
+            />
+          </s-input>
+          <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
+          <s-input
+            type="password"
+            :placeholder="t('desktop.confirmPassword.placeholder')"
+            v-model="accountPasswordConfirm"
+            :disabled="loading"
+          ></s-input>
+        </s-form>
       </div>
       <s-button key="step3" @click="createAccount" class="s-typography-button--large login-btn" type="primary">{{
         t('desktop.button.createAccount')
@@ -88,6 +113,7 @@
 </template>
 
 <script lang="ts">
+import { isEqual } from 'lodash';
 import LoadingMixin from '@/components/mixins/LoadingMixin';
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
@@ -109,6 +135,9 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   seedPhraseToCompare: Array<string | undefined> = [];
   seedPhraseBoundToClass = new Map<string | undefined, string>();
 
+  showErrorMessage = false;
+  hiddenInput = true;
+
   get title(): string {
     if (this.step === LoginStep.SeedPhrase) return this.t('desktop.heading.seedPhraseTitle');
     if (this.step === LoginStep.ConfirmSeedPhrase) return this.t('desktop.heading.confirmSeedTitle');
@@ -128,6 +157,14 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
       return this.t('desktop.button.next');
     }
     return this.t('desktop.button.skip');
+  }
+
+  get inputType(): string {
+    return this.hiddenInput ? 'password' : 'text';
+  }
+
+  get iconPasswordStyle(): string {
+    return this.hiddenInput ? 'basic-eye-no-24' : 'basic-filterlist-24';
   }
 
   get btnTypeConfirmStep(): string {
@@ -168,6 +205,10 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     return [...this.seedPhrase].sort(() => Math.random() - 0.5);
   }
 
+  toggleVisibility(): void {
+    this.hiddenInput = !this.hiddenInput;
+  }
+
   chooseWord(e: Event): void {
     const clickedWord = e.currentTarget;
     const targetClass = (clickedWord as HTMLElement).classList[1];
@@ -183,6 +224,21 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     const wordToDiscard = this.seedPhraseBoundToClass.get(clickedWordText);
     this.$refs[`${wordToDiscard}`]?.[0].classList.remove('word--hidden');
     this.seedPhraseToCompare = this.seedPhraseToCompare.filter((word) => word !== clickedWordText);
+  }
+
+  discardAllWords(): void {
+    const wordsHtmlDOM = Array.from(new Array(this.PHRASE_LENGTH), (_, idx) => `word${idx + 1}`);
+    wordsHtmlDOM.map((value) => {
+      this.$refs[value]?.[0].classList.remove('word--hidden');
+    });
+    wordsHtmlDOM.map((value) => {
+      this.$refs[value]?.[0].classList.add('login__random-word--incorrect');
+    });
+    setTimeout(() => {
+      wordsHtmlDOM.map((value) => {
+        this.$refs[value]?.[0].classList.remove('login__random-word--incorrect');
+      });
+    }, 2000);
   }
 
   async handleCopy(): Promise<void> {
@@ -209,8 +265,26 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     this.$emit('stepChange', LoginStep.ConfirmSeedPhrase);
   }
 
-  skip(): void {
-    this.$emit('stepChange', LoginStep.CreateCredentials);
+  handleMnemonicCheck(): void {
+    if (this.seedPhraseToCompare.length < this.PHRASE_LENGTH) {
+      this.$emit('stepChange', LoginStep.CreateCredentials);
+      return;
+    }
+    const isSeedPhraseMatched = isEqual(this.seedPhraseToCompare, this.seedPhrase);
+    if (!isSeedPhraseMatched) {
+      this.showErrorMessage = true;
+      setTimeout(() => {
+        this.showErrorMessage = false;
+      }, 4500);
+      this.seedPhraseToCompare = [];
+      this.runReturnAnimation();
+    } else {
+      this.$emit('stepChange', LoginStep.CreateCredentials);
+    }
+  }
+
+  runReturnAnimation(): void {
+    this.discardAllWords();
   }
 
   createAccount(): void {
@@ -253,6 +327,14 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     font-weight: 300;
   }
 
+  &__error {
+    height: 20px;
+    margin-bottom: 6px;
+    &-text {
+      color: var(--s-color-status-error);
+    }
+  }
+
   &__copy-seed {
     margin: 8px 0 28px 0 !important;
     height: 28px !important;
@@ -292,8 +374,8 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
       font-weight: 400 !important;
     }
 
-    &--hidden {
-      visibility: hidden !important;
+    &--incorrect {
+      @include shake;
     }
   }
 
@@ -318,6 +400,10 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     }
   }
 
+  .eye-icon:hover {
+    cursor: pointer;
+  }
+
   .delimiter {
     margin: 16px 0 24px 0;
     width: 100%;
@@ -328,5 +414,16 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
 
 .word--hidden {
   visibility: hidden;
+}
+</style>
+
+<style lang="scss" scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 1s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

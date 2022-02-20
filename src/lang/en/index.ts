@@ -321,5 +321,6 @@ export default {
     seedAdviceText:
       'This is a secret seed of your account. Make sure to store it on a non-digital carrier, for example - paper',
     confirmSeedText: 'Confirm the seed phrase by clicking words in the correct order',
+    errorMnemonicText: 'Incorrect seed phrase order',
   },
 };

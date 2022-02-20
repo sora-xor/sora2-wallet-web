@@ -17,7 +17,7 @@
 }
 
 @mixin custom-tabs {
-  $tabs-class: ".el-tabs";
+  $tabs-class: '.el-tabs';
 
   .s-tabs {
     &#{$tabs-class} {
@@ -48,14 +48,14 @@
   }
 }
 
-@mixin hint-text ($lineHeight: var(--s-line-height-medium)) {
+@mixin hint-text($lineHeight: var(--s-line-height-medium)) {
   color: var(--s-color-base-content-secondary); // TODO: check primary
   font-size: var(--s-font-size-mini);
   font-weight: 300;
   line-height: $lineHeight;
 }
 
-@mixin switch-block () {
+@mixin switch-block() {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -70,7 +70,7 @@
   }
 }
 
-@mixin svg-icon ($url: '', $width: var(--s-icon-font-size-mini), $height: $width) {
+@mixin svg-icon($url: '', $width: var(--s-icon-font-size-mini), $height: $width) {
   display: block;
   width: $width;
   height: $height;
@@ -94,7 +94,31 @@
   }
 }
 
-@mixin select-icon ($containerClass) {
+@mixin shake {
+  animation: shake 0.5s 1;
+  @keyframes shake {
+    from {
+      transform: translate(-2px);
+    }
+    20% {
+      transform: translate(4px);
+    }
+    40% {
+      transform: translate(-2px);
+    }
+    60% {
+      transform: translate(4px);
+    }
+    80% {
+      transform: translate(-2px);
+    }
+    to {
+      transform: translate(0px);
+    }
+  }
+}
+
+@mixin select-icon($containerClass) {
   .#{$containerClass} .s-select .el-select {
     .el-input__icon {
       margin-right: 10px;
@@ -102,7 +126,7 @@
     i.el-icon-arrow-up:before {
       position: relative;
       top: 5px;
-      content: "\e9e4"; // TODO: change it asap
+      content: '\e9e4'; // TODO: change it asap
       color: var(--s-color-base-content-primary);
       font-size: var(--s-icon-font-size-medium);
     }
@@ -115,7 +139,7 @@
   }
 }
 
-@mixin scrollbar ($marginOffset: 0, $verticalRight: 2px) {
+@mixin scrollbar($marginOffset: 0, $verticalRight: 2px) {
   &.el-scrollbar {
     margin-left: calc(#{$marginOffset} * -1);
     margin-right: calc(#{$marginOffset} * -1);
@@ -124,7 +148,8 @@
       overflow-x: hidden;
       margin-bottom: 0px !important; // to disable element-ui negative margin
     }
-    .el-scrollbar__wrap, .el-scrollbar__view {
+    .el-scrollbar__wrap,
+    .el-scrollbar__view {
       display: flex;
       flex: 1;
       flex-flow: column nowrap;
@@ -141,7 +166,7 @@
   }
 }
 
-@mixin formatted-amount-tooltip () {
+@mixin formatted-amount-tooltip() {
   $padding-left: 8px;
   $padding-top: 4px;
   $border-width: 1px;
@@ -153,9 +178,10 @@
   text-overflow: ellipsis;
 
   &.formatted-amount--value-wider {
-    &:active, &:hover {
+    &:active,
+    &:hover {
       overflow: visible;
-  
+
       & > span {
         display: inline-table;
         position: absolute;
@@ -172,15 +198,14 @@
   }
 }
 
-@mixin fadeHeight ($max-height: 200px, $seconds: .3s) {
+@mixin fadeHeight($max-height: 200px, $seconds: 0.3s) {
   .fadeHeight-enter-active,
   .fadeHeight-leave-active {
     transition: all $seconds;
     max-height: $max-height;
   }
   .fadeHeight-enter,
-  .fadeHeight-leave-to
-  {
+  .fadeHeight-leave-to {
     opacity: 0;
     max-height: 0px;
   }
