@@ -51,7 +51,7 @@
               <s-icon name="finance-send-24" size="28" />
             </s-button>
             <s-button
-              v-if="permissions.swapAssets"
+              v-if="permissions.swapAssets && asset.decimals"
               class="wallet-assets__button swap"
               type="action"
               size="small"
@@ -103,6 +103,7 @@ import LoadingMixin from './mixins/LoadingMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import { api } from '../api';
 import { RouteNames, HiddenValue } from '../consts';
 import { getAssetIconStyles, formatAddress } from '../util';
 import type { WalletPermissions } from '../consts';
@@ -153,8 +154,8 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
-  nftIconClass(asset): string {
-    return asset.decimals === 0 ? 'nft-asset' : '';
+  nftIconClass(asset: AccountAsset): string {
+    return api.assets.isNft(asset) ? 'nft-asset' : '';
   }
 
   getFormattedAddress(asset: AccountAsset): string {
