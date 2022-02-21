@@ -48,6 +48,15 @@
         v-model="tokenName"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
+      <s-input
+        class="input-textarea"
+        type="textarea"
+        :placeholder="t('createToken.nft.description.placeholder')"
+        :disabled="loading"
+        :maxlength="255"
+        v-model="tokenDescription"
+        @keypress.native="handleTextAreaInput($event)"
+      />
       <s-float-input
         has-locale-string
         :placeholder="t('createToken.nft.supply.placeholder')"
@@ -58,15 +67,6 @@
         v-model="tokenSupply"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.nft.supply.desc') }}</p>
-      <s-input
-        class="input-textarea"
-        type="textarea"
-        :placeholder="t('createToken.nft.description.placeholder')"
-        :disabled="loading"
-        :maxlength="255"
-        v-model="tokenDescription"
-        @keypress.native="handleTextAreaInput($event)"
-      />
       <div class="wallet-settings-create-token_supply-block">
         <s-switch v-model="extensibleSupply" :disabled="loading" />
         <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
@@ -74,7 +74,7 @@
       <p class="wallet-settings-create-token_desc">{{ t('createToken.extensibleSupply.desc') }}</p>
       <div class="delimiter"></div>
       <div class="wallet-settings-create-token_divisible-block">
-        <s-switch v-model="divisible" :disabled="loading" />
+        <s-switch v-model="divisible" :disabled="loading" @change="handleChangeDivisible" />
         <span>{{ t('createToken.divisible.placeholder') }}</span>
       </div>
       <p class="wallet-settings-create-token_desc">{{ t('createToken.divisible.desc') }}</p>
@@ -164,7 +164,6 @@ export default class CreateNftToken extends Mixins(
   readonly tokenSymbolMask = 'AAAAAAA';
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } };
   readonly maxTotalSupply = MaxTotalSupply.substring(0, MaxTotalSupply.indexOf('.'));
-  readonly decimals = 0;
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
   readonly Step = Step;
   readonly XOR_SYMBOL = XOR.symbol;
@@ -190,6 +189,14 @@ export default class CreateNftToken extends Mixins(
   file: Nullable<File> = null;
   extensibleSupply = false;
   divisible = false;
+
+  private calcDecimals(divisible: boolean): number {
+    return divisible ? FPNumber.DEFAULT_PRECISION : 0;
+  }
+
+  get decimals(): number {
+    return this.calcDecimals(this.divisible);
+  }
 
   get isCreateDisabled(): boolean {
     return (
@@ -222,6 +229,13 @@ export default class CreateNftToken extends Mixins(
     this.badSource = false;
     this.imageLoading = false;
     this.tokenContentLink = '';
+  }
+
+  handleChangeDivisible(value: boolean): void {
+    if (!value && this.tokenSupply) {
+      const decimals = this.calcDecimals(value);
+      this.tokenSupply = this.getCorrectSupply(this.tokenSupply, decimals);
+    }
   }
 
   handleInputLinkChange(link: string): void {
