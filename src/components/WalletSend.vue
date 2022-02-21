@@ -29,6 +29,7 @@
           size="medium"
           has-locale-string
           :delimiters="delimiters"
+          :decimals="asset.decimals"
           :max="getMax((asset || {}).address)"
         >
           <div class="wallet-send-amount" slot="top">
