@@ -310,11 +310,16 @@ export default class CreateNftToken extends Mixins(
   }
 
   async registerNftAsset(): Promise<void> {
-    return api.assets.register(this.tokenSymbol, this.tokenName.trim(), this.tokenSupply, undefined, {
-      isNft: true,
-      content: this.tokenContentIpfsParsed,
-      description: this.tokenDescription,
-    });
+    const extensibleSupply = false; // TODO: need to add these fields to UI
+    const nonDivisible = true;
+    return api.assets.register(
+      this.tokenSymbol,
+      this.tokenName.trim(),
+      this.tokenSupply,
+      extensibleSupply,
+      nonDivisible,
+      { content: this.tokenContentIpfsParsed, description: this.tokenDescription.trim() }
+    );
   }
 
   onCreate(): void {

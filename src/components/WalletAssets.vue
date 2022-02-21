@@ -51,7 +51,7 @@
               <s-icon name="finance-send-24" size="28" />
             </s-button>
             <s-button
-              v-if="permissions.swapAssets"
+              v-if="permissions.swapAssets && asset.decimals"
               class="wallet-assets__button swap"
               type="action"
               size="small"
@@ -154,7 +154,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
-  nftIconClass(asset): string {
+  nftIconClass(asset: AccountAsset): string {
     return api.assets.isNft(asset) ? 'nft-asset' : '';
   }
 

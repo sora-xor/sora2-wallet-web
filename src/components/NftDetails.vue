@@ -11,7 +11,7 @@
           t('createToken.nft.image.placeholderBadSourceAddition')
         }}</span>
       </div>
-      <img v-else class="preview-image-confirm-nft__content" :src="contentLink" />
+      <img v-else class="preview-image-confirm-nft__content" :src="image" />
     </div>
     <div class="nft-info">
       <div class="nft-info__header">
@@ -45,6 +45,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   private nftDetailsClicked = false;
   badLink = false;
   imageLoading = true;
+  image = '';
 
   get nftDetailsSectionClasses(): Array<string> {
     const cssClasses: Array<string> = ['nft-info__header--clickable'];
@@ -54,10 +55,14 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     return cssClasses;
   }
 
-  async checkImageAvailability(): Promise<void> {
-    if (!this.contentLink) return;
+  private async checkImageAvailability(): Promise<void> {
+    if (!this.contentLink) {
+      return;
+    }
     const response = await fetch(this.contentLink);
     const buffer = await response.blob();
+    const urlCreator = window.URL || window.webkitURL;
+    this.image = urlCreator.createObjectURL(buffer);
     this.imageLoading = false;
     this.badLink = !buffer.type.startsWith('image/');
   }
@@ -67,11 +72,8 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     this.$emit('click-details');
   }
 
-  beforeUpdate(): void {
-    this.checkImageAvailability();
-  }
-
-  mounted(): void {
+  async mounted(): Promise<void> {
+    await this.$nextTick();
     this.checkImageAvailability();
   }
 }
