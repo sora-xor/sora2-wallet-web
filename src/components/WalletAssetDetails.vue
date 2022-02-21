@@ -211,6 +211,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
   get operations(): Array<Operation> {
     const list: Array<Operation> = [];
+    const divisible = !!this.asset.decimals;
 
     if (this.permissions.sendAssets) {
       list.push({ type: Operations.Send, icon: 'finance-send-24' });
@@ -218,13 +219,13 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     if (this.permissions.copyAssets) {
       list.push({ type: Operations.Receive, icon: 'basic-receive-24' });
     }
-    if (this.permissions.swapAssets && !this.isNft) {
+    if (this.permissions.swapAssets && divisible) {
       list.push({ type: Operations.Swap, icon: 'arrows-swap-24' });
     }
-    if (this.permissions.addLiquidity && !this.isNft) {
+    if (this.permissions.addLiquidity && divisible) {
       list.push({ type: Operations.Liquidity, icon: 'basic-drop-24' });
     }
-    if (this.permissions.bridgeAssets && !this.isNft) {
+    if (this.permissions.bridgeAssets && divisible) {
       list.push({ type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' });
     }
 
