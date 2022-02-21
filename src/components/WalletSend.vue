@@ -60,7 +60,7 @@
               {{ t('walletSend.max') }}
             </s-button>
             <div class="asset-box">
-              <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+              <i class="asset-logo" :class="nftIconClass" :style="getAssetIconStyles(asset.address)" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
@@ -93,7 +93,7 @@
           <div class="confirm-asset s-flex">
             <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
             <div class="confirm-asset-value s-flex">
-              <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+              <i class="asset-logo" :class="nftIconClass" :style="getAssetIconStyles(asset.address)" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
@@ -164,6 +164,10 @@ export default class WalletSend extends Mixins(
   amount = '';
   showWarningFeeNotification = false;
   showAdditionalInfo = true;
+
+  get nftIconClass(): string {
+    return api.assets.isNft(this.asset) ? 'nft-asset' : '';
+  }
 
   get fee(): FPNumber {
     return this.getFPNumberFromCodec(this.networkFees.Transfer);
@@ -362,6 +366,7 @@ export default class WalletSend extends Mixins(
 
 <style scoped lang="scss">
 @import '../styles/icons';
+
 $logo-size: var(--s-size-mini);
 // TODO: fix typography issues here
 .wallet-send {
@@ -392,7 +397,8 @@ $logo-size: var(--s-size-mini);
       padding: $basic-spacing-mini #{$basic-spacing-extra-small};
     }
     &-logo {
-      @include asset-logo-styles(var(--s-size-mini));
+      $nft-font-size: 8px;
+      @include asset-logo-styles(var(--s-size-mini), $nft-font-size);
       margin-right: var(--s-basic-spacing);
     }
     &-max {

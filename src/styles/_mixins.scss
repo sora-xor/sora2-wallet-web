@@ -4,7 +4,7 @@
   }
 }
 
-@mixin asset-logo-styles($size: var(--s-size-medium)) {
+@mixin asset-logo-styles($size: var(--s-size-medium), $nft-font-size: var(--s-font-size-small)) {
   $token-background-color: var(--s-color-base-on-accent);
   height: $size;
   width: $size;
@@ -14,6 +14,22 @@
   background-repeat: no-repeat;
   background-position: 50%;
   border-radius: 50%;
+
+  &.nft-asset {
+    text-align: center;
+    background-image: none;
+    background-color: var(--s-color-base-on-accent);
+    position: relative;
+    font-style: unset;
+    &::before {
+      display: block;
+      content: 'NFT';
+      font-weight: 800;
+      font-size: $nft-font-size;
+      line-height: $size;
+      color: var(--s-color-base-content-tertiary);
+    }
+  }
 }
 
 @mixin custom-tabs {

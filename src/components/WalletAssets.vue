@@ -372,20 +372,4 @@ $wallet-assets-count: 5;
     }
   }
 }
-
-.nft-asset {
-  background-image: none !important;
-  background-color: #f4f0f1 !important;
-  position: relative;
-  font-style: unset;
-
-  &::before {
-    content: 'NFT';
-    position: absolute;
-    font-weight: 800;
-    top: 28%;
-    left: 14%;
-    color: var(--s-color-base-content-tertiary);
-  }
-}
 </style>
