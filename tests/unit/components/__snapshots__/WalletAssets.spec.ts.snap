@@ -43,7 +43,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
         class="wallet-assets-item s-flex"
       >
         <i
-          class="asset-logo"
+          class="asset-logo asset-default s-icon-notifications-info-24"
         />
          
         <div
@@ -167,7 +167,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
         class="wallet-assets-item s-flex"
       >
         <i
-          class="asset-logo"
+          class="asset-logo asset-default s-icon-notifications-info-24"
         />
          
         <div
@@ -291,7 +291,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
         class="wallet-assets-item s-flex"
       >
         <i
-          class="asset-logo"
+          class="asset-logo asset-default s-icon-notifications-info-24"
         />
          
         <div

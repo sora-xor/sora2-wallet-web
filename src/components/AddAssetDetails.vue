@@ -3,7 +3,7 @@
     <div class="add-asset-details">
       <s-card shadow="always" size="small" border-radius="mini" pressed>
         <div class="add-asset-details_asset" v-if="asset">
-          <i class="asset-logo" :style="assetIconStyles" />
+          <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
           <div class="asset-description s-flex">
             <div class="asset-description_symbol">{{ asset.symbol }}</div>
             <div class="asset-description_info">
@@ -48,7 +48,7 @@ import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 import WalletBase from './WalletBase.vue';
 import { RouteNames } from '../consts';
-import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
+import { copyToClipboard, formatAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
 import { api } from '../api';
 import type { WhitelistIdsBySymbol } from '../types/common';
 
@@ -121,7 +121,11 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     return this.asset.name || this.asset.symbol;
   }
 
-  get assetIconStyles(): object {
+  get iconClasses(): Array<string> {
+    return getAssetIconClasses(this.asset);
+  }
+
+  get iconStyles(): object {
     if (!this.asset) {
       return {};
     }
@@ -169,8 +173,6 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
 </script>
 
 <style scoped lang="scss">
-@import '../styles/icons';
-
 .add-asset-details {
   & > *:not(:last-child) {
     margin-bottom: #{$basic-spacing-medium};

@@ -274,7 +274,7 @@ export const historyElementsFilter = ({
 
   // operation names criteria
   if (operationNames.length) {
-    queryFilters.push(...createOperationsCriteria(operations));
+    queryFilters.push(...createOperationsCriteria(operationNames));
   }
 
   // symbol criteria

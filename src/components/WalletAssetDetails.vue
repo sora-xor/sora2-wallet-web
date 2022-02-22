@@ -23,7 +23,7 @@
           @click-details="handleClickNftDetails"
         />
         <template v-else>
-          <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+          <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
           <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
             <formatted-amount
               value-can-be-hidden
@@ -128,7 +128,7 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import { RouteNames } from '../consts';
-import { copyToClipboard, delay, getAssetIconStyles, shortenValue } from '../util';
+import { copyToClipboard, delay, getAssetIconStyles, shortenValue, getAssetIconClasses } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 import { Operations, Account } from '../types/common';
 import type { WalletPermissions } from '../consts';
@@ -211,6 +211,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
   get operations(): Array<Operation> {
     const list: Array<Operation> = [];
+    const divisible = !!this.asset.decimals;
 
     if (this.permissions.sendAssets) {
       list.push({ type: Operations.Send, icon: 'finance-send-24' });
@@ -218,13 +219,13 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     if (this.permissions.copyAssets) {
       list.push({ type: Operations.Receive, icon: 'basic-receive-24' });
     }
-    if (this.permissions.swapAssets && !this.isNft) {
+    if (this.permissions.swapAssets && divisible) {
       list.push({ type: Operations.Swap, icon: 'arrows-swap-24' });
     }
-    if (this.permissions.addLiquidity && !this.isNft) {
+    if (this.permissions.addLiquidity && divisible) {
       list.push({ type: Operations.Liquidity, icon: 'basic-drop-24' });
     }
-    if (this.permissions.bridgeAssets && !this.isNft) {
+    if (this.permissions.bridgeAssets && divisible) {
       list.push({ type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' });
     }
 
@@ -293,6 +294,17 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     );
   }
 
+  get iconClasses(): Array<string> {
+    return getAssetIconClasses(this.asset);
+  }
+
+  get iconStyles(): object {
+    if (!this.asset) {
+      return {};
+    }
+    return getAssetIconStyles(this.asset.address);
+  }
+
   handleBack(): void {
     this.navigate({ name: RouteNames.Wallet });
   }
@@ -327,8 +339,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     this.wasBalanceDetailsClicked = !this.wasBalanceDetailsClicked;
   }
 
-  getAssetIconStyles = getAssetIconStyles;
-
   getBalance(asset: AccountAsset, type: BalanceType): string {
     return `${this.formatCodecNumber(asset.balance[type], asset.decimals)}`;
   }
@@ -346,11 +356,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 </script>
 
 <style scoped lang="scss">
-@import '../styles/icons';
-
 .asset-details {
   padding: 0 !important;
   margin-bottom: 0;
+  border-radius: 0;
   &.s-card.neumorphic {
     padding-top: 0;
     padding-bottom: 0;
