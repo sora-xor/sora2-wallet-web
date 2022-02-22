@@ -258,6 +258,7 @@ export default class CreateNftToken extends Mixins(
   hideLimit(): void {
     this.contentSrcLink = '';
     this.fileExceedsLimit = false;
+  }
 
   handleChangeDivisible(value: boolean): void {
     if (!value && this.tokenSupply) {
