@@ -71,8 +71,13 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     try {
       const response = await fetch(this.contentLink);
       const buffer = await response.blob();
+
+      if (!buffer.type.startsWith('image/')) {
+        this.isNotImage = true;
+        this.badLink = true;
+        return;
+      }
       this.imageLoading = false;
-      this.isNotImage = !buffer.type.startsWith('image/');
       this.image = this.urlCreator.createObjectURL(buffer);
 
       // Remove fake error trigger below:
@@ -91,6 +96,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   }
 
   handleRefresh(): void {
+    this.badLink = false;
     this.imageLoading = true;
     this.checkImageAvailability();
   }
