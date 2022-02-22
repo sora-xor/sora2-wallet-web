@@ -23,7 +23,7 @@
           @click-details="handleClickNftDetails"
         />
         <template v-else>
-          <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+          <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
           <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
             <formatted-amount
               value-can-be-hidden
@@ -128,7 +128,7 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import { RouteNames } from '../consts';
-import { copyToClipboard, delay, getAssetIconStyles, shortenValue } from '../util';
+import { copyToClipboard, delay, getAssetIconStyles, shortenValue, getAssetIconClasses } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 import { Operations, Account } from '../types/common';
 import type { WalletPermissions } from '../consts';
@@ -294,6 +294,17 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     );
   }
 
+  get iconClasses(): Array<string> {
+    return getAssetIconClasses(this.asset);
+  }
+
+  get iconStyles(): object {
+    if (!this.asset) {
+      return {};
+    }
+    return getAssetIconStyles(this.asset.address);
+  }
+
   handleBack(): void {
     this.navigate({ name: RouteNames.Wallet });
   }
@@ -328,8 +339,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     this.wasBalanceDetailsClicked = !this.wasBalanceDetailsClicked;
   }
 
-  getAssetIconStyles = getAssetIconStyles;
-
   getBalance(asset: AccountAsset, type: BalanceType): string {
     return `${this.formatCodecNumber(asset.balance[type], asset.decimals)}`;
   }
@@ -347,8 +356,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 </script>
 
 <style scoped lang="scss">
-@import '../styles/icons';
-
 .asset-details {
   padding: 0 !important;
   margin-bottom: 0;

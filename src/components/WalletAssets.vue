@@ -11,7 +11,7 @@
       <div class="wallet-assets-container">
         <template v-for="(asset, index) in formattedAccountAssets">
           <div class="wallet-assets-item s-flex" :key="asset.address">
-            <i class="asset-logo" :class="nftIconClass(asset)" :style="getAssetIconStyles(asset.address)" />
+            <i class="asset-logo" :class="getAssetIconClasses(asset)" :style="getAssetIconStyles(asset.address)" />
             <div class="asset s-flex">
               <formatted-amount-with-fiat-value
                 value-can-be-hidden
@@ -103,9 +103,8 @@ import LoadingMixin from './mixins/LoadingMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
-import { api } from '../api';
 import { RouteNames, HiddenValue } from '../consts';
-import { getAssetIconStyles, formatAddress } from '../util';
+import { getAssetIconStyles, formatAddress, getAssetIconClasses } from '../util';
 import type { WalletPermissions } from '../consts';
 
 @Component({
@@ -154,15 +153,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
-  nftIconClass(asset: AccountAsset): string {
-    return api.assets.isNft(asset) ? 'nft-asset' : '';
-  }
-
   getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
   }
 
   getAssetIconStyles = getAssetIconStyles;
+  getAssetIconClasses = getAssetIconClasses;
 
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
@@ -258,8 +254,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 </style>
 
 <style scoped lang="scss">
-@import '../styles/icons';
-
 $wallet-assets-class: '.wallet-assets';
 $wallet-assets-count: 5;
 
