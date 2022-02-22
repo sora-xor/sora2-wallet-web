@@ -30,7 +30,7 @@ import type { Asset } from '@sora-substrate/util/build/assets/types';
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
 
-  get iconStyles() {
+  get iconStyles(): object {
     return getAssetIconStyles(this.asset.address);
   }
 

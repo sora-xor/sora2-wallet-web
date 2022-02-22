@@ -41,7 +41,6 @@ import TranslationMixin from './mixins/TranslationMixin';
 import WalletBase from './WalletBase.vue';
 import AssetListItem from './AssetListItem.vue';
 import { RouteNames } from '../consts';
-import { copyToClipboard, formatAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
 import { api } from '../api';
 import type { WhitelistIdsBySymbol } from '../types/common';
 
@@ -106,52 +105,6 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
       return this.t('addAsset.scam');
     }
     return this.t('addAsset.unknown');
-  }
-
-  get formattedName(): string {
-    if (!this.asset) {
-      return '';
-    }
-    return this.asset.name || this.asset.symbol;
-  }
-
-  get iconClasses(): Array<string> {
-    return getAssetIconClasses(this.asset);
-  }
-
-  get iconStyles(): object {
-    if (!this.asset) {
-      return {};
-    }
-    return getAssetIconStyles(this.asset.address);
-  }
-
-  get formattedAddress(): string {
-    if (!this.asset) {
-      return '';
-    }
-    return formatAddress(this.asset.address, 10);
-  }
-
-  async handleCopy(event: Event): Promise<void> {
-    event.stopImmediatePropagation();
-    if (!this.asset) {
-      return;
-    }
-    try {
-      await copyToClipboard(this.asset.address);
-      this.$notify({
-        message: this.t('assets.successCopy', { symbol: this.asset.symbol }),
-        type: 'success',
-        title: '',
-      });
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: '',
-      });
-    }
   }
 
   handleBack(): void {
