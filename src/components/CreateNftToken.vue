@@ -65,6 +65,15 @@
         v-model="tokenName"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
+      <s-input
+        class="input-textarea"
+        type="textarea"
+        :placeholder="t('createToken.nft.description.placeholder')"
+        :disabled="loading"
+        :maxlength="200"
+        v-model="tokenDescription"
+        @keypress.native="handleTextAreaInput($event)"
+      />
       <s-float-input
         has-locale-string
         :placeholder="t('createToken.nft.supply.placeholder')"
@@ -75,15 +84,17 @@
         v-model="tokenSupply"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.nft.supply.desc') }}</p>
-      <s-input
-        class="input-textarea"
-        type="textarea"
-        :placeholder="t('createToken.nft.description.placeholder')"
-        :disabled="loading"
-        :maxlength="200"
-        v-model="tokenDescription"
-        @keypress.native="handleTextAreaInput($event)"
-      />
+      <div class="wallet-settings-create-token_supply-block">
+        <s-switch v-model="extensibleSupply" :disabled="loading" />
+        <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
+      </div>
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.extensibleSupply.desc') }}</p>
+      <div class="delimiter"></div>
+      <div class="wallet-settings-create-token_divisible-block">
+        <s-switch v-model="divisible" :disabled="loading" @change="handleChangeDivisible" />
+        <span>{{ t('createToken.divisible.placeholder') }}</span>
+      </div>
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.divisible.desc') }}</p>
       <s-button
         class="wallet-settings-create-token_action s-typography-button--large"
         type="primary"
@@ -170,7 +181,6 @@ export default class CreateNftToken extends Mixins(
   readonly tokenSymbolMask = 'AAAAAAA';
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } };
   readonly maxTotalSupply = MaxTotalSupply.substring(0, MaxTotalSupply.indexOf('.'));
-  readonly decimals = 0;
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
   readonly Step = Step;
   readonly XOR_SYMBOL = XOR.symbol;
@@ -195,6 +205,16 @@ export default class CreateNftToken extends Mixins(
   tokenSupply = '';
   showFee = true;
   file: Nullable<File> = null;
+  extensibleSupply = false;
+  divisible = false;
+
+  private calcDecimals(divisible: boolean): number {
+    return divisible ? FPNumber.DEFAULT_PRECISION : 0;
+  }
+
+  get decimals(): number {
+    return this.calcDecimals(this.divisible);
+  }
 
   get isCreateDisabled(): boolean {
     return (
@@ -238,6 +258,13 @@ export default class CreateNftToken extends Mixins(
   hideLimit(): void {
     this.contentSrcLink = '';
     this.fileExceedsLimit = false;
+  }
+
+  handleChangeDivisible(value: boolean): void {
+    if (!value && this.tokenSupply) {
+      const decimals = this.calcDecimals(value);
+      this.tokenSupply = this.getCorrectSupply(this.tokenSupply, decimals);
+    }
   }
 
   handleInputLinkChange(link: string): void {
@@ -310,14 +337,12 @@ export default class CreateNftToken extends Mixins(
   }
 
   async registerNftAsset(): Promise<void> {
-    const extensibleSupply = false; // TODO: need to add these fields to UI
-    const nonDivisible = true;
     return api.assets.register(
       this.tokenSymbol,
       this.tokenName.trim(),
       this.tokenSupply,
-      extensibleSupply,
-      nonDivisible,
+      this.extensibleSupply,
+      !this.divisible,
       { content: this.tokenContentIpfsParsed, description: this.tokenDescription.trim() }
     );
   }
@@ -401,6 +426,12 @@ export default class CreateNftToken extends Mixins(
     margin-top: #{$basic-spacing-medium};
     width: 100%;
   }
+
+  &_supply-block,
+  &_divisible-block {
+    @include switch-block;
+    padding: 0 #{$basic-spacing-small};
+  }
 }
 
 .s-textarea {
@@ -482,5 +513,11 @@ export default class CreateNftToken extends Mixins(
     text-align: center;
     padding: 0 50px;
   }
+}
+
+.delimiter {
+  background-color: var(--s-color-base-border-secondary);
+  margin-bottom: calc(var(--s-size-small) / 2);
+  height: 1px;
 }
 </style>

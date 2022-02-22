@@ -248,6 +248,10 @@ export default {
       placeholder: 'Extensible supply',
       desc: 'Ability to mint more tokens.',
     },
+    divisible: {
+      placeholder: 'Divisible',
+      desc: 'Ability of NFT to divide into fractional parts. Liquidity provisioning only works with divisible assets',
+    },
   },
   transaction: {
     title: 'Transaction details',
