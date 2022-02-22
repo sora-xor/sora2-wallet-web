@@ -50,6 +50,6 @@ export default class NumberFormatterMixin extends Vue {
       return fpnMaxTokenSupply.toString();
     }
 
-    return tokenSupply;
+    return fpnTokenSupply.toString();
   }
 }
