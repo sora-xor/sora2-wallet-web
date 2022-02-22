@@ -161,6 +161,7 @@ export default {
     download: 'Download QR Code',
     upload: 'Upload QR Code',
     recieve: 'Recieve by QR Code',
+    invalid: 'Invalid QR Code',
   },
   addAsset: {
     title: '@:addAssetText',

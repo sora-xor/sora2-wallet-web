@@ -29,6 +29,10 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
     this.input.click();
   }
 
+  resetFileInput() {
+    this.input.value = '';
+  }
+
   async handleFileInput(event: Event): Promise<void> {
     const value = await new Promise((resolve) => {
       const input = event.target as HTMLInputElement;
@@ -59,6 +63,7 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
     });
 
     this.$emit('change', value);
+    this.resetFileInput();
   }
 }
 </script>
