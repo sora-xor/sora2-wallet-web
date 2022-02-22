@@ -33,7 +33,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
       class="asset s-flex"
     >
       <i
-        class="asset-logo asset-default s-icon-notifications-info-24"
+        class="asset-logo"
       />
        
       <div
@@ -142,7 +142,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
       class="asset s-flex"
     >
       <i
-        class="asset-logo asset-default s-icon-notifications-info-24"
+        class="asset-logo"
       />
        
       <div

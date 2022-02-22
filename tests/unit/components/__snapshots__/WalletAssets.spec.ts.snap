@@ -38,7 +38,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
     assets="[object Object],[object Object],[object Object]"
     class="wallet-assets-list"
     divider="true"
-    items="5"
+    items="3"
   />
    
   <s-button-stub

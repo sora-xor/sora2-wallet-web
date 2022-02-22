@@ -8,7 +8,7 @@
       <s-divider class="wallet-assets-divider" />
     </div>
 
-    <asset-list :assets="formattedAccountAssets" divider class="wallet-assets-list">
+    <asset-list :assets="formattedAccountAssets" :items="3" divider class="wallet-assets-list">
       <template #default="{ asset }">
         <asset-list-item :asset="asset" :key="asset.address" class="wallet-assets-item">
           <template #value>
