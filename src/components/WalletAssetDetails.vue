@@ -351,6 +351,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 .asset-details {
   padding: 0 !important;
   margin-bottom: 0;
+  border-radius: 0;
   &.s-card.neumorphic {
     padding-top: 0;
     padding-bottom: 0;
