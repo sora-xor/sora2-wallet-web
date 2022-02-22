@@ -40,6 +40,8 @@ import { Prop, Component, Mixins } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
 
+const UrlCreator = window.URL || window.webkitURL;
+
 @Component
 export default class NftDetails extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly contentLink!: string;
@@ -53,7 +55,6 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   imageLoading = true;
   isNotImage = false;
   image = '';
-  urlCreator = window.URL || window.webkitURL;
 
   get nftDetailsSectionClasses(): Array<string> {
     const cssClasses: Array<string> = ['nft-info__header--clickable'];
@@ -78,13 +79,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
         return;
       }
       this.imageLoading = false;
-      this.image = this.urlCreator.createObjectURL(buffer);
-
-      // Remove fake error trigger below:
-      if (Math.random() > 0.5 ? 1 : 0) {
-        console.log('error triggered');
-        throw new Error();
-      }
+      this.image = UrlCreator.createObjectURL(buffer);
     } catch {
       this.badLink = true;
     }
@@ -107,7 +102,9 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   }
 
   beforeDestroy(): void {
-    this.urlCreator.revokeObjectURL(this.image);
+    if (this.image) {
+      UrlCreator.revokeObjectURL(this.image);
+    }
   }
 }
 </script>

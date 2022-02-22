@@ -19,13 +19,13 @@
         </s-tooltip>
       </s-input>
       <file-uploader
-        @upload="upload"
-        @clear="clear"
-        @showLimit="showLimit"
-        @hideLimit="hideLimit"
         ref="uploader"
         class="preview-image-create-nft"
-        :isLinkProvided="!!contentSrcLink"
+        :is-link-provided="!!contentSrcLink"
+        @upload="upload"
+        @clear="clear"
+        @show-limit="showLimit"
+        @hide-limit="hideLimit"
       >
         <div v-if="imageLoading" v-loading="imageLoading" />
         <div v-else-if="fileExceedsLimit" class="placeholder">
