@@ -4,7 +4,7 @@
       <div v-if="imageLoading" v-loading="imageLoading" />
       <div v-else-if="badLink" class="placeholder">
         <s-icon
-          v-if="isAssetDetails"
+          v-if="isAssetDetails && !isNotImage"
           class="preview-image-confirm-nft__icon-refresh"
           name="refresh-16"
           size="64px"
@@ -51,6 +51,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   private nftDetailsClicked = false;
   badLink = false;
   imageLoading = true;
+  isNotImage = false;
   image = '';
   urlCreator = window.URL || window.webkitURL;
 
@@ -71,7 +72,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
       const response = await fetch(this.contentLink);
       const buffer = await response.blob();
       this.imageLoading = false;
-      this.badLink = !buffer.type.startsWith('image/');
+      this.isNotImage = !buffer.type.startsWith('image/');
       this.image = this.urlCreator.createObjectURL(buffer);
 
       // Remove fake error trigger below:
