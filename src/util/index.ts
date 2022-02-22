@@ -2,6 +2,7 @@ import { web3Enable, web3FromAddress, web3AccountsSubscribe } from '@polkadot/ex
 import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
+import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import { api } from '../api';
 import store from '../store';
@@ -89,6 +90,22 @@ export const copyToClipboard = async (text: string) => {
 
 export const formatAddress = (address: string, length = address.length / 2): string => {
   return `${address.slice(0, length / 2)}...${address.slice(-length / 2)}`;
+};
+
+export const getAssetIconClasses = (asset: Nullable<AccountAsset | Asset>) => {
+  if (!asset || !asset.address) {
+    return ['asset-default', 's-icon-notifications-info-24'];
+  }
+  const whitelisted = store.getters.whitelist[asset.address];
+  if (!whitelisted) {
+    const isNft = api.assets.isNft(asset);
+    if (!isNft) {
+      return ['asset-default', 's-icon-notifications-info-24'];
+    } else {
+      return ['asset-default', 'asset-default-nft'];
+    }
+  }
+  return [];
 };
 
 export const getAssetIconStyles = (address: string) => {

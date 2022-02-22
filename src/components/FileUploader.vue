@@ -1,19 +1,19 @@
 <template>
   <div
+    class="drop-zone"
+    :class="dropZoneClass"
     @drop="dropImage"
     @dragenter.prevent
     @dragover.prevent="dragOver"
     @dragleave="dragCancelled"
     @dragend="dragCancelled"
     @click="openFileUpload"
-    class="drop-zone"
-    :class="dropZoneClass"
   >
     <slot />
     <div v-if="clearBtnShown" @click="clear">
       <s-icon class="clear-file-input-btn" name="basic-clear-X-24" size="64px" />
     </div>
-    <input class="drop-zone__input" ref="fileInput" type="file" :accept="allowedTypes" @change="upload" />
+    <input class="drop-zone__input" ref="fileInput" type="file" :accept="accept" @change="upload" />
   </div>
 </template>
 
@@ -22,15 +22,27 @@ import { Mixins, Component, Ref, Prop } from 'vue-property-decorator';
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 
+const HUNDRED_MB = 100 * 1024 * 1024; // 100MB in bytes
+
 @Component
-export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixin) {
+export default class FileUploader extends Mixins(LoadingMixin, TranslationMixin) {
+  /**
+   * Boolean check for the external link
+   */
   @Prop({ default: false, type: Boolean }) readonly isLinkProvided!: boolean;
-  @Prop({ default: 'image/*', type: String }) readonly allowedTypes!: string;
+  /**
+   * Accepted format of files. `image/*` is set by default
+   */
+  @Prop({ default: 'image/*', type: String }) readonly accept!: string;
+  /**
+   * Limit (in bytes) of the file. 100 MB is set by default.
+   */
+  @Prop({ default: HUNDRED_MB, type: Number }) readonly limit!: number;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
-  isImgDraggedOver = false;
-  isClearBtnShown = false;
+  private isImgDraggedOver = false;
+  private isClearBtnShown = false;
 
   get dropZoneClass(): string {
     return this.isImgDraggedOver || this.isLinkProvided ? 'drop-zone--over' : '';
@@ -40,10 +52,28 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
     return this.isClearBtnShown || this.isLinkProvided;
   }
 
-  dropImage(event): void {
+  dropImage(event: DragEvent): void {
     event.preventDefault();
+    if (!event.dataTransfer) {
+      this.resetFileInput();
+      return;
+    }
 
-    if (event.dataTransfer.files[0].type.startsWith('image/')) {
+    const file = event.dataTransfer.files[0];
+
+    if (!file) {
+      this.resetFileInput();
+      return;
+    }
+
+    if (file.size > this.limit) {
+      this.dragCancelled();
+      this.$emit('showLimit');
+      this.resetFileInput();
+      return;
+    }
+
+    if (file.type.startsWith('image/')) {
       this.fileInput.files = event.dataTransfer.files as FileList;
       this.upload();
       this.isClearBtnShown = true;
@@ -71,11 +101,20 @@ export default class UploadNftImage extends Mixins(LoadingMixin, TranslationMixi
       return;
     }
 
+    this.$emit('hide-limit');
     const file = this.fileInput.files[0];
+
     if (!file) {
       this.resetFileInput();
       return;
     }
+
+    if (file.size > this.limit) {
+      this.$emit('show-limit');
+      this.resetFileInput();
+      return;
+    }
+
     this.$emit('upload', file);
     this.isImgDraggedOver = true;
     this.isClearBtnShown = true;
