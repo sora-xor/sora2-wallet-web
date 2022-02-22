@@ -2,26 +2,43 @@
   <div class="wallet-settings-create-token">
     <template v-if="step === Step.CreateNftToken">
       <s-input
-        :placeholder="linkPlaceholder"
+        :placeholder="t('createToken.nft.link.placeholder')"
         :minlength="1"
         :maxlength="200"
         :disabled="loading"
         v-model="tokenContentLink"
         @input="handleInputLinkChange"
-      />
+      >
+        <s-tooltip
+          slot="suffix"
+          popper-class="ipfs-tooltip"
+          :content="t('createToken.nft.link.tooltip')"
+          placement="bottom"
+        >
+          <s-icon class="ipfs-tooltip__icon" name="info-16" size="18px" />
+        </s-tooltip>
+      </s-input>
       <file-uploader
+        ref="uploader"
+        class="preview-image-create-nft"
+        :is-link-provided="!!contentSrcLink"
         @upload="upload"
         @clear="clear"
-        class="preview-image-create-nft"
-        :isLinkProvided="!!contentSrcLink"
+        @show-limit="showLimit"
+        @hide-limit="hideLimit"
       >
         <div v-if="imageLoading" v-loading="imageLoading" />
+        <div v-else-if="fileExceedsLimit" class="placeholder">
+          <s-icon class="preview-image-create-nft__icon icon--error" name="basic-clear-X-24" size="64px" />
+          <span>{{ t('createToken.nft.image.placeholderFileLimit', { value: FILE_SIZE_LIMIT }) }}</span>
+          <s-button class="preview-image-create-nft__btn">{{ t('createToken.nft.source.limit') }}</s-button>
+        </div>
         <div v-else-if="!tokenContentLink && !file" class="placeholder">
           <s-icon class="preview-image-create-nft__icon" name="camera-16" size="64px" />
           <span class="preview-image-create-nft__placeholder">{{ t('createToken.nft.image.placeholderNoImage') }}</span>
         </div>
         <div v-else-if="badSource && !file" class="placeholder">
-          <s-icon class="preview-image-create-nft__icon" name="basic-clear-X-24" size="64px" />
+          <s-icon class="preview-image-create-nft__icon icon--error" name="basic-clear-X-24" size="64px" />
           <span class="preview-image-create-nft__placeholder">{{
             t('createToken.nft.image.placeholderBadSource')
           }}</span>
@@ -48,6 +65,15 @@
         v-model="tokenName"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
+      <s-input
+        class="input-textarea"
+        type="textarea"
+        :placeholder="t('createToken.nft.description.placeholder')"
+        :disabled="loading"
+        :maxlength="200"
+        v-model="tokenDescription"
+        @keypress.native="handleTextAreaInput($event)"
+      />
       <s-float-input
         has-locale-string
         :placeholder="t('createToken.nft.supply.placeholder')"
@@ -58,15 +84,17 @@
         v-model="tokenSupply"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.nft.supply.desc') }}</p>
-      <s-input
-        class="input-textarea"
-        type="textarea"
-        :placeholder="t('createToken.nft.description.placeholder')"
-        :disabled="loading"
-        :maxlength="255"
-        v-model="tokenDescription"
-        @keypress.native="handleTextAreaInput($event)"
-      />
+      <div class="wallet-settings-create-token_supply-block">
+        <s-switch v-model="extensibleSupply" :disabled="loading" />
+        <span>{{ t('createToken.extensibleSupply.placeholder') }}</span>
+      </div>
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.extensibleSupply.desc') }}</p>
+      <div class="delimiter"></div>
+      <div class="wallet-settings-create-token_divisible-block">
+        <s-switch v-model="divisible" :disabled="loading" @change="handleChangeDivisible" />
+        <span>{{ t('createToken.divisible.placeholder') }}</span>
+      </div>
+      <p class="wallet-settings-create-token_desc">{{ t('createToken.divisible.desc') }}</p>
       <s-button
         class="wallet-settings-create-token_action s-typography-button--large"
         type="primary"
@@ -153,10 +181,10 @@ export default class CreateNftToken extends Mixins(
   readonly tokenSymbolMask = 'AAAAAAA';
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } };
   readonly maxTotalSupply = MaxTotalSupply.substring(0, MaxTotalSupply.indexOf('.'));
-  readonly decimals = 0;
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
   readonly Step = Step;
   readonly XOR_SYMBOL = XOR.symbol;
+  readonly FILE_SIZE_LIMIT = 100; // in megabytes
 
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
@@ -166,6 +194,7 @@ export default class CreateNftToken extends Mixins(
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
   imageLoading = false;
+  fileExceedsLimit = false;
   badSource = false;
   contentSrcLink = '';
   tokenContentIpfsParsed = '';
@@ -174,9 +203,18 @@ export default class CreateNftToken extends Mixins(
   tokenName = '';
   tokenDescription = '';
   tokenSupply = '';
-  linkPlaceholder = this.t('createToken.nft.link.placeholder');
   showFee = true;
   file: Nullable<File> = null;
+  extensibleSupply = false;
+  divisible = false;
+
+  private calcDecimals(divisible: boolean): number {
+    return divisible ? FPNumber.DEFAULT_PRECISION : 0;
+  }
+
+  get decimals(): number {
+    return this.calcDecimals(this.divisible);
+  }
 
   get isCreateDisabled(): boolean {
     return (
@@ -204,6 +242,7 @@ export default class CreateNftToken extends Mixins(
   }
 
   async upload(file: File): Promise<void> {
+    this.imageLoading = true;
     this.file = file;
     this.contentSrcLink = await IpfsStorage.fileToBase64(file);
     this.badSource = false;
@@ -211,19 +250,35 @@ export default class CreateNftToken extends Mixins(
     this.tokenContentLink = '';
   }
 
+  showLimit(): void {
+    this.contentSrcLink = '';
+    this.fileExceedsLimit = true;
+  }
+
+  hideLimit(): void {
+    this.contentSrcLink = '';
+    this.fileExceedsLimit = false;
+  }
+
+  handleChangeDivisible(value: boolean): void {
+    if (!value && this.tokenSupply) {
+      const decimals = this.calcDecimals(value);
+      this.tokenSupply = this.getCorrectSupply(this.tokenSupply, decimals);
+    }
+  }
+
   handleInputLinkChange(link: string): void {
+    (this.$refs.uploader as HTMLFormElement).resetFileInput();
+    this.resetFileInput();
+    this.fileExceedsLimit = false;
+    this.contentSrcLink = '';
+
     try {
       const url = new URL(link);
     } catch {
       this.badSource = true;
       return;
     }
-
-    this.imageLoading = true;
-    this.badSource = false;
-    this.linkPlaceholder = link
-      ? this.t('createToken.nft.link.placeholderShort')
-      : this.t('createToken.nft.link.placeholder');
 
     this.checkImageFromSource(link);
   }
@@ -234,6 +289,9 @@ export default class CreateNftToken extends Mixins(
   }
 
   async checkImageFromSource(url: string): Promise<void> {
+    this.imageLoading = true;
+    this.badSource = false;
+
     try {
       const response = await fetch(url);
       const buffer = await response.blob();
@@ -279,14 +337,12 @@ export default class CreateNftToken extends Mixins(
   }
 
   async registerNftAsset(): Promise<void> {
-    const extensibleSupply = false; // TODO: need to add these fields to UI
-    const nonDivisible = true;
     return api.assets.register(
       this.tokenSymbol,
       this.tokenName.trim(),
       this.tokenSupply,
-      extensibleSupply,
-      nonDivisible,
+      this.extensibleSupply,
+      !this.divisible,
       { content: this.tokenContentIpfsParsed, description: this.tokenDescription.trim() }
     );
   }
@@ -346,6 +402,17 @@ export default class CreateNftToken extends Mixins(
 </style>
 
 <style lang="scss">
+.ipfs-tooltip {
+  font-size: 10px !important;
+  padding: 10px 15px !important;
+  &__icon {
+    color: var(--color-base-content-tertiary) !important;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}
+
 .wallet-settings-create-token {
   &_desc {
     color: var(--s-color-base-content-primary);
@@ -359,6 +426,12 @@ export default class CreateNftToken extends Mixins(
     margin-top: #{$basic-spacing-medium};
     width: 100%;
   }
+
+  &_supply-block,
+  &_divisible-block {
+    @include switch-block;
+    padding: 0 #{$basic-spacing-small};
+  }
 }
 
 .s-textarea {
@@ -370,6 +443,24 @@ export default class CreateNftToken extends Mixins(
 
   &__inner {
     resize: none !important;
+    scrollbar-width: none; /* Firefox - not customizable */
+
+    &:hover::-webkit-scrollbar {
+      width: 4px;
+
+      &-thumb {
+        background-color: var(--s-color-base-content-tertiary);
+        border-radius: 6px;
+      }
+    }
+
+    &::-webkit-scrollbar {
+      width: 4px;
+
+      &-track {
+        margin-bottom: calc(var(--s-size-small) * 0.25);
+      }
+    }
   }
 }
 
@@ -406,6 +497,15 @@ export default class CreateNftToken extends Mixins(
     margin-bottom: calc(var(--s-size-small) / 2);
   }
 
+  &__icon.icon--error {
+    color: var(--s-color-theme-accent) !important;
+  }
+
+  &__btn {
+    margin-top: calc(var(--s-size-small) / 2) !important;
+    height: 32px !important;
+  }
+
   &__placeholder {
     letter-spacing: var(--s-letter-spacing-small);
     color: var(--s-color-base-content-primary);
@@ -413,5 +513,11 @@ export default class CreateNftToken extends Mixins(
     text-align: center;
     padding: 0 50px;
   }
+}
+
+.delimiter {
+  background-color: var(--s-color-base-border-secondary);
+  margin-bottom: calc(var(--s-size-small) / 2);
+  height: 1px;
 }
 </style>

@@ -199,16 +199,19 @@ export default {
       source: {
         label: 'Source',
         value: 'Local files',
+        limit: 'Choose another file',
       },
       link: {
-        placeholder: 'Enter link here...',
-        placeholderShort: 'Link',
+        placeholder: 'IPFS link',
         copyLink: 'Copy link',
+        tooltip:
+          "IPFS is a distributed system for storing and accessing files, making it possible to access files from many locations that aren't managed by one organization.",
       },
       image: {
         placeholderNoImage: 'Upload the file by either entering a link or choosing from local storage',
-        placeholderBadSource: 'There’s no image',
+        placeholderBadSource: 'The file failed to be processed',
         placeholderBadSourceAddition: 'or it’s not uploaded to IPFS yet',
+        placeholderFileLimit: 'The file size exceeds the limit of {value}mb',
       },
       supply: {
         placeholder: 'Token supply',
@@ -244,6 +247,10 @@ export default {
     extensibleSupply: {
       placeholder: 'Extensible supply',
       desc: 'Ability to mint more tokens.',
+    },
+    divisible: {
+      placeholder: 'Divisible',
+      desc: 'Ability of NFT to divide into fractional parts. Liquidity provisioning only works with divisible assets',
     },
   },
   transaction: {

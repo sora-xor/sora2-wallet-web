@@ -112,7 +112,7 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
           class="asset-box"
         >
           <i
-            class="asset-logo"
+            class="asset-logo asset-default s-icon-notifications-info-24"
           />
            
           <span
@@ -281,7 +281,7 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
           class="asset-box"
         >
           <i
-            class="asset-logo"
+            class="asset-logo asset-default s-icon-notifications-info-24"
           />
            
           <span
@@ -477,7 +477,7 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
           class="asset-box"
         >
           <i
-            class="asset-logo"
+            class="asset-logo asset-default s-icon-notifications-info-24"
           />
            
           <span
@@ -650,7 +650,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
           class="asset-box"
         >
           <i
-            class="asset-logo"
+            class="asset-logo asset-default s-icon-notifications-info-24"
           />
            
           <span
