@@ -252,6 +252,10 @@ export default {
       placeholder: 'Extensible supply',
       desc: 'Ability to mint more tokens.',
     },
+    divisible: {
+      placeholder: 'Divisible',
+      desc: 'Ability of NFT to divide into fractional parts. Liquidity provisioning only works with divisible assets',
+    },
   },
   transaction: {
     title: 'Transaction details',
@@ -272,6 +276,7 @@ export default {
     from: 'From',
     to: 'To',
     referrer: 'Referrer',
+    referral: 'Referral',
     viewIn: {
       sorascan: 'View in SORAScan',
       subscan: 'View in Subscan',

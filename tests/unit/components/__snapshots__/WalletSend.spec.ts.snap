@@ -57,6 +57,7 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
      
     <s-float-input-stub
       class="wallet-send-input"
+      decimals="18"
       delimiters="[object Object]"
       haslocalestring="true"
       max="700000"
@@ -107,7 +108,7 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
           class="asset-box"
         >
           <i
-            class="asset-logo"
+            class="asset-logo asset-default s-icon-notifications-info-24"
           />
            
           <span
@@ -223,6 +224,7 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
      
     <s-float-input-stub
       class="wallet-send-input"
+      decimals="18"
       delimiters="[object Object]"
       haslocalestring="true"
       max="700000"
@@ -273,7 +275,7 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
           class="asset-box"
         >
           <i
-            class="asset-logo"
+            class="asset-logo asset-default s-icon-notifications-info-24"
           />
            
           <span
@@ -416,6 +418,7 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
      
     <s-float-input-stub
       class="wallet-send-input"
+      decimals="18"
       delimiters="[object Object]"
       haslocalestring="true"
       max="700000"
@@ -466,7 +469,7 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
           class="asset-box"
         >
           <i
-            class="asset-logo"
+            class="asset-logo asset-default s-icon-notifications-info-24"
           />
            
           <span
@@ -586,6 +589,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
      
     <s-float-input-stub
       class="wallet-send-input"
+      decimals="18"
       delimiters="[object Object]"
       haslocalestring="true"
       max="700000"
@@ -636,7 +640,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
           class="asset-box"
         >
           <i
-            class="asset-logo"
+            class="asset-logo asset-default s-icon-notifications-info-24"
           />
            
           <span

@@ -92,8 +92,6 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 </style>
 
 <style scoped lang="scss">
-@import '../styles/icons';
-
 $avatar-margin-right: #{$basic-spacing-small};
 $avatar-size: 32px;
 

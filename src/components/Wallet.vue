@@ -35,6 +35,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
+import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
