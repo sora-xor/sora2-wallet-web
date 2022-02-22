@@ -1,6 +1,6 @@
 <template>
   <div class="asset s-flex" v-bind="$attrs" v-on="$listeners">
-    <i class="asset-logo" :style="iconStyles" />
+    <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
     <div class="asset-description s-flex">
       <slot name="value">
         <div class="asset-symbol">{{ asset.symbol }}</div>
@@ -11,6 +11,7 @@
           <span class="asset-id" @click="handleCopy">({{ address }})</span>
         </s-tooltip>
       </div>
+      <slot name="append" />
     </div>
     <slot />
   </div>
@@ -21,7 +22,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
 
-import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
+import { copyToClipboard, formatAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 
@@ -31,6 +32,10 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
   get iconStyles() {
     return getAssetIconStyles(this.asset.address);
+  }
+
+  get iconClasses(): Array<string> {
+    return getAssetIconClasses(this.asset);
   }
 
   get name(): string {
@@ -76,6 +81,7 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   &-description {
     flex: 1;
     flex-direction: column;
+    align-items: flex-start;
     line-height: var(--s-line-height-big);
     padding: 0 $basic-spacing-small;
     width: 30%;

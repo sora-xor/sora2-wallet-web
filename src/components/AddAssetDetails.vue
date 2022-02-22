@@ -2,21 +2,13 @@
   <wallet-base :title="t('addAsset.title')" show-back @back="handleBack">
     <div class="add-asset-details">
       <s-card shadow="always" size="small" border-radius="mini" pressed>
-        <div class="add-asset-details_asset" v-if="asset">
-          <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
-          <div class="asset-description s-flex">
-            <div class="asset-description_symbol">{{ asset.symbol }}</div>
-            <div class="asset-description_info">
-              {{ formattedName }}
-              <s-tooltip :content="t('assets.copy')">
-                <span class="asset-id" @click="handleCopy($event)">({{ formattedAddress }})</span>
-              </s-tooltip>
-            </div>
+        <asset-list-item :asset="asset">
+          <template #append>
             <s-card size="mini" :status="assetCardStatus" primary>
               <div class="asset-nature">{{ assetNatureText }}</div>
             </s-card>
-          </div>
-        </div>
+          </template>
+        </asset-list-item>
       </s-card>
       <s-card status="warning" :primary="isCardPrimary" shadow="always" class="add-asset-details_text">
         <div class="p2">{{ t('addAsset.warningTitle') }}</div>
@@ -47,6 +39,7 @@ import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 import WalletBase from './WalletBase.vue';
+import AssetListItem from './AssetListItem.vue';
 import { RouteNames } from '../consts';
 import { copyToClipboard, formatAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
 import { api } from '../api';
@@ -55,6 +48,7 @@ import type { WhitelistIdsBySymbol } from '../types/common';
 @Component({
   components: {
     WalletBase,
+    AssetListItem,
   },
 })
 export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMixin) {
@@ -178,45 +172,13 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     margin-bottom: #{$basic-spacing-medium};
   }
 
-  &_asset {
-    display: flex;
-    align-items: center;
-
-    .asset {
-      &-logo {
-        margin-right: #{$basic-spacing-medium};
-        @include asset-logo-styles(40px);
-      }
-      &-description {
-        flex: 1;
-        flex-direction: column;
-        align-items: flex-start;
-
-        &_symbol {
-          font-size: var(--s-font-size-big);
-          line-height: var(--s-line-height-small);
-          font-weight: 600;
-        }
-        &_info {
-          @include hint-text;
-          color: var(--s-color-base-content-primary);
-          .asset-id {
-            outline: none;
-            &:hover {
-              text-decoration: underline;
-              cursor: pointer;
-            }
-          }
-        }
-      }
-      &-nature {
-        font-size: var(--s-font-size-mini);
-        font-weight: 300;
-        letter-spacing: var(--s-letter-spacing-small);
-        line-height: var(--s-line-height-medium);
-      }
-    }
+  .asset-nature {
+    font-size: var(--s-font-size-mini);
+    font-weight: 300;
+    letter-spacing: var(--s-letter-spacing-small);
+    line-height: var(--s-line-height-medium);
   }
+
   &_confirm {
     @include switch-block;
     padding-top: 0;
