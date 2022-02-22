@@ -3,7 +3,13 @@
     <div class="preview-image-confirm-nft">
       <div v-if="imageLoading" v-loading="imageLoading" />
       <div v-else-if="badLink" class="placeholder">
-        <s-icon class="preview-image-confirm-nft__icon" name="basic-clear-X-24" size="64px" />
+        <s-icon
+          v-if="isAssetDetails"
+          class="preview-image-confirm-nft__icon-refresh"
+          name="refresh-16"
+          size="64px"
+          @click.native="handleRefresh"
+        />
         <span class="preview-image-confirm-nft__placeholder">{{
           t('createToken.nft.image.placeholderBadSource')
         }}</span>
@@ -46,6 +52,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
   badLink = false;
   imageLoading = true;
   image = '';
+  urlCreator = window.URL || window.webkitURL;
 
   get nftDetailsSectionClasses(): Array<string> {
     const cssClasses: Array<string> = ['nft-info__header--clickable'];
@@ -59,12 +66,22 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     if (!this.contentLink) {
       return;
     }
-    const response = await fetch(this.contentLink);
-    const buffer = await response.blob();
-    const urlCreator = window.URL || window.webkitURL;
-    this.image = urlCreator.createObjectURL(buffer);
-    this.imageLoading = false;
-    this.badLink = !buffer.type.startsWith('image/');
+
+    try {
+      const response = await fetch(this.contentLink);
+      const buffer = await response.blob();
+      this.imageLoading = false;
+      this.badLink = !buffer.type.startsWith('image/');
+      this.image = this.urlCreator.createObjectURL(buffer);
+
+      // Remove fake error trigger below:
+      if (Math.random() > 0.5 ? 1 : 0) {
+        console.log('error triggered');
+        throw new Error();
+      }
+    } catch {
+      this.badLink = true;
+    }
   }
 
   handleDetailsClick(): void {
@@ -72,9 +89,18 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     this.$emit('click-details');
   }
 
+  handleRefresh(): void {
+    this.imageLoading = true;
+    this.checkImageAvailability();
+  }
+
   async mounted(): Promise<void> {
     await this.$nextTick();
     this.checkImageAvailability();
+  }
+
+  beforeDestroy(): void {
+    this.urlCreator.revokeObjectURL(this.image);
   }
 }
 </script>
@@ -101,10 +127,14 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     border-radius: calc(var(--s-border-radius-mini) * 0.75);
   }
 
-  &__icon {
+  &__icon-refresh {
     color: var(--s-color-base-content-tertiary) !important;
     font-size: var(--s-size-small) !important;
     margin-bottom: calc(var(--s-size-small) / 2);
+    cursor: pointer;
+    &:hover {
+      color: var(--s-color-base-content-secondary) !important;
+    }
   }
 
   &__placeholder {
