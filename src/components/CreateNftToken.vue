@@ -105,7 +105,7 @@
         <template v-if="!tokenContentLink.trim() && !file">{{ t('createToken.provideContent') }}</template>
         <template v-else-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
         <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
-        <template v-else-if="!tokenSupply">{{ t('createToken.enterSupply') }}</template>
+        <template v-else-if="!+tokenSupply">{{ t('createToken.enterSupply') }}</template>
         <template v-else-if="!tokenDescription">{{ t('createToken.enterTokenDescription') }}</template>
         <template v-else-if="badSource">{{ t('createToken.provideContent') }}</template>
         <template v-else>{{ t('createToken.actionNFT') }}</template>
@@ -218,7 +218,7 @@ export default class CreateNftToken extends Mixins(
 
   get isCreateDisabled(): boolean {
     return (
-      !(this.tokenSymbol && this.tokenName.trim() && this.tokenSupply && this.tokenDescription.trim()) ||
+      !(this.tokenSymbol && this.tokenName.trim() && +this.tokenSupply && this.tokenDescription.trim()) ||
       this.badSource ||
       !(this.file || this.tokenContentLink)
     );
