@@ -43,7 +43,7 @@
       >
         <template v-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
         <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
-        <template v-else-if="!tokenSupply">{{ t('createToken.enterSupply') }}</template>
+        <template v-else-if="!+tokenSupply">{{ t('createToken.enterSupply') }}</template>
         <template v-else>{{ t('createToken.action') }}</template>
       </s-button>
     </template>
@@ -124,7 +124,7 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
   }
 
   get isCreateDisabled(): boolean {
-    return !(this.tokenSymbol && this.tokenName.trim() && this.tokenSupply);
+    return !(this.tokenSymbol && this.tokenName.trim() && +this.tokenSupply);
   }
 
   get formattedTokenSupply(): string {
