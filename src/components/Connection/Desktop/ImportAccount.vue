@@ -58,10 +58,15 @@ import { LoginStep } from '../../../consts';
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 import TranslationMixin from '../../mixins/TranslationMixin';
 import LoadingMixin from '@/components/mixins/LoadingMixin';
+import { api } from '@sora-substrate/util';
+import { PolkadotJsAccount } from '@/types/common';
+import { Getter } from 'vuex-class';
 
 @Component
 export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @Prop({ type: String }) readonly step!: LoginStep;
+
+  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   LoginStep = LoginStep;
 
@@ -105,7 +110,8 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   importAccount(): void {
-    // api call to import account
+    api.importAccount('salute sniff lift general bus space easy tiny purse puppy seven spoil', 'desktop', 'desktop');
+    console.log('polkadotJsAccounts comp', this.polkadotJsAccounts);
   }
 }
 </script>

@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@polkadot/extension-dapp": "^0.42.2",
+    "@polkadot/util-crypto": "^8.4.1",
     "@polkadot/vue-identicon": "^0.72.1",
     "@sora-substrate/util": "^1.7.26",
     "@soramitsu/soramitsu-js-ui": "^1.0.26",

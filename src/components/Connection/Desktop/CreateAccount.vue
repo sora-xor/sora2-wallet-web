@@ -116,6 +116,7 @@
 import { isEqual } from 'lodash';
 import LoadingMixin from '@/components/mixins/LoadingMixin';
 import { Mixins, Component, Prop } from 'vue-property-decorator';
+// import { mnemonicGenerate } from '@polkadot/util-crypto';
 
 import TranslationMixin from '../../../components/mixins/TranslationMixin';
 import { LoginStep } from '../../../consts';
@@ -181,6 +182,8 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get seedPhrase(): Array<string> {
+    // const seed = mnemonicGenerate(this.PHRASE_LENGTH);
+    // console.log('seed', seed);
     return [
       'TIGER',
       'IDLE',

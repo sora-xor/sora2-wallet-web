@@ -1,6 +1,7 @@
 import debounce from 'lodash/fp/debounce';
 import type Vue from 'vue';
 import type { Store } from 'vuex';
+import isDesktop from 'is-electron';
 
 import installWalletPlugins from './plugins';
 // import './styles' We don't need it for now
@@ -97,8 +98,12 @@ async function initWallet({
     await store.dispatch('subscribeOnRuntimeVersion');
     await store.dispatch('getWhitelist', { whiteListOverApi });
     await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates');
-    await store.dispatch('subscribeOnExtensionAvailability');
-    await store.dispatch('checkSigner');
+    if (isDesktop()) {
+      await store.dispatch('getPolkadotJsAccounts');
+    } else {
+      await store.dispatch('subscribeOnExtensionAvailability');
+      await store.dispatch('checkSigner');
+    }
     await store.dispatch('setWalletLoaded', true);
     subscribeStoreToStorageUpdates(store);
   }

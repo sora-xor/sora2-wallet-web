@@ -6,9 +6,9 @@
           <p class="extension-connection-text">{{ t('connection.text') }}</p>
           <p v-if="!extensionAvailability" class="extension-connection-text" v-html="t('connection.install')" />
         </template>
-        <template v-else>
+        <template v-else-if="!polkadotJsAccounts.length">
           <p class="wallet-connection-text">
-            {{ t(polkadotJsAccounts.length ? 'connection.selectAccount' : 'connection.noAccounts') }}
+            {{ t('connection.noAccounts') }}
           </p>
         </template>
 
@@ -36,17 +36,9 @@
             v-html="t('connection.noPermissions')"
           />
         </template>
-
-        <s-scrollbar v-else-if="step === Step.Second" class="extension-connection-accounts">
-          <div
-            class="extension-connection-account"
-            v-for="account in polkadotJsAccounts"
-            :key="account.address"
-            @click="handleSelectAccount(account)"
-          >
-            <wallet-account :polkadotAccount="account" />
-          </div>
-        </s-scrollbar>
+        <div v-else-if="step === Step.Second">
+          <connected-account-list @handleSelectAccount="handleSelectAccount" />
+        </div>
       </template>
     </div>
   </wallet-base>
@@ -60,6 +52,7 @@ import LoadingMixin from '../mixins/LoadingMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 import WalletBase from '../WalletBase.vue';
 import WalletAccount from '../WalletAccount.vue';
+import ConnectedAccountList from './common/ConnectedAccountList.vue';
 
 enum Step {
   First = 1,
@@ -67,7 +60,7 @@ enum Step {
 }
 
 @Component({
-  components: { WalletBase, WalletAccount },
+  components: { WalletBase, WalletAccount, ConnectedAccountList },
 })
 export default class WalletConnection extends Mixins(TranslationMixin, LoadingMixin) {
   readonly Step = Step;
@@ -81,6 +74,8 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   @Action importPolkadotJs!: (address: string) => Promise<void>;
 
   get isAccountSwitch(): boolean {
+    console.log('this.currentRouteParams', this.currentRouteParams);
+    console.log('(this.currentRouteParams || {}).isAccountSwitch', (this.currentRouteParams || {}).isAccountSwitch);
     return (this.currentRouteParams || {}).isAccountSwitch;
   }
 
@@ -147,11 +142,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 </style>
 
 <style scoped lang="scss">
-$account-height: 60px;
-$account-margin-bottom: var(--s-basic-spacing);
-$accounts-padding: calc(#{$account-margin-bottom} / 2);
-$accounts-number: 7;
-
 .extension-connection {
   // Margin and padding are set for the loader
   margin: calc(var(--s-basic-spacing) * -1);
@@ -168,23 +158,7 @@ $accounts-number: 7;
     line-height: var(--s-line-height-base);
     color: var(--s-color-base-content-primary);
   }
-  &-accounts {
-    height: calc(
-      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom}
-    );
-  }
-  &-account {
-    height: $account-height;
-    &:not(:last-child) {
-      margin-bottom: var(--s-basic-spacing);
-    }
-    &:hover {
-      cursor: pointer;
-      .wallet-account {
-        border-color: var(--s-color-base-content-secondary);
-      }
-    }
-  }
+
   &-action {
     width: 100%;
     & + & {

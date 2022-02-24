@@ -1,9 +1,12 @@
 <template>
-  <wallet-base :show-header="false" :show-back="showBackBtn" @back="handleBack">
+  <wallet-base :title="t('connection.title')" :show-header="showHeader" :show-back="showBackBtn" @back="handleBack">
     <div class="desktop-connection" v-loading="loading">
-      <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
-      <create-account v-else-if="isCreateFlow" :step="step" class="login" @stepChange="setStep" />
-      <import-account v-else-if="isImportFlow" :step="step" class="login" @stepChange="setStep" />
+      <connected-account-list v-if="polkadotJsAccounts.length" @handleSelectAccount="handleSelectAccount" />
+      <div v-else>
+        <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
+        <create-account v-else-if="isCreateFlow" :step="step" class="login" @stepChange="setStep" />
+        <import-account v-else-if="isImportFlow" :step="step" class="login" @stepChange="setStep" />
+      </div>
     </div>
   </wallet-base>
 </template>
@@ -19,14 +22,20 @@ import CreateAccount from './Desktop/CreateAccount.vue';
 import ImportAccount from './Desktop/ImportAccount.vue';
 import { LoginStep } from '../../consts';
 import { getPreviousLoginStep } from '../../util';
+import { Getter } from 'vuex-class';
+import ConnectedAccountList from './common/ConnectedAccountList.vue';
+import { PolkadotJsAccount } from '@/types/common';
 
 @Component({
-  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount },
+  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList },
 })
 export default class DesktopConnection extends Mixins(TranslationMixin, LoadingMixin) {
   step: LoginStep = LoginStep.Welcome;
 
   readonly LoginStep = LoginStep;
+
+  @Getter currentRouteParams!: any;
+  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   createAccount(): void {
     this.step = LoginStep.SeedPhrase;
@@ -48,6 +57,16 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
     return LoginStep.Welcome !== this.step;
   }
 
+  get showHeader(): boolean {
+    return false;
+  }
+
+  get isAccountSwitch(): boolean {
+    // console.log('this.currentRouteParams', this.currentRouteParams);
+    // console.log('(this.currentRouteParams || {}).isAccountSwitch', (this.currentRouteParams || {}).isAccountSwitch);
+    return (this.currentRouteParams || {}).isAccountSwitch;
+  }
+
   setStep(step: LoginStep): void {
     this.step = step;
   }
@@ -55,6 +74,29 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   handleBack(): void {
     const step = getPreviousLoginStep(this.step);
     this.step = step;
+  }
+
+  async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
+    // await this.withLoading(async () => {
+    //   try {
+    //     await this.importPolkadotJs(account.address);
+    //   } catch (error) {
+    //     this.$alert(this.t((error as Error).message), this.t('errorText'));
+    //     this.step = Step.First;
+    //   }
+    // });
+  }
+
+  async mounted(): Promise<void> {
+    await this.withApi(async () => {
+      if (this.isAccountSwitch) {
+        // this.navigateToAccountList();
+      }
+    });
+  }
+
+  private navigateToAccountList(): void {
+    // this.step = Step.Second;
   }
 }
 </script>

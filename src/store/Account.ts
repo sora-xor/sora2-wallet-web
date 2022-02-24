@@ -14,6 +14,7 @@ import {
   getExtension,
   getExtensionSigner,
   getExtensionInfo,
+  getPolkadotJsAccounts,
   subscribeToPolkadotJsAccounts,
   toHashTable,
   WHITE_LIST_GITHUB_URL,
@@ -416,6 +417,11 @@ const actions = {
         await dispatch('logout');
       }
     }
+  },
+
+  async getPolkadotJsAccounts({ dispatch }) {
+    const accounts = await getPolkadotJsAccounts();
+    await dispatch('updatePolkadotJsAccounts', accounts);
   },
 
   async subscribeToPolkadotJsAccounts({ dispatch, state }) {
