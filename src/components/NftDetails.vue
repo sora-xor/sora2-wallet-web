@@ -76,6 +76,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
       if (!buffer.type.startsWith('image/')) {
         this.isNotImage = true;
         this.badLink = true;
+        this.imageLoading = false;
         return;
       }
       this.imageLoading = false;
