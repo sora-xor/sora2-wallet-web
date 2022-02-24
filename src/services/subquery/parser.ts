@@ -91,11 +91,16 @@ const getTransactionStatus = (tx: HistoryElement): string => {
   return TransactionStatus.Error;
 };
 
-const getAssetByAddress = async (address: string): Promise<Asset> => {
-  if (address in store.getters.whitelist) {
-    return store.getters.whitelist[address];
+const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
+  try {
+    if (address in store.getters.whitelist) {
+      return store.getters.whitelist[address];
+    }
+    return await api.assets.getAssetInfo(address);
+  } catch (error) {
+    console.error(error);
+    return null;
   }
-  return await api.assets.getAssetInfo(address);
 };
 
 const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {
@@ -214,8 +219,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const asset = await getAssetByAddress(assetAddress as string);
         const asset2 = await getAssetByAddress(asset2Address as string);
 
-        payload.assetAddress = asset.address;
-        payload.asset2Address = asset2.address;
+        payload.assetAddress = asset ? asset.address : '';
+        payload.asset2Address = asset2 ? asset2.address : '';
         payload.symbol = getAssetSymbol(asset);
         payload.symbol2 = getAssetSymbol(asset2);
         payload.amount = FPNumber.fromCodecValue(amount).toString();
