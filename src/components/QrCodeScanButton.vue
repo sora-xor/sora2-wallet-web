@@ -17,7 +17,7 @@
 import { Component, Ref, Mixins } from 'vue-property-decorator';
 import { BrowserQRCodeReader } from '@zxing/browser';
 
-import TranslationMixin from '../mixins/TranslationMixin';
+import TranslationMixin from './mixins/TranslationMixin';
 
 const reader = new BrowserQRCodeReader();
 

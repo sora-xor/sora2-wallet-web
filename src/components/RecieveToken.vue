@@ -21,7 +21,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
-import QrCode from './QrCode/QrCode.vue';
+import QrCode from './QrCode.vue';
 
 import { api } from '../api';
 import { RouteNames } from '../consts';

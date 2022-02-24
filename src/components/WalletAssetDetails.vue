@@ -123,7 +123,7 @@ import FormattedAmount from './FormattedAmount.vue';
 import NftDetails from './NftDetails.vue';
 import InfoLine from './InfoLine.vue';
 import WalletHistory from './WalletHistory.vue';
-import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
+import QrCodeScanButton from './QrCodeScanButton.vue';
 import { api } from '../api';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
