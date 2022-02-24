@@ -15,7 +15,7 @@ export enum ModuleNames {
   Assets = 'assets',
   LiquidityProxy = 'liquidityProxy',
   Rewards = 'rewards',
-  PoolXYK = 'poolXyk',
+  PoolXYK = 'poolXYK',
   TradingPair = 'tradingPair',
   Utility = 'utility',
   Referrals = 'referrals',
