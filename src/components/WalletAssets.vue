@@ -8,7 +8,7 @@
       <s-divider class="wallet-assets-divider" />
     </div>
 
-    <asset-list :assets="formattedAccountAssets" :items="3" divider class="wallet-assets-list">
+    <asset-list :assets="formattedAccountAssets" :items="3" with-fiat divider class="wallet-assets-list">
       <template #default="{ asset }">
         <asset-list-item :asset="asset" :key="asset.address" class="wallet-assets-item">
           <template #value>
@@ -256,9 +256,6 @@ $wallet-assets-count: 5;
   margin-top: #{$basic-spacing-medium};
 
   &--fiat {
-    #{$wallet-assets-class}-list {
-      height: calc(var(--s-asset-item-height--fiat) * #{$wallet-assets-count} + 4px) !important;
-    }
     #{$wallet-assets-class}-item {
       height: var(--s-asset-item-height--fiat);
     }

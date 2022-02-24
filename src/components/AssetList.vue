@@ -24,6 +24,7 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly assets!: Array<Asset>;
   @Prop({ default: 5, type: Number }) readonly items!: number;
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
 
   get empty(): boolean {
     return this.assets.length === 0;
@@ -31,7 +32,8 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
   get style() {
     const dividersHeight = this.divider ? this.items - 1 : 0;
-    const height = `calc(var(--s-asset-item-height) * ${this.items} + ${dividersHeight}px)`;
+    const itemHeight = `--s-asset-item-height${this.withFiat ? '--fiat' : ''}`;
+    const height = `calc(var(${itemHeight}) * ${this.items} + ${dividersHeight}px)`;
 
     return {
       height,
