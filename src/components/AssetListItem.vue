@@ -1,5 +1,5 @@
 <template>
-  <div class="asset s-flex" v-bind="$attrs" v-on="$listeners">
+  <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
     <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
@@ -29,6 +29,7 @@ import type { Asset } from '@sora-substrate/util/build/assets/types';
 @Component
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
+  @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
 
   get iconStyles(): object {
     return getAssetIconStyles(this.asset.address);
@@ -72,6 +73,10 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 .asset {
   align-items: center;
   height: var(--s-asset-item-height);
+
+  &--with-fiat {
+    height: var(--s-asset-item-height--fiat);
+  }
 
   &-logo {
     flex-shrink: 0;

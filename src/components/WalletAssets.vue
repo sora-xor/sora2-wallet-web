@@ -8,7 +8,7 @@
       <s-divider class="wallet-assets-divider" />
     </div>
 
-    <asset-list :assets="formattedAccountAssets" :items="3" with-fiat divider class="wallet-assets-list">
+    <asset-list :assets="formattedAccountAssets" :size="3" with-fiat divider class="wallet-assets-list">
       <template #value="asset">
         <formatted-amount-with-fiat-value
           value-can-be-hidden
@@ -185,12 +185,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
 <style lang="scss">
 .wallet-assets {
-  &--fiat {
-    .asset {
-      height: var(--s-asset-item-height--fiat);
-    }
-  }
-
   .asset {
     .formatted-amount {
       display: block;

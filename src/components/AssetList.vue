@@ -1,37 +1,53 @@
 <template>
-  <s-scrollbar class="asset-list" :style="style">
-    <div v-if="empty" class="asset-list-empty">
-      <slot name="list-empty">{{ t('assets.empty') }}</slot>
-    </div>
+  <div class="asset-list-wrapper">
+    <recycle-scroller
+      :items="assets"
+      :item-size="itemHeightValue"
+      :buffer="itemHeightValue"
+      key-field="address"
+      class="asset-list el-scrollbar"
+      :style="style"
+    >
+      <template #before>
+        <div v-if="isEmptyList" class="asset-list-empty">
+          <slot name="list-empty">{{ t('assets.empty') }}</slot>
+        </div>
+      </template>
 
-    <template v-for="(asset, index) in assets">
-      <asset-list-item :asset="asset" :key="index" v-on="wrapListeners(asset)">
-        <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
-          <slot :name="name" v-bind="slotData" />
-        </template>
-      </asset-list-item>
-
-      <s-divider v-if="divider && index !== assets.length - 1" :key="`${index}-divider`" />
-    </template>
-  </s-scrollbar>
+      <template #default="{ item, index }">
+        <asset-list-item :asset="item" :withFiat="withFiat" :key="index" v-on="wrapListeners(item)">
+          <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
+            <slot :name="name" v-bind="slotData" />
+          </template>
+        </asset-list-item>
+        <s-divider v-if="divider && index !== assets.length - 1" :key="`${index}-divider`" />
+      </template>
+    </recycle-scroller>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { RecycleScroller } from 'vue-virtual-scroller';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import AssetListItem from './AssetListItem.vue';
 
+import { getCssVariableValue } from '../util';
+
 import type { Asset } from '@sora-substrate/util/build/assets/types';
+
+import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
 
 @Component({
   components: {
+    RecycleScroller,
     AssetListItem,
   },
 })
 export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly assets!: Array<Asset>;
-  @Prop({ default: 5, type: Number }) readonly items!: number;
+  @Prop({ default: 5, type: Number }) readonly size!: number;
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
 
@@ -44,14 +60,21 @@ export default class AssetList extends Mixins(TranslationMixin) {
     }, {});
   }
 
-  get empty(): boolean {
+  get isEmptyList(): boolean {
     return this.assets.length === 0;
   }
 
+  get itemHeightCssVar(): string {
+    return `--s-asset-item-height${this.withFiat ? '--fiat' : ''}`;
+  }
+
+  get itemHeightValue(): number {
+    return parseFloat(getCssVariableValue(this.itemHeightCssVar)) + Number(this.divider);
+  }
+
   get style() {
-    const dividersHeight = this.divider ? this.items - 1 : 0;
-    const itemHeight = `--s-asset-item-height${this.withFiat ? '--fiat' : ''}`;
-    const height = `calc(var(${itemHeight}) * ${this.items} + ${dividersHeight}px)`;
+    const dividersHeight = this.divider ? this.size - 1 : 0;
+    const height = `calc(var(${this.itemHeightCssVar}) * ${this.size} + ${dividersHeight}px)`;
 
     return {
       height,
@@ -62,7 +85,11 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
 <style lang="scss">
 .asset-list {
-  @include scrollbar($basic-spacing-big);
+  margin-right: -17px;
+
+  &-wrapper {
+    overflow: hidden;
+  }
 
   &-empty {
     margin-top: $basic-spacing-medium;
