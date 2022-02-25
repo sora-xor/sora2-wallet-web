@@ -91,7 +91,7 @@ export default class RecieveToken extends Mixins(TranslationMixin) {
   flex-flow: column nowrap;
   align-items: center;
 
-  & > * {
+  & > *:not(:last-child) {
     margin-bottom: $basic-spacing-medium;
   }
 }
