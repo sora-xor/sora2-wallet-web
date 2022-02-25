@@ -1,18 +1,16 @@
 <template>
   <wallet-base :title="t('asset.select')" show-back @back="handleBack">
     <asset-list :assets="accountAssets" divider>
-      <template #default="{ asset }">
-        <asset-list-item :asset="asset">
-          <s-button
-            type="action"
-            size="small"
-            alternative
-            :tooltip="t('asset.recieve', { symbol: asset.symbol })"
-            @click="selectAsset(asset)"
-          >
-            <s-icon name="arrows-chevron-right-rounded-24" size="28" />
-          </s-button>
-        </asset-list-item>
+      <template #default="asset">
+        <s-button
+          type="action"
+          size="small"
+          alternative
+          :tooltip="t('asset.recieve', { symbol: asset.symbol })"
+          @click="selectAsset(asset)"
+        >
+          <s-icon name="arrows-chevron-right-rounded-24" size="28" />
+        </s-button>
       </template>
     </asset-list>
   </wallet-base>
@@ -26,7 +24,6 @@ import TranslationMixin from './mixins/TranslationMixin';
 
 import WalletBase from './WalletBase.vue';
 import AssetList from './AssetList.vue';
-import AssetListItem from './AssetListItem.vue';
 
 import { RouteNames } from '../consts';
 
@@ -36,7 +33,6 @@ import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
   components: {
     WalletBase,
     AssetList,
-    AssetListItem,
   },
 })
 export default class SelectAsset extends Mixins(TranslationMixin) {

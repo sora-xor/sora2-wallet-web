@@ -2,7 +2,7 @@
   <div class="asset s-flex" v-bind="$attrs" v-on="$listeners">
     <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
     <div class="asset-description s-flex">
-      <slot name="value">
+      <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
       </slot>
       <div class="asset-info">
@@ -11,9 +11,9 @@
           <span class="asset-id" @click="handleCopy">({{ address }})</span>
         </s-tooltip>
       </div>
-      <slot name="append" />
+      <slot name="append" v-bind="asset" />
     </div>
-    <slot />
+    <slot v-bind="asset" />
   </div>
 </template>
 

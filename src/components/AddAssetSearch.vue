@@ -8,12 +8,9 @@
       :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
       v-model="search"
     />
-    <asset-list :assets="foundAssets" class="asset-search-list">
-      <template #empty>
+    <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset">
+      <template #list-empty>
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
-      </template>
-      <template #default="{ asset }">
-        <asset-list-item :asset="asset" :key="asset.address" @click="handleSelectAsset(asset)" />
       </template>
     </asset-list>
   </div>
@@ -25,7 +22,6 @@ import { Action, Getter } from 'vuex-class';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from './AssetList.vue';
-import AssetListItem from './AssetListItem.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -35,7 +31,6 @@ import type { AccountAssetsTable } from '../types/common';
 @Component({
   components: {
     AssetList,
-    AssetListItem,
   },
 })
 export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
