@@ -159,8 +159,8 @@ export default {
   },
   code: {
     download: 'Download QR Code',
-    upload: 'Upload QR Code',
-    recieve: 'Recieve by QR Code',
+    upload: 'Scan QR',
+    recieve: 'Recieve',
     invalid: 'Invalid QR Code',
   },
   addAsset: {
