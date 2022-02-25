@@ -70,7 +70,10 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         .join(` ${this.t('operations.andText')} `);
     }
     let status = value.status as TransactionStatus;
-    if ([TransactionStatus.Invalid, TransactionStatus.Usurped].includes(status)) {
+    if (
+      [TransactionStatus.Invalid, TransactionStatus.Usurped].includes(status) ||
+      (Operation.ReferralSetInvitedUser && TransactionStatus.Broadcast === status)
+    ) {
       status = TransactionStatus.Error;
     } else if (status !== TransactionStatus.Error) {
       status = TransactionStatus.Finalized;
