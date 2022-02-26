@@ -16,13 +16,13 @@ export const WHITE_LIST_GITHUB_URL =
 
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
-export const getPolkadotJsAccounts = async (): Promise<void> => {
-  // const accounts = api.getAccounts();
-  // const polkadotJsAccounts = accounts.map((account) => ({
-  //   address: account.address,
-  //   name: account.meta.name || '',
-  // }));
-  // return polkadotJsAccounts;
+export const getPolkadotJsAccounts = async (): Promise<any> => {
+  const accounts = await api.getAccounts();
+  const polkadotJsAccounts = accounts.map((account) => ({
+    address: account.address,
+    name: account.meta.name || '',
+  }));
+  return polkadotJsAccounts;
 };
 
 export const subscribeToPolkadotJsAccounts = async (

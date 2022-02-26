@@ -98,7 +98,7 @@ async function initWallet({
     await store.dispatch('subscribeOnRuntimeVersion');
     await store.dispatch('getWhitelist', { whiteListOverApi });
     await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates');
-    if (isDesktop()) {
+    if (!isDesktop()) {
       await store.dispatch('getPolkadotJsAccounts');
     } else {
       await store.dispatch('subscribeOnExtensionAvailability');

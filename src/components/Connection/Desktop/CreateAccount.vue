@@ -5,7 +5,7 @@
     <template v-if="step === LoginStep.SeedPhrase">
       <div class="seed-grid">
         <div v-for="column in 3" :key="column" class="seed-grid__column">
-          <div v-for="(word, idx) in sortedSeedPhrase" :key="word">
+          <div v-for="(word, idx) in seedPhraseAsArray" :key="word">
             <div v-if="renderWord(column, idx)" class="seed-grid__word">
               <span class="seed-grid__word-number">{{ idx + 1 }}</span>
               <span>{{ word }}</span>
@@ -116,7 +116,7 @@
 import { isEqual } from 'lodash';
 import LoadingMixin from '@/components/mixins/LoadingMixin';
 import { Mixins, Component, Prop } from 'vue-property-decorator';
-// import { mnemonicGenerate } from '@polkadot/util-crypto';
+import { api } from '../../../api';
 
 import TranslationMixin from '../../../components/mixins/TranslationMixin';
 import { LoginStep } from '../../../consts';
@@ -181,31 +181,18 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     return cssClass;
   }
 
-  get seedPhrase(): Array<string> {
-    // const seed = mnemonicGenerate(this.PHRASE_LENGTH);
-    // console.log('seed', seed);
-    return [
-      'TIGER',
-      'IDLE',
-      'DUTCH',
-      'HUNGRY',
-      'MERRY',
-      'EARLY',
-      'MOON',
-      'SMOOTH',
-      'PARROT',
-      'COOL',
-      'CLIENT',
-      'TOILET',
-    ];
+  get seedPhrase(): string {
+    const { seed } = api.createSeed();
+    return seed;
   }
 
-  get sortedSeedPhrase(): Array<string> {
-    return this.seedPhrase;
+  get seedPhraseAsArray(): Array<string> {
+    const seedArray = this.seedPhrase.split(' ').map((word) => word.toUpperCase());
+    return seedArray;
   }
 
   get randomizedSeedPhrase(): Array<string> {
-    return [...this.seedPhrase].sort(() => Math.random() - 0.5);
+    return [...this.seedPhraseAsArray].sort(() => Math.random() - 0.5);
   }
 
   toggleVisibility(): void {
@@ -245,7 +232,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   async handleCopy(): Promise<void> {
-    await copyToClipboard(this.seedPhrase.join(' '));
+    await copyToClipboard(this.seedPhraseAsArray.join(' '));
   }
 
   renderWord(column, index): boolean {
@@ -291,7 +278,9 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   createAccount(): void {
-    // submit creds...
+    if (this.accountPassword === this.accountPasswordConfirm) {
+      api.importAccount(this.seedPhrase, this.accountName, this.accountPassword);
+    }
   }
 
   beforeUpdate() {
@@ -398,13 +387,13 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     line-height: var(--s-line-height-base);
     padding: var(--s-basic-spacing) #{$basic-spacing-small} #{$basic-spacing-medium};
     width: 330px !important;
-
-    p {
-    }
   }
 
-  .eye-icon:hover {
-    cursor: pointer;
+  .eye-icon {
+    color: var(--s-color-base-content-tertiary);
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   .delimiter {

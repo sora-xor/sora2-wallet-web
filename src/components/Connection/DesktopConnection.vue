@@ -1,7 +1,7 @@
 <template>
   <wallet-base :title="t('connection.title')" :show-header="showHeader" :show-back="showBackBtn" @back="handleBack">
     <div class="desktop-connection" v-loading="loading">
-      <connected-account-list v-if="polkadotJsAccounts.length" @handleSelectAccount="handleSelectAccount" />
+      <connected-account-list v-if="!polkadotJsAccounts.length" @handleSelectAccount="handleSelectAccount" />
       <div v-else>
         <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
         <create-account v-else-if="isCreateFlow" :step="step" class="login" @stepChange="setStep" />
