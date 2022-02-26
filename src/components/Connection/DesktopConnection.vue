@@ -1,7 +1,7 @@
 <template>
   <wallet-base :title="t('connection.title')" :show-header="showHeader" :show-back="showBackBtn" @back="handleBack">
     <div class="desktop-connection" v-loading="loading">
-      <connected-account-list v-if="!polkadotJsAccounts.length" @handleSelectAccount="handleSelectAccount" />
+      <connected-account-list v-if="polkadotJsAccounts.length" @handleSelectAccount="handleSelectAccount" />
       <div v-else>
         <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
         <create-account v-else-if="isCreateFlow" :step="step" class="login" @stepChange="setStep" />
@@ -22,7 +22,7 @@ import CreateAccount from './Desktop/CreateAccount.vue';
 import ImportAccount from './Desktop/ImportAccount.vue';
 import { LoginStep } from '../../consts';
 import { getPreviousLoginStep } from '../../util';
-import { Getter } from 'vuex-class';
+import { Getter, Action } from 'vuex-class';
 import ConnectedAccountList from './common/ConnectedAccountList.vue';
 import { PolkadotJsAccount } from '@/types/common';
 
@@ -36,6 +36,8 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
 
   @Getter currentRouteParams!: any;
   @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
+
+  @Action importPolkadotJs!: (address: string) => Promise<void>;
 
   createAccount(): void {
     this.step = LoginStep.SeedPhrase;
@@ -77,20 +79,19 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   }
 
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
-    // await this.withLoading(async () => {
-    //   try {
-    //     await this.importPolkadotJs(account.address);
-    //   } catch (error) {
-    //     this.$alert(this.t((error as Error).message), this.t('errorText'));
-    //     this.step = Step.First;
-    //   }
-    // });
+    await this.withLoading(async () => {
+      try {
+        await this.importPolkadotJs(account.address);
+      } catch (error) {
+        this.$alert(this.t((error as Error).message), this.t('errorText'));
+      }
+    });
   }
 
   async mounted(): Promise<void> {
     await this.withApi(async () => {
       if (this.isAccountSwitch) {
-        // this.navigateToAccountList();
+        this.navigateToAccountList();
       }
     });
   }

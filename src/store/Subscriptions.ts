@@ -69,7 +69,6 @@ const actions = {
     await runParallel(dispatch, [
       'trackActiveTransactions',
       'subscribeOnFiatPriceAndApyObjectUpdates',
-      'subscribeOnExtensionAvailability',
       'subscribeToStorageUpdates',
     ]);
   },

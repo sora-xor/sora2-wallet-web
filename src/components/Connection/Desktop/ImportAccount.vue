@@ -109,8 +109,12 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     this.$emit('stepChange', LoginStep.ImportCredentials);
   }
 
-  importAccount(): void {
-    api.importAccount('salute sniff lift general bus space easy tiny purse puppy seven spoil', 'desktop', 'desktop');
+  async importAccount(): Promise<void> {
+    await api.importAccount(
+      'salute sniff lift general bus space easy tiny purse puppy seven spoil',
+      'desktop',
+      'desktop'
+    );
     console.log('polkadotJsAccounts comp', this.polkadotJsAccounts);
   }
 }

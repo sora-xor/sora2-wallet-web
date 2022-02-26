@@ -85,7 +85,6 @@ async function initWallet({
       throw error;
     }
     await store.dispatch('getWhitelist', { whiteListOverApi });
-    await store.dispatch('subscribeOnFiatPriceAndApyObjectUpdates');
     if (!isDesktop()) {
       await store.dispatch('getPolkadotJsAccounts');
     } else {
@@ -93,7 +92,6 @@ async function initWallet({
       await store.dispatch('checkSigner');
     }
     await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
-    await store.dispatch('checkSigner');
     await store.dispatch('setWalletLoaded', true);
   }
 }
