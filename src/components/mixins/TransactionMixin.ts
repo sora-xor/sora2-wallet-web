@@ -20,8 +20,8 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
 
   @Getter account!: Account;
 
-  @Action addActiveTransaction!: (tx: History) => Promise<void>;
-  @Action removeActiveTransaction!: (tx: History) => Promise<void>;
+  @Action addActiveTransaction!: (id: string) => Promise<void>;
+  @Action removeActiveTransaction!: (id: string) => Promise<void>;
 
   getMessage(value?: History, hideAmountValues = false): string {
     if (!value || !Object.values(Operation).includes(value.type as Operation)) {
@@ -92,7 +92,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       return await this.getLastTransaction();
     }
     this.transaction = tx;
-    this.addActiveTransaction(this.transaction);
+    this.addActiveTransaction(this.transaction.id as string);
   }
 
   /** Should be used with @Watch like a singletone in a root of the project */
@@ -119,7 +119,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       });
     }
     this.time = 0;
-    this.removeActiveTransaction(value);
+    this.removeActiveTransaction(value.id as string);
   }
 
   async withNotifications(func: AsyncVoidFn): Promise<void> {
@@ -133,7 +133,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         const message = this.getMessage(this.transaction as History);
         this.time = 0;
         if (this.transaction) {
-          this.removeActiveTransaction(this.transaction);
+          this.removeActiveTransaction(this.transaction.id as string);
           this.transaction = null;
         }
         this.$notify({

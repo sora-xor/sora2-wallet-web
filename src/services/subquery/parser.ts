@@ -5,7 +5,7 @@ import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 import store from '../../store';
 import { api } from '../../api';
-import { ModuleNames, ModuleMethods } from '../types';
+import { ModuleNames, ModuleMethods } from './types';
 import type {
   ExplorerDataParser,
   HistoryElement,
@@ -17,7 +17,7 @@ import type {
   UtilityBatchAllItem,
   ReferralSetReferrer,
   ReferrerReserve,
-} from '../types';
+} from './types';
 
 const OperationsMap = {
   [ModuleNames.Assets]: {
@@ -91,11 +91,16 @@ const getTransactionStatus = (tx: HistoryElement): string => {
   return TransactionStatus.Error;
 };
 
-const getAssetByAddress = async (address: string): Promise<Asset> => {
-  if (address in store.getters.whitelist) {
-    return store.getters.whitelist[address];
+const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
+  try {
+    if (address in store.getters.whitelist) {
+      return store.getters.whitelist[address];
+    }
+    return await api.assets.getAssetInfo(address);
+  } catch (error) {
+    console.error(error);
+    return null;
   }
-  return await api.assets.getAssetInfo(address);
 };
 
 const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {
@@ -103,6 +108,7 @@ const logOperationDataParsingError = (operation: Operation, transaction: History
 };
 
 export default class SubqueryDataParser implements ExplorerDataParser {
+  // Operations visible in wallet
   public static SUPPORTED_OPERATIONS = [
     Operation.Transfer,
     Operation.Swap,
@@ -213,8 +219,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const asset = await getAssetByAddress(assetAddress as string);
         const asset2 = await getAssetByAddress(asset2Address as string);
 
-        payload.assetAddress = asset.address;
-        payload.asset2Address = asset2.address;
+        payload.assetAddress = asset ? asset.address : '';
+        payload.asset2Address = asset2 ? asset2.address : '';
         payload.symbol = getAssetSymbol(asset);
         payload.symbol2 = getAssetSymbol(asset2);
         payload.amount = FPNumber.fromCodecValue(amount).toString();
@@ -253,11 +259,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.to = data.to;
         return payload;
       }
-      case Operation.ReferralReserveXor: {
-        const data = transaction.data as ReferrerReserve;
-        payload.amount = data.amount;
-        return payload;
-      }
+      case Operation.ReferralReserveXor:
       case Operation.ReferralUnreserveXor: {
         const data = transaction.data as ReferrerReserve;
         payload.amount = data.amount;

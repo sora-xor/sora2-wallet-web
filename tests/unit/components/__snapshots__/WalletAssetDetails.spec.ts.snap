@@ -22,29 +22,27 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
     <div
       class="asset-details-container s-flex"
     >
-      <div>
-        <i
-          class="asset-logo"
-        />
-         
-        <div
-          class="asset-details-balance d2 asset-details-balance--clickable"
-          style="font-size: 30px;"
+      <i
+        class="asset-logo asset-default s-icon-notifications-info-24"
+      />
+       
+      <div
+        class="asset-details-balance d2 asset-details-balance--clickable"
+        style="font-size: 30px;"
+      >
+        <formatted-amount-stub
+          assetsymbol="XOR"
+          fontsizerate="small"
+          fontweightrate="normal"
+          symbolasdecimal="true"
+          value="123.4"
+          valuecanbehidden="true"
         >
-          <formatted-amount-stub
-            assetsymbol="XOR"
-            fontsizerate="small"
-            fontweightrate="normal"
-            symbolasdecimal="true"
-            value="123.4"
-            valuecanbehidden="true"
-          >
-            <s-icon-stub
-              name="chevron-down-rounded-16"
-              size="18"
-            />
-          </formatted-amount-stub>
-        </div>
+          <s-icon-stub
+            name="chevron-down-rounded-16"
+            size="18"
+          />
+        </formatted-amount-stub>
       </div>
        
       <formatted-amount-stub
@@ -199,29 +197,27 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
     <div
       class="asset-details-container s-flex"
     >
-      <div>
-        <i
-          class="asset-logo"
-        />
-         
-        <div
-          class="asset-details-balance d2 asset-details-balance--clickable asset-details-balance--clicked"
-          style="font-size: 30px;"
+      <i
+        class="asset-logo asset-default s-icon-notifications-info-24"
+      />
+       
+      <div
+        class="asset-details-balance d2 asset-details-balance--clickable asset-details-balance--clicked"
+        style="font-size: 30px;"
+      >
+        <formatted-amount-stub
+          assetsymbol="XOR"
+          fontsizerate="small"
+          fontweightrate="normal"
+          symbolasdecimal="true"
+          value="123.4"
+          valuecanbehidden="true"
         >
-          <formatted-amount-stub
-            assetsymbol="XOR"
-            fontsizerate="small"
-            fontweightrate="normal"
-            symbolasdecimal="true"
-            value="123.4"
-            valuecanbehidden="true"
-          >
-            <s-icon-stub
-              name="chevron-down-rounded-16"
-              size="18"
-            />
-          </formatted-amount-stub>
-        </div>
+          <s-icon-stub
+            name="chevron-down-rounded-16"
+            size="18"
+          />
+        </formatted-amount-stub>
       </div>
        
       <formatted-amount-stub

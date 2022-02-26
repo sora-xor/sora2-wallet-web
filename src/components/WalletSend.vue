@@ -29,6 +29,7 @@
           size="medium"
           has-locale-string
           :delimiters="delimiters"
+          :decimals="asset.decimals"
           :max="getMax((asset || {}).address)"
         >
           <div class="wallet-send-amount" slot="top">
@@ -59,7 +60,7 @@
               {{ t('walletSend.max') }}
             </s-button>
             <div class="asset-box">
-              <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+              <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
@@ -92,7 +93,7 @@
           <div class="confirm-asset s-flex">
             <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
             <div class="confirm-asset-value s-flex">
-              <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+              <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
@@ -126,7 +127,7 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import { RouteNames } from '../consts';
-import { formatAddress, formatSoraAddress, getAssetIconStyles } from '../util';
+import { formatAddress, formatSoraAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
 import { api } from '../api';
 
 import WalletBase from './WalletBase.vue';
@@ -163,6 +164,17 @@ export default class WalletSend extends Mixins(
   amount = '';
   showWarningFeeNotification = false;
   showAdditionalInfo = true;
+
+  get iconClasses(): Array<string> {
+    return getAssetIconClasses(this.asset);
+  }
+
+  get iconStyles(): object {
+    if (!this.asset) {
+      return {};
+    }
+    return getAssetIconStyles(this.asset.address);
+  }
 
   get fee(): FPNumber {
     return this.getFPNumberFromCodec(this.networkFees.Transfer);
@@ -285,8 +297,6 @@ export default class WalletSend extends Mixins(
     return knownAsset.symbol === KnownSymbols.XOR;
   }
 
-  getAssetIconStyles = getAssetIconStyles;
-
   getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
   }
@@ -360,7 +370,6 @@ export default class WalletSend extends Mixins(
 </style>
 
 <style scoped lang="scss">
-@import '../styles/icons';
 $logo-size: var(--s-size-mini);
 // TODO: fix typography issues here
 .wallet-send {
@@ -391,7 +400,7 @@ $logo-size: var(--s-size-mini);
       padding: $basic-spacing-mini #{$basic-spacing-extra-small};
     }
     &-logo {
-      @include asset-logo-styles(var(--s-size-mini));
+      @include asset-logo-styles(var(--s-size-mini), $nft-font-size: 8px);
       margin-right: var(--s-basic-spacing);
     }
     &-max {
@@ -517,7 +526,7 @@ $logo-size: var(--s-size-mini);
         white-space: nowrap;
         .asset {
           &-logo {
-            @include asset-logo-styles(var(--s-size-small));
+            @include asset-logo-styles(var(--s-size-small), $nft-font-size: var(--s-font-size-mini));
             margin-right: calc(var(--s-basic-spacing) * 2);
           }
           &-name {

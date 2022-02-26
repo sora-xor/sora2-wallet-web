@@ -4,7 +4,7 @@ import fromPairs from 'lodash/fp/fromPairs';
 import flow from 'lodash/fp/flow';
 import concat from 'lodash/fp/concat';
 import omit from 'lodash/fp/omit';
-import { axiosInstance, History, FPNumber } from '@sora-substrate/util';
+import { axiosInstance, FPNumber } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
 import type { AccountAsset, Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
@@ -20,7 +20,7 @@ import {
   WHITE_LIST_GITHUB_URL,
 } from '../util';
 import { SubqueryExplorerService } from '../services/subquery';
-import type { FiatPriceAndApyObject, ReferrerRewards } from '../services/types';
+import type { FiatPriceAndApyObject, ReferrerRewards } from '../services/subquery/types';
 import type { Account, PolkadotJsAccount, AccountAssetsTable } from '../types/common';
 
 const HOUR = 60 * 60 * 1000;
@@ -35,24 +35,21 @@ const types = flow(
   flatMap((x) => [x + '_REQUEST', x + '_SUCCESS', x + '_FAILURE']),
   concat([
     'RESET_ACCOUNT',
+    'RESET_ASSETS_SUBSCRIPTION',
     'RESET_ACCOUNT_ASSETS_SUBSCRIPTION',
     'RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION',
     'LOGOUT',
     'SYNC_WITH_STORAGE',
-    'SET_TRANSACTION_DETAILS_ID',
-    'GET_ACCOUNT_ACTIVITY',
     'SET_POLKADOT_JS_ACCOUNTS',
     'RESET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
     'SET_EXTENSION_AVAILABILIY',
     'RESET_EXTENSION_AVAILABILIY_SUBSCRIPTION',
+    'UPDATE_ASSETS',
+    'UPDATE_ACCOUNT_ASSETS',
   ]),
   map((x) => [x, x]),
   fromPairs
 )([
-  'GET_ACCOUNT_ASSETS',
-  'UPDATE_ACCOUNT_ASSETS',
-  'GET_ASSETS',
-  'SEARCH_ASSET',
   'ADD_ASSET',
   'TRANSFER',
   'IMPORT_POLKADOT_JS_ACCOUNT',
@@ -65,16 +62,14 @@ type AccountState = {
   address: string;
   name: string;
   isExternal: boolean;
-  accountAssets: Array<AccountAsset>;
-  selectedTransactionId: Nullable<string>;
-  activity: Array<History>;
   assets: Array<Asset>;
-  assetsLoading: boolean;
+  assetsSubscription: Nullable<Subscription>;
+  accountAssets: Array<AccountAsset>;
+  accountAssetsSubscription: Nullable<Subscription>;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
   polkadotJsAccountsSubscription: Nullable<VoidFunction>;
   whitelistArray: Array<WhitelistArrayItem>;
   withoutFiatAndApy: boolean;
-  accountAssetsSubscription: Nullable<Subscription>;
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
   fiatPriceAndApyTimer: Nullable<NodeJS.Timer>;
   referralRewards: ReferrerRewards;
@@ -87,16 +82,16 @@ function initialState(): AccountState {
     address: storage.get('address') || '',
     name: storage.get('name') || '',
     isExternal: Boolean(JSON.parse(storage.get('isExternal'))) || false,
-    accountAssets: [],
-    selectedTransactionId: null,
-    activity: [], // account history (without bridge)
     assets: [],
-    assetsLoading: false,
+    assetsSubscription: null,
+    // account assets & subscription
+    accountAssets: [],
+    accountAssetsSubscription: null,
+    // polkadot js accounts & subscription
     polkadotJsAccounts: [],
     polkadotJsAccountsSubscription: null,
     whitelistArray: [],
     withoutFiatAndApy: false,
-    accountAssetsSubscription: null,
     fiatPriceAndApyObject: {},
     fiatPriceAndApyTimer: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
@@ -127,9 +122,6 @@ const getters = {
   accountAssetsAddressTable(state: AccountState): AccountAssetsTable {
     return toHashTable(state.accountAssets, 'address');
   },
-  activity(state: AccountState): Array<History> {
-    return state.activity;
-  },
   assets(state: AccountState): Array<Asset> {
     return state.assets;
   },
@@ -152,12 +144,6 @@ const getters = {
   },
   fiatPriceAndApyObject(state: AccountState): Nullable<FiatPriceAndApyObject> {
     return state.fiatPriceAndApyObject;
-  },
-  assetsLoading(state: AccountState): boolean {
-    return state.assetsLoading;
-  },
-  selectedTransaction(state: AccountState, getters): History {
-    return getters.activity.find((item) => item.id === state.selectedTransactionId);
   },
   referralRewards(state: AccountState): ReferrerRewards {
     return state.referralRewards;
@@ -194,6 +180,13 @@ const mutations = {
     });
   },
 
+  [types.RESET_ASSETS_SUBSCRIPTION](state: AccountState) {
+    if (state.assetsSubscription) {
+      state.assetsSubscription.unsubscribe();
+      state.assetsSubscription = null;
+    }
+  },
+
   [types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION](state: AccountState) {
     if (state.accountAssetsSubscription) {
       state.accountAssetsSubscription.unsubscribe();
@@ -205,49 +198,14 @@ const mutations = {
     state.address = storage.get('address') || '';
     state.name = storage.get('name') || '';
     state.isExternal = Boolean(storage.get('isExternal')) || false;
-    state.accountAssets = api.assets.accountAssets; // to save reactivity
-    state.activity = api.historyList;
   },
 
-  [types.GET_ACCOUNT_ASSETS_REQUEST](state: AccountState) {
-    state.accountAssets = [];
-  },
-
-  [types.GET_ACCOUNT_ASSETS_SUCCESS](state: AccountState, assets: Array<AccountAsset>) {
-    state.accountAssets = assets;
-  },
-
-  [types.GET_ACCOUNT_ASSETS_FAILURE](state: AccountState) {
-    state.accountAssets = [];
-  },
-
-  [types.UPDATE_ACCOUNT_ASSETS_REQUEST](state: AccountState) {},
-
-  [types.UPDATE_ACCOUNT_ASSETS_SUCCESS](state: AccountState, assets: Array<AccountAsset>) {
-    state.accountAssets = assets;
-  },
-
-  [types.UPDATE_ACCOUNT_ASSETS_FAILURE](state: AccountState) {
-    state.accountAssets = [];
-  },
-
-  [types.GET_ACCOUNT_ACTIVITY](state: AccountState, activity: Array<History>) {
-    state.activity = activity;
-  },
-
-  [types.GET_ASSETS_REQUEST](state: AccountState) {
-    state.assets = [];
-    state.assetsLoading = true;
-  },
-
-  [types.GET_ASSETS_SUCCESS](state: AccountState, assets: Array<Asset>) {
+  [types.UPDATE_ASSETS](state: AccountState, assets: Array<Asset>) {
     state.assets = assets;
-    state.assetsLoading = false;
   },
 
-  [types.GET_ASSETS_FAILURE](state: AccountState) {
-    state.assets = [];
-    state.assetsLoading = false;
+  [types.UPDATE_ACCOUNT_ASSETS](state: AccountState, assets: Array<AccountAsset>) {
+    state.accountAssets = assets;
   },
 
   [types.GET_WHITELIST_REQUEST](state: AccountState) {
@@ -284,10 +242,6 @@ const mutations = {
     state.referralRewards = EMPTY_REFERRAL_REWARDS;
   },
 
-  [types.SEARCH_ASSET_REQUEST](state: AccountState) {},
-  [types.SEARCH_ASSET_SUCCESS](state: AccountState) {},
-  [types.SEARCH_ASSET_FAILURE](state: AccountState) {},
-
   [types.ADD_ASSET_REQUEST](state: AccountState) {},
   [types.ADD_ASSET_SUCCESS](state: AccountState) {},
   [types.ADD_ASSET_FAILURE](state: AccountState) {},
@@ -316,10 +270,6 @@ const mutations = {
   },
 
   [types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE](state: AccountState) {},
-
-  [types.SET_TRANSACTION_DETAILS_ID](state: AccountState, id: string) {
-    state.selectedTransactionId = id;
-  },
 
   [types.SET_EXTENSION_AVAILABILIY](state: AccountState, availability: boolean) {
     state.extensionAvailability = availability;
@@ -354,7 +304,6 @@ const actions = {
   },
 
   async afterLogin({ dispatch }) {
-    await dispatch('getAccountAssets');
     await dispatch('subscribeOnAccountAssets');
     await dispatch('checkCurrentRoute', undefined, { root: true });
   },
@@ -460,31 +409,42 @@ const actions = {
     }
   },
 
-  async getAccountAssets({ commit, getters }) {
-    if (!getters.isLoggedIn || (api.assets.accountAssets.length && getters.accountAssets.length !== 0)) {
-      return;
-    }
-    commit(types.GET_ACCOUNT_ASSETS_REQUEST);
+  async getAssets({ commit, getters: { whitelist } }) {
     try {
-      await api.assets.getKnownAccountAssets();
-      commit(types.GET_ACCOUNT_ASSETS_SUCCESS, api.assets.accountAssets);
+      const assets = await api.assets.getAssets(whitelist);
+      commit(types.UPDATE_ASSETS, assets);
     } catch (error) {
-      commit(types.GET_ACCOUNT_ASSETS_FAILURE);
+      commit(types.UPDATE_ASSETS, []);
     }
+  },
+
+  async subscribeOnAssets({ dispatch, state }) {
+    await dispatch('resetAssetsSubscription');
+    await dispatch('getAssets');
+
+    state.assetsSubscription = api.system.updated.subscribe((events) => {
+      if (events.find((e) => e.event.section === 'assets' && e.event.method === 'AssetRegistered')) {
+        dispatch('getAssets');
+      }
+    });
+  },
+
+  resetAssetsSubscription({ commit }) {
+    commit(types.RESET_ASSETS_SUBSCRIPTION);
   },
 
   async subscribeOnAccountAssets({ commit, dispatch, getters, state }) {
     await dispatch('resetAccountAssetsSubscription');
 
     if (getters.isLoggedIn) {
-      commit(types.UPDATE_ACCOUNT_ASSETS_REQUEST);
       try {
         state.accountAssetsSubscription = api.assets.balanceUpdated.subscribe((data) => {
-          commit(types.UPDATE_ACCOUNT_ASSETS_SUCCESS, api.assets.accountAssets);
+          commit(types.UPDATE_ACCOUNT_ASSETS, api.assets.accountAssets);
         });
-        api.assets.updateAccountAssets();
+
+        await api.assets.updateAccountAssets();
       } catch (error) {
-        commit(types.UPDATE_ACCOUNT_ASSETS_FAILURE);
+        commit(types.UPDATE_ACCOUNT_ASSETS, []);
       }
     }
   },
@@ -493,9 +453,6 @@ const actions = {
     commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION);
   },
 
-  getAccountActivity({ commit }) {
-    commit(types.GET_ACCOUNT_ACTIVITY, api.historyList);
-  },
   async getWhitelist({ commit }, { whiteListOverApi }) {
     const url = whiteListOverApi ? WHITE_LIST_GITHUB_URL : '/whitelist.json';
     commit(types.GET_WHITELIST_REQUEST);
@@ -544,38 +501,17 @@ const actions = {
       commit(types.GET_REFERRAL_REWARDS_FAILURE);
     }
   },
-  async getAssets({ commit, getters: { whitelist } }) {
-    commit(types.GET_ASSETS_REQUEST);
-    try {
-      const assets = await api.assets.getAssets(whitelist);
-      commit(types.GET_ASSETS_SUCCESS, assets);
-    } catch (error) {
-      commit(types.GET_ASSETS_FAILURE);
-    }
-  },
-  async searchAsset({ commit, getters: { whitelist } }, address: string) {
-    commit(types.SEARCH_ASSET_REQUEST);
-    try {
-      const assets = await api.assets.getAssets(whitelist);
-      const asset = assets.find((asset) => asset.address === address);
-      commit(types.SEARCH_ASSET_SUCCESS);
-      return asset;
-    } catch (error) {
-      commit(types.SEARCH_ASSET_FAILURE);
-    }
-  },
+
   async addAsset({ commit }, address: string) {
     commit(types.ADD_ASSET_REQUEST);
     try {
-      await api.assets.getAccountAsset(address, true);
+      await api.assets.addAccountAsset(address);
       commit(types.ADD_ASSET_SUCCESS);
     } catch (error) {
       commit(types.ADD_ASSET_FAILURE);
     }
   },
-  getTransactionDetails({ commit }, id: string) {
-    commit(types.SET_TRANSACTION_DETAILS_ID, id);
-  },
+
   async transfer({ commit, getters: { currentRouteParams } }, { to, amount }) {
     commit(types.TRANSFER_REQUEST);
     const asset = currentRouteParams.asset as AccountAsset;
@@ -592,12 +528,9 @@ const actions = {
   },
 
   async syncWithStorage({ commit, state, getters, dispatch }) {
-    const getAccountAssetsAddresses = () => Object.keys(getters.accountAssetsAddressTable);
-
     // previous state
     const { isLoggedIn: wasLoggedIn } = getters;
     const { address } = state;
-    const prevAddresses = getAccountAssetsAddresses();
 
     commit(types.SYNC_WITH_STORAGE);
 
@@ -612,14 +545,7 @@ const actions = {
 
     // still logged in after sync
     if (getters.isLoggedIn && wasLoggedIn) {
-      const currentAddresses = getAccountAssetsAddresses();
-      // unique addresses size of two states
-      const delta = new Set([...prevAddresses, ...currentAddresses]).size;
-
-      // if asset(s) in api.accountAssets changed, we should update subscription
-      if (prevAddresses.length !== delta || currentAddresses.length !== delta) {
-        api.assets.updateAccountAssets();
-      }
+      await api.assets.updateAccountAssets();
     }
   },
 };

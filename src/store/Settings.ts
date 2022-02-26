@@ -32,6 +32,7 @@ const types = flow(
     'SET_WALLET_LOADED',
     'SET_NETWORK_FEES',
     'RESET_RUNTIME_VERSION_SUBSCRIPTION',
+    'RESET_SYSTEM_EVENTS_SUBSCRIPTION',
     'SET_NFT_STORAGE',
     'SET_API_KEYS',
   ]),
@@ -48,6 +49,7 @@ type SettingsState = {
   shouldBalanceBeHidden: boolean;
   runtimeVersion: number;
   runtimeVersionSubscription: Nullable<Subscription>;
+  systemEventsSubscription: Nullable<Subscription>;
   nftStorage: Nullable<NFTStorage>;
   isDesktop: boolean;
 };
@@ -70,6 +72,7 @@ function initialState(): SettingsState {
     nftStorage: null,
     runtimeVersion: Number(JSON.parse(runtimeStorage.get('version'))),
     runtimeVersionSubscription: null,
+    systemEventsSubscription: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
     shouldBalanceBeHidden: Boolean(JSON.parse(storage.get('shouldBalanceBeHidden'))) || false,
     isDesktop: isElectron(),
@@ -147,6 +150,13 @@ const mutations = {
     }
   },
 
+  [types.RESET_SYSTEM_EVENTS_SUBSCRIPTION](state: SettingsState) {
+    if (state.systemEventsSubscription) {
+      state.systemEventsSubscription.unsubscribe();
+      state.systemEventsSubscription = null;
+    }
+  },
+
   [types.SET_API_KEYS](state, keys = {}) {
     state.apiKeys = { ...state.apiKeys, ...keys };
   },
@@ -180,8 +190,17 @@ const actions = {
     commit(types.SET_NFT_STORAGE, nftStorage);
   },
 
+  async subscribeOnSystemEvents({ state, dispatch }) {
+    await dispatch('resetSystemEventsSubscription');
+    state.systemEventsSubscription = api.system.getEventsSubscription();
+  },
+
+  resetSystemEventsSubscription({ commit }) {
+    commit(types.RESET_SYSTEM_EVENTS_SUBSCRIPTION);
+  },
+
   subscribeOnRuntimeVersion({ commit, state }) {
-    state.runtimeVersionSubscription = api.getRuntimeVersionObservable().subscribe(async (version) => {
+    state.runtimeVersionSubscription = api.system.getRuntimeVersionObservable().subscribe(async (version) => {
       const currentVersion = Number(JSON.parse(runtimeStorage.get('version')));
       const networkFees = JSON.parse(runtimeStorage.get('networkFees'));
       if (currentVersion === version && !isEmpty(networkFees) && areKeysEqual(networkFees, api.NetworkFee)) {

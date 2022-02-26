@@ -3,7 +3,7 @@ import { axiosInstance, FPNumber } from '@sora-substrate/util';
 import { HistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
 import { SoraNetwork } from '../../consts';
-import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject, ReferrerRewards, ReferrerReward } from '../types';
+import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject, ReferrerRewards, ReferrerReward } from './types';
 
 import store from '../../store';
 import { FiatPriceQuery } from './queries/fiatPriceAndApy';
@@ -19,7 +19,7 @@ export default class SubqueryExplorer implements Explorer {
         return 'https://subquery.q1.tst.sora2.soramitsu.co.jp';
       case SoraNetwork.Dev:
       default:
-        return 'https://subquery.q1.dev.sora2.soramitsu.co.jp';
+        return 'https://api.subquery.network/sq/sora-xor/sora-dev';
     }
   }
 
@@ -27,8 +27,8 @@ export default class SubqueryExplorer implements Explorer {
     return store.getters.soraNetwork;
   }
 
-  public async getAccountTransactions(params = {}): Promise<any> {
-    const { historyElements } = await this.request(HistoryElementsQuery, params);
+  public async getAccountTransactions(variables = {}): Promise<any> {
+    const { historyElements } = await this.request(HistoryElementsQuery, variables);
 
     return historyElements;
   }
@@ -74,10 +74,10 @@ export default class SubqueryExplorer implements Explorer {
    */
   public async getNoirTotalRedeemed(accountId?: string, noirAssetId?: string): Promise<number> {
     try {
-      const params = {
+      const variables = {
         filter: noirHistoryElementsFilter(accountId, noirAssetId),
       };
-      const { historyElements } = await this.request(HistoryElementsQuery, params);
+      const { historyElements } = await this.request(HistoryElementsQuery, variables);
       const count = (historyElements.edges as Array<any>).reduce((value, item) => {
         return value + +item.node.data.amount;
       }, 0);
@@ -116,11 +116,11 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public async request(scheme: any, params = {}): Promise<any> {
+  public async request(query: any, variables = {}): Promise<any> {
     const url = SubqueryExplorer.getApiUrl(this.soraNetwork);
     const response = await axiosInstance.post(url, {
-      query: scheme,
-      variables: params,
+      query,
+      variables,
     });
     return response.data.data;
   }

@@ -9,7 +9,7 @@
       v-model="search"
       @input="handleSearch"
     />
-    <s-scrollbar class="asset-search-list" v-loading="assetsLoading || loading">
+    <s-scrollbar class="asset-search-list" v-loading="loading">
       <div v-if="assetIsAlreadyAdded || !foundAssets.length" class="asset-search-list_empty">
         {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
       </div>
@@ -21,7 +21,7 @@
         :class="{ selected: (selectedAsset || {}).address === asset.address }"
         @click="handleSelectAsset(asset)"
       >
-        <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+        <i class="asset-logo" :class="getAssetIconClasses(asset)" :style="getAssetIconStyles(asset.address)" />
         <div class="asset-description s-flex">
           <div class="asset-description_symbol">{{ asset.symbol }}</div>
           <div class="asset-description_info">
@@ -44,7 +44,7 @@ import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/type
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import { AddAssetTabs, RouteNames } from '../consts';
-import { copyToClipboard, formatAddress, getAssetIconStyles } from '../util';
+import { copyToClipboard, formatAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
 
 import type { AccountAssetsTable } from '../types/common';
 
@@ -53,18 +53,14 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   readonly AddAssetTabs = AddAssetTabs;
 
   @Getter assets!: Array<Asset>;
-  @Getter assetsLoading!: boolean;
   @Getter accountAssets!: Array<AccountAsset>;
   @Getter accountAssetsAddressTable!: AccountAssetsTable;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAssets!: AsyncVoidFn;
 
   search = '';
   selectedAsset: Nullable<Asset> = null;
 
   async mounted(): Promise<void> {
-    await this.getAssets();
-
     const input = this.$refs.search as any;
 
     if (input && typeof input.focus === 'function') {
@@ -124,6 +120,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   }
 
   getAssetIconStyles = getAssetIconStyles;
+  getAssetIconClasses = getAssetIconClasses;
 
   getFormattedAddress(asset: Asset): string {
     return formatAddress(asset.address, 10);
@@ -156,8 +153,6 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 </style>
 
 <style scoped lang="scss">
-@import '../styles/icons';
-
 .asset-search {
   margin-top: #{$basic-spacing-medium};
   &-input {

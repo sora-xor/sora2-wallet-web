@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "1.7.11",
+  "version": "1.7.25",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
@@ -23,8 +23,8 @@
   "dependencies": {
     "@polkadot/extension-dapp": "^0.42.2",
     "@polkadot/vue-identicon": "^0.72.1",
-    "@sora-substrate/util": "^1.7.42",
-    "@soramitsu/soramitsu-js-ui": "^1.0.26",
+    "@sora-substrate/util": "^1.7.38",
+    "@soramitsu/soramitsu-js-ui": "^1.0.28",
     "core-js": "^3.6.4",
     "dayjs": "^1.10.5",
     "is-electron": "^2.2.1",

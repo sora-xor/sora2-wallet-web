@@ -11,7 +11,7 @@
       <div class="wallet-assets-container">
         <template v-for="(asset, index) in formattedAccountAssets">
           <div class="wallet-assets-item s-flex" :key="asset.address">
-            <i class="asset-logo" :class="nftIconClass(asset)" :style="getAssetIconStyles(asset.address)" />
+            <i class="asset-logo" :class="getAssetIconClasses(asset)" :style="getAssetIconStyles(asset.address)" />
             <div class="asset s-flex">
               <formatted-amount-with-fiat-value
                 value-can-be-hidden
@@ -51,7 +51,7 @@
               <s-icon name="finance-send-24" size="28" />
             </s-button>
             <s-button
-              v-if="permissions.swapAssets"
+              v-if="permissions.swapAssets && asset.decimals"
               class="wallet-assets__button swap"
               type="action"
               size="small"
@@ -104,7 +104,7 @@ import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import { RouteNames, HiddenValue } from '../consts';
-import { getAssetIconStyles, formatAddress } from '../util';
+import { getAssetIconStyles, formatAddress, getAssetIconClasses } from '../util';
 import type { WalletPermissions } from '../consts';
 
 @Component({
@@ -118,12 +118,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @Getter withoutFiatAndApy!: boolean;
   @Getter permissions!: WalletPermissions;
   @Getter shouldBalanceBeHidden!: boolean;
-  @Action getAccountAssets!: AsyncVoidFn;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-
-  async mounted(): Promise<void> {
-    this.withApi(this.getAccountAssets);
-  }
 
   get computedClasses(): string {
     const baseClass = 'wallet-assets';
@@ -158,15 +153,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
-  nftIconClass(asset): string {
-    return asset.decimals === 0 ? 'nft-asset' : '';
-  }
-
   getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
   }
 
   getAssetIconStyles = getAssetIconStyles;
+  getAssetIconClasses = getAssetIconClasses;
 
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
@@ -262,8 +254,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 </style>
 
 <style scoped lang="scss">
-@import '../styles/icons';
-
 $wallet-assets-class: '.wallet-assets';
 $wallet-assets-count: 5;
 
@@ -374,22 +364,6 @@ $wallet-assets-count: 5;
       font-size: var(--s-font-size-medium);
       font-weight: 600;
     }
-  }
-}
-
-.nft-asset {
-  background-image: none !important;
-  background-color: #f4f0f1 !important;
-  position: relative;
-  font-style: unset;
-
-  &::before {
-    content: 'NFT';
-    position: absolute;
-    font-weight: 800;
-    top: 28%;
-    left: 14%;
-    color: var(--s-color-base-content-tertiary);
   }
 }
 </style>

@@ -19,11 +19,11 @@
           :content-link="nftContentLink"
           :token-name="asset.name"
           :token-symbol="asset.symbol"
-          :token-description="nftTokenDescription"
+          :token-description="asset.description"
           @click-details="handleClickNftDetails"
         />
-        <div v-else>
-          <i class="asset-logo" :style="getAssetIconStyles(asset.address)" />
+        <template v-else>
+          <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
           <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
             <formatted-amount
               value-can-be-hidden
@@ -35,7 +35,7 @@
               <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
             </formatted-amount>
           </div>
-        </div>
+        </template>
         <formatted-amount
           v-if="price && !isNft"
           value-can-be-hidden
@@ -114,9 +114,9 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
-import { CodecString, History } from '@sora-substrate/util';
 import { KnownAssets, KnownSymbols, BalanceType } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
@@ -128,7 +128,7 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import { RouteNames } from '../consts';
-import { copyToClipboard, delay, getAssetIconStyles, shortenValue } from '../util';
+import { copyToClipboard, delay, getAssetIconStyles, shortenValue, getAssetIconClasses } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 import { Operations, Account } from '../types/common';
 import type { WalletPermissions } from '../consts';
@@ -155,10 +155,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @Getter account!: Account;
   @Getter accountAssets!: Array<AccountAsset>;
   @Getter currentRouteParams!: any;
-  @Getter activity!: Array<History>;
+  @Getter history!: AccountHistory<HistoryItem>;
   @Getter permissions!: WalletPermissions;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getAccountActivity!: AsyncVoidFn;
+  @Action clearAccountHistory!: (assetAddress?: string) => Promise<void>;
 
   wasBalanceDetailsClicked = false;
 
@@ -166,10 +166,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   private wasNftLinkCopied = false;
   wasNftDetailsClicked = false;
   nftContentLink = '';
-  nftTokenDescription = '';
 
   get isNft(): boolean {
-    return this.currentRouteParams.asset.decimals === 0;
+    return api.assets.isNft(this.asset);
   }
 
   get nftLinkTooltipText(): string {
@@ -183,9 +182,8 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   private async setNftMeta(): Promise<void> {
-    const ipfsPath = await api.assets.getNftContent(this.currentRouteParams.asset.address);
+    const ipfsPath = this.asset.content as string;
     this.nftContentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
-    this.nftTokenDescription = await api.assets.getNftDescription(this.currentRouteParams.asset.address);
   }
 
   handleClickNftDetails(): void {
@@ -213,6 +211,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
   get operations(): Array<Operation> {
     const list: Array<Operation> = [];
+    const divisible = !!this.asset.decimals;
 
     if (this.permissions.sendAssets) {
       list.push({ type: Operations.Send, icon: 'finance-send-24' });
@@ -220,13 +219,13 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     if (this.permissions.copyAssets) {
       list.push({ type: Operations.Receive, icon: 'basic-receive-24' });
     }
-    if (this.permissions.swapAssets && !this.isNft) {
+    if (this.permissions.swapAssets && divisible) {
       list.push({ type: Operations.Swap, icon: 'arrows-swap-24' });
     }
-    if (this.permissions.addLiquidity && !this.isNft) {
+    if (this.permissions.addLiquidity && divisible) {
       list.push({ type: Operations.Liquidity, icon: 'basic-drop-24' });
     }
-    if (this.permissions.bridgeAssets && !this.isNft) {
+    if (this.permissions.bridgeAssets && divisible) {
       list.push({ type: Operations.Bridge, icon: 'grid-block-distribute-vertically-24' });
     }
 
@@ -288,9 +287,22 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   get isCleanHistoryDisabled(): boolean {
-    return !this.asset
-      ? true
-      : !this.activity.filter((item) => [item.assetAddress, item.asset2Address].includes(this.asset.address)).length;
+    if (!this.asset) return true;
+
+    return Object.values(this.history).every(
+      (item) => ![item.assetAddress, item.asset2Address].includes(this.asset.address)
+    );
+  }
+
+  get iconClasses(): Array<string> {
+    return getAssetIconClasses(this.asset);
+  }
+
+  get iconStyles(): object {
+    if (!this.asset) {
+      return {};
+    }
+    return getAssetIconStyles(this.asset.address);
   }
 
   handleBack(): void {
@@ -327,31 +339,27 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     this.wasBalanceDetailsClicked = !this.wasBalanceDetailsClicked;
   }
 
-  getAssetIconStyles = getAssetIconStyles;
-
   getBalance(asset: AccountAsset, type: BalanceType): string {
     return `${this.formatCodecNumber(asset.balance[type], asset.decimals)}`;
   }
 
   handleRemoveAsset(): void {
-    api.assets.removeAsset(this.asset.address);
+    api.assets.removeAccountAsset(this.asset.address);
     this.handleBack();
   }
 
-  handleCleanHistory(): void {
+  async handleCleanHistory(): Promise<void> {
     if (!this.asset) return;
-    api.clearHistory(this.asset.address);
-    this.getAccountActivity();
+    await this.clearAccountHistory(this.asset.address);
   }
 }
 </script>
 
 <style scoped lang="scss">
-@import '../styles/icons';
-
 .asset-details {
   padding: 0 !important;
   margin-bottom: 0;
+  border-radius: 0;
   &.s-card.neumorphic {
     padding-top: 0;
     padding-bottom: 0;
