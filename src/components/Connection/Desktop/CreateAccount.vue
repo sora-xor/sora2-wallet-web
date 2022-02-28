@@ -114,6 +114,7 @@
 
 <script lang="ts">
 import { isEqual } from 'lodash';
+import { Action } from 'vuex-class';
 import LoadingMixin from '@/components/mixins/LoadingMixin';
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 import { api } from '../../../api';
@@ -121,9 +122,11 @@ import { api } from '../../../api';
 import TranslationMixin from '../../../components/mixins/TranslationMixin';
 import { LoginStep } from '../../../consts';
 import { copyToClipboard } from '../../../util';
+import { PolkadotJsAccount } from '@/types/common';
 
 @Component
 export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin) {
+  @Action importPolkadotJs!: (address: string) => Promise<void>;
   @Prop({ type: String }) readonly step!: LoginStep;
 
   readonly LoginStep = LoginStep;
@@ -277,10 +280,21 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     this.discardAllWords();
   }
 
-  createAccount(): void {
+  async createAccount(): Promise<void> {
     if (this.accountPassword === this.accountPasswordConfirm) {
-      api.importAccount(this.seedPhrase, this.accountName, this.accountPassword);
+      const account = await api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
+      this.enterAccount(account);
     }
+  }
+
+  async enterAccount(account): Promise<void> {
+    await this.withLoading(async () => {
+      try {
+        await this.importPolkadotJs(account.address);
+      } catch (error) {
+        this.$alert(this.t((error as Error).message), this.t('errorText'));
+      }
+    });
   }
 
   beforeUpdate() {

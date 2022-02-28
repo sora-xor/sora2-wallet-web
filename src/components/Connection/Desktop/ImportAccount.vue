@@ -110,12 +110,23 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   async importAccount(): Promise<void> {
-    await api.importAccount(
+    const account = await api.importAccount(
       'salute sniff lift general bus space easy tiny purse puppy seven spoil',
       'desktop',
       'desktop'
     );
-    console.log('polkadotJsAccounts comp', this.polkadotJsAccounts);
+
+    this.enterAccount(account);
+  }
+
+  async enterAccount(account: PolkadotJsAccount): Promise<void> {
+    await this.withLoading(async () => {
+      try {
+        await this.importPolkadotJs(account.address);
+      } catch (error) {
+        this.$alert(this.t((error as Error).message), this.t('errorText'));
+      }
+    });
   }
 }
 </script>
