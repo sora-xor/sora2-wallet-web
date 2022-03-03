@@ -19,6 +19,8 @@ import type {
   ReferrerReserve,
 } from './types';
 
+const insensitive = (value: string) => value.toLowerCase();
+
 const OperationsMap = {
   [ModuleNames.Assets]: {
     [ModuleMethods.AssetsRegister]: () => Operation.RegisterAsset,
@@ -58,7 +60,7 @@ const emptyFn = () => null;
 
 const getBatchCall = (data: Array<UtilityBatchAllItem>, { module, method }): Nullable<UtilityBatchAllItem> =>
   data.find(
-    (item) => item.module.toLowerCase() === module.toLowerCase() && item.method.toLowerCase() === method.toLowerCase()
+    (item) => insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method)
   );
 
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
@@ -214,8 +216,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const {
           input_asset_a: assetAddress,
           input_asset_b: asset2Address,
-          input_a_desired: amount,
-          input_b_desired: amount2,
+          input_a_min: amount,
+          input_b_min: amount2,
         } = call.data.args;
 
         const asset = await getAssetByAddress(assetAddress as string);
@@ -225,8 +227,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.asset2Address = asset2 ? asset2.address : '';
         payload.symbol = getAssetSymbol(asset);
         payload.symbol2 = getAssetSymbol(asset2);
-        payload.amount = FPNumber.fromCodecValue(amount).toString();
-        payload.amount2 = FPNumber.fromCodecValue(amount2).toString();
+        payload.amount = String(amount);
+        payload.amount2 = String(amount2);
 
         return payload;
       }
