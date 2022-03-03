@@ -57,7 +57,9 @@ const getTransactionId = (tx: HistoryElement): string => tx.id;
 const emptyFn = () => null;
 
 const getBatchCall = (data: Array<UtilityBatchAllItem>, { module, method }): Nullable<UtilityBatchAllItem> =>
-  data.find((item) => item.module === module && item.method === method);
+  data.find(
+    (item) => item.module.toLowerCase() === module.toLowerCase() && item.method.toLowerCase() === method.toLowerCase()
+  );
 
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
