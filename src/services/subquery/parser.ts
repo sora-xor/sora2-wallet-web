@@ -22,18 +22,18 @@ import type {
 const insensitive = (value: string) => value.toLowerCase();
 
 const OperationsMap = {
-  [ModuleNames.Assets]: {
+  [insensitive(ModuleNames.Assets)]: {
     [ModuleMethods.AssetsRegister]: () => Operation.RegisterAsset,
     [ModuleMethods.AssetsTransfer]: () => Operation.Transfer,
   },
-  [ModuleNames.PoolXYK]: {
+  [insensitive(ModuleNames.PoolXYK)]: {
     [ModuleMethods.PoolXYKDepositLiquidity]: () => Operation.AddLiquidity,
     [ModuleMethods.PoolXYKWithdrawLiquidity]: () => Operation.RemoveLiquidity,
   },
-  [ModuleNames.LiquidityProxy]: {
+  [insensitive(ModuleNames.LiquidityProxy)]: {
     [ModuleMethods.LiquidityProxySwap]: () => Operation.Swap,
   },
-  [ModuleNames.Utility]: {
+  [insensitive(ModuleNames.Utility)]: {
     [ModuleMethods.UtilityBatchAll]: (data: HistoryElement['data']) => {
       if (
         Array.isArray(data) &&
@@ -45,7 +45,7 @@ const OperationsMap = {
       return null;
     },
   },
-  [ModuleNames.Referrals]: {
+  [insensitive(ModuleNames.Referrals)]: {
     [ModuleMethods.ReferralsSetReferrer]: () => Operation.ReferralSetInvitedUser,
     [ModuleMethods.ReferralsReserve]: () => Operation.ReferralReserveXor,
     [ModuleMethods.ReferralsUnreserve]: () => Operation.ReferralUnreserveXor,
@@ -66,7 +66,7 @@ const getBatchCall = (data: Array<UtilityBatchAllItem>, { module, method }): Nul
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
 
-  const operationGetter = getOr(emptyFn, [module, method], OperationsMap);
+  const operationGetter = getOr(emptyFn, [insensitive(module), method], OperationsMap);
 
   return operationGetter(data);
 };
