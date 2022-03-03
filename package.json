@@ -23,8 +23,8 @@
   "dependencies": {
     "@polkadot/extension-dapp": "^0.42.2",
     "@polkadot/vue-identicon": "^0.72.1",
-    "@sora-substrate/util": "^1.7.38",
-    "@soramitsu/soramitsu-js-ui": "^1.0.28",
+    "@sora-substrate/util": "^1.7.46",
+    "@soramitsu/soramitsu-js-ui": "^1.0.29",
     "core-js": "^3.6.4",
     "dayjs": "^1.10.5",
     "lodash": "^4.17.21",
