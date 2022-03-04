@@ -89,7 +89,7 @@ const OperationFilterMap = {
   },
   [Operation.AddLiquidity]: {
     module: {
-      equalTo: ModuleNames.PoolXYK,
+      includesInsensitive: ModuleNames.PoolXYK,
     },
     method: {
       equalTo: ModuleMethods.PoolXYKDepositLiquidity,
@@ -97,7 +97,7 @@ const OperationFilterMap = {
   },
   [Operation.RemoveLiquidity]: {
     module: {
-      equalTo: ModuleNames.PoolXYK,
+      includesInsensitive: ModuleNames.PoolXYK,
     },
     method: {
       equalTo: ModuleMethods.PoolXYKWithdrawLiquidity,
