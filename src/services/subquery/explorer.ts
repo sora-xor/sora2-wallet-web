@@ -149,7 +149,7 @@ export default class SubqueryExplorer implements Explorer {
 
     try {
       do {
-        const response = await this.getAccountlRewards(referrer, after);
+        const response = await this.getAccountRewards(referrer, after);
 
         if (!response) {
           return null;
@@ -158,7 +158,7 @@ export default class SubqueryExplorer implements Explorer {
         after = response.endCursor;
         hasNextPage = response.hasNextPage;
 
-        (response.nodes as Array<ReferrerReward>).forEach((item) => {
+        response.nodes.forEach((item) => {
           rewardsInfo.rewards = rewardsInfo.rewards.add(new FPNumber(item.amount));
           const invitedUser = item.referral;
           if (!rewardsInfo.invitedUserRewards[invitedUser]) {
@@ -180,7 +180,7 @@ export default class SubqueryExplorer implements Explorer {
   /**
    * Get Referral Rewards items
    */
-  public async getAccountlRewards(
+  public async getAccountRewards(
     referrer?: string,
     after?: string
   ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: ReferrerReward[] }>> {
