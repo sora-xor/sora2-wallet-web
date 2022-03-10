@@ -135,18 +135,30 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public async getAccountReferralRewards(referrer?: string): Promise<any> {
+  /**
+   * Get Referral Rewards summarized by referral
+   */
+  public async getAccountReferralRewards(referrer?: string): Promise<Nullable<ReferrerRewards>> {
+    const rewardsInfo: ReferrerRewards = {
+      rewards: FPNumber.ZERO,
+      invitedUserRewards: {},
+    };
+
+    let after = '';
+    let hasNextPage = true;
+
     try {
-      const params = {
-        filter: referrerRewardsFilter(referrer),
-      };
-      const { referrerRewards } = await this.request(ReferrerRewardsQuery, params);
-      const rewardsInfo: ReferrerRewards = {
-        rewards: FPNumber.ZERO,
-        invitedUserRewards: {},
-      };
-      if (referrerRewards) {
-        (referrerRewards.nodes as Array<ReferrerReward>).forEach((item) => {
+      do {
+        const response = await this.getAccountlRewards(referrer, after);
+
+        if (!response) {
+          return null;
+        }
+
+        after = response.endCursor;
+        hasNextPage = response.hasNextPage;
+
+        (response.nodes as Array<ReferrerReward>).forEach((item) => {
           rewardsInfo.rewards = rewardsInfo.rewards.add(new FPNumber(item.amount));
           const invitedUser = item.referral;
           if (!rewardsInfo.invitedUserRewards[invitedUser]) {
@@ -156,10 +168,41 @@ export default class SubqueryExplorer implements Explorer {
             new FPNumber(item.amount)
           );
         });
-      }
+      } while (hasNextPage);
+
       return rewardsInfo;
     } catch (error) {
+      console.error('Subquery is not available or data is incorrect!', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get Referral Rewards items
+   */
+  public async getAccountlRewards(
+    referrer?: string,
+    after?: string
+  ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: ReferrerReward[] }>> {
+    try {
+      const params = {
+        after,
+        filter: referrerRewardsFilter(referrer),
+      };
+
+      const { referrerRewards } = await this.request(ReferrerRewardsQuery, params);
+
+      if (!referrerRewards) return null;
+
+      const {
+        pageInfo: { hasNextPage, endCursor },
+        nodes,
+      } = referrerRewards;
+
+      return { hasNextPage, endCursor, nodes };
+    } catch (error) {
       console.error(error);
+      return null;
     }
   }
 

@@ -1,6 +1,18 @@
 export const ReferrerRewardsQuery = `
-query($filter: ReferrerRewardFilter) {
-  referrerRewards(filter: $filter) {
+query (
+  $first: Int = 100
+  $filter: ReferrerRewardFilter
+  $after: Cursor = ""
+) {
+  referrerRewards (
+    first: $first
+    filter: $filter
+    after: $after
+  ) {
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
     nodes {
       id
       blockHeight
@@ -12,7 +24,9 @@ query($filter: ReferrerRewardFilter) {
   }
 }`;
 
-export const referrerRewardsFilter = (referrer = '') => {
+export const referrerRewardsFilter = (referrer?: string) => {
+  if (!referrer) return undefined;
+
   return {
     referrer: {
       equalTo: referrer,
