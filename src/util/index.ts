@@ -8,7 +8,7 @@ import { api } from '../api';
 import store from '../store';
 import { ExplorerLink, SoraNetwork, ExplorerType, LoginStep } from '../consts';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
-import type { PolkadotJsAccount } from '../types/common';
+import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 
 export const APP_NAME = 'Sora2 Wallet';
 
@@ -19,10 +19,12 @@ export const formatSoraAddress = (address: string) => api.formatAddress(address)
 
 export const getPolkadotJsAccounts = async (): Promise<any> => {
   const accounts = await api.getAccounts();
+  console.log('accounts!', accounts);
   const polkadotJsAccounts = accounts.map((account) => ({
     address: account.address,
     name: account.meta.name || '',
   }));
+  console.log('polkadotJsAccounts', polkadotJsAccounts);
   return polkadotJsAccounts;
 };
 
@@ -212,6 +214,8 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
 export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
   let currentStepIndex: number;
 
+  if (currentStep === LoginStep.Welcome) return LoginStep.AccountList;
+
   const createFlow = [
     LoginStep.Welcome,
     LoginStep.SeedPhrase,
@@ -234,4 +238,16 @@ export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
   }
 
   return LoginStep.Welcome;
+};
+
+export const parseJson = (file: File): Promise<KeyringPair$Json> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = () => {
+      const json = reader.result as string;
+      resolve(JSON.parse(json));
+    };
+    reader.onerror = (e) => reject(e);
+  });
 };

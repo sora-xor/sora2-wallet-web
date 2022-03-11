@@ -109,6 +109,9 @@ const getters = {
   isExternal(state: AccountState): boolean {
     return state.isExternal;
   },
+  isDesktop(state, getters, rootState): boolean {
+    return rootState.Settings.isDesktop;
+  },
   account(state: AccountState): Account {
     return {
       address: state.address,
@@ -359,7 +362,7 @@ const actions = {
   async updatePolkadotJsAccounts({ commit, dispatch, getters }, accounts: Array<PolkadotJsAccount>) {
     commit(types.SET_POLKADOT_JS_ACCOUNTS, accounts);
 
-    if (getters.isLoggedIn) {
+    if (getters.isLoggedIn && !getters.isDesktop) {
       try {
         await dispatch('getSigner');
       } catch (error) {
@@ -386,17 +389,43 @@ const actions = {
     commit(types.RESET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION);
   },
 
+  async importPolkadotJsDesktop({ commit, dispatch, getters }, address: string) {
+    commit(types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST);
+    try {
+      const defaultAddress = api.formatAddress(address, false);
+      const account = getters.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
+
+      if (!account) {
+        commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE);
+        throw new Error('polkadotjs.noAccount');
+      }
+
+      // const signer = await dispatch('getSigner');
+      // console.log('signer', signer);
+
+      api.importByPolkadotJs(account.address, account.name);
+      // api.setSigner(signer);
+
+      commit(types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS, account.name);
+      await dispatch('afterLogin');
+    } catch (error) {
+      commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE);
+      throw new Error((error as Error).message);
+    }
+  },
+
   async importPolkadotJs({ commit, dispatch }, address: string) {
     commit(types.IMPORT_POLKADOT_JS_ACCOUNT_REQUEST);
     try {
       const defaultAddress = api.formatAddress(address, false);
       const info = await getExtensionInfo();
-      console.log('info', info);
       const account = info.accounts.find((acc) => acc.address === defaultAddress);
       if (!account) {
         commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE);
         throw new Error('polkadotjs.noAccount');
       }
+      console.log('info', info);
+      console.log('info.signer', info.signer);
       api.importByPolkadotJs(account.address, account.name);
       api.setSigner(info.signer);
 
@@ -539,6 +568,7 @@ const actions = {
       if (getters.isLoggedIn) {
         await dispatch('importPolkadotJs', state.address);
       } else {
+        console.log('syncWithStorage');
         await dispatch('logout');
       }
     }

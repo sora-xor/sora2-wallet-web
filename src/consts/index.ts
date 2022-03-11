@@ -69,6 +69,7 @@ export enum LoginStep {
   SeedPhrase = 'Create/SeedPhrase',
   ConfirmSeedPhrase = 'Create/ConfirmSeedPhrase',
   CreateCredentials = 'Create/Credentials',
+  AccountList = 'AccountList',
 }
 
 export interface WalletPermissions {

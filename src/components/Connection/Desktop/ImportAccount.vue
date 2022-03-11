@@ -12,11 +12,19 @@
         @input="handleMnemonicInput"
       />
       <p class="line">or</p>
-      <s-button @click="nextStep" class="s-typography-button--large login-btn"> Import .JSON </s-button>
+      <input
+        ref="fileInput"
+        id="contentFile"
+        type="file"
+        accept="application/json"
+        class="json-upload"
+        @change="handleUploadJson"
+      />
+      <s-button @click="importJson" class="s-typography-button--large login-btn"> Import .JSON </s-button>
       <s-button
         @click="nextStep"
         key="step1"
-        :disabled="disabled"
+        :disabled="disabledNextStep"
         class="s-typography-button--large login-btn"
         type="primary"
       >
@@ -29,6 +37,7 @@
           :placeholder="t('desktop.accountName.placeholder')"
           v-model="accountName"
           :disabled="loading"
+          :readonly="readonlyAccountName"
         ></s-input>
         <s-input
           :type="inputType"
@@ -43,7 +52,7 @@
       <s-button
         @click="importAccount"
         key="step2"
-        :disabled="disabled"
+        :disabled="disabledImportStep"
         class="s-typography-button--large login-btn"
         type="primary"
       >
@@ -55,12 +64,14 @@
 
 <script lang="ts">
 import { LoginStep } from '../../../consts';
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import TranslationMixin from '../../mixins/TranslationMixin';
 import LoadingMixin from '@/components/mixins/LoadingMixin';
 import { api } from '@sora-substrate/util';
-import { PolkadotJsAccount } from '@/types/common';
-import { Getter } from 'vuex-class';
+import { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
+import { Getter, Action } from 'vuex-class';
+import { parseJson } from '../../../util';
+import { mnemonicValidate } from '@polkadot/util-crypto';
 
 @Component
 export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin) {
@@ -68,13 +79,23 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
   @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
+  @Action importPolkadotJs!: (address: string) => Promise<void>;
+  @Action getPolkadotJsAccounts!: () => Promise<void>;
+
+  @Ref('fileInput') readonly fileInput!: HTMLInputElement;
+
   LoginStep = LoginStep;
+
+  readonly PHRASE_LENGTH = 12;
 
   mnemonicPhrase = '';
   accountName = '';
   accountPassword = '';
 
+  json: KeyringPair$Json | null = null;
+
   hiddenInput = true;
+  readonlyAccountName = false;
 
   get title(): string {
     if (this.step === LoginStep.Import) return this.t('desktop.heading.importTitle');
@@ -82,8 +103,12 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     return '';
   }
 
-  get disabled(): boolean {
-    return false;
+  get disabledNextStep(): boolean {
+    return this.mnemonicPhrase.length === 0;
+  }
+
+  get disabledImportStep(): boolean {
+    return !(!!this.accountName && !!this.accountPassword);
   }
 
   get inputType(): string {
@@ -106,27 +131,112 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   nextStep(): void {
+    if (this.mnemonicPhrase.trim().split(' ').length !== this.PHRASE_LENGTH) {
+      this.$notify({
+        message: `Mnemonic should contain ${this.PHRASE_LENGTH} words`,
+        type: 'error',
+        title: '',
+      });
+      this.mnemonicPhrase = '';
+      return;
+    }
+
+    if (!mnemonicValidate(this.mnemonicPhrase)) {
+      this.$notify({
+        message: `Invalid bip39 mnemonic specified`,
+        type: 'error',
+        title: '',
+      });
+      this.mnemonicPhrase = '';
+      return;
+    }
+
     this.$emit('stepChange', LoginStep.ImportCredentials);
   }
 
-  async importAccount(): Promise<void> {
-    const account = await api.importAccount(
-      'salute sniff lift general bus space easy tiny purse puppy seven spoil',
-      'desktop',
-      'desktop'
-    );
-
-    this.enterAccount(account);
+  importJson(): void {
+    this.fileInput.click();
   }
 
-  async enterAccount(account: PolkadotJsAccount): Promise<void> {
-    await this.withLoading(async () => {
-      try {
-        await this.importPolkadotJs(account.address);
-      } catch (error) {
-        this.$alert(this.t((error as Error).message), this.t('errorText'));
+  async handleUploadJson(e): Promise<void> {
+    try {
+      const jsonFile = e.target.files[0];
+      if (!jsonFile) {
+        return;
       }
-    });
+
+      const parsedJson = await parseJson(jsonFile);
+      let name;
+      try {
+        const address = (parsedJson as KeyringPair$Json).address;
+        const encoded = (parsedJson as KeyringPair$Json).encoded;
+        const encoding = (parsedJson as KeyringPair$Json).encoding;
+        name = (parsedJson as KeyringPair$Json).meta.name;
+      } catch {
+        this.$notify({
+          message: `JSON file does not have required fields`,
+          type: 'error',
+          title: '',
+        });
+
+        return;
+      }
+
+      this.accountName = name;
+      this.readonlyAccountName = true;
+      this.json = parsedJson;
+      this.$emit('stepChange', LoginStep.ImportCredentials);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async importAccount(): Promise<void> {
+    if (this.json) {
+      this.handleJsonInput(this.json);
+    } else {
+      this.handleCredentialsInput();
+    }
+  }
+
+  handleJsonInput(json: KeyringPair$Json): void {
+    try {
+      api.restoreFromJson(json, this.accountPassword);
+      this.getPolkadotJsAccounts();
+      this.$emit('stepChange', LoginStep.AccountList);
+    } catch (error) {
+      if (error.message === 'Unable to decode using the supplied passphrase') {
+        this.$notify({
+          message: `Password did not match`,
+          type: 'error',
+          title: '',
+        });
+      } else {
+        this.$notify({
+          message: `Something went wrong`,
+          type: 'error',
+          title: '',
+        });
+      }
+      this.accountPassword = '';
+    }
+  }
+
+  async handleCredentialsInput() {
+    try {
+      const account = await api.createAccount(this.mnemonicPhrase, this.accountName, this.accountPassword);
+      this.getPolkadotJsAccounts();
+      this.$emit('stepChange', LoginStep.AccountList);
+    } catch (error) {
+      console.log('error', error);
+      if (error.message === 'Invalid bip39 mnemonic specified') {
+        this.$notify({
+          message: `Invalid bip39 mnemonic specified`,
+          type: 'error',
+          title: '',
+        });
+      }
+    }
   }
 }
 </script>
@@ -138,6 +248,10 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     display: flex;
     flex-direction: column;
     gap: 16px;
+  }
+
+  .json-upload {
+    display: none;
   }
 }
 .line {

@@ -324,11 +324,16 @@ export default {
       placeholder: 'Confirm password',
     },
     accountMnemonic: {
-      placeholder: 'Enter mnemonic phrase',
+      placeholder: 'Mnemonic phrase',
     },
     seedAdviceText:
       'This is a secret seed of your account. Make sure to store it on a non-digital carrier, for example - paper',
     confirmSeedText: 'Confirm the seed phrase by clicking words in the correct order',
     errorMnemonicText: 'Incorrect seed phrase order',
+    dialog: {
+      confirmTitle: 'Confirm with password',
+      confirmButton: 'Sign Transaction',
+      savePasswordText: 'Remember my password for next 15 minutes',
+    },
   },
 };

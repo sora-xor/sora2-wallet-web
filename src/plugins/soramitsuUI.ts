@@ -9,6 +9,7 @@ import SoramitsuUIStorePlugin from '@soramitsu/soramitsu-js-ui/lib/plugins/soram
 import SButton from '@soramitsu/soramitsu-js-ui/lib/components/Button/SButton';
 import SCard from '@soramitsu/soramitsu-js-ui/lib/components/Card/SCard';
 import SDesignSystemProvider from '@soramitsu/soramitsu-js-ui/lib/components/DesignSystem/SDesignSystemProvider';
+import SDialog from '@soramitsu/soramitsu-js-ui/lib/components/Dialog';
 import SDivider from '@soramitsu/soramitsu-js-ui/lib/components/Divider/SDivider';
 import SDropdown from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdown';
 import SDropdownItem from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdownItem';
@@ -30,6 +31,7 @@ export function install(vue: typeof Vue, store) {
   vue.use(SButton);
   vue.use(SCard);
   vue.use(SDesignSystemProvider);
+  vue.use(SDialog);
   vue.use(SDivider);
   vue.use(SDropdown);
   vue.use(SDropdownItem);

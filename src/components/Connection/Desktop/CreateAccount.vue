@@ -122,11 +122,11 @@ import { api } from '../../../api';
 import TranslationMixin from '../../../components/mixins/TranslationMixin';
 import { LoginStep } from '../../../consts';
 import { copyToClipboard } from '../../../util';
-import { PolkadotJsAccount } from '@/types/common';
 
 @Component
 export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin) {
-  @Action importPolkadotJs!: (address: string) => Promise<void>;
+  @Action importPolkadotJsDesktop!: (address: string) => Promise<void>;
+  @Action getPolkadotJsAccounts!: () => Promise<void>;
   @Prop({ type: String }) readonly step!: LoginStep;
 
   readonly LoginStep = LoginStep;
@@ -235,7 +235,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   async handleCopy(): Promise<void> {
-    await copyToClipboard(this.seedPhraseAsArray.join(' '));
+    await copyToClipboard(this.seedPhraseAsArray.map((w) => w.toLowerCase()).join(' '));
   }
 
   renderWord(column, index): boolean {
@@ -282,19 +282,16 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
 
   async createAccount(): Promise<void> {
     if (this.accountPassword === this.accountPasswordConfirm) {
-      const account = await api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
-      this.enterAccount(account);
+      await api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
+      await this.getPolkadotJsAccounts();
+      this.$emit('stepChange', LoginStep.AccountList);
+    } else {
+      this.$notify({
+        message: `Passwords did not match`,
+        type: 'error',
+        title: '',
+      });
     }
-  }
-
-  async enterAccount(account): Promise<void> {
-    await this.withLoading(async () => {
-      try {
-        await this.importPolkadotJs(account.address);
-      } catch (error) {
-        this.$alert(this.t((error as Error).message), this.t('errorText'));
-      }
-    });
   }
 
   beforeUpdate() {

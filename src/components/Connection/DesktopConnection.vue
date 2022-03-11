@@ -1,13 +1,16 @@
 <template>
   <wallet-base :title="t('connection.title')" :show-header="showHeader" :show-back="showBackBtn" @back="handleBack">
     <div class="desktop-connection" v-loading="loading">
-      <connected-account-list v-if="polkadotJsAccounts.length" @handleSelectAccount="handleSelectAccount" />
-      <div v-else>
-        <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
-        <create-account v-else-if="isCreateFlow" :step="step" class="login" @stepChange="setStep" />
-        <import-account v-else-if="isImportFlow" :step="step" class="login" @stepChange="setStep" />
-      </div>
+      <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
+      <create-account v-else-if="isCreateFlow" :step="step" class="login" @stepChange="setStep" />
+      <import-account v-else-if="isImportFlow" :step="step" class="login" @stepChange="setStep" />
+      <connected-account-list
+        v-else-if="isAccountList"
+        @handleSelectAccount="handleSelectAccount"
+        @stepChange="setStep"
+      />
     </div>
+    <!-- <confirm-dialog :visible="true" /> -->
   </wallet-base>
 </template>
 
@@ -25,9 +28,10 @@ import { getPreviousLoginStep } from '../../util';
 import { Getter, Action } from 'vuex-class';
 import ConnectedAccountList from './common/ConnectedAccountList.vue';
 import { PolkadotJsAccount } from '@/types/common';
+import ConfirmDialog from '../ConfirmDialog.vue';
 
 @Component({
-  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList },
+  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList, ConfirmDialog },
 })
 export default class DesktopConnection extends Mixins(TranslationMixin, LoadingMixin) {
   step: LoginStep = LoginStep.Welcome;
@@ -37,15 +41,9 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   @Getter currentRouteParams!: any;
   @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
-  @Action importPolkadotJs!: (address: string) => Promise<void>;
+  @Action importPolkadotJsDesktop!: (address: string) => Promise<void>;
 
-  createAccount(): void {
-    this.step = LoginStep.SeedPhrase;
-  }
-
-  importAccount(): void {
-    this.step = LoginStep.Import;
-  }
+  showWelcomePage = true;
 
   get isCreateFlow(): boolean {
     return [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials].includes(this.step);
@@ -55,22 +53,44 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
     return [LoginStep.Import, LoginStep.ImportCredentials].includes(this.step);
   }
 
+  get isAccountList(): boolean {
+    return this.step === LoginStep.AccountList;
+  }
+
   get showBackBtn(): boolean {
-    return LoginStep.Welcome !== this.step;
+    if (this.step === LoginStep.Welcome && !this.polkadotJsAccounts.length) return false;
+    if (this.step === LoginStep.AccountList) return false;
+    if (this.step !== LoginStep.Welcome) return true;
+    if (this.isCreateFlow || this.isImportFlow) return false;
+    return true;
   }
 
   get showHeader(): boolean {
+    if (this.step === LoginStep.Welcome && this.polkadotJsAccounts.length) return true;
+    // if (this.step === LoginStep.Welcome) return true;
+    if (this.step === LoginStep.AccountList) return true;
+    // if (this.polkadotJsAccounts.length > 0) return true;
     return false;
   }
 
   get isAccountSwitch(): boolean {
-    // console.log('this.currentRouteParams', this.currentRouteParams);
-    // console.log('(this.currentRouteParams || {}).isAccountSwitch', (this.currentRouteParams || {}).isAccountSwitch);
     return (this.currentRouteParams || {}).isAccountSwitch;
+  }
+
+  createAccount(): void {
+    this.step = LoginStep.SeedPhrase;
+  }
+
+  importAccount(): void {
+    this.step = LoginStep.Import;
   }
 
   setStep(step: LoginStep): void {
     this.step = step;
+  }
+
+  navigateToAccountList(): void {
+    this.step = LoginStep.AccountList;
   }
 
   handleBack(): void {
@@ -81,7 +101,8 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
     await this.withLoading(async () => {
       try {
-        await this.importPolkadotJs(account.address);
+        console.log('handleSelect', account);
+        await this.importPolkadotJsDesktop(account.address);
       } catch (error) {
         this.$alert(this.t((error as Error).message), this.t('errorText'));
       }
@@ -89,23 +110,21 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   }
 
   async mounted(): Promise<void> {
+    if (this.polkadotJsAccounts.length) {
+      this.step = LoginStep.AccountList;
+    } else {
+      this.step = LoginStep.Welcome;
+    }
     await this.withApi(async () => {
-      if (this.isAccountSwitch) {
+      if (this.isAccountSwitch || this.polkadotJsAccounts.length) {
         this.navigateToAccountList();
       }
     });
-  }
-
-  private navigateToAccountList(): void {
-    // this.step = Step.Second;
   }
 }
 </script>
 
 <style lang="scss">
-.desktop-connection {
-}
-
 .login {
   display: flex;
   flex-direction: column;
