@@ -161,13 +161,18 @@ export default class SubqueryExplorer implements Explorer {
       poolXykEntityId = response.id;
 
       response.nodes.forEach((el: PoolXYKEntity) => {
+        const strategicBonusApyFPNumber = format(el.strategicBonusApy);
         const priceFPNumber = format(el.priceUSD);
+        const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
         const isPriceFinity = priceFPNumber.isFinity();
-        if (isPriceFinity) {
+        if (isPriceFinity || isStrategicBonusApyFinity) {
           acc[el.targetAssetId] = {};
         }
         if (isPriceFinity) {
           acc[el.targetAssetId].price = priceFPNumber.toCodecString();
+        }
+        if (isStrategicBonusApyFinity) {
+          acc[el.targetAssetId].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
         }
       });
 
