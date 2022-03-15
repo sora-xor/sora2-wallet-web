@@ -2,6 +2,7 @@ import { axiosInstance, FPNumber } from '@sora-substrate/util';
 
 import { HistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
+import { ChartsFiatPriceQuery, chartsPoolXykEntityFilter } from './queries/chartsFiatPrice';
 import { SoraNetwork } from '../../consts';
 import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject, ReferrerRewards, ReferrerReward } from './types';
 
@@ -106,6 +107,69 @@ export default class SubqueryExplorer implements Explorer {
           }
         });
       } while (hasNextPage);
+
+      return acc;
+    } catch (error) {
+      console.error('Subquery is not available or data is incorrect!', error);
+      return null;
+    }
+  }
+
+  /**
+   * Fetch pools for Charts prices
+   * @param poolXykEntityId poolXykEntity id
+   * @param assetId
+   */
+  public async fetchChartsPrice(
+    poolXykEntityId?: string,
+    assetId?: string
+  ): Promise<Nullable<{ id: string; nodes: PoolXYKEntity[] }>> {
+    try {
+      const params = {
+        filter: chartsPoolXykEntityFilter(poolXykEntityId, assetId),
+      };
+
+      const { poolXYKEntities } = await this.request(ChartsFiatPriceQuery, params);
+
+      if (!poolXYKEntities) return null;
+
+      const { id, nodes } = poolXYKEntities.nodes;
+
+      return { id, nodes };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
+   * Get fiat price for charts
+   */
+  public async getChartsHistoryPrices(assetId?: string): Promise<Nullable<FiatPriceAndApyObject>> {
+    const format = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
+
+    const acc: FiatPriceAndApyObject = {};
+
+    let poolXykEntityId = '';
+
+    try {
+      const response = await this.fetchChartsPrice(poolXykEntityId, assetId);
+
+      if (!response) {
+        return poolXykEntityId ? acc : null;
+      }
+
+      poolXykEntityId = response.id;
+
+      response.nodes.forEach((el: PoolXYKEntity) => {
+        const priceFPNumber = format(el.priceUSD);
+        const isPriceFinity = priceFPNumber.isFinity();
+        if (isPriceFinity) {
+          acc[el.targetAssetId] = {};
+        }
+        if (isPriceFinity) {
+          acc[el.targetAssetId].price = priceFPNumber.toCodecString();
+        }
+      });
 
       return acc;
     } catch (error) {
