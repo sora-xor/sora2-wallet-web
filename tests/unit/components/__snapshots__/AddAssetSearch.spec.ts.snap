@@ -25,35 +25,31 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
   />
    
   <div
-    class="asset-list-container asset-search-list"
+    class="asset-list asset-search-list"
   >
     <div
-      class="asset-list-wrapper"
+      class="vue-recycle-scroller asset-list-inner direction-vertical"
     >
+      <!---->
+       
       <div
-        class="vue-recycle-scroller asset-list el-scrollbar direction-vertical"
+        class="vue-recycle-scroller__item-wrapper"
+        style="min-height: 0px;"
+      />
+       
+      <!---->
+       
+      <div
+        class="resize-observer"
+        data-v-b329ee4c=""
+        tabindex="-1"
       >
-        <!---->
-         
-        <div
-          class="vue-recycle-scroller__item-wrapper"
-          style="min-height: 0px;"
-        />
-         
-        <!---->
-         
-        <div
-          class="resize-observer"
-          data-v-b329ee4c=""
+        <object
+          aria-hidden="true"
+          data="about:blank"
           tabindex="-1"
-        >
-          <object
-            aria-hidden="true"
-            data="about:blank"
-            tabindex="-1"
-            type="text/html"
-          />
-        </div>
+          type="text/html"
+        />
       </div>
     </div>
   </div>
@@ -85,45 +81,41 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
   />
    
   <div
-    class="asset-list-container asset-search-list"
+    class="asset-list asset-search-list"
   >
     <div
-      class="asset-list-wrapper"
+      class="vue-recycle-scroller asset-list-inner direction-vertical"
     >
       <div
-        class="vue-recycle-scroller asset-list el-scrollbar direction-vertical"
+        class="vue-recycle-scroller__slot"
       >
         <div
-          class="vue-recycle-scroller__slot"
+          class="asset-list-empty"
         >
-          <div
-            class="asset-list-empty"
-          >
-            
+          
       No tokens found
     
-          </div>
         </div>
-         
-        <div
-          class="vue-recycle-scroller__item-wrapper"
-          style="min-height: 0px;"
-        />
-         
-        <!---->
-         
-        <div
-          class="resize-observer"
-          data-v-b329ee4c=""
+      </div>
+       
+      <div
+        class="vue-recycle-scroller__item-wrapper"
+        style="min-height: 0px;"
+      />
+       
+      <!---->
+       
+      <div
+        class="resize-observer"
+        data-v-b329ee4c=""
+        tabindex="-1"
+      >
+        <object
+          aria-hidden="true"
+          data="about:blank"
           tabindex="-1"
-        >
-          <object
-            aria-hidden="true"
-            data="about:blank"
-            tabindex="-1"
-            type="text/html"
-          />
-        </div>
+          type="text/html"
+        />
       </div>
     </div>
   </div>
@@ -155,35 +147,31 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
   />
    
   <div
-    class="asset-list-container asset-search-list"
+    class="asset-list asset-search-list"
   >
     <div
-      class="asset-list-wrapper"
+      class="vue-recycle-scroller asset-list-inner direction-vertical"
     >
+      <!---->
+       
       <div
-        class="vue-recycle-scroller asset-list el-scrollbar direction-vertical"
+        class="vue-recycle-scroller__item-wrapper"
+        style="min-height: 0px;"
+      />
+       
+      <!---->
+       
+      <div
+        class="resize-observer"
+        data-v-b329ee4c=""
+        tabindex="-1"
       >
-        <!---->
-         
-        <div
-          class="vue-recycle-scroller__item-wrapper"
-          style="min-height: 0px;"
-        />
-         
-        <!---->
-         
-        <div
-          class="resize-observer"
-          data-v-b329ee4c=""
+        <object
+          aria-hidden="true"
+          data="about:blank"
           tabindex="-1"
-        >
-          <object
-            aria-hidden="true"
-            data="about:blank"
-            tabindex="-1"
-            type="text/html"
-          />
-        </div>
+          type="text/html"
+        />
       </div>
     </div>
   </div>

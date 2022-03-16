@@ -164,33 +164,33 @@
   }
 }
 
-@mixin asset-list-scrollbar ($wrapperOffset: 0px, $listOffset: 0px, $thumbWidth: 6px) {
-  .asset-list {
-    padding-right: $wrapperOffset - $listOffset;
-    padding-left: $wrapperOffset - $listOffset;
+@mixin asset-list-scrollbar ($wrapperOffset: 0px, $paddingLeft: 0px, $paddingRight: 6px, $thumbWidth: 6px) {
+  &.asset-list {
+    margin-left: calc(#{$wrapperOffset} * -1);
+    margin-right: calc(#{$wrapperOffset} * -1);
 
-    &-wrapper {
-      margin-left: calc(#{$wrapperOffset} * -1);
-      margin-right: calc(#{$wrapperOffset} * -1);
-    }
+    .asset-list-inner {
+      padding-left: $paddingLeft;
+      padding-right: calc(#{$paddingRight} - #{$thumbWidth});
 
-    &:hover {
-      &::-webkit-scrollbar-thumb {
-        background: var(--s-color-base-content-tertiary);
+      &:hover {
+        &::-webkit-scrollbar-thumb {
+          background: var(--s-color-base-content-tertiary);
+        }
       }
-    }
-
-    &::-webkit-scrollbar {
-      width: $thumbWidth;
-    }
   
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      border-radius: $thumbWidth;
-      background: transparent;
+      &::-webkit-scrollbar {
+        width: $thumbWidth;
+      }
+    
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+  
+      &::-webkit-scrollbar-thumb {
+        border-radius: $thumbWidth;
+        background: transparent;
+      }
     }
   }
 }

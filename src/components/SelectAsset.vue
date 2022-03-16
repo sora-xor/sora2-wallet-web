@@ -57,6 +57,6 @@ export default class SelectAsset extends Mixins(TranslationMixin) {
 
 <style lang="scss">
 .select-asset-list {
-  @include asset-list-scrollbar(24px, 0px);
+  @include asset-list-scrollbar($basic-spacing-big, $basic-spacing-big, $basic-spacing-big);
 }
 </style>

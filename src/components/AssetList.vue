@@ -1,30 +1,28 @@
 <template>
-  <div class="asset-list-container">
-    <div class="asset-list-wrapper">
-      <recycle-scroller
-        :items="assets"
-        :item-size="itemHeightValue"
-        :buffer="itemHeightValue"
-        key-field="address"
-        class="asset-list el-scrollbar"
-        :style="style"
-      >
-        <template #before>
-          <div v-if="isEmptyList" class="asset-list-empty">
-            <slot name="list-empty">{{ t('assets.empty') }}</slot>
-          </div>
-        </template>
+  <div class="asset-list">
+    <recycle-scroller
+      :items="assets"
+      :item-size="itemHeightValue"
+      :buffer="itemHeightValue"
+      key-field="address"
+      class="asset-list-inner"
+      :style="style"
+    >
+      <template #before>
+        <div v-if="isEmptyList" class="asset-list-empty">
+          <slot name="list-empty">{{ t('assets.empty') }}</slot>
+        </div>
+      </template>
 
-        <template #default="{ item, index }">
-          <asset-list-item :asset="item" :withFiat="withFiat" :key="index" v-on="wrapListeners(item)">
-            <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
-              <slot :name="name" v-bind="slotData" />
-            </template>
-          </asset-list-item>
-          <s-divider v-if="divider && index !== assets.length - 1" :key="`${index}-divider`" />
-        </template>
-      </recycle-scroller>
-    </div>
+      <template #default="{ item, index }">
+        <asset-list-item :asset="item" :withFiat="withFiat" :key="index" v-on="wrapListeners(item)">
+          <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
+            <slot :name="name" v-bind="slotData" />
+          </template>
+        </asset-list-item>
+        <s-divider v-if="divider && index !== assets.length - 1" :key="`${index}-divider`" />
+      </template>
+    </recycle-scroller>
   </div>
 </template>
 
@@ -87,10 +85,6 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
 <style lang="scss">
 .asset-list {
-  &-wrapper {
-    overflow: hidden;
-  }
-
   &-empty {
     margin-top: $basic-spacing-medium;
     text-align: center;
