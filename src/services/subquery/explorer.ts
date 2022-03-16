@@ -2,12 +2,18 @@ import { axiosInstance, FPNumber } from '@sora-substrate/util';
 
 import { HistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
-import { ChartsFiatPriceQuery, chartsPoolXykEntityFilter } from './queries/chartsFiatPrice';
-import { SoraNetwork } from '../../consts';
-import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject, ReferrerRewards, ReferrerReward } from './types';
-
-import store from '../../store';
+import { HistoricalPriceQuery } from './queries/historicalPrice';
 import { FiatPriceQuery, poolXykEntityFilter } from './queries/fiatPriceAndApy';
+import { SoraNetwork } from '../../consts';
+import store from '../../store';
+import type {
+  Explorer,
+  PoolXYKEntity,
+  FiatPriceAndApyObject,
+  ReferrerRewards,
+  ReferrerReward,
+  HistoricalPrice,
+} from './types';
 
 export default class SubqueryExplorer implements Explorer {
   public static getApiUrl(soraNetwork?: SoraNetwork): string {
@@ -20,7 +26,7 @@ export default class SubqueryExplorer implements Explorer {
         return 'https://subquery.q1.tst.sora2.soramitsu.co.jp';
       case SoraNetwork.Dev:
       default:
-        return 'https://api.subquery.network/sq/sora-xor/sora-dev';
+        return 'https://api.subquery.network/sq/sora-xor/sora';
     }
   }
 
@@ -116,69 +122,35 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   /**
-   * Fetch pools for Charts prices
-   * @param poolXykEntityId poolXykEntity id
-   * @param assetId
+   * Get historical data for selected asset
+   * @param assetId Asset ID
+   * @param first number of timestamp entities (10 by default)
    */
-  public async fetchChartsPrice(
-    poolXykEntityId?: string,
-    assetId?: string
-  ): Promise<Nullable<{ id: string; nodes: PoolXYKEntity[] }>> {
-    try {
-      const params = {
-        filter: chartsPoolXykEntityFilter(poolXykEntityId, assetId),
-      };
-
-      const { poolXYKEntities } = await this.request(ChartsFiatPriceQuery, params);
-
-      if (!poolXYKEntities) return null;
-
-      const { id, nodes } = poolXYKEntities.nodes;
-
-      return { id, nodes };
-    } catch (error) {
-      return null;
-    }
-  }
-
-  /**
-   * Get fiat price for charts
-   */
-  public async getChartsHistoryPrices(assetId?: string): Promise<Nullable<FiatPriceAndApyObject>> {
+  public async getHistoricalPriceForAsset(assetId: string, first = 10): Promise<Nullable<HistoricalPrice>> {
     const format = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
 
-    const acc: FiatPriceAndApyObject = {};
-
-    let poolXykEntityId = '';
-
     try {
-      const response = await this.fetchChartsPrice(poolXykEntityId, assetId);
-
-      if (!response) {
-        return poolXykEntityId ? acc : null;
+      const { poolXYKEntities } = await this.request(HistoricalPriceQuery, { assetId, first });
+      if (!poolXYKEntities) {
+        return null;
       }
-
-      poolXykEntityId = response.id;
-
-      response.nodes.forEach((el: PoolXYKEntity) => {
-        const strategicBonusApyFPNumber = format(el.strategicBonusApy);
-        const priceFPNumber = format(el.priceUSD);
-        const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+      const { nodes } = poolXYKEntities;
+      if (!nodes || !nodes.length) {
+        return null;
+      }
+      const data = (nodes as Array<any>).reduce<HistoricalPrice>((acc, el) => {
+        const item: { updated: number; priceUSD: string } = el.pools.nodes[0];
+        const priceFPNumber = format(item.priceUSD);
         const isPriceFinity = priceFPNumber.isFinity();
-        if (isPriceFinity || isStrategicBonusApyFinity) {
-          acc[el.targetAssetId] = {};
-        }
         if (isPriceFinity) {
-          acc[el.targetAssetId].price = priceFPNumber.toCodecString();
+          acc[item.updated * 1000] = priceFPNumber.toCodecString();
         }
-        if (isStrategicBonusApyFinity) {
-          acc[el.targetAssetId].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
-        }
-      });
+        return acc;
+      }, {});
 
-      return acc;
+      return data;
     } catch (error) {
-      console.error('Subquery is not available or data is incorrect!', error);
+      console.error('HistoricalPriceQuery: Subquery is not available or data is incorrect!', error);
       return null;
     }
   }
