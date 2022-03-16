@@ -1,6 +1,6 @@
 <template>
   <wallet-base :title="t('asset.select')" show-back @back="handleBack">
-    <asset-list :assets="accountAssets" divider>
+    <asset-list :assets="accountAssets" divider class="select-asset-list">
       <template #default="asset">
         <s-button
           type="action"
@@ -54,3 +54,9 @@ export default class SelectAsset extends Mixins(TranslationMixin) {
   }
 }
 </script>
+
+<style lang="scss">
+.select-asset-list {
+  @include asset-list-scrollbar(24px, 0px);
+}
+</style>
