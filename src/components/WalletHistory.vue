@@ -189,9 +189,9 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   getStatus(status: string): string {
-    if ([TransactionStatus.Error, 'invalid'].includes(status)) {
+    if ([TransactionStatus.Error, TransactionStatus.Invalid].includes(status as TransactionStatus)) {
       status = TransactionStatus.Error;
-    } else if (status !== TransactionStatus.Finalized) {
+    } else if (![TransactionStatus.InBlock, TransactionStatus.Finalized].includes(status as TransactionStatus)) {
       status = 'in_progress';
     }
     return status.toUpperCase();
@@ -205,8 +205,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return getStatusIcon(this.getStatus(status));
   }
 
-  isFinalizedStatus(status: string): boolean {
-    return status === TransactionStatus.Finalized;
+  isFinalizedStatus(status: TransactionStatus): boolean {
+    return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(status);
   }
 
   handleOpenTransactionDetails(id: number): void {

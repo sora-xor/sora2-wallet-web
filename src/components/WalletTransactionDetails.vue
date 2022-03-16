@@ -115,11 +115,17 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
   }
 
   get isComplete(): boolean {
-    return [TransactionStatus.Finalized, 'done'].includes(this.selectedTransaction.status as TransactionStatus);
+    return [TransactionStatus.InBlock, TransactionStatus.Finalized, 'done'].includes(
+      this.selectedTransaction.status as TransactionStatus
+    );
   }
 
   get statusTitle(): string {
-    if ([TransactionStatus.Error, 'invalid'].includes(this.selectedTransaction.status as string)) {
+    if (
+      [TransactionStatus.Error, TransactionStatus.Invalid].includes(
+        this.selectedTransaction.status as TransactionStatus
+      )
+    ) {
       return this.t('transaction.statuses.failed');
     } else if (this.isComplete) {
       return this.t('transaction.statuses.complete');

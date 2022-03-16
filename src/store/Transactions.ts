@@ -72,8 +72,10 @@ const getters = {
     }, []);
   },
   firstReadyTransaction(state: TransactionsState, getters) {
-    return getters.activeTransactions.find((t) =>
-      [TransactionStatus.Finalized, TransactionStatus.Error].includes(t.status as TransactionStatus)
+    return getters.activeTransactions.find((t: HistoryItem) =>
+      [TransactionStatus.InBlock, TransactionStatus.Finalized, TransactionStatus.Error].includes(
+        t.status as TransactionStatus
+      )
     );
   },
   selectedTransaction(state: TransactionsState): Nullable<HistoryItem> {
