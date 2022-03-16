@@ -140,10 +140,12 @@ export default class SubqueryExplorer implements Explorer {
       }
       const data = (nodes as Array<any>).reduce<HistoricalPrice>((acc, el) => {
         const item: { updated: number; priceUSD: string } = el.pools.nodes[0];
-        const priceFPNumber = format(item.priceUSD);
-        const isPriceFinity = priceFPNumber.isFinity();
-        if (isPriceFinity) {
-          acc[item.updated * 1000] = priceFPNumber.toCodecString();
+        if (item) {
+          const priceFPNumber = format(item.priceUSD);
+          const isPriceFinity = priceFPNumber.isFinity();
+          if (isPriceFinity) {
+            acc[item.updated * 1000] = priceFPNumber.toCodecString();
+          }
         }
         return acc;
       }, {});
