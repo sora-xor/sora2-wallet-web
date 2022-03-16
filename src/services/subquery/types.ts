@@ -46,7 +46,7 @@ export type PoolXYKEntity = {
 
 export type FiatPriceAndApyObject = {
   [key: string]: {
-    price: CodecString;
+    price?: CodecString;
     strategicBonusApy?: CodecString;
   };
 };

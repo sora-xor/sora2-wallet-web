@@ -6,7 +6,7 @@ import { SoraNetwork } from '../../consts';
 import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject, ReferrerRewards, ReferrerReward } from './types';
 
 import store from '../../store';
-import { FiatPriceQuery } from './queries/fiatPriceAndApy';
+import { FiatPriceQuery, poolXykEntityFilter } from './queries/fiatPriceAndApy';
 
 export default class SubqueryExplorer implements Explorer {
   public static getApiUrl(soraNetwork?: SoraNetwork): string {
@@ -34,33 +34,80 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   /**
+   * Fetch pools from poolXykEntity
+   * @param poolXykEntityId poolXykEntity id
+   * @param poolsAfter cursor of last element
+   */
+  public async fetchPools(
+    poolXykEntityId?: string,
+    poolsAfter?: string
+  ): Promise<Nullable<{ id: string; hasNextPage: boolean; endCursor: string; nodes: PoolXYKEntity[] }>> {
+    try {
+      const params = {
+        poolsAfter,
+        filter: poolXykEntityFilter(poolXykEntityId),
+      };
+
+      const { poolXYKEntities } = await this.request(FiatPriceQuery, params);
+
+      if (!poolXYKEntities) return null;
+
+      const {
+        id,
+        pools: {
+          pageInfo: { hasNextPage, endCursor },
+          nodes,
+        },
+      } = poolXYKEntities.nodes[0];
+
+      return { id, hasNextPage, endCursor, nodes };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /**
    * Get fiat price & APY coefficient for each asset (without historical data)
    */
   public async getFiatPriceAndApyObject(): Promise<Nullable<FiatPriceAndApyObject>> {
     const format = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
+
+    const acc: FiatPriceAndApyObject = {};
+
+    let poolXykEntityId = '';
+    let poolsAfter = '';
+    let hasNextPage = true;
+
     try {
-      const { poolXYKEntities } = await this.request(FiatPriceQuery);
-      if (!poolXYKEntities) {
-        return null;
-      }
-      const data = (poolXYKEntities.nodes[0].pools.edges as Array<any>).reduce((acc, item) => {
-        const el: PoolXYKEntity = item.node;
-        const strategicBonusApyFPNumber = format(el.strategicBonusApy);
-        const priceFPNumber = format(el.priceUSD);
-        const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
-        const isPriceFinity = priceFPNumber.isFinity();
-        if (isPriceFinity || isStrategicBonusApyFinity) {
-          acc[el.targetAssetId] = {};
+      do {
+        const response = await this.fetchPools(poolXykEntityId, poolsAfter);
+
+        if (!response) {
+          return poolXykEntityId ? acc : null;
         }
-        if (isPriceFinity) {
-          acc[el.targetAssetId].price = priceFPNumber.toCodecString();
-        }
-        if (isStrategicBonusApyFinity) {
-          acc[el.targetAssetId].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
-        }
-        return acc;
-      }, {});
-      return data;
+
+        poolXykEntityId = response.id;
+        poolsAfter = response.endCursor;
+        hasNextPage = response.hasNextPage;
+
+        response.nodes.forEach((el: PoolXYKEntity) => {
+          const strategicBonusApyFPNumber = format(el.strategicBonusApy);
+          const priceFPNumber = format(el.priceUSD);
+          const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+          const isPriceFinity = priceFPNumber.isFinity();
+          if (isPriceFinity || isStrategicBonusApyFinity) {
+            acc[el.targetAssetId] = {};
+          }
+          if (isPriceFinity) {
+            acc[el.targetAssetId].price = priceFPNumber.toCodecString();
+          }
+          if (isStrategicBonusApyFinity) {
+            acc[el.targetAssetId].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
+          }
+        });
+      } while (hasNextPage);
+
+      return acc;
     } catch (error) {
       console.error('Subquery is not available or data is incorrect!', error);
       return null;
@@ -88,18 +135,30 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public async getAccountReferralRewards(referrer?: string): Promise<any> {
+  /**
+   * Get Referral Rewards summarized by referral
+   */
+  public async getAccountReferralRewards(referrer?: string): Promise<Nullable<ReferrerRewards>> {
+    const rewardsInfo: ReferrerRewards = {
+      rewards: FPNumber.ZERO,
+      invitedUserRewards: {},
+    };
+
+    let after = '';
+    let hasNextPage = true;
+
     try {
-      const params = {
-        filter: referrerRewardsFilter(referrer),
-      };
-      const { referrerRewards } = await this.request(ReferrerRewardsQuery, params);
-      const rewardsInfo: ReferrerRewards = {
-        rewards: FPNumber.ZERO,
-        invitedUserRewards: {},
-      };
-      if (referrerRewards) {
-        (referrerRewards.nodes as Array<ReferrerReward>).forEach((item) => {
+      do {
+        const response = await this.getAccountRewards(referrer, after);
+
+        if (!response) {
+          return null;
+        }
+
+        after = response.endCursor;
+        hasNextPage = response.hasNextPage;
+
+        response.nodes.forEach((item) => {
           rewardsInfo.rewards = rewardsInfo.rewards.add(new FPNumber(item.amount));
           const invitedUser = item.referral;
           if (!rewardsInfo.invitedUserRewards[invitedUser]) {
@@ -109,10 +168,41 @@ export default class SubqueryExplorer implements Explorer {
             new FPNumber(item.amount)
           );
         });
-      }
+      } while (hasNextPage);
+
       return rewardsInfo;
     } catch (error) {
+      console.error('Subquery is not available or data is incorrect!', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get Referral Rewards items
+   */
+  public async getAccountRewards(
+    referrer?: string,
+    after?: string
+  ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: ReferrerReward[] }>> {
+    try {
+      const params = {
+        after,
+        filter: referrerRewardsFilter(referrer),
+      };
+
+      const { referrerRewards } = await this.request(ReferrerRewardsQuery, params);
+
+      if (!referrerRewards) return null;
+
+      const {
+        pageInfo: { hasNextPage, endCursor },
+        nodes,
+      } = referrerRewards;
+
+      return { hasNextPage, endCursor, nodes };
+    } catch (error) {
       console.error(error);
+      return null;
     }
   }
 

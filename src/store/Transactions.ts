@@ -161,15 +161,13 @@ const actions = {
    * Clear history items from accountStorage, what exists in explorer
    * Getting only the IDs & timestamp of elements whose start time is greater than api.historySyncTimestamp
    */
-  async clearSyncedAccountHistory(
-    { dispatch, state },
-    { address, assetAddress }: { address: string; assetAddress?: string }
-  ) {
+  async clearSyncedAccountHistory(_, { address, assetAddress }: { address: string; assetAddress?: string }) {
     const operations = SubqueryDataParserService.supportedOperations;
     const timestamp = api.historySyncTimestamp || 0;
     const filter = historyElementsFilter({ address, assetAddress, timestamp, operations });
     const variables = { filter, idsOnly: true };
     const removeHistoryIds: Array<string> = [];
+    const unsyncedHistory = api.history;
     try {
       const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
 
@@ -179,14 +177,13 @@ const actions = {
         for (const edge of edges) {
           const historyId = edge.node.id;
 
-          if (historyId in state.history) {
+          if (historyId in unsyncedHistory) {
             removeHistoryIds.push(historyId);
           }
         }
 
         if (removeHistoryIds.length) {
           api.removeHistory(...removeHistoryIds);
-          await dispatch('getAccountHistory');
         }
       }
     } catch (error) {
