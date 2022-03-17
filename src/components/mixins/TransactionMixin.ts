@@ -103,7 +103,9 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     }
     const message = this.getMessage(value);
 
+    // show success notification when transaction has 'in_block' status
     if (value.status === TransactionStatus.InBlock) {
+      // if tx with 'in_block' status handles first time
       if (!oldValue || oldValue.id !== value.id || oldValue.status !== TransactionStatus.InBlock) {
         this.$notify({
           message,
@@ -119,6 +121,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         title: '',
       });
     }
+    // remove active tx on finalized or error status
     this.removeActiveTransaction(value.id as string);
   }
 
