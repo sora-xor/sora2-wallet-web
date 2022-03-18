@@ -191,7 +191,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   getStatus(status: string): string {
     if ([TransactionStatus.Error, TransactionStatus.Invalid].includes(status as TransactionStatus)) {
       status = TransactionStatus.Error;
-    } else if (![TransactionStatus.InBlock, TransactionStatus.Finalized].includes(status as TransactionStatus)) {
+    } else if (!this.isFinalizedStatus(status as TransactionStatus)) {
       status = 'in_progress';
     }
     return status.toUpperCase();

@@ -115,7 +115,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
   }
 
   get isComplete(): boolean {
-    return [TransactionStatus.InBlock, TransactionStatus.Finalized, 'done'].includes(
+    return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(
       this.selectedTransaction.status as TransactionStatus
     );
   }

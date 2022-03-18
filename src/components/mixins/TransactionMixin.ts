@@ -103,7 +103,8 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     }
 
     const message = this.getMessage(value);
-    const isNextTx = !oldValue || oldValue.id !== value.id;
+    // is transaction has not been processed before
+    const isNewTx = !oldValue || oldValue.id !== value.id;
 
     if (value.status === TransactionStatus.Error) {
       this.$notify({
@@ -111,8 +112,8 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         type: 'error',
         title: '',
       });
-    } else if (value.status === TransactionStatus.InBlock || isNextTx) {
-      if (isNextTx) {
+    } else if (value.status === TransactionStatus.InBlock || isNewTx) {
+      if (isNewTx) {
         this.$notify({
           message,
           type: 'success',
