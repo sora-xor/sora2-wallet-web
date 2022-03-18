@@ -7,10 +7,12 @@ import { TransactionStatus } from '@sora-substrate/util';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../api';
+import { delay } from '../util';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../services/subquery';
 import { historyElementsFilter } from '../services/subquery/queries/historyElements';
 import type { CursorPagination, ExternalHistoryParams } from '../types/history';
 
+const BLOCK_PRODUCE_TIME = 6 * 1000;
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2 * 1000;
 
 const types = flow(
@@ -97,8 +99,8 @@ const mutations = {
     state.activeTransactionsIds = [...new Set([...state.activeTransactionsIds, id])];
   },
 
-  [types.REMOVE_ACTIVE_TRANSACTION](state: TransactionsState, id: string) {
-    state.activeTransactionsIds = state.activeTransactionsIds.filter((txId) => txId !== id);
+  [types.REMOVE_ACTIVE_TRANSACTION](state: TransactionsState, ids: string[]) {
+    state.activeTransactionsIds = state.activeTransactionsIds.filter((txId) => !ids.includes(txId));
   },
 
   [types.SET_TRANSACTION_DETAILS_ID](state: TransactionsState, id: string) {
@@ -128,17 +130,20 @@ const actions = {
   addActiveTransaction({ commit }, id: string) {
     commit(types.ADD_ACTIVE_TRANSACTION, id);
   },
-  removeActiveTransaction({ commit }, id: string) {
-    commit(types.REMOVE_ACTIVE_TRANSACTION, id);
+  removeActiveTransactions({ commit }, ids: string[]) {
+    commit(types.REMOVE_ACTIVE_TRANSACTION, ids);
   },
   // Should be used once in a root of the project
   trackActiveTransactions({ commit, dispatch, state }) {
     commit(types.RESET_ACTIVE_TRANSACTIONS);
-    state.updateActiveTransactionsId = setInterval(() => {
+
+    state.updateActiveTransactionsId = setInterval(async () => {
       if (state.activeTransactionsIds.length) {
-        dispatch('getAccountHistory');
+        await dispatch('getAccountHistory');
       }
     }, UPDATE_ACTIVE_TRANSACTIONS_INTERVAL);
+
+    dispatch('restorePendingTransactions');
   },
   resetActiveTransactions({ commit }) {
     commit(types.RESET_ACTIVE_TRANSACTIONS);
@@ -160,10 +165,18 @@ const actions = {
   },
 
   /**
+   * Clear history items from accountStorage & from activeTransactions
+   */
+  removeHistoryByIds({ dispatch }, ids: string[]) {
+    dispatch('removeActiveTransactions', ids);
+    api.removeHistory(...ids);
+  },
+
+  /**
    * Clear history items from accountStorage, what exists in explorer
    * Getting only the IDs & timestamp of elements whose start time is greater than api.historySyncTimestamp
    */
-  async clearSyncedAccountHistory(_, { address, assetAddress }: { address: string; assetAddress?: string }) {
+  async clearSyncedAccountHistory({ dispatch }, { address, assetAddress }: { address: string; assetAddress?: string }) {
     const operations = SubqueryDataParserService.supportedOperations;
     const timestamp = api.historySyncTimestamp || 0;
     const filter = historyElementsFilter({ address, assetAddress, timestamp, operations });
@@ -185,7 +198,7 @@ const actions = {
         }
 
         if (removeHistoryIds.length) {
-          api.removeHistory(...removeHistoryIds);
+          dispatch('removeHistoryByIds', removeHistoryIds);
         }
       }
     } catch (error) {
@@ -197,7 +210,7 @@ const actions = {
    * Get history items from explorer, already filtered
    */
   async getExternalHistory(
-    { commit, state: { externalHistoryPagination: pagination, externalHistory, history } },
+    { commit, dispatch, state: { externalHistoryPagination: pagination, externalHistory, history } },
     {
       next = true,
       address = '',
@@ -249,7 +262,7 @@ const actions = {
         }
 
         if (removeHistoryIds.length) {
-          api.removeHistory(...removeHistoryIds);
+          dispatch('removeHistoryByIds', removeHistoryIds);
         }
       }
 
@@ -259,6 +272,42 @@ const actions = {
     } catch (error) {
       console.error(error);
     }
+  },
+
+  async restorePendingTransactions({ getters, dispatch, state }) {
+    // if tracking is disabled, return
+    if (state.updateActiveTransactionsId === null) return;
+
+    const now = Date.now();
+    // difference in time between last block & finilized block (ideal)
+    const delta = 3 * BLOCK_PRODUCE_TIME;
+    // find transactions, which blocks should be produced
+    const txs: HistoryItem[] = [...getters.activeTransactions].filter(
+      (item: HistoryItem) => now - (item.startTime as number) > delta
+    );
+
+    if (txs.length) {
+      try {
+        const ids = txs.map((tx) => tx.id as string);
+        const variables = { filter: { id: { in: ids } } };
+        const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
+
+        if (edges.length) {
+          for (const edge of edges) {
+            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(edge.node);
+
+            if (historyItem && (historyItem.id as string) in api.history) {
+              api.saveHistory(historyItem);
+            }
+          }
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    await delay(BLOCK_PRODUCE_TIME);
+    await dispatch('restorePendingTransactions');
   },
 };
 

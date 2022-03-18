@@ -18,7 +18,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
   @Getter account!: Account;
 
   @Action addActiveTransaction!: (id: string) => Promise<void>;
-  @Action removeActiveTransaction!: (id: string) => Promise<void>;
+  @Action removeActiveTransactions!: (ids: string[]) => Promise<void>;
 
   getMessage(value?: History, hideAmountValues = false): string {
     if (!value || !Object.values(Operation).includes(value.type as Operation)) {
@@ -101,28 +101,28 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     ) {
       return;
     }
-    const message = this.getMessage(value);
 
-    // show success notification when transaction has 'in_block' status
-    if (value.status === TransactionStatus.InBlock) {
-      // if tx with 'in_block' status handles first time
-      if (!oldValue || oldValue.id !== value.id || oldValue.status !== TransactionStatus.InBlock) {
+    const message = this.getMessage(value);
+    const isNextTx = !oldValue || oldValue.id !== value.id;
+
+    if (value.status === TransactionStatus.Error) {
+      this.$notify({
+        message: message || this.t('unknownErrorText'),
+        type: 'error',
+        title: '',
+      });
+    } else if (value.status === TransactionStatus.InBlock || isNextTx) {
+      if (isNextTx) {
         this.$notify({
           message,
           type: 'success',
           title: '',
         });
       }
-      return;
-    } else if (value.status === TransactionStatus.Error) {
-      this.$notify({
-        message: message || this.t('unknownErrorText'),
-        type: 'error',
-        title: '',
-      });
+      if (value.status === TransactionStatus.InBlock) return;
     }
     // remove active tx on finalized or error status
-    this.removeActiveTransaction(value.id as string);
+    this.removeActiveTransactions([value.id as string]);
   }
 
   async withNotifications(func: AsyncVoidFn): Promise<void> {
