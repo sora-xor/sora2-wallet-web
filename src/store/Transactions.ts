@@ -307,7 +307,7 @@ const actions = {
     }
 
     await delay(BLOCK_PRODUCE_TIME);
-    await dispatch('restorePendingTransactions');
+    dispatch('restorePendingTransactions');
   },
 };
 
