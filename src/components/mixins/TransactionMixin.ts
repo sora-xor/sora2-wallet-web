@@ -11,17 +11,14 @@ import NumberFormatterMixin from './NumberFormatterMixin';
 import { HiddenValue } from '../../consts';
 
 import type { Account } from '../../types/common';
+import type { HistoryItem } from '@sora-substrate/util';
 
 @Component
 export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
-  private time = 0;
-
-  transaction: Nullable<History> = null; // It's used just for sync errors
-
   @Getter account!: Account;
 
   @Action addActiveTransaction!: (id: string) => Promise<void>;
-  @Action removeActiveTransaction!: (id: string) => Promise<void>;
+  @Action removeActiveTransactions!: (ids: string[]) => Promise<void>;
 
   getMessage(value?: History, hideAmountValues = false): string {
     if (!value || !Object.values(Operation).includes(value.type as Operation)) {
@@ -84,60 +81,62 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     return this.t(`operations.${status}.${value.type}`, params);
   }
 
-  private async getLastTransaction(): Promise<void> {
-    // Now we are checking every transaction with 1 second interval
-    const tx = findLast((item) => Number(item.startTime) > this.time, api.historyList);
+  private async getLastTransaction(time: number): Promise<HistoryItem> {
+    const tx = findLast((item) => Number(item.startTime) > time, api.historyList);
     if (!tx) {
       await delay();
-      return await this.getLastTransaction();
+      return await this.getLastTransaction(time);
     }
-    this.transaction = tx;
-    this.addActiveTransaction(this.transaction.id as string);
+    return tx;
   }
 
   /** Should be used with @Watch like a singletone in a root of the project */
-  handleChangeTransaction(value: History): void {
+  handleChangeTransaction(value: Nullable<History>, oldValue: Nullable<History>): void {
     if (
       !value ||
       !value.status ||
-      ![TransactionStatus.Finalized, TransactionStatus.Error].includes(value.status as TransactionStatus)
+      ![TransactionStatus.InBlock, TransactionStatus.Finalized, TransactionStatus.Error].includes(
+        value.status as TransactionStatus
+      )
     ) {
       return;
     }
+
     const message = this.getMessage(value);
+    // is transaction has not been processed before
+    const isNewTx = !oldValue || oldValue.id !== value.id;
+
     if (value.status === TransactionStatus.Error) {
       this.$notify({
         message: message || this.t('unknownErrorText'),
         type: 'error',
         title: '',
       });
-    } else if (value.status === TransactionStatus.Finalized) {
-      this.$notify({
-        message,
-        type: 'success',
-        title: '',
-      });
+    } else if (value.status === TransactionStatus.InBlock || isNewTx) {
+      if (isNewTx) {
+        this.$notify({
+          message,
+          type: 'success',
+          title: '',
+        });
+      }
+      if (value.status === TransactionStatus.InBlock) return;
     }
-    this.time = 0;
-    this.removeActiveTransaction(value.id as string);
+    // remove active tx on finalized or error status
+    this.removeActiveTransactions([value.id as string]);
   }
 
   async withNotifications(func: AsyncVoidFn): Promise<void> {
     await this.withLoading(async () => {
       try {
-        this.time = Date.now();
+        const time = Date.now();
         await func();
-        await this.getLastTransaction();
+        const tx = await this.getLastTransaction(time);
+        await this.addActiveTransaction(tx.id as string);
         this.$notify({ message: this.t('transactionSubmittedText'), title: '' });
       } catch (error) {
-        const message = this.getMessage(this.transaction as History);
-        this.time = 0;
-        if (this.transaction) {
-          this.removeActiveTransaction(this.transaction.id as string);
-          this.transaction = null;
-        }
         this.$notify({
-          message: message || this.t('unknownErrorText'),
+          message: this.t('unknownErrorText'),
           type: 'error',
           title: '',
         });

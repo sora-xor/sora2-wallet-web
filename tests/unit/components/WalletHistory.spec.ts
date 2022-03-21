@@ -65,7 +65,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
   it('should render spinner when transaction is pending', () => {
     const pendingItem = {
       ...(Object.values(MOCK_ACCOUNT_HISTORY)[0] as HistoryItem),
-      status: TransactionStatus.InBlock,
+      status: TransactionStatus.Broadcast,
     };
 
     const wrapper = useMount(WalletHistory, {

@@ -52,8 +52,8 @@ export default class App extends Mixins(TransactionMixin) {
   }
 
   @Watch('firstReadyTransaction', { deep: true })
-  private handleNotifyAboutTransaction(value: History): void {
-    this.handleChangeTransaction(value);
+  private handleNotifyAboutTransaction(value: History, oldValue: History): void {
+    this.handleChangeTransaction(value, oldValue);
   }
 
   beforeDestroy(): void {
