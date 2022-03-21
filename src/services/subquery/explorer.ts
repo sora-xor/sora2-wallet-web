@@ -2,11 +2,18 @@ import { axiosInstance, FPNumber } from '@sora-substrate/util';
 
 import { HistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
-import { SoraNetwork } from '../../consts';
-import type { Explorer, PoolXYKEntity, FiatPriceAndApyObject, ReferrerRewards, ReferrerReward } from './types';
-
-import store from '../../store';
+import { HistoricalPriceQuery } from './queries/historicalPrice';
 import { FiatPriceQuery, poolXykEntityFilter } from './queries/fiatPriceAndApy';
+import { SoraNetwork } from '../../consts';
+import store from '../../store';
+import type {
+  Explorer,
+  PoolXYKEntity,
+  FiatPriceAndApyObject,
+  ReferrerRewards,
+  ReferrerReward,
+  HistoricalPrice,
+} from './types';
 
 export default class SubqueryExplorer implements Explorer {
   public static getApiUrl(soraNetwork?: SoraNetwork): string {
@@ -110,6 +117,42 @@ export default class SubqueryExplorer implements Explorer {
       return acc;
     } catch (error) {
       console.error('Subquery is not available or data is incorrect!', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get historical data for selected asset
+   * @param assetId Asset ID
+   * @param first number of timestamp entities (10 by default)
+   */
+  public async getHistoricalPriceForAsset(assetId: string, first = 10): Promise<Nullable<HistoricalPrice>> {
+    const format = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
+
+    try {
+      const { poolXYKEntities } = await this.request(HistoricalPriceQuery, { assetId, first });
+      if (!poolXYKEntities) {
+        return null;
+      }
+      const { nodes } = poolXYKEntities;
+      if (!nodes || !nodes.length) {
+        return null;
+      }
+      const data = (nodes as Array<any>).reduce<HistoricalPrice>((acc, el) => {
+        const item: { updated: number; priceUSD: string } = el.pools.nodes[0];
+        if (item) {
+          const priceFPNumber = format(item.priceUSD);
+          const isPriceFinity = priceFPNumber.isFinity();
+          if (isPriceFinity) {
+            acc[item.updated * 1000] = priceFPNumber.toCodecString();
+          }
+        }
+        return acc;
+      }, {});
+
+      return data;
+    } catch (error) {
+      console.error('HistoricalPriceQuery: Subquery is not available or data is incorrect!', error);
       return null;
     }
   }
