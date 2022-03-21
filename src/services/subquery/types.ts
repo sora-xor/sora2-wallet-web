@@ -51,6 +51,13 @@ export type FiatPriceAndApyObject = {
   };
 };
 
+/**
+ * `key` is timestamp, `value` is price USD
+ */
+export type HistoricalPrice = {
+  [key: number]: CodecString;
+};
+
 export type HistoryElementError = {
   moduleErrorId: number;
   moduleErrorIndex: number;
