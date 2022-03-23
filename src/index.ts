@@ -1,8 +1,9 @@
 import type Vue from 'vue';
 import type { Store } from 'vuex';
 
+// import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
+
 import installWalletPlugins from './plugins';
-// import './styles' We don't need it for now
 
 // Components
 import SoraWallet from './SoraWallet.vue';
