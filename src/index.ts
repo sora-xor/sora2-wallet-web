@@ -1,8 +1,6 @@
 import type Vue from 'vue';
 import type { Store } from 'vuex';
 
-// import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
-
 import installWalletPlugins from './plugins';
 
 // Components
