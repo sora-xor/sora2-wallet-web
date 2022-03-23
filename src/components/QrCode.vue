@@ -15,11 +15,11 @@ export default class QrCode extends Vue {
   @Ref('container') readonly container!: HTMLDivElement;
 
   @Watch('value')
-  private rerender() {
+  private rerender(): void {
     this.renderCode();
   }
 
-  element: SVGSVGElement | null = null;
+  element: Nullable<SVGSVGElement> = null;
 
   mounted(): void {
     this.renderCode();

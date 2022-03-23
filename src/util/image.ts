@@ -12,7 +12,7 @@ export const IMAGE_MIME_TYPES = {
   [IMAGE_EXTENSIONS.JPEG]: 'image/jpeg',
 };
 
-export const dataURItoBlob = (dataURI) => {
+export const dataURItoBlob = (dataURI: string): Blob => {
   // convert base64 to raw binary data held in a string
   const byteString = atob(dataURI.split(',')[1]);
 
@@ -65,7 +65,7 @@ export const createImageBlobByUrl = (url: string, mimeType: string): Promise<Blo
   });
 };
 
-export const createSvgBlob = (svgElement: SVGSVGElement) => {
+export const createSvgBlob = (svgElement: SVGSVGElement): Blob => {
   const data = new XMLSerializer().serializeToString(svgElement);
   const blob = new Blob([data], { type: 'image/svg+xml' });
 

@@ -25,11 +25,11 @@ const reader = new BrowserQRCodeReader();
 export default class QrCodeScanButton extends Mixins(TranslationMixin) {
   @Ref('input') readonly input!: HTMLInputElement;
 
-  openFileInput() {
+  openFileInput(): void {
     this.input.click();
   }
 
-  resetFileInput() {
+  private resetFileInput(): void {
     this.input.value = '';
   }
 

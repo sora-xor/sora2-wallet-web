@@ -15,7 +15,7 @@
       </template>
 
       <template #default="{ item, index }">
-        <asset-list-item :asset="item" :withFiat="withFiat" :key="index" v-on="wrapListeners(item)">
+        <asset-list-item :asset="item" :with-fiat="withFiat" :key="index" v-on="wrapListeners(item)">
           <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
             <slot :name="name" v-bind="slotData" />
           </template>
@@ -51,7 +51,7 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
 
-  wrapListeners(asset: Asset) {
+  wrapListeners(asset: Asset): { [key: string]: VoidFunction } {
     return Object.entries(this.$listeners).reduce((result, [eventName, handlers]) => {
       return {
         ...result,
@@ -72,7 +72,7 @@ export default class AssetList extends Mixins(TranslationMixin) {
     return parseFloat(getCssVariableValue(this.itemHeightCssVar)) + Number(this.divider);
   }
 
-  get style() {
+  get style(): object {
     const dividersHeight = this.divider ? this.size - 1 : 0;
     const height = `calc(var(${this.itemHeightCssVar}) * ${this.size} + ${dividersHeight}px)`;
 
