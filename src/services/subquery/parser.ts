@@ -216,8 +216,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const {
           input_asset_a: assetAddress,
           input_asset_b: asset2Address,
-          input_a_min: amount,
-          input_b_min: amount2,
+          input_a_desired: amount,
+          input_b_desired: amount2,
         } = call.data.args;
 
         const asset = await getAssetByAddress(assetAddress as string);
