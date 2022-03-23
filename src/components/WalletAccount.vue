@@ -1,5 +1,5 @@
 <template>
-  <s-card shadow="always" size="small" border-radius="medium" class="wallet-account">
+  <s-card v-bind="{ shadow: 'always', size: 'small', borderRadius: 'medium', ...$attrs }" class="wallet-account">
     <div class="account s-flex">
       <wallet-avatar class="account-avatar" :address="address" :size="28" />
       <div class="account-details s-flex">
@@ -9,18 +9,7 @@
             <div class="account-credentials_address" @click="handleCopyAddress($event)">{{ formattedAddress }}</div>
           </s-tooltip>
         </div>
-        <template v-if="showControls">
-          <s-button
-            class="account__action-button account-switch"
-            type="action"
-            alternative
-            rounded
-            :tooltip="t('account.switch')"
-            @click="handleSwitchAccount"
-          >
-            <s-icon name="arrows-refresh-ccw-24" size="28" />
-          </s-button>
-        </template>
+        <slot />
       </div>
     </div>
   </s-card>
@@ -28,10 +17,9 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { Getter, Action } from 'vuex-class';
+import { Getter } from 'vuex-class';
 
 import TranslationMixin from './mixins/TranslationMixin';
-import { RouteNames } from '../consts';
 import { copyToClipboard, formatAddress, formatSoraAddress } from '../util';
 import WalletAvatar from './WalletAvatar.vue';
 import type { Account, PolkadotJsAccount } from '../types/common';
@@ -43,10 +31,7 @@ import type { Account, PolkadotJsAccount } from '../types/common';
 })
 export default class WalletAccount extends Mixins(TranslationMixin) {
   @Getter account!: Account;
-  @Action logout!: AsyncVoidFn;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
-  @Prop({ default: false, type: Boolean }) readonly showControls!: boolean;
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
 
   get address(): string {
@@ -81,15 +66,6 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
       });
     }
   }
-
-  handleSwitchAccount(): void {
-    const navigationArgs = {
-      name: RouteNames.WalletConnection,
-      params: { isAccountSwitch: true },
-    };
-    this.navigate(navigationArgs);
-    this.logout();
-  }
 }
 </script>
 
@@ -99,6 +75,18 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
   border-radius: 50%;
   svg circle:first-child {
     fill: var(--s-color-utility-surface);
+  }
+}
+
+.account-menu i:hover {
+  color: var(--s-color-theme-accent);
+}
+
+.account {
+  &-details {
+    .el-button + .el-button {
+      margin-left: 0;
+    }
   }
 }
 </style>
@@ -153,19 +141,5 @@ $avatar-size: 32px;
       }
     }
   }
-  &__action-button {
-    & + & {
-      margin-left: var(--s-basic-spacing);
-    }
-  }
-  &-switch {
-    padding: 0;
-  }
-}
-</style>
-
-<style lang="scss">
-.account-menu i:hover {
-  color: var(--s-color-theme-accent);
 }
 </style>

@@ -6,6 +6,9 @@ import { MOCK_ADD_ASSET_SEARCH } from '../../utils/AddAssetSearchMock';
 
 import AddAssetSearch from '@/components/AddAssetSearch.vue';
 
+import AssetList from '@/components/AssetList.vue';
+import AssetListItem from '@/components/AssetListItem.vue';
+
 const accountAssetsAddressTableMock = MOCK_ACCOUNT_ASSETS.reduce((param, item) => {
   param[item.address] = item;
   return param;
@@ -44,6 +47,10 @@ useDescribe('AddAssetSearch.vue', AddAssetSearch, () => {
             search: item.search,
             selectedAsset: item.selectedAsset,
           };
+        },
+        stubs: {
+          AssetList,
+          AssetListItem,
         },
       });
       expect(wrapper.element).toMatchSnapshot();

@@ -1,16 +1,10 @@
 <template>
-  <wallet-base
-    :title="asset.name"
-    show-back
-    show-clean-history
-    :show-action="!isXor"
-    action-icon="basic-eye-24"
-    action-tooltip="asset.remove"
-    :disabled-clean-history="isCleanHistoryDisabled"
-    @back="handleBack"
-    @action="handleRemoveAsset"
-    @cleanHistory="handleCleanHistory"
-  >
+  <wallet-base :title="asset.name" show-back @back="handleBack">
+    <template #actions>
+      <s-button v-if="!isXor" type="action" :tooltip="t('asset.remove')" @click="handleRemoveAsset">
+        <s-icon name="basic-eye-24" size="28" />
+      </s-button>
+    </template>
     <s-card class="asset-details" primary>
       <div class="asset-details-container s-flex">
         <nft-details
@@ -57,6 +51,12 @@
             @click="handleOperation(operation.type)"
           >
             <s-icon :name="operation.icon" size="28" />
+          </s-button>
+
+          <qr-code-scan-button primary @change="parseQrCodeValue" />
+
+          <s-button type="action" primary rounded :tooltip="t('code.recieve')" @click="recieveByQrCode(asset)">
+            <s-icon name="finance-receive-show-QR-24" size="28" />
           </s-button>
         </div>
         <transition name="fadeHeight">
@@ -123,10 +123,12 @@ import FormattedAmount from './FormattedAmount.vue';
 import NftDetails from './NftDetails.vue';
 import InfoLine from './InfoLine.vue';
 import WalletHistory from './WalletHistory.vue';
+import QrCodeScanButton from './QrCodeScanButton.vue';
 import { api } from '../api';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import { RouteNames } from '../consts';
 import { copyToClipboard, delay, getAssetIconStyles, shortenValue, getAssetIconClasses } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
@@ -144,11 +146,12 @@ interface Operation {
     FormattedAmount,
     FormattedAmountWithFiatValue,
     WalletHistory,
+    QrCodeScanButton,
     NftDetails,
     InfoLine,
   },
 })
-export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin) {
+export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin, QrCodeParserMixin) {
   readonly balanceTypes = Object.values(BalanceType).filter((type) => type !== BalanceType.Total);
   readonly BalanceType = BalanceType;
 

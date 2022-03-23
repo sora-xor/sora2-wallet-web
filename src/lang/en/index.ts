@@ -154,6 +154,14 @@ export default {
   },
   asset: {
     remove: 'Remove asset',
+    select: 'Select an asset',
+    recieve: 'Recieve {symbol}',
+  },
+  code: {
+    download: 'Download QR Code',
+    upload: 'Scan QR',
+    recieve: 'Recieve',
+    invalid: 'Invalid QR Code',
   },
   addAsset: {
     title: '@:addAssetText',
