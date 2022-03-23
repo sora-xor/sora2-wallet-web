@@ -24,56 +24,35 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
     value=""
   />
    
-  <s-scrollbar-stub
-    class="asset-search-list"
-    tag="div"
+  <div
+    class="asset-list asset-search-list"
   >
     <div
-      class="asset s-flex"
+      class="vue-recycle-scroller asset-list-inner direction-vertical"
     >
-      <i
-        class="asset-logo asset-default s-icon-notifications-info-24"
-      />
+      <!---->
        
       <div
-        class="asset-description s-flex"
+        class="vue-recycle-scroller__item-wrapper"
+        style="min-height: 0px;"
+      />
+       
+      <!---->
+       
+      <div
+        class="resize-observer"
+        data-v-b329ee4c=""
+        tabindex="-1"
       >
-        <div
-          class="asset-description_symbol"
-        >
-          TEST
-        </div>
-         
-        <div
-          class="asset-description_info"
-        >
-          
-          Test Asset
-          
-          <s-tooltip-stub
-            animation="el-fade-in-linear"
-            borderradius="small"
-            closedelay="0"
-            content="Copy Asset ID"
-            hideafter="0"
-            offset="0"
-            opendelay="1000"
-            placement="top"
-            showarrow="true"
-            tabindex="0"
-            theme="auto"
-            usedesignsystem="true"
-          >
-            <span
-              class="asset-id"
-            >
-              (0x021...00000)
-            </span>
-          </s-tooltip-stub>
-        </div>
+        <object
+          aria-hidden="true"
+          data="about:blank"
+          tabindex="-1"
+          type="text/html"
+        />
       </div>
     </div>
-  </s-scrollbar-stub>
+  </div>
 </div>
 `;
 
@@ -101,18 +80,45 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
     value="123456"
   />
    
-  <s-scrollbar-stub
-    class="asset-search-list"
-    tag="div"
+  <div
+    class="asset-list asset-search-list"
   >
     <div
-      class="asset-search-list_empty"
+      class="vue-recycle-scroller asset-list-inner direction-vertical"
     >
-      
+      <div
+        class="vue-recycle-scroller__slot"
+      >
+        <div
+          class="asset-list-empty"
+        >
+          
       No tokens found
     
+        </div>
+      </div>
+       
+      <div
+        class="vue-recycle-scroller__item-wrapper"
+        style="min-height: 0px;"
+      />
+       
+      <!---->
+       
+      <div
+        class="resize-observer"
+        data-v-b329ee4c=""
+        tabindex="-1"
+      >
+        <object
+          aria-hidden="true"
+          data="about:blank"
+          tabindex="-1"
+          type="text/html"
+        />
+      </div>
     </div>
-  </s-scrollbar-stub>
+  </div>
 </div>
 `;
 
@@ -140,55 +146,34 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
     value="TEST"
   />
    
-  <s-scrollbar-stub
-    class="asset-search-list"
-    tag="div"
+  <div
+    class="asset-list asset-search-list"
   >
     <div
-      class="asset s-flex"
+      class="vue-recycle-scroller asset-list-inner direction-vertical"
     >
-      <i
-        class="asset-logo asset-default s-icon-notifications-info-24"
-      />
+      <!---->
        
       <div
-        class="asset-description s-flex"
+        class="vue-recycle-scroller__item-wrapper"
+        style="min-height: 0px;"
+      />
+       
+      <!---->
+       
+      <div
+        class="resize-observer"
+        data-v-b329ee4c=""
+        tabindex="-1"
       >
-        <div
-          class="asset-description_symbol"
-        >
-          TEST
-        </div>
-         
-        <div
-          class="asset-description_info"
-        >
-          
-          Test Asset
-          
-          <s-tooltip-stub
-            animation="el-fade-in-linear"
-            borderradius="small"
-            closedelay="0"
-            content="Copy Asset ID"
-            hideafter="0"
-            offset="0"
-            opendelay="1000"
-            placement="top"
-            showarrow="true"
-            tabindex="0"
-            theme="auto"
-            usedesignsystem="true"
-          >
-            <span
-              class="asset-id"
-            >
-              (0x021...00000)
-            </span>
-          </s-tooltip-stub>
-        </div>
+        <object
+          aria-hidden="true"
+          data="about:blank"
+          tabindex="-1"
+          type="text/html"
+        />
       </div>
     </div>
-  </s-scrollbar-stub>
+  </div>
 </div>
 `;

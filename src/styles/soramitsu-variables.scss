@@ -41,10 +41,13 @@ $s-shadow-surface: 1px 1px 5px var(--s-shadow-color-dark), inset 1px 1px 1px var
 // Fiat colors
 $s-color-fiat-value: rgba(71, 154, 239, 1) !default;
 // Size
-$s-size-big: 58px;
-$s-size-medium: 42px;
-$s-size-small: 32px;
-$s-size-mini: 24px;
+$s-size-big: 58px !default;
+$s-size-medium: 42px !default;
+$s-size-small: 32px !default;
+$s-size-mini: 24px !default;
+// Asset item height
+$s-asset-item-height: 71px !default;
+$s-asset-item-height--fiat: 86px !default;
 // Border Radius
 $s-border-radius-base: 16px !default;
 $s-border-radius-mini: $s-border-radius-base !default;
@@ -63,6 +66,9 @@ $s-font-family-icons-path: '~@/assets/fonts/polkaswap_icons.ttf' !default;
   --s-transition-default: #{$s-transition-default};
   // Fiat colors
   --s-color-fiat-value: #{$s-color-fiat-value};
+  // Asset item height
+  --s-asset-item-height: #{$s-asset-item-height};
+  --s-asset-item-height--fiat: #{$s-asset-item-height--fiat};
 }
 
 @import "../../node_modules/@soramitsu/soramitsu-js-ui/lib/styles/index";
