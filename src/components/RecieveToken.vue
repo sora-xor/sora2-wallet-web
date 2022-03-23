@@ -65,7 +65,7 @@ export default class RecieveToken extends Mixins(TranslationMixin) {
 
   async downloadCode(): Promise<void> {
     try {
-      const codeSvg = this.qrcode.element as SVGSVGElement;
+      const codeSvg = (this.qrcode as any).element as SVGSVGElement;
       const filename = `${this.asset.symbol}_${this.account.address}`;
 
       await svgSaveAs(codeSvg, filename, IMAGE_EXTENSIONS.JPEG);
