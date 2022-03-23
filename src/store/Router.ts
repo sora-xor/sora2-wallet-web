@@ -38,6 +38,12 @@ const getters = {
   currentRouteParams(state: RouterState) {
     return state.currentRouteParams;
   },
+  previousRoute(state: RouterState): RouteNames {
+    return state.previousRoute as RouteNames;
+  },
+  previousRouteParams(state: RouterState) {
+    return state.previousRouteParams;
+  },
 };
 
 const mutations = {

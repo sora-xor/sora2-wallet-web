@@ -196,3 +196,9 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
     return total;
   }, []);
 };
+
+export const getCssVariableValue = (name: string): string => {
+  return getComputedStyle(document.documentElement as any)
+    .getPropertyValue(name)
+    .trim();
+};
