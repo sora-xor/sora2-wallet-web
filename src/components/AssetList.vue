@@ -28,7 +28,6 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { RecycleScroller } from 'vue-virtual-scroller';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import AssetListItem from './AssetListItem.vue';
@@ -37,11 +36,8 @@ import { getCssVariableValue } from '../util';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 
-import 'vue-virtual-scroller/dist/vue-virtual-scroller.css';
-
 @Component({
   components: {
-    RecycleScroller,
     AssetListItem,
   },
 })
