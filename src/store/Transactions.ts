@@ -278,18 +278,24 @@ const actions = {
     // if tracking is disabled, return
     if (state.updateActiveTransactionsId === null) return;
 
+    const operations = SubqueryDataParserService.supportedOperations;
+
     const now = Date.now();
     // difference in time between last block & finilized block (ideal)
     const delta = 3 * BLOCK_PRODUCE_TIME;
-    // find transactions, which blocks should be produced
-    const txs: HistoryItem[] = [...getters.activeTransactions].filter(
-      (item: HistoryItem) => now - (item.startTime as number) > delta
-    );
+    // find transactions, which blocks should be produced, and could be restored
+    const txs: HistoryItem[] = [...getters.activeTransactions].filter((item: HistoryItem) => {
+      const shouldProduced = now - (item.startTime as number) > delta;
+      const couldBeRestored = operations.includes(item.type);
+
+      return shouldProduced && couldBeRestored;
+    });
 
     if (txs.length) {
       try {
         const ids = txs.map((tx) => tx.id as string);
-        const variables = { filter: { id: { in: ids } } };
+        const filter = historyElementsFilter({ operations, ids });
+        const variables = { filter };
         const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
 
         if (edges.length) {
