@@ -63,15 +63,15 @@
 </template>
 
 <script lang="ts">
-import { LoginStep } from '../../../consts';
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
-import TranslationMixin from '../../mixins/TranslationMixin';
-import LoadingMixin from '@/components/mixins/LoadingMixin';
-import { api } from '@sora-substrate/util';
-import { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
 import { Getter, Action } from 'vuex-class';
-import { parseJson } from '../../../util';
 import { mnemonicValidate } from '@polkadot/util-crypto';
+import { api } from '@sora-substrate/util';
+import LoadingMixin from '@/components/mixins/LoadingMixin';
+import TranslationMixin from '../../mixins/TranslationMixin';
+import { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
+import { parseJson } from '../../../util';
+import { LoginStep } from '../../../consts';
 
 @Component
 export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin) {
@@ -125,7 +125,6 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
   handleMnemonicInput(char) {
     const letter = char.replace('.', '').replace('  ', ' ');
-    // letter = letter.replace(/[0-9]/, '');
 
     if (/^[a-z ]+$/.test(letter)) this.mnemonicPhrase = letter;
   }
@@ -133,7 +132,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   nextStep(): void {
     if (this.mnemonicPhrase.trim().split(' ').length !== this.PHRASE_LENGTH) {
       this.$notify({
-        message: `Mnemonic should contain ${this.PHRASE_LENGTH} words`,
+        message: this.t('desktop.errorMessages.mnemonicLength', { number: this.PHRASE_LENGTH }),
         type: 'error',
         title: '',
       });
@@ -143,7 +142,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
     if (!mnemonicValidate(this.mnemonicPhrase)) {
       this.$notify({
-        message: `Invalid bip39 mnemonic specified`,
+        message: this.t('desktop.errorMessages.mnemonic'),
         type: 'error',
         title: '',
       });
@@ -174,7 +173,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
         name = (parsedJson as KeyringPair$Json).meta.name;
       } catch {
         this.$notify({
-          message: `JSON file does not have required fields`,
+          message: this.t('desktop.errorMessages.jsonFields'),
           type: 'error',
           title: '',
         });
@@ -188,7 +187,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
       this.$emit('stepChange', LoginStep.ImportCredentials);
     } catch (err) {
       this.$notify({
-        message: `Something went wrong`,
+        message: this.t('unknownErrorText'),
         type: 'error',
         title: '',
       });
@@ -211,13 +210,13 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     } catch (error) {
       if (error.message === 'Unable to decode using the supplied passphrase') {
         this.$notify({
-          message: `Password did not match`,
+          message: this.t('desktop.errorMessages.password'),
           type: 'error',
           title: '',
         });
       } else {
         this.$notify({
-          message: `Something went wrong`,
+          message: this.t('unknownErrorText'),
           type: 'error',
           title: '',
         });
@@ -228,13 +227,13 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
   async handleCredentialsInput() {
     try {
-      const account = await api.createAccount(this.mnemonicPhrase, this.accountName, this.accountPassword);
+      await api.createAccount(this.mnemonicPhrase, this.accountName, this.accountPassword);
       await this.getPolkadotJsAccounts();
       this.$emit('stepChange', LoginStep.AccountList);
     } catch (error) {
       if (error.message === 'Invalid bip39 mnemonic specified') {
         this.$notify({
-          message: `Invalid bip39 mnemonic specified`,
+          message: this.t('desktop.errorMessages.mnemonic'),
           type: 'error',
           title: '',
         });
@@ -250,7 +249,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     margin-top: 24px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: calc(var(--s-size-small) / 2);
   }
 
   .json-upload {

@@ -163,7 +163,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
 
   &__header {
     font-weight: 700;
-    font-size: 24px;
+    font-size: var(--s-font-size-large);
     text-transform: capitalize;
 
     &--clickable {

@@ -15,7 +15,7 @@
       <s-card shadow="always" size="small" border-radius="medium" class="logout" @click.native="openWelcomePage">
         <div class="connection__logout">
           <s-icon name="various-atom-24" class="connection__logout-icon" size="28" />
-          <div class="connection__logout-text s-flex">Add an account</div>
+          <div class="connection__logout-text s-flex">{{ t('desktop.addAccount') }}</div>
         </div>
       </s-card>
     </s-scrollbar>
@@ -62,7 +62,7 @@ $accounts-number: 7;
 
 .connection {
   $avatar-margin-right: #{$basic-spacing-small};
-  $avatar-size: 32px;
+  $avatar-size: var(--s-size-small);
 
   &__accounts {
     margin-top: $basic-spacing-medium;

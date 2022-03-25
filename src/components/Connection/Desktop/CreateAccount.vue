@@ -105,21 +105,27 @@
           ></s-input>
         </s-form>
       </div>
-      <s-button key="step3" @click="createAccount" class="s-typography-button--large login-btn" type="primary">{{
-        t('desktop.button.createAccount')
-      }}</s-button>
+      <s-button
+        key="step3"
+        @click="createAccount"
+        class="s-typography-button--large login-btn"
+        type="primary"
+        :disabled="isInputsNotFilled"
+      >
+        {{ t('desktop.button.createAccount') }}
+      </s-button>
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import { isEqual } from 'lodash';
-import { Action } from 'vuex-class';
-import LoadingMixin from '@/components/mixins/LoadingMixin';
 import { Mixins, Component, Prop } from 'vue-property-decorator';
-import { api } from '../../../api';
+import { Action } from 'vuex-class';
+import { isEqual } from 'lodash';
 
+import LoadingMixin from '../../../components/mixins/LoadingMixin';
 import TranslationMixin from '../../../components/mixins/TranslationMixin';
+import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
 import { copyToClipboard } from '../../../util';
 
@@ -175,6 +181,10 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
       return 'primary';
     }
     return 'secondary';
+  }
+
+  get isInputsNotFilled(): boolean {
+    return !this.accountName || !this.accountPassword || !this.accountPasswordConfirm;
   }
 
   getKey(word, idx): string {
@@ -280,14 +290,6 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   async createAccount(): Promise<void> {
-    if (!this.accountName || !this.accountPassword || !this.accountPasswordConfirm) {
-      this.$notify({
-        message: `Set required fields`,
-        type: 'error',
-        title: '',
-      });
-      return;
-    }
     if (this.accountPassword === this.accountPasswordConfirm) {
       await api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
       await this.getPolkadotJsAccounts();
@@ -348,7 +350,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   &__copy-seed {
     margin: 8px 0 28px 0 !important;
     height: 28px !important;
-    font-size: 12px !important;
+    font-size: calc(var(--s-size-mini) / 2) !important;
 
     .s-icon-basic-copy-24 {
       margin-left: 6px;
@@ -360,7 +362,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     justify-content: center;
     flex-wrap: wrap;
     width: 90% !important;
-    margin: 0px auto 16px auto;
+    margin: 0px auto calc(var(--s-size-small) / 2) auto;
   }
 
   &__correct-order {
@@ -369,7 +371,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     flex-wrap: wrap;
     min-height: 160px;
     width: 90% !important;
-    margin: 24px auto;
+    margin: var(--s-size-mini) auto;
   }
 
   &__random-word {
@@ -391,7 +393,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
 
   &__inputs {
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: calc(var(--s-size-small) / 2);
   }
 
   &__step-count {
@@ -415,7 +417,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   .delimiter {
-    margin: 16px 0 24px 0;
+    margin: calc(var(--s-size-small) / 2) 0 var(--s-size-mini) 0;
     width: 100%;
     height: 1px;
     background-color: var(--s-color-base-content-tertiary);

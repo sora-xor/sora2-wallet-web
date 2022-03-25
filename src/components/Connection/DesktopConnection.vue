@@ -15,19 +15,19 @@
 
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
+import { Getter, Action } from 'vuex-class';
+import { PolkadotJsAccount } from '@/types/common';
 
 import LoadingMixin from '../mixins/LoadingMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 import WalletBase from '../WalletBase.vue';
 import WelcomePage from './Desktop/WelcomePage.vue';
 import CreateAccount from './Desktop/CreateAccount.vue';
+import ConnectedAccountList from './common/ConnectedAccountList.vue';
 import ImportAccount from './Desktop/ImportAccount.vue';
+import ConfirmDialog from '../ConfirmDialog.vue';
 import { LoginStep } from '../../consts';
 import { getPreviousLoginStep } from '../../util';
-import { Getter, Action } from 'vuex-class';
-import ConnectedAccountList from './common/ConnectedAccountList.vue';
-import { PolkadotJsAccount } from '@/types/common';
-import ConfirmDialog from '../ConfirmDialog.vue';
 
 @Component({
   components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList, ConfirmDialog },
@@ -134,7 +134,7 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
 
   &__title {
     font-weight: 400;
-    font-size: 24px;
+    font-size: var(--s-font-size-large);
   }
 
   &__step-count {

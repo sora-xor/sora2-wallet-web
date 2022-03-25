@@ -3,7 +3,7 @@
     <div v-if="loggedIn" class="welcome-page">
       <div class="pswap-logo"></div>
       <h3 class="welcome-page__header">{{ t('desktop.welcome.header') }}</h3>
-      <h3 class="welcome-page__advice">{{ t('desktop.welcome.advice') }}</h3>
+      <h3 class="welcome-page__headline">{{ t('desktop.welcome.headline') }}</h3>
     </div>
     <div class="welcome-page__text">{{ t('desktop.welcome.text') }}</div>
     <s-button @click="createAccount" class="s-typography-button--large login-btn" type="primary">{{
@@ -16,9 +16,9 @@
 </template>
 
 <script lang="ts">
-import { PolkadotJsAccount } from '@/types/common';
 import { Mixins, Component } from 'vue-property-decorator';
 import { Getter } from 'vuex-class';
+import { PolkadotJsAccount } from '@/types/common';
 import TranslationMixin from '../../mixins/TranslationMixin';
 
 @Component
@@ -52,14 +52,14 @@ export default class WelcomePage extends Mixins(TranslationMixin) {
     margin-bottom: 18px;
   }
 
-  &__advice {
-    margin-bottom: 16px;
+  &__headline {
+    margin-bottom: calc(var(--s-size-small) / 2);
   }
 
   &__text {
     font-weight: 300;
     text-align: center;
-    margin-bottom: 16px;
+    margin-bottom: calc(var(--s-size-small) / 2);
   }
 }
 </style>

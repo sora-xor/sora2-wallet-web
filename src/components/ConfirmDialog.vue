@@ -21,7 +21,7 @@
       <div class="confirm-dialog__save-password">
         <s-switch v-model="savePassword" />
         <span v-if="!passphrase">{{ t('desktop.dialog.savePasswordText') }}</span>
-        <span v-else>Extend period without password by 15 minutes</span>
+        <span v-else>{{ t('desktop.dialog.extendPasswordText') }}</span>
       </div>
       <s-button @click="handleConfirm" type="primary" class="confirm-dialog__button" :disabled="disabled">
         {{ t('desktop.dialog.confirmButton') }}
@@ -32,13 +32,13 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
+import { Action, Getter } from 'vuex-class';
 import DialogBase from './DialogBase.vue';
 import WalletAccount from './WalletAccount.vue';
 import DialogMixin from './mixins/DialogMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import { api } from '../api';
-import { Action, Getter } from 'vuex-class';
 
 @Component({
   components: {
@@ -81,7 +81,7 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
     } catch (error) {
       if (error.message === 'Unable to decode using the supplied passphrase') {
         this.$notify({
-          message: `Password did not match`,
+          message: this.t('desktop.errorMessages.password'),
           type: 'error',
           title: '',
         });
@@ -123,17 +123,17 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
 <style lang="scss" scoped>
 .confirm-dialog {
   &__password {
-    margin-top: 16px;
+    margin-top: calc(var(--s-size-small) / 2);
   }
 
   &__save-password {
-    margin-top: 16px;
+    margin-top: calc(var(--s-size-small) / 2);
     @include switch-block;
     padding: 0 #{$basic-spacing-small};
   }
 
   &__button {
-    margin: 16px 0;
+    margin: calc(var(--s-size-small) / 2) 0;
     width: 100%;
   }
 

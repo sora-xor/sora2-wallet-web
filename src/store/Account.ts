@@ -27,7 +27,7 @@ import type { Account, PolkadotJsAccount, AccountAssetsTable } from '../types/co
 
 const HOUR = 60 * 60 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5 * 1000;
-const PASSPHRASE_TIMEOUT = 1 * 60 * 1000; // 15min
+const PASSPHRASE_TIMEOUT = 15 * 60 * 1000;
 
 const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {
   rewards: FPNumber.ZERO,
@@ -81,7 +81,6 @@ type AccountState = {
   referralRewards: ReferrerRewards;
   extensionAvailability: boolean;
   extensionAvailabilityTimer: Nullable<NodeJS.Timeout>;
-  passphraseAvailibiltyTimer: Nullable<NodeJS.Timeout>;
   addressKeyMapping: AddressKeyMapping;
   addressPassphraseMapping: AddressKeyMapping;
 };
@@ -106,7 +105,6 @@ function initialState(): AccountState {
     referralRewards: EMPTY_REFERRAL_REWARDS,
     extensionAvailability: false,
     extensionAvailabilityTimer: null,
-    passphraseAvailibiltyTimer: null,
     addressKeyMapping: {},
     addressPassphraseMapping: {},
   };
