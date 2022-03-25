@@ -5,8 +5,11 @@
 <script lang="ts">
 import { Component, Prop, Ref, Vue, Watch } from 'vue-property-decorator';
 import { BrowserQRCodeSvgWriter } from '@zxing/browser';
+import { EncodeHintType, QRCodeDecoderErrorCorrectionLevel } from '@zxing/library';
 
 const writer = new BrowserQRCodeSvgWriter();
+const hints = new Map();
+hints.set(EncodeHintType.ERROR_CORRECTION, QRCodeDecoderErrorCorrectionLevel.M);
 
 @Component
 export default class QrCode extends Vue {
@@ -33,7 +36,7 @@ export default class QrCode extends Vue {
 
   renderCode(): void {
     this.clearContainer();
-    this.element = writer.write(this.value, this.size, this.size);
+    this.element = writer.write(this.value, this.size, this.size, hints);
     this.container.appendChild(this.element);
   }
 }

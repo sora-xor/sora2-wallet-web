@@ -55,6 +55,7 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
           const result = await reader.decodeFromImageUrl(base64);
           resolve(result.getText());
         } catch (error) {
+          console.error(error);
           resolve(null);
         }
       });
