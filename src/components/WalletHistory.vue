@@ -69,12 +69,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   @Getter externalHistory!: AccountHistory<HistoryItem>;
   @Getter externalHistoryTotal!: number;
   @Getter shouldBalanceBeHidden!: boolean;
-  @Action getAssets!: AsyncVoidFn;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getExternalHistory!: (options?: ExternalHistoryParams) => Promise<void>;
   @Action resetExternalHistory!: AsyncVoidFn;
   @Action getAccountHistory!: AsyncVoidFn;
-  @Action clearSyncedAccountHistory!: (options: { address: string; assetAddress?: string }) => Promise<void>;
 
   @Prop() readonly asset?: AccountAsset;
 
@@ -150,7 +148,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   async mounted() {
     await this.withLoading(async () => {
       await this.reset();
-      await Promise.all([this.getAssets(), this.syncAndUpdateHistory()]);
+      await this.updateHistory();
     });
   }
 
@@ -217,11 +215,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     const isNext = current > this.currentPage;
     await this.updateHistory(isNext);
     this.currentPage = current;
-  }
-
-  private async syncAndUpdateHistory(): Promise<void> {
-    await this.clearSyncedAccountHistory({ address: this.account.address, assetAddress: this.assetAddress });
-    await this.updateHistory();
   }
 
   /**
