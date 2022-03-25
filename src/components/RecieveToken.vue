@@ -60,7 +60,7 @@ export default class RecieveToken extends Mixins(TranslationMixin) {
     const accountAddress = this.account.address;
     const publicKey = api.getPublicKeyByAddress(accountAddress);
 
-    return `substrate:${accountAddress.toLowerCase()}:0x${publicKey.toLowerCase()}::${assetAddress}`;
+    return `substrate:${accountAddress}:0x${publicKey}::${assetAddress}`;
   }
 
   async downloadCode(): Promise<void> {
