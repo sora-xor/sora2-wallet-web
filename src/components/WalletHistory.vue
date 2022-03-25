@@ -69,12 +69,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   @Getter externalHistory!: AccountHistory<HistoryItem>;
   @Getter externalHistoryTotal!: number;
   @Getter shouldBalanceBeHidden!: boolean;
-  @Action getAssets!: AsyncVoidFn;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
   @Action getExternalHistory!: (options?: ExternalHistoryParams) => Promise<void>;
   @Action resetExternalHistory!: AsyncVoidFn;
   @Action getAccountHistory!: AsyncVoidFn;
-  @Action clearSyncedAccountHistory!: (options: { address: string; assetAddress?: string }) => Promise<void>;
 
   @Prop() readonly asset?: AccountAsset;
 
@@ -150,7 +148,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   async mounted() {
     await this.withLoading(async () => {
       await this.reset();
-      await Promise.all([this.getAssets(), this.syncAndUpdateHistory()]);
+      await this.updateHistory();
     });
   }
 
@@ -189,9 +187,9 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   getStatus(status: string): string {
-    if ([TransactionStatus.Error, 'invalid'].includes(status)) {
+    if ([TransactionStatus.Error, TransactionStatus.Invalid].includes(status as TransactionStatus)) {
       status = TransactionStatus.Error;
-    } else if (status !== TransactionStatus.Finalized) {
+    } else if (!this.isFinalizedStatus(status as TransactionStatus)) {
       status = 'in_progress';
     }
     return status.toUpperCase();
@@ -205,8 +203,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     return getStatusIcon(this.getStatus(status));
   }
 
-  isFinalizedStatus(status: string): boolean {
-    return status === TransactionStatus.Finalized;
+  isFinalizedStatus(status: TransactionStatus): boolean {
+    return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(status);
   }
 
   handleOpenTransactionDetails(id: number): void {
@@ -217,11 +215,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     const isNext = current > this.currentPage;
     await this.updateHistory(isNext);
     this.currentPage = current;
-  }
-
-  private async syncAndUpdateHistory(): Promise<void> {
-    await this.clearSyncedAccountHistory({ address: this.account.address, assetAddress: this.assetAddress });
-    await this.updateHistory();
   }
 
   /**

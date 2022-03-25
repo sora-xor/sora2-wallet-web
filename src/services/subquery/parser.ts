@@ -19,19 +19,21 @@ import type {
   ReferrerReserve,
 } from './types';
 
+const insensitive = (value: string) => value.toLowerCase();
+
 const OperationsMap = {
-  [ModuleNames.Assets]: {
+  [insensitive(ModuleNames.Assets)]: {
     [ModuleMethods.AssetsRegister]: () => Operation.RegisterAsset,
     [ModuleMethods.AssetsTransfer]: () => Operation.Transfer,
   },
-  [ModuleNames.PoolXYK]: {
+  [insensitive(ModuleNames.PoolXYK)]: {
     [ModuleMethods.PoolXYKDepositLiquidity]: () => Operation.AddLiquidity,
     [ModuleMethods.PoolXYKWithdrawLiquidity]: () => Operation.RemoveLiquidity,
   },
-  [ModuleNames.LiquidityProxy]: {
+  [insensitive(ModuleNames.LiquidityProxy)]: {
     [ModuleMethods.LiquidityProxySwap]: () => Operation.Swap,
   },
-  [ModuleNames.Utility]: {
+  [insensitive(ModuleNames.Utility)]: {
     [ModuleMethods.UtilityBatchAll]: (data: HistoryElement['data']) => {
       if (
         Array.isArray(data) &&
@@ -43,7 +45,7 @@ const OperationsMap = {
       return null;
     },
   },
-  [ModuleNames.Referrals]: {
+  [insensitive(ModuleNames.Referrals)]: {
     [ModuleMethods.ReferralsSetReferrer]: () => Operation.ReferralSetInvitedUser,
     [ModuleMethods.ReferralsReserve]: () => Operation.ReferralReserveXor,
     [ModuleMethods.ReferralsUnreserve]: () => Operation.ReferralUnreserveXor,
@@ -57,12 +59,14 @@ const getTransactionId = (tx: HistoryElement): string => tx.id;
 const emptyFn = () => null;
 
 const getBatchCall = (data: Array<UtilityBatchAllItem>, { module, method }): Nullable<UtilityBatchAllItem> =>
-  data.find((item) => item.module === module && item.method === method);
+  data.find(
+    (item) => insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method)
+  );
 
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
 
-  const operationGetter = getOr(emptyFn, [module, method], OperationsMap);
+  const operationGetter = getOr(emptyFn, [insensitive(module), method], OperationsMap);
 
   return operationGetter(data);
 };
@@ -223,8 +227,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.asset2Address = asset2 ? asset2.address : '';
         payload.symbol = getAssetSymbol(asset);
         payload.symbol2 = getAssetSymbol(asset2);
-        payload.amount = FPNumber.fromCodecValue(amount).toString();
-        payload.amount2 = FPNumber.fromCodecValue(amount2).toString();
+        payload.amount = String(amount);
+        payload.amount2 = String(amount2);
 
         return payload;
       }

@@ -1,87 +1,71 @@
 <template>
   <div :class="computedClasses" v-loading="loading">
-    <template v-if="assetsFiatAmount">
+    <div v-if="assetsFiatAmount">
       <div class="total-fiat-values">
         <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
         <formatted-amount value-can-be-hidden is-fiat-value integer-only with-left-shift :value="assetsFiatAmount" />
       </div>
-      <s-divider class="wallet-assets-item_divider" />
-    </template>
-    <s-scrollbar v-if="!!formattedAccountAssets.length" class="wallet-assets-scrollbar">
-      <div class="wallet-assets-container">
-        <template v-for="(asset, index) in formattedAccountAssets">
-          <div class="wallet-assets-item s-flex" :key="asset.address">
-            <i class="asset-logo" :class="getAssetIconClasses(asset)" :style="getAssetIconStyles(asset.address)" />
-            <div class="asset s-flex">
-              <formatted-amount-with-fiat-value
-                value-can-be-hidden
-                value-class="asset-value"
-                :value="getBalance(asset)"
-                :font-size-rate="FontSizeRate.SMALL"
-                :asset-symbol="asset.symbol"
-                symbol-as-decimal
-                :fiat-value="getFiatBalance(asset)"
-                :fiat-font-size-rate="FontSizeRate.MEDIUM"
-                :fiat-font-weight-rate="FontWeightRate.MEDIUM"
-              >
-                <div v-if="hasFrozenBalance(asset)" class="asset-value-locked p4">
-                  <s-icon name="lock-16" size="12px" />
-                  <span>{{ formatFrozenBalance(asset) }}</span>
-                </div>
-              </formatted-amount-with-fiat-value>
-              <div class="asset-info">
-                {{ asset.name || asset.symbol }}
-                <s-tooltip :content="copyTooltip">
-                  <span class="asset-id" @click="handleCopyAddress(asset.address)">
-                    ({{ getFormattedAddress(asset) }})
-                  </span>
-                </s-tooltip>
-              </div>
-            </div>
-            <s-button
-              v-if="permissions.sendAssets"
-              class="wallet-assets__button send"
-              type="action"
-              size="small"
-              alternative
-              :tooltip="t('assets.send')"
-              :disabled="isZeroBalance(asset)"
-              @click="handleAssetSend(asset)"
-            >
-              <s-icon name="finance-send-24" size="28" />
-            </s-button>
-            <s-button
-              v-if="permissions.swapAssets && asset.decimals"
-              class="wallet-assets__button swap"
-              type="action"
-              size="small"
-              alternative
-              :tooltip="t('assets.swap')"
-              @click="handleAssetSwap(asset)"
-            >
-              <s-icon name="arrows-swap-24" size="28" />
-            </s-button>
-            <s-button
-              v-if="permissions.showAssetDetails"
-              class="wallet-assets__button el-button--details"
-              type="action"
-              size="small"
-              alternative
-              :tooltip="t('assets.details')"
-              @click="handleOpenAssetDetails(asset)"
-            >
-              <s-icon name="arrows-chevron-right-rounded-24" size="28" />
-            </s-button>
+      <s-divider class="wallet-assets-divider" />
+    </div>
+
+    <asset-list :assets="formattedAccountAssets" :size="3" with-fiat divider class="wallet-assets-list">
+      <template #value="asset">
+        <formatted-amount-with-fiat-value
+          value-can-be-hidden
+          value-class="asset-value"
+          :value="getBalance(asset)"
+          :font-size-rate="FontSizeRate.SMALL"
+          :asset-symbol="asset.symbol"
+          symbol-as-decimal
+          :fiat-value="getFiatBalance(asset)"
+          :fiat-font-size-rate="FontSizeRate.MEDIUM"
+          :fiat-font-weight-rate="FontWeightRate.MEDIUM"
+        >
+          <div v-if="hasFrozenBalance(asset)" class="asset-value-locked p4">
+            <s-icon name="lock-16" size="12px" />
+            <span>{{ formatFrozenBalance(asset) }}</span>
           </div>
-          <s-divider
-            v-if="index !== formattedAccountAssets.length - 1"
-            class="wallet-assets-item_divider"
-            :key="`${asset.address}-divider`"
-          />
-        </template>
-      </div>
-    </s-scrollbar>
-    <div v-else class="wallet-assets-empty">{{ t('assets.empty') }}</div>
+        </formatted-amount-with-fiat-value>
+      </template>
+
+      <template #default="asset">
+        <s-button
+          v-if="permissions.sendAssets"
+          class="wallet-assets__button send"
+          type="action"
+          size="small"
+          alternative
+          :tooltip="t('assets.send')"
+          :disabled="isZeroBalance(asset)"
+          @click="handleAssetSend(asset)"
+        >
+          <s-icon name="finance-send-24" size="28" />
+        </s-button>
+        <s-button
+          v-if="permissions.swapAssets && asset.decimals"
+          class="wallet-assets__button swap"
+          type="action"
+          size="small"
+          alternative
+          :tooltip="t('assets.swap')"
+          @click="handleAssetSwap(asset)"
+        >
+          <s-icon name="arrows-swap-24" size="28" />
+        </s-button>
+        <s-button
+          v-if="permissions.showAssetDetails"
+          class="wallet-assets__button el-button--details"
+          type="action"
+          size="small"
+          alternative
+          :tooltip="t('assets.details')"
+          @click="handleOpenAssetDetails(asset)"
+        >
+          <s-icon name="arrows-chevron-right-rounded-24" size="28" />
+        </s-button>
+      </template>
+    </asset-list>
+
     <s-button
       v-if="permissions.addAssets"
       class="wallet-assets-add s-typography-button--large"
@@ -101,6 +85,7 @@ import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
+import AssetList from './AssetList.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import { RouteNames, HiddenValue } from '../consts';
@@ -109,6 +94,7 @@ import type { WalletPermissions } from '../consts';
 
 @Component({
   components: {
+    AssetList,
     FormattedAmount,
     FormattedAmountWithFiatValue,
   },
@@ -199,9 +185,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
 <style lang="scss">
 .wallet-assets {
-  &-scrollbar {
-    @include scrollbar($basic-spacing-big);
+  &-list {
+    @include asset-list-scrollbar($basic-spacing-big, $basic-spacing-big, $basic-spacing-big);
   }
+
   .asset {
     .formatted-amount {
       display: block;
@@ -215,6 +202,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
         margin-top: $basic-spacing-mini;
       }
     }
+
     &-value {
       height: $basic-spacing-medium;
       font-size: var(--s-font-size-medium);
@@ -229,6 +217,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       }
 
       @include formatted-amount-tooltip;
+    }
+
+    &-info {
+      margin-top: $basic-spacing-mini;
+      color: var(--s-color-base-content-primary);
+      line-height: var(--s-line-height-reset);
     }
   }
 
@@ -261,87 +255,38 @@ $wallet-assets-count: 5;
   flex-direction: column;
   margin-top: #{$basic-spacing-medium};
 
-  &--fiat {
-    #{$wallet-assets-class}-container {
-      max-height: calc(#{$asset-item-height--fiat} * #{$wallet-assets-count} + 4px);
-    }
-    #{$wallet-assets-class}-item {
-      height: $asset-item-height--fiat;
-    }
-  }
-
-  &-container {
-    max-height: calc((#{$asset-item-height} * #{$wallet-assets-count}) + 4px);
-  }
-  &-item {
-    align-items: center;
-    height: $asset-item-height;
-
-    .asset {
-      flex: 1;
-      overflow-wrap: break-word;
-      flex-direction: column;
-      padding-right: var(--s-basic-spacing);
-      padding-left: var(--s-basic-spacing);
-      width: 30%;
-      justify-content: center;
-      &-value,
-      &-info {
-        line-height: var(--s-line-height-base);
-      }
-      &-info {
-        margin-top: $basic-spacing-mini;
-        @include hint-text(var(--s-line-height-reset));
-        color: var(--s-color-base-content-primary);
-      }
-      &-id {
-        outline: none;
-        &:hover {
-          text-decoration: underline;
-          cursor: pointer;
-        }
-      }
-      &-value-locked {
-        display: inline-flex;
-        align-items: center;
-        background-color: var(--s-color-base-content-secondary);
+  .asset {
+    &-value-locked {
+      display: inline-flex;
+      align-items: center;
+      background-color: var(--s-color-base-content-secondary);
+      color: var(--s-color-base-on-accent);
+      padding: 2px 7px;
+      line-height: 1;
+      border-radius: var(--s-border-radius-mini);
+      max-width: 100%;
+      > .s-icon-lock-16 {
         color: var(--s-color-base-on-accent);
-        padding: 2px 7px;
-        line-height: 1;
-        border-radius: var(--s-border-radius-mini);
-        max-width: 100%;
-        > .s-icon-lock-16 {
-          color: var(--s-color-base-on-accent);
-        }
-        > span {
-          margin-left: #{$basic-spacing-mini};
-          white-space: nowrap;
-        }
       }
-      &-converted {
-        @include hint-text;
+      > span {
+        margin-left: #{$basic-spacing-mini};
+        white-space: nowrap;
       }
-    }
-    .asset-logo {
-      flex-shrink: 0;
-      @include asset-logo-styles;
-    }
-    &_divider {
-      margin: 0;
     }
   }
-  &-add,
-  &-empty {
+
+  &-add {
     margin-top: #{$basic-spacing-medium};
   }
-  &-empty {
-    text-align: center;
-    @include hint-text;
-  }
+
   &__button {
     & + & {
       margin-left: 0;
     }
+  }
+
+  &-divider {
+    margin: 0;
   }
 
   .total-fiat-values {

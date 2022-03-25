@@ -2,8 +2,6 @@
 
 exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon=""
-  actiontooltip=""
   showback="true"
   showheader="true"
   title="Create"
@@ -39,8 +37,6 @@ exports[`CreateToken.vue [Confirm Step]: should be rendered correctly 1`] = `
 
 exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon=""
-  actiontooltip=""
   showback="true"
   showheader="true"
   title="Create"

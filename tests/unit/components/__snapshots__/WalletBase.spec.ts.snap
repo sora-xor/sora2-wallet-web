@@ -21,7 +21,9 @@ exports[`WalletBase.vue should be rendered correctly 1`] = `
         <!---->
       </h3>
        
-      <!---->
+      <div
+        class="base-title_action"
+      />
        
       <!---->
     </div>

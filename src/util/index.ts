@@ -246,3 +246,9 @@ export const parseJson = (file: File): Promise<KeyringPair$Json> => {
     reader.onerror = (e) => reject(e);
   });
 };
+
+export const getCssVariableValue = (name: string): string => {
+  return getComputedStyle(document.documentElement as any)
+    .getPropertyValue(name)
+    .trim();
+};

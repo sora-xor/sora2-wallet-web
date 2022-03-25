@@ -46,9 +46,16 @@ export type PoolXYKEntity = {
 
 export type FiatPriceAndApyObject = {
   [key: string]: {
-    price: CodecString;
+    price?: CodecString;
     strategicBonusApy?: CodecString;
   };
+};
+
+/**
+ * `key` is timestamp, `value` is price USD
+ */
+export type HistoricalPrice = {
+  [key: number]: CodecString;
 };
 
 export type HistoryElementError = {

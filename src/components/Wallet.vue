@@ -1,15 +1,28 @@
 <template>
-  <wallet-base
-    :title="t('wallet.title')"
-    :show-action="permissions.createAssets"
-    :show-clean-history="currentTab === WalletTabs.Activity"
-    :disabled-clean-history="isCleanHistoryDisabled"
-    action-icon="various-atom-24"
-    action-tooltip="wallet.createToken"
-    @action="handleCreateToken"
-    @cleanHistory="clearAccountHistory"
-  >
-    <wallet-account show-controls />
+  <wallet-base :title="t('wallet.title')">
+    <template #actions>
+      <s-button
+        v-if="permissions.createAssets"
+        type="action"
+        :tooltip="t('wallet.createToken')"
+        @click="handleCreateToken"
+      >
+        <s-icon name="various-atom-24" size="28" />
+      </s-button>
+    </template>
+
+    <wallet-account>
+      <qr-code-scan-button alternative @change="parseQrCodeValue" />
+
+      <s-button type="action" alternative rounded :tooltip="t('code.recieve')" @click="recieveByQrCode(null)">
+        <s-icon name="finance-receive-show-QR-24" size="28" />
+      </s-button>
+
+      <s-button type="action" alternative rounded :tooltip="t('account.switch')" @click="handleSwitchAccount">
+        <s-icon name="arrows-refresh-ccw-24" size="28" />
+      </s-button>
+    </wallet-account>
+
     <div class="wallet">
       <s-tabs :value="currentTab" type="rounded" @change="handleChangeTab">
         <s-tab v-for="tab in WalletTabs" :key="tab" :label="t(`wallet.${tab}`)" :name="tab" />
@@ -25,12 +38,15 @@ import { Action, Getter } from 'vuex-class';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import TranslationMixin from './mixins/TranslationMixin';
+import QrCodeParserMixin from './mixins/QrCodeParserMixin';
+
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletActivity from './WalletActivity.vue';
+import QrCodeScanButton from './QrCodeScanButton.vue';
 import { RouteNames, WalletTabs } from '../consts';
-import type { Account } from '../types/common';
+
 import type { WalletPermissions } from '../consts';
 
 @Component({
@@ -39,26 +55,23 @@ import type { WalletPermissions } from '../consts';
     WalletAccount,
     WalletAssets,
     WalletActivity,
+    QrCodeScanButton,
   },
 })
-export default class Wallet extends Mixins(TranslationMixin) {
+export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) {
   readonly WalletTabs = WalletTabs;
 
   @Getter currentRouteParams!: any;
-  @Getter account!: Account;
-  @Getter history!: AccountHistory<HistoryItem>;
   @Getter permissions!: WalletPermissions;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action clearAccountHistory!: (assetAddress?: string) => Promise<void>;
+
+  @Action logout!: AsyncVoidFn;
 
   currentTab: WalletTabs = WalletTabs.Assets;
 
   mounted() {
-    if (this.currentRouteParams.currentTab) this.currentTab = this.currentRouteParams.currentTab;
-  }
-
-  get isCleanHistoryDisabled(): boolean {
-    return !Object.keys(this.history).length;
+    if (this.currentRouteParams.currentTab) {
+      this.currentTab = this.currentRouteParams.currentTab;
+    }
   }
 
   handleChangeTab(value: WalletTabs): void {
@@ -71,6 +84,15 @@ export default class Wallet extends Mixins(TranslationMixin) {
 
   handleCreateToken(): void {
     this.navigate({ name: RouteNames.CreateToken });
+  }
+
+  handleSwitchAccount(): void {
+    const navigationArgs = {
+      name: RouteNames.WalletConnection,
+      params: { isAccountSwitch: true },
+    };
+    this.navigate(navigationArgs);
+    this.logout();
   }
 }
 </script>

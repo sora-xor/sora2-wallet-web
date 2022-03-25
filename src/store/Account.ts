@@ -524,7 +524,6 @@ const actions = {
         state.accountAssetsSubscription = api.assets.balanceUpdated.subscribe((data) => {
           commit(types.UPDATE_ACCOUNT_ASSETS, api.assets.accountAssets);
         });
-
         await api.assets.updateAccountAssets();
       } catch (error) {
         commit(types.UPDATE_ACCOUNT_ASSETS, []);
@@ -533,6 +532,7 @@ const actions = {
   },
 
   resetAccountAssetsSubscription({ commit }) {
+    api.assets.clearAccountAssets();
     commit(types.RESET_ACCOUNT_ASSETS_SUBSCRIPTION);
   },
 

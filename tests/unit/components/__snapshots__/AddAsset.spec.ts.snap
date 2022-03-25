@@ -2,8 +2,6 @@
 
 exports[`AddAsset.vue [Custom Asset Tab]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon=""
-  actiontooltip=""
   showback="true"
   showheader="true"
   title="Add asset"
@@ -37,8 +35,6 @@ exports[`AddAsset.vue [Custom Asset Tab]: should be rendered correctly 1`] = `
 
 exports[`AddAsset.vue [Search Tab]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  actionicon=""
-  actiontooltip=""
   showback="true"
   showheader="true"
   title="Add asset"
