@@ -187,7 +187,11 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
       this.json = parsedJson;
       this.$emit('stepChange', LoginStep.ImportCredentials);
     } catch (err) {
-      console.error(err);
+      this.$notify({
+        message: `Something went wrong`,
+        type: 'error',
+        title: '',
+      });
     }
   }
 
@@ -199,10 +203,10 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     }
   }
 
-  handleJsonInput(json: KeyringPair$Json): void {
+  async handleJsonInput(json: KeyringPair$Json): Promise<void> {
     try {
       api.restoreFromJson(json, this.accountPassword);
-      this.getPolkadotJsAccounts();
+      await this.getPolkadotJsAccounts();
       this.$emit('stepChange', LoginStep.AccountList);
     } catch (error) {
       if (error.message === 'Unable to decode using the supplied passphrase') {
@@ -225,10 +229,9 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   async handleCredentialsInput() {
     try {
       const account = await api.createAccount(this.mnemonicPhrase, this.accountName, this.accountPassword);
-      this.getPolkadotJsAccounts();
+      await this.getPolkadotJsAccounts();
       this.$emit('stepChange', LoginStep.AccountList);
     } catch (error) {
-      console.log('error', error);
       if (error.message === 'Invalid bip39 mnemonic specified') {
         this.$notify({
           message: `Invalid bip39 mnemonic specified`,

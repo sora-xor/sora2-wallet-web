@@ -74,8 +74,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   @Action importPolkadotJs!: (address: string) => Promise<void>;
 
   get isAccountSwitch(): boolean {
-    console.log('this.currentRouteParams', this.currentRouteParams);
-    console.log('(this.currentRouteParams || {}).isAccountSwitch', (this.currentRouteParams || {}).isAccountSwitch);
     return (this.currentRouteParams || {}).isAccountSwitch;
   }
 

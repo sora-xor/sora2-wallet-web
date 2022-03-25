@@ -4,6 +4,8 @@ import fromPairs from 'lodash/fp/fromPairs';
 import flow from 'lodash/fp/flow';
 import concat from 'lodash/fp/concat';
 import omit from 'lodash/fp/omit';
+import { AES, enc } from 'crypto-js';
+import cryptoRandomString from 'crypto-random-string';
 import { axiosInstance, FPNumber } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
 import type { AccountAsset, Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
@@ -20,11 +22,12 @@ import {
   WHITE_LIST_GITHUB_URL,
 } from '../util';
 import { SubqueryExplorerService } from '../services/subquery';
-import type { FiatPriceAndApyObject, ReferrerRewards } from '../services/subquery/types';
+import type { AddressKeyMapping, FiatPriceAndApyObject, ReferrerRewards } from '../services/subquery/types';
 import type { Account, PolkadotJsAccount, AccountAssetsTable } from '../types/common';
 
 const HOUR = 60 * 60 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5 * 1000;
+const PASSPHRASE_TIMEOUT = 1 * 60 * 1000; // 15min
 
 const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {
   rewards: FPNumber.ZERO,
@@ -40,6 +43,9 @@ const types = flow(
     'RESET_FIAT_PRICE_AND_APY_SUBSCRIPTION',
     'LOGOUT',
     'SYNC_WITH_STORAGE',
+    'SET_ACCOUNT_PASSPHRASE',
+    'RESET_ACCOUNT_PASSPHRASE',
+    'UPDATE_ADDRESS_GENERATED_KEY',
     'SET_POLKADOT_JS_ACCOUNTS',
     'RESET_POLKADOT_JS_ACCOUNTS_SUBSCRIPTION',
     'SET_EXTENSION_AVAILABILIY',
@@ -75,6 +81,9 @@ type AccountState = {
   referralRewards: ReferrerRewards;
   extensionAvailability: boolean;
   extensionAvailabilityTimer: Nullable<NodeJS.Timeout>;
+  passphraseAvailibiltyTimer: Nullable<NodeJS.Timeout>;
+  addressKeyMapping: AddressKeyMapping;
+  addressPassphraseMapping: AddressKeyMapping;
 };
 
 function initialState(): AccountState {
@@ -97,12 +106,25 @@ function initialState(): AccountState {
     referralRewards: EMPTY_REFERRAL_REWARDS,
     extensionAvailability: false,
     extensionAvailabilityTimer: null,
+    passphraseAvailibiltyTimer: null,
+    addressKeyMapping: {},
+    addressPassphraseMapping: {},
   };
 }
 
 const state = initialState();
 
 const getters = {
+  passphrase(state: AccountState): string | null {
+    const encryptedPassphrase = state.addressPassphraseMapping[state.address];
+    const sessionKey = state.addressKeyMapping[state.address];
+
+    if (encryptedPassphrase && sessionKey) {
+      const decoded = AES.decrypt(encryptedPassphrase, sessionKey).toString(enc.Utf8);
+      return decoded;
+    }
+    return null;
+  },
   isLoggedIn(state: AccountState): boolean {
     return state.isExternal && !!state.address;
   },
@@ -175,6 +197,8 @@ const mutations = {
         'polkadotJsAccountsSubscription',
         'extensionAvailability',
         'extensionAvailabilityTimer',
+        'addressKeyMapping',
+        'addressPassphraseMapping',
       ],
       initialState()
     );
@@ -284,6 +308,31 @@ const mutations = {
       state.extensionAvailabilityTimer = null;
     }
   },
+
+  [types.SET_ACCOUNT_PASSPHRASE](state: AccountState, passphraseEncoded: string) {
+    state.addressPassphraseMapping = {
+      ...state.addressPassphraseMapping,
+      [state.address]: passphraseEncoded,
+    };
+  },
+
+  [types.UPDATE_ADDRESS_GENERATED_KEY](state: AccountState, key: string) {
+    state.addressKeyMapping = {
+      ...state.addressKeyMapping,
+      [state.address]: key,
+    };
+  },
+
+  [types.RESET_ACCOUNT_PASSPHRASE](state: AccountState) {
+    state.addressKeyMapping = {
+      ...state.addressKeyMapping,
+      [state.address]: null,
+    };
+    state.addressPassphraseMapping = {
+      ...state.addressPassphraseMapping,
+      [state.address]: null,
+    };
+  },
 };
 
 const actions = {
@@ -313,7 +362,7 @@ const actions = {
 
   async logout({ commit, dispatch }) {
     if (api.accountPair) {
-      api.logout();
+      api.logout(!!getters.isDesktop);
     }
 
     await dispatch('resetAccountAssetsSubscription');
@@ -345,6 +394,19 @@ const actions = {
     return signer;
   },
 
+  async setAccountPassphrase({ commit }, passphrase: string) {
+    const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
+    const passphraseEncoded = AES.encrypt(passphrase, key).toString();
+
+    commit(types.UPDATE_ADDRESS_GENERATED_KEY, key);
+    commit(types.SET_ACCOUNT_PASSPHRASE, passphraseEncoded);
+
+    const timer = setTimeout(() => {
+      commit(types.RESET_ACCOUNT_PASSPHRASE);
+      clearTimeout(timer);
+    }, PASSPHRASE_TIMEOUT);
+  },
+
   subscribeOnExtensionAvailability({ dispatch, state }) {
     dispatch('checkExtension');
 
@@ -362,7 +424,7 @@ const actions = {
   async updatePolkadotJsAccounts({ commit, dispatch, getters }, accounts: Array<PolkadotJsAccount>) {
     commit(types.SET_POLKADOT_JS_ACCOUNTS, accounts);
 
-    if (getters.isLoggedIn && !getters.isDesktop) {
+    if (getters.isLoggedIn && getters.isDesktop) {
       try {
         await dispatch('getSigner');
       } catch (error) {
@@ -400,11 +462,7 @@ const actions = {
         throw new Error('polkadotjs.noAccount');
       }
 
-      // const signer = await dispatch('getSigner');
-      // console.log('signer', signer);
-
-      api.importByPolkadotJs(account.address, account.name);
-      // api.setSigner(signer);
+      api.importByPolkadotJs(account.address, account.name, true);
 
       commit(types.IMPORT_POLKADOT_JS_ACCOUNT_SUCCESS, account.name);
       await dispatch('afterLogin');
@@ -424,8 +482,6 @@ const actions = {
         commit(types.IMPORT_POLKADOT_JS_ACCOUNT_FAILURE);
         throw new Error('polkadotjs.noAccount');
       }
-      console.log('info', info);
-      console.log('info.signer', info.signer);
       api.importByPolkadotJs(account.address, account.name);
       api.setSigner(info.signer);
 
@@ -568,7 +624,6 @@ const actions = {
       if (getters.isLoggedIn) {
         await dispatch('importPolkadotJs', state.address);
       } else {
-        console.log('syncWithStorage');
         await dispatch('logout');
       }
     }

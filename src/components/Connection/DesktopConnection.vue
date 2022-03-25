@@ -10,7 +10,6 @@
         @stepChange="setStep"
       />
     </div>
-    <!-- <confirm-dialog :visible="true" /> -->
   </wallet-base>
 </template>
 
@@ -67,9 +66,7 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
 
   get showHeader(): boolean {
     if (this.step === LoginStep.Welcome && this.polkadotJsAccounts.length) return true;
-    // if (this.step === LoginStep.Welcome) return true;
     if (this.step === LoginStep.AccountList) return true;
-    // if (this.polkadotJsAccounts.length > 0) return true;
     return false;
   }
 
@@ -101,7 +98,6 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
     await this.withLoading(async () => {
       try {
-        console.log('handleSelect', account);
         await this.importPolkadotJsDesktop(account.address);
       } catch (error) {
         this.$alert(this.t((error as Error).message), this.t('errorText'));

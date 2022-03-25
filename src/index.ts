@@ -28,7 +28,7 @@ import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import { storage, runtimeStorage } from './util/storage';
 import { api, connection } from './api';
-import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
+import { delay, getExplorerLinks, getPolkadotJsAccounts, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import * as SUBQUERY_TYPES from './services/subquery/types';
@@ -85,11 +85,12 @@ async function initWallet({
       throw error;
     }
     await store.dispatch('getWhitelist', { whiteListOverApi });
-    if (!isDesktop()) {
-      await store.dispatch('getPolkadotJsAccounts');
-    } else {
+    if (isDesktop()) {
       await store.dispatch('subscribeOnExtensionAvailability');
       await store.dispatch('checkSigner');
+    } else {
+      api.initAccountStorage();
+      await store.dispatch('getPolkadotJsAccounts');
     }
     await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
     await store.dispatch('setWalletLoaded', true);

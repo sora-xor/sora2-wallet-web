@@ -102,6 +102,10 @@ export type UtilityBatchAllItem = {
   method: string;
 };
 
+export type AddressKeyMapping = {
+  [key: string]: string | null;
+};
+
 export type HistoryElementEthBridgeOutgoing = {
   amount: string;
   assetId: string;

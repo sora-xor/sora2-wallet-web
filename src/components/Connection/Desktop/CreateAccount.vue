@@ -125,7 +125,6 @@ import { copyToClipboard } from '../../../util';
 
 @Component
 export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin) {
-  @Action importPolkadotJsDesktop!: (address: string) => Promise<void>;
   @Action getPolkadotJsAccounts!: () => Promise<void>;
   @Prop({ type: String }) readonly step!: LoginStep;
 
@@ -281,6 +280,14 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   async createAccount(): Promise<void> {
+    if (!this.accountName || !this.accountPassword || !this.accountPasswordConfirm) {
+      this.$notify({
+        message: `Set required fields`,
+        type: 'error',
+        title: '',
+      });
+      return;
+    }
     if (this.accountPassword === this.accountPasswordConfirm) {
       await api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
       await this.getPolkadotJsAccounts();

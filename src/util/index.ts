@@ -19,12 +19,10 @@ export const formatSoraAddress = (address: string) => api.formatAddress(address)
 
 export const getPolkadotJsAccounts = async (): Promise<any> => {
   const accounts = await api.getAccounts();
-  console.log('accounts!', accounts);
   const polkadotJsAccounts = accounts.map((account) => ({
     address: account.address,
     name: account.meta.name || '',
   }));
-  console.log('polkadotJsAccounts', polkadotJsAccounts);
   return polkadotJsAccounts;
 };
 
@@ -36,9 +34,6 @@ export const subscribeToPolkadotJsAccounts = async (
       address: account.address,
       name: account.meta.name || '',
     }));
-
-    console.log('injectedAccounts', injectedAccounts);
-    console.log('polkadotJsAccounts', polkadotJsAccounts);
 
     callback(polkadotJsAccounts);
   });

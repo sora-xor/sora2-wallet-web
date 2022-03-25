@@ -88,7 +88,7 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
       params: { isAccountSwitch: true },
     };
     this.navigate(navigationArgs);
-    // this.logout();
+    this.logout();
   }
 }
 </script>
