@@ -360,7 +360,7 @@ const actions = {
 
   async logout({ commit, dispatch }) {
     if (api.accountPair) {
-      api.logout(!!getters.isDesktop);
+      api.logout(!getters.isDesktop);
     }
 
     await dispatch('resetAccountAssetsSubscription');
@@ -422,7 +422,7 @@ const actions = {
   async updatePolkadotJsAccounts({ commit, dispatch, getters }, accounts: Array<PolkadotJsAccount>) {
     commit(types.SET_POLKADOT_JS_ACCOUNTS, accounts);
 
-    if (getters.isLoggedIn && getters.isDesktop) {
+    if (getters.isLoggedIn && !getters.isDesktop) {
       try {
         await dispatch('getSigner');
       } catch (error) {
