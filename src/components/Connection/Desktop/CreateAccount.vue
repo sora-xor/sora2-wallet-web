@@ -214,31 +214,38 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   chooseWord(e: Event): void {
     const clickedWord = e.currentTarget;
     const targetClass = (clickedWord as HTMLElement).classList[1];
-    this.$refs[`${targetClass}`]?.[0].classList.add('word--hidden');
-    const clickedWordText = (clickedWord as HTMLElement).textContent?.trim();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.$refs[`${targetClass}`]![0].classList.add('word--hidden')!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const clickedWordText = (clickedWord as HTMLElement).textContent!.trim();
     this.$nextTick(() => {
       this.seedPhraseToCompare.push(clickedWordText);
     });
   }
 
   discardWord(e: Event): void {
-    const clickedWordText = (e.currentTarget as HTMLElement).textContent?.trim();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const clickedWordText = (e.currentTarget as HTMLElement).textContent!.trim();
     const wordToDiscard = this.seedPhraseBoundToClass.get(clickedWordText);
-    this.$refs[`${wordToDiscard}`]?.[0].classList.remove('word--hidden');
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.$refs[`${wordToDiscard}`]![0].classList.remove('word--hidden');
     this.seedPhraseToCompare = this.seedPhraseToCompare.filter((word) => word !== clickedWordText);
   }
 
   discardAllWords(): void {
     const wordsHtmlDOM = Array.from(new Array(this.PHRASE_LENGTH), (_, idx) => `word${idx + 1}`);
     wordsHtmlDOM.map((value) => {
-      this.$refs[value]?.[0].classList.remove('word--hidden');
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.$refs[value]![0].classList.remove('word--hidden');
     });
     wordsHtmlDOM.map((value) => {
-      this.$refs[value]?.[0].classList.add('login__random-word--incorrect');
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      this.$refs[value]![0].classList.add('login__random-word--incorrect');
     });
     setTimeout(() => {
       wordsHtmlDOM.map((value) => {
-        this.$refs[value]?.[0].classList.remove('login__random-word--incorrect');
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.$refs[value]![0].classList.remove('login__random-word--incorrect');
       });
     }, 2000);
   }

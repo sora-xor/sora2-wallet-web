@@ -4,7 +4,7 @@ import fromPairs from 'lodash/fp/fromPairs';
 import flow from 'lodash/fp/flow';
 import concat from 'lodash/fp/concat';
 import omit from 'lodash/fp/omit';
-import { AES, enc } from 'crypto-js';
+import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
 import { axiosInstance, FPNumber } from '@sora-substrate/util';
 import type { Subscription } from '@polkadot/x-rxjs';
@@ -118,7 +118,7 @@ const getters = {
     const sessionKey = state.addressKeyMapping[state.address];
 
     if (encryptedPassphrase && sessionKey) {
-      const decoded = AES.decrypt(encryptedPassphrase, sessionKey).toString(enc.Utf8);
+      const decoded = CryptoJS.AES.decrypt(encryptedPassphrase, sessionKey).toString(CryptoJS.enc.Utf8);
       return decoded;
     }
     return null;
@@ -394,7 +394,7 @@ const actions = {
 
   async setAccountPassphrase({ commit }, passphrase: string) {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
-    const passphraseEncoded = AES.encrypt(passphrase, key).toString();
+    const passphraseEncoded = CryptoJS.AES.encrypt(passphrase, key).toString();
 
     commit(types.UPDATE_ADDRESS_GENERATED_KEY, key);
     commit(types.SET_ACCOUNT_PASSPHRASE, passphraseEncoded);
