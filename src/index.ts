@@ -86,7 +86,7 @@ async function initWallet({
       throw error;
     }
     await store.dispatch('getWhitelist', { whiteListOverApi });
-    if (!isDesktop()) {
+    if (isDesktop()) {
       await store.dispatch('subscribeOnExtensionAvailability');
       await store.dispatch('checkSigner');
     } else {
