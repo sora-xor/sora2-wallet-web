@@ -43,11 +43,13 @@ export default class QrCode extends Vue {
 </script>
 
 <style lang="scss" scoped>
+$qr-background-color: #f7f3f4;
+
 .qr-code {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--s-color-utility-body);
+  background: $qr-background-color;
   border-radius: var(--s-border-radius-small);
   box-shadow: var(--s-shadow-element-pressed);
 }
