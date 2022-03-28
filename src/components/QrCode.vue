@@ -9,7 +9,7 @@ import { EncodeHintType, QRCodeDecoderErrorCorrectionLevel } from '@zxing/librar
 
 const writer = new BrowserQRCodeSvgWriter();
 const hints = new Map();
-hints.set(EncodeHintType.ERROR_CORRECTION, QRCodeDecoderErrorCorrectionLevel.M);
+hints.set(EncodeHintType.ERROR_CORRECTION, QRCodeDecoderErrorCorrectionLevel.Q);
 
 @Component
 export default class QrCode extends Vue {
