@@ -565,7 +565,11 @@ $logo-size: var(--s-size-mini);
         white-space: nowrap;
         .asset {
           &-logo {
-            @include asset-logo-styles(var(--s-size-small), $nft-font-size: var(--s-font-size-mini));
+            @include asset-logo-styles(
+              var(--s-size-small),
+              $nft-font-size: var(--s-font-size-mini),
+              $nft-border-radius: 12%
+            );
             margin-right: calc(var(--s-basic-spacing) * 2);
           }
           &-name {
