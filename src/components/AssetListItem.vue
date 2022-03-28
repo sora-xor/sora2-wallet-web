@@ -1,6 +1,6 @@
 <template>
   <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
-    <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+    <i class="asset-logo" :class="iconClasses" :style="iconStyles" @click="handleOpenAssetDetails(asset)" />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
@@ -19,9 +19,11 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Action } from 'vuex-class';
 
 import TranslationMixin from './mixins/TranslationMixin';
 
+import { RouteNames } from '../consts';
 import { copyToClipboard, formatAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
@@ -30,6 +32,8 @@ import type { Asset } from '@sora-substrate/util/build/assets/types';
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
+
+  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
   get iconStyles(): object {
     return getAssetIconStyles(this.asset.address);
@@ -45,6 +49,10 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
   get address(): string {
     return formatAddress(this.asset.address, 10);
+  }
+
+  handleOpenAssetDetails(asset: Asset): void {
+    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } });
   }
 
   async handleCopy(event: Event): Promise<void> {
@@ -81,6 +89,9 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   &-logo {
     flex-shrink: 0;
     @include asset-logo-styles(42px);
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   &-description {
