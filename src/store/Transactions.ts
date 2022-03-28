@@ -219,11 +219,11 @@ const actions = {
 
             if (historyItem) {
               buffer[id] = historyItem;
-            }
-          }
 
-          if (id in history) {
-            removeHistoryIds.push(id);
+              if (id in history) {
+                removeHistoryIds.push(id);
+              }
+            }
           }
         }
 
