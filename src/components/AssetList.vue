@@ -30,8 +30,8 @@
       :move="barMove"
       :size="barSize"
       :scroll-height="scrollHeight"
-      @change="scrollTo"
       class="asset-list-scrollbar"
+      @change="scrollTo"
     />
   </div>
 </template>

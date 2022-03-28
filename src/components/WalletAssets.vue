@@ -186,7 +186,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 <style lang="scss">
 .wallet-assets {
   &-list {
-    @include asset-list-scrollbar($basic-spacing-big, $basic-spacing-big, $basic-spacing-big);
+    @include asset-list-scrollbar($basic-spacing-big, $basic-spacing-big);
   }
 
   .asset {
