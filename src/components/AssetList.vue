@@ -26,9 +26,13 @@
       </template>
     </recycle-scroller>
 
-    <div class="scrollbar" ref="scrollbar" @mousedown="clickTrackHandler">
-      <div ref="thumb" class="thumb" :style="renderThumbStyle" @mousedown="clickThumbHandler" />
-    </div>
+    <scrollbar
+      :move="barMove"
+      :size="barSize"
+      :scroll-height="scrollHeight"
+      @change="scrollTo"
+      class="asset-list-scrollbar"
+    />
   </div>
 </template>
 
@@ -37,26 +41,17 @@ import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import AssetListItem from './AssetListItem.vue';
+import Scrollbar from './ScrollBar.vue';
 
 import { getCssVariableValue } from '../util';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 import type { RecycleScroller } from 'vue-virtual-scroller';
 
-const bar = {
-  offset: 'offsetHeight',
-  scroll: 'scrollTop',
-  scrollSize: 'scrollHeight',
-  size: 'height',
-  key: 'vertical',
-  axis: 'Y',
-  client: 'clientY',
-  direction: 'top',
-};
-
 @Component({
   components: {
     AssetListItem,
+    Scrollbar,
   },
 })
 export default class AssetList extends Mixins(TranslationMixin) {
@@ -66,9 +61,9 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Ref('wrap') readonly wrap!: RecycleScroller;
 
-  barHeight = '';
+  barSize = 0;
   barMove = 0;
-  cursorDown = false;
+  scrollHeight = 0;
 
   wrapListeners(asset: Asset): { [key: string]: VoidFunction } {
     return Object.entries(this.$listeners).reduce((result, [eventName, handlers]) => {
@@ -101,87 +96,23 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
     return {
       height,
+      marginRight: `${this.assets.length > this.size ? -17 : 0}px`,
     };
   }
 
-  async mounted() {
+  async mounted(): Promise<void> {
     await this.$nextTick();
 
-    this.barHeight = `${(this.el.clientHeight * 100) / this.el.scrollHeight}%`;
+    this.barSize = (this.el.clientHeight * 100) / this.el.scrollHeight;
+    this.scrollHeight = this.el.scrollHeight;
   }
 
-  handleScroll() {
+  handleScroll(): void {
     this.barMove = (this.el.scrollTop * 100) / this.el.clientHeight;
   }
 
-  clickThumbHandler(e) {
-    // prevent click event of right button
-    if (e.ctrlKey || e.button === 2) {
-      return;
-    }
-    this.startDrag(e);
-    this[bar.axis] =
-      e.currentTarget[bar.offset] - (e[bar.client] - e.currentTarget.getBoundingClientRect()[bar.direction]);
-  }
-
-  clickTrackHandler(e) {
-    const offset = Math.abs(e.target.getBoundingClientRect()[bar.direction] - e[bar.client]);
-    const thumbHalf = (this.$refs.thumb as any)[bar.offset] / 2;
-    console.log(offset, thumbHalf);
-    const thumbPositionPercentage = ((offset - thumbHalf) * 100) / this.$el[bar.offset];
-
-    const scrollTop = (thumbPositionPercentage * this.el[bar.scrollSize]) / 100;
-
-    console.log(scrollTop);
-
-    this.el[bar.scroll] = (thumbPositionPercentage * this.el[bar.scrollSize]) / 100;
-    this.handleScroll();
-  }
-
-  startDrag(e) {
-    e.stopImmediatePropagation();
-    this.cursorDown = true;
-
-    document.addEventListener('mousemove', this.mouseMoveDocumentHandler);
-    document.addEventListener('mouseup', this.mouseUpDocumentHandler);
-    document.onselectstart = () => false;
-  }
-
-  mouseMoveDocumentHandler(e) {
-    if (this.cursorDown === false) return;
-    const prevPage = this[bar.axis];
-
-    if (!prevPage) return;
-
-    const offset = ((this.$refs.scrollbar as any).getBoundingClientRect()[bar.direction] - e[bar.client]) * -1;
-    const thumbClickPosition = (this.$refs.thumb as any)[bar.offset] - prevPage;
-    const thumbPositionPercentage = ((offset - thumbClickPosition) * 100) / (this.$refs.scrollbar as any)[bar.offset];
-
-    this.el[bar.scroll] = (thumbPositionPercentage * this.el[bar.scrollSize]) / 100;
-    this.handleScroll();
-  }
-
-  mouseUpDocumentHandler(e) {
-    this.cursorDown = false;
-    this[bar.axis] = 0;
-    document.removeEventListener('mousemove', this.mouseMoveDocumentHandler);
-    document.onselectstart = null;
-  }
-
-  destroyed() {
-    document.removeEventListener('mouseup', this.mouseUpDocumentHandler);
-  }
-
-  get renderThumbStyle() {
-    const style: any = {};
-    const translate = `translate${bar.axis}(${this.barMove}%)`;
-
-    style[bar.size] = this.barHeight;
-    style.transform = translate;
-    style.msTransform = translate;
-    style.webkitTransform = translate;
-
-    return style;
+  scrollTo(value: number): void {
+    this.el.scrollTop = value;
   }
 }
 </script>
@@ -197,27 +128,8 @@ export default class AssetList extends Mixins(TranslationMixin) {
     @include hint-text;
   }
 
-  &-inner {
-    margin-right: -17px;
-  }
-
   .el-divider {
     margin: 0;
-  }
-}
-
-.scrollbar {
-  position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: 6px;
-
-  .thumb {
-    width: 100%;
-    background: var(--s-color-base-content-tertiary);
-    border-radius: 6px;
-    cursor: pointer;
   }
 }
 </style>
