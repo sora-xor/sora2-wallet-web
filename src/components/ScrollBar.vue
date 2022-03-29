@@ -1,6 +1,6 @@
 <template>
   <div class="scrollbar" ref="scrollbar" @mousedown="clickTrackHandler">
-    <div v-if="visible" ref="thumb" class="thumb" :style="style" @mousedown="clickThumbHandler" />
+    <div ref="thumb" class="thumb" :style="style" @mousedown="clickThumbHandler" />
   </div>
 </template>
 
@@ -34,10 +34,6 @@ export default class Scrollbar extends Vue {
       transform: `translate${bar.axis}(${this.move}%)`,
       height: this.size < 100 ? this.size + '%' : '',
     };
-  }
-
-  get visible(): boolean {
-    return this.size < 100;
   }
 
   clickThumbHandler(e: MouseEvent): void {
