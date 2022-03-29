@@ -33,7 +33,17 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
       item-size="NaN"
       items="[object Object]"
       key-field="address"
+      style="margin-right: 0px;"
     />
+     
+    <div
+      class="scrollbar asset-list-scrollbar"
+    >
+      <div
+        class="thumb"
+        style="transform: translateY(0%); height: 0%;"
+      />
+    </div>
   </div>
 </div>
 `;
@@ -71,7 +81,17 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
       item-size="NaN"
       items=""
       key-field="address"
+      style="margin-right: 0px;"
     />
+     
+    <div
+      class="scrollbar asset-list-scrollbar"
+    >
+      <div
+        class="thumb"
+        style="transform: translateY(0%); height: 0%;"
+      />
+    </div>
   </div>
 </div>
 `;
@@ -109,7 +129,17 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
       item-size="NaN"
       items="[object Object]"
       key-field="address"
+      style="margin-right: 0px;"
     />
+     
+    <div
+      class="scrollbar asset-list-scrollbar"
+    >
+      <div
+        class="thumb"
+        style="transform: translateY(0%); height: 0%;"
+      />
+    </div>
   </div>
 </div>
 `;
