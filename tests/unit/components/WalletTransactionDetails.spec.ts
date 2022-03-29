@@ -1,33 +1,36 @@
-import Vuex from 'vuex';
-import type { History } from '@sora-substrate/util';
+import type { HistoryItem } from '@sora-substrate/util';
 
-import { useDescribe, useShallowMount } from '../../utils';
-import { MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
+import { MOCK_ACCOUNTS, MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock';
 
 import WalletTransactionDetails from '@/components/WalletTransactionDetails.vue';
 
-const createStore = (tx: History) =>
-  new Vuex.Store({
-    modules: {
-      Account: {
-        getters: {
-          selectedTransaction: () => tx,
-          accountAssets: () => MOCK_ACCOUNT_ASSETS,
-        },
-        actions: {
-          getTransactionDetails: jest.fn(),
-          getAccountHistory: jest.fn(),
-        },
+const createStore = (tx: HistoryItem) =>
+  useVuex({
+    router: {
+      state: () => ({
+        currentRouteParams: { id: '1', asset: MOCK_ACCOUNT_ASSETS[0] },
+      }),
+      mutations: {
+        navigate: jest.fn(),
       },
-      Router: {
-        getters: {
-          currentRouteParams: () => ({ id: '1', asset: MOCK_ACCOUNT_ASSETS[0] }),
-        },
-        actions: {
-          navigate: jest.fn(),
-        },
+    },
+    account: {
+      state: () => ({
+        accountAssets: MOCK_ACCOUNT_ASSETS,
+      }),
+      getters: {
+        account: () => MOCK_ACCOUNTS[0],
       },
-    } as any,
+    },
+    transactions: {
+      getters: {
+        selectedTx: () => tx,
+      },
+      mutations: {
+        setTxDetailsId: jest.fn(),
+      },
+    },
   });
 
 useDescribe('WalletTransactionDetails.vue', WalletTransactionDetails, () => {

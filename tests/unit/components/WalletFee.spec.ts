@@ -1,17 +1,21 @@
-import Vuex from 'vuex';
-
-import { useDescribe, useShallowMount } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_FIAT_PRICE_AND_APY_OBJECT } from '../../utils/mock';
 import { MOCK_WALLET_FEE } from '../../utils/WalletFeeMock';
 
 import WalletFee from '@/components/WalletFee.vue';
 
-useDescribe('WalletFee.vue', WalletFee, () => {
-  const store = new Vuex.Store({
-    getters: {
-      fiatPriceAndApyObject: () => MOCK_FIAT_PRICE_AND_APY_OBJECT,
+const createStore = () =>
+  useVuex({
+    account: {
+      state: () => ({
+        fiatPriceAndApyObject: MOCK_FIAT_PRICE_AND_APY_OBJECT,
+      }),
     },
   });
+
+useDescribe('WalletFee.vue', WalletFee, () => {
+  const store = createStore();
+
   MOCK_WALLET_FEE.map((item) =>
     it(`[${item.title}]: should be rendered correctly`, () => {
       const propsData = {

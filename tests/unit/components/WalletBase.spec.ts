@@ -3,7 +3,7 @@ import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 
 import { useDescribe, useMount } from '../../utils';
 import WalletBase from '@/components/WalletBase.vue';
-
+// TODO: [vuex]
 const createStore = () =>
   new Vuex.Store({
     getters: {

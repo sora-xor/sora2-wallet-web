@@ -155,14 +155,6 @@ export const delay = async (ms = 50) => {
   await new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-export const toHashTable = (list: Array<any>, key: string) => {
-  return list.reduce((result, item) => {
-    if (!(key in item)) return result;
-
-    return { ...result, [item[key]]: item };
-  }, {});
-};
-
 export const shortenValue = (string: string, length = string.length / 2): string => {
   if (!string) return '';
   if (string.length < 35) return string;
