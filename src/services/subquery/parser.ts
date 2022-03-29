@@ -1,7 +1,7 @@
 import { FPNumber, Operation, TransactionStatus, History } from '@sora-substrate/util';
 import { BN } from '@polkadot/util';
 import getOr from 'lodash/fp/getOr';
-import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
 
 import store from '../../store';
 import { api } from '../../api';
@@ -52,7 +52,7 @@ const OperationsMap = {
   },
 };
 
-const getAssetSymbol = (asset: Nullable<Asset>): string => (asset && asset.symbol ? asset.symbol : '');
+const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asset && asset.symbol ? asset.symbol : '');
 
 const getTransactionId = (tx: HistoryElement): string => tx.id;
 
@@ -95,10 +95,10 @@ const getTransactionStatus = (tx: HistoryElement): string => {
   return TransactionStatus.Error;
 };
 
-const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
+const getAssetByAddress = async (address: string): Promise<Nullable<Asset | WhitelistItem>> => {
   try {
-    if (address in store.getters.whitelist) {
-      return store.getters.whitelist[address];
+    if (address in store.getters.wallet.account.whitelist) {
+      return store.getters.wallet.account.whitelist[address];
     }
     return await api.assets.getAssetInfo(address);
   } catch (error) {
@@ -223,8 +223,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const asset = await getAssetByAddress(assetAddress as string);
         const asset2 = await getAssetByAddress(asset2Address as string);
 
-        payload.assetAddress = asset ? asset.address : '';
-        payload.asset2Address = asset2 ? asset2.address : '';
+        payload.assetAddress = asset ? (assetAddress as string) : '';
+        payload.asset2Address = asset2 ? (asset2Address as string) : '';
         payload.symbol = getAssetSymbol(asset);
         payload.symbol2 = getAssetSymbol(asset2);
         payload.amount = String(amount);

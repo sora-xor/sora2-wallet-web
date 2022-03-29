@@ -16,7 +16,7 @@ import type {
 } from './types';
 
 export default class SubqueryExplorer implements Explorer {
-  public static getApiUrl(soraNetwork?: SoraNetwork): string {
+  public static getApiUrl(soraNetwork: Nullable<SoraNetwork>): string {
     switch (soraNetwork) {
       case SoraNetwork.Prod:
         return 'https://api.subquery.network/sq/sora-xor/sora';
@@ -30,8 +30,8 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public get soraNetwork(): SoraNetwork {
-    return store.getters.soraNetwork;
+  public get soraNetwork(): Nullable<SoraNetwork> {
+    return store.state.wallet.settings.soraNetwork;
   }
 
   public async getAccountTransactions(variables = {}): Promise<any> {

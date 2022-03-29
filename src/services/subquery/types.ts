@@ -7,7 +7,7 @@ export interface ExplorerDataParser {
 }
 
 export interface Explorer {
-  soraNetwork: SoraNetwork;
+  soraNetwork: Nullable<SoraNetwork>;
   getAccountTransactions: (variables?: any) => Promise<any>;
 }
 

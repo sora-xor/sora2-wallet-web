@@ -85,17 +85,16 @@ const walletGetter = {} as WalletGettersDecorators;
 const walletMutation = {} as WalletCommitDecorators;
 const walletAction = {} as WalletDispatchDecorators;
 
-export function initWalletDecorators(): void {
+(function initWalletDecorators(): void {
   createDecoratorsObject(store.state, walletState, walletModules, VuexOperation.State);
   createDecoratorsObject(store.getters, walletGetter, walletModules, VuexOperation.Getter);
   createDecoratorsObject(store.commit, walletMutation, walletModules, VuexOperation.Mutation);
   createDecoratorsObject(store.dispatch, walletAction, walletModules, VuexOperation.Action);
-}
-initWalletDecorators();
+})();
 
 const state = walletState.wallet;
 const getter = walletGetter.wallet;
 const mutation = walletMutation.wallet;
 const action = walletAction.wallet;
-console.log(state, getter, mutation, action);
+
 export { state, getter, mutation, action };

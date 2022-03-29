@@ -96,7 +96,7 @@ export const getAssetIconClasses = (asset: Nullable<AccountAsset | Asset>) => {
   if (!asset || !asset.address) {
     return ['asset-default', 's-icon-notifications-info-24'];
   }
-  const whitelisted = store.getters.whitelist[asset.address];
+  const whitelisted = store.getters.wallet.account.whitelist[asset.address];
   if (!whitelisted) {
     const isNft = api.assets.isNft(asset);
     if (!isNft) {
@@ -112,7 +112,7 @@ export const getAssetIconStyles = (address: string) => {
   if (!address) {
     return {};
   }
-  const asset = store.getters.whitelist[address];
+  const asset = store.getters.wallet.account.whitelist[address];
   if (!asset) {
     return {};
   }
