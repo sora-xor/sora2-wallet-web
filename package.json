@@ -29,6 +29,7 @@
     "@zxing/library": "^0.18.6",
     "core-js": "^3.6.4",
     "dayjs": "^1.10.5",
+    "direct-vuex": "^0.12.1",
     "file-saver": "^2.0.5",
     "lodash": "^4.17.21",
     "maska": "^1.4.0",
