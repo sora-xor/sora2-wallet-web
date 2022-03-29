@@ -32,7 +32,7 @@ export default class Scrollbar extends Vue {
   get style(): object {
     return {
       transform: `translate${bar.axis}(${this.move}%)`,
-      height: `${this.size}%`,
+      height: this.size < 100 ? this.size + '%' : '',
     };
   }
 
@@ -47,7 +47,7 @@ export default class Scrollbar extends Vue {
     }
     this.startDrag(e);
     this[bar.axis] =
-      e.currentTarget[bar.offset] -
+      (e.currentTarget as HTMLElement)[bar.offset] -
       (e[bar.client] - (e.currentTarget as HTMLElement).getBoundingClientRect()[bar.direction]);
   }
 
