@@ -22,7 +22,6 @@ const createStore = ({ history = {}, externalHistory = {} } = {}) => {
       getAccountHistory: jest.fn(),
       getExternalHistory: jest.fn(),
       resetExternalHistory: jest.fn(),
-      clearSyncedAccountHistory: jest.fn(),
       navigate: jest.fn(),
     },
   });

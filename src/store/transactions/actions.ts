@@ -119,43 +119,6 @@ const actions = defineActions({
     }
   },
   /**
-   * Clear history items from accountStorage, what exists in explorer
-   * Getting only the IDs & timestamp of elements whose start time is greater than api.historySyncTimestamp
-   */
-  async clearSyncedAccountHistory(
-    context,
-    { address, assetAddress }: { address: string; assetAddress?: string }
-  ): Promise<void> {
-    const { commit } = transactionsActionContext(context);
-    const operations = SubqueryDataParserService.supportedOperations;
-    const timestamp = api.historySyncTimestamp || 0;
-    const filter = historyElementsFilter({ address, assetAddress, timestamp, operations });
-    const variables = { filter, idsOnly: true };
-    const removeHistoryIds: Array<string> = [];
-    const unsyncedHistory = api.history;
-    try {
-      const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
-
-      if (edges.length) {
-        api.historySyncTimestamp = +edges[0].node.timestamp;
-
-        for (const edge of edges) {
-          const historyId = edge.node.id;
-
-          if (historyId in unsyncedHistory) {
-            removeHistoryIds.push(historyId);
-          }
-        }
-
-        if (removeHistoryIds.length) {
-          commit.removeHistoryByIds(removeHistoryIds);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  },
-  /**
    * Should be used once in a root of the project
    */
   async trackActiveTxs(context): Promise<void> {
