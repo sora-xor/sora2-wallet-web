@@ -11,12 +11,12 @@ import type { FiatPriceAndApyObject, ReferrerRewards } from '../../services/subq
 import type { PolkadotJsAccount } from '../../types/common';
 
 const mutations = defineMutations<AccountState>()({
-  setFiatPriceAndApyTimer(state, timer: NodeJS.Timer): void {
+  setFiatPriceAndApyTimer(state, timer: NodeJS.Timer | number): void {
     state.fiatPriceAndApyTimer = timer;
   },
   resetFiatPriceAndApySubscription(state): void {
     if (state.fiatPriceAndApyTimer) {
-      clearInterval(state.fiatPriceAndApyTimer);
+      clearInterval(state.fiatPriceAndApyTimer as number);
       state.fiatPriceAndApyTimer = null;
     }
   },
@@ -110,12 +110,12 @@ const mutations = defineMutations<AccountState>()({
   setExtensionAvailability(state, availability: boolean): void {
     state.extensionAvailability = availability;
   },
-  setExtensionAvailabilitySubscription(state, timeout: NodeJS.Timeout): void {
+  setExtensionAvailabilitySubscription(state, timeout: NodeJS.Timeout | number): void {
     state.extensionAvailabilityTimer = timeout;
   },
   resetExtensionAvailabilitySubscription(state): void {
     if (state.extensionAvailabilityTimer) {
-      clearInterval(state.extensionAvailabilityTimer);
+      clearInterval(state.extensionAvailabilityTimer as number);
       state.extensionAvailabilityTimer = null;
     }
     state.polkadotJsAccounts = [];

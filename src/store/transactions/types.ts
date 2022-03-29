@@ -8,6 +8,6 @@ export type TransactionsState = {
   externalHistoryTotal: number;
   externalHistoryPagination: Nullable<CursorPagination>;
   activeTxsIds: Array<string>;
-  updateActiveTxsId: Nullable<NodeJS.Timeout>;
+  updateActiveTxsId: Nullable<NodeJS.Timeout | number>;
   selectedTxId: Nullable<string>;
 };

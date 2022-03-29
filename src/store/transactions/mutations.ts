@@ -6,12 +6,12 @@ import type { TransactionsState } from './types';
 import type { CursorPagination } from '../../types/history';
 
 const mutations = defineMutations<TransactionsState>()({
-  setActiveTxsSubscription(state, subscription: NodeJS.Timeout): void {
+  setActiveTxsSubscription(state, subscription: NodeJS.Timeout | number): void {
     state.updateActiveTxsId = subscription;
   },
   resetActiveTxs(state): void {
     if (state.updateActiveTxsId) {
-      clearInterval(state.updateActiveTxsId);
+      clearInterval(state.updateActiveTxsId as number);
     }
     state.activeTxsIds = [];
   },

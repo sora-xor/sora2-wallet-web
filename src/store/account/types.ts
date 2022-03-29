@@ -17,8 +17,8 @@ export type AccountState = {
   whitelistArray: Array<WhitelistArrayItem>;
   withoutFiatAndApy: boolean;
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
-  fiatPriceAndApyTimer: Nullable<NodeJS.Timer>;
+  fiatPriceAndApyTimer: Nullable<NodeJS.Timer | number>;
   referralRewards: ReferrerRewards;
   extensionAvailability: boolean;
-  extensionAvailabilityTimer: Nullable<NodeJS.Timeout>;
+  extensionAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
 };
