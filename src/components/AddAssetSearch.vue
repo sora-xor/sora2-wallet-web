@@ -89,7 +89,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 
 <style lang="scss">
 .asset-search-list {
-  @include asset-list-scrollbar($basic-spacing-big, 0px);
+  @include asset-list-scrollbar($basic-spacing-big);
 
   .asset {
     padding-left: $basic-spacing-big;
