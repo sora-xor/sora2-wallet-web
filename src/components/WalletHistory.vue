@@ -74,15 +74,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.transactions.resetExternalHistory private resetExternalHistory!: VoidFn;
   @mutation.transactions.getHistory private getHistory!: VoidFn;
-  @action.account.getAssets private getAssets!: AsyncVoidFn;
-  @action.transactions.getExternalHistory private getExternalHistory!: (
-    options?: ExternalHistoryParams
-  ) => Promise<void>;
-
-  @action.transactions.clearSyncedAccountHistory private clearSyncedAccountHistory!: (options: {
-    address: string;
-    assetAddress?: string;
-  }) => Promise<void>;
+  @action.transactions.getExternalHistory private getExternalHistory!: (args?: ExternalHistoryParams) => Promise<void>;
 
   @Prop() readonly asset!: Nullable<AccountAsset>;
 
@@ -158,7 +150,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   async mounted() {
     await this.withLoading(async () => {
       await this.reset();
-      await Promise.all([this.getAssets(), this.syncAndUpdateHistory()]);
+      await this.updateHistory();
     });
   }
 
@@ -225,11 +217,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     const isNext = current > this.currentPage;
     await this.updateHistory(isNext);
     this.currentPage = current;
-  }
-
-  private async syncAndUpdateHistory(): Promise<void> {
-    await this.clearSyncedAccountHistory({ address: this.account.address, assetAddress: this.assetAddress });
-    await this.updateHistory();
   }
 
   /**

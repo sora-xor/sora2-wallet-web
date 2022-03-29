@@ -7,14 +7,14 @@
     </template>
 
     <div class="recieve-token">
-      <qr-code ref="code" :value="code" />
+      <qr-code ref="qrcode" :value="code" />
       <wallet-account primary shadow="never" class="account-card" />
     </div>
   </wallet-base>
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Ref } from 'vue-property-decorator';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import TranslationMixin from './mixins/TranslationMixin';
@@ -45,6 +45,8 @@ export default class RecieveToken extends Mixins(TranslationMixin) {
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
+  @Ref('qrcode') readonly qrcode!: QrCode;
+
   get asset(): AccountAsset {
     return this.currentRouteParams.asset;
   }
@@ -63,7 +65,7 @@ export default class RecieveToken extends Mixins(TranslationMixin) {
 
   async downloadCode(): Promise<void> {
     try {
-      const codeSvg = (this.$refs.code as any).element;
+      const codeSvg = (this.qrcode as any).element as SVGSVGElement;
       const filename = `${this.asset.symbol}_${this.account.address}`;
 
       await svgSaveAs(codeSvg, filename, IMAGE_EXTENSIONS.JPEG);

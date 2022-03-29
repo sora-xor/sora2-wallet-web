@@ -27,30 +27,22 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
   <div
     class="asset-list asset-search-list"
   >
+    <recycle-scroller
+      buffer="NaN"
+      class="asset-list-inner"
+      item-size="NaN"
+      items="[object Object]"
+      key-field="address"
+      style="margin-right: 0px;"
+    />
+     
     <div
-      class="vue-recycle-scroller asset-list-inner direction-vertical"
+      class="scrollbar asset-list-scrollbar"
     >
-      <!---->
-       
       <div
-        class="vue-recycle-scroller__item-wrapper"
-        style="min-height: 0px;"
+        class="thumb"
+        style="transform: translateY(0%); height: 0%;"
       />
-       
-      <!---->
-       
-      <div
-        class="resize-observer"
-        data-v-b329ee4c=""
-        tabindex="-1"
-      >
-        <object
-          aria-hidden="true"
-          data="about:blank"
-          tabindex="-1"
-          type="text/html"
-        />
-      </div>
     </div>
   </div>
 </div>
@@ -83,40 +75,22 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
   <div
     class="asset-list asset-search-list"
   >
+    <recycle-scroller
+      buffer="NaN"
+      class="asset-list-inner"
+      item-size="NaN"
+      items=""
+      key-field="address"
+      style="margin-right: 0px;"
+    />
+     
     <div
-      class="vue-recycle-scroller asset-list-inner direction-vertical"
+      class="scrollbar asset-list-scrollbar"
     >
       <div
-        class="vue-recycle-scroller__slot"
-      >
-        <div
-          class="asset-list-empty"
-        >
-          
-      No tokens found
-    
-        </div>
-      </div>
-       
-      <div
-        class="vue-recycle-scroller__item-wrapper"
-        style="min-height: 0px;"
+        class="thumb"
+        style="transform: translateY(0%); height: 0%;"
       />
-       
-      <!---->
-       
-      <div
-        class="resize-observer"
-        data-v-b329ee4c=""
-        tabindex="-1"
-      >
-        <object
-          aria-hidden="true"
-          data="about:blank"
-          tabindex="-1"
-          type="text/html"
-        />
-      </div>
     </div>
   </div>
 </div>
@@ -149,30 +123,22 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
   <div
     class="asset-list asset-search-list"
   >
+    <recycle-scroller
+      buffer="NaN"
+      class="asset-list-inner"
+      item-size="NaN"
+      items="[object Object]"
+      key-field="address"
+      style="margin-right: 0px;"
+    />
+     
     <div
-      class="vue-recycle-scroller asset-list-inner direction-vertical"
+      class="scrollbar asset-list-scrollbar"
     >
-      <!---->
-       
       <div
-        class="vue-recycle-scroller__item-wrapper"
-        style="min-height: 0px;"
+        class="thumb"
+        style="transform: translateY(0%); height: 0%;"
       />
-       
-      <!---->
-       
-      <div
-        class="resize-observer"
-        data-v-b329ee4c=""
-        tabindex="-1"
-      >
-        <object
-          aria-hidden="true"
-          data="about:blank"
-          tabindex="-1"
-          type="text/html"
-        />
-      </div>
     </div>
   </div>
 </div>

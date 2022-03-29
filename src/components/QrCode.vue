@@ -5,8 +5,11 @@
 <script lang="ts">
 import { Component, Prop, Ref, Vue, Watch } from 'vue-property-decorator';
 import { BrowserQRCodeSvgWriter } from '@zxing/browser';
+import { EncodeHintType, QRCodeDecoderErrorCorrectionLevel } from '@zxing/library';
 
 const writer = new BrowserQRCodeSvgWriter();
+const hints = new Map();
+hints.set(EncodeHintType.ERROR_CORRECTION, QRCodeDecoderErrorCorrectionLevel.Q);
 
 @Component
 export default class QrCode extends Vue {
@@ -15,11 +18,11 @@ export default class QrCode extends Vue {
   @Ref('container') readonly container!: HTMLDivElement;
 
   @Watch('value')
-  private rerender() {
+  private rerender(): void {
     this.renderCode();
   }
 
-  element: SVGSVGElement | null = null;
+  element: Nullable<SVGSVGElement> = null;
 
   mounted(): void {
     this.renderCode();
@@ -33,18 +36,20 @@ export default class QrCode extends Vue {
 
   renderCode(): void {
     this.clearContainer();
-    this.element = writer.write(this.value, this.size, this.size);
+    this.element = writer.write(this.value, this.size, this.size, hints);
     this.container.appendChild(this.element);
   }
 }
 </script>
 
 <style lang="scss" scoped>
+$qr-background-color: #f7f3f4;
+
 .qr-code {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--s-color-utility-body);
+  background: $qr-background-color;
   border-radius: var(--s-border-radius-small);
   box-shadow: var(--s-shadow-element-pressed);
 }

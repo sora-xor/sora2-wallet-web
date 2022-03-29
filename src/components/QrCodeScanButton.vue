@@ -25,11 +25,11 @@ const reader = new BrowserQRCodeReader();
 export default class QrCodeScanButton extends Mixins(TranslationMixin) {
   @Ref('input') readonly input!: HTMLInputElement;
 
-  openFileInput() {
+  openFileInput(): void {
     this.input.click();
   }
 
-  resetFileInput() {
+  private resetFileInput(): void {
     this.input.value = '';
   }
 
@@ -55,6 +55,7 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
           const result = await reader.decodeFromImageUrl(base64);
           resolve(result.getText());
         } catch (error) {
+          console.error(error);
           resolve(null);
         }
       });

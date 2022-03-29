@@ -163,11 +163,11 @@ export default class WalletSend extends Mixins(
 
   step = 1;
   address = '';
-  assetBalance: Nullable<AccountBalance> = null;
-  assetBalanceSubscription: Nullable<Subscription> = null;
   amount = '';
   showWarningFeeNotification = false;
   showAdditionalInfo = true;
+  private assetBalance: Nullable<AccountBalance> = null;
+  private assetBalanceSubscription: Nullable<Subscription> = null;
 
   created(): void {
     if (this.currentRouteParams.address) {
@@ -382,7 +382,7 @@ export default class WalletSend extends Mixins(
     this.step = 3;
   }
 
-  resetAssetBalanceSubscription(): void {
+  private resetAssetBalanceSubscription(): void {
     if (this.assetBalanceSubscription) {
       this.assetBalanceSubscription.unsubscribe();
     }

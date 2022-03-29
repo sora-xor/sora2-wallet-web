@@ -104,7 +104,6 @@ export default {
         'lib/lang',
         'lib/SoraNeoWallet.vue.d.ts',
         'lib/main.d.ts',
-        'lib/soraneo-wallet-web.esm.css',
       ],
       hook: 'writeBundle',
     }),

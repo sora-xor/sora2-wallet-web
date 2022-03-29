@@ -3,7 +3,6 @@ import type { PluginObject } from 'vue';
 import type { Module } from 'vuex';
 
 import installWalletPlugins from './plugins';
-// import './styles' We don't need it for now
 
 // Components
 import SoraWallet from './SoraWallet.vue';

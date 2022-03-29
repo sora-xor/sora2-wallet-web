@@ -196,6 +196,7 @@ type HistoryElementsFilterOptions = {
   assetAddress?: string;
   timestamp?: number;
   operations?: Array<Operation>;
+  ids?: Array<string>;
   query?: {
     search?: string;
     operationNames?: Array<Operation>;
@@ -208,6 +209,7 @@ export const historyElementsFilter = ({
   assetAddress = '',
   timestamp = 0,
   operations = [],
+  ids = [],
   query: { search = '', operationNames = [], assetsAddresses = [] } = {},
 }: HistoryElementsFilterOptions = {}): any => {
   const filter: any = {
@@ -236,6 +238,14 @@ export const historyElementsFilter = ({
     filter.and.push({
       timestamp: {
         greaterThan: timestamp,
+      },
+    });
+  }
+
+  if (ids.length) {
+    filter.and.push({
+      id: {
+        in: ids,
       },
     });
   }
