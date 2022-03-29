@@ -6,6 +6,7 @@ import actions from './actions';
 import getters from './getters';
 
 import { prepareWalletActionContext } from '../../store';
+import { WalletModule } from '../wallet';
 
 const transactions = defineModule({
   namespaced: true,
@@ -19,7 +20,7 @@ const transactionsGetterContext = (args: [any, any, any, any]) => localGetterCon
 
 const transactionsActionContextBroken = (context: any) => localActionContext(context, transactions);
 const transactionsActionContext = ((context: any) =>
-  prepareWalletActionContext(context, 'transactions')) as typeof transactionsActionContextBroken;
+  prepareWalletActionContext(context, WalletModule.Transactions)) as typeof transactionsActionContextBroken;
 
 export { transactionsGetterContext, transactionsActionContext };
 export default transactions;

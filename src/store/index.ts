@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import { createDirectStore } from 'direct-vuex';
 import type { Store } from 'vuex';
 
-import wallet from './wallet';
+import wallet, { WalletModule } from './wallet';
 
 Vue.use(Vuex);
 
@@ -31,7 +31,7 @@ const { store, rootActionContext, rootGetterContext } = createDirectStore({
  * @param submodule name of submodule
  * @returns the same as localActionContext
  */
-const prepareWalletActionContext = (context: any, submodule: string) => {
+const prepareWalletActionContext = (context: any, submodule: WalletModule) => {
   const { rootCommit, rootDispatch, rootGetters, rootState } = rootActionContext(context);
   return {
     state: rootState.wallet[submodule],

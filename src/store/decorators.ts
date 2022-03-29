@@ -2,6 +2,7 @@ import { createDecorator, VueDecorator } from 'vue-class-component';
 import { mapGetters, mapState, mapActions, mapMutations } from 'vuex';
 
 import store from '../store';
+import { WalletModules } from './wallet';
 import type {
   WalletCommitDecorators,
   WalletDispatchDecorators,
@@ -9,22 +10,12 @@ import type {
   WalletStateDecorators,
 } from './types';
 
-type VuexMap = typeof mapState | typeof mapGetters | typeof mapActions | typeof mapMutations;
-
 export enum VuexOperation {
   State = 'state',
   Getter = 'getter',
   Mutation = 'mutation',
   Action = 'action',
 }
-
-export const walletModules = [
-  'wallet/account',
-  'wallet/router',
-  'wallet/settings',
-  'wallet/subscriptions',
-  'wallet/transactions',
-];
 
 export function getVuexMapFn(type: VuexOperation) {
   switch (type) {
@@ -86,10 +77,10 @@ const walletMutation = {} as WalletCommitDecorators;
 const walletAction = {} as WalletDispatchDecorators;
 
 (function initWalletDecorators(): void {
-  createDecoratorsObject(store.state, walletState, walletModules, VuexOperation.State);
-  createDecoratorsObject(store.getters, walletGetter, walletModules, VuexOperation.Getter);
-  createDecoratorsObject(store.commit, walletMutation, walletModules, VuexOperation.Mutation);
-  createDecoratorsObject(store.dispatch, walletAction, walletModules, VuexOperation.Action);
+  createDecoratorsObject(store.state, walletState, WalletModules, VuexOperation.State);
+  createDecoratorsObject(store.getters, walletGetter, WalletModules, VuexOperation.Getter);
+  createDecoratorsObject(store.commit, walletMutation, WalletModules, VuexOperation.Mutation);
+  createDecoratorsObject(store.dispatch, walletAction, WalletModules, VuexOperation.Action);
 })();
 
 const state = walletState.wallet;

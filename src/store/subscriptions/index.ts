@@ -5,6 +5,7 @@ import mutations from './mutations';
 import actions from './actions';
 
 import { prepareWalletActionContext } from '../../store';
+import { WalletModule } from '../wallet';
 
 const subscriptions = defineModule({
   namespaced: true,
@@ -16,7 +17,7 @@ const subscriptions = defineModule({
 const subscriptionsActionContextBroken = (context: any) => localActionContext(context, subscriptions);
 
 const subscriptionsActionContext = ((context: any) =>
-  prepareWalletActionContext(context, 'subscriptions')) as typeof subscriptionsActionContextBroken;
+  prepareWalletActionContext(context, WalletModule.Subscriptions)) as typeof subscriptionsActionContextBroken;
 
 export { subscriptionsActionContext };
 export default subscriptions;

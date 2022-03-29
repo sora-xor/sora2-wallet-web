@@ -6,6 +6,7 @@ import actions from './actions';
 import getters from './getters';
 
 import { prepareWalletActionContext } from '../../store';
+import { WalletModule } from '../wallet';
 
 const account = defineModule({
   namespaced: true,
@@ -19,7 +20,7 @@ const accountGetterContext = (args: [any, any, any, any]) => localGetterContext(
 
 const accountActionContextBroken = (context: any) => localActionContext(context, account);
 const accountActionContext = ((context: any) =>
-  prepareWalletActionContext(context, 'account')) as typeof accountActionContextBroken;
+  prepareWalletActionContext(context, WalletModule.Account)) as typeof accountActionContextBroken;
 
 export { accountGetterContext, accountActionContext };
 export default account;

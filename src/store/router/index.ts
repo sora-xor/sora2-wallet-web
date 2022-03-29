@@ -5,6 +5,7 @@ import state from './state';
 import actions from './actions';
 
 import { prepareWalletActionContext } from '../../store';
+import { WalletModule } from '../wallet';
 
 const router = defineModule({
   namespaced: true,
@@ -15,7 +16,7 @@ const router = defineModule({
 
 const routerActionContextBroken = (context: any) => localActionContext(context, router);
 const routerActionContext = ((context: any) =>
-  prepareWalletActionContext(context, 'router')) as typeof routerActionContextBroken;
+  prepareWalletActionContext(context, WalletModule.Router)) as typeof routerActionContextBroken;
 
 export { routerActionContext };
 export default router;
