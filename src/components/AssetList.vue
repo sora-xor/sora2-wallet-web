@@ -64,7 +64,7 @@ export default class AssetList extends Mixins(TranslationMixin) {
     return this.assets.length === 0;
   }
 
-  get itemHeightCssVar(): string {
+  private get itemHeightCssVar(): string {
     return `--s-asset-item-height${this.withFiat ? '--fiat' : ''}`;
   }
 

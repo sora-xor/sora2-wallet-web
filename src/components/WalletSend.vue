@@ -117,9 +117,16 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
 import { FPNumber, CodecString, Operation } from '@sora-substrate/util';
-import { KnownAssets, KnownSymbols, XOR } from '@sora-substrate/util/build/assets/consts';
+import { KnownAssets, KnownSymbols } from '@sora-substrate/util/build/assets/consts';
+import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/assets/types';
+import type { Subscription } from '@polkadot/x-rxjs';
+
+import WalletBase from './WalletBase.vue';
+import FormattedAmount from './FormattedAmount.vue';
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import NetworkFeeWarning from './NetworkFeeWarning.vue';
+import WalletFee from './WalletFee.vue';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -128,15 +135,8 @@ import CopyAddressMixin from './mixins/CopyAddressMixin';
 import { RouteNames } from '../consts';
 import { formatAddress, formatSoraAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
 import { api } from '../api';
-
-import WalletBase from './WalletBase.vue';
-import FormattedAmount from './FormattedAmount.vue';
-import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
-import NetworkFeeWarning from './NetworkFeeWarning.vue';
-import WalletFee from './WalletFee.vue';
-
-import type { Subscription } from '@polkadot/x-rxjs';
-import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/assets/types';
+import { state, mutation, action } from '../store/decorators';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -155,11 +155,11 @@ export default class WalletSend extends Mixins(
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
 
-  @Getter currentRouteParams!: any;
-  @Getter accountAssets!: Array<AccountAsset>;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
+  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action transfer!: (options: { to: string; amount: string }) => Promise<void>;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
+  @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;
 
   step = 1;
   address = '';
@@ -171,11 +171,11 @@ export default class WalletSend extends Mixins(
 
   created(): void {
     if (this.currentRouteParams.address) {
-      this.address = this.currentRouteParams.address;
+      this.address = this.currentRouteParams.address as string;
     }
 
     if (this.currentRouteParams.asset) {
-      const asset = { ...this.currentRouteParams.asset };
+      const asset = { ...(this.currentRouteParams.asset as AccountAsset) };
       const accountAsset = this.accountAssets.find((accountAsset) => accountAsset.address === asset.address);
 
       if (accountAsset) {
@@ -195,8 +195,8 @@ export default class WalletSend extends Mixins(
 
   get asset(): AccountAsset {
     return {
-      ...this.currentRouteParams.asset,
-      balance: this.assetBalance,
+      ...(this.currentRouteParams.asset as AccountAsset),
+      balance: this.assetBalance as AccountBalance,
     };
   }
 

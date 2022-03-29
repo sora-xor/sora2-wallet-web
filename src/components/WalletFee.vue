@@ -2,12 +2,12 @@
   <div class="info-line-container">
     <info-line
       class="wallet-fee"
+      is-formatted
       :label="t('walletSend.fee')"
       :label-tooltip="t('walletSend.feeTooltip')"
       :value="formattedValue"
       :asset-symbol="xor"
       :fiat-value="formattedFiatValue"
-      is-formatted
     />
   </div>
 </template>
@@ -21,7 +21,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import InfoLine from './InfoLine.vue';
 
-function isFPNumber(value: any): boolean {
+function isFPNumber(value: unknown): boolean {
   if (value instanceof FPNumber) {
     return true;
   }

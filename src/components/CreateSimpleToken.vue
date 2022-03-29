@@ -74,19 +74,21 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { Action } from 'vuex-class';
 import { FPNumber, Operation } from '@sora-substrate/util';
 import { KnownSymbols, MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
 
 import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
+
 import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import { RouteNames, Step } from '../consts';
 import { api } from '../api';
+import { mutation } from '../store/decorators';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -107,7 +109,7 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
 
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   tokenSymbol = '';
   tokenName = '';

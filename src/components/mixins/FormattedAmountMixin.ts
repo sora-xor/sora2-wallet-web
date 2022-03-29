@@ -1,11 +1,11 @@
 import { Component, Mixins } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
 import { FPNumber, CodecString } from '@sora-substrate/util';
 import { BalanceType, KnownAssets, KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { FontSizeRate, FontWeightRate } from '../../consts';
+import { state } from '../../store/decorators';
 import type { FiatPriceAndApyObject } from '../../services/subquery/types';
 
 @Component
@@ -13,7 +13,7 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
   readonly FontSizeRate = FontSizeRate;
   readonly FontWeightRate = FontWeightRate;
 
-  @Getter fiatPriceAndApyObject!: FiatPriceAndApyObject;
+  @state.account.fiatPriceAndApyObject fiatPriceAndApyObject!: FiatPriceAndApyObject;
 
   getAssetFiatPrice(accountAsset: Asset | AccountAsset): Nullable<CodecString> {
     const fiatObj = this.fiatPriceAndApyObject[accountAsset.address];
