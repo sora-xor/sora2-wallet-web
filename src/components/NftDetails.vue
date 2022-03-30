@@ -17,7 +17,7 @@
           t('createToken.nft.image.placeholderBadSourceAddition')
         }}</span>
       </div>
-      <img v-else class="preview-image-confirm-nft__content" :src="image" />
+      <s-image v-else class="preview-image-confirm-nft__content" :src="image" fit="cover" :src-list="imagePreview" />
     </div>
     <div class="nft-info">
       <div class="nft-info__header">
@@ -62,6 +62,10 @@ export default class NftDetails extends Mixins(TranslationMixin) {
       cssClasses.push('nft-info__header--clicked');
     }
     return cssClasses;
+  }
+
+  get imagePreview(): Array<string> {
+    return [this.image];
   }
 
   private async checkImageAvailability(): Promise<void> {
@@ -126,8 +130,8 @@ export default class NftDetails extends Mixins(TranslationMixin) {
 
   &__content {
     margin: 0 auto;
-    height: 250px;
-    width: 250px;
+    height: 250px !important;
+    width: 250px !important;
     object-fit: cover;
     border-radius: calc(var(--s-border-radius-mini) * 0.75);
   }
