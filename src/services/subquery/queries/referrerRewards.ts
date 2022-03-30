@@ -1,25 +1,13 @@
 export const ReferrerRewardsQuery = `
-query (
-  $first: Int = 100
+query(
   $filter: ReferrerRewardFilter
-  $after: Cursor = ""
 ) {
-  referrerRewards (
-    first: $first
-    filter: $filter
-    after: $after
-  ) {
-    pageInfo {
-      hasNextPage
-      endCursor
-    }
-    nodes {
-      id
-      blockHeight
-      referral
-      referrer
-      timestamp
-      amount
+  referrerRewards(filter: $filter) {
+    groupedAggregates(groupBy: [REFERRAL]) {
+      keys
+      sum {
+        amount
+      }
     }
   }
 }`;
