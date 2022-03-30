@@ -168,32 +168,27 @@
   }
 }
 
-@mixin asset-list-scrollbar($wrapperOffset: 0px, $paddingLeft: 0px, $paddingRight: 6px, $thumbWidth: 6px) {
+@mixin asset-list-scrollbar($margin: 0px, $padding: 0px) {
   &.asset-list {
-    margin-left: calc(#{$wrapperOffset} * -1);
-    margin-right: calc(#{$wrapperOffset} * -1);
+    margin-left: calc(#{$margin} * -1);
+    margin-right: calc(#{$margin} * -1);
 
     .asset-list-inner {
-      padding-left: $paddingLeft;
-      padding-right: calc(#{$paddingRight} - #{$thumbWidth});
+      padding-left: $padding;
+      padding-right: $padding;
+    }
 
-      &:hover {
-        &::-webkit-scrollbar-thumb {
-          background: var(--s-color-base-content-tertiary);
-        }
-      }
+    .scrollbar {
+      opacity: 0;
+      transition: opacity 0.12s ease-out;
+    }
 
-      &::-webkit-scrollbar {
-        width: $thumbWidth;
-      }
-
-      &::-webkit-scrollbar-track {
-        background: transparent;
-      }
-
-      &::-webkit-scrollbar-thumb {
-        border-radius: $thumbWidth;
-        background: transparent;
+    &:hover,
+    &:focus,
+    &:active {
+      .scrollbar {
+        opacity: 1;
+        transition: opacity 0.34s ease-out;
       }
     }
   }
