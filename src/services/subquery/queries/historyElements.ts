@@ -63,6 +63,14 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.LiquidityProxySwap,
     },
   },
+  [Operation.SwapAndSend]: {
+    module: {
+      equalTo: ModuleNames.LiquidityProxy,
+    },
+    method: {
+      equalTo: ModuleMethods.LiquidityProxySwapTransfer,
+    },
+  },
   [Operation.Transfer]: {
     module: {
       equalTo: ModuleNames.Assets,
