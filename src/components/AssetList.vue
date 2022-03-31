@@ -43,7 +43,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 import AssetListItem from './AssetListItem.vue';
 import Scrollbar from './ScrollBar.vue';
 
-import { getCssVariableValue } from '../util';
+import { delay, getCssVariableValue } from '../util';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 import type { RecycleScroller } from 'vue-virtual-scroller';
@@ -101,10 +101,16 @@ export default class AssetList extends Mixins(TranslationMixin) {
   }
 
   async mounted(): Promise<void> {
-    await this.$nextTick();
+    await this.waitForAssetsListReady();
 
     this.barSize = (this.el.clientHeight * 100) / this.el.scrollHeight;
     this.scrollHeight = this.el.scrollHeight;
+  }
+
+  async waitForAssetsListReady(): Promise<void> {
+    if (this.wrap && this.wrap.ready) return;
+    await delay();
+    await this.waitForAssetsListReady();
   }
 
   handleScroll(): void {
