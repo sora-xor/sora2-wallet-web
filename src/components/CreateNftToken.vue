@@ -150,7 +150,7 @@ import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
 
 import NftDetails from './NftDetails.vue';
 import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
-import FileUploader from './FileUploader.vue';
+import FileUploader, { ALLOWED_FILE_INPUT_TYPES } from './FileUploader.vue';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
 import TranslationMixin from '../components/mixins/TranslationMixin';
@@ -297,7 +297,7 @@ export default class CreateNftToken extends Mixins(
       const buffer = await response.blob();
       this.imageLoading = false;
 
-      if (buffer.type.startsWith('image/')) {
+      if (this.isValidType(buffer.type)) {
         this.badSource = false;
         this.contentSrcLink = url;
         this.tokenContentIpfsParsed = IpfsStorage.getIpfsPath(url);
@@ -311,6 +311,10 @@ export default class CreateNftToken extends Mixins(
     }
 
     this.resetFileInput();
+  }
+
+  isValidType(type: string): boolean {
+    return Object.values(ALLOWED_FILE_INPUT_TYPES).includes(type);
   }
 
   clear(): void {
