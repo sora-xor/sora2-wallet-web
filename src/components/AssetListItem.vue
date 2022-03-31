@@ -1,7 +1,14 @@
 <template>
   <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
     <div class="asset-logo" :class="iconClasses" :style="iconStyles" />
-    <img v-show="isImgLoaded()" class="asset-logo__nft-image" :src="nftImageUrl" ref="nftImage" @error="hideNftImage" />
+    <img
+      v-show="asset.content && showNftImage"
+      class="asset-logo__nft-image"
+      :src="nftImageUrl"
+      ref="nftImage"
+      @load="handleNftImageLoad"
+      @error="hideNftImage"
+    />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
@@ -35,6 +42,8 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Ref('nftImage') readonly nftImage!: HTMLImageElement;
 
+  showNftImage = false;
+
   get iconStyles(): object {
     return getAssetIconStyles(this.asset.address);
   }
@@ -58,13 +67,13 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     return formatAddress(this.asset.address, 10);
   }
 
-  isImgLoaded(): boolean {
+  handleNftImageLoad(): void {
     const imgElement = this.$refs.nftImage as HTMLImageElement;
     if (imgElement) {
-      return imgElement.complete && imgElement.naturalHeight !== 0;
+      this.showNftImage = imgElement.complete && imgElement.naturalHeight !== 0;
+    } else {
+      this.showNftImage = false;
     }
-
-    return false;
   }
 
   hideNftImage(): void {
