@@ -1,7 +1,7 @@
 <template>
   <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
     <div class="asset-logo" :class="iconClasses" :style="iconStyles" />
-    <img v-if="asset.content" class="asset-logo__nft-image" :src="nftImageUrl" ref="nftImage" @error="hideNftImage" />
+    <img v-show="isImgLoaded()" class="asset-logo__nft-image" :src="nftImageUrl" ref="nftImage" @error="hideNftImage" />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
@@ -58,6 +58,15 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     return formatAddress(this.asset.address, 10);
   }
 
+  isImgLoaded(): boolean {
+    const imgElement = this.$refs.nftImage as HTMLImageElement;
+    if (imgElement) {
+      return imgElement.complete && imgElement.naturalHeight !== 0;
+    }
+
+    return false;
+  }
+
   hideNftImage(): void {
     (this.$refs.nftImage as HTMLImageElement).style.display = 'none';
   }
@@ -95,10 +104,11 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
   &-logo {
     flex-shrink: 0;
-    @include asset-logo-styles(42px, $nft-border-radius: 14%);
+    @include asset-logo-styles(42px);
 
     &__nft-image {
-      border-radius: 14%;
+      border-radius: 50%;
+      object-fit: cover;
       width: var(--s-size-medium);
       height: var(--s-size-medium);
       position: absolute;
