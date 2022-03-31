@@ -16,10 +16,13 @@
 <script lang="ts">
 import { Component, Ref, Mixins } from 'vue-property-decorator';
 import { BrowserQRCodeReader } from '@zxing/browser';
+import { DecodeHintType } from '@zxing/library';
 
 import TranslationMixin from './mixins/TranslationMixin';
 
-const reader = new BrowserQRCodeReader();
+const hints = new Map();
+hints.set(DecodeHintType.PURE_BARCODE, true);
+const reader = new BrowserQRCodeReader(hints);
 
 @Component
 export default class QrCodeScanButton extends Mixins(TranslationMixin) {

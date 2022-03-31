@@ -11,6 +11,7 @@ import type {
   HistoryElement,
   HistoryElementError,
   HistoryElementSwap,
+  HistoryElementSwapTransfer,
   HistoryElementLiquidityOperation,
   HistoryElementTransfer,
   HistoryElementAssetRegistration,
@@ -32,6 +33,7 @@ const OperationsMap = {
   },
   [insensitive(ModuleNames.LiquidityProxy)]: {
     [ModuleMethods.LiquidityProxySwap]: () => Operation.Swap,
+    [ModuleMethods.LiquidityProxySwapTransfer]: () => Operation.SwapAndSend,
   },
   [insensitive(ModuleNames.Utility)]: {
     [ModuleMethods.UtilityBatchAll]: (data: HistoryElement['data']) => {
@@ -116,6 +118,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
   public static SUPPORTED_OPERATIONS = [
     Operation.Transfer,
     Operation.Swap,
+    Operation.SwapAndSend,
     Operation.CreatePair,
     Operation.AddLiquidity,
     Operation.RemoveLiquidity,
@@ -167,8 +170,9 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     }
 
     switch (type) {
-      case Operation.Swap: {
-        const data = transaction.data as HistoryElementSwap;
+      case Operation.Swap:
+      case Operation.SwapAndSend: {
+        const data = transaction.data as HistoryElementSwap & HistoryElementSwapTransfer;
 
         const assetAddress = data.baseAssetId;
         const asset2Address = data.targetAssetId;
@@ -183,6 +187,10 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.symbol2 = getAssetSymbol(asset2);
         payload.liquiditySource = data.selectedMarket;
         payload.liquidityProviderFee = new FPNumber(data.liquidityProviderFee).toCodecString();
+
+        if (data.to) {
+          payload.to = data.to;
+        }
 
         return payload;
       }
