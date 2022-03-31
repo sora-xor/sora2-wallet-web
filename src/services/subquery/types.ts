@@ -30,6 +30,7 @@ export enum ModuleMethods {
   PoolXYKDepositLiquidity = 'depositLiquidity',
   PoolXYKWithdrawLiquidity = 'withdrawLiquidity',
   LiquidityProxySwap = 'swap',
+  LiquidityProxySwapTransfer = 'swapTransfer',
   UtilityBatchAll = 'batchAll',
   ReferralsSetReferrer = 'setReferrer',
   ReferralsReserve = 'reserve',
@@ -68,14 +69,18 @@ export type HistoryElementExecution = {
   error?: HistoryElementError;
 };
 
-export type HistoryElementSwap = {
+export interface HistoryElementSwap {
   baseAssetAmount: string;
   baseAssetId: string;
   liquidityProviderFee: string;
   selectedMarket: string;
   targetAssetAmount: string;
   targetAssetId: string;
-};
+}
+
+export interface HistoryElementSwapTransfer extends HistoryElementSwap {
+  to: string;
+}
 
 export type HistoryElementTransfer = {
   amount: string;
@@ -135,6 +140,7 @@ export type HistoryElement = {
   timestamp: number;
   data: Nullable<
     | HistoryElementSwap
+    | HistoryElementSwapTransfer
     | HistoryElementTransfer
     | HistoryElementLiquidityOperation
     | HistoryElementAssetRegistration
