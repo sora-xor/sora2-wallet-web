@@ -151,6 +151,42 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.BridgeMultisigAsMulti,
     },
   },
+  [Operation.ClaimRewards]: {
+    or: [
+      {
+        module: {
+          equalTo: ModuleNames.PswapDistribution,
+        },
+        method: {
+          equalTo: ModuleMethods.PswapDistributionClaimIncentive,
+        },
+      },
+      {
+        module: {
+          equalTo: ModuleNames.Rewards,
+        },
+        method: {
+          equalTo: ModuleMethods.RewardsClaim,
+        },
+      },
+      {
+        module: {
+          equalTo: ModuleNames.VestedRewards,
+        },
+        method: {
+          in: [ModuleMethods.VestedRewardsClaimRewards, ModuleMethods.VestedRewardsClaimCrowdloanRewards],
+        },
+      },
+      {
+        module: {
+          equalTo: ModuleNames.Utility,
+        },
+        method: {
+          equalTo: ModuleMethods.UtilityBatchAll,
+        },
+      },
+    ],
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {

@@ -14,13 +14,15 @@ export interface Explorer {
 export enum ModuleNames {
   Assets = 'assets',
   LiquidityProxy = 'liquidityProxy',
-  Rewards = 'rewards',
   PoolXYK = 'poolXYK',
   TradingPair = 'tradingPair',
   Utility = 'utility',
   Referrals = 'referrals',
   EthBridge = 'ethBridge',
   BridgeMultisig = 'bridgeMultisig',
+  Rewards = 'rewards',
+  VestedRewards = 'vestedRewards',
+  PswapDistribution = 'pswapDistribution',
 }
 
 export enum ModuleMethods {
@@ -37,6 +39,10 @@ export enum ModuleMethods {
   ReferralsUnreserve = 'unreserve',
   EthBridgeTransferToSidechain = 'transferToSidechain',
   BridgeMultisigAsMulti = 'asMulti',
+  RewardsClaim = 'claim',
+  VestedRewardsClaimRewards = 'claimRewards',
+  VestedRewardsClaimCrowdloanRewards = 'claimCrowdloanRewards',
+  PswapDistributionClaimIncentive = 'claimIncentive',
 }
 
 export type PoolXYKEntity = {
@@ -101,12 +107,20 @@ export type HistoryElementAssetRegistration = {
   assetId: string;
 };
 
+export type ClaimedRewardItem = {
+  assetId: string;
+  amount: string;
+};
+
+export type HistoryElementRewardsClaim = ClaimedRewardItem[];
+
 export type UtilityBatchAllItem = {
   data: {
     args: {
       [key: string]: string | number;
     };
     callIndex: string;
+    rewards?: ClaimedRewardItem[];
   };
   hash: string;
   callId: string;
@@ -149,6 +163,7 @@ export type HistoryElement = {
     | ReferrerReserve
     | HistoryElementEthBridgeOutgoing
     | HistoryElementEthBridgeIncoming
+    | HistoryElementRewardsClaim
   >;
 };
 

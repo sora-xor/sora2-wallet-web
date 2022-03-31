@@ -27,7 +27,7 @@ export default class SubqueryExplorer implements Explorer {
         return 'https://subquery.q1.tst.sora2.soramitsu.co.jp';
       case SoraNetwork.Dev:
       default:
-        return 'https://api.subquery.network/sq/sora-xor/sora-dev';
+        return 'http://localhost:3000';
     }
   }
 
