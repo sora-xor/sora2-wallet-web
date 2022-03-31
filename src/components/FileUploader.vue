@@ -21,16 +21,9 @@
 import { Mixins, Component, Ref, Prop } from 'vue-property-decorator';
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
+import { IMAGE_MIME_TYPES } from '../util/image';
 
-export const ALLOWED_FILE_INPUT_TYPES = {
-  png: 'image/png',
-  gif: 'image/gif',
-  jpeg: 'image/jpeg',
-  svg: 'image/svg+xml',
-  webp: 'image/webp',
-};
-
-const FILE_TYPES_LIST_STRING = Object.values(ALLOWED_FILE_INPUT_TYPES).join(',');
+const FILE_TYPES_LIST_STRING = Object.values(IMAGE_MIME_TYPES).join(',');
 
 const HUNDRED_MB = 100 * 1024 * 1024; // 100MB in bytes
 
