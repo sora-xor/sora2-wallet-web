@@ -161,6 +161,7 @@ import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import { RouteNames, Step } from '../consts';
 import { api } from '../api';
 import { IpfsStorage } from '../util/ipfsStorage';
+import { IMAGE_MIME_TYPES } from '../util/image';
 
 @Component({
   components: {
@@ -297,7 +298,7 @@ export default class CreateNftToken extends Mixins(
       const buffer = await response.blob();
       this.imageLoading = false;
 
-      if (buffer.type.startsWith('image/')) {
+      if (this.isValidType(buffer.type)) {
         this.badSource = false;
         this.contentSrcLink = url;
         this.tokenContentIpfsParsed = IpfsStorage.getIpfsPath(url);
@@ -311,6 +312,10 @@ export default class CreateNftToken extends Mixins(
     }
 
     this.resetFileInput();
+  }
+
+  isValidType(type: string): boolean {
+    return Object.values(IMAGE_MIME_TYPES).includes(type);
   }
 
   clear(): void {
