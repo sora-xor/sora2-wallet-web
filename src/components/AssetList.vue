@@ -4,9 +4,11 @@
       :items="assets"
       :item-size="itemHeightValue"
       :buffer="itemHeightValue"
+      :style="style"
       key-field="address"
       class="asset-list-inner"
-      :style="style"
+      ref="wrap"
+      @scroll.native="handleScroll"
     >
       <template #before>
         <div v-if="isEmptyList" class="asset-list-empty">
@@ -23,22 +25,33 @@
         <s-divider v-if="divider && index !== assets.length - 1" :key="`${index}-divider`" />
       </template>
     </recycle-scroller>
+
+    <scrollbar
+      :move="barMove"
+      :size="barSize"
+      :scroll-height="scrollHeight"
+      class="asset-list-scrollbar"
+      @change="scrollTo"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import AssetListItem from './AssetListItem.vue';
+import Scrollbar from './ScrollBar.vue';
 
-import { getCssVariableValue } from '../util';
+import { delay, getCssVariableValue } from '../util';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { RecycleScroller } from 'vue-virtual-scroller';
 
 @Component({
   components: {
     AssetListItem,
+    Scrollbar,
   },
 })
 export default class AssetList extends Mixins(TranslationMixin) {
@@ -46,6 +59,11 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: 5, type: Number }) readonly size!: number;
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
+  @Ref('wrap') readonly wrap!: RecycleScroller;
+
+  barSize = 0;
+  barMove = 0;
+  scrollHeight = 0;
 
   wrapListeners(asset: Asset): { [key: string]: VoidFunction } {
     return Object.entries(this.$listeners).reduce((result, [eventName, handlers]) => {
@@ -54,6 +72,10 @@ export default class AssetList extends Mixins(TranslationMixin) {
         [eventName]: () => (Array.isArray(handlers) ? handlers.map((handler) => handler(asset)) : handlers(asset)),
       };
     }, {});
+  }
+
+  get el(): HTMLDivElement {
+    return this.wrap.$el;
   }
 
   get isEmptyList(): boolean {
@@ -74,13 +96,38 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
     return {
       height,
+      marginRight: `${this.assets.length > this.size ? -17 : 0}px`,
     };
+  }
+
+  async mounted(): Promise<void> {
+    await this.waitForAssetsListReady();
+
+    this.barSize = (this.el.clientHeight * 100) / this.el.scrollHeight;
+    this.scrollHeight = this.el.scrollHeight;
+  }
+
+  async waitForAssetsListReady(): Promise<void> {
+    if (this.wrap && this.wrap.ready) return;
+    await delay();
+    await this.waitForAssetsListReady();
+  }
+
+  handleScroll(): void {
+    this.barMove = (this.el.scrollTop * 100) / this.el.clientHeight;
+  }
+
+  scrollTo(value: number): void {
+    this.el.scrollTop = value;
   }
 }
 </script>
 
 <style lang="scss">
 .asset-list {
+  position: relative;
+  overflow: hidden;
+
   &-empty {
     margin-top: $basic-spacing-medium;
     text-align: center;
