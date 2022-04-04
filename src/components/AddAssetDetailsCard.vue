@@ -30,7 +30,6 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
 import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
@@ -48,16 +47,15 @@ import type { WhitelistIdsBySymbol } from '../types/common';
 })
 export default class AddAssetDetails extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
+  @Prop({ required: true, type: Object }) readonly whitelist!: Whitelist;
+  @Prop({ required: true, type: Object }) readonly whitelistIdsBySymbol!: WhitelistIdsBySymbol;
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
-
-  @Getter whitelist!: Whitelist;
-  @Getter whitelistIdsBySymbol!: WhitelistIdsBySymbol;
-  @Getter libraryTheme!: Theme;
+  @Prop({ default: Theme.LIGHT, type: String }) readonly theme!: Theme;
 
   isConfirmed = false;
 
   get isCardPrimary(): boolean {
-    return this.libraryTheme !== Theme.DARK;
+    return this.theme !== Theme.DARK;
   }
 
   get isWhitelist(): boolean {
