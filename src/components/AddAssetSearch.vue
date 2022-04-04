@@ -1,12 +1,12 @@
 <template>
   <div class="asset-search">
-    <s-input
-      ref="search"
-      class="asset-search-input"
-      prefix="s-icon-search-16"
-      :maxlength="100"
-      :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
+    <search-input
+      autofocus
       v-model="search"
+      :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
+      :maxlength="100"
+      @clear="resetSearch"
+      class="asset-search-input"
     />
     <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset">
       <template #list-empty>
@@ -22,6 +22,7 @@ import { Action, Getter } from 'vuex-class';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from './AssetList.vue';
+import SearchInput from './SearchInput.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -31,25 +32,17 @@ import type { AccountAssetsTable } from '../types/common';
 @Component({
   components: {
     AssetList,
+    SearchInput,
   },
 })
 export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
   readonly AddAssetTabs = AddAssetTabs;
-
   @Getter assets!: Array<Asset>;
   @Getter accountAssets!: Array<AccountAsset>;
   @Getter accountAssetsAddressTable!: AccountAssetsTable;
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
   search = '';
-
-  async mounted(): Promise<void> {
-    const input = this.$refs.search as any;
-
-    if (input && typeof input.focus === 'function') {
-      input.focus();
-    }
-  }
 
   get searchValue(): string {
     return this.search ? this.search.trim().toLowerCase() : '';
@@ -83,6 +76,10 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 
   handleSelectAsset(asset: Asset): void {
     this.navigate({ name: RouteNames.AddAssetDetails, params: { asset } });
+  }
+
+  resetSearch(): void {
+    this.search = '';
   }
 }
 </script>
