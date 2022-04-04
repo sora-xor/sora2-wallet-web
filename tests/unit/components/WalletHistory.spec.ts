@@ -68,7 +68,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
       status: TransactionStatus.Broadcast,
     };
 
-    const wrapper = useMount(WalletHistory, {
+    const wrapper = useShallowMount(WalletHistory, {
       store: createStore({
         history: {
           ...MOCK_ACCOUNT_HISTORY,
@@ -90,7 +90,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
       status: TransactionStatus.Error,
     };
 
-    const wrapper = useMount(WalletHistory, {
+    const wrapper = useShallowMount(WalletHistory, {
       store: createStore({
         history: {
           ...MOCK_ACCOUNT_HISTORY,
