@@ -113,7 +113,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
       try {
         await this.importPolkadotJs(account.address);
       } catch (error) {
-        this.$alert(this.t((error as Error).message), this.t('errorText'));
+        this.$alert(this.t('enterAccountError'), this.t('errorText'));
         this.step = Step.First;
       }
     });

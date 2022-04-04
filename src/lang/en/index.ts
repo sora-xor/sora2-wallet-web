@@ -30,6 +30,7 @@ export default {
   errorText: 'Error',
   insufficientBalanceText: 'Insufficient {tokenSymbol} balance',
   unknownErrorText: 'ERROR Something went wrong...',
+  enterAccountError: 'Unable to enter account',
   transactionSubmittedText: 'Transaction was submitted',
   operations: {
     [Operation.Swap]: 'Swap',
@@ -338,6 +339,9 @@ export default {
       'This is a secret seed of your account. Make sure to store it on a non-digital carrier, for example - paper',
     confirmSeedText: 'Confirm the seed phrase by clicking words in the correct order',
     errorMnemonicText: 'Incorrect seed phrase order',
+    exportOptionText: 'Export .json account file',
+    exportJsonText:
+      'You will always be able to access your account by importing that .json file. Do not share it with anyone!',
     addAccount: 'Add an account',
     dialog: {
       confirmTitle: 'Confirm with password',

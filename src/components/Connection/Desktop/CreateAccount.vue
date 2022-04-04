@@ -105,6 +105,12 @@
           ></s-input>
         </s-form>
       </div>
+      <div class="wallet-settings-create-token_export">
+        <s-switch v-model="toExport" :disabled="loading" />
+        <span>{{ t('desktop.exportOptionText') }}</span>
+      </div>
+      <p class="wallet-settings-create-token_desc">{{ t('desktop.exportJsonText') }}</p>
+      <a ref="json" class="download-json" />
       <s-button
         key="step3"
         @click="createAccount"
@@ -119,7 +125,7 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { Action } from 'vuex-class';
 import { isEqual } from 'lodash';
 
@@ -133,6 +139,7 @@ import { copyToClipboard } from '../../../util';
 export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @Action getPolkadotJsAccounts!: () => Promise<void>;
   @Prop({ type: String }) readonly step!: LoginStep;
+  @Ref('json') readonly json!: HTMLLinkElement;
 
   readonly LoginStep = LoginStep;
   readonly PHRASE_LENGTH = 12;
@@ -140,12 +147,15 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   accountName = '';
   accountPassword = '';
   accountPasswordConfirm = '';
+  fileName = '';
+  href: string | null = null;
 
   seedPhraseToCompare: Array<string | undefined> = [];
   seedPhraseBoundToClass = new Map<string | undefined, string>();
 
   showErrorMessage = false;
   hiddenInput = true;
+  toExport = false;
 
   get title(): string {
     if (this.step === LoginStep.SeedPhrase) return this.t('desktop.heading.seedPhraseTitle');
@@ -300,6 +310,15 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     if (this.accountPassword === this.accountPasswordConfirm) {
       await api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
       await this.getPolkadotJsAccounts();
+
+      if (this.toExport) {
+        const accountJson = api.exportAccount(this.accountPassword);
+        const blob = new Blob([accountJson], { type: 'application/json' });
+        this.json.href = URL.createObjectURL(blob);
+        this.json.setAttribute('download', JSON.parse(accountJson).address);
+        this.json.click();
+      }
+
       this.$emit('stepChange', LoginStep.AccountList);
     } else {
       this.$notify({
@@ -429,6 +448,10 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     height: 1px;
     background-color: var(--s-color-base-content-tertiary);
   }
+
+  .download-json {
+    display: none;
+  }
 }
 
 .word--hidden {
@@ -437,6 +460,21 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
 </style>
 
 <style lang="scss" scoped>
+.wallet-settings-create-token {
+  &_desc {
+    color: var(--s-color-base-content-primary);
+    font-size: var(--s-font-size-extra-small);
+    font-weight: 300;
+    line-height: var(--s-line-height-base);
+    padding: var(--s-basic-spacing) #{$basic-spacing-small} #{$basic-spacing-medium};
+  }
+
+  &_export {
+    @include switch-block;
+    align-self: start;
+    padding: 0 #{$basic-spacing-small};
+  }
+}
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 1s;
