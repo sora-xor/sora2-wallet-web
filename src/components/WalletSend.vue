@@ -60,6 +60,14 @@
               {{ t('walletSend.max') }}
             </s-button>
             <div class="asset-box">
+              <img
+                v-show="asset.content && showNftImage"
+                class="asset-logo nft-image"
+                :src="nftImageUrl"
+                ref="nftImage"
+                @load="handleNftImageLoad"
+                @error="hideNftImage"
+              />
               <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
@@ -93,7 +101,17 @@
           <div class="confirm-asset s-flex">
             <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
             <div class="confirm-asset-value s-flex">
-              <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+              <div class="confirm-asset-icon">
+                <img
+                  v-show="asset.content && showNftImage"
+                  class="asset-logo nft-image"
+                  :src="nftImageUrl"
+                  ref="nftImage"
+                  @load="handleNftImageLoad"
+                  @error="hideNftImage"
+                />
+                <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+              </div>
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
@@ -137,6 +155,7 @@ import WalletFee from './WalletFee.vue';
 
 import type { Subscription } from '@polkadot/x-rxjs';
 import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/assets/types';
+import { IpfsStorage } from '../util/ipfsStorage';
 
 @Component({
   components: {
@@ -166,6 +185,7 @@ export default class WalletSend extends Mixins(
   amount = '';
   showWarningFeeNotification = false;
   showAdditionalInfo = true;
+  showNftImage = false;
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
@@ -198,6 +218,13 @@ export default class WalletSend extends Mixins(
       ...this.currentRouteParams.asset,
       balance: this.assetBalance,
     };
+  }
+
+  get nftImageUrl(): string {
+    if (this.asset.content) {
+      return IpfsStorage.constructFullIpfsUrl(this.asset.content);
+    }
+    return '';
   }
 
   get iconClasses(): Array<string> {
@@ -328,6 +355,19 @@ export default class WalletSend extends Mixins(
       return false;
     }
     return knownAsset.symbol === KnownSymbols.XOR;
+  }
+
+  handleNftImageLoad(): void {
+    const imgElement = this.$refs.nftImage as HTMLImageElement;
+    if (imgElement) {
+      this.showNftImage = imgElement.complete && imgElement.naturalHeight !== 0;
+    } else {
+      this.showNftImage = false;
+    }
+  }
+
+  hideNftImage(): void {
+    (this.$refs.nftImage as HTMLImageElement).style.display = 'none';
   }
 
   getFormattedAddress(asset: AccountAsset): string {
@@ -472,6 +512,10 @@ $logo-size: var(--s-size-mini);
       text-align: right;
     }
   }
+  .nft-image {
+    position: absolute;
+    z-index: 1;
+  }
   .asset-id,
   &-address-formatted {
     cursor: pointer;
@@ -573,6 +617,13 @@ $logo-size: var(--s-size-mini);
             line-height: var(--s-line-height-small);
           }
         }
+      }
+      &-icon {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        white-space: nowrap;
+        position: relative;
       }
     }
     &-from {
