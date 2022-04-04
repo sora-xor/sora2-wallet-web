@@ -9,6 +9,9 @@ import WalletAccount from './components/WalletAccount.vue';
 import WalletAvatar from './components/WalletAvatar.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
+import AddAssetDetailsCard from './components/AddAssetDetailsCard.vue';
+import TokenAddress from './components/TokenAddress.vue';
+import SearchInput from './components/SearchInput.vue';
 import InfoLine from './components/InfoLine.vue';
 import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';
@@ -97,6 +100,9 @@ const components = {
   WalletAvatar,
   AssetList,
   AssetListItem,
+  AddAssetDetailsCard,
+  TokenAddress,
+  SearchInput,
   InfoLine,
   FormattedAmount,
   FormattedAmountWithFiatValue,
