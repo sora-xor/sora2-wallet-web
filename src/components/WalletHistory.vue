@@ -1,15 +1,14 @@
 <template>
   <div class="history s-flex">
     <s-form class="history-form" :show-message="false">
-      <s-form-item v-if="hasTransactions" class="history--search">
-        <s-input v-model="query" :placeholder="t('history.filterPlaceholder')" prefix="s-icon-search-16" size="big">
-          <template #suffix v-if="query">
-            <s-button class="s-button--clear" :use-design-system="false" @click="resetSearch">
-              <s-icon name="clear-X-16" />
-            </s-button>
-          </template>
-        </s-input>
-      </s-form-item>
+      <search-input
+        v-if="hasTransactions"
+        :placeholder="t('history.filterPlaceholder')"
+        v-model="query"
+        autofocus
+        @clear="resetSearch"
+        class="history--search"
+      />
       <div class="history-items" v-loading="loading">
         <template v-if="hasVisibleTransactions">
           <div
@@ -57,12 +56,17 @@ import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/uti
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 import PaginationSearchMixin from './mixins/PaginationSearchMixin';
+import SearchInput from './SearchInput.vue';
 import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames } from '../consts';
 import { SubqueryDataParserService } from '../services/subquery';
 import type { ExternalHistoryParams } from '../types/history';
 
-@Component
+@Component({
+  components: {
+    SearchInput,
+  },
+})
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
   @Getter assets!: Array<Asset>;
   @Getter history!: AccountHistory<HistoryItem>;
@@ -282,7 +286,7 @@ $history-item-top-border-height: 1px;
 .history {
   flex-direction: column;
 
-  &--search.el-form-item {
+  &--search {
     margin-bottom: #{$basic-spacing-medium};
   }
 
@@ -390,17 +394,6 @@ $history-item-top-border-height: 1px;
   }
   &-empty {
     text-align: center;
-  }
-  .history--search {
-    position: relative;
-    .s-button--clear {
-      width: 18px;
-      height: 18px;
-      padding: 0;
-      background-color: transparent;
-      border-radius: 0;
-      border: none;
-    }
   }
 }
 .el-pagination {

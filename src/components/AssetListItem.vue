@@ -1,16 +1,12 @@
 <template>
   <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
-    <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+    <div class="asset-logo" :class="iconClasses" :style="iconStyles" />
+    <nft-token-logo :asset="asset" class="asset-logo__nft-image" />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
       </slot>
-      <div class="asset-info">
-        {{ name }}
-        <s-tooltip :content="t('assets.copy')">
-          <span class="asset-id" @click="handleCopy">({{ address }})</span>
-        </s-tooltip>
-      </div>
+      <token-address :name="asset.name" :symbol="asset.symbol" :address="asset.address" class="asset-info" />
       <slot name="append" v-bind="asset" />
     </div>
     <slot v-bind="asset" />
@@ -20,13 +16,21 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import TranslationMixin from './mixins/TranslationMixin';
+import NftTokenLogo from './NftTokenLogo.vue';
 
-import { copyToClipboard, formatAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
+import TranslationMixin from './mixins/TranslationMixin';
+import TokenAddress from './TokenAddress.vue';
+
+import { getAssetIconStyles, getAssetIconClasses } from '../util';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 
-@Component
+@Component({
+  components: {
+    NftTokenLogo,
+    TokenAddress,
+  },
+})
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
@@ -37,32 +41,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
   get iconClasses(): Array<string> {
     return getAssetIconClasses(this.asset);
-  }
-
-  get name(): string {
-    return this.asset.name || this.asset.symbol;
-  }
-
-  get address(): string {
-    return formatAddress(this.asset.address, 10);
-  }
-
-  async handleCopy(event: Event): Promise<void> {
-    event.stopImmediatePropagation();
-    try {
-      await copyToClipboard(this.asset.address);
-      this.$notify({
-        message: this.t('assets.successCopy', { symbol: this.asset.symbol }),
-        type: 'success',
-        title: '',
-      });
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: '',
-      });
-    }
   }
 }
 </script>
@@ -81,6 +59,15 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   &-logo {
     flex-shrink: 0;
     @include asset-logo-styles(42px);
+
+    &__nft-image {
+      border-radius: 50%;
+      object-fit: cover;
+      width: var(--s-size-medium);
+      height: var(--s-size-medium);
+      position: absolute;
+      background-color: var(--s-color-base-background);
+    }
   }
 
   &-description {
@@ -97,17 +84,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     font-weight: 600;
     letter-spacing: var(--s-letter-spacing-small);
     line-height: var(--s-line-height-extra-small);
-  }
-
-  &-info {
-    @include hint-text;
-    .asset-id {
-      outline: none;
-      &:hover {
-        text-decoration: underline;
-        cursor: pointer;
-      }
-    }
   }
 }
 </style>
