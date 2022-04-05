@@ -29,7 +29,7 @@ export default class NftTokenLogo extends Vue {
   }
 
   handleNftImageLoad(): void {
-    const imgElement = this.$refs.nftImage as HTMLImageElement;
+    const imgElement = this.nftImage as HTMLImageElement;
     if (imgElement) {
       this.showNftImage = imgElement.complete && imgElement.naturalHeight !== 0;
     } else {
@@ -38,7 +38,7 @@ export default class NftTokenLogo extends Vue {
   }
 
   hideNftImage(): void {
-    (this.$refs.nftImage as HTMLImageElement).style.display = 'none';
+    this.showNftImage = false;
   }
 }
 </script>
