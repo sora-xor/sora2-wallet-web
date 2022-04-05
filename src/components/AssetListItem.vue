@@ -6,12 +6,7 @@
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
       </slot>
-      <div class="asset-info">
-        {{ name }}
-        <s-tooltip :content="t('assets.copy')">
-          <span class="asset-id" @click="handleCopy">({{ address }})</span>
-        </s-tooltip>
-      </div>
+      <token-address :name="asset.name" :symbol="asset.symbol" :address="asset.address" class="asset-info" />
       <slot name="append" v-bind="asset" />
     </div>
     <slot v-bind="asset" />
@@ -24,14 +19,16 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 import NftTokenLogo from './NftTokenLogo.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
+import TokenAddress from './TokenAddress.vue';
 
-import { copyToClipboard, formatAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
+import { getAssetIconStyles, getAssetIconClasses } from '../util';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {
     NftTokenLogo,
+    TokenAddress,
   },
 })
 export default class AssetListItem extends Mixins(TranslationMixin) {
@@ -44,32 +41,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
   get iconClasses(): Array<string> {
     return getAssetIconClasses(this.asset);
-  }
-
-  get name(): string {
-    return this.asset.name || this.asset.symbol;
-  }
-
-  get address(): string {
-    return formatAddress(this.asset.address, 10);
-  }
-
-  async handleCopy(event: Event): Promise<void> {
-    event.stopImmediatePropagation();
-    try {
-      await copyToClipboard(this.asset.address);
-      this.$notify({
-        message: this.t('assets.successCopy', { symbol: this.asset.symbol }),
-        type: 'success',
-        title: '',
-      });
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: '',
-      });
-    }
   }
 }
 </script>
@@ -113,17 +84,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     font-weight: 600;
     letter-spacing: var(--s-letter-spacing-small);
     line-height: var(--s-line-height-extra-small);
-  }
-
-  &-info {
-    @include hint-text;
-    .asset-id {
-      outline: none;
-      &:hover {
-        text-decoration: underline;
-        cursor: pointer;
-      }
-    }
   }
 }
 </style>
