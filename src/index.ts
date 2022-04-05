@@ -14,6 +14,7 @@ import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';
 import TransactionHashView from './components/TransactionHashView.vue';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
+import NftTokenLogo from './components/NftTokenLogo.vue';
 // Mixins
 import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
@@ -102,6 +103,7 @@ const components = {
   FormattedAmountWithFiatValue,
   TransactionHashView,
   NetworkFeeWarning,
+  NftTokenLogo,
 };
 
 const mixins = {

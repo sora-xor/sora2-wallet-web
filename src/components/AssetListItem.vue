@@ -1,14 +1,7 @@
 <template>
   <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
     <div class="asset-logo" :class="iconClasses" :style="iconStyles" />
-    <img
-      v-show="asset.content && showNftImage"
-      class="asset-logo__nft-image"
-      :src="nftImageUrl"
-      ref="nftImage"
-      @load="handleNftImageLoad"
-      @error="hideNftImage"
-    />
+    <nft-token-logo :asset="asset" class="asset-logo__nft-image" />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
@@ -26,9 +19,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { IpfsStorage } from '../util/ipfsStorage';
+import NftTokenLogo from './NftTokenLogo.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 
@@ -36,13 +29,14 @@ import { copyToClipboard, formatAddress, getAssetIconStyles, getAssetIconClasses
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 
-@Component
+@Component({
+  components: {
+    NftTokenLogo,
+  },
+})
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
-  @Ref('nftImage') readonly nftImage!: HTMLImageElement;
-
-  showNftImage = false;
 
   get iconStyles(): object {
     return getAssetIconStyles(this.asset.address);
@@ -52,32 +46,12 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     return getAssetIconClasses(this.asset);
   }
 
-  get nftImageUrl(): string {
-    if (this.asset.content) {
-      return IpfsStorage.constructFullIpfsUrl(this.asset.content);
-    }
-    return '';
-  }
-
   get name(): string {
     return this.asset.name || this.asset.symbol;
   }
 
   get address(): string {
     return formatAddress(this.asset.address, 10);
-  }
-
-  handleNftImageLoad(): void {
-    const imgElement = this.$refs.nftImage as HTMLImageElement;
-    if (imgElement) {
-      this.showNftImage = imgElement.complete && imgElement.naturalHeight !== 0;
-    } else {
-      this.showNftImage = false;
-    }
-  }
-
-  hideNftImage(): void {
-    (this.$refs.nftImage as HTMLImageElement).style.display = 'none';
   }
 
   async handleCopy(event: Event): Promise<void> {

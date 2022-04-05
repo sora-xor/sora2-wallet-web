@@ -60,14 +60,7 @@
               {{ t('walletSend.max') }}
             </s-button>
             <div class="asset-box">
-              <img
-                v-show="asset.content && showNftImage"
-                class="asset-logo nft-image"
-                :src="nftImageUrl"
-                ref="nftImage"
-                @load="handleNftImageLoad"
-                @error="hideNftImage"
-              />
+              <nft-token-logo :asset="asset" class="asset-logo nft-image" />
               <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
@@ -102,14 +95,7 @@
             <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
             <div class="confirm-asset-value s-flex">
               <div class="confirm-asset-icon">
-                <img
-                  v-show="asset.content && showNftImage"
-                  class="asset-logo nft-image"
-                  :src="nftImageUrl"
-                  ref="nftImage"
-                  @load="handleNftImageLoad"
-                  @error="hideNftImage"
-                />
+                <nft-token-logo :asset="asset" class="asset-logo nft-image" />
                 <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
               </div>
               <span class="asset-name">{{ asset.symbol }}</span>
@@ -137,7 +123,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import { Action, Getter } from 'vuex-class';
 import { FPNumber, CodecString, Operation } from '@sora-substrate/util';
-import { KnownAssets, KnownSymbols, XOR } from '@sora-substrate/util/build/assets/consts';
+import { KnownAssets, KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -152,10 +138,10 @@ import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
+import NftTokenLogo from './NftTokenLogo.vue';
 
 import type { Subscription } from '@polkadot/x-rxjs';
 import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/assets/types';
-import { IpfsStorage } from '../util/ipfsStorage';
 
 @Component({
   components: {
@@ -164,6 +150,7 @@ import { IpfsStorage } from '../util/ipfsStorage';
     FormattedAmountWithFiatValue,
     NetworkFeeWarning,
     WalletFee,
+    NftTokenLogo,
   },
 })
 export default class WalletSend extends Mixins(
@@ -185,7 +172,6 @@ export default class WalletSend extends Mixins(
   amount = '';
   showWarningFeeNotification = false;
   showAdditionalInfo = true;
-  showNftImage = false;
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
@@ -218,13 +204,6 @@ export default class WalletSend extends Mixins(
       ...this.currentRouteParams.asset,
       balance: this.assetBalance,
     };
-  }
-
-  get nftImageUrl(): string {
-    if (this.asset.content) {
-      return IpfsStorage.constructFullIpfsUrl(this.asset.content);
-    }
-    return '';
   }
 
   get iconClasses(): Array<string> {
@@ -355,19 +334,6 @@ export default class WalletSend extends Mixins(
       return false;
     }
     return knownAsset.symbol === KnownSymbols.XOR;
-  }
-
-  handleNftImageLoad(): void {
-    const imgElement = this.$refs.nftImage as HTMLImageElement;
-    if (imgElement) {
-      this.showNftImage = imgElement.complete && imgElement.naturalHeight !== 0;
-    } else {
-      this.showNftImage = false;
-    }
-  }
-
-  hideNftImage(): void {
-    (this.$refs.nftImage as HTMLImageElement).style.display = 'none';
   }
 
   getFormattedAddress(asset: AccountAsset): string {
