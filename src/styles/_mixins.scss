@@ -169,7 +169,7 @@
   }
 }
 
-@mixin asset-list-scrollbar($margin: 0px, $padding: 0px) {
+@mixin asset-list($margin: 0px, $padding: 0px) {
   &.asset-list {
     margin-left: calc(#{$margin} * -1);
     margin-right: calc(#{$margin} * -1);
@@ -177,20 +177,6 @@
     .asset-list-inner {
       padding-left: $padding;
       padding-right: $padding;
-    }
-
-    .scrollbar {
-      opacity: 0;
-      transition: opacity 0.12s ease-out;
-    }
-
-    &:hover,
-    &:focus,
-    &:active {
-      .scrollbar {
-        opacity: 1;
-        transition: opacity 0.34s ease-out;
-      }
     }
   }
 }
