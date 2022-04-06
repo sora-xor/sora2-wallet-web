@@ -1,6 +1,7 @@
 <template>
   <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
-    <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+    <div class="asset-logo" :class="iconClasses" :style="iconStyles" />
+    <nft-token-logo :asset="asset" class="asset-logo__nft-image" />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
@@ -15,6 +16,8 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
+import NftTokenLogo from './NftTokenLogo.vue';
+
 import TranslationMixin from './mixins/TranslationMixin';
 import TokenAddress from './TokenAddress.vue';
 
@@ -24,6 +27,7 @@ import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {
+    NftTokenLogo,
     TokenAddress,
   },
 })
@@ -55,6 +59,15 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   &-logo {
     flex-shrink: 0;
     @include asset-logo-styles(42px);
+
+    &__nft-image {
+      border-radius: 50%;
+      object-fit: cover;
+      width: var(--s-size-medium);
+      height: var(--s-size-medium);
+      position: absolute;
+      background-color: var(--s-color-base-background);
+    }
   }
 
   &-description {
