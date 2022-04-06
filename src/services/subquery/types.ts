@@ -14,13 +14,15 @@ export interface Explorer {
 export enum ModuleNames {
   Assets = 'assets',
   LiquidityProxy = 'liquidityProxy',
-  Rewards = 'rewards',
   PoolXYK = 'poolXYK',
   TradingPair = 'tradingPair',
   Utility = 'utility',
   Referrals = 'referrals',
   EthBridge = 'ethBridge',
   BridgeMultisig = 'bridgeMultisig',
+  Rewards = 'rewards',
+  VestedRewards = 'vestedRewards',
+  PswapDistribution = 'pswapDistribution',
 }
 
 export enum ModuleMethods {
@@ -37,6 +39,10 @@ export enum ModuleMethods {
   ReferralsUnreserve = 'unreserve',
   EthBridgeTransferToSidechain = 'transferToSidechain',
   BridgeMultisigAsMulti = 'asMulti',
+  RewardsClaim = 'claim',
+  VestedRewardsClaimRewards = 'claimRewards',
+  VestedRewardsClaimCrowdloanRewards = 'claimCrowdloanRewards',
+  PswapDistributionClaimIncentive = 'claimIncentive',
 }
 
 export type PoolXYKEntity = {
@@ -101,7 +107,14 @@ export type HistoryElementAssetRegistration = {
   assetId: string;
 };
 
-export type UtilityBatchAllItem = {
+export type ClaimedRewardItem = {
+  assetId: string;
+  amount: string;
+};
+
+export type HistoryElementRewardsClaim = Nullable<ClaimedRewardItem[]>;
+
+export type UtilityBatchCall = {
   data: {
     args: {
       [key: string]: string | number;
@@ -113,6 +126,14 @@ export type UtilityBatchAllItem = {
   module: string;
   method: string;
 };
+
+export type ExtrinsicEvent = {
+  method: string;
+  section: string;
+  data: any[];
+};
+
+export type HistoryElementUtilityBatchAll = UtilityBatchCall[];
 
 export type HistoryElementEthBridgeOutgoing = {
   amount: string;
@@ -144,11 +165,12 @@ export type HistoryElement = {
     | HistoryElementTransfer
     | HistoryElementLiquidityOperation
     | HistoryElementAssetRegistration
-    | UtilityBatchAllItem[]
+    | HistoryElementUtilityBatchAll
     | ReferralSetReferrer
     | ReferrerReserve
     | HistoryElementEthBridgeOutgoing
     | HistoryElementEthBridgeIncoming
+    | HistoryElementRewardsClaim
   >;
 };
 

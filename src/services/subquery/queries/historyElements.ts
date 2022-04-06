@@ -1,5 +1,6 @@
 import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../types';
+import { SubstrateEvents } from '../consts';
 
 export const HistoryElementsQuery = `
   query HistoryElements (
@@ -49,10 +50,17 @@ export const HistoryElementsQuery = `
 type DataCriteria = {
   data: {
     contains: {
-      [key: string]: string;
+      [key: string]: any;
     };
   };
 };
+
+const RewardsClaimExtrinsics = [
+  [ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive],
+  [ModuleNames.Rewards, ModuleMethods.RewardsClaim],
+  [ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimRewards],
+  [ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimCrowdloanRewards],
+];
 
 const OperationFilterMap = {
   [Operation.Swap]: {
@@ -93,6 +101,18 @@ const OperationFilterMap = {
     },
     method: {
       equalTo: ModuleMethods.UtilityBatchAll,
+    },
+    data: {
+      contains: [
+        {
+          module: ModuleNames.PoolXYK,
+          method: ModuleMethods.PoolXYKInitializePool,
+        },
+        {
+          module: ModuleNames.PoolXYK,
+          method: ModuleMethods.PoolXYKDepositLiquidity,
+        },
+      ],
     },
   },
   [Operation.AddLiquidity]: {
@@ -151,6 +171,36 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.BridgeMultisigAsMulti,
     },
   },
+  [Operation.ClaimRewards]: {
+    or: [
+      ...RewardsClaimExtrinsics.map(([module, method]) => ({
+        module: {
+          equalTo: module,
+        },
+        method: {
+          equalTo: method,
+        },
+      })),
+      {
+        module: {
+          equalTo: ModuleNames.Utility,
+        },
+        method: {
+          equalTo: ModuleMethods.UtilityBatchAll,
+        },
+        or: RewardsClaimExtrinsics.map(([module, method]) => ({
+          data: {
+            contains: [
+              {
+                module,
+                method,
+              },
+            ],
+          },
+        })),
+      },
+    ],
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
@@ -166,7 +216,7 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
 const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
   const attributes = ['assetId', 'baseAssetId', 'targetAssetId'];
 
-  return attributes.reduce((result: Array<DataCriteria>, attr) => {
+  const criterias = attributes.reduce((result: Array<DataCriteria>, attr) => {
     result.push({
       data: {
         contains: {
@@ -177,6 +227,36 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
 
     return result;
   }, []);
+
+  // for rewards claim operation
+  criterias.push({
+    data: {
+      contains: [
+        {
+          assetId: assetAddress,
+        },
+      ],
+    },
+  });
+
+  // for create pair operation
+  ['input_asset_a', 'input_asset_b'].forEach((attr) => {
+    criterias.push({
+      data: {
+        contains: [
+          {
+            data: {
+              args: {
+                [attr]: assetAddress,
+              },
+            },
+          },
+        ],
+      },
+    });
+  });
+
+  return criterias;
 };
 
 const createAccountAddressCriteria = (address: string) => {
