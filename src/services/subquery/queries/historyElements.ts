@@ -232,7 +232,18 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
     return result;
   }, []);
 
-  // utility.batchAll: rewards & create pair has this transfer event
+  // rewards claim extrinsic
+  criterias.push({
+    data: {
+      contains: [
+        {
+          assetId: assetAddress,
+        },
+      ],
+    },
+  });
+
+  // utility.batchAll: rewards claim & create pair extrinsics has this transfer event
   criterias.push({
     data: {
       contains: {
