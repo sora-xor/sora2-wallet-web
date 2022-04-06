@@ -148,5 +148,19 @@ export default class AssetList extends Mixins(TranslationMixin) {
   .el-divider {
     margin: 0;
   }
+
+  .scrollbar {
+    opacity: 0;
+    transition: opacity 0.12s ease-out;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    .scrollbar {
+      opacity: 1;
+      transition: opacity 0.34s ease-out;
+    }
+  }
 }
 </style>
