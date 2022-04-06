@@ -44,17 +44,17 @@ const OperationsMap = {
   },
   [insensitive(ModuleNames.Utility)]: {
     [ModuleMethods.UtilityBatchAll]: (data: HistoryElementUtilityBatchAll) => {
-      if (!Array.isArray(data.calls)) return null;
+      if (!Array.isArray(data)) return null;
 
       if (
-        !!getBatchCall(data.calls, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKInitializePool }) &&
-        !!getBatchCall(data.calls, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity })
+        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKInitializePool }) &&
+        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity })
       ) {
         return Operation.CreatePair;
       }
 
       if (
-        data.calls.every(
+        data.every(
           (item) =>
             isModuleMethod(item, ModuleNames.Rewards, ModuleMethods.RewardsClaim) ||
             isModuleMethod(item, ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive) ||
@@ -282,7 +282,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       }
       case Operation.CreatePair: {
         const data = transaction.data as HistoryElementUtilityBatchAll;
-        const call = getBatchCall(data.calls, {
+        const call = getBatchCall(data, {
           module: ModuleNames.PoolXYK,
           method: ModuleMethods.PoolXYKDepositLiquidity,
         });
@@ -347,9 +347,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       }
       case Operation.ClaimRewards: {
         const rewardsData =
-          transaction.module === ModuleNames.Utility
-            ? getRewardsFromEvents((transaction.data as HistoryElementUtilityBatchAll).events)
-            : (transaction.data as HistoryElementRewardsClaim);
+          transaction.module === ModuleNames.Utility ? [] : (transaction.data as HistoryElementRewardsClaim);
 
         (payload as RewardClaimHistory).rewards = Array.isArray(rewardsData) ? await formatRewards(rewardsData) : [];
 

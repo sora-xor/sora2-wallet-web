@@ -192,14 +192,12 @@ const OperationFilterMap = {
         },
         or: RewardsClaimExtrinsics.map(([module, method]) => ({
           data: {
-            contains: {
-              calls: [
-                {
-                  module,
-                  method,
-                },
-              ],
-            },
+            contains: [
+              {
+                module,
+                method,
+              },
+            ],
           },
         })),
       },
@@ -240,21 +238,6 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
           assetId: assetAddress,
         },
       ],
-    },
-  });
-
-  // utility.batchAll: rewards claim & create pair extrinsics has this transfer event
-  criterias.push({
-    data: {
-      contains: {
-        events: [
-          {
-            data: [assetAddress],
-            method: SubstrateEvents.CurrenciesTransferred.method,
-            section: SubstrateEvents.CurrenciesTransferred.section,
-          },
-        ],
-      },
     },
   });
 

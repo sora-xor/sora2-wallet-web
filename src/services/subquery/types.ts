@@ -134,10 +134,7 @@ export type ExtrinsicEvent = {
   data: any[];
 };
 
-export type HistoryElementUtilityBatchAll = {
-  calls: UtilityBatchCall[];
-  events: ExtrinsicEvent[];
-};
+export type HistoryElementUtilityBatchAll = UtilityBatchCall[];
 
 export type HistoryElementEthBridgeOutgoing = {
   amount: string;
