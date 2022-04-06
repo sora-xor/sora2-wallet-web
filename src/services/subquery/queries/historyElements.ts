@@ -1,5 +1,6 @@
 import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../types';
+import { SubstrateEvents } from '../consts';
 
 export const HistoryElementsQuery = `
   query HistoryElements (
@@ -49,10 +50,17 @@ export const HistoryElementsQuery = `
 type DataCriteria = {
   data: {
     contains: {
-      [key: string]: string;
+      [key: string]: any;
     };
   };
 };
+
+const RewardsClaimExtrinsics = [
+  [ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive],
+  [ModuleNames.Rewards, ModuleMethods.RewardsClaim],
+  [ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimRewards],
+  [ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimCrowdloanRewards],
+];
 
 const OperationFilterMap = {
   [Operation.Swap]: {
@@ -93,6 +101,20 @@ const OperationFilterMap = {
     },
     method: {
       equalTo: ModuleMethods.UtilityBatchAll,
+    },
+    data: {
+      contains: {
+        calls: [
+          {
+            module: ModuleNames.PoolXYK,
+            method: ModuleMethods.PoolXYKInitializePool,
+          },
+          {
+            module: ModuleNames.PoolXYK,
+            method: ModuleMethods.PoolXYKDepositLiquidity,
+          },
+        ],
+      },
     },
   },
   [Operation.AddLiquidity]: {
@@ -153,30 +175,14 @@ const OperationFilterMap = {
   },
   [Operation.ClaimRewards]: {
     or: [
-      {
+      ...RewardsClaimExtrinsics.map(([module, method]) => ({
         module: {
-          equalTo: ModuleNames.PswapDistribution,
+          equalTo: module,
         },
         method: {
-          equalTo: ModuleMethods.PswapDistributionClaimIncentive,
+          equalTo: method,
         },
-      },
-      {
-        module: {
-          equalTo: ModuleNames.Rewards,
-        },
-        method: {
-          equalTo: ModuleMethods.RewardsClaim,
-        },
-      },
-      {
-        module: {
-          equalTo: ModuleNames.VestedRewards,
-        },
-        method: {
-          in: [ModuleMethods.VestedRewardsClaimRewards, ModuleMethods.VestedRewardsClaimCrowdloanRewards],
-        },
-      },
+      })),
       {
         module: {
           equalTo: ModuleNames.Utility,
@@ -184,6 +190,18 @@ const OperationFilterMap = {
         method: {
           equalTo: ModuleMethods.UtilityBatchAll,
         },
+        or: RewardsClaimExtrinsics.map(([module, method]) => ({
+          data: {
+            contains: {
+              calls: [
+                {
+                  module,
+                  method,
+                },
+              ],
+            },
+          },
+        })),
       },
     ],
   },
@@ -202,7 +220,7 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
 const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
   const attributes = ['assetId', 'baseAssetId', 'targetAssetId'];
 
-  return attributes.reduce((result: Array<DataCriteria>, attr) => {
+  const criterias = attributes.reduce((result: Array<DataCriteria>, attr) => {
     result.push({
       data: {
         contains: {
@@ -213,6 +231,23 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
 
     return result;
   }, []);
+
+  // utility.batchAll: rewards & create pair has this transfer event
+  criterias.push({
+    data: {
+      contains: {
+        events: [
+          {
+            data: [assetAddress],
+            method: SubstrateEvents.CurrenciesTransferred.method,
+            section: SubstrateEvents.CurrenciesTransferred.section,
+          },
+        ],
+      },
+    },
+  });
+
+  return criterias;
 };
 
 const createAccountAddressCriteria = (address: string) => {

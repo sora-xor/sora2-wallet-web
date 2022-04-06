@@ -25,6 +25,7 @@ import type {
   ClaimedRewardItem,
   ExtrinsicEvent,
 } from './types';
+import { SubstrateEvents } from './consts';
 
 const insensitive = (value: string) => value.toLowerCase();
 
@@ -146,7 +147,10 @@ const logOperationDataParsingError = (operation: Operation, transaction: History
 
 const getRewardsFromEvents = (events: ExtrinsicEvent[]): ClaimedRewardItem[] => {
   return events.reduce<ClaimedRewardItem[]>((buffer, event) => {
-    if (event.method === 'Transferred' && event.section === 'currencies') {
+    if (
+      event.method === SubstrateEvents.CurrenciesTransferred.method &&
+      event.section === SubstrateEvents.CurrenciesTransferred.section
+    ) {
       const [assetId, from, to, amount] = event.data;
 
       buffer.push({
