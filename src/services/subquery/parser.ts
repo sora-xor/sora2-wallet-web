@@ -18,10 +18,12 @@ import type {
   HistoryElementTransfer,
   HistoryElementAssetRegistration,
   HistoryElementRewardsClaim,
-  UtilityBatchAllItem,
+  HistoryElementUtilityBatchAll,
+  UtilityBatchCall,
   ReferralSetReferrer,
   ReferrerReserve,
   ClaimedRewardItem,
+  ExtrinsicEvent,
 } from './types';
 
 const insensitive = (value: string) => value.toLowerCase();
@@ -40,18 +42,18 @@ const OperationsMap = {
     [ModuleMethods.LiquidityProxySwapTransfer]: () => Operation.SwapAndSend,
   },
   [insensitive(ModuleNames.Utility)]: {
-    [ModuleMethods.UtilityBatchAll]: (data: UtilityBatchAllItem[]) => {
-      if (!Array.isArray(data)) return null;
+    [ModuleMethods.UtilityBatchAll]: (data: HistoryElementUtilityBatchAll) => {
+      if (!Array.isArray(data.calls)) return null;
 
       if (
-        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKInitializePool }) &&
-        !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity })
+        !!getBatchCall(data.calls, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKInitializePool }) &&
+        !!getBatchCall(data.calls, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity })
       ) {
         return Operation.CreatePair;
       }
 
       if (
-        data.every(
+        data.calls.every(
           (item) =>
             isModuleMethod(item, ModuleNames.Rewards, ModuleMethods.RewardsClaim) ||
             isModuleMethod(item, ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive) ||
@@ -88,11 +90,11 @@ const getTransactionId = (tx: HistoryElement): string => tx.id;
 
 const emptyFn = () => null;
 
-const isModuleMethod = (item: UtilityBatchAllItem, module: string, method: string) =>
+const isModuleMethod = (item: UtilityBatchCall, module: string, method: string) =>
   insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method);
 
-const getBatchCall = (data: Array<UtilityBatchAllItem>, { module, method }): Nullable<UtilityBatchAllItem> =>
-  data.find((item) => isModuleMethod(item, module, method));
+const getBatchCall = (calls: Array<UtilityBatchCall>, { module, method }): Nullable<UtilityBatchCall> =>
+  calls.find((item) => isModuleMethod(item, module, method));
 
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
@@ -140,6 +142,20 @@ const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
 
 const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {
   console.error(`Couldn't parse ${operation} data.`, transaction);
+};
+
+const getRewardsFromEvents = (events: ExtrinsicEvent[]): ClaimedRewardItem[] => {
+  return events.reduce<ClaimedRewardItem[]>((buffer, event) => {
+    if (event.method === 'Transferred' && event.section === 'currencies') {
+      const [assetId, from, to, amount] = event.data;
+
+      buffer.push({
+        assetId,
+        amount,
+      });
+    }
+    return buffer;
+  }, []);
 };
 
 const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]> => {
@@ -261,8 +277,11 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         return payload;
       }
       case Operation.CreatePair: {
-        const data = transaction.data as UtilityBatchAllItem[];
-        const call = getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity });
+        const data = transaction.data as HistoryElementUtilityBatchAll;
+        const call = getBatchCall(data.calls, {
+          module: ModuleNames.PoolXYK,
+          method: ModuleMethods.PoolXYKDepositLiquidity,
+        });
 
         if (!call) {
           logOperationDataParsingError(type, transaction);
@@ -325,12 +344,10 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       case Operation.ClaimRewards: {
         const rewardsData =
           transaction.module === ModuleNames.Utility
-            ? (transaction.data as UtilityBatchAllItem[])[0].data.rewards
+            ? getRewardsFromEvents((transaction.data as HistoryElementUtilityBatchAll).events)
             : (transaction.data as HistoryElementRewardsClaim);
 
-        if (Array.isArray(rewardsData)) {
-          (payload as RewardClaimHistory).rewards = await formatRewards(rewardsData);
-        }
+        (payload as RewardClaimHistory).rewards = Array.isArray(rewardsData) ? await formatRewards(rewardsData) : [];
 
         return payload;
       }

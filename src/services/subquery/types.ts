@@ -112,9 +112,9 @@ export type ClaimedRewardItem = {
   amount: string;
 };
 
-export type HistoryElementRewardsClaim = ClaimedRewardItem[];
+export type HistoryElementRewardsClaim = Nullable<ClaimedRewardItem[]>;
 
-export type UtilityBatchAllItem = {
+export type UtilityBatchCall = {
   data: {
     args: {
       [key: string]: string | number;
@@ -126,6 +126,17 @@ export type UtilityBatchAllItem = {
   callId: string;
   module: string;
   method: string;
+};
+
+export type ExtrinsicEvent = {
+  method: string;
+  section: string;
+  data: any[];
+};
+
+export type HistoryElementUtilityBatchAll = {
+  calls: UtilityBatchCall[];
+  events: ExtrinsicEvent[];
 };
 
 export type HistoryElementEthBridgeOutgoing = {
@@ -158,7 +169,7 @@ export type HistoryElement = {
     | HistoryElementTransfer
     | HistoryElementLiquidityOperation
     | HistoryElementAssetRegistration
-    | UtilityBatchAllItem[]
+    | HistoryElementUtilityBatchAll
     | ReferralSetReferrer
     | ReferrerReserve
     | HistoryElementEthBridgeOutgoing
