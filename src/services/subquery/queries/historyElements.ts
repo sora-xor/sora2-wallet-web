@@ -103,18 +103,16 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.UtilityBatchAll,
     },
     data: {
-      contains: {
-        calls: [
-          {
-            module: ModuleNames.PoolXYK,
-            method: ModuleMethods.PoolXYKInitializePool,
-          },
-          {
-            module: ModuleNames.PoolXYK,
-            method: ModuleMethods.PoolXYKDepositLiquidity,
-          },
-        ],
-      },
+      contains: [
+        {
+          module: ModuleNames.PoolXYK,
+          method: ModuleMethods.PoolXYKInitializePool,
+        },
+        {
+          module: ModuleNames.PoolXYK,
+          method: ModuleMethods.PoolXYKDepositLiquidity,
+        },
+      ],
     },
   },
   [Operation.AddLiquidity]: {
@@ -230,7 +228,7 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
     return result;
   }, []);
 
-  // rewards claim extrinsic
+  // for rewards claim operation
   criterias.push({
     data: {
       contains: [
@@ -239,6 +237,23 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
         },
       ],
     },
+  });
+
+  // for create pair operation
+  ['input_asset_a', 'input_asset_b'].forEach((attr) => {
+    criterias.push({
+      data: {
+        contains: [
+          {
+            data: {
+              args: {
+                [attr]: assetAddress,
+              },
+            },
+          },
+        ],
+      },
+    });
   });
 
   return criterias;
