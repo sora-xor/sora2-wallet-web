@@ -120,7 +120,6 @@ export type UtilityBatchCall = {
       [key: string]: string | number;
     };
     callIndex: string;
-    rewards?: ClaimedRewardItem[];
   };
   hash: string;
   callId: string;
