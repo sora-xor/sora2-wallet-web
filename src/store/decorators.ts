@@ -1,3 +1,5 @@
+import type { VueDecorator } from 'vue-class-component';
+
 import store from '../store';
 import { WalletModules } from './wallet';
 import type {
@@ -6,7 +8,7 @@ import type {
   WalletGettersDecorators,
   WalletStateDecorators,
 } from './types';
-import { VuexOperation, createDecoratorsObject } from './util';
+import { VuexOperation, createDecoratorsObject, attachDecorator } from './util';
 
 const walletState = {} as WalletStateDecorators;
 const walletGetter = {} as WalletGettersDecorators;
@@ -21,8 +23,15 @@ const walletAction = {} as WalletDispatchDecorators;
 })();
 
 const state = walletState.wallet;
-const getter = walletGetter.wallet;
+const getter = walletGetter.wallet as typeof walletGetter.wallet & {
+  libraryDesignSystem: VueDecorator;
+  libraryTheme: VueDecorator;
+};
 const mutation = walletMutation.wallet;
 const action = walletAction.wallet;
+
+// Add Design System getters
+getter.libraryDesignSystem = attachDecorator(VuexOperation.Getter, 'libraryDesignSystem');
+getter.libraryTheme = attachDecorator(VuexOperation.Getter, 'libraryTheme');
 
 export { state, getter, mutation, action };

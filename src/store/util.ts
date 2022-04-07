@@ -25,7 +25,7 @@ function isComputedDecorator(type: VuexOperation): boolean {
   return [VuexOperation.State, VuexOperation.Getter].includes(type);
 }
 
-export function attachDecorator(type: VuexOperation, modulesChain: string, name: string): VueDecorator {
+export function attachDecorator(type: VuexOperation, name: string, modulesChain?: string): VueDecorator {
   const mapFn = getVuexMapFn(type);
   const featuresType = isComputedDecorator(type) ? 'computed' : 'methods';
   return createDecorator((options, key) => {
@@ -34,10 +34,13 @@ export function attachDecorator(type: VuexOperation, modulesChain: string, name:
       features = {};
     }
     const mapObject = { [name]: name };
-    features[key] = mapFn(modulesChain, mapObject)[name];
+    const map = modulesChain ? mapFn(modulesChain, mapObject) : mapFn(mapObject);
+    features[key] = map[name];
     options[featuresType] = features;
   });
 }
+
+const uiLibGetters = ['libraryDesignSystem', 'libraryTheme'];
 
 export function createDecoratorsObject(
   obj: any,
@@ -53,8 +56,9 @@ export function createDecoratorsObject(
   }
   for (const key of keys) {
     const value = obj[key];
+    if (uiLibGetters.includes(key)) return;
     if (path && modules.includes(path)) {
-      newObj[key] = attachDecorator(type, path, key);
+      newObj[key] = attachDecorator(type, key, path);
     } else {
       newObj[key] = {};
       createDecoratorsObject(value, newObj[key], modules, type, path ? `${path}/${key}` : key);

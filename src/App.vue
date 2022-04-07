@@ -13,7 +13,6 @@
 <script lang="ts">
 // This file is only for local usage
 import { Component, Mixins, Watch } from 'vue-property-decorator';
-import { Getter } from 'vuex-class'; // TODO: [vuex]
 
 import { FPNumber, HistoryItem } from '@sora-substrate/util';
 import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils';
@@ -33,15 +32,14 @@ import type { ApiKeysObject } from './types/common';
 export default class App extends Mixins(TransactionMixin) {
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
   @getter.transactions.firstReadyTx firstReadyTransaction!: Nullable<HistoryItem>;
+  @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
+  @getter.libraryTheme libraryTheme!: Theme;
 
   @mutation.settings.toggleHideBalance toggleHideBalance!: VoidFn;
   @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncVoidFn;
   @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncVoidFn;
-
-  @Getter libraryDesignSystem!: DesignSystem;
-  @Getter libraryTheme!: Theme;
 
   async created(): Promise<void> {
     await this.setApiKeys({ nftStorage: NFT_STORAGE_API_KEY });

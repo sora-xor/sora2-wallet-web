@@ -32,7 +32,6 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Getter } from 'vuex-class'; // TODO: [vuex]
 import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
@@ -56,11 +55,10 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
   asset: Nullable<Asset> = null;
   isConfirmed = false;
 
-  @Getter private libraryTheme!: Theme;
-
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<Asset>>;
   @getter.account.whitelist private whitelist!: Whitelist;
   @getter.account.whitelistIdsBySymbol private whitelistIdsBySymbol!: WhitelistIdsBySymbol;
+  @getter.libraryTheme private libraryTheme!: Theme;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.account.addAsset private addAsset!: (address?: string) => Promise<void>;
