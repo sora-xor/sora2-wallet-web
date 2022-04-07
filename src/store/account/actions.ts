@@ -234,7 +234,7 @@ const actions = defineActions({
       commit.clearReferralRewards();
     }
   },
-  async addAsset(context, address?: string): Promise<void> {
+  async addAsset(_, address?: string): Promise<void> {
     if (!address) return;
     try {
       await api.assets.addAccountAsset(address);

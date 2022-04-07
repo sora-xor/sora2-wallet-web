@@ -7,14 +7,6 @@ import wallet, { WalletModule } from './wallet';
 
 Vue.use(Vuex);
 
-// To enable types in the injected store '$store'.
-export type AppStore = typeof store;
-declare module 'vuex' {
-  interface Store<S> {
-    direct: AppStore;
-  }
-}
-
 const modules = {
   wallet,
 };

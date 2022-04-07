@@ -20,7 +20,9 @@ export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
     return !fiatObj || !fiatObj.price ? null : fiatObj.price;
   }
 
-  getFiatBalance(asset: AccountAsset, type = BalanceType.Transferable): Nullable<string> {
+  getFiatBalance(asset?: AccountAsset, type = BalanceType.Transferable): Nullable<string> {
+    if (!asset) return null;
+
     const price = this.getAssetFiatPrice(asset);
     if (!price || !asset.balance) {
       return null;

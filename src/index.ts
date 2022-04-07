@@ -1,6 +1,5 @@
 import type Vue from 'vue';
 import type { PluginObject } from 'vue';
-import type { Module } from 'vuex';
 
 import installWalletPlugins from './plugins';
 
@@ -32,9 +31,12 @@ import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
+import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
+import * as VUEX_TYPES from './store/types';
 import * as SUBQUERY_TYPES from './services/subquery/types';
 import * as WALLET_CONSTS from './consts';
 import * as WALLET_TYPES from './types/common';
+import { WalletModules } from './store/wallet';
 
 type Store = typeof internalStore;
 
@@ -49,11 +51,8 @@ const SoraWalletElements: PluginObject<PluginOptions> = {
     if (!options || !options.store) {
       throw new Error('Please provide vuex store.');
     }
-    Object.values(WALLET_TYPES.Modules).forEach((module) => {
-      options.store.original.registerModule(module, modules[module] as Module<unknown, unknown>);
-    });
     store = options.store;
-    installWalletPlugins(vue, store);
+    installWalletPlugins(vue, store.original);
     vue.component('SoraWallet', SoraWallet); // Root component
   },
 };
@@ -125,6 +124,14 @@ const mixins = {
   PaginationSearchMixin,
 };
 
+const vuex = {
+  walletModules: modules,
+  VuexOperation,
+  attachDecorator,
+  createDecoratorsObject,
+  WalletModules,
+};
+
 export {
   initWallet,
   en,
@@ -141,5 +148,7 @@ export {
   historyElementsFilter,
   SubqueryExplorerService,
   SUBQUERY_TYPES,
+  VUEX_TYPES,
+  vuex,
 };
 export default SoraWalletElements;
