@@ -122,7 +122,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { FPNumber, CodecString, Operation } from '@sora-substrate/util';
-import { KnownAssets, KnownSymbols } from '@sora-substrate/util/build/assets/consts';
+import { XOR } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from '@polkadot/x-rxjs';
 
@@ -292,7 +292,7 @@ export default class WalletSend extends Mixins(
     const decimals = this.asset.decimals;
     const balance = this.getFPNumberFromCodec(this.transferableBalance, decimals);
     const amount = this.getFPNumber(this.amount, decimals);
-    if (this.isXorAccountAsset(this.asset)) {
+    if (this.isXorAccountAsset) {
       if (this.fee.isZero()) {
         return false;
       }
@@ -322,18 +322,14 @@ export default class WalletSend extends Mixins(
     }
 
     if (!this.hasEnoughXor) {
-      return this.t('walletSend.badAmount', { tokenSymbol: KnownSymbols.XOR });
+      return this.t('walletSend.badAmount', { tokenSymbol: XOR.symbol });
     }
 
     return '';
   }
 
-  isXorAccountAsset(asset: AccountAsset): boolean {
-    const knownAsset = KnownAssets.get(asset.address);
-    if (!knownAsset) {
-      return false;
-    }
-    return knownAsset.symbol === KnownSymbols.XOR;
+  get isXorAccountAsset(): boolean {
+    return this.asset.address === XOR.address;
   }
 
   getFormattedAddress(asset: AccountAsset): string {
@@ -350,7 +346,7 @@ export default class WalletSend extends Mixins(
   }
 
   async handleMaxClick(): Promise<void> {
-    if (this.isXorAccountAsset(this.asset)) {
+    if (this.isXorAccountAsset) {
       const balance = this.getFPNumberFromCodec(this.transferableBalance, this.asset.decimals);
       this.amount = balance.sub(this.fee).toString();
       return;
@@ -362,7 +358,7 @@ export default class WalletSend extends Mixins(
     if (
       !this.isXorSufficientForNextTx({
         type: Operation.Transfer,
-        isXorAccountAsset: this.isXorAccountAsset(this.asset),
+        isXorAccountAsset: this.isXorAccountAsset,
         amount: this.getFPNumber(this.amount),
       })
     ) {

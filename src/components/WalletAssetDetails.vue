@@ -113,7 +113,7 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { KnownAssets, KnownSymbols, BalanceType } from '@sora-substrate/util/build/assets/consts';
+import { XOR, BalanceType } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/util';
 
@@ -283,8 +283,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   get isXor(): boolean {
-    const asset = KnownAssets.get(this.asset.address);
-    return asset && asset.symbol === KnownSymbols.XOR;
+    return this.asset.address === XOR.address;
   }
 
   get isCleanHistoryDisabled(): boolean {
