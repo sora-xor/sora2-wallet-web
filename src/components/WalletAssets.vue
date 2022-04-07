@@ -8,7 +8,7 @@
       <s-divider class="wallet-assets-divider" />
     </div>
 
-    <asset-list :assets="formattedAccountAssets" :size="3" with-fiat divider class="wallet-assets-list">
+    <asset-list :assets="formattedAccountAssets" :size="3" account-assets with-fiat divider class="wallet-assets-list">
       <template #value="asset">
         <formatted-amount-with-fiat-value
           value-can-be-hidden

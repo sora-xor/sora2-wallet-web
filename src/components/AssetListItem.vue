@@ -1,6 +1,6 @@
 <template>
   <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
-    <i class="asset-logo" :class="iconClasses" :style="iconStyles" @click="handleOpenAssetDetails(asset)" />
+    <i class="asset-logo" :class="iconClasses" :style="iconStyles" @click="handleOpenAssetDetails" />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
@@ -31,6 +31,7 @@ import type { Asset } from '@sora-substrate/util/build/assets/types';
 @Component
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
+  @Prop({ default: false, type: Boolean }) readonly accountAsset!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
 
   @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
@@ -51,8 +52,12 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     return formatAddress(this.asset.address, 10);
   }
 
-  handleOpenAssetDetails(asset: Asset): void {
-    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } });
+  handleOpenAssetDetails(event: Event): void {
+    if (this.accountAsset) {
+      event.stopImmediatePropagation();
+      this.$emit('show-details', this.asset);
+      this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.asset } });
+    }
   }
 
   async handleCopy(event: Event): Promise<void> {
