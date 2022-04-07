@@ -107,6 +107,11 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
         <div
           class="asset-box"
         >
+          <nft-token-logo-stub
+            asset="[object Object]"
+            class="asset-logo nft-image"
+          />
+           
           <i
             class="asset-logo asset-default s-icon-notifications-info-24"
           />
@@ -274,6 +279,11 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
         <div
           class="asset-box"
         >
+          <nft-token-logo-stub
+            asset="[object Object]"
+            class="asset-logo nft-image"
+          />
+           
           <i
             class="asset-logo asset-default s-icon-notifications-info-24"
           />
@@ -468,6 +478,11 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
         <div
           class="asset-box"
         >
+          <nft-token-logo-stub
+            asset="[object Object]"
+            class="asset-logo nft-image"
+          />
+           
           <i
             class="asset-logo asset-default s-icon-notifications-info-24"
           />
@@ -639,6 +654,11 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
         <div
           class="asset-box"
         >
+          <nft-token-logo-stub
+            asset="[object Object]"
+            class="asset-logo nft-image"
+          />
+           
           <i
             class="asset-logo asset-default s-icon-notifications-info-24"
           />

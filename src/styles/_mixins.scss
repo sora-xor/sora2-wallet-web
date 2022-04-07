@@ -7,7 +7,8 @@
 @mixin asset-logo-styles(
   $size: var(--s-size-medium),
   $default-font-size: var(--s-font-size-large),
-  $nft-font-size: var(--s-font-size-small)
+  $nft-font-size: var(--s-font-size-small),
+  $nft-border-radius: 50%
 ) {
   $token-background-color: var(--s-color-base-on-accent);
   height: $size;
@@ -30,17 +31,19 @@
     }
 
     &-nft {
+      background-size: cover;
+      border-radius: $nft-border-radius !important;
       &::before {
+        content: 'NFT';
         font-size: $nft-font-size;
         font-weight: 800;
-        content: 'NFT';
       }
     }
   }
 }
 
 @mixin custom-tabs {
-  $tabs-class: ".el-tabs";
+  $tabs-class: '.el-tabs';
 
   .s-tabs {
     &#{$tabs-class} {
@@ -71,14 +74,15 @@
   }
 }
 
-@mixin hint-text ($lineHeight: var(--s-line-height-medium)) {
-  color: var(--s-color-base-content-secondary); // TODO: check primary
+@mixin hint-text($lineHeight: var(--s-line-height-medium)) {
+  color: var(--s-color-base-content-secondary);
   font-size: var(--s-font-size-mini);
   font-weight: 300;
   line-height: $lineHeight;
+  letter-spacing: var(--s-letter-spacing-small);
 }
 
-@mixin switch-block () {
+@mixin switch-block() {
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -93,7 +97,7 @@
   }
 }
 
-@mixin svg-icon ($url: '', $width: var(--s-icon-font-size-mini), $height: $width) {
+@mixin svg-icon($url: '', $width: var(--s-icon-font-size-mini), $height: $width) {
   display: block;
   width: $width;
   height: $height;
@@ -117,7 +121,7 @@
   }
 }
 
-@mixin select-icon ($containerClass) {
+@mixin select-icon($containerClass) {
   .#{$containerClass} .s-select .el-select {
     .el-input__icon {
       margin-right: 10px;
@@ -125,7 +129,7 @@
     i.el-icon-arrow-up:before {
       position: relative;
       top: 5px;
-      content: "\e9e4"; // TODO: change it asap
+      content: '\e9e4'; // TODO: change it asap
       color: var(--s-color-base-content-primary);
       font-size: var(--s-icon-font-size-medium);
     }
@@ -138,7 +142,7 @@
   }
 }
 
-@mixin scrollbar ($marginOffset: 0, $verticalRight: 2px) {
+@mixin scrollbar($marginOffset: 0, $verticalRight: 2px) {
   &.el-scrollbar {
     margin-left: calc(#{$marginOffset} * -1);
     margin-right: calc(#{$marginOffset} * -1);
@@ -147,7 +151,8 @@
       overflow-x: hidden;
       margin-bottom: 0px !important; // to disable element-ui negative margin
     }
-    .el-scrollbar__wrap, .el-scrollbar__view {
+    .el-scrollbar__wrap,
+    .el-scrollbar__view {
       display: flex;
       flex: 1;
       flex-flow: column nowrap;
@@ -164,7 +169,7 @@
   }
 }
 
-@mixin asset-list-scrollbar ($margin: 0px, $padding: 0px) {
+@mixin asset-list($margin: 0px, $padding: 0px) {
   &.asset-list {
     margin-left: calc(#{$margin} * -1);
     margin-right: calc(#{$margin} * -1);
@@ -173,24 +178,10 @@
       padding-left: $padding;
       padding-right: $padding;
     }
-
-    .scrollbar {
-      opacity: 0;
-      transition: opacity .12s ease-out;
-    }
-
-    &:hover,
-    &:focus,
-    &:active {
-      .scrollbar {
-        opacity: 1;
-        transition: opacity .34s ease-out
-      }
-    }
   }
 }
 
-@mixin formatted-amount-tooltip () {
+@mixin formatted-amount-tooltip() {
   $padding-left: 8px;
   $padding-top: 4px;
   $border-width: 1px;
@@ -202,9 +193,10 @@
   text-overflow: ellipsis;
 
   &.formatted-amount--value-wider {
-    &:active, &:hover {
+    &:active,
+    &:hover {
       overflow: visible;
-  
+
       & > span {
         display: inline-table;
         position: absolute;
@@ -221,15 +213,14 @@
   }
 }
 
-@mixin fadeHeight ($max-height: 200px, $seconds: .3s) {
+@mixin fadeHeight($max-height: 200px, $seconds: 0.3s) {
   .fadeHeight-enter-active,
   .fadeHeight-leave-active {
     transition: all $seconds;
     max-height: $max-height;
   }
   .fadeHeight-enter,
-  .fadeHeight-leave-to
-  {
+  .fadeHeight-leave-to {
     opacity: 0;
     max-height: 0px;
   }

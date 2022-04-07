@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import AssetListItem from './AssetListItem.vue';
@@ -66,6 +66,14 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly accountAssets!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Ref('wrap') readonly wrap!: RecycleScroller;
+
+  @Watch('size')
+  @Watch('assets')
+  private async rerenderScrollbar() {
+    await this.$nextTick();
+    this.updateScrollbar();
+    this.handleScroll();
+  }
 
   barSize = 0;
   barMove = 0;
@@ -108,15 +116,18 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
   async mounted(): Promise<void> {
     await this.waitForAssetsListReady();
-
-    this.barSize = (this.el.clientHeight * 100) / this.el.scrollHeight;
-    this.scrollHeight = this.el.scrollHeight;
+    this.updateScrollbar();
   }
 
   async waitForAssetsListReady(): Promise<void> {
     if (this.wrap && this.wrap.ready) return;
     await delay();
     await this.waitForAssetsListReady();
+  }
+
+  private updateScrollbar(): void {
+    this.barSize = (this.el.clientHeight * 100) / this.el.scrollHeight;
+    this.scrollHeight = this.el.scrollHeight;
   }
 
   handleScroll(): void {
@@ -142,6 +153,20 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
   .el-divider {
     margin: 0;
+  }
+
+  .scrollbar {
+    opacity: 0;
+    transition: opacity 0.12s ease-out;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    .scrollbar {
+      opacity: 1;
+      transition: opacity 0.34s ease-out;
+    }
   }
 }
 </style>
