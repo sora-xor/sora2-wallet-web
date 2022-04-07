@@ -60,6 +60,7 @@
               {{ t('walletSend.max') }}
             </s-button>
             <div class="asset-box">
+              <nft-token-logo :asset="asset" class="asset-logo nft-image" />
               <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
@@ -93,7 +94,10 @@
           <div class="confirm-asset s-flex">
             <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
             <div class="confirm-asset-value s-flex">
-              <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+              <div class="confirm-asset-icon">
+                <nft-token-logo :asset="asset" class="asset-logo nft-image" />
+                <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+              </div>
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
@@ -127,6 +131,7 @@ import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
+import NftTokenLogo from './NftTokenLogo.vue';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -145,6 +150,7 @@ import type { Route } from '../store/router/types';
     FormattedAmountWithFiatValue,
     NetworkFeeWarning,
     WalletFee,
+    NftTokenLogo,
   },
 })
 export default class WalletSend extends Mixins(
@@ -472,6 +478,10 @@ $logo-size: var(--s-size-mini);
       text-align: right;
     }
   }
+  .nft-image {
+    position: absolute;
+    z-index: 1;
+  }
   .asset-id,
   &-address-formatted {
     cursor: pointer;
@@ -573,6 +583,13 @@ $logo-size: var(--s-size-mini);
             line-height: var(--s-line-height-small);
           }
         }
+      }
+      &-icon {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        white-space: nowrap;
+        position: relative;
       }
     }
     &-from {

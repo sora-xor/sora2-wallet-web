@@ -1,4 +1,5 @@
 import { axiosInstance, FPNumber } from '@sora-substrate/util';
+import { XOR } from '@sora-substrate/util/build/assets/consts';
 
 import { HistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
@@ -11,7 +12,7 @@ import type {
   PoolXYKEntity,
   FiatPriceAndApyObject,
   ReferrerRewards,
-  ReferrerReward,
+  ReferralRewardsGroup,
   HistoricalPrice,
 } from './types';
 
@@ -187,31 +188,23 @@ export default class SubqueryExplorer implements Explorer {
       invitedUserRewards: {},
     };
 
-    let after = '';
-    let hasNextPage = true;
-
     try {
-      do {
-        const response = await this.getAccountRewards(referrer, after);
+      const groups = await this.getAccountRewards(referrer);
 
-        if (!response) {
-          return null;
+      if (!groups) return null;
+
+      groups.forEach((group) => {
+        const referral = group.keys[0];
+        const amount = FPNumber.fromCodecValue(group.sum.amount, XOR.decimals);
+
+        rewardsInfo.rewards = rewardsInfo.rewards.add(amount);
+
+        if (!rewardsInfo.invitedUserRewards[referral]) {
+          rewardsInfo.invitedUserRewards[referral] = { rewards: FPNumber.ZERO };
         }
 
-        after = response.endCursor;
-        hasNextPage = response.hasNextPage;
-
-        response.nodes.forEach((item) => {
-          rewardsInfo.rewards = rewardsInfo.rewards.add(new FPNumber(item.amount));
-          const invitedUser = item.referral;
-          if (!rewardsInfo.invitedUserRewards[invitedUser]) {
-            rewardsInfo.invitedUserRewards[invitedUser] = { rewards: FPNumber.ZERO };
-          }
-          rewardsInfo.invitedUserRewards[invitedUser].rewards = rewardsInfo.invitedUserRewards[invitedUser].rewards.add(
-            new FPNumber(item.amount)
-          );
-        });
-      } while (hasNextPage);
+        rewardsInfo.invitedUserRewards[referral].rewards = rewardsInfo.invitedUserRewards[referral].rewards.add(amount);
+      });
 
       return rewardsInfo;
     } catch (error) {
@@ -221,28 +214,19 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   /**
-   * Get Referral Rewards items
+   * Get Referral Rewards items grouped by referral
    */
-  public async getAccountRewards(
-    referrer?: string,
-    after?: string
-  ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: ReferrerReward[] }>> {
+  public async getAccountRewards(referrer?: string): Promise<Nullable<ReferralRewardsGroup[]>> {
     try {
-      const params = {
-        after,
+      const variables = {
         filter: referrerRewardsFilter(referrer),
       };
 
-      const { referrerRewards } = await this.request(ReferrerRewardsQuery, params);
-
-      if (!referrerRewards) return null;
-
       const {
-        pageInfo: { hasNextPage, endCursor },
-        nodes,
-      } = referrerRewards;
+        referrerRewards: { groupedAggregates },
+      } = await this.request(ReferrerRewardsQuery, variables);
 
-      return { hasNextPage, endCursor, nodes };
+      return groupedAggregates;
     } catch (error) {
       console.error(error);
       return null;

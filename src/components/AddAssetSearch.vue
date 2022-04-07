@@ -1,12 +1,12 @@
 <template>
   <div class="asset-search">
-    <s-input
-      ref="search"
-      class="asset-search-input"
-      prefix="s-icon-search-16"
-      :maxlength="100"
-      :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
+    <search-input
+      autofocus
       v-model="search"
+      :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
+      :maxlength="100"
+      @clear="resetSearch"
+      class="asset-search-input"
     />
     <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset">
       <template #list-empty>
@@ -21,6 +21,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from './AssetList.vue';
+import SearchInput from './SearchInput.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -32,6 +33,7 @@ import type { Route } from '../store/router/types';
 @Component({
   components: {
     AssetList,
+    SearchInput,
   },
 })
 export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
@@ -45,15 +47,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
 
   search = '';
 
-  mounted(): void {
-    const input = this.$refs.search as any;
-
-    if (input && typeof input.focus === 'function') {
-      input.focus();
-    }
-  }
-
-  private get searchValue(): string {
+  get searchValue(): string {
     return this.search ? this.search.trim().toLowerCase() : '';
   }
 
@@ -86,12 +80,16 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   handleSelectAsset(asset: Asset): void {
     this.navigate({ name: RouteNames.AddAssetDetails, params: { asset } });
   }
+
+  resetSearch(): void {
+    this.search = '';
+  }
 }
 </script>
 
 <style lang="scss">
 .asset-search-list {
-  @include asset-list-scrollbar($basic-spacing-big);
+  @include asset-list($basic-spacing-big);
 
   .asset {
     padding-left: $basic-spacing-big;
