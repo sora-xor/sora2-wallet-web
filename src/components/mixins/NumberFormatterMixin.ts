@@ -31,7 +31,7 @@ export default class NumberFormatterMixin extends Vue {
     return this.getFPNumberFromCodec(value, decimals).isZero();
   }
 
-  getMax(address: string): string {
+  getMax(address?: string): string {
     if (!address) {
       return MaxTotalSupply;
     }

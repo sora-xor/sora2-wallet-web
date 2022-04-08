@@ -54,13 +54,14 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Getter, Action } from 'vuex-class';
 
-import TranslationMixin from './mixins/TranslationMixin';
-import LoadingMixin from './mixins/LoadingMixin';
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
 
+import TranslationMixin from './mixins/TranslationMixin';
+import LoadingMixin from './mixins/LoadingMixin';
+
+import { state, action } from '../store/decorators';
 import type { PolkadotJsAccount } from '../types/common';
 
 enum Step {
@@ -76,14 +77,14 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   step = Step.First;
 
-  @Getter currentRouteParams!: any;
-  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @Getter extensionAvailability!: boolean;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
+  @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.account.extensionAvailability extensionAvailability!: boolean;
 
-  @Action importPolkadotJs!: (address: string) => Promise<void>;
+  @action.account.importPolkadotJs private importPolkadotJs!: (address: string) => Promise<void>;
 
   get isAccountSwitch(): boolean {
-    return (this.currentRouteParams || {}).isAccountSwitch;
+    return !!this.currentRouteParams.isAccountSwitch;
   }
 
   async mounted(): Promise<void> {

@@ -13,7 +13,6 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import AddAsset from './components/AddAsset.vue';
@@ -30,6 +29,7 @@ import WalletTransactionDetails from './components/WalletTransactionDetails.vue'
 import LoadingMixin from './components/mixins/LoadingMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
 
+import { state } from './store/decorators';
 import { Operations } from './types/common';
 import type { RouteNames } from './consts';
 
@@ -50,7 +50,7 @@ import type { RouteNames } from './consts';
 export default class SoraWallet extends Mixins(LoadingMixin, TranslationMixin) {
   readonly Operations = Operations;
 
-  @Getter currentRoute!: RouteNames;
+  @state.router.currentRoute currentRoute!: RouteNames;
 
   async created(): Promise<void> {
     this.withApi(() => {}); // We need it just for loading state
