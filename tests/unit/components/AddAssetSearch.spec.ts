@@ -1,6 +1,4 @@
-import Vuex from 'vuex';
-
-import { useDescribe, useShallowMount } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_ASSETS } from '../../utils/mock';
 import { MOCK_ADD_ASSET_SEARCH } from '../../utils/AddAssetSearchMock';
 
@@ -15,25 +13,21 @@ const accountAssetsAddressTableMock = MOCK_ACCOUNT_ASSETS.reduce((param, item) =
 }, {});
 
 const createStore = () =>
-  new Vuex.Store({
-    modules: {
-      Account: {
-        getters: {
-          assets: () => MOCK_ASSETS,
-          assetsLoading: () => false,
-          accountAssets: () => MOCK_ACCOUNT_ASSETS,
-          accountAssetsAddressTable: () => accountAssetsAddressTableMock,
-        },
-        actions: {
-          getAssets: jest.fn(),
-        },
+  useVuex({
+    account: {
+      state: () => ({
+        assets: MOCK_ASSETS,
+        accountAssets: MOCK_ACCOUNT_ASSETS,
+      }),
+      getters: {
+        accountAssetsAddressTable: () => accountAssetsAddressTableMock,
       },
-      Router: {
-        actions: {
-          navigate: jest.fn(),
-        },
+    },
+    router: {
+      mutations: {
+        navigate: jest.fn(),
       },
-    } as any,
+    },
   });
 
 useDescribe('AddAssetSearch.vue', AddAssetSearch, () => {
@@ -45,7 +39,6 @@ useDescribe('AddAssetSearch.vue', AddAssetSearch, () => {
           return {
             loading: item.loading,
             search: item.search,
-            selectedAsset: item.selectedAsset,
           };
         },
         stubs: {

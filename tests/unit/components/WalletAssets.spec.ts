@@ -1,14 +1,10 @@
-import Vuex from 'vuex';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
-
 import WalletAssets from '@/components/WalletAssets.vue';
 import AssetList from '@/components/AssetList.vue';
 import AssetListItem from '@/components/AssetListItem.vue';
 
-import { useDescribe, useShallowMount } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_FIAT_PRICE_AND_APY_OBJECT, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 import { WalletPermissions } from '../../../src/consts';
-import type { FiatPriceAndApyObject } from '../../../src/services/subquery/types';
 
 const createWrapper = (options = {}) =>
   useShallowMount(WalletAssets, {
@@ -20,12 +16,24 @@ const createWrapper = (options = {}) =>
   });
 
 const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, withoutFiatAndApy = false) =>
-  new Vuex.Store({
-    getters: {
-      accountAssets: () => MOCK_ACCOUNT_ASSETS as Array<AccountAsset>,
-      fiatPriceAndApyObject: () => MOCK_FIAT_PRICE_AND_APY_OBJECT as FiatPriceAndApyObject,
-      withoutFiatAndApy: () => withoutFiatAndApy,
-      permissions: () => permissions,
+  useVuex({
+    settings: {
+      state: () => ({
+        permissions,
+        shouldBalanceBeHidden: false,
+      }),
+    },
+    account: {
+      state: () => ({
+        accountAssets: MOCK_ACCOUNT_ASSETS,
+        fiatPriceAndApyObject: MOCK_FIAT_PRICE_AND_APY_OBJECT,
+        withoutFiatAndApy,
+      }),
+    },
+    router: {
+      mutations: {
+        navigate: jest.fn(),
+      },
     },
   });
 

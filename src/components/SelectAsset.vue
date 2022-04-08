@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import TranslationMixin from './mixins/TranslationMixin';
 
@@ -26,8 +26,8 @@ import WalletBase from './WalletBase.vue';
 import AssetList from './AssetList.vue';
 
 import { RouteNames } from '../consts';
-
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import { state, mutation } from '../store/decorators';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -36,9 +36,9 @@ import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
   },
 })
 export default class SelectAsset extends Mixins(TranslationMixin) {
-  @Getter accountAssets!: Array<AccountAsset>;
+  @state.account.accountAssets accountAssets!: Array<AccountAsset>;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   handleBack(): void {
     this.navigate({ name: RouteNames.Wallet });

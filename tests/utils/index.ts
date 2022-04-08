@@ -41,3 +41,22 @@ export const useMount = (component: VueConstructor<Vue>, options = {}) => {
     ...options,
   });
 };
+
+export const useVuex = (submodules = {}) => {
+  const keys = Object.keys(submodules);
+  const namespacedSubmodules = {};
+  for (const key of keys) {
+    namespacedSubmodules[key] = {
+      namespaced: true,
+      ...submodules[key],
+    };
+  }
+  return new Vuex.Store({
+    modules: {
+      wallet: {
+        namespaced: true,
+        modules: namespacedSubmodules,
+      },
+    },
+  });
+};

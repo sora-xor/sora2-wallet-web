@@ -19,13 +19,14 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action } from 'vuex-class';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import WalletBase from './WalletBase.vue';
 import AddAssetSearch from './AddAssetSearch.vue';
 import AddAssetCustom from './AddAssetCustom.vue';
 import { RouteNames, AddAssetTabs } from '../consts';
+import { mutation } from '../store/decorators';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -37,7 +38,7 @@ import { RouteNames, AddAssetTabs } from '../consts';
 export default class AddAsset extends Mixins(TranslationMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   currentTab = AddAssetTabs.Search;
 

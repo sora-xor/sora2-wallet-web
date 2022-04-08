@@ -1,41 +1,26 @@
-import Vuex from 'vuex';
+import omit from 'lodash/fp/omit';
 
-import { useDescribe, useShallowMount } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_CREATE_TOKEN } from '../../utils/CreateTokenMock';
 
 import CreateToken from '@/components/CreateToken.vue';
-import { MOCK_NETWORK_FEES } from '../../utils/NetworkFeesMock';
 
 const createStore = () =>
-  new Vuex.Store({
-    modules: {
-      Settings: {
-        getters: {
-          networkFees: () => MOCK_NETWORK_FEES,
-        },
+  useVuex({
+    router: {
+      mutations: {
+        navigate: jest.fn(),
       },
-      Router: {
-        actions: {
-          navigate: jest.fn(),
-        },
-      },
-    } as any,
+    },
   });
 
 useDescribe('CreateToken.vue', CreateToken, () => {
   MOCK_CREATE_TOKEN.map((item) =>
     it(`[${item.title}]: should be rendered correctly`, () => {
+      const data = omit(['title'], item);
       const wrapper = useShallowMount(CreateToken, {
         store: createStore(),
-        data: () => {
-          return {
-            step: item.step,
-            tokenSymbol: item.tokenSymbol,
-            tokenName: item.tokenName,
-            tokenSupply: item.tokenSupply,
-            extensibleSupply: item.extensibleSupply,
-          };
-        },
+        data: () => data,
         computed: {
           hasEnoughXor: () => item.hasEnoughXor,
         },

@@ -1,17 +1,16 @@
 import { Mixins, Component } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
 import { FPNumber, NetworkFeesObject, Operation } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
 
 import NumberFormatterMixin from './NumberFormatterMixin';
-import { NetworkFeeWarningOptions } from '@/consts';
-
-import type { AccountAssetsTable } from '@/types/common';
+import { NetworkFeeWarningOptions } from '../../consts';
+import { state, getter } from '../../store/decorators';
+import type { AccountAssetsTable } from '../../types/common';
 
 @Component
 export default class NetworkFeeWarningMixin extends Mixins(NumberFormatterMixin) {
-  @Getter networkFees!: NetworkFeesObject;
-  @Getter accountAssetsAddressTable!: AccountAssetsTable;
+  @state.settings.networkFees networkFees!: NetworkFeesObject;
+  @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;
 
   get xorBalance(): FPNumber {
     const accountXor = this.accountAssetsAddressTable[XOR.address];

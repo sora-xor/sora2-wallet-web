@@ -24,19 +24,21 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Getter, Action } from 'vuex-class';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import { AddAssetTabs, RouteNames } from '../consts';
+import { state, mutation } from '../store/decorators';
+import type { Route } from '../store/router/types';
 
 @Component
 export default class AddAssetCustom extends Mixins(TranslationMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
-  @Getter assets!: Array<Asset>;
-  @Getter accountAssets!: Array<AccountAsset>;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @state.account.assets private assets!: Array<Asset>;
+  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   address = '';
   selectedAsset: Nullable<Asset> = null;
