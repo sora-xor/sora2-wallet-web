@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { Action } from 'vuex-class';
+import { mutation } from '../store/decorators';
 
 import NftTokenLogo from './NftTokenLogo.vue';
 
@@ -38,7 +38,7 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly accountAsset!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @mutation.router.navigate private navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
   get iconStyles(): object {
     return getAssetIconStyles(this.asset.address);
