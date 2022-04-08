@@ -1,5 +1,5 @@
 import type Vue from 'vue';
-import type { Store } from 'vuex';
+import type { PluginObject } from 'vue';
 
 import installWalletPlugins from './plugins';
 
@@ -35,22 +35,28 @@ import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
+import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
+import * as VUEX_TYPES from './store/types';
 import * as SUBQUERY_TYPES from './services/subquery/types';
 import * as WALLET_CONSTS from './consts';
 import * as WALLET_TYPES from './types/common';
+import { WalletModules } from './store/wallet';
 
-let store: Store<unknown>;
+type Store = typeof internalStore;
 
-const SoraWalletElements = {
-  install(vue: typeof Vue, options: any): void {
-    if (!options.store) {
+type PluginOptions = {
+  store: Store;
+};
+
+let store: Store;
+
+const SoraWalletElements: PluginObject<PluginOptions> = {
+  install(vue: typeof Vue, options?: PluginOptions): void {
+    if (!options || !options.store) {
       throw new Error('Please provide vuex store.');
     }
-    Object.values(WALLET_TYPES.Modules).forEach((module) => {
-      options.store.registerModule(module, modules[module]);
-    });
     store = options.store;
-    installWalletPlugins(vue, store);
+    installWalletPlugins(vue, store.original);
     vue.component('SoraWallet', SoraWallet); // Root component
   },
 };
@@ -80,7 +86,7 @@ async function initWallet({
       console.info('Connected to blockchain', connection.endpoint);
     }
     if (permissions) {
-      store.dispatch('setPermissions', permissions);
+      store.commit.wallet.settings.setPermissions(permissions);
     }
     try {
       api.initialize();
@@ -88,10 +94,13 @@ async function initWallet({
       console.error('Something went wrong during api initialization', error);
       throw error;
     }
-    await store.dispatch('getWhitelist', { whiteListOverApi });
-    await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
-    await store.dispatch('checkSigner');
-    await store.dispatch('setWalletLoaded', true);
+    await store.dispatch.wallet.account.getWhitelist(whiteListOverApi);
+    await Promise.all([
+      store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
+      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(),
+    ]);
+    await store.dispatch.wallet.account.checkSigner();
+    store.commit.wallet.settings.setWalletLoaded(true);
   }
 }
 
@@ -123,6 +132,14 @@ const mixins = {
   PaginationSearchMixin,
 };
 
+const vuex = {
+  walletModules: modules,
+  VuexOperation,
+  attachDecorator,
+  createDecoratorsObject,
+  WalletModules,
+};
+
 export {
   initWallet,
   en,
@@ -139,5 +156,7 @@ export {
   historyElementsFilter,
   SubqueryExplorerService,
   SUBQUERY_TYPES,
+  VUEX_TYPES,
+  vuex,
 };
 export default SoraWalletElements;

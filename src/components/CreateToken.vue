@@ -17,13 +17,15 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action } from 'vuex-class';
 
 import CreateSimpleToken from './CreateSimpleToken.vue';
 import CreateNftToken from './CreateNftToken.vue';
 import WalletBase from './WalletBase.vue';
+
 import TranslationMixin from './mixins/TranslationMixin';
 import { TokenTabs, Step, RouteNames } from '../consts';
+import { mutation } from '../store/decorators';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -35,7 +37,7 @@ import { TokenTabs, Step, RouteNames } from '../consts';
 export default class CreateToken extends Mixins(TranslationMixin) {
   readonly TokenTabs = TokenTabs;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   private step: Step = Step.CreateSimpleToken;
   currentTab: Step = Step.CreateSimpleToken;

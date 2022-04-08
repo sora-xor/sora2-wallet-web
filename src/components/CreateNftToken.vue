@@ -143,7 +143,6 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
 import { File as ImageNFT, NFTStorage } from 'nft.storage';
 import { FPNumber, Operation } from '@sora-substrate/util';
 import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
@@ -153,6 +152,7 @@ import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
 import FileUploader from './FileUploader.vue';
 import InfoLine from './InfoLine.vue';
 import WalletFee from './WalletFee.vue';
+
 import TranslationMixin from '../components/mixins/TranslationMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import LoadingMixin from '../components/mixins/LoadingMixin';
@@ -161,6 +161,8 @@ import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import { RouteNames, Step } from '../consts';
 import { api } from '../api';
 import { IpfsStorage } from '../util/ipfsStorage';
+import { mutation, state } from '../store/decorators';
+import type { Route } from '../store/router/types';
 import { IMAGE_MIME_TYPES } from '../util/image';
 
 @Component({
@@ -189,8 +191,8 @@ export default class CreateNftToken extends Mixins(
 
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
-  @Getter nftStorage!: NFTStorage;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @state.settings.nftStorage private nftStorage!: NFTStorage;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 

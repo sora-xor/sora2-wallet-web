@@ -1,17 +1,19 @@
-import Vuex from 'vuex';
-import { useDescribe, useShallowMount } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 
 import WalletAccount from '@/components/WalletAccount.vue';
 import { MOCK_ACCOUNT, MOCK_ACCOUNT_POLKADOT, MOCK_ADDRESS } from '../../utils/WalletAccountMock';
 
 const createStore = () =>
-  new Vuex.Store({
-    getters: {
-      account: () => ({
+  useVuex({
+    account: {
+      state: () => ({
         name: MOCK_ACCOUNT.name,
         address: MOCK_ACCOUNT.address,
         isExternal: MOCK_ACCOUNT.isExternal,
       }),
+      getters: {
+        account: () => MOCK_ACCOUNT,
+      },
     },
   });
 
@@ -68,7 +70,7 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
     const divAddressText = wrapper.find('.account-credentials_address').text();
     const startLine = divAddressText.substring(0, 12);
     const endLine = divAddressText.substring(15);
-    const accountGetter = wrapper.vm.$store.getters.account;
+    const accountGetter = wrapper.vm.$store.getters['wallet/account/account'];
 
     expect(accountGetter.name).toBe(divName.text());
     expect(accountGetter.address).toStartWith(startLine);

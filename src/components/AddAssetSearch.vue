@@ -18,7 +18,6 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from './AssetList.vue';
@@ -27,7 +26,9 @@ import SearchInput from './SearchInput.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import { AddAssetTabs, RouteNames } from '../consts';
+import { state, getter, mutation } from '../store/decorators';
 import type { AccountAssetsTable } from '../types/common';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -37,10 +38,12 @@ import type { AccountAssetsTable } from '../types/common';
 })
 export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
   readonly AddAssetTabs = AddAssetTabs;
-  @Getter assets!: Array<Asset>;
-  @Getter accountAssets!: Array<AccountAsset>;
-  @Getter accountAssetsAddressTable!: AccountAssetsTable;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+
+  @state.account.assets private assets!: Array<Asset>;
+  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @getter.account.accountAssetsAddressTable private accountAssetsAddressTable!: AccountAssetsTable;
+
+  @mutation.router.navigate private navigate!: (options: Route) => Promise<void>;
 
   search = '';
 
@@ -48,7 +51,7 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
     return this.search ? this.search.trim().toLowerCase() : '';
   }
 
-  get notAddedAssets(): Array<Asset> {
+  private get notAddedAssets(): Array<Asset> {
     return this.assets.filter((asset) => !(asset.address in this.accountAssetsAddressTable));
   }
 
