@@ -1,6 +1,4 @@
-import Vuex from 'vuex';
-
-import { useDescribe, useShallowMount } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import WalletConnection from '@/components/WalletConnection.vue';
 import WalletBase from '@/components/WalletBase.vue';
 import { POLKADOT_JS_ACCOUNTS_MOCK } from '../../utils/WalletConnectionMock';
@@ -9,19 +7,28 @@ const createStore = ({
   currentRouteParams = { isAccountSwitch: false },
   polkadotJsAccounts = POLKADOT_JS_ACCOUNTS_MOCK,
   extensionAvailability = true,
-} = {}) => {
-  return new Vuex.Store({
-    getters: {
-      currentRouteParams: () => currentRouteParams,
-      polkadotJsAccounts: () => polkadotJsAccounts,
-      extensionAvailability: () => extensionAvailability,
-      isWalletLoaded: () => true,
+} = {}) =>
+  useVuex({
+    settings: {
+      state: () => ({
+        isWalletLoaded: true,
+      }),
     },
-    actions: {
-      importPolkadotJs: jest.fn(),
+    account: {
+      state: () => ({
+        polkadotJsAccounts,
+        extensionAvailability,
+      }),
+      actions: {
+        importPolkadotJs: jest.fn(),
+      },
+    },
+    router: {
+      state: () => ({
+        currentRouteParams,
+      }),
     },
   });
-};
 
 useDescribe('WalletConnection.vue', WalletConnection, () => {
   it('[Extension available]: Connect account screen should be rendered', () => {

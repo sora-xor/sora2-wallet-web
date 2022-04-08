@@ -1,11 +1,11 @@
 import { Component, Vue } from 'vue-property-decorator';
-import { Getter, Action } from 'vuex-class';
 
+import { state, action } from '../../store/decorators';
 import type { ReferrerRewards } from '../../services/subquery/types';
 
 @Component
 export default class ReferralRewardsMixin extends Vue {
-  @Getter referralRewards!: ReferrerRewards;
+  @state.account.referralRewards referralRewards!: ReferrerRewards;
 
-  @Action getAccountReferralRewards!: AsyncVoidFn;
+  @action.account.getAccountReferralRewards getAccountReferralRewards!: AsyncVoidFn;
 }

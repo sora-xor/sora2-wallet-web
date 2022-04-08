@@ -1,6 +1,4 @@
-import Vuex from 'vuex';
-
-import { useDescribe, useShallowMount } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT, MOCK_HISTORY, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 
 import Wallet from '@/components/Wallet.vue';
@@ -9,29 +7,33 @@ import { WalletTabs } from '@/consts';
 import type { WalletPermissions } from '../../../src/consts';
 
 const createStore = (currentTab: WalletTabs, permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS) =>
-  new Vuex.Store({
-    modules: {
-      Account: {
-        getters: {
-          account: () => MOCK_ACCOUNT,
-          history: () => MOCK_HISTORY,
-          permissions: () => permissions,
-        },
-        actions: {
-          getAccountHistory: jest.fn(),
-        },
+  useVuex({
+    settings: {
+      state: () => ({
+        permissions,
+      }),
+    },
+    router: {
+      state: () => ({
+        currentRouteParams: { currentTab },
+      }),
+    },
+    account: {
+      state: () => ({
+        permissions,
+      }),
+      getters: {
+        account: () => MOCK_ACCOUNT,
       },
-      Router: {
-        getters: {
-          currentRouteParams: () => ({
-            currentTab,
-          }),
-        },
-        actions: {
-          navigate: jest.fn(),
-        },
+      actions: {
+        logout: jest.fn(),
       },
-    } as any,
+    },
+    transactions: {
+      state: () => ({
+        history: MOCK_HISTORY,
+      }),
+    },
   });
 
 useDescribe('Wallet.vue', Wallet, () => {

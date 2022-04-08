@@ -36,11 +36,11 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
 
 import { copyToClipboard, formatAddress, getExplorerLinks, formatSoraAddress } from '../util';
 import TranslationMixin from './mixins/TranslationMixin';
 import { ExplorerLink, SoraNetwork, HashType, ExplorerType } from '../consts';
+import { state } from '../store/decorators';
 
 @Component
 export default class TransactionHashView extends Mixins(TranslationMixin) {
@@ -48,7 +48,7 @@ export default class TransactionHashView extends Mixins(TranslationMixin) {
   @Prop({ type: String, required: true }) readonly type!: HashType;
   @Prop({ type: String, required: true }) readonly translation!: string;
 
-  @Getter soraNetwork!: SoraNetwork;
+  @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
 
   get formattedValue(): string {
     if (this.type === HashType.Account) {

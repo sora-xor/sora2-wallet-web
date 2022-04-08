@@ -63,7 +63,7 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
   @Watch('size')
   @Watch('assets')
-  private async rerenderScrollbar() {
+  private async rerenderScrollbar(): Promise<void> {
     await this.$nextTick();
     this.updateScrollbar();
     this.handleScroll();

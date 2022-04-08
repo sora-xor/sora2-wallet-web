@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Ref } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import TranslationMixin from './mixins/TranslationMixin';
 
@@ -26,9 +26,9 @@ import QrCode from './QrCode.vue';
 import { api } from '../api';
 import { RouteNames } from '../consts';
 import { svgSaveAs, IMAGE_EXTENSIONS } from '../util/image';
-
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import { state, getter, mutation } from '../store/decorators';
 import type { Account } from '../types/common';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -38,12 +38,12 @@ import type { Account } from '../types/common';
   },
 })
 export default class RecieveToken extends Mixins(TranslationMixin) {
-  @Getter account!: Account;
-  @Getter currentRouteParams!: any;
-  @Getter previousRoute!: RouteNames;
-  @Getter previousRouteParams!: any;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset>;
+  @state.router.previousRoute private previousRoute!: RouteNames;
+  @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
+  @getter.account.account private account!: Account;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   @Ref('qrcode') readonly qrcode!: QrCode;
 

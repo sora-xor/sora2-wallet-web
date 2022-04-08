@@ -26,11 +26,11 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
 import { FPNumber } from '@sora-substrate/util';
 
 import { FontSizeRate, FontWeightRate, HiddenValue } from '../consts';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
+import { state } from '../store/decorators';
 
 interface FormattedAmountValues {
   integer: string;
@@ -80,7 +80,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    */
   @Prop({ default: false, type: Boolean }) readonly withLeftShift!: boolean;
 
-  @Getter shouldBalanceBeHidden!: boolean;
+  @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
   isValueWider = false;
 
