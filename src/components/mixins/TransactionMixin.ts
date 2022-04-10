@@ -116,10 +116,9 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       if (value.status === TransactionStatus.InBlock) return;
     } else if (value.type === Operation.RegisterAsset && value.assetAddress) {
       // Add asset automatically for registered assets for finalized txs made by the account
-      // TODO [will be done in this PR]: define asset symbol in message & think how to scroll into view
       this.addAsset(value.assetAddress).then(() => {
         this.$notify({
-          message: this.t('addAsset.success'),
+          message: this.t('addAsset.success', { symbol: value.symbol || '' }),
           type: 'success',
           title: '',
         });
