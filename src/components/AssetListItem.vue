@@ -92,7 +92,7 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     flex-direction: column;
     align-items: flex-start;
     line-height: var(--s-line-height-big);
-    padding: 0 $basic-spacing-small;
+    padding: 0 var(--s-basic-spacing);
     width: 30%;
   }
 
