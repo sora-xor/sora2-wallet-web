@@ -1,6 +1,7 @@
 <template>
   <img
     v-show="asset.content && showNftImage"
+    v-on="$listeners"
     class="asset-logo nft-image"
     :src="nftImageUrl"
     ref="nftImage"

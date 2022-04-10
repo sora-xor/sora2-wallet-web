@@ -169,7 +169,7 @@ export default {
   addAsset: {
     title: '@:addAssetText',
     action: '@:addAssetText',
-    success: 'Asset was added successfully!',
+    success: 'Asset {symbol} was added successfully!',
     [AddAssetTabs.Search]: {
       title: '@:searchText',
       placeholder: 'Filter by Asset ID, Name or Ticker Symbol',

@@ -1,4 +1,5 @@
 import getOr from 'lodash/fp/getOr';
+import omit from 'lodash/fp/omit';
 import { BN } from '@polkadot/util';
 import { FPNumber, Operation, TransactionStatus, HistoryItem } from '@sora-substrate/util';
 import { RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
@@ -129,10 +130,11 @@ const getTransactionStatus = (tx: HistoryElement): string => {
   return TransactionStatus.Error;
 };
 
-const getAssetByAddress = async (address: string): Promise<Nullable<Asset | WhitelistItem>> => {
+const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
   try {
     if (address in store.getters.wallet.account.whitelist) {
-      return store.getters.wallet.account.whitelist[address];
+      const whitelistData = omit(['icon'], store.getters.wallet.account.whitelist[address]);
+      return { ...whitelistData, address };
     }
     return await api.assets.getAssetInfo(address);
   } catch (error) {
@@ -166,7 +168,7 @@ const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]
   const formatted: RewardInfo[] = [];
 
   for (const { assetId, amount } of rewards) {
-    const asset = (await getAssetByAddress(assetId)) as Asset;
+    const asset = await getAssetByAddress(assetId);
 
     if (asset) {
       formatted.push({

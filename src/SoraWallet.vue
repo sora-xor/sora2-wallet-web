@@ -68,9 +68,9 @@ export default class SoraWallet extends Mixins(LoadingMixin, TranslationMixin) {
     this.$emit('learn-more');
   }
 
-  handleShowAddAssetNotification(): void {
+  handleShowAddAssetNotification(symbol?: string): void {
     this.$notify({
-      message: this.t('addAsset.success'),
+      message: this.t('addAsset.success', { symbol: symbol || '' }),
       type: 'success',
       title: '',
     });
