@@ -409,18 +409,18 @@ export default class CreateNftToken extends Mixins(
 </style>
 
 <style lang="scss">
-.ipfs-tooltip {
-  font-size: 10px !important;
-  padding: 10px 15px !important;
-  &__icon {
-    color: var(--color-base-content-tertiary) !important;
-    &:hover {
-      cursor: pointer;
+.wallet-settings-create-token {
+  .ipfs-tooltip {
+    font-size: 10px !important;
+    padding: 10px 15px !important;
+    &__icon {
+      color: var(--s-color-base-content-tertiary);
+      &:hover {
+        cursor: pointer;
+        color: var(--s-color-base-content-secondary);
+      }
     }
   }
-}
-
-.wallet-settings-create-token {
   &_desc {
     color: var(--s-color-base-content-primary);
     font-size: var(--s-font-size-extra-small);
