@@ -53,9 +53,10 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
   }
 
   async handleAddAsset(): Promise<void> {
-    await this.withLoading(async () => await this.addAsset((this.asset || {}).address));
+    const asset: Partial<Asset> = this.asset || {};
+    await this.withLoading(async () => await this.addAsset(asset.address));
     this.navigate({ name: RouteNames.Wallet, params: { asset: this.asset } });
-    this.$emit('add-asset');
+    this.$emit('add-asset', asset.symbol);
   }
 }
 </script>
