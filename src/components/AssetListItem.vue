@@ -1,7 +1,12 @@
 <template>
   <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
-    <div class="asset-logo" :class="iconClasses" :style="iconStyles" @click="handleOpenAssetDetails" />
-    <nft-token-logo :asset="asset" class="asset-logo__nft-image" />
+    <div class="asset-logo" :class="iconClasses" :style="iconStyles" @click.stop="handleIconClick" />
+    <nft-token-logo
+      :asset="asset"
+      class="asset-logo__nft-image"
+      :class="{ 'asset-logo--clickable': withClickableLogo }"
+      @click.stop="handleIconClick"
+    />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
@@ -15,14 +20,12 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { mutation } from '../store/decorators';
 
 import NftTokenLogo from './NftTokenLogo.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import TokenAddress from './TokenAddress.vue';
 
-import { RouteNames } from '../consts';
 import { getAssetIconStyles, getAssetIconClasses } from '../util';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
@@ -35,24 +38,24 @@ import type { Asset } from '@sora-substrate/util/build/assets/types';
 })
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
-  @Prop({ default: false, type: Boolean }) readonly accountAsset!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
-
-  @mutation.router.navigate private navigate!: (options: { name: string; params?: object }) => Promise<void>;
 
   get iconStyles(): object {
     return getAssetIconStyles(this.asset.address);
   }
 
   get iconClasses(): Array<string> {
-    return getAssetIconClasses(this.asset);
+    const classes = getAssetIconClasses(this.asset);
+    if (this.withClickableLogo) {
+      return [...classes, 'asset-logo--clickable'];
+    }
+    return classes;
   }
 
-  handleOpenAssetDetails(event: Event): void {
-    if (this.accountAsset) {
-      event.stopImmediatePropagation();
+  handleIconClick(): void {
+    if (this.withClickableLogo) {
       this.$emit('show-details', this.asset);
-      this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.asset } });
     }
   }
 }
@@ -73,10 +76,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     flex-shrink: 0;
     @include asset-logo-styles(42px);
 
-    &:hover {
-      cursor: pointer;
-    }
-
     &__nft-image {
       border-radius: 50%;
       object-fit: cover;
@@ -84,6 +83,10 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
       height: var(--s-size-medium);
       position: absolute;
       background-color: var(--s-color-base-background);
+    }
+
+    &--clickable {
+      cursor: pointer;
     }
   }
 

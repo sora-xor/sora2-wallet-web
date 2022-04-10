@@ -18,7 +18,7 @@
       <template #default="{ item, index }">
         <asset-list-item
           :asset="item"
-          :account-asset="accountAssets"
+          :with-clickable-logo="withClickableLogo"
           :with-fiat="withFiat"
           :key="index"
           v-on="wrapListeners(item)"
@@ -63,7 +63,7 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly assets!: Array<Asset>;
   @Prop({ default: 5, type: Number }) readonly size!: number;
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly accountAssets!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Ref('wrap') readonly wrap!: RecycleScroller;
 
