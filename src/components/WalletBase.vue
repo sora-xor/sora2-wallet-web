@@ -64,9 +64,6 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     if (this.showClose) {
       cssClasses.push('base-title--actions');
     }
-    if (!this.showHeader) {
-      cssClasses.push('base-title--hide');
-    }
     return cssClasses;
   }
 
@@ -119,9 +116,6 @@ $button-size: var(--s-size-medium);
         padding-left: calc(#{$button-size} * 2 + #{$basic-spacing-medium});
       }
       padding-right: calc(#{$button-size} * 2 + #{$basic-spacing-medium});
-    }
-    &--hide {
-      position: absolute;
     }
     &_text {
       flex: 1;
