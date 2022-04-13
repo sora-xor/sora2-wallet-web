@@ -225,3 +225,10 @@
     max-height: 0px;
   }
 }
+
+@mixin element-size($className: '', $width: 40px, $height: $width) {
+  .#{$className} {
+    height: $height;
+    width: $width;
+  }
+}

@@ -1,12 +1,13 @@
 <template>
   <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
-    <div class="asset-logo" :class="iconClasses" :style="iconStyles" @click.stop="handleIconClick" />
-    <nft-token-logo
+    <!-- <div class="asset-logo" :class="iconClasses" :style="iconStyles" @click.stop="handleIconClick" /> -->
+    <token-logo :token="asset" size="big" @click.native="handleIconClick" />
+    <!-- <nft-token-logo
       :asset="asset"
       class="asset-logo__nft-image"
       :class="{ 'asset-logo--clickable': withClickableLogo }"
       @click.stop="handleIconClick"
-    />
+    /> -->
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
@@ -22,6 +23,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import NftTokenLogo from './NftTokenLogo.vue';
+import TokenLogo from './TokenLogo.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import TokenAddress from './TokenAddress.vue';
@@ -33,6 +35,7 @@ import type { Asset } from '@sora-substrate/util/build/assets/types';
 @Component({
   components: {
     NftTokenLogo,
+    TokenLogo,
     TokenAddress,
   },
 })
@@ -40,18 +43,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
-
-  get iconStyles(): object {
-    return getAssetIconStyles(this.asset.address);
-  }
-
-  get iconClasses(): Array<string> {
-    const classes = getAssetIconClasses(this.asset);
-    if (this.withClickableLogo) {
-      return [...classes, 'asset-logo--clickable'];
-    }
-    return classes;
-  }
 
   handleIconClick(): void {
     if (this.withClickableLogo) {
