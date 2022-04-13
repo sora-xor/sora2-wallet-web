@@ -33,6 +33,7 @@ $inner-padding: 20px;
   flex-direction: column;
   align-items: center;
   text-align: center;
+  margin-top: calc(var(--s-size-big) * -1);
 
   &__warning-icon {
     color: var(--s-color-status-error) !important;
