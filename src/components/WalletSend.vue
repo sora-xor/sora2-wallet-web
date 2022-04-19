@@ -138,7 +138,7 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import { RouteNames } from '../consts';
-import { formatAddress, formatSoraAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
+import { formatAddress, formatSoraAddress } from '../util';
 import { api } from '../api';
 import { state, mutation, action } from '../store/decorators';
 import type { Route } from '../store/router/types';
@@ -204,17 +204,6 @@ export default class WalletSend extends Mixins(
       ...(this.currentRouteParams.asset as AccountAsset),
       balance: this.assetBalance as AccountBalance,
     };
-  }
-
-  get iconClasses(): Array<string> {
-    return getAssetIconClasses(this.asset);
-  }
-
-  get iconStyles(): object {
-    if (!this.asset) {
-      return {};
-    }
-    return getAssetIconStyles(this.asset.address);
   }
 
   get fee(): FPNumber {

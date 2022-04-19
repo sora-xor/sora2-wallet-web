@@ -130,7 +130,7 @@ import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import { RouteNames } from '../consts';
-import { copyToClipboard, delay, getAssetIconStyles, shortenValue, getAssetIconClasses } from '../util';
+import { copyToClipboard, delay, shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 import { state, getter } from '../store/decorators';
 import { Operations, Account } from '../types/common';
@@ -294,17 +294,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     return Object.values(this.history).every(
       (item) => ![item.assetAddress, item.asset2Address].includes(this.asset.address)
     );
-  }
-
-  get iconClasses(): Array<string> {
-    return getAssetIconClasses(this.asset);
-  }
-
-  get iconStyles(): object {
-    if (!this.asset) {
-      return {};
-    }
-    return getAssetIconStyles(this.asset.address);
   }
 
   handleBack(): void {
