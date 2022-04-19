@@ -10,7 +10,7 @@ import LoadingMixin from './LoadingMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { HiddenValue } from '../../consts';
 import { getter, mutation, action } from '../../store/decorators';
-import type { Account } from '../../types/common';
+import type { Account, AccountAssetsTable } from '../../types/common';
 
 const twoAssetsBasedOperations = [
   Operation.AddLiquidity,
@@ -24,6 +24,7 @@ const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
 @Component
 export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
   @getter.account.account account!: Account;
+  @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;
 
   @mutation.transactions.addActiveTx addActiveTransaction!: (id: string) => void;
   @mutation.transactions.removeActiveTxs removeActiveTxs!: (ids: string[]) => void;
@@ -115,14 +116,18 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       }
       if (value.status === TransactionStatus.InBlock) return;
     } else if (value.type === Operation.RegisterAsset && value.assetAddress) {
-      // Add asset automatically for registered assets for finalized txs made by the account
-      this.addAsset(value.assetAddress).then(() => {
-        this.$notify({
-          message: this.t('addAsset.success', { symbol: value.symbol || '' }),
-          type: 'success',
-          title: '',
+      // If user was really fast and already added tx
+      const alreadyExists = this.accountAssetsAddressTable[value.assetAddress];
+      if (!alreadyExists) {
+        // Add asset automatically for registered assets for finalized txs made by the account
+        this.addAsset(value.assetAddress).then(() => {
+          this.$notify({
+            message: this.t('addAsset.success', { symbol: value.symbol || '' }),
+            type: 'success',
+            title: '',
+          });
         });
-      });
+      }
     }
     // remove active tx on finalized or error status
     this.removeActiveTxs([value.id as string]);
