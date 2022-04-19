@@ -63,7 +63,7 @@ export const getExtensionSigner = async (address: string) => {
  * @param soraNetwork
  * Devnet will set by default
  */
-export const getExplorerLinks = (soraNetwork?: SoraNetwork): Array<ExplorerLink> => {
+export const getExplorerLinks = (soraNetwork?: Nullable<SoraNetwork>): Array<ExplorerLink> => {
   switch (soraNetwork) {
     case SoraNetwork.Prod:
       return [
