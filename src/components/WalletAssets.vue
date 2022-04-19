@@ -97,7 +97,7 @@ import LoadingMixin from './mixins/LoadingMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 
 import { RouteNames, HiddenValue } from '../consts';
-import { getAssetIconStyles, formatAddress, getAssetIconClasses } from '../util';
+import { formatAddress } from '../util';
 import { state, mutation } from '../store/decorators';
 import type { WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';
@@ -153,9 +153,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
   }
-
-  getAssetIconStyles = getAssetIconStyles;
-  getAssetIconClasses = getAssetIconClasses;
 
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;

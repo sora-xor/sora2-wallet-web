@@ -24,11 +24,7 @@ import TranslationMixin from '@/components/mixins/TranslationMixin';
 import { LogoSize, ObjectInit, RouteNames } from '../consts';
 
 import type { Route } from '../store/router/types';
-
-// TODO: move to js lib
-type WhitelistIdsBySymbol = {
-  [key: string]: string;
-};
+import type { WhitelistIdsBySymbol } from '../types/common';
 
 @Component({
   components: {
