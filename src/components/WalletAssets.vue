@@ -15,7 +15,6 @@
       divider
       :assets="formattedAccountAssets"
       :size="3"
-      @show-details="handleOpenAssetDetails"
     >
       <template #value="asset">
         <formatted-amount-with-fiat-value

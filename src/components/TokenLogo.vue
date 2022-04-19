@@ -1,10 +1,12 @@
 <template>
   <fragment>
-    <span :class="iconClasses" :style="iconStyles" />
+    <span :class="iconClasses" :style="iconStyles" @click="handleIconClick" />
     <nft-token-logo
+      v-if="token.content"
       :asset="token"
       class="asset-logo asset-logo__nft-image"
-      :class="{ 'asset-logo--clickable': withClickableLogo }"
+      :class="iconClasses"
+      @click="handleIconClick"
     />
   </fragment>
 </template>
@@ -14,13 +16,14 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import NftTokenLogo from './NftTokenLogo.vue';
 
-import { api } from '../api';
 import { getAssetIconStyles, getAssetIconClasses } from '../util';
-import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/util/build/assets/types';
-import { getter } from '../store/decorators';
+import type { Asset, AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/types';
+import { getter, mutation } from '../store/decorators';
 
 import TranslationMixin from '@/components/mixins/TranslationMixin';
-import { LogoSize, ObjectInit } from '../consts';
+import { LogoSize, ObjectInit, RouteNames } from '../consts';
+
+import type { Route } from '../store/router/types';
 
 // TODO: move to js lib
 type WhitelistIdsBySymbol = {
@@ -35,23 +38,12 @@ type WhitelistIdsBySymbol = {
 export default class TokenLogo extends Mixins(TranslationMixin) {
   @getter.account.whitelist whitelist!: Whitelist;
   @getter.account.whitelistIdsBySymbol whitelistIdsBySymbol!: WhitelistIdsBySymbol;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   @Prop({ type: String, default: '' }) readonly tokenSymbol!: string;
   @Prop({ type: Object, default: ObjectInit }) readonly token!: AccountAsset | Asset;
   @Prop({ type: String, default: LogoSize.MEDIUM, required: false }) readonly size!: LogoSize;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
-
-  // get assetAddress(): string {
-  //   return this.tokenSymbol ? this.whitelistIdsBySymbol[this.tokenSymbol] : this.token.address;
-  // }
-
-  // get whitelistedItem(): Nullable<WhitelistItem> {
-  //   if (!(this.token || this.tokenSymbol)) {
-  //     return null;
-  //   }
-  //   const address = this.assetAddress;
-  //   return this.whitelist[address];
-  // }
 
   get iconStyles(): object {
     return getAssetIconStyles(this.token.address);
@@ -60,29 +52,22 @@ export default class TokenLogo extends Mixins(TranslationMixin) {
   get iconClasses(): Array<string> {
     let classes = getAssetIconClasses(this.token);
 
-    const tokenLogoClass = 'token-logo';
+    const tokenLogoClass = 'asset-logo';
     classes = [...classes, tokenLogoClass];
     classes.push(`${tokenLogoClass}--${this.size.toLowerCase()}`);
 
     if (this.withClickableLogo) {
-      return [...classes, 'asset-logo--clickable'];
+      classes.push('asset-logo--clickable');
     }
+
     return classes;
   }
 
-  // get tokenClasses(): Array<string> {
-  //   const tokenLogoClass = 'token-logo';
-  //   const classes = [tokenLogoClass];
-  //   classes.push(`${tokenLogoClass}--${this.size.toLowerCase()}`);
-
-  //   const asset = this.whitelistedItem;
-  //   if (!asset) {
-  //     const isNft = this.token ? api.assets.isNft(this.token) : false;
-  //     return [...classes, isNft ? 'token-logo-nft' : 's-icon-notifications-info-24'];
-  //   }
-
-  //   return classes;
-  // }
+  handleIconClick(): void {
+    if (this.withClickableLogo) {
+      this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.token } });
+    }
+  }
 }
 </script>
 
@@ -91,49 +76,30 @@ $token-background-color: var(--s-color-base-on-accent);
 $token-color: var(--s-color-base-content-tertiary);
 
 .asset-logo {
-  @include asset-logo-styles(42px);
-
   &__nft-image {
     border-radius: 50%;
     object-fit: cover;
-    width: var(--s-size-medium);
-    height: var(--s-size-medium);
-    position: absolute;
-    background-color: var(--s-color-base-background);
+    position: absolute !important;
   }
-}
 
-.token-logo {
-  background-color: $token-background-color;
-  background-size: 60%;
-  background-repeat: no-repeat;
-  background-position: 50%;
-  border: none;
-  box-shadow: none;
-  border-radius: 50%;
-  text-align: center;
-  position: relative;
-  font-style: unset;
-  &::before {
-    display: block;
-    color: $token-color;
-  }
-  &-nft::before {
-    font-weight: 800;
-    content: 'NFT';
+  &--clickable {
+    cursor: pointer;
   }
 }
 
 @mixin token-logo-size($size: '') {
-  $className: 'token-logo';
+  $className: 'asset-logo';
   @if ($size == 'mini') {
     $size-px: 16px;
     $classNameMini: '#{$className}--mini';
     @include element-size($classNameMini, $size-px);
     .#{$classNameMini} {
+      @include asset-logo-styles;
       line-height: $size-px;
       font-size: 12px;
+      color: var(--s-color-base-content-tertiary);
       &.#{$className}-nft::before {
+        content: 'NFT';
         font-size: 6px;
       }
     }
@@ -142,10 +108,13 @@ $token-color: var(--s-color-base-content-tertiary);
     $classNameSmall: '#{$className}--small';
     @include element-size($classNameSmall, $size-px);
     .#{$classNameSmall} {
+      @include asset-logo-styles;
       line-height: $size-px;
       font-size: 18px;
       &.#{$className}-nft::before {
+        content: 'NFT';
         font-size: 8px;
+        font-weight: 800;
       }
     }
   } @else if ($size == 'medium') {
@@ -153,10 +122,13 @@ $token-color: var(--s-color-base-content-tertiary);
     $classNameMedium: '#{$className}--medium';
     @include element-size($classNameMedium, $size-px);
     .#{$classNameMedium} {
+      @include asset-logo-styles;
       line-height: $size-px;
       font-size: 24px;
       &.#{$className}-nft::before {
+        content: 'NFT';
         font-size: 12px;
+        font-weight: 800;
       }
     }
   } @else if ($size == 'big') {
@@ -164,10 +136,27 @@ $token-color: var(--s-color-base-content-tertiary);
     $classNameBig: '#{$className}--big';
     @include element-size($classNameBig, $size-px);
     .#{$classNameBig} {
+      @include asset-logo-styles;
       line-height: $size-px;
       font-size: 32px;
       &.#{$className}-nft::before {
+        content: 'NFT';
         font-size: 14px;
+        font-weight: 800;
+      }
+    }
+  } @else if ($size == 'bigger') {
+    $size-px: 48px;
+    $classNameBig: '#{$className}--bigger';
+    @include element-size($classNameBig, $size-px);
+    .#{$classNameBig} {
+      @include asset-logo-styles;
+      line-height: $size-px;
+      font-size: 32px;
+      &.#{$className}-nft::before {
+        content: 'NFT';
+        font-size: 14px;
+        font-weight: 800;
       }
     }
   } @else if ($size == 'large') {
@@ -175,10 +164,13 @@ $token-color: var(--s-color-base-content-tertiary);
     $classNameLarge: '#{$className}--large';
     @include element-size($classNameLarge, $size-px);
     .#{$classNameLarge} {
+      @include asset-logo-styles;
       line-height: $size-px;
       font-size: 64px;
       &.#{$className}-nft::before {
+        content: 'NFT';
         font-size: 28px;
+        font-weight: 800;
       }
     }
   }
@@ -188,5 +180,6 @@ $token-color: var(--s-color-base-content-tertiary);
 @include token-logo-size('small');
 @include token-logo-size('medium');
 @include token-logo-size('big');
+@include token-logo-size('bigger');
 @include token-logo-size('large');
 </style>

@@ -102,7 +102,7 @@ export const getAssetIconClasses = (asset: Nullable<AccountAsset | Asset>) => {
     if (!isNft) {
       return ['asset-default', 's-icon-notifications-info-24'];
     } else {
-      return ['asset-default', 'asset-default-nft'];
+      return ['asset-default', 'asset-logo-nft'];
     }
   }
   return [];
