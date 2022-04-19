@@ -39,6 +39,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
     class="wallet-assets-list"
     divider="true"
     size="3"
+    withclickablelogo="true"
     withfiat="true"
   />
    

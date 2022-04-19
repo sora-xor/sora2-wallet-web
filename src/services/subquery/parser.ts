@@ -1,8 +1,9 @@
+import getOr from 'lodash/fp/getOr';
+import omit from 'lodash/fp/omit';
+import { BN } from '@polkadot/util';
 import { FPNumber, Operation, TransactionStatus, HistoryItem } from '@sora-substrate/util';
 import { RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
-import { BN } from '@polkadot/util';
-import getOr from 'lodash/fp/getOr';
-import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 
 import store from '../../store';
@@ -85,7 +86,7 @@ const OperationsMap = {
   },
 };
 
-const getAssetSymbol = (asset: Nullable<Asset>): string => (asset && asset.symbol ? asset.symbol : '');
+const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asset && asset.symbol ? asset.symbol : '');
 
 const getTransactionId = (tx: HistoryElement): string => tx.id;
 
@@ -131,8 +132,9 @@ const getTransactionStatus = (tx: HistoryElement): string => {
 
 const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
   try {
-    if (address in store.getters.whitelist) {
-      return { ...store.getters.whitelist[address], address };
+    if (address in store.getters.wallet.account.whitelist) {
+      const whitelistData = omit(['icon'], store.getters.wallet.account.whitelist[address]);
+      return { ...whitelistData, address };
     }
     return await api.assets.getAssetInfo(address);
   } catch (error) {
@@ -302,8 +304,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const asset = await getAssetByAddress(assetAddress as string);
         const asset2 = await getAssetByAddress(asset2Address as string);
 
-        payload.assetAddress = asset ? asset.address : '';
-        payload.asset2Address = asset2 ? asset2.address : '';
+        payload.assetAddress = asset ? (assetAddress as string) : '';
+        payload.asset2Address = asset2 ? (asset2Address as string) : '';
         payload.symbol = getAssetSymbol(asset);
         payload.symbol2 = getAssetSymbol(asset2);
         payload.amount = String(amount);

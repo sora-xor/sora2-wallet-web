@@ -63,7 +63,7 @@ export const getExtensionSigner = async (address: string) => {
  * @param soraNetwork
  * Devnet will set by default
  */
-export const getExplorerLinks = (soraNetwork?: SoraNetwork): Array<ExplorerLink> => {
+export const getExplorerLinks = (soraNetwork?: Nullable<SoraNetwork>): Array<ExplorerLink> => {
   switch (soraNetwork) {
     case SoraNetwork.Prod:
       return [
@@ -96,7 +96,7 @@ export const getAssetIconClasses = (asset: Nullable<AccountAsset | Asset>) => {
   if (!asset || !asset.address) {
     return ['asset-default', 's-icon-notifications-info-24'];
   }
-  const whitelisted = store.getters.whitelist[asset.address];
+  const whitelisted = store.getters.wallet.account.whitelist[asset.address];
   if (!whitelisted) {
     const isNft = api.assets.isNft(asset);
     if (!isNft) {
@@ -112,7 +112,7 @@ export const getAssetIconStyles = (address: string) => {
   if (!address) {
     return {};
   }
-  const asset = store.getters.whitelist[address];
+  const asset = store.getters.wallet.account.whitelist[address];
   if (!asset) {
     return {};
   }
@@ -153,14 +153,6 @@ export const getStatusClass = (status: string) => {
 
 export const delay = async (ms = 50) => {
   await new Promise((resolve) => setTimeout(resolve, ms));
-};
-
-export const toHashTable = (list: Array<any>, key: string) => {
-  return list.reduce((result, item) => {
-    if (!(key in item)) return result;
-
-    return { ...result, [item[key]]: item };
-  }, {});
 };
 
 export const shortenValue = (string: string, length = string.length / 2): string => {

@@ -15,9 +15,14 @@
           <slot name="list-empty">{{ t('assets.empty') }}</slot>
         </div>
       </template>
-
       <template #default="{ item, index }">
-        <asset-list-item :asset="item" :with-fiat="withFiat" :key="index" v-on="wrapListeners(item)">
+        <asset-list-item
+          :asset="item"
+          :with-clickable-logo="withClickableLogo"
+          :with-fiat="withFiat"
+          :key="index"
+          v-on="wrapListeners(item)"
+        >
           <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
             <slot :name="name" v-bind="slotData" />
           </template>
@@ -58,12 +63,13 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly assets!: Array<Asset>;
   @Prop({ default: 5, type: Number }) readonly size!: number;
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Ref('wrap') readonly wrap!: RecycleScroller;
 
   @Watch('size')
   @Watch('assets')
-  private async rerenderScrollbar() {
+  private async rerenderScrollbar(): Promise<void> {
     await this.$nextTick();
     this.updateScrollbar();
     this.handleScroll();

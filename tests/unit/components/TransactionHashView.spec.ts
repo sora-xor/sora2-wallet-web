@@ -1,20 +1,16 @@
-import Vuex from 'vuex';
-
-import { useDescribe, useShallowMount } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_TRANSACTION_HASH_VIEW } from '../../utils/TransactionHashViewMock';
 
 import TransactionHashView from '@/components/TransactionHashView.vue';
 import { SoraNetwork } from '@/consts';
 
 const createStore = (env: SoraNetwork) =>
-  new Vuex.Store({
-    modules: {
-      Settings: {
-        getters: {
-          soraNetwork: () => env,
-        },
-      },
-    } as any,
+  useVuex({
+    settings: {
+      state: () => ({
+        soraNetwork: env,
+      }),
+    },
   });
 
 useDescribe('TransactionHashView.vue', TransactionHashView, () => {

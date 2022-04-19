@@ -1,32 +1,48 @@
-import Vuex from 'vuex';
-import { TransactionStatus, AccountHistory, HistoryItem } from '@sora-substrate/util';
+import { TransactionStatus, HistoryItem } from '@sora-substrate/util';
 
 import WalletHistory from '@/components/WalletHistory.vue';
-import { useDescribe, useShallowMount, useMount } from '../../utils';
+import { useDescribe, useShallowMount, useMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_ACCOUNT_HISTORY, MOCK_EXTERNAL_HISTORY, MOCK_ASSETS } from '../../utils/mock';
 import { MOCK_ACCOUNT } from '../../utils/WalletAccountMock';
 import type { Account } from '@/types/common';
 
-const createStore = ({ history = {}, externalHistory = {} } = {}) => {
-  return new Vuex.Store({
-    getters: {
-      assets: () => MOCK_ASSETS,
-      account: () => MOCK_ACCOUNT as Account,
-      history: () => history as AccountHistory<HistoryItem>,
-      externalHistory: () => externalHistory as AccountHistory<HistoryItem>,
-      externalHistoryTotal: () => 4,
-      shouldBalanceBeHidden: () => true as boolean,
+const createStore = ({ history = {}, externalHistory = {} } = {}) =>
+  useVuex({
+    settings: {
+      state: () => ({
+        shouldBalanceBeHidden: true,
+      }),
     },
-    actions: {
-      getAssets: jest.fn(),
-      getAccountHistory: jest.fn(),
-      getExternalHistory: jest.fn(),
-      resetExternalHistory: jest.fn(),
-      clearSyncedAccountHistory: jest.fn(),
-      navigate: jest.fn(),
+    account: {
+      state: () => ({
+        assets: MOCK_ASSETS,
+      }),
+      getters: {
+        account: () => MOCK_ACCOUNT as Account,
+      },
+    },
+    router: {
+      mutations: {
+        navigate: jest.fn(),
+      },
+    },
+    transactions: {
+      state: () => ({
+        history,
+        externalHistory,
+        externalHistoryTotal: 4,
+      }),
+      mutations: {
+        getHistory: jest.fn(),
+        resetExternalHistory: jest.fn(),
+        addActiveTx: jest.fn(),
+        removeActiveTxs: jest.fn(),
+      },
+      actions: {
+        getExternalHistory: jest.fn(),
+      },
     },
   });
-};
 
 useDescribe('WalletHistory.vue', WalletHistory, () => {
   it('should be rendered correctly', () => {

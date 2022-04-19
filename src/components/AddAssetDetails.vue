@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="t('addAsset.title')" show-back @back="handleBack">
+  <wallet-base :title="t('addAsset.title')" show-back @back="back">
     <add-asset-details-card
       :asset="asset"
       :loading="loading"
@@ -13,7 +13,6 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
 import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 
@@ -22,8 +21,10 @@ import TranslationMixin from './mixins/TranslationMixin';
 import WalletBase from './WalletBase.vue';
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 import { RouteNames } from '../consts';
-
+import { api } from '../api';
+import { state, getter, mutation, action } from '../store/decorators';
 import type { WhitelistIdsBySymbol } from '../types/common';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -34,14 +35,14 @@ import type { WhitelistIdsBySymbol } from '../types/common';
 export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMixin) {
   asset: Nullable<Asset> = null;
 
-  @Getter currentRouteParams!: any;
-  @Getter whitelist!: Whitelist;
-  @Getter whitelistIdsBySymbol!: WhitelistIdsBySymbol;
-  @Getter libraryTheme!: Theme;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<Asset>>;
+  @getter.account.whitelist whitelist!: Whitelist;
+  @getter.account.whitelistIdsBySymbol whitelistIdsBySymbol!: WhitelistIdsBySymbol;
+  @getter.libraryTheme libraryTheme!: Theme;
 
-  @Action back!: AsyncVoidFn;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action addAsset!: (address?: string) => Promise<void>;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
+  @action.account.addAsset private addAsset!: (address?: string) => Promise<void>;
+  @action.router.back back!: AsyncVoidFn;
 
   created(): void {
     if (!this.currentRouteParams.asset) {
@@ -51,14 +52,11 @@ export default class AddAssetDetails extends Mixins(TranslationMixin, LoadingMix
     this.asset = this.currentRouteParams.asset;
   }
 
-  handleBack(): void {
-    this.back();
-  }
-
   async handleAddAsset(): Promise<void> {
-    await this.withLoading(async () => await this.addAsset((this.asset || {}).address));
+    const asset: Partial<Asset> = this.asset || {};
+    await this.withLoading(async () => await this.addAsset(asset.address));
     this.navigate({ name: RouteNames.Wallet, params: { asset: this.asset } });
-    this.$emit('add-asset');
+    this.$emit('add-asset', asset.symbol);
   }
 }
 </script>

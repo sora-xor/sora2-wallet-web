@@ -50,10 +50,11 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
 
 import FormattedAmount from './FormattedAmount.vue';
+
 import { FontSizeRate, FontWeightRate, HiddenValue } from '../consts';
+import { state } from '../store/decorators';
 
 @Component({
   components: { FormattedAmount },
@@ -73,7 +74,7 @@ export default class InfoLine extends Vue {
    */
   @Prop({ default: false, type: Boolean }) readonly valueCanBeHidden!: boolean;
 
-  @Getter shouldBalanceBeHidden!: boolean;
+  @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
   get isValueExists(): boolean {
     if (this.value === 'NaN' || this.value.includes('Infinity')) {

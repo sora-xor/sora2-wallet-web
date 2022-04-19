@@ -55,8 +55,7 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
-import { TransactionStatus, History, Operation } from '@sora-substrate/util';
+import { TransactionStatus, Operation, HistoryItem } from '@sora-substrate/util';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import TranslationMixin from './mixins/TranslationMixin';
@@ -65,9 +64,11 @@ import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import TransactionHashView from './TransactionHashView.vue';
-import { RouteNames, WalletTabs, HashType } from '../consts';
 
+import { RouteNames, WalletTabs, HashType } from '../consts';
+import { state, getter, mutation } from '../store/decorators';
 import type { Account } from '../types/common';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -80,27 +81,26 @@ import type { Account } from '../types/common';
 export default class WalletTransactionDetails extends Mixins(TranslationMixin, NumberFormatterMixin) {
   readonly HashType = HashType;
 
-  @Getter currentRouteParams!: any;
-  @Getter selectedTransaction!: History;
-  @Getter account!: Account;
-  @Getter accountAssets!: Array<AccountAsset>;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getTransactionDetails!: (id: string) => Promise<void>;
+  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
+  @getter.account.account private account!: Account;
+  @getter.transactions.selectedTx selectedTransaction!: HistoryItem;
 
-  mounted() {
-    const id: string = this.currentRouteParams.id;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
+  @mutation.transactions.setTxDetailsId setTxDetailsId!: (id: string) => void;
+
+  mounted(): void {
+    const id = this.currentRouteParams.id as string;
     if (!id) {
       this.navigate({ name: RouteNames.Wallet });
     }
-    this.getTransactionDetails(id);
+    this.setTxDetailsId(id);
   }
 
   get asset(): AccountAsset {
     // currentRouteParams.asset was added here to avoid a case when the asset is not found
-    return (
-      this.accountAssets.find(({ address }) => address === this.currentRouteParams.asset.address) ||
-      (this.currentRouteParams.asset as AccountAsset)
-    );
+    const asset = this.currentRouteParams.asset as AccountAsset;
+    return this.accountAssets.find(({ address }) => address === asset.address) || asset;
   }
 
   get statusClass(): Array<string> {

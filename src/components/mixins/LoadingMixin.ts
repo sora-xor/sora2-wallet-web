@@ -1,12 +1,13 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
+
 import { delay } from '../../util';
+import { state } from '../../store/decorators';
 
 @Component
 export default class LoadingMixin extends Vue {
   @Prop({ type: Boolean, default: false }) readonly parentLoading!: boolean;
 
-  @Getter isWalletLoaded!: boolean;
+  @state.settings.isWalletLoaded isWalletLoaded!: boolean;
 
   loading = false;
 

@@ -1,17 +1,21 @@
 import omit from 'lodash/fp/omit';
-import Vuex from 'vuex';
 
-import { useDescribe, useShallowMount } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_INFO_LINE } from '../../utils/InfoLineMock';
 
 import InfoLine from '@/components/InfoLine.vue';
 
-useDescribe('InfoLine.vue', InfoLine, () => {
-  const store = new Vuex.Store({
-    getters: {
-      shouldBalanceBeHidden: () => true,
+const createStore = (shouldBalanceBeHidden = true) =>
+  useVuex({
+    settings: {
+      state: () => ({
+        shouldBalanceBeHidden,
+      }),
     },
   });
+
+useDescribe('InfoLine.vue', InfoLine, () => {
+  const store = createStore();
 
   MOCK_INFO_LINE.map((item) =>
     it(`[${item.title}${

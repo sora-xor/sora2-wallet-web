@@ -1,7 +1,5 @@
-import Vuex from 'vuex';
-
 import WalletAssetDetails from '@/components/WalletAssetDetails.vue';
-import { useDescribe, useShallowMount } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import {
   MOCK_ACCOUNT_ASSETS,
   MOCK_FIAT_PRICE_AND_APY_OBJECT,
@@ -11,15 +9,31 @@ import {
 import { MOCK_ACCOUNT } from '../../utils/WalletAccountMock';
 
 const createStore = ({ permissions = MOCK_WALLET_PERMISSIONS, isNotXor = false } = {}) =>
-  new Vuex.Store({
-    getters: {
-      accountAssets: () => MOCK_ACCOUNT_ASSETS,
-      currentRouteParams: () => ({ asset: MOCK_ACCOUNT_ASSETS[Number(isNotXor)] }),
-      history: () => MOCK_HISTORY,
-      fiatPriceAndApyObject: () => MOCK_FIAT_PRICE_AND_APY_OBJECT,
-      account: () => MOCK_ACCOUNT,
-      permissions: () => permissions,
-    } as any,
+  useVuex({
+    settings: {
+      state: () => ({
+        permissions,
+      }),
+    },
+    router: {
+      state: () => ({
+        currentRouteParams: { asset: MOCK_ACCOUNT_ASSETS[Number(isNotXor)] },
+      }),
+    },
+    account: {
+      state: () => ({
+        accountAssets: MOCK_ACCOUNT_ASSETS,
+        fiatPriceAndApyObject: MOCK_FIAT_PRICE_AND_APY_OBJECT,
+      }),
+      getters: {
+        account: () => MOCK_ACCOUNT,
+      },
+    },
+    transactions: {
+      state: () => ({
+        history: MOCK_HISTORY,
+      }),
+    },
   });
 
 useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {

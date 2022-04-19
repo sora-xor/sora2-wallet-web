@@ -48,7 +48,6 @@
 <script lang="ts">
 import debounce from 'lodash/debounce';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
-import { Getter, Action } from 'vuex-class';
 import { History, TransactionStatus } from '@sora-substrate/util';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
@@ -59,8 +58,10 @@ import PaginationSearchMixin from './mixins/PaginationSearchMixin';
 import SearchInput from './SearchInput.vue';
 import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames } from '../consts';
+import { state, mutation, action } from '../store/decorators';
 import { SubqueryDataParserService } from '../services/subquery';
 import type { ExternalHistoryParams } from '../types/history';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -68,17 +69,18 @@ import type { ExternalHistoryParams } from '../types/history';
   },
 })
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
-  @Getter assets!: Array<Asset>;
-  @Getter history!: AccountHistory<HistoryItem>;
-  @Getter externalHistory!: AccountHistory<HistoryItem>;
-  @Getter externalHistoryTotal!: number;
-  @Getter shouldBalanceBeHidden!: boolean;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getExternalHistory!: (options?: ExternalHistoryParams) => Promise<void>;
-  @Action resetExternalHistory!: AsyncVoidFn;
-  @Action getAccountHistory!: AsyncVoidFn;
+  @state.account.assets private assets!: Array<Asset>;
+  @state.transactions.history private history!: AccountHistory<HistoryItem>;
+  @state.transactions.externalHistory private externalHistory!: AccountHistory<HistoryItem>;
+  @state.transactions.externalHistoryTotal private externalHistoryTotal!: number;
+  @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
-  @Prop() readonly asset?: AccountAsset;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
+  @mutation.transactions.resetExternalHistory private resetExternalHistory!: VoidFn;
+  @mutation.transactions.getHistory private getHistory!: VoidFn;
+  @action.transactions.getExternalHistory private getExternalHistory!: (args?: ExternalHistoryParams) => Promise<void>;
+
+  @Prop() readonly asset!: Nullable<AccountAsset>;
 
   @Watch('searchQuery')
   private async updateHistoryBySearchQuery() {
@@ -151,14 +153,14 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   async mounted() {
     await this.withLoading(async () => {
-      await this.reset();
+      this.reset();
       await this.updateHistory();
     });
   }
 
-  async reset(): Promise<void> {
+  reset(): void {
     this.resetPage();
-    await this.resetExternalHistory();
+    this.resetExternalHistory();
   }
 
   getFilteredHistory(history: Array<History>): Array<History> {
@@ -193,25 +195,25 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   getStatus(status: string): string {
     if ([TransactionStatus.Error, TransactionStatus.Invalid].includes(status as TransactionStatus)) {
       status = TransactionStatus.Error;
-    } else if (!this.isFinalizedStatus(status as TransactionStatus)) {
+    } else if (!this.isFinalizedStatus(status)) {
       status = 'in_progress';
     }
     return status.toUpperCase();
   }
 
-  getStatusClass(status: string): string {
-    return getStatusClass(this.getStatus(status));
+  getStatusClass(status?: string): string {
+    return getStatusClass(this.getStatus(status || ''));
   }
 
-  getStatusIcon(status: string): string {
-    return getStatusIcon(this.getStatus(status));
+  getStatusIcon(status?: string): string {
+    return getStatusIcon(this.getStatus(status || ''));
   }
 
-  isFinalizedStatus(status: TransactionStatus): boolean {
-    return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(status);
+  isFinalizedStatus(status?: TransactionStatus | string): boolean {
+    return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(status as TransactionStatus);
   }
 
-  handleOpenTransactionDetails(id: number): void {
+  handleOpenTransactionDetails(id?: string): void {
     this.navigate({ name: RouteNames.WalletTransactionDetails, params: { id, asset: this.asset } });
   }
 
@@ -231,6 +233,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       if (withReset) {
         this.reset();
       }
+      this.getHistory(); // TODO: refactoring action
       await this.getExternalHistory({
         next,
         address: this.account.address,
@@ -242,7 +245,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
           assetsAddresses: this.queryAssetsAddresses,
         },
       });
-      await this.getAccountHistory();
+      this.getHistory();
     });
   }
 }
