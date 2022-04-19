@@ -102,7 +102,7 @@
             :label="t('createToken.nft.source.label')"
             :value="displayedNftContentLink"
             :value-tooltip="nftLinkTooltipText"
-            @click.native="handleCopyNftLink"
+            @click.native.stop="handleCopyNftLink"
           />
         </div>
       </transition>
@@ -191,8 +191,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     this.wasNftDetailsClicked = !this.wasNftDetailsClicked;
   }
 
-  async handleCopyNftLink(event?: Event): Promise<void> {
-    event && event.stopImmediatePropagation();
+  async handleCopyNftLink(): Promise<void> {
     await copyToClipboard(this.nftContentLink);
     this.wasNftLinkCopied = true;
     await delay(1000);

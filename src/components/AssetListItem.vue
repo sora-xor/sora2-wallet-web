@@ -5,7 +5,7 @@
       :asset="asset"
       class="asset-logo__nft-image"
       :class="{ 'asset-logo--clickable': withClickableLogo }"
-      @click.stop="handleIconClick"
+      @click.native.stop="handleIconClick"
     />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
