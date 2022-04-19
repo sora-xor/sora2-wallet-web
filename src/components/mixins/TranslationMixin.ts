@@ -20,6 +20,13 @@ export default class TranslationMixin extends Vue {
   }
 
   formatDate(date: Nullable<number>, format = 'll LTS'): string {
+    let locale = this.$i18n.locale.toLowerCase();
+    // We have only dialect of hy lang
+    switch (locale) {
+      case 'hy':
+        locale = 'hy-am';
+        break;
+    }
     return dayjs(date).locale(this.$i18n.locale).format(format);
   }
 }
