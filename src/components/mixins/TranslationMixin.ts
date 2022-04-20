@@ -27,6 +27,6 @@ export default class TranslationMixin extends Vue {
         locale = 'hy-am';
         break;
     }
-    return dayjs(date).locale(this.$i18n.locale).format(format);
+    return dayjs(date).locale(locale).format(format);
   }
 }
