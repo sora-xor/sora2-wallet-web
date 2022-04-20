@@ -42,6 +42,7 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 .asset {
   align-items: center;
   height: var(--s-asset-item-height);
+  position: relative;
 
   &--with-fiat {
     height: var(--s-asset-item-height--fiat);
