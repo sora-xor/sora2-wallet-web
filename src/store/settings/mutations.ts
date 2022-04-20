@@ -72,6 +72,9 @@ const mutations = defineMutations<SettingsState>()({
     const nftStorage = new NFTStorage({ token: state.apiKeys.nftStorage });
     state.nftStorage = nftStorage;
   },
+  setSubqueryEndpoint(state, endpoint: string): void {
+    state.subqueryEndpoint = endpoint;
+  },
 });
 
 export default mutations;
