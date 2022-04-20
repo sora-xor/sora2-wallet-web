@@ -2052,15 +2052,15 @@
     crypto-js "^4.0.0"
     lodash "^4.17.15"
 
-"@soramitsu/soramitsu-js-ui@^1.0.30":
-  version "1.0.30"
-  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-1.0.30.tgz#7620213f2a74b445abd630a3d317657e69cc35b4"
-  integrity sha512-yIX9i7q+3Q8inSOYJU+XAPuwSSCLrmqz9nTXgBj7L32pH94xzu1C3WC5nTyRaqLdl0VvGKVibXBH/i4S5E7Plg==
+"@soramitsu/soramitsu-js-ui@^1.0.32":
+  version "1.0.32"
+  resolved "https://nexus.iroha.tech/repository/npm-group/@soramitsu/soramitsu-js-ui/-/soramitsu-js-ui-1.0.32.tgz#826d53df97e77097b94dccaad38e331db213d101"
+  integrity sha512-rFV8zje6t+JhqM8aiAj7yVEEAeEffV6xYa3flWHoF5ORPgb6hDnPfZIRg/enzI/fpIgXw8qlbSa55aCay8KSWg==
   dependencies:
     core-js "^3.6.4"
     element-resize-detector "^1.2.1"
     element-ui "^2.15.5"
-    lodash "^4.17.15"
+    lodash "^4.17.21"
     throttle-debounce "^1.0.1"
     v-jsoneditor "^1.4.1"
     vue "^2.6.11"
