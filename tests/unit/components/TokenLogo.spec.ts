@@ -10,16 +10,6 @@ const createStore = (mutations) =>
   });
 
 useDescribe('TokenLogo.vue', TokenLogo, () => {
-  it('should render correctly', () => {
-    const wrapper = useShallowMount(TokenLogo, {
-      propsData: {
-        token: MOCK_ACCOUNT_ASSETS[0],
-      },
-    });
-
-    expect(wrapper.element).toMatchSnapshot();
-  });
-
   it('should render nft-token-logo when asset.content exists', () => {
     const wrapper = useShallowMount(TokenLogo, {
       propsData: {
@@ -29,7 +19,6 @@ useDescribe('TokenLogo.vue', TokenLogo, () => {
     const nftComponent = wrapper.find('.asset-logo-nft');
 
     expect(nftComponent.exists()).toBeTrue();
-    expect(wrapper.element).toMatchSnapshot();
   });
 
   it('should call navigate() mutation when prop is passed and logo is clicked', () => {
