@@ -17,7 +17,7 @@
           @click-details="handleClickNftDetails"
         />
         <template v-else>
-          <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+          <token-logo :token="asset" size="bigger" />
           <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
             <formatted-amount
               value-can-be-hidden
@@ -121,6 +121,7 @@ import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import NftDetails from './NftDetails.vue';
 import InfoLine from './InfoLine.vue';
+import TokenLogo from './TokenLogo.vue';
 import WalletHistory from './WalletHistory.vue';
 import QrCodeScanButton from './QrCodeScanButton.vue';
 import { api } from '../api';
@@ -129,7 +130,7 @@ import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import { RouteNames } from '../consts';
-import { copyToClipboard, delay, getAssetIconStyles, shortenValue, getAssetIconClasses } from '../util';
+import { copyToClipboard, delay, shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 import { state, getter } from '../store/decorators';
 import { Operations, Account } from '../types/common';
@@ -149,6 +150,7 @@ interface Operation {
     QrCodeScanButton,
     NftDetails,
     InfoLine,
+    TokenLogo,
   },
 })
 export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin, QrCodeParserMixin) {
@@ -294,17 +296,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     );
   }
 
-  get iconClasses(): Array<string> {
-    return getAssetIconClasses(this.asset);
-  }
-
-  get iconStyles(): object {
-    if (!this.asset) {
-      return {};
-    }
-    return getAssetIconStyles(this.asset.address);
-  }
-
   handleBack(): void {
     this.navigate({ name: RouteNames.Wallet });
   }
@@ -424,9 +415,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
   &-actions {
     margin-top: #{$basic-spacing-medium};
-  }
-  .asset-logo {
-    @include asset-logo-styles(48px);
   }
 }
 
