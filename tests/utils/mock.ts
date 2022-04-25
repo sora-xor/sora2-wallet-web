@@ -52,6 +52,26 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
   },
 ];
 
+export const MOCK_ACCOUNT_ASSETS_NFT = [
+  {
+    address: '0x00df77c098d070e4097184755b4cf26fd7a19849d69f92345548e6bdb50cbc26',
+    balance: {
+      transferable: '1000000000000',
+      total: '1000000000000',
+      reserved: '0',
+      frozen: '0',
+      locked: '0',
+      bonded: '0',
+    },
+    content:
+      'bafybeihexv4moultujlt4prmyzrufr4wpdnjom7qkpghwdl2sffoj4txem/VAL_cnUfVtQDZCkUngZ1Pudmb9qDTeHHAmuCm6vsHNzGNnMKg83x1%20(1).jpeg',
+    decimals: FPNumber.DEFAULT_PRECISION,
+    name: 'token',
+    symbol: 'TOKEN',
+    description: 'Amazing NFT token!',
+  },
+];
+
 export const MOCK_ASSETS: Array<Asset> = [
   {
     address: '0x0212350000000000000000000000000000000000000000000000000000000000',

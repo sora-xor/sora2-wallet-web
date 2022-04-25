@@ -20,8 +20,10 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
     <div
       class="asset-details-container s-flex"
     >
-      <i
-        class="asset-logo asset-default s-icon-notifications-info-24"
+      <token-logo-stub
+        size="bigger"
+        token="[object Object]"
+        tokensymbol=""
       />
        
       <div
@@ -217,8 +219,10 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
     <div
       class="asset-details-container s-flex"
     >
-      <i
-        class="asset-logo asset-default s-icon-notifications-info-24"
+      <token-logo-stub
+        size="bigger"
+        token="[object Object]"
+        tokensymbol=""
       />
        
       <div
