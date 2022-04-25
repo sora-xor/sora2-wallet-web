@@ -60,8 +60,9 @@
               {{ t('walletSend.max') }}
             </s-button>
             <div class="asset-box">
-              <nft-token-logo :asset="asset" class="asset-logo nft-image" />
-              <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+              <div class="asset-box__logo">
+                <token-logo :token="asset" size="small" />
+              </div>
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
@@ -95,8 +96,7 @@
             <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
             <div class="confirm-asset-value s-flex">
               <div class="confirm-asset-icon">
-                <nft-token-logo :asset="asset" class="asset-logo nft-image" />
-                <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+                <token-logo :token="asset" />
               </div>
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
@@ -131,14 +131,14 @@ import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
-import NftTokenLogo from './NftTokenLogo.vue';
+import TokenLogo from './TokenLogo.vue';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import { RouteNames } from '../consts';
-import { formatAddress, formatSoraAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
+import { formatAddress, formatSoraAddress } from '../util';
 import { api } from '../api';
 import { state, mutation, action } from '../store/decorators';
 import type { Route } from '../store/router/types';
@@ -150,7 +150,7 @@ import type { Route } from '../store/router/types';
     FormattedAmountWithFiatValue,
     NetworkFeeWarning,
     WalletFee,
-    NftTokenLogo,
+    TokenLogo,
   },
 })
 export default class WalletSend extends Mixins(
@@ -204,17 +204,6 @@ export default class WalletSend extends Mixins(
       ...(this.currentRouteParams.asset as AccountAsset),
       balance: this.assetBalance as AccountBalance,
     };
-  }
-
-  get iconClasses(): Array<string> {
-    return getAssetIconClasses(this.asset);
-  }
-
-  get iconStyles(): object {
-    if (!this.asset) {
-      return {};
-    }
-    return getAssetIconStyles(this.asset.address);
   }
 
   get fee(): FPNumber {
@@ -439,10 +428,10 @@ $logo-size: var(--s-size-mini);
       border-radius: var(--s-border-radius-mini);
       box-shadow: var(--s-shadow-element);
       padding: $basic-spacing-mini #{$basic-spacing-extra-small};
-    }
-    &-logo {
-      @include asset-logo-styles(var(--s-size-mini), $nft-font-size: 8px);
-      margin-right: var(--s-basic-spacing);
+      &__logo {
+        @include asset-logo-styles;
+        margin-right: var(--s-basic-spacing) !important;
+      }
     }
     &-max {
       height: var(--s-size-mini);
@@ -570,10 +559,6 @@ $logo-size: var(--s-size-mini);
         justify-content: flex-end;
         white-space: nowrap;
         .asset {
-          &-logo {
-            @include asset-logo-styles(var(--s-size-small), $nft-font-size: var(--s-font-size-mini));
-            margin-right: calc(var(--s-basic-spacing) * 2);
-          }
           &-name {
             font-size: var(--s-heading2-font-size);
             line-height: var(--s-line-height-small);
@@ -586,6 +571,7 @@ $logo-size: var(--s-size-mini);
         justify-content: flex-end;
         white-space: nowrap;
         position: relative;
+        margin-right: calc(var(--s-basic-spacing) * 2);
       }
     }
     &-from {
