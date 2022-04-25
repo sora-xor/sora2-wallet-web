@@ -253,7 +253,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
 <style lang="scss">
 .history {
-  margin-top: #{$basic-spacing-medium};
   .el-card__body {
     padding: #{$basic-spacing-medium} #{$basic-spacing-medium} calc(var(--s-basic-spacing) * 2.5);
   }

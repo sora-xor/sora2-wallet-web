@@ -357,6 +357,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     .formatted-amount--fiat-value {
       + .asset-details-actions {
         margin-top: #{$basic-spacing-small};
+        margin-bottom: #{$basic-spacing-medium};
       }
     }
   }
