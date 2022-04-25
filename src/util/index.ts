@@ -94,15 +94,15 @@ export const formatAddress = (address: string, length = address.length / 2): str
 
 export const getAssetIconClasses = (asset: Nullable<AccountAsset | Asset>) => {
   if (!asset || !asset.address) {
-    return ['asset-default', 's-icon-notifications-info-24'];
+    return ['s-icon-notifications-info-24'];
   }
   const whitelisted = store.getters.wallet.account.whitelist[asset.address];
   if (!whitelisted) {
     const isNft = api.assets.isNft(asset);
     if (!isNft) {
-      return ['asset-default', 's-icon-notifications-info-24'];
+      return ['s-icon-notifications-info-24'];
     } else {
-      return ['asset-default', 'asset-default-nft'];
+      return ['asset-logo-nft'];
     }
   }
   return [];

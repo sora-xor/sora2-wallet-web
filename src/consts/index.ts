@@ -95,3 +95,14 @@ export enum FontWeightRate {
   MEDIUM = 'medium',
   NORMAL = 'normal',
 }
+
+export enum LogoSize {
+  MINI = 'mini',
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  BIG = 'big',
+  BIGGER = 'bigger',
+  LARGE = 'large',
+}
+
+export const ObjectInit = () => null;
