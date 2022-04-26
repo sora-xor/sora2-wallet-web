@@ -17,7 +17,7 @@ import {
 import type { PolkadotJsAccount } from '../../types/common';
 
 const HOUR = 60 * 60 * 1000;
-const CHECK_EXTENSION_INTERVAL = 5 * 1000;
+const CHECK_EXTENSION_INTERVAL = 5_000;
 
 const actions = defineActions({
   async getSigner(context): Promise<Signer> {

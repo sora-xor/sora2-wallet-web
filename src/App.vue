@@ -19,10 +19,12 @@ import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils';
 import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
 
+import env from '../public/env.json';
+
 import TransactionMixin from './components/mixins/TransactionMixin';
 import { initWallet } from './index';
 import SoraWallet from './SoraWallet.vue';
-import { SoraNetwork, NFT_STORAGE_API_KEY } from './consts';
+import { SoraNetwork } from './consts';
 import { state, mutation, getter, action } from './store/decorators';
 import type { ApiKeysObject } from './types/common';
 
@@ -37,12 +39,14 @@ export default class App extends Mixins(TransactionMixin) {
 
   @mutation.settings.toggleHideBalance toggleHideBalance!: VoidFn;
   @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
+  @mutation.settings.setSubqueryEndpoint private setSubqueryEndpoint!: (endpoint: string) => void;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncVoidFn;
   @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncVoidFn;
 
   async created(): Promise<void> {
-    await this.setApiKeys({ nftStorage: NFT_STORAGE_API_KEY });
+    await this.setApiKeys(env.API_KEYS);
+    this.setSubqueryEndpoint(env.SUBQUERY_ENDPOINT);
     this.setSoraNetwork(SoraNetwork.Dev);
     await initWallet({ withoutStore: true, whiteListOverApi: true }); // We don't need storage for local development
     const localeLanguage = navigator.language;

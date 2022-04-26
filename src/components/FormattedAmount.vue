@@ -68,6 +68,10 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    */
   @Prop({ default: false, type: Boolean }) readonly isFiatValue!: boolean;
   /**
+   * Uses default rounding rule for fiat value. It'll be applied for small numbers like 0.009 or less
+   */
+  @Prop({ default: false, type: Boolean }) readonly fiatDefaultRounding!: boolean;
+  /**
    * Define directly that this field displays value which can be hidden by hide balances button.
    */
   @Prop({ default: false, type: Boolean }) readonly valueCanBeHidden!: boolean;
@@ -83,6 +87,20 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
   isValueWider = false;
+
+  private formatFiatDecimal(integer: Nullable<string>, decimal: Nullable<string>): string {
+    if (!decimal || !+decimal) {
+      return '00';
+    }
+    if (decimal.length <= 2) {
+      return decimal.length === 1 ? decimal + '0' : decimal;
+    }
+    const isSmallNumber = (!integer || !+integer) && decimal.substring(0, 2) === '00';
+    if (isSmallNumber && this.fiatDefaultRounding) {
+      return decimal;
+    }
+    return decimal.length === 1 ? decimal + '0' : decimal.substring(0, 2);
+  }
 
   get unformatted(): string {
     return this.value
@@ -102,11 +120,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
 
     if (!this.integerOnly) {
       if (this.isFiatValue) {
-        if (decimal) {
-          decimal = decimal.length === 1 ? decimal + '0' : decimal.substring(0, 2);
-        } else {
-          decimal = '00';
-        }
+        decimal = this.formatFiatDecimal(integer, decimal);
       }
 
       if (decimal && decimal.length > 0) {
