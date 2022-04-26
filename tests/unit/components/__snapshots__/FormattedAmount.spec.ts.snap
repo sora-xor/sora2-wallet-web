@@ -824,6 +824,80 @@ exports[`FormattedAmount.vue [Is Fiat Value With One Decimal Symbol]: should be 
 </span>
 `;
 
+exports[`FormattedAmount.vue [Is Fiat Value With Two Decimal Symbols (default rounding); hide balances button was clicked]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--fiat-value"
+>
+  <span
+    class="formatted-amount__value"
+  >
+    <span
+      class="formatted-amount__prefix"
+    >
+      ~$
+    </span>
+     
+    <span
+      class="formatted-amount__integer"
+    >
+      0
+    </span>
+     
+    <span
+      class="formatted-amount__decimal"
+    >
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        .09
+      </span>
+       
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [Is Fiat Value With Two Decimal Symbols (default rounding)]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--fiat-value"
+>
+  <span
+    class="formatted-amount__value"
+  >
+    <span
+      class="formatted-amount__prefix"
+    >
+      ~$
+    </span>
+     
+    <span
+      class="formatted-amount__integer"
+    >
+      0
+    </span>
+     
+    <span
+      class="formatted-amount__decimal"
+    >
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        .09
+      </span>
+       
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </span>
+</span>
+`;
+
 exports[`FormattedAmount.vue [Is Fiat Value Without Decimals, value can be hidden; hide balances button was clicked]: should be rendered correctly 1`] = `
 <span
   class="formatted-amount formatted-amount--fiat-value"
@@ -1069,6 +1143,80 @@ exports[`FormattedAmount.vue [Is Fiat Value]: should be rendered correctly 1`] =
         class="formatted-amount__decimal-value"
       >
         .89
+      </span>
+       
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [Is Small Fiat Value With Two Decimal Symbols (default rounding); hide balances button was clicked]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--fiat-value"
+>
+  <span
+    class="formatted-amount__value"
+  >
+    <span
+      class="formatted-amount__prefix"
+    >
+      ~$
+    </span>
+     
+    <span
+      class="formatted-amount__integer"
+    >
+      0
+    </span>
+     
+    <span
+      class="formatted-amount__decimal"
+    >
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        .009
+      </span>
+       
+      <!---->
+    </span>
+     
+    <!---->
+     
+  </span>
+</span>
+`;
+
+exports[`FormattedAmount.vue [Is Small Fiat Value With Two Decimal Symbols (default rounding)]: should be rendered correctly 1`] = `
+<span
+  class="formatted-amount formatted-amount--fiat-value"
+>
+  <span
+    class="formatted-amount__value"
+  >
+    <span
+      class="formatted-amount__prefix"
+    >
+      ~$
+    </span>
+     
+    <span
+      class="formatted-amount__integer"
+    >
+      0
+    </span>
+     
+    <span
+      class="formatted-amount__decimal"
+    >
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        .009
       </span>
        
       <!---->

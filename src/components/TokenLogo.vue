@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div class="logo">
     <span :class="iconClasses" :style="iconStyles" @click="handleIconClick" />
     <nft-token-logo
       v-if="token.content"
@@ -8,7 +8,7 @@
       :class="iconClasses"
       @click="handleIconClick"
     />
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">
@@ -71,11 +71,16 @@ export default class TokenLogo extends Mixins(TranslationMixin) {
 $token-background-color: var(--s-color-base-on-accent);
 $token-color: var(--s-color-base-content-tertiary);
 
+.logo {
+  position: relative;
+}
 .asset-logo {
   &__nft-image {
     border-radius: 50%;
     object-fit: cover;
     position: absolute !important;
+    top: 0;
+    left: 0;
   }
 
   &--clickable {

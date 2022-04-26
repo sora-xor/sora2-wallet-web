@@ -36,6 +36,14 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 }
 </script>
 
+<style lang="scss">
+.asset-description {
+  .formatted-amount__container {
+    width: 100%;
+  }
+}
+</style>
+
 <style lang="scss" scoped>
 @import '../styles/icons';
 

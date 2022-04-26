@@ -1,5 +1,5 @@
 <template>
-  <div class="formatted-amount__container">
+  <div :class="computedClasses">
     <formatted-amount
       :class="valueClass"
       :value="value"
@@ -92,6 +92,17 @@ export default class FormattedAmountWithFiatValue extends Vue {
    * Added special class to left shifting for Fiat value if needed (the shift is the same in all screens).
    */
   @Prop({ default: false, type: Boolean }) readonly withLeftShift!: boolean;
+
+  get computedClasses(): string {
+    const baseClass = 'formatted-amount__container';
+    const classes = [baseClass];
+
+    if (+this.value === 0) {
+      classes.push(`${baseClass}--nowrap`);
+    }
+
+    return classes.join(' ');
+  }
 }
 </script>
 
@@ -103,5 +114,8 @@ export default class FormattedAmountWithFiatValue extends Vue {
   flex-wrap: wrap;
   word-break: break-word;
   text-align: right;
+  &--nowrap {
+    white-space: nowrap;
+  }
 }
 </style>
