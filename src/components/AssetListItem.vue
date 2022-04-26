@@ -38,8 +38,8 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
 <style lang="scss">
 .asset-description {
-  .formatted-amount__value {
-    margin-right: 1px;
+  .formatted-amount__container {
+    width: 100%;
   }
 }
 </style>
