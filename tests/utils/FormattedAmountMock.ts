@@ -13,6 +13,7 @@ interface FormattedAmount {
   integerOnly?: boolean;
   withLeftShift?: boolean;
   valueCanBeHidden?: boolean;
+  fiatDefaultRounding?: boolean;
 }
 
 export const MOCK_FORMATTED_AMOUNT: Array<FormattedAmount> = [
@@ -79,6 +80,18 @@ export const MOCK_FORMATTED_AMOUNT: Array<FormattedAmount> = [
     title: 'Is Fiat Value With One Decimal Symbol',
     value: '1,234,567.8',
     isFiatValue: true,
+  },
+  {
+    title: 'Is Fiat Value With Two Decimal Symbols (default rounding)',
+    value: '0.09',
+    isFiatValue: true,
+    fiatDefaultRounding: true,
+  },
+  {
+    title: 'Is Small Fiat Value With Two Decimal Symbols (default rounding)',
+    value: '0.009',
+    isFiatValue: true,
+    fiatDefaultRounding: true,
   },
   {
     title: 'Without Decimals',

@@ -6,6 +6,7 @@ import type { SettingsState } from './types';
 function initialState(): SettingsState {
   return {
     apiKeys: {},
+    subqueryEndpoint: null,
     isWalletLoaded: false, // wallet is loading
     permissions: {
       addAssets: true,

@@ -17,20 +17,6 @@ import type {
 } from './types';
 
 export default class SubqueryExplorer implements Explorer {
-  public static getApiUrl(soraNetwork: Nullable<SoraNetwork>): string {
-    switch (soraNetwork) {
-      case SoraNetwork.Prod:
-        return 'https://api.subquery.network/sq/sora-xor/sora';
-      case SoraNetwork.Stage:
-        return 'https://api.subquery.network/sq/sora-xor/sora-staging';
-      case SoraNetwork.Test:
-        return 'https://subquery.q1.tst.sora2.soramitsu.co.jp';
-      case SoraNetwork.Dev:
-      default:
-        return 'https://api.subquery.network/sq/sora-xor/sora-dev';
-    }
-  }
-
   public get soraNetwork(): Nullable<SoraNetwork> {
     return store.state.wallet.settings.soraNetwork;
   }
@@ -234,7 +220,10 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   public async request(query: any, variables = {}): Promise<any> {
-    const url = SubqueryExplorer.getApiUrl(this.soraNetwork);
+    const url = store.state.wallet.settings.subqueryEndpoint;
+    if (!url) {
+      throw new Error('Subquery endpoint is not set');
+    }
     const response = await axiosInstance.post(url, {
       query,
       variables,
