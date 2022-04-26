@@ -37,13 +37,12 @@
 
       <template #default="asset">
         <s-button
-          v-if="permissions.sendAssets"
+          v-if="permissions.sendAssets && !isZeroBalance(asset)"
           class="wallet-assets__button send"
           type="action"
           size="small"
           alternative
           :tooltip="t('assets.send')"
-          :disabled="isZeroBalance(asset)"
           @click="handleAssetSend(asset)"
         >
           <s-icon name="finance-send-24" size="28" />

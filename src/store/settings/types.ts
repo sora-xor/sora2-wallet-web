@@ -16,4 +16,5 @@ export type SettingsState = {
   runtimeVersionSubscription: Nullable<Subscription>;
   systemEventsSubscription: Nullable<Subscription>;
   nftStorage: Nullable<NFTStorage>;
+  subqueryEndpoint: Nullable<string>;
 };
