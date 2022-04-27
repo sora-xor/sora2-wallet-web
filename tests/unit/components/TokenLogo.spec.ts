@@ -1,17 +1,23 @@
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import TokenLogo from '@/components/TokenLogo.vue';
-import { MOCK_ACCOUNT_ASSETS, MOCK_ACCOUNT_ASSETS_NFT } from '../../utils/mock';
+import { MOCK_ACCOUNT_ASSETS_NFT, MOCK_WHITE_LIST, MOCK_WHITELIST_IDS_BY_SYMBOL } from '../../utils/mock';
 
-const createStore = (mutations) =>
+// TODO: [RUSTEM]: please add more test cases for 1) symbol prop, 2) token prop, 3) whitelisted 4) non-whitelisted
+
+const createStore = () =>
   useVuex({
-    router: {
-      mutations,
+    account: {
+      getters: {
+        whitelist: () => MOCK_WHITE_LIST,
+        whitelistIdsBySymbol: () => MOCK_WHITELIST_IDS_BY_SYMBOL,
+      },
     },
   });
 
 useDescribe('TokenLogo.vue', TokenLogo, () => {
   it('should render nft-token-logo when asset.content exists', () => {
     const wrapper = useShallowMount(TokenLogo, {
+      store: createStore(),
       propsData: {
         token: MOCK_ACCOUNT_ASSETS_NFT[0],
       },
@@ -19,25 +25,5 @@ useDescribe('TokenLogo.vue', TokenLogo, () => {
     const nftComponent = wrapper.find('.asset-logo-nft');
 
     expect(nftComponent.exists()).toBeTrue();
-  });
-
-  it('should call navigate() mutation when prop is passed and logo is clicked', () => {
-    const mutations = {
-      navigate: jest.fn(),
-    };
-
-    const wrapper = useShallowMount(TokenLogo, {
-      store: createStore(mutations),
-      propsData: {
-        token: MOCK_ACCOUNT_ASSETS[0],
-        withClickableLogo: true,
-      },
-    });
-
-    const element = wrapper.find('.asset-logo');
-
-    element.trigger('click');
-
-    expect(mutations.navigate).toHaveBeenCalled();
   });
 });
