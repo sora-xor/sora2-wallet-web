@@ -1,7 +1,7 @@
 <template>
   <div class="logo">
     <span :class="iconClasses" :style="iconStyles" />
-    <nft-token-logo v-if="token.content" class="asset-logo__nft-image" :class="iconClasses" :asset="token" />
+    <nft-token-logo v-if="isNft" class="asset-logo__nft-image" :class="iconClasses" :asset="token" />
   </div>
 </template>
 
@@ -27,9 +27,13 @@ export default class TokenLogo extends Mixins(TranslationMixin) {
   @getter.account.whitelistIdsBySymbol private whitelistIdsBySymbol!: WhitelistIdsBySymbol;
 
   @Prop({ type: String, default: '' }) readonly tokenSymbol!: string;
-  @Prop({ type: Object, default: ObjectInit }) readonly token!: AccountAsset | Asset;
+  @Prop({ type: Object, default: ObjectInit }) readonly token!: Nullable<AccountAsset | Asset>;
   @Prop({ type: String, default: LogoSize.MEDIUM, required: false }) readonly size!: LogoSize;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
+
+  get isNft(): boolean {
+    return !!this.token && api.assets.isNft(this.token);
+  }
 
   get assetAddress(): Nullable<string> {
     return this.tokenSymbol ? this.whitelistIdsBySymbol[this.tokenSymbol] : (this.token || {}).address;
@@ -69,8 +73,7 @@ export default class TokenLogo extends Mixins(TranslationMixin) {
     if (!this.assetAddress) {
       classes.push(questionMark);
     } else if (!this.whitelistedItem) {
-      const isNft = this.token ? api.assets.isNft(this.token) : false;
-      classes.push(isNft ? 'asset-logo-nft' : questionMark);
+      classes.push(this.isNft ? 'asset-logo-nft' : questionMark);
     }
 
     classes.push(`${tokenLogoClass}--${this.size.toLowerCase()}`);
