@@ -2,10 +2,8 @@ import { web3Enable, web3FromAddress, web3AccountsSubscribe } from '@polkadot/ex
 import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
-import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import { api } from '../api';
-import store from '../store';
 import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { PolkadotJsAccount } from '../types/common';
@@ -92,36 +90,6 @@ export const formatAddress = (address: string, length = address.length / 2): str
   return `${address.slice(0, length / 2)}...${address.slice(-length / 2)}`;
 };
 
-export const getAssetIconClasses = (asset: Nullable<AccountAsset | Asset>) => {
-  if (!asset || !asset.address) {
-    return ['s-icon-notifications-info-24'];
-  }
-  const whitelisted = store.getters.wallet.account.whitelist[asset.address];
-  if (!whitelisted) {
-    const isNft = api.assets.isNft(asset);
-    if (!isNft) {
-      return ['s-icon-notifications-info-24'];
-    } else {
-      return ['asset-logo-nft'];
-    }
-  }
-  return [];
-};
-
-export const getAssetIconStyles = (address: string) => {
-  if (!address) {
-    return {};
-  }
-  const asset = store.getters.wallet.account.whitelist[address];
-  if (!asset) {
-    return {};
-  }
-  return {
-    'background-size': '100%',
-    'background-image': `url("${asset.icon}")`,
-  };
-};
-
 export const getStatusIcon = (status: string) => {
   // TODO: [1.5] we should check it
   switch (status) {
@@ -193,4 +161,27 @@ export const getCssVariableValue = (name: string): string => {
   return getComputedStyle(document.documentElement as any)
     .getPropertyValue(name)
     .trim();
+};
+
+export const getScrollbarWidth = (): number => {
+  const outer = document.createElement('div');
+  outer.className = 'el-scrollbar__wrap';
+  outer.style.visibility = 'hidden';
+  outer.style.width = '100px';
+  outer.style.position = 'absolute';
+  outer.style.top = '-9999px';
+  document.body.appendChild(outer);
+
+  const widthNoScroll = outer.offsetWidth;
+  outer.style.overflow = 'scroll';
+
+  const inner = document.createElement('div');
+  inner.style.width = '100%';
+  outer.appendChild(inner);
+
+  const widthWithScroll = inner.offsetWidth;
+  (outer.parentNode as HTMLElement).removeChild(outer);
+  const scrollBarWidth = widthNoScroll - widthWithScroll;
+
+  return scrollBarWidth;
 };

@@ -1,29 +1,20 @@
 <template>
   <div class="logo">
-    <span :class="iconClasses" :style="iconStyles" @click="handleIconClick" />
-    <nft-token-logo
-      v-if="token.content"
-      :asset="token"
-      class="asset-logo asset-logo__nft-image"
-      :class="iconClasses"
-      @click="handleIconClick"
-    />
+    <span :class="iconClasses" :style="iconStyles" />
+    <nft-token-logo v-if="isNft" class="asset-logo__nft-image" :class="iconClasses" :asset="token" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
+import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/util/build/assets/types';
 
 import NftTokenLogo from './NftTokenLogo.vue';
-
-import { getAssetIconStyles, getAssetIconClasses } from '../util';
-import type { Asset, AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/types';
-import { getter, mutation } from '../store/decorators';
-
 import TranslationMixin from '@/components/mixins/TranslationMixin';
-import { LogoSize, ObjectInit, RouteNames } from '../consts';
 
-import type { Route } from '../store/router/types';
+import { api } from '../api';
+import { getter } from '../store/decorators';
+import { LogoSize, ObjectInit } from '../consts';
 import type { WhitelistIdsBySymbol } from '../types/common';
 
 @Component({
@@ -32,24 +23,55 @@ import type { WhitelistIdsBySymbol } from '../types/common';
   },
 })
 export default class TokenLogo extends Mixins(TranslationMixin) {
-  @getter.account.whitelist whitelist!: Whitelist;
-  @getter.account.whitelistIdsBySymbol whitelistIdsBySymbol!: WhitelistIdsBySymbol;
-  @mutation.router.navigate private navigate!: (options: Route) => void;
+  @getter.account.whitelist private whitelist!: Whitelist;
+  @getter.account.whitelistIdsBySymbol private whitelistIdsBySymbol!: WhitelistIdsBySymbol;
 
   @Prop({ type: String, default: '' }) readonly tokenSymbol!: string;
-  @Prop({ type: Object, default: ObjectInit }) readonly token!: AccountAsset | Asset;
+  @Prop({ type: Object, default: ObjectInit }) readonly token!: Nullable<AccountAsset | Asset>;
   @Prop({ type: String, default: LogoSize.MEDIUM, required: false }) readonly size!: LogoSize;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
 
+  get isNft(): boolean {
+    return !!this.token && api.assets.isNft(this.token);
+  }
+
+  get assetAddress(): Nullable<string> {
+    return this.tokenSymbol ? this.whitelistIdsBySymbol[this.tokenSymbol] : (this.token || {}).address;
+  }
+
+  get whitelistedItem(): Nullable<WhitelistItem> {
+    if (!(this.token || this.tokenSymbol)) {
+      return null;
+    }
+    const address = this.assetAddress;
+    if (!address) {
+      return null;
+    }
+    return this.whitelist[address];
+  }
+
   get iconStyles(): object {
-    return getAssetIconStyles(this.token.address);
+    const asset = this.whitelistedItem;
+    if (!asset) {
+      return {};
+    }
+    return {
+      'background-size': '100%',
+      'background-image': `url("${asset.icon}")`,
+    };
   }
 
   get iconClasses(): Array<string> {
-    let classes = getAssetIconClasses(this.token);
-
+    const questionMark = 's-icon-notifications-info-24';
     const tokenLogoClass = 'asset-logo';
-    classes = [...classes, tokenLogoClass];
+    const classes = [tokenLogoClass];
+
+    if (!this.assetAddress) {
+      classes.push(questionMark);
+    } else if (!this.whitelistedItem) {
+      classes.push(this.isNft ? 'asset-logo-nft' : questionMark);
+    }
+
     classes.push(`${tokenLogoClass}--${this.size.toLowerCase()}`);
 
     if (this.withClickableLogo) {
@@ -57,12 +79,6 @@ export default class TokenLogo extends Mixins(TranslationMixin) {
     }
 
     return classes;
-  }
-
-  handleIconClick(): void {
-    if (this.withClickableLogo) {
-      this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.token } });
-    }
   }
 }
 </script>
