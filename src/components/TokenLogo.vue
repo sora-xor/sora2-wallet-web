@@ -51,10 +51,6 @@ export default class TokenLogo extends Mixins(TranslationMixin) {
   }
 
   get iconStyles(): object {
-    const address = this.assetAddress;
-    if (!address) {
-      return {};
-    }
     const asset = this.whitelistedItem;
     if (!asset) {
       return {};
