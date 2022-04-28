@@ -104,10 +104,14 @@ export default class AssetList extends Mixins(TranslationMixin) {
     return parseFloat(getCssVariableValue(this.itemHeightCssVar)) + Number(this.divider);
   }
 
+  get gutterOffset(): number {
+    return this.assets.length > this.size ? -1 * getScrollbarWidth() : 0;
+  }
+
   get style(): object {
-    const dividersHeight = this.divider ? this.size - 1 : 0;
+    const dividersHeight = this.divider ? this.size : 0;
     const height = `calc(var(${this.itemHeightCssVar}) * ${this.size} + ${dividersHeight}px)`;
-    const marginRight = `${this.assets.length > this.size ? -1 * getScrollbarWidth() : 0}px`;
+    const marginRight = `${this.gutterOffset}px`;
 
     return {
       height,
