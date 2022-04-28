@@ -6,7 +6,7 @@
       :buffer="itemHeightValue"
       :style="style"
       key-field="address"
-      class="asset-list-inner"
+      :class="['asset-list-inner', { 'hidden-scrollbar': !gutterOffset }]"
       ref="wrap"
       @scroll.native="handleScroll"
     >
@@ -154,6 +154,17 @@ export default class AssetList extends Mixins(TranslationMixin) {
     margin-top: $basic-spacing-medium;
     text-align: center;
     @include hint-text;
+  }
+
+  &-inner {
+    &.hidden-scrollbar {
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
+    }
   }
 
   .el-divider {
