@@ -287,6 +287,7 @@ $history-item-top-border-height: 1px;
 
 .history {
   flex-direction: column;
+  margin-top: calc(var(--s-basic-spacing) * 2);
 
   &--search {
     margin-bottom: #{$basic-spacing-medium};

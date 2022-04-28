@@ -17,7 +17,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
   >
     <recycle-scroller
       buffer="NaN"
-      class="asset-list-inner"
+      class="asset-list-inner hidden-scrollbar"
       item-size="NaN"
       items="[object Object]"
       key-field="address"
@@ -53,7 +53,7 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
   >
     <recycle-scroller
       buffer="NaN"
-      class="asset-list-inner"
+      class="asset-list-inner hidden-scrollbar"
       item-size="NaN"
       items=""
       key-field="address"
@@ -89,7 +89,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
   >
     <recycle-scroller
       buffer="NaN"
-      class="asset-list-inner"
+      class="asset-list-inner hidden-scrollbar"
       item-size="NaN"
       items="[object Object]"
       key-field="address"

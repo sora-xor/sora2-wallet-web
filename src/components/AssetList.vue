@@ -6,7 +6,7 @@
       :buffer="itemHeightValue"
       :style="style"
       key-field="address"
-      class="asset-list-inner"
+      :class="['asset-list-inner', { 'hidden-scrollbar': !gutterOffset }]"
       ref="wrap"
       @scroll.native="handleScroll"
     >
@@ -48,7 +48,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 import AssetListItem from './AssetListItem.vue';
 import Scrollbar from './ScrollBar.vue';
 
-import { delay, getCssVariableValue } from '../util';
+import { delay, getCssVariableValue, getScrollbarWidth } from '../util';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 import type { RecycleScroller } from 'vue-virtual-scroller';
@@ -104,13 +104,18 @@ export default class AssetList extends Mixins(TranslationMixin) {
     return parseFloat(getCssVariableValue(this.itemHeightCssVar)) + Number(this.divider);
   }
 
+  get gutterOffset(): number {
+    return this.assets.length > this.size ? -1 * getScrollbarWidth() : 0;
+  }
+
   get style(): object {
-    const dividersHeight = this.divider ? this.size - 1 : 0;
+    const dividersHeight = this.divider ? this.size : 0;
     const height = `calc(var(${this.itemHeightCssVar}) * ${this.size} + ${dividersHeight}px)`;
+    const marginRight = `${this.gutterOffset}px`;
 
     return {
       height,
-      marginRight: `${this.assets.length > this.size ? -17 : 0}px`,
+      marginRight,
     };
   }
 
@@ -149,6 +154,17 @@ export default class AssetList extends Mixins(TranslationMixin) {
     margin-top: $basic-spacing-medium;
     text-align: center;
     @include hint-text;
+  }
+
+  &-inner {
+    &.hidden-scrollbar {
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
+    }
   }
 
   .el-divider {
