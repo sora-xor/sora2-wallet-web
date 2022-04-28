@@ -1,6 +1,6 @@
 <template>
   <div :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]" v-bind="$attrs" v-on="$listeners">
-    <token-logo :token="asset" size="big" :with-clickable-logo="withClickableLogo" />
+    <token-logo size="big" :token="asset" :with-clickable-logo="withClickableLogo" @click.native="handleIconClick" />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
@@ -33,6 +33,16 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
+
+  handleIconClick(event: Event): void {
+    if (!this.withClickableLogo) {
+      return;
+    }
+    if (event) {
+      event.stopImmediatePropagation();
+    }
+    this.$emit('show-details', this.asset);
+  }
 }
 </script>
 

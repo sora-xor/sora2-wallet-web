@@ -1,11 +1,5 @@
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
-import {
-  MOCK_ACCOUNT_ASSETS,
-  MOCK_WHITE_LIST,
-  MOCK_ACCOUNTS,
-  MOCK_NETWORK_FEE,
-  MOCK_FIAT_PRICE_AND_APY_OBJECT,
-} from '../../utils/mock';
+import { MOCK_ACCOUNT_ASSETS, MOCK_ACCOUNTS, MOCK_NETWORK_FEE, MOCK_FIAT_PRICE_AND_APY_OBJECT } from '../../utils/mock';
 import { MOCK_WALLET_SEND } from '../../utils/WalletSendMock';
 
 import WalletSend from '@/components/WalletSend.vue';
@@ -29,7 +23,6 @@ const createStore = () =>
       }),
       getters: {
         account: () => MOCK_ACCOUNTS[0],
-        whitelist: () => MOCK_WHITE_LIST,
       },
     },
   });
