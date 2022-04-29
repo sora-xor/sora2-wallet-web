@@ -2,9 +2,6 @@ import type { FPNumber, Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
-export const NFT_STORAGE_API_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDBmMzgwOTMyQTNDODM3ZDNiN2JEYzBBNTc0NmNkMDlBRGIyNUZGMzQiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY0MjU4OTQ2ODA4MSwibmFtZSI6Im5mdC1zdG9yYWdlLWRldiJ9.hkvzea9ltcriXXHKoYd3F2Iu1Y8X5H-zunAQboC_3vw';
-
 export enum RouteNames {
   WalletConnection = 'WalletConnection',
   WalletSend = 'WalletSend',
@@ -108,3 +105,14 @@ export enum FontWeightRate {
   MEDIUM = 'medium',
   NORMAL = 'normal',
 }
+
+export enum LogoSize {
+  MINI = 'mini',
+  SMALL = 'small',
+  MEDIUM = 'medium',
+  BIG = 'big',
+  BIGGER = 'bigger',
+  LARGE = 'large',
+}
+
+export const ObjectInit = () => null;

@@ -21,6 +21,9 @@
 import { Mixins, Component, Ref, Prop } from 'vue-property-decorator';
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
+import { IMAGE_MIME_TYPES } from '../util/image';
+
+const FILE_TYPES_LIST_STRING = Object.values(IMAGE_MIME_TYPES).join(',');
 
 const HUNDRED_MB = 100 * 1024 * 1024; // 100MB in bytes
 
@@ -33,7 +36,7 @@ export default class FileUploader extends Mixins(LoadingMixin, TranslationMixin)
   /**
    * Accepted format of files. `image/*` is set by default
    */
-  @Prop({ default: 'image/*', type: String }) readonly accept!: string;
+  @Prop({ default: FILE_TYPES_LIST_STRING, type: String }) readonly accept!: string;
   /**
    * Limit (in bytes) of the file. 100 MB is set by default.
    */

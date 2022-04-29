@@ -34,8 +34,6 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
-import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
@@ -45,8 +43,9 @@ import WalletAccount from './WalletAccount.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletActivity from './WalletActivity.vue';
 import QrCodeScanButton from './QrCodeScanButton.vue';
-import { RouteNames, WalletTabs } from '../consts';
 
+import { RouteNames, WalletTabs } from '../consts';
+import { state, action } from '../store/decorators';
 import type { WalletPermissions } from '../consts';
 
 @Component({
@@ -61,14 +60,14 @@ import type { WalletPermissions } from '../consts';
 export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) {
   readonly WalletTabs = WalletTabs;
 
-  @Getter currentRouteParams!: any;
-  @Getter permissions!: WalletPermissions;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
+  @state.settings.permissions permissions!: WalletPermissions;
 
-  @Action logout!: AsyncVoidFn;
+  @action.account.logout private logout!: AsyncVoidFn;
 
   currentTab: WalletTabs = WalletTabs.Assets;
 
-  mounted() {
+  mounted(): void {
     if (this.currentRouteParams.currentTab) {
       this.currentTab = this.currentRouteParams.currentTab;
     }

@@ -42,7 +42,7 @@
                   fiat-format-as-value
                   with-left-shift
                   value-class="wallet-send-amount-balance-value"
-                  :value="balance"
+                  :value="formattedBalance"
                   :asset-symbol="asset.symbol"
                   :fiat-value="getFiatBalance(asset)"
                 />
@@ -61,7 +61,9 @@
                 {{ t('walletSend.max') }}
               </s-button>
               <div class="asset-box">
-                <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+                <div class="asset-box__logo">
+                  <token-logo :token="asset" size="small" />
+                </div>
                 <span class="asset-name">{{ asset.symbol }}</span>
               </div>
             </div>
@@ -94,7 +96,9 @@
             <div class="confirm-asset s-flex">
               <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
               <div class="confirm-asset-value s-flex">
-                <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+                <div class="confirm-asset-icon">
+                  <token-logo :token="asset" />
+                </div>
                 <span class="asset-name">{{ asset.symbol }}</span>
               </div>
             </div>
@@ -120,28 +124,29 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
 import { FPNumber, CodecString, Operation } from '@sora-substrate/util';
-import { KnownAssets, KnownSymbols } from '@sora-substrate/util/build/assets/consts';
+import { XOR } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/assets/types';
-
-import TransactionMixin from './mixins/TransactionMixin';
-import FormattedAmountMixin from './mixins/FormattedAmountMixin';
-import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
-import CopyAddressMixin from './mixins/CopyAddressMixin';
-import ConfirmTransactionMixin from './mixins/ConfirmTransactionMixin';
-import { RouteNames } from '../consts';
-import { formatAddress, formatSoraAddress, getAssetIconStyles, getAssetIconClasses } from '../util';
-import { api } from '../api';
+import type { Subscription } from '@polkadot/x-rxjs';
 
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
+import TokenLogo from './TokenLogo.vue';
 import ConfirmDialog from './ConfirmDialog.vue';
 
-import type { Subscription } from '@polkadot/x-rxjs';
+import TransactionMixin from './mixins/TransactionMixin';
+import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
+import ConfirmTransactionMixin from './mixins/ConfirmTransactionMixin';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import { RouteNames } from '../consts';
+import { formatAddress, formatSoraAddress } from '../util';
+import { api } from '../api';
+import { state, mutation, action } from '../store/decorators';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -150,6 +155,7 @@ import type { Subscription } from '@polkadot/x-rxjs';
     FormattedAmountWithFiatValue,
     NetworkFeeWarning,
     WalletFee,
+    TokenLogo,
     ConfirmDialog,
   },
 })
@@ -162,11 +168,11 @@ export default class WalletSend extends Mixins(
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
 
-  @Getter currentRouteParams!: any;
-  @Getter accountAssets!: Array<AccountAsset>;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
+  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
 
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action transfer!: (options: { to: string; amount: string }) => Promise<void>;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
+  @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;
 
   step = 1;
   address = '';
@@ -178,11 +184,11 @@ export default class WalletSend extends Mixins(
 
   created(): void {
     if (this.currentRouteParams.address) {
-      this.address = this.currentRouteParams.address;
+      this.address = this.currentRouteParams.address as string;
     }
 
     if (this.currentRouteParams.asset) {
-      const asset = { ...this.currentRouteParams.asset };
+      const asset = { ...(this.currentRouteParams.asset as AccountAsset) };
       const accountAsset = this.accountAssets.find((accountAsset) => accountAsset.address === asset.address);
 
       if (accountAsset) {
@@ -202,20 +208,9 @@ export default class WalletSend extends Mixins(
 
   get asset(): AccountAsset {
     return {
-      ...this.currentRouteParams.asset,
-      balance: this.assetBalance,
+      ...(this.currentRouteParams.asset as AccountAsset),
+      balance: this.assetBalance as AccountBalance,
     };
-  }
-
-  get iconClasses(): Array<string> {
-    return getAssetIconClasses(this.asset);
-  }
-
-  get iconStyles(): object {
-    if (!this.asset) {
-      return {};
-    }
-    return getAssetIconStyles(this.asset.address);
   }
 
   get fee(): FPNumber {
@@ -293,7 +288,7 @@ export default class WalletSend extends Mixins(
     const decimals = this.asset.decimals;
     const balance = this.getFPNumberFromCodec(this.transferableBalance, decimals);
     const amount = this.getFPNumber(this.amount, decimals);
-    if (this.isXorAccountAsset(this.asset)) {
+    if (this.isXorAccountAsset) {
       if (this.fee.isZero()) {
         return false;
       }
@@ -323,18 +318,14 @@ export default class WalletSend extends Mixins(
     }
 
     if (!this.hasEnoughXor) {
-      return this.t('walletSend.badAmount', { tokenSymbol: KnownSymbols.XOR });
+      return this.t('walletSend.badAmount', { tokenSymbol: XOR.symbol });
     }
 
     return '';
   }
 
-  isXorAccountAsset(asset: AccountAsset): boolean {
-    const knownAsset = KnownAssets.get(asset.address);
-    if (!knownAsset) {
-      return false;
-    }
-    return knownAsset.symbol === KnownSymbols.XOR;
+  get isXorAccountAsset(): boolean {
+    return this.asset.address === XOR.address;
   }
 
   getFormattedAddress(asset: AccountAsset): string {
@@ -351,7 +342,7 @@ export default class WalletSend extends Mixins(
   }
 
   async handleMaxClick(): Promise<void> {
-    if (this.isXorAccountAsset(this.asset)) {
+    if (this.isXorAccountAsset) {
       const balance = this.getFPNumberFromCodec(this.transferableBalance, this.asset.decimals);
       this.amount = balance.sub(this.fee).toString();
       return;
@@ -363,7 +354,7 @@ export default class WalletSend extends Mixins(
     if (
       !this.isXorSufficientForNextTx({
         type: Operation.Transfer,
-        isXorAccountAsset: this.isXorAccountAsset(this.asset),
+        isXorAccountAsset: this.isXorAccountAsset,
         amount: this.getFPNumber(this.amount),
       })
     ) {
@@ -449,10 +440,10 @@ $logo-size: var(--s-size-mini);
       border-radius: var(--s-border-radius-mini);
       box-shadow: var(--s-shadow-element);
       padding: $basic-spacing-mini #{$basic-spacing-extra-small};
-    }
-    &-logo {
-      @include asset-logo-styles(var(--s-size-mini), $nft-font-size: 8px);
-      margin-right: var(--s-basic-spacing);
+      &__logo {
+        @include asset-logo-styles;
+        margin-right: var(--s-basic-spacing) !important;
+      }
     }
     &-max {
       height: var(--s-size-mini);
@@ -483,6 +474,10 @@ $logo-size: var(--s-size-mini);
       letter-spacing: var(--s-letter-spacing-small);
       text-align: right;
     }
+  }
+  .nft-image {
+    position: absolute;
+    z-index: 1;
   }
   .asset-id,
   &-address-formatted {
@@ -576,15 +571,19 @@ $logo-size: var(--s-size-mini);
         justify-content: flex-end;
         white-space: nowrap;
         .asset {
-          &-logo {
-            @include asset-logo-styles(var(--s-size-small), $nft-font-size: var(--s-font-size-mini));
-            margin-right: calc(var(--s-basic-spacing) * 2);
-          }
           &-name {
             font-size: var(--s-heading2-font-size);
             line-height: var(--s-line-height-small);
           }
         }
+      }
+      &-icon {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        white-space: nowrap;
+        position: relative;
+        margin-right: calc(var(--s-basic-spacing) * 2);
       }
     }
     &-from {

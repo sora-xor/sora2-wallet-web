@@ -8,7 +8,15 @@
       <s-divider class="wallet-assets-divider" />
     </div>
 
-    <asset-list :assets="formattedAccountAssets" :size="3" with-fiat divider class="wallet-assets-list">
+    <asset-list
+      class="wallet-assets-list"
+      with-fiat
+      with-clickable-logo
+      divider
+      :assets="formattedAccountAssets"
+      :size="3"
+      @show-details="handleOpenAssetDetails"
+    >
       <template #value="asset">
         <formatted-amount-with-fiat-value
           value-can-be-hidden
@@ -30,13 +38,12 @@
 
       <template #default="asset">
         <s-button
-          v-if="permissions.sendAssets"
+          v-if="permissions.sendAssets && !isZeroBalance(asset)"
           class="wallet-assets__button send"
           type="action"
           size="small"
           alternative
           :tooltip="t('assets.send')"
-          :disabled="isZeroBalance(asset)"
           @click="handleAssetSend(asset)"
         >
           <s-icon name="finance-send-24" size="28" />
@@ -78,19 +85,22 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Getter, Action } from 'vuex-class';
 import { FPNumber } from '@sora-substrate/util';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+
+import AssetList from './AssetList.vue';
+import FormattedAmount from './FormattedAmount.vue';
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
-import AssetList from './AssetList.vue';
-import FormattedAmount from './FormattedAmount.vue';
-import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+
 import { RouteNames, HiddenValue } from '../consts';
-import { getAssetIconStyles, formatAddress, getAssetIconClasses } from '../util';
+import { formatAddress } from '../util';
+import { state, mutation } from '../store/decorators';
 import type { WalletPermissions } from '../consts';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
@@ -100,11 +110,12 @@ import type { WalletPermissions } from '../consts';
   },
 })
 export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, CopyAddressMixin) {
-  @Getter accountAssets!: Array<AccountAsset>;
-  @Getter withoutFiatAndApy!: boolean;
-  @Getter permissions!: WalletPermissions;
-  @Getter shouldBalanceBeHidden!: boolean;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.account.withoutFiatAndApy private withoutFiatAndApy!: boolean;
+  @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
+  @state.settings.permissions permissions!: WalletPermissions;
+
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   get computedClasses(): string {
     const baseClass = 'wallet-assets';
@@ -142,9 +153,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
   }
-
-  getAssetIconStyles = getAssetIconStyles;
-  getAssetIconClasses = getAssetIconClasses;
 
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
@@ -186,7 +194,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 <style lang="scss">
 .wallet-assets {
   &-list {
-    @include asset-list-scrollbar($basic-spacing-big, $basic-spacing-big, $basic-spacing-big);
+    @include asset-list($basic-spacing-big, $basic-spacing-big);
   }
 
   .asset {

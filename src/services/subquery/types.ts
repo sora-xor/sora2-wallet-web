@@ -7,20 +7,22 @@ export interface ExplorerDataParser {
 }
 
 export interface Explorer {
-  soraNetwork: SoraNetwork;
+  soraNetwork: Nullable<SoraNetwork>;
   getAccountTransactions: (variables?: any) => Promise<any>;
 }
 
 export enum ModuleNames {
   Assets = 'assets',
   LiquidityProxy = 'liquidityProxy',
-  Rewards = 'rewards',
   PoolXYK = 'poolXYK',
   TradingPair = 'tradingPair',
   Utility = 'utility',
   Referrals = 'referrals',
   EthBridge = 'ethBridge',
   BridgeMultisig = 'bridgeMultisig',
+  Rewards = 'rewards',
+  VestedRewards = 'vestedRewards',
+  PswapDistribution = 'pswapDistribution',
 }
 
 export enum ModuleMethods {
@@ -30,12 +32,17 @@ export enum ModuleMethods {
   PoolXYKDepositLiquidity = 'depositLiquidity',
   PoolXYKWithdrawLiquidity = 'withdrawLiquidity',
   LiquidityProxySwap = 'swap',
+  LiquidityProxySwapTransfer = 'swapTransfer',
   UtilityBatchAll = 'batchAll',
   ReferralsSetReferrer = 'setReferrer',
   ReferralsReserve = 'reserve',
   ReferralsUnreserve = 'unreserve',
   EthBridgeTransferToSidechain = 'transferToSidechain',
   BridgeMultisigAsMulti = 'asMulti',
+  RewardsClaim = 'claim',
+  VestedRewardsClaimRewards = 'claimRewards',
+  VestedRewardsClaimCrowdloanRewards = 'claimCrowdloanRewards',
+  PswapDistributionClaimIncentive = 'claimIncentive',
 }
 
 export type PoolXYKEntity = {
@@ -68,14 +75,18 @@ export type HistoryElementExecution = {
   error?: HistoryElementError;
 };
 
-export type HistoryElementSwap = {
+export interface HistoryElementSwap {
   baseAssetAmount: string;
   baseAssetId: string;
   liquidityProviderFee: string;
   selectedMarket: string;
   targetAssetAmount: string;
   targetAssetId: string;
-};
+}
+
+export interface HistoryElementSwapTransfer extends HistoryElementSwap {
+  to: string;
+}
 
 export type HistoryElementTransfer = {
   amount: string;
@@ -96,7 +107,14 @@ export type HistoryElementAssetRegistration = {
   assetId: string;
 };
 
-export type UtilityBatchAllItem = {
+export type ClaimedRewardItem = {
+  assetId: string;
+  amount: string;
+};
+
+export type HistoryElementRewardsClaim = Nullable<ClaimedRewardItem[]>;
+
+export type UtilityBatchCall = {
   data: {
     args: {
       [key: string]: string | number;
@@ -109,9 +127,13 @@ export type UtilityBatchAllItem = {
   method: string;
 };
 
-export type AddressKeyMapping = {
-  [key: string]: string | null;
+export type ExtrinsicEvent = {
+  method: string;
+  section: string;
+  data: any[];
 };
+
+export type HistoryElementUtilityBatchAll = UtilityBatchCall[];
 
 export type HistoryElementEthBridgeOutgoing = {
   amount: string;
@@ -139,14 +161,16 @@ export type HistoryElement = {
   timestamp: number;
   data: Nullable<
     | HistoryElementSwap
+    | HistoryElementSwapTransfer
     | HistoryElementTransfer
     | HistoryElementLiquidityOperation
     | HistoryElementAssetRegistration
-    | UtilityBatchAllItem[]
+    | HistoryElementUtilityBatchAll
     | ReferralSetReferrer
     | ReferrerReserve
     | HistoryElementEthBridgeOutgoing
     | HistoryElementEthBridgeIncoming
+    | HistoryElementRewardsClaim
   >;
 };
 
@@ -177,4 +201,11 @@ export type ReferrerReserve = {
   from: string;
   to: string;
   amount: string;
+};
+
+export type ReferralRewardsGroup = {
+  keys: [string];
+  sum: {
+    amount: CodecString;
+  };
 };

@@ -15,6 +15,7 @@ import SDropdown from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropd
 import SDropdownItem from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdownItem';
 import SIcon from '@soramitsu/soramitsu-js-ui/lib/components/Icon/SIcon';
 import SInput from '@soramitsu/soramitsu-js-ui/lib/components/Input/SInput';
+import SImage from '@soramitsu/soramitsu-js-ui/lib/components/Image/SImage';
 import SFloatInput from '@soramitsu/soramitsu-js-ui/lib/components/Input/SFloatInput';
 import SForm from '@soramitsu/soramitsu-js-ui/lib/components/Form/SForm';
 import SFormItem from '@soramitsu/soramitsu-js-ui/lib/components/Form/SFormItem';
@@ -37,6 +38,7 @@ export function install(vue: typeof Vue, store) {
   vue.use(SDropdownItem);
   vue.use(SIcon);
   vue.use(SInput);
+  vue.use(SImage);
   vue.use(SFloatInput);
   vue.use(SForm);
   vue.use(SFormItem);

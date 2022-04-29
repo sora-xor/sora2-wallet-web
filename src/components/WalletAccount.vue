@@ -17,11 +17,12 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
+
+import WalletAvatar from './WalletAvatar.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import { copyToClipboard, formatAddress, formatSoraAddress } from '../util';
-import WalletAvatar from './WalletAvatar.vue';
+import { getter } from '../store/decorators';
 import type { Account, PolkadotJsAccount } from '../types/common';
 
 @Component({
@@ -30,7 +31,7 @@ import type { Account, PolkadotJsAccount } from '../types/common';
   },
 })
 export default class WalletAccount extends Mixins(TranslationMixin) {
-  @Getter account!: Account;
+  @getter.account.account private account!: Account;
 
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
 

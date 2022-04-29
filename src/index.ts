@@ -1,6 +1,6 @@
 import type Vue from 'vue';
-import type { Store } from 'vuex';
 import isDesktop from 'is-electron';
+import type { PluginObject } from 'vue';
 
 import installWalletPlugins from './plugins';
 
@@ -10,11 +10,15 @@ import WalletAccount from './components/WalletAccount.vue';
 import WalletAvatar from './components/WalletAvatar.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
+import AddAssetDetailsCard from './components/AddAssetDetailsCard.vue';
+import TokenAddress from './components/TokenAddress.vue';
+import SearchInput from './components/SearchInput.vue';
 import InfoLine from './components/InfoLine.vue';
 import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';
 import TransactionHashView from './components/TransactionHashView.vue';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
+import TokenLogo from './components/TokenLogo.vue';
 // Mixins
 import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
@@ -32,22 +36,28 @@ import { api, connection } from './api';
 import { delay, getExplorerLinks, getPolkadotJsAccounts, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
+import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
+import * as VUEX_TYPES from './store/types';
 import * as SUBQUERY_TYPES from './services/subquery/types';
 import * as WALLET_CONSTS from './consts';
 import * as WALLET_TYPES from './types/common';
+import { WalletModules } from './store/wallet';
 
-let store: Store<unknown>;
+type Store = typeof internalStore;
 
-const SoraWalletElements = {
-  install(vue: typeof Vue, options: any): void {
-    if (!options.store) {
+type PluginOptions = {
+  store: Store;
+};
+
+let store: Store;
+
+const SoraWalletElements: PluginObject<PluginOptions> = {
+  install(vue: typeof Vue, options?: PluginOptions): void {
+    if (!options || !options.store) {
       throw new Error('Please provide vuex store.');
     }
-    Object.values(WALLET_TYPES.Modules).forEach((module) => {
-      options.store.registerModule(module, modules[module]);
-    });
     store = options.store;
-    installWalletPlugins(vue, store);
+    installWalletPlugins(vue, store.original);
     vue.component('SoraWallet', SoraWallet); // Root component
   },
 };
@@ -77,7 +87,7 @@ async function initWallet({
       console.info('Connected to blockchain', connection.endpoint);
     }
     if (permissions) {
-      store.dispatch('setPermissions', permissions);
+      store.commit.wallet.settings.setPermissions(permissions);
     }
     try {
       api.initialize();
@@ -85,16 +95,34 @@ async function initWallet({
       console.error('Something went wrong during api initialization', error);
       throw error;
     }
-    await store.dispatch('getWhitelist', { whiteListOverApi });
+    // // OLD
+    // await store.dispatch('getWhitelist', { whiteListOverApi });
+    // if (isDesktop()) {
+    //   await store.dispatch('subscribeOnExtensionAvailability');
+    //   await store.dispatch('checkSigner');
+    // } else {
+    //   api.initAccountStorage();
+    //   await store.dispatch('getPolkadotJsAccounts');
+    // }
+    // await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
+    // await store.dispatch('setWalletLoaded', true);
+
+    // NEW
+    await store.dispatch.wallet.account.getWhitelist(whiteListOverApi);
+
     if (isDesktop()) {
-      await store.dispatch('subscribeOnExtensionAvailability');
-      await store.dispatch('checkSigner');
+      await store.dispatch.wallet.account.subscribeOnExtensionAvailability();
+      await store.dispatch.wallet.account.checkSigner();
     } else {
       api.initAccountStorage();
-      await store.dispatch('getPolkadotJsAccounts');
+      await store.dispatch.wallet.account.getPolkadotJsAccounts();
     }
-    await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
-    await store.dispatch('setWalletLoaded', true);
+    await Promise.all([
+      store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
+      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(),
+    ]);
+
+    store.commit.wallet.settings.setWalletLoaded(true);
   }
 }
 
@@ -104,11 +132,15 @@ const components = {
   WalletAvatar,
   AssetList,
   AssetListItem,
+  AddAssetDetailsCard,
+  TokenAddress,
+  SearchInput,
   InfoLine,
   FormattedAmount,
   FormattedAmountWithFiatValue,
   TransactionHashView,
   NetworkFeeWarning,
+  TokenLogo,
 };
 
 const mixins = {
@@ -120,6 +152,14 @@ const mixins = {
   LoadingMixin,
   ReferralRewardsMixin,
   PaginationSearchMixin,
+};
+
+const vuex = {
+  walletModules: modules,
+  VuexOperation,
+  attachDecorator,
+  createDecoratorsObject,
+  WalletModules,
 };
 
 export {
@@ -138,5 +178,7 @@ export {
   historyElementsFilter,
   SubqueryExplorerService,
   SUBQUERY_TYPES,
+  VUEX_TYPES,
+  vuex,
 };
 export default SoraWalletElements;

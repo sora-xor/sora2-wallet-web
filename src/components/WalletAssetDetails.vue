@@ -17,7 +17,7 @@
           @click-details="handleClickNftDetails"
         />
         <template v-else>
-          <i class="asset-logo" :class="iconClasses" :style="iconStyles" />
+          <token-logo :token="asset" size="bigger" />
           <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
             <formatted-amount
               value-can-be-hidden
@@ -102,7 +102,7 @@
             :label="t('createToken.nft.source.label')"
             :value="displayedNftContentLink"
             :value-tooltip="nftLinkTooltipText"
-            @click.native="handleCopyNftLink"
+            @click.native.stop="handleCopyNftLink"
           />
         </div>
       </transition>
@@ -113,8 +113,7 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
-import { KnownAssets, KnownSymbols, BalanceType } from '@sora-substrate/util/build/assets/consts';
+import { XOR, BalanceType } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/util';
 
@@ -122,6 +121,7 @@ import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import NftDetails from './NftDetails.vue';
 import InfoLine from './InfoLine.vue';
+import TokenLogo from './TokenLogo.vue';
 import WalletHistory from './WalletHistory.vue';
 import QrCodeScanButton from './QrCodeScanButton.vue';
 import { api } from '../api';
@@ -130,8 +130,9 @@ import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import { RouteNames } from '../consts';
-import { copyToClipboard, delay, getAssetIconStyles, shortenValue, getAssetIconClasses } from '../util';
+import { copyToClipboard, delay, shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
+import { state, getter } from '../store/decorators';
 import { Operations, Account } from '../types/common';
 import type { WalletPermissions } from '../consts';
 
@@ -149,19 +150,18 @@ interface Operation {
     QrCodeScanButton,
     NftDetails,
     InfoLine,
+    TokenLogo,
   },
 })
 export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin, QrCodeParserMixin) {
   readonly balanceTypes = Object.values(BalanceType).filter((type) => type !== BalanceType.Total);
   readonly BalanceType = BalanceType;
 
-  @Getter account!: Account;
-  @Getter accountAssets!: Array<AccountAsset>;
-  @Getter currentRouteParams!: any;
-  @Getter history!: AccountHistory<HistoryItem>;
-  @Getter permissions!: WalletPermissions;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action clearAccountHistory!: (assetAddress?: string) => Promise<void>;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset>;
+  @state.settings.permissions private permissions!: WalletPermissions;
+  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.transactions.history private history!: AccountHistory<HistoryItem>;
+  @getter.account.account private account!: Account;
 
   wasBalanceDetailsClicked = false;
 
@@ -193,8 +193,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     this.wasNftDetailsClicked = !this.wasNftDetailsClicked;
   }
 
-  async handleCopyNftLink(event?: Event): Promise<void> {
-    event && event.stopImmediatePropagation();
+  async handleCopyNftLink(): Promise<void> {
     await copyToClipboard(this.nftContentLink);
     this.wasNftLinkCopied = true;
     await delay(1000);
@@ -243,7 +242,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     // currentRouteParams.asset was added here to avoid a case when the asset is not found
     return (
       this.accountAssets.find(({ address }) => address === this.currentRouteParams.asset.address) ||
-      (this.currentRouteParams.asset as AccountAsset)
+      this.currentRouteParams.asset
     );
   }
 
@@ -285,8 +284,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   get isXor(): boolean {
-    const asset = KnownAssets.get(this.asset.address);
-    return asset && asset.symbol === KnownSymbols.XOR;
+    return this.asset.address === XOR.address;
   }
 
   get isCleanHistoryDisabled(): boolean {
@@ -295,17 +293,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     return Object.values(this.history).every(
       (item) => ![item.assetAddress, item.asset2Address].includes(this.asset.address)
     );
-  }
-
-  get iconClasses(): Array<string> {
-    return getAssetIconClasses(this.asset);
-  }
-
-  get iconStyles(): object {
-    if (!this.asset) {
-      return {};
-    }
-    return getAssetIconStyles(this.asset.address);
   }
 
   handleBack(): void {
@@ -350,11 +337,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     api.assets.removeAccountAsset(this.asset.address);
     this.handleBack();
   }
-
-  async handleCleanHistory(): Promise<void> {
-    if (!this.asset) return;
-    await this.clearAccountHistory(this.asset.address);
-  }
 }
 </script>
 
@@ -374,6 +356,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     .formatted-amount--fiat-value {
       + .asset-details-actions {
         margin-top: #{$basic-spacing-small};
+        margin-bottom: #{$basic-spacing-medium};
       }
     }
   }
@@ -432,9 +415,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
   &-actions {
     margin-top: #{$basic-spacing-medium};
-  }
-  .asset-logo {
-    @include asset-logo-styles(48px);
   }
 }
 

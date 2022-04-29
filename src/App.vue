@@ -13,38 +13,41 @@
 <script lang="ts">
 // This file is only for local usage
 import { Component, Mixins, Watch } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
 
-import { FPNumber, History } from '@sora-substrate/util';
+import { FPNumber, HistoryItem } from '@sora-substrate/util';
 import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils';
 import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
 
+import env from '../public/env.json';
+
 import TransactionMixin from './components/mixins/TransactionMixin';
 import { initWallet } from './index';
 import SoraWallet from './SoraWallet.vue';
-import { SoraNetwork, NFT_STORAGE_API_KEY } from './consts';
-import { ApiKeysObject } from './types/common';
+import { SoraNetwork } from './consts';
+import { state, mutation, getter, action } from './store/decorators';
+import type { ApiKeysObject } from './types/common';
 
 @Component({
   components: { SoraWallet },
 })
 export default class App extends Mixins(TransactionMixin) {
-  @Getter shouldBalanceBeHidden!: boolean;
-  @Action toggleHideBalance!: AsyncVoidFn;
+  @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
+  @getter.transactions.firstReadyTx firstReadyTransaction!: Nullable<HistoryItem>;
+  @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
+  @getter.libraryTheme libraryTheme!: Theme;
 
-  @Getter libraryDesignSystem!: DesignSystem;
-  @Getter libraryTheme!: Theme;
-  @Getter firstReadyTransaction!: Nullable<History>;
-
-  @Action resetNetworkSubscriptions!: AsyncVoidFn;
-  @Action resetInternalSubscriptions!: AsyncVoidFn;
-  @Action setApiKeys!: (apiKeys: ApiKeysObject) => AsyncVoidFn;
-  @Action setSoraNetwork!: (network: SoraNetwork) => Promise<void>;
+  @mutation.settings.toggleHideBalance toggleHideBalance!: VoidFn;
+  @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
+  @mutation.settings.setSubqueryEndpoint private setSubqueryEndpoint!: (endpoint: string) => void;
+  @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
+  @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncVoidFn;
+  @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncVoidFn;
 
   async created(): Promise<void> {
-    await this.setApiKeys({ nftStorage: NFT_STORAGE_API_KEY });
-    await this.setSoraNetwork(SoraNetwork.Dev);
+    await this.setApiKeys(env.API_KEYS);
+    this.setSubqueryEndpoint(env.SUBQUERY_ENDPOINT);
+    this.setSoraNetwork(SoraNetwork.Dev);
     await initWallet({ withoutStore: true, whiteListOverApi: true }); // We don't need storage for local development
     const localeLanguage = navigator.language;
     FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2);
@@ -52,7 +55,7 @@ export default class App extends Mixins(TransactionMixin) {
   }
 
   @Watch('firstReadyTransaction', { deep: true })
-  private handleNotifyAboutTransaction(value: History, oldValue: History): void {
+  private handleNotifyAboutTransaction(value: HistoryItem, oldValue: HistoryItem): void {
     this.handleChangeTransaction(value, oldValue);
   }
 

@@ -1,12 +1,12 @@
 <template>
   <div class="asset-search">
-    <s-input
-      ref="search"
-      class="asset-search-input"
-      prefix="s-icon-search-16"
-      :maxlength="100"
-      :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
+    <search-input
+      autofocus
       v-model="search"
+      :placeholder="t(`addAsset.${AddAssetTabs.Search}.placeholder`)"
+      :maxlength="100"
+      @clear="resetSearch"
+      class="asset-search-input"
     />
     <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset">
       <template #list-empty>
@@ -18,44 +18,40 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from './AssetList.vue';
+import SearchInput from './SearchInput.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import { AddAssetTabs, RouteNames } from '../consts';
+import { state, getter, mutation } from '../store/decorators';
 import type { AccountAssetsTable } from '../types/common';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {
     AssetList,
+    SearchInput,
   },
 })
 export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
-  @Getter assets!: Array<Asset>;
-  @Getter accountAssets!: Array<AccountAsset>;
-  @Getter accountAssetsAddressTable!: AccountAssetsTable;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
+  @state.account.assets private assets!: Array<Asset>;
+  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @getter.account.accountAssetsAddressTable private accountAssetsAddressTable!: AccountAssetsTable;
+
+  @mutation.router.navigate private navigate!: (options: Route) => Promise<void>;
 
   search = '';
-
-  async mounted(): Promise<void> {
-    const input = this.$refs.search as any;
-
-    if (input && typeof input.focus === 'function') {
-      input.focus();
-    }
-  }
 
   get searchValue(): string {
     return this.search ? this.search.trim().toLowerCase() : '';
   }
 
-  get notAddedAssets(): Array<Asset> {
+  private get notAddedAssets(): Array<Asset> {
     return this.assets.filter((asset) => !(asset.address in this.accountAssetsAddressTable));
   }
 
@@ -84,12 +80,16 @@ export default class AddAssetSearch extends Mixins(TranslationMixin, LoadingMixi
   handleSelectAsset(asset: Asset): void {
     this.navigate({ name: RouteNames.AddAssetDetails, params: { asset } });
   }
+
+  resetSearch(): void {
+    this.search = '';
+  }
 }
 </script>
 
 <style lang="scss">
 .asset-search-list {
-  @include asset-list-scrollbar($basic-spacing-big, 0px);
+  @include asset-list($basic-spacing-big);
 
   .asset {
     padding-left: $basic-spacing-big;

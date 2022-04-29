@@ -34,6 +34,7 @@ export default {
   transactionSubmittedText: 'Transaction was submitted',
   operations: {
     [Operation.Swap]: 'Swap',
+    [Operation.SwapAndSend]: 'Swap and Send',
     [Operation.Transfer]: 'Transfer',
     [Operation.AddLiquidity]: 'Add Liquidity',
     [Operation.RemoveLiquidity]: 'Remove Liquidity',
@@ -48,6 +49,7 @@ export default {
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
       [Operation.Swap]: 'Swapped {amount} {symbol} for {amount2} {symbol2}',
+      [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and sent to {address}',
       [Operation.AddLiquidity]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Removed {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
@@ -60,6 +62,7 @@ export default {
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
       [Operation.Swap]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2}',
+      [Operation.SwapAndSend]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2} and send to {address}',
       [Operation.AddLiquidity]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Failed to remove {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
@@ -167,7 +170,7 @@ export default {
   addAsset: {
     title: '@:addAssetText',
     action: '@:addAssetText',
-    success: 'Asset was added successfully!',
+    success: 'Asset {symbol} was added successfully!',
     [AddAssetTabs.Search]: {
       title: '@:searchText',
       placeholder: 'Filter by Asset ID, Name or Ticker Symbol',

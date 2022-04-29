@@ -1,7 +1,10 @@
-import { FPNumber, Operation, TransactionStatus, History } from '@sora-substrate/util';
-import { BN } from '@polkadot/util';
 import getOr from 'lodash/fp/getOr';
-import type { Asset } from '@sora-substrate/util/build/assets/types';
+import omit from 'lodash/fp/omit';
+import { BN } from '@polkadot/util';
+import { FPNumber, Operation, TransactionStatus, HistoryItem } from '@sora-substrate/util';
+import { RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
+import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
+import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 
 import store from '../../store';
 import { api } from '../../api';
@@ -11,13 +14,19 @@ import type {
   HistoryElement,
   HistoryElementError,
   HistoryElementSwap,
+  HistoryElementSwapTransfer,
   HistoryElementLiquidityOperation,
   HistoryElementTransfer,
   HistoryElementAssetRegistration,
-  UtilityBatchAllItem,
+  HistoryElementRewardsClaim,
+  HistoryElementUtilityBatchAll,
+  UtilityBatchCall,
   ReferralSetReferrer,
   ReferrerReserve,
+  ClaimedRewardItem,
+  ExtrinsicEvent,
 } from './types';
+import { SubstrateEvents } from './consts';
 
 const insensitive = (value: string) => value.toLowerCase();
 
@@ -32,16 +41,31 @@ const OperationsMap = {
   },
   [insensitive(ModuleNames.LiquidityProxy)]: {
     [ModuleMethods.LiquidityProxySwap]: () => Operation.Swap,
+    [ModuleMethods.LiquidityProxySwapTransfer]: () => Operation.SwapAndSend,
   },
   [insensitive(ModuleNames.Utility)]: {
-    [ModuleMethods.UtilityBatchAll]: (data: HistoryElement['data']) => {
+    [ModuleMethods.UtilityBatchAll]: (data: HistoryElementUtilityBatchAll) => {
+      if (!Array.isArray(data)) return null;
+
       if (
-        Array.isArray(data) &&
         !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKInitializePool }) &&
         !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity })
       ) {
         return Operation.CreatePair;
       }
+
+      if (
+        data.every(
+          (item) =>
+            isModuleMethod(item, ModuleNames.Rewards, ModuleMethods.RewardsClaim) ||
+            isModuleMethod(item, ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive) ||
+            isModuleMethod(item, ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimRewards) ||
+            isModuleMethod(item, ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimCrowdloanRewards)
+        )
+      ) {
+        return Operation.ClaimRewards;
+      }
+
       return null;
     },
   },
@@ -50,18 +74,29 @@ const OperationsMap = {
     [ModuleMethods.ReferralsReserve]: () => Operation.ReferralReserveXor,
     [ModuleMethods.ReferralsUnreserve]: () => Operation.ReferralUnreserveXor,
   },
+  [insensitive(ModuleNames.PswapDistribution)]: {
+    [ModuleMethods.PswapDistributionClaimIncentive]: () => Operation.ClaimRewards,
+  },
+  [insensitive(ModuleNames.Rewards)]: {
+    [ModuleMethods.RewardsClaim]: () => Operation.ClaimRewards,
+  },
+  [insensitive(ModuleNames.VestedRewards)]: {
+    [ModuleMethods.VestedRewardsClaimRewards]: () => Operation.ClaimRewards,
+    [ModuleMethods.VestedRewardsClaimCrowdloanRewards]: () => Operation.ClaimRewards,
+  },
 };
 
-const getAssetSymbol = (asset: Nullable<Asset>): string => (asset && asset.symbol ? asset.symbol : '');
+const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asset && asset.symbol ? asset.symbol : '');
 
 const getTransactionId = (tx: HistoryElement): string => tx.id;
 
 const emptyFn = () => null;
 
-const getBatchCall = (data: Array<UtilityBatchAllItem>, { module, method }): Nullable<UtilityBatchAllItem> =>
-  data.find(
-    (item) => insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method)
-  );
+const isModuleMethod = (item: UtilityBatchCall, module: string, method: string) =>
+  insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method);
+
+const getBatchCall = (calls: Array<UtilityBatchCall>, { module, method }): Nullable<UtilityBatchCall> =>
+  calls.find((item) => isModuleMethod(item, module, method));
 
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
@@ -97,8 +132,9 @@ const getTransactionStatus = (tx: HistoryElement): string => {
 
 const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
   try {
-    if (address in store.getters.whitelist) {
-      return store.getters.whitelist[address];
+    if (address in store.getters.wallet.account.whitelist) {
+      const whitelistData = omit(['icon'], store.getters.wallet.account.whitelist[address]);
+      return { ...whitelistData, address };
     }
     return await api.assets.getAssetInfo(address);
   } catch (error) {
@@ -111,11 +147,47 @@ const logOperationDataParsingError = (operation: Operation, transaction: History
   console.error(`Couldn't parse ${operation} data.`, transaction);
 };
 
+const getRewardsFromEvents = (events: ExtrinsicEvent[]): ClaimedRewardItem[] => {
+  return events.reduce<ClaimedRewardItem[]>((buffer, event) => {
+    if (
+      event.method === SubstrateEvents.CurrenciesTransferred.method &&
+      event.section === SubstrateEvents.CurrenciesTransferred.section
+    ) {
+      const [assetId, from, to, amount] = event.data;
+
+      buffer.push({
+        assetId,
+        amount,
+      });
+    }
+    return buffer;
+  }, []);
+};
+
+const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]> => {
+  const formatted: RewardInfo[] = [];
+
+  for (const { assetId, amount } of rewards) {
+    const asset = await getAssetByAddress(assetId);
+
+    if (asset) {
+      formatted.push({
+        amount,
+        asset,
+        type: RewardingEvents.Unspecified,
+      });
+    }
+  }
+
+  return formatted;
+};
+
 export default class SubqueryDataParser implements ExplorerDataParser {
   // Operations visible in wallet
   public static SUPPORTED_OPERATIONS = [
     Operation.Transfer,
     Operation.Swap,
+    Operation.SwapAndSend,
     Operation.CreatePair,
     Operation.AddLiquidity,
     Operation.RemoveLiquidity,
@@ -123,13 +195,14 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     Operation.ReferralSetInvitedUser,
     Operation.ReferralReserveXor,
     Operation.ReferralUnreserveXor,
+    Operation.ClaimRewards,
   ];
 
   public get supportedOperations(): Array<Operation> {
     return SubqueryDataParser.SUPPORTED_OPERATIONS;
   }
 
-  public async parseTransactionAsHistoryItem(transaction: HistoryElement): Promise<Nullable<History>> {
+  public async parseTransactionAsHistoryItem(transaction: HistoryElement): Promise<Nullable<HistoryItem>> {
     const type = getTransactionOperationType(transaction);
 
     if (!type) return null;
@@ -145,7 +218,7 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     const blockId = transaction.blockHash;
 
     // common attributes
-    const payload: History = {
+    const payload: HistoryItem = {
       id, // history item id will be txId
       type,
       txId: id,
@@ -167,8 +240,9 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     }
 
     switch (type) {
-      case Operation.Swap: {
-        const data = transaction.data as HistoryElementSwap;
+      case Operation.Swap:
+      case Operation.SwapAndSend: {
+        const data = transaction.data as HistoryElementSwap & HistoryElementSwapTransfer;
 
         const assetAddress = data.baseAssetId;
         const asset2Address = data.targetAssetId;
@@ -183,6 +257,10 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         payload.symbol2 = getAssetSymbol(asset2);
         payload.liquiditySource = data.selectedMarket;
         payload.liquidityProviderFee = new FPNumber(data.liquidityProviderFee).toCodecString();
+
+        if (data.to) {
+          payload.to = data.to;
+        }
 
         return payload;
       }
@@ -205,8 +283,11 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         return payload;
       }
       case Operation.CreatePair: {
-        const data = transaction.data as UtilityBatchAllItem[];
-        const call = getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity });
+        const data = transaction.data as HistoryElementUtilityBatchAll;
+        const call = getBatchCall(data, {
+          module: ModuleNames.PoolXYK,
+          method: ModuleMethods.PoolXYKDepositLiquidity,
+        });
 
         if (!call) {
           logOperationDataParsingError(type, transaction);
@@ -223,8 +304,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
         const asset = await getAssetByAddress(assetAddress as string);
         const asset2 = await getAssetByAddress(asset2Address as string);
 
-        payload.assetAddress = asset ? asset.address : '';
-        payload.asset2Address = asset2 ? asset2.address : '';
+        payload.assetAddress = asset ? (assetAddress as string) : '';
+        payload.asset2Address = asset2 ? (asset2Address as string) : '';
         payload.symbol = getAssetSymbol(asset);
         payload.symbol2 = getAssetSymbol(asset2);
         payload.amount = String(amount);
@@ -255,9 +336,6 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
         return payload;
       }
-      // TODO: wait for Subquery support:
-      // Operation.Rewards
-      // utility.batch
       case Operation.ReferralSetInvitedUser: {
         const data = transaction.data as ReferralSetReferrer;
         payload.to = data.to;
@@ -267,6 +345,14 @@ export default class SubqueryDataParser implements ExplorerDataParser {
       case Operation.ReferralUnreserveXor: {
         const data = transaction.data as ReferrerReserve;
         payload.amount = data.amount;
+        return payload;
+      }
+      case Operation.ClaimRewards: {
+        const rewardsData =
+          transaction.module === ModuleNames.Utility ? [] : (transaction.data as HistoryElementRewardsClaim);
+
+        (payload as RewardClaimHistory).rewards = Array.isArray(rewardsData) ? await formatRewards(rewardsData) : [];
+
         return payload;
       }
       default:

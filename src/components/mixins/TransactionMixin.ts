@@ -1,7 +1,7 @@
+import findLast from 'lodash/fp/findLast';
 import { Component, Mixins } from 'vue-property-decorator';
 import { History, TransactionStatus, Operation } from '@sora-substrate/util';
-import findLast from 'lodash/fp/findLast';
-import { Action, Getter } from 'vuex-class';
+import type { HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../../api';
 import { delay, formatAddress, groupRewardsByAssetsList } from '../../util';
@@ -9,23 +9,34 @@ import TranslationMixin from './TranslationMixin';
 import LoadingMixin from './LoadingMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { HiddenValue } from '../../consts';
+import { getter, mutation, action } from '../../store/decorators';
+import type { Account, AccountAssetsTable } from '../../types/common';
 
-import type { Account } from '../../types/common';
-import type { HistoryItem } from '@sora-substrate/util';
+const twoAssetsBasedOperations = [
+  Operation.AddLiquidity,
+  Operation.CreatePair,
+  Operation.RemoveLiquidity,
+  Operation.Swap,
+  Operation.SwapAndSend,
+];
+const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
 
 @Component
 export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
-  @Getter account!: Account;
+  @getter.account.account account!: Account;
+  @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;
 
-  @Action addActiveTransaction!: (id: string) => Promise<void>;
-  @Action removeActiveTransactions!: (ids: string[]) => Promise<void>;
+  @mutation.transactions.addActiveTx addActiveTransaction!: (id: string) => void;
+  @mutation.transactions.removeActiveTxs removeActiveTxs!: (ids: string[]) => void;
+
+  @action.account.addAsset private addAsset!: (address?: string) => Promise<void>;
 
   getMessage(value?: History, hideAmountValues = false): string {
     if (!value || !Object.values(Operation).includes(value.type as Operation)) {
       return '';
     }
     const params = { ...value } as any;
-    if ([Operation.Transfer, Operation.SwapAndSend].includes(value.type)) {
+    if (accountIdBasedOperations.includes(value.type)) {
       const isRecipient = this.account.address === value.to;
       const address = isRecipient ? value.from : value.to;
       const direction = isRecipient ? this.t('transaction.from') : this.t('transaction.to');
@@ -35,27 +46,10 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       params.direction = direction;
       params.action = action;
     }
-    if (
-      [
-        Operation.AddLiquidity,
-        Operation.CreatePair,
-        Operation.Transfer,
-        Operation.RemoveLiquidity,
-        Operation.Swap,
-        Operation.SwapAndSend,
-      ].includes(value.type)
-    ) {
+    if ([...twoAssetsBasedOperations, Operation.Transfer].includes(value.type)) {
       params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
     }
-    if (
-      [
-        Operation.AddLiquidity,
-        Operation.CreatePair,
-        Operation.RemoveLiquidity,
-        Operation.Swap,
-        Operation.SwapAndSend,
-      ].includes(value.type)
-    ) {
+    if (twoAssetsBasedOperations.includes(value.type)) {
       params.amount2 = params.amount2 ? this.formatStringValue(params.amount2, params.decimals2) : '';
     }
     if (value.type === Operation.ClaimRewards) {
@@ -91,7 +85,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
   }
 
   /** Should be used with @Watch like a singletone in a root of the project */
-  handleChangeTransaction(value: Nullable<History>, oldValue: Nullable<History>): void {
+  handleChangeTransaction(value: Nullable<HistoryItem>, oldValue: Nullable<HistoryItem>): void {
     if (
       !value ||
       !value.status ||
@@ -121,9 +115,22 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         });
       }
       if (value.status === TransactionStatus.InBlock) return;
+    } else if (value.type === Operation.RegisterAsset && value.assetAddress) {
+      // If user was really fast and already added tx
+      const alreadyExists = this.accountAssetsAddressTable[value.assetAddress];
+      if (!alreadyExists) {
+        // Add asset automatically for registered assets for finalized txs made by the account
+        this.addAsset(value.assetAddress).then(() => {
+          this.$notify({
+            message: this.t('addAsset.success', { symbol: value.symbol || '' }),
+            type: 'success',
+            title: '',
+          });
+        });
+      }
     }
     // remove active tx on finalized or error status
-    this.removeActiveTransactions([value.id as string]);
+    this.removeActiveTxs([value.id as string]);
   }
 
   async withNotifications(func: AsyncVoidFn): Promise<void> {
@@ -132,7 +139,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         const time = Date.now();
         await func();
         const tx = await this.getLastTransaction(time);
-        await this.addActiveTransaction(tx.id as string);
+        this.addActiveTransaction(tx.id as string);
         this.$notify({ message: this.t('transactionSubmittedText'), title: '' });
       } catch (error) {
         this.$notify({

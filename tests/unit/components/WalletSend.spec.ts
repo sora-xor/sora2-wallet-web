@@ -1,31 +1,35 @@
-import Vuex from 'vuex';
-
-import { useDescribe, useShallowMount } from '../../utils';
-import {
-  MOCK_ACCOUNT_ASSETS,
-  MOCK_WHITE_LIST,
-  MOCK_ACCOUNTS,
-  MOCK_NETWORK_FEE,
-  MOCK_FIAT_PRICE_AND_APY_OBJECT,
-} from '../../utils/mock';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
+import { MOCK_ACCOUNT_ASSETS, MOCK_ACCOUNTS, MOCK_NETWORK_FEE, MOCK_FIAT_PRICE_AND_APY_OBJECT } from '../../utils/mock';
 import { MOCK_WALLET_SEND } from '../../utils/WalletSendMock';
 
 import WalletSend from '@/components/WalletSend.vue';
 
-useDescribe('WalletSend.vue', WalletSend, () => {
-  const store = new Vuex.Store({
-    getters: {
-      currentRouteParams: () => ({ id: '1', asset: MOCK_ACCOUNT_ASSETS[0] }),
-      accountAssets: () => MOCK_ACCOUNT_ASSETS,
-      account: () => MOCK_ACCOUNTS[0],
-      whitelist: () => MOCK_WHITE_LIST,
-      networkFees: () => MOCK_NETWORK_FEE,
-      fiatPriceAndApyObject: () => MOCK_FIAT_PRICE_AND_APY_OBJECT,
+const createStore = () =>
+  useVuex({
+    settings: {
+      state: () => ({
+        networkFees: MOCK_NETWORK_FEE,
+      }),
     },
-    actions: {
-      setAttribute: jest.fn(),
+    router: {
+      state: () => ({
+        currentRouteParams: { id: '1', asset: MOCK_ACCOUNT_ASSETS[0] },
+      }),
+    },
+    account: {
+      state: () => ({
+        accountAssets: MOCK_ACCOUNT_ASSETS,
+        fiatPriceAndApyObject: MOCK_FIAT_PRICE_AND_APY_OBJECT,
+      }),
+      getters: {
+        account: () => MOCK_ACCOUNTS[0],
+      },
     },
   });
+
+useDescribe('WalletSend.vue', WalletSend, () => {
+  const store = createStore();
+
   MOCK_WALLET_SEND.map((item) =>
     it(`[${item.title}]: should be rendered correctly`, () => {
       const wrapper = useShallowMount(WalletSend, {

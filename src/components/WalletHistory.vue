@@ -1,15 +1,14 @@
 <template>
   <div class="history s-flex">
     <s-form class="history-form" :show-message="false">
-      <s-form-item v-if="hasTransactions" class="history--search">
-        <s-input v-model="query" :placeholder="t('history.filterPlaceholder')" prefix="s-icon-search-16" size="big">
-          <template #suffix v-if="query">
-            <s-button class="s-button--clear" :use-design-system="false" @click="resetSearch">
-              <s-icon name="clear-X-16" />
-            </s-button>
-          </template>
-        </s-input>
-      </s-form-item>
+      <search-input
+        v-if="hasTransactions"
+        :placeholder="t('history.filterPlaceholder')"
+        v-model="query"
+        autofocus
+        @clear="resetSearch"
+        class="history--search"
+      />
       <div class="history-items" v-loading="loading">
         <template v-if="hasVisibleTransactions">
           <div
@@ -49,7 +48,6 @@
 <script lang="ts">
 import debounce from 'lodash/debounce';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
-import { Getter, Action } from 'vuex-class';
 import { History, TransactionStatus } from '@sora-substrate/util';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
@@ -57,24 +55,32 @@ import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/uti
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 import PaginationSearchMixin from './mixins/PaginationSearchMixin';
+import SearchInput from './SearchInput.vue';
 import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames } from '../consts';
+import { state, mutation, action } from '../store/decorators';
 import { SubqueryDataParserService } from '../services/subquery';
 import type { ExternalHistoryParams } from '../types/history';
+import type { Route } from '../store/router/types';
 
-@Component
+@Component({
+  components: {
+    SearchInput,
+  },
+})
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
-  @Getter assets!: Array<Asset>;
-  @Getter history!: AccountHistory<HistoryItem>;
-  @Getter externalHistory!: AccountHistory<HistoryItem>;
-  @Getter externalHistoryTotal!: number;
-  @Getter shouldBalanceBeHidden!: boolean;
-  @Action navigate!: (options: { name: string; params?: object }) => Promise<void>;
-  @Action getExternalHistory!: (options?: ExternalHistoryParams) => Promise<void>;
-  @Action resetExternalHistory!: AsyncVoidFn;
-  @Action getAccountHistory!: AsyncVoidFn;
+  @state.account.assets private assets!: Array<Asset>;
+  @state.transactions.history private history!: AccountHistory<HistoryItem>;
+  @state.transactions.externalHistory private externalHistory!: AccountHistory<HistoryItem>;
+  @state.transactions.externalHistoryTotal private externalHistoryTotal!: number;
+  @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
-  @Prop() readonly asset?: AccountAsset;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
+  @mutation.transactions.resetExternalHistory private resetExternalHistory!: VoidFn;
+  @mutation.transactions.getHistory private getHistory!: VoidFn;
+  @action.transactions.getExternalHistory private getExternalHistory!: (args?: ExternalHistoryParams) => Promise<void>;
+
+  @Prop() readonly asset!: Nullable<AccountAsset>;
 
   @Watch('searchQuery')
   private async updateHistoryBySearchQuery() {
@@ -147,14 +153,14 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   async mounted() {
     await this.withLoading(async () => {
-      await this.reset();
+      this.reset();
       await this.updateHistory();
     });
   }
 
-  async reset(): Promise<void> {
+  reset(): void {
     this.resetPage();
-    await this.resetExternalHistory();
+    this.resetExternalHistory();
   }
 
   getFilteredHistory(history: Array<History>): Array<History> {
@@ -189,25 +195,25 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   getStatus(status: string): string {
     if ([TransactionStatus.Error, TransactionStatus.Invalid].includes(status as TransactionStatus)) {
       status = TransactionStatus.Error;
-    } else if (!this.isFinalizedStatus(status as TransactionStatus)) {
+    } else if (!this.isFinalizedStatus(status)) {
       status = 'in_progress';
     }
     return status.toUpperCase();
   }
 
-  getStatusClass(status: string): string {
-    return getStatusClass(this.getStatus(status));
+  getStatusClass(status?: string): string {
+    return getStatusClass(this.getStatus(status || ''));
   }
 
-  getStatusIcon(status: string): string {
-    return getStatusIcon(this.getStatus(status));
+  getStatusIcon(status?: string): string {
+    return getStatusIcon(this.getStatus(status || ''));
   }
 
-  isFinalizedStatus(status: TransactionStatus): boolean {
-    return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(status);
+  isFinalizedStatus(status?: TransactionStatus | string): boolean {
+    return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(status as TransactionStatus);
   }
 
-  handleOpenTransactionDetails(id: number): void {
+  handleOpenTransactionDetails(id?: string): void {
     this.navigate({ name: RouteNames.WalletTransactionDetails, params: { id, asset: this.asset } });
   }
 
@@ -227,6 +233,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       if (withReset) {
         this.reset();
       }
+      this.getHistory(); // TODO: refactoring action
       await this.getExternalHistory({
         next,
         address: this.account.address,
@@ -238,7 +245,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
           assetsAddresses: this.queryAssetsAddresses,
         },
       });
-      await this.getAccountHistory();
+      this.getHistory();
     });
   }
 }
@@ -246,7 +253,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
 <style lang="scss">
 .history {
-  margin-top: #{$basic-spacing-medium};
   .el-card__body {
     padding: #{$basic-spacing-medium} #{$basic-spacing-medium} calc(var(--s-basic-spacing) * 2.5);
   }
@@ -281,8 +287,9 @@ $history-item-top-border-height: 1px;
 
 .history {
   flex-direction: column;
+  margin-top: calc(var(--s-basic-spacing) * 2);
 
-  &--search.el-form-item {
+  &--search {
     margin-bottom: #{$basic-spacing-medium};
   }
 
@@ -390,17 +397,6 @@ $history-item-top-border-height: 1px;
   }
   &-empty {
     text-align: center;
-  }
-  .history--search {
-    position: relative;
-    .s-button--clear {
-      width: 18px;
-      height: 18px;
-      padding: 0;
-      background-color: transparent;
-      border-radius: 0;
-      border: none;
-    }
   }
 }
 .el-pagination {
