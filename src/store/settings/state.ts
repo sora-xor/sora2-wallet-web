@@ -1,3 +1,4 @@
+import isElectron from 'is-electron';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 
 import { storage, runtimeStorage } from '../../util/storage';
@@ -25,6 +26,7 @@ function initialState(): SettingsState {
     systemEventsSubscription: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
     shouldBalanceBeHidden: Boolean(JSON.parse(storage.get('shouldBalanceBeHidden'))) || false,
+    isDesktop: isElectron(),
   };
 }
 

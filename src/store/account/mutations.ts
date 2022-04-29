@@ -124,6 +124,28 @@ const mutations = defineMutations<AccountState>()({
     }
     state.polkadotJsAccountsSubscription = null;
   },
+  setAccountPassphrase(state, passphraseEncoded): void {
+    state.addressPassphraseMapping = {
+      ...state.addressPassphraseMapping,
+      [state.address]: passphraseEncoded,
+    };
+  },
+  updateAddressGeneratedKey(state, key) {
+    state.addressKeyMapping = {
+      ...state.addressKeyMapping,
+      [state.address]: key,
+    };
+  },
+  resetAccountPassphrase(state: AccountState) {
+    state.addressKeyMapping = {
+      ...state.addressKeyMapping,
+      [state.address]: null,
+    };
+    state.addressPassphraseMapping = {
+      ...state.addressPassphraseMapping,
+      [state.address]: null,
+    };
+  },
 });
 
 export default mutations;

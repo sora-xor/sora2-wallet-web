@@ -17,4 +17,5 @@ export type SettingsState = {
   systemEventsSubscription: Nullable<Subscription>;
   nftStorage: Nullable<NFTStorage>;
   subqueryEndpoint: Nullable<string>;
+  isDesktop: boolean;
 };

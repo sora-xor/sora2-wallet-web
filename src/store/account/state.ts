@@ -29,6 +29,8 @@ export function initialState(): AccountState {
     referralRewards: EMPTY_REFERRAL_REWARDS,
     extensionAvailability: false,
     extensionAvailabilityTimer: null,
+    addressKeyMapping: {},
+    addressPassphraseMapping: {},
   };
 }
 

@@ -17,6 +17,10 @@ export enum Operations {
   Bridge = 'bridge',
 }
 
+export type AddressKeyMapping = {
+  [key: string]: string | null;
+};
+
 export interface PolkadotJsAccount {
   address: string;
   name: string;

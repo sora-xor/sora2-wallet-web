@@ -1,4 +1,6 @@
 import { defineActions } from 'direct-vuex';
+import CryptoJS from 'crypto-js';
+import cryptoRandomString from 'crypto-random-string';
 import { axiosInstance } from '@sora-substrate/util';
 import type { Signer } from '@polkadot/api/types';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
@@ -11,6 +13,7 @@ import {
   getExtension,
   getExtensionInfo,
   getExtensionSigner,
+  getPolkadotJsAccounts,
   subscribeToPolkadotJsAccounts,
   WHITE_LIST_GITHUB_URL,
 } from '../../util';
@@ -18,6 +21,7 @@ import type { PolkadotJsAccount } from '../../types/common';
 
 const HOUR = 60 * 60 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5_000;
+const PASSPHRASE_TIMEOUT = 15 * 60 * 1000; // 15min
 
 const actions = defineActions({
   async getSigner(context): Promise<Signer> {
@@ -35,11 +39,12 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
   async logout(context): Promise<void> {
-    const { commit } = accountActionContext(context);
+    const { commit, getters } = accountActionContext(context);
     const { rootDispatch } = rootActionContext(context);
 
     if (api.accountPair) {
-      api.logout();
+      // probably broken
+      api.logout(getters.isDesktop);
     }
     commit.resetAccountAssetsSubscription();
     commit.resetAccount();
@@ -65,7 +70,7 @@ const actions = defineActions({
     const { commit, getters, dispatch } = accountActionContext(context);
     commit.setPolkadotJsAccounts(accounts);
 
-    if (getters.isLoggedIn) {
+    if (getters.isLoggedIn && getters.isDesktop) {
       try {
         await dispatch.getSigner();
       } catch (error) {
@@ -100,6 +105,11 @@ const actions = defineActions({
     }, CHECK_EXTENSION_INTERVAL);
     commit.setExtensionAvailabilitySubscription(timer);
   },
+  async getPolkadotJsAccounts(context) {
+    const accounts = await getPolkadotJsAccounts();
+    const { dispatch } = accountActionContext(context);
+    await dispatch.updatePolkadotJsAccounts(accounts);
+  },
   async subscribeToPolkadotJsAccounts(context): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
     commit.resetPolkadotJsAccountsSubscription();
@@ -127,6 +137,38 @@ const actions = defineActions({
     } catch (error) {
       throw new Error((error as Error).message);
     }
+  },
+  async importPolkadotJsDesktop(context, address: string) {
+    const { getters, dispatch } = accountActionContext(context);
+
+    try {
+      const defaultAddress = api.formatAddress(address, false);
+      const account = getters.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
+
+      if (!account) {
+        throw new Error('polkadotjs.noAccount');
+      }
+
+      api.importByPolkadotJs(account.address, account.name, true);
+
+      await dispatch.afterLogin();
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  },
+  async setAccountPassphrase(context, passphrase) {
+    const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
+    const passphraseEncoded = CryptoJS.AES.encrypt(passphrase, key).toString();
+
+    const { commit } = accountActionContext(context);
+
+    commit.updateAddressGeneratedKey(key);
+    commit.setAccountPassphrase(passphraseEncoded);
+
+    const timer = setTimeout(() => {
+      commit.resetAccountPassphrase();
+      clearTimeout(timer);
+    }, PASSPHRASE_TIMEOUT);
   },
   async syncWithStorage(context): Promise<void> {
     const { state, getters, commit, dispatch } = accountActionContext(context);

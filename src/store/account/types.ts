@@ -2,7 +2,7 @@ import type { FiatPriceAndApyObject, ReferrerRewards } from '@/services/subquery
 import type { AccountAsset, Asset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from '@polkadot/x-rxjs';
 
-import type { PolkadotJsAccount } from '../../types/common';
+import type { PolkadotJsAccount, AddressKeyMapping } from '../../types/common';
 
 export type AccountState = {
   address: string;
@@ -21,4 +21,6 @@ export type AccountState = {
   referralRewards: ReferrerRewards;
   extensionAvailability: boolean;
   extensionAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
+  addressKeyMapping: AddressKeyMapping;
+  addressPassphraseMapping: AddressKeyMapping;
 };

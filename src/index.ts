@@ -95,23 +95,10 @@ async function initWallet({
       console.error('Something went wrong during api initialization', error);
       throw error;
     }
-    // // OLD
-    // await store.dispatch('getWhitelist', { whiteListOverApi });
-    // if (isDesktop()) {
-    //   await store.dispatch('subscribeOnExtensionAvailability');
-    //   await store.dispatch('checkSigner');
-    // } else {
-    //   api.initAccountStorage();
-    //   await store.dispatch('getPolkadotJsAccounts');
-    // }
-    // await Promise.all([store.dispatch('activateNetwokSubscriptions'), store.dispatch('activateInternalSubscriptions')]);
-    // await store.dispatch('setWalletLoaded', true);
 
-    // NEW
     await store.dispatch.wallet.account.getWhitelist(whiteListOverApi);
 
     if (isDesktop()) {
-      await store.dispatch.wallet.account.subscribeOnExtensionAvailability();
       await store.dispatch.wallet.account.checkSigner();
     } else {
       api.initAccountStorage();
@@ -119,7 +106,7 @@ async function initWallet({
     }
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(),
+      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(isDesktop()),
     ]);
 
     store.commit.wallet.settings.setWalletLoaded(true);

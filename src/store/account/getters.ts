@@ -1,7 +1,9 @@
 import { defineGetters } from 'direct-vuex';
 import type { Whitelist } from '@sora-substrate/util/build/assets/types';
+import CryptoJS from 'crypto-js';
 
 import { accountGetterContext } from './../account';
+import { settingsGetterContext } from './../settings';
 import { api } from '../../api';
 import type { AccountState } from './types';
 import type { Account, AccountAssetsTable } from '../../types/common';
@@ -40,6 +42,21 @@ const getters = defineGetters<AccountState>()({
     return state.whitelistArray && state.whitelistArray.length
       ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray)
       : {};
+  },
+  passphrase(...args): string | null {
+    const { state } = accountGetterContext(args);
+    const encryptedPassphrase = state.addressPassphraseMapping[state.address];
+    const sessionKey = state.addressKeyMapping[state.address];
+
+    if (encryptedPassphrase && sessionKey) {
+      const decoded = CryptoJS.AES.decrypt(encryptedPassphrase, sessionKey).toString(CryptoJS.enc.Utf8);
+      return decoded;
+    }
+    return null;
+  },
+  isDesktop(...args): boolean {
+    const { getters } = settingsGetterContext(args);
+    return getters.isDesktop;
   },
 });
 
