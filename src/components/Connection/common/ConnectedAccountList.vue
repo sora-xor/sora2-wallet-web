@@ -25,9 +25,9 @@
 <script lang="ts">
 import TranslationMixin from '@/components/mixins/TranslationMixin';
 import { LoginStep } from '@/consts';
+import { getter } from '../../../store/decorators';
 import { PolkadotJsAccount } from '@/types/common';
 import { Mixins, Component } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
 
 import WalletAccount from '../../WalletAccount.vue';
 
@@ -35,7 +35,7 @@ import WalletAccount from '../../WalletAccount.vue';
   components: { WalletAccount },
 })
 export default class ConnectedAccountList extends Mixins(TranslationMixin) {
-  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   handleClick(account: PolkadotJsAccount): void {
     this.$emit('handleSelectAccount', account);

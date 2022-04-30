@@ -32,12 +32,12 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
 import DialogBase from './DialogBase.vue';
 import WalletAccount from './WalletAccount.vue';
 import DialogMixin from './mixins/DialogMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
+import { getter, action } from '../store/decorators';
 import { api } from '../api';
 
 @Component({
@@ -47,8 +47,8 @@ import { api } from '../api';
   },
 })
 export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin, LoadingMixin) {
-  @Getter passphrase!: string | null;
-  @Action setAccountPassphrase!: (passphrase: string) => AsyncVoidFn;
+  @getter.account.passphrase passphrase!: string | null;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => AsyncVoidFn;
 
   accountPassword = '';
 

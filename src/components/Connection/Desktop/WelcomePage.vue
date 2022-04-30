@@ -17,13 +17,13 @@
 
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
-import { Getter } from 'vuex-class';
 import { PolkadotJsAccount } from '@/types/common';
 import TranslationMixin from '../../mixins/TranslationMixin';
+import { getter } from '../../../store/decorators';
 
 @Component
 export default class WelcomePage extends Mixins(TranslationMixin) {
-  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   get loggedIn(): boolean {
     return this.polkadotJsAccounts.length === 0;

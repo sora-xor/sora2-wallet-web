@@ -64,7 +64,6 @@
 
 <script lang="ts">
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
-import { Getter, Action } from 'vuex-class';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import { api } from '@sora-substrate/util';
 import LoadingMixin from '@/components/mixins/LoadingMixin';
@@ -72,15 +71,16 @@ import TranslationMixin from '../../mixins/TranslationMixin';
 import { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
 import { parseJson } from '../../../util';
 import { LoginStep } from '../../../consts';
+import { getter, action } from '../../../store/decorators';
 
 @Component
 export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @Prop({ type: String }) readonly step!: LoginStep;
 
-  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
-  @Action importPolkadotJs!: (address: string) => Promise<void>;
-  @Action getPolkadotJsAccounts!: () => Promise<void>;
+  @action.account.importPolkadotJs importPolkadotJs!: (address: string) => Promise<void>;
+  @action.account.getPolkadotJsAccounts getPolkadotJsAccounts!: () => Promise<void>;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 

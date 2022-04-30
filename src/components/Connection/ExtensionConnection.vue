@@ -46,13 +46,14 @@
 
 <script lang="ts">
 import { PolkadotJsAccount } from '../../types/common';
+import { Asset } from '@sora-substrate/util/build/assets/types';
 import { Mixins, Component } from 'vue-property-decorator';
-import { Action, Getter } from 'vuex-class';
 import LoadingMixin from '../mixins/LoadingMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 import WalletBase from '../WalletBase.vue';
 import WalletAccount from '../WalletAccount.vue';
 import ConnectedAccountList from './common/ConnectedAccountList.vue';
+import { state, action, getter } from '@/store/decorators';
 
 enum Step {
   First = 1,
@@ -67,14 +68,15 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   step = Step.First;
 
-  @Getter currentRouteParams!: any;
-  @Getter extensionAvailability!: boolean;
-  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<Asset>>;
+  @state.account.extensionAvailability extensionAvailability!: boolean;
 
-  @Action importPolkadotJs!: (address: string) => Promise<void>;
+  @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+
+  @action.account.importPolkadotJs private importPolkadotJs!: (address: string) => Promise<void>;
 
   get isAccountSwitch(): boolean {
-    return (this.currentRouteParams || {}).isAccountSwitch;
+    return !!this.currentRouteParams.isAccountSwitch;
   }
 
   get actionButtonText(): string {

@@ -15,8 +15,8 @@
 
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
-import { Getter, Action } from 'vuex-class';
 import { PolkadotJsAccount } from '@/types/common';
+import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 import LoadingMixin from '../mixins/LoadingMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
@@ -28,6 +28,7 @@ import ImportAccount from './Desktop/ImportAccount.vue';
 import ConfirmDialog from '../ConfirmDialog.vue';
 import { LoginStep } from '../../consts';
 import { getPreviousLoginStep } from '../../util';
+import { state, getter, action } from '../../store/decorators';
 
 @Component({
   components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList, ConfirmDialog },
@@ -37,10 +38,9 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
 
   readonly LoginStep = LoginStep;
 
-  @Getter currentRouteParams!: any;
-  @Getter polkadotJsAccounts!: Array<PolkadotJsAccount>;
-
-  @Action importPolkadotJsDesktop!: (address: string) => Promise<void>;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<Asset>>;
+  @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @action.account.importPolkadotJsDesktop importPolkadotJsDesktop!: (address: string) => Promise<void>;
 
   showWelcomePage = true;
 
@@ -71,7 +71,7 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   }
 
   get isAccountSwitch(): boolean {
-    return (this.currentRouteParams || {}).isAccountSwitch;
+    return !!this.currentRouteParams.isAccountSwitch;
   }
 
   createAccount(): void {

@@ -96,7 +96,7 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
               fontsizerate="normal"
               fontweightrate="normal"
               hasfiatvalue="true"
-              value=""
+              value="123.4"
               valuecanbehidden="true"
               valueclass="wallet-send-amount-balance-value"
               withleftshift="true"
@@ -107,22 +107,20 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
         <div
           class="asset s-flex"
         >
-          <div
-            class="asset-box__logo"
-          >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
-          </div>
+          <!---->
            
           <div
             class="asset-box"
           >
-            <i
-              class="asset-logo asset-default s-icon-notifications-info-24"
-            />
+            <div
+              class="asset-box__logo"
+            >
+              <token-logo-stub
+                size="small"
+                token="[object Object]"
+                tokensymbol=""
+              />
+            </div>
              
             <span
               class="asset-name"
@@ -275,7 +273,7 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
               fontsizerate="normal"
               fontweightrate="normal"
               hasfiatvalue="true"
-              value=""
+              value="123.4"
               valuecanbehidden="true"
               valueclass="wallet-send-amount-balance-value"
               withleftshift="true"
@@ -286,22 +284,20 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
         <div
           class="asset s-flex"
         >
-          <div
-            class="asset-box__logo"
-          >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
-          </div>
+          <!---->
            
           <div
             class="asset-box"
           >
-            <i
-              class="asset-logo asset-default s-icon-notifications-info-24"
-            />
+            <div
+              class="asset-box__logo"
+            >
+              <token-logo-stub
+                size="small"
+                token="[object Object]"
+                tokensymbol=""
+              />
+            </div>
              
             <span
               class="asset-name"
@@ -481,7 +477,7 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
               fontsizerate="normal"
               fontweightrate="normal"
               hasfiatvalue="true"
-              value=""
+              value="123.4"
               valuecanbehidden="true"
               valueclass="wallet-send-amount-balance-value"
               withleftshift="true"
@@ -492,22 +488,20 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
         <div
           class="asset s-flex"
         >
-          <div
-            class="asset-box__logo"
-          >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
-          </div>
+          <!---->
            
           <div
             class="asset-box"
           >
-            <i
-              class="asset-logo asset-default s-icon-notifications-info-24"
-            />
+            <div
+              class="asset-box__logo"
+            >
+              <token-logo-stub
+                size="small"
+                token="[object Object]"
+                tokensymbol=""
+              />
+            </div>
              
             <span
               class="asset-name"
@@ -664,7 +658,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
               fontsizerate="normal"
               fontweightrate="normal"
               hasfiatvalue="true"
-              value=""
+              value="123.4"
               valuecanbehidden="true"
               valueclass="wallet-send-amount-balance-value"
               withleftshift="true"
@@ -675,22 +669,20 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
         <div
           class="asset s-flex"
         >
-          <div
-            class="asset-box__logo"
-          >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
-          </div>
+          <!---->
            
           <div
             class="asset-box"
           >
-            <i
-              class="asset-logo asset-default s-icon-notifications-info-24"
-            />
+            <div
+              class="asset-box__logo"
+            >
+              <token-logo-stub
+                size="small"
+                token="[object Object]"
+                tokensymbol=""
+              />
+            </div>
              
             <span
               class="asset-name"

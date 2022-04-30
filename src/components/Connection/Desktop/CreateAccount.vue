@@ -126,7 +126,6 @@
 
 <script lang="ts">
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
-import { Action } from 'vuex-class';
 import { isEqual } from 'lodash';
 
 import LoadingMixin from '../../../components/mixins/LoadingMixin';
@@ -134,10 +133,12 @@ import TranslationMixin from '../../../components/mixins/TranslationMixin';
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
 import { copyToClipboard } from '../../../util';
+import { action } from '../../../store/decorators';
 
 @Component
 export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin) {
-  @Action getPolkadotJsAccounts!: () => Promise<void>;
+  @action.account.getPolkadotJsAccounts getPolkadotJsAccounts!: () => Promise<void>;
+
   @Prop({ type: String }) readonly step!: LoginStep;
   @Ref('json') readonly json!: HTMLLinkElement;
 
