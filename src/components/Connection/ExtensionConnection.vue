@@ -111,10 +111,13 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
+    console.log('EXTENSION');
+
     await this.withLoading(async () => {
       try {
         await this.importPolkadotJs(account.address);
       } catch (error) {
+        console.log('error exten', error);
         this.$alert(this.t('enterAccountError'), this.t('errorText'));
         this.step = Step.First;
       }

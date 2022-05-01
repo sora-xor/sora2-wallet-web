@@ -17,6 +17,7 @@ export const formatSoraAddress = (address: string) => api.formatAddress(address)
 
 export const getPolkadotJsAccounts = async (): Promise<any> => {
   const accounts = await api.getAccounts();
+  console.log('accounts from keyring', accounts);
   const polkadotJsAccounts = accounts.map((account) => ({
     address: account.address,
     name: account.meta.name || '',

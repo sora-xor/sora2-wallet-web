@@ -170,6 +170,7 @@ export default class WalletSend extends Mixins(
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.settings.isDesktop isDesktop!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;
@@ -366,11 +367,14 @@ export default class WalletSend extends Mixins(
   }
 
   async handleConfirm(): Promise<void> {
-    this.openConfirmationDialog();
-    await this.waitOnNextTxConfirmation();
-    if (!this.isTxDialogConfirmed) {
-      return;
+    if (!this.isDesktop) {
+      this.openConfirmationDialog();
+      await this.waitOnNextTxConfirmation();
+      if (!this.isTxDialogConfirmed) {
+        return;
+      }
     }
+
     await this.withNotifications(async () => {
       if (!this.hasEnoughXor) {
         throw new Error('walletSend.badAmount');

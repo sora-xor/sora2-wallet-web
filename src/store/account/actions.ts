@@ -43,8 +43,7 @@ const actions = defineActions({
     const { rootDispatch } = rootActionContext(context);
 
     if (api.accountPair) {
-      // probably broken
-      api.logout(getters.isDesktop);
+      api.logout(!getters.isDesktop);
     }
     commit.resetAccountAssetsSubscription();
     commit.resetAccount();
@@ -70,7 +69,7 @@ const actions = defineActions({
     const { commit, getters, dispatch } = accountActionContext(context);
     commit.setPolkadotJsAccounts(accounts);
 
-    if (getters.isLoggedIn && getters.isDesktop) {
+    if (getters.isLoggedIn && !getters.isDesktop) {
       try {
         await dispatch.getSigner();
       } catch (error) {
@@ -139,7 +138,7 @@ const actions = defineActions({
     }
   },
   async importPolkadotJsDesktop(context, address: string) {
-    const { getters, dispatch } = accountActionContext(context);
+    const { getters, commit, dispatch } = accountActionContext(context);
 
     try {
       const defaultAddress = api.formatAddress(address, false);
@@ -150,6 +149,8 @@ const actions = defineActions({
       }
 
       api.importByPolkadotJs(account.address, account.name, true);
+
+      commit.selectPolkadotJsAccount(account.name);
 
       await dispatch.afterLogin();
     } catch (error) {

@@ -33,7 +33,7 @@ import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import { storage, runtimeStorage } from './util/storage';
 import { api, connection } from './api';
-import { delay, getExplorerLinks, getPolkadotJsAccounts, groupRewardsByAssetsList } from './util';
+import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
@@ -98,16 +98,19 @@ async function initWallet({
 
     await store.dispatch.wallet.account.getWhitelist(whiteListOverApi);
 
+    await Promise.all([
+      store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
+      // invert condition afterwards
+      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(isDesktop()),
+    ]);
+
+    // invert condition afterwards
     if (isDesktop()) {
       await store.dispatch.wallet.account.checkSigner();
     } else {
       api.initAccountStorage();
       await store.dispatch.wallet.account.getPolkadotJsAccounts();
     }
-    await Promise.all([
-      store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(isDesktop()),
-    ]);
 
     store.commit.wallet.settings.setWalletLoaded(true);
   }
