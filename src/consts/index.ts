@@ -12,7 +12,6 @@ export enum RouteNames {
   AddAsset = 'AddAsset',
   SelectAsset = 'SelectAsset',
   WalletTransactionDetails = 'WalletTransactionDetails',
-  AddAssetDetails = 'AddAssetDetails',
 }
 
 export enum WalletTabs {
@@ -26,8 +25,8 @@ export enum TokenTabs {
 }
 
 export enum AddAssetTabs {
-  Search = 'AddAssetSearch',
-  Custom = 'AddAssetCustom',
+  Token = 'AddAssetToken',
+  NFT = 'AddAssetNFT',
 }
 
 export enum SoraNetwork {
