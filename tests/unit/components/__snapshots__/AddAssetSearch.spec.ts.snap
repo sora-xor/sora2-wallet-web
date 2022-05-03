@@ -2,35 +2,58 @@
 
 exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1`] = `
 <div
-  class="asset-search"
+  class="add-asset-token"
 >
-  <search-input-stub
-    autofocus="true"
-    class="asset-search-input"
-    maxlength="100"
-    placeholder="Filter by Asset ID, Name or Ticker Symbol"
-    value=""
-  />
-   
   <div
-    class="asset-list asset-search-list"
+    class="add-asset-token__page"
   >
-    <recycle-scroller
-      buffer="NaN"
-      class="asset-list-inner hidden-scrollbar"
-      item-size="NaN"
-      items="[object Object]"
-      key-field="address"
-      style="margin-right: 0px;"
+    <search-input-stub
+      autofocus="true"
+      class="add-asset-token__search"
+      maxlength="100"
+      placeholder="Search by Asset ID, Name or Ticker Symbol"
+      value=""
     />
      
     <div
-      class="scrollbar asset-list-scrollbar"
+      class="add-asset-token__switch-btn"
     >
-      <div
-        class="thumb"
-        style="transform: translateY(0%); height: 0%;"
+      <s-switch-stub
+        activeiconСlass=""
+        activetext=""
+        activevalue="true"
+        inactiveiconСlass=""
+        inactivetext=""
+        name=""
+        usedesignsystem="true"
+        width="40"
       />
+       
+      <span>
+        Verified assets only
+      </span>
+    </div>
+     
+    <div
+      class="asset-list asset-search-list"
+    >
+      <recycle-scroller
+        buffer="NaN"
+        class="asset-list-inner hidden-scrollbar"
+        item-size="NaN"
+        items="[object Object]"
+        key-field="address"
+        style="margin-right: 0px;"
+      />
+       
+      <div
+        class="scrollbar asset-list-scrollbar"
+      >
+        <div
+          class="thumb"
+          style="transform: translateY(0%); height: 0%;"
+        />
+      </div>
     </div>
   </div>
 </div>
@@ -38,35 +61,58 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
 
 exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] = `
 <div
-  class="asset-search"
+  class="add-asset-token"
 >
-  <search-input-stub
-    autofocus="true"
-    class="asset-search-input"
-    maxlength="100"
-    placeholder="Filter by Asset ID, Name or Ticker Symbol"
-    value="123456"
-  />
-   
   <div
-    class="asset-list asset-search-list"
+    class="add-asset-token__page"
   >
-    <recycle-scroller
-      buffer="NaN"
-      class="asset-list-inner hidden-scrollbar"
-      item-size="NaN"
-      items=""
-      key-field="address"
-      style="margin-right: 0px;"
+    <search-input-stub
+      autofocus="true"
+      class="add-asset-token__search"
+      maxlength="100"
+      placeholder="Search by Asset ID, Name or Ticker Symbol"
+      value="123456"
     />
      
     <div
-      class="scrollbar asset-list-scrollbar"
+      class="add-asset-token__switch-btn"
     >
-      <div
-        class="thumb"
-        style="transform: translateY(0%); height: 0%;"
+      <s-switch-stub
+        activeiconСlass=""
+        activetext=""
+        activevalue="true"
+        inactiveiconСlass=""
+        inactivetext=""
+        name=""
+        usedesignsystem="true"
+        width="40"
       />
+       
+      <span>
+        Verified assets only
+      </span>
+    </div>
+     
+    <div
+      class="asset-list asset-search-list"
+    >
+      <recycle-scroller
+        buffer="NaN"
+        class="asset-list-inner hidden-scrollbar"
+        item-size="NaN"
+        items=""
+        key-field="address"
+        style="margin-right: 0px;"
+      />
+       
+      <div
+        class="scrollbar asset-list-scrollbar"
+      >
+        <div
+          class="thumb"
+          style="transform: translateY(0%); height: 0%;"
+        />
+      </div>
     </div>
   </div>
 </div>
@@ -74,35 +120,58 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
 
 exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] = `
 <div
-  class="asset-search"
+  class="add-asset-token"
 >
-  <search-input-stub
-    autofocus="true"
-    class="asset-search-input"
-    maxlength="100"
-    placeholder="Filter by Asset ID, Name or Ticker Symbol"
-    value="TEST"
-  />
-   
   <div
-    class="asset-list asset-search-list"
+    class="add-asset-token__page"
   >
-    <recycle-scroller
-      buffer="NaN"
-      class="asset-list-inner hidden-scrollbar"
-      item-size="NaN"
-      items="[object Object]"
-      key-field="address"
-      style="margin-right: 0px;"
+    <search-input-stub
+      autofocus="true"
+      class="add-asset-token__search"
+      maxlength="100"
+      placeholder="Search by Asset ID, Name or Ticker Symbol"
+      value="TEST"
     />
      
     <div
-      class="scrollbar asset-list-scrollbar"
+      class="add-asset-token__switch-btn"
     >
-      <div
-        class="thumb"
-        style="transform: translateY(0%); height: 0%;"
+      <s-switch-stub
+        activeiconСlass=""
+        activetext=""
+        activevalue="true"
+        inactiveiconСlass=""
+        inactivetext=""
+        name=""
+        usedesignsystem="true"
+        width="40"
       />
+       
+      <span>
+        Verified assets only
+      </span>
+    </div>
+     
+    <div
+      class="asset-list asset-search-list"
+    >
+      <recycle-scroller
+        buffer="NaN"
+        class="asset-list-inner hidden-scrollbar"
+        item-size="NaN"
+        items="[object Object]"
+        key-field="address"
+        style="margin-right: 0px;"
+      />
+       
+      <div
+        class="scrollbar asset-list-scrollbar"
+      >
+        <div
+          class="thumb"
+          style="transform: translateY(0%); height: 0%;"
+        />
+      </div>
     </div>
   </div>
 </div>

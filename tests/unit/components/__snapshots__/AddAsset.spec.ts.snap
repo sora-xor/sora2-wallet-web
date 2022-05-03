@@ -15,20 +15,21 @@ exports[`AddAsset.vue [Custom Asset Tab]: should be rendered correctly 1`] = `
       position="top"
       type="rounded"
       usedesignsystem="true"
-      value="AddAssetCustom"
+      value="AddAssetNFT"
     >
       <s-tab-stub
-        label="Search"
-        name="AddAssetSearch"
+        label="Tokens"
+        name="AddAssetToken"
       />
       <s-tab-stub
-        disabled="true"
-        label="Custom asset"
-        name="AddAssetCustom"
+        label="NFTs"
+        name="AddAssetNFT"
       />
     </s-tabs-stub>
      
-    <addassetcustom-stub />
+    <keep-alive-stub>
+      <addassetnft-stub />
+    </keep-alive-stub>
   </div>
 </wallet-base-stub>
 `;
@@ -48,20 +49,21 @@ exports[`AddAsset.vue [Search Tab]: should be rendered correctly 1`] = `
       position="top"
       type="rounded"
       usedesignsystem="true"
-      value="AddAssetSearch"
+      value="AddAssetToken"
     >
       <s-tab-stub
-        label="Search"
-        name="AddAssetSearch"
+        label="Tokens"
+        name="AddAssetToken"
       />
       <s-tab-stub
-        disabled="true"
-        label="Custom asset"
-        name="AddAssetCustom"
+        label="NFTs"
+        name="AddAssetNFT"
       />
     </s-tabs-stub>
      
-    <addassetsearch-stub />
+    <keep-alive-stub>
+      <addassettoken-stub />
+    </keep-alive-stub>
   </div>
 </wallet-base-stub>
 `;

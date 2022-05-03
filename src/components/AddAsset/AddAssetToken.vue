@@ -56,7 +56,6 @@ export default class AddAssetToken extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get whiteListedNotAddedAssets(): Array<Asset> {
-    // APPROVE: from where to grab whitelist assets???
     return this.whitelistArray.filter((asset) => !(asset.address in this.accountAssetsAddressTable));
   }
 
