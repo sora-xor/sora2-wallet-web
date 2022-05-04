@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import type { Asset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from '../AssetList.vue';
 import SearchInput from '../SearchInput.vue';
@@ -33,9 +33,11 @@ import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
 import TranslationMixin from '../mixins/TranslationMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
-import AddAssetMixin from './AddAssetMixin';
+import AddAssetMixin from '../mixins/AddAssetMixin';
 import { AddAssetTabs } from '../../consts';
-import { state } from '../../store/decorators';
+import { getter, state } from '../../store/decorators';
+import { api } from '../../api';
+import getters from '@/store/transactions/getters';
 
 @Component({
   components: {
@@ -48,6 +50,7 @@ export default class AddAssetToken extends Mixins(TranslationMixin, LoadingMixin
   readonly AddAssetTabs = AddAssetTabs;
 
   @state.account.whitelistArray private whitelistArray!: Array<WhitelistArrayItem>;
+  @getter.account.whitelist private whitelist!: Whitelist;
 
   showVerifiedAssetsOnly = false;
 
@@ -56,7 +59,9 @@ export default class AddAssetToken extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get whiteListedNotAddedAssets(): Array<Asset> {
-    return this.whitelistArray.filter((asset) => !(asset.address in this.accountAssetsAddressTable));
+    return this.assets
+      .filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
+      .filter((asset) => !(asset.address in this.accountAssetsAddressTable));
   }
 
   get foundAssets(): Array<Asset> {

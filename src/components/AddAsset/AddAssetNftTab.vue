@@ -28,7 +28,7 @@ import SearchInput from '../SearchInput.vue';
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
 import TranslationMixin from '../mixins/TranslationMixin';
-import AddAssetMixin from './AddAssetMixin';
+import AddAssetMixin from '../mixins/AddAssetMixin';
 import { AddAssetTabs } from '../../consts';
 
 @Component({
