@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import type { Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from '../AssetList.vue';
 import SearchInput from '../SearchInput.vue';
@@ -35,9 +35,8 @@ import TranslationMixin from '../mixins/TranslationMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
 import AddAssetMixin from '../mixins/AddAssetMixin';
 import { AddAssetTabs } from '../../consts';
-import { getter, state } from '../../store/decorators';
+import { getter } from '../../store/decorators';
 import { api } from '../../api';
-import getters from '@/store/transactions/getters';
 
 @Component({
   components: {
@@ -49,19 +48,18 @@ import getters from '@/store/transactions/getters';
 export default class AddAssetToken extends Mixins(TranslationMixin, LoadingMixin, AddAssetMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
-  @state.account.whitelistArray private whitelistArray!: Array<WhitelistArrayItem>;
   @getter.account.whitelist private whitelist!: Whitelist;
 
   showVerifiedAssetsOnly = false;
 
   private get notAddedAssets(): Array<Asset> {
-    return this.assets.filter((asset) => !(asset.address in this.accountAssetsAddressTable) && !asset.content);
+    return this.assets.filter(
+      (asset) => !(asset.address in this.accountAssetsAddressTable) && !api.assets.isNft(asset)
+    );
   }
 
   get whiteListedNotAddedAssets(): Array<Asset> {
-    return this.assets
-      .filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
-      .filter((asset) => !(asset.address in this.accountAssetsAddressTable));
+    return this.notAddedAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist));
   }
 
   get foundAssets(): Array<Asset> {

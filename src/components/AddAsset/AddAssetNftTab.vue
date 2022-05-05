@@ -29,7 +29,7 @@ import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
 import TranslationMixin from '../mixins/TranslationMixin';
 import AddAssetMixin from '../mixins/AddAssetMixin';
-import { AddAssetTabs } from '../../consts';
+import { api } from '../../api';
 
 @Component({
   components: {
@@ -39,10 +39,8 @@ import { AddAssetTabs } from '../../consts';
   },
 })
 export default class AddAssetNFT extends Mixins(TranslationMixin, AddAssetMixin) {
-  readonly AddAssetTabs = AddAssetTabs;
-
   private get notAddedNftAssets(): Array<Asset> {
-    return this.assets.filter((asset) => !(asset.address in this.accountAssetsAddressTable) && asset.content);
+    return this.assets.filter((asset) => !(asset.address in this.accountAssetsAddressTable) && api.assets.isNft(asset));
   }
 
   get foundAssets(): Array<Asset> {
