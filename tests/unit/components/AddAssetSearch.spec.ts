@@ -2,7 +2,7 @@ import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_ASSETS } from '../../utils/mock';
 import { MOCK_ADD_ASSET_SEARCH } from '../../utils/AddAssetSearchMock';
 
-import AddAssetSearch from '@/components/AddAsset/AddAssetToken.vue';
+import AddAssetSearch from '@/components/AddAsset/AddAssetTokenTab.vue';
 
 import AssetList from '@/components/AssetList.vue';
 import AssetListItem from '@/components/AssetListItem.vue';
