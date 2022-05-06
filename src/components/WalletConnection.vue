@@ -2,7 +2,7 @@
   <wallet-base :title="t('connection.title')">
     <div class="wallet-connection" v-loading="loading">
       <template v-if="!loading">
-        <template v-if="step === Step.First">
+        <template v-if="isEntryView">
           <p class="wallet-connection-text">{{ t('connection.text') }}</p>
           <p v-if="!extensionAvailability" class="wallet-connection-text" v-html="t('connection.install')" />
         </template>
@@ -12,7 +12,7 @@
           </p>
         </template>
 
-        <template v-if="step === Step.First || (step === Step.Second && !polkadotJsAccounts.length)">
+        <template v-if="isEntryView || isUnableToSelectAccount">
           <s-button
             class="wallet-connection-action s-typography-button--large action-btn"
             type="primary"
@@ -37,7 +37,7 @@
           />
         </template>
 
-        <s-scrollbar v-else-if="step === Step.Second" class="wallet-connection-accounts">
+        <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
           <div
             class="wallet-connection-account"
             v-for="account in polkadotJsAccounts"
@@ -67,6 +67,7 @@ import type { PolkadotJsAccount } from '../types/common';
 enum Step {
   First = 1,
   Second = 2,
+  Third = 3,
 }
 
 @Component({
@@ -83,10 +84,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   @action.account.importPolkadotJs private importPolkadotJs!: (address: string) => Promise<void>;
 
-  get isAccountSwitch(): boolean {
-    return !!this.currentRouteParams.isAccountSwitch;
-  }
-
   async mounted(): Promise<void> {
     await this.withApi(async () => {
       if (this.isAccountSwitch) {
@@ -95,22 +92,42 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     });
   }
 
+  get isAccountSwitch(): boolean {
+    return !!this.currentRouteParams.isAccountSwitch;
+  }
+
+  get isEntryView(): boolean {
+    return this.step === Step.First;
+  }
+
+  get isExtensionListView(): boolean {
+    return this.step === Step.Second;
+  }
+
+  get isAccountListView(): boolean {
+    return this.step === Step.Third;
+  }
+
+  get isUnableToSelectAccount(): boolean {
+    return this.isAccountListView && !this.polkadotJsAccounts.length;
+  }
+
   get actionButtonText(): string {
-    if (this.step === Step.First && !this.extensionAvailability) {
+    if (this.isEntryView && !this.extensionAvailability) {
       return 'connection.action.install';
     }
-    if (this.step === Step.Second && !this.polkadotJsAccounts.length) {
+    if (this.isUnableToSelectAccount) {
       return 'connection.action.refresh';
     }
     return 'connection.action.connect';
   }
 
   handleActionClick(): void {
-    if (this.step === Step.First && !this.extensionAvailability) {
+    if (this.isEntryView && !this.extensionAvailability) {
       window.open('https://polkadot.js.org/extension/', '_blank');
       return;
     }
-    if (this.step === Step.Second && !this.polkadotJsAccounts.length) {
+    if (this.isUnableToSelectAccount) {
       window.history.go();
       return;
     }
@@ -124,12 +141,20 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
         await this.importPolkadotJs(account.address);
       } catch (error) {
         this.$alert(this.t((error as Error).message), this.t('errorText'));
-        this.step = Step.First;
+        this.navigateToEntry();
       }
     });
   }
 
+  private navigateToEntry(): void {
+    this.step = Step.First;
+  }
+
   private navigateToAccountList(): void {
+    this.step = Step.Third;
+  }
+
+  private navigateToExtensionList(): void {
     this.step = Step.Second;
   }
 

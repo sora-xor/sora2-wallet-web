@@ -8,6 +8,11 @@ import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { PolkadotJsAccount } from '../types/common';
 
+export enum Extensions {
+  PolkadotJS = 'polkadot-js',
+  SubwalletJS = 'subwallet-js',
+}
+
 export const APP_NAME = 'Sora2 Wallet';
 
 export const WHITE_LIST_GITHUB_URL =
@@ -19,19 +24,21 @@ export const subscribeToPolkadotJsAccounts = async (
   callback: (accounts: PolkadotJsAccount[]) => void
 ): Promise<VoidFunction> => {
   const unsubscribe = await web3AccountsSubscribe((injectedAccounts) => {
-    const polkadotJsAccounts = injectedAccounts.map((account) => ({
+    console.log(injectedAccounts);
+
+    const accounts = injectedAccounts.map((account) => ({
       address: account.address,
       name: account.meta.name || '',
     }));
 
-    callback(polkadotJsAccounts);
+    callback(accounts);
   });
 
   return unsubscribe;
 };
 
-export const getExtension = async () => {
-  let extensions: Array<any> = [];
+export const getExtensions = async () => {
+  let extensions: any[] = [];
   try {
     extensions = await web3Enable(APP_NAME);
   } catch (error) {
@@ -40,18 +47,24 @@ export const getExtension = async () => {
   if (!extensions.length) {
     throw new Error('polkadotjs.noExtensions');
   }
-  return extensions[0];
+  return extensions;
 };
 
 export const getExtensionInfo = async () => {
-  const extension = await getExtension();
+  const extension = (await getExtensions())[0];
   const accounts = (await extension.accounts.get()) as Array<{ address: string; name: string }>;
   if (!accounts.length) {
     throw new Error('polkadotjs.noAccounts');
   }
+  console.log(accounts);
   return { accounts, signer: extension.signer };
 };
 
+/**
+ * Retrieves a provider for a specific address and return signer
+ * @param address
+ * @returns
+ */
 export const getExtensionSigner = async (address: string) => {
   return (await web3FromAddress(address)).signer;
 };

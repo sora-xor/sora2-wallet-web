@@ -8,7 +8,7 @@ import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
 import {
-  getExtension,
+  getExtensions,
   getExtensionInfo,
   getExtensionSigner,
   subscribeToPolkadotJsAccounts,
@@ -76,7 +76,7 @@ const actions = defineActions({
   async checkExtension(context): Promise<void> {
     const { commit, dispatch, state, getters } = accountActionContext(context);
     try {
-      await getExtension();
+      await getExtensions();
       commit.setExtensionAvailability(true);
 
       if (!state.polkadotJsAccountsSubscription) {
