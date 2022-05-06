@@ -207,11 +207,6 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
     if (!type) return null;
 
-    if (!transaction.data) {
-      logOperationDataParsingError(type, transaction);
-      return null;
-    }
-
     const id = getTransactionId(transaction);
     const timestamp = getTransactionTimestamp(transaction);
     const blockHeight = transaction.blockHeight;
