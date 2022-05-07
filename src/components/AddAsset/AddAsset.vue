@@ -67,8 +67,5 @@ export default class AddAsset extends Mixins(TranslationMixin) {
 <style lang="scss">
 .add-asset {
   @include custom-tabs;
-  #tab-AddAssetCustom.is-disabled {
-    color: var(--s-color-base-content-tertiary);
-  }
 }
 </style>

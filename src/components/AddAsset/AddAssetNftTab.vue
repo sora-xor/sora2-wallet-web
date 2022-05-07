@@ -27,7 +27,6 @@ import AssetList from '../AssetList.vue';
 import SearchInput from '../SearchInput.vue';
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
-import TranslationMixin from '../mixins/TranslationMixin';
 import AddAssetMixin from '../mixins/AddAssetMixin';
 import { api } from '../../api';
 
@@ -38,7 +37,7 @@ import { api } from '../../api';
     AddAssetDetailsCard,
   },
 })
-export default class AddAssetNFT extends Mixins(TranslationMixin, AddAssetMixin) {
+export default class AddAssetNFT extends Mixins(AddAssetMixin) {
   private get notAddedNftAssets(): Array<Asset> {
     return this.assets.filter((asset) => !(asset.address in this.accountAssetsAddressTable) && api.assets.isNft(asset));
   }
@@ -46,12 +45,20 @@ export default class AddAssetNFT extends Mixins(TranslationMixin, AddAssetMixin)
   get foundAssets(): Array<Asset> {
     if (!this.searchValue) return this.notAddedNftAssets;
 
-    return this.notAddedNftAssets.filter(
-      ({ name, symbol, address }) =>
-        address.toLowerCase() === this.searchValue ||
-        symbol.toLowerCase().includes(this.searchValue) ||
-        name.toLowerCase().includes(this.searchValue)
-    );
+    return this.getSoughtAssets(this.notAddedNftAssets);
+  }
+
+  get assetIsAlreadyAdded(): boolean {
+    if (!this.searchValue) return false;
+
+    return this.accountAssets
+      .filter((asset) => api.assets.isNft(asset))
+      .some(
+        ({ name = '', symbol = '', address = '' }) =>
+          address.toLowerCase() === this.searchValue ||
+          symbol.toLowerCase() === this.searchValue ||
+          name.toLowerCase() === this.searchValue
+      );
   }
 }
 </script>

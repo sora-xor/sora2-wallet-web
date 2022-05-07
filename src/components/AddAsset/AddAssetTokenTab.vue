@@ -31,7 +31,6 @@ import AssetList from '../AssetList.vue';
 import SearchInput from '../SearchInput.vue';
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
-import TranslationMixin from '../mixins/TranslationMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
 import AddAssetMixin from '../mixins/AddAssetMixin';
 import { AddAssetTabs } from '../../consts';
@@ -45,7 +44,7 @@ import { api } from '../../api';
     AddAssetDetailsCard,
   },
 })
-export default class AddAssetToken extends Mixins(TranslationMixin, LoadingMixin, AddAssetMixin) {
+export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
   @getter.account.whitelist private whitelist!: Whitelist;
@@ -63,16 +62,20 @@ export default class AddAssetToken extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get foundAssets(): Array<Asset> {
-    if (!this.searchValue && !this.showVerifiedAssetsOnly) return this.notAddedAssets;
-    if (!this.searchValue && this.showVerifiedAssetsOnly) return this.whiteListedNotAddedAssets;
-
     const assetsToSearch = this.showVerifiedAssetsOnly ? this.whiteListedNotAddedAssets : this.notAddedAssets;
+    if (!this.searchValue) return assetsToSearch;
 
-    return assetsToSearch.filter(
-      ({ name, symbol, address }) =>
+    return this.getSoughtAssets(assetsToSearch);
+  }
+
+  get assetIsAlreadyAdded(): boolean {
+    if (!this.searchValue) return false;
+
+    return this.accountAssets.some(
+      ({ name = '', symbol = '', address = '' }) =>
         address.toLowerCase() === this.searchValue ||
-        symbol.toLowerCase().includes(this.searchValue) ||
-        name.toLowerCase().includes(this.searchValue)
+        symbol.toLowerCase() === this.searchValue ||
+        name.toLowerCase() === this.searchValue
     );
   }
 }

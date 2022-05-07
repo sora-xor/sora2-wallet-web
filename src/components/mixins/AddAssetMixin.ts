@@ -1,11 +1,12 @@
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Component, Prop, Mixins } from 'vue-property-decorator';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import { state, getter } from '../../store/decorators';
 import { AccountAssetsTable } from '@/types/common';
+import TranslationMixin from './TranslationMixin';
 
 @Component
-export default class AddAssetMixin extends Vue {
+export default class AddAssetMixin extends Mixins(TranslationMixin) {
   @state.account.assets assets!: Array<Asset>;
   @state.account.accountAssets accountAssets!: Array<AccountAsset>;
 
@@ -21,14 +22,12 @@ export default class AddAssetMixin extends Vue {
     return this.search ? this.search.trim().toLowerCase() : '';
   }
 
-  get assetIsAlreadyAdded(): boolean {
-    if (!this.searchValue) return false;
-
-    return this.accountAssets.some(
-      ({ name = '', symbol = '', address = '' }) =>
+  getSoughtAssets(assets: Array<Asset>): Array<Asset> {
+    return assets.filter(
+      ({ name, symbol, address }) =>
         address.toLowerCase() === this.searchValue ||
-        symbol.toLowerCase() === this.searchValue ||
-        name.toLowerCase() === this.searchValue
+        symbol.toLowerCase().includes(this.searchValue) ||
+        name.toLowerCase().includes(this.searchValue)
     );
   }
 
