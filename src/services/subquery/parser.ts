@@ -207,7 +207,8 @@ export default class SubqueryDataParser implements ExplorerDataParser {
 
     if (!type) return null;
 
-    if (!transaction.data) {
+    // rewards transaction data could be nullable
+    if (!transaction.data && type !== Operation.ClaimRewards) {
       logOperationDataParsingError(type, transaction);
       return null;
     }
