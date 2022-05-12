@@ -16,7 +16,7 @@ import {
 } from '../../util';
 import type { PolkadotJsAccount } from '../../types/common';
 
-const HOUR = 60 * 60 * 1000;
+const FIVE_MINUTES = 5 * 60 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5_000;
 
 const actions = defineActions({
@@ -217,7 +217,7 @@ const actions = defineActions({
 
     const timer = setInterval(() => {
       dispatch.getFiatPriceAndApyObject();
-    }, HOUR);
+    }, FIVE_MINUTES);
     commit.setFiatPriceAndApyTimer(timer);
   },
   async getAccountReferralRewards(context): Promise<void> {
