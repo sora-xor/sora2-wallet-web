@@ -58,7 +58,7 @@ export default class RecieveToken extends Mixins(TranslationMixin) {
   get code(): string {
     const assetAddress = this.asset.address;
     const accountAddress = this.account.address;
-    const accountName = this.account.name;
+    const accountName = this.account.name || '';
     const publicKey = api.getPublicKeyByAddress(accountAddress);
 
     return `substrate:${accountAddress}:0x${publicKey}:${accountName}:${assetAddress}`;
