@@ -16,9 +16,15 @@ export enum Operations {
   Bridge = 'bridge',
 }
 
+export enum Extensions {
+  PolkadotJS = 'polkadot-js',
+  SubwalletJS = 'subwallet-js',
+}
+
 export interface PolkadotJsAccount {
   address: string;
   name: string;
+  source?: Extensions;
 }
 
 export interface Account extends PolkadotJsAccount {

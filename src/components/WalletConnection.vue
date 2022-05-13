@@ -40,11 +40,11 @@
         <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
           <div
             class="wallet-connection-account"
-            v-for="account in polkadotJsAccounts"
-            :key="account.address"
+            v-for="(account, index) in polkadotJsAccounts"
+            :key="index"
             @click="handleSelectAccount(account)"
           >
-            <wallet-account :polkadotAccount="account" />
+            <wallet-account :polkadotAccount="account"></wallet-account>
           </div>
         </s-scrollbar>
       </template>
@@ -67,7 +67,6 @@ import type { PolkadotJsAccount } from '../types/common';
 enum Step {
   First = 1,
   Second = 2,
-  Third = 3,
 }
 
 @Component({
@@ -100,12 +99,8 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     return this.step === Step.First;
   }
 
-  get isExtensionListView(): boolean {
-    return this.step === Step.Second;
-  }
-
   get isAccountListView(): boolean {
-    return this.step === Step.Third;
+    return this.step === Step.Second;
   }
 
   get isUnableToSelectAccount(): boolean {
@@ -151,10 +146,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   private navigateToAccountList(): void {
-    this.step = Step.Third;
-  }
-
-  private navigateToExtensionList(): void {
     this.step = Step.Second;
   }
 

@@ -8,7 +8,7 @@ import { storage } from '../../util/storage';
 import { api } from '../../api';
 import type { AccountState } from './types';
 import type { FiatPriceAndApyObject, ReferrerRewards } from '../../services/subquery/types';
-import type { PolkadotJsAccount } from '../../types/common';
+import type { PolkadotJsAccount, Extensions } from '../../types/common';
 
 const mutations = defineMutations<AccountState>()({
   setFiatPriceAndApyTimer(state, timer: NodeJS.Timer | number): void {
