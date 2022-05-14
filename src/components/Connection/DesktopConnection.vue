@@ -96,13 +96,10 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   }
 
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
-    console.log('DESKTOP');
-
     await this.withLoading(async () => {
       try {
         await this.importPolkadotJsDesktop(account.address);
       } catch (error) {
-        console.log('error desc', error);
         this.$alert(this.t('enterAccountError'), this.t('errorText'));
       }
     });

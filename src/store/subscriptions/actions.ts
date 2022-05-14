@@ -65,7 +65,6 @@ const actions = defineActions({
     ];
 
     subscriptions = onDesktop ? [...subscriptions, 'account/subscribeOnExtensionAvailability'] : subscriptions;
-    console.log('subscriptions', subscriptions);
     await runParallel(context, subscriptions);
   },
   async resetInternalSubscriptions(context): Promise<void> {
