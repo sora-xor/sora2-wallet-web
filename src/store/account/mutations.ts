@@ -29,7 +29,7 @@ const mutations = defineMutations<AccountState>()({
         'assets',
         'polkadotJsAccounts',
         'polkadotJsAccountsSubscription',
-        'extensionAvailability',
+        'availableExtensions',
         'extensionAvailabilityTimer',
       ],
       initialState()
@@ -96,10 +96,7 @@ const mutations = defineMutations<AccountState>()({
     state.polkadotJsAccountsSubscription = subscription;
   },
   resetPolkadotJsAccountsSubscription(state): void {
-    state.polkadotJsAccounts = [];
-    if (typeof state.polkadotJsAccountsSubscription === 'function') {
-      state.polkadotJsAccountsSubscription();
-    }
+    state.polkadotJsAccountsSubscription?.();
     state.polkadotJsAccountsSubscription = null;
   },
   selectPolkadotJsAccount(state, name: string): void {
@@ -107,8 +104,8 @@ const mutations = defineMutations<AccountState>()({
     state.name = name;
     state.isExternal = true;
   },
-  setExtensionAvailability(state, availability: boolean): void {
-    state.extensionAvailability = availability;
+  setAvailableExtensions(state, names: Extensions[]) {
+    state.availableExtensions = names;
   },
   setExtensionAvailabilitySubscription(state, timeout: NodeJS.Timeout | number): void {
     state.extensionAvailabilityTimer = timeout;

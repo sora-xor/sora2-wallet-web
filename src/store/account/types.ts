@@ -2,7 +2,7 @@ import type { FiatPriceAndApyObject, ReferrerRewards } from '@/services/subquery
 import type { AccountAsset, Asset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from '@polkadot/x-rxjs';
 
-import type { PolkadotJsAccount } from '../../types/common';
+import type { Extensions, PolkadotJsAccount } from '../../types/common';
 
 export type AccountState = {
   address: string;
@@ -19,6 +19,6 @@ export type AccountState = {
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
   fiatPriceAndApyTimer: Nullable<NodeJS.Timer | number>;
   referralRewards: ReferrerRewards;
-  extensionAvailability: boolean;
+  availableExtensions: Array<Extensions>;
   extensionAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
 };

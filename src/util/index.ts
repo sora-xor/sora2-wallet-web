@@ -1,6 +1,7 @@
 import { web3Enable, web3FromAddress, web3AccountsSubscribe } from '@polkadot/extension-dapp';
 import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
+import type { InjectedExtension, InjectedAccount } from '@polkadot/extension-inject/types';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
 import { api } from '../api';
@@ -19,8 +20,6 @@ export const subscribeToPolkadotJsAccounts = async (
   callback: (accounts: PolkadotJsAccount[]) => void
 ): Promise<VoidFunction> => {
   const unsubscribe = await web3AccountsSubscribe((injectedAccounts) => {
-    console.log(injectedAccounts);
-
     const accounts = injectedAccounts.map((account) => ({
       address: account.address,
       name: account.meta.name || '',
@@ -33,8 +32,8 @@ export const subscribeToPolkadotJsAccounts = async (
   return unsubscribe;
 };
 
-export const getExtensions = async () => {
-  let extensions: any[] = [];
+export const getExtensions = async (): Promise<InjectedExtension[]> => {
+  let extensions: InjectedExtension[] = [];
   try {
     extensions = await web3Enable(APP_NAME);
   } catch (error) {
@@ -46,12 +45,17 @@ export const getExtensions = async () => {
   return extensions;
 };
 
-const getExtensionAccounts = async (extension) => {
-  return (await extension.accounts.get()) as Array<{ address: string; name: string }>;
+const getExtensionAccounts = async (extension: InjectedExtension): Promise<InjectedAccount[]> => {
+  return await extension.accounts.get();
 };
 
 export const getExtensionInfo = async (selectedExtension = Extensions.PolkadotJS) => {
   const extension = (await getExtensions()).find((extension) => extension.name === selectedExtension);
+
+  if (!extension) {
+    throw new Error('polkadotjs.noExtensions');
+  }
+
   const accounts = await getExtensionAccounts(extension);
 
   return { accounts, signer: extension.signer };

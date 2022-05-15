@@ -14,7 +14,7 @@ import {
   subscribeToPolkadotJsAccounts,
   WHITE_LIST_GITHUB_URL,
 } from '../../util';
-import type { PolkadotJsAccount } from '../../types/common';
+import type { PolkadotJsAccount, Extensions } from '../../types/common';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5_000;
@@ -81,16 +81,20 @@ const actions = defineActions({
   async checkExtension(context): Promise<void> {
     const { commit, dispatch, state, getters } = accountActionContext(context);
     try {
+      const availableExtensions = JSON.stringify(state.availableExtensions);
       const extensions = await getExtensions();
       const names = extensions.map(({ name }) => name);
 
-      commit.setExtensionAvailability(!!names.length);
+      commit.setAvailableExtensions(names as Extensions[]);
 
-      if (!state.polkadotJsAccountsSubscription) {
+      if (!state.polkadotJsAccountsSubscription || JSON.stringify(state.availableExtensions) !== availableExtensions) {
+        commit.resetPolkadotJsAccountsSubscription();
+
         await dispatch.subscribeToPolkadotJsAccounts();
       }
     } catch (error) {
-      commit.setExtensionAvailability(false);
+      commit.setAvailableExtensions([]);
+      commit.setPolkadotJsAccounts([]);
       commit.resetPolkadotJsAccountsSubscription();
 
       if (getters.isLoggedIn) {
@@ -112,11 +116,11 @@ const actions = defineActions({
 
   async subscribeToPolkadotJsAccounts(context): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
-    commit.resetPolkadotJsAccountsSubscription();
 
     const subscription = await subscribeToPolkadotJsAccounts(async (accounts) => {
       await dispatch.updatePolkadotJsAccounts(accounts);
     });
+
     commit.setPolkadotJsAccountsSubscription(subscription);
   },
 
@@ -131,10 +135,12 @@ const actions = defineActions({
         throw new Error('polkadotjs.noAccount');
       }
 
-      api.importByPolkadotJs(account.address, account.name);
+      const accountName = account.name || '';
+
+      api.importByPolkadotJs(account.address, accountName);
       api.setSigner(info.signer);
 
-      commit.selectPolkadotJsAccount(account.name);
+      commit.selectPolkadotJsAccount(accountName);
 
       await dispatch.afterLogin();
     } catch (error) {

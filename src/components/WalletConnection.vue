@@ -61,7 +61,7 @@ import WalletAccount from './WalletAccount.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 
-import { state, action } from '../store/decorators';
+import { state, action, getter } from '../store/decorators';
 import type { PolkadotJsAccount } from '../types/common';
 
 enum Step {
@@ -79,7 +79,8 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @state.account.extensionAvailability extensionAvailability!: boolean;
+
+  @getter.account.extensionAvailability extensionAvailability!: boolean;
 
   @action.account.importPolkadotJs private importPolkadotJs!: (address: string) => Promise<void>;
 
