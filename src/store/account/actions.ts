@@ -14,7 +14,8 @@ import {
   subscribeToPolkadotJsAccounts,
   WHITE_LIST_GITHUB_URL,
 } from '../../util';
-import type { PolkadotJsAccount, Extensions } from '../../types/common';
+import { Extensions } from '../../consts';
+import type { PolkadotJsAccount } from '../../types/common';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5_000;

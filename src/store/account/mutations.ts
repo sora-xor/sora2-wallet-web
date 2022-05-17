@@ -6,9 +6,11 @@ import type { Subscription } from '@polkadot/x-rxjs';
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
 import { storage } from '../../util/storage';
 import { api } from '../../api';
+import { Extensions } from '../../consts';
+
 import type { AccountState } from './types';
 import type { FiatPriceAndApyObject, ReferrerRewards } from '../../services/subquery/types';
-import type { PolkadotJsAccount, Extensions } from '../../types/common';
+import type { PolkadotJsAccount } from '../../types/common';
 
 const mutations = defineMutations<AccountState>()({
   setFiatPriceAndApyTimer(state, timer: NodeJS.Timer | number): void {

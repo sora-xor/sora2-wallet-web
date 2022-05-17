@@ -27,10 +27,6 @@ const getters = defineGetters<AccountState>()({
       isExternal: state.isExternal,
     };
   },
-  extensionAvailability(...args): boolean {
-    const { state } = accountGetterContext(args);
-    return state.availableExtensions.length !== 0;
-  },
   accountAssetsAddressTable(...args): AccountAssetsTable {
     const { state } = accountGetterContext(args);
     return toHashTable(state.accountAssets, 'address');

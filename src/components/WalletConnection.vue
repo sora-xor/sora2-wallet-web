@@ -4,7 +4,7 @@
       <template v-if="!loading">
         <template v-if="isEntryView">
           <p class="wallet-connection-text">{{ t('connection.text') }}</p>
-          <p v-if="!extensionAvailability" class="wallet-connection-text" v-html="t('connection.install')" />
+          <p v-if="!extensionsAvailability" class="wallet-connection-text" v-html="t('connection.install')" />
         </template>
         <template v-else>
           <p class="wallet-connection-text">
@@ -31,7 +31,7 @@
             {{ t('connection.action.learnMore') }}
           </s-button>
           <p
-            v-if="!extensionAvailability"
+            v-if="!extensionsAvailability"
             class="wallet-connection-text no-permissions"
             v-html="t('connection.noPermissions')"
           />
@@ -44,7 +44,12 @@
             :key="index"
             @click="handleSelectAccount(account)"
           >
-            <wallet-account :polkadotAccount="account"></wallet-account>
+            <wallet-account :polkadotAccount="account">
+              <div v-if="isMultipleAvailableExtension" class="extension-label">
+                <span v-if="hasIcon(account.source)" :class="['extension-label-icon', account.source]" />
+                <span class="extension-label-name">{{ account.source }}</span>
+              </div>
+            </wallet-account>
           </div>
         </s-scrollbar>
       </template>
@@ -61,7 +66,8 @@ import WalletAccount from './WalletAccount.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 
-import { state, action, getter } from '../store/decorators';
+import { state, action } from '../store/decorators';
+import { Extensions } from '../consts';
 import type { PolkadotJsAccount } from '../types/common';
 
 enum Step {
@@ -79,8 +85,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-
-  @getter.account.extensionAvailability extensionAvailability!: boolean;
+  @state.account.availableExtensions private availableExtensions!: Array<Extensions>;
 
   @action.account.importPolkadotJs private importPolkadotJs!: (address: string) => Promise<void>;
 
@@ -90,6 +95,14 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
         this.navigateToAccountList();
       }
     });
+  }
+
+  get extensionsAvailability(): boolean {
+    return this.availableExtensions.length !== 0;
+  }
+
+  get isMultipleAvailableExtension(): boolean {
+    return this.availableExtensions.length > 1;
   }
 
   get isAccountSwitch(): boolean {
@@ -109,7 +122,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   get actionButtonText(): string {
-    if (this.isEntryView && !this.extensionAvailability) {
+    if (this.isEntryView && !this.extensionsAvailability) {
       return 'connection.action.install';
     }
     if (this.isUnableToSelectAccount) {
@@ -119,7 +132,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   handleActionClick(): void {
-    if (this.isEntryView && !this.extensionAvailability) {
+    if (this.isEntryView && !this.extensionsAvailability) {
       window.open('https://polkadot.js.org/extension/', '_blank');
       return;
     }
@@ -152,6 +165,10 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   handleLearnMoreClick(): void {
     this.$emit('learn-more');
+  }
+
+  hasIcon(extension: string): boolean {
+    return Object.values(Extensions).includes(extension as Extensions);
   }
 }
 </script>
@@ -209,6 +226,36 @@ $accounts-number: 7;
     width: 100%;
     & + & {
       margin-left: 0;
+    }
+  }
+}
+
+$extensions: 'polkadot-js', 'subwallet-js';
+
+.extension-label {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  background: var(--s-color-utility-surface);
+  border-radius: calc(var(--s-border-radius-mini) / 2);
+  box-shadow: var(--s-shadow-element-pressed);
+  font-size: var(--s-font-size-mini);
+  line-height: var(--s-line-height-medium);
+  letter-spacing: var(--s-letter-spacing-small);
+  padding: 2px 6px;
+
+  &-icon {
+    width: 16px;
+    height: 16px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    margin-right: $basic-spacing-mini;
+
+    @each $extension in $extensions {
+      &.#{$extension} {
+        background-image: url('~@/assets/img/extensions/#{$extension}.png');
+      }
     }
   }
 }

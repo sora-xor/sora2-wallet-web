@@ -1,3 +1,4 @@
+import { Extensions } from '../consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 export enum Modules {
@@ -14,11 +15,6 @@ export enum Operations {
   Swap = 'swap',
   Liquidity = 'liquidity',
   Bridge = 'bridge',
-}
-
-export enum Extensions {
-  PolkadotJS = 'polkadot-js',
-  SubwalletJS = 'subwallet-js',
 }
 
 export interface PolkadotJsAccount {

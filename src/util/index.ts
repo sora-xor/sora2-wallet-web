@@ -5,9 +5,9 @@ import type { InjectedExtension, InjectedAccount } from '@polkadot/extension-inj
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
 import { api } from '../api';
-import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
+import { ExplorerLink, SoraNetwork, ExplorerType, Extensions } from '../consts';
+import type { PolkadotJsAccount } from '../types/common';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
-import { Extensions, PolkadotJsAccount } from '../types/common';
 
 export const APP_NAME = 'Sora2 Wallet';
 
