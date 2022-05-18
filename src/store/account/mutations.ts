@@ -98,7 +98,9 @@ const mutations = defineMutations<AccountState>()({
     state.polkadotJsAccountsSubscription = subscription;
   },
   resetPolkadotJsAccountsSubscription(state): void {
-    state.polkadotJsAccountsSubscription?.();
+    if (typeof state.polkadotJsAccountsSubscription === 'function') {
+      state.polkadotJsAccountsSubscription();
+    }
     state.polkadotJsAccountsSubscription = null;
   },
   selectPolkadotJsAccount(state, name: string): void {
