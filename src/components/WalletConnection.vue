@@ -45,7 +45,7 @@
             @click="handleSelectAccount(account)"
           >
             <wallet-account :polkadotAccount="account">
-              <div v-if="isMultipleAvailableExtension" class="extension-label">
+              <div v-if="isMultipleAvailableExtension && account.source" class="extension-label">
                 <span v-if="hasIcon(account.source)" :class="['extension-label-icon', account.source]" />
                 <span class="extension-label-name">{{ account.source }}</span>
               </div>

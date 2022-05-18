@@ -29,28 +29,36 @@ exports[`WalletConnection.vue [Extension available]: Accounts should be rendered
       >
         <wallet-account-stub
           polkadotaccount="[object Object]"
-        />
+        >
+          <!---->
+        </wallet-account-stub>
       </div>
       <div
         class="wallet-connection-account"
       >
         <wallet-account-stub
           polkadotaccount="[object Object]"
-        />
+        >
+          <!---->
+        </wallet-account-stub>
       </div>
       <div
         class="wallet-connection-account"
       >
         <wallet-account-stub
           polkadotaccount="[object Object]"
-        />
+        >
+          <!---->
+        </wallet-account-stub>
       </div>
       <div
         class="wallet-connection-account"
       >
         <wallet-account-stub
           polkadotaccount="[object Object]"
-        />
+        >
+          <!---->
+        </wallet-account-stub>
       </div>
     </s-scrollbar-stub>
     <div
@@ -223,7 +231,7 @@ exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen
 </s-card>
 `;
 
-exports[`WalletConnection.vue [Extension is not available]: Install extension screen should be rendered 1`] = `
+exports[`WalletConnection.vue [Extensions is not available]: Install extension screen should be rendered 1`] = `
 <s-card
   border-radius="medium"
   class="base"
@@ -304,6 +312,162 @@ exports[`WalletConnection.vue [Extension is not available]: Install extension sc
       <br />
       Go to polkadot{.js} settings and open "Manage Website Access" to allow.
     </p>
+  </div>
+</s-card>
+`;
+
+exports[`WalletConnection.vue [Multiple Extensions available]: Accounts should be rendered 1`] = `
+<s-card
+  border-radius="medium"
+  class="base"
+  primary=""
+  shadow="always"
+  size="big"
+>
+   
+  <div
+    class="wallet-connection el-loading-parent--relative"
+  >
+    <p
+      class="wallet-connection-text"
+    >
+      
+          Select account to work with
+        
+    </p>
+     
+    <s-scrollbar-stub
+      class="wallet-connection-accounts"
+      tag="div"
+    >
+      <div
+        class="wallet-connection-account"
+      >
+        <wallet-account-stub
+          polkadotaccount="[object Object]"
+        >
+          <div
+            class="extension-label"
+          >
+            <span
+              class="extension-label-icon polkadot-js"
+            />
+             
+            <span
+              class="extension-label-name"
+            >
+              polkadot-js
+            </span>
+          </div>
+        </wallet-account-stub>
+      </div>
+      <div
+        class="wallet-connection-account"
+      >
+        <wallet-account-stub
+          polkadotaccount="[object Object]"
+        >
+          <div
+            class="extension-label"
+          >
+            <span
+              class="extension-label-icon polkadot-js"
+            />
+             
+            <span
+              class="extension-label-name"
+            >
+              polkadot-js
+            </span>
+          </div>
+        </wallet-account-stub>
+      </div>
+      <div
+        class="wallet-connection-account"
+      >
+        <wallet-account-stub
+          polkadotaccount="[object Object]"
+        >
+          <div
+            class="extension-label"
+          >
+            <span
+              class="extension-label-icon polkadot-js"
+            />
+             
+            <span
+              class="extension-label-name"
+            >
+              polkadot-js
+            </span>
+          </div>
+        </wallet-account-stub>
+      </div>
+      <div
+        class="wallet-connection-account"
+      >
+        <wallet-account-stub
+          polkadotaccount="[object Object]"
+        >
+          <div
+            class="extension-label"
+          >
+            <span
+              class="extension-label-icon polkadot-js"
+            />
+             
+            <span
+              class="extension-label-name"
+            >
+              polkadot-js
+            </span>
+          </div>
+        </wallet-account-stub>
+      </div>
+      <div
+        class="wallet-connection-account"
+      >
+        <wallet-account-stub
+          polkadotaccount="[object Object]"
+        >
+          <div
+            class="extension-label"
+          >
+            <span
+              class="extension-label-icon subwallet-js"
+            />
+             
+            <span
+              class="extension-label-name"
+            >
+              subwallet-js
+            </span>
+          </div>
+        </wallet-account-stub>
+      </div>
+    </s-scrollbar-stub>
+    <div
+      class="el-loading-mask"
+      style="display: none;"
+    >
+      <div
+        class="el-loading-spinner"
+      >
+        <svg
+          class="circular"
+          viewBox="25 25 50 50"
+        >
+          <circle
+            class="path"
+            cx="50"
+            cy="50"
+            fill="none"
+            r="20"
+          />
+        </svg>
+        <!---->
+      </div>
+    </div>
   </div>
 </s-card>
 `;
