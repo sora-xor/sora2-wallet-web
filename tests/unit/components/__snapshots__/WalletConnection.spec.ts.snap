@@ -347,16 +347,16 @@ exports[`WalletConnection.vue [Multiple Extensions available]: Accounts should b
           polkadotaccount="[object Object]"
         >
           <div
-            class="extension-label"
+            class="extension-tag"
           >
             <span
-              class="extension-label-icon polkadot-js"
+              class="extension-tag-icon polkadot-js"
             />
              
             <span
-              class="extension-label-name"
+              class="extension-tag-name"
             >
-              polkadot-js
+              polkadot{.js}
             </span>
           </div>
         </wallet-account-stub>
@@ -368,16 +368,16 @@ exports[`WalletConnection.vue [Multiple Extensions available]: Accounts should b
           polkadotaccount="[object Object]"
         >
           <div
-            class="extension-label"
+            class="extension-tag"
           >
             <span
-              class="extension-label-icon polkadot-js"
+              class="extension-tag-icon polkadot-js"
             />
              
             <span
-              class="extension-label-name"
+              class="extension-tag-name"
             >
-              polkadot-js
+              polkadot{.js}
             </span>
           </div>
         </wallet-account-stub>
@@ -389,16 +389,16 @@ exports[`WalletConnection.vue [Multiple Extensions available]: Accounts should b
           polkadotaccount="[object Object]"
         >
           <div
-            class="extension-label"
+            class="extension-tag"
           >
             <span
-              class="extension-label-icon polkadot-js"
+              class="extension-tag-icon polkadot-js"
             />
              
             <span
-              class="extension-label-name"
+              class="extension-tag-name"
             >
-              polkadot-js
+              polkadot{.js}
             </span>
           </div>
         </wallet-account-stub>
@@ -410,16 +410,16 @@ exports[`WalletConnection.vue [Multiple Extensions available]: Accounts should b
           polkadotaccount="[object Object]"
         >
           <div
-            class="extension-label"
+            class="extension-tag"
           >
             <span
-              class="extension-label-icon polkadot-js"
+              class="extension-tag-icon polkadot-js"
             />
              
             <span
-              class="extension-label-name"
+              class="extension-tag-name"
             >
-              polkadot-js
+              polkadot{.js}
             </span>
           </div>
         </wallet-account-stub>
@@ -431,16 +431,16 @@ exports[`WalletConnection.vue [Multiple Extensions available]: Accounts should b
           polkadotaccount="[object Object]"
         >
           <div
-            class="extension-label"
+            class="extension-tag"
           >
             <span
-              class="extension-label-icon subwallet-js"
+              class="extension-tag-icon subwallet-js"
             />
              
             <span
-              class="extension-label-name"
+              class="extension-tag-name"
             >
-              subwallet-js
+              SubWallet
             </span>
           </div>
         </wallet-account-stub>

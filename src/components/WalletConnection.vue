@@ -45,10 +45,7 @@
             @click="handleSelectAccount(account)"
           >
             <wallet-account :polkadotAccount="account">
-              <div v-if="isMultipleAvailableExtension && account.source" class="extension-label">
-                <span v-if="hasIcon(account.source)" :class="['extension-label-icon', account.source]" />
-                <span class="extension-label-name">{{ account.source }}</span>
-              </div>
+              <extension-tag v-if="isMultipleAvailableExtension && account.source" :extension="account.source" />
             </wallet-account>
           </div>
         </s-scrollbar>
@@ -62,12 +59,13 @@ import { Component, Mixins } from 'vue-property-decorator';
 
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
+import ExtensionTag from './ExtensionTag.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 
 import { state, action } from '../store/decorators';
-import { Extensions } from '../consts';
+import type { Extensions } from '../consts';
 import type { PolkadotJsAccount } from '../types/common';
 
 enum Step {
@@ -76,7 +74,7 @@ enum Step {
 }
 
 @Component({
-  components: { WalletBase, WalletAccount },
+  components: { WalletBase, WalletAccount, ExtensionTag },
 })
 export default class WalletConnection extends Mixins(TranslationMixin, LoadingMixin) {
   readonly Step = Step;
@@ -166,10 +164,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   handleLearnMoreClick(): void {
     this.$emit('learn-more');
   }
-
-  hasIcon(extension: string): boolean {
-    return Object.values(Extensions).includes(extension as Extensions);
-  }
 }
 </script>
 
@@ -226,36 +220,6 @@ $accounts-number: 7;
     width: 100%;
     & + & {
       margin-left: 0;
-    }
-  }
-}
-
-$extensions: 'polkadot-js', 'subwallet-js';
-
-.extension-label {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  background: var(--s-color-utility-surface);
-  border-radius: calc(var(--s-border-radius-mini) / 2);
-  box-shadow: var(--s-shadow-element-pressed);
-  font-size: var(--s-font-size-mini);
-  line-height: var(--s-line-height-medium);
-  letter-spacing: var(--s-letter-spacing-small);
-  padding: 2px 6px;
-
-  &-icon {
-    width: 16px;
-    height: 16px;
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
-    margin-right: $basic-spacing-mini;
-
-    @each $extension in $extensions {
-      &.#{$extension} {
-        background-image: url('~@/assets/img/extensions/#{$extension}.png');
-      }
     }
   }
 }
