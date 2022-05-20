@@ -1,12 +1,14 @@
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
+import { Extensions } from '../../../src/consts';
 import WalletConnection from '@/components/WalletConnection.vue';
 import WalletBase from '@/components/WalletBase.vue';
-import { POLKADOT_JS_ACCOUNTS_MOCK } from '../../utils/WalletConnectionMock';
+import ExtensionTag from '@/components/ExtensionTag.vue';
+import { POLKADOT_JS_ACCOUNTS_MOCK, SUBWALLET_JS_ACCOUNTS_MOCK } from '../../utils/WalletConnectionMock';
 
 const createStore = ({
   currentRouteParams = { isAccountSwitch: false },
   polkadotJsAccounts = POLKADOT_JS_ACCOUNTS_MOCK,
-  extensionAvailability = true,
+  availableExtensions = [Extensions.PolkadotJS],
 } = {}) =>
   useVuex({
     settings: {
@@ -17,7 +19,7 @@ const createStore = ({
     account: {
       state: () => ({
         polkadotJsAccounts,
-        extensionAvailability,
+        availableExtensions,
       }),
       actions: {
         importPolkadotJs: jest.fn(),
@@ -36,6 +38,7 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
       store: createStore(),
       stubs: {
         WalletBase,
+        ExtensionTag,
       },
     });
 
@@ -47,6 +50,32 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
       store: createStore(),
       stubs: {
         WalletBase,
+        ExtensionTag,
+      },
+    });
+
+    wrapper.setData({ step: 2 });
+
+    // const handler = jest.spyOn(wrapper.vm, 'handleActionClick' as any);
+    // const actionButton = wrapper.find('.action-btn');
+
+    // actionButton.vm.$emit('click');
+
+    await wrapper.vm.$nextTick();
+
+    // expect(handler).toHaveBeenCalled();
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it('[Multiple Extensions available]: Accounts should be rendered', async () => {
+    const wrapper = useShallowMount(WalletConnection, {
+      store: createStore({
+        availableExtensions: Object.values(Extensions),
+        polkadotJsAccounts: [...POLKADOT_JS_ACCOUNTS_MOCK, ...SUBWALLET_JS_ACCOUNTS_MOCK],
+      }),
+      stubs: {
+        WalletBase,
+        ExtensionTag,
       },
     });
 
@@ -68,6 +97,7 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
       store: createStore({ polkadotJsAccounts: [] }),
       stubs: {
         WalletBase,
+        ExtensionTag,
       },
     });
 
@@ -78,11 +108,12 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it('[Extension is not available]: Install extension screen should be rendered', () => {
+  it('[Extensions is not available]: Install extension screen should be rendered', () => {
     const wrapper = useShallowMount(WalletConnection, {
-      store: createStore({ extensionAvailability: false }),
+      store: createStore({ availableExtensions: [] }),
       stubs: {
         WalletBase,
+        ExtensionTag,
       },
     });
 

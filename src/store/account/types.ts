@@ -1,3 +1,5 @@
+import { Extensions } from '../../consts';
+
 import type { FiatPriceAndApyObject, ReferrerRewards } from '@/services/subquery/types';
 import type { AccountAsset, Asset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from '@polkadot/x-rxjs';
@@ -19,6 +21,6 @@ export type AccountState = {
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
   fiatPriceAndApyTimer: Nullable<NodeJS.Timer | number>;
   referralRewards: ReferrerRewards;
-  extensionAvailability: boolean;
+  availableExtensions: Array<Extensions>;
   extensionAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
 };

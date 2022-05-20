@@ -1,3 +1,4 @@
+import { Extensions } from '../consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 export enum Modules {
@@ -19,6 +20,7 @@ export enum Operations {
 export interface PolkadotJsAccount {
   address: string;
   name: string;
+  source?: Extensions;
 }
 
 export interface Account extends PolkadotJsAccount {
