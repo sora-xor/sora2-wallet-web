@@ -410,18 +410,21 @@ export const noirHistoryElementsFilter = (
     ],
   };
 
-  filter.and.push({
-    or: [
-      {
-        data: {
-          contains: {
-            to: address,
-            // amount: { greaterThan: 1 }, amount is a string so this operator doesn't work
-          },
+  filter.and.push(
+    {
+      data: {
+        contains: {
+          to: address,
+          // amount: { greaterThan: 1 }, amount is a string so this operator doesn't work
         },
       },
-    ],
-  });
+    },
+    {
+      address: {
+        notEqualTo: address,
+      },
+    }
+  );
 
   if (noirAssetId) {
     filter.and.push({
