@@ -6,6 +6,8 @@ import type { Subscription } from '@polkadot/x-rxjs';
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
 import { storage } from '../../util/storage';
 import { api } from '../../api';
+import { Extensions } from '../../consts';
+
 import type { AccountState } from './types';
 import type { FiatPriceAndApyObject, ReferrerRewards } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
@@ -29,7 +31,7 @@ const mutations = defineMutations<AccountState>()({
         'assets',
         'polkadotJsAccounts',
         'polkadotJsAccountsSubscription',
-        'extensionAvailability',
+        'availableExtensions',
         'extensionAvailabilityTimer',
       ],
       initialState()
@@ -96,7 +98,6 @@ const mutations = defineMutations<AccountState>()({
     state.polkadotJsAccountsSubscription = subscription;
   },
   resetPolkadotJsAccountsSubscription(state): void {
-    state.polkadotJsAccounts = [];
     if (typeof state.polkadotJsAccountsSubscription === 'function') {
       state.polkadotJsAccountsSubscription();
     }
@@ -107,8 +108,8 @@ const mutations = defineMutations<AccountState>()({
     state.name = name;
     state.isExternal = true;
   },
-  setExtensionAvailability(state, availability: boolean): void {
-    state.extensionAvailability = availability;
+  setAvailableExtensions(state, names: Extensions[]) {
+    state.availableExtensions = names;
   },
   setExtensionAvailabilitySubscription(state, timeout: NodeJS.Timeout | number): void {
     state.extensionAvailabilityTimer = timeout;

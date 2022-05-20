@@ -8,12 +8,13 @@ import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
 import {
-  getExtension,
-  getExtensionInfo,
+  getExtensions,
+  getExtensionInfoByAccountAddress,
   getExtensionSigner,
   subscribeToPolkadotJsAccounts,
   WHITE_LIST_GITHUB_URL,
 } from '../../util';
+import { Extensions } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
@@ -27,6 +28,7 @@ const actions = defineActions({
 
     return signer;
   },
+
   async afterLogin(context): Promise<void> {
     const { dispatch } = accountActionContext(context);
     const { rootDispatch } = rootActionContext(context);
@@ -34,6 +36,7 @@ const actions = defineActions({
     await dispatch.subscribeOnAccountAssets();
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
+
   async logout(context): Promise<void> {
     const { commit } = accountActionContext(context);
     const { rootDispatch } = rootActionContext(context);
@@ -46,6 +49,7 @@ const actions = defineActions({
 
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
+
   async checkSigner(context): Promise<void> {
     const { dispatch, getters } = accountActionContext(context);
     if (getters.isLoggedIn) {
@@ -61,6 +65,7 @@ const actions = defineActions({
       }
     }
   },
+
   async updatePolkadotJsAccounts(context, accounts: Array<PolkadotJsAccount>): Promise<void> {
     const { commit, getters, dispatch } = accountActionContext(context);
     commit.setPolkadotJsAccounts(accounts);
@@ -73,17 +78,24 @@ const actions = defineActions({
       }
     }
   },
+
   async checkExtension(context): Promise<void> {
     const { commit, dispatch, state, getters } = accountActionContext(context);
     try {
-      await getExtension();
-      commit.setExtensionAvailability(true);
+      const availableExtensions = JSON.stringify(state.availableExtensions);
+      const extensions = await getExtensions();
+      const names = extensions.map(({ name }) => name);
 
-      if (!state.polkadotJsAccountsSubscription) {
+      commit.setAvailableExtensions(names as Extensions[]);
+
+      if (!state.polkadotJsAccountsSubscription || JSON.stringify(state.availableExtensions) !== availableExtensions) {
+        commit.resetPolkadotJsAccountsSubscription();
+
         await dispatch.subscribeToPolkadotJsAccounts();
       }
     } catch (error) {
-      commit.setExtensionAvailability(false);
+      commit.setAvailableExtensions([]);
+      commit.setPolkadotJsAccounts([]);
       commit.resetPolkadotJsAccountsSubscription();
 
       if (getters.isLoggedIn) {
@@ -91,6 +103,7 @@ const actions = defineActions({
       }
     }
   },
+
   async subscribeOnExtensionAvailability(context): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
     dispatch.checkExtension();
@@ -98,36 +111,44 @@ const actions = defineActions({
     const timer = setInterval(() => {
       dispatch.checkExtension();
     }, CHECK_EXTENSION_INTERVAL);
+
     commit.setExtensionAvailabilitySubscription(timer);
   },
+
   async subscribeToPolkadotJsAccounts(context): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
-    commit.resetPolkadotJsAccountsSubscription();
 
     const subscription = await subscribeToPolkadotJsAccounts(async (accounts) => {
       await dispatch.updatePolkadotJsAccounts(accounts);
     });
+
     commit.setPolkadotJsAccountsSubscription(subscription);
   },
+
   async importPolkadotJs(context, address: string): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
     try {
       const defaultAddress = api.formatAddress(address, false);
-      const info = await getExtensionInfo();
+      const info = await getExtensionInfoByAccountAddress(defaultAddress);
       const account = info.accounts.find((acc) => acc.address === defaultAddress);
+
       if (!account) {
         throw new Error('polkadotjs.noAccount');
       }
-      api.importByPolkadotJs(account.address, account.name);
+
+      const accountName = account.name || '';
+
+      api.importByPolkadotJs(account.address, accountName);
       api.setSigner(info.signer);
 
-      commit.selectPolkadotJsAccount(account.name);
+      commit.selectPolkadotJsAccount(accountName);
 
       await dispatch.afterLogin();
     } catch (error) {
       throw new Error((error as Error).message);
     }
   },
+
   async syncWithStorage(context): Promise<void> {
     const { state, getters, commit, dispatch } = accountActionContext(context);
     // previous state
