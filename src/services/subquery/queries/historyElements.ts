@@ -398,7 +398,8 @@ export const historyElementsFilter = ({
  */
 export const noirHistoryElementsFilter = (
   address = 'cnW1pm3hDysWLCD4xvQAKFmW9QPjMG5zmnRxBpc6hd3P7CWP3',
-  noirAssetId = ''
+  noirAssetId = '',
+  excludedAddresses: string[] = []
 ): any => {
   const filter: any = {
     and: [
@@ -421,7 +422,7 @@ export const noirHistoryElementsFilter = (
     },
     {
       address: {
-        notEqualTo: address,
+        notIn: excludedAddresses,
       },
     }
   );
