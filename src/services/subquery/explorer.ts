@@ -149,10 +149,14 @@ export default class SubqueryExplorer implements Explorer {
    * @param accountId Noir Account Id
    * @param noirAssetId Noir Asset Id
    */
-  public async getNoirTotalRedeemed(accountId?: string, noirAssetId?: string): Promise<number> {
+  public async getNoirTotalRedeemed(
+    accountId?: string,
+    noirAssetId?: string,
+    excludedAddresses?: string[]
+  ): Promise<number> {
     try {
       const variables = {
-        filter: noirHistoryElementsFilter(accountId, noirAssetId),
+        filter: noirHistoryElementsFilter(accountId, noirAssetId, excludedAddresses),
       };
       const { historyElements } = await this.request(HistoryElementsQuery, variables);
       const count = (historyElements.edges as Array<any>).reduce((value, item) => {
