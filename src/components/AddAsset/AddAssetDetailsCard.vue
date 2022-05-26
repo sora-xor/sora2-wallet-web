@@ -34,14 +34,13 @@ import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import TranslationMixin from '../mixins/TranslationMixin';
+import AddAssetMixin from '../mixins/AddAssetMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
 import WalletBase from '../WalletBase.vue';
 import AssetListItem from '../AssetListItem.vue';
 import { api } from '../../api';
 import type { WhitelistIdsBySymbol } from '../../types/common';
-import { action, getter, mutation } from '../../store/decorators';
-import { RouteNames } from '@/consts';
-import { Route } from '@/store/router/types';
+import { getter } from '../../store/decorators';
 
 @Component({
   components: {
@@ -49,13 +48,9 @@ import { Route } from '@/store/router/types';
     AssetListItem,
   },
 })
-export default class AddAssetDetailsCard extends Mixins(TranslationMixin, LoadingMixin) {
+export default class AddAssetDetailsCard extends Mixins(TranslationMixin, LoadingMixin, AddAssetMixin) {
   @getter.account.whitelist whitelist!: Whitelist;
   @getter.account.whitelistIdsBySymbol whitelistIdsBySymbol!: WhitelistIdsBySymbol;
-
-  @mutation.router.navigate private navigate!: (options: Route) => void;
-
-  @action.account.addAsset private addAsset!: (address?: string) => Promise<void>;
 
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
   @Prop({ default: Theme.LIGHT, type: String }) readonly theme!: Theme;
@@ -92,15 +87,7 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
 
   async handleAddAsset(): Promise<void> {
     this.$emit('add');
-    const asset: Partial<Asset> = this.asset || {};
-    await this.withLoading(async () => await this.addAsset(asset.address));
-    this.navigate({ name: RouteNames.Wallet, params: { asset: this.asset } });
-
-    this.$notify({
-      message: this.t('addAsset.success', { symbol: asset.symbol || '' }),
-      type: 'success',
-      title: '',
-    });
+    this.addAccountAsset(this.asset);
   }
 }
 </script>

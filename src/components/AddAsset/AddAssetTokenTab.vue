@@ -19,7 +19,7 @@
         </template>
       </asset-list>
     </div>
-    <add-asset-details-card v-else :asset="asset" />
+    <add-asset-details-card v-else :asset="selectedAsset" />
   </div>
 </template>
 
