@@ -33,11 +33,14 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
-import TranslationMixin from './mixins/TranslationMixin';
-import WalletBase from './WalletBase.vue';
-import AssetListItem from './AssetListItem.vue';
-import { api } from '../api';
-import type { WhitelistIdsBySymbol } from '../types/common';
+import TranslationMixin from '../mixins/TranslationMixin';
+import AddAssetMixin from '../mixins/AddAssetMixin';
+import LoadingMixin from '../mixins/LoadingMixin';
+import WalletBase from '../WalletBase.vue';
+import AssetListItem from '../AssetListItem.vue';
+import { api } from '../../api';
+import type { WhitelistIdsBySymbol } from '../../types/common';
+import { getter } from '../../store/decorators';
 
 @Component({
   components: {
@@ -45,11 +48,11 @@ import type { WhitelistIdsBySymbol } from '../types/common';
     AssetListItem,
   },
 })
-export default class AddAssetDetails extends Mixins(TranslationMixin) {
+export default class AddAssetDetailsCard extends Mixins(TranslationMixin, LoadingMixin, AddAssetMixin) {
+  @getter.account.whitelist whitelist!: Whitelist;
+  @getter.account.whitelistIdsBySymbol whitelistIdsBySymbol!: WhitelistIdsBySymbol;
+
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
-  @Prop({ required: true, type: Object }) readonly whitelist!: Whitelist;
-  @Prop({ required: true, type: Object }) readonly whitelistIdsBySymbol!: WhitelistIdsBySymbol;
-  @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
   @Prop({ default: Theme.LIGHT, type: String }) readonly theme!: Theme;
 
   isConfirmed = false;
@@ -84,6 +87,7 @@ export default class AddAssetDetails extends Mixins(TranslationMixin) {
 
   async handleAddAsset(): Promise<void> {
     this.$emit('add');
+    this.addAccountAsset(this.asset);
   }
 }
 </script>
