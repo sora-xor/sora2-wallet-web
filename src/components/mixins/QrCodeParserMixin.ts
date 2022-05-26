@@ -22,17 +22,16 @@ export default class QrCodeParserMixin extends Mixins(TranlationMixin) {
     try {
       if (!value) reject('QR Code not provided');
 
-      const [base, assetId] = (value as string).split('::');
+      const [chain, address, publicKey, accountName, assetId] = (value as string).split(':');
 
-      if (!base || !assetId) reject(`Unsupported QR Code: ${value}`);
+      if (chain !== 'substrate') reject(`Unsupported chain: ${chain}`);
+      if (!address) reject(`Account address not provided: ${address}`);
+      if (!publicKey) reject(`Account public key not provided: ${publicKey}`);
+      if (!assetId) reject(`Asset ID not provided: ${assetId}`);
 
       const asset = this.assets.find((asset) => asset.address === assetId);
 
       if (!asset) reject(`Unsupported asset: ${assetId}`);
-
-      const [chain, address, publicKey] = base.split(':');
-
-      if (chain !== 'substrate') reject(`Unsupported chain: ${chain}`);
 
       const publicKeyHex = `0x${api.getPublicKeyByAddress(address)}`;
 

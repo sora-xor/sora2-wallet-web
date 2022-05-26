@@ -398,7 +398,8 @@ export const historyElementsFilter = ({
  */
 export const noirHistoryElementsFilter = (
   address = 'cnW1pm3hDysWLCD4xvQAKFmW9QPjMG5zmnRxBpc6hd3P7CWP3',
-  noirAssetId = ''
+  noirAssetId = '',
+  excludedAddresses: string[] = []
 ): any => {
   const filter: any = {
     and: [
@@ -410,18 +411,21 @@ export const noirHistoryElementsFilter = (
     ],
   };
 
-  filter.and.push({
-    or: [
-      {
-        data: {
-          contains: {
-            to: address,
-            // amount: { greaterThan: 1 }, amount is a string so this operator doesn't work
-          },
+  filter.and.push(
+    {
+      data: {
+        contains: {
+          to: address,
+          // amount: { greaterThan: 1 }, amount is a string so this operator doesn't work
         },
       },
-    ],
-  });
+    },
+    {
+      address: {
+        notIn: excludedAddresses,
+      },
+    }
+  );
 
   if (noirAssetId) {
     filter.and.push({

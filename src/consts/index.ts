@@ -2,6 +2,11 @@ import type { FPNumber, Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
+export enum Extensions {
+  PolkadotJS = 'polkadot-js',
+  SubwalletJS = 'subwallet-js',
+}
+
 export enum RouteNames {
   WalletConnection = 'WalletConnection',
   WalletSend = 'WalletSend',

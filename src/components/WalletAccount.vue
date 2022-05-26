@@ -111,6 +111,7 @@ $avatar-size: 32px;
   }
   &-details {
     flex: 1;
+    align-items: center;
     width: calc(100% - #{$avatar-size} - #{$avatar-margin-right});
   }
   &-credentials {
