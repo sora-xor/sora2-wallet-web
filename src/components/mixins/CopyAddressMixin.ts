@@ -7,6 +7,7 @@ import { copyToClipboard, delay } from '../../util';
 @Component
 export default class CopyAddressMixin extends Mixins(TranslationMixin) {
   wasAddressCopied = false;
+  customCopyTooltip: Nullable<string> = null;
 
   async handleCopyAddress(address: string, event?: Event): Promise<void> {
     event && event.stopImmediatePropagation();
@@ -18,6 +19,9 @@ export default class CopyAddressMixin extends Mixins(TranslationMixin) {
 
   get copyTooltip(): string {
     // TODO: [UI-LIB] add key property with the content value for tooltip in buttons to rerender it each time
-    return this.t(`assets.${!this.wasAddressCopied ? 'receive' : 'copied'}`);
+    if (!this.wasAddressCopied) {
+      return this.customCopyTooltip ?? this.t('assets.receive');
+    }
+    return this.t('assets.copied');
   }
 }
