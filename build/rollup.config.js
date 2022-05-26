@@ -76,9 +76,9 @@ export default {
       needMap: false, // fix for https://github.com/vuejs/rollup-plugin-vue/issues/238
       data: {
         scss: `
-          @import "../styles/_variables.scss";
-          @import "../styles/_layout.scss";
-          @import "../styles/_mixins.scss";
+          @import "src/styles/_variables.scss";
+          @import "src/styles/_layout.scss";
+          @import "src/styles/_mixins.scss";
         `,
       },
     }),
