@@ -174,15 +174,14 @@ export default {
     title: '@:addAssetText',
     action: '@:addAssetText',
     success: 'Asset {symbol} was added successfully!',
-    [AddAssetTabs.Search]: {
-      title: '@:searchText',
-      placeholder: 'Filter by Asset ID, Name or Ticker Symbol',
+    [AddAssetTabs.Token]: {
+      title: 'Tokens',
+      switchBtn: 'Verified assets only',
     },
-    [AddAssetTabs.Custom]: {
-      title: 'Custom asset',
-      addressPlaceholder: '@:addressText',
-      symbolPlaceholder: 'Asset symbol',
+    [AddAssetTabs.NFT]: {
+      title: 'NFTs',
     },
+    searchInputText: 'Search by Asset ID, Name or Ticker Symbol',
     empty: 'No tokens found',
     alreadyAttached: 'Token was already attached',
     understand: 'I understand',

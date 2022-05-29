@@ -8,10 +8,10 @@ export interface AddAssetData {
 export const MOCK_ADD_ASSET: Array<AddAssetData> = [
   {
     title: 'Search Tab',
-    currentTab: AddAssetTabs.Search,
+    currentTab: AddAssetTabs.Token,
   },
   {
     title: 'Custom Asset Tab',
-    currentTab: AddAssetTabs.Custom,
+    currentTab: AddAssetTabs.NFT,
   },
 ];
