@@ -8,6 +8,7 @@ import { copyToClipboard, delay } from '../../util';
 export default class CopyAddressMixin extends Mixins(TranslationMixin) {
   wasAddressCopied = false;
   customCopyTooltip: Nullable<string> = null;
+  customCopiedTooltip: Nullable<string> = null;
 
   async handleCopyAddress(address: string, event?: Event): Promise<void> {
     event && event.stopImmediatePropagation();
@@ -22,6 +23,6 @@ export default class CopyAddressMixin extends Mixins(TranslationMixin) {
     if (!this.wasAddressCopied) {
       return this.customCopyTooltip ?? this.t('assets.receive');
     }
-    return this.t('assets.copied');
+    return this.customCopiedTooltip ?? this.t('assets.copied');
   }
 }

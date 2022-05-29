@@ -175,7 +175,8 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   get nftLinkTooltipText(): string {
-    return this.wasNftLinkCopied ? this.t('assets.copied') : this.t('createToken.nft.link.copyLink');
+    // TODO: Remove assets.copy, assets.copied
+    return this.wasNftLinkCopied ? this.t('copiedText') : this.t('createToken.nft.link.copyLink');
   }
 
   get displayedNftContentLink(): string {

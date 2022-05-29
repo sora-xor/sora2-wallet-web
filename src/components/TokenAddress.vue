@@ -24,7 +24,8 @@ export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMi
   @Prop({ default: false, type: Boolean }) readonly external!: boolean;
   @Prop({ default: true, type: Boolean }) readonly showName!: boolean;
 
-  customCopyTooltip = this.t('assets.copy');
+  customCopyTooltip = this.t('copyWithValue', { value: this.t('assets.assetId') });
+  customCopiedTooltip = this.t('copiedWithValue', { value: this.t('assets.assetId') });
 
   get tokenName(): string {
     return this.name || this.symbol;

@@ -16,7 +16,7 @@
         />
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
-          <s-tooltip :content="copyTooltip" :open-delay="200">
+          <s-tooltip :content="copyTooltip" :placement="top" :open-delay="200">
             <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">
               {{ formattedSoraAddress }}
             </p>
