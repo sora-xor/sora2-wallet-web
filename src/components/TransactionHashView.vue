@@ -4,10 +4,10 @@
     <s-button
       class="s-button--copy"
       icon="basic-copy-24"
-      :tooltip="operationTooltip"
+      :tooltip="copyTooltip"
       type="action"
       alternative
-      @click="handleCopy"
+      @click="handleCopyAddress(formattedValue)"
     />
     <s-dropdown
       class="s-dropdown-menu"
@@ -37,18 +37,22 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { copyToClipboard, formatAddress, getExplorerLinks, formatSoraAddress } from '../util';
+import { formatAddress, getExplorerLinks, formatSoraAddress } from '../util';
 import TranslationMixin from './mixins/TranslationMixin';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
 import { ExplorerLink, SoraNetwork, HashType, ExplorerType } from '../consts';
 import { state } from '../store/decorators';
 
 @Component
-export default class TransactionHashView extends Mixins(TranslationMixin) {
+export default class TransactionHashView extends Mixins(TranslationMixin, CopyAddressMixin) {
   @Prop({ type: String, required: true }) readonly value!: string;
   @Prop({ type: String, required: true }) readonly type!: HashType;
   @Prop({ type: String, required: true }) readonly translation!: string;
 
   @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
+
+  customCopyTooltip = this.t('copyWithValue', { value: this.t(this.translation) });
+  customCopiedTooltip = this.t('copiedWithValue', { value: this.t(this.translation) });
 
   get formattedValue(): string {
     if (this.type === HashType.Account) {
@@ -73,29 +77,8 @@ export default class TransactionHashView extends Mixins(TranslationMixin) {
     });
   }
 
-  get operationTooltip(): string {
-    return this.t('transaction.copy', { value: this.t(this.translation) });
-  }
-
   get formattedAddress(): string {
     return formatAddress(this.formattedValue, 24);
-  }
-
-  async handleCopy(): Promise<void> {
-    try {
-      await copyToClipboard(this.formattedValue);
-      this.$notify({
-        message: this.t('transaction.successCopy', { value: this.t(this.translation) }),
-        type: 'success',
-        title: '',
-      });
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: '',
-      });
-    }
   }
 }
 </script>
