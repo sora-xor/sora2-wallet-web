@@ -1,8 +1,8 @@
 <template>
   <div class="token-address">
     <span v-if="showName" class="token-address__name">{{ tokenName }}</span>
-    <s-tooltip :content="t('assets.copy')" border-radius="mini" placement="bottom-end">
-      <span class="token-address__value" @click.stop="handleCopy">({{ formattedAddress }})</span>
+    <s-tooltip :content="copyTooltip" :open-delay="200">
+      <span class="token-address__value" @click="handleCopyAddress(tokenAddress)">({{ formattedAddress }})</span>
     </s-tooltip>
   </div>
 </template>
@@ -11,17 +11,21 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
 
-import { formatAddress, copyToClipboard } from '../util';
+import { formatAddress } from '../util';
 
 @Component
-export default class TokenAddress extends Mixins(TranslationMixin) {
+export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMixin) {
   @Prop({ default: '', type: String }) readonly name!: string;
   @Prop({ default: '', type: String }) readonly symbol!: string;
   @Prop({ default: '', type: String }) readonly address!: string;
   @Prop({ default: '', type: String }) readonly externalAddress!: string;
   @Prop({ default: false, type: Boolean }) readonly external!: boolean;
   @Prop({ default: true, type: Boolean }) readonly showName!: boolean;
+
+  customCopyTooltip = this.t('copyWithValue', { value: this.t('assets.assetId') });
+  customCopiedTooltip = this.t('copiedWithValue', { value: this.t('assets.assetId') });
 
   get tokenName(): string {
     return this.name || this.symbol;
@@ -33,23 +37,6 @@ export default class TokenAddress extends Mixins(TranslationMixin) {
 
   get formattedAddress(): string {
     return formatAddress(this.tokenAddress, 10);
-  }
-
-  async handleCopy(): Promise<void> {
-    try {
-      await copyToClipboard(this.tokenAddress);
-      this.$notify({
-        message: this.t('assets.successCopy', { symbol: this.symbol }),
-        type: 'success',
-        title: '',
-      });
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: '',
-      });
-    }
   }
 }
 </script>
