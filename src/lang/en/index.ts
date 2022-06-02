@@ -43,10 +43,14 @@ export default {
     [Operation.CreatePair]: 'Create Pair',
     [Operation.RegisterAsset]: 'Register Asset',
     [Operation.ClaimRewards]: 'Claim Rewards',
-    [Operation.ClaimRewards]: 'Claim Rewards',
     [Operation.ReferralReserveXor]: 'Bond XOR',
     [Operation.ReferralUnreserveXor]: 'Unbond XOR',
     [Operation.ReferralSetInvitedUser]: 'Set Referral',
+    [Operation.DemeterFarmingDepositLiquidity]: 'Deposit Liquidity',
+    [Operation.DemeterFarmingWithdrawLiquidity]: 'Withdraw Liquidity',
+    [Operation.DemeterFarmingStakeToken]: 'Add Stake',
+    [Operation.DemeterFarmingUnstakeToken]: 'Remove Stake',
+    [Operation.DemeterFarmingGetRewards]: 'Claim Rewards',
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
@@ -60,6 +64,11 @@ export default {
       [Operation.ReferralReserveXor]: 'Bonded XOR successfully',
       [Operation.ReferralUnreserveXor]: 'Unbonded XOR successfully',
       [Operation.ReferralSetInvitedUser]: 'Set Referral',
+      [Operation.DemeterFarmingDepositLiquidity]: 'Supplied {symbol} and {symbol2} {amount} LP tokens for farming',
+      [Operation.DemeterFarmingWithdrawLiquidity]: 'Removed {symbol} and {symbol2} {amount} LP tokens from farming',
+      [Operation.DemeterFarmingStakeToken]: 'Added {amount} {symbol} for staking',
+      [Operation.DemeterFarmingUnstakeToken]: 'Removed {amount} {symbol} from staking',
+      [Operation.DemeterFarmingGetRewards]: '{amount} {symbol} claimed successfully',
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
@@ -73,6 +82,13 @@ export default {
       [Operation.ReferralReserveXor]: 'Failed to bond XOR',
       [Operation.ReferralUnreserveXor]: 'Failed to unbonded XOR',
       [Operation.ReferralSetInvitedUser]: 'Failed to set referral',
+      [Operation.DemeterFarmingDepositLiquidity]:
+        'Failed to supply {amount} {symbol} and {symbol2} LP tokens for farming',
+      [Operation.DemeterFarmingWithdrawLiquidity]:
+        'Failed to remove {amount} {symbol} and {symbol2} LP tokens from farming',
+      [Operation.DemeterFarmingStakeToken]: 'Failed to add {amount} {symbol} for staking',
+      [Operation.DemeterFarmingUnstakeToken]: 'Failed to remove {amount} {symbol} from staking',
+      [Operation.DemeterFarmingGetRewards]: 'Failed to claim {symbol}',
     },
   },
   polkadotjs: {

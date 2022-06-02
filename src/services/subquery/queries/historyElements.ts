@@ -62,6 +62,24 @@ const RewardsClaimExtrinsics = [
   [ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimCrowdloanRewards],
 ];
 
+const DemeterFarmingDeposit = {
+  module: {
+    equalTo: ModuleNames.DemeterFarming,
+  },
+  method: {
+    equalTo: ModuleMethods.DemeterFarmingDeposit,
+  },
+};
+
+const DemeterFarmingWithdraw = {
+  module: {
+    equalTo: ModuleNames.DemeterFarming,
+  },
+  method: {
+    equalTo: ModuleMethods.DemeterFarmingWithdraw,
+  },
+};
+
 const OperationFilterMap = {
   [Operation.Swap]: {
     module: {
@@ -200,6 +218,19 @@ const OperationFilterMap = {
         })),
       },
     ],
+  },
+  // DEMETER
+  [Operation.DemeterFarmingDepositLiquidity]: DemeterFarmingDeposit,
+  [Operation.DemeterFarmingWithdrawLiquidity]: DemeterFarmingWithdraw,
+  [Operation.DemeterFarmingStakeToken]: DemeterFarmingDeposit,
+  [Operation.DemeterFarmingUnstakeToken]: DemeterFarmingWithdraw,
+  [Operation.DemeterFarmingGetRewards]: {
+    module: {
+      equalTo: ModuleNames.DemeterFarming,
+    },
+    method: {
+      equalTo: ModuleMethods.DemeterFarmingGetRewards,
+    },
   },
 };
 

@@ -20,6 +20,7 @@ import type {
   HistoryElementAssetRegistration,
   HistoryElementRewardsClaim,
   HistoryElementUtilityBatchAll,
+  HistoryElementDemeterFarming,
   UtilityBatchCall,
   ReferralSetReferrer,
   ReferrerReserve,
@@ -83,6 +84,15 @@ const OperationsMap = {
   [insensitive(ModuleNames.VestedRewards)]: {
     [ModuleMethods.VestedRewardsClaimRewards]: () => Operation.ClaimRewards,
     [ModuleMethods.VestedRewardsClaimCrowdloanRewards]: () => Operation.ClaimRewards,
+  },
+  [insensitive(ModuleNames.DemeterFarming)]: {
+    [ModuleMethods.DemeterFarmingDeposit]: (data: HistoryElementDemeterFarming) => {
+      return data.isFarm ? Operation.DemeterFarmingDepositLiquidity : Operation.DemeterFarmingStakeToken;
+    },
+    [ModuleMethods.DemeterFarmingWithdraw]: (data: HistoryElementDemeterFarming) => {
+      return data.isFarm ? Operation.DemeterFarmingWithdrawLiquidity : Operation.DemeterFarmingUnstakeToken;
+    },
+    [ModuleMethods.DemeterFarmingGetRewards]: () => Operation.DemeterFarmingGetRewards,
   },
 };
 
@@ -196,6 +206,11 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     Operation.ReferralReserveXor,
     Operation.ReferralUnreserveXor,
     Operation.ClaimRewards,
+    Operation.DemeterFarmingDepositLiquidity,
+    Operation.DemeterFarmingWithdrawLiquidity,
+    Operation.DemeterFarmingStakeToken,
+    Operation.DemeterFarmingUnstakeToken,
+    Operation.DemeterFarmingGetRewards,
   ];
 
   public get supportedOperations(): Array<Operation> {
@@ -353,6 +368,38 @@ export default class SubqueryDataParser implements ExplorerDataParser {
           transaction.module === ModuleNames.Utility ? [] : (transaction.data as HistoryElementRewardsClaim);
 
         (payload as RewardClaimHistory).rewards = Array.isArray(rewardsData) ? await formatRewards(rewardsData) : [];
+
+        return payload;
+      }
+      case Operation.DemeterFarmingDepositLiquidity:
+      case Operation.DemeterFarmingWithdrawLiquidity: {
+        const data = transaction.data as HistoryElementDemeterFarming;
+
+        const assetAddress = data.baseAssetId as string;
+        const asset2Address = data.assetId;
+
+        const asset = await getAssetByAddress(assetAddress);
+        const asset2 = await getAssetByAddress(asset2Address);
+
+        payload.assetAddress = assetAddress;
+        payload.asset2Address = asset2Address;
+        payload.symbol = getAssetSymbol(asset);
+        payload.symbol2 = getAssetSymbol(asset2);
+        payload.amount = data.amount;
+
+        return payload;
+      }
+      case Operation.DemeterFarmingStakeToken:
+      case Operation.DemeterFarmingUnstakeToken:
+      case Operation.DemeterFarmingGetRewards: {
+        const data = transaction.data as HistoryElementDemeterFarming;
+
+        const assetAddress = data.assetId;
+        const asset = await getAssetByAddress(assetAddress);
+
+        payload.assetAddress = assetAddress;
+        payload.symbol = getAssetSymbol(asset);
+        payload.amount = data.amount;
 
         return payload;
       }
