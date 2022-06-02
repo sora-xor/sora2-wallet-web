@@ -12,7 +12,6 @@ function initialState(): SettingsState {
       addAssets: true,
       addLiquidity: true,
       bridgeAssets: true,
-      copyAssets: false,
       createAssets: true,
       sendAssets: true,
       swapAssets: true,

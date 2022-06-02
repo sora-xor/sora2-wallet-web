@@ -3,7 +3,6 @@ import { Component, Mixins } from 'vue-property-decorator';
 import TranslationMixin from './TranslationMixin';
 import { copyToClipboard, delay } from '../../util';
 
-// TODO: make a common solution without 'address' word and use it everywhere
 @Component
 export default class CopyAddressMixin extends Mixins(TranslationMixin) {
   targetElement: Nullable<EventTarget> = null;
@@ -14,7 +13,9 @@ export default class CopyAddressMixin extends Mixins(TranslationMixin) {
     if (event) {
       event.stopImmediatePropagation();
       this.targetElement = event.target;
-      this.targetElement?.addEventListener('mouseleave', this.handleMouseleaveListener);
+      if (this.targetElement) {
+        this.targetElement.addEventListener('mouseleave', this.handleMouseleaveListener);
+      }
     }
     await copyToClipboard(address);
     this.wasAddressCopied = true;
@@ -24,7 +25,9 @@ export default class CopyAddressMixin extends Mixins(TranslationMixin) {
   async handleMouseleaveListener(): Promise<void> {
     await delay(1000);
     this.wasAddressCopied = false;
-    this.targetElement?.removeEventListener('mouseleave', this.handleMouseleaveListener);
+    if (this.targetElement) {
+      this.targetElement.removeEventListener('mouseleave', this.handleMouseleaveListener);
+    }
   }
 
   get copyTooltip(): string {
