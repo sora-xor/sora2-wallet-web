@@ -16,8 +16,8 @@
         />
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
-          <s-tooltip :content="copyTooltip" :placement="top" :open-delay="200">
-            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">
+          <s-tooltip :content="copyTooltip" :placement="top">
+            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress, $event)">
               {{ formattedSoraAddress }}
             </p>
           </s-tooltip>
@@ -70,8 +70,8 @@
             <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
             <div class="asset-highlight">
               {{ asset.name || asset.symbol }}
-              <s-tooltip :content="copyTooltip" :open-delay="200">
-                <span class="asset-id" @click="handleCopyAddress(asset.address)">
+              <s-tooltip :content="copyTooltip">
+                <span class="asset-id" @click="handleCopyAddress(asset.address, $event)">
                   ({{ getFormattedAddress(asset) }})
                 </span>
               </s-tooltip>
@@ -174,6 +174,7 @@ export default class WalletSend extends Mixins(
   showAdditionalInfo = true;
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
+  tooltipCopyValue = this.t('assets.assetId');
 
   created(): void {
     if (this.currentRouteParams.address) {

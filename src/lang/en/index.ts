@@ -23,7 +23,7 @@ export default {
   saveText: 'Save',
   copiedText: 'Copied!',
   copyWithValue: 'Copy {value}',
-  copiedWithValue: 'Copied {value}!',
+  copiedWithValue: '{value} is copied!',
   sendText: 'Send',
   sentText: 'Sent',
   recievedText: 'Recieved',
@@ -126,7 +126,7 @@ export default {
     errorAddress: 'Invalid address. Please check it and try again.',
   },
   account: {
-    successCopy: 'Wallet address is copied to the clipboard',
+    walletAddress: 'Wallet address',
     copy: 'Copy address',
     switch: 'Switch account',
   },
@@ -148,7 +148,6 @@ export default {
     bridge: 'Bridge',
     assetId: 'Asset ID',
     copy: 'Copy Asset ID',
-    successCopy: '{symbol} Asset ID is copied to the clipboard',
     copied: 'Copied!',
     balance: {
       [BalanceType.Transferable]: 'Transferable',
@@ -291,7 +290,6 @@ export default {
       sorascan: 'View in SORAScan',
       subscan: 'View in Subscan',
     },
-    successCopy: '{value} is copied to the clipboard',
     copy: 'Copy {value}',
     history: {
       created: 'Transaction for {amount} {symbol} has been created.',
