@@ -23,6 +23,7 @@ export enum ModuleNames {
   Rewards = 'rewards',
   VestedRewards = 'vestedRewards',
   PswapDistribution = 'pswapDistribution',
+  DemeterFarming = 'demeterFarmingPlatform',
 }
 
 export enum ModuleMethods {
@@ -43,6 +44,9 @@ export enum ModuleMethods {
   VestedRewardsClaimRewards = 'claimRewards',
   VestedRewardsClaimCrowdloanRewards = 'claimCrowdloanRewards',
   PswapDistributionClaimIncentive = 'claimIncentive',
+  DemeterFarmingDeposit = 'deposit',
+  DemeterFarmingWithdraw = 'withdraw',
+  DemeterFarmingGetRewards = 'getRewards',
 }
 
 export type PoolXYKEntity = {
@@ -105,6 +109,14 @@ export type HistoryElementLiquidityOperation = {
 
 export type HistoryElementAssetRegistration = {
   assetId: string;
+};
+
+export type HistoryElementDemeterFarming = {
+  amount: string;
+  assetId: string;
+  isFarm: boolean;
+  rewardAssetId?: string;
+  baseAssetId?: string;
 };
 
 export type ClaimedRewardItem = {
@@ -171,6 +183,7 @@ export type HistoryElement = {
     | HistoryElementEthBridgeOutgoing
     | HistoryElementEthBridgeIncoming
     | HistoryElementRewardsClaim
+    | HistoryElementDemeterFarming
   >;
 };
 

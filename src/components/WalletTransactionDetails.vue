@@ -26,7 +26,7 @@
           value-can-be-hidden
           :label="t('transaction.amount')"
           :value="transactionAmount"
-          :asset-symbol="selectedTransaction.symbol"
+          :asset-symbol="transactionSymbol"
         />
         <info-line
           v-if="selectedTransaction.amount2"
@@ -34,7 +34,7 @@
           value-can-be-hidden
           :label="t('transaction.amount2')"
           :value="transactionAmount2"
-          :asset-symbol="selectedTransaction.symbol2"
+          :asset-symbol="transactionSymbol2"
         />
       </div>
       <transaction-hash-view
@@ -97,12 +97,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
     this.setTxDetailsId(id);
   }
 
-  get asset(): AccountAsset {
-    // currentRouteParams.asset was added here to avoid a case when the asset is not found
-    const asset = this.currentRouteParams.asset as AccountAsset;
-    return this.accountAssets.find(({ address }) => address === asset.address) || asset;
-  }
-
   get statusClass(): Array<string> {
     const baseClass = 'transaction-status';
     const classes = [baseClass];
@@ -149,6 +143,20 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
     return this.formatStringValue(this.selectedTransaction.amount2 as string);
   }
 
+  get transactionSymbol(): string {
+    const { type, symbol, symbol2 } = this.selectedTransaction;
+
+    if ([Operation.DemeterFarmingDepositLiquidity, Operation.DemeterFarmingWithdrawLiquidity].includes(type)) {
+      return `${symbol}-${symbol2}`;
+    }
+
+    return symbol || '';
+  }
+
+  get transactionSymbol2(): string {
+    return this.selectedTransaction.symbol2 || '';
+  }
+
   get transactionDate(): string {
     return this.formatDate(this.selectedTransaction.startTime as number);
   }
@@ -167,7 +175,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
 
   handleBack(): void {
     if (this.currentRouteParams.asset) {
-      this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.asset } });
+      this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.currentRouteParams.asset } });
       return;
     }
     this.navigate({ name: RouteNames.Wallet, params: { currentTab: WalletTabs.Activity } });
