@@ -18,6 +18,8 @@ const twoAssetsBasedOperations = [
   Operation.RemoveLiquidity,
   Operation.Swap,
   Operation.SwapAndSend,
+  Operation.DemeterFarmingDepositLiquidity,
+  Operation.DemeterFarmingWithdrawLiquidity,
 ];
 const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
 
@@ -46,7 +48,15 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       params.direction = direction;
       params.action = action;
     }
-    if ([...twoAssetsBasedOperations, Operation.Transfer].includes(value.type)) {
+    if (
+      [
+        ...twoAssetsBasedOperations,
+        Operation.Transfer,
+        Operation.DemeterFarmingGetRewards,
+        Operation.DemeterFarmingStakeToken,
+        Operation.DemeterFarmingUnstakeToken,
+      ].includes(value.type)
+    ) {
       params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
     }
     if (twoAssetsBasedOperations.includes(value.type)) {
