@@ -122,12 +122,41 @@ const getTransactionTimestamp = (tx: HistoryElement): number => {
   return !Number.isNaN(timestamp) ? timestamp : Date.now();
 };
 
+// TODO: Remove to substrate-js
+function getFormattedMessage(errorIndex: number, section: string) {
+  const generalError = 'Something went wrong';
+  switch (section) {
+    case 'poolXyk':
+      return poolXYKErrorMessages[errorIndex] ? poolXYKErrorMessages[errorIndex] : generalError;
+    default:
+      return generalError;
+  }
+}
+
+const poolXYKErrorMessages = {
+  6: 'Source balance is not large enough',
+  32: 'Source balance of liquidity is not large enough',
+  44: 'This is error', // add liquidity
+  55: 'XOR lower than the minimum value (0.007)',
+};
+
+const farmingErrorMessages = {
+  // Add errors
+};
+
 const getErrorMessage = (historyElementError: HistoryElementError): string => {
   try {
     const [error, index] = [new BN(historyElementError.moduleErrorId), new BN(historyElementError.moduleErrorIndex)];
     const { documentation } = api.api.registry.findMetaError({ error, index });
 
-    return documentation.join(' ').trim();
+    console.log(api.api.registry.findMetaError({ error, index }).index);
+    console.log('documentation', documentation);
+    // return documentation.join(' ').trim();
+
+    // Formatted
+    const meta = api.api.registry.findMetaError({ error, index });
+
+    return getFormattedMessage(meta.index, meta.section);
   } catch (error) {
     console.error(historyElementError, error);
     return '';
