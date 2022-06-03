@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
-import Sortable from 'sortablejs';
+
 import TranslationMixin from './mixins/TranslationMixin';
 import AssetListItem from './AssetListItem.vue';
 import Scrollbar from './ScrollBar.vue';
@@ -122,12 +122,6 @@ export default class AssetList extends Mixins(TranslationMixin) {
   async mounted(): Promise<void> {
     await this.waitForAssetsListReady();
     this.updateScrollbar();
-
-    const dragArea = document.querySelector('.vue-recycle-scroller__item-wrapper');
-    // eslint-disable-next-line no-new
-    new Sortable(dragArea, {
-      animation: 350,
-    });
   }
 
   async waitForAssetsListReady(): Promise<void> {
