@@ -5,7 +5,7 @@
       <div class="account-details s-flex">
         <div class="account-credentials s-flex">
           <div v-if="name" class="account-credentials_name">{{ name }}</div>
-          <s-tooltip :content="copyTooltip">
+          <s-tooltip :content="copyTooltip(t('account.walletAddress'))">
             <div class="account-credentials_address" @click="handleCopyAddress(address, $event)">
               {{ formattedAddress }}
             </div>
@@ -37,8 +37,6 @@ export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressM
   @getter.account.account private account!: Account;
 
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
-
-  tooltipCopyValue = this.t('account.walletAddress');
 
   get address(): string {
     if (this.polkadotAccount) {

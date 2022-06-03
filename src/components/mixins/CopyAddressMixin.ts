@@ -7,7 +7,6 @@ import { copyToClipboard, delay } from '../../util';
 export default class CopyAddressMixin extends Mixins(TranslationMixin) {
   targetElement: Nullable<EventTarget> = null;
   wasAddressCopied = false;
-  tooltipCopyValue: Nullable<string> = null;
 
   async handleCopyAddress(address: string, event?: PointerEvent): Promise<void> {
     if (event) {
@@ -30,15 +29,11 @@ export default class CopyAddressMixin extends Mixins(TranslationMixin) {
     }
   }
 
-  get copyTooltip(): string {
+  copyTooltip(tooltipCopyValue?: string): string {
     // TODO: [UI-LIB] add key property with the content value for tooltip in buttons to rerender it each time
     if (!this.wasAddressCopied) {
-      return this.tooltipCopyValue
-        ? this.t('copyWithValue', { value: this.tooltipCopyValue })
-        : this.t('assets.receive');
+      return tooltipCopyValue ? this.t('copyWithValue', { value: tooltipCopyValue }) : this.t('assets.receive');
     }
-    return this.tooltipCopyValue
-      ? this.t('copiedWithValue', { value: this.tooltipCopyValue })
-      : this.t('assets.copied');
+    return tooltipCopyValue ? this.t('copiedWithValue', { value: tooltipCopyValue }) : this.t('assets.copied');
   }
 }

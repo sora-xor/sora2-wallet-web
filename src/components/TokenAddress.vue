@@ -1,7 +1,7 @@
 <template>
   <div class="token-address">
     <span v-if="showName" class="token-address__name">{{ tokenName }}</span>
-    <s-tooltip :content="copyTooltip">
+    <s-tooltip :content="copyTooltip(t('assets.assetId'))">
       <span class="token-address__value" @click="handleCopyAddress(tokenAddress, $event)">
         ({{ formattedAddress }})
       </span>
@@ -25,8 +25,6 @@ export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMi
   @Prop({ default: '', type: String }) readonly externalAddress!: string;
   @Prop({ default: false, type: Boolean }) readonly external!: boolean;
   @Prop({ default: true, type: Boolean }) readonly showName!: boolean;
-
-  tooltipCopyValue = this.t('assets.assetId');
 
   get tokenName(): string {
     return this.name || this.symbol;
