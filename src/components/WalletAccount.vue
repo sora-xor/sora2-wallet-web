@@ -5,8 +5,8 @@
       <div class="account-details s-flex">
         <div class="account-credentials s-flex">
           <div v-if="name" class="account-credentials_name">{{ name }}</div>
-          <s-tooltip :content="t('account.copy')">
-            <div class="account-credentials_address" @click="handleCopyAddress($event)">{{ formattedAddress }}</div>
+          <s-tooltip :content="copyTooltip" :open-delay="200">
+            <div class="account-credentials_address" @click="handleCopyAddress(address)">{{ formattedAddress }}</div>
           </s-tooltip>
         </div>
         <slot />
@@ -21,7 +21,8 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 import WalletAvatar from './WalletAvatar.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
-import { copyToClipboard, formatAddress, formatSoraAddress } from '../util';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import { formatAddress, formatSoraAddress } from '../util';
 import { getter } from '../store/decorators';
 import type { Account, PolkadotJsAccount } from '../types/common';
 
@@ -30,7 +31,7 @@ import type { Account, PolkadotJsAccount } from '../types/common';
     WalletAvatar,
   },
 })
-export default class WalletAccount extends Mixins(TranslationMixin) {
+export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressMixin) {
   @getter.account.account private account!: Account;
 
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
@@ -48,24 +49,6 @@ export default class WalletAccount extends Mixins(TranslationMixin) {
 
   get formattedAddress(): string {
     return formatAddress(this.address, 24);
-  }
-
-  async handleCopyAddress(event: Event): Promise<void> {
-    event.stopImmediatePropagation();
-    try {
-      await copyToClipboard(this.address);
-      this.$notify({
-        message: this.t('account.successCopy'),
-        type: 'success',
-        title: '',
-      });
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: '',
-      });
-    }
   }
 }
 </script>

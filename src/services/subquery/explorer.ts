@@ -145,6 +145,8 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   /**
+   * DEPRECATED
+   *
    * This method should be used **only** for total redeemed value for Noir Exchange
    * @param accountId Noir Account Id
    * @param noirAssetId Noir Asset Id
