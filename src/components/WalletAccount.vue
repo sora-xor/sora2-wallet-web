@@ -5,8 +5,10 @@
       <div class="account-details s-flex">
         <div class="account-credentials s-flex">
           <div v-if="name" class="account-credentials_name">{{ name }}</div>
-          <s-tooltip :content="copyTooltip" :open-delay="200">
-            <div class="account-credentials_address" @click="handleCopyAddress(address)">{{ formattedAddress }}</div>
+          <s-tooltip :content="copyTooltip(t('account.walletAddress'))">
+            <div class="account-credentials_address" @click="handleCopyAddress(address, $event)">
+              {{ formattedAddress }}
+            </div>
           </s-tooltip>
         </div>
         <slot />
