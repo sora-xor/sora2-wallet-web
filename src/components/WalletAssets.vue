@@ -8,8 +8,8 @@
       <s-divider class="wallet-assets-divider" />
     </div>
     <s-scrollbar class="wallet-assets-scrollbar">
-      <draggable v-model="assetsList" @end="updateAssets" class="wallet-assets__draggable">
-        <div v-for="(asset, index) in assetsList" :key="asset.address">
+      <draggable v-model="assetList" @end="updateAssets" class="wallet-assets__draggable">
+        <div v-for="(asset, index) in assetList" :key="asset.address">
           <div class="wallet-assets-item s-flex">
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
@@ -141,14 +141,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return this.accountAssets.filter((asset) => asset.balance && !Number.isNaN(+asset.balance.transferable));
   }
 
-  get assetsList(): Array<AccountAsset> {
-    return this.assetList;
-  }
-
-  set assetsList(updatedAssetsList: Array<AccountAsset>) {
-    this.assetList = updatedAssetsList;
-  }
-
   get assetsFiatAmount(): Nullable<string> {
     if (!this.formattedAccountAssets || this.withoutFiatAndApy) {
       return null;
@@ -208,8 +200,11 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   updateAssets(): void {
     const assetsAddresses = this.assetList.map((asset) => asset.address);
-    api.accountStorage?.clear();
-    api.accountStorage?.set('assetsAddresses', JSON.stringify(assetsAddresses));
+
+    if (api.accountStorage) {
+      api.accountStorage.clear();
+      api.accountStorage.set('assetsAddresses', JSON.stringify(assetsAddresses));
+    }
   }
 
   mounted(): void {
