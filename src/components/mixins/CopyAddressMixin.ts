@@ -22,7 +22,7 @@ export default class CopyAddressMixin extends Mixins(TranslationMixin) {
   }
 
   async handleMouseleaveListener(): Promise<void> {
-    await delay(1000);
+    await delay(500);
     this.wasAddressCopied = false;
     if (this.targetElement) {
       this.targetElement.removeEventListener('mouseleave', this.handleMouseleaveListener);
