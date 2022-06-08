@@ -35,10 +35,10 @@ exports[`WalletAccount.vue should be rendered correctly 1`] = `
           animation="el-fade-in-linear"
           borderradius="small"
           closedelay="0"
-          content="Copy address"
+          content="Copy Wallet address"
           hideafter="0"
           offset="0"
-          opendelay="200"
+          opendelay="500"
           placement="top"
           showarrow="true"
           tabindex="0"
@@ -48,7 +48,9 @@ exports[`WalletAccount.vue should be rendered correctly 1`] = `
           <div
             class="account-credentials_address"
           >
+            
             cnRXua6zs8Ta...TvL6UHcHDCvo
+          
           </div>
         </s-tooltip-stub>
       </div>

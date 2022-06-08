@@ -99,7 +99,7 @@ import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import LoadingMixin from './mixins/LoadingMixin';
-import CopyAddressMixin from './mixins/CopyAddressMixin';
+import TranslationMixin from './mixins/TranslationMixin';
 
 import { RouteNames, HiddenValue } from '../consts';
 import { formatAddress } from '../util';
@@ -116,7 +116,7 @@ import type { Route } from '../store/router/types';
     draggable,
   },
 })
-export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, CopyAddressMixin) {
+export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, TranslationMixin) {
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.account.withoutFiatAndApy private withoutFiatAndApy!: boolean;
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;

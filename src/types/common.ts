@@ -11,7 +11,6 @@ export enum Modules {
 
 export enum Operations {
   Send = 'send',
-  Receive = 'receive',
   Swap = 'swap',
   Liquidity = 'liquidity',
   Bridge = 'bridge',

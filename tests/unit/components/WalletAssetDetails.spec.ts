@@ -77,14 +77,6 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
     expect(btn.exists()).toBeFalse();
   });
 
-  it('should not show copy action button', () => {
-    const store = createStore({ permissions: { ...MOCK_WALLET_PERMISSIONS, copyAssets: false } });
-    const wrapper = useShallowMount(WalletAssetDetails, { store });
-    const btn = wrapper.find('.asset-details-action.recieve');
-
-    expect(btn.exists()).toBeFalse();
-  });
-
   it('should not show swap action button', () => {
     const store = createStore({ permissions: { ...MOCK_WALLET_PERMISSIONS, swapAssets: false } });
     const wrapper = useShallowMount(WalletAssetDetails, { store });

@@ -69,7 +69,6 @@ export interface WalletPermissions {
   addAssets?: boolean;
   addLiquidity?: boolean;
   bridgeAssets?: boolean;
-  copyAssets?: boolean;
   createAssets?: boolean;
   sendAssets?: boolean;
   showAssetDetails?: boolean;
