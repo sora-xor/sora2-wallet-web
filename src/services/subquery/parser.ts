@@ -5,6 +5,7 @@ import { FPNumber, Operation, TransactionStatus, HistoryItem } from '@sora-subst
 import { RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
+import type { TranslateResult } from 'vue-i18n';
 
 import store from '../../store';
 import { api } from '../../api';
@@ -28,6 +29,7 @@ import type {
   ExtrinsicEvent,
 } from './types';
 import { SubstrateEvents } from './consts';
+import i18n from '../../lang';
 
 const insensitive = (value: string) => value.toLowerCase();
 
@@ -147,16 +149,18 @@ const farmingErrorMessages = {
 const getErrorMessage = (historyElementError: HistoryElementError): string => {
   try {
     const [error, index] = [new BN(historyElementError.moduleErrorId), new BN(historyElementError.moduleErrorIndex)];
-    const { documentation } = api.api.registry.findMetaError({ error, index });
+    const { index: indexError, section } = api.api.registry.findMetaError({ error, index });
+    let errMessage = i18n.t(`historyErrorMessages.generalError`) as string;
 
-    console.log(api.api.registry.findMetaError({ error, index }).index);
-    console.log('documentation', documentation);
-    // return documentation.join(' ').trim();
+    if (indexError > -1 && section) {
+      errMessage = i18n.t(`historyErrorMessages.${section}.${indexError}`) as string;
+      console.log('errMessage, indexError', errMessage, indexError);
+      if (errMessage.startsWith('historyErrorMessages')) {
+        return i18n.t(`historyErrorMessages.generalError`) as string;
+      }
+    }
 
-    // Formatted
-    const meta = api.api.registry.findMetaError({ error, index });
-
-    return getFormattedMessage(meta.index, meta.section);
+    return errMessage as string;
   } catch (error) {
     console.error(historyElementError, error);
     return '';

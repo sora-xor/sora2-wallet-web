@@ -322,4 +322,19 @@ export default {
       'You would have to use the Bridge to get XOR from other networks, get sent XOR from another SORA account, or swap any other token already in your account into XOR.',
     button: 'Yes, I understand the risk',
   },
+  historyErrorMessages: {
+    generalError: 'Something went wrong',
+    poolXyk: {
+      6: 'Source balance is not large enough',
+      32: 'Source balance of liquidity is not large enough',
+      46: 'Values are out of required bounds',
+      55: 'XOR lower than the minimum value (0.007)',
+    },
+    xstPool: {
+      5: 'Slippage has not been met during execution',
+    },
+    vestedRewards: {
+      3: 'Rewards program has already finished',
+    },
+  },
 };
