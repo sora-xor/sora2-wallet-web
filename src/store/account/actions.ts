@@ -9,7 +9,7 @@ import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
 import {
   getExtensions,
-  getExtensionInfoByAccountAddress,
+  getExtensionInfo,
   getExtensionSigner,
   subscribeToPolkadotJsAccounts,
   WHITE_LIST_GITHUB_URL,
@@ -125,23 +125,24 @@ const actions = defineActions({
     commit.setPolkadotJsAccountsSubscription(subscription);
   },
 
-  async importPolkadotJs(context, address: string): Promise<void> {
+  async importPolkadotJs(context, accountData: PolkadotJsAccount): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
     try {
-      const defaultAddress = api.formatAddress(address, false);
-      const info = await getExtensionInfoByAccountAddress(defaultAddress);
+      const source = accountData.source;
+      const defaultAddress = api.formatAddress(accountData.address, false);
+      const info = await getExtensionInfo(source);
       const account = info.accounts.find((acc) => acc.address === defaultAddress);
 
       if (!account) {
         throw new Error('polkadotjs.noAccount');
       }
 
-      const accountName = account.name || '';
+      const name = account.name || '';
 
-      api.importByPolkadotJs(account.address, accountName);
+      api.importByPolkadotJs(account.address, name, source as string);
       api.setSigner(info.signer);
 
-      commit.selectPolkadotJsAccount(accountName);
+      commit.selectPolkadotJsAccount({ name, source });
 
       await dispatch.afterLogin();
     } catch (error) {
@@ -160,7 +161,8 @@ const actions = defineActions({
     // check log in/out state changes after sync
     if (getters.isLoggedIn !== wasLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
-        await dispatch.importPolkadotJs(state.address);
+        const account = { address: state.address, name: state.name, source: state.source as Extensions };
+        await dispatch.importPolkadotJs(account);
       } else {
         await dispatch.logout();
       }

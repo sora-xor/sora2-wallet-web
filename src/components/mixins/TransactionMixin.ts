@@ -10,7 +10,7 @@ import LoadingMixin from './LoadingMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { HiddenValue } from '../../consts';
 import { getter, mutation, action } from '../../store/decorators';
-import type { Account, AccountAssetsTable } from '../../types/common';
+import type { PolkadotJsAccount, AccountAssetsTable } from '../../types/common';
 
 const twoAssetsBasedOperations = [
   Operation.AddLiquidity,
@@ -25,7 +25,7 @@ const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
 
 @Component
 export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
-  @getter.account.account account!: Account;
+  @getter.account.account account!: PolkadotJsAccount;
   @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;
 
   @mutation.transactions.addActiveTx addActiveTransaction!: (id: string) => void;
