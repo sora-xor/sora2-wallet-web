@@ -13,7 +13,7 @@ export function initialState(): AccountState {
   return {
     address: storage.get('address') || '',
     name: storage.get('name') || '',
-    isExternal: Boolean(JSON.parse(storage.get('isExternal'))) || false,
+    source: storage.get('source') || '',
     assets: [],
     assetsSubscription: null,
     /** account assets & subscription */

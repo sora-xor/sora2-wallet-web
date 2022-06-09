@@ -67,7 +67,7 @@ import TransactionHashView from './TransactionHashView.vue';
 
 import { RouteNames, WalletTabs, HashType } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
-import type { Account } from '../types/common';
+import type { PolkadotJsAccount } from '../types/common';
 import type { Route } from '../store/router/types';
 
 @Component({
@@ -81,9 +81,8 @@ import type { Route } from '../store/router/types';
 export default class WalletTransactionDetails extends Mixins(TranslationMixin, NumberFormatterMixin) {
   readonly HashType = HashType;
 
-  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
-  @getter.account.account private account!: Account;
+  @getter.account.account private account!: PolkadotJsAccount;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
