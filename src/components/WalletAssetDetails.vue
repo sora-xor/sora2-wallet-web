@@ -133,7 +133,7 @@ import { RouteNames } from '../consts';
 import { copyToClipboard, delay, shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 import { state, getter } from '../store/decorators';
-import { Operations, Account } from '../types/common';
+import { Operations, PolkadotJsAccount } from '../types/common';
 import type { WalletPermissions } from '../consts';
 
 interface Operation {
@@ -161,7 +161,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @state.settings.permissions private permissions!: WalletPermissions;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
-  @getter.account.account private account!: Account;
+  @getter.account.account private account!: PolkadotJsAccount;
 
   wasBalanceDetailsClicked = false;
 

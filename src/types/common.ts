@@ -22,10 +22,6 @@ export interface PolkadotJsAccount {
   source?: Extensions;
 }
 
-export interface Account extends PolkadotJsAccount {
-  isExternal: boolean;
-}
-
 export type WhitelistIdsBySymbol = { [key: string]: string };
 
 export type Permissions = {

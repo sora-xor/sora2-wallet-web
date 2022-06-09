@@ -9,7 +9,7 @@ const createStore = () =>
       state: () => ({
         name: MOCK_ACCOUNT.name,
         address: MOCK_ACCOUNT.address,
-        isExternal: MOCK_ACCOUNT.isExternal,
+        source: MOCK_ACCOUNT.source,
       }),
       getters: {
         account: () => MOCK_ACCOUNT,

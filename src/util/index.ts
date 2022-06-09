@@ -61,13 +61,6 @@ export const getExtensionInfo = async (selectedExtension = Extensions.PolkadotJS
   return { accounts, signer: extension.signer };
 };
 
-export const getExtensionInfoByAccountAddress = async (address: string) => {
-  const extension = await web3FromAddress(address);
-  const accounts = await getExtensionAccounts(extension);
-
-  return { accounts, signer: extension.signer };
-};
-
 /**
  * Retrieves a provider for a specific address and return signer
  * @param address
