@@ -85,7 +85,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.availableExtensions private availableExtensions!: Array<Extensions>;
 
-  @action.account.importPolkadotJs private importPolkadotJs!: (address: string) => Promise<void>;
+  @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
 
   async mounted(): Promise<void> {
     await this.withApi(async () => {
@@ -145,7 +145,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
     await this.withLoading(async () => {
       try {
-        await this.importPolkadotJs(account.address);
+        await this.importPolkadotJs(account);
       } catch (error) {
         this.$alert(this.t((error as Error).message), this.t('errorText'));
         this.navigateToEntry();
