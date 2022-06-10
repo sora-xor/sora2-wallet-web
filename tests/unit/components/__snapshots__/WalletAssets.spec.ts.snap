@@ -34,14 +34,17 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
     />
   </div>
    
-  <asset-list-stub
-    assets="[object Object],[object Object],[object Object]"
-    class="wallet-assets-list"
-    divider="true"
-    size="3"
-    withclickablelogo="true"
-    withfiat="true"
-  />
+  <s-scrollbar-stub
+    class="wallet-assets-scrollbar"
+    tag="div"
+  >
+    <draggable-stub
+      class="wallet-assets__draggable"
+      clone="[Function]"
+      element="div"
+      value=""
+    />
+  </s-scrollbar-stub>
    
   <s-button-stub
     borderradius="small"
