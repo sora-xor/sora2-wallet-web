@@ -5,8 +5,10 @@
       <div class="account-details s-flex">
         <div class="account-credentials s-flex">
           <div v-if="name" class="account-credentials_name">{{ name }}</div>
-          <s-tooltip :content="copyTooltip" :open-delay="200">
-            <div class="account-credentials_address" @click="handleCopyAddress(address)">{{ formattedAddress }}</div>
+          <s-tooltip :content="copyTooltip(t('account.walletAddress'))">
+            <div class="account-credentials_address" @click="handleCopyAddress(address, $event)">
+              {{ formattedAddress }}
+            </div>
           </s-tooltip>
         </div>
         <slot />
@@ -24,7 +26,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import { formatAddress, formatSoraAddress } from '../util';
 import { getter } from '../store/decorators';
-import type { Account, PolkadotJsAccount } from '../types/common';
+import type { PolkadotJsAccount } from '../types/common';
 
 @Component({
   components: {
@@ -32,7 +34,7 @@ import type { Account, PolkadotJsAccount } from '../types/common';
   },
 })
 export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressMixin) {
-  @getter.account.account private account!: Account;
+  @getter.account.account private account!: PolkadotJsAccount;
 
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
 

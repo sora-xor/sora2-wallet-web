@@ -4,10 +4,10 @@
     <s-button
       class="s-button--copy"
       icon="basic-copy-24"
-      :tooltip="copyTooltip"
+      :tooltip="copyTooltip(t(translation))"
       type="action"
       alternative
-      @click="handleCopyAddress(formattedValue)"
+      @click="handleCopyAddress(formattedValue, $event)"
     />
     <s-dropdown
       class="s-dropdown-menu"
@@ -50,9 +50,6 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
   @Prop({ type: String, required: true }) readonly translation!: string;
 
   @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
-
-  customCopyTooltip = this.t('copyWithValue', { value: this.t(this.translation) });
-  customCopiedTooltip = this.t('copiedWithValue', { value: this.t(this.translation) });
 
   get formattedValue(): string {
     if (this.type === HashType.Account) {

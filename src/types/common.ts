@@ -11,7 +11,6 @@ export enum Modules {
 
 export enum Operations {
   Send = 'send',
-  Receive = 'receive',
   Swap = 'swap',
   Liquidity = 'liquidity',
   Bridge = 'bridge',
@@ -21,10 +20,6 @@ export interface PolkadotJsAccount {
   address: string;
   name: string;
   source?: Extensions;
-}
-
-export interface Account extends PolkadotJsAccount {
-  isExternal: boolean;
 }
 
 export type WhitelistIdsBySymbol = { [key: string]: string };

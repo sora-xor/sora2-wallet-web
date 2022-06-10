@@ -27,7 +27,7 @@ import { api } from '../api';
 import { RouteNames } from '../consts';
 import { svgSaveAs, IMAGE_EXTENSIONS } from '../util/image';
 import { state, getter, mutation } from '../store/decorators';
-import type { Account } from '../types/common';
+import type { PolkadotJsAccount } from '../types/common';
 import type { Route } from '../store/router/types';
 
 @Component({
@@ -41,7 +41,7 @@ export default class RecieveToken extends Mixins(TranslationMixin) {
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset>;
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
-  @getter.account.account private account!: Account;
+  @getter.account.account private account!: PolkadotJsAccount;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
 

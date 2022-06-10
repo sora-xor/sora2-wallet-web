@@ -133,7 +133,7 @@ import { RouteNames } from '../consts';
 import { copyToClipboard, delay, shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
 import { state, getter } from '../store/decorators';
-import { Operations, Account } from '../types/common';
+import { Operations, PolkadotJsAccount } from '../types/common';
 import type { WalletPermissions } from '../consts';
 
 interface Operation {
@@ -161,7 +161,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @state.settings.permissions private permissions!: WalletPermissions;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
-  @getter.account.account private account!: Account;
+  @getter.account.account private account!: PolkadotJsAccount;
 
   wasBalanceDetailsClicked = false;
 
@@ -218,9 +218,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
     if (this.permissions.sendAssets) {
       list.push({ type: Operations.Send, icon: 'finance-send-24' });
-    }
-    if (this.permissions.copyAssets) {
-      list.push({ type: Operations.Receive, icon: 'basic-receive-24' });
     }
     if (this.permissions.swapAssets && divisible) {
       list.push({ type: Operations.Swap, icon: 'arrows-swap-24' });
@@ -301,11 +298,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   getOperationTooltip(operation: Operation): string {
-    if (operation.type !== Operations.Receive || !this.wasAddressCopied) {
-      return this.t(`assets.${operation.type}`);
-    }
-    // TODO: [UI-LIB] add key property with the content value for tooltip in buttons to rerender it each time
-    return this.t('assets.copied');
+    return this.t(`assets.${operation.type}`);
   }
 
   isOperationDisabled(operation: Operations): boolean {
@@ -316,9 +309,6 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     switch (operation) {
       case Operations.Send:
         this.navigate({ name: RouteNames.WalletSend, params: { asset: this.asset } });
-        break;
-      case Operations.Receive:
-        this.handleCopyAddress(this.account.address);
         break;
       default:
         this.$emit(operation, this.asset);

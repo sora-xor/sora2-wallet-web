@@ -2,8 +2,8 @@ import { FPNumber, History, TransactionStatus, Operation, api } from '@sora-subs
 import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset, Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
-import { SoraNetwork, WalletPermissions } from '@/consts';
-import type { Account, WhitelistIdsBySymbol } from '@/types/common';
+import { SoraNetwork, WalletPermissions, Extensions } from '@/consts';
+import type { PolkadotJsAccount, WhitelistIdsBySymbol } from '@/types/common';
 
 export const MOCK_NETWORK_FEE: {} = api.NetworkFee;
 
@@ -248,17 +248,16 @@ export const MOCK_FIAT_PRICE_AND_APY_OBJECT: any = {
 
 export const MOCK_SORA_NETWORK = SoraNetwork.Dev;
 
-export const MOCK_ACCOUNT: Account = {
+export const MOCK_ACCOUNT: PolkadotJsAccount = {
   address: '',
   name: '',
-  isExternal: true,
+  source: Extensions.PolkadotJS,
 };
 
 export const MOCK_WALLET_PERMISSIONS: WalletPermissions = {
   addAssets: true,
   addLiquidity: true,
   bridgeAssets: true,
-  copyAssets: true,
   createAssets: true,
   sendAssets: true,
   swapAssets: true,
