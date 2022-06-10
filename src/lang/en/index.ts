@@ -327,10 +327,9 @@ export default {
     },
     poolXyk: {
       6: 'Source balance is not large enough',
-      7: 'Target balance is not large enough',
-      32: 'Source balance of liquidity is not large enough',
+      7: 'Destination balance is not large enough',
       44: 'Provided amounts are too diverse',
-      46: 'Values are out of required bounds',
+      46: 'Amounts are out of required bounds',
       55: 'XOR lower than the minimum value (0.007)',
     },
     xstPool: {
@@ -347,7 +346,13 @@ export default {
       9: 'There are no rewards for this asset',
     },
     liquidityProxy: {
-      7: 'Selected filtering request is not allowed',
+      7: 'Selected liquidity source is not allowed',
+    },
+    demeterFarmingPlatform: {
+      7: 'Insufficient funds',
+      8: 'No rewards',
+      10: 'Insufficient liquidity provision tokens',
+      11: 'Pool does not have rewards',
     },
   },
 };
