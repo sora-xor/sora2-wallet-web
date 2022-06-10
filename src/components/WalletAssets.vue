@@ -201,9 +201,8 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   updateAssets(): void {
     const assetsAddresses = this.assetList.map((asset) => asset.address);
 
-    if (api.accountStorage && assetsAddresses.length) {
+    if (assetsAddresses.length) {
       api.assets.accountAssetsAddresses = assetsAddresses;
-      api.accountStorage.set('assetsAddresses', JSON.stringify(assetsAddresses));
     }
   }
 
