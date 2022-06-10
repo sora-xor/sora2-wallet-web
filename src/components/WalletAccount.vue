@@ -26,7 +26,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import { formatAddress, formatSoraAddress } from '../util';
 import { getter } from '../store/decorators';
-import type { Account, PolkadotJsAccount } from '../types/common';
+import type { PolkadotJsAccount } from '../types/common';
 
 @Component({
   components: {
@@ -34,7 +34,7 @@ import type { Account, PolkadotJsAccount } from '../types/common';
   },
 })
 export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressMixin) {
-  @getter.account.account private account!: Account;
+  @getter.account.account private account!: PolkadotJsAccount;
 
   @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
 
