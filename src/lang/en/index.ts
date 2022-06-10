@@ -324,17 +324,32 @@ export default {
   },
   historyErrorMessages: {
     generalError: 'Something went wrong',
+    balances: {
+      1: 'Account liquidity restrictions prevent withdrawal',
+    },
     poolXyk: {
       6: 'Source balance is not large enough',
+      7: 'Target balance is not large enough',
       32: 'Source balance of liquidity is not large enough',
+      44: 'Provided amounts are too diverse',
       46: 'Values are out of required bounds',
       55: 'XOR lower than the minimum value (0.007)',
     },
     xstPool: {
-      5: 'Slippage has not been met during execution',
+      3: 'Pool pair already exists',
+      5: 'Slippage tolerance has not met proper limits',
+    },
+    referrals: {
+      0: 'Account already has a referrer',
+      2: 'Referrer does not have enough of reserved balance',
     },
     vestedRewards: {
       3: 'Rewards program has already finished',
+      6: 'Failed to perform reward calculation',
+      9: 'There are no rewards for this asset',
+    },
+    liquidityProxy: {
+      7: 'Selected filtering request is not allowed',
     },
   },
 };
