@@ -3,8 +3,9 @@ import type { Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import { accountGetterContext } from './../account';
 import { api } from '../../api';
+import type { Extensions } from '../../consts';
 import type { AccountState } from './types';
-import type { Account, AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
+import type { AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
 
 const toHashTable = (list: Array<any>, key: string) => {
   return list.reduce((result, item) => {
@@ -17,14 +18,14 @@ const toHashTable = (list: Array<any>, key: string) => {
 const getters = defineGetters<AccountState>()({
   isLoggedIn(...args): boolean {
     const { state } = accountGetterContext(args);
-    return state.isExternal && !!state.address;
+    return !!state.source && !!state.address;
   },
-  account(...args): Account {
+  account(...args): PolkadotJsAccount {
     const { state } = accountGetterContext(args);
     return {
       address: state.address,
       name: state.name,
-      isExternal: state.isExternal,
+      source: state.source as Extensions,
     };
   },
   accountAssetsAddressTable(...args): AccountAssetsTable {

@@ -62,7 +62,7 @@ const mutations = defineMutations<AccountState>()({
   syncWithStorage(state): void {
     state.address = storage.get('address') || '';
     state.name = storage.get('name') || '';
-    state.isExternal = Boolean(storage.get('isExternal')) || false;
+    state.source = storage.get('source') || '';
   },
   updateAssets(state, assets: Array<Asset>): void {
     state.assets = assets;
@@ -103,10 +103,10 @@ const mutations = defineMutations<AccountState>()({
     }
     state.polkadotJsAccountsSubscription = null;
   },
-  selectPolkadotJsAccount(state, name: string): void {
+  selectPolkadotJsAccount(state, { name = '', source = '' } = {}): void {
     state.address = api.address;
+    state.source = source;
     state.name = name;
-    state.isExternal = true;
   },
   setAvailableExtensions(state, names: Extensions[]) {
     state.availableExtensions = names;

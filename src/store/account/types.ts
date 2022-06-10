@@ -9,7 +9,7 @@ import type { PolkadotJsAccount } from '../../types/common';
 export type AccountState = {
   address: string;
   name: string;
-  isExternal: boolean;
+  source: string;
   assets: Array<Asset>;
   assetsSubscription: Nullable<Subscription>;
   accountAssets: Array<AccountAsset>;
