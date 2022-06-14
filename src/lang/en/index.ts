@@ -320,4 +320,39 @@ export default {
       'You would have to use the Bridge to get XOR from other networks, get sent XOR from another SORA account, or swap any other token already in your account into XOR.',
     button: 'Yes, I understand the risk',
   },
+  historyErrorMessages: {
+    generalError: 'Something went wrong',
+    balances: {
+      LiquidityRestrictions: 'Account liquidity restrictions prevent withdrawal',
+    },
+    poolXyk: {
+      SourceBalanceIsNotLargeEnough: 'Source balance is not large enough',
+      TargetBalanceIsNotLargeEnough: 'Destination balance is not large enough',
+      ImpossibleToDecideValidPairValuesFromRangeForThisPool: 'Provided amounts are too diverse',
+      CalculatedValueIsNotMeetsRequiredBoundaries: 'Amounts are out of required bounds',
+      UnableToDepositXorLessThanMinimum: 'XOR lower than the minimum value (0.007)',
+    },
+    xstPool: {
+      PoolAlreadyInitializedForPair: 'Pool pair already exists',
+      SlippageLimitExceeded: 'Slippage tolerance has not met proper limits',
+    },
+    referrals: {
+      AlreadyHasReferrer: 'Account already has a referrer',
+      ReferrerInsufficientBalance: 'Referrer does not have enough of reserved balance',
+    },
+    vestedRewards: {
+      RewardsSupplyShortage: 'Rewards program has already finished',
+      CantCalculateReward: 'Failed to perform reward calculation',
+      NoRewardsForAsset: 'There are no rewards for this asset',
+    },
+    liquidityProxy: {
+      ForbiddenFilter: 'Selected liquidity source is not allowed',
+    },
+    demeterFarmingPlatform: {
+      InsufficientFunds: 'Insufficient funds',
+      ZeroRewards: 'No rewards',
+      InsufficientLPTokens: 'Insufficient liquidity provision tokens',
+      PoolDoesNotHaveRewards: 'Pool does not have rewards',
+    },
+  },
 };
