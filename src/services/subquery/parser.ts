@@ -127,11 +127,11 @@ const getTransactionTimestamp = (tx: HistoryElement): number => {
 const getErrorMessage = (historyElementError: HistoryElementError): string => {
   try {
     const [error, index] = [new BN(historyElementError.moduleErrorId), new BN(historyElementError.moduleErrorIndex)];
-    const { index: indexError, section } = api.api.registry.findMetaError({ error, index });
+    const { name, section } = api.api.registry.findMetaError({ error, index });
     let errMessage = i18n.t(`historyErrorMessages.generalError`) as string;
 
-    if (indexError > -1 && section) {
-      errMessage = i18n.t(`historyErrorMessages.${section}.${indexError}`) as string;
+    if (name && section) {
+      errMessage = i18n.t(`historyErrorMessages.${section}.${name}`) as string;
       if (errMessage.startsWith('historyErrorMessages')) {
         return i18n.t(`historyErrorMessages.generalError`) as string;
       }
