@@ -328,6 +328,7 @@ export default {
     poolXyk: {
       SourceBalanceIsNotLargeEnough: 'Source balance is not large enough',
       TargetBalanceIsNotLargeEnough: 'Destination balance is not large enough',
+      ZeroValueInAmountParameter: 'What to put!!!!!',
       ImpossibleToDecideValidPairValuesFromRangeForThisPool: 'Provided amounts are too diverse',
       CalculatedValueIsNotMeetsRequiredBoundaries: 'Amounts are out of required bounds',
       UnableToDepositXorLessThanMinimum: 'XOR lower than the minimum value (0.007)',
@@ -353,6 +354,9 @@ export default {
       ZeroRewards: 'No rewards',
       InsufficientLPTokens: 'Insufficient liquidity provision tokens',
       PoolDoesNotHaveRewards: 'Pool does not have rewards',
+    },
+    multicollateralBondingCurvePool: {
+      PriceCalculationFailed: 'An error occurred while calculating the price',
     },
   },
 };
