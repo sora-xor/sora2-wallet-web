@@ -328,7 +328,7 @@ export default {
     poolXyk: {
       SourceBalanceIsNotLargeEnough: 'Source balance is not large enough',
       TargetBalanceIsNotLargeEnough: 'Destination balance is not large enough',
-      ZeroValueInAmountParameter: 'What to put!!!!!',
+      ZeroValueInAmountParameter: 'Amount parameter has zero value',
       ImpossibleToDecideValidPairValuesFromRangeForThisPool: 'Provided amounts are too diverse',
       CalculatedValueIsNotMeetsRequiredBoundaries: 'Amounts are out of required bounds',
       UnableToDepositXorLessThanMinimum: 'XOR lower than the minimum value (0.007)',

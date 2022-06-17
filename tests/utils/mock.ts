@@ -99,7 +99,7 @@ export const MOCK_HISTORY: Array<History> = [
     id: '2',
     blockId: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD',
     status: TransactionStatus.Error,
-    errorMessage: 'Test error message!',
+    errorMessage: 'Something went wrong',
     type: Operation.Swap,
     startTime: 1605048643745,
     amount: '0.1',
