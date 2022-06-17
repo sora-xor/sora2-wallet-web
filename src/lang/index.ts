@@ -12,6 +12,7 @@ const messages = {
 const i18n = new VueI18n({
   locale: 'en',
   messages,
+  silentTranslationWarn: process.env.NODE_ENV === 'production',
 });
 
 export default i18n;

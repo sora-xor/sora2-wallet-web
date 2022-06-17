@@ -124,23 +124,14 @@ const getTransactionTimestamp = (tx: HistoryElement): number => {
   return !Number.isNaN(timestamp) ? timestamp : Date.now();
 };
 
-const getErrorMessage = (historyElementError: HistoryElementError): string => {
+const getErrorMessage = (historyElementError: HistoryElementError): Record<string, string> => {
   try {
     const [error, index] = [new BN(historyElementError.moduleErrorId), new BN(historyElementError.moduleErrorIndex)];
     const { name, section } = api.api.registry.findMetaError({ error, index });
-    let errMessage = i18n.t(`historyErrorMessages.generalError`) as string;
-
-    if (name && section) {
-      errMessage = i18n.t(`historyErrorMessages.${section}.${name}`) as string;
-      if (errMessage.startsWith('historyErrorMessages')) {
-        return i18n.t(`historyErrorMessages.generalError`) as string;
-      }
-    }
-
-    return errMessage as string;
+    return { name, section };
   } catch (error) {
     console.error(historyElementError, error);
-    return '';
+    return { section: '', name: '' };
   }
 };
 
@@ -258,11 +249,12 @@ export default class SubqueryDataParser implements ExplorerDataParser {
     };
 
     if (transaction.execution.error) {
-      const message = getErrorMessage(transaction.execution.error);
+      const { name, section } = getErrorMessage(transaction.execution.error);
 
-      if (message) {
-        payload.errorMessage = message;
-      }
+      payload.errorMessage = {
+        section,
+        name,
+      };
     }
 
     switch (type) {

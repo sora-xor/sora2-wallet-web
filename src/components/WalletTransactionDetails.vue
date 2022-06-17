@@ -17,7 +17,9 @@
           <s-icon v-if="isComplete" name="basic-check-mark-24" size="16px" />
         </info-line>
         <info-line v-if="selectedTransaction.errorMessage" :label="t('transaction.errorMessage')">
-          <span :class="statusClass">{{ selectedTransaction.errorMessage }}</span>
+          <span :class="statusClass">{{
+            getErrorMessage(selectedTransaction.errorMessage.section, selectedTransaction.errorMessage.name)
+          }}</span>
         </info-line>
         <info-line v-if="selectedTransaction.startTime" :label="t('transaction.startTime')" :value="transactionDate" />
         <info-line
@@ -170,6 +172,19 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
 
   get isInvitedUser(): boolean {
     return this.isSetReferralOperation && this.account.address === this.selectedTransaction.from;
+  }
+
+  getErrorMessage(section: string, name: string): string {
+    let errMessage = this.t(`historyErrorMessages.generalError`) as string;
+
+    if (name && section) {
+      errMessage = this.t(`historyErrorMessages.${section}.${name}`) as string;
+      if (errMessage.startsWith('historyErrorMessages')) {
+        return this.t(`historyErrorMessages.generalError`) as string;
+      }
+    }
+
+    return errMessage as string;
   }
 
   handleBack(): void {
