@@ -272,7 +272,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         <span
           class="transaction-status transaction-status--error"
         >
-          Test error message!
+          Something went wrong
         </span>
       </info-line-stub>
        
