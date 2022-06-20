@@ -198,16 +198,24 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     this.navigate({ name: RouteNames.AddAsset });
   }
 
-  updateAssets(): void {
+  async updateAssets(): Promise<void> {
     const assetsAddresses = this.assetList.map((asset) => asset.address);
 
     if (assetsAddresses.length) {
       api.assets.accountAssetsAddresses = assetsAddresses;
+
+      const assetsToUpdate = await Promise.all(
+        assetsAddresses.map(async (address) => {
+          return api.assets.getAccountAsset(address);
+        })
+      );
+
+      api.assets.accountAssets = assetsToUpdate;
     }
   }
 
   mounted(): void {
-    this.assetList = this.formattedAccountAssets;
+    this.assetList = api.assets.accountAssets;
   }
 }
 </script>
