@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "1.9.10",
+  "version": "1.9.11",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
