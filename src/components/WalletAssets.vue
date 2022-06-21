@@ -203,14 +203,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
     if (assetsAddresses.length) {
       api.assets.accountAssetsAddresses = assetsAddresses;
-
-      const assetsToUpdate = await Promise.all(
-        assetsAddresses.map(async (address) => {
-          return api.assets.getAccountAsset(address);
-        })
-      );
-
-      api.assets.accountAssets = assetsToUpdate;
+      api.assets.updateAccountAssets();
     }
   }
 
