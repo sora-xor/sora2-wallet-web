@@ -203,11 +203,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
     if (assetsAddresses.length) {
       api.assets.accountAssetsAddresses = assetsAddresses;
+      api.assets.updateAccountAssets();
     }
   }
 
   mounted(): void {
-    this.assetList = this.formattedAccountAssets;
+    this.assetList = api.assets.accountAssets;
   }
 }
 </script>
