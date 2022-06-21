@@ -198,7 +198,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     this.navigate({ name: RouteNames.AddAsset });
   }
 
-  async updateAssets(): Promise<void> {
+  updateAssets(): void {
     const assetsAddresses = this.assetList.map((asset) => asset.address);
 
     if (assetsAddresses.length) {
