@@ -1,19 +1,21 @@
 import { axiosInstance, FPNumber } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
 
-import { HistoryElementsQuery, noirHistoryElementsFilter } from './queries/historyElements';
+import { HistoryElementsQuery } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
-import { HistoricalPriceQuery } from './queries/historicalPrice';
-import { FiatPriceQuery, poolXykEntityFilter } from './queries/fiatPriceAndApy';
+import { HistoricalPriceQuery, historicalPriceFilter } from './queries/historicalPrice';
+import { FiatPriceQuery } from './queries/fiatPriceAndApy';
 import { SoraNetwork } from '../../consts';
+import { AssetSnapshotTypes } from './types';
 import store from '../../store';
+
 import type {
   Explorer,
   PoolXYKEntity,
   FiatPriceAndApyObject,
   ReferrerRewards,
   ReferralRewardsGroup,
-  HistoricalPrice,
+  AssetSnapshot,
 } from './types';
 
 export default class SubqueryExplorer implements Explorer {
@@ -33,28 +35,21 @@ export default class SubqueryExplorer implements Explorer {
    * @param poolsAfter cursor of last element
    */
   public async fetchPools(
-    poolXykEntityId?: string,
-    poolsAfter?: string
-  ): Promise<Nullable<{ id: string; hasNextPage: boolean; endCursor: string; nodes: PoolXYKEntity[] }>> {
+    after?: string
+  ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: PoolXYKEntity[] }>> {
     try {
-      const params = {
-        poolsAfter,
-        filter: poolXykEntityFilter(poolXykEntityId),
-      };
+      const params = { after };
 
-      const { poolXYKEntities } = await this.request(FiatPriceQuery, params);
+      const { poolXYKs } = await this.request(FiatPriceQuery, params);
 
-      if (!poolXYKEntities) return null;
+      if (!poolXYKs) return null;
 
       const {
-        id,
-        pools: {
-          pageInfo: { hasNextPage, endCursor },
-          nodes,
-        },
-      } = poolXYKEntities.nodes[0];
+        pageInfo: { hasNextPage, endCursor },
+        nodes,
+      } = poolXYKs;
 
-      return { id, hasNextPage, endCursor, nodes };
+      return { hasNextPage, endCursor, nodes };
     } catch (error) {
       return null;
     }
@@ -68,20 +63,18 @@ export default class SubqueryExplorer implements Explorer {
 
     const acc: FiatPriceAndApyObject = {};
 
-    let poolXykEntityId = '';
-    let poolsAfter = '';
+    let after = '';
     let hasNextPage = true;
 
     try {
       do {
-        const response = await this.fetchPools(poolXykEntityId, poolsAfter);
+        const response = await this.fetchPools(after);
 
         if (!response) {
-          return poolXykEntityId ? acc : null;
+          return Object.keys(acc).length ? acc : null;
         }
 
-        poolXykEntityId = response.id;
-        poolsAfter = response.endCursor;
+        after = response.endCursor;
         hasNextPage = response.hasNextPage;
 
         response.nodes.forEach((el: PoolXYKEntity) => {
@@ -90,13 +83,13 @@ export default class SubqueryExplorer implements Explorer {
           const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
           const isPriceFinity = priceFPNumber.isFinity();
           if (isPriceFinity || isStrategicBonusApyFinity) {
-            acc[el.targetAssetId] = {};
+            acc[el.id] = {};
           }
           if (isPriceFinity) {
-            acc[el.targetAssetId].price = priceFPNumber.toCodecString();
+            acc[el.id].price = priceFPNumber.toCodecString();
           }
           if (isStrategicBonusApyFinity) {
-            acc[el.targetAssetId].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
+            acc[el.id].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
           }
         });
       } while (hasNextPage);
@@ -111,63 +104,33 @@ export default class SubqueryExplorer implements Explorer {
   /**
    * Get historical data for selected asset
    * @param assetId Asset ID
-   * @param first number of timestamp entities (10 by default)
+   * @param type type of snapshots
+   * @param first number entities (all by default)
    */
-  public async getHistoricalPriceForAsset(assetId: string, first = 10): Promise<Nullable<HistoricalPrice>> {
-    const format = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
+  public async getHistoricalPriceForAsset(
+    assetId: string,
+    type = AssetSnapshotTypes.DEFAULT,
+    first = null
+  ): Promise<Nullable<AssetSnapshot[]>> {
+    const filter = historicalPriceFilter(assetId, type);
 
     try {
-      const { poolXYKEntities } = await this.request(HistoricalPriceQuery, { assetId, first });
-      if (!poolXYKEntities) {
+      const { assetSnapshots } = await this.request(HistoricalPriceQuery, { filter, first });
+
+      if (!assetSnapshots) {
         return null;
       }
-      const { nodes } = poolXYKEntities;
+
+      const { nodes } = assetSnapshots;
+
       if (!nodes || !nodes.length) {
         return null;
       }
-      const data = (nodes as Array<any>).reduce<HistoricalPrice>((acc, el) => {
-        const item: { updated: number; priceUSD: string } = el.pools.nodes[0];
-        if (item) {
-          const priceFPNumber = format(item.priceUSD);
-          const isPriceFinity = priceFPNumber.isFinity();
-          if (isPriceFinity) {
-            acc[item.updated * 1000] = priceFPNumber.toCodecString();
-          }
-        }
-        return acc;
-      }, {});
 
-      return data;
+      return nodes;
     } catch (error) {
       console.error('HistoricalPriceQuery: Subquery is not available or data is incorrect!', error);
       return null;
-    }
-  }
-
-  /**
-   * DEPRECATED
-   *
-   * This method should be used **only** for total redeemed value for Noir Exchange
-   * @param accountId Noir Account Id
-   * @param noirAssetId Noir Asset Id
-   */
-  public async getNoirTotalRedeemed(
-    accountId?: string,
-    noirAssetId?: string,
-    excludedAddresses?: string[]
-  ): Promise<number> {
-    try {
-      const variables = {
-        filter: noirHistoryElementsFilter(accountId, noirAssetId, excludedAddresses),
-      };
-      const { historyElements } = await this.request(HistoryElementsQuery, variables);
-      const count = (historyElements.edges as Array<any>).reduce((value, item) => {
-        return value + +item.node.data.amount;
-      }, 0);
-      return ~~count;
-    } catch (error) {
-      console.error(error);
-      return 0;
     }
   }
 

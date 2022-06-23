@@ -1,25 +1,44 @@
+import { AssetSnapshotTypes } from '../types';
+
 export const HistoricalPriceQuery = `
-query PoolXYKEntities (
-  $orderBy: [PoolXykEntitiesOrderBy!] = UPDATED_DESC
-  $assetId: String = ""
+query HistoricalPriceQuery(
+  $after: Cursor = ""
+  $filter: AssetSnapshotFilter
   $first: Int = null
-)
-{
-  poolXYKEntities (
-    orderBy: $orderBy,
+) {
+  assetSnapshots(
+    after: $after
     first: $first
-  )
-  {
+    filter: $filter
+    orderBy: [TIMESTAMP_DESC]
+  ) {
+    totalCount
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
     nodes {
-      pools(
-        filter: { targetAssetId: { equalTo: $assetId } }
-      ) {
-        nodes {
-          priceUSD,
-          updated
-        }
-      }
+      priceUSD
+      volume
+      timestamp
     }
   }
 }
 `;
+
+export const historicalPriceFilter = (assetAddress: string, type: AssetSnapshotTypes) => {
+  return {
+    and: [
+      {
+        assetId: {
+          equalTo: assetAddress,
+        },
+      },
+      {
+        type: {
+          equalTo: type,
+        },
+      },
+    ],
+  };
+};
