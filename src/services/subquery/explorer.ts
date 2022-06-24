@@ -128,24 +128,24 @@ export default class SubqueryExplorer implements Explorer {
   public async getHistoricalPriceForAsset(
     assetId: string,
     type = AssetSnapshotTypes.DEFAULT,
-    first = null
-  ): Promise<Nullable<AssetSnapshot[]>> {
+    first = null,
+    after = ''
+  ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: AssetSnapshot[] }>> {
     const filter = historicalPriceFilter(assetId, type);
 
     try {
-      const { assetSnapshots } = await this.request(HistoricalPriceQuery, { filter, first });
+      const { assetSnapshots } = await this.request(HistoricalPriceQuery, { filter, first, after });
 
       if (!assetSnapshots) {
         return null;
       }
 
-      const { nodes } = assetSnapshots;
+      const {
+        nodes,
+        pageInfo: { hasNextPage, endCursor },
+      } = assetSnapshots;
 
-      if (!nodes || !nodes.length) {
-        return null;
-      }
-
-      return nodes;
+      return { hasNextPage, endCursor, nodes };
     } catch (error) {
       console.error('HistoricalPriceQuery: Subquery is not available or data is incorrect!', error);
       return null;
