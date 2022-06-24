@@ -1,26 +1,20 @@
+import { gql } from '@urql/core';
+
 import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../types';
 import { SubstrateEvents } from '../consts';
 
-export const HistoryElementsQuery = `
-  query HistoryElements (
-    $first: Int = null,
-    $last: Int = null,
-    $after: Cursor = "",
-    $before: Cursor = "",
-    $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC,
+export const HistoryElementsQuery = gql`
+  query HistoryElements(
+    $first: Int = null
+    $last: Int = null
+    $after: Cursor = ""
+    $before: Cursor = ""
+    $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC
     $filter: HistoryElementFilter
-    $idsOnly: Boolean! = false)
-  {
-    historyElements (
-      first: $first
-      last: $last
-      before: $before
-      after: $after
-      orderBy: $orderBy
-      filter: $filter
-    )
-    {
+    $idsOnly: Boolean! = false
+  ) {
+    historyElements(first: $first, last: $last, before: $before, after: $after, orderBy: $orderBy, filter: $filter) {
       edges {
         cursor @skip(if: $idsOnly)
         node {

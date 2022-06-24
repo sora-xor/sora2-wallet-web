@@ -1,4 +1,4 @@
-import { axiosInstance, FPNumber } from '@sora-substrate/util';
+import { FPNumber } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
 
 import { HistoryElementsQuery } from './queries/historyElements';
@@ -7,6 +7,10 @@ import { HistoricalPriceQuery, historicalPriceFilter } from './queries/historica
 import { FiatPriceQuery } from './queries/fiatPriceAndApy';
 import { SoraNetwork } from '../../consts';
 import { AssetSnapshotTypes } from './types';
+
+import { createSubqueryClient } from './client';
+import type { Client } from './client';
+
 import store from '../../store';
 
 import type {
@@ -19,8 +23,22 @@ import type {
 } from './types';
 
 export default class SubqueryExplorer implements Explorer {
+  public client!: Client;
+
   public get soraNetwork(): Nullable<SoraNetwork> {
     return store.state.wallet.settings.soraNetwork;
+  }
+
+  public initClient() {
+    if (this.client) return;
+
+    const url = store.state.wallet.settings.subqueryEndpoint;
+
+    if (!url) {
+      throw new Error('Subquery endpoint is not set');
+    }
+
+    this.client = createSubqueryClient(url);
   }
 
   public async getAccountTransactions(variables = {}): Promise<any> {
@@ -189,14 +207,10 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   public async request(query: any, variables = {}): Promise<any> {
-    const url = store.state.wallet.settings.subqueryEndpoint;
-    if (!url) {
-      throw new Error('Subquery endpoint is not set');
-    }
-    const response = await axiosInstance.post(url, {
-      query,
-      variables,
-    });
-    return response.data.data;
+    this.initClient();
+
+    const { data } = await this.client.query(query, variables).toPromise();
+
+    return data;
   }
 }
