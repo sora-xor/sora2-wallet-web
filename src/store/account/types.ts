@@ -21,6 +21,7 @@ export type AccountState = {
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
   fiatPriceAndApyTimer: Nullable<NodeJS.Timer | number>;
   referralRewards: ReferrerRewards;
+  selectedExtension: Nullable<Extensions>;
   availableExtensions: Array<Extensions>;
   extensionAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
 };

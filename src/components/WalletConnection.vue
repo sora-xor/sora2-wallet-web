@@ -37,6 +37,12 @@
           />
         </template>
 
+        <template v-else-if="isExtensionsView">
+          <s-button v-for="extension in availableExtensions" :key="extension" @click="handleSelectExtension(extension)">
+            {{ extension }}
+          </s-button>
+        </template>
+
         <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
           <div
             class="wallet-connection-account"
@@ -71,6 +77,7 @@ import type { PolkadotJsAccount } from '../types/common';
 enum Step {
   First = 1,
   Second = 2,
+  Third = 3,
 }
 
 @Component({
@@ -84,8 +91,10 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.availableExtensions private availableExtensions!: Array<Extensions>;
+  @state.account.selectedExtension selectedExtension!: Nullable<Extensions>;
 
   @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
+  @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
 
   async mounted(): Promise<void> {
     await this.withApi(async () => {
@@ -111,8 +120,12 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     return this.step === Step.First;
   }
 
-  get isAccountListView(): boolean {
+  get isExtensionsView(): boolean {
     return this.step === Step.Second;
+  }
+
+  get isAccountListView(): boolean {
+    return this.step === Step.Third;
   }
 
   get isUnableToSelectAccount(): boolean {
@@ -139,7 +152,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
       return;
     }
 
-    this.navigateToAccountList();
+    this.navigateToExtensionsList();
   }
 
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
@@ -153,12 +166,28 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     });
   }
 
+  async handleSelectExtension(extension: Extensions): Promise<void> {
+    await this.withLoading(async () => {
+      try {
+        await this.selectExtension(extension);
+
+        this.navigateToAccountList();
+      } catch (error) {
+        this.$alert(this.t((error as Error).message), this.t('errorText'));
+      }
+    });
+  }
+
   private navigateToEntry(): void {
     this.step = Step.First;
   }
 
-  private navigateToAccountList(): void {
+  private navigateToExtensionsList(): void {
     this.step = Step.Second;
+  }
+
+  private navigateToAccountList(): void {
+    this.step = Step.Third;
   }
 
   handleLearnMoreClick(): void {

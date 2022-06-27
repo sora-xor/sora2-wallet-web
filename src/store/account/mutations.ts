@@ -2,6 +2,7 @@ import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
 import type { Asset, AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from '@polkadot/x-rxjs';
+import type { Unsubcall } from '@polkadot/extension-inject/types';
 
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
 import { storage } from '../../util/storage';
@@ -31,6 +32,7 @@ const mutations = defineMutations<AccountState>()({
         'assets',
         'polkadotJsAccounts',
         'polkadotJsAccountsSubscription',
+        'selectedExtension',
         'availableExtensions',
         'extensionAvailabilityTimer',
       ],
@@ -94,7 +96,7 @@ const mutations = defineMutations<AccountState>()({
   setPolkadotJsAccounts(state, polkadotJsAccounts: Array<PolkadotJsAccount>): void {
     state.polkadotJsAccounts = polkadotJsAccounts;
   },
-  setPolkadotJsAccountsSubscription(state, subscription: VoidFunction): void {
+  setPolkadotJsAccountsSubscription(state, subscription: Nullable<Unsubcall>): void {
     state.polkadotJsAccountsSubscription = subscription;
   },
   resetPolkadotJsAccountsSubscription(state): void {
@@ -110,6 +112,9 @@ const mutations = defineMutations<AccountState>()({
   },
   setAvailableExtensions(state, names: Extensions[]) {
     state.availableExtensions = names;
+  },
+  setSelectedExtension(state, extension: Extensions) {
+    state.selectedExtension = extension;
   },
   setExtensionAvailabilitySubscription(state, timeout: NodeJS.Timeout | number): void {
     state.extensionAvailabilityTimer = timeout;
