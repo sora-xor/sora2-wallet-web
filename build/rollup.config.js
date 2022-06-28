@@ -97,12 +97,11 @@ export default {
     }),
     del({
       targets: [
-        // 'lib/src', Cannot be removed due to issue above
         'lib/styles',
         'lib/node_modules',
         'lib/plugins',
         'lib/lang',
-        'lib/SoraNeoWallet.vue.d.ts',
+        'lib/SoraWallet.vue.d.ts',
         'lib/main.d.ts',
       ],
       hook: 'writeBundle',
