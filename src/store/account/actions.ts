@@ -81,16 +81,32 @@ const actions = defineActions({
     }
   },
 
-  async checkExtension(context): Promise<void> {
-    const { commit, dispatch, getters } = accountActionContext(context);
+  /**
+   * Update the list of installed extensions
+   */
+  async updateAvailableExtensions(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+
     try {
-      const wallets = await getAppWallets();
-      const names = wallets.map(({ extensionName }) => extensionName);
+      const wallets = getAppWallets();
+      const available = wallets.filter((wallet) => wallet.installed);
+      const names = available.map(({ extensionName }) => extensionName);
 
       commit.setAvailableExtensions(names as Extensions[]);
     } catch (error) {
       console.error(error);
       commit.setAvailableExtensions([]);
+    }
+  },
+
+  async checkSelectedExtension(context): Promise<void> {
+    const { dispatch, getters, state } = accountActionContext(context);
+    try {
+      if (state.selectedExtension) {
+        await getWallet(state.selectedExtension);
+      }
+    } catch (error) {
+      console.error(error);
 
       if (getters.isLoggedIn) {
         await dispatch.logout();
@@ -112,11 +128,13 @@ const actions = defineActions({
 
   async subscribeOnExtensionAvailability(context): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
-    dispatch.checkExtension();
 
-    const timer = setInterval(() => {
-      dispatch.checkExtension();
-    }, CHECK_EXTENSION_INTERVAL);
+    const runChecks = async () =>
+      await Promise.all([dispatch.updateAvailableExtensions(), dispatch.checkSelectedExtension()]);
+
+    await runChecks();
+
+    const timer = setInterval(runChecks, CHECK_EXTENSION_INTERVAL);
 
     commit.setExtensionAvailabilitySubscription(timer);
   },
@@ -124,12 +142,10 @@ const actions = defineActions({
   async subscribeToPolkadotJsAccounts(context): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
 
-    if (!state.selectedExtension) {
-      throw new Error('polkadotjs.noExtensions');
-    }
+    if (!state.selectedExtension) return;
 
-    const subscription = await subscribeToPolkadotJsAccounts(state.selectedExtension, async (accounts) => {
-      await dispatch.updatePolkadotJsAccounts(accounts);
+    const subscription = await subscribeToPolkadotJsAccounts(state.selectedExtension, (accounts) => {
+      dispatch.updatePolkadotJsAccounts(accounts);
     });
 
     commit.setPolkadotJsAccountsSubscription(subscription);

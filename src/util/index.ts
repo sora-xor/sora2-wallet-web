@@ -1,5 +1,5 @@
 import { getWallets, getWalletBySource } from '@subwallet/wallet-connect/dotsama/wallets';
-import type { Wallet } from '@subwallet/wallet-connect/types';
+import type { Wallet, WalletAccount } from '@subwallet/wallet-connect/types';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 
@@ -13,6 +13,18 @@ import { ExplorerLink, SoraNetwork, ExplorerType, Extensions } from '../consts';
 import type { PolkadotJsAccount } from '../types/common';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 
+export class AppError extends Error {
+  public translationKey: string;
+  public translationPayload: any;
+
+  constructor({ key = '', payload = {} } = {}, ...params) {
+    super(...params);
+    this.name = 'AppHandledError';
+    this.translationKey = key;
+    this.translationPayload = payload;
+  }
+}
+
 export const APP_NAME = 'Sora2 Wallet';
 
 export const WHITE_LIST_GITHUB_URL =
@@ -20,38 +32,43 @@ export const WHITE_LIST_GITHUB_URL =
 
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
+const formatWalletAccount = (account: WalletAccount): PolkadotJsAccount => ({
+  address: account.address,
+  name: account.name || '',
+  source: account.source as Extensions,
+});
+
+const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAccount[] => {
+  return (accounts || []).map((account) => formatWalletAccount(account));
+};
+
 export const subscribeToPolkadotJsAccounts = async (
   extension: Extensions,
   callback: (accounts: PolkadotJsAccount[]) => void
-): Promise<Unsubcall | null> => {
+): Promise<Nullable<Unsubcall>> => {
   const wallet = await getWallet(extension);
 
-  const unsubscribe = wallet.subscribeAccounts((injectedAccounts) => {
-    const accounts = injectedAccounts
-      ? injectedAccounts.map((account) => ({
-          address: account.address,
-          name: account.name || '',
-          source: account.source as Extensions,
-        }))
-      : [];
+  let resolveCall: VoidFunction;
 
-    callback(accounts);
+  const subscriptionResult = new Promise<void>((resolve) => {
+    resolveCall = resolve;
   });
+
+  const unsubscribe = await wallet.subscribeAccounts((injectedAccounts) => {
+    callback(formatWalletAccounts(injectedAccounts));
+    resolveCall();
+  });
+
+  await subscriptionResult;
 
   return unsubscribe;
 };
 
-export const getAppWallets = async (): Promise<Wallet[]> => {
+export const getAppWallets = (): Wallet[] => {
   try {
-    const wallets = getWallets();
-
-    if (!wallets.length) {
-      throw new Error('polkadotjs.noExtensions');
-    }
-
-    return wallets;
+    return getWallets();
   } catch (error) {
-    throw new Error('polkadotjs.noExtensions');
+    throw new AppError({ key: 'polkadotjs.noExtensions' });
   }
 };
 
@@ -59,13 +76,13 @@ export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wall
   const wallet = getWalletBySource(extension);
 
   if (!wallet) {
-    throw new Error('polkadotjs.noExtensions');
+    throw new AppError({ key: 'polkadotjs.noExtension', payload: { extension } });
   }
 
   await wallet.enable();
 
   if (!wallet.signer) {
-    throw new Error('polkadotjs.noExtensions');
+    throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension } });
   }
 
   return wallet;
@@ -76,21 +93,21 @@ export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wall
  * @param address
  * @returns
  */
-export const getExtensionSigner = async (address: string, source: Extensions) => {
-  const wallet = await getWallet(source);
+export const getExtensionSigner = async (address: string, extension: Extensions) => {
+  const wallet = await getWallet(extension);
   const accounts = await wallet.getAccounts();
 
   if (!accounts) {
-    throw new Error('polkadotjs.noAccount');
+    throw new AppError({ key: 'polkadotjs.noAccounts', payload: { extension } });
   }
 
   const account = accounts.find((acc) => acc.address === address);
 
   if (!account) {
-    throw new Error('polkadotjs.noAccount');
+    throw new AppError({ key: 'polkadotjs.noAccount', payload: { extension } });
   }
 
-  return { account, signer: wallet.signer as Signer };
+  return { account: formatWalletAccount(account), signer: wallet.signer as Signer };
 };
 
 /**

@@ -1,12 +1,12 @@
 <template>
-  <wallet-base :title="t('connection.title')">
+  <wallet-base :title="t('connection.title')" :show-back="!isEntryView" @back="handleBackClick">
     <div class="wallet-connection" v-loading="loading">
       <template v-if="!loading">
         <template v-if="isEntryView">
           <p class="wallet-connection-text">{{ t('connection.text') }}</p>
           <p v-if="!extensionsAvailability" class="wallet-connection-text" v-html="t('connection.install')" />
         </template>
-        <template v-else>
+        <template v-else-if="isAccountListView">
           <p class="wallet-connection-text">
             {{ t(polkadotJsAccounts.length ? 'connection.selectAccount' : 'connection.noAccounts') }}
           </p>
@@ -44,16 +44,13 @@
         </template>
 
         <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
-          <div
-            class="wallet-connection-account"
+          <wallet-account
             v-for="(account, index) in polkadotJsAccounts"
             :key="index"
-            @click="handleSelectAccount(account)"
-          >
-            <wallet-account :polkadotAccount="account">
-              <extension-tag v-if="isMultipleAvailableExtension && account.source" :extension="account.source" />
-            </wallet-account>
-          </div>
+            :polkadotAccount="account"
+            @click.native="handleSelectAccount(account)"
+            class="wallet-connection-account"
+          />
         </s-scrollbar>
       </template>
     </div>
@@ -71,6 +68,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 
 import { state, action } from '../store/decorators';
+import { AppError } from '../util';
 import type { Extensions } from '../consts';
 import type { PolkadotJsAccount } from '../types/common';
 
@@ -99,7 +97,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   async mounted(): Promise<void> {
     await this.withApi(async () => {
       if (this.isAccountSwitch) {
-        this.navigateToAccountList();
+        this.navigateToExtensionsList();
       }
     });
   }
@@ -142,7 +140,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     return 'connection.action.connect';
   }
 
-  handleActionClick(): void {
+  async handleActionClick(): Promise<void> {
     if (this.isEntryView && !this.extensionsAvailability) {
       window.open('https://polkadot.js.org/extension/', '_blank');
       return;
@@ -160,7 +158,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
       try {
         await this.importPolkadotJs(account);
       } catch (error) {
-        this.$alert(this.t((error as Error).message), this.t('errorText'));
+        this.showAlert(error);
         this.navigateToEntry();
       }
     });
@@ -173,7 +171,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
         this.navigateToAccountList();
       } catch (error) {
-        this.$alert(this.t((error as Error).message), this.t('errorText'));
+        this.showAlert(error);
       }
     });
   }
@@ -183,7 +181,11 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   private navigateToExtensionsList(): void {
-    this.step = Step.Second;
+    if (!this.isMultipleAvailableExtension && this.extensionsAvailability) {
+      this.handleSelectExtension(this.availableExtensions[0]);
+    } else {
+      this.step = Step.Second;
+    }
   }
 
   private navigateToAccountList(): void {
@@ -192,6 +194,23 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   handleLearnMoreClick(): void {
     this.$emit('learn-more');
+  }
+
+  handleBackClick(): void {
+    if (this.isAccountListView) {
+      this.navigateToExtensionsList();
+    } else if (this.isExtensionsView) {
+      this.navigateToEntry();
+    }
+  }
+
+  private showAlert(error: unknown): void {
+    const message =
+      error instanceof AppError
+        ? this.t(error.translationKey, error.translationPayload)
+        : this.t((error as Error).message);
+
+    this.$alert(message, this.t('errorText'));
   }
 }
 </script>

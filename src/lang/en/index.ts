@@ -94,8 +94,10 @@ export default {
   polkadotjs: {
     noExtensions:
       'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
+    noExtension: 'No {extension} extension was found. Please install it and reload this page',
     noAccounts: 'There seems to be no accounts in your Polkadot.js extension. Please add an account and try again.',
-    noAccount: 'Polkadot.js account error. Please check your account in the Polkadot.js extension',
+    noAccount: '{extension} account error. Please check your account in the {extension} extension',
+    noSigner: 'Access denied. Go to {extension} extension settings and open "Manage Website Access" to allow.',
   },
   connection: {
     title: 'SORA Network account',
