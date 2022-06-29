@@ -16,6 +16,7 @@ import {
 } from '../../util';
 import { Extensions } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
+import { pushNotification } from '../../util/notification';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5_000;
@@ -200,7 +201,9 @@ const actions = defineActions({
 
     if (getters.isLoggedIn) {
       try {
-        const subscription = api.assets.balanceUpdated.subscribe((data) => {
+        // @ts-expect-error
+        const subscription = api.assets.balanceUpdated.subscribe(({ asset, isAssetDeposited }) => {
+          pushNotification(asset, isAssetDeposited);
           commit.updateAccountAssets(api.assets.accountAssets);
         });
         commit.setAccountAssetsSubscription(subscription);
