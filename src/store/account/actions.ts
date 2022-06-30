@@ -17,7 +17,7 @@ import {
 import { Extensions } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
 
-const FIVE_MINUTES = 5 * 60 * 1000;
+const UPDATE_PRICES_INTERVAL = 30 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5_000;
 
 const actions = defineActions({
@@ -240,7 +240,7 @@ const actions = defineActions({
 
     const timer = setInterval(() => {
       dispatch.getFiatPriceAndApyObject();
-    }, FIVE_MINUTES);
+    }, UPDATE_PRICES_INTERVAL);
     commit.setFiatPriceAndApyTimer(timer);
   },
   async getAccountReferralRewards(context): Promise<void> {
