@@ -1,11 +1,12 @@
 import { gql } from '@urql/core';
 
+import { PageInfoFragment } from '../fragments/pageInfo';
+
 export const FiatPriceQuery = gql`
-  query AssetsFiatPrices($after: Cursor = "", $first: Int = 100) {
+  query FiatPriceQuery($after: Cursor = "", $first: Int = 100) {
     poolXYKs(first: $first, after: $after) {
       pageInfo {
-        hasNextPage
-        endCursor
+        ...PageInfoFragment
       }
       nodes {
         id
@@ -14,4 +15,5 @@ export const FiatPriceQuery = gql`
       }
     }
   }
+  ${PageInfoFragment}
 `;

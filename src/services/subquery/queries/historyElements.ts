@@ -4,6 +4,8 @@ import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../types';
 import { SubstrateEvents } from '../consts';
 
+import { PageInfoFragment } from '../fragments/pageInfo';
+
 export const HistoryElementsQuery = gql`
   query HistoryElements(
     $first: Int = null
@@ -31,14 +33,12 @@ export const HistoryElementsQuery = gql`
         }
       }
       pageInfo @skip(if: $idsOnly) {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
+        ...PageInfoFragment
       }
       totalCount @skip(if: $idsOnly)
     }
   }
+  ${PageInfoFragment}
 `;
 
 type DataCriteria = {

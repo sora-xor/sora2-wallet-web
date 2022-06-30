@@ -1,5 +1,7 @@
 import { gql } from '@urql/core';
 
+import { PageInfoFragment } from '../fragments/pageInfo';
+
 import { AssetSnapshotTypes } from '../types';
 
 export const HistoricalPriceQuery = gql`
@@ -7,8 +9,7 @@ export const HistoricalPriceQuery = gql`
     assetSnapshots(after: $after, first: $first, filter: $filter, orderBy: [TIMESTAMP_DESC]) {
       totalCount
       pageInfo {
-        hasNextPage
-        endCursor
+        ...PageInfoFragment
       }
       nodes {
         priceUSD
@@ -17,6 +18,7 @@ export const HistoricalPriceQuery = gql`
       }
     }
   }
+  ${PageInfoFragment}
 `;
 
 export const historicalPriceFilter = (assetAddress: string, type: AssetSnapshotTypes) => {

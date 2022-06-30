@@ -18,7 +18,7 @@ import type {
   PoolXYKEntity,
   FiatPriceAndApyObject,
   ReferrerRewards,
-  ReferralRewardsGroup,
+  AccountReferralReward,
   AssetSnapshot,
 } from './types';
 
@@ -48,9 +48,8 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   /**
-   * Fetch pools from poolXykEntity
-   * @param poolXykEntityId poolXykEntity id
-   * @param poolsAfter cursor of last element
+   * Fetch pools from poolXYKs
+   * @param after cursor of last element
    */
   public async fetchPools(
     after?: string
@@ -155,29 +154,38 @@ export default class SubqueryExplorer implements Explorer {
   /**
    * Get Referral Rewards summarized by referral
    */
-  public async getAccountReferralRewards(referrer?: string): Promise<Nullable<ReferrerRewards>> {
+  public async getAccountReferralRewards(referrer: string): Promise<Nullable<ReferrerRewards>> {
     const rewardsInfo: ReferrerRewards = {
       rewards: FPNumber.ZERO,
       invitedUserRewards: {},
     };
 
+    let after = '';
+    let hasNextPage = true;
+
     try {
-      const groups = await this.getAccountRewards(referrer);
+      do {
+        const response = await this.getAccountRewards(referrer, after);
 
-      if (!groups) return null;
+        if (!response) return null;
 
-      groups.forEach((group) => {
-        const referral = group.keys[0];
-        const amount = FPNumber.fromCodecValue(group.sum.amount, XOR.decimals);
+        after = response.endCursor;
+        hasNextPage = response.hasNextPage;
 
-        rewardsInfo.rewards = rewardsInfo.rewards.add(amount);
+        response.nodes.forEach((node) => {
+          const referral = node.referral;
+          const amount = FPNumber.fromCodecValue(node.amount, XOR.decimals);
 
-        if (!rewardsInfo.invitedUserRewards[referral]) {
-          rewardsInfo.invitedUserRewards[referral] = { rewards: FPNumber.ZERO };
-        }
+          rewardsInfo.rewards = rewardsInfo.rewards.add(amount);
 
-        rewardsInfo.invitedUserRewards[referral].rewards = rewardsInfo.invitedUserRewards[referral].rewards.add(amount);
-      });
+          if (!rewardsInfo.invitedUserRewards[referral]) {
+            rewardsInfo.invitedUserRewards[referral] = { rewards: FPNumber.ZERO };
+          }
+
+          rewardsInfo.invitedUserRewards[referral].rewards =
+            rewardsInfo.invitedUserRewards[referral].rewards.add(amount);
+        });
+      } while (hasNextPage);
 
       return rewardsInfo;
     } catch (error) {
@@ -187,19 +195,26 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   /**
-   * Get Referral Rewards items grouped by referral
+   * Get Referral Rewards items by referral
    */
-  public async getAccountRewards(referrer?: string): Promise<Nullable<ReferralRewardsGroup[]>> {
+  public async getAccountRewards(
+    referrer: string,
+    after?: string
+  ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: AccountReferralReward[] }>> {
     try {
       const variables = {
+        after,
         filter: referrerRewardsFilter(referrer),
       };
 
       const {
-        referrerRewards: { groupedAggregates },
+        referrerRewards: {
+          nodes,
+          pageInfo: { hasNextPage, endCursor },
+        },
       } = await this.request(ReferrerRewardsQuery, variables);
 
-      return groupedAggregates;
+      return { hasNextPage, endCursor, nodes };
     } catch (error) {
       console.error(error);
       return null;

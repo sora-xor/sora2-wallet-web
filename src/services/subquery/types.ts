@@ -229,9 +229,7 @@ export type ReferrerReserve = {
   amount: string;
 };
 
-export type ReferralRewardsGroup = {
-  keys: [string];
-  sum: {
-    amount: CodecString;
-  };
+export type AccountReferralReward = {
+  referral: string;
+  amount: string;
 };
