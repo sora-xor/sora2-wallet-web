@@ -1,44 +1,19 @@
-export const FiatPriceQuery = `
-query PoolXYKEntities (
-  $first: Int = 1,
-  $orderBy: [PoolXykEntitiesOrderBy!] = UPDATED_DESC
-  $filter: PoolXYKEntityFilter
-  $poolsAfter: Cursor = ""
-  $poolsFirst: Int = 100)
-{
-  poolXYKEntities (
-    first: $first
-    orderBy: $orderBy
-    filter: $filter
-  )
-  {
-    nodes {
-      id
-      pools (
-        first: $poolsFirst
-        after: $poolsAfter
-      ) {
-        pageInfo {
-          hasNextPage
-          endCursor
-        }
-        nodes {
-          targetAssetId,
-          priceUSD,
-          strategicBonusApy
-        }
+import { gql } from '@urql/core';
+
+import { PageInfoFragment } from '../fragments/pageInfo';
+
+export const FiatPriceQuery = gql`
+  query FiatPriceQuery($after: Cursor = "", $first: Int = 100) {
+    poolXYKs(first: $first, after: $after) {
+      pageInfo {
+        ...PageInfoFragment
+      }
+      nodes {
+        id
+        priceUSD
+        strategicBonusApy
       }
     }
   }
-}
+  ${PageInfoFragment}
 `;
-
-export const poolXykEntityFilter = (poolXykEntityId?: string) => {
-  if (!poolXykEntityId) return undefined;
-
-  return {
-    id: {
-      equalTo: poolXykEntityId,
-    },
-  };
-};
