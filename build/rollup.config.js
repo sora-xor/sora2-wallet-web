@@ -82,7 +82,9 @@ export default {
         `,
       },
     }),
-    scss(),
+    scss({
+      output: 'lib/soraneo-wallet-web.css',
+    }),
     resolve(),
     // TODO: it is used to fix:
     // Error: Unexpected token (Note that you need @rollup/plugin-json to import JSON files)
