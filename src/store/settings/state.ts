@@ -4,6 +4,8 @@ import { storage, runtimeStorage } from '../../util/storage';
 import type { SettingsState } from './types';
 
 function initialState(): SettingsState {
+  const shouldBalanceBeHidden = storage.get('shouldBalanceBeHidden');
+  const runtimeVersion = runtimeStorage.get('version');
   return {
     apiKeys: {},
     subqueryEndpoint: null,
@@ -19,11 +21,11 @@ function initialState(): SettingsState {
     },
     soraNetwork: null,
     nftStorage: null,
-    runtimeVersion: Number(JSON.parse(runtimeStorage.get('version'))),
+    runtimeVersion: runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0,
     runtimeVersionSubscription: null,
     systemEventsSubscription: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
-    shouldBalanceBeHidden: Boolean(JSON.parse(storage.get('shouldBalanceBeHidden'))) || false,
+    shouldBalanceBeHidden: shouldBalanceBeHidden ? Boolean(JSON.parse(shouldBalanceBeHidden)) : false,
   };
 }
 
