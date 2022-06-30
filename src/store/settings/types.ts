@@ -1,6 +1,6 @@
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { NFTStorage } from 'nft.storage';
-import type { Subscription } from '@polkadot/x-rxjs';
+import type { Subscription } from 'rxjs';
 
 import type { SoraNetwork, WalletPermissions } from '../../consts';
 import type { ApiKeysObject } from '../../types/common';

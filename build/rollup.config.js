@@ -3,7 +3,7 @@ import typescript from 'rollup-plugin-typescript2';
 import pkg from '../package.json';
 import scss from 'rollup-plugin-scss';
 import resolve from '@rollup/plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
 import del from 'rollup-plugin-delete';
 import copy from 'rollup-plugin-copy';
@@ -82,7 +82,9 @@ export default {
         `,
       },
     }),
-    scss(),
+    scss({
+      output: 'lib/soraneo-wallet-web.css',
+    }),
     resolve(),
     // TODO: it is used to fix:
     // Error: Unexpected token (Note that you need @rollup/plugin-json to import JSON files)
@@ -97,12 +99,11 @@ export default {
     }),
     del({
       targets: [
-        // 'lib/src', Cannot be removed due to issue above
         'lib/styles',
         'lib/node_modules',
         'lib/plugins',
         'lib/lang',
-        'lib/SoraNeoWallet.vue.d.ts',
+        'lib/SoraWallet.vue.d.ts',
         'lib/main.d.ts',
       ],
       hook: 'writeBundle',

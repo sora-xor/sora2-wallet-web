@@ -22,8 +22,10 @@ const actions = defineActions({
   async subscribeOnRuntimeVersion(context): Promise<void> {
     const { commit } = settingsActionContext(context);
     const runtimeVersionSubscription = api.system.getRuntimeVersionObservable().subscribe(async (version) => {
-      const currentVersion = Number(JSON.parse(runtimeStorage.get('version')));
-      const networkFees = JSON.parse(runtimeStorage.get('networkFees'));
+      const runtimeVersion = runtimeStorage.get('version');
+      const networkFeesObj = runtimeStorage.get('networkFees');
+      const currentVersion = runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0;
+      const networkFees = networkFeesObj ? JSON.parse(networkFeesObj) : {};
       if (currentVersion === version && !isEmpty(networkFees) && areKeysEqual(networkFees, api.NetworkFee)) {
         commit.setNetworkFees(networkFees);
         return;
