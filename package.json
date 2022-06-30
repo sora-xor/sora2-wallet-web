@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@polkadot/extension-dapp": "^0.42.2",
-    "@polkadot/vue-identicon": "^0.72.1",
+    "@polkadot/vue-identicon": "2.6.1",
     "@sora-substrate/util": "1.10.0-beta.3",
     "@soramitsu/soramitsu-js-ui": "^1.0.33",
     "@zxing/browser": "^0.0.10",
