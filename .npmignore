@@ -1,4 +1,6 @@
 lib/src
+.scannerwork
+report
 tests
 src
 public
