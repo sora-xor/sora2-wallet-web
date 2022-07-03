@@ -108,12 +108,18 @@ export default {
       'Accidentally denied access for polkadot{.js}?</br>Go to polkadot{.js} settings and open "Manage Website Access" to allow.',
     noAccounts: 'No account found in your polkadot{.js} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
+    selectWallet: 'Select a wallet to work with',
     loadingTitle: 'Waiting for you to allow access to polkadot{.js} extension..',
     action: {
       install: 'Install extension',
       learnMore: 'Learn more',
       connect: 'Connect account',
       refresh: 'Refresh',
+    },
+    wallet: {
+      connected: 'Connected',
+      notConnected: 'Not connected',
+      install: 'Install',
     },
   },
   wallet: {

@@ -72,8 +72,10 @@ export const getAppWallets = (): Wallet[] => {
   }
 };
 
+export const getWalletByExtension = (extension: Extensions) => getWalletBySource(extension);
+
 export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wallet> => {
-  const wallet = getWalletBySource(extension);
+  const wallet = getWalletByExtension(extension);
 
   if (!wallet) {
     throw new AppError({ key: 'polkadotjs.noExtension', payload: { extension } });

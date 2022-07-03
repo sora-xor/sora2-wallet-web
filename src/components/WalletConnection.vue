@@ -6,6 +6,9 @@
           <p class="wallet-connection-text">{{ t('connection.text') }}</p>
           <p v-if="!extensionsAvailability" class="wallet-connection-text" v-html="t('connection.install')" />
         </template>
+        <template v-if="isExtensionsView">
+          <p class="wallet-connection-text">{{ t('connection.selectWallet') }}</p>
+        </template>
         <template v-else-if="isAccountListView">
           <p class="wallet-connection-text">
             {{ t(polkadotJsAccounts.length ? 'connection.selectAccount' : 'connection.noAccounts') }}
@@ -38,9 +41,23 @@
         </template>
 
         <template v-else-if="isExtensionsView">
-          <s-button v-for="extension in availableExtensions" :key="extension" @click="handleSelectExtension(extension)">
-            {{ extension }}
-          </s-button>
+          <account-card
+            v-for="wallet in availableWallets"
+            :key="wallet.extensionName"
+            @click.native="handleSelectWallet(wallet)"
+            class="wallet-connection-account"
+          >
+            <template #avatar>
+              <img :src="wallet.logo.src" :alt="wallet.logo.alt" />
+            </template>
+            <template #name>{{ wallet.title }}</template>
+            <template #description>{{ getWalletStatus(wallet) }}</template>
+            <template #default v-if="!wallet.installed">
+              <a :href="wallet.installUrl" target="_blank" rel="nofollow noopener noreferrer">
+                <s-button size="small">{{ t('connection.wallet.install') }}</s-button>
+              </a>
+            </template>
+          </account-card>
         </template>
 
         <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
@@ -62,13 +79,16 @@ import { Component, Mixins } from 'vue-property-decorator';
 
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
+import AccountCard from './AccountCard.vue';
 import ExtensionTag from './ExtensionTag.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 
 import { state, action } from '../store/decorators';
-import { AppError } from '../util';
+import { AppError, getWalletByExtension } from '../util';
+
+import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Extensions } from '../consts';
 import type { PolkadotJsAccount } from '../types/common';
 
@@ -79,7 +99,7 @@ enum Step {
 }
 
 @Component({
-  components: { WalletBase, WalletAccount, ExtensionTag },
+  components: { AccountCard, WalletBase, WalletAccount, ExtensionTag },
 })
 export default class WalletConnection extends Mixins(TranslationMixin, LoadingMixin) {
   readonly Step = Step;
@@ -102,12 +122,22 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     });
   }
 
+  get availableWallets(): Wallet[] {
+    return this.availableExtensions.reduce<Wallet[]>((buffer, name) => {
+      const wallet = getWalletByExtension(name);
+
+      if (wallet) buffer.push(wallet);
+
+      return buffer;
+    }, []);
+  }
+
   get extensionsAvailability(): boolean {
-    return this.availableExtensions.length !== 0;
+    return this.availableWallets.length !== 0;
   }
 
   get isMultipleAvailableExtension(): boolean {
-    return this.availableExtensions.length > 1;
+    return this.availableWallets.length > 1;
   }
 
   get isAccountSwitch(): boolean {
@@ -164,16 +194,16 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     });
   }
 
-  async handleSelectExtension(extension: Extensions): Promise<void> {
-    await this.withLoading(async () => {
-      try {
-        await this.selectExtension(extension);
+  async handleSelectWallet(wallet: Wallet): Promise<void> {
+    if (!wallet.installed) return;
 
-        this.navigateToAccountList();
-      } catch (error) {
-        this.showAlert(error);
-      }
-    });
+    try {
+      await this.selectExtension(wallet.extensionName as Extensions);
+
+      this.navigateToAccountList();
+    } catch (error) {
+      this.showAlert(error);
+    }
   }
 
   private navigateToEntry(): void {
@@ -182,7 +212,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   private navigateToExtensionsList(): void {
     if (!this.isMultipleAvailableExtension && this.extensionsAvailability) {
-      this.handleSelectExtension(this.availableExtensions[0]);
+      this.handleSelectWallet(this.availableWallets[0]);
     } else {
       this.step = Step.Second;
     }
@@ -204,6 +234,16 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     }
   }
 
+  walletIsConnected(wallet: Wallet): boolean {
+    return !!wallet.extension && !!wallet.extension.signer;
+  }
+
+  getWalletStatus(wallet: Wallet): string {
+    const isConnected = this.walletIsConnected(wallet);
+
+    return this.t(`connection.wallet.${isConnected ? 'connected' : 'notConnected'}`);
+  }
+
   private showAlert(error: unknown): void {
     const message =
       error instanceof AppError
@@ -216,12 +256,28 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 </script>
 
 <style lang="scss">
+$account-height: 60px;
+
 .wallet-connection-link {
   color: var(--s-color-theme-accent);
   text-decoration: none;
 }
 .wallet-connection-accounts {
   @include scrollbar($basic-spacing-big);
+}
+
+.wallet-connection-account {
+  height: $account-height;
+
+  &:not(:last-child) {
+    margin-bottom: var(--s-basic-spacing);
+  }
+  &:hover {
+    cursor: pointer;
+    &.wallet-account {
+      border-color: var(--s-color-base-content-secondary);
+    }
+  }
 }
 </style>
 
@@ -252,18 +308,7 @@ $accounts-number: 7;
       calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom}
     );
   }
-  &-account {
-    height: $account-height;
-    &:not(:last-child) {
-      margin-bottom: var(--s-basic-spacing);
-    }
-    &:hover {
-      cursor: pointer;
-      .wallet-account {
-        border-color: var(--s-color-base-content-secondary);
-      }
-    }
-  }
+
   &-action {
     width: 100%;
     & + & {

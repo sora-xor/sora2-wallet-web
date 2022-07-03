@@ -89,8 +89,7 @@ const actions = defineActions({
 
     try {
       const wallets = getAppWallets();
-      const available = wallets.filter((wallet) => wallet.installed);
-      const names = available.map(({ extensionName }) => extensionName);
+      const names = wallets.map(({ extensionName }) => extensionName);
 
       commit.setAvailableExtensions(names as Extensions[]);
     } catch (error) {
