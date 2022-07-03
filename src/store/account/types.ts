@@ -2,7 +2,7 @@ import { Extensions } from '../../consts';
 
 import type { FiatPriceAndApyObject, ReferrerRewards } from '@/services/subquery/types';
 import type { AccountAsset, Asset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
-import type { Subscription } from '@polkadot/x-rxjs';
+import type { Subscription } from 'rxjs';
 
 import type { PolkadotJsAccount } from '../../types/common';
 

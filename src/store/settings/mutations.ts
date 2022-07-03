@@ -1,7 +1,7 @@
 import { defineMutations } from 'direct-vuex';
 import { NFTStorage } from 'nft.storage';
 import type { NetworkFeesObject } from '@sora-substrate/util';
-import type { Subscription } from '@polkadot/x-rxjs';
+import type { Subscription } from 'rxjs';
 
 import { api } from '../../api';
 import { SoraNetwork, WalletPermissions } from '../../consts';

@@ -124,7 +124,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { FPNumber, CodecString, Operation } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/assets/types';
-import type { Subscription } from '@polkadot/x-rxjs';
+import type { Subscription } from 'rxjs';
 
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
