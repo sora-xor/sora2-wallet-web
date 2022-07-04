@@ -5,6 +5,7 @@ export const HiddenValue = '******';
 export enum Extensions {
   PolkadotJS = 'polkadot-js',
   SubwalletJS = 'subwallet-js',
+  TalismanJS = 'talisman',
 }
 
 export enum RouteNames {

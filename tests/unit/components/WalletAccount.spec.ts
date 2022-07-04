@@ -1,5 +1,6 @@
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 
+import AccountCard from '@/components//AccountCard.vue';
 import WalletAccount from '@/components/WalletAccount.vue';
 import { MOCK_ACCOUNT, MOCK_ACCOUNT_POLKADOT, MOCK_ADDRESS } from '../../utils/WalletAccountMock';
 
@@ -36,6 +37,9 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
       polkadotAccount,
     },
     store: createStore(),
+    stubs: {
+      AccountCard,
+    },
   };
 
   beforeEach(() => {

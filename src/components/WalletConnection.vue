@@ -24,25 +24,24 @@
           </s-button>
         </template>
 
-        <template v-else-if="isExtensionsView">
+        <div v-else-if="isExtensionsView" class="wallet-connection-extensions">
           <account-card
             v-for="wallet in availableWallets"
             :key="wallet.extensionName"
             @click.native="handleSelectWallet(wallet)"
-            class="wallet-connection-account"
+            class="wallet-connection-extension"
           >
             <template #avatar>
               <img :src="wallet.logo.src" :alt="wallet.logo.alt" />
             </template>
             <template #name>{{ wallet.title }}</template>
-            <template #description>{{ getWalletStatus(wallet) }}</template>
             <template #default v-if="!wallet.installed">
               <a :href="wallet.installUrl" target="_blank" rel="nofollow noopener noreferrer">
                 <s-button size="small">{{ t('connection.wallet.install') }}</s-button>
               </a>
             </template>
           </account-card>
-        </template>
+        </div>
 
         <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
           <wallet-account
@@ -209,12 +208,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     return !!wallet.extension && !!wallet.extension.signer;
   }
 
-  getWalletStatus(wallet: Wallet): string {
-    const isConnected = this.walletIsConnected(wallet);
-
-    return this.t(`connection.wallet.${isConnected ? 'connected' : 'notConnected'}`);
-  }
-
   private showAlert(error: unknown): void {
     const message =
       error instanceof AppError
@@ -231,6 +224,10 @@ $account-height: 60px;
 
 .wallet-connection-accounts {
   @include scrollbar($basic-spacing-big);
+}
+
+.wallet-connection-extension.s-card.neumorphic.s-size-small {
+  padding: calc(var(--s-basic-spacing) * 1.25) $basic-spacing-small;
 }
 </style>
 
@@ -273,13 +270,22 @@ $accounts-number: 7;
   &-account {
     height: $account-height;
 
+    &:not(:last-child) {
+      margin-bottom: var(--s-basic-spacing);
+    }
+  }
+
+  &-extension {
+    &:not(:last-child) {
+      margin-bottom: $basic-spacing-medium;
+    }
+  }
+
+  &-account,
+  &-extension {
     &:hover {
       cursor: pointer;
       border-color: var(--s-color-base-content-secondary);
-    }
-
-    &:not(:last-child) {
-      margin-bottom: var(--s-basic-spacing);
     }
   }
 }

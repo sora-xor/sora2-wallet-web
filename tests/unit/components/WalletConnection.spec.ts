@@ -2,7 +2,6 @@ import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { Extensions } from '../../../src/consts';
 import WalletConnection from '@/components/WalletConnection.vue';
 import WalletBase from '@/components/WalletBase.vue';
-import ExtensionTag from '@/components/ExtensionTag.vue';
 import { POLKADOT_JS_ACCOUNTS_MOCK, SUBWALLET_JS_ACCOUNTS_MOCK } from '../../utils/WalletConnectionMock';
 
 const createStore = ({
@@ -38,7 +37,6 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
       store: createStore(),
       stubs: {
         WalletBase,
-        ExtensionTag,
       },
     });
 
@@ -50,7 +48,6 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
       store: createStore(),
       stubs: {
         WalletBase,
-        ExtensionTag,
       },
     });
 
@@ -75,7 +72,6 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
       }),
       stubs: {
         WalletBase,
-        ExtensionTag,
       },
     });
 
@@ -97,7 +93,6 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
       store: createStore({ polkadotJsAccounts: [] }),
       stubs: {
         WalletBase,
-        ExtensionTag,
       },
     });
 
@@ -113,7 +108,6 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
       store: createStore({ availableExtensions: [] }),
       stubs: {
         WalletBase,
-        ExtensionTag,
       },
     });
 
