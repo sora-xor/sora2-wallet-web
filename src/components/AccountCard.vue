@@ -53,6 +53,8 @@ $avatar-size: 32px;
     margin-right: $avatar-margin-right;
     width: $avatar-size;
     height: $avatar-size;
+    border-radius: 50%;
+    overflow: hidden;
   }
 
   &-details {

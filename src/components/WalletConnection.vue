@@ -2,18 +2,7 @@
   <wallet-base :title="t('connection.title')" :show-back="!isEntryView" @back="handleBackClick">
     <div class="wallet-connection" v-loading="loading">
       <template v-if="!loading">
-        <template v-if="isEntryView">
-          <p class="wallet-connection-text">{{ t('connection.text') }}</p>
-          <p v-if="!extensionsAvailability" class="wallet-connection-text" v-html="t('connection.install')" />
-        </template>
-        <template v-if="isExtensionsView">
-          <p class="wallet-connection-text">{{ t('connection.selectWallet') }}</p>
-        </template>
-        <template v-else-if="isAccountListView">
-          <p class="wallet-connection-text">
-            {{ t(polkadotJsAccounts.length ? 'connection.selectAccount' : 'connection.noAccounts') }}
-          </p>
-        </template>
+        <p class="wallet-connection-text">{{ connectionText }}</p>
 
         <template v-if="isEntryView || isUnableToSelectAccount">
           <s-button
@@ -33,11 +22,6 @@
           >
             {{ t('connection.action.learnMore') }}
           </s-button>
-          <p
-            v-if="!extensionsAvailability"
-            class="wallet-connection-text no-permissions"
-            v-html="t('connection.noPermissions')"
-          />
         </template>
 
         <template v-else-if="isExtensionsView">
@@ -80,7 +64,6 @@ import { Component, Mixins } from 'vue-property-decorator';
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
 import AccountCard from './AccountCard.vue';
-import ExtensionTag from './ExtensionTag.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -99,7 +82,7 @@ enum Step {
 }
 
 @Component({
-  components: { AccountCard, WalletBase, WalletAccount, ExtensionTag },
+  components: { AccountCard, WalletBase, WalletAccount },
 })
 export default class WalletConnection extends Mixins(TranslationMixin, LoadingMixin) {
   readonly Step = Step;
@@ -132,14 +115,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     }, []);
   }
 
-  get extensionsAvailability(): boolean {
-    return this.availableWallets.length !== 0;
-  }
-
-  get isMultipleAvailableExtension(): boolean {
-    return this.availableWallets.length > 1;
-  }
-
   get isAccountSwitch(): boolean {
     return !!this.currentRouteParams.isAccountSwitch;
   }
@@ -161,20 +136,20 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   get actionButtonText(): string {
-    if (this.isEntryView && !this.extensionsAvailability) {
-      return 'connection.action.install';
-    }
     if (this.isUnableToSelectAccount) {
       return 'connection.action.refresh';
     }
     return 'connection.action.connect';
   }
 
+  get connectionText(): string {
+    if (this.isEntryView) return this.t('connection.text');
+    if (this.isExtensionsView) return this.t('connection.selectWallet');
+
+    return this.t(this.polkadotJsAccounts.length ? 'connection.selectAccount' : 'connection.noAccounts');
+  }
+
   async handleActionClick(): Promise<void> {
-    if (this.isEntryView && !this.extensionsAvailability) {
-      window.open('https://polkadot.js.org/extension/', '_blank');
-      return;
-    }
     if (this.isUnableToSelectAccount) {
       window.history.go();
       return;
@@ -211,11 +186,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   private navigateToExtensionsList(): void {
-    if (!this.isMultipleAvailableExtension && this.extensionsAvailability) {
-      this.handleSelectWallet(this.availableWallets[0]);
-    } else {
-      this.step = Step.Second;
-    }
+    this.step = Step.Second;
   }
 
   private navigateToAccountList(): void {
@@ -258,26 +229,8 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 <style lang="scss">
 $account-height: 60px;
 
-.wallet-connection-link {
-  color: var(--s-color-theme-accent);
-  text-decoration: none;
-}
 .wallet-connection-accounts {
   @include scrollbar($basic-spacing-big);
-}
-
-.wallet-connection-account {
-  height: $account-height;
-
-  &:not(:last-child) {
-    margin-bottom: var(--s-basic-spacing);
-  }
-  &:hover {
-    cursor: pointer;
-    &.wallet-account {
-      border-color: var(--s-color-base-content-secondary);
-    }
-  }
 }
 </style>
 
@@ -303,6 +256,7 @@ $accounts-number: 7;
     line-height: var(--s-line-height-base);
     color: var(--s-color-base-content-primary);
   }
+
   &-accounts {
     height: calc(
       calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom}
@@ -313,6 +267,19 @@ $accounts-number: 7;
     width: 100%;
     & + & {
       margin-left: 0;
+    }
+  }
+
+  &-account {
+    height: $account-height;
+
+    &:hover {
+      cursor: pointer;
+      border-color: var(--s-color-base-content-secondary);
+    }
+
+    &:not(:last-child) {
+      margin-bottom: var(--s-basic-spacing);
     }
   }
 }
