@@ -29,6 +29,8 @@ export default {
     ...Object.keys(pkg.dependencies || {}),
     'tslib',
     'vue',
+    '@subwallet/wallet-connect/types',
+    '@subwallet/wallet-connect/dotsama/wallets',
     '@soramitsu/soramitsu-js-ui/lib/utils/Theme',
     '@soramitsu/soramitsu-js-ui/lib/utils/DesignSystem',
     '@soramitsu/soramitsu-js-ui/lib/utils',
