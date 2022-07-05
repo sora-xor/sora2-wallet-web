@@ -29,7 +29,7 @@ export function initialState(): AccountState {
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
     selectedExtension: null,
-    availableExtensions: [],
+    availableWallets: [],
     extensionAvailabilityTimer: null,
   };
 }

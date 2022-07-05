@@ -84,17 +84,16 @@ const actions = defineActions({
   /**
    * Update the list of installed extensions
    */
-  async updateAvailableExtensions(context): Promise<void> {
+  async updateAvailableWallets(context): Promise<void> {
     const { commit } = accountActionContext(context);
 
     try {
       const wallets = getAppWallets();
-      const names = wallets.map(({ extensionName }) => extensionName);
 
-      commit.setAvailableExtensions(names as Extensions[]);
+      commit.setAvailableWallets(wallets);
     } catch (error) {
       console.error(error);
-      commit.setAvailableExtensions([]);
+      commit.setAvailableWallets([]);
     }
   },
 
@@ -129,7 +128,7 @@ const actions = defineActions({
     const { commit, dispatch } = accountActionContext(context);
 
     const runChecks = async () =>
-      await Promise.all([dispatch.updateAvailableExtensions(), dispatch.checkSelectedExtension()]);
+      await Promise.all([dispatch.updateAvailableWallets(), dispatch.checkSelectedExtension()]);
 
     await runChecks();
 

@@ -15,49 +15,30 @@ exports[`WalletConnection.vue [Extension available]: Accounts should be rendered
     <p
       class="wallet-connection-text"
     >
-      Select a wallet to work with
+      Select account to work with
     </p>
      
-    <div
-      class="wallet-connection-extensions"
+    <s-scrollbar-stub
+      class="wallet-connection-accounts"
+      tag="div"
     >
-      <account-card-stub
-        class="wallet-connection-extension"
-      >
-        <div
-          class="base-title s-flex base-title--center"
-        >
-          <div
-            class="base-title_back"
-          >
-            <s-button
-              tooltip="Back"
-              type="action"
-            >
-              <s-icon
-                name="arrows-chevron-left-rounded-24"
-                size="28"
-              />
-            </s-button>
-          </div>
-           
-          <h3
-            class="base-title_text"
-          >
-            
-        SORA Network account
-        
-            <!---->
-          </h3>
-           
-          <div
-            class="base-title_action"
-          />
-           
-          <!---->
-        </div>
-      </account-card-stub>
-    </div>
+      <wallet-account-stub
+        class="wallet-connection-account"
+        polkadotaccount="[object Object]"
+      />
+      <wallet-account-stub
+        class="wallet-connection-account"
+        polkadotaccount="[object Object]"
+      />
+      <wallet-account-stub
+        class="wallet-connection-account"
+        polkadotaccount="[object Object]"
+      />
+      <wallet-account-stub
+        class="wallet-connection-account"
+        polkadotaccount="[object Object]"
+      />
+    </s-scrollbar-stub>
     <div
       class="el-loading-mask"
       style="display: none;"
@@ -141,7 +122,7 @@ exports[`WalletConnection.vue [Extension available]: Connect account screen shou
 </s-card>
 `;
 
-exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen should be rendered 1`] = `
+exports[`WalletConnection.vue [Extension available]: Extensions should be rendered 1`] = `
 <s-card
   border-radius="medium"
   class="base"
@@ -162,42 +143,102 @@ exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen
     <div
       class="wallet-connection-extensions"
     >
-      <account-card-stub
-        class="wallet-connection-extension"
+      <s-card
+        borderradius="medium"
+        class="wallet-account wallet-connection-extension"
+        shadow="always"
+        size="small"
       >
         <div
-          class="base-title s-flex base-title--center"
+          class="account s-flex"
         >
           <div
-            class="base-title_back"
+            class="account-avatar"
           >
-            <s-button
-              tooltip="Back"
-              type="action"
-            >
-              <s-icon
-                name="arrows-chevron-left-rounded-24"
-                size="28"
-              />
-            </s-button>
+            <img
+              alt="polkadot"
+              src="/img/polkadot.svg"
+            />
           </div>
            
-          <h3
-            class="base-title_text"
+          <div
+            class="account-details s-flex"
           >
-            
-        SORA Network account
-        
-            <!---->
-          </h3>
+            <div
+              class="account-credentials s-flex"
+            >
+              <div
+                class="account-credentials_name"
+              >
+                Polkadot{.js}
+              </div>
+               
+              <div
+                class="account-credentials_description"
+              />
+            </div>
+             
+          </div>
+        </div>
+      </s-card>
+      <s-card
+        borderradius="medium"
+        class="wallet-account wallet-connection-extension"
+        shadow="always"
+        size="small"
+      >
+        <div
+          class="account s-flex"
+        >
+          <div
+            class="account-avatar"
+          >
+            <img
+              alt="subwallet"
+              src="/img/subwallet.svg"
+            />
+          </div>
            
           <div
-            class="base-title_action"
-          />
-           
-          <!---->
+            class="account-details s-flex"
+          >
+            <div
+              class="account-credentials s-flex"
+            >
+              <div
+                class="account-credentials_name"
+              >
+                SubWallet
+              </div>
+               
+              <div
+                class="account-credentials_description"
+              />
+            </div>
+             
+            <a
+              href="https://subwallet.org"
+              rel="nofollow noopener noreferrer"
+              target="_blank"
+            >
+              <s-button-stub
+                borderradius="small"
+                icon=""
+                iconposition="left"
+                nativetype="button"
+                size="small"
+                tabindex="0"
+                tooltip=""
+                tooltipplacement="top"
+                type="secondary"
+                usedesignsystem="true"
+              >
+                Install
+              </s-button-stub>
+            </a>
+          </div>
         </div>
-      </account-card-stub>
+      </s-card>
     </div>
     <div
       class="el-loading-mask"
@@ -225,7 +266,7 @@ exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen
 </s-card>
 `;
 
-exports[`WalletConnection.vue [Extensions is not available]: Install extension screen should be rendered 1`] = `
+exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen should be rendered 1`] = `
 <s-card
   border-radius="medium"
   class="base"
@@ -235,12 +276,12 @@ exports[`WalletConnection.vue [Extensions is not available]: Install extension s
 >
    
   <div
-    class="wallet-connection"
+    class="wallet-connection el-loading-parent--relative"
   >
     <p
       class="wallet-connection-text"
     >
-      Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.
+      No account found in your polkadot{.js} browser extension. Please add an account and try again.
     </p>
      
     <s-button-stub
@@ -257,7 +298,7 @@ exports[`WalletConnection.vue [Extensions is not available]: Install extension s
       usedesignsystem="true"
     >
       
-          Connect account
+          Refresh
         
     </s-button-stub>
      
@@ -278,104 +319,6 @@ exports[`WalletConnection.vue [Extensions is not available]: Install extension s
           Learn more
         
     </s-button-stub>
-  </div>
-</s-card>
-`;
-
-exports[`WalletConnection.vue [Multiple Extensions available]: Accounts should be rendered 1`] = `
-<s-card
-  border-radius="medium"
-  class="base"
-  primary=""
-  shadow="always"
-  size="big"
->
-   
-  <div
-    class="wallet-connection el-loading-parent--relative"
-  >
-    <p
-      class="wallet-connection-text"
-    >
-      Select a wallet to work with
-    </p>
-     
-    <div
-      class="wallet-connection-extensions"
-    >
-      <account-card-stub
-        class="wallet-connection-extension"
-      >
-        <div
-          class="base-title s-flex base-title--center"
-        >
-          <div
-            class="base-title_back"
-          >
-            <s-button
-              tooltip="Back"
-              type="action"
-            >
-              <s-icon
-                name="arrows-chevron-left-rounded-24"
-                size="28"
-              />
-            </s-button>
-          </div>
-           
-          <h3
-            class="base-title_text"
-          >
-            
-        SORA Network account
-        
-            <!---->
-          </h3>
-           
-          <div
-            class="base-title_action"
-          />
-           
-          <!---->
-        </div>
-      </account-card-stub>
-      <account-card-stub
-        class="wallet-connection-extension"
-      >
-        <div
-          class="base-title s-flex base-title--center"
-        >
-          <div
-            class="base-title_back"
-          >
-            <s-button
-              tooltip="Back"
-              type="action"
-            >
-              <s-icon
-                name="arrows-chevron-left-rounded-24"
-                size="28"
-              />
-            </s-button>
-          </div>
-           
-          <h3
-            class="base-title_text"
-          >
-            
-        SORA Network account
-        
-            <!---->
-          </h3>
-           
-          <div
-            class="base-title_action"
-          />
-           
-          <!---->
-        </div>
-      </account-card-stub>
-    </div>
     <div
       class="el-loading-mask"
       style="display: none;"

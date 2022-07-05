@@ -68,7 +68,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 
 import { state, action } from '../store/decorators';
-import { AppError, getWalletByExtension } from '../util';
+import { AppError } from '../util';
 
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Extensions } from '../consts';
@@ -90,8 +90,7 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @state.account.availableExtensions private availableExtensions!: Array<Extensions>;
-  @state.account.selectedExtension selectedExtension!: Nullable<Extensions>;
+  @state.account.availableWallets availableWallets!: Array<Wallet>;
 
   @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
@@ -102,16 +101,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
         this.navigateToExtensionsList();
       }
     });
-  }
-
-  get availableWallets(): Wallet[] {
-    return this.availableExtensions.reduce<Wallet[]>((buffer, name) => {
-      const wallet = getWalletByExtension(name);
-
-      if (wallet) buffer.push(wallet);
-
-      return buffer;
-    }, []);
   }
 
   get isAccountSwitch(): boolean {
@@ -202,10 +191,6 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
     } else if (this.isExtensionsView) {
       this.navigateToEntry();
     }
-  }
-
-  walletIsConnected(wallet: Wallet): boolean {
-    return !!wallet.extension && !!wallet.extension.signer;
   }
 
   private showAlert(error: unknown): void {
