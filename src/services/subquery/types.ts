@@ -49,10 +49,30 @@ export enum ModuleMethods {
   DemeterFarmingGetRewards = 'getRewards',
 }
 
+export enum AssetSnapshotTypes {
+  DEFAULT = 'DEFAULT',
+  HOUR = 'HOUR',
+  DAY = 'DAY',
+}
+
+export type AssetSnapshot = {
+  priceUSD: {
+    low: string;
+    high: string;
+    open: string;
+    close: string;
+  };
+  volume: {
+    amount: string;
+    amountUSD: string;
+  };
+  timestamp: number;
+};
+
 export type PoolXYKEntity = {
+  id: string;
   strategicBonusApy: Nullable<string>;
   priceUSD: Nullable<string>;
-  targetAssetId: string;
 };
 
 export type FiatPriceAndApyObject = {
@@ -60,13 +80,6 @@ export type FiatPriceAndApyObject = {
     price?: CodecString;
     strategicBonusApy?: CodecString;
   };
-};
-
-/**
- * `key` is timestamp, `value` is price USD
- */
-export type HistoricalPrice = {
-  [key: number]: CodecString;
 };
 
 export type HistoryElementError = {
@@ -216,9 +229,7 @@ export type ReferrerReserve = {
   amount: string;
 };
 
-export type ReferralRewardsGroup = {
-  keys: [string];
-  sum: {
-    amount: CodecString;
-  };
+export type AccountReferralReward = {
+  referral: string;
+  amount: string;
 };

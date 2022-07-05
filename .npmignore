@@ -1,0 +1,13 @@
+lib/src
+.scannerwork
+report
+tests
+src
+public
+build
+__mocks__
+.github
+.yarnrc
+Jenkinsfile
+jest.config.js
+cypress.json
