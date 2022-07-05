@@ -1,4 +1,5 @@
 import { saveAs } from 'file-saver';
+import base64 from 'base-64';
 
 export enum IMAGE_EXTENSIONS {
   SVG = '.svg',
@@ -96,3 +97,19 @@ export const svgSaveAs = async (
 
   saveAs(blob, filename);
 };
+
+export function getBase64Icon(icon: string): string {
+  const BASE64_PNG_PREFIX = 'data:image/png;base64';
+  const XML_SVG_PREFIX = 'data:image/svg+xml';
+
+  if (icon.startsWith(BASE64_PNG_PREFIX)) return icon;
+  if (icon.startsWith(XML_SVG_PREFIX)) {
+    // Take svg string starting from '<' char up to end
+    const svgUriEncoded = icon.substring(icon.indexOf('%3C'));
+    const svgUriDecoded = decodeURIComponent(svgUriEncoded);
+    const base64SvgEncoded = base64.encode(svgUriDecoded);
+    return `${XML_SVG_PREFIX};base64,${base64SvgEncoded}`;
+  }
+
+  return '';
+}

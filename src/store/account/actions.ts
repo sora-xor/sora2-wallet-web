@@ -203,7 +203,7 @@ const actions = defineActions({
       try {
         // @ts-expect-error
         const subscription = api.assets.balanceUpdated.subscribe(({ asset, isAssetDeposited }) => {
-          pushNotification(asset, isAssetDeposited);
+          pushNotification(asset, isAssetDeposited, getters.whitelist);
           commit.updateAccountAssets(api.assets.accountAssets);
         });
         commit.setAccountAssetsSubscription(subscription);
