@@ -98,18 +98,51 @@ export const svgSaveAs = async (
   saveAs(blob, filename);
 };
 
-export function getBase64Icon(icon: string): string {
+/**
+ * Transform svg to png icon
+ */
+export async function getBase64Icon(icon: string): Promise<string> {
   const BASE64_PNG_PREFIX = 'data:image/png;base64';
   const XML_SVG_PREFIX = 'data:image/svg+xml';
 
   if (icon.startsWith(BASE64_PNG_PREFIX)) return icon;
   if (icon.startsWith(XML_SVG_PREFIX)) {
-    // Take svg string starting from '<' char up to end
+    // take svg string starting from '<' char up to end
     const svgUriEncoded = icon.substring(icon.indexOf('%3C'));
     const svgUriDecoded = decodeURIComponent(svgUriEncoded);
     const base64SvgEncoded = base64.encode(svgUriDecoded);
-    return `${XML_SVG_PREFIX};base64,${base64SvgEncoded}`;
+
+    const base64SVG = `${XML_SVG_PREFIX};base64,${base64SvgEncoded}`;
+    const base64PNG = base64SvgToBase64Png(base64SVG);
+
+    return base64PNG;
   }
 
   return '';
+}
+
+function base64SvgToBase64Png(imgsrc: string): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const canvas = document.createElement('canvas');
+
+    canvas.setAttribute('width', '80');
+    canvas.setAttribute('height', '80');
+
+    const context = canvas.getContext('2d');
+
+    const image = new Image();
+    image.src = imgsrc;
+
+    image.onload = function () {
+      try {
+        if (context) {
+          context.drawImage(image, 0, 0);
+          const base64PNG = canvas.toDataURL('image/png');
+          resolve(base64PNG);
+        }
+      } catch (e) {
+        reject(e);
+      }
+    };
+  });
 }

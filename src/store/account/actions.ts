@@ -184,13 +184,21 @@ const actions = defineActions({
     }
   },
   async subscribeOnAssets(context): Promise<void> {
-    const { commit, dispatch } = accountActionContext(context);
+    const { commit, dispatch, getters } = accountActionContext(context);
     commit.resetAssetsSubscription();
     await dispatch.getAssets();
 
     const subscription = api.system.updated.subscribe((events) => {
       if (events.find((e) => e.event.section === 'assets' && e.event.method === 'AssetRegistered')) {
         dispatch.getAssets();
+      }
+
+      const notificationEvent = events.find((e) => e.event.section === 'assets' && e.event.method === 'Transfer');
+      // 'to' address
+      if (notificationEvent && notificationEvent.event.data[1].toJSON() === getters.account.address) {
+        const assetAddress = (notificationEvent.event.data[2].toJSON() as any).code;
+        const depositedAsset = getters.whitelist[assetAddress];
+        pushNotification(depositedAsset);
       }
     });
     commit.setAssetsSubscription(subscription);
@@ -201,9 +209,7 @@ const actions = defineActions({
 
     if (getters.isLoggedIn) {
       try {
-        // @ts-expect-error
-        const subscription = api.assets.balanceUpdated.subscribe(({ asset, isAssetDeposited }) => {
-          pushNotification(asset, isAssetDeposited, getters.whitelist);
+        const subscription = api.assets.balanceUpdated.subscribe(() => {
           commit.updateAccountAssets(api.assets.accountAssets);
         });
         commit.setAccountAssetsSubscription(subscription);
