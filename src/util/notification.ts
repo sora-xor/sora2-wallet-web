@@ -1,10 +1,16 @@
+import { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import { getBase64Icon } from './image';
 
-export async function pushNotification(asset): Promise<void> {
+export async function pushNotification(asset: WhitelistArrayItem, message: string): Promise<void> {
   if (Notification.permission === 'granted') {
     const notification = new Notification(asset.symbol, {
-      body: 'Asset balance has been deposited',
+      body: message,
       icon: await getBase64Icon(asset.icon),
     });
+
+    notification.onclick = function (event) {
+      event.preventDefault(); // prevent the browser from focusing the Notification's tab
+      window.open('https://polkaswap.io/#/wallet', '_blank');
+    };
   }
 }

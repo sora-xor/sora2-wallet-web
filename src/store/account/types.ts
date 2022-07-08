@@ -23,4 +23,5 @@ export type AccountState = {
   referralRewards: ReferrerRewards;
   availableExtensions: Array<Extensions>;
   extensionAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
+  assetsToNotifyQueue: Array<WhitelistArrayItem>;
 };

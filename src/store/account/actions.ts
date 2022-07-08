@@ -1,7 +1,7 @@
 import { defineActions } from 'direct-vuex';
 import { axiosInstance } from '@sora-substrate/util';
 import type { Signer } from '@polkadot/api/types';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { accountActionContext } from './../account';
 import { rootActionContext } from '../../store';
@@ -197,8 +197,8 @@ const actions = defineActions({
       // 'to' address
       if (notificationEvent && notificationEvent.event.data[1].toJSON() === getters.account.address) {
         const assetAddress = (notificationEvent.event.data[2].toJSON() as any).code;
-        const depositedAsset = getters.whitelist[assetAddress];
-        pushNotification(depositedAsset);
+        const depositedAsset = getters.whitelist[assetAddress] as WhitelistArrayItem;
+        commit.setAssetToNotify(depositedAsset);
       }
     });
     commit.setAssetsSubscription(subscription);
@@ -265,6 +265,12 @@ const actions = defineActions({
     } catch (error) {
       commit.clearReferralRewards();
     }
+  },
+  async notifyOnDeposit(context, data): Promise<void> {
+    const { commit } = accountActionContext(context);
+    const { asset, message }: { asset: WhitelistArrayItem; message: string } = data;
+    pushNotification(asset, message);
+    commit.popAssetFromNotificationQueue();
   },
   async addAsset(_, address?: string): Promise<void> {
     if (!address) return;

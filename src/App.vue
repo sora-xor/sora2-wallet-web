@@ -27,12 +27,14 @@ import SoraWallet from './SoraWallet.vue';
 import { SoraNetwork } from './consts';
 import { state, mutation, getter, action } from './store/decorators';
 import type { ApiKeysObject } from './types/common';
+import { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: { SoraWallet },
 })
 export default class App extends Mixins(TransactionMixin) {
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
+  @state.account.assetsToNotifyQueue assetsToNotifyQueue!: Array<WhitelistArrayItem>;
   @getter.transactions.firstReadyTx firstReadyTransaction!: Nullable<HistoryItem>;
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
   @getter.libraryTheme libraryTheme!: Theme;
@@ -43,6 +45,7 @@ export default class App extends Mixins(TransactionMixin) {
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncVoidFn;
   @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncVoidFn;
+  @action.account.notifyOnDeposit private notifyOnDeposit!: (data) => AsyncVoidFn;
 
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);
@@ -52,6 +55,12 @@ export default class App extends Mixins(TransactionMixin) {
     const localeLanguage = navigator.language;
     FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2);
     FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2);
+  }
+
+  @Watch('assetsToNotifyQueue')
+  private handleNotifyOnDeposit(data): void {
+    if (!data.length) return;
+    this.notifyOnDeposit({ asset: data[0], message: this.t('assetDeposit') });
   }
 
   @Watch('firstReadyTransaction', { deep: true })
