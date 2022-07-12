@@ -49,6 +49,13 @@ export enum ModuleMethods {
   DemeterFarmingGetRewards = 'getRewards',
 }
 
+export type PageInfo = {
+  hasNextPage?: boolean;
+  hasPreviousPage?: boolean;
+  startCursor?: string;
+  endCursor?: string;
+};
+
 export enum AssetSnapshotTypes {
   DEFAULT = 'DEFAULT',
   HOUR = 'HOUR',
