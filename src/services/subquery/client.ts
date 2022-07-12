@@ -29,6 +29,7 @@ export const createSubqueryClient = (url: string, subscriptions = false): Client
   const client = createClient({
     url,
     exchanges,
+    requestPolicy: 'network-only',
   });
 
   return client;
