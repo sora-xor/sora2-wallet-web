@@ -67,3 +67,10 @@ export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressM
   }
 }
 </style>
+
+<style scoped lang="scss">
+.account-credentials_address:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+</style>
