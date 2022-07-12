@@ -127,8 +127,8 @@ export default class SubqueryExplorer implements Explorer {
   public async getHistoricalPriceForAsset(
     assetId: string,
     type = AssetSnapshotTypes.DEFAULT,
-    first = null,
-    after = ''
+    first?: number,
+    after?: string
   ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: AssetSnapshot[] }>> {
     const filter = historicalPriceFilter(assetId, type);
 
@@ -221,7 +221,7 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public async request(query: any, variables = {}): Promise<any> {
+  public async request(query, variables = {}): Promise<any> {
     this.initClient();
 
     const { data } = await this.client.query(query, variables).toPromise();
