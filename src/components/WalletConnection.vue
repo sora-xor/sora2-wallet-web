@@ -214,6 +214,16 @@ $account-height: 60px;
 .wallet-connection-extension.s-card.neumorphic.s-size-small {
   padding: calc(var(--s-basic-spacing) * 1.25) $basic-spacing-small;
 }
+
+.s-card.wallet-account.wallet-connection {
+  &-account,
+  &-extension {
+    &:hover {
+      cursor: pointer;
+      border-color: var(--s-color-base-content-secondary);
+    }
+  }
+}
 </style>
 
 <style scoped lang="scss">
@@ -263,14 +273,6 @@ $accounts-number: 7;
   &-extension {
     &:not(:last-child) {
       margin-bottom: $basic-spacing-medium;
-    }
-  }
-
-  &-account,
-  &-extension {
-    &:hover {
-      cursor: pointer;
-      border-color: var(--s-color-base-content-secondary);
     }
   }
 }
