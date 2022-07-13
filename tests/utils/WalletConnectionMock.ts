@@ -11,3 +11,25 @@ export const POLKADOT_JS_ACCOUNTS_MOCK: Array<PolkadotJsAccount> = [
 export const SUBWALLET_JS_ACCOUNTS_MOCK: Array<PolkadotJsAccount> = [
   { address: '5Fo3FLDvmZUYQhjZvhNu1Ejsa86ksSQaxZ1CqJVCqgoNgvyM', name: 'name', source: Extensions.SubwalletJS },
 ];
+
+export const POLKADOT_WALLET_MOCK = {
+  title: 'Polkadot{.js}',
+  extensionName: Extensions.PolkadotJS,
+  installed: true,
+  logo: {
+    src: '/img/polkadot.svg',
+    alt: 'polkadot',
+  },
+  installUrl: 'https://polkadot.org',
+};
+
+export const SUBWALLET_WALLET_MOCK = {
+  title: 'SubWallet',
+  extensionName: Extensions.SubwalletJS,
+  installed: false,
+  logo: {
+    src: '/img/subwallet.svg',
+    alt: 'subwallet',
+  },
+  installUrl: 'https://subwallet.org',
+};
