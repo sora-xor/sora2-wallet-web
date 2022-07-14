@@ -31,9 +31,16 @@
     <input ref="input" type="file" class="qr-code-file" @change="handleFileInput" />
 
     <dialog-base :visible.sync="scanerDialog" :title="t('code.upload')">
-      <s-tabs v-if="multipleMediaDevices" class="s-flex" :value="selectedDeviceId" @input="handleChangeDevice">
-        <s-tab v-for="device in mediaDevices" :key="device.deviceId" :label="device.label" :name="device.deviceId" />
-      </s-tabs>
+      <s-radio-group
+        v-if="multipleMediaDevices"
+        :value="selectedDeviceId"
+        @input="handleChangeDevice"
+        class="device-select"
+      >
+        <s-radio v-for="(device, index) in mediaDevices" :key="index" :label="device.deviceId" :value="device.deviceId">
+          {{ device.label }}
+        </s-radio>
+      </s-radio-group>
       <div class="qr-code-stream">
         <video ref="preview" class="qr-code-stream-video" />
         <div class="mask">
@@ -289,6 +296,11 @@ $mask-box-angles: (
       transform: translateX(-50%);
     }
   }
+}
+
+.device-select {
+  display: flex;
+  flex-direction: column;
 }
 
 .mask {

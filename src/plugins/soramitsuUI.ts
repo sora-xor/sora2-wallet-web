@@ -20,6 +20,8 @@ import SFloatInput from '@soramitsu/soramitsu-js-ui/lib/components/Input/SFloatI
 import SForm from '@soramitsu/soramitsu-js-ui/lib/components/Form/SForm';
 import SFormItem from '@soramitsu/soramitsu-js-ui/lib/components/Form/SFormItem';
 import SPagination from '@soramitsu/soramitsu-js-ui/lib/components/Pagination';
+import SRadio from '@soramitsu/soramitsu-js-ui/lib/components/Radio/SRadio';
+import SRadioGroup from '@soramitsu/soramitsu-js-ui/lib/components/Radio/SRadioGroup';
 import SScrollbar from '@soramitsu/soramitsu-js-ui/lib/components/Scrollbar';
 import SSwitch from '@soramitsu/soramitsu-js-ui/lib/components/Switch';
 import STab from '@soramitsu/soramitsu-js-ui/lib/components/Tab/STab';
@@ -43,6 +45,8 @@ export function install(vue: typeof Vue, store) {
   vue.use(SForm);
   vue.use(SFormItem);
   vue.use(SPagination);
+  vue.use(SRadio);
+  vue.use(SRadioGroup);
   vue.use(SScrollbar);
   vue.use(SSwitch);
   vue.use(STab);
