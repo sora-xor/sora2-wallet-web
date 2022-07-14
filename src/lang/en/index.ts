@@ -192,6 +192,7 @@ export default {
     upload: 'Scan QR',
     recieve: 'Recieve',
     invalid: 'Invalid QR Code',
+    allowanceError: 'Check your camera availability and browser permissions to use it',
   },
   addAsset: {
     title: '@:addAssetText',
