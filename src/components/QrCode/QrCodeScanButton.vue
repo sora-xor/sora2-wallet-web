@@ -1,30 +1,32 @@
 <template>
-  <s-button
-    type="action"
-    size="medium"
-    rounded
-    :tooltip="t('code.upload')"
-    v-bind="$attrs"
-    class="qr-code-button"
-    @click="handleButtonClick"
-  >
-    <s-dropdown
-      type="ellipsis"
-      border-radius="mini"
-      icon="basic-scan-24"
-      @select="handleSelect"
-      class="qr-code-dropdown"
-      ref="dropdown"
+  <div>
+    <s-button
+      type="action"
+      size="medium"
+      rounded
+      :tooltip="t('code.upload')"
+      v-bind="$attrs"
+      class="qr-code-button"
+      @click="handleButtonClick"
     >
-      <template #menu>
-        <s-dropdown-item icon="basic-dashboard-24" :value="scanTypes.FILE" class="qr-code-dropdown__item">
-          Import an image
-        </s-dropdown-item>
-        <s-dropdown-item icon="camera-16" :value="scanTypes.STREAM" class="qr-code-dropdown__item">
-          Scan with camera
-        </s-dropdown-item>
-      </template>
-    </s-dropdown>
+      <s-dropdown
+        type="ellipsis"
+        border-radius="mini"
+        icon="basic-scan-24"
+        @select="handleSelect"
+        class="qr-code-dropdown"
+        ref="dropdown"
+      >
+        <template #menu>
+          <s-dropdown-item icon="basic-dashboard-24" :value="scanTypes.FILE" class="qr-code-dropdown__item">
+            {{ t('code.import') }}
+          </s-dropdown-item>
+          <s-dropdown-item icon="camera-16" :value="scanTypes.STREAM" class="qr-code-dropdown__item">
+            {{ t('code.scan') }}
+          </s-dropdown-item>
+        </template>
+      </s-dropdown>
+    </s-button>
 
     <input ref="input" type="file" class="qr-code-file" @change="handleFileInput" />
 
@@ -46,7 +48,7 @@
         </div>
       </div>
     </dialog-base>
-  </s-button>
+  </div>
 </template>
 
 <script lang="ts">
