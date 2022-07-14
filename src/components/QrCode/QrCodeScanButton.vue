@@ -1,19 +1,35 @@
 <template>
-  <div>
-    <s-dropdown type="ellipsis" icon="basic-scan-24" @select="handleSelect">
-      <template #default>
-        {{ t('code.upload') }}
-      </template>
+  <s-button
+    type="action"
+    size="medium"
+    rounded
+    :tooltip="t('code.upload')"
+    v-bind="$attrs"
+    class="qr-code-button"
+    @click="handleButtonClick"
+  >
+    <s-dropdown
+      type="ellipsis"
+      border-radius="mini"
+      icon="basic-scan-24"
+      @select="handleSelect"
+      class="qr-code-dropdown"
+      ref="dropdown"
+    >
       <template #menu>
-        <s-dropdown-item icon="basic-dashboard-24" :value="scanTypes.FILE"> Import an image </s-dropdown-item>
-        <s-dropdown-item icon="camera-16" :value="scanTypes.STREAM"> Scan with camera </s-dropdown-item>
+        <s-dropdown-item icon="basic-dashboard-24" :value="scanTypes.FILE" class="qr-code-dropdown__item">
+          Import an image
+        </s-dropdown-item>
+        <s-dropdown-item icon="camera-16" :value="scanTypes.STREAM" class="qr-code-dropdown__item">
+          Scan with camera
+        </s-dropdown-item>
       </template>
     </s-dropdown>
 
     <input ref="input" type="file" class="qr-code-file" @change="handleFileInput" />
 
     <dialog-base :visible.sync="scanerDialog" :title="t('code.upload')">
-      <s-tabs class="s-flex" :value="selectedDeviceId" @input="handleChangeDevice">
+      <s-tabs v-if="multipleMediaDevices" class="s-flex" :value="selectedDeviceId" @input="handleChangeDevice">
         <s-tab v-for="device in mediaDevices" :key="device.deviceId" :label="device.label" :name="device.deviceId" />
       </s-tabs>
       <div class="qr-code-stream">
@@ -30,7 +46,7 @@
         </div>
       </div>
     </dialog-base>
-  </div>
+  </s-button>
 </template>
 
 <script lang="ts">
@@ -41,6 +57,8 @@ import type { IScannerControls } from '@zxing/browser';
 import DialogBase from '../DialogBase.vue';
 
 import TranslationMixin from '../mixins/TranslationMixin';
+
+import type SDropdown from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdown/SDropdown.vue';
 
 enum SCAN_TYPES {
   FILE = 'file',
@@ -57,6 +75,7 @@ const reader = new BrowserQRCodeReader();
 export default class QrCodeScanButton extends Mixins(TranslationMixin) {
   @Ref('input') readonly input!: HTMLInputElement;
   @Ref('preview') readonly preview!: HTMLVideoElement;
+  @Ref('dropdown') readonly dropdown!: SDropdown;
 
   readonly scanTypes = SCAN_TYPES;
 
@@ -76,6 +95,15 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
     if (!flag) {
       this.stopScanProcess();
     }
+  }
+
+  get multipleMediaDevices(): boolean {
+    return this.mediaDevices.length > 1;
+  }
+
+  handleButtonClick(): void {
+    // emulate click in el-dropdown
+    (this.dropdown.$refs.dropdown as SDropdown).handleClick();
   }
 
   handleSelect(value: SCAN_TYPES): void {
@@ -197,6 +225,25 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
   }
 }
 </script>
+
+<style lang="scss">
+.qr-code {
+  &-dropdown {
+    &.el-dropdown {
+      color: inherit;
+
+      i {
+        font-size: 28px !important; // override style attr
+        color: inherit;
+      }
+    }
+
+    &__item {
+      border-radius: calc(var(--s-border-radius-mini) / 2);
+    }
+  }
+}
+</style>
 
 <style lang="scss" scoped>
 $mask-box-border: 2px solid var(--s-color-theme-accent);
