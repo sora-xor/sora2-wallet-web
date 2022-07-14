@@ -199,10 +199,9 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss" scoped>
-$preview-max-width: 480px;
+$mask-box-border: 2px solid var(--s-color-theme-accent);
 $mask-background-color: rgba(13, 13, 13, 0.5);
-$box-border: 2px solid var(--s-color-theme-accent);
-$angles: (
+$mask-box-angles: (
   'top-left': (
     'top',
     'left',
@@ -225,14 +224,20 @@ $angles: (
   &-file {
     display: none;
   }
+
   &-stream {
     position: relative;
     overflow: hidden;
     border-radius: var(--s-border-radius-small);
-    max-width: $preview-max-width;
+    width: 100%;
+    padding-top: 100%;
 
     &-video {
-      width: 100%;
+      position: absolute;
+      left: 50%;
+      top: 0;
+      height: 100%;
+      transform: translateX(-50%);
     }
   }
 }
@@ -242,10 +247,13 @@ $angles: (
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: $preview-max-width;
-  height: $preview-max-width;
+  width: 100%;
+  padding-top: 100%;
 
   &-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
     clip-path: polygon(0% 0%, 0% 100%, 25% 100%, 25% 25%, 75% 25%, 75% 75%, 25% 75%, 25% 100%, 100% 100%, 100% 0%);
@@ -262,22 +270,22 @@ $angles: (
     &-line {
       width: 100%;
       height: 100%;
-      border-bottom: $box-border;
+      border-bottom: $mask-box-border;
       animation: radar 4s infinite;
       animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
     }
 
     &-angle {
       position: absolute;
-      width: var(--s-size-medium);
-      height: var(--s-size-medium);
+      width: 15%;
+      height: 15%;
 
-      @each $class, $angle in $angles {
+      @each $class, $angle in $mask-box-angles {
         &.#{$class} {
           #{nth($angle, 1)}: 0;
           #{nth($angle, 2)}: 0;
-          border-#{nth($angle, 2)}: $box-border;
-          border-#{nth($angle, 1)}: $box-border;
+          border-#{nth($angle, 2)}: $mask-box-border;
+          border-#{nth($angle, 1)}: $mask-box-border;
           border-#{nth($angle, 1)}-#{nth($angle, 2)}-radius: 4px;
         }
       }
