@@ -406,6 +406,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
   &-actions {
     margin-top: #{$basic-spacing-medium};
+
+    & > *:not(:first-child) {
+      margin-left: $basic-spacing;
+    }
   }
 }
 
