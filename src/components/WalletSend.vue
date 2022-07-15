@@ -161,6 +161,8 @@ export default class WalletSend extends Mixins(
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
 
+  @state.router.previousRoute private previousRoute!: RouteNames;
+  @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
 
@@ -176,22 +178,20 @@ export default class WalletSend extends Mixins(
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
   created(): void {
+    if (!this.currentRouteParams.asset) {
+      this.handleBack();
+      return;
+    }
+
     if (this.currentRouteParams.address) {
       this.address = this.currentRouteParams.address as string;
     }
 
-    if (this.currentRouteParams.asset) {
-      const asset = { ...(this.currentRouteParams.asset as AccountAsset) };
-      const accountAsset = this.accountAssets.find((accountAsset) => accountAsset.address === asset.address);
-
-      if (accountAsset) {
-        this.assetBalance = accountAsset.balance;
-      } else {
-        this.resetAssetBalanceSubscription();
-        this.assetBalanceSubscription = api.assets.getAssetBalanceObservable(asset).subscribe((balance) => {
-          this.assetBalance = balance;
-        });
-      }
+    if (!this.accountAsset) {
+      this.resetAssetBalanceSubscription();
+      this.assetBalanceSubscription = api.assets.getAssetBalanceObservable(this.assetParams).subscribe((balance) => {
+        this.assetBalance = balance;
+      });
     }
   }
 
@@ -199,9 +199,19 @@ export default class WalletSend extends Mixins(
     this.resetAssetBalanceSubscription();
   }
 
+  get assetParams(): AccountAsset {
+    return this.currentRouteParams.asset as AccountAsset;
+  }
+
+  get accountAsset(): Nullable<AccountAsset> {
+    return this.accountAssets.find((accountAsset) => accountAsset.address === this.assetParams.address);
+  }
+
   get asset(): AccountAsset {
+    if (this.accountAsset) return this.accountAsset;
+
     return {
-      ...(this.currentRouteParams.asset as AccountAsset),
+      ...this.assetParams,
       balance: this.assetBalance as AccountBalance,
     };
   }
@@ -223,7 +233,7 @@ export default class WalletSend extends Mixins(
   }
 
   get transferableBalance(): CodecString {
-    return this.assetBalance ? this.assetBalance.transferable : '0';
+    return this.asset.balance ? this.asset.balance.transferable : '0';
   }
 
   get formattedBalance(): string {
@@ -239,10 +249,7 @@ export default class WalletSend extends Mixins(
   }
 
   get emptyAddress(): boolean {
-    if (!this.address.trim()) {
-      return true;
-    }
-    return false;
+    return !this.address.trim();
   }
 
   get isAccountAddress(): boolean {
@@ -335,7 +342,10 @@ export default class WalletSend extends Mixins(
       this.step = 1;
       return;
     }
-    this.navigate({ name: RouteNames.Wallet });
+    this.navigate({
+      name: this.previousRoute,
+      params: this.previousRouteParams,
+    });
   }
 
   async handleMaxClick(): Promise<void> {
