@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="qr-code-container">
     <s-button
       type="action"
       size="medium"
@@ -241,7 +241,7 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
     &.el-dropdown {
       color: inherit;
 
-      i {
+      i.el-tooltip.el-dropdown-selfdefine {
         font-size: 28px !important; // override style attr
         color: inherit;
       }
@@ -277,6 +277,10 @@ $mask-box-angles: (
 );
 
 .qr-code {
+  &-container {
+    display: inline-block;
+  }
+
   &-file {
     display: none;
   }

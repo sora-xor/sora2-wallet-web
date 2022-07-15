@@ -161,6 +161,8 @@ export default class WalletSend extends Mixins(
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
 
+  @state.router.previousRoute private previousRoute!: RouteNames;
+  @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
 
@@ -176,6 +178,11 @@ export default class WalletSend extends Mixins(
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
   created(): void {
+    if (!this.currentRouteParams.asset) {
+      this.handleBack();
+      return;
+    }
+
     if (this.currentRouteParams.address) {
       this.address = this.currentRouteParams.address as string;
     }
@@ -197,8 +204,6 @@ export default class WalletSend extends Mixins(
   }
 
   get accountAsset(): Nullable<AccountAsset> {
-    if (!this.assetParams) return null;
-
     return this.accountAssets.find((accountAsset) => accountAsset.address === this.assetParams.address);
   }
 
@@ -337,7 +342,10 @@ export default class WalletSend extends Mixins(
       this.step = 1;
       return;
     }
-    this.navigate({ name: RouteNames.Wallet });
+    this.navigate({
+      name: this.previousRoute,
+      params: this.previousRouteParams,
+    });
   }
 
   async handleMaxClick(): Promise<void> {
