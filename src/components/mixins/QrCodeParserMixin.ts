@@ -55,8 +55,8 @@ export default class QrCodeParserMixin extends Mixins(TranlationMixin) {
     }
   }
 
-  recieveByQrCode(asset: Nullable<AccountAsset>): void {
-    const name = asset ? RouteNames.RecieveToken : RouteNames.SelectAsset;
+  receiveByQrCode(asset: Nullable<AccountAsset>): void {
+    const name = asset ? RouteNames.ReceiveToken : RouteNames.SelectAsset;
 
     this.navigate({
       name,

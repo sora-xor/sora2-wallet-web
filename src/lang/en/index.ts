@@ -26,7 +26,7 @@ export default {
   copiedWithValue: '{value} is copied!',
   sendText: 'Send',
   sentText: 'Sent',
-  recievedText: 'Recieved',
+  receivedText: 'Received',
   addressText: 'Address',
   amountText: 'Amount',
   confirmText: 'Confirm',
@@ -185,12 +185,12 @@ export default {
   asset: {
     remove: 'Remove asset',
     select: 'Select an asset',
-    recieve: 'Recieve {symbol}',
+    receive: 'Receive {symbol}',
   },
   code: {
     download: 'Download QR Code',
     upload: 'Scan QR',
-    recieve: 'Recieve',
+    receive: 'Receive',
     invalid: 'Invalid QR Code',
   },
   addAsset: {
