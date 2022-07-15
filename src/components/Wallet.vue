@@ -42,7 +42,7 @@ import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletActivity from './WalletActivity.vue';
-import QrCodeScanButton from './QrCodeScanButton.vue';
+import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 
 import { RouteNames, WalletTabs } from '../consts';
 import { state, action } from '../store/decorators';

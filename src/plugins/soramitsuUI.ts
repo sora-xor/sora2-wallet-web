@@ -9,6 +9,7 @@ import SoramitsuUIStorePlugin from '@soramitsu/soramitsu-js-ui/lib/plugins/soram
 import SButton from '@soramitsu/soramitsu-js-ui/lib/components/Button/SButton';
 import SCard from '@soramitsu/soramitsu-js-ui/lib/components/Card/SCard';
 import SDesignSystemProvider from '@soramitsu/soramitsu-js-ui/lib/components/DesignSystem/SDesignSystemProvider';
+import SDialog from '@soramitsu/soramitsu-js-ui/lib/components/Dialog';
 import SDivider from '@soramitsu/soramitsu-js-ui/lib/components/Divider/SDivider';
 import SDropdown from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdown';
 import SDropdownItem from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdownItem';
@@ -19,6 +20,8 @@ import SFloatInput from '@soramitsu/soramitsu-js-ui/lib/components/Input/SFloatI
 import SForm from '@soramitsu/soramitsu-js-ui/lib/components/Form/SForm';
 import SFormItem from '@soramitsu/soramitsu-js-ui/lib/components/Form/SFormItem';
 import SPagination from '@soramitsu/soramitsu-js-ui/lib/components/Pagination';
+import SRadio from '@soramitsu/soramitsu-js-ui/lib/components/Radio/SRadio';
+import SRadioGroup from '@soramitsu/soramitsu-js-ui/lib/components/Radio/SRadioGroup';
 import SScrollbar from '@soramitsu/soramitsu-js-ui/lib/components/Scrollbar';
 import SSwitch from '@soramitsu/soramitsu-js-ui/lib/components/Switch';
 import STab from '@soramitsu/soramitsu-js-ui/lib/components/Tab/STab';
@@ -31,6 +34,7 @@ export function install(vue: typeof Vue, store) {
   vue.use(SButton);
   vue.use(SCard);
   vue.use(SDesignSystemProvider);
+  vue.use(SDialog);
   vue.use(SDivider);
   vue.use(SDropdown);
   vue.use(SDropdownItem);
@@ -41,6 +45,8 @@ export function install(vue: typeof Vue, store) {
   vue.use(SForm);
   vue.use(SFormItem);
   vue.use(SPagination);
+  vue.use(SRadio);
+  vue.use(SRadioGroup);
   vue.use(SScrollbar);
   vue.use(SSwitch);
   vue.use(STab);
