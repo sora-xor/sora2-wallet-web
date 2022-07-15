@@ -14,7 +14,7 @@ export enum RouteNames {
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
   CreateToken = 'CreateToken',
-  RecieveToken = 'RecieveToken',
+  ReceiveToken = 'ReceiveToken',
   AddAsset = 'AddAsset',
   SelectAsset = 'SelectAsset',
   WalletTransactionDetails = 'WalletTransactionDetails',
