@@ -42,7 +42,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       const isRecipient = this.account.address === value.to;
       const address = isRecipient ? value.from : value.to;
       const direction = isRecipient ? this.t('transaction.from') : this.t('transaction.to');
-      const action = isRecipient ? this.t('recievedText') : this.t('sentText');
+      const action = isRecipient ? this.t('receivedText') : this.t('sentText');
 
       params.address = formatAddress(address as string, 10);
       params.direction = direction;

@@ -6,7 +6,7 @@
       </s-button>
     </template>
 
-    <div class="recieve-token">
+    <div class="receive-token">
       <qr-code ref="qrcode" :value="code" />
       <wallet-account primary shadow="never" class="account-card" />
     </div>
@@ -21,7 +21,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
-import QrCode from './QrCode.vue';
+import QrCode from './QrCode/QrCode.vue';
 
 import { api } from '../api';
 import { RouteNames } from '../consts';
@@ -37,7 +37,7 @@ import type { Route } from '../store/router/types';
     QrCode,
   },
 })
-export default class RecieveToken extends Mixins(TranslationMixin) {
+export default class ReceiveToken extends Mixins(TranslationMixin) {
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset>;
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
@@ -52,7 +52,7 @@ export default class RecieveToken extends Mixins(TranslationMixin) {
   }
 
   get title(): string {
-    return this.t('asset.recieve', { symbol: this.asset.symbol });
+    return this.t('asset.receive', { symbol: this.asset.symbol });
   }
 
   get code(): string {
@@ -89,7 +89,7 @@ export default class RecieveToken extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss" scoped>
-.recieve-token {
+.receive-token {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;

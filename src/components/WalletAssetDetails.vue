@@ -55,7 +55,7 @@
 
           <qr-code-scan-button primary @change="parseQrCodeValue" />
 
-          <s-button type="action" primary rounded :tooltip="t('code.recieve')" @click="recieveByQrCode(asset)">
+          <s-button type="action" primary rounded :tooltip="t('code.receive')" @click="receiveByQrCode(asset)">
             <s-icon name="finance-receive-show-QR-24" size="28" />
           </s-button>
         </div>
@@ -123,7 +123,7 @@ import NftDetails from './NftDetails.vue';
 import InfoLine from './InfoLine.vue';
 import TokenLogo from './TokenLogo.vue';
 import WalletHistory from './WalletHistory.vue';
-import QrCodeScanButton from './QrCodeScanButton.vue';
+import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import { api } from '../api';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
@@ -406,6 +406,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
   &-actions {
     margin-top: #{$basic-spacing-medium};
+
+    & > *:not(:first-child) {
+      margin-left: $basic-spacing;
+    }
   }
 }
 
