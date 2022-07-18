@@ -1,13 +1,29 @@
-import { web3Enable, web3FromAddress, web3AccountsSubscribe } from '@polkadot/extension-dapp';
+import { getWallets, getWalletBySource } from '@subwallet/wallet-connect/dotsama/wallets';
+import type { Wallet, WalletAccount } from '@subwallet/wallet-connect/types';
+import type { Unsubcall } from '@polkadot/extension-inject/types';
+import type { Signer } from '@polkadot/types/types';
+
 import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
-import type { InjectedExtension, InjectedAccount } from '@polkadot/extension-inject/types';
+
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
 import { api } from '../api';
 import { ExplorerLink, SoraNetwork, ExplorerType, Extensions } from '../consts';
 import type { PolkadotJsAccount } from '../types/common';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
+
+export class AppError extends Error {
+  public translationKey: string;
+  public translationPayload: any;
+
+  constructor({ key = '', payload = {} } = {}, ...params) {
+    super(...params);
+    this.name = 'AppHandledError';
+    this.translationKey = key;
+    this.translationPayload = payload;
+  }
+}
 
 export const APP_NAME = 'Sora2 Wallet';
 
@@ -16,49 +32,62 @@ export const WHITE_LIST_GITHUB_URL =
 
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
-export const subscribeToPolkadotJsAccounts = async (
-  callback: (accounts: PolkadotJsAccount[]) => void
-): Promise<VoidFunction> => {
-  const unsubscribe = await web3AccountsSubscribe((injectedAccounts) => {
-    const accounts = injectedAccounts.map((account) => ({
-      address: account.address,
-      name: account.meta.name || '',
-      source: account.meta.source as Extensions,
-    }));
+const formatWalletAccount = (account: WalletAccount): PolkadotJsAccount => ({
+  address: account.address,
+  name: account.name || '',
+  source: account.source as Extensions,
+});
 
-    callback(accounts);
+const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAccount[] => {
+  return (accounts || []).map((account) => formatWalletAccount(account));
+};
+
+export const subscribeToPolkadotJsAccounts = async (
+  extension: Extensions,
+  callback: (accounts: PolkadotJsAccount[]) => void
+): Promise<Nullable<Unsubcall>> => {
+  const wallet = await getWallet(extension);
+
+  let resolveCall: VoidFunction;
+
+  const subscriptionResult = new Promise<void>((resolve) => {
+    resolveCall = resolve;
   });
+
+  const unsubscribe = await wallet.subscribeAccounts((injectedAccounts) => {
+    callback(formatWalletAccounts(injectedAccounts));
+    resolveCall();
+  });
+
+  await subscriptionResult;
 
   return unsubscribe;
 };
 
-export const getExtensions = async (): Promise<InjectedExtension[]> => {
-  let extensions: InjectedExtension[] = [];
+export const getAppWallets = (): Wallet[] => {
   try {
-    extensions = await web3Enable(APP_NAME);
+    return getWallets();
   } catch (error) {
-    throw new Error('polkadotjs.noExtensions');
+    throw new AppError({ key: 'polkadotjs.noExtensions' });
   }
-  if (!extensions.length) {
-    throw new Error('polkadotjs.noExtensions');
-  }
-  return extensions;
 };
 
-const getExtensionAccounts = async (extension: InjectedExtension): Promise<InjectedAccount[]> => {
-  return await extension.accounts.get();
-};
+export const getWalletByExtension = (extension: Extensions) => getWalletBySource(extension);
 
-export const getExtensionInfo = async (selectedExtension = Extensions.PolkadotJS) => {
-  const extension = (await getExtensions()).find((extension) => extension.name === selectedExtension);
+export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wallet> => {
+  const wallet = getWalletByExtension(extension);
 
-  if (!extension) {
-    throw new Error('polkadotjs.noExtensions');
+  if (!wallet) {
+    throw new AppError({ key: 'polkadotjs.noExtension', payload: { extension } });
   }
 
-  const accounts = await getExtensionAccounts(extension);
+  await wallet.enable();
 
-  return { accounts, signer: extension.signer };
+  if (!wallet.signer) {
+    throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension } });
+  }
+
+  return wallet;
 };
 
 /**
@@ -66,8 +95,21 @@ export const getExtensionInfo = async (selectedExtension = Extensions.PolkadotJS
  * @param address
  * @returns
  */
-export const getExtensionSigner = async (address: string) => {
-  return (await web3FromAddress(address)).signer;
+export const getExtensionSigner = async (address: string, extension: Extensions) => {
+  const wallet = await getWallet(extension);
+  const accounts = await wallet.getAccounts();
+
+  if (!accounts) {
+    throw new AppError({ key: 'polkadotjs.noAccounts', payload: { extension } });
+  }
+
+  const account = accounts.find((acc) => acc.address === address);
+
+  if (!account) {
+    throw new AppError({ key: 'polkadotjs.noAccount', payload: { extension } });
+  }
+
+  return { account: formatWalletAccount(account), signer: wallet.signer as Signer };
 };
 
 /**

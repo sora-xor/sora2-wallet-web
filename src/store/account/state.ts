@@ -28,7 +28,9 @@ export function initialState(): AccountState {
     fiatPriceAndApyObject: {},
     fiatPriceAndApyTimer: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
-    availableExtensions: [],
+    /** extension management */
+    selectedExtension: null,
+    availableWallets: [],
     extensionAvailabilityTimer: null,
   };
 }
