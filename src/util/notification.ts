@@ -10,7 +10,7 @@ export async function pushNotification(asset: WhitelistArrayItem, message: strin
 
     notification.onclick = function (event) {
       event.preventDefault(); // prevent the browser from focusing the Notification's tab
-      window.open('https://polkaswap.io/#/wallet', '_blank');
+      window.open('https://polkaswap.io/#/wallet');
     };
   }
 }
