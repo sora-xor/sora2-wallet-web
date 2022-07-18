@@ -45,7 +45,10 @@ export default class App extends Mixins(TransactionMixin) {
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncVoidFn;
   @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncVoidFn;
-  @action.account.notifyOnDeposit private notifyOnDeposit!: (data) => AsyncVoidFn;
+  @action.account.notifyOnDeposit private notifyOnDeposit!: (info: {
+    asset: WhitelistArrayItem;
+    message: string;
+  }) => AsyncVoidFn;
 
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);
@@ -58,9 +61,9 @@ export default class App extends Mixins(TransactionMixin) {
   }
 
   @Watch('assetsToNotifyQueue')
-  private handleNotifyOnDeposit(data): void {
-    if (!data.length) return;
-    this.notifyOnDeposit({ asset: data[0], message: this.t('assetDeposit') });
+  private handleNotifyOnDeposit(whitelistAssetArray: WhitelistArrayItem[]): void {
+    if (!whitelistAssetArray.length) return;
+    this.notifyOnDeposit({ asset: whitelistAssetArray[0], message: this.t('assetDeposit') });
   }
 
   @Watch('firstReadyTransaction', { deep: true })

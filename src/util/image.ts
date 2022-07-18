@@ -108,7 +108,12 @@ export async function getBase64Icon(icon: string): Promise<string> {
   if (icon.startsWith(BASE64_PNG_PREFIX)) return icon;
   if (icon.startsWith(XML_SVG_PREFIX)) {
     // take svg string starting from '<' char up to end
-    const svgUriEncoded = icon.substring(icon.indexOf('%3C'));
+    const svgUriEncodedTrimmed = icon.substring(icon.indexOf('%3C'));
+    // provide width and height for original svg
+    const svgUriEncoded = svgUriEncodedTrimmed.replace(
+      "xmlns='http://www.w3.org/2000/svg'",
+      "xmlns='http://www.w3.org/2000/svg' width='80px' height='80px' "
+    );
     const svgUriDecoded = decodeURIComponent(svgUriEncoded);
     const base64SvgEncoded = base64.encode(svgUriDecoded);
 
