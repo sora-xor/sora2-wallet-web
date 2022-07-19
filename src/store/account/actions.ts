@@ -1,7 +1,7 @@
 import { defineActions } from 'direct-vuex';
 import { axiosInstance } from '@sora-substrate/util';
 import type { Signer } from '@polkadot/api/types';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { accountActionContext } from './../account';
 import { rootActionContext } from '../../store';
@@ -16,6 +16,7 @@ import {
 } from '../../util';
 import { Extensions } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
+import { pushNotification } from '../../util/notification';
 
 const UPDATE_PRICES_INTERVAL = 30 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5_000;
@@ -202,13 +203,21 @@ const actions = defineActions({
     }
   },
   async subscribeOnAssets(context): Promise<void> {
-    const { commit, dispatch } = accountActionContext(context);
+    const { commit, dispatch, getters } = accountActionContext(context);
     commit.resetAssetsSubscription();
     await dispatch.getAssets();
 
     const subscription = api.system.updated.subscribe((events) => {
       if (events.find((e) => e.event.section === 'assets' && e.event.method === 'AssetRegistered')) {
         dispatch.getAssets();
+      }
+
+      const notificationEvent = events.find((e) => e.event.section === 'assets' && e.event.method === 'Transfer');
+      // 'to' address
+      if (notificationEvent && notificationEvent.event.data[1].toJSON() === getters.account.address) {
+        const assetAddress = (notificationEvent.event.data[2].toJSON() as any).code;
+        const depositedAsset = getters.whitelist[assetAddress] as WhitelistArrayItem;
+        commit.setAssetToNotify(depositedAsset);
       }
     });
     commit.setAssetsSubscription(subscription);
@@ -219,7 +228,7 @@ const actions = defineActions({
 
     if (getters.isLoggedIn) {
       try {
-        const subscription = api.assets.balanceUpdated.subscribe((data) => {
+        const subscription = api.assets.balanceUpdated.subscribe(() => {
           commit.updateAccountAssets(api.assets.accountAssets);
         });
         commit.setAccountAssetsSubscription(subscription);
@@ -275,6 +284,12 @@ const actions = defineActions({
     } catch (error) {
       commit.clearReferralRewards();
     }
+  },
+  async notifyOnDeposit(context, data): Promise<void> {
+    const { commit } = accountActionContext(context);
+    const { asset, message }: { asset: WhitelistArrayItem; message: string } = data;
+    pushNotification(asset, message);
+    commit.popAssetFromNotificationQueue();
   },
   async addAsset(_, address?: string): Promise<void> {
     if (!address) return;

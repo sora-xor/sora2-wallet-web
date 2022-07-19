@@ -15,6 +15,7 @@ export function initialState(): AccountState {
     name: storage.get('name') || '',
     source: storage.get('source') || '',
     assets: [],
+    assetsToNotifyQueue: [],
     assetsSubscription: null,
     /** account assets & subscription */
     accountAssets: [],

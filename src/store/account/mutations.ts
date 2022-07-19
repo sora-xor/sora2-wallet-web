@@ -73,6 +73,12 @@ const mutations = defineMutations<AccountState>()({
   updateAccountAssets(state, accountAssets: Array<AccountAsset>): void {
     state.accountAssets = accountAssets;
   },
+  setAssetToNotify(state, asset: WhitelistArrayItem): void {
+    state.assetsToNotifyQueue.push(asset);
+  },
+  popAssetFromNotificationQueue(state): void {
+    state.assetsToNotifyQueue.shift();
+  },
   setWhitelist(state, whitelistArray: Array<WhitelistArrayItem>): void {
     state.whitelistArray = whitelistArray;
   },
