@@ -25,4 +25,5 @@ export type AccountState = {
   selectedExtension: Nullable<Extensions>;
   availableWallets: Array<Wallet>;
   extensionAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
+  assetsToNotifyQueue: Array<WhitelistArrayItem>;
 };
