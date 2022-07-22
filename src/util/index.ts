@@ -68,7 +68,7 @@ export const getAppWallets = (): Wallet[] => {
   try {
     return getWallets();
   } catch (error) {
-    throw new AppError({ key: 'polkadotjs.noExtensions' }, { polkadotJs: TranslationConsts.PolkadotJs });
+    throw new AppError({ key: 'polkadotjs.noExtensions', payload: { polkadotJs: TranslationConsts.PolkadotJs } });
   }
 };
 
@@ -100,10 +100,7 @@ export const getExtensionSigner = async (address: string, extension: Extensions)
   const accounts = await wallet.getAccounts();
 
   if (!accounts) {
-    throw new AppError(
-      { key: 'polkadotjs.noAccounts', payload: { extension } },
-      { polkadotJs: TranslationConsts.PolkadotJs }
-    );
+    throw new AppError({ key: 'polkadotjs.noAccounts', payload: { extension } });
   }
 
   const account = accounts.find((acc) => acc.address === address);
