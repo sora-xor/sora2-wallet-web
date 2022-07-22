@@ -110,3 +110,14 @@ export enum LogoSize {
 }
 
 export const ObjectInit = () => null;
+
+export enum TranslationConsts {
+  Sora = 'SORA',
+  Ethereum = 'Ethereum',
+  Hashi = 'HASHI',
+  Xyk = 'XYK',
+  Metamask = 'MetaMask',
+  Polkadot = 'Polkadot',
+  PolkadotJs = 'Polkadot.js',
+  Etherscan = 'Etherscan',
+}

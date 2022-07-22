@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="t('wallet.title')">
+  <wallet-base :title="t('wallet.title', { sora: TranslationConsts.Sora })">
     <template #actions>
       <s-button
         v-if="permissions.createAssets"

@@ -9,7 +9,7 @@ import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
 import { api } from '../api';
-import { ExplorerLink, SoraNetwork, ExplorerType, Extensions } from '../consts';
+import { ExplorerLink, SoraNetwork, ExplorerType, Extensions, TranslationConsts } from '../consts';
 import type { PolkadotJsAccount } from '../types/common';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 
@@ -68,7 +68,7 @@ export const getAppWallets = (): Wallet[] => {
   try {
     return getWallets();
   } catch (error) {
-    throw new AppError({ key: 'polkadotjs.noExtensions' });
+    throw new AppError({ key: 'polkadotjs.noExtensions' }, { polkadotJs: TranslationConsts.PolkadotJs });
   }
 };
 
@@ -100,7 +100,10 @@ export const getExtensionSigner = async (address: string, extension: Extensions)
   const accounts = await wallet.getAccounts();
 
   if (!accounts) {
-    throw new AppError({ key: 'polkadotjs.noAccounts', payload: { extension } });
+    throw new AppError(
+      { key: 'polkadotjs.noAccounts', payload: { extension } },
+      { polkadotJs: TranslationConsts.PolkadotJs }
+    );
   }
 
   const account = accounts.find((acc) => acc.address === address);

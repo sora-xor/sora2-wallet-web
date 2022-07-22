@@ -1,5 +1,9 @@
 <template>
-  <wallet-base :title="t('connection.title')" :show-back="!isEntryView" @back="handleBackClick">
+  <wallet-base
+    :title="t('connection.title', { sora: TranslationConsts.Sora })"
+    :show-back="!isEntryView"
+    @back="handleBackClick"
+  >
     <div class="wallet-connection" v-loading="loading">
       <template v-if="!loading">
         <p class="wallet-connection-text">{{ connectionText }}</p>
@@ -131,10 +135,16 @@ export default class WalletConnection extends Mixins(TranslationMixin, LoadingMi
   }
 
   get connectionText(): string {
-    if (this.isEntryView) return this.t('connection.text');
+    if (this.isEntryView)
+      return this.t('connection.text', {
+        sora: this.TranslationConsts.Sora,
+        polkadotJs: this.TranslationConsts.PolkadotJs,
+      });
     if (this.isExtensionsView) return this.t('connection.selectWallet');
 
-    return this.t(this.polkadotJsAccounts.length ? 'connection.selectAccount' : 'connection.noAccounts');
+    return this.t(this.polkadotJsAccounts.length ? 'connection.selectAccount' : 'connection.noAccounts', {
+      polkadotJs: this.TranslationConsts.PolkadotJs,
+    });
   }
 
   async handleActionClick(): Promise<void> {

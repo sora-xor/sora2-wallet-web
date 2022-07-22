@@ -15,7 +15,9 @@
           v-model="address"
         />
         <template v-if="validAddress && isNotSoraAddress">
-          <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
+          <p class="wallet-send-address-warning">
+            {{ t('walletSend.addressWarning', { sora: TranslationConsts.Sora }) }}
+          </p>
           <s-tooltip :content="copyValueAssetId" :placement="top">
             <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress, $event)">
               {{ formattedSoraAddress }}
@@ -225,7 +227,7 @@ export default class WalletSend extends Mixins(
   }
 
   get tooltipContent(): string {
-    return this.step === 1 ? this.t('walletSend.tooltip') : '';
+    return this.step === 1 ? this.t('walletSend.tooltip', { sora: this.TranslationConsts.Sora }) : '';
   }
 
   get copyValueAssetId(): string {

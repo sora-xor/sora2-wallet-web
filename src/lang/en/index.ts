@@ -94,23 +94,18 @@ export default {
   },
   polkadotjs: {
     noExtensions:
-      'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
+      'No {polkadotJs} extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
     noExtension: 'No {extension} extension was found. Please install it and reload this page',
-    noAccounts: 'There seems to be no accounts in your Polkadot.js extension. Please add an account and try again.',
+    noAccounts: 'There seems to be no accounts in your {polkadotJs} extension. Please add an account and try again.',
     noAccount: '{extension} account error. Please check your account in the {extension} extension',
     noSigner: 'Access denied. Go to {extension} extension settings and open "Manage Website Access" to allow.',
   },
   connection: {
-    title: 'SORA Network account',
-    text: 'Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
-    install:
-      'No polkadot.js extension found. Install it and <a href="#" onclick="window.location.reload(true);" class="wallet-connection-link">reload</a> the page.<br/><span class="wallet-connection-link">https://polkadot.js.org/extension/</span>',
-    noPermissions:
-      'Accidentally denied access for polkadot{.js}?</br>Go to polkadot{.js} settings and open "Manage Website Access" to allow.',
-    noAccounts: 'No account found in your polkadot{.js} browser extension. Please add an account and try again.',
+    title: '{sora} Network account',
+    text: 'Connect your {sora} Network accounts or create new ones with {polkadotJs} browser extension. This extension allows you to securely sign transactions and manage assets in {sora} Network.',
+    noAccounts: 'No account found in your {polkadotJs} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
     selectWallet: 'Select a wallet to work with',
-    loadingTitle: 'Waiting for you to allow access to polkadot{.js} extension..',
     action: {
       install: 'Install extension',
       learnMore: 'Learn more',
@@ -124,7 +119,7 @@ export default {
     },
   },
   wallet: {
-    title: 'SORA Network account',
+    title: '{sora} Network account',
     [WalletTabs.Assets]: 'Assets',
     [WalletTabs.Activity]: 'Activity',
     addAsset: '@:addAssetText',
@@ -132,16 +127,16 @@ export default {
   },
   walletSend: {
     title: 'Send',
-    tooltip: 'Send tokens between SORA network accounts',
+    tooltip: 'Send tokens between {sora} network accounts',
     address: '@:addressText',
     addressWarning:
-      'Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:',
+      'Tokens will be sent to the {sora} address below. Make sure the recipient can access the {sora} chain to use the tokens:',
     addressError: 'You cannot send tokens to the same acount that you are currently connected to.',
     amount: '@:amountText',
     balance: 'Balance',
     max: 'MAX',
     fee: 'Network fee',
-    feeTooltip: "Network fee is used to ensure SORA system's growth and stable performance.",
+    feeTooltip: '@:networkFeeTooltipText',
     enterAddress: 'Enter address',
     badAddress: 'Incorrect address',
     enterAmount: 'Enter amount',
@@ -225,7 +220,6 @@ export default {
     titleCommon: 'Create',
     confirmTokenTitleCommon: 'Create Token',
     confirmTokenTitleNFT: 'Create NFT',
-    desc: 'Create and deploy custom asset on SORA',
     action: '@:createTokenText',
     actionNFT: '@:createTokenTextNFT',
     enterSymbol: 'Enter token symbol',
@@ -268,7 +262,6 @@ export default {
       title: 'Transaction submitted',
       desc: 'Create {symbol} token',
     },
-    tooltipValue: 'To create a token, you have to pay a fee',
     fee: 'Network fee',
     insufficientBalance: '@:insufficientBalanceText',
     feeError: 'Failed to get a fee for a transaction',
@@ -329,7 +322,7 @@ export default {
     header: 'Attention',
     info: 'Your XOR balance will be less than {fee} XOR after this transaction. You won’t be able to pay for the network fee for another transaction.',
     payoff:
-      'You would have to use the Bridge to get XOR from other networks, get sent XOR from another SORA account, or swap any other token already in your account into XOR.',
+      'You would have to use the Bridge to get XOR from other networks, get sent XOR from another {sora} account, or swap any other token already in your account into XOR.',
     button: 'Yes, I understand the risk',
   },
   historyErrorMessages: {

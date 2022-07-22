@@ -2,11 +2,15 @@ import { Vue, Component } from 'vue-property-decorator';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 
+import { TranslationConsts } from '../../consts';
+
 // enable dayjs plugin
 dayjs.extend(localizedFormat);
 
 @Component
 export default class TranslationMixin extends Vue {
+  readonly TranslationConsts = TranslationConsts;
+
   t(key: string, values?: any): string {
     return this.$root.$t(key, values) as string;
   }
