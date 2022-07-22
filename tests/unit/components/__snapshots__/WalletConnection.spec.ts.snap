@@ -80,7 +80,7 @@ exports[`WalletConnection.vue [Extension available]: Connect account screen shou
     <p
       class="wallet-connection-text"
     >
-      Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.
+      Connect your SORA Network accounts or create new ones with Polkadot.js browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.
     </p>
      
     <s-button-stub
@@ -281,7 +281,7 @@ exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen
     <p
       class="wallet-connection-text"
     >
-      No account found in your polkadot{.js} browser extension. Please add an account and try again.
+      No account found in your Polkadot.js browser extension. Please add an account and try again.
     </p>
      
     <s-button-stub

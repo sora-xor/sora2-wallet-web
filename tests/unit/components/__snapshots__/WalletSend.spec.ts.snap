@@ -400,7 +400,9 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
     <p
       class="wallet-send-address-warning"
     >
-      Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:
+      
+          Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:
+        
     </p>
      
     <s-tooltip-stub
