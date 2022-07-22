@@ -28,7 +28,6 @@ import type {
   ExtrinsicEvent,
 } from './types';
 import { SubstrateEvents } from './consts';
-import i18n from '../../lang';
 
 const insensitive = (value: string) => value.toLowerCase();
 
@@ -123,9 +122,22 @@ const getTransactionTimestamp = (tx: HistoryElement): number => {
   return !Number.isNaN(timestamp) ? timestamp : Date.now();
 };
 
+const parseError = (error: number | string) => {
+  const str = String(error);
+
+  if (/^0x/.test(str)) {
+    return new BN(str.replace(/^0x/, ''));
+  }
+
+  return new BN(error);
+};
+
 const getErrorMessage = (historyElementError: HistoryElementError): Record<string, string> => {
   try {
-    const [error, index] = [new BN(historyElementError.moduleErrorId), new BN(historyElementError.moduleErrorIndex)];
+    const [error, index] = [
+      parseError(historyElementError.moduleErrorId),
+      parseError(historyElementError.moduleErrorIndex),
+    ];
     const { name, section } = api.api.registry.findMetaError({ error, index });
     return { name, section };
   } catch (error) {
