@@ -1,10 +1,11 @@
+import { pipe, subscribe } from 'wonka';
 import { FPNumber } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
 
 import { HistoryElementsQuery } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
 import { HistoricalPriceQuery, historicalPriceFilter } from './queries/historicalPrice';
-import { FiatPriceQuery } from './queries/fiatPriceAndApy';
+import { FiatPriceQuery, FiatPriceSubscription } from './queries/fiatPriceAndApy';
 import { SoraNetwork } from '../../consts';
 import { AssetSnapshotTypes } from './types';
 
@@ -38,7 +39,7 @@ export default class SubqueryExplorer implements Explorer {
       throw new Error('Subquery endpoint is not set');
     }
 
-    this.client = createSubqueryClient(url);
+    this.client = createSubqueryClient(url, true);
   }
 
   public async getAccountTransactions(variables = {}): Promise<any> {
@@ -70,6 +71,10 @@ export default class SubqueryExplorer implements Explorer {
     } catch (error) {
       return null;
     }
+  }
+
+  public subscribeOnFiatPriceAndApyObject(): VoidFunction {
+    return this.subscribe(FiatPriceSubscription);
   }
 
   /**
@@ -227,5 +232,18 @@ export default class SubqueryExplorer implements Explorer {
     const { data } = await this.client.query(query, variables).toPromise();
 
     return data;
+  }
+
+  public subscribe(subscription): VoidFunction {
+    this.initClient();
+
+    const { unsubscribe } = pipe(
+      this.client.subscription(subscription),
+      subscribe((result) => {
+        console.log(result); // { data: ... }
+      })
+    );
+
+    return unsubscribe;
   }
 }

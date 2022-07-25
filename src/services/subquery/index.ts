@@ -3,3 +3,5 @@ import SubqueryDataParser from './parser';
 
 export const SubqueryExplorerService = new SubqueryExplorer();
 export const SubqueryDataParserService = new SubqueryDataParser();
+
+(window as any).SubqueryExplorerService = SubqueryExplorerService;

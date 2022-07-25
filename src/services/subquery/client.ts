@@ -5,13 +5,13 @@ import type { Client } from '@urql/core';
 
 export type { Client } from '@urql/core';
 
-const createSubscriptionClient = (url: string): SubscriptionClient => {
+const createSubscriptionClient = (url: string) => {
   const wsUrl = url.replace(/^http/, 'ws');
 
   return new SubscriptionClient(wsUrl, { reconnect: true });
 };
 
-const createSubscriptionExchange = (subscriptionClient: SubscriptionClient) => {
+const createSubscriptionExchange = (subscriptionClient) => {
   return subscriptionExchange({
     forwardSubscription: (operation) => subscriptionClient.request(operation),
   });
