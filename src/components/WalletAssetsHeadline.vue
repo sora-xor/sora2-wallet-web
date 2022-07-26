@@ -106,10 +106,16 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   }
 
   get chosenOptionText(): string {
-    if (this.filters.option === WalletFilteringOptions.ALL) return this.t('filter.all');
-    if (this.filters.option === WalletFilteringOptions.TOKEN) return this.t('filter.token');
-    if (this.filters.option === WalletFilteringOptions.NFT) return this.t('filter.nft');
-    return this.t('filter.all');
+    switch (this.filters.option) {
+      case WalletFilteringOptions.ALL:
+        return this.t('filter.all');
+      case WalletFilteringOptions.TOKEN:
+        return this.t('filter.token');
+      case WalletFilteringOptions.NFT:
+        return this.t('filter.nft');
+      default:
+        return this.t('filter.all');
+    }
   }
 
   mounted(): void {

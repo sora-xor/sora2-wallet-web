@@ -205,18 +205,22 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   filterAssets(filters: WalletAssetFilters): void {
+    const filterCallback = (asset: AccountAsset) => this.applyFilterOptions(asset, filters);
+
     if (filters.option === WalletFilteringOptions.ALL) {
-      this.assetList = api.assets.accountAssets.filter((asset) => this.applyFilterOptions(asset, filters));
+      this.assetList = api.assets.accountAssets.filter(filterCallback);
+      return;
     }
 
     if (filters.option === WalletFilteringOptions.TOKEN) {
       const tokens = api.assets.accountAssets.filter((asset) => !api.assets.isNft(asset));
-      this.assetList = tokens.filter((asset) => this.applyFilterOptions(asset, filters));
+      this.assetList = tokens.filter(filterCallback);
+      return;
     }
 
     if (filters.option === WalletFilteringOptions.NFT) {
       const nfts = api.assets.accountAssets.filter((asset) => api.assets.isNft(asset));
-      this.assetList = nfts.filter((asset) => this.applyFilterOptions(asset, filters));
+      this.assetList = nfts.filter(filterCallback);
     }
   }
 
@@ -227,13 +231,13 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
     // asset
     const isWhitelisted = api.assets.isWhitelist(asset, this.whitelist);
-    const notHaveZeroBalance = asset.balance.total !== '0';
+    const hasZeroBalance = asset.balance.total === '0';
 
     if (!isWhitelisted && showWhitelistedOnly) {
       return false;
     }
 
-    if (hideZeroBalance && !notHaveZeroBalance) {
+    if (hideZeroBalance && hasZeroBalance) {
       return false;
     }
 
@@ -241,7 +245,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   updated(): void {
-    !this.assetList.length ? (this.showEmptyListText = true) : (this.showEmptyListText = false);
+    this.showEmptyListText = !this.assetList.length;
   }
 }
 </script>
