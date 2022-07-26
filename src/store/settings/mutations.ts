@@ -4,7 +4,7 @@ import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from 'rxjs';
 
 import { api } from '../../api';
-import { SoraNetwork, WalletPermissions } from '../../consts';
+import { SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
 import { runtimeStorage, storage } from '../../util/storage';
 import type { ApiKeysObject } from '../../types/common';
 import type { SettingsState } from './types';
@@ -36,6 +36,10 @@ const mutations = defineMutations<SettingsState>()({
   toggleHideBalance(state): void {
     state.shouldBalanceBeHidden = !state.shouldBalanceBeHidden;
     storage.set('shouldBalanceBeHidden', state.shouldBalanceBeHidden);
+  },
+  setFilterOptions(state, filters: WalletAssetFilters): void {
+    // settingsStorage.set('filters', JSON.stringify(filters));
+    state.filters = filters;
   },
   setRuntimeVersion(state, version: number): void {
     state.runtimeVersion = version;

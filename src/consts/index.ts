@@ -35,6 +35,12 @@ export enum AddAssetTabs {
   NFT = 'AddAssetNFT',
 }
 
+export enum WalletFilteringOptions {
+  ALL = 'All',
+  TOKEN = 'Tokens',
+  NFT = 'NFTs',
+}
+
 export enum SoraNetwork {
   Dev = 'Dev',
   Test = 'Test',
@@ -74,6 +80,12 @@ export interface WalletPermissions {
   sendAssets?: boolean;
   showAssetDetails?: boolean;
   swapAssets?: boolean;
+}
+
+export interface WalletAssetFilters {
+  option: string;
+  verifiedOnly: boolean;
+  zeroBalance: boolean;
 }
 
 export interface WalletInitOptions {

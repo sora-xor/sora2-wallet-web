@@ -1,12 +1,6 @@
 <template>
   <div :class="computedClasses" v-loading="loading">
-    <div v-if="assetsFiatAmount">
-      <div class="total-fiat-values">
-        <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
-        <formatted-amount value-can-be-hidden is-fiat-value integer-only with-left-shift :value="assetsFiatAmount" />
-      </div>
-      <s-divider class="wallet-assets-divider" />
-    </div>
+    <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @filter-assets="filterAssets" />
     <s-scrollbar class="wallet-assets-scrollbar">
       <draggable v-model="assetList" @end="updateAssets" class="wallet-assets__draggable">
         <div v-for="(asset, index) in assetList" :key="asset.address">
@@ -73,6 +67,7 @@
             class="wallet-assets-divider"
           />
         </div>
+        <div v-if="showEmptyListText" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
       </draggable>
     </s-scrollbar>
 
@@ -90,29 +85,28 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import { api, FPNumber } from '@sora-substrate/util';
 import draggable from 'vuedraggable';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from './AssetList.vue';
 import AssetListItem from './AssetListItem.vue';
-import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
 
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 
-import { RouteNames, HiddenValue } from '../consts';
+import { RouteNames, HiddenValue, WalletAssetFilters, WalletPermissions, WalletFilteringOptions } from '../consts';
 import { formatAddress } from '../util';
-import { state, mutation } from '../store/decorators';
-import type { WalletPermissions } from '../consts';
+import { state, mutation, getter } from '../store/decorators';
 import type { Route } from '../store/router/types';
 
 @Component({
   components: {
     AssetList,
     AssetListItem,
-    FormattedAmount,
     FormattedAmountWithFiatValue,
+    WalletAssetsHeadline,
     draggable,
   },
 })
@@ -122,9 +116,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
   @state.settings.permissions permissions!: WalletPermissions;
 
-  assetList: Array<AccountAsset> = [];
+  @getter.account.whitelist private whitelist!: Whitelist;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
+
+  assetList: Array<AccountAsset> = [];
+  showEmptyListText = false;
 
   get computedClasses(): string {
     const baseClass = 'wallet-assets';
@@ -207,8 +204,44 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     }
   }
 
-  mounted(): void {
-    this.assetList = api.assets.accountAssets;
+  filterAssets(filters: WalletAssetFilters): void {
+    if (filters.option === WalletFilteringOptions.ALL) {
+      this.assetList = api.assets.accountAssets.filter((asset) => this.applyFilterOptions(asset, filters));
+    }
+
+    if (filters.option === WalletFilteringOptions.TOKEN) {
+      const tokens = api.assets.accountAssets.filter((asset) => !api.assets.isNft(asset));
+      this.assetList = tokens.filter((asset) => this.applyFilterOptions(asset, filters));
+    }
+
+    if (filters.option === WalletFilteringOptions.NFT) {
+      const nfts = api.assets.accountAssets.filter((asset) => api.assets.isNft(asset));
+      this.assetList = nfts.filter((asset) => this.applyFilterOptions(asset, filters));
+    }
+  }
+
+  applyFilterOptions(asset: AccountAsset, filters: WalletAssetFilters) {
+    // filter
+    const showWhitelistedOnly = filters.verifiedOnly;
+    const hideZeroBalance = filters.zeroBalance;
+
+    // asset
+    const isWhitelisted = api.assets.isWhitelist(asset, this.whitelist);
+    const notHaveZeroBalance = asset.balance.total !== '0';
+
+    if (!isWhitelisted && showWhitelistedOnly) {
+      return false;
+    }
+
+    if (hideZeroBalance && !notHaveZeroBalance) {
+      return false;
+    }
+
+    return true;
+  }
+
+  updated(): void {
+    !this.assetList.length ? (this.showEmptyListText = true) : (this.showEmptyListText = false);
   }
 }
 </script>
@@ -225,6 +258,16 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   &__draggable {
     height: calc(var(--s-asset-item-height--fiat) * 3);
+  }
+
+  &--empty {
+    margin-top: calc(var(--s-basic-spacing) * 2);
+    text-align: center;
+    color: var(--s-color-base-content-secondary);
+    font-size: var(--s-font-size-mini);
+    font-weight: 300;
+    line-height: var(--s-line-height-medium);
+    letter-spacing: var(--s-letter-spacing-small);
   }
 
   .asset {
@@ -325,28 +368,6 @@ $wallet-assets-count: 5;
 
   &-divider {
     margin: 0;
-  }
-
-  .total-fiat-values {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding-top: #{$basic-spacing-extra-small};
-    padding-bottom: #{$basic-spacing-extra-small};
-    text-align: center;
-    &__title {
-      text-transform: uppercase;
-      padding-right: #{$basic-spacing-extra-mini};
-      white-space: nowrap;
-      font-weight: 400;
-      letter-spacing: var(--s-letter-spacing-small);
-    }
-    .formatted-amount--fiat-value {
-      display: block;
-      font-size: var(--s-font-size-medium);
-      font-weight: 600;
-    }
   }
 }
 </style>
