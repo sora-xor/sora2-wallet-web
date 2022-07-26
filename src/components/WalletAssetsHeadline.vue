@@ -161,7 +161,7 @@ $size-px: 16px;
   &__switch {
     @include switch-block;
     padding-top: 0;
-    padding-bottom: calc($s-size-small / 2);
+    padding-bottom: calc(var(--s-size-small / 2));
 
     .el-switch__input:disabled + .el-switch__core {
       background-color: var(--s-color-base-content-tertiary) !important;
