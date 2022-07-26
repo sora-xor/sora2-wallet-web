@@ -118,6 +118,7 @@ export enum TranslationConsts {
   Xyk = 'XYK',
   Metamask = 'MetaMask',
   Polkadot = 'Polkadot',
+  Kusama = 'Kusama',
   PolkadotJs = 'Polkadot.js',
   Etherscan = 'Etherscan',
 }
