@@ -115,6 +115,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @state.account.withoutFiatAndApy private withoutFiatAndApy!: boolean;
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
   @state.settings.permissions permissions!: WalletPermissions;
+  @state.settings.filters filters!: WalletAssetFilters;
 
   @getter.account.whitelist private whitelist!: Whitelist;
 
@@ -209,19 +210,19 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
     if (filters.option === WalletFilteringOptions.ALL) {
       this.assetList = api.assets.accountAssets.filter(filterCallback);
-      return;
     }
 
     if (filters.option === WalletFilteringOptions.TOKEN) {
       const tokens = api.assets.accountAssets.filter((asset) => !api.assets.isNft(asset));
       this.assetList = tokens.filter(filterCallback);
-      return;
     }
 
     if (filters.option === WalletFilteringOptions.NFT) {
       const nfts = api.assets.accountAssets.filter((asset) => api.assets.isNft(asset));
       this.assetList = nfts.filter(filterCallback);
     }
+
+    this.showEmptyListText = !this.assetList.length;
   }
 
   applyFilterOptions(asset: AccountAsset, filters: WalletAssetFilters) {
@@ -244,8 +245,8 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return true;
   }
 
-  updated(): void {
-    this.showEmptyListText = !this.assetList.length;
+  beforeUpdate(): void {
+    this.filterAssets(this.filters);
   }
 }
 </script>
