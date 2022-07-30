@@ -13,8 +13,9 @@ export function initialState(): AccountState {
   return {
     address: storage.get('address') || '',
     name: storage.get('name') || '',
-    isExternal: Boolean(JSON.parse(storage.get('isExternal'))) || false,
+    source: storage.get('source') || '',
     assets: [],
+    assetsToNotifyQueue: [],
     assetsSubscription: null,
     /** account assets & subscription */
     accountAssets: [],
@@ -27,7 +28,9 @@ export function initialState(): AccountState {
     fiatPriceAndApyObject: {},
     fiatPriceAndApyTimer: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
-    extensionAvailability: false,
+    /** extension management */
+    selectedExtension: null,
+    availableWallets: [],
     extensionAvailabilityTimer: null,
     addressKeyMapping: {},
     addressPassphraseMapping: {},

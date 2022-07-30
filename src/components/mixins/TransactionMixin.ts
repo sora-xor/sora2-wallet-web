@@ -10,7 +10,7 @@ import LoadingMixin from './LoadingMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { HiddenValue } from '../../consts';
 import { getter, mutation, action } from '../../store/decorators';
-import type { Account, AccountAssetsTable } from '../../types/common';
+import type { PolkadotJsAccount, AccountAssetsTable } from '../../types/common';
 
 const twoAssetsBasedOperations = [
   Operation.AddLiquidity,
@@ -18,12 +18,14 @@ const twoAssetsBasedOperations = [
   Operation.RemoveLiquidity,
   Operation.Swap,
   Operation.SwapAndSend,
+  Operation.DemeterFarmingDepositLiquidity,
+  Operation.DemeterFarmingWithdrawLiquidity,
 ];
 const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
 
 @Component
 export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
-  @getter.account.account account!: Account;
+  @getter.account.account account!: PolkadotJsAccount;
   @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;
 
   @mutation.transactions.addActiveTx addActiveTransaction!: (id: string) => void;
@@ -40,13 +42,21 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       const isRecipient = this.account.address === value.to;
       const address = isRecipient ? value.from : value.to;
       const direction = isRecipient ? this.t('transaction.from') : this.t('transaction.to');
-      const action = isRecipient ? this.t('recievedText') : this.t('sentText');
+      const action = isRecipient ? this.t('receivedText') : this.t('sentText');
 
       params.address = formatAddress(address as string, 10);
       params.direction = direction;
       params.action = action;
     }
-    if ([...twoAssetsBasedOperations, Operation.Transfer].includes(value.type)) {
+    if (
+      [
+        ...twoAssetsBasedOperations,
+        Operation.Transfer,
+        Operation.DemeterFarmingGetRewards,
+        Operation.DemeterFarmingStakeToken,
+        Operation.DemeterFarmingUnstakeToken,
+      ].includes(value.type)
+    ) {
       params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
     }
     if (twoAssetsBasedOperations.includes(value.type)) {

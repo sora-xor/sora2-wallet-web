@@ -1,11 +1,15 @@
 import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
+import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Asset, AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
-import type { Subscription } from '@polkadot/x-rxjs';
+import type { Subscription } from 'rxjs';
+import type { Unsubcall } from '@polkadot/extension-inject/types';
 
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
 import { storage } from '../../util/storage';
 import { api } from '../../api';
+import { Extensions } from '../../consts';
+
 import type { AccountState } from './types';
 import type { FiatPriceAndApyObject, ReferrerRewards } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
@@ -29,7 +33,8 @@ const mutations = defineMutations<AccountState>()({
         'assets',
         'polkadotJsAccounts',
         'polkadotJsAccountsSubscription',
-        'extensionAvailability',
+        'selectedExtension',
+        'availableWallets',
         'extensionAvailabilityTimer',
       ],
       initialState()
@@ -60,13 +65,19 @@ const mutations = defineMutations<AccountState>()({
   syncWithStorage(state): void {
     state.address = storage.get('address') || '';
     state.name = storage.get('name') || '';
-    state.isExternal = Boolean(storage.get('isExternal')) || false;
+    state.source = storage.get('source') || '';
   },
   updateAssets(state, assets: Array<Asset>): void {
     state.assets = assets;
   },
   updateAccountAssets(state, accountAssets: Array<AccountAsset>): void {
     state.accountAssets = accountAssets;
+  },
+  setAssetToNotify(state, asset: WhitelistArrayItem): void {
+    state.assetsToNotifyQueue.push(asset);
+  },
+  popAssetFromNotificationQueue(state): void {
+    state.assetsToNotifyQueue.shift();
   },
   setWhitelist(state, whitelistArray: Array<WhitelistArrayItem>): void {
     state.whitelistArray = whitelistArray;
@@ -92,23 +103,25 @@ const mutations = defineMutations<AccountState>()({
   setPolkadotJsAccounts(state, polkadotJsAccounts: Array<PolkadotJsAccount>): void {
     state.polkadotJsAccounts = polkadotJsAccounts;
   },
-  setPolkadotJsAccountsSubscription(state, subscription: VoidFunction): void {
+  setPolkadotJsAccountsSubscription(state, subscription: Nullable<Unsubcall>): void {
     state.polkadotJsAccountsSubscription = subscription;
   },
   resetPolkadotJsAccountsSubscription(state): void {
-    state.polkadotJsAccounts = [];
     if (typeof state.polkadotJsAccountsSubscription === 'function') {
       state.polkadotJsAccountsSubscription();
     }
     state.polkadotJsAccountsSubscription = null;
   },
-  selectPolkadotJsAccount(state, name: string): void {
+  selectPolkadotJsAccount(state, { name = '', source = '' } = {}): void {
     state.address = api.address;
+    state.source = source;
     state.name = name;
-    state.isExternal = true;
   },
-  setExtensionAvailability(state, availability: boolean): void {
-    state.extensionAvailability = availability;
+  setAvailableWallets(state, wallets: Wallet[]) {
+    state.availableWallets = wallets;
+  },
+  setSelectedExtension(state, extension: Extensions) {
+    state.selectedExtension = extension;
   },
   setExtensionAvailabilitySubscription(state, timeout: NodeJS.Timeout | number): void {
     state.extensionAvailabilityTimer = timeout;

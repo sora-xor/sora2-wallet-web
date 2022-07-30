@@ -1,26 +1,22 @@
+import { gql } from '@urql/core';
+
 import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../types';
 import { SubstrateEvents } from '../consts';
 
-export const HistoryElementsQuery = `
-  query HistoryElements (
-    $first: Int = null,
-    $last: Int = null,
-    $after: Cursor = "",
-    $before: Cursor = "",
-    $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC,
+import { PageInfoFragment } from '../fragments/pageInfo';
+
+export const HistoryElementsQuery = gql`
+  query HistoryElements(
+    $first: Int = null
+    $last: Int = null
+    $after: Cursor = ""
+    $before: Cursor = ""
+    $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC
     $filter: HistoryElementFilter
-    $idsOnly: Boolean! = false)
-  {
-    historyElements (
-      first: $first
-      last: $last
-      before: $before
-      after: $after
-      orderBy: $orderBy
-      filter: $filter
-    )
-    {
+    $idsOnly: Boolean! = false
+  ) {
+    historyElements(first: $first, last: $last, before: $before, after: $after, orderBy: $orderBy, filter: $filter) {
       edges {
         cursor @skip(if: $idsOnly)
         node {
@@ -37,14 +33,12 @@ export const HistoryElementsQuery = `
         }
       }
       pageInfo @skip(if: $idsOnly) {
-        hasNextPage
-        hasPreviousPage
-        startCursor
-        endCursor
+        ...PageInfoFragment
       }
       totalCount @skip(if: $idsOnly)
     }
   }
+  ${PageInfoFragment}
 `;
 
 type DataCriteria = {
@@ -61,6 +55,24 @@ const RewardsClaimExtrinsics = [
   [ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimRewards],
   [ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimCrowdloanRewards],
 ];
+
+const DemeterFarmingDeposit = {
+  module: {
+    equalTo: ModuleNames.DemeterFarming,
+  },
+  method: {
+    equalTo: ModuleMethods.DemeterFarmingDeposit,
+  },
+};
+
+const DemeterFarmingWithdraw = {
+  module: {
+    equalTo: ModuleNames.DemeterFarming,
+  },
+  method: {
+    equalTo: ModuleMethods.DemeterFarmingWithdraw,
+  },
+};
 
 const OperationFilterMap = {
   [Operation.Swap]: {
@@ -200,6 +212,19 @@ const OperationFilterMap = {
         })),
       },
     ],
+  },
+  // DEMETER
+  [Operation.DemeterFarmingDepositLiquidity]: DemeterFarmingDeposit,
+  [Operation.DemeterFarmingWithdrawLiquidity]: DemeterFarmingWithdraw,
+  [Operation.DemeterFarmingStakeToken]: DemeterFarmingDeposit,
+  [Operation.DemeterFarmingUnstakeToken]: DemeterFarmingWithdraw,
+  [Operation.DemeterFarmingGetRewards]: {
+    module: {
+      equalTo: ModuleNames.DemeterFarming,
+    },
+    method: {
+      equalTo: ModuleMethods.DemeterFarmingGetRewards,
+    },
   },
 };
 
@@ -385,47 +410,6 @@ export const historyElementsFilter = ({
   if (queryFilters.length) {
     filter.and.push({
       or: queryFilters,
-    });
-  }
-
-  return filter;
-};
-
-/**
- * This method should be used **only** for filtering history elements in terms of Noir redeemed value
- * @param address Noir Account Id
- * @param noirAssetId Noir Asset Id
- */
-export const noirHistoryElementsFilter = (
-  address = 'cnW1pm3hDysWLCD4xvQAKFmW9QPjMG5zmnRxBpc6hd3P7CWP3',
-  noirAssetId = ''
-): any => {
-  const filter: any = {
-    and: [
-      {
-        method: {
-          in: ['transfer'],
-        },
-      },
-    ],
-  };
-
-  filter.and.push({
-    or: [
-      {
-        data: {
-          contains: {
-            to: address,
-            // amount: { greaterThan: 1 }, amount is a string so this operator doesn't work
-          },
-        },
-      },
-    ],
-  });
-
-  if (noirAssetId) {
-    filter.and.push({
-      or: createAssetCriteria(noirAssetId),
     });
   }
 

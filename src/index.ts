@@ -10,7 +10,7 @@ import WalletAccount from './components/WalletAccount.vue';
 import WalletAvatar from './components/WalletAvatar.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
-import AddAssetDetailsCard from './components/AddAssetDetailsCard.vue';
+import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
 import TokenAddress from './components/TokenAddress.vue';
 import SearchInput from './components/SearchInput.vue';
 import InfoLine from './components/InfoLine.vue';
@@ -19,6 +19,7 @@ import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatVa
 import TransactionHashView from './components/TransactionHashView.vue';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import TokenLogo from './components/TokenLogo.vue';
+import DialogBase from './components/DialogBase.vue';
 // Mixins
 import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
@@ -28,6 +29,8 @@ import TranslationMixin from './components/mixins/TranslationMixin';
 import LoadingMixin from './components/mixins/LoadingMixin';
 import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
 import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
+import CopyAddressMixin from './components/mixins/CopyAddressMixin';
+import DialogMixin from './components/mixins/DialogMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
@@ -131,6 +134,7 @@ const components = {
   TransactionHashView,
   NetworkFeeWarning,
   TokenLogo,
+  DialogBase,
 };
 
 const mixins = {
@@ -142,6 +146,8 @@ const mixins = {
   LoadingMixin,
   ReferralRewardsMixin,
   PaginationSearchMixin,
+  CopyAddressMixin,
+  DialogMixin,
 };
 
 const vuex = {

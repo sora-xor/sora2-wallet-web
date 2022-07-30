@@ -17,7 +17,9 @@
           <s-icon v-if="isComplete" name="basic-check-mark-24" size="16px" />
         </info-line>
         <info-line v-if="selectedTransaction.errorMessage" :label="t('transaction.errorMessage')">
-          <span :class="statusClass">{{ selectedTransaction.errorMessage }}</span>
+          <span :class="statusClass">{{
+            getErrorMessage(selectedTransaction.errorMessage.section, selectedTransaction.errorMessage.name)
+          }}</span>
         </info-line>
         <info-line v-if="selectedTransaction.startTime" :label="t('transaction.startTime')" :value="transactionDate" />
         <info-line
@@ -26,7 +28,7 @@
           value-can-be-hidden
           :label="t('transaction.amount')"
           :value="transactionAmount"
-          :asset-symbol="selectedTransaction.symbol"
+          :asset-symbol="transactionSymbol"
         />
         <info-line
           v-if="selectedTransaction.amount2"
@@ -34,7 +36,7 @@
           value-can-be-hidden
           :label="t('transaction.amount2')"
           :value="transactionAmount2"
-          :asset-symbol="selectedTransaction.symbol2"
+          :asset-symbol="transactionSymbol2"
         />
       </div>
       <transaction-hash-view
@@ -67,7 +69,7 @@ import TransactionHashView from './TransactionHashView.vue';
 
 import { RouteNames, WalletTabs, HashType } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
-import type { Account } from '../types/common';
+import type { PolkadotJsAccount } from '../types/common';
 import type { Route } from '../store/router/types';
 
 @Component({
@@ -81,9 +83,8 @@ import type { Route } from '../store/router/types';
 export default class WalletTransactionDetails extends Mixins(TranslationMixin, NumberFormatterMixin) {
   readonly HashType = HashType;
 
-  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
-  @getter.account.account private account!: Account;
+  @getter.account.account private account!: PolkadotJsAccount;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
@@ -95,12 +96,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
       this.navigate({ name: RouteNames.Wallet });
     }
     this.setTxDetailsId(id);
-  }
-
-  get asset(): AccountAsset {
-    // currentRouteParams.asset was added here to avoid a case when the asset is not found
-    const asset = this.currentRouteParams.asset as AccountAsset;
-    return this.accountAssets.find(({ address }) => address === asset.address) || asset;
   }
 
   get statusClass(): Array<string> {
@@ -149,6 +144,20 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
     return this.formatStringValue(this.selectedTransaction.amount2 as string);
   }
 
+  get transactionSymbol(): string {
+    const { type, symbol, symbol2 } = this.selectedTransaction;
+
+    if ([Operation.DemeterFarmingDepositLiquidity, Operation.DemeterFarmingWithdrawLiquidity].includes(type)) {
+      return `${symbol}-${symbol2}`;
+    }
+
+    return symbol || '';
+  }
+
+  get transactionSymbol2(): string {
+    return this.selectedTransaction.symbol2 || '';
+  }
+
   get transactionDate(): string {
     return this.formatDate(this.selectedTransaction.startTime as number);
   }
@@ -165,9 +174,22 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
     return this.isSetReferralOperation && this.account.address === this.selectedTransaction.from;
   }
 
+  getErrorMessage(section: string, name: string): string {
+    let errMessage = this.t(`historyErrorMessages.generalError`) as string;
+
+    if (name && section) {
+      errMessage = this.t(`historyErrorMessages.${section}.${name}`) as string;
+      if (errMessage.startsWith('historyErrorMessages')) {
+        return this.t(`historyErrorMessages.generalError`) as string;
+      }
+    }
+
+    return errMessage as string;
+  }
+
   handleBack(): void {
     if (this.currentRouteParams.asset) {
-      this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.asset } });
+      this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.currentRouteParams.asset } });
       return;
     }
     this.navigate({ name: RouteNames.Wallet, params: { currentTab: WalletTabs.Activity } });

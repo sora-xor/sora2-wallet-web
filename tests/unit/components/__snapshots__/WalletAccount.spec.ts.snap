@@ -1,23 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WalletAccount.vue should be rendered correctly 1`] = `
-<s-card-stub
+<s-card
   borderradius="medium"
   class="wallet-account"
   shadow="always"
   size="small"
-  status="default"
-  usedesignsystem="true"
 >
   <div
     class="account s-flex"
   >
-    <wallet-avatar-stub
-      address="cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo"
+    <div
       class="account-avatar"
-      size="28"
-      theme="polkadot"
-    />
+    >
+      <wallet-avatar-stub
+        address="cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo"
+        class="account-gravatar"
+        size="28"
+        slot="avatar"
+        theme="polkadot"
+      />
+    </div>
      
     <div
       class="account-details s-flex"
@@ -31,29 +34,35 @@ exports[`WalletAccount.vue should be rendered correctly 1`] = `
           Polkadot Name
         </div>
          
-        <s-tooltip-stub
-          animation="el-fade-in-linear"
-          borderradius="small"
-          closedelay="0"
-          content="Copy address"
-          hideafter="0"
-          offset="0"
-          opendelay="1000"
-          placement="top"
-          showarrow="true"
-          tabindex="0"
-          theme="auto"
-          usedesignsystem="true"
+        <div
+          class="account-credentials_description"
         >
-          <div
-            class="account-credentials_address"
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content="Copy Wallet address"
+            hideafter="0"
+            offset="0"
+            opendelay="500"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
           >
-            cnRXua6zs8Ta...TvL6UHcHDCvo
-          </div>
-        </s-tooltip-stub>
+            <div
+              class="account-credentials_address"
+            >
+              
+        cnRXua6zs8Ta...TvL6UHcHDCvo
+      
+            </div>
+          </s-tooltip-stub>
+        </div>
       </div>
        
     </div>
   </div>
-</s-card-stub>
+</s-card>
 `;

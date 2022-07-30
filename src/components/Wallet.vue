@@ -14,7 +14,7 @@
     <wallet-account>
       <qr-code-scan-button alternative @change="parseQrCodeValue" />
 
-      <s-button type="action" alternative rounded :tooltip="t('code.recieve')" @click="recieveByQrCode(null)">
+      <s-button type="action" alternative rounded :tooltip="t('code.receive')" @click="receiveByQrCode(null)">
         <s-icon name="finance-receive-show-QR-24" size="28" />
       </s-button>
 
@@ -42,7 +42,7 @@ import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletActivity from './WalletActivity.vue';
-import QrCodeScanButton from './QrCodeScanButton.vue';
+import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 
 import { RouteNames, WalletTabs } from '../consts';
 import { state, action } from '../store/decorators';

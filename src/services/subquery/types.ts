@@ -23,6 +23,7 @@ export enum ModuleNames {
   Rewards = 'rewards',
   VestedRewards = 'vestedRewards',
   PswapDistribution = 'pswapDistribution',
+  DemeterFarming = 'demeterFarmingPlatform',
 }
 
 export enum ModuleMethods {
@@ -43,12 +44,42 @@ export enum ModuleMethods {
   VestedRewardsClaimRewards = 'claimRewards',
   VestedRewardsClaimCrowdloanRewards = 'claimCrowdloanRewards',
   PswapDistributionClaimIncentive = 'claimIncentive',
+  DemeterFarmingDeposit = 'deposit',
+  DemeterFarmingWithdraw = 'withdraw',
+  DemeterFarmingGetRewards = 'getRewards',
 }
 
+export type PageInfo = {
+  hasNextPage?: boolean;
+  hasPreviousPage?: boolean;
+  startCursor?: string;
+  endCursor?: string;
+};
+
+export enum AssetSnapshotTypes {
+  DEFAULT = 'DEFAULT',
+  HOUR = 'HOUR',
+  DAY = 'DAY',
+}
+
+export type AssetSnapshot = {
+  priceUSD: {
+    low: string;
+    high: string;
+    open: string;
+    close: string;
+  };
+  volume: {
+    amount: string;
+    amountUSD: string;
+  };
+  timestamp: number;
+};
+
 export type PoolXYKEntity = {
+  id: string;
   strategicBonusApy: Nullable<string>;
   priceUSD: Nullable<string>;
-  targetAssetId: string;
 };
 
 export type FiatPriceAndApyObject = {
@@ -56,13 +87,6 @@ export type FiatPriceAndApyObject = {
     price?: CodecString;
     strategicBonusApy?: CodecString;
   };
-};
-
-/**
- * `key` is timestamp, `value` is price USD
- */
-export type HistoricalPrice = {
-  [key: number]: CodecString;
 };
 
 export type HistoryElementError = {
@@ -105,6 +129,14 @@ export type HistoryElementLiquidityOperation = {
 
 export type HistoryElementAssetRegistration = {
   assetId: string;
+};
+
+export type HistoryElementDemeterFarming = {
+  amount: string;
+  assetId: string;
+  isFarm: boolean;
+  rewardAssetId?: string;
+  baseAssetId?: string;
 };
 
 export type ClaimedRewardItem = {
@@ -171,6 +203,7 @@ export type HistoryElement = {
     | HistoryElementEthBridgeOutgoing
     | HistoryElementEthBridgeIncoming
     | HistoryElementRewardsClaim
+    | HistoryElementDemeterFarming
   >;
 };
 
@@ -203,9 +236,7 @@ export type ReferrerReserve = {
   amount: string;
 };
 
-export type ReferralRewardsGroup = {
-  keys: [string];
-  sum: {
-    amount: CodecString;
-  };
+export type AccountReferralReward = {
+  referral: string;
+  amount: string;
 };

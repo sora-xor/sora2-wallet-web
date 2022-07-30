@@ -1,3 +1,4 @@
+import { Extensions } from '../consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 export type { KeyringPair$Json } from '@polkadot/keyring/types';
 
@@ -11,7 +12,6 @@ export enum Modules {
 
 export enum Operations {
   Send = 'send',
-  Receive = 'receive',
   Swap = 'swap',
   Liquidity = 'liquidity',
   Bridge = 'bridge',
@@ -24,10 +24,7 @@ export type AddressKeyMapping = {
 export interface PolkadotJsAccount {
   address: string;
   name: string;
-}
-
-export interface Account extends PolkadotJsAccount {
-  isExternal: boolean;
+  source?: Extensions;
 }
 
 export type WhitelistIdsBySymbol = { [key: string]: string };

@@ -7,7 +7,6 @@
     @bridge="(asset) => handleOperation(Operations.Bridge, asset)"
     @learn-more="handleLearnMore"
     @close="handleClose"
-    @add-asset="handleShowAddAssetNotification"
   />
 </template>
 
@@ -15,11 +14,10 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
-import AddAsset from './components/AddAsset.vue';
-import AddAssetDetails from './components/AddAssetDetails.vue';
+import AddAsset from './components/AddAsset/AddAsset.vue';
 import SelectAsset from './components/SelectAsset.vue';
 import CreateToken from './components/CreateToken.vue';
-import RecieveToken from './components/RecieveToken.vue';
+import ReceiveToken from './components/ReceiveToken.vue';
 import Wallet from './components/Wallet.vue';
 import WalletAssetDetails from './components/WalletAssetDetails.vue';
 import WalletConnection from './components/WalletConnection.vue';
@@ -36,10 +34,9 @@ import type { RouteNames } from './consts';
 @Component({
   components: {
     AddAsset,
-    AddAssetDetails,
     SelectAsset,
     CreateToken,
-    RecieveToken,
+    ReceiveToken,
     Wallet,
     WalletAssetDetails,
     WalletConnection,
@@ -66,14 +63,6 @@ export default class SoraWallet extends Mixins(LoadingMixin, TranslationMixin) {
 
   handleLearnMore(): void {
     this.$emit('learn-more');
-  }
-
-  handleShowAddAssetNotification(symbol?: string): void {
-    this.$notify({
-      message: this.t('addAsset.success', { symbol: symbol || '' }),
-      type: 'success',
-      title: '',
-    });
   }
 }
 </script>

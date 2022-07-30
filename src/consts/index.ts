@@ -2,17 +2,22 @@ import type { FPNumber, Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
+export enum Extensions {
+  PolkadotJS = 'polkadot-js',
+  SubwalletJS = 'subwallet-js',
+  TalismanJS = 'talisman',
+}
+
 export enum RouteNames {
   WalletConnection = 'WalletConnection',
   WalletSend = 'WalletSend',
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
   CreateToken = 'CreateToken',
-  RecieveToken = 'RecieveToken',
+  ReceiveToken = 'ReceiveToken',
   AddAsset = 'AddAsset',
   SelectAsset = 'SelectAsset',
   WalletTransactionDetails = 'WalletTransactionDetails',
-  AddAssetDetails = 'AddAssetDetails',
 }
 
 export enum WalletTabs {
@@ -26,8 +31,8 @@ export enum TokenTabs {
 }
 
 export enum AddAssetTabs {
-  Search = 'AddAssetSearch',
-  Custom = 'AddAssetCustom',
+  Token = 'AddAssetToken',
+  NFT = 'AddAssetNFT',
 }
 
 export enum SoraNetwork {
@@ -75,7 +80,6 @@ export interface WalletPermissions {
   addAssets?: boolean;
   addLiquidity?: boolean;
   bridgeAssets?: boolean;
-  copyAssets?: boolean;
   createAssets?: boolean;
   sendAssets?: boolean;
   showAssetDetails?: boolean;

@@ -6,7 +6,7 @@
           type="action"
           size="small"
           alternative
-          :tooltip="t('asset.recieve', { symbol: asset.symbol })"
+          :tooltip="t('asset.receive', { symbol: asset.symbol })"
           @click="selectAsset(asset)"
         >
           <s-icon name="arrows-chevron-right-rounded-24" size="28" />
@@ -46,7 +46,7 @@ export default class SelectAsset extends Mixins(TranslationMixin) {
 
   selectAsset(asset: AccountAsset): void {
     this.navigate({
-      name: RouteNames.RecieveToken,
+      name: RouteNames.ReceiveToken,
       params: {
         asset,
       },

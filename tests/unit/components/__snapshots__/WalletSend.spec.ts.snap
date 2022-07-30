@@ -107,10 +107,22 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
         <div
           class="asset s-flex"
         >
-          <!---->
-           
-          <div
-            class="asset-box"
+          
+            SORA
+            
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content="Copy Asset ID"
+            hideafter="0"
+            offset="0"
+            opendelay="500"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
           >
             <div
               class="asset-box__logo"
@@ -284,10 +296,22 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
         <div
           class="asset s-flex"
         >
-          <!---->
-           
-          <div
-            class="asset-box"
+          
+            SORA
+            
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content="Copy Asset ID"
+            hideafter="0"
+            offset="0"
+            opendelay="500"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
           >
             <div
               class="asset-box__logo"
@@ -387,8 +411,45 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
     title="Send"
     tooltip="Send tokens between SORA network accounts"
   >
-    <div
-      class="wallet-send"
+    <s-input-stub
+      accept=""
+      autocomplete="off"
+      borderradius="small"
+      class="wallet-send-address"
+      form=""
+      label=""
+      maxlength="128"
+      name=""
+      placeholder="Address"
+      prefix=""
+      rows="2"
+      size="big"
+      suffix=""
+      tabindex=""
+      type="text"
+      usedesignsystem="true"
+      value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
+    />
+     
+    <p
+      class="wallet-send-address-warning"
+    >
+      Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:
+    </p>
+     
+    <s-tooltip-stub
+      animation="el-fade-in-linear"
+      borderradius="small"
+      closedelay="0"
+      content="Copy Asset ID"
+      hideafter="0"
+      offset="0"
+      opendelay="500"
+      placement="top"
+      showarrow="true"
+      tabindex="0"
+      theme="auto"
+      usedesignsystem="true"
     >
       <s-input-stub
         accept=""
@@ -488,10 +549,22 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
         <div
           class="asset s-flex"
         >
-          <!---->
-           
-          <div
-            class="asset-box"
+          
+            SORA
+            
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content="Copy Asset ID"
+            hideafter="0"
+            offset="0"
+            opendelay="500"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
           >
             <div
               class="asset-box__logo"
@@ -669,10 +742,22 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
         <div
           class="asset s-flex"
         >
-          <!---->
-           
-          <div
-            class="asset-box"
+          
+            SORA
+            
+          <s-tooltip-stub
+            animation="el-fade-in-linear"
+            borderradius="small"
+            closedelay="0"
+            content="Copy Asset ID"
+            hideafter="0"
+            offset="0"
+            opendelay="500"
+            placement="top"
+            showarrow="true"
+            tabindex="0"
+            theme="auto"
+            usedesignsystem="true"
           >
             <div
               class="asset-box__logo"

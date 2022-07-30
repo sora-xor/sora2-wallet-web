@@ -21,9 +21,12 @@ export default {
   searchText: 'Search',
   cancelText: 'Cancel',
   saveText: 'Save',
+  copiedText: 'Copied!',
+  copyWithValue: 'Copy {value}',
+  copiedWithValue: '{value} is copied!',
   sendText: 'Send',
   sentText: 'Sent',
-  recievedText: 'Recieved',
+  receivedText: 'Received',
   addressText: 'Address',
   amountText: 'Amount',
   confirmText: 'Confirm',
@@ -32,6 +35,7 @@ export default {
   unknownErrorText: 'ERROR Something went wrong...',
   enterAccountError: 'Unable to enter account',
   transactionSubmittedText: 'Transaction was submitted',
+  assetDeposit: 'Asset balance has been deposited',
   operations: {
     [Operation.Swap]: 'Swap',
     [Operation.SwapAndSend]: 'Swap and Send',
@@ -41,10 +45,14 @@ export default {
     [Operation.CreatePair]: 'Create Pair',
     [Operation.RegisterAsset]: 'Register Asset',
     [Operation.ClaimRewards]: 'Claim Rewards',
-    [Operation.ClaimRewards]: 'Claim Rewards',
     [Operation.ReferralReserveXor]: 'Bond XOR',
     [Operation.ReferralUnreserveXor]: 'Unbond XOR',
     [Operation.ReferralSetInvitedUser]: 'Set Referral',
+    [Operation.DemeterFarmingDepositLiquidity]: 'Deposit Liquidity',
+    [Operation.DemeterFarmingWithdrawLiquidity]: 'Withdraw Liquidity',
+    [Operation.DemeterFarmingStakeToken]: 'Add Stake',
+    [Operation.DemeterFarmingUnstakeToken]: 'Remove Stake',
+    [Operation.DemeterFarmingGetRewards]: 'Claim Rewards',
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
@@ -58,6 +66,11 @@ export default {
       [Operation.ReferralReserveXor]: 'Bonded XOR successfully',
       [Operation.ReferralUnreserveXor]: 'Unbonded XOR successfully',
       [Operation.ReferralSetInvitedUser]: 'Set Referral',
+      [Operation.DemeterFarmingDepositLiquidity]: 'Supplied {symbol} and {symbol2} {amount} LP tokens for farming',
+      [Operation.DemeterFarmingWithdrawLiquidity]: 'Removed {symbol} and {symbol2} {amount} LP tokens from farming',
+      [Operation.DemeterFarmingStakeToken]: 'Added {amount} {symbol} for staking',
+      [Operation.DemeterFarmingUnstakeToken]: 'Removed {amount} {symbol} from staking',
+      [Operation.DemeterFarmingGetRewards]: '{amount} {symbol} claimed successfully',
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
@@ -71,13 +84,22 @@ export default {
       [Operation.ReferralReserveXor]: 'Failed to bond XOR',
       [Operation.ReferralUnreserveXor]: 'Failed to unbonded XOR',
       [Operation.ReferralSetInvitedUser]: 'Failed to set referral',
+      [Operation.DemeterFarmingDepositLiquidity]:
+        'Failed to supply {amount} {symbol} and {symbol2} LP tokens for farming',
+      [Operation.DemeterFarmingWithdrawLiquidity]:
+        'Failed to remove {amount} {symbol} and {symbol2} LP tokens from farming',
+      [Operation.DemeterFarmingStakeToken]: 'Failed to add {amount} {symbol} for staking',
+      [Operation.DemeterFarmingUnstakeToken]: 'Failed to remove {amount} {symbol} from staking',
+      [Operation.DemeterFarmingGetRewards]: 'Failed to claim {symbol}',
     },
   },
   polkadotjs: {
     noExtensions:
       'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
+    noExtension: 'No {extension} extension was found. Please install it and reload this page',
     noAccounts: 'There seems to be no accounts in your Polkadot.js extension. Please add an account and try again.',
-    noAccount: 'Polkadot.js account error. Please check your account in the Polkadot.js extension',
+    noAccount: '{extension} account error. Please check your account in the {extension} extension',
+    noSigner: 'Access denied. Go to {extension} extension settings and open "Manage Website Access" to allow.',
   },
   connection: {
     title: 'SORA Network account',
@@ -88,12 +110,18 @@ export default {
       'Accidentally denied access for polkadot{.js}?</br>Go to polkadot{.js} settings and open "Manage Website Access" to allow.',
     noAccounts: 'No account found in your polkadot{.js} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
+    selectWallet: 'Select a wallet to work with',
     loadingTitle: 'Waiting for you to allow access to polkadot{.js} extension..',
     action: {
       install: 'Install extension',
       learnMore: 'Learn more',
       connect: 'Connect account',
       refresh: 'Refresh',
+    },
+    wallet: {
+      connected: 'Connected',
+      notConnected: 'Not connected',
+      install: 'Install',
     },
   },
   wallet: {
@@ -124,7 +152,7 @@ export default {
     errorAddress: 'Invalid address. Please check it and try again.',
   },
   account: {
-    successCopy: 'Wallet address is copied to the clipboard',
+    walletAddress: 'Wallet address',
     copy: 'Copy address',
     switch: 'Switch account',
   },
@@ -144,8 +172,8 @@ export default {
     receive: '@:account.copy',
     liquidity: 'Add liquidity',
     bridge: 'Bridge',
+    assetId: 'Asset ID',
     copy: 'Copy Asset ID',
-    successCopy: '{symbol} Asset ID is copied to the clipboard',
     copied: 'Copied!',
     balance: {
       [BalanceType.Transferable]: 'Transferable',
@@ -159,27 +187,29 @@ export default {
   asset: {
     remove: 'Remove asset',
     select: 'Select an asset',
-    recieve: 'Recieve {symbol}',
+    receive: 'Receive {symbol}',
   },
   code: {
     download: 'Download QR Code',
     upload: 'Scan QR',
-    recieve: 'Recieve',
+    receive: 'Receive',
     invalid: 'Invalid QR Code',
+    import: 'Import an image',
+    scan: 'Scan with camera',
+    allowanceError: 'Check your camera availability and browser permissions to use it',
   },
   addAsset: {
     title: '@:addAssetText',
     action: '@:addAssetText',
     success: 'Asset {symbol} was added successfully!',
-    [AddAssetTabs.Search]: {
-      title: '@:searchText',
-      placeholder: 'Filter by Asset ID, Name or Ticker Symbol',
+    [AddAssetTabs.Token]: {
+      title: 'Tokens',
+      switchBtn: 'Verified assets only',
     },
-    [AddAssetTabs.Custom]: {
-      title: 'Custom asset',
-      addressPlaceholder: '@:addressText',
-      symbolPlaceholder: 'Asset symbol',
+    [AddAssetTabs.NFT]: {
+      title: 'NFTs',
     },
+    searchInputText: 'Search by Asset ID, Name or Ticker Symbol',
     empty: 'No tokens found',
     alreadyAttached: 'Token was already attached',
     understand: 'I understand',
@@ -289,7 +319,6 @@ export default {
       sorascan: 'View in SORAScan',
       subscan: 'View in Subscan',
     },
-    successCopy: '{value} is copied to the clipboard',
     copy: 'Copy {value}',
     history: {
       created: 'Transaction for {amount} {symbol} has been created.',
@@ -358,6 +387,45 @@ export default {
       mnemonic: 'Invalid bip39 mnemonic specified',
       mnemonicLength: 'Mnemonic should contain {number} words',
       jsonFields: 'JSON file does not have required fields',
+    },
+  },
+  historyErrorMessages: {
+    generalError: 'Something went wrong',
+    balances: {
+      LiquidityRestrictions: 'Account liquidity restrictions prevent withdrawal',
+    },
+    poolXyk: {
+      SourceBalanceIsNotLargeEnough: 'Source balance is not large enough',
+      TargetBalanceIsNotLargeEnough: 'Destination balance is not large enough',
+      ZeroValueInAmountParameter: 'Amount parameter has zero value',
+      ImpossibleToDecideValidPairValuesFromRangeForThisPool: 'Provided amounts are too diverse',
+      CalculatedValueIsNotMeetsRequiredBoundaries: 'Amounts are out of required bounds',
+      UnableToDepositXorLessThanMinimum: 'XOR lower than the minimum value (0.007)',
+    },
+    xstPool: {
+      PoolAlreadyInitializedForPair: 'Pool pair already exists',
+      SlippageLimitExceeded: 'Slippage tolerance has not met proper limits',
+    },
+    referrals: {
+      AlreadyHasReferrer: 'Account already has a referrer',
+      ReferrerInsufficientBalance: 'Referrer does not have enough of reserved balance',
+    },
+    vestedRewards: {
+      RewardsSupplyShortage: 'Rewards program has already finished',
+      CantCalculateReward: 'Failed to perform reward calculation',
+      NoRewardsForAsset: 'There are no rewards for this asset',
+    },
+    liquidityProxy: {
+      ForbiddenFilter: 'Selected liquidity source is not allowed',
+    },
+    demeterFarmingPlatform: {
+      InsufficientFunds: 'Insufficient funds',
+      ZeroRewards: 'No rewards',
+      InsufficientLPTokens: 'Insufficient liquidity provision tokens',
+      PoolDoesNotHaveRewards: 'Pool does not have rewards',
+    },
+    multicollateralBondingCurvePool: {
+      PriceCalculationFailed: 'An error occurred while calculating the price',
     },
   },
 };

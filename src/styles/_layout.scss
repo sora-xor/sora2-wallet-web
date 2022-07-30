@@ -3,7 +3,8 @@ $asset-item-height--fiat: 86px;
 
 $basic-spacing-extra-mini: calc(var(--s-basic-spacing) / 4);
 $basic-spacing-mini: calc(var(--s-basic-spacing) / 2);
-$basic-spacing-extra-small: calc(var(--s-basic-spacing) * 0.75);
+$basic-spacing-extra-small: calc(var(--s-basic-spacing) * 0.75); // 6px
+$basic-spacing: var(--s-basic-spacing); // 8px
 $basic-spacing-small: calc(var(--s-basic-spacing) * 1.5);
 $basic-spacing-medium: calc(var(--s-basic-spacing) * 2);
 $basic-spacing-big: calc(var(--s-basic-spacing) * 3);
