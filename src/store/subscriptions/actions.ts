@@ -42,18 +42,18 @@ const actions = defineActions({
   // Subscriptions dependent on chain state
   async activateNetwokSubscriptions(context): Promise<void> {
     await runParallel(context, [
-      'settings/subscribeOnSystemEvents',
       'settings/subscribeOnRuntimeVersion',
       'account/subscribeOnAssets',
       'account/subscribeOnAccountAssets',
+      'account/subscribeOnNotifications',
     ]);
   },
   async resetNetworkSubscriptions(context): Promise<void> {
     await runParallel(context, [
-      'settings/resetSystemEventsSubscription',
       'settings/resetRuntimeVersionSubscription',
       'account/resetAssetsSubscription',
       'account/resetAccountAssetsSubscription',
+      'account/resetNotificationsSubscription',
     ]);
   },
   // Internal subscriptions & timers

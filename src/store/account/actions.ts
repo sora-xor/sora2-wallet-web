@@ -7,6 +7,7 @@ import { accountActionContext } from './../account';
 import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
+import { incomingTransferFilter } from '../../services/subquery/queries/historyElements';
 import {
   getAppWallets,
   getWallet,
@@ -19,7 +20,9 @@ import type { PolkadotJsAccount } from '../../types/common';
 import { pushNotification } from '../../util/notification';
 
 const UPDATE_PRICES_INTERVAL = 30 * 1000;
-const CHECK_EXTENSION_INTERVAL = 5_000;
+const CHECK_EXTENSION_INTERVAL = 5 * 1000;
+const UPDATE_ASSETS_INTERVAL = 18 * 1000;
+const CHECK_INCOMING_TRANSFERS_INTERVAL = 18 * 1000;
 
 const actions = defineActions({
   async getSigner(context): Promise<Signer> {
@@ -35,6 +38,7 @@ const actions = defineActions({
     const { rootDispatch } = rootActionContext(context);
 
     await dispatch.subscribeOnAccountAssets();
+    await dispatch.subscribeOnNotifications();
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
@@ -46,6 +50,7 @@ const actions = defineActions({
       api.logout();
     }
     commit.resetAccountAssetsSubscription();
+    commit.resetNotificationsSubscription();
     commit.resetAccount();
 
     await rootDispatch.wallet.router.checkCurrentRoute();
@@ -202,26 +207,53 @@ const actions = defineActions({
       commit.updateAssets([]);
     }
   },
+
   async subscribeOnAssets(context): Promise<void> {
-    const { commit, dispatch, getters } = accountActionContext(context);
-    commit.resetAssetsSubscription();
+    const { commit, dispatch } = accountActionContext(context);
+
     await dispatch.getAssets();
 
-    const subscription = api.system.updated.subscribe((events) => {
-      if (events.find((e) => e.event.section === 'assets' && e.event.method === 'AssetRegistered')) {
-        dispatch.getAssets();
-      }
+    const timer = setInterval(() => {
+      dispatch.getAssets();
+    }, UPDATE_ASSETS_INTERVAL);
 
-      const notificationEvent = events.find((e) => e.event.section === 'assets' && e.event.method === 'Transfer');
-      // 'to' address
-      if (notificationEvent && notificationEvent.event.data[1].toJSON() === getters.account.address) {
-        const assetAddress = (notificationEvent.event.data[2].toJSON() as any).code;
-        const depositedAsset = getters.whitelist[assetAddress] as WhitelistArrayItem;
-        commit.setAssetToNotify(depositedAsset);
-      }
-    });
-    commit.setAssetsSubscription(subscription);
+    commit.setAssetsSubscription(timer);
   },
+
+  async subscribeOnNotifications(context): Promise<void> {
+    const { commit, getters, state } = accountActionContext(context);
+
+    commit.resetNotificationsSubscription();
+
+    if (!getters.isLoggedIn) return;
+
+    let timestamp = Math.ceil(Date.now() / 1000);
+
+    const timer = setInterval(async () => {
+      const filter = incomingTransferFilter(state.address, timestamp);
+      const variables = { filter };
+
+      try {
+        const data = await SubqueryExplorerService.getAccountTransactions(variables);
+
+        if (!data.edges.length) return;
+
+        timestamp = +data.edges[0].node.timestamp;
+
+        const assetAddresses = new Set<string>(data.edges.map((edge) => edge.node.data.assetId));
+        const assets = [...assetAddresses].map((assetAddress) => getters.whitelist[assetAddress] as WhitelistArrayItem);
+
+        assets.forEach((asset) => {
+          commit.setAssetToNotify(asset);
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }, CHECK_INCOMING_TRANSFERS_INTERVAL);
+
+    commit.setNotificationsSubscription(timer);
+  },
+
   async subscribeOnAccountAssets(context): Promise<void> {
     const { commit, getters } = accountActionContext(context);
     commit.resetAccountAssetsSubscription();
@@ -322,6 +354,11 @@ const actions = defineActions({
   async resetAccountAssetsSubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
     commit.resetAccountAssetsSubscription();
+  },
+  /** It's used **only** for subscriptions module */
+  async resetNotificationsSubscription(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+    commit.resetNotificationsSubscription();
   },
   /** It's used **only** for subscriptions module */
   async resetFiatPriceAndApySubscription(context): Promise<void> {
