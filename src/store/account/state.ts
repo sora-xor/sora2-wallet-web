@@ -33,7 +33,7 @@ export function initialState(): AccountState {
     availableWallets: [],
     extensionAvailabilityTimer: null,
     /** notifications */
-    notificationsSubscription: null,
+    incomingTransfersSubscription: null,
   };
 }
 

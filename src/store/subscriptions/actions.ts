@@ -45,7 +45,6 @@ const actions = defineActions({
       'settings/subscribeOnRuntimeVersion',
       'account/subscribeOnAssets',
       'account/subscribeOnAccountAssets',
-      'account/subscribeOnNotifications',
     ]);
   },
   async resetNetworkSubscriptions(context): Promise<void> {
@@ -53,7 +52,6 @@ const actions = defineActions({
       'settings/resetRuntimeVersionSubscription',
       'account/resetAssetsSubscription',
       'account/resetAccountAssetsSubscription',
-      'account/resetNotificationsSubscription',
     ]);
   },
   // Internal subscriptions & timers
@@ -62,6 +60,7 @@ const actions = defineActions({
       'transactions/trackActiveTxs',
       'account/subscribeOnFiatPriceAndApyObjectUpdates',
       'account/subscribeOnExtensionAvailability',
+      'account/subscribeOnIncomingTransfers',
       'subscriptions/subscribeToStorageUpdates',
     ]);
   },
@@ -70,6 +69,7 @@ const actions = defineActions({
       'transactions/resetActiveTxs',
       'account/resetFiatPriceAndApySubscription',
       'account/resetExtensionAvailabilitySubscription',
+      'account/resetIncomingTransfersSubscription',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);
   },

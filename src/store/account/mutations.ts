@@ -137,13 +137,13 @@ const mutations = defineMutations<AccountState>()({
     }
     state.polkadotJsAccountsSubscription = null;
   },
-  setNotificationsSubscription(state, timer: NodeJS.Timer | number): void {
-    state.notificationsSubscription = timer;
+  setIncomingTransfersSubscription(state, timer: NodeJS.Timer | number): void {
+    state.incomingTransfersSubscription = timer;
   },
-  resetNotificationsSubscription(state): void {
-    if (state.notificationsSubscription) {
-      clearInterval(state.notificationsSubscription as number);
-      state.notificationsSubscription = null;
+  resetIncomingTransfersSubscription(state): void {
+    if (state.incomingTransfersSubscription) {
+      clearInterval(state.incomingTransfersSubscription as number);
+      state.incomingTransfersSubscription = null;
     }
   },
 });

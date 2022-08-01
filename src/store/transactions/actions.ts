@@ -4,11 +4,11 @@ import type { HistoryItem } from '@sora-substrate/util';
 import { transactionsActionContext } from './../transactions';
 import { api } from '../../api';
 import { delay } from '../../util';
+import { BLOCK_PRODUCE_TIME } from '../../consts';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../../services/subquery';
 import { historyElementsFilter } from '../../services/subquery/queries/historyElements';
 import type { ExternalHistoryParams } from '../../types/history';
 
-const BLOCK_PRODUCE_TIME = 6 * 1000;
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2 * 1000;
 
 const actions = defineActions({
