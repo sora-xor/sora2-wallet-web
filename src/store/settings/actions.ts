@@ -39,16 +39,6 @@ const actions = defineActions({
     commit.setRuntimeVersionSubscription(runtimeVersionSubscription);
   },
   /** It's used **only** for subscriptions module */
-  async subscribeOnSystemEvents(context): Promise<void> {
-    const { commit } = settingsActionContext(context);
-    commit.subscribeOnSystemEvents();
-  },
-  /** It's used **only** for subscriptions module */
-  async resetSystemEventsSubscription(context): Promise<void> {
-    const { commit } = settingsActionContext(context);
-    commit.resetSystemEventsSubscription();
-  },
-  /** It's used **only** for subscriptions module */
   async resetRuntimeVersionSubscription(context): Promise<void> {
     const { commit } = settingsActionContext(context);
     commit.resetRuntimeVersionSubscription();

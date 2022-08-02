@@ -7,6 +7,7 @@ import { accountActionContext } from './../account';
 import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
+import { incomingTransferFilter } from '../../services/subquery/queries/historyElements';
 import {
   getAppWallets,
   getWallet,
@@ -14,12 +15,15 @@ import {
   subscribeToPolkadotJsAccounts,
   WHITE_LIST_GITHUB_URL,
 } from '../../util';
-import { Extensions } from '../../consts';
+import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
+import type { HistoryElementTransfer } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
 import { pushNotification } from '../../util/notification';
 
 const UPDATE_PRICES_INTERVAL = 30 * 1000;
-const CHECK_EXTENSION_INTERVAL = 5_000;
+const CHECK_EXTENSION_INTERVAL = 5 * 1000;
+const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
+const CHECK_INCOMING_TRANSFERS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
 
 const actions = defineActions({
   async getSigner(context): Promise<Signer> {
@@ -35,6 +39,7 @@ const actions = defineActions({
     const { rootDispatch } = rootActionContext(context);
 
     await dispatch.subscribeOnAccountAssets();
+    await dispatch.subscribeOnIncomingTransfers();
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
@@ -46,6 +51,7 @@ const actions = defineActions({
       api.logout();
     }
     commit.resetAccountAssetsSubscription();
+    commit.resetIncomingTransfersSubscription();
     commit.resetAccount();
 
     await rootDispatch.wallet.router.checkCurrentRoute();
@@ -202,26 +208,19 @@ const actions = defineActions({
       commit.updateAssets([]);
     }
   },
+
   async subscribeOnAssets(context): Promise<void> {
-    const { commit, dispatch, getters } = accountActionContext(context);
-    commit.resetAssetsSubscription();
+    const { commit, dispatch } = accountActionContext(context);
+
     await dispatch.getAssets();
 
-    const subscription = api.system.updated.subscribe((events) => {
-      if (events.find((e) => e.event.section === 'assets' && e.event.method === 'AssetRegistered')) {
-        dispatch.getAssets();
-      }
+    const timer = setInterval(() => {
+      dispatch.getAssets();
+    }, UPDATE_ASSETS_INTERVAL);
 
-      const notificationEvent = events.find((e) => e.event.section === 'assets' && e.event.method === 'Transfer');
-      // 'to' address
-      if (notificationEvent && notificationEvent.event.data[1].toJSON() === getters.account.address) {
-        const assetAddress = (notificationEvent.event.data[2].toJSON() as any).code;
-        const depositedAsset = getters.whitelist[assetAddress] as WhitelistArrayItem;
-        commit.setAssetToNotify(depositedAsset);
-      }
-    });
-    commit.setAssetsSubscription(subscription);
+    commit.setAssetsSubscription(timer);
   },
+
   async subscribeOnAccountAssets(context): Promise<void> {
     const { commit, getters } = accountActionContext(context);
     commit.resetAccountAssetsSubscription();
@@ -285,6 +284,50 @@ const actions = defineActions({
       commit.clearReferralRewards();
     }
   },
+
+  async subscribeOnIncomingTransfers(context): Promise<void> {
+    const { commit, getters, state } = accountActionContext(context);
+
+    commit.resetIncomingTransfersSubscription();
+
+    if (!getters.isLoggedIn) return;
+
+    let timestamp = Math.ceil(Date.now() / 1000);
+
+    const timer = setInterval(async () => {
+      const filter = incomingTransferFilter(state.address, timestamp);
+      const variables = { filter };
+
+      try {
+        const data = await SubqueryExplorerService.getAccountTransactions(variables);
+
+        if (!data || !Array.isArray(data.edges) || !data.edges.length) return;
+
+        timestamp = +data.edges[0].node.timestamp;
+
+        const assetAddresses = data.edges.reduce<string[]>((buffer, edge) => {
+          if (!edge.node || !edge.node.data) return buffer;
+
+          const assetId = (edge.node.data as HistoryElementTransfer).assetId;
+
+          return [...buffer, assetId];
+        }, []);
+        const uniqueAssetAddresses = new Set<string>(assetAddresses);
+        const assets = [...uniqueAssetAddresses].map(
+          (assetAddress) => getters.whitelist[assetAddress] as WhitelistArrayItem
+        );
+
+        assets.forEach((asset) => {
+          commit.setAssetToNotify(asset);
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }, CHECK_INCOMING_TRANSFERS_INTERVAL);
+
+    commit.setIncomingTransfersSubscription(timer);
+  },
+
   async notifyOnDeposit(context, data): Promise<void> {
     const { commit } = accountActionContext(context);
     const { asset, message }: { asset: WhitelistArrayItem; message: string } = data;
@@ -322,6 +365,11 @@ const actions = defineActions({
   async resetAccountAssetsSubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
     commit.resetAccountAssetsSubscription();
+  },
+  /** It's used **only** for subscriptions module */
+  async resetIncomingTransfersSubscription(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+    commit.resetIncomingTransfersSubscription();
   },
   /** It's used **only** for subscriptions module */
   async resetFiatPriceAndApySubscription(context): Promise<void> {

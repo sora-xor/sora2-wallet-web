@@ -4,11 +4,11 @@ import type { HistoryItem } from '@sora-substrate/util';
 import { transactionsActionContext } from './../transactions';
 import { api } from '../../api';
 import { delay } from '../../util';
+import { BLOCK_PRODUCE_TIME } from '../../consts';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../../services/subquery';
 import { historyElementsFilter } from '../../services/subquery/queries/historyElements';
 import type { ExternalHistoryParams } from '../../types/history';
 
-const BLOCK_PRODUCE_TIME = 6 * 1000;
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2 * 1000;
 
 const actions = defineActions({
@@ -29,10 +29,10 @@ const actions = defineActions({
       try {
         const ids = txs.map((tx) => tx.id as string);
         const variables = { filter: { id: { in: ids } } };
-        const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
+        const response = await SubqueryExplorerService.getAccountTransactions(variables);
 
-        if (edges.length) {
-          for (const edge of edges) {
+        if (response && response.edges.length) {
+          for (const edge of response.edges) {
             const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(edge.node);
 
             if (historyItem && (historyItem.id as string) in api.history) {
@@ -84,7 +84,11 @@ const actions = defineActions({
     };
 
     try {
-      const { edges, pageInfo, totalCount } = await SubqueryExplorerService.getAccountTransactions(variables);
+      const response = await SubqueryExplorerService.getAccountTransactions(variables);
+
+      if (!response) return;
+
+      const { edges, pageInfo, totalCount } = response;
       const buffer = {};
       const removeHistoryIds: Array<string> = [];
 
