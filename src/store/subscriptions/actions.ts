@@ -58,13 +58,17 @@ const actions = defineActions({
   },
   // Internal subscriptions & timers
   async activateInternalSubscriptions(context, onDesktop: boolean): Promise<void> {
-    let subscriptions = [
+    const subscriptions = [
       'transactions/trackActiveTxs',
       'account/subscribeOnFiatPriceAndApyObjectUpdates',
       'subscriptions/subscribeToStorageUpdates',
     ];
 
-    subscriptions = onDesktop ? [...subscriptions, 'account/subscribeOnExtensionAvailability'] : subscriptions;
+    // Check flag
+    if (!onDesktop) {
+      subscriptions.push('account/subscribeOnExtensionAvailability');
+    }
+
     await runParallel(context, subscriptions);
   },
   async resetInternalSubscriptions(context): Promise<void> {

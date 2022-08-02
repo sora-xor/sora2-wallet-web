@@ -13,7 +13,7 @@
         <wallet-account :polkadotAccount="account" />
       </div>
       <s-card
-        v-if="!isDesktop"
+        v-if="isDesktop"
         shadow="always"
         size="small"
         border-radius="medium"

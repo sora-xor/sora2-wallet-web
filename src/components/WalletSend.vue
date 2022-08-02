@@ -381,7 +381,8 @@ export default class WalletSend extends Mixins(
   }
 
   async handleConfirm(): Promise<void> {
-    if (!this.isDesktop) {
+    // here
+    if (this.isDesktop) {
       this.openConfirmationDialog();
       await this.waitOnNextTxConfirmation();
       if (!this.isTxDialogConfirmed) {

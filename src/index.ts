@@ -1,5 +1,4 @@
 import type Vue from 'vue';
-import isDesktop from 'is-electron';
 import type { PluginObject } from 'vue';
 
 import installWalletPlugins from './plugins';
@@ -104,11 +103,11 @@ async function initWallet({
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
       // invert condition afterwards
-      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(isDesktop()),
+      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.settings.isDesktop),
     ]);
 
     // invert condition afterwards
-    if (isDesktop()) {
+    if (store.state.wallet.settings.isDesktop) {
       await store.dispatch.wallet.account.checkSigner();
     } else {
       api.initAccountStorage();

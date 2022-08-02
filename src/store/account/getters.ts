@@ -19,9 +19,8 @@ const toHashTable = (list: Array<any>, key: string) => {
 };
 
 const getters = defineGetters<AccountState>()({
-  isLoggedIn(...args): boolean {
-    const { state } = accountGetterContext(args);
-    return !!state.source && !!state.address;
+  isLoggedIn(state, getters): boolean {
+    return (!!state.source && !!state.address) || (getters.isDesktop && !!state.address);
   },
   account(...args): PolkadotJsAccount {
     const { state } = accountGetterContext(args);

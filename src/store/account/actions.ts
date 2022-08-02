@@ -95,6 +95,8 @@ const actions = defineActions({
     try {
       const wallets = getAppWallets();
 
+      console.log('wallets', wallets);
+
       commit.setAvailableWallets(wallets);
     } catch (error) {
       console.error(error);
@@ -190,9 +192,9 @@ const actions = defineActions({
         throw new Error('polkadotjs.noAccount');
       }
 
-      api.importByPolkadotJs(account.address, account.name, true);
+      api.importByPolkadotJs(account.address, account.name, '');
 
-      commit.selectPolkadotJsAccount(account.name);
+      commit.selectPolkadotJsAccount({ name: account.name });
 
       await dispatch.afterLogin();
     } catch (error) {

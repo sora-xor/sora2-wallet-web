@@ -21,6 +21,10 @@ const actions = defineActions({
     const { currentRoute } = state;
     const { isLoggedIn } = rootGetters.wallet.account;
 
+    console.log('isLoggedIn', isLoggedIn);
+    console.log('currentRoute', currentRoute);
+    console.log('RouteNames.WalletConnection', RouteNames.WalletConnection);
+
     if (isLoggedIn && currentRoute === RouteNames.WalletConnection) {
       commit.navigate({ name: RouteNames.Wallet });
     } else if (!isLoggedIn && currentRoute !== RouteNames.WalletConnection) {

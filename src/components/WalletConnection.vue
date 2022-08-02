@@ -1,5 +1,5 @@
 <template>
-  <extension-connection v-if="isDesktop" />
+  <extension-connection v-if="!isDesktop" />
   <desktop-connection v-else />
 </template>
 
