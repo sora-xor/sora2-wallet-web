@@ -16,6 +16,7 @@ import {
   WHITE_LIST_GITHUB_URL,
 } from '../../util';
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
+import type { HistoryElementTransfer } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
 import { pushNotification } from '../../util/notification';
 
@@ -300,12 +301,21 @@ const actions = defineActions({
       try {
         const data = await SubqueryExplorerService.getAccountTransactions(variables);
 
-        if (!data.edges.length) return;
+        if (!data || !Array.isArray(data.edges) || !data.edges.length) return;
 
         timestamp = +data.edges[0].node.timestamp;
 
-        const assetAddresses = new Set<string>(data.edges.map((edge) => edge.node.data.assetId));
-        const assets = [...assetAddresses].map((assetAddress) => getters.whitelist[assetAddress] as WhitelistArrayItem);
+        const assetAddresses = data.edges.reduce<string[]>((buffer, edge) => {
+          if (!edge.node || !edge.node.data) return buffer;
+
+          const assetId = (edge.node.data as HistoryElementTransfer).assetId;
+
+          return [...buffer, assetId];
+        }, []);
+        const uniqueAssetAddresses = new Set<string>(assetAddresses);
+        const assets = [...uniqueAssetAddresses].map(
+          (assetAddress) => getters.whitelist[assetAddress] as WhitelistArrayItem
+        );
 
         assets.forEach((asset) => {
           commit.setAssetToNotify(asset);

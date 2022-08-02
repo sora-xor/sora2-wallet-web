@@ -29,10 +29,10 @@ const actions = defineActions({
       try {
         const ids = txs.map((tx) => tx.id as string);
         const variables = { filter: { id: { in: ids } } };
-        const { edges } = await SubqueryExplorerService.getAccountTransactions(variables);
+        const response = await SubqueryExplorerService.getAccountTransactions(variables);
 
-        if (edges.length) {
-          for (const edge of edges) {
+        if (response && response.edges.length) {
+          for (const edge of response.edges) {
             const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(edge.node);
 
             if (historyItem && (historyItem.id as string) in api.history) {
@@ -84,7 +84,11 @@ const actions = defineActions({
     };
 
     try {
-      const { edges, pageInfo, totalCount } = await SubqueryExplorerService.getAccountTransactions(variables);
+      const response = await SubqueryExplorerService.getAccountTransactions(variables);
+
+      if (!response) return;
+
+      const { edges, pageInfo, totalCount } = response;
       const buffer = {};
       const removeHistoryIds: Array<string> = [];
 
