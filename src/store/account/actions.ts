@@ -237,9 +237,9 @@ const actions = defineActions({
       }
     }
   },
-  async getWhitelist(context, whiteListOverApi: boolean): Promise<void> {
+  async getWhitelist(context): Promise<void> {
     const { commit } = accountActionContext(context);
-    const url = whiteListOverApi ? WHITE_LIST_GITHUB_URL : '/whitelist.json';
+    const url = 'https://whitelist.polkaswap2.io/whitelist.json';
     commit.clearWhitelist();
     try {
       const { data } = await axiosInstance.get(url);

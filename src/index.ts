@@ -68,21 +68,17 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(SoraWalletElements, {});
 }
 
-async function initWallet({
-  withoutStore = false,
-  whiteListOverApi = false,
-  permissions,
-}: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
+async function initWallet({ withoutStore = false, permissions }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
   if (!withoutStore && !store) {
     await delay();
-    return await initWallet({ withoutStore, whiteListOverApi, permissions });
+    return await initWallet({ withoutStore, permissions });
   } else {
     if (withoutStore) {
       store = internalStore;
     }
     if (connection.loading) {
       await delay();
-      return await initWallet({ withoutStore, whiteListOverApi, permissions });
+      return await initWallet({ withoutStore, permissions });
     }
     if (!connection.api) {
       await connection.open();
@@ -97,7 +93,7 @@ async function initWallet({
       console.error('Something went wrong during api initialization', error);
       throw error;
     }
-    await store.dispatch.wallet.account.getWhitelist(whiteListOverApi);
+    await store.dispatch.wallet.account.getWhitelist();
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
       store.dispatch.wallet.subscriptions.activateInternalSubscriptions(),
