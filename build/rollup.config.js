@@ -127,4 +127,5 @@ export default {
       hook: 'writeBundle',
     }),
   ],
+  exports: 'named',
 };

@@ -174,4 +174,5 @@ export {
   VUEX_TYPES,
   vuex,
 };
+
 export default SoraWalletElements;
