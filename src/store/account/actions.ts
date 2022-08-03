@@ -47,7 +47,7 @@ const actions = defineActions({
     const { rootDispatch } = rootActionContext(context);
 
     if (api.accountPair) {
-      api.logout(!getters.isDesktop);
+      api.logout(getters.isDesktop);
     }
     commit.resetAccountAssetsSubscription();
     commit.resetAccount();
@@ -94,8 +94,6 @@ const actions = defineActions({
 
     try {
       const wallets = getAppWallets();
-
-      console.log('wallets', wallets);
 
       commit.setAvailableWallets(wallets);
     } catch (error) {

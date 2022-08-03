@@ -64,7 +64,6 @@ const actions = defineActions({
       'subscriptions/subscribeToStorageUpdates',
     ];
 
-    // Check flag
     if (!onDesktop) {
       subscriptions.push('account/subscribeOnExtensionAvailability');
     }

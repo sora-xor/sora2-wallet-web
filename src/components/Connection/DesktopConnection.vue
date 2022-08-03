@@ -100,7 +100,6 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
       try {
         await this.importPolkadotJsDesktop(account.address);
       } catch (error) {
-        console.log('error', error);
         this.$alert(this.t('enterAccountError'), this.t('errorText'));
       }
     });

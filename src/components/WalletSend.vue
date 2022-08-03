@@ -17,7 +17,7 @@
           />
           <template v-if="validAddress && isNotSoraAddress">
             <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
-            <s-tooltip :content="copyTooltip">
+            <s-tooltip :content="copyValueAssetId">
               <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress)">
                 {{ formattedSoraAddress }}
               </p>
@@ -71,7 +71,7 @@
               <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
               <div class="asset-highlight">
                 {{ asset.name || asset.symbol }}
-                <s-tooltip :content="copyTooltip">
+                <s-tooltip :content="copyValueAssetId">
                   <span class="asset-id" @click="handleCopyAddress(asset.address)">
                     ({{ getFormattedAddress(asset) }})
                   </span>

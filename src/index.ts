@@ -102,16 +102,14 @@ async function initWallet({
 
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-      // invert condition afterwards
       store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.settings.isDesktop),
     ]);
 
-    // invert condition afterwards
     if (store.state.wallet.settings.isDesktop) {
-      await store.dispatch.wallet.account.checkSigner();
-    } else {
       api.initAccountStorage();
       await store.dispatch.wallet.account.getPolkadotJsAccounts();
+    } else {
+      await store.dispatch.wallet.account.checkSigner();
     }
 
     store.commit.wallet.settings.setWalletLoaded(true);
