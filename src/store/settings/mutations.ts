@@ -53,18 +53,6 @@ const mutations = defineMutations<SettingsState>()({
       state.runtimeVersionSubscription = null;
     }
   },
-  subscribeOnSystemEvents(state): void {
-    if (state.systemEventsSubscription) {
-      state.systemEventsSubscription.unsubscribe();
-    }
-    state.systemEventsSubscription = api.system.getEventsSubscription();
-  },
-  resetSystemEventsSubscription(state): void {
-    if (state.systemEventsSubscription) {
-      state.systemEventsSubscription.unsubscribe();
-      state.systemEventsSubscription = null;
-    }
-  },
   setApiKeys(state, keys: ApiKeysObject = {}): void {
     state.apiKeys = { ...state.apiKeys, ...keys };
   },

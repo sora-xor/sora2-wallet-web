@@ -42,7 +42,6 @@ const actions = defineActions({
   // Subscriptions dependent on chain state
   async activateNetwokSubscriptions(context): Promise<void> {
     await runParallel(context, [
-      'settings/subscribeOnSystemEvents',
       'settings/subscribeOnRuntimeVersion',
       'account/subscribeOnAssets',
       'account/subscribeOnAccountAssets',
@@ -50,7 +49,6 @@ const actions = defineActions({
   },
   async resetNetworkSubscriptions(context): Promise<void> {
     await runParallel(context, [
-      'settings/resetSystemEventsSubscription',
       'settings/resetRuntimeVersionSubscription',
       'account/resetAssetsSubscription',
       'account/resetAccountAssetsSubscription',
@@ -62,6 +60,7 @@ const actions = defineActions({
       'transactions/trackActiveTxs',
       'account/subscribeOnFiatPriceAndApyObjectUpdates',
       'account/subscribeOnExtensionAvailability',
+      'account/subscribeOnIncomingTransfers',
       'subscriptions/subscribeToStorageUpdates',
     ]);
   },
@@ -70,6 +69,7 @@ const actions = defineActions({
       'transactions/resetActiveTxs',
       'account/resetFiatPriceAndApySubscription',
       'account/resetExtensionAvailabilitySubscription',
+      'account/resetIncomingTransfersSubscription',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);
   },

@@ -1,5 +1,7 @@
 import Vue from 'vue';
 
+// IMPORTANT!
+// Add import url to rollup.external !
 import DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
 import { setTheme, setDesignSystem } from '@soramitsu/soramitsu-js-ui/lib/utils';
 
