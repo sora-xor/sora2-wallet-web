@@ -43,12 +43,12 @@ const mutations = defineMutations<AccountState>()({
       state[key] = s[key];
     });
   },
-  setAssetsSubscription(state, subscription: Subscription): void {
-    state.assetsSubscription = subscription;
+  setAssetsSubscription(state, timer: NodeJS.Timer | number): void {
+    state.assetsSubscription = timer;
   },
   resetAssetsSubscription(state): void {
     if (state.assetsSubscription) {
-      state.assetsSubscription.unsubscribe();
+      clearInterval(state.assetsSubscription as number);
       state.assetsSubscription = null;
     }
   },
@@ -158,6 +158,15 @@ const mutations = defineMutations<AccountState>()({
       ...state.addressPassphraseMapping,
       [state.address]: null,
     };
+  },
+  setIncomingTransfersSubscription(state, timer: NodeJS.Timer | number): void {
+    state.incomingTransfersSubscription = timer;
+  },
+  resetIncomingTransfersSubscription(state): void {
+    if (state.incomingTransfersSubscription) {
+      clearInterval(state.incomingTransfersSubscription as number);
+      state.incomingTransfersSubscription = null;
+    }
   },
 });
 

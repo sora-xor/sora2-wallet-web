@@ -12,7 +12,7 @@ export type AccountState = {
   name: string;
   source: string;
   assets: Array<Asset>;
-  assetsSubscription: Nullable<Subscription>;
+  assetsSubscription: Nullable<NodeJS.Timer | number>;
   accountAssets: Array<AccountAsset>;
   accountAssetsSubscription: Nullable<Subscription>;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
@@ -28,4 +28,5 @@ export type AccountState = {
   addressKeyMapping: AddressKeyMapping;
   addressPassphraseMapping: AddressKeyMapping;
   assetsToNotifyQueue: Array<WhitelistArrayItem>;
+  incomingTransfersSubscription: Nullable<NodeJS.Timeout | number>;
 };

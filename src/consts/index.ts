@@ -2,6 +2,8 @@ import type { FPNumber, Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
+export const BLOCK_PRODUCE_TIME = 6 * 1000;
+
 export enum Extensions {
   PolkadotJS = 'polkadot-js',
   SubwalletJS = 'subwallet-js',

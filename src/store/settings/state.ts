@@ -24,7 +24,6 @@ function initialState(): SettingsState {
     nftStorage: null,
     runtimeVersion: runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0,
     runtimeVersionSubscription: null,
-    systemEventsSubscription: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
     isDesktop: !isElectron(),
     shouldBalanceBeHidden: shouldBalanceBeHidden ? Boolean(JSON.parse(shouldBalanceBeHidden)) : false,
