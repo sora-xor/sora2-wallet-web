@@ -33,6 +33,7 @@ export default {
     'tslib',
     'vue',
     '@polkadot/util',
+    '@polkadot/wasm-crypto',
     '@subwallet/wallet-connect/types',
     '@subwallet/wallet-connect/dotsama/wallets',
     '@sora-substrate/math',
