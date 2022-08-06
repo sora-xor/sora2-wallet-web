@@ -415,3 +415,37 @@ export const historyElementsFilter = ({
 
   return filter;
 };
+
+export const incomingTransferFilter = (address = '', timestamp?: number): any => {
+  const filter: any = {
+    and: [
+      {
+        module: {
+          equalTo: ModuleNames.Assets,
+        },
+      },
+      {
+        method: {
+          equalTo: ModuleMethods.AssetsTransfer,
+        },
+      },
+      {
+        data: {
+          contains: {
+            to: address,
+          },
+        },
+      },
+    ],
+  };
+
+  if (timestamp) {
+    filter.and.push({
+      timestamp: {
+        greaterThan: timestamp,
+      },
+    });
+  }
+
+  return filter;
+};

@@ -15,7 +15,6 @@ export type SettingsState = {
   shouldBalanceBeHidden: boolean;
   runtimeVersion: number;
   runtimeVersionSubscription: Nullable<Subscription>;
-  systemEventsSubscription: Nullable<Subscription>;
   nftStorage: Nullable<NFTStorage>;
   subqueryEndpoint: Nullable<string>;
 };
