@@ -121,22 +121,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
-  assetList: Array<AccountAsset> = [
-    {
-      address: '0x0200000000000000000000000000000000000000000000000000000000000000',
-      symbol: 'XOR',
-      name: 'SORA',
-      decimals: FPNumber.DEFAULT_PRECISION,
-      balance: {
-        transferable: '123400000000000000000',
-        total: '123400000000000000000',
-        reserved: '0',
-        frozen: '0',
-        locked: '0',
-        bonded: '0',
-      },
-    },
-  ];
+  assetList: Array<AccountAsset> = [];
 
   showEmptyListText = false;
 

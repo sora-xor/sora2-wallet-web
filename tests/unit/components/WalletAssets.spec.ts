@@ -1,9 +1,8 @@
 import WalletAssets from '@/components/WalletAssets.vue';
 import AssetList from '@/components/AssetList.vue';
 import AssetListItem from '@/components/AssetListItem.vue';
-import TokenLogo from '@/components/TokenLogo.vue';
 
-import { useDescribe, useShallowMount, useMount, useVuex } from '../../utils';
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_FIAT_PRICE_AND_APY_OBJECT, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 import { WalletPermissions } from '../../../src/consts';
 
@@ -22,15 +21,7 @@ const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, w
       state: () => ({
         permissions,
         shouldBalanceBeHidden: false,
-        filters: {
-          option: 'All',
-          verifiedOnly: false,
-          zeroBalance: false,
-        },
       }),
-      mutations: {
-        setFilterOptions: jest.fn(),
-      },
     },
     account: {
       state: () => ({
@@ -48,16 +39,7 @@ const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, w
 
 useDescribe('WalletAssets.vue', WalletAssets, () => {
   it('should be rendered correctly', () => {
-    const wrapper = useMount(WalletAssets, { store: createStore(), stubs: ['s-button', 's-tooltip', TokenLogo] });
-
-    wrapper.setData({ assetList: MOCK_ACCOUNT_ASSETS });
-
-    // await wrapper.setData({ foo: 'bar' });
-
-    expect(wrapper.vm.$data.assetList).toBe(MOCK_ACCOUNT_ASSETS);
-
-    const found = wrapper.find('.asset');
-    // expect(found.exists()).toBeTrue();
+    const wrapper = useShallowMount(WalletAssets, { store: createStore() });
 
     expect(wrapper.element).toMatchSnapshot();
   });
