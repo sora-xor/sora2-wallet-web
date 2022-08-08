@@ -9,7 +9,7 @@
     </div>
     <s-scrollbar class="wallet-assets-scrollbar">
       <draggable v-model="assetList" @end="updateAssets" class="wallet-assets__draggable">
-        <div v-for="(asset, index) in assetList" :key="asset.address">
+        <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div class="wallet-assets-item s-flex">
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
@@ -214,7 +214,21 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 </script>
 
 <style lang="scss">
+.sortable-ghost {
+  opacity: 0.5;
+}
+
 .wallet-assets {
+  &-item {
+    padding-left: 4px;
+    background-color: var(--s-color-utility-surface);
+    border-radius: 8px;
+
+    &__wrapper {
+      margin-left: -4px;
+    }
+  }
+
   &-list {
     @include asset-list($basic-spacing-big, $basic-spacing-big);
   }
