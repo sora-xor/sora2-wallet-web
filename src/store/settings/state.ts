@@ -27,6 +27,8 @@ function initialState(): SettingsState {
       showAssetDetails: true,
     },
     filters: {
+      // CHECKME: Uncomment or remove this functionality depending on user's feedback
+      // to save setting preferences.
       option: 'All', // option || 'All'
       verifiedOnly: false, // verifiedOnly || false,
       zeroBalance: false, // zeroBalance || false
