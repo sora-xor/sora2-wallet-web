@@ -196,6 +196,8 @@ export default {
     import: 'Import an image',
     scan: 'Scan with camera',
     allowanceError: 'Check your camera availability and browser permissions to use it',
+    camera: 'Camera',
+    allowanceRequest: 'Press “Allow” access to camera',
   },
   addAsset: {
     title: '@:addAssetText',

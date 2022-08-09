@@ -19,6 +19,7 @@ import TransactionHashView from './components/TransactionHashView.vue';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import TokenLogo from './components/TokenLogo.vue';
 import DialogBase from './components/DialogBase.vue';
+import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
 // Mixins
 import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
@@ -119,6 +120,7 @@ const components = {
   NetworkFeeWarning,
   TokenLogo,
   DialogBase,
+  NotificationEnablingPage,
 };
 
 const mixins = {
