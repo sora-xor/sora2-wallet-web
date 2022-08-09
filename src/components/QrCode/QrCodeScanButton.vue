@@ -31,16 +31,6 @@
     <input ref="input" type="file" class="qr-code-file" @change="handleFileInput" />
 
     <dialog-base :visible.sync="scanerDialog" :title="t('code.upload')">
-      <s-radio-group
-        v-if="multipleMediaDevices"
-        :value="selectedDeviceId"
-        @input="handleChangeDevice"
-        class="device-select"
-      >
-        <s-radio v-for="(device, index) in mediaDevices" :key="index" :label="device.deviceId" :value="device.deviceId">
-          {{ device.label }}
-        </s-radio>
-      </s-radio-group>
       <div class="qr-code-stream">
         <video ref="preview" class="qr-code-stream-video" />
         <div class="mask">
@@ -54,7 +44,25 @@
           <div class="mask-bg"></div>
         </div>
       </div>
+      <template #footer>
+        <s-select
+          v-if="multipleMediaDevices"
+          :value="selectedDeviceId"
+          :placeholder="t('code.camera')"
+          @input="handleChangeDevice"
+          border-radius="mini"
+          popper-class="device-select-popper"
+        >
+          <s-option v-for="(device, index) in mediaDevices" :key="index" :label="device.label" :value="device.deviceId">
+            {{ device.label }}
+          </s-option>
+        </s-select>
+      </template>
     </dialog-base>
+
+    <notification-enabling-page v-if="permissionDialogVisibility">{{
+      t('code.allowanceRequest')
+    }}</notification-enabling-page>
   </div>
 </template>
 
@@ -64,6 +72,7 @@ import { BrowserQRCodeReader } from '@zxing/browser';
 import type { IScannerControls } from '@zxing/browser';
 
 import DialogBase from '../DialogBase.vue';
+import NotificationEnablingPage from '../NotificationEnablingPage.vue';
 
 import TranslationMixin from '../mixins/TranslationMixin';
 
@@ -79,6 +88,7 @@ const reader = new BrowserQRCodeReader();
 @Component({
   components: {
     DialogBase,
+    NotificationEnablingPage,
   },
 })
 export default class QrCodeScanButton extends Mixins(TranslationMixin) {
@@ -93,6 +103,7 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
 
   scanProcess: Nullable<IScannerControls> = null;
   scanDialogVisibility = false;
+  permissionDialogVisibility = false;
 
   get scanerDialog(): boolean {
     return this.scanDialogVisibility;
@@ -128,8 +139,39 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
     this.startScanProcess();
   }
 
+  async checkCameraPermission(): Promise<string> {
+    try {
+      const { state } = await navigator.permissions.query({ name: 'camera' } as any);
+
+      return state;
+    } catch (error) {
+      console.error(error);
+      return '';
+    }
+  }
+
+  async checkDevicesAvailability(): Promise<boolean> {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+
+      return devices.some((device) => device.kind === 'videoinput');
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  }
+
   async checkMediaDevicesAllowance(): Promise<boolean> {
     try {
+      const cameraAvailability = await this.checkDevicesAvailability();
+
+      if (!cameraAvailability) throw new Error('[QR Code]: Cannot find camera device');
+
+      const cameraPermisssion = await this.checkCameraPermission();
+
+      if (cameraPermisssion === 'denied') throw new Error('[QR Code]: Check camera browser permissions');
+
+      this.permissionDialogVisibility = cameraPermisssion !== 'granted';
       // request to allow use camera
       await navigator.mediaDevices.getUserMedia({ video: true });
       return true;
@@ -143,6 +185,8 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
       });
 
       return false;
+    } finally {
+      this.permissionDialogVisibility = false;
     }
   }
 
@@ -250,6 +294,11 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
     &__item {
       border-radius: calc(var(--s-border-radius-mini) / 2);
     }
+  }
+}
+.device-select-popper {
+  .el-select-dropdown__item {
+    border-radius: calc(var(--s-border-radius-mini) / 2);
   }
 }
 </style>
