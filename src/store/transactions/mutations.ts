@@ -25,7 +25,7 @@ const mutations = defineMutations<TransactionsState>()({
     state.activeTxsIds = state.activeTxsIds.filter((txId) => !ids.includes(txId));
     api.removeHistory(...ids);
   },
-  setTxDetailsId(state, id: string): void {
+  setTxDetailsId(state, id: Nullable<string>): void {
     state.selectedTxId = id;
   },
   getHistory(state): void {

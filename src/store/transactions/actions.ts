@@ -56,6 +56,7 @@ const actions = defineActions({
     {
       next = true,
       address = '',
+      isLtrDirection = true,
       assetAddress = '',
       pageAmount = 8,
       query: { search = '', operationNames = [], assetsAddresses = [] } = {},
@@ -79,9 +80,9 @@ const actions = defineActions({
 
     const variables = {
       filter,
-      first: pageAmount,
       ...cursor,
     };
+    variables[isLtrDirection ? 'first' : 'last'] = pageAmount;
 
     try {
       const response = await SubqueryExplorerService.getAccountTransactions(variables);

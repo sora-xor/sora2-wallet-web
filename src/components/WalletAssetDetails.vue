@@ -1,11 +1,11 @@
 <template>
-  <wallet-base :title="asset.name" show-back @back="handleBack">
-    <template #actions>
+  <wallet-base :title="headerTitle" show-back @back="handleBack">
+    <template v-if="!selectedTransaction" #actions>
       <s-button v-if="!isXor" type="action" :tooltip="t('asset.remove')" @click="handleRemoveAsset">
         <s-icon name="basic-eye-24" size="28" />
       </s-button>
     </template>
-    <s-card class="asset-details" primary>
+    <s-card v-if="!selectedTransaction" class="asset-details" primary>
       <div class="asset-details-container s-flex">
         <nft-details
           v-if="isNft"
@@ -93,7 +93,7 @@
         </transition>
       </div>
     </s-card>
-    <div v-if="isNft" class="asset-details-nft-container">
+    <div v-if="isNft && !selectedTransaction" class="asset-details-nft-container">
       <transition name="fadeHeight">
         <div v-if="wasNftDetailsClicked" class="info-line-container">
           <info-line :label="t('createToken.nft.supply.quantity')" :value="balance" />
@@ -107,7 +107,8 @@
         </div>
       </transition>
     </div>
-    <wallet-history :asset="asset" />
+    <wallet-history v-show="!selectedTransaction" :asset="asset" />
+    <wallet-transaction-details />
   </wallet-base>
 </template>
 
@@ -123,6 +124,7 @@ import NftDetails from './NftDetails.vue';
 import InfoLine from './InfoLine.vue';
 import TokenLogo from './TokenLogo.vue';
 import WalletHistory from './WalletHistory.vue';
+import WalletTransactionDetails from './WalletTransactionDetails.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import { api } from '../api';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -132,8 +134,8 @@ import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import { RouteNames } from '../consts';
 import { copyToClipboard, delay, shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
-import { state, getter } from '../store/decorators';
-import { Operations, PolkadotJsAccount } from '../types/common';
+import { state, getter, mutation } from '../store/decorators';
+import { Operations } from '../types/common';
 import type { WalletPermissions } from '../consts';
 
 interface Operation {
@@ -147,6 +149,7 @@ interface Operation {
     FormattedAmount,
     FormattedAmountWithFiatValue,
     WalletHistory,
+    WalletTransactionDetails,
     QrCodeScanButton,
     NftDetails,
     InfoLine,
@@ -161,7 +164,8 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @state.settings.permissions private permissions!: WalletPermissions;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
-  @getter.account.account private account!: PolkadotJsAccount;
+  @getter.transactions.selectedTx selectedTransaction!: HistoryItem;
+  @mutation.transactions.setTxDetailsId setTxDetailsId!: (id: Nullable<string>) => void;
 
   wasBalanceDetailsClicked = false;
 
@@ -172,6 +176,10 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
   get isNft(): boolean {
     return api.assets.isNft(this.asset);
+  }
+
+  get headerTitle(): string {
+    return !this.selectedTransaction ? this.asset.name : this.t(`operations.${this.selectedTransaction.type}`);
   }
 
   get nftLinkTooltipText(): string {
@@ -294,7 +302,11 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   handleBack(): void {
-    this.navigate({ name: RouteNames.Wallet });
+    if (this.selectedTransaction) {
+      this.setTxDetailsId(null);
+    } else {
+      this.navigate({ name: RouteNames.Wallet });
+    }
   }
 
   getOperationTooltip(operation: Operation): string {

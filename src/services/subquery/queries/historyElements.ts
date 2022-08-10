@@ -307,6 +307,7 @@ const isAssetAddress = (value: string) => value.startsWith('0x') && value.length
 type HistoryElementsFilterOptions = {
   address?: string;
   assetAddress?: string;
+  isLtrDirection?: boolean;
   timestamp?: number;
   operations?: Array<Operation>;
   ids?: Array<string>;
@@ -320,6 +321,7 @@ type HistoryElementsFilterOptions = {
 export const historyElementsFilter = ({
   address = '',
   assetAddress = '',
+  isLtrDirection = true,
   timestamp = 0,
   operations = [],
   ids = [],

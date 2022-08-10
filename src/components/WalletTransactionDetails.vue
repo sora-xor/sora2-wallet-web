@@ -1,58 +1,52 @@
 <template>
-  <wallet-base
-    :title="t(!selectedTransaction ? 'transaction.title' : `operations.${selectedTransaction.type}`)"
-    show-back
-    @back="handleBack"
-  >
-    <div class="transaction" v-if="selectedTransaction">
-      <transaction-hash-view
-        v-if="transactionId"
-        :value="transactionId"
-        :translation="transactionIdKey"
-        :type="selectedTransaction.txId ? HashType.ID : HashType.Block"
+  <div class="transaction" v-if="selectedTransaction">
+    <transaction-hash-view
+      v-if="transactionId"
+      :value="transactionId"
+      :translation="transactionIdKey"
+      :type="selectedTransaction.txId ? HashType.ID : HashType.Block"
+    />
+    <div class="info-line-container">
+      <info-line v-if="selectedTransaction.status" :label="t('transaction.status')">
+        <span :class="statusClass">{{ statusTitle }}</span>
+        <s-icon v-if="isComplete" name="basic-check-mark-24" size="16px" />
+      </info-line>
+      <info-line v-if="selectedTransaction.errorMessage" :label="t('transaction.errorMessage')">
+        <span :class="statusClass">{{
+          getErrorMessage(selectedTransaction.errorMessage.section, selectedTransaction.errorMessage.name)
+        }}</span>
+      </info-line>
+      <info-line v-if="selectedTransaction.startTime" :label="t('transaction.startTime')" :value="transactionDate" />
+      <info-line
+        v-if="selectedTransaction.amount"
+        is-formatted
+        value-can-be-hidden
+        :label="t('transaction.amount')"
+        :value="transactionAmount"
+        :asset-symbol="transactionSymbol"
       />
-      <div class="info-line-container">
-        <info-line v-if="selectedTransaction.status" :label="t('transaction.status')">
-          <span :class="statusClass">{{ statusTitle }}</span>
-          <s-icon v-if="isComplete" name="basic-check-mark-24" size="16px" />
-        </info-line>
-        <info-line v-if="selectedTransaction.errorMessage" :label="t('transaction.errorMessage')">
-          <span :class="statusClass">{{
-            getErrorMessage(selectedTransaction.errorMessage.section, selectedTransaction.errorMessage.name)
-          }}</span>
-        </info-line>
-        <info-line v-if="selectedTransaction.startTime" :label="t('transaction.startTime')" :value="transactionDate" />
-        <info-line
-          v-if="selectedTransaction.amount"
-          is-formatted
-          value-can-be-hidden
-          :label="t('transaction.amount')"
-          :value="transactionAmount"
-          :asset-symbol="transactionSymbol"
-        />
-        <info-line
-          v-if="selectedTransaction.amount2"
-          is-formatted
-          value-can-be-hidden
-          :label="t('transaction.amount2')"
-          :value="transactionAmount2"
-          :asset-symbol="transactionSymbol2"
-        />
-      </div>
-      <transaction-hash-view
-        v-if="selectedTransaction.from && (!isSetReferralOperation || !isInvitedUser)"
-        :translation="`transaction.${isSetReferralOperation ? 'referral' : 'from'}`"
-        :value="selectedTransaction.from"
-        :type="HashType.Account"
-      />
-      <transaction-hash-view
-        v-if="selectedTransaction.to && (!isSetReferralOperation || !isReferrer)"
-        :translation="`transaction.${isSetReferralOperation ? 'referrer' : 'to'}`"
-        :value="selectedTransaction.to"
-        :type="HashType.Account"
+      <info-line
+        v-if="selectedTransaction.amount2"
+        is-formatted
+        value-can-be-hidden
+        :label="t('transaction.amount2')"
+        :value="transactionAmount2"
+        :asset-symbol="transactionSymbol2"
       />
     </div>
-  </wallet-base>
+    <transaction-hash-view
+      v-if="selectedTransaction.from && (!isSetReferralOperation || !isInvitedUser)"
+      :translation="`transaction.${isSetReferralOperation ? 'referral' : 'from'}`"
+      :value="selectedTransaction.from"
+      :type="HashType.Account"
+    />
+    <transaction-hash-view
+      v-if="selectedTransaction.to && (!isSetReferralOperation || !isReferrer)"
+      :translation="`transaction.${isSetReferralOperation ? 'referrer' : 'to'}`"
+      :value="selectedTransaction.to"
+      :type="HashType.Account"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -67,7 +61,7 @@ import InfoLine from './InfoLine.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import TransactionHashView from './TransactionHashView.vue';
 
-import { RouteNames, WalletTabs, HashType } from '../consts';
+import { HashType } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
 import type { PolkadotJsAccount } from '../types/common';
 import type { Route } from '../store/router/types';
@@ -88,15 +82,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
-  @mutation.transactions.setTxDetailsId setTxDetailsId!: (id: string) => void;
-
-  mounted(): void {
-    const id = this.currentRouteParams.id as string;
-    if (!id) {
-      this.navigate({ name: RouteNames.Wallet });
-    }
-    this.setTxDetailsId(id);
-  }
 
   get statusClass(): Array<string> {
     const baseClass = 'transaction-status';
@@ -185,14 +170,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
     }
 
     return errMessage as string;
-  }
-
-  handleBack(): void {
-    if (this.currentRouteParams.asset) {
-      this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.currentRouteParams.asset } });
-      return;
-    }
-    this.navigate({ name: RouteNames.Wallet, params: { currentTab: WalletTabs.Activity } });
   }
 }
 </script>

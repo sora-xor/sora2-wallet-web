@@ -176,6 +176,8 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
   <wallet-history-stub
     asset="[object Object]"
   />
+   
+  <wallet-transaction-details-stub />
 </wallet-base-stub>
 `;
 
@@ -503,5 +505,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
   <wallet-history-stub
     asset="[object Object]"
   />
+   
+  <wallet-transaction-details-stub />
 </wallet-base-stub>
 `;
