@@ -32,7 +32,7 @@
         <div v-else class="history-empty p4">{{ t(`history.${hasTransactions ? 'emptySearch' : 'empty'}`) }}</div>
       </div>
       <s-pagination
-        v-if="hasVisibleTransactions"
+        v-if="hasVisibleTransactions && total > pageAmount"
         layout="slot"
         :current-page.sync="currentPage"
         :page-size="pageAmount"
@@ -45,7 +45,7 @@
         <s-button
           type="link"
           :tooltip="t('history.firstText')"
-          :disabled="isFirstPaginationPage"
+          :disabled="isFirstPage"
           @click="handlePaginationClick(PaginationButton.First)"
         >
           <s-icon name="chevrons-left-16" size="14" />
@@ -53,7 +53,7 @@
         <s-button
           type="link"
           :tooltip="t('history.prevText')"
-          :disabled="isFirstPaginationPage"
+          :disabled="isFirstPage"
           @click="handlePaginationClick(PaginationButton.Prev)"
         >
           <s-icon name="chevron-left-16" size="14" />
@@ -61,7 +61,7 @@
         <s-button
           type="link"
           :tooltip="t('history.nextText')"
-          :disabled="isLastPaginationPage"
+          :disabled="isLastPage"
           @click="handlePaginationClick(PaginationButton.Next)"
         >
           <s-icon name="chevron-right-16" size="14" />
@@ -69,7 +69,7 @@
         <s-button
           type="link"
           :tooltip="t('history.lastText')"
-          :disabled="isLastPaginationPage"
+          :disabled="isLastPage"
           @click="handlePaginationClick(PaginationButton.Last)"
         >
           <s-icon name="chevrons-right-16" size="14" />
@@ -123,8 +123,8 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   readonly pageAmount = 8; // override PaginationSearchMixin
-  readonly updateCommonHistory = debounce(() => this.updateHistory(true, true), 500);
   isLtrDirection = true;
+  readonly updateCommonHistory = debounce(() => this.updateHistory(true, true), 500);
   PaginationButton = PaginationButton;
 
   get assetAddress(): string {
@@ -152,34 +152,46 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   get transactions(): Array<History> {
     const merged = [...this.filteredInternalHistory, ...this.filteredExternalHistory];
-    const sorted = this.sortTransactions(merged);
+    const sorted = this.sortTransactions(merged, this.isLtrDirection);
+    const rtlDirectionShift = !this.isLtrDirection ? this.pageAmount - this.lastPageAmount : 0;
 
-    return this.getPageItems(sorted);
+    return this.sortTransactions(
+      this.getPageItems(
+        sorted,
+        !this.isLtrDirection && !this.isLastPage ? this.startIndex - rtlDirectionShift : this.startIndex,
+        !this.isLtrDirection && this.isLastPage ? this.lastPageAmount : this.lastIndex - rtlDirectionShift
+      ),
+      true
+    );
   }
 
   get total(): number {
     return this.externalHistoryTotal + this.internalHistory.length;
   }
 
-  get totalText(): string {
-    // TODO: Play with this value
-    const upperNumber = this.pageAmount * (this.isLtrDirection ? this.currentPage : this.lastPaginationPage);
-    return `${this.t('ofText', {
-      first: `${upperNumber - this.pageAmount + 1}—${upperNumber > this.total ? this.total : upperNumber}`,
-      second: this.total,
-    })}`;
+  get isFirstPage(): boolean {
+    return this.isLtrDirection ? this.currentPage === 1 : this.currentPage === this.lastPage;
   }
 
-  get isFirstPaginationPage(): boolean {
-    return this.isLtrDirection ? this.currentPage === 1 : this.currentPage === this.lastPaginationPage;
-  }
-
-  get lastPaginationPage(): number {
+  get lastPage(): number {
     return this.total ? Math.ceil(this.total / this.pageAmount) : 1;
   }
 
-  get isLastPaginationPage(): boolean {
-    return this.isLtrDirection ? this.currentPage === this.lastPaginationPage : this.currentPage === 1;
+  get isLastPage(): boolean {
+    return this.isLtrDirection ? this.currentPage === this.lastPage : this.currentPage === 1;
+  }
+
+  get lastPageAmount(): number {
+    return this.total ? this.total - Math.floor(this.total / this.pageAmount) * this.pageAmount : this.pageAmount;
+  }
+
+  get totalText(): string {
+    const upperNumber =
+      this.pageAmount * (this.isLtrDirection ? this.currentPage : this.lastPage + 1 - this.currentPage);
+    return `${this.t('ofText', {
+      first: `${upperNumber - this.pageAmount + 1}-${upperNumber > this.total ? this.total : upperNumber}`,
+      second: this.total,
+    })}`;
   }
 
   get hasVisibleTransactions(): boolean {
@@ -246,8 +258,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     );
   }
 
-  sortTransactions(transactions: Array<History>): Array<History> {
-    return transactions.sort((a: History, b: History) => (a.startTime && b.startTime ? b.startTime - a.startTime : 0));
+  sortTransactions(transactions: Array<History>, isAscendingOrder = false): Array<History> {
+    return transactions.sort((a: History, b: History) =>
+      a.startTime && b.startTime ? (isAscendingOrder ? b.startTime - a.startTime : a.startTime - b.startTime) : 0
+    );
   }
 
   getStatus(status: string): string {
@@ -280,7 +294,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   async handlePaginationClick(button: PaginationButton): Promise<void> {
-    let current: number;
+    let current = 1;
 
     switch (button) {
       case PaginationButton.Prev:
@@ -291,11 +305,9 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
         break;
       case PaginationButton.First:
         this.isLtrDirection = true;
-        current = 1;
         break;
       case PaginationButton.Last:
         this.isLtrDirection = false;
-        current = 1;
     }
 
     const isNext = this.isLtrDirection ? current > this.currentPage : current < this.currentPage;

@@ -259,12 +259,12 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       perpagetext="Rows per page"
       popperclass=""
       prevtext=""
-      totaltext="1—8 of 9"
+      totaltext="1-8 of 9"
     >
       <span
         class="el-pagination__total"
       >
-        1—8 of 9
+        1-8 of 9
       </span>
        
       <s-button-stub
@@ -509,101 +509,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       </div>
     </div>
      
-    <s-pagination-stub
-      borderradius="small"
-      currentpage="1"
-      layout="slot"
-      nexttext=""
-      oftext="of"
-      pagesize="8"
-      pagesizes="10,20,30,40,50,100"
-      perpagetext="Rows per page"
-      popperclass=""
-      prevtext=""
-      totaltext="1—5 of 5"
-    >
-      <span
-        class="el-pagination__total"
-      >
-        1—5 of 5
-      </span>
-       
-      <s-button-stub
-        borderradius="small"
-        disabled="true"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="First"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevrons-left-16"
-          size="14"
-        />
-      </s-button-stub>
-       
-      <s-button-stub
-        borderradius="small"
-        disabled="true"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="Previous"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevron-left-16"
-          size="14"
-        />
-      </s-button-stub>
-       
-      <s-button-stub
-        borderradius="small"
-        disabled="true"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="Next"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevron-right-16"
-          size="14"
-        />
-      </s-button-stub>
-       
-      <s-button-stub
-        borderradius="small"
-        disabled="true"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="Last"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevrons-right-16"
-          size="14"
-        />
-      </s-button-stub>
-    </s-pagination-stub>
+    <!---->
   </s-form-stub>
 </div>
 `;
@@ -798,101 +704,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       </div>
     </div>
      
-    <s-pagination-stub
-      borderradius="small"
-      currentpage="1"
-      layout="slot"
-      nexttext=""
-      oftext="of"
-      pagesize="8"
-      pagesizes="10,20,30,40,50,100"
-      perpagetext="Rows per page"
-      popperclass=""
-      prevtext=""
-      totaltext="1—5 of 5"
-    >
-      <span
-        class="el-pagination__total"
-      >
-        1—5 of 5
-      </span>
-       
-      <s-button-stub
-        borderradius="small"
-        disabled="true"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="First"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevrons-left-16"
-          size="14"
-        />
-      </s-button-stub>
-       
-      <s-button-stub
-        borderradius="small"
-        disabled="true"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="Previous"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevron-left-16"
-          size="14"
-        />
-      </s-button-stub>
-       
-      <s-button-stub
-        borderradius="small"
-        disabled="true"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="Next"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevron-right-16"
-          size="14"
-        />
-      </s-button-stub>
-       
-      <s-button-stub
-        borderradius="small"
-        disabled="true"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="Last"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevrons-right-16"
-          size="14"
-        />
-      </s-button-stub>
-    </s-pagination-stub>
+    <!---->
   </s-form-stub>
 </div>
 `;
