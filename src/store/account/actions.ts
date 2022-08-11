@@ -242,7 +242,8 @@ const actions = defineActions({
     const url = 'https://whitelist.polkaswap2.io/whitelist.json';
     commit.clearWhitelist();
     try {
-      const { data } = await axiosInstance.get(url);
+      const response = await fetch(url);
+      const data = await response.json();
       commit.setWhitelist(data);
     } catch (error) {
       commit.clearWhitelist();
