@@ -56,9 +56,9 @@ const actions = defineActions({
     {
       next = true,
       address = '',
-      isLtrDirection = true,
       assetAddress = '',
       pageAmount = 8,
+      page = 1,
       query: { search = '', operationNames = [], assetsAddresses = [] } = {},
     }: ExternalHistoryParams = {}
   ): Promise<void> {
@@ -74,15 +74,12 @@ const actions = defineActions({
       operations,
       query: { search, operationNames, assetsAddresses },
     });
-    const cursor = {
-      [next ? 'after' : 'before']: pagination ? (next ? pagination.endCursor : pagination.startCursor) || '' : '',
-    };
 
     const variables = {
       filter,
-      ...cursor,
+      first: pageAmount,
+      offset: pageAmount * (page - 1),
     };
-    variables[isLtrDirection ? 'first' : 'last'] = pageAmount;
 
     try {
       const response = await SubqueryExplorerService.getAccountTransactions(variables);
