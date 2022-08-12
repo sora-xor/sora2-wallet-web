@@ -56,10 +56,10 @@ export default class DialogBase extends Mixins(DialogMixin) {
     const Scrollbar = Vue.extend(SScrollbar);
     const scrollbar = new Scrollbar({
       mounted: function () {
-        this.$el.addEventListener('click', handleClickOutside);
+        this.$el.addEventListener('mousedown', handleClickOutside);
       },
       destroyed: function () {
-        this.$el.removeEventListener('click', handleClickOutside);
+        this.$el.removeEventListener('mousedown', handleClickOutside);
       },
     });
     scrollbar.$mount();
