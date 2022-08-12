@@ -307,7 +307,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     }
 
     const isNext = current > this.currentPage;
-    await this.updateHistory(isNext, current, button === PaginationButton.First);
+    await this.updateHistory(isNext, current);
     this.currentPage = current;
   }
 
