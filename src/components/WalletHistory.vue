@@ -152,13 +152,14 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   get transactions(): Array<History> {
     const merged = [...this.filteredInternalHistory, ...this.filteredExternalHistory];
     const sorted = this.sortTransactions(merged, this.isLtrDirection);
-    const directionShift = this.isLtrDirection ? 0 : this.pageAmount - this.lastPageAmount;
-    const start = this.isLtrDirection
-      ? this.startIndex
-      : Math.max((this.lastPage - this.currentPage) * this.pageAmount - directionShift, 0);
+
     const end = this.isLtrDirection
-      ? this.lastIndex
-      : Math.max((this.lastPage - this.currentPage + 1) * this.pageAmount - directionShift, 0);
+      ? Math.min(this.currentPage * this.pageAmount, sorted.length)
+      : Math.max((this.lastPage - this.currentPage + 1) * this.pageAmount - this.directionShift, 0);
+
+    const start = this.isLtrDirection
+      ? Math.max(end - this.pageAmount, 0)
+      : Math.max((this.lastPage - this.currentPage) * this.pageAmount - this.directionShift, 0);
 
     return this.sortTransactions(this.getPageItems(sorted, start, end), true);
   }
@@ -181,6 +182,10 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
 
   get lastPageAmount(): number {
     return this.total % this.pageAmount || this.pageAmount;
+  }
+
+  get directionShift(): number {
+    return this.isLtrDirection ? 0 : this.pageAmount - this.lastPageAmount;
   }
 
   get totalText(): string {
