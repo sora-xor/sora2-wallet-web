@@ -21,7 +21,7 @@ export default class NotificationEnablingPage extends Vue {}
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  position: absolute;
+  position: fixed;
 
   top: 0;
   left: 0;
