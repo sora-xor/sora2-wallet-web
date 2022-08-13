@@ -1,10 +1,10 @@
 <template>
   <div :class="computedClasses" v-loading="loading">
-    <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @filter-assets="filterAssets" />
+    <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" />
     <s-scrollbar class="wallet-assets-scrollbar">
-      <draggable v-model="assetList" @end="updateAssets" class="wallet-assets__draggable">
+      <draggable v-model="assetList" class="wallet-assets__draggable">
         <div v-for="(asset, index) in assetList" :key="asset.address">
-          <div class="wallet-assets-item s-flex">
+          <div v-if="showAsset(asset)" class="wallet-assets-item s-flex" ref="walletAssets">
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
                 <formatted-amount-with-fiat-value
@@ -60,14 +60,14 @@
                 </s-button>
               </template>
             </asset-list-item>
+            <s-divider
+              v-if="index !== numberOfRenderedAssets - 1"
+              :key="`${index}-divider`"
+              class="wallet-assets-divider"
+            />
           </div>
-          <s-divider
-            v-if="index !== formattedAccountAssets.length - 1"
-            :key="`${index}-divider`"
-            class="wallet-assets-divider"
-          />
         </div>
-        <div v-if="showEmptyListText" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
+        <div v-if="numberOfRenderedAssets === 0" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
       </draggable>
     </s-scrollbar>
 
@@ -82,7 +82,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Ref } from 'vue-property-decorator';
 import { api, FPNumber } from '@sora-substrate/util';
 import draggable from 'vuedraggable';
 import type { AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/types';
@@ -98,7 +98,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 
 import { RouteNames, HiddenValue, WalletAssetFilters, WalletPermissions, WalletFilteringOptions } from '../consts';
 import { formatAddress } from '../util';
-import { state, mutation, getter } from '../store/decorators';
+import { state, getter, mutation } from '../store/decorators';
 import type { Route } from '../store/router/types';
 
 @Component({
@@ -120,10 +120,25 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @getter.account.whitelist private whitelist!: Whitelist;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
+  @mutation.account.updateAccountAssets private updateAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
 
-  assetList: Array<AccountAsset> = [];
+  @Ref('walletAssets') readonly walletAssets!: HTMLCollection;
 
-  showEmptyListText = false;
+  numberOfRenderedAssets = 0;
+
+  get assetList(): Array<AccountAsset> {
+    return this.accountAssets;
+  }
+
+  set assetList(accountAssets: Array<AccountAsset>) {
+    const assetsAddresses = accountAssets.map((asset) => asset.address);
+
+    if (assetsAddresses.length) {
+      api.assets.accountAssetsAddresses = assetsAddresses;
+      api.assets.updateAccountAssets();
+      this.updateAccountAssets(accountAssets);
+    }
+  }
 
   get computedClasses(): string {
     const baseClass = 'wallet-assets';
@@ -197,43 +212,24 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     this.navigate({ name: RouteNames.AddAsset });
   }
 
-  updateAssets(): void {
-    const assetsAddresses = this.assetList.map((asset) => asset.address);
-
-    if (assetsAddresses.length) {
-      api.assets.accountAssetsAddresses = assetsAddresses;
-      api.assets.updateAccountAssets();
-    }
-  }
-
-  filterAssets(filters: WalletAssetFilters): void {
-    const filterCallback = (asset: AccountAsset) => this.applyFilterOptions(asset, filters);
-
-    if (filters.option === WalletFilteringOptions.ALL) {
-      this.assetList = api.assets.accountAssets.filter(filterCallback);
-    }
-
-    if (filters.option === WalletFilteringOptions.TOKEN) {
-      const tokens = api.assets.accountAssets.filter((asset) => !api.assets.isNft(asset));
-      this.assetList = tokens.filter(filterCallback);
-    }
-
-    if (filters.option === WalletFilteringOptions.NFT) {
-      const nfts = api.assets.accountAssets.filter((asset) => api.assets.isNft(asset));
-      this.assetList = nfts.filter(filterCallback);
-    }
-
-    this.showEmptyListText = !this.assetList.length;
-  }
-
-  applyFilterOptions(asset: AccountAsset, filters: WalletAssetFilters) {
+  showAsset(asset: AccountAsset) {
     // filter
-    const showWhitelistedOnly = filters.verifiedOnly;
-    const hideZeroBalance = filters.zeroBalance;
+    const tokenType = this.filters.option;
+    const showWhitelistedOnly = this.filters.verifiedOnly;
+    const hideZeroBalance = this.filters.zeroBalance;
 
     // asset
+    const isNft = api.assets.isNft(asset);
     const isWhitelisted = api.assets.isWhitelist(asset, this.whitelist);
     const hasZeroBalance = asset.balance.total === '0';
+
+    if (tokenType === WalletFilteringOptions.TOKEN && isNft) {
+      return false;
+    }
+
+    if (tokenType === WalletFilteringOptions.NFT && !isNft) {
+      return false;
+    }
 
     if (!isWhitelisted && showWhitelistedOnly) {
       return false;
@@ -246,8 +242,9 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return true;
   }
 
-  beforeUpdate(): void {
-    this.filterAssets(this.filters);
+  updated(): void {
+    console.log('NUMBER', this.walletAssets.length);
+    this.numberOfRenderedAssets = this.walletAssets.length;
   }
 }
 </script>
@@ -338,6 +335,11 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 $wallet-assets-class: '.wallet-assets';
 $wallet-assets-count: 5;
 
+-item {
+  display: flex;
+  flex-direction: column;
+}
+
 #{$wallet-assets-class} {
   flex-direction: column;
   margin-top: #{$basic-spacing-medium};
@@ -374,6 +376,11 @@ $wallet-assets-count: 5;
 
   &-divider {
     margin: 0;
+  }
+
+  &-item {
+    display: flex;
+    flex-direction: column;
   }
 }
 </style>
