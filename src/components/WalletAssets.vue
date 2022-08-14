@@ -3,8 +3,9 @@
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" />
     <s-scrollbar class="wallet-assets-scrollbar">
       <draggable v-model="assetList" class="wallet-assets__draggable">
-        <div v-for="(asset, index) in assetList" :key="asset.address">
-          <div v-if="showAsset(asset)" class="wallet-assets-item s-flex" ref="walletAssets">
+        <div v-for="(asset, index) in assetsToShow" :key="asset.address" class="wallet-assets-item__wrapper">
+          <div class="wallet-assets-item s-flex" ref="walletAssets">
+            <div class="wallet-assets-three-dash"></div>
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
                 <formatted-amount-with-fiat-value
@@ -60,11 +61,7 @@
                 </s-button>
               </template>
             </asset-list-item>
-            <s-divider
-              v-if="index !== numberOfRenderedAssets - 1"
-              :key="`${index}-divider`"
-              class="wallet-assets-divider"
-            />
+            <s-divider :key="`${index}-divider`" class="wallet-assets-divider" />
           </div>
         </div>
         <div v-if="numberOfRenderedAssets === 0" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
@@ -125,6 +122,11 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @Ref('walletAssets') readonly walletAssets!: HTMLCollection;
 
   numberOfRenderedAssets = 0;
+  get assetsToShow(): Array<AccountAsset> {
+    const res = this.assetList.filter((asset) => this.showAsset(asset));
+    console.log('res', res);
+    return res;
+  }
 
   get assetList(): Array<AccountAsset> {
     return this.accountAssets;
@@ -243,14 +245,41 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   updated(): void {
-    console.log('NUMBER', this.walletAssets.length);
     this.numberOfRenderedAssets = this.walletAssets.length;
   }
 }
 </script>
 
 <style lang="scss">
+.sortable-ghost {
+  opacity: 0.5;
+}
+
 .wallet-assets {
+  &-item {
+    position: relative;
+    padding-left: 4px;
+    background-color: var(--s-color-utility-surface);
+    border-radius: 8px;
+    &__wrapper {
+      margin-left: -4px;
+    }
+  }
+
+  &-three-dash {
+    @include three-dashes(50%);
+
+    &::before {
+      content: '';
+      @include three-dashes(5px);
+    }
+
+    &::after {
+      content: '';
+      @include three-dashes(-5px);
+    }
+  }
+
   &-list {
     @include asset-list($basic-spacing-big, $basic-spacing-big);
   }
@@ -274,6 +303,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   .asset {
+    .logo {
+      margin-left: 20px;
+    }
+
     .formatted-amount {
       display: block;
       width: 100%;
@@ -334,11 +367,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 <style scoped lang="scss">
 $wallet-assets-class: '.wallet-assets';
 $wallet-assets-count: 5;
-
--item {
-  display: flex;
-  flex-direction: column;
-}
 
 #{$wallet-assets-class} {
   flex-direction: column;
