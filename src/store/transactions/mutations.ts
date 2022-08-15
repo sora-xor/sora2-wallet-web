@@ -25,8 +25,11 @@ const mutations = defineMutations<TransactionsState>()({
     state.activeTxsIds = state.activeTxsIds.filter((txId) => !ids.includes(txId));
     api.removeHistory(...ids);
   },
-  setTxDetailsId(state, id: Nullable<string>): void {
+  setTxDetailsId(state, id: string): void {
     state.selectedTxId = id;
+  },
+  resetTxDetailsId(state): void {
+    state.selectedTxId = null;
   },
   getHistory(state): void {
     // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes

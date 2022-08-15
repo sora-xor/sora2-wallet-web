@@ -44,7 +44,7 @@
         <s-button
           type="link"
           :tooltip="t('history.firstText')"
-          :disabled="isFirstPage || loading"
+          :disabled="isFirstPage"
           @click="handlePaginationClick(PaginationButton.First)"
         >
           <s-icon name="chevrons-left-16" size="14" />
@@ -52,7 +52,7 @@
         <s-button
           type="link"
           :tooltip="t('history.prevText')"
-          :disabled="isFirstPage || loading"
+          :disabled="isFirstPage"
           @click="handlePaginationClick(PaginationButton.Prev)"
         >
           <s-icon name="chevron-left-16" size="14" />
@@ -60,7 +60,7 @@
         <s-button
           type="link"
           :tooltip="t('history.nextText')"
-          :disabled="isLastPage || loading"
+          :disabled="isLastPage"
           @click="handlePaginationClick(PaginationButton.Next)"
         >
           <s-icon name="chevron-right-16" size="14" />
@@ -68,7 +68,7 @@
         <s-button
           type="link"
           :tooltip="t('history.lastText')"
-          :disabled="isLastPage || loading"
+          :disabled="isLastPage"
           @click="handlePaginationClick(PaginationButton.Last)"
         >
           <s-icon name="chevrons-right-16" size="14" />
@@ -111,7 +111,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.transactions.resetExternalHistory private resetExternalHistory!: VoidFn;
   @mutation.transactions.getHistory private getHistory!: VoidFn;
-  @mutation.transactions.setTxDetailsId setTxDetailsId!: (id: Nullable<string>) => void;
+  @mutation.transactions.setTxDetailsId private setTxDetailsId!: (id: string) => void;
   @action.transactions.getExternalHistory private getExternalHistory!: (args?: ExternalHistoryParams) => Promise<void>;
 
   @Prop() readonly asset!: Nullable<AccountAsset>;
@@ -122,9 +122,9 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   readonly pageAmount = 8; // override PaginationSearchMixin
-  isLtrDirection = true;
+  isLtrDirection = true; // Change pagination number from left to right
   readonly updateCommonHistory = debounce(() => this.updateHistory(true, 1, true), 500);
-  PaginationButton = PaginationButton;
+  readonly PaginationButton = PaginationButton;
 
   get assetAddress(): string {
     return (this.asset && this.asset.address) || '';
@@ -169,7 +169,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get isFirstPage(): boolean {
-    return this.currentPage === 1;
+    return this.currentPage === 1 || this.loading;
   }
 
   get lastPage(): number {
@@ -177,7 +177,7 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   get isLastPage(): boolean {
-    return this.currentPage === this.lastPage;
+    return this.currentPage === this.lastPage || this.loading;
   }
 
   get lastPageAmount(): number {

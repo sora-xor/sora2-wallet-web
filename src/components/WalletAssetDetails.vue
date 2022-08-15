@@ -165,7 +165,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem;
-  @mutation.transactions.setTxDetailsId setTxDetailsId!: (id: Nullable<string>) => void;
+  @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: VoidFn;
 
   wasBalanceDetailsClicked = false;
 
@@ -303,7 +303,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
 
   handleBack(): void {
     if (this.selectedTransaction) {
-      this.setTxDetailsId(null);
+      this.resetTxDetailsId();
     } else {
       this.navigate({ name: RouteNames.Wallet });
     }

@@ -68,7 +68,7 @@ export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem;
-  @mutation.transactions.setTxDetailsId setTxDetailsId!: (id: Nullable<string>) => void;
+  @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: VoidFn;
 
   @action.account.logout private logout!: AsyncVoidFn;
 
@@ -107,7 +107,7 @@ export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) 
 
   handleBack(): void {
     if (this.selectedTransaction) {
-      this.setTxDetailsId(null);
+      this.resetTxDetailsId();
     }
   }
 }
