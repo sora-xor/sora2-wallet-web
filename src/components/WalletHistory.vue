@@ -37,8 +37,6 @@
         :current-page.sync="currentPage"
         :page-size="pageAmount"
         :total-text="totalText"
-        @prev-click="handlePaginationClick"
-        @next-click="handlePaginationClick"
       >
         <span class="el-pagination__total">{{ totalText }}</span>
         <s-button
