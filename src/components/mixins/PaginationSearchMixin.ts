@@ -18,14 +18,6 @@ export default class PaginationSearchMixin extends Vue {
     return this.query.trim();
   }
 
-  handlePrevClick(current: number): void {
-    this.currentPage = current;
-  }
-
-  handleNextClick(current: number): void {
-    this.currentPage = current;
-  }
-
   resetPage(): void {
     this.currentPage = 1;
   }
@@ -34,7 +26,7 @@ export default class PaginationSearchMixin extends Vue {
     this.query = '';
   }
 
-  getPageItems(items: Array<any>): Array<any> {
-    return items.slice(this.startIndex, this.lastIndex);
+  getPageItems(items: Array<any>, customStartIndex?: number, customLastIndex?: number): Array<any> {
+    return items.slice(customStartIndex ?? this.startIndex, customLastIndex ?? this.lastIndex);
   }
 }
