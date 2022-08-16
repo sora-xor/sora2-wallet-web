@@ -30,7 +30,7 @@
       <component :is="currentTab" @swap="handleSwap" />
     </div>
 
-    <wallet-transaction-details />
+    <wallet-transaction-details v-if="selectedTransaction" />
   </wallet-base>
 </template>
 
@@ -67,7 +67,7 @@ export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) 
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;
-  @getter.transactions.selectedTx selectedTransaction!: HistoryItem;
+  @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
   @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: VoidFn;
 
   @action.account.logout private logout!: AsyncVoidFn;
