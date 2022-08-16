@@ -1,5 +1,5 @@
 <template>
-  <div class="transaction" v-if="selectedTransaction">
+  <div class="transaction">
     <transaction-hash-view
       v-if="transactionId"
       :value="transactionId"
@@ -11,10 +11,8 @@
         <span :class="statusClass">{{ statusTitle }}</span>
         <s-icon v-if="isComplete" name="basic-check-mark-24" size="16px" />
       </info-line>
-      <info-line v-if="selectedTransaction.errorMessage" :label="t('transaction.errorMessage')">
-        <span :class="statusClass">{{
-          getErrorMessage(selectedTransaction.errorMessage.section, selectedTransaction.errorMessage.name)
-        }}</span>
+      <info-line v-if="errorMessage" :label="t('transaction.errorMessage')">
+        <span :class="statusClass">{{ errorMessage }}</span>
       </info-line>
       <info-line v-if="selectedTransaction.startTime" :label="t('transaction.startTime')" :value="transactionDate" />
       <info-line
@@ -79,7 +77,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @getter.account.account private account!: PolkadotJsAccount;
-  @getter.transactions.selectedTx selectedTransaction!: HistoryItem;
+  @getter.transactions.selectedTx selectedTransaction!: HistoryItem; // It shouldn't be empty
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
@@ -159,17 +157,26 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
     return this.isSetReferralOperation && this.account.address === this.selectedTransaction.from;
   }
 
-  getErrorMessage(section: string, name: string): string {
-    let errMessage = this.t(`historyErrorMessages.generalError`) as string;
+  get errorMessage(): Nullable<string> {
+    const error = this.selectedTransaction.errorMessage;
+    if (!error) {
+      return null;
+    }
 
-    if (name && section) {
-      errMessage = this.t(`historyErrorMessages.${section}.${name}`) as string;
+    let errMessage = this.t(`historyErrorMessages.generalError`);
+
+    if (typeof error === 'string') {
+      return errMessage; // Backward compatibility
+    }
+
+    if (error.name && error.section) {
+      errMessage = this.t(`historyErrorMessages.${error.section}.${error.name}`);
       if (errMessage.startsWith('historyErrorMessages')) {
-        return this.t(`historyErrorMessages.generalError`) as string;
+        return this.t(`historyErrorMessages.generalError`);
       }
     }
 
-    return errMessage as string;
+    return errMessage;
   }
 }
 </script>
