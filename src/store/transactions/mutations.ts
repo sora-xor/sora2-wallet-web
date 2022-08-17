@@ -28,6 +28,9 @@ const mutations = defineMutations<TransactionsState>()({
   setTxDetailsId(state, id: string): void {
     state.selectedTxId = id;
   },
+  resetTxDetailsId(state): void {
+    state.selectedTxId = null;
+  },
   getHistory(state): void {
     // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes
     state.history = Object.freeze(api.history);
