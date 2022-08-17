@@ -15,6 +15,6 @@ export async function pushNotification(asset: WhitelistArrayItem, message: strin
       };
     }
   } catch {
-    // return silently
+    console.warn("Your browser doesn't support Notification API");
   }
 }
