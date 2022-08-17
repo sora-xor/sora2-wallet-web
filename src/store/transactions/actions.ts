@@ -58,6 +58,7 @@ const actions = defineActions({
       address = '',
       assetAddress = '',
       pageAmount = 8,
+      page = 1,
       query: { search = '', operationNames = [], assetsAddresses = [] } = {},
     }: ExternalHistoryParams = {}
   ): Promise<void> {
@@ -73,14 +74,11 @@ const actions = defineActions({
       operations,
       query: { search, operationNames, assetsAddresses },
     });
-    const cursor = {
-      [next ? 'after' : 'before']: pagination ? (next ? pagination.endCursor : pagination.startCursor) || '' : '',
-    };
 
     const variables = {
       filter,
       first: pageAmount,
-      ...cursor,
+      offset: pageAmount * (page - 1),
     };
 
     try {
