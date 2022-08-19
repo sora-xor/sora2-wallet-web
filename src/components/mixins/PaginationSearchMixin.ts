@@ -8,7 +8,8 @@ export default class PaginationSearchMixin extends Mixins(LoadingMixin, Translat
   currentPage = 1;
   pageAmount = 10;
   query = '';
-  isLtrDirection = true; // Change pagination number from left to right
+  /** Change pagination number from left to right */
+  isLtrDirection = true;
 
   get startIndex(): number {
     return (this.currentPage - 1) * this.pageAmount;

@@ -38,7 +38,7 @@
         :total-text="totalText"
         :is-first-page="isFirstPage"
         :is-last-page="isLastPage"
-        @handle-pagination-click="handlePaginationClick"
+        @pagination-click="handlePaginationClick"
       />
     </s-form>
   </div>

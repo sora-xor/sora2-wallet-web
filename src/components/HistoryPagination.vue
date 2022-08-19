@@ -59,7 +59,7 @@ export default class HistoryPagination extends Mixins(TranslationMixin) {
   readonly PaginationButton = PaginationButton;
 
   handlePaginationClick(button: PaginationButton): void {
-    this.$emit('handle-pagination-click', button);
+    this.$emit('pagination-click', button);
   }
 }
 </script>
