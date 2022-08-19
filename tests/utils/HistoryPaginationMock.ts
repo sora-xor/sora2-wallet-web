@@ -2,9 +2,9 @@ interface HistoryPagination {
   title: string;
   currentPage: number;
   pageAmount: number;
-  totalText: string;
-  isFirstPage: boolean;
-  isLastPage: boolean;
+  total: number;
+  loading?: boolean;
+  lastPage: number;
 }
 
 export const MOCK_HISTORY_PAGINATION: Array<HistoryPagination> = [
@@ -12,24 +12,29 @@ export const MOCK_HISTORY_PAGINATION: Array<HistoryPagination> = [
     title: 'With Empty History',
     currentPage: 1,
     pageAmount: 10,
-    totalText: '0-0 of 0',
-    isFirstPage: true,
-    isLastPage: false,
+    total: 0,
+    lastPage: 1,
   },
   {
     title: 'With Second Page',
     currentPage: 2,
     pageAmount: 10,
-    totalText: '11-20 of 23',
-    isFirstPage: false,
-    isLastPage: false,
+    total: 25,
+    lastPage: 3,
+  },
+  {
+    title: 'With Loading State',
+    currentPage: 2,
+    pageAmount: 10,
+    total: 25,
+    loading: true,
+    lastPage: 3,
   },
   {
     title: 'With Last Page',
     currentPage: 2,
     pageAmount: 10,
-    totalText: '11-11 of 11',
-    isFirstPage: false,
-    isLastPage: true,
+    total: 11,
+    lastPage: 2,
   },
 ];

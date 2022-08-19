@@ -13,12 +13,12 @@ exports[`HistoryPagination.vue [With Empty History]: should be rendered correctl
   perpagetext="Rows per page"
   popperclass=""
   prevtext=""
-  totaltext="0-0 of 0"
+  totaltext="Total"
 >
   <span
     class="el-pagination__total"
   >
-    0-0 of 0
+    1-0 of 0
   </span>
    
   <s-button-stub
@@ -61,6 +61,7 @@ exports[`HistoryPagination.vue [With Empty History]: should be rendered correctl
    
   <s-button-stub
     borderradius="small"
+    disabled="true"
     icon=""
     iconposition="left"
     nativetype="button"
@@ -79,6 +80,7 @@ exports[`HistoryPagination.vue [With Empty History]: should be rendered correctl
    
   <s-button-stub
     borderradius="small"
+    disabled="true"
     icon=""
     iconposition="left"
     nativetype="button"
@@ -110,7 +112,7 @@ exports[`HistoryPagination.vue [With Last Page]: should be rendered correctly 1`
   perpagetext="Rows per page"
   popperclass=""
   prevtext=""
-  totaltext="11-11 of 11"
+  totaltext="Total"
 >
   <span
     class="el-pagination__total"
@@ -194,6 +196,105 @@ exports[`HistoryPagination.vue [With Last Page]: should be rendered correctly 1`
 </s-pagination-stub>
 `;
 
+exports[`HistoryPagination.vue [With Loading State]: should be rendered correctly 1`] = `
+<s-pagination-stub
+  borderradius="small"
+  class="history-pagination"
+  currentpage="2"
+  layout="slot"
+  nexttext=""
+  oftext="of"
+  pagesize="10"
+  pagesizes="10,20,30,40,50,100"
+  perpagetext="Rows per page"
+  popperclass=""
+  prevtext=""
+  totaltext="Total"
+>
+  <span
+    class="el-pagination__total"
+  >
+    11-20 of 25
+  </span>
+   
+  <s-button-stub
+    borderradius="small"
+    disabled="true"
+    icon=""
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="First"
+    tooltipplacement="top"
+    type="link"
+    usedesignsystem="true"
+  >
+    <s-icon-stub
+      name="chevrons-left-16"
+      size="14"
+    />
+  </s-button-stub>
+   
+  <s-button-stub
+    borderradius="small"
+    disabled="true"
+    icon=""
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Previous"
+    tooltipplacement="top"
+    type="link"
+    usedesignsystem="true"
+  >
+    <s-icon-stub
+      name="chevron-left-16"
+      size="14"
+    />
+  </s-button-stub>
+   
+  <s-button-stub
+    borderradius="small"
+    disabled="true"
+    icon=""
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Next"
+    tooltipplacement="top"
+    type="link"
+    usedesignsystem="true"
+  >
+    <s-icon-stub
+      name="chevron-right-16"
+      size="14"
+    />
+  </s-button-stub>
+   
+  <s-button-stub
+    borderradius="small"
+    disabled="true"
+    icon=""
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Last"
+    tooltipplacement="top"
+    type="link"
+    usedesignsystem="true"
+  >
+    <s-icon-stub
+      name="chevrons-right-16"
+      size="14"
+    />
+  </s-button-stub>
+</s-pagination-stub>
+`;
+
 exports[`HistoryPagination.vue [With Second Page]: should be rendered correctly 1`] = `
 <s-pagination-stub
   borderradius="small"
@@ -207,12 +308,12 @@ exports[`HistoryPagination.vue [With Second Page]: should be rendered correctly 
   perpagetext="Rows per page"
   popperclass=""
   prevtext=""
-  totaltext="11-20 of 23"
+  totaltext="Total"
 >
   <span
     class="el-pagination__total"
   >
-    11-20 of 23
+    11-20 of 25
   </span>
    
   <s-button-stub

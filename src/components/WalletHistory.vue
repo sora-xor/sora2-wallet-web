@@ -35,9 +35,9 @@
         v-if="hasVisibleTransactions && total > pageAmount"
         :current-page="currentPage"
         :page-amount="pageAmount"
-        :total-text="totalText"
-        :is-first-page="isFirstPage"
-        :is-last-page="isLastPage"
+        :total="total"
+        :loading="loading"
+        :last-page="lastPage"
         @pagination-click="handlePaginationClick"
       />
     </s-form>

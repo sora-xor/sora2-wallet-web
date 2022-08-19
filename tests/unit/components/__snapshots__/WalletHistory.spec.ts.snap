@@ -250,9 +250,9 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
      
     <history-pagination-stub
       currentpage="1"
-      isfirstpage="true"
+      lastpage="2"
       pageamount="8"
-      totaltext="1-8 of 9"
+      total="9"
     />
   </s-form-stub>
 </div>
