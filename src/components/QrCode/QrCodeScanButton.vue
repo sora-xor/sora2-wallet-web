@@ -16,6 +16,7 @@
         @select="handleSelect"
         class="qr-code-dropdown"
         ref="dropdown"
+        :tabindex="-1"
       >
         <template #menu>
           <s-dropdown-item icon="basic-dashboard-24" :value="scanTypes.FILE" class="qr-code-dropdown__item">

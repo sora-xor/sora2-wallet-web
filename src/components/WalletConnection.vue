@@ -30,6 +30,7 @@
             :key="wallet.extensionName"
             @click.native="handleSelectWallet(wallet)"
             class="wallet-connection-extension"
+            :tabindex="0"
           >
             <template #avatar>
               <img :src="wallet.logo.src" :alt="wallet.logo.alt" />
@@ -37,7 +38,7 @@
             <template #name>{{ wallet.title }}</template>
             <template #default v-if="!wallet.installed">
               <a :href="wallet.installUrl" target="_blank" rel="nofollow noopener noreferrer">
-                <s-button size="small">{{ t('connection.wallet.install') }}</s-button>
+                <s-button size="small" :tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
               </a>
             </template>
           </account-card>
@@ -50,6 +51,7 @@
             :polkadotAccount="account"
             @click.native="handleSelectAccount(account)"
             class="wallet-connection-account"
+            :tabindex="0"
           />
         </s-scrollbar>
       </template>

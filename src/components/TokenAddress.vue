@@ -49,7 +49,6 @@ export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMi
   }
 
   &__value {
-    outline: none;
     cursor: pointer;
 
     &:hover {
