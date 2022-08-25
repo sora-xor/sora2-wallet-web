@@ -210,7 +210,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   mounted(): void {
-    this.assetList = getLegalAssets(api.assets.accountAssets, this.blacklist) as any;
+    this.assetList = getLegalAssets(api.assets.accountAssets, this.blacklist) as Array<AccountAsset>;
   }
 }
 </script>
