@@ -248,99 +248,12 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
     </div>
      
-    <s-pagination-stub
-      borderradius="small"
+    <history-pagination-stub
       currentpage="1"
-      layout="slot"
-      nexttext=""
-      oftext="of"
-      pagesize="8"
-      pagesizes="10,20,30,40,50,100"
-      perpagetext="Rows per page"
-      popperclass=""
-      prevtext=""
-      totaltext="1-8 of 9"
-    >
-      <span
-        class="el-pagination__total"
-      >
-        1-8 of 9
-      </span>
-       
-      <s-button-stub
-        borderradius="small"
-        disabled="true"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="First"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevrons-left-16"
-          size="14"
-        />
-      </s-button-stub>
-       
-      <s-button-stub
-        borderradius="small"
-        disabled="true"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="Previous"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevron-left-16"
-          size="14"
-        />
-      </s-button-stub>
-       
-      <s-button-stub
-        borderradius="small"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="Next"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevron-right-16"
-          size="14"
-        />
-      </s-button-stub>
-       
-      <s-button-stub
-        borderradius="small"
-        icon=""
-        iconposition="left"
-        nativetype="button"
-        size="medium"
-        tabindex="0"
-        tooltip="Last"
-        tooltipplacement="top"
-        type="link"
-        usedesignsystem="true"
-      >
-        <s-icon-stub
-          name="chevrons-right-16"
-          size="14"
-        />
-      </s-button-stub>
-    </s-pagination-stub>
+      lastpage="2"
+      pageamount="8"
+      total="9"
+    />
   </s-form-stub>
 </div>
 `;
