@@ -90,7 +90,8 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import { api, FPNumber } from '@sora-substrate/util';
 import draggable from 'vuedraggable';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, Blacklist } from '@sora-substrate/util/build/assets/types';
+import { getLegalAssets } from '@sora-substrate/util/build/assets/index';
 
 import AssetList from './AssetList.vue';
 import AssetListItem from './AssetListItem.vue';
@@ -121,6 +122,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @state.account.withoutFiatAndApy private withoutFiatAndApy!: boolean;
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
   @state.settings.permissions permissions!: WalletPermissions;
+  @state.account.blacklistArray blacklist!: Blacklist;
 
   assetList: Array<AccountAsset> = [];
 
@@ -208,7 +210,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   mounted(): void {
-    this.assetList = api.assets.accountAssets;
+    this.assetList = getLegalAssets(api.assets.accountAssets, this.blacklist) as any;
   }
 }
 </script>
