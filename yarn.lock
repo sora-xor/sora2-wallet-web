@@ -2104,7 +2104,7 @@
     "@polkadot/types" "8.9.1"
     "@sora-substrate/type-definitions" "1.10.0-beta.11"
 
-"@sora-substrate/util@^1.10.0-beta.11":
+"@sora-substrate/util@1.10.0-beta.11":
   version "1.10.0-beta.11"
   resolved "https://registry.yarnpkg.com/@sora-substrate/util/-/util-1.10.0-beta.11.tgz#a4d7255734f41068e1a981fd1a6f3ef2bdf57265"
   integrity sha512-EuJR9eugMVU4ft+EiXGgT1RboMfKV57xMOcCwF0XJ1Sojn8pWAfB0/9AcoSufW6ust7H2EWQ/Pos/vj7Gd7/dw==
