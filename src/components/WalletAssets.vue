@@ -90,8 +90,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import { api, FPNumber } from '@sora-substrate/util';
 import draggable from 'vuedraggable';
-import type { AccountAsset, Blacklist, Asset } from '@sora-substrate/util/build/assets/types';
-import { getLegalAssets } from '@sora-substrate/util/build/assets/index';
+import type { AccountAsset, Blacklist } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from './AssetList.vue';
 import AssetListItem from './AssetListItem.vue';
