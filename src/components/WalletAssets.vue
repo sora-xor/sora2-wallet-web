@@ -90,7 +90,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import { api, FPNumber } from '@sora-substrate/util';
 import draggable from 'vuedraggable';
-import type { AccountAsset, Blacklist } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, Blacklist, Asset } from '@sora-substrate/util/build/assets/types';
 import { getLegalAssets } from '@sora-substrate/util/build/assets/index';
 
 import AssetList from './AssetList.vue';
@@ -210,7 +210,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   mounted(): void {
-    this.assetList = getLegalAssets(api.assets.accountAssets, this.blacklist) as Array<AccountAsset>;
+    this.assetList = api.assets.accountAssets.filter((asset) => !api.assets.isNftBlacklisted(asset, this.blacklist));
   }
 }
 </script>
