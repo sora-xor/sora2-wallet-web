@@ -18,6 +18,7 @@ import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatVa
 import TransactionHashView from './components/TransactionHashView.vue';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import TokenLogo from './components/TokenLogo.vue';
+import HistoryPagination from './components/HistoryPagination.vue';
 import DialogBase from './components/DialogBase.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
 // Mixins
@@ -95,6 +96,7 @@ async function initWallet({ withoutStore = false, permissions }: WALLET_CONSTS.W
       throw error;
     }
     await store.dispatch.wallet.account.getWhitelist();
+    await store.dispatch.wallet.account.getNftBlacklist();
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
       store.dispatch.wallet.subscriptions.activateInternalSubscriptions(),
@@ -119,6 +121,7 @@ const components = {
   TransactionHashView,
   NetworkFeeWarning,
   TokenLogo,
+  HistoryPagination,
   DialogBase,
   NotificationEnablingPage,
 };

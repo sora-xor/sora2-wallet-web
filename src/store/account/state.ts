@@ -24,6 +24,7 @@ export function initialState(): AccountState {
     polkadotJsAccounts: [],
     polkadotJsAccountsSubscription: null,
     whitelistArray: [],
+    blacklistArray: [],
     withoutFiatAndApy: false,
     fiatPriceAndApyObject: {},
     fiatPriceAndApyTimer: null,

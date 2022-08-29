@@ -35,6 +35,7 @@ export default {
   unknownErrorText: 'ERROR Something went wrong...',
   transactionSubmittedText: 'Transaction was submitted',
   assetDeposit: 'Asset balance has been deposited',
+  ofText: '{first} of {second}',
   operations: {
     [Operation.Swap]: 'Swap',
     [Operation.SwapAndSend]: 'Swap and Send',
@@ -160,6 +161,10 @@ export default {
     filterPlaceholder: 'Filter by Address, Symbol, Type or Block ID',
     empty: 'Your transactions will appear here',
     emptySearch: 'No transactions found',
+    firstText: 'First',
+    lastText: 'Last',
+    prevText: 'Previous',
+    nextText: 'Next',
   },
   assets: {
     empty: 'There are no assets',

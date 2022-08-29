@@ -13,7 +13,8 @@ import {
   getWallet,
   getExtensionSigner,
   subscribeToPolkadotJsAccounts,
-  WHITE_LIST_GITHUB_URL,
+  WHITE_LIST_URL,
+  NFT_BLACK_LIST_URL,
 } from '../../util';
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
 import type { HistoryElementTransfer } from '../../services/subquery/types';
@@ -202,7 +203,7 @@ const actions = defineActions({
   async getAssets(context): Promise<void> {
     const { getters, commit } = accountActionContext(context);
     try {
-      const assets = await api.assets.getAssets(getters.whitelist);
+      const assets = await api.assets.getAssets(getters.whitelist, false, getters.blacklist);
       commit.updateAssets(assets);
     } catch (error) {
       commit.updateAssets([]);
@@ -239,14 +240,24 @@ const actions = defineActions({
   },
   async getWhitelist(context): Promise<void> {
     const { commit } = accountActionContext(context);
-    const url = 'https://whitelist.polkaswap2.io/whitelist.json';
     commit.clearWhitelist();
     try {
-      const response = await fetch(url);
+      const response = await fetch(WHITE_LIST_URL);
       const data = await response.json();
       commit.setWhitelist(data);
     } catch (error) {
       commit.clearWhitelist();
+    }
+  },
+  async getNftBlacklist(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+    commit.clearBlacklist();
+    try {
+      const response = await fetch(NFT_BLACK_LIST_URL);
+      const data = await response.json();
+      commit.setNftBlacklist(data);
+    } catch (error) {
+      commit.clearBlacklist();
     }
   },
   async getFiatPriceAndApyObject(context): Promise<void> {
