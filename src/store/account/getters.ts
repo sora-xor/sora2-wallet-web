@@ -1,5 +1,5 @@
 import { defineGetters } from 'direct-vuex';
-import type { Whitelist } from '@sora-substrate/util/build/assets/types';
+import type { Blacklist, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import { accountGetterContext } from './../account';
 import { api } from '../../api';
@@ -41,6 +41,10 @@ const getters = defineGetters<AccountState>()({
     return state.whitelistArray && state.whitelistArray.length
       ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray)
       : {};
+  },
+  blacklist(...args): any {
+    const { state } = accountGetterContext(args);
+    return state.blacklistArray && state.blacklistArray.length ? state.blacklistArray : [];
   },
 });
 

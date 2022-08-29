@@ -47,7 +47,7 @@ exports[`WalletAccount.vue should be rendered correctly 1`] = `
             opendelay="500"
             placement="top"
             showarrow="true"
-            tabindex="0"
+            tabindex="-1"
             theme="auto"
             usedesignsystem="true"
           >

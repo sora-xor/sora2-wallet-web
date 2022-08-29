@@ -26,10 +26,12 @@
 
         <div v-else-if="isExtensionsView" class="wallet-connection-extensions">
           <account-card
+            v-button
             v-for="wallet in availableWallets"
             :key="wallet.extensionName"
-            @click.native="handleSelectWallet(wallet)"
             class="wallet-connection-extension"
+            tabindex="0"
+            @click.native="handleSelectWallet(wallet)"
           >
             <template #avatar>
               <img :src="wallet.logo.src" :alt="wallet.logo.alt" />
@@ -37,7 +39,7 @@
             <template #name>{{ wallet.title }}</template>
             <template #default v-if="!wallet.installed">
               <a :href="wallet.installUrl" target="_blank" rel="nofollow noopener noreferrer">
-                <s-button size="small">{{ t('connection.wallet.install') }}</s-button>
+                <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
               </a>
             </template>
           </account-card>
@@ -45,11 +47,13 @@
 
         <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
           <wallet-account
+            v-button
             v-for="(account, index) in polkadotJsAccounts"
             :key="index"
             :polkadotAccount="account"
-            @click.native="handleSelectAccount(account)"
             class="wallet-connection-account"
+            tabindex="0"
+            @click.native="handleSelectAccount(account)"
           />
         </s-scrollbar>
       </template>
@@ -59,6 +63,7 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
+import { Button } from '@soramitsu/soramitsu-js-ui/lib/directives';
 
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
@@ -82,6 +87,9 @@ enum Step {
 
 @Component({
   components: { AccountCard, WalletBase, WalletAccount },
+  directives: {
+    button: Button as any, // TODO: fix type
+  },
 })
 export default class WalletConnection extends Mixins(TranslationMixin, LoadingMixin) {
   readonly Step = Step;

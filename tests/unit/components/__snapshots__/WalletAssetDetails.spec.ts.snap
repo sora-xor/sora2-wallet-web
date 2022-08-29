@@ -28,7 +28,9 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
        
       <div
         class="asset-details-balance d2 asset-details-balance--clickable"
+        role="button"
         style="font-size: 30px;"
+        tabindex="0"
       >
         <formatted-amount-stub
           assetsymbol="XOR"
@@ -207,7 +209,9 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
        
       <div
         class="asset-details-balance d2 asset-details-balance--clickable asset-details-balance--clicked"
+        role="button"
         style="font-size: 30px;"
+        tabindex="0"
       >
         <formatted-amount-stub
           assetsymbol="XOR"
