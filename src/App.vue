@@ -63,7 +63,9 @@ export default class App extends Mixins(TransactionMixin) {
   @Watch('assetsToNotifyQueue')
   private handleNotifyOnDeposit(whitelistAssetArray: WhitelistArrayItem[]): void {
     if (!whitelistAssetArray.length) return;
-    this.notifyOnDeposit({ asset: whitelistAssetArray[0], message: this.t('assetDeposit') });
+    if ('Notification' in window) {
+      this.notifyOnDeposit({ asset: whitelistAssetArray[0], message: this.t('assetDeposit') });
+    }
   }
 
   @Watch('firstReadyTransaction', { deep: true })

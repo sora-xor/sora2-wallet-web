@@ -21,6 +21,7 @@ import type {
   ReferrerRewards,
   AccountReferralReward,
   AssetSnapshot,
+  HistoryElementsQueryResponse,
 } from './types';
 
 export default class SubqueryExplorer implements Explorer {
@@ -42,10 +43,10 @@ export default class SubqueryExplorer implements Explorer {
     this.client = createSubqueryClient(url, true);
   }
 
-  public async getAccountTransactions(variables = {}): Promise<any> {
+  public async getAccountTransactions(variables = {}): Promise<Nullable<HistoryElementsQueryResponse>> {
     const { historyElements } = await this.request(HistoryElementsQuery, variables);
 
-    return historyElements;
+    return historyElements as HistoryElementsQueryResponse;
   }
 
   /**

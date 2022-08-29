@@ -24,6 +24,7 @@ export function initialState(): AccountState {
     polkadotJsAccounts: [],
     polkadotJsAccountsSubscription: null,
     whitelistArray: [],
+    blacklistArray: [],
     withoutFiatAndApy: false,
     fiatPriceAndApyObject: {},
     fiatPriceAndApyTimer: null,
@@ -32,6 +33,8 @@ export function initialState(): AccountState {
     selectedExtension: null,
     availableWallets: [],
     extensionAvailabilityTimer: null,
+    /** notifications */
+    incomingTransfersSubscription: null,
   };
 }
 

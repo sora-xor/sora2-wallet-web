@@ -2,6 +2,8 @@ import type { FPNumber, Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
+export const BLOCK_PRODUCE_TIME = 6 * 1000;
+
 export enum Extensions {
   PolkadotJS = 'polkadot-js',
   SubwalletJS = 'subwallet-js',
@@ -17,7 +19,6 @@ export enum RouteNames {
   ReceiveToken = 'ReceiveToken',
   AddAsset = 'AddAsset',
   SelectAsset = 'SelectAsset',
-  WalletTransactionDetails = 'WalletTransactionDetails',
 }
 
 export enum WalletTabs {
@@ -107,6 +108,13 @@ export enum LogoSize {
   BIG = 'big',
   BIGGER = 'bigger',
   LARGE = 'large',
+}
+
+export enum PaginationButton {
+  First = 'first',
+  Prev = 'prev',
+  Next = 'next',
+  Last = 'last',
 }
 
 export const ObjectInit = () => null;

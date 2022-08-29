@@ -3,7 +3,7 @@ import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../../api';
 import type { TransactionsState } from './types';
-import type { CursorPagination } from '../../types/history';
+import type { PageInfo } from '../../services/subquery/types';
 
 const mutations = defineMutations<TransactionsState>()({
   setActiveTxsSubscription(state, subscription: NodeJS.Timeout | number): void {
@@ -28,6 +28,9 @@ const mutations = defineMutations<TransactionsState>()({
   setTxDetailsId(state, id: string): void {
     state.selectedTxId = id;
   },
+  resetTxDetailsId(state): void {
+    state.selectedTxId = null;
+  },
   getHistory(state): void {
     // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes
     state.history = Object.freeze(api.history);
@@ -35,10 +38,10 @@ const mutations = defineMutations<TransactionsState>()({
   setExternalHistory(state, history: AccountHistory<HistoryItem>): void {
     state.externalHistory = Object.freeze(history);
   },
-  setExternalHistoryTotal(state, total: number): void {
+  setExternalHistoryTotal(state, total = 0): void {
     state.externalHistoryTotal = total;
   },
-  setExternalHistoryPagination(state, pageInfo: Nullable<CursorPagination>): void {
+  setExternalHistoryPagination(state, pageInfo: Nullable<PageInfo>): void {
     state.externalHistoryPagination = pageInfo;
   },
   resetExternalHistory(state): void {

@@ -89,6 +89,15 @@ export type FiatPriceAndApyObject = {
   };
 };
 
+export type HistoryElementsQueryResponse = {
+  edges: Array<{
+    cursor?: string;
+    node: HistoryElement;
+  }>;
+  pageInfo?: PageInfo;
+  totalCount?: number;
+};
+
 export type HistoryElementError = {
   moduleErrorId: number;
   moduleErrorIndex: number;
