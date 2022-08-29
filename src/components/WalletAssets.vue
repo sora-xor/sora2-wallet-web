@@ -3,8 +3,8 @@
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" />
     <s-scrollbar class="wallet-assets-scrollbar">
       <draggable v-model="assetList" class="wallet-assets__draggable">
-        <div v-for="(asset, index) in assetsToShow" :key="asset.address" class="wallet-assets-item__wrapper">
-          <div class="wallet-assets-item s-flex" ref="walletAssets">
+        <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
+          <div v-if="showAsset(asset)" class="wallet-assets-item s-flex" ref="walletAssets">
             <div class="wallet-assets-three-dash"></div>
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
