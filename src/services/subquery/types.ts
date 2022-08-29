@@ -79,7 +79,9 @@ export type AssetSnapshot = {
 export type PoolXYKEntity = {
   id: string;
   strategicBonusApy: Nullable<string>;
+  strategic_bonus_apy?: Nullable<string>;
   priceUSD: Nullable<string>;
+  price_u_s_d?: Nullable<string>;
 };
 
 export type FiatPriceAndApyObject = {

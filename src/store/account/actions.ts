@@ -21,7 +21,6 @@ import type { HistoryElementTransfer } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
 import { pushNotification } from '../../util/notification';
 
-const UPDATE_PRICES_INTERVAL = 30 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5 * 1000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
 const CHECK_INCOMING_TRANSFERS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -273,14 +272,24 @@ const actions = defineActions({
       commit.clearFiatPriceAndApyObject();
     }
   },
+  async updateFiatPriceAndApyObject(context, firatPriceAndApyRecord): Promise<void> {
+    const {
+      commit,
+      state: { fiatPriceAndApyObject },
+    } = accountActionContext(context);
+
+    const updated = { ...fiatPriceAndApyObject, ...firatPriceAndApyRecord };
+
+    commit.setFiatPriceAndApyObject(updated);
+  },
   async subscribeOnFiatPriceAndApyObjectUpdates(context): Promise<void> {
     const { dispatch, commit } = accountActionContext(context);
+
     dispatch.getFiatPriceAndApyObject();
 
-    const timer = setInterval(() => {
-      dispatch.getFiatPriceAndApyObject();
-    }, UPDATE_PRICES_INTERVAL);
-    commit.setFiatPriceAndApyTimer(timer);
+    const subscription = SubqueryExplorerService.subscribeOnFiatPriceAndApyObject(dispatch.updateFiatPriceAndApyObject);
+
+    commit.setFiatPriceAndApySubscription(subscription);
   },
   async getAccountReferralRewards(context): Promise<void> {
     const { state, commit } = accountActionContext(context);

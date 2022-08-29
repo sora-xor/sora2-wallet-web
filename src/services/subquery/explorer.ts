@@ -24,6 +24,8 @@ import type {
   HistoryElementsQueryResponse,
 } from './types';
 
+const format = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
+
 export default class SubqueryExplorer implements Explorer {
   public client!: Client;
 
@@ -74,18 +76,39 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public subscribeOnFiatPriceAndApyObject(): VoidFunction {
-    return this.subscribe(FiatPriceSubscription);
+  public subscribeOnFiatPriceAndApyObject(handler: (entity: FiatPriceAndApyObject) => void): VoidFunction {
+    return this.subscribe(FiatPriceSubscription, (result: any) => {
+      const entity = this.parseFiatPriceAndApyEntity(result.data.poolXYKs._entity);
+
+      handler(entity);
+    });
+  }
+
+  public parseFiatPriceAndApyEntity(entity: PoolXYKEntity): FiatPriceAndApyObject {
+    const acc = {};
+    const id = entity.id;
+    const strategicBonusApyFPNumber = format(entity.strategicBonusApy || entity.strategic_bonus_apy);
+    const priceFPNumber = format(entity.priceUSD || entity.price_u_s_d);
+    const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+    const isPriceFinity = priceFPNumber.isFinity();
+    if (isPriceFinity || isStrategicBonusApyFinity) {
+      acc[id] = {};
+    }
+    if (isPriceFinity) {
+      acc[id].price = priceFPNumber.toCodecString();
+    }
+    if (isStrategicBonusApyFinity) {
+      acc[id].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
+    }
+
+    return acc;
   }
 
   /**
    * Get fiat price & APY coefficient for each asset (without historical data)
    */
   public async getFiatPriceAndApyObject(): Promise<Nullable<FiatPriceAndApyObject>> {
-    const format = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
-
-    const acc: FiatPriceAndApyObject = {};
-
+    let acc: FiatPriceAndApyObject = {};
     let after = '';
     let hasNextPage = true;
 
@@ -101,19 +124,9 @@ export default class SubqueryExplorer implements Explorer {
         hasNextPage = response.hasNextPage;
 
         response.nodes.forEach((el: PoolXYKEntity) => {
-          const strategicBonusApyFPNumber = format(el.strategicBonusApy);
-          const priceFPNumber = format(el.priceUSD);
-          const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
-          const isPriceFinity = priceFPNumber.isFinity();
-          if (isPriceFinity || isStrategicBonusApyFinity) {
-            acc[el.id] = {};
-          }
-          if (isPriceFinity) {
-            acc[el.id].price = priceFPNumber.toCodecString();
-          }
-          if (isStrategicBonusApyFinity) {
-            acc[el.id].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
-          }
+          const record = this.parseFiatPriceAndApyEntity(el);
+
+          acc = { ...acc, ...record };
         });
       } while (hasNextPage);
 
@@ -235,14 +248,12 @@ export default class SubqueryExplorer implements Explorer {
     return data;
   }
 
-  public subscribe(subscription): VoidFunction {
+  public subscribe(subscription, handler: (result: any) => void): VoidFunction {
     this.initClient();
 
     const { unsubscribe } = pipe(
       this.client.subscription(subscription),
-      subscribe((result) => {
-        console.log(result); // { data: ... }
-      })
+      subscribe((result) => handler(result))
     );
 
     return unsubscribe;
