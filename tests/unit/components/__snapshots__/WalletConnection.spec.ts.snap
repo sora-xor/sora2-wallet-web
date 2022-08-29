@@ -25,18 +25,26 @@ exports[`WalletConnection.vue [Extension available]: Accounts should be rendered
       <wallet-account-stub
         class="wallet-connection-account"
         polkadotaccount="[object Object]"
+        role="button"
+        tabindex="0"
       />
       <wallet-account-stub
         class="wallet-connection-account"
         polkadotaccount="[object Object]"
+        role="button"
+        tabindex="0"
       />
       <wallet-account-stub
         class="wallet-connection-account"
         polkadotaccount="[object Object]"
+        role="button"
+        tabindex="0"
       />
       <wallet-account-stub
         class="wallet-connection-account"
         polkadotaccount="[object Object]"
+        role="button"
+        tabindex="0"
       />
     </s-scrollbar-stub>
     <div
@@ -146,8 +154,10 @@ exports[`WalletConnection.vue [Extension available]: Extensions should be render
       <s-card
         borderradius="medium"
         class="wallet-account wallet-connection-extension"
+        role="button"
         shadow="always"
         size="small"
+        tabindex="0"
       >
         <div
           class="account s-flex"
@@ -184,8 +194,10 @@ exports[`WalletConnection.vue [Extension available]: Extensions should be render
       <s-card
         borderradius="medium"
         class="wallet-account wallet-connection-extension"
+        role="button"
         shadow="always"
         size="small"
+        tabindex="0"
       >
         <div
           class="account s-flex"
@@ -227,7 +239,7 @@ exports[`WalletConnection.vue [Extension available]: Extensions should be render
                 iconposition="left"
                 nativetype="button"
                 size="small"
-                tabindex="0"
+                tabindex="-1"
                 tooltip=""
                 tooltipplacement="top"
                 type="secondary"
