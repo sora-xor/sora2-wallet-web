@@ -21,6 +21,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
     >
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -49,6 +51,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -77,6 +81,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -105,6 +111,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -133,6 +141,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -161,6 +171,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -192,6 +204,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -220,6 +234,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -287,6 +303,8 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
     >
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -315,6 +333,8 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -343,6 +363,8 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -371,6 +393,8 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -399,6 +423,8 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -495,6 +521,8 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
     >
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -523,6 +551,8 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -551,6 +581,8 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -579,6 +611,8 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -607,6 +641,8 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"

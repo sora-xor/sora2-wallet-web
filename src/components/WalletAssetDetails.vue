@@ -18,7 +18,13 @@
         />
         <template v-else>
           <token-logo :token="asset" size="bigger" />
-          <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
+          <div
+            v-button="isXor"
+            :style="balanceStyles"
+            :class="balanceDetailsClasses"
+            :tabindex="isXor ? 0 : -1"
+            @click="isXor && handleClickDetailedBalance()"
+          >
             <formatted-amount
               value-can-be-hidden
               symbol-as-decimal
@@ -116,6 +122,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { XOR, BalanceType } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/util';
+import { Button } from '@soramitsu/soramitsu-js-ui/lib/directives';
 
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
@@ -151,6 +158,9 @@ interface Operation {
     NftDetails,
     InfoLine,
     TokenLogo,
+  },
+  directives: {
+    button: Button as any, // TODO: fix type
   },
 })
 export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin, QrCodeParserMixin) {

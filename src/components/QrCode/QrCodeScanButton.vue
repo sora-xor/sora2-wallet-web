@@ -13,16 +13,22 @@
         type="ellipsis"
         border-radius="mini"
         icon="basic-scan-24"
-        @select="handleSelect"
         class="qr-code-dropdown"
         ref="dropdown"
-        :tabindex="-1"
+        tabindex="-1"
+        @select="handleSelect"
       >
         <template #menu>
-          <s-dropdown-item icon="basic-dashboard-24" :value="scanTypes.FILE" class="qr-code-dropdown__item">
+          <!-- TODO: Tabindex Check this place -->
+          <s-dropdown-item
+            icon="basic-dashboard-24"
+            :value="scanTypes.FILE"
+            class="qr-code-dropdown__item"
+            tabindex="0"
+          >
             {{ t('code.import') }}
           </s-dropdown-item>
-          <s-dropdown-item icon="camera-16" :value="scanTypes.STREAM" class="qr-code-dropdown__item">
+          <s-dropdown-item icon="camera-16" :value="scanTypes.STREAM" class="qr-code-dropdown__item" tabindex="0">
             {{ t('code.scan') }}
           </s-dropdown-item>
         </template>
