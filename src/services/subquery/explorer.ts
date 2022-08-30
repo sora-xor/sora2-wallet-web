@@ -5,12 +5,14 @@ import { XOR } from '@sora-substrate/util/build/assets/consts';
 import { HistoryElementsQuery } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
 import { HistoricalPriceQuery, historicalPriceFilter } from './queries/historicalPrice';
-import { FiatPriceQuery, FiatPriceSubscription } from './queries/fiatPriceAndApy';
+import { FiatPriceQuery } from './queries/fiatPriceAndApy';
+import { FiatPriceSubscription } from './subscriptions/fiatPriceAndApy';
 import { SoraNetwork } from '../../consts';
 import { AssetSnapshotTypes } from './types';
 
 import { createSubqueryClient } from './client';
-import type { Client } from './client';
+
+import type { Client, OperationResult, ResultOf } from './client';
 
 import store from '../../store';
 
@@ -76,11 +78,13 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public subscribeOnFiatPriceAndApyObject(handler: (entity: FiatPriceAndApyObject) => void): VoidFunction {
-    return this.subscribe(FiatPriceSubscription, (result: any) => {
-      const entity = this.parseFiatPriceAndApyEntity(result.data.poolXYKs._entity);
+  public createFiatPriceAndApySubscription(handler: (entity: FiatPriceAndApyObject) => void): VoidFunction {
+    return this.subscribe<ResultOf<typeof FiatPriceSubscription>>(FiatPriceSubscription, (payload) => {
+      if (payload.data) {
+        const entity = this.parseFiatPriceAndApyEntity(payload.data.poolXYKs._entity);
 
-      handler(entity);
+        handler(entity);
+      }
     });
   }
 
@@ -248,12 +252,12 @@ export default class SubqueryExplorer implements Explorer {
     return data;
   }
 
-  public subscribe(subscription, handler: (result: any) => void): VoidFunction {
+  public subscribe<T>(subscription, handler: (payload: OperationResult<T, {}>) => void): VoidFunction {
     this.initClient();
 
     const { unsubscribe } = pipe(
-      this.client.subscription(subscription),
-      subscribe((result) => handler(result))
+      this.client.subscription<T>(subscription),
+      subscribe((payload) => handler(payload))
     );
 
     return unsubscribe;

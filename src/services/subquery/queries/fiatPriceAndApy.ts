@@ -17,13 +17,3 @@ export const FiatPriceQuery = gql`
   }
   ${PageInfoFragment}
 `;
-
-export const FiatPriceSubscription = gql`
-  subscription {
-    poolXYKs {
-      id
-      mutation_type
-      _entity
-    }
-  }
-`;

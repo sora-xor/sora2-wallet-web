@@ -17,7 +17,7 @@ import {
   NFT_BLACK_LIST_URL,
 } from '../../util';
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
-import type { HistoryElementTransfer } from '../../services/subquery/types';
+import type { HistoryElementTransfer, FiatPriceAndApyObject } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
 import { pushNotification } from '../../util/notification';
 
@@ -272,22 +272,24 @@ const actions = defineActions({
       commit.clearFiatPriceAndApyObject();
     }
   },
-  async updateFiatPriceAndApyObject(context, firatPriceAndApyRecord): Promise<void> {
+  async updateFiatPriceAndApyObject(context, fiatPriceAndApyRecord: FiatPriceAndApyObject): Promise<void> {
     const {
       commit,
       state: { fiatPriceAndApyObject },
     } = accountActionContext(context);
 
-    const updated = { ...fiatPriceAndApyObject, ...firatPriceAndApyRecord };
+    const updated = { ...(fiatPriceAndApyObject || {}), ...fiatPriceAndApyRecord };
 
     commit.setFiatPriceAndApyObject(updated);
   },
-  async subscribeOnFiatPriceAndApyObjectUpdates(context): Promise<void> {
+  async subscribeOnFiatPriceAndApy(context): Promise<void> {
     const { dispatch, commit } = accountActionContext(context);
 
     dispatch.getFiatPriceAndApyObject();
 
-    const subscription = SubqueryExplorerService.subscribeOnFiatPriceAndApyObject(dispatch.updateFiatPriceAndApyObject);
+    const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
+      dispatch.updateFiatPriceAndApyObject
+    );
 
     commit.setFiatPriceAndApySubscription(subscription);
   },

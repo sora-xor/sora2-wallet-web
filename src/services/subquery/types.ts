@@ -62,6 +62,22 @@ export enum AssetSnapshotTypes {
   DAY = 'DAY',
 }
 
+export enum MutationTypes {
+  DELETE = 'DELETE',
+  INSERT = 'INSERT',
+  UPDATE = 'UPDATE',
+}
+
+export type SubscriptionResult<SubscriptionData> = {
+  [EntityName in keyof SubscriptionData]: SubscriptionData[EntityName];
+};
+
+export type SubscriptionPayload<EntityData> = {
+  id: string;
+  mutation_type: MutationTypes;
+  _entity: EntityData;
+};
+
 export type AssetSnapshot = {
   priceUSD: {
     low: string;
