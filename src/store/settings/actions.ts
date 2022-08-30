@@ -7,6 +7,7 @@ import { api } from '../../api';
 import { runtimeStorage } from '../../util/storage';
 import type { ApiKeysObject } from '../../types/common';
 import { IpfsStorage } from '@/util/ipfsStorage';
+import { SoraNetwork } from '@/consts';
 
 function areKeysEqual(obj1: object, obj2: object): boolean {
   const obj1Keys = Object.keys(obj1).sort();
@@ -20,8 +21,9 @@ const actions = defineActions({
     commit.setApiKeys(keys);
   },
   async createNftStorageInstance(context) {
-    const { commit } = settingsActionContext(context);
-    if (process.env.NODE_ENV === 'production') {
+    const { state, commit } = settingsActionContext(context);
+
+    if (state.soraNetwork === SoraNetwork.Prod) {
       try {
         const { marketplaceDid, ucan } = await IpfsStorage.getUcanTokens();
         commit.setNftStorage({ marketplaceDid, ucan });
