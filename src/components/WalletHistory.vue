@@ -52,7 +52,6 @@ import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 import { History, TransactionStatus } from '@sora-substrate/util';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
-import { Button } from '@soramitsu/soramitsu-js-ui/lib/directives';
 
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
@@ -70,9 +69,6 @@ import type { Route } from '../store/router/types';
   components: {
     SearchInput,
     HistoryPagination,
-  },
-  directives: {
-    button: Button as any, // TODO: fix type
   },
 })
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {

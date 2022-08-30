@@ -63,7 +63,6 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { Button } from '@soramitsu/soramitsu-js-ui/lib/directives';
 
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './WalletAccount.vue';
@@ -87,9 +86,6 @@ enum Step {
 
 @Component({
   components: { AccountCard, WalletBase, WalletAccount },
-  directives: {
-    button: Button as any, // TODO: fix type
-  },
 })
 export default class WalletConnection extends Mixins(TranslationMixin, LoadingMixin) {
   readonly Step = Step;
