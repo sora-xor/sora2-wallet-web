@@ -14,7 +14,9 @@
           <div
             class="history-item s-flex"
             v-for="(item, index) in transactions"
+            v-button
             :key="index"
+            tabindex="0"
             @click="handleOpenTransactionDetails(item.id)"
           >
             <div class="history-item-info">
@@ -50,6 +52,7 @@ import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 import { History, TransactionStatus } from '@sora-substrate/util';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
+import { Button } from '@soramitsu/soramitsu-js-ui/lib/directives';
 
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
@@ -67,6 +70,9 @@ import type { Route } from '../store/router/types';
   components: {
     SearchInput,
     HistoryPagination,
+  },
+  directives: {
+    button: Button as any, // TODO: fix type
   },
 })
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
@@ -321,7 +327,7 @@ $history-item-top-border-height: 1px;
     padding: calc(var(--s-basic-spacing) + #{$history-item-top-border-height}) $history-item-horizontal-space * 2;
     font-size: var(--s-font-size-mini);
     border-radius: var(--s-border-radius-small);
-    &:not(:first-child) {
+    &:not(:first-child):not(:focus) {
       position: relative;
       &:before {
         position: absolute;
@@ -340,6 +346,9 @@ $history-item-top-border-height: 1px;
     &:hover {
       background-color: var(--s-color-base-background-hover);
       cursor: pointer;
+    }
+    &:focus ~ .history-item:before {
+      background-color: transparent;
     }
     &-info {
       display: flex;
