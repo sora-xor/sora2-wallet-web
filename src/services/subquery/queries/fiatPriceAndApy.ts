@@ -1,8 +1,18 @@
 import { gql } from '@urql/core';
 
+import type { ResultOf } from '../client';
+import type { PoolXYKEntity } from '../types';
+
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-export const FiatPriceQuery = gql`
+type FiatPriceQueryResponse = {
+  poolXYKs: {
+    pageInfo: ResultOf<typeof PageInfoFragment>;
+    nodes: PoolXYKEntity[];
+  };
+};
+
+export const FiatPriceQuery = gql<FiatPriceQueryResponse>`
   query FiatPriceQuery($after: Cursor = "", $first: Int = 100) {
     poolXYKs(first: $first, after: $after) {
       pageInfo {

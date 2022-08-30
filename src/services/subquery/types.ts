@@ -50,10 +50,10 @@ export enum ModuleMethods {
 }
 
 export type PageInfo = {
-  hasNextPage?: boolean;
-  hasPreviousPage?: boolean;
-  startCursor?: string;
-  endCursor?: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string;
+  endCursor: string;
 };
 
 export enum AssetSnapshotTypes {
@@ -67,10 +67,6 @@ export enum MutationTypes {
   INSERT = 'INSERT',
   UPDATE = 'UPDATE',
 }
-
-export type SubscriptionResult<SubscriptionData> = {
-  [EntityName in keyof SubscriptionData]: SubscriptionData[EntityName];
-};
 
 export type SubscriptionPayload<EntityData> = {
   id: string;

@@ -63,14 +63,14 @@ export default class SubqueryExplorer implements Explorer {
     try {
       const params = { after };
 
-      const { poolXYKs } = await this.request(FiatPriceQuery, params);
+      const response = await this.request(FiatPriceQuery, params);
 
-      if (!poolXYKs) return null;
+      if (!response || !response.poolXYKs) return null;
 
       const {
         pageInfo: { hasNextPage, endCursor },
         nodes,
-      } = poolXYKs;
+      } = response.poolXYKs;
 
       return { hasNextPage, endCursor, nodes };
     } catch (error) {
@@ -79,7 +79,9 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   public createFiatPriceAndApySubscription(handler: (entity: FiatPriceAndApyObject) => void): VoidFunction {
-    return this.subscribe<ResultOf<typeof FiatPriceSubscription>>(FiatPriceSubscription, (payload) => {
+    const createSubscription = this.subscribe(FiatPriceSubscription, {});
+
+    return createSubscription((payload) => {
       if (payload.data) {
         const entity = this.parseFiatPriceAndApyEntity(payload.data.poolXYKs._entity);
 
@@ -244,25 +246,24 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public async request(query: TypedDocumentNode, variables = {}): Promise<any> {
+  public async request<T>(query: TypedDocumentNode<T>, variables = {}) {
     this.initClient();
 
-    const { data } = await this.client.query(query, variables).toPromise();
+    const { data } = await this.client.query<ResultOf<typeof query>>(query, variables).toPromise();
 
     return data;
   }
 
-  public subscribe<T>(
-    subscription: TypedDocumentNode,
-    handler: (payload: OperationResult<T, {}>) => void
-  ): VoidFunction {
+  public subscribe<T>(subscription: TypedDocumentNode<T>, variables = {}) {
     this.initClient();
 
-    const { unsubscribe } = pipe(
-      this.client.subscription<T>(subscription),
-      subscribe((payload) => handler(payload))
-    );
+    return (handler: (payload: OperationResult<T, {}>) => void) => {
+      const { unsubscribe } = pipe(
+        this.client.subscription<ResultOf<typeof subscription>>(subscription, variables),
+        subscribe((payload) => handler(payload))
+      );
 
-    return unsubscribe;
+      return unsubscribe;
+    };
   }
 }
