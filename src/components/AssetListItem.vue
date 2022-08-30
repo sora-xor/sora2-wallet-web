@@ -21,7 +21,6 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 import type { Asset } from '@sora-substrate/util/build/assets/types';
-import { Button } from '@soramitsu/soramitsu-js-ui/lib/directives';
 
 import NftTokenLogo from './NftTokenLogo.vue';
 import TokenLogo from './TokenLogo.vue';
@@ -34,9 +33,6 @@ import TranslationMixin from './mixins/TranslationMixin';
     NftTokenLogo,
     TokenLogo,
     TokenAddress,
-  },
-  directives: {
-    button: Button as any, // TODO: fix type
   },
 })
 export default class AssetListItem extends Mixins(TranslationMixin) {
