@@ -3,7 +3,7 @@ import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 import type { Client } from '@urql/core';
 
-export type { Client, OperationResult } from '@urql/core';
+export type { Client, OperationResult, TypedDocumentNode } from '@urql/core';
 
 export type { ResultOf } from '@graphql-typed-document-node/core';
 

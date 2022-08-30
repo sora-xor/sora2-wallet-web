@@ -12,7 +12,7 @@ import { AssetSnapshotTypes } from './types';
 
 import { createSubqueryClient } from './client';
 
-import type { Client, OperationResult, ResultOf } from './client';
+import type { Client, OperationResult, ResultOf, TypedDocumentNode } from './client';
 
 import store from '../../store';
 
@@ -244,7 +244,7 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public async request(query, variables = {}): Promise<any> {
+  public async request(query: TypedDocumentNode, variables = {}): Promise<any> {
     this.initClient();
 
     const { data } = await this.client.query(query, variables).toPromise();
@@ -252,7 +252,10 @@ export default class SubqueryExplorer implements Explorer {
     return data;
   }
 
-  public subscribe<T>(subscription, handler: (payload: OperationResult<T, {}>) => void): VoidFunction {
+  public subscribe<T>(
+    subscription: TypedDocumentNode,
+    handler: (payload: OperationResult<T, {}>) => void
+  ): VoidFunction {
     this.initClient();
 
     const { unsubscribe } = pipe(
