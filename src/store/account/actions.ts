@@ -285,7 +285,7 @@ const actions = defineActions({
   async subscribeOnFiatPriceAndApy(context): Promise<void> {
     const { dispatch, commit } = accountActionContext(context);
 
-    dispatch.getFiatPriceAndApyObject();
+    await dispatch.getFiatPriceAndApyObject();
 
     const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
       dispatch.updateFiatPriceAndApyObject
