@@ -17,7 +17,7 @@ const createSubscriptionClient = (url: string) => {
   });
 };
 
-const createSubscriptionExchange = (subscriptionClient) => {
+const createSubscriptionExchange = (subscriptionClient: SubscriptionClient) => {
   return subscriptionExchange({
     forwardSubscription: (operation) => subscriptionClient.request(operation),
   });
