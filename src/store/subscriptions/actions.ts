@@ -58,7 +58,7 @@ const actions = defineActions({
   async activateInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'transactions/trackActiveTxs',
-      'account/subscribeOnFiatPriceAndApyObjectUpdates',
+      'account/subscribeOnFiatPriceAndApy',
       'account/subscribeOnExtensionAvailability',
       'account/subscribeOnIncomingTransfers',
       'subscriptions/subscribeToStorageUpdates',

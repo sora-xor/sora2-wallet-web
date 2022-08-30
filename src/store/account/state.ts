@@ -27,7 +27,7 @@ export function initialState(): AccountState {
     blacklistArray: [],
     withoutFiatAndApy: false,
     fiatPriceAndApyObject: {},
-    fiatPriceAndApyTimer: null,
+    fiatPriceAndApySubscription: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
     selectedExtension: null,

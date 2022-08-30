@@ -1,6 +1,8 @@
 import { gql } from '@urql/core';
 
-export const PageInfoFragment = gql`
+import type { PageInfo } from '../types';
+
+export const PageInfoFragment = gql<PageInfo>`
   fragment PageInfoFragment on PageInfo {
     hasNextPage
     hasPreviousPage
