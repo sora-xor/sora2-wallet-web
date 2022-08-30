@@ -1,6 +1,6 @@
 <template>
   <div class="s-input-container">
-    <s-input :placeholder="t(translation)" :value="formattedAddress" readonly />
+    <s-input :placeholder="t(translation)" :value="formattedAddress" readonly tabindex="-1" />
     <s-button
       class="s-button--copy"
       icon="basic-copy-24"

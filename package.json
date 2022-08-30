@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "1.10.18",
+  "version": "1.10.19",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
@@ -22,13 +22,13 @@
   },
   "dependencies": {
     "@polkadot/vue-identicon": "2.6.1",
-    "@sora-substrate/util": "1.10.0-beta.9",
-    "@soramitsu/soramitsu-js-ui": "^1.0.35",
+    "@sora-substrate/util": "1.10.0-beta.11",
+    "@soramitsu/soramitsu-js-ui": "^1.0.37",
     "@subwallet/wallet-connect": "^0.2.3",
     "@urql/core": "^2.5.0",
-    "base-64": "^1.0.0",
     "@zxing/browser": "^0.1.1",
     "@zxing/library": "^0.19.1",
+    "base-64": "^1.0.0",
     "core-js": "^3.6.4",
     "dayjs": "^1.10.5",
     "direct-vuex": "^0.12.1",

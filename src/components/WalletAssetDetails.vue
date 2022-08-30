@@ -19,7 +19,13 @@
           />
           <template v-else>
             <token-logo :token="asset" size="bigger" />
-            <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
+            <div
+              v-button="isXor"
+              :style="balanceStyles"
+              :class="balanceDetailsClasses"
+              :tabindex="isXor ? 0 : -1"
+              @click="isXor && handleClickDetailedBalance()"
+            >
               <formatted-amount
                 value-can-be-hidden
                 symbol-as-decimal

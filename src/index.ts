@@ -96,6 +96,7 @@ async function initWallet({ withoutStore = false, permissions }: WALLET_CONSTS.W
       throw error;
     }
     await store.dispatch.wallet.account.getWhitelist();
+    await store.dispatch.wallet.account.getNftBlacklist();
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
       store.dispatch.wallet.subscriptions.activateInternalSubscriptions(),

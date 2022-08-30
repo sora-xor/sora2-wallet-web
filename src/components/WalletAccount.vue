@@ -5,7 +5,8 @@
     </template>
     <template #name>{{ name }}</template>
     <template #description>
-      <s-tooltip :content="copyTooltip(t('account.walletAddress'))">
+      <!-- TODO: Add Copy address by Keyboard -->
+      <s-tooltip :content="copyTooltip(t('account.walletAddress'))" tabindex="-1">
         <div class="account-credentials_address" @click="handleCopyAddress(address, $event)">
           {{ formattedAddress }}
         </div>
