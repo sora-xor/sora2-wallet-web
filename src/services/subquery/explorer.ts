@@ -254,6 +254,7 @@ export default class SubqueryExplorer implements Explorer {
     return data;
   }
 
+  // https://formidable.com/open-source/urql/docs/advanced/subscriptions/#one-off-subscriptions
   public subscribe<T>(subscription: TypedDocumentNode<T>, variables = {}) {
     this.initClient();
 

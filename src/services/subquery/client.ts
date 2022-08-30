@@ -7,6 +7,7 @@ export type { Client, OperationResult, TypedDocumentNode } from '@urql/core';
 
 export type { ResultOf } from '@graphql-typed-document-node/core';
 
+// https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#constructorurl-options-websocketimpl
 const createSubscriptionClient = (url: string) => {
   const wsUrl = url.replace(/^http/, 'ws');
 
@@ -17,6 +18,7 @@ const createSubscriptionClient = (url: string) => {
   });
 };
 
+// https://formidable.com/open-source/urql/docs/advanced/subscriptions/#setting-up-subscriptions-transport-ws
 const createSubscriptionExchange = (subscriptionClient: SubscriptionClient) => {
   return subscriptionExchange({
     forwardSubscription: (operation) => subscriptionClient.request(operation),
