@@ -72,7 +72,7 @@ import type { Route } from '../store/router/types';
     HistoryPagination,
   },
   directives: {
-    button: Button as any, // TODO: fix type
+    button: Button as any,
   },
 })
 export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {

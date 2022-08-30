@@ -88,7 +88,7 @@ enum Step {
 @Component({
   components: { AccountCard, WalletBase, WalletAccount },
   directives: {
-    button: Button as any, // TODO: fix type
+    button: Button as any,
   },
 })
 export default class WalletConnection extends Mixins(TranslationMixin, LoadingMixin) {

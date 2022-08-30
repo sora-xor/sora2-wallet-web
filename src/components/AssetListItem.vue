@@ -36,7 +36,7 @@ import TranslationMixin from './mixins/TranslationMixin';
     TokenAddress,
   },
   directives: {
-    button: Button as any, // TODO: fix type
+    button: Button as any,
   },
 })
 export default class AssetListItem extends Mixins(TranslationMixin) {
