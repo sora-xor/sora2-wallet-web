@@ -56,7 +56,7 @@ const mutations = defineMutations<SettingsState>()({
   setApiKeys(state, keys: ApiKeysObject = {}): void {
     state.apiKeys = { ...state.apiKeys, ...keys };
   },
-  setNftStorage(state, { marketplaceDid, ucan }): void {
+  setNftStorage(state, { marketplaceDid, ucan }: { marketplaceDid?: string; ucan?: string }): void {
     let nftStorage;
 
     if (marketplaceDid && ucan) {
