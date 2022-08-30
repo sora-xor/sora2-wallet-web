@@ -70,7 +70,7 @@
             <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
             <div class="asset-highlight">
               {{ asset.name || asset.symbol }}
-              <s-tooltip :content="copyValueAssetId">
+              <s-tooltip :content="copyValueAssetId" tabindex="-1">
                 <span class="asset-id" @click="handleCopyAddress(asset.address, $event)">
                   ({{ getFormattedAddress(asset) }})
                 </span>
