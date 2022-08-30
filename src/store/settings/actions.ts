@@ -6,6 +6,7 @@ import { settingsActionContext } from './../settings';
 import { api } from '../../api';
 import { runtimeStorage } from '../../util/storage';
 import type { ApiKeysObject } from '../../types/common';
+import { IpfsStorage } from '@/util/ipfsStorage';
 
 function areKeysEqual(obj1: object, obj2: object): boolean {
   const obj1Keys = Object.keys(obj1).sort();
@@ -17,7 +18,19 @@ const actions = defineActions({
   async setApiKeys(context, keys: ApiKeysObject): Promise<void> {
     const { commit } = settingsActionContext(context);
     commit.setApiKeys(keys);
-    commit.setNftStorage();
+  },
+  async createNftStorageInstance(context) {
+    const { commit } = settingsActionContext(context);
+    if (process.env.NODE_ENV === 'production') {
+      try {
+        const { marketplaceDid, ucan } = await IpfsStorage.getUcanTokens();
+        commit.setNftStorage({ marketplaceDid, ucan });
+      } catch {
+        console.error('Error while getting API keys for NFT marketplace.');
+      }
+    } else {
+      commit.setNftStorage({});
+    }
   },
   async subscribeOnRuntimeVersion(context): Promise<void> {
     const { commit } = settingsActionContext(context);

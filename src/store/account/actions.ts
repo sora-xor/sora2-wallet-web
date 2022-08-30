@@ -1,5 +1,4 @@
 import { defineActions } from 'direct-vuex';
-import { axiosInstance } from '@sora-substrate/util';
 import type { Signer } from '@polkadot/api/types';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
