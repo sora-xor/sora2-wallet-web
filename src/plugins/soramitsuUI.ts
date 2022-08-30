@@ -3,6 +3,7 @@ import Vue from 'vue';
 // IMPORTANT!
 // Add import url to rollup.external !
 import DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
+import Directives from '@soramitsu/soramitsu-js-ui/lib/types/directives';
 import { setTheme, setDesignSystem } from '@soramitsu/soramitsu-js-ui/lib/utils';
 
 import ElementUIPlugin, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui/lib/plugins/elementUI';
@@ -32,9 +33,12 @@ import STab from '@soramitsu/soramitsu-js-ui/lib/components/Tab/STab';
 import STabs from '@soramitsu/soramitsu-js-ui/lib/components/Tab/STabs';
 import STooltip from '@soramitsu/soramitsu-js-ui/lib/components/Tooltip';
 
+import { Button } from '@soramitsu/soramitsu-js-ui/lib/directives';
+
 export function install(vue: typeof Vue, store) {
   vue.use(ElementUIPlugin);
   vue.use(SoramitsuUIStorePlugin, { store });
+  vue.directive(Directives.Button, Button);
   vue.use(SButton);
   vue.use(SCard);
   vue.use(SDesignSystemProvider);

@@ -14,7 +14,9 @@
           <div
             class="history-item s-flex"
             v-for="(item, index) in transactions"
+            v-button
             :key="index"
+            tabindex="0"
             @click="handleOpenTransactionDetails(item.id)"
           >
             <div class="history-item-info">
@@ -321,7 +323,7 @@ $history-item-top-border-height: 1px;
     padding: calc(var(--s-basic-spacing) + #{$history-item-top-border-height}) $history-item-horizontal-space * 2;
     font-size: var(--s-font-size-mini);
     border-radius: var(--s-border-radius-small);
-    &:not(:first-child) {
+    &:not(:first-child):not(:focus) {
       position: relative;
       &:before {
         position: absolute;
@@ -340,6 +342,9 @@ $history-item-top-border-height: 1px;
     &:hover {
       background-color: var(--s-color-base-background-hover);
       cursor: pointer;
+    }
+    &:focus ~ .history-item:before {
+      background-color: transparent;
     }
     &-info {
       display: flex;
