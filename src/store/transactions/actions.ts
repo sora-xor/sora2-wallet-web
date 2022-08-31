@@ -36,8 +36,11 @@ const actions = defineActions({
         // Update storage - this will show new element on history view
         commit.getHistory();
 
-        // Handle incoming transfer
-        if (historyItem.type === Operation.Transfer && historyItem.to === account.address) {
+        // Handle incoming Transfer or SwapAndSend
+        if (
+          [Operation.Transfer, Operation.SwapAndSend].includes(historyItem.type) &&
+          historyItem.to === account.address
+        ) {
           const asset = rootGetters.wallet.account.whitelist[historyItem.assetAddress as string];
           rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
         }
