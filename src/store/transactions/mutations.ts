@@ -55,8 +55,8 @@ const mutations = defineMutations<TransactionsState>()({
   resetExternalHistorySubscription(state): void {
     if (state.externalHistorySubscription) {
       state.externalHistorySubscription();
-      state.externalHistorySubscription = null;
     }
+    state.externalHistorySubscription = null;
   },
 });
 

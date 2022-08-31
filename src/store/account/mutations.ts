@@ -21,8 +21,8 @@ const mutations = defineMutations<AccountState>()({
   resetFiatPriceAndApySubscription(state): void {
     if (state.fiatPriceAndApySubscription) {
       state.fiatPriceAndApySubscription();
-      state.fiatPriceAndApySubscription = null;
     }
+    state.fiatPriceAndApySubscription = null;
   },
   resetAccount(state): void {
     const s = omit(

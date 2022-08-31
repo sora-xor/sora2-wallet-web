@@ -42,7 +42,10 @@ const actions = defineActions({
           historyItem.to === account.address
         ) {
           const asset = rootGetters.wallet.account.whitelist[historyItem.assetAddress as string];
-          rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
+
+          if (asset) {
+            rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
+          }
         }
       }
     );
