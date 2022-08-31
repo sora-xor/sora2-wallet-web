@@ -7,6 +7,7 @@ export type TransactionsState = {
   externalHistory: AccountHistory<HistoryItem>;
   externalHistoryTotal: number;
   externalHistoryPagination: Nullable<PageInfo>;
+  externalHistorySubscription: Nullable<VoidFunction>;
   activeTxsIds: Array<string>;
   updateActiveTxsId: Nullable<NodeJS.Timeout | number>;
   selectedTxId: Nullable<string>;

@@ -57,7 +57,7 @@ export default {
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
       [Operation.Swap]: 'Swapped {amount} {symbol} for {amount2} {symbol2}',
-      [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and sent to {address}',
+      [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
       [Operation.AddLiquidity]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Removed {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
@@ -75,7 +75,8 @@ export default {
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
       [Operation.Swap]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2}',
-      [Operation.SwapAndSend]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2} and send to {address}',
+      [Operation.SwapAndSend]:
+        'Failed to swap {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
       [Operation.AddLiquidity]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Failed to remove {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',

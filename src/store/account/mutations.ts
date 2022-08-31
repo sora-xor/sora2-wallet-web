@@ -15,14 +15,14 @@ import type { FiatPriceAndApyObject, ReferrerRewards } from '../../services/subq
 import type { PolkadotJsAccount } from '../../types/common';
 
 const mutations = defineMutations<AccountState>()({
-  setFiatPriceAndApySubscription(state, timer: VoidFunction): void {
-    state.fiatPriceAndApySubscription = timer;
+  setFiatPriceAndApySubscription(state, subscription: VoidFunction): void {
+    state.fiatPriceAndApySubscription = subscription;
   },
   resetFiatPriceAndApySubscription(state): void {
     if (state.fiatPriceAndApySubscription) {
       state.fiatPriceAndApySubscription();
-      state.fiatPriceAndApySubscription = null;
     }
+    state.fiatPriceAndApySubscription = null;
   },
   resetAccount(state): void {
     const s = omit(
@@ -142,15 +142,6 @@ const mutations = defineMutations<AccountState>()({
       state.polkadotJsAccountsSubscription();
     }
     state.polkadotJsAccountsSubscription = null;
-  },
-  setIncomingTransfersSubscription(state, timer: NodeJS.Timer | number): void {
-    state.incomingTransfersSubscription = timer;
-  },
-  resetIncomingTransfersSubscription(state): void {
-    if (state.incomingTransfersSubscription) {
-      clearInterval(state.incomingTransfersSubscription as number);
-      state.incomingTransfersSubscription = null;
-    }
   },
 });
 

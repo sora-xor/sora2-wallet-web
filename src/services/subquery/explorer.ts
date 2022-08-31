@@ -7,6 +7,7 @@ import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerR
 import { HistoricalPriceQuery, historicalPriceFilter } from './queries/historicalPrice';
 import { FiatPriceQuery } from './queries/fiatPriceAndApy';
 import { FiatPriceSubscription } from './subscriptions/fiatPriceAndApy';
+import { AccountHistorySubscription } from './subscriptions/account';
 import { SoraNetwork } from '../../consts';
 import { AssetSnapshotTypes } from './types';
 
@@ -23,6 +24,7 @@ import type {
   ReferrerRewards,
   AccountReferralReward,
   AssetSnapshot,
+  HistoryElement,
   HistoryElementsQueryResponse,
 } from './types';
 
@@ -76,6 +78,23 @@ export default class SubqueryExplorer implements Explorer {
     } catch (error) {
       return null;
     }
+  }
+
+  public createAccountHistorySubscription(accountAddress: string, handler: (entity: HistoryElement) => void) {
+    const variables = { id: [accountAddress] };
+    const createSubscription = this.subscribe(AccountHistorySubscription, variables);
+
+    return createSubscription(async (payload) => {
+      if (payload.data) {
+        const txId = payload.data.accounts._entity.latest_history_element_id;
+        const variables = { filter: { id: { equalTo: txId } } };
+        const response = await this.getAccountTransactions(variables);
+
+        if (response && Array.isArray(response.edges) && response.edges[0]) {
+          handler(response.edges[0].node);
+        }
+      }
+    });
   }
 
   public createFiatPriceAndApySubscription(handler: (entity: FiatPriceAndApyObject) => void): VoidFunction {
