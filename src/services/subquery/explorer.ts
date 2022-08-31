@@ -1,3 +1,4 @@
+import { pipe, subscribe } from 'wonka';
 import { FPNumber } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
 
@@ -5,11 +6,13 @@ import { HistoryElementsQuery } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
 import { HistoricalPriceQuery, historicalPriceFilter } from './queries/historicalPrice';
 import { FiatPriceQuery } from './queries/fiatPriceAndApy';
+import { FiatPriceSubscription } from './subscriptions/fiatPriceAndApy';
 import { SoraNetwork } from '../../consts';
 import { AssetSnapshotTypes } from './types';
 
 import { createSubqueryClient } from './client';
-import type { Client } from './client';
+
+import type { Client, OperationResult, ResultOf, TypedDocumentNode } from './client';
 
 import store from '../../store';
 
@@ -22,6 +25,8 @@ import type {
   AssetSnapshot,
   HistoryElementsQueryResponse,
 } from './types';
+
+const format = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
 
 export default class SubqueryExplorer implements Explorer {
   public client!: Client;
@@ -39,7 +44,7 @@ export default class SubqueryExplorer implements Explorer {
       throw new Error('Subquery endpoint is not set');
     }
 
-    this.client = createSubqueryClient(url);
+    this.client = createSubqueryClient(url, true);
   }
 
   public async getAccountTransactions(variables = {}): Promise<Nullable<HistoryElementsQueryResponse>> {
@@ -58,14 +63,14 @@ export default class SubqueryExplorer implements Explorer {
     try {
       const params = { after };
 
-      const { poolXYKs } = await this.request(FiatPriceQuery, params);
+      const response = await this.request(FiatPriceQuery, params);
 
-      if (!poolXYKs) return null;
+      if (!response || !response.poolXYKs) return null;
 
       const {
         pageInfo: { hasNextPage, endCursor },
         nodes,
-      } = poolXYKs;
+      } = response.poolXYKs;
 
       return { hasNextPage, endCursor, nodes };
     } catch (error) {
@@ -73,14 +78,43 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
+  public createFiatPriceAndApySubscription(handler: (entity: FiatPriceAndApyObject) => void): VoidFunction {
+    const createSubscription = this.subscribe(FiatPriceSubscription, {});
+
+    return createSubscription((payload) => {
+      if (payload.data) {
+        const entity = this.parseFiatPriceAndApyEntity(payload.data.poolXYKs._entity);
+
+        handler(entity);
+      }
+    });
+  }
+
+  public parseFiatPriceAndApyEntity(entity: PoolXYKEntity): FiatPriceAndApyObject {
+    const acc = {};
+    const id = entity.id;
+    const strategicBonusApyFPNumber = format(entity.strategicBonusApy || entity.strategic_bonus_apy);
+    const priceFPNumber = format(entity.priceUSD || entity.price_u_s_d);
+    const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+    const isPriceFinity = priceFPNumber.isFinity();
+    if (isPriceFinity || isStrategicBonusApyFinity) {
+      acc[id] = {};
+    }
+    if (isPriceFinity) {
+      acc[id].price = priceFPNumber.toCodecString();
+    }
+    if (isStrategicBonusApyFinity) {
+      acc[id].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
+    }
+
+    return acc;
+  }
+
   /**
    * Get fiat price & APY coefficient for each asset (without historical data)
    */
   public async getFiatPriceAndApyObject(): Promise<Nullable<FiatPriceAndApyObject>> {
-    const format = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
-
-    const acc: FiatPriceAndApyObject = {};
-
+    let acc: FiatPriceAndApyObject = {};
     let after = '';
     let hasNextPage = true;
 
@@ -96,19 +130,9 @@ export default class SubqueryExplorer implements Explorer {
         hasNextPage = response.hasNextPage;
 
         response.nodes.forEach((el: PoolXYKEntity) => {
-          const strategicBonusApyFPNumber = format(el.strategicBonusApy);
-          const priceFPNumber = format(el.priceUSD);
-          const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
-          const isPriceFinity = priceFPNumber.isFinity();
-          if (isPriceFinity || isStrategicBonusApyFinity) {
-            acc[el.id] = {};
-          }
-          if (isPriceFinity) {
-            acc[el.id].price = priceFPNumber.toCodecString();
-          }
-          if (isStrategicBonusApyFinity) {
-            acc[el.id].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
-          }
+          const record = this.parseFiatPriceAndApyEntity(el);
+
+          acc = { ...acc, ...record };
         });
       } while (hasNextPage);
 
@@ -222,11 +246,25 @@ export default class SubqueryExplorer implements Explorer {
     }
   }
 
-  public async request(query, variables = {}): Promise<any> {
+  public async request<T>(query: TypedDocumentNode<T>, variables = {}) {
     this.initClient();
 
-    const { data } = await this.client.query(query, variables).toPromise();
+    const { data } = await this.client.query<ResultOf<typeof query>>(query, variables).toPromise();
 
     return data;
+  }
+
+  // https://formidable.com/open-source/urql/docs/advanced/subscriptions/#one-off-subscriptions
+  public subscribe<T>(subscription: TypedDocumentNode<T>, variables = {}) {
+    this.initClient();
+
+    return (handler: (payload: OperationResult<T, {}>) => void) => {
+      const { unsubscribe } = pipe(
+        this.client.subscription<ResultOf<typeof subscription>>(subscription, variables),
+        subscribe((payload) => handler(payload))
+      );
+
+      return unsubscribe;
+    };
   }
 }
