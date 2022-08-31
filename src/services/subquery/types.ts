@@ -50,10 +50,10 @@ export enum ModuleMethods {
 }
 
 export type PageInfo = {
-  hasNextPage?: boolean;
-  hasPreviousPage?: boolean;
-  startCursor?: string;
-  endCursor?: string;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  startCursor: string;
+  endCursor: string;
 };
 
 export enum AssetSnapshotTypes {
@@ -61,6 +61,18 @@ export enum AssetSnapshotTypes {
   HOUR = 'HOUR',
   DAY = 'DAY',
 }
+
+export enum MutationTypes {
+  DELETE = 'DELETE',
+  INSERT = 'INSERT',
+  UPDATE = 'UPDATE',
+}
+
+export type SubscriptionPayload<EntityData> = {
+  id: string;
+  mutation_type: MutationTypes;
+  _entity: EntityData;
+};
 
 export type AssetSnapshot = {
   priceUSD: {
@@ -79,7 +91,9 @@ export type AssetSnapshot = {
 export type PoolXYKEntity = {
   id: string;
   strategicBonusApy: Nullable<string>;
+  strategic_bonus_apy?: Nullable<string>;
   priceUSD: Nullable<string>;
+  price_u_s_d?: Nullable<string>;
 };
 
 export type FiatPriceAndApyObject = {
