@@ -161,7 +161,7 @@ import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import { RouteNames, Step } from '../consts';
 import { api } from '../api';
 import { IpfsStorage } from '../util/ipfsStorage';
-import { mutation, state } from '../store/decorators';
+import { state, mutation, action } from '../store/decorators';
 import type { Route } from '../store/router/types';
 import { IMAGE_MIME_TYPES } from '../util/image';
 
@@ -193,6 +193,7 @@ export default class CreateNftToken extends Mixins(
 
   @state.settings.nftStorage private nftStorage!: NFTStorage;
   @mutation.router.navigate private navigate!: (options: Route) => void;
+  @action.settings.createNftStorageInstance private createNftStorageInstance!: () => AsyncVoidFn;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
@@ -334,13 +335,21 @@ export default class CreateNftToken extends Mixins(
   async storeNftImage(file: File): Promise<void> {
     const content = (await IpfsStorage.fileToBuffer(file)) as ArrayBuffer;
 
-    const metadata = await this.nftStorage.store({
-      name: file.name,
-      description: this.tokenDescription,
-      image: new ImageNFT([content], file.name, { type: file.type }),
-    });
+    if (!this.nftStorage) {
+      await this.createNftStorageInstance();
+    }
 
-    this.tokenContentIpfsParsed = IpfsStorage.getIpfsPath(metadata.embed().image.href);
+    try {
+      const metadata = await this.nftStorage.store({
+        name: file.name,
+        description: this.tokenDescription,
+        image: new ImageNFT([content], file.name, { type: file.type }),
+      });
+
+      this.tokenContentIpfsParsed = IpfsStorage.getIpfsPath(metadata.embed().image.href);
+    } catch (error) {
+      console.error('Error while storing NFT content:', error);
+    }
   }
 
   async registerNftAsset(): Promise<void> {
