@@ -143,15 +143,6 @@ const mutations = defineMutations<AccountState>()({
     }
     state.polkadotJsAccountsSubscription = null;
   },
-  setIncomingTransfersSubscription(state, timer: NodeJS.Timer | number): void {
-    state.incomingTransfersSubscription = timer;
-  },
-  resetIncomingTransfersSubscription(state): void {
-    if (state.incomingTransfersSubscription) {
-      clearInterval(state.incomingTransfersSubscription as number);
-      state.incomingTransfersSubscription = null;
-    }
-  },
 });
 
 export default mutations;
