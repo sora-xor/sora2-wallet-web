@@ -49,7 +49,7 @@ const mutations = defineMutations<TransactionsState>()({
     state.externalHistoryTotal = 0;
     state.externalHistoryPagination = null;
   },
-  setExternalHistorySubscription(state, subscription: VoidFunction) {
+  setExternalHistorySubscription(state, subscription: VoidFunction): void {
     state.externalHistorySubscription = subscription;
   },
   resetExternalHistorySubscription(state): void {

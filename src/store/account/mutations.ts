@@ -15,8 +15,8 @@ import type { FiatPriceAndApyObject, ReferrerRewards } from '../../services/subq
 import type { PolkadotJsAccount } from '../../types/common';
 
 const mutations = defineMutations<AccountState>()({
-  setFiatPriceAndApySubscription(state, timer: VoidFunction): void {
-    state.fiatPriceAndApySubscription = timer;
+  setFiatPriceAndApySubscription(state, subscription: VoidFunction): void {
+    state.fiatPriceAndApySubscription = subscription;
   },
   resetFiatPriceAndApySubscription(state): void {
     if (state.fiatPriceAndApySubscription) {
