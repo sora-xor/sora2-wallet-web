@@ -21,7 +21,7 @@ export type AccountState = {
   blacklistArray: Blacklist;
   withoutFiatAndApy: boolean;
   fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
-  fiatPriceAndApyTimer: Nullable<NodeJS.Timer | number>;
+  fiatPriceAndApySubscription: Nullable<VoidFunction>;
   referralRewards: ReferrerRewards;
   selectedExtension: Nullable<Extensions>;
   availableWallets: Array<Wallet>;
