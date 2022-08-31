@@ -1,6 +1,8 @@
 import { gql } from '@urql/core';
 
-export const AccountHistorySubscription = gql`
+import type { SubscriptionPayload, AccountEntity } from '../types';
+
+export const AccountHistorySubscription = gql<{ accounts: SubscriptionPayload<AccountEntity> }>`
   subscription AccountHistorySubscription($id: [ID!]) {
     accounts(id: $id, mutation: [UPDATE, INSERT]) {
       id

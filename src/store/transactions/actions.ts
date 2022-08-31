@@ -62,7 +62,7 @@ const actions = defineActions({
     }: ExternalHistoryParams = {}
   ): Promise<void> {
     const { state, commit } = transactionsActionContext(context);
-    const { externalHistoryPagination: pagination, externalHistory, history } = state;
+    const { externalHistoryPagination: pagination, externalHistory } = state;
 
     if (pagination && ((next && !pagination.hasNextPage) || (!next && !pagination.hasPreviousPage))) return;
 
@@ -100,7 +100,7 @@ const actions = defineActions({
             if (historyItem) {
               buffer[id] = historyItem;
 
-              if (id in history) {
+              if (id in api.history) {
                 removeHistoryIds.push(id);
               }
             }
