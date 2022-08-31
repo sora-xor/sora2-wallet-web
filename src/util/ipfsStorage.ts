@@ -1,5 +1,11 @@
 export class IpfsStorage {
   static IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
+  static UCAN_TOKEN_HOST_PROVIDER = 'https://ucan.polkaswap2.io/ucan.json';
+
+  static async getUcanTokens(): Promise<Record<string, string>> {
+    const response = await fetch(this.UCAN_TOKEN_HOST_PROVIDER);
+    return response.json();
+  }
 
   static constructFullIpfsUrl(path: string): string {
     return this.IPFS_GATEWAY + path;
