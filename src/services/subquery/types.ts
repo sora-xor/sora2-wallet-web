@@ -88,6 +88,11 @@ export type AssetSnapshot = {
   timestamp: number;
 };
 
+export type AccountEntity = {
+  id: string;
+  latest_history_element_id: string;
+};
+
 export type PoolXYKEntity = {
   id: string;
   strategicBonusApy: Nullable<string>;

@@ -292,7 +292,6 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
       if (withReset) {
         this.reset();
       }
-      this.getHistory(); // TODO: refactoring action
       await this.getExternalHistory({
         next,
         page,
