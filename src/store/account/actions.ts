@@ -6,7 +6,6 @@ import { accountActionContext } from './../account';
 import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
-import { incomingTransferFilter } from '../../services/subquery/queries/historyElements';
 import {
   getAppWallets,
   getWallet,
@@ -16,13 +15,12 @@ import {
   NFT_BLACK_LIST_URL,
 } from '../../util';
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
-import type { HistoryElementTransfer, FiatPriceAndApyObject } from '../../services/subquery/types';
+import type { FiatPriceAndApyObject } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
 import { pushNotification } from '../../util/notification';
 
 const CHECK_EXTENSION_INTERVAL = 5 * 1000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
-const CHECK_INCOMING_TRANSFERS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
 
 const actions = defineActions({
   async getSigner(context): Promise<Signer> {
@@ -38,19 +36,19 @@ const actions = defineActions({
     const { rootDispatch } = rootActionContext(context);
 
     await dispatch.subscribeOnAccountAssets();
-    await dispatch.subscribeOnIncomingTransfers();
+    await rootDispatch.wallet.transactions.subscribeOnExternalHistory();
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
   async logout(context): Promise<void> {
     const { commit } = accountActionContext(context);
-    const { rootDispatch } = rootActionContext(context);
+    const { rootDispatch, rootCommit } = rootActionContext(context);
 
     if (api.accountPair) {
       api.logout();
     }
     commit.resetAccountAssetsSubscription();
-    commit.resetIncomingTransfersSubscription();
+    rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
 
     await rootDispatch.wallet.router.checkCurrentRoute();
@@ -290,6 +288,12 @@ const actions = defineActions({
       dispatch.updateFiatPriceAndApyObject
     );
 
+    await dispatch.getFiatPriceAndApyObject();
+
+    const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
+      dispatch.updateFiatPriceAndApyObject
+    );
+
     commit.setFiatPriceAndApySubscription(subscription);
   },
   async getAccountReferralRewards(context): Promise<void> {
@@ -305,49 +309,6 @@ const actions = defineActions({
     } catch (error) {
       commit.clearReferralRewards();
     }
-  },
-
-  async subscribeOnIncomingTransfers(context): Promise<void> {
-    const { commit, getters, state } = accountActionContext(context);
-
-    commit.resetIncomingTransfersSubscription();
-
-    if (!getters.isLoggedIn) return;
-
-    let timestamp = Math.ceil(Date.now() / 1000);
-
-    const timer = setInterval(async () => {
-      const filter = incomingTransferFilter(state.address, timestamp);
-      const variables = { filter };
-
-      try {
-        const data = await SubqueryExplorerService.getAccountTransactions(variables);
-
-        if (!data || !Array.isArray(data.edges) || !data.edges.length) return;
-
-        timestamp = +data.edges[0].node.timestamp;
-
-        const assetAddresses = data.edges.reduce<string[]>((buffer, edge) => {
-          if (!edge.node || !edge.node.data) return buffer;
-
-          const assetId = (edge.node.data as HistoryElementTransfer).assetId;
-
-          return [...buffer, assetId];
-        }, []);
-        const uniqueAssetAddresses = new Set<string>(assetAddresses);
-        const assets = [...uniqueAssetAddresses].map(
-          (assetAddress) => getters.whitelist[assetAddress] as WhitelistArrayItem
-        );
-
-        assets.forEach((asset) => {
-          commit.setAssetToNotify(asset);
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    }, CHECK_INCOMING_TRANSFERS_INTERVAL);
-
-    commit.setIncomingTransfersSubscription(timer);
   },
 
   async notifyOnDeposit(context, data): Promise<void> {
@@ -387,11 +348,6 @@ const actions = defineActions({
   async resetAccountAssetsSubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
     commit.resetAccountAssetsSubscription();
-  },
-  /** It's used **only** for subscriptions module */
-  async resetIncomingTransfersSubscription(context): Promise<void> {
-    const { commit } = accountActionContext(context);
-    commit.resetIncomingTransfersSubscription();
   },
   /** It's used **only** for subscriptions module */
   async resetFiatPriceAndApySubscription(context): Promise<void> {
