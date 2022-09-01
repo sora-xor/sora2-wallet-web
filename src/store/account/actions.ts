@@ -288,12 +288,6 @@ const actions = defineActions({
       dispatch.updateFiatPriceAndApyObject
     );
 
-    await dispatch.getFiatPriceAndApyObject();
-
-    const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
-      dispatch.updateFiatPriceAndApyObject
-    );
-
     commit.setFiatPriceAndApySubscription(subscription);
   },
   async getAccountReferralRewards(context): Promise<void> {
