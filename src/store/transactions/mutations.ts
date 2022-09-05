@@ -33,7 +33,7 @@ const mutations = defineMutations<TransactionsState>()({
   },
   getHistory(state): void {
     // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes
-    state.history = Object.freeze(api.history);
+    state.history = Object.freeze({ ...api.history, ...api.bridge.history });
   },
   setExternalHistory(state, history: AccountHistory<HistoryItem>): void {
     state.externalHistory = Object.freeze(history);

@@ -47,6 +47,7 @@ export enum HashType {
   ID = 'id',
   Block = 'block',
   Account = 'account',
+  EthAccount = 'ethAccount',
 }
 
 export enum ExplorerType {
@@ -115,6 +116,19 @@ export enum PaginationButton {
   Prev = 'prev',
   Next = 'next',
   Last = 'last',
+}
+
+// states for Ethereum Bridge transaction
+export enum ETH_BRIDGE_STATES {
+  INITIAL = 'INITIAL',
+  SORA_SUBMITTED = 'SORA_SUBMITTED',
+  SORA_PENDING = 'SORA_PENDING',
+  SORA_REJECTED = 'SORA_REJECTED',
+  SORA_COMMITED = 'SORA_COMMITED',
+  EVM_SUBMITTED = 'EVM_SUBMITTED',
+  EVM_PENDING = 'EVM_PENDING',
+  EVM_REJECTED = 'EVM_REJECTED',
+  EVM_COMMITED = 'EVM_COMMITED',
 }
 
 export const ObjectInit = () => null;
