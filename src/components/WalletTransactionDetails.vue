@@ -108,6 +108,7 @@ import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
+import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
 import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
 import FormattedAmount from './FormattedAmount.vue';
@@ -127,7 +128,11 @@ import type { PolkadotJsAccount } from '../types/common';
     TransactionHashView,
   },
 })
-export default class WalletTransactionDetails extends Mixins(TranslationMixin, NumberFormatterMixin) {
+export default class WalletTransactionDetails extends Mixins(
+  TranslationMixin,
+  NumberFormatterMixin,
+  EthBridgeTransactionMixin
+) {
   readonly HashType = HashType;
 
   @getter.account.account private account!: PolkadotJsAccount;
@@ -148,7 +153,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
 
   get isCompleteTransaction(): boolean {
     // ETH BRIDGE transaction (first part)
-    if (this.isEthBridgeOperation) return this.isTransactionFromCompleted;
+    if (this.isEthBridgeOperation) return this.isEthBridgeTxFromCompleted(this.selectedTransaction);
     // or default transaction
     return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(
       this.selectedTransaction.status as TransactionStatus
@@ -157,7 +162,7 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
 
   get isFailedTransaction(): boolean {
     // ETH BRIDGE transaction (first part)
-    if (this.isEthBridgeOperation) return this.isTransactionFromFailed;
+    if (this.isEthBridgeOperation) return this.isEthBridgeTxFromFailed(this.selectedTransaction);
     // or default transaction
     return [TransactionStatus.Error, TransactionStatus.Invalid].includes(
       this.selectedTransaction.status as TransactionStatus
@@ -229,11 +234,6 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
     return this.getTransactionAddress(this.isSoraTx, false);
   }
 
-  // ETH BRIDGE transaction
-  get isEthBridgeOperation(): boolean {
-    return [Operation.EthBridgeOutgoing, Operation.EthBridgeIncoming].includes(this.selectedTransaction.type);
-  }
-
   get isSetReferralOperation(): boolean {
     return this.selectedTransaction.type === Operation.ReferralSetInvitedUser;
   }
@@ -269,38 +269,18 @@ export default class WalletTransactionDetails extends Mixins(TranslationMixin, N
   }
 
   // ETH BRIDGE transaction
-  get currentState(): string {
-    return (this.selectedTransaction as BridgeHistory)?.transactionState ?? ETH_BRIDGE_STATES.INITIAL;
-  }
-
-  // ETH BRIDGE transaction
-  get isTransferStarted(): boolean {
-    return this.currentState !== ETH_BRIDGE_STATES.INITIAL;
-  }
-
-  // ETH BRIDGE transaction
-  get isTransactionFromPending(): boolean {
-    return this.currentState === (this.isSoraTx ? ETH_BRIDGE_STATES.SORA_PENDING : ETH_BRIDGE_STATES.EVM_PENDING);
-  }
-
-  // ETH BRIDGE transaction
-  get isTransactionFromFailed(): boolean {
-    return this.currentState === (this.isSoraTx ? ETH_BRIDGE_STATES.SORA_REJECTED : ETH_BRIDGE_STATES.EVM_REJECTED);
+  get isEthBridgeOperation(): boolean {
+    return this.isEthBridgeTx(this.selectedTransaction);
   }
 
   // ETH BRIDGE transaction
   get isTransactionToFailed(): boolean {
-    return this.currentState === (!this.isSoraTx ? ETH_BRIDGE_STATES.SORA_REJECTED : ETH_BRIDGE_STATES.EVM_REJECTED);
-  }
-
-  // ETH BRIDGE transaction
-  get isTransactionFromCompleted(): boolean {
-    return this.isTransferStarted && !this.isTransactionFromPending && !this.isTransactionFromFailed;
+    return this.isEthBridgeTxToFailed(this.selectedTransaction);
   }
 
   // ETH BRIDGE transaction
   get isTransactionToCompleted(): boolean {
-    return this.currentState === (!this.isSoraTx ? ETH_BRIDGE_STATES.SORA_COMMITED : ETH_BRIDGE_STATES.EVM_COMMITED);
+    return this.isEthBridgeTxToCompleted(this.selectedTransaction);
   }
 
   public getNetworkTitle(isSoraTx = true): string {
