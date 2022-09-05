@@ -19,7 +19,6 @@ export enum RouteNames {
   ReceiveToken = 'ReceiveToken',
   AddAsset = 'AddAsset',
   SelectAsset = 'SelectAsset',
-  WalletTransactionDetails = 'WalletTransactionDetails',
 }
 
 export enum WalletTabs {
@@ -119,6 +118,13 @@ export enum LogoSize {
   BIG = 'big',
   BIGGER = 'bigger',
   LARGE = 'large',
+}
+
+export enum PaginationButton {
+  First = 'first',
+  Prev = 'prev',
+  Next = 'next',
+  Last = 'last',
 }
 
 export const ObjectInit = () => null;

@@ -21,6 +21,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
     >
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -49,6 +51,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -77,6 +81,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -105,6 +111,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -133,6 +141,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -161,6 +171,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -192,6 +204,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -220,6 +234,8 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -248,19 +264,11 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       </div>
     </div>
      
-    <s-pagination-stub
-      borderradius="small"
+    <history-pagination-stub
       currentpage="1"
-      layout="total, prev, next"
-      nexttext=""
-      oftext="of"
-      pagesize="8"
-      pagesizes="10,20,30,40,50,100"
-      perpagetext="Rows per page"
-      popperclass=""
-      prevtext=""
+      lastpage="2"
+      pageamount="8"
       total="9"
-      totaltext="Total"
     />
   </s-form-stub>
 </div>
@@ -287,6 +295,8 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
     >
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -315,6 +325,8 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -343,6 +355,8 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -371,6 +385,8 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -399,6 +415,8 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -430,20 +448,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       </div>
     </div>
      
-    <s-pagination-stub
-      borderradius="small"
-      currentpage="1"
-      layout="total, prev, next"
-      nexttext=""
-      oftext="of"
-      pagesize="8"
-      pagesizes="10,20,30,40,50,100"
-      perpagetext="Rows per page"
-      popperclass=""
-      prevtext=""
-      total="5"
-      totaltext="Total"
-    />
+    <!---->
   </s-form-stub>
 </div>
 `;
@@ -495,6 +500,8 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
     >
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -523,6 +530,8 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -551,6 +560,8 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -579,6 +590,8 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -607,6 +620,8 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       </div>
       <div
         class="history-item s-flex"
+        role="button"
+        tabindex="0"
       >
         <div
           class="history-item-info"
@@ -638,20 +653,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       </div>
     </div>
      
-    <s-pagination-stub
-      borderradius="small"
-      currentpage="1"
-      layout="total, prev, next"
-      nexttext=""
-      oftext="of"
-      pagesize="8"
-      pagesizes="10,20,30,40,50,100"
-      perpagetext="Rows per page"
-      popperclass=""
-      prevtext=""
-      total="5"
-      totaltext="Total"
-    />
+    <!---->
   </s-form-stub>
 </div>
 `;

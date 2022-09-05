@@ -1,10 +1,8 @@
 import { defineGetters } from 'direct-vuex';
-import type { Whitelist } from '@sora-substrate/util/build/assets/types';
 import CryptoJS from 'crypto-js';
+import type { Blacklist, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import { accountGetterContext } from './../account';
-import { rootActionContext } from '..';
-
 import { api } from '../../api';
 import type { Extensions } from '../../consts';
 import type { AccountState } from './types';
@@ -61,6 +59,10 @@ const getters = defineGetters<AccountState>()({
   },
   isDesktop(state, getters, rootState): boolean {
     return rootState.wallet.settings.isDesktop;
+  },
+  blacklist(...args): any {
+    const { state } = accountGetterContext(args);
+    return state.blacklistArray && state.blacklistArray.length ? state.blacklistArray : [];
   },
 });
 

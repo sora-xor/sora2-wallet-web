@@ -24,9 +24,10 @@ export function initialState(): AccountState {
     polkadotJsAccounts: [],
     polkadotJsAccountsSubscription: null,
     whitelistArray: [],
+    blacklistArray: [],
     withoutFiatAndApy: false,
     fiatPriceAndApyObject: {},
-    fiatPriceAndApyTimer: null,
+    fiatPriceAndApySubscription: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
     selectedExtension: null,
@@ -35,8 +36,6 @@ export function initialState(): AccountState {
     /** desktop key management */
     addressKeyMapping: {},
     addressPassphraseMapping: {},
-    /** notifications */
-    incomingTransfersSubscription: null,
   };
 }
 

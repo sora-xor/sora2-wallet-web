@@ -3,6 +3,7 @@ import Vue from 'vue';
 // IMPORTANT!
 // Add import url to rollup.external !
 import DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
+import Directives from '@soramitsu/soramitsu-js-ui/lib/types/directives';
 import { setTheme, setDesignSystem } from '@soramitsu/soramitsu-js-ui/lib/utils';
 
 import ElementUIPlugin, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui/lib/plugins/elementUI';
@@ -21,18 +22,23 @@ import SImage from '@soramitsu/soramitsu-js-ui/lib/components/Image/SImage';
 import SFloatInput from '@soramitsu/soramitsu-js-ui/lib/components/Input/SFloatInput';
 import SForm from '@soramitsu/soramitsu-js-ui/lib/components/Form/SForm';
 import SFormItem from '@soramitsu/soramitsu-js-ui/lib/components/Form/SFormItem';
+import SOption from '@soramitsu/soramitsu-js-ui/lib/components/Select/SOption';
 import SPagination from '@soramitsu/soramitsu-js-ui/lib/components/Pagination';
 import SRadio from '@soramitsu/soramitsu-js-ui/lib/components/Radio/SRadio';
 import SRadioGroup from '@soramitsu/soramitsu-js-ui/lib/components/Radio/SRadioGroup';
 import SScrollbar from '@soramitsu/soramitsu-js-ui/lib/components/Scrollbar';
+import SSelect from '@soramitsu/soramitsu-js-ui/lib/components/Select/SSelect';
 import SSwitch from '@soramitsu/soramitsu-js-ui/lib/components/Switch';
 import STab from '@soramitsu/soramitsu-js-ui/lib/components/Tab/STab';
 import STabs from '@soramitsu/soramitsu-js-ui/lib/components/Tab/STabs';
 import STooltip from '@soramitsu/soramitsu-js-ui/lib/components/Tooltip';
 
+import { Button } from '@soramitsu/soramitsu-js-ui/lib/directives';
+
 export function install(vue: typeof Vue, store) {
   vue.use(ElementUIPlugin);
   vue.use(SoramitsuUIStorePlugin, { store });
+  vue.directive(Directives.Button, Button);
   vue.use(SButton);
   vue.use(SCard);
   vue.use(SDesignSystemProvider);
@@ -46,10 +52,12 @@ export function install(vue: typeof Vue, store) {
   vue.use(SFloatInput);
   vue.use(SForm);
   vue.use(SFormItem);
+  vue.use(SOption);
   vue.use(SPagination);
   vue.use(SRadio);
   vue.use(SRadioGroup);
   vue.use(SScrollbar);
+  vue.use(SSelect);
   vue.use(SSwitch);
   vue.use(STab);
   vue.use(STabs);

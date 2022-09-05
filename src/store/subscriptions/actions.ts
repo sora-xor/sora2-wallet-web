@@ -58,8 +58,8 @@ const actions = defineActions({
   async activateInternalSubscriptions(context, onDesktop: boolean): Promise<void> {
     const subscriptions = [
       'transactions/trackActiveTxs',
-      'account/subscribeOnFiatPriceAndApyObjectUpdates',
-      'account/subscribeOnIncomingTransfers',
+      'transactions/subscribeOnExternalHistory',
+      'account/subscribeOnFiatPriceAndApy',
       'subscriptions/subscribeToStorageUpdates',
     ];
 
@@ -72,9 +72,9 @@ const actions = defineActions({
   async resetInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'transactions/resetActiveTxs',
+      'transactions/resetExternalHistorySubscription',
       'account/resetFiatPriceAndApySubscription',
       'account/resetExtensionAvailabilitySubscription',
-      'account/resetIncomingTransfersSubscription',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);
   },

@@ -36,6 +36,7 @@ export default {
   enterAccountError: 'Unable to enter account',
   transactionSubmittedText: 'Transaction was submitted',
   assetDeposit: 'Asset balance has been deposited',
+  ofText: '{first} of {second}',
   operations: {
     [Operation.Swap]: 'Swap',
     [Operation.SwapAndSend]: 'Swap and Send',
@@ -57,7 +58,7 @@ export default {
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
       [Operation.Swap]: 'Swapped {amount} {symbol} for {amount2} {symbol2}',
-      [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and sent to {address}',
+      [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
       [Operation.AddLiquidity]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Removed {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
@@ -75,7 +76,8 @@ export default {
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
       [Operation.Swap]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2}',
-      [Operation.SwapAndSend]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2} and send to {address}',
+      [Operation.SwapAndSend]:
+        'Failed to swap {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
       [Operation.AddLiquidity]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Failed to remove {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
@@ -161,6 +163,10 @@ export default {
     filterPlaceholder: 'Filter by Address, Symbol, Type or Block ID',
     empty: 'Your transactions will appear here',
     emptySearch: 'No transactions found',
+    firstText: 'First',
+    lastText: 'Last',
+    prevText: 'Previous',
+    nextText: 'Next',
   },
   assets: {
     empty: 'There are no assets',
@@ -197,6 +203,8 @@ export default {
     import: 'Import an image',
     scan: 'Scan with camera',
     allowanceError: 'Check your camera availability and browser permissions to use it',
+    camera: 'Camera',
+    allowanceRequest: 'Press “Allow” access to camera',
   },
   addAsset: {
     title: '@:addAssetText',

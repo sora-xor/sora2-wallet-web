@@ -1,7 +1,6 @@
 import { defineActions } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
-import { axiosInstance } from '@sora-substrate/util';
 import type { Signer } from '@polkadot/api/types';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
@@ -9,24 +8,22 @@ import { accountActionContext } from './../account';
 import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
-import { incomingTransferFilter } from '../../services/subquery/queries/historyElements';
 import {
   getAppWallets,
   getWallet,
   getExtensionSigner,
   getPolkadotJsAccounts,
   subscribeToPolkadotJsAccounts,
-  WHITE_LIST_GITHUB_URL,
+  WHITE_LIST_URL,
+  NFT_BLACK_LIST_URL,
 } from '../../util';
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
-import type { HistoryElementTransfer } from '../../services/subquery/types';
+import type { FiatPriceAndApyObject } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
 import { pushNotification } from '../../util/notification';
 
-const UPDATE_PRICES_INTERVAL = 30 * 1000;
 const CHECK_EXTENSION_INTERVAL = 5 * 1000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
-const CHECK_INCOMING_TRANSFERS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
 const PASSPHRASE_TIMEOUT = 15 * 60 * 1000; // 15min
 
 const actions = defineActions({
@@ -43,19 +40,19 @@ const actions = defineActions({
     const { rootDispatch } = rootActionContext(context);
 
     await dispatch.subscribeOnAccountAssets();
-    await dispatch.subscribeOnIncomingTransfers();
+    await rootDispatch.wallet.transactions.subscribeOnExternalHistory();
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
   async logout(context): Promise<void> {
     const { commit, getters } = accountActionContext(context);
-    const { rootDispatch } = rootActionContext(context);
+    const { rootDispatch, rootCommit } = rootActionContext(context);
 
     if (api.accountPair) {
       api.logout(getters.isDesktop);
     }
     commit.resetAccountAssetsSubscription();
-    commit.resetIncomingTransfersSubscription();
+    rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
 
     await rootDispatch.wallet.router.checkCurrentRoute();
@@ -245,7 +242,7 @@ const actions = defineActions({
   async getAssets(context): Promise<void> {
     const { getters, commit } = accountActionContext(context);
     try {
-      const assets = await api.assets.getAssets(getters.whitelist);
+      const assets = await api.assets.getAssets(getters.whitelist, false, getters.blacklist);
       commit.updateAssets(assets);
     } catch (error) {
       commit.updateAssets([]);
@@ -282,13 +279,24 @@ const actions = defineActions({
   },
   async getWhitelist(context): Promise<void> {
     const { commit } = accountActionContext(context);
-    const url = 'https://whitelist.polkaswap2.io/whitelist.json';
     commit.clearWhitelist();
     try {
-      const { data } = await axiosInstance.get(url);
+      const response = await fetch(WHITE_LIST_URL);
+      const data = await response.json();
       commit.setWhitelist(data);
     } catch (error) {
       commit.clearWhitelist();
+    }
+  },
+  async getNftBlacklist(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+    commit.clearBlacklist();
+    try {
+      const response = await fetch(NFT_BLACK_LIST_URL);
+      const data = await response.json();
+      commit.setNftBlacklist(data);
+    } catch (error) {
+      commit.clearBlacklist();
     }
   },
   async getFiatPriceAndApyObject(context): Promise<void> {
@@ -304,14 +312,26 @@ const actions = defineActions({
       commit.clearFiatPriceAndApyObject();
     }
   },
-  async subscribeOnFiatPriceAndApyObjectUpdates(context): Promise<void> {
-    const { dispatch, commit } = accountActionContext(context);
-    dispatch.getFiatPriceAndApyObject();
+  async updateFiatPriceAndApyObject(context, fiatPriceAndApyRecord: FiatPriceAndApyObject): Promise<void> {
+    const {
+      commit,
+      state: { fiatPriceAndApyObject },
+    } = accountActionContext(context);
 
-    const timer = setInterval(() => {
-      dispatch.getFiatPriceAndApyObject();
-    }, UPDATE_PRICES_INTERVAL);
-    commit.setFiatPriceAndApyTimer(timer);
+    const updated = { ...(fiatPriceAndApyObject || {}), ...fiatPriceAndApyRecord };
+
+    commit.setFiatPriceAndApyObject(updated);
+  },
+  async subscribeOnFiatPriceAndApy(context): Promise<void> {
+    const { dispatch, commit } = accountActionContext(context);
+
+    await dispatch.getFiatPriceAndApyObject();
+
+    const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
+      dispatch.updateFiatPriceAndApyObject
+    );
+
+    commit.setFiatPriceAndApySubscription(subscription);
   },
   async getAccountReferralRewards(context): Promise<void> {
     const { state, commit } = accountActionContext(context);
@@ -326,49 +346,6 @@ const actions = defineActions({
     } catch (error) {
       commit.clearReferralRewards();
     }
-  },
-
-  async subscribeOnIncomingTransfers(context): Promise<void> {
-    const { commit, getters, state } = accountActionContext(context);
-
-    commit.resetIncomingTransfersSubscription();
-
-    if (!getters.isLoggedIn) return;
-
-    let timestamp = Math.ceil(Date.now() / 1000);
-
-    const timer = setInterval(async () => {
-      const filter = incomingTransferFilter(state.address, timestamp);
-      const variables = { filter };
-
-      try {
-        const data = await SubqueryExplorerService.getAccountTransactions(variables);
-
-        if (!data || !Array.isArray(data.edges) || !data.edges.length) return;
-
-        timestamp = +data.edges[0].node.timestamp;
-
-        const assetAddresses = data.edges.reduce<string[]>((buffer, edge) => {
-          if (!edge.node || !edge.node.data) return buffer;
-
-          const assetId = (edge.node.data as HistoryElementTransfer).assetId;
-
-          return [...buffer, assetId];
-        }, []);
-        const uniqueAssetAddresses = new Set<string>(assetAddresses);
-        const assets = [...uniqueAssetAddresses].map(
-          (assetAddress) => getters.whitelist[assetAddress] as WhitelistArrayItem
-        );
-
-        assets.forEach((asset) => {
-          commit.setAssetToNotify(asset);
-        });
-      } catch (error) {
-        console.error(error);
-      }
-    }, CHECK_INCOMING_TRANSFERS_INTERVAL);
-
-    commit.setIncomingTransfersSubscription(timer);
   },
 
   async notifyOnDeposit(context, data): Promise<void> {
@@ -408,11 +385,6 @@ const actions = defineActions({
   async resetAccountAssetsSubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
     commit.resetAccountAssetsSubscription();
-  },
-  /** It's used **only** for subscriptions module */
-  async resetIncomingTransfersSubscription(context): Promise<void> {
-    const { commit } = accountActionContext(context);
-    commit.resetIncomingTransfersSubscription();
   },
   /** It's used **only** for subscriptions module */
   async resetFiatPriceAndApySubscription(context): Promise<void> {
