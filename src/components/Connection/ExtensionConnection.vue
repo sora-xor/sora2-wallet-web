@@ -69,22 +69,27 @@ import { AppError } from '../../util';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Extensions } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
+
 enum Step {
   First = 1,
   Second = 2,
   Third = 3,
 }
+
 @Component({
   components: { AccountCard, WalletBase, WalletAccount },
 })
 export default class ExtensionConnection extends Mixins(TranslationMixin, LoadingMixin) {
   readonly Step = Step;
   step = Step.First;
+
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.availableWallets availableWallets!: Array<Wallet>;
+
   @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
+
   async mounted(): Promise<void> {
     await this.withApi(async () => {
       if (this.isAccountSwitch) {
@@ -191,12 +196,15 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
 
 <style lang="scss">
 $account-height: 60px;
+
 .wallet-connection-accounts {
   @include scrollbar($basic-spacing-big);
 }
+
 .wallet-connection-extension.s-card.neumorphic.s-size-small {
   padding: calc(var(--s-basic-spacing) * 1.25) $basic-spacing-small;
 }
+
 .s-card.wallet-account.wallet-connection {
   &-account,
   &-extension {
@@ -213,6 +221,7 @@ $account-height: 60px;
 $account-margin-bottom: var(--s-basic-spacing);
 $accounts-padding: calc(#{$account-margin-bottom} / 2);
 $accounts-number: 7;
+
 .wallet-connection {
   // Margin and padding are set for the loader
   margin: calc(var(--s-basic-spacing) * -1);
