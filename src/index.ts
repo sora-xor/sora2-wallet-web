@@ -70,17 +70,21 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(SoraWalletElements, {});
 }
 
-async function initWallet({ withoutStore = false, permissions }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
+async function initWallet({
+  withoutStore = false,
+  permissions,
+  updateEthBridgeHistory,
+}: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
   if (!withoutStore && !store) {
     await delay();
-    return await initWallet({ withoutStore, permissions });
+    return await initWallet({ withoutStore, permissions, updateEthBridgeHistory });
   } else {
     if (withoutStore) {
       store = internalStore;
     }
     if (connection.loading) {
       await delay();
-      return await initWallet({ withoutStore, permissions });
+      return await initWallet({ withoutStore, permissions, updateEthBridgeHistory });
     }
     if (!connection.api) {
       await connection.open();
@@ -88,6 +92,9 @@ async function initWallet({ withoutStore = false, permissions }: WALLET_CONSTS.W
     }
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);
+    }
+    if (updateEthBridgeHistory) {
+      store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
     try {
       api.initialize();

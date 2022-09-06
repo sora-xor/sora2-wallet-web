@@ -59,6 +59,7 @@ import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames, PaginationButton } from '../consts';
 import { state, mutation, action } from '../store/decorators';
 import { SubqueryDataParserService } from '../services/subquery';
+import type { EthBridgeUpdateHistory } from '../consts';
 import type { ExternalHistoryParams } from '../types/history';
 import type { Route } from '../store/router/types';
 
@@ -78,6 +79,7 @@ export default class WalletHistory extends Mixins(
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistory private externalHistory!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistoryTotal private externalHistoryTotal!: number;
+  @state.transactions.updateEthBridgeHistory private updateEthBridgeHistory!: Nullable<EthBridgeUpdateHistory>;
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
@@ -167,6 +169,9 @@ export default class WalletHistory extends Mixins(
   }
 
   async mounted() {
+    if (this.updateEthBridgeHistory) {
+      this.updateEthBridgeHistory(this.getHistory);
+    }
     this.updateHistory(true, 1, true);
   }
 

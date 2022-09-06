@@ -84,10 +84,13 @@ export interface WalletPermissions {
   swapAssets?: boolean;
 }
 
+export type EthBridgeUpdateHistory = (updateWalletHistory: VoidFunction) => Promise<void>;
+
 export interface WalletInitOptions {
   withoutStore?: boolean;
   whiteListOverApi?: boolean;
   permissions?: WalletPermissions;
+  updateEthBridgeHistory?: EthBridgeUpdateHistory;
 }
 
 export interface NetworkFeeWarningOptions {
