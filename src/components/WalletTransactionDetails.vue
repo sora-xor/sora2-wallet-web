@@ -8,7 +8,11 @@
           })}`
         }}
       </div>
-      <transaction-hash-view :value="getTransactionHash(isSoraTx)" :type="HashType.ID" translation="transaction.txId" />
+      <transaction-hash-view
+        :value="getTransactionHash(isSoraTx)"
+        :translation="isSoraTx ? 'transaction.txId' : 'bridgeTransaction.transactionHash'"
+        :type="isSoraTx ? HashType.ID : HashType.EthTransaction"
+      />
       <div class="info-line-container">
         <info-line :label="t('transaction.status')">
           <span :class="statusClass">{{ statusTitle }}</span>
@@ -66,8 +70,8 @@
       </div>
       <transaction-hash-view
         :value="getTransactionHash(!isSoraTx)"
-        :translation="t('transaction.txId')"
-        :type="HashType.ID"
+        :translation="!isSoraTx ? 'transaction.txId' : 'bridgeTransaction.transactionHash'"
+        :type="!isSoraTx ? HashType.ID : HashType.EthTransaction"
       />
       <div class="info-line-container">
         <info-line :label="t('transaction.status')">
@@ -114,8 +118,8 @@ import InfoLine from './InfoLine.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import TransactionHashView from './TransactionHashView.vue';
 
-import { HashType, ETH_BRIDGE_STATES } from '../consts';
-import { getter } from '../store/decorators';
+import { HashType, SoraNetwork, EthNetworkType } from '../consts';
+import { getter, state } from '../store/decorators';
 
 import type { BridgeHistory } from '@sora-substrate/util';
 import type { PolkadotJsAccount } from '../types/common';
@@ -134,6 +138,8 @@ export default class WalletTransactionDetails extends Mixins(
   EthBridgeTransactionMixin
 ) {
   readonly HashType = HashType;
+
+  @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
 
   @getter.account.account private account!: PolkadotJsAccount;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem; // It shouldn't be empty
@@ -284,7 +290,13 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   public getNetworkTitle(isSoraTx = true): string {
-    return this.t(isSoraTx ? 'soraText' : 'ethereumText');
+    if (isSoraTx) {
+      return this.t(`sora.${this.soraNetwork}`);
+    }
+
+    const network = this.soraNetwork === SoraNetwork.Prod ? EthNetworkType.Mainnet : EthNetworkType.Rinkeby;
+
+    return network ? this.t(`evm.${network}`) : '';
   }
 
   public getNetworkFee(isSoraTx = true): string {

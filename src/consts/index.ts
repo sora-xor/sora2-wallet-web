@@ -43,11 +43,17 @@ export enum SoraNetwork {
   Prod = 'Prod',
 }
 
+export enum EthNetworkType {
+  Mainnet = 'main',
+  Rinkeby = 'rinkeby',
+}
+
 export enum HashType {
   ID = 'id',
   Block = 'block',
   Account = 'account',
   EthAccount = 'ethAccount',
+  EthTransaction = 'ethTransaction',
 }
 
 export enum ExplorerType {

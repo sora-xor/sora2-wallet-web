@@ -1,7 +1,7 @@
 import { Operation, TransactionStatus } from '@sora-substrate/util';
 import { BalanceType } from '@sora-substrate/util/build/assets/consts';
 
-import { AddAssetTabs, TokenTabs, WalletTabs } from '../../consts';
+import { AddAssetTabs, TokenTabs, WalletTabs, SoraNetwork, EthNetworkType } from '../../consts';
 
 export default {
   soraText: 'SORA',
@@ -394,5 +394,17 @@ export default {
       step2: '2nd',
     },
     networkTitle: '{network} transaction',
+    viewInEtherscan: 'View in Etherscan',
+    transactionHash: 'Transaction hash',
+  },
+  sora: {
+    [SoraNetwork.Dev]: '@:soraText Devnet',
+    [SoraNetwork.Test]: '@:soraText Testnet',
+    [SoraNetwork.Stage]: '@:soraText Testnet',
+    [SoraNetwork.Prod]: '@:soraText Mainnet',
+  },
+  evm: {
+    [EthNetworkType.Mainnet]: 'Ethereum Mainnet',
+    [EthNetworkType.Rinkeby]: 'Ethereum Rinkeby',
   },
 };
