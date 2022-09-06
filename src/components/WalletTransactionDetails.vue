@@ -8,11 +8,7 @@
           })}`
         }}
       </div>
-      <transaction-hash-view
-        :value="getTransactionHash(isSoraTx)"
-        :translation="isSoraTx ? 'transaction.txId' : 'bridgeTransaction.transactionHash'"
-        :type="isSoraTx ? HashType.ID : HashType.EthTransaction"
-      />
+      <transaction-hash-view v-if="transactionFromHash.value" v-bind="transactionFromHash" />
       <div class="info-line-container">
         <info-line :label="t('transaction.status')">
           <span :class="statusClass">{{ statusTitle }}</span>
@@ -68,11 +64,7 @@
           })}`
         }}
       </div>
-      <transaction-hash-view
-        :value="getTransactionHash(!isSoraTx)"
-        :translation="!isSoraTx ? 'transaction.txId' : 'bridgeTransaction.transactionHash'"
-        :type="!isSoraTx ? HashType.ID : HashType.EthTransaction"
-      />
+      <transaction-hash-view v-if="transactionToHash.value" v-bind="transactionToHash" />
       <div class="info-line-container">
         <info-line :label="t('transaction.status')">
           <span :class="statusClass2">{{ statusTitle2 }}</span>
@@ -240,6 +232,22 @@ export default class WalletTransactionDetails extends Mixins(
     return this.getTransactionAddress(this.isSoraTx, false);
   }
 
+  get transactionFromHash(): { value: Nullable<string>; hash: Nullable<string>; translation: string; type: HashType } {
+    const { value, type } = this.getTransactionId(this.isSoraTx);
+    const hash = this.getTransactionHash(this.isSoraTx);
+    const translation = this.getTransactionTranslation(this.isSoraTx);
+
+    return { value, hash, translation, type };
+  }
+
+  get transactionToHash(): { value: Nullable<string>; hash: Nullable<string>; translation: string; type: HashType } {
+    const { value, type } = this.getTransactionId(!this.isSoraTx);
+    const hash = this.getTransactionHash(!this.isSoraTx);
+    const translation = this.getTransactionTranslation(!this.isSoraTx);
+
+    return { value, hash, translation, type };
+  }
+
   get isSetReferralOperation(): boolean {
     return this.selectedTransaction.type === Operation.ReferralSetInvitedUser;
   }
@@ -311,8 +319,35 @@ export default class WalletTransactionDetails extends Mixins(
     return isSoraTx ? KnownSymbols.XOR : KnownSymbols.ETH;
   }
 
-  public getTransactionHash(isSoraTx = true): Nullable<string> {
-    return isSoraTx ? this.selectedTransaction.txId : (this.selectedTransaction as BridgeHistory).ethereumHash;
+  private getTransactionHash(isSoraTx = true): Nullable<string> {
+    if (!isSoraTx) return (this.selectedTransaction as BridgeHistory).ethereumHash;
+
+    return this.isEthBridgeOperation ? (this.selectedTransaction as BridgeHistory).hash : this.selectedTransaction.txId;
+  }
+
+  private getTransactionId(isSoraTx = true): { type: HashType; value: Nullable<string> } {
+    if (!isSoraTx)
+      return {
+        type: HashType.EthTransaction,
+        value: (this.selectedTransaction as BridgeHistory).ethereumHash,
+      };
+
+    if (this.selectedTransaction.txId)
+      return {
+        type: HashType.ID,
+        value: (this.selectedTransaction as BridgeHistory).txId,
+      };
+
+    return {
+      type: HashType.Block,
+      value: this.selectedTransaction.blockId,
+    };
+  }
+
+  private getTransactionTranslation(isSoraTx = true): string {
+    if (!isSoraTx || this.isEthBridgeOperation) return 'bridgeTransaction.transactionHash';
+
+    return 'transaction.txId';
   }
 
   private getTransactionAddress(isSoraTx = true, txFrom = true): Nullable<string> {

@@ -54,6 +54,7 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
   @Prop({ type: String, required: true }) readonly value!: string;
   @Prop({ type: String, required: true }) readonly type!: HashType;
   @Prop({ type: String, required: true }) readonly translation!: string;
+  @Prop({ type: String, default: '' }) readonly hash!: string;
 
   @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
 
@@ -66,6 +67,10 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
       return formatSoraAddress(this.value);
     }
     return this.value;
+  }
+
+  get displayValue(): string {
+    return this.hash || this.formattedValue;
   }
 
   get explorerLinks(): Array<ExplorerLink> {
@@ -87,7 +92,7 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
   }
 
   get formattedAddress(): string {
-    return formatAddress(this.formattedValue, 24);
+    return formatAddress(this.displayValue, 24);
   }
 
   handleOpenEtherscan(): void {

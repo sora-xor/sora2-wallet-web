@@ -11,7 +11,7 @@ export default class EthBridgeTransactionMixin extends Vue {
   }
 
   getEthBridgeTxState(transaction: HistoryItem): string {
-    return (transaction as BridgeHistory)?.transactionState ?? ETH_BRIDGE_STATES.INITIAL;
+    return (transaction as BridgeHistory).transactionState ?? ETH_BRIDGE_STATES.INITIAL;
   }
 
   isSoraToEthTx(transaction: HistoryItem): boolean {
