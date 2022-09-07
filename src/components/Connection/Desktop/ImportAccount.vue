@@ -92,15 +92,20 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   accountName = '';
   accountPassword = '';
 
-  json: KeyringPair$Json | null = null;
+  json: Nullable<KeyringPair$Json> = null;
 
   hiddenInput = true;
   readonlyAccountName = false;
 
   get title(): string {
-    if (this.step === LoginStep.Import) return this.t('desktop.heading.importTitle');
-    if (this.step === LoginStep.ImportCredentials) return this.t('desktop.heading.accountDetailsTitle');
-    return '';
+    switch (this.step) {
+      case LoginStep.Import:
+        return this.t('desktop.heading.importTitle');
+      case LoginStep.ImportCredentials:
+        return this.t('desktop.heading.accountDetailsTitle');
+      default:
+        return '';
+    }
   }
 
   get disabledNextStep(): boolean {
@@ -166,11 +171,14 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
       const parsedJson = await parseJson(jsonFile);
       let name;
+
       try {
-        const address = (parsedJson as KeyringPair$Json).address;
-        const encoded = (parsedJson as KeyringPair$Json).encoded;
-        const encoding = (parsedJson as KeyringPair$Json).encoding;
-        name = (parsedJson as KeyringPair$Json).meta.name;
+        const { address, encoded, encoding } = parsedJson;
+        name = parsedJson.meta.name;
+
+        if (!address && !encoded && !encoding && !name) {
+          throw new Error('JSON file does not contain required fields.');
+        }
       } catch {
         this.$notify({
           message: this.t('desktop.errorMessages.jsonFields'),

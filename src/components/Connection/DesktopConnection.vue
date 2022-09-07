@@ -57,6 +57,7 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   }
 
   get showBackBtn(): boolean {
+    // show back button depending on which view is rendered
     if (this.step === LoginStep.Welcome && !this.polkadotJsAccounts.length) return false;
     if (this.step === LoginStep.AccountList) return false;
     if (this.step !== LoginStep.Welcome) return true;
@@ -65,6 +66,7 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   }
 
   get showHeader(): boolean {
+    // show header depending on which view is rendered
     if (this.step === LoginStep.Welcome && this.polkadotJsAccounts.length) return true;
     if (this.step === LoginStep.AccountList) return true;
     return false;

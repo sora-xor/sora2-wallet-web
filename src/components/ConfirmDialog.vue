@@ -113,10 +113,6 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
   mounted(): void {
     this.setupFormState();
   }
-
-  updated(): void {
-    this.setupFormState();
-  }
 }
 </script>
 

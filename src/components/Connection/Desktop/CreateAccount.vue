@@ -166,10 +166,16 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get stepNumber(): number {
-    if (this.step === LoginStep.SeedPhrase) return 1;
-    if (this.step === LoginStep.ConfirmSeedPhrase) return 2;
-    if (this.step === LoginStep.CreateCredentials) return 3;
-    return 1;
+    switch (this.step) {
+      case LoginStep.SeedPhrase:
+        return 1;
+      case LoginStep.ConfirmSeedPhrase:
+        return 2;
+      case LoginStep.CreateCredentials:
+        return 3;
+      default:
+        return 1;
+    }
   }
 
   get btnTextConfirmStep(): string {
