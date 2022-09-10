@@ -86,6 +86,7 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
     };
 
     this.setFilterOptions(filters);
+    this.$emit('update-filter');
   }
 
   get filterOptions(): Array<string> {

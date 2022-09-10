@@ -1,7 +1,7 @@
 <template>
   <div :class="computedClasses" v-loading="loading">
-    <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" />
-    <s-scrollbar class="wallet-assets-scrollbar">
+    <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @update-filter="updateFilter" />
+    <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
       <draggable v-model="assetList" class="wallet-assets__draggable">
         <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex" ref="walletAssets">
@@ -122,11 +122,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @Ref('walletAssets') readonly walletAssets!: HTMLCollection;
 
   numberOfRenderedAssets = 0;
-  get assetsToShow(): Array<AccountAsset> {
-    const res = this.assetList.filter((asset) => this.showAsset(asset));
-    console.log('res', res);
-    return res;
-  }
+  scrollbarComponentKey = 0;
 
   get assetList(): Array<AccountAsset> {
     return this.accountAssets;
@@ -196,6 +192,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       return HiddenValue;
     }
     return this.formatCodecNumber(asset.balance.frozen, asset.decimals);
+  }
+
+  updateFilter(): void {
+    this.scrollbarComponentKey += 1;
   }
 
   handleAssetSwap(asset: AccountAsset): void {
