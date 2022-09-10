@@ -94,7 +94,6 @@ import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 
 import { RouteNames, HiddenValue, WalletAssetFilters, WalletPermissions, WalletFilteringOptions } from '../consts';
-import { formatAddress } from '../util';
 import { state, getter, mutation } from '../store/decorators';
 import type { Route } from '../store/router/types';
 
@@ -130,13 +129,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   set assetList(accountAssets: Array<AccountAsset>) {
-    const assetsAddresses = accountAssets.map((asset) => asset.address);
+    if (!accountAssets.length) return;
 
-    if (assetsAddresses.length) {
-      api.assets.accountAssetsAddresses = assetsAddresses;
-      api.assets.updateAccountAssets();
-      this.updateAccountAssets(accountAssets);
-    }
+    const assetsAddresses = accountAssets.map((asset) => asset.address);
+    api.assets.accountAssetsAddresses = assetsAddresses;
+    api.assets.updateAccountAssets();
+    this.updateAccountAssets(accountAssets);
   }
 
   get computedClasses(): string {
@@ -170,10 +168,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
         : sum;
     }, new FPNumber(0));
     return fiatAmount ? fiatAmount.toLocaleString() : null;
-  }
-
-  getFormattedAddress(asset: AccountAsset): string {
-    return formatAddress(asset.address, 10);
   }
 
   getBalance(asset: AccountAsset): string {

@@ -16,10 +16,86 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
       class="wallet-assets__draggable"
       clone="[Function]"
       element="div"
-      value=""
+      value="[object Object],[object Object],[object Object]"
     >
+      <div
+        class="wallet-assets-item__wrapper"
+      >
+        <div
+          class="wallet-assets-item s-flex"
+        >
+          <div
+            class="wallet-assets-three-dash"
+          />
+           
+          <asset-list-item-stub
+            asset="[object Object]"
+            withclickablelogo="true"
+            withfiat="true"
+          />
+           
+          <s-divider-stub
+            class="wallet-assets-divider"
+            contentposition="center"
+            direction="horizontal"
+            type="secondary"
+          />
+        </div>
+      </div>
+      <div
+        class="wallet-assets-item__wrapper"
+      >
+        <div
+          class="wallet-assets-item s-flex"
+        >
+          <div
+            class="wallet-assets-three-dash"
+          />
+           
+          <asset-list-item-stub
+            asset="[object Object]"
+            withclickablelogo="true"
+            withfiat="true"
+          />
+           
+          <s-divider-stub
+            class="wallet-assets-divider"
+            contentposition="center"
+            direction="horizontal"
+            type="secondary"
+          />
+        </div>
+      </div>
+      <div
+        class="wallet-assets-item__wrapper"
+      >
+        <div
+          class="wallet-assets-item s-flex"
+        >
+          <div
+            class="wallet-assets-three-dash"
+          />
+           
+          <asset-list-item-stub
+            asset="[object Object]"
+            withclickablelogo="true"
+            withfiat="true"
+          />
+           
+          <s-divider-stub
+            class="wallet-assets-divider"
+            contentposition="center"
+            direction="horizontal"
+            type="secondary"
+          />
+        </div>
+      </div>
        
-      <!---->
+      <div
+        class="wallet-assets--empty"
+      >
+        No tokens found
+      </div>
     </draggable-stub>
   </s-scrollbar-stub>
    
