@@ -82,7 +82,7 @@
 import { Component, Mixins, Ref } from 'vue-property-decorator';
 import { api, FPNumber } from '@sora-substrate/util';
 import draggable from 'vuedraggable';
-import type { AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, Whitelist, Blacklist } from '@sora-substrate/util/build/assets/types';
 
 import AssetList from './AssetList.vue';
 import AssetListItem from './AssetListItem.vue';
@@ -113,6 +113,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
   @state.settings.permissions permissions!: WalletPermissions;
   @state.settings.filters filters!: WalletAssetFilters;
+  @state.account.blacklistArray blacklist!: Blacklist;
 
   @getter.account.whitelist private whitelist!: Whitelist;
 
@@ -246,6 +247,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   updated(): void {
     this.numberOfRenderedAssets = this.walletAssets.length;
+  }
+
+  mounted(): void {
+    this.assetList = api.assets.accountAssets.filter((asset) => !api.assets.isNftBlacklisted(asset, this.blacklist));
   }
 }
 </script>

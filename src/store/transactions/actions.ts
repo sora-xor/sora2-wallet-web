@@ -1,10 +1,10 @@
 import { defineActions } from 'direct-vuex';
-import type { HistoryItem } from '@sora-substrate/util';
+import { Operation } from '@sora-substrate/util';
+import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { transactionsActionContext } from './../transactions';
+import { rootActionContext } from '../../store';
 import { api } from '../../api';
-import { delay } from '../../util';
-import { BLOCK_PRODUCE_TIME } from '../../consts';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../../services/subquery';
 import { historyElementsFilter } from '../../services/subquery/queries/historyElements';
 import type { ExternalHistoryParams } from '../../types/history';
@@ -12,42 +12,47 @@ import type { ExternalHistoryParams } from '../../types/history';
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2 * 1000;
 
 const actions = defineActions({
-  async restorePendingTxs(context): Promise<void> {
-    const { state, dispatch, getters } = transactionsActionContext(context);
-    // if tracking is disabled, return
-    if (state.updateActiveTxsId === null) return;
+  async subscribeOnExternalHistory(context): Promise<void> {
+    const { commit } = transactionsActionContext(context);
+    const { rootGetters, rootCommit } = rootActionContext(context);
+    const { isLoggedIn, account } = rootGetters.wallet.account;
 
-    const now = Date.now();
-    // difference in time between last block & finilized block (ideal)
-    const delta = 3 * BLOCK_PRODUCE_TIME;
-    // find transactions, which blocks should be produced
-    const txs: HistoryItem[] = [...getters.activeTxs].filter(
-      (item: HistoryItem) => now - (item.startTime as number) > delta
-    );
+    commit.resetExternalHistorySubscription();
 
-    if (txs.length) {
-      try {
-        const ids = txs.map((tx) => tx.id as string);
-        const variables = { filter: { id: { in: ids } } };
-        const response = await SubqueryExplorerService.getAccountTransactions(variables);
+    if (!isLoggedIn) return;
 
-        if (response && response.edges.length) {
-          for (const edge of response.edges) {
-            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(edge.node);
+    const subscription = SubqueryExplorerService.createAccountHistorySubscription(
+      account.address,
+      async (transaction) => {
+        const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
 
-            if (historyItem && (historyItem.id as string) in api.history) {
-              api.saveHistory(historyItem);
-            }
+        if (!historyItem) return;
+        // Don't handle bridge operations
+        if ([Operation.EthBridgeIncoming, Operation.EthBridgeOutgoing].includes(historyItem.type)) return;
+
+        // Save history item to local history
+        // This will update unsynced transactions and restore pending transactions too
+        api.saveHistory(historyItem);
+        // Update storage - this will show new element on history view
+        commit.getHistory();
+
+        // Handle incoming Transfer or SwapAndSend
+        if (
+          [Operation.Transfer, Operation.SwapAndSend].includes(historyItem.type) &&
+          historyItem.to === account.address
+        ) {
+          const asset = rootGetters.wallet.account.whitelist[historyItem.assetAddress as string];
+
+          if (asset) {
+            rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
           }
         }
-      } catch (error) {
-        console.error(error);
       }
-    }
+    );
 
-    await delay(BLOCK_PRODUCE_TIME);
-    dispatch.restorePendingTxs(); // TODO: check it
+    commit.setExternalHistorySubscription(subscription);
   },
+
   /**
    * Get history items from explorer, already filtered
    */
@@ -58,11 +63,12 @@ const actions = defineActions({
       address = '',
       assetAddress = '',
       pageAmount = 8,
+      page = 1,
       query: { search = '', operationNames = [], assetsAddresses = [] } = {},
     }: ExternalHistoryParams = {}
   ): Promise<void> {
     const { state, commit } = transactionsActionContext(context);
-    const { externalHistoryPagination: pagination, externalHistory, history } = state;
+    const { externalHistoryPagination: pagination, externalHistory } = state;
 
     if (pagination && ((next && !pagination.hasNextPage) || (!next && !pagination.hasPreviousPage))) return;
 
@@ -73,14 +79,11 @@ const actions = defineActions({
       operations,
       query: { search, operationNames, assetsAddresses },
     });
-    const cursor = {
-      [next ? 'after' : 'before']: pagination ? (next ? pagination.endCursor : pagination.startCursor) || '' : '',
-    };
 
     const variables = {
       filter,
       first: pageAmount,
-      ...cursor,
+      offset: pageAmount * (page - 1),
     };
 
     try {
@@ -103,7 +106,7 @@ const actions = defineActions({
             if (historyItem) {
               buffer[id] = historyItem;
 
-              if (id in history) {
+              if (id in api.history) {
                 removeHistoryIds.push(id);
               }
             }
@@ -126,7 +129,7 @@ const actions = defineActions({
    * Should be used once in a root of the project
    */
   async trackActiveTxs(context): Promise<void> {
-    const { commit, state, dispatch } = transactionsActionContext(context);
+    const { commit, state } = transactionsActionContext(context);
     commit.resetActiveTxs();
 
     const updateActiveTxsId = setInterval(async () => {
@@ -134,9 +137,8 @@ const actions = defineActions({
         commit.getHistory();
       }
     }, UPDATE_ACTIVE_TRANSACTIONS_INTERVAL);
-    commit.setActiveTxsSubscription(updateActiveTxsId);
 
-    dispatch.restorePendingTxs();
+    commit.setActiveTxsSubscription(updateActiveTxsId);
   },
   /** It's used **only** for subscriptions module */
   async getAccountHistory(context): Promise<void> {
@@ -147,6 +149,11 @@ const actions = defineActions({
   async resetActiveTxs(context): Promise<void> {
     const { commit } = transactionsActionContext(context);
     commit.resetActiveTxs();
+  },
+  /** It's used **only** for subscriptions module */
+  async resetExternalHistorySubscription(context): Promise<void> {
+    const { commit } = transactionsActionContext(context);
+    commit.resetExternalHistorySubscription();
   },
 });
 

@@ -5,6 +5,7 @@ export type ExternalHistoryParams = {
   address?: string;
   assetAddress?: string;
   pageAmount?: number;
+  page?: number;
   query?: {
     search?: string;
     operationNames?: Operation[];

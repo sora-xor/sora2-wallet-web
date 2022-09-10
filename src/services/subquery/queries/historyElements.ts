@@ -10,13 +10,22 @@ export const HistoryElementsQuery = gql`
   query HistoryElements(
     $first: Int = null
     $last: Int = null
+    $offset: Int = null
     $after: Cursor = ""
     $before: Cursor = ""
     $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC
     $filter: HistoryElementFilter
     $idsOnly: Boolean! = false
   ) {
-    historyElements(first: $first, last: $last, before: $before, after: $after, orderBy: $orderBy, filter: $filter) {
+    historyElements(
+      first: $first
+      last: $last
+      offset: $offset
+      before: $before
+      after: $after
+      orderBy: $orderBy
+      filter: $filter
+    ) {
       edges {
         cursor @skip(if: $idsOnly)
         node {
@@ -410,40 +419,6 @@ export const historyElementsFilter = ({
   if (queryFilters.length) {
     filter.and.push({
       or: queryFilters,
-    });
-  }
-
-  return filter;
-};
-
-export const incomingTransferFilter = (address = '', timestamp?: number): any => {
-  const filter: any = {
-    and: [
-      {
-        module: {
-          equalTo: ModuleNames.Assets,
-        },
-      },
-      {
-        method: {
-          equalTo: ModuleMethods.AssetsTransfer,
-        },
-      },
-      {
-        data: {
-          contains: {
-            to: address,
-          },
-        },
-      },
-    ],
-  };
-
-  if (timestamp) {
-    filter.and.push({
-      timestamp: {
-        greaterThan: timestamp,
-      },
     });
   }
 

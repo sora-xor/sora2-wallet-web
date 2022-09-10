@@ -21,6 +21,7 @@
           :with-clickable-logo="withClickableLogo"
           :with-fiat="withFiat"
           :key="index"
+          with-tabindex
           v-on="wrapListeners(item)"
         >
           <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">

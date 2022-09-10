@@ -60,8 +60,20 @@ const mutations = defineMutations<SettingsState>()({
   setApiKeys(state, keys: ApiKeysObject = {}): void {
     state.apiKeys = { ...state.apiKeys, ...keys };
   },
-  setNftStorage(state): void {
-    const nftStorage = new NFTStorage({ token: state.apiKeys.nftStorage });
+  setNftStorage(state, { marketplaceDid, ucan }: { marketplaceDid?: string; ucan?: string }): void {
+    let nftStorage;
+
+    if (marketplaceDid && ucan) {
+      // on prod environment
+      nftStorage = new NFTStorage({
+        token: ucan,
+        did: marketplaceDid,
+      });
+    } else {
+      // on dev, test environments
+      nftStorage = new NFTStorage({ token: state.apiKeys.nftStorage });
+    }
+
     state.nftStorage = nftStorage;
   },
   setSubqueryEndpoint(state, endpoint: string): void {
