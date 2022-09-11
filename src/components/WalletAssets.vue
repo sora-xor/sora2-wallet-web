@@ -257,11 +257,11 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 .wallet-assets {
   &-item {
     position: relative;
-    padding-left: 4px;
+    padding-left: 5px;
     background-color: var(--s-color-utility-surface);
-    border-radius: 8px;
+    border-radius: calc(var(--s-border-radius-mini) / 2);
     &__wrapper {
-      margin-left: -4px;
+      margin-left: -5px;
     }
   }
 
