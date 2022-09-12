@@ -91,11 +91,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
         </div>
       </div>
        
-      <div
-        class="wallet-assets--empty"
-      >
-        No tokens found
-      </div>
+      <!---->
     </draggable-stub>
   </s-scrollbar-stub>
    
