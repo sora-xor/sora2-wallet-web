@@ -64,7 +64,7 @@
             <s-divider :key="`${index}-divider`" class="wallet-assets-divider" />
           </div>
         </div>
-        <div v-if="numberOfRenderedAssets === 0" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
+        <div v-if="!numberOfRenderedAssets" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
       </draggable>
     </s-scrollbar>
 
@@ -111,7 +111,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @state.account.withoutFiatAndApy private withoutFiatAndApy!: boolean;
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
   @state.settings.permissions permissions!: WalletPermissions;
-  @state.settings.filters filters!: WalletAssetFilters;
+  @state.settings.filters private filters!: WalletAssetFilters;
   @state.account.blacklistArray blacklist!: Blacklist;
 
   @getter.account.whitelist private whitelist!: Whitelist;
