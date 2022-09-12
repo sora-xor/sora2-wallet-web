@@ -64,7 +64,7 @@
             <s-divider :key="`${index}-divider`" class="wallet-assets-divider" />
           </div>
         </div>
-        <div v-if="visibleAssetList.length === 0" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
+        <div v-if="!visibleAssetList.length" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
       </draggable>
     </s-scrollbar>
 
