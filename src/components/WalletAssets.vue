@@ -3,8 +3,8 @@
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @update-filter="updateFilter" />
     <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
       <draggable v-model="assetList" class="wallet-assets__draggable">
-        <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
-          <div v-if="showAsset(asset)" class="wallet-assets-item s-flex" ref="walletAssets">
+        <div v-for="(asset, index) in visibleAssetList" :key="asset.address" class="wallet-assets-item__wrapper">
+          <div class="wallet-assets-item s-flex">
             <div class="wallet-assets-three-dash"></div>
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
@@ -64,7 +64,7 @@
             <s-divider :key="`${index}-divider`" class="wallet-assets-divider" />
           </div>
         </div>
-        <div v-if="numberOfRenderedAssets === 0" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
+        <div v-if="visibleAssetList.length === 0" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
       </draggable>
     </s-scrollbar>
 
@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Ref } from 'vue-property-decorator';
+import { Component, Mixins } from 'vue-property-decorator';
 import { api, FPNumber } from '@sora-substrate/util';
 import draggable from 'vuedraggable';
 import type { AccountAsset, Whitelist, Blacklist } from '@sora-substrate/util/build/assets/types';
@@ -119,9 +119,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.account.updateAccountAssets private updateAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
 
-  @Ref('walletAssets') readonly walletAssets!: HTMLCollection;
-
-  numberOfRenderedAssets = 0;
   scrollbarComponentKey = 0;
 
   get assetList(): Array<AccountAsset> {
@@ -135,6 +132,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     api.assets.accountAssetsAddresses = assetsAddresses;
     api.assets.updateAccountAssets();
     this.updateAccountAssets(accountAssets);
+  }
+
+  get visibleAssetList(): Array<AccountAsset> {
+    return this.assetList.filter((asset) => this.showAsset(asset));
   }
 
   get computedClasses(): string {
@@ -237,10 +238,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     }
 
     return true;
-  }
-
-  updated(): void {
-    this.numberOfRenderedAssets = this.walletAssets.length;
   }
 
   mounted(): void {
