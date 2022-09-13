@@ -123,12 +123,6 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
         return this.t('filter.all');
     }
   }
-
-  mounted(): void {
-    this.onlyVerifiedAssets = this.filters.verifiedOnly;
-    this.zeroBalanceAssets = this.filters.zeroBalance;
-    this.selectedFilter = this.filters.option;
-  }
 }
 </script>
 

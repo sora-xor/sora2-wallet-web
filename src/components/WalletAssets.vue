@@ -4,7 +4,7 @@
     <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
       <draggable v-model="assetList" class="wallet-assets__draggable">
         <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
-          <div v-if="visibleAssetsMap[asset.address]" class="wallet-assets-item s-flex">
+          <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
             <div class="wallet-assets-three-dash"></div>
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
@@ -120,6 +120,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @mutation.account.updateAccountAssets private updateAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
 
   scrollbarComponentKey = 0;
+  assetsAreHidden = true;
 
   get assetList(): Array<AccountAsset> {
     return this.accountAssets;
@@ -132,16 +133,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     api.assets.accountAssetsAddresses = assetsAddresses;
     api.assets.updateAccountAssets();
     this.updateAccountAssets(accountAssets);
-  }
-
-  get visibleAssetsMap(): Record<string, AccountAsset> {
-    return this.assetList.reduce((buffer, asset) => {
-      return this.showAsset(asset) ? { ...buffer, [asset.address]: asset } : buffer;
-    }, {});
-  }
-
-  get assetsAreHidden(): boolean {
-    return Object.keys(this.visibleAssetsMap).length === 0;
   }
 
   get computedClasses(): string {
@@ -197,6 +188,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   updateFilter(): void {
+    this.assetsAreHidden = true;
     this.scrollbarComponentKey += 1;
   }
 
@@ -243,10 +235,14 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       return false;
     }
 
+    // there is at least one asset to show
+    this.assetsAreHidden = false;
+
     return true;
   }
 
   mounted(): void {
+    // TODO: filter blacklist assets in Vuex store
     this.assetList = api.assets.accountAssets.filter((asset) => !api.assets.isNftBlacklisted(asset, this.blacklist));
   }
 }
