@@ -3,8 +3,8 @@
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @update-filter="updateFilter" />
     <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
       <draggable v-model="assetList" class="wallet-assets__draggable">
-        <div v-for="(asset, index) in visibleAssetList" :key="asset.address" class="wallet-assets-item__wrapper">
-          <div class="wallet-assets-item s-flex">
+        <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
+          <div v-if="visibleAssetsMap[asset.address]" class="wallet-assets-item s-flex">
             <div class="wallet-assets-three-dash"></div>
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
@@ -64,7 +64,7 @@
             <s-divider :key="`${index}-divider`" class="wallet-assets-divider" />
           </div>
         </div>
-        <div v-if="!visibleAssetList.length" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
+        <div v-if="assetsAreHidden" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
       </draggable>
     </s-scrollbar>
 
@@ -134,8 +134,14 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     this.updateAccountAssets(accountAssets);
   }
 
-  get visibleAssetList(): Array<AccountAsset> {
-    return this.assetList.filter((asset) => this.showAsset(asset));
+  get visibleAssetsMap(): Record<string, AccountAsset> {
+    return this.assetList.reduce((buffer, asset) => {
+      return this.showAsset(asset) ? { ...buffer, [asset.address]: asset } : buffer;
+    }, {});
+  }
+
+  get assetsAreHidden(): boolean {
+    return Object.keys(this.visibleAssetsMap).length === 0;
   }
 
   get computedClasses(): string {
