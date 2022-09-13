@@ -4,35 +4,9 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
 <div
   class="wallet-assets wallet-assets--fiat s-flex"
 >
-  <div>
-    <div
-      class="total-fiat-values"
-    >
-      <span
-        class="total-fiat-values__title"
-      >
-        Your total assets value:
-      </span>
-       
-      <formatted-amount-stub
-        assetsymbol=""
-        fontsizerate="normal"
-        fontweightrate="normal"
-        integeronly="true"
-        isfiatvalue="true"
-        value="151.782"
-        valuecanbehidden="true"
-        withleftshift="true"
-      />
-    </div>
-     
-    <s-divider-stub
-      class="wallet-assets-divider"
-      contentposition="center"
-      direction="horizontal"
-      type="secondary"
-    />
-  </div>
+  <wallet-assets-headline-stub
+    assetsfiatamount="151.782"
+  />
    
   <s-scrollbar-stub
     class="wallet-assets-scrollbar"
@@ -42,8 +16,83 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
       class="wallet-assets__draggable"
       clone="[Function]"
       element="div"
-      value=""
-    />
+      value="[object Object],[object Object],[object Object]"
+    >
+      <div
+        class="wallet-assets-item__wrapper"
+      >
+        <div
+          class="wallet-assets-item s-flex"
+        >
+          <div
+            class="wallet-assets-three-dash"
+          />
+           
+          <asset-list-item-stub
+            asset="[object Object]"
+            withclickablelogo="true"
+            withfiat="true"
+          />
+           
+          <s-divider-stub
+            class="wallet-assets-divider"
+            contentposition="center"
+            direction="horizontal"
+            type="secondary"
+          />
+        </div>
+      </div>
+      <div
+        class="wallet-assets-item__wrapper"
+      >
+        <div
+          class="wallet-assets-item s-flex"
+        >
+          <div
+            class="wallet-assets-three-dash"
+          />
+           
+          <asset-list-item-stub
+            asset="[object Object]"
+            withclickablelogo="true"
+            withfiat="true"
+          />
+           
+          <s-divider-stub
+            class="wallet-assets-divider"
+            contentposition="center"
+            direction="horizontal"
+            type="secondary"
+          />
+        </div>
+      </div>
+      <div
+        class="wallet-assets-item__wrapper"
+      >
+        <div
+          class="wallet-assets-item s-flex"
+        >
+          <div
+            class="wallet-assets-three-dash"
+          />
+           
+          <asset-list-item-stub
+            asset="[object Object]"
+            withclickablelogo="true"
+            withfiat="true"
+          />
+           
+          <s-divider-stub
+            class="wallet-assets-divider"
+            contentposition="center"
+            direction="horizontal"
+            type="secondary"
+          />
+        </div>
+      </div>
+       
+      <!---->
+    </draggable-stub>
   </s-scrollbar-stub>
    
   <s-button-stub
