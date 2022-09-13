@@ -169,7 +169,7 @@ export default {
   },
   assets: {
     empty: 'There are no assets',
-    totalAssetsValue: 'Your total assets value:',
+    totalAssetsValue: 'Total assets value:',
     add: '@:addAssetText',
     swap: '@:swapText',
     send: '@:sendText',
@@ -301,6 +301,15 @@ export default {
       placeholder: 'Divisible',
       desc: 'Ability of NFT to divide into fractional parts. Liquidity provisioning only works with divisible assets',
     },
+  },
+  filter: {
+    all: 'All',
+    token: 'Tokens',
+    nft: 'NFTs',
+    verifiedOnly: 'Show verified assets only',
+    zeroBalance: 'Hide 0 balance assets',
+    showAssets: 'Show assets',
+    show: 'Show',
   },
   transaction: {
     title: 'Transaction details',

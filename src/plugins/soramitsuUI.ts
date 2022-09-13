@@ -9,6 +9,7 @@ import { setTheme, setDesignSystem } from '@soramitsu/soramitsu-js-ui/lib/utils'
 import ElementUIPlugin, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui/lib/plugins/elementUI';
 import SoramitsuUIStorePlugin from '@soramitsu/soramitsu-js-ui/lib/plugins/soramitsuUIStore';
 
+import ElPopover from 'element-ui/lib/popover';
 import SButton from '@soramitsu/soramitsu-js-ui/lib/components/Button/SButton';
 import SCard from '@soramitsu/soramitsu-js-ui/lib/components/Card/SCard';
 import SDesignSystemProvider from '@soramitsu/soramitsu-js-ui/lib/components/DesignSystem/SDesignSystemProvider';
@@ -36,6 +37,7 @@ import STooltip from '@soramitsu/soramitsu-js-ui/lib/components/Tooltip';
 import { Button } from '@soramitsu/soramitsu-js-ui/lib/directives';
 
 export function install(vue: typeof Vue, store) {
+  vue.use(ElPopover);
   vue.use(ElementUIPlugin);
   vue.use(SoramitsuUIStorePlugin, { store });
   vue.directive(Directives.Button, Button);
