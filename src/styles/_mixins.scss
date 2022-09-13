@@ -16,6 +16,15 @@
   text-align: center;
 }
 
+@mixin three-dashes($topValue) {
+  width: 10px;
+  height: 2px;
+  top: $topValue;
+  position: absolute;
+  background-color: var(--s-color-base-content-tertiary);
+  border-radius: 1px;
+}
+
 @mixin custom-tabs {
   $tabs-class: '.el-tabs';
 

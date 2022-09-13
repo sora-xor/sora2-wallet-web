@@ -1,17 +1,16 @@
 import WalletAssets from '@/components/WalletAssets.vue';
-import AssetList from '@/components/AssetList.vue';
-import AssetListItem from '@/components/AssetListItem.vue';
 
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
-import { MOCK_ACCOUNT_ASSETS, MOCK_FIAT_PRICE_AND_APY_OBJECT, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
+import {
+  MOCK_ACCOUNT_ASSETS,
+  MOCK_FIAT_PRICE_AND_APY_OBJECT,
+  MOCK_WALLET_PERMISSIONS,
+  MOCK_WHITE_LIST,
+} from '../../utils/mock';
 import { WalletPermissions } from '../../../src/consts';
 
 const createWrapper = (options = {}) =>
   useShallowMount(WalletAssets, {
-    stubs: {
-      AssetList,
-      AssetListItem,
-    },
     ...options,
   });
 
@@ -21,6 +20,11 @@ const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, w
       state: () => ({
         permissions,
         shouldBalanceBeHidden: false,
+        filters: {
+          option: 'All',
+          verifiedOnly: false,
+          zeroBalance: false,
+        },
       }),
     },
     account: {
@@ -29,6 +33,9 @@ const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, w
         fiatPriceAndApyObject: MOCK_FIAT_PRICE_AND_APY_OBJECT,
         withoutFiatAndApy,
       }),
+      getters: {
+        whitelist: () => MOCK_WHITE_LIST,
+      },
     },
     router: {
       mutations: {
@@ -39,7 +46,11 @@ const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, w
 
 useDescribe('WalletAssets.vue', WalletAssets, () => {
   it('should be rendered correctly', () => {
-    const wrapper = useShallowMount(WalletAssets, { store: createStore() });
+    // const wrapper = useShallowMount(WalletAssets, { store: createStore() });
+
+    const wrapper = createWrapper({
+      store: createStore(),
+    });
 
     expect(wrapper.element).toMatchSnapshot();
   });

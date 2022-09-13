@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import VueI18n from 'vue-i18n';
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils';
 import SoramitsuElements, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui';
+import ElPopover from 'element-ui/lib/popover';
 
 import i18n from '../../src/lang';
 
@@ -12,6 +13,7 @@ localVue.use(VueI18n);
 
 export const SoramitsuElementsImport = (vue: VueConstructor) => {
   vue.use(SoramitsuElements);
+  vue.use(ElPopover);
   vue.prototype.$prompt = MessageBox.prompt;
   vue.prototype.$alert = MessageBox.alert;
   vue.prototype.$message = Message;
