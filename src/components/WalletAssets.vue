@@ -247,6 +247,8 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 </script>
 
 <style lang="scss">
+$padding: 5px;
+
 .sortable-ghost {
   opacity: 0.5;
 }
@@ -254,11 +256,11 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 .wallet-assets {
   &-item {
     position: relative;
-    padding-left: 5px;
+    padding-left: $padding;
     background-color: var(--s-color-utility-surface);
     border-radius: calc(var(--s-border-radius-mini) / 2);
     &__wrapper {
-      margin-left: -5px;
+      margin-left: calc(#{$padding} * -1);
     }
   }
 
@@ -267,12 +269,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
     &::before {
       content: '';
-      @include three-dashes(5px);
+      @include three-dashes($padding);
     }
 
     &::after {
       content: '';
-      @include three-dashes(-5px);
+      @include three-dashes(calc(#{$padding} * -1));
     }
   }
 

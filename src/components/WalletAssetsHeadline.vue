@@ -41,6 +41,12 @@ import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import { WalletAssetFilters, WalletFilteringOptions } from '../consts';
 
+enum Filter {
+  verifiedOnly = 'verifiedOnly',
+  zeroBalance = 'zeroBalance',
+  option = 'option',
+}
+
 @Component({
   components: {
     FormattedAmount,
@@ -52,6 +58,8 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   @state.settings.filters filters!: WalletAssetFilters;
   @mutation.settings.setFilterOptions private setFilterOptions!: (filter: WalletAssetFilters) => void;
 
+  Filter = Filter;
+
   verifiedOnlySwitch = false;
   zeroBalanceSwitch = false;
 
@@ -60,7 +68,7 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   }
 
   set onlyVerifiedAssets(value: boolean) {
-    this.updateFilters('verifiedOnly', value);
+    this.updateFilters(Filter.verifiedOnly, value);
   }
 
   get zeroBalanceAssets(): boolean {
@@ -68,7 +76,7 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   }
 
   set zeroBalanceAssets(value: boolean) {
-    this.updateFilters('zeroBalance', value);
+    this.updateFilters(Filter.zeroBalance, value);
   }
 
   get selectedFilter(): string {
@@ -76,7 +84,7 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   }
 
   set selectedFilter(value) {
-    this.updateFilters('option', value);
+    this.updateFilters(Filter.option, value);
   }
 
   updateFilters(key: string, value: string | boolean): void {
@@ -170,7 +178,7 @@ $size-px: 16px;
     padding-bottom: calc(var(--s-size-small / 2));
 
     .el-switch__input:disabled + .el-switch__core {
-      background-color: var(--s-color-base-content-tertiary) !important;
+      background-color: var(--s-color-base-border-secondary) !important;
     }
   }
 
