@@ -58,8 +58,6 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   @state.settings.filters filters!: WalletAssetFilters;
   @mutation.settings.setFilterOptions private setFilterOptions!: (filter: WalletAssetFilters) => void;
 
-  Filter = Filter;
-
   verifiedOnlySwitch = false;
   zeroBalanceSwitch = false;
 
@@ -130,7 +128,6 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
     this.onlyVerifiedAssets = this.filters.verifiedOnly;
     this.zeroBalanceAssets = this.filters.zeroBalance;
     this.selectedFilter = this.filters.option;
-    this.$emit('filter-assets', this.filters);
   }
 }
 </script>
