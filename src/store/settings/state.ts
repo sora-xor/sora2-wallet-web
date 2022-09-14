@@ -1,4 +1,5 @@
 import isElectron from 'is-electron';
+import { WalletAssetFilters } from '@/consts';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 
 import { storage, runtimeStorage } from '../../util/storage';
@@ -7,6 +8,12 @@ import type { SettingsState } from './types';
 function initialState(): SettingsState {
   const shouldBalanceBeHidden = storage.get('shouldBalanceBeHidden');
   const runtimeVersion = runtimeStorage.get('version');
+
+  // CHECKME: Uncomment or remove this functionality depending on user's feedback
+  // to save setting preferences.
+  // const filters = settingsStorage.get('filters');
+  // const { option, verifiedOnly, zeroBalance } = filters && JSON.parse(filters);
+
   return {
     apiKeys: {},
     subqueryEndpoint: null,
@@ -20,6 +27,13 @@ function initialState(): SettingsState {
       swapAssets: true,
       showAssetDetails: true,
     },
+    filters: {
+      // CHECKME: Uncomment or remove this functionality depending on user's feedback
+      // to save setting preferences.
+      option: 'All', // option || 'All'
+      verifiedOnly: false, // verifiedOnly || false,
+      zeroBalance: false, // zeroBalance || false
+    } as WalletAssetFilters,
     soraNetwork: null,
     nftStorage: null,
     runtimeVersion: runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0,
