@@ -170,15 +170,19 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
       }
 
       const parsedJson = await parseJson(jsonFile);
-      let name;
 
       try {
         const { address, encoded, encoding } = parsedJson;
-        name = parsedJson.meta.name;
+        const name = parsedJson.meta.name as string;
 
         if (!address && !encoded && !encoding && !name) {
           throw new Error('JSON file does not contain required fields.');
         }
+
+        this.accountName = name;
+        this.readonlyAccountName = true;
+        this.json = parsedJson;
+        this.$emit('stepChange', LoginStep.ImportCredentials);
       } catch {
         this.$notify({
           message: this.t('desktop.errorMessages.jsonFields'),
@@ -188,11 +192,6 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
         return;
       }
-
-      this.accountName = name;
-      this.readonlyAccountName = true;
-      this.json = parsedJson;
-      this.$emit('stepChange', LoginStep.ImportCredentials);
     } catch (err) {
       this.$notify({
         message: this.t('unknownErrorText'),

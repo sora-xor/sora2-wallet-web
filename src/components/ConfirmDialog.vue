@@ -91,10 +91,8 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
       return;
     }
 
-    if (!this.passphrase && this.savePassword) {
-      this.setAccountPassphrase(this.accountPassword);
-    } else if (this.passphrase && this.savePassword) {
-      this.setAccountPassphrase(this.passphrase);
+    if (this.savePassword) {
+      this.setAccountPassphrase(this.passphrase || this.accountPassword);
     }
 
     this.$emit('confirm');
