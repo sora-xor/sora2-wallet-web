@@ -1,7 +1,7 @@
 <template>
   <div class="welcome-page">
     <div v-if="loggedIn" class="welcome-page">
-      <div class="pswap-logo"></div>
+      <token-logo class="pswap-desktop-logo" tokenSymbol="PSWAP" />
       <h3 class="welcome-page__header">{{ t('desktop.welcome.header') }}</h3>
       <h3 class="welcome-page__headline">{{ t('desktop.welcome.headline') }}</h3>
     </div>
@@ -18,12 +18,17 @@
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
 import { PolkadotJsAccount } from '@/types/common';
+import TokenLogo from '../../TokenLogo.vue';
 import TranslationMixin from '../../mixins/TranslationMixin';
 import { getter } from '../../../store/decorators';
 
-@Component
+@Component({
+  components: {
+    TokenLogo,
+  },
+})
 export default class WelcomePage extends Mixins(TranslationMixin) {
-  @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @getter.account.polkadotJsAccounts private polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   get loggedIn(): boolean {
     return this.polkadotJsAccounts.length === 0;
@@ -45,12 +50,6 @@ export default class WelcomePage extends Mixins(TranslationMixin) {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  .pswap-logo {
-    background: url('~@/assets/img/pswap.svg') no-repeat;
-    height: 60px;
-    width: 60px;
-    margin-bottom: 18px;
-  }
 
   &__headline {
     margin-bottom: calc(var(--s-size-small) / 2);
@@ -60,6 +59,17 @@ export default class WelcomePage extends Mixins(TranslationMixin) {
     font-weight: 300;
     text-align: center;
     margin-bottom: calc(var(--s-size-small) / 2);
+  }
+}
+</style>
+
+<style lang="scss">
+.pswap-desktop-logo {
+  margin-top: -36px;
+  margin-bottom: 28px;
+  .asset-logo {
+    height: 64px;
+    width: 64px;
   }
 }
 </style>
