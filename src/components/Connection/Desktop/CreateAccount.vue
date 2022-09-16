@@ -360,6 +360,10 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 }
 .login {
+  &__title {
+    margin-top: -54px;
+  }
+
   &__text-advice {
     text-align: center;
     margin-bottom: 8px;
