@@ -61,10 +61,6 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   verifiedOnlySwitch = false;
   zeroBalanceSwitch = false;
 
-  getLabel(index: number): string {
-    return Object.values(WalletFilteringOptions)[index];
-  }
-
   get onlyVerifiedAssets(): boolean {
     return this.filters.verifiedOnly;
   }
@@ -87,6 +83,10 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
 
   set selectedFilter(value) {
     this.updateFilters(Filter.option, value);
+  }
+
+  getLabel(index: number): string {
+    return Object.values(WalletFilteringOptions)[index];
   }
 
   updateFilters(key: string, value: string | boolean): void {
