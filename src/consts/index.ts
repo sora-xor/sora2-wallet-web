@@ -36,6 +36,12 @@ export enum AddAssetTabs {
   NFT = 'AddAssetNFT',
 }
 
+export enum WalletFilteringOptions {
+  ALL = 'All',
+  TOKEN = 'Tokens',
+  NFT = 'NFTs',
+}
+
 export enum SoraNetwork {
   Dev = 'Dev',
   Test = 'Test',
@@ -85,6 +91,12 @@ export interface WalletPermissions {
 }
 
 export type EthBridgeUpdateHistory = (updateWalletHistory: VoidFunction) => Promise<void>;
+
+export interface WalletAssetFilters {
+  option: string;
+  verifiedOnly: boolean;
+  zeroBalance: boolean;
+}
 
 export interface WalletInitOptions {
   withoutStore?: boolean;
