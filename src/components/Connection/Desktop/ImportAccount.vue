@@ -20,7 +20,9 @@
         class="json-upload"
         @change="handleUploadJson"
       />
-      <s-button @click="importJson" class="s-typography-button--large login-btn"> Import .JSON </s-button>
+      <s-button @click="importJson" class="s-typography-button--large login-btn">
+        {{ t('importText') }} .JSON
+      </s-button>
       <s-button
         @click="nextStep"
         key="step1"
@@ -75,7 +77,7 @@ import { getter, action } from '../../../store/decorators';
 
 @Component
 export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin) {
-  @Prop({ type: String }) readonly step!: LoginStep;
+  @Prop({ type: String, required: true }) readonly step!: LoginStep;
 
   @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
@@ -84,7 +86,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
-  LoginStep = LoginStep;
+  readonly LoginStep = LoginStep;
 
   readonly PHRASE_LENGTH = 12;
 
@@ -113,7 +115,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get disabledImportStep(): boolean {
-    return !(!!this.accountName && !!this.accountPassword);
+    return !(this.accountName && this.accountPassword);
   }
 
   get inputType(): string {
@@ -241,6 +243,12 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
       if (error.message === 'Invalid bip39 mnemonic specified') {
         this.$notify({
           message: this.t('desktop.errorMessages.mnemonic'),
+          type: 'error',
+          title: '',
+        });
+      } else {
+        this.$notify({
+          message: this.t('unknownErrorText'),
           type: 'error',
           title: '',
         });

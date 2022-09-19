@@ -47,7 +47,7 @@ import { api } from '../api';
   },
 })
 export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin, LoadingMixin) {
-  @getter.account.passphrase passphrase!: string | null;
+  @getter.account.passphrase passphrase!: Nullable<string>;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => AsyncVoidFn;
 
   accountPassword = '';
@@ -100,7 +100,7 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
     this.accountPassword = '';
   }
 
-  setupFormState(): void {
+  private setupFormState(): void {
     if (this.passphrase) {
       this.accountPassword = this.passphrase;
     } else if (this.isVisible === false) {

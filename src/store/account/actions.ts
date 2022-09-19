@@ -161,8 +161,6 @@ const actions = defineActions({
     commit.setPolkadotJsAccountsSubscription(subscription);
   },
 
-  pullAccountsLocalStorage(context) {},
-
   async importPolkadotJs(context, accountData: PolkadotJsAccount): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
     try {

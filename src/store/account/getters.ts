@@ -18,7 +18,7 @@ const toHashTable = (list: Array<any>, key: string) => {
 
 const getters = defineGetters<AccountState>()({
   isLoggedIn(state, getters): boolean {
-    return (!!state.source && !!state.address) || (getters.isDesktop && !!state.address);
+    return !!(state.source && state.address) || (getters.isDesktop && !!state.address);
   },
   account(...args): PolkadotJsAccount {
     const { state } = accountGetterContext(args);
@@ -46,7 +46,7 @@ const getters = defineGetters<AccountState>()({
       ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray)
       : {};
   },
-  passphrase(...args): string | null {
+  passphrase(...args): Nullable<string> {
     const { state } = accountGetterContext(args);
     const encryptedPassphrase = state.addressPassphraseMapping[state.address];
     const sessionKey = state.addressKeyMapping[state.address];

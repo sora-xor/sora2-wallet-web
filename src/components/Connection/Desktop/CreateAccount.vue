@@ -126,7 +126,7 @@
 
 <script lang="ts">
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/fp/isEqual';
 
 import LoadingMixin from '../../../components/mixins/LoadingMixin';
 import TranslationMixin from '../../../components/mixins/TranslationMixin';
@@ -139,7 +139,7 @@ import { action } from '../../../store/decorators';
 export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @action.account.getPolkadotJsAccounts getPolkadotJsAccounts!: () => Promise<void>;
 
-  @Prop({ type: String }) readonly step!: LoginStep;
+  @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Ref('json') readonly json!: HTMLLinkElement;
 
   readonly LoginStep = LoginStep;
@@ -231,38 +231,31 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   chooseWord(e: Event): void {
     const clickedWord = e.currentTarget;
     const targetClass = (clickedWord as HTMLElement).classList[1];
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.$refs[`${targetClass}`]![0].classList.add('word--hidden')!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const clickedWordText = (clickedWord as HTMLElement).textContent!.trim();
+    (this.$refs[`${targetClass}`] as HTMLElement)[0].classList.add('word--hidden');
+    const clickedWordText = ((clickedWord as HTMLElement).textContent as string).trim();
     this.$nextTick(() => {
       this.seedPhraseToCompare.push(clickedWordText);
     });
   }
 
   discardWord(e: Event): void {
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const clickedWordText = (e.currentTarget as HTMLElement).textContent!.trim();
+    const clickedWordText = ((e.currentTarget as HTMLElement).textContent as string).trim();
     const wordToDiscard = this.seedPhraseBoundToClass.get(clickedWordText);
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.$refs[`${wordToDiscard}`]![0].classList.remove('word--hidden');
+    (this.$refs[`${wordToDiscard}`] as HTMLElement)[0].classList.remove('word--hidden');
     this.seedPhraseToCompare = this.seedPhraseToCompare.filter((word) => word !== clickedWordText);
   }
 
   discardAllWords(): void {
     const wordsHtmlDOM = Array.from(new Array(this.PHRASE_LENGTH), (_, idx) => `word${idx + 1}`);
-    wordsHtmlDOM.map((value) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.$refs[value]![0].classList.remove('word--hidden');
+    wordsHtmlDOM.forEach((value) => {
+      (this.$refs[value] as HTMLElement)[0].classList.remove('word--hidden');
     });
-    wordsHtmlDOM.map((value) => {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this.$refs[value]![0].classList.add('login__random-word--incorrect');
+    wordsHtmlDOM.forEach((value) => {
+      (this.$refs[value] as HTMLElement)[0].classList.add('login__random-word--incorrect');
     });
     setTimeout(() => {
-      wordsHtmlDOM.map((value) => {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        this.$refs[value]![0].classList.remove('login__random-word--incorrect');
+      wordsHtmlDOM.forEach((value) => {
+        (this.$refs[value] as HTMLElement)[0].classList.remove('login__random-word--incorrect');
       });
     }, 2000);
   }
