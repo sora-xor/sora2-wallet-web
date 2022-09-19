@@ -8,9 +8,9 @@
       <el-popover popper-class="wallet-assets-headline__popover" trigger="click" :visible-arrow="false">
         <div class="wallet-assets-headline__text">{{ t('filter.showAssets') }}</div>
         <s-radio-group v-model="selectedFilter">
-          <s-radio class="radio-btn" v-for="(filter, index) in filterOptionsText" :key="index" :label="filter">{{
-            filter
-          }}</s-radio>
+          <s-radio class="radio-btn" v-for="(filter, index) in filterOptionsText" :key="index" :label="getLabel(index)">
+            {{ filter }}
+          </s-radio>
         </s-radio-group>
         <s-divider class="wallet-assets-divider__popover" />
         <div class="wallet-assets-headline__switch">
@@ -83,6 +83,10 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
 
   set selectedFilter(value) {
     this.updateFilters(Filter.option, value);
+  }
+
+  getLabel(index: number): string {
+    return Object.values(WalletFilteringOptions)[index];
   }
 
   updateFilters(key: string, value: string | boolean): void {
