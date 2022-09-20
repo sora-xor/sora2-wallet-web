@@ -261,7 +261,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   async handleCopy(): Promise<void> {
-    await copyToClipboard(this.seedPhraseAsArray.map((w) => w.toLowerCase()).join(' '));
+    await copyToClipboard(this.seedPhrase);
   }
 
   renderWord(column, index): boolean {
