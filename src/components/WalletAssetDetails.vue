@@ -381,6 +381,8 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     text-align: center;
     &--clickable {
       cursor: pointer;
+      @include focus-outline;
+      width: calc(100% - 2px);
     }
     & + .formatted-amount--fiat-value {
       width: 100%;

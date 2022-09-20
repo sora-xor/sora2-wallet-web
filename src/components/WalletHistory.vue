@@ -322,6 +322,7 @@ $history-item-top-border-height: 1px;
     padding: calc(var(--s-basic-spacing) + #{$history-item-top-border-height}) $history-item-horizontal-space * 2;
     font-size: var(--s-font-size-mini);
     border-radius: var(--s-border-radius-small);
+    @include focus-outline($borderRadius: var(--s-border-radius-small));
     &:not(:first-child):not(:focus) {
       position: relative;
       &:before {

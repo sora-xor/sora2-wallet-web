@@ -126,6 +126,9 @@ $button-size: var(--s-size-medium);
       line-height: var(--s-line-height-small);
       font-weight: 300;
       letter-spacing: var(--s-letter-spacing-mini);
+      .el-tooltip {
+        @include focus-outline($borderRadius: 50%);
+      }
     }
     &_back {
       position: absolute;

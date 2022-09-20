@@ -222,10 +222,14 @@ $account-height: 60px;
 .s-card.wallet-account.wallet-connection {
   &-account,
   &-extension {
+    @include focus-outline;
     &:hover {
       cursor: pointer;
       border-color: var(--s-color-base-content-secondary);
     }
+  }
+  &-extension a {
+    @include focus-outline($borderRadius: var(--s-border-radius-small));
   }
 }
 </style>
@@ -255,7 +259,8 @@ $accounts-number: 7;
 
   &-accounts {
     height: calc(
-      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom}
+      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom} + #{$account-margin-bottom} /
+        2
     );
   }
 
@@ -268,9 +273,16 @@ $accounts-number: 7;
 
   &-account {
     height: $account-height;
+    &:first-child {
+      margin-top: 1px;
+    }
 
     &:not(:last-child) {
-      margin-bottom: var(--s-basic-spacing);
+      margin-bottom: $account-margin-bottom;
+    }
+
+    &:last-child {
+      margin-bottom: 1px;
     }
   }
 
