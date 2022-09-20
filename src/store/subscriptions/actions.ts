@@ -55,14 +55,19 @@ const actions = defineActions({
     ]);
   },
   // Internal subscriptions & timers
-  async activateInternalSubscriptions(context): Promise<void> {
-    await runParallel(context, [
+  async activateInternalSubscriptions(context, onDesktop: boolean): Promise<void> {
+    const subscriptions = [
       'transactions/trackActiveTxs',
       'transactions/subscribeOnExternalHistory',
       'account/subscribeOnFiatPriceAndApy',
-      'account/subscribeOnExtensionAvailability',
       'subscriptions/subscribeToStorageUpdates',
-    ]);
+    ];
+
+    if (!onDesktop) {
+      subscriptions.push('account/subscribeOnExtensionAvailability');
+    }
+
+    await runParallel(context, subscriptions);
   },
   async resetInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
