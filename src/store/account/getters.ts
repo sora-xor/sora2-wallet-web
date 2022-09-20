@@ -1,4 +1,5 @@
 import { defineGetters } from 'direct-vuex';
+import CryptoJS from 'crypto-js';
 import type { Blacklist, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import { accountGetterContext } from './../account';
@@ -16,9 +17,8 @@ const toHashTable = (list: Array<any>, key: string) => {
 };
 
 const getters = defineGetters<AccountState>()({
-  isLoggedIn(...args): boolean {
-    const { state } = accountGetterContext(args);
-    return !!state.source && !!state.address;
+  isLoggedIn(state, getters): boolean {
+    return !!(state.source && state.address) || (getters.isDesktop && !!state.address);
   },
   account(...args): PolkadotJsAccount {
     const { state } = accountGetterContext(args);
@@ -27,6 +27,10 @@ const getters = defineGetters<AccountState>()({
       name: state.name,
       source: state.source as Extensions,
     };
+  },
+  polkadotJsAccounts(...args): Array<PolkadotJsAccount> {
+    const { state } = accountGetterContext(args);
+    return state.polkadotJsAccounts;
   },
   accountAssetsAddressTable(...args): AccountAssetsTable {
     const { state } = accountGetterContext(args);
@@ -41,6 +45,20 @@ const getters = defineGetters<AccountState>()({
     return state.whitelistArray && state.whitelistArray.length
       ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray)
       : {};
+  },
+  passphrase(...args): Nullable<string> {
+    const { state } = accountGetterContext(args);
+    const encryptedPassphrase = state.addressPassphraseMapping[state.address];
+    const sessionKey = state.addressKeyMapping[state.address];
+
+    if (encryptedPassphrase && sessionKey) {
+      const decoded = CryptoJS.AES.decrypt(encryptedPassphrase, sessionKey).toString(CryptoJS.enc.Utf8);
+      return decoded;
+    }
+    return null;
+  },
+  isDesktop(state, getters, rootState): boolean {
+    return rootState.wallet.settings.isDesktop;
   },
   blacklist(...args): any {
     const { state } = accountGetterContext(args);

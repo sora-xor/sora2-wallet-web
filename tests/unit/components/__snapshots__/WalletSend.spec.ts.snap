@@ -1,745 +1,765 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WalletSend.vue [Confirm Step]: should be rendered correctly 1`] = `
-<wallet-base-stub
-  showback="true"
-  showheader="true"
-  title="Confirm transaction"
-  tooltip=""
->
-  <div
-    class="wallet-send"
+<div>
+  <wallet-base-stub
+    showback="true"
+    showheader="true"
+    title="Confirm transaction"
+    tooltip=""
   >
-    <network-fee-warning-stub
-      fee="0"
-    />
-     
-    <wallet-fee-stub
-      value="0"
-    />
-  </div>
-</wallet-base-stub>
+    <div
+      class="wallet-send"
+    >
+      <network-fee-warning-stub
+        fee="0"
+      />
+       
+      <wallet-fee-stub
+        value="0"
+      />
+    </div>
+  </wallet-base-stub>
+   
+  <confirm-dialog-stub />
+</div>
 `;
 
 exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctly 1`] = `
-<wallet-base-stub
-  showback="true"
-  showheader="true"
-  title="Send"
-  tooltip="Send tokens between SORA network accounts"
->
-  <div
-    class="wallet-send"
+<div>
+  <wallet-base-stub
+    showback="true"
+    showheader="true"
+    title="Send"
+    tooltip="Send tokens between SORA network accounts"
   >
-    <s-input-stub
-      accept=""
-      autocomplete="off"
-      borderradius="small"
-      class="wallet-send-address"
-      form=""
-      label=""
-      maxlength="128"
-      name=""
-      placeholder="Address"
-      prefix=""
-      rows="2"
-      size="big"
-      suffix=""
-      tabindex="0"
-      type="text"
-      usedesignsystem="true"
-      value=""
-    />
-     
-    <!---->
-     
-    <!---->
-     
-    <s-float-input-stub
-      class="wallet-send-input"
-      decimals="18"
-      delimiters="[object Object]"
-      haslocalestring="true"
-      max="700000"
-      size="medium"
-      value=""
+    <div
+      class="wallet-send"
     >
-      <div
-        class="wallet-send-amount"
-      >
-        <div
-          class="wallet-send-amount-title"
-        >
-          Amount
-        </div>
-         
-        <div
-          class="wallet-send-amount-balance"
-        >
-          <span
-            class="wallet-send-amount-balance-title"
-          >
-            Balance
-          </span>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="151.782"
-            fontsizerate="normal"
-            fontweightrate="normal"
-            hasfiatvalue="true"
-            value="123.4"
-            valuecanbehidden="true"
-            valueclass="wallet-send-amount-balance-value"
-            withleftshift="true"
-          />
-        </div>
-      </div>
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        class="wallet-send-address"
+        form=""
+        label=""
+        maxlength="128"
+        name=""
+        placeholder="Address"
+        prefix=""
+        rows="2"
+        size="big"
+        suffix=""
+        tabindex="0"
+        type="text"
+        usedesignsystem="true"
+        value=""
+      />
        
-      <div
-        class="asset s-flex"
+      <!---->
+       
+      <!---->
+       
+      <s-float-input-stub
+        class="wallet-send-input"
+        decimals="18"
+        delimiters="[object Object]"
+        haslocalestring="true"
+        max="700000"
+        size="medium"
+        value=""
       >
-        <!---->
-         
         <div
-          class="asset-box"
+          class="wallet-send-amount"
         >
           <div
-            class="asset-box__logo"
+            class="wallet-send-amount-title"
           >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
+            Amount
           </div>
            
-          <span
-            class="asset-name"
-          >
-            XOR
-          </span>
-        </div>
-      </div>
-       
-      <div
-        class="asset-info"
-      >
-        <formatted-amount-stub
-          assetsymbol=""
-          fontsizerate="normal"
-          fontweightrate="normal"
-          isfiatvalue="true"
-          value="0"
-        />
-         
-        <div
-          class="asset-highlight"
-        >
-          
-            SORA
-            
-          <s-tooltip-stub
-            animation="el-fade-in-linear"
-            borderradius="small"
-            closedelay="0"
-            content="Copy Asset ID"
-            hideafter="0"
-            offset="0"
-            opendelay="500"
-            placement="top"
-            showarrow="true"
-            tabindex="-1"
-            theme="auto"
-            usedesignsystem="true"
+          <div
+            class="wallet-send-amount-balance"
           >
             <span
-              class="asset-id"
+              class="wallet-send-amount-balance-title"
             >
-              
-                (0x020...00000)
-              
+              Balance
             </span>
-          </s-tooltip-stub>
+             
+            <formatted-amount-with-fiat-value-stub
+              assetsymbol="XOR"
+              fiatfontsizerate="normal"
+              fiatfontweightrate="normal"
+              fiatformatasvalue="true"
+              fiatvalue="151.782"
+              fontsizerate="normal"
+              fontweightrate="normal"
+              hasfiatvalue="true"
+              value="123.4"
+              valuecanbehidden="true"
+              valueclass="wallet-send-amount-balance-value"
+              withleftshift="true"
+            />
+          </div>
         </div>
-      </div>
-    </s-float-input-stub>
-     
-    <s-button-stub
-      borderradius="small"
-      class="wallet-send-action s-typography-button--large"
-      disabled="true"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
-      usedesignsystem="true"
-    >
-      
-        Enter address
-      
-    </s-button-stub>
-     
-    <wallet-fee-stub
-      value="0"
-    />
-  </div>
-</wallet-base-stub>
+         
+        <div
+          class="asset s-flex"
+        >
+          <!---->
+           
+          <div
+            class="asset-box"
+          >
+            <div
+              class="asset-box__logo"
+            >
+              <token-logo-stub
+                size="small"
+                token="[object Object]"
+                tokensymbol=""
+              />
+            </div>
+             
+            <span
+              class="asset-name"
+            >
+              XOR
+            </span>
+          </div>
+        </div>
+         
+        <div
+          class="asset-info"
+        >
+          <formatted-amount-stub
+            assetsymbol=""
+            fontsizerate="normal"
+            fontweightrate="normal"
+            isfiatvalue="true"
+            value="0"
+          />
+           
+          <div
+            class="asset-highlight"
+          >
+            
+              SORA
+              
+            <s-tooltip-stub
+              animation="el-fade-in-linear"
+              borderradius="small"
+              closedelay="0"
+              content="Copy Asset ID"
+              hideafter="0"
+              offset="0"
+              opendelay="500"
+              placement="top"
+              showarrow="true"
+              tabindex="-1"
+              theme="auto"
+              usedesignsystem="true"
+            >
+              <span
+                class="asset-id"
+              >
+                
+                  (0x020...00000)
+                
+              </span>
+            </s-tooltip-stub>
+          </div>
+        </div>
+      </s-float-input-stub>
+       
+      <s-button-stub
+        borderradius="small"
+        class="wallet-send-action s-typography-button--large"
+        disabled="true"
+        icon=""
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="primary"
+        usedesignsystem="true"
+      >
+        
+          Enter address
+        
+      </s-button-stub>
+       
+      <wallet-fee-stub
+        value="0"
+      />
+    </div>
+  </wallet-base-stub>
+   
+  <confirm-dialog-stub />
+</div>
 `;
 
 exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered correctly 1`] = `
-<wallet-base-stub
-  showback="true"
-  showheader="true"
-  title="Send"
-  tooltip="Send tokens between SORA network accounts"
->
-  <div
-    class="wallet-send"
+<div>
+  <wallet-base-stub
+    showback="true"
+    showheader="true"
+    title="Send"
+    tooltip="Send tokens between SORA network accounts"
   >
-    <s-input-stub
-      accept=""
-      autocomplete="off"
-      borderradius="small"
-      class="wallet-send-address"
-      form=""
-      label=""
-      maxlength="128"
-      name=""
-      placeholder="Address"
-      prefix=""
-      rows="2"
-      size="big"
-      suffix=""
-      tabindex="0"
-      type="text"
-      usedesignsystem="true"
-      value="12345"
-    />
-     
-    <!---->
-     
-    <!---->
-     
-    <s-float-input-stub
-      class="wallet-send-input"
-      decimals="18"
-      delimiters="[object Object]"
-      haslocalestring="true"
-      max="700000"
-      size="medium"
-      value=""
+    <div
+      class="wallet-send"
     >
-      <div
-        class="wallet-send-amount"
-      >
-        <div
-          class="wallet-send-amount-title"
-        >
-          Amount
-        </div>
-         
-        <div
-          class="wallet-send-amount-balance"
-        >
-          <span
-            class="wallet-send-amount-balance-title"
-          >
-            Balance
-          </span>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="151.782"
-            fontsizerate="normal"
-            fontweightrate="normal"
-            hasfiatvalue="true"
-            value="123.4"
-            valuecanbehidden="true"
-            valueclass="wallet-send-amount-balance-value"
-            withleftshift="true"
-          />
-        </div>
-      </div>
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        class="wallet-send-address"
+        form=""
+        label=""
+        maxlength="128"
+        name=""
+        placeholder="Address"
+        prefix=""
+        rows="2"
+        size="big"
+        suffix=""
+        tabindex="0"
+        type="text"
+        usedesignsystem="true"
+        value="12345"
+      />
        
-      <div
-        class="asset s-flex"
+      <!---->
+       
+      <!---->
+       
+      <s-float-input-stub
+        class="wallet-send-input"
+        decimals="18"
+        delimiters="[object Object]"
+        haslocalestring="true"
+        max="700000"
+        size="medium"
+        value=""
       >
-        <!---->
-         
         <div
-          class="asset-box"
+          class="wallet-send-amount"
         >
           <div
-            class="asset-box__logo"
+            class="wallet-send-amount-title"
           >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
+            Amount
           </div>
            
-          <span
-            class="asset-name"
-          >
-            XOR
-          </span>
-        </div>
-      </div>
-       
-      <div
-        class="asset-info"
-      >
-        <formatted-amount-stub
-          assetsymbol=""
-          fontsizerate="normal"
-          fontweightrate="normal"
-          isfiatvalue="true"
-          value="0"
-        />
-         
-        <div
-          class="asset-highlight"
-        >
-          
-            SORA
-            
-          <s-tooltip-stub
-            animation="el-fade-in-linear"
-            borderradius="small"
-            closedelay="0"
-            content="Copy Asset ID"
-            hideafter="0"
-            offset="0"
-            opendelay="500"
-            placement="top"
-            showarrow="true"
-            tabindex="-1"
-            theme="auto"
-            usedesignsystem="true"
+          <div
+            class="wallet-send-amount-balance"
           >
             <span
-              class="asset-id"
+              class="wallet-send-amount-balance-title"
             >
-              
-                (0x020...00000)
-              
+              Balance
             </span>
-          </s-tooltip-stub>
+             
+            <formatted-amount-with-fiat-value-stub
+              assetsymbol="XOR"
+              fiatfontsizerate="normal"
+              fiatfontweightrate="normal"
+              fiatformatasvalue="true"
+              fiatvalue="151.782"
+              fontsizerate="normal"
+              fontweightrate="normal"
+              hasfiatvalue="true"
+              value="123.4"
+              valuecanbehidden="true"
+              valueclass="wallet-send-amount-balance-value"
+              withleftshift="true"
+            />
+          </div>
         </div>
-      </div>
-    </s-float-input-stub>
-     
-    <s-button-stub
-      borderradius="small"
-      class="wallet-send-action s-typography-button--large"
-      disabled="true"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
-      usedesignsystem="true"
-    >
-      
-        Incorrect address
-      
-    </s-button-stub>
-     
-    <wallet-fee-stub
-      value="0"
-    />
-  </div>
-</wallet-base-stub>
+         
+        <div
+          class="asset s-flex"
+        >
+          <!---->
+           
+          <div
+            class="asset-box"
+          >
+            <div
+              class="asset-box__logo"
+            >
+              <token-logo-stub
+                size="small"
+                token="[object Object]"
+                tokensymbol=""
+              />
+            </div>
+             
+            <span
+              class="asset-name"
+            >
+              XOR
+            </span>
+          </div>
+        </div>
+         
+        <div
+          class="asset-info"
+        >
+          <formatted-amount-stub
+            assetsymbol=""
+            fontsizerate="normal"
+            fontweightrate="normal"
+            isfiatvalue="true"
+            value="0"
+          />
+           
+          <div
+            class="asset-highlight"
+          >
+            
+              SORA
+              
+            <s-tooltip-stub
+              animation="el-fade-in-linear"
+              borderradius="small"
+              closedelay="0"
+              content="Copy Asset ID"
+              hideafter="0"
+              offset="0"
+              opendelay="500"
+              placement="top"
+              showarrow="true"
+              tabindex="-1"
+              theme="auto"
+              usedesignsystem="true"
+            >
+              <span
+                class="asset-id"
+              >
+                
+                  (0x020...00000)
+                
+              </span>
+            </s-tooltip-stub>
+          </div>
+        </div>
+      </s-float-input-stub>
+       
+      <s-button-stub
+        borderradius="small"
+        class="wallet-send-action s-typography-button--large"
+        disabled="true"
+        icon=""
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="primary"
+        usedesignsystem="true"
+      >
+        
+          Incorrect address
+        
+      </s-button-stub>
+       
+      <wallet-fee-stub
+        value="0"
+      />
+    </div>
+  </wallet-base-stub>
+   
+  <confirm-dialog-stub />
+</div>
 `;
 
 exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered correctly 1`] = `
-<wallet-base-stub
-  showback="true"
-  showheader="true"
-  title="Send"
-  tooltip="Send tokens between SORA network accounts"
->
-  <div
-    class="wallet-send"
+<div>
+  <wallet-base-stub
+    showback="true"
+    showheader="true"
+    title="Send"
+    tooltip="Send tokens between SORA network accounts"
   >
-    <s-input-stub
-      accept=""
-      autocomplete="off"
-      borderradius="small"
-      class="wallet-send-address"
-      form=""
-      label=""
-      maxlength="128"
-      name=""
-      placeholder="Address"
-      prefix=""
-      rows="2"
-      size="big"
-      suffix=""
-      tabindex="0"
-      type="text"
-      usedesignsystem="true"
-      value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
-    />
-     
-    <p
-      class="wallet-send-address-warning"
+    <div
+      class="wallet-send"
     >
-      Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:
-    </p>
-     
-    <s-tooltip-stub
-      animation="el-fade-in-linear"
-      borderradius="small"
-      closedelay="0"
-      content="Copy Asset ID"
-      hideafter="0"
-      offset="0"
-      opendelay="500"
-      placement="top"
-      showarrow="true"
-      tabindex="0"
-      theme="auto"
-      usedesignsystem="true"
-    >
-      <p
-        class="wallet-send-address-formatted"
-      >
-        
-            cnV1qZzFyBzkXS4xfmEnXue4SPhAbFNqcvULKSdzkfPEEZsBe
-          
-      </p>
-    </s-tooltip-stub>
-     
-    <!---->
-     
-    <s-float-input-stub
-      class="wallet-send-input"
-      decimals="18"
-      delimiters="[object Object]"
-      haslocalestring="true"
-      max="700000"
-      size="medium"
-      value=""
-    >
-      <div
-        class="wallet-send-amount"
-      >
-        <div
-          class="wallet-send-amount-title"
-        >
-          Amount
-        </div>
-         
-        <div
-          class="wallet-send-amount-balance"
-        >
-          <span
-            class="wallet-send-amount-balance-title"
-          >
-            Balance
-          </span>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="151.782"
-            fontsizerate="normal"
-            fontweightrate="normal"
-            hasfiatvalue="true"
-            value="123.4"
-            valuecanbehidden="true"
-            valueclass="wallet-send-amount-balance-value"
-            withleftshift="true"
-          />
-        </div>
-      </div>
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        class="wallet-send-address"
+        form=""
+        label=""
+        maxlength="128"
+        name=""
+        placeholder="Address"
+        prefix=""
+        rows="2"
+        size="big"
+        suffix=""
+        tabindex="0"
+        type="text"
+        usedesignsystem="true"
+        value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
+      />
        
-      <div
-        class="asset s-flex"
+      <p
+        class="wallet-send-address-warning"
       >
-        <!---->
-         
+        Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:
+      </p>
+       
+      <s-tooltip-stub
+        animation="el-fade-in-linear"
+        borderradius="small"
+        closedelay="0"
+        content="Copy Asset ID"
+        hideafter="0"
+        offset="0"
+        opendelay="500"
+        placement="top"
+        showarrow="true"
+        tabindex="0"
+        theme="auto"
+        usedesignsystem="true"
+      >
+        <p
+          class="wallet-send-address-formatted"
+        >
+          
+              cnV1qZzFyBzkXS4xfmEnXue4SPhAbFNqcvULKSdzkfPEEZsBe
+            
+        </p>
+      </s-tooltip-stub>
+       
+      <!---->
+       
+      <s-float-input-stub
+        class="wallet-send-input"
+        decimals="18"
+        delimiters="[object Object]"
+        haslocalestring="true"
+        max="700000"
+        size="medium"
+        value=""
+      >
         <div
-          class="asset-box"
+          class="wallet-send-amount"
         >
           <div
-            class="asset-box__logo"
+            class="wallet-send-amount-title"
           >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
+            Amount
           </div>
            
-          <span
-            class="asset-name"
-          >
-            XOR
-          </span>
-        </div>
-      </div>
-       
-      <div
-        class="asset-info"
-      >
-        <formatted-amount-stub
-          assetsymbol=""
-          fontsizerate="normal"
-          fontweightrate="normal"
-          isfiatvalue="true"
-          value="0"
-        />
-         
-        <div
-          class="asset-highlight"
-        >
-          
-            SORA
-            
-          <s-tooltip-stub
-            animation="el-fade-in-linear"
-            borderradius="small"
-            closedelay="0"
-            content="Copy Asset ID"
-            hideafter="0"
-            offset="0"
-            opendelay="500"
-            placement="top"
-            showarrow="true"
-            tabindex="-1"
-            theme="auto"
-            usedesignsystem="true"
+          <div
+            class="wallet-send-amount-balance"
           >
             <span
-              class="asset-id"
+              class="wallet-send-amount-balance-title"
             >
-              
-                (0x020...00000)
-              
+              Balance
             </span>
-          </s-tooltip-stub>
+             
+            <formatted-amount-with-fiat-value-stub
+              assetsymbol="XOR"
+              fiatfontsizerate="normal"
+              fiatfontweightrate="normal"
+              fiatformatasvalue="true"
+              fiatvalue="151.782"
+              fontsizerate="normal"
+              fontweightrate="normal"
+              hasfiatvalue="true"
+              value="123.4"
+              valuecanbehidden="true"
+              valueclass="wallet-send-amount-balance-value"
+              withleftshift="true"
+            />
+          </div>
         </div>
-      </div>
-    </s-float-input-stub>
-     
-    <s-button-stub
-      borderradius="small"
-      class="wallet-send-action s-typography-button--large"
-      disabled="true"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
-      usedesignsystem="true"
-    >
-      
-        Enter amount
-      
-    </s-button-stub>
-     
-    <wallet-fee-stub
-      value="0"
-    />
-  </div>
-</wallet-base-stub>
+         
+        <div
+          class="asset s-flex"
+        >
+          <!---->
+           
+          <div
+            class="asset-box"
+          >
+            <div
+              class="asset-box__logo"
+            >
+              <token-logo-stub
+                size="small"
+                token="[object Object]"
+                tokensymbol=""
+              />
+            </div>
+             
+            <span
+              class="asset-name"
+            >
+              XOR
+            </span>
+          </div>
+        </div>
+         
+        <div
+          class="asset-info"
+        >
+          <formatted-amount-stub
+            assetsymbol=""
+            fontsizerate="normal"
+            fontweightrate="normal"
+            isfiatvalue="true"
+            value="0"
+          />
+           
+          <div
+            class="asset-highlight"
+          >
+            
+              SORA
+              
+            <s-tooltip-stub
+              animation="el-fade-in-linear"
+              borderradius="small"
+              closedelay="0"
+              content="Copy Asset ID"
+              hideafter="0"
+              offset="0"
+              opendelay="500"
+              placement="top"
+              showarrow="true"
+              tabindex="-1"
+              theme="auto"
+              usedesignsystem="true"
+            >
+              <span
+                class="asset-id"
+              >
+                
+                  (0x020...00000)
+                
+              </span>
+            </s-tooltip-stub>
+          </div>
+        </div>
+      </s-float-input-stub>
+       
+      <s-button-stub
+        borderradius="small"
+        class="wallet-send-action s-typography-button--large"
+        disabled="true"
+        icon=""
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="primary"
+        usedesignsystem="true"
+      >
+        
+          Enter amount
+        
+      </s-button-stub>
+       
+      <wallet-fee-stub
+        value="0"
+      />
+    </div>
+  </wallet-base-stub>
+   
+  <confirm-dialog-stub />
+</div>
 `;
 
 exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered correctly 1`] = `
-<wallet-base-stub
-  showback="true"
-  showheader="true"
-  title="Send"
-  tooltip="Send tokens between SORA network accounts"
->
-  <div
-    class="wallet-send"
+<div>
+  <wallet-base-stub
+    showback="true"
+    showheader="true"
+    title="Send"
+    tooltip="Send tokens between SORA network accounts"
   >
-    <s-input-stub
-      accept=""
-      autocomplete="off"
-      borderradius="small"
-      class="wallet-send-address"
-      form=""
-      label=""
-      maxlength="128"
-      name=""
-      placeholder="Address"
-      prefix=""
-      rows="2"
-      size="big"
-      suffix=""
-      tabindex="0"
-      type="text"
-      usedesignsystem="true"
-      value="dfsakljfdlkjfhfkjladshslfjafds"
-    />
-     
-    <!---->
-     
-    <p
-      class="wallet-send-address-error"
+    <div
+      class="wallet-send"
     >
-      You cannot send tokens to the same acount that you are currently connected to.
-    </p>
-     
-    <s-float-input-stub
-      class="wallet-send-input"
-      decimals="18"
-      delimiters="[object Object]"
-      haslocalestring="true"
-      max="700000"
-      size="medium"
-      value=""
-    >
-      <div
-        class="wallet-send-amount"
-      >
-        <div
-          class="wallet-send-amount-title"
-        >
-          Amount
-        </div>
-         
-        <div
-          class="wallet-send-amount-balance"
-        >
-          <span
-            class="wallet-send-amount-balance-title"
-          >
-            Balance
-          </span>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="151.782"
-            fontsizerate="normal"
-            fontweightrate="normal"
-            hasfiatvalue="true"
-            value="123.4"
-            valuecanbehidden="true"
-            valueclass="wallet-send-amount-balance-value"
-            withleftshift="true"
-          />
-        </div>
-      </div>
+      <s-input-stub
+        accept=""
+        autocomplete="off"
+        borderradius="small"
+        class="wallet-send-address"
+        form=""
+        label=""
+        maxlength="128"
+        name=""
+        placeholder="Address"
+        prefix=""
+        rows="2"
+        size="big"
+        suffix=""
+        tabindex="0"
+        type="text"
+        usedesignsystem="true"
+        value="dfsakljfdlkjfhfkjladshslfjafds"
+      />
        
-      <div
-        class="asset s-flex"
+      <!---->
+       
+      <p
+        class="wallet-send-address-error"
       >
-        <!---->
-         
+        You cannot send tokens to the same acount that you are currently connected to.
+      </p>
+       
+      <s-float-input-stub
+        class="wallet-send-input"
+        decimals="18"
+        delimiters="[object Object]"
+        haslocalestring="true"
+        max="700000"
+        size="medium"
+        value=""
+      >
         <div
-          class="asset-box"
+          class="wallet-send-amount"
         >
           <div
-            class="asset-box__logo"
+            class="wallet-send-amount-title"
           >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
+            Amount
           </div>
            
-          <span
-            class="asset-name"
-          >
-            XOR
-          </span>
-        </div>
-      </div>
-       
-      <div
-        class="asset-info"
-      >
-        <formatted-amount-stub
-          assetsymbol=""
-          fontsizerate="normal"
-          fontweightrate="normal"
-          isfiatvalue="true"
-          value="0"
-        />
-         
-        <div
-          class="asset-highlight"
-        >
-          
-            SORA
-            
-          <s-tooltip-stub
-            animation="el-fade-in-linear"
-            borderradius="small"
-            closedelay="0"
-            content="Copy Asset ID"
-            hideafter="0"
-            offset="0"
-            opendelay="500"
-            placement="top"
-            showarrow="true"
-            tabindex="-1"
-            theme="auto"
-            usedesignsystem="true"
+          <div
+            class="wallet-send-amount-balance"
           >
             <span
-              class="asset-id"
+              class="wallet-send-amount-balance-title"
             >
-              
-                (0x020...00000)
-              
+              Balance
             </span>
-          </s-tooltip-stub>
+             
+            <formatted-amount-with-fiat-value-stub
+              assetsymbol="XOR"
+              fiatfontsizerate="normal"
+              fiatfontweightrate="normal"
+              fiatformatasvalue="true"
+              fiatvalue="151.782"
+              fontsizerate="normal"
+              fontweightrate="normal"
+              hasfiatvalue="true"
+              value="123.4"
+              valuecanbehidden="true"
+              valueclass="wallet-send-amount-balance-value"
+              withleftshift="true"
+            />
+          </div>
         </div>
-      </div>
-    </s-float-input-stub>
-     
-    <s-button-stub
-      borderradius="small"
-      class="wallet-send-action s-typography-button--large"
-      disabled="true"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
-      usedesignsystem="true"
-    >
-      
-        Incorrect address
-      
-    </s-button-stub>
-     
-    <wallet-fee-stub
-      value="0"
-    />
-  </div>
-</wallet-base-stub>
+         
+        <div
+          class="asset s-flex"
+        >
+          <!---->
+           
+          <div
+            class="asset-box"
+          >
+            <div
+              class="asset-box__logo"
+            >
+              <token-logo-stub
+                size="small"
+                token="[object Object]"
+                tokensymbol=""
+              />
+            </div>
+             
+            <span
+              class="asset-name"
+            >
+              XOR
+            </span>
+          </div>
+        </div>
+         
+        <div
+          class="asset-info"
+        >
+          <formatted-amount-stub
+            assetsymbol=""
+            fontsizerate="normal"
+            fontweightrate="normal"
+            isfiatvalue="true"
+            value="0"
+          />
+           
+          <div
+            class="asset-highlight"
+          >
+            
+              SORA
+              
+            <s-tooltip-stub
+              animation="el-fade-in-linear"
+              borderradius="small"
+              closedelay="0"
+              content="Copy Asset ID"
+              hideafter="0"
+              offset="0"
+              opendelay="500"
+              placement="top"
+              showarrow="true"
+              tabindex="-1"
+              theme="auto"
+              usedesignsystem="true"
+            >
+              <span
+                class="asset-id"
+              >
+                
+                  (0x020...00000)
+                
+              </span>
+            </s-tooltip-stub>
+          </div>
+        </div>
+      </s-float-input-stub>
+       
+      <s-button-stub
+        borderradius="small"
+        class="wallet-send-action s-typography-button--large"
+        disabled="true"
+        icon=""
+        iconposition="left"
+        nativetype="button"
+        size="medium"
+        tabindex="0"
+        tooltip=""
+        tooltipplacement="top"
+        type="primary"
+        usedesignsystem="true"
+      >
+        
+          Incorrect address
+        
+      </s-button-stub>
+       
+      <wallet-fee-stub
+        value="0"
+      />
+    </div>
+  </wallet-base-stub>
+   
+  <confirm-dialog-stub />
+</div>
 `;

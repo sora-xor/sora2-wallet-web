@@ -1,3 +1,4 @@
+import isElectron from 'is-electron';
 import { WalletAssetFilters } from '@/consts';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 
@@ -38,6 +39,7 @@ function initialState(): SettingsState {
     runtimeVersion: runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0,
     runtimeVersionSubscription: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
+    isDesktop: isElectron(), // NOTE: inverse flag here to debug desktop
     shouldBalanceBeHidden: shouldBalanceBeHidden ? Boolean(JSON.parse(shouldBalanceBeHidden)) : false,
   };
 }

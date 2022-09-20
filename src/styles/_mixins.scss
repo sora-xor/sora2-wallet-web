@@ -104,6 +104,30 @@
   }
 }
 
+@mixin shake {
+  animation: shake 0.5s 1;
+  @keyframes shake {
+    from {
+      transform: translate(-2px);
+    }
+    20% {
+      transform: translate(4px);
+    }
+    40% {
+      transform: translate(-2px);
+    }
+    60% {
+      transform: translate(4px);
+    }
+    80% {
+      transform: translate(-2px);
+    }
+    to {
+      transform: translate(0px);
+    }
+  }
+}
+
 @mixin select-icon($containerClass) {
   .#{$containerClass} .s-select .el-select {
     .el-input__icon {
