@@ -17,12 +17,14 @@ export default {
       file: 'lib/soraneo-wallet-web.esm.js',
       format: 'esm',
       sourcemap: true,
+      exports: 'named',
     },
     {
       name: 'SoraNeoWalletWebUmd',
       format: 'umd',
       file: 'lib/soraneo-wallet-web.umd.js',
       sourcemap: true,
+      exports: 'named',
     },
   ],
   external: [
@@ -31,6 +33,7 @@ export default {
     'tslib',
     'vue',
     '@polkadot/util',
+    '@polkadot/wasm-crypto',
     '@subwallet/wallet-connect/types',
     '@subwallet/wallet-connect/dotsama/wallets',
     '@sora-substrate/math',

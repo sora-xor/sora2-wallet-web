@@ -60,7 +60,9 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
           size="medium"
           usedesignsystem="true"
         >
+          
           All
+        
         </s-radio-stub>
         <s-radio-stub
           class="radio-btn"
@@ -69,7 +71,9 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
           size="medium"
           usedesignsystem="true"
         >
+          
           Tokens
+        
         </s-radio-stub>
         <s-radio-stub
           class="radio-btn"
@@ -78,7 +82,9 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
           size="medium"
           usedesignsystem="true"
         >
+          
           NFTs
+        
         </s-radio-stub>
       </s-radio-group-stub>
        
