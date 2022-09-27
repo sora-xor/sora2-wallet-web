@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="t('addAsset.title')" show-back @back="handleBack">
+  <wallet-base :title="t('addAsset.title')" show-back :reset-focus="currentScreen" @back="handleBack">
     <div class="add-asset">
       <s-tabs v-if="showTabs" :value="currentTab" type="rounded" @change="handleChangeTab">
         <s-tab v-for="tab in AddAssetTabs" :key="tab" :label="t(`addAsset.${tab}.title`)" :name="tab" />
@@ -42,6 +42,10 @@ export default class AddAsset extends Mixins(TranslationMixin) {
 
   showTabs = true;
   tokenDetailsPageOpened = false;
+
+  get currentScreen(): string {
+    return `${this.currentTab}${this.tokenDetailsPageOpened}`;
+  }
 
   handleChangeTab(value: AddAssetTabs): void {
     this.currentTab = value;
