@@ -1,9 +1,10 @@
 <template>
   <div>
     <wallet-base
+      show-back
+      :reset-focus="step.toString()"
       :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)"
       :tooltip="tooltipContent"
-      show-back
       :showHeader="showAdditionalInfo"
       @back="handleBack"
     >

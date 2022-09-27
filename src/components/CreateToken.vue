@@ -1,5 +1,5 @@
 <template>
-  <wallet-base show-back :title="createTokenTitle" :show-header="showHeader" @back="handleBack">
+  <wallet-base show-back :reset-focus="step" :title="createTokenTitle" :show-header="showHeader" @back="handleBack">
     <div class="token">
       <s-tabs v-if="showTabs" class="token__tab" type="rounded" :value="currentTab" @change="handleChangeTab">
         <s-tab v-for="tab in TokenTabs" :key="tab" :label="t(`createToken.${tab}`)" :name="tab" />
