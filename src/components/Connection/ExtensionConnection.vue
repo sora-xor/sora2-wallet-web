@@ -251,8 +251,7 @@ $accounts-number: 7;
   }
   &-accounts {
     height: calc(
-      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom} + #{$account-margin-bottom} /
-        2
+      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom} / 2
     );
   }
   &-action {
