@@ -44,7 +44,7 @@ export default class AddAsset extends Mixins(TranslationMixin) {
   tokenDetailsPageOpened = false;
 
   get currentScreen(): string {
-    return this.currentTab.toString().concat(this.tokenDetailsPageOpened.toString());
+    return `${this.currentTab}${this.tokenDetailsPageOpened}`;
   }
 
   handleChangeTab(value: AddAssetTabs): void {
