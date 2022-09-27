@@ -1,5 +1,10 @@
 <template>
-  <wallet-base :title="t('connection.title')" :show-back="!isEntryView" @back="handleBackClick">
+  <wallet-base
+    :title="t('connection.title')"
+    :show-back="!isEntryView"
+    :reset-focus="step.toString()"
+    @back="handleBackClick"
+  >
     <div class="wallet-connection" v-loading="loading">
       <template v-if="!loading">
         <p class="wallet-connection-text">{{ connectionText }}</p>
@@ -47,11 +52,13 @@
 
         <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
           <wallet-account
+            v-button
             v-for="(account, index) in polkadotJsAccounts"
             :key="index"
             :polkadotAccount="account"
             @click.native="handleSelectAccount(account)"
             class="wallet-connection-account"
+            tabindex="0"
           />
         </s-scrollbar>
       </template>

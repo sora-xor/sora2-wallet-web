@@ -86,11 +86,10 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   @include asset-list($basic-spacing-big);
 
   .asset {
-    @include focus-outline;
+    @include focus-outline($outlinedWidth: true);
     padding-left: $basic-spacing-big;
     padding-right: $basic-spacing-big;
     margin-left: 1px;
-    width: calc(100% - 2px);
 
     &:hover,
     &.selected {

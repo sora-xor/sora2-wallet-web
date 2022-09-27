@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="headerTitle" show-back @back="handleBack">
+  <wallet-base :title="headerTitle" show-back :reset-focus="hasResetFocus" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
       <s-button v-if="!isXor" type="action" :tooltip="t('asset.remove')" @click="handleRemoveAsset">
         <s-icon name="basic-eye-24" size="28" />
@@ -181,6 +181,12 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   private wasNftLinkCopied = false;
   wasNftDetailsClicked = false;
   nftContentLink = '';
+
+  get hasResetFocus(): string {
+    return this.selectedTransaction && this.selectedTransaction.id
+      ? this.selectedTransaction.id.toString()
+      : this.wasBalanceDetailsClicked.toString();
+  }
 
   get isNft(): boolean {
     return api.assets.isNft(this.asset);
@@ -381,8 +387,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     text-align: center;
     &--clickable {
       cursor: pointer;
-      @include focus-outline;
-      width: calc(100% - 2px);
+      @include focus-outline($outlinedWidth: true);
     }
     & + .formatted-amount--fiat-value {
       width: 100%;
