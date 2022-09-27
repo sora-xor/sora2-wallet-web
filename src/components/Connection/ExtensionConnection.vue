@@ -1,5 +1,10 @@
 <template>
-  <wallet-base :title="t('connection.title')" :show-back="!isEntryView" @back="handleBackClick">
+  <wallet-base
+    :title="t('connection.title')"
+    :show-back="!isEntryView"
+    :reset-focus="step.toString()"
+    @back="handleBackClick"
+  >
     <div class="wallet-connection" v-loading="loading">
       <template v-if="!loading">
         <p class="wallet-connection-text">{{ connectionText }}</p>
@@ -26,10 +31,12 @@
 
         <div v-else-if="isExtensionsView" class="wallet-connection-extensions">
           <account-card
+            v-button
             v-for="wallet in availableWallets"
             :key="wallet.extensionName"
             @click.native="handleSelectWallet(wallet)"
             class="wallet-connection-extension"
+            tabindex="0"
           >
             <template #avatar>
               <img :src="wallet.logo.src" :alt="wallet.logo.alt" />
@@ -37,7 +44,7 @@
             <template #name>{{ wallet.title }}</template>
             <template #default v-if="!wallet.installed">
               <a :href="wallet.installUrl" target="_blank" rel="nofollow noopener noreferrer">
-                <s-button size="small">{{ t('connection.wallet.install') }}</s-button>
+                <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
               </a>
             </template>
           </account-card>
@@ -45,11 +52,13 @@
 
         <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
           <wallet-account
+            v-button
             v-for="(account, index) in polkadotJsAccounts"
             :key="index"
             :polkadotAccount="account"
             @click.native="handleSelectAccount(account)"
             class="wallet-connection-account"
+            tabindex="0"
           />
         </s-scrollbar>
       </template>
@@ -208,10 +217,14 @@ $account-height: 60px;
 .s-card.wallet-account.wallet-connection {
   &-account,
   &-extension {
+    @include focus-outline;
     &:hover {
       cursor: pointer;
       border-color: var(--s-color-base-content-secondary);
     }
+  }
+  &-extension a {
+    @include focus-outline($borderRadius: var(--s-border-radius-small));
   }
 }
 </style>
@@ -238,7 +251,7 @@ $accounts-number: 7;
   }
   &-accounts {
     height: calc(
-      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom}
+      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom} / 2
     );
   }
   &-action {
@@ -248,9 +261,16 @@ $accounts-number: 7;
     }
   }
   &-account {
+    $margin-value: 1px;
     height: $account-height;
+    &:first-child {
+      margin-top: $margin-value;
+    }
     &:not(:last-child) {
       margin-bottom: var(--s-basic-spacing);
+    }
+    &:last-child {
+      margin-bottom: $margin-value;
     }
   }
   &-extension {

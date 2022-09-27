@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" @back="handleBack">
+  <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
       <s-button
         v-if="permissions.createAssets"

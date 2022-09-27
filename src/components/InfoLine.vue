@@ -121,6 +121,10 @@ export default class InfoLine extends Vue {
       text-transform: uppercase;
       margin-bottom: #{$basic-spacing-small};
     }
+
+    .el-tooltip {
+      @include focus-outline($borderRadius: 50%);
+    }
   }
 }
 </style>

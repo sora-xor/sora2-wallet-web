@@ -239,3 +239,23 @@
     width: $width;
   }
 }
+
+@mixin focus-outline($focusWithin: false, $borderRadius: '', $outlinedWidth: false) {
+  $outline: 1px solid var(--s-color-outline);
+  @if $focusWithin == true {
+    &:focus-within {
+      outline: $outline;
+    }
+  } @else {
+    &:focus:not(:active) {
+      outline: $outline;
+      @if $borderRadius != '' {
+        border-radius: $borderRadius;
+      }
+      @if $outlinedWidth == true {
+        // Decrease width by left and right outline width
+        width: calc(100% - 2px);
+      }
+    }
+  }
+}

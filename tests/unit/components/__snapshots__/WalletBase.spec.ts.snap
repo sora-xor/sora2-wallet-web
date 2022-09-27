@@ -9,6 +9,7 @@ exports[`WalletBase.vue should be rendered correctly 1`] = `
   >
     <div
       class="base-title s-flex"
+      tabindex="-1"
     >
       <!---->
        

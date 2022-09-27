@@ -1,6 +1,6 @@
 <template>
   <wallet-base :title="t('asset.select')" show-back @back="handleBack">
-    <asset-list :assets="accountAssets" divider class="select-asset-list">
+    <asset-list :assets="accountAssets" divider class="select-asset-list" :with-tabindex="false">
       <template #default="asset">
         <s-button
           type="action"
@@ -58,5 +58,8 @@ export default class SelectAsset extends Mixins(TranslationMixin) {
 <style lang="scss">
 .select-asset-list {
   @include asset-list($basic-spacing-big, $basic-spacing-big);
+  .s-action {
+    margin-right: 1px;
+  }
 }
 </style>
