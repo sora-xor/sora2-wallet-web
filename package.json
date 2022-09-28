@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "1.10.25",
+  "version": "1.10.26",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
@@ -30,6 +30,7 @@
     "@zxing/library": "^0.19.1",
     "base-64": "^1.0.0",
     "core-js": "^3.6.4",
+    "crypto-js": "^4.1.1",
     "crypto-random-string": "^4.0.0",
     "dayjs": "^1.10.5",
     "direct-vuex": "^0.12.1",
