@@ -2,6 +2,7 @@
 
 exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
 <wallet-base-stub
+  resetfocus="false"
   showback="true"
   showheader="true"
   title="SORA"
@@ -183,6 +184,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
 
 exports[`WalletAssetDetails.vue should show detailed balance info when button clicked 1`] = `
 <wallet-base-stub
+  resetfocus="true"
   showback="true"
   showheader="true"
   title="SORA"

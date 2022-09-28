@@ -35,6 +35,7 @@ export default {
   errorText: 'Error',
   insufficientBalanceText: 'Insufficient {tokenSymbol} balance',
   unknownErrorText: 'ERROR Something went wrong...',
+  enterAccountError: 'Unable to enter account',
   transactionSubmittedText: 'Transaction was submitted',
   assetDeposit: 'Asset balance has been deposited',
   ofText: '{first} of {second}',
@@ -356,6 +357,62 @@ export default {
     payoff:
       'You would have to use the Bridge to get XOR from other networks, get sent XOR from another SORA account, or swap any other token already in your account into XOR.',
     button: 'Yes, I understand the risk',
+  },
+  desktop: {
+    welcome: {
+      header: 'Welcome to Polkaswap!',
+      headline: 'Let’s set up your account',
+      text: 'Create your SORA Network account or log into the old ones using mnemonic phrase or .json import. This allows you to securely sign transactions and manage assets in SORA Network.',
+      createAccount: 'Create an account',
+      importAccount: 'Import Account',
+    },
+    heading: {
+      seedPhraseTitle: 'Seed phrase',
+      confirmSeedTitle: 'Confirm seed phrase',
+      accountDetailsTitle: 'Account Details',
+      importTitle: 'Import account',
+    },
+    button: {
+      next: 'Next step',
+      skip: 'Skip',
+      createAccount: 'Create Account',
+      importAccount: 'Import account',
+    },
+    accountName: {
+      placeholder: 'Wallet name',
+      desc: 'This is the public name of your wallet which will be visible to everyone',
+    },
+    password: {
+      placeholder: 'Password',
+      desc: 'Ensure you are using a strong password for proper protection',
+    },
+    confirmPassword: {
+      placeholder: 'Confirm password',
+    },
+    accountMnemonic: {
+      placeholder: 'Mnemonic phrase',
+    },
+    seedAdviceText:
+      'This is a secret seed of your account. Make sure to store it on a non-digital carrier, for example - paper',
+    confirmSeedText: 'Confirm the seed phrase by clicking words in the correct order',
+    errorMnemonicText: 'Incorrect seed phrase order',
+    exportOptionText: 'Export .json account file',
+    exportJsonText:
+      'You will always be able to access your account by importing that .json file. Do not share it with anyone!',
+    addAccount: 'Add an account',
+    dialog: {
+      confirmTitle: 'Confirm with password',
+      confirmButton: 'Sign Transaction',
+      savePasswordText: 'Remember my password for next 15 minutes',
+      extendPasswordText: 'Extend period without password by 15 minutes',
+    },
+    errorMessages: {
+      password: 'Password did not match',
+      passwords: 'Passwords did not match',
+      mnemonic: 'Invalid bip39 mnemonic specified',
+      mnemonicLength: 'Mnemonic should contain {number} words',
+      jsonFields: 'JSON file does not have required fields',
+    },
   },
   historyErrorMessages: {
     generalError: 'Something went wrong',

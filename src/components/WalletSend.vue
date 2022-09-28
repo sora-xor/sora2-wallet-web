@@ -1,122 +1,126 @@
 <template>
-  <wallet-base
-    :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)"
-    :tooltip="tooltipContent"
-    show-back
-    :showHeader="showAdditionalInfo"
-    @back="handleBack"
-  >
-    <div class="wallet-send">
-      <template v-if="step === 1">
-        <s-input
-          class="wallet-send-address"
-          :maxlength="128"
-          :placeholder="t('walletSend.address')"
-          v-model="address"
-        />
-        <template v-if="validAddress && isNotSoraAddress">
-          <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
-          <s-tooltip :content="copyValueAssetId" :placement="top">
-            <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress, $event)">
-              {{ formattedSoraAddress }}
-            </p>
-          </s-tooltip>
+  <div>
+    <wallet-base
+      show-back
+      :reset-focus="step.toString()"
+      :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)"
+      :tooltip="tooltipContent"
+      :showHeader="showAdditionalInfo"
+      @back="handleBack"
+    >
+      <div class="wallet-send">
+        <template v-if="step === 1">
+          <s-input
+            class="wallet-send-address"
+            :maxlength="128"
+            :placeholder="t('walletSend.address')"
+            v-model="address"
+          />
+          <template v-if="validAddress && isNotSoraAddress">
+            <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
+            <s-tooltip :content="copyValueAssetId" :placement="top">
+              <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress, $event)">
+                {{ formattedSoraAddress }}
+              </p>
+            </s-tooltip>
+          </template>
+          <p v-if="isAccountAddress" class="wallet-send-address-error">{{ t('walletSend.addressError') }}</p>
+          <s-float-input
+            v-model="amount"
+            class="wallet-send-input"
+            size="medium"
+            has-locale-string
+            :delimiters="delimiters"
+            :decimals="asset.decimals"
+            :max="getMax((asset || {}).address)"
+          >
+            <div class="wallet-send-amount" slot="top">
+              <div class="wallet-send-amount-title">{{ t('walletSend.amount') }}</div>
+              <div class="wallet-send-amount-balance">
+                <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
+                <formatted-amount-with-fiat-value
+                  value-can-be-hidden
+                  fiat-format-as-value
+                  with-left-shift
+                  value-class="wallet-send-amount-balance-value"
+                  :value="formattedBalance"
+                  :asset-symbol="asset.symbol"
+                  :fiat-value="getFiatBalance(asset)"
+                />
+              </div>
+            </div>
+            <div class="asset s-flex" slot="right">
+              <s-button
+                v-if="isMaxButtonAvailable"
+                class="asset-max s-typography-button--small"
+                type="primary"
+                alternative
+                size="mini"
+                border-radius="mini"
+                @click="handleMaxClick"
+              >
+                {{ t('walletSend.max') }}
+              </s-button>
+              <div class="asset-box">
+                <div class="asset-box__logo">
+                  <token-logo :token="asset" size="small" />
+                </div>
+                <span class="asset-name">{{ asset.symbol }}</span>
+              </div>
+            </div>
+            <div class="asset-info" slot="bottom">
+              <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
+              <div class="asset-highlight">
+                {{ asset.name || asset.symbol }}
+                <s-tooltip :content="copyValueAssetId" tabindex="-1">
+                  <span class="asset-id" @click="handleCopyAddress(asset.address, $event)">
+                    ({{ getFormattedAddress(asset) }})
+                  </span>
+                </s-tooltip>
+              </div>
+            </div>
+          </s-float-input>
+          <s-button
+            class="wallet-send-action s-typography-button--large"
+            type="primary"
+            :disabled="sendButtonDisabled"
+            @click="handleSend"
+          >
+            {{ sendButtonDisabledText || t('walletSend.title') }}
+          </s-button>
         </template>
-        <p v-if="isAccountAddress" class="wallet-send-address-error">{{ t('walletSend.addressError') }}</p>
-        <s-float-input
-          v-model="amount"
-          class="wallet-send-input"
-          size="medium"
-          has-locale-string
-          :delimiters="delimiters"
-          :decimals="asset.decimals"
-          :max="getMax((asset || {}).address)"
-        >
-          <div class="wallet-send-amount" slot="top">
-            <div class="wallet-send-amount-title">{{ t('walletSend.amount') }}</div>
-            <div class="wallet-send-amount-balance">
-              <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
-              <formatted-amount-with-fiat-value
-                value-can-be-hidden
-                fiat-format-as-value
-                with-left-shift
-                value-class="wallet-send-amount-balance-value"
-                :value="formattedBalance"
-                :asset-symbol="asset.symbol"
-                :fiat-value="getFiatBalance(asset)"
-              />
-            </div>
-          </div>
-          <div class="asset s-flex" slot="right">
-            <s-button
-              v-if="isMaxButtonAvailable"
-              class="asset-max s-typography-button--small"
-              type="primary"
-              alternative
-              size="mini"
-              border-radius="mini"
-              @click="handleMaxClick"
-            >
-              {{ t('walletSend.max') }}
-            </s-button>
-            <div class="asset-box">
-              <div class="asset-box__logo">
-                <token-logo :token="asset" size="small" />
+        <template v-else-if="step === 2">
+          <network-fee-warning :fee="formattedFee" @confirm="confirmNextTxFailure" />
+        </template>
+        <template v-else>
+          <div class="confirm">
+            <div class="confirm-asset s-flex">
+              <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
+              <div class="confirm-asset-value s-flex">
+                <div class="confirm-asset-icon">
+                  <token-logo :token="asset" />
+                </div>
+                <span class="asset-name">{{ asset.symbol }}</span>
               </div>
-              <span class="asset-name">{{ asset.symbol }}</span>
             </div>
+            <div class="confirm-from">{{ account.address }}</div>
+            <s-icon name="arrows-arrow-bottom-24" />
+            <div class="confirm-to">{{ formattedSoraAddress }}</div>
           </div>
-          <div class="asset-info" slot="bottom">
-            <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
-            <div class="asset-highlight">
-              {{ asset.name || asset.symbol }}
-              <s-tooltip :content="copyValueAssetId" tabindex="-1">
-                <span class="asset-id" @click="handleCopyAddress(asset.address, $event)">
-                  ({{ getFormattedAddress(asset) }})
-                </span>
-              </s-tooltip>
-            </div>
-          </div>
-        </s-float-input>
-        <s-button
-          class="wallet-send-action s-typography-button--large"
-          type="primary"
-          :disabled="sendButtonDisabled"
-          @click="handleSend"
-        >
-          {{ sendButtonDisabledText || t('walletSend.title') }}
-        </s-button>
-      </template>
-      <template v-else-if="step === 2">
-        <network-fee-warning :fee="formattedFee" @confirm="confirmNextTxFailure" />
-      </template>
-      <template v-else>
-        <div class="confirm">
-          <div class="confirm-asset s-flex">
-            <span class="confirm-asset-title">{{ formatStringValue(amount, asset.decimals) }}</span>
-            <div class="confirm-asset-value s-flex">
-              <div class="confirm-asset-icon">
-                <token-logo :token="asset" />
-              </div>
-              <span class="asset-name">{{ asset.symbol }}</span>
-            </div>
-          </div>
-          <div class="confirm-from">{{ account.address }}</div>
-          <s-icon name="arrows-arrow-bottom-24" />
-          <div class="confirm-to">{{ formattedSoraAddress }}</div>
-        </div>
-        <s-button
-          class="wallet-send-action s-typography-button--large"
-          type="primary"
-          :disabled="sendButtonDisabled"
-          @click="handleConfirm"
-        >
-          {{ sendButtonDisabledText || t('walletSend.confirm') }}
-        </s-button>
-      </template>
-      <wallet-fee v-if="showAdditionalInfo" :value="fee" />
-    </div>
-  </wallet-base>
+          <s-button
+            class="wallet-send-action s-typography-button--large"
+            type="primary"
+            :disabled="sendButtonDisabled"
+            @click="handleConfirm"
+          >
+            {{ sendButtonDisabledText || t('walletSend.confirm') }}
+          </s-button>
+        </template>
+        <wallet-fee v-if="showAdditionalInfo" :value="fee" />
+      </div>
+    </wallet-base>
+    <confirm-dialog :visible.sync="showConfirmTxDialog" @confirm="confirmTransactionDialog" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -132,10 +136,12 @@ import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
 import TokenLogo from './TokenLogo.vue';
+import ConfirmDialog from './ConfirmDialog.vue';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
+import ConfirmTransactionMixin from './mixins/ConfirmTransactionMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import { RouteNames } from '../consts';
 import { formatAddress, formatSoraAddress } from '../util';
@@ -151,13 +157,15 @@ import type { Route } from '../store/router/types';
     NetworkFeeWarning,
     WalletFee,
     TokenLogo,
+    ConfirmDialog,
   },
 })
 export default class WalletSend extends Mixins(
   TransactionMixin,
   FormattedAmountMixin,
   CopyAddressMixin,
-  NetworkFeeWarningMixin
+  NetworkFeeWarningMixin,
+  ConfirmTransactionMixin
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
 
@@ -165,6 +173,7 @@ export default class WalletSend extends Mixins(
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.settings.isDesktop isDesktop!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;
@@ -373,6 +382,14 @@ export default class WalletSend extends Mixins(
   }
 
   async handleConfirm(): Promise<void> {
+    if (this.isDesktop) {
+      this.openConfirmationDialog();
+      await this.waitOnNextTxConfirmation();
+      if (!this.isTxDialogConfirmed) {
+        return;
+      }
+    }
+
     await this.withNotifications(async () => {
       if (!this.hasEnoughXor) {
         throw new Error('walletSend.badAmount');

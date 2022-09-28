@@ -33,6 +33,9 @@ export function initialState(): AccountState {
     selectedExtension: null,
     availableWallets: [],
     extensionAvailabilityTimer: null,
+    /** desktop key management */
+    addressKeyMapping: {},
+    addressPassphraseMapping: {},
   };
 }
 

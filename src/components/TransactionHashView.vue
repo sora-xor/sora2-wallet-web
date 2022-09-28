@@ -106,9 +106,14 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
 </script>
 
 <style lang="scss">
-// TODO: fix UI library
-.s-dropdown-menu__item {
-  border-radius: calc(var(--s-border-radius-mini) / 2);
+.s-dropdown-menu {
+  // TODO: fix UI library
+  &__item {
+    border-radius: calc(var(--s-border-radius-mini) / 2);
+  }
+  .el-tooltip {
+    @include focus-outline;
+  }
 }
 </style>
 

@@ -80,6 +80,16 @@ export enum Step {
   Warn = 'Warn',
 }
 
+export enum LoginStep {
+  Welcome = 'Welcome',
+  Import = 'Import',
+  ImportCredentials = 'Import/Credentials',
+  SeedPhrase = 'Create/SeedPhrase',
+  ConfirmSeedPhrase = 'Create/ConfirmSeedPhrase',
+  CreateCredentials = 'Create/Credentials',
+  AccountList = 'AccountList',
+}
+
 export interface WalletPermissions {
   addAssets?: boolean;
   addLiquidity?: boolean;

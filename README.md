@@ -81,5 +81,8 @@ yarn test:e2e
 yarn lint
 ```
 
+### Desktop
+To run desktop version in the browser window, please change **isElectron** flag in `src/store/settings/state.ts`
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).

@@ -104,6 +104,30 @@
   }
 }
 
+@mixin shake {
+  animation: shake 0.5s 1;
+  @keyframes shake {
+    from {
+      transform: translate(-2px);
+    }
+    20% {
+      transform: translate(4px);
+    }
+    40% {
+      transform: translate(-2px);
+    }
+    60% {
+      transform: translate(4px);
+    }
+    80% {
+      transform: translate(-2px);
+    }
+    to {
+      transform: translate(0px);
+    }
+  }
+}
+
 @mixin select-icon($containerClass) {
   .#{$containerClass} .s-select .el-select {
     .el-input__icon {
@@ -213,5 +237,25 @@
   .#{$className} {
     height: $height;
     width: $width;
+  }
+}
+
+@mixin focus-outline($focusWithin: false, $borderRadius: '', $outlinedWidth: false) {
+  $outline: 1px solid var(--s-color-outline);
+  @if $focusWithin == true {
+    &:focus-within {
+      outline: $outline;
+    }
+  } @else {
+    &:focus:not(:active) {
+      outline: $outline;
+      @if $borderRadius != '' {
+        border-radius: $borderRadius;
+      }
+      @if $outlinedWidth == true {
+        // Decrease width by left and right outline width
+        width: calc(100% - 2px);
+      }
+    }
   }
 }

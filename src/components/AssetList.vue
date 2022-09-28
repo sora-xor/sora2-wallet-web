@@ -21,7 +21,7 @@
           :with-clickable-logo="withClickableLogo"
           :with-fiat="withFiat"
           :key="index"
-          with-tabindex
+          :with-tabindex="withTabindex"
           v-on="wrapListeners(item)"
         >
           <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
@@ -66,6 +66,7 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
+  @Prop({ default: true, type: Boolean }) readonly withTabindex!: boolean;
   @Ref('wrap') readonly wrap!: RecycleScroller;
 
   @Watch('size')

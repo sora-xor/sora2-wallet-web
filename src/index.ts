@@ -21,6 +21,7 @@ import TokenLogo from './components/TokenLogo.vue';
 import HistoryPagination from './components/HistoryPagination.vue';
 import DialogBase from './components/DialogBase.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
+import ConfirmDialog from './components/ConfirmDialog.vue';
 // Mixins
 import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
@@ -32,6 +33,7 @@ import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
 import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 import CopyAddressMixin from './components/mixins/CopyAddressMixin';
 import DialogMixin from './components/mixins/DialogMixin';
+import ConfirmTransactionMixin from './components/mixins/ConfirmTransactionMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
@@ -102,13 +104,22 @@ async function initWallet({
       console.error('Something went wrong during api initialization', error);
       throw error;
     }
+
     await store.dispatch.wallet.account.getWhitelist();
     await store.dispatch.wallet.account.getNftBlacklist();
+
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(),
+      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.settings.isDesktop),
     ]);
-    await store.dispatch.wallet.account.checkSigner();
+
+    if (store.state.wallet.settings.isDesktop) {
+      api.initAccountStorage();
+      await store.dispatch.wallet.account.getPolkadotJsAccounts();
+    } else {
+      await store.dispatch.wallet.account.checkSigner();
+    }
+
     store.commit.wallet.settings.setWalletLoaded(true);
   }
 }
@@ -120,6 +131,7 @@ const components = {
   AssetList,
   AssetListItem,
   AddAssetDetailsCard,
+  ConfirmDialog,
   TokenAddress,
   SearchInput,
   InfoLine,
@@ -144,6 +156,7 @@ const mixins = {
   PaginationSearchMixin,
   CopyAddressMixin,
   DialogMixin,
+  ConfirmTransactionMixin,
 };
 
 const vuex = {
@@ -173,4 +186,5 @@ export {
   VUEX_TYPES,
   vuex,
 };
+
 export default SoraWalletElements;
