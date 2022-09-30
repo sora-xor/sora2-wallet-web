@@ -92,7 +92,7 @@ async function initWallet({ withoutStore = false, permissions }: WALLET_CONSTS.W
       store.commit.wallet.settings.setPermissions(permissions);
     }
     try {
-      api.initialize();
+      await api.initialize();
     } catch (error) {
       console.error('Something went wrong during api initialization', error);
       throw error;
