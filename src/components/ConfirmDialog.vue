@@ -85,9 +85,16 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
           type: 'error',
           title: '',
         });
+      } else {
+        this.$notify({
+          message: this.t('unknownErrorText'),
+          type: 'error',
+          title: '',
+        });
       }
 
       this.accountPassword = '';
+      this.closeDialog();
       return;
     }
 
@@ -106,6 +113,10 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
     } else if (this.isVisible === false) {
       this.accountPassword = '';
     }
+  }
+
+  updated(): void {
+    this.setupFormState();
   }
 
   mounted(): void {
