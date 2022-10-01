@@ -343,7 +343,7 @@ $history-item-top-border-height: 1px;
       background-color: var(--s-color-base-background-hover);
       cursor: pointer;
     }
-    &:focus ~ .history-item:before {
+    &:focus + .history-item:before {
       background-color: transparent;
     }
     &-info {

@@ -2,7 +2,7 @@
   <wallet-base
     :title="t('connection.title')"
     :show-back="!isEntryView"
-    :reset-focus="step.toString()"
+    :reset-focus="`${isEntryView}${step}`"
     @back="handleBackClick"
   >
     <div class="wallet-connection" v-loading="loading">
@@ -217,7 +217,7 @@ $account-height: 60px;
 .s-card.wallet-account.wallet-connection {
   &-account,
   &-extension {
-    @include focus-outline;
+    @include focus-outline($withOffset: true);
     &:hover {
       cursor: pointer;
       border-color: var(--s-color-base-content-secondary);
@@ -251,7 +251,7 @@ $accounts-number: 7;
   }
   &-accounts {
     height: calc(
-      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom} / 2
+      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom}
     );
   }
   &-action {
@@ -261,16 +261,9 @@ $accounts-number: 7;
     }
   }
   &-account {
-    $margin-value: 1px;
     height: $account-height;
-    &:first-child {
-      margin-top: $margin-value;
-    }
     &:not(:last-child) {
       margin-bottom: var(--s-basic-spacing);
-    }
-    &:last-child {
-      margin-bottom: $margin-value;
     }
   }
   &-extension {

@@ -58,8 +58,5 @@ export default class SelectAsset extends Mixins(TranslationMixin) {
 <style lang="scss">
 .select-asset-list {
   @include asset-list($basic-spacing-big, $basic-spacing-big);
-  .s-action {
-    margin-right: 1px;
-  }
 }
 </style>

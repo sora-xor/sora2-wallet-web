@@ -61,13 +61,15 @@ export default class WalletBase extends Mixins(TranslationMixin) {
   private async resetBaseFocus(value: string) {
     if (value) {
       this.hasFocusReset = true;
-
-      const editButtonRef = this.$refs.headerBase as any;
-      editButtonRef.focus();
-      editButtonRef.blur();
-
+      this.setFocusToHeader();
       this.hasFocusReset = false;
     }
+  }
+
+  setFocusToHeader() {
+    const editButtonRef = this.$refs.headerBase as any;
+    editButtonRef.focus();
+    editButtonRef.blur();
   }
 
   hasFocusReset = false;
@@ -81,6 +83,10 @@ export default class WalletBase extends Mixins(TranslationMixin) {
       cssClasses.push('base-title--actions');
     }
     return cssClasses;
+  }
+
+  mounted(): void {
+    this.setFocusToHeader();
   }
 
   handleBackClick(): void {
