@@ -186,5 +186,9 @@ export default class AssetList extends Mixins(TranslationMixin) {
       transition: opacity 0.34s ease-out;
     }
   }
+
+  .s-action {
+    margin-right: 1px;
+  }
 }
 </style>
