@@ -387,7 +387,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     text-align: center;
     &--clickable {
       cursor: pointer;
-      @include focus-outline($outlinedWidth: true);
+      @include focus-outline($withOffset: true);
     }
     & + .formatted-amount--fiat-value {
       width: 100%;

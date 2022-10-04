@@ -56,8 +56,11 @@ export default class SearchInput extends Vue {
     background-color: transparent;
     border-radius: 0;
     border: none;
-    &.focusing {
-      outline: var(--s-color-theme-accent);
+    &:focus {
+      outline: none !important;
+      i {
+        @include focus-outline($inner: true, $borderRadius: 50%);
+      }
     }
   }
 }
