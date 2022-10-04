@@ -7,6 +7,7 @@ import installWalletPlugins from './plugins';
 import SoraWallet from './SoraWallet.vue';
 import WalletAccount from './components/WalletAccount.vue';
 import WalletAvatar from './components/WalletAvatar.vue';
+import WalletBase from './components/WalletBase.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
 import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
@@ -121,6 +122,7 @@ const components = {
   SoraWallet,
   WalletAccount,
   WalletAvatar,
+  WalletBase,
   AssetList,
   AssetListItem,
   AddAssetDetailsCard,
