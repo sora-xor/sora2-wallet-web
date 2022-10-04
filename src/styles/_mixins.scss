@@ -240,21 +240,27 @@
   }
 }
 
-@mixin focus-outline($focusWithin: false, $borderRadius: '', $outlinedWidth: false) {
+@mixin focus-outline($inner: false, $focusWithin: false, $borderRadius: '', $withOffset: false) {
   $outline: 1px solid var(--s-color-outline);
-  @if $focusWithin == true {
-    &:focus-within {
-      outline: $outline;
+  @if $inner == true {
+    outline: $outline;
+    @if $borderRadius != '' {
+      border-radius: $borderRadius;
     }
   } @else {
-    &:focus:not(:active) {
-      outline: $outline;
-      @if $borderRadius != '' {
-        border-radius: $borderRadius;
+    @if $focusWithin == true {
+      &:focus-within {
+        outline: $outline;
       }
-      @if $outlinedWidth == true {
-        // Decrease width by left and right outline width
-        width: calc(100% - 2px);
+    } @else {
+      @if $withOffset == true {
+        outline-offset: -1px;
+      }
+      &:focus:not(:active) {
+        outline: $outline;
+        @if $borderRadius != '' {
+          border-radius: $borderRadius;
+        }
       }
     }
   }
