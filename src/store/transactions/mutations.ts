@@ -33,8 +33,10 @@ const mutations = defineMutations<TransactionsState>()({
     state.selectedTxId = null;
   },
   getHistory(state): void {
+    // show eth bridge history, if update fn exists
+    const ethBridgeHistory = state.updateEthBridgeHistory ? api.bridge.history : {};
     // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes
-    state.history = Object.freeze({ ...api.history, ...api.bridge.history });
+    state.history = Object.freeze({ ...api.history, ...ethBridgeHistory });
   },
   setEthBridgeHistoryUpdateFn(state, updateEthBridgeHistory: EthBridgeUpdateHistory): void {
     state.updateEthBridgeHistory = updateEthBridgeHistory;
