@@ -97,7 +97,7 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
 
   handleOpenEtherscan(): void {
     const path = this.type === HashType.EthAccount ? 'address' : 'tx';
-    const base = this.soraNetwork !== SoraNetwork.Prod ? 'rinkeby' + '.' : '';
+    const base = this.soraNetwork !== SoraNetwork.Prod ? 'sepolia' + '.' : '';
     const url = `https://${base}etherscan.io/${path}/${this.value}`;
     const win = window.open(url, '_blank');
     win && win.focus();

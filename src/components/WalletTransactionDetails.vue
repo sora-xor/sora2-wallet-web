@@ -302,7 +302,7 @@ export default class WalletTransactionDetails extends Mixins(
       return this.t(`sora.${this.soraNetwork}`);
     }
 
-    const network = this.soraNetwork === SoraNetwork.Prod ? EthNetworkType.Mainnet : EthNetworkType.Rinkeby;
+    const network = this.soraNetwork === SoraNetwork.Prod ? EthNetworkType.Mainnet : EthNetworkType.Sepolia;
 
     return network ? this.t(`evm.${network}`) : '';
   }

@@ -471,6 +471,6 @@ export default {
   },
   evm: {
     [EthNetworkType.Mainnet]: 'Ethereum Mainnet',
-    [EthNetworkType.Rinkeby]: 'Ethereum Rinkeby',
+    [EthNetworkType.Sepolia]: 'Ethereum Sepolia',
   },
 };

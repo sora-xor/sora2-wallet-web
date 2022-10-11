@@ -51,7 +51,7 @@ export enum SoraNetwork {
 
 export enum EthNetworkType {
   Mainnet = 'main',
-  Rinkeby = 'rinkeby',
+  Sepolia = 'sepolia',
 }
 
 export enum HashType {
