@@ -184,7 +184,7 @@ export default class CreateNftToken extends Mixins(
 ) {
   readonly tokenSymbolMask = 'AAAAAAA';
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } };
-  readonly maxTotalSupply = MaxTotalSupply.substring(0, MaxTotalSupply.indexOf('.'));
+  readonly maxTotalSupply = MaxTotalSupply;
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
   readonly Step = Step;
   readonly XOR_SYMBOL = XOR.symbol;

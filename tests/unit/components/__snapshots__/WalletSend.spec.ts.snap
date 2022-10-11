@@ -67,7 +67,7 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
         decimals="18"
         delimiters="[object Object]"
         haslocalestring="true"
-        max="700000"
+        max="100000000000000000000"
         size="medium"
         value=""
       >
@@ -245,7 +245,7 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
         decimals="18"
         delimiters="[object Object]"
         haslocalestring="true"
-        max="700000"
+        max="100000000000000000000"
         size="medium"
         value=""
       >
@@ -450,7 +450,7 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
         decimals="18"
         delimiters="[object Object]"
         haslocalestring="true"
-        max="700000"
+        max="100000000000000000000"
         size="medium"
         value=""
       >
@@ -632,7 +632,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
         decimals="18"
         delimiters="[object Object]"
         haslocalestring="true"
-        max="700000"
+        max="100000000000000000000"
         size="medium"
         value=""
       >
