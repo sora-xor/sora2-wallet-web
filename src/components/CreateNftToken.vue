@@ -14,6 +14,7 @@
           popper-class="ipfs-tooltip"
           :content="t('createToken.nft.link.tooltip')"
           placement="bottom"
+          tabindex="-1"
         >
           <s-icon class="ipfs-tooltip__icon" name="info-16" size="18px" />
         </s-tooltip>
