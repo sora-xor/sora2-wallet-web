@@ -8,6 +8,7 @@
       :content="labelTooltip"
       placement="right-start"
       border-radius="mini"
+      tabindex="-1"
     >
       <s-icon name="info-16" size="14px" />
     </s-tooltip>
@@ -120,10 +121,6 @@ export default class InfoLine extends Vue {
       color: var(--s-color-base-content-secondary);
       text-transform: uppercase;
       margin-bottom: #{$basic-spacing-small};
-    }
-
-    .el-tooltip {
-      @include focus-outline($borderRadius: 50%);
     }
   }
 }
