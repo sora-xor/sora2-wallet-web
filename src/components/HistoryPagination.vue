@@ -81,7 +81,7 @@ export default class HistoryPagination extends Mixins(TranslationMixin) {
 .history-pagination.el-pagination {
   margin-top: #{$basic-spacing-medium};
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
   align-items: baseline;
   padding-left: 0;
   padding-right: 0;

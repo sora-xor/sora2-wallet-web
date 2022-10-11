@@ -1,11 +1,12 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { FPNumber, CodecString } from '@sora-substrate/util';
-import { MaxTotalSupply, KnownAssets } from '@sora-substrate/util/build/assets/consts';
+import { MaxTotalSupply } from '@sora-substrate/util/build/assets/consts';
 
 @Component
 export default class NumberFormatterMixin extends Vue {
   readonly Zero = FPNumber.ZERO;
   readonly Hundred = FPNumber.HUNDRED;
+  readonly MaxInputNumber = MaxTotalSupply;
 
   getFPNumber(value: string | number, decimals?: number): FPNumber {
     return new FPNumber(value, decimals);
@@ -29,17 +30,6 @@ export default class NumberFormatterMixin extends Vue {
 
   isCodecZero(value: CodecString, decimals?: number): boolean {
     return this.getFPNumberFromCodec(value, decimals).isZero();
-  }
-
-  getMax(address?: string): string {
-    if (!address) {
-      return MaxTotalSupply;
-    }
-    const knownAsset = KnownAssets.get(address);
-    if (!knownAsset) {
-      return MaxTotalSupply;
-    }
-    return knownAsset.totalSupply || MaxTotalSupply;
   }
 
   getCorrectSupply(tokenSupply: string, decimals: number): string {

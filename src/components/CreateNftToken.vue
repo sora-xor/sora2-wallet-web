@@ -14,6 +14,7 @@
           popper-class="ipfs-tooltip"
           :content="t('createToken.nft.link.tooltip')"
           placement="bottom"
+          tabindex="-1"
         >
           <s-icon class="ipfs-tooltip__icon" name="info-16" size="18px" />
         </s-tooltip>
@@ -183,7 +184,7 @@ export default class CreateNftToken extends Mixins(
 ) {
   readonly tokenSymbolMask = 'AAAAAAA';
   readonly tokenNameMask = { mask: 'Z*', tokens: { Z: { pattern: /[0-9a-zA-Z ]/ } } };
-  readonly maxTotalSupply = MaxTotalSupply.substring(0, MaxTotalSupply.indexOf('.'));
+  readonly maxTotalSupply = MaxTotalSupply;
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
   readonly Step = Step;
   readonly XOR_SYMBOL = XOR.symbol;
