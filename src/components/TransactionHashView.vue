@@ -111,9 +111,6 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
   &__item {
     border-radius: calc(var(--s-border-radius-mini) / 2);
   }
-  .el-tooltip {
-    @include focus-outline;
-  }
 }
 </style>
 
