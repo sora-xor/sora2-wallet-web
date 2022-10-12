@@ -27,7 +27,7 @@ import SoraWallet from './SoraWallet.vue';
 import { SoraNetwork } from './consts';
 import { state, mutation, getter, action } from './store/decorators';
 import type { ApiKeysObject } from './types/common';
-import { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: { SoraWallet },
