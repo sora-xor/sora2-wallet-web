@@ -241,28 +241,23 @@ export default class SubqueryExplorer implements Explorer {
   /**
    * Get Referral Rewards items by referral
    */
-  public async getAccountRewards(
+  private async getAccountRewards(
     referrer: string,
     after?: string
-  ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: AccountReferralReward[] }>> {
-    try {
-      const variables = {
-        after,
-        filter: referrerRewardsFilter(referrer),
-      };
+  ): Promise<{ hasNextPage: boolean; endCursor: string; nodes: AccountReferralReward[] }> {
+    const variables = {
+      after,
+      filter: referrerRewardsFilter(referrer),
+    };
 
-      const {
-        referrerRewards: {
-          nodes,
-          pageInfo: { hasNextPage, endCursor },
-        },
-      } = await this.request(ReferrerRewardsQuery, variables);
+    const {
+      referrerRewards: {
+        nodes,
+        pageInfo: { hasNextPage, endCursor },
+      },
+    } = await this.request(ReferrerRewardsQuery, variables);
 
-      return { hasNextPage, endCursor, nodes };
-    } catch (error) {
-      console.error(error);
-      return null;
-    }
+    return { hasNextPage, endCursor, nodes };
   }
 
   public async request<T>(query: TypedDocumentNode<T>, variables = {}) {
