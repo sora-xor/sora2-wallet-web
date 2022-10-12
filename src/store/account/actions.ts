@@ -334,15 +334,9 @@ const actions = defineActions({
   async getAccountReferralRewards(context): Promise<void> {
     const { state, commit } = accountActionContext(context);
     commit.clearReferralRewards();
-    try {
-      const data = await SubqueryExplorerService.getAccountReferralRewards(state.address);
-      if (!data) {
-        commit.clearReferralRewards();
-        return;
-      }
+    const data = await SubqueryExplorerService.getAccountReferralRewards(state.address);
+    if (data) {
       commit.setReferralRewards(data);
-    } catch (error) {
-      commit.clearReferralRewards();
     }
   },
 
