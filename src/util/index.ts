@@ -75,7 +75,9 @@ export const subscribeToPolkadotJsAccounts = async (
 
 export const getAppWallets = (): Wallet[] => {
   try {
-    return getWallets();
+    const wallets = getWallets();
+
+    return wallets;
   } catch (error) {
     throw new AppError({ key: 'polkadotjs.noExtensions' });
   }
@@ -119,6 +121,31 @@ export const getExtensionSigner = async (address: string, extension: Extensions)
   }
 
   return { account: formatWalletAccount(account), signer: wallet.signer as Signer };
+};
+
+/**
+ * Get url to install wallet extension
+ * Extensions are available for Chrome based browsers (Chrome, Edge, Brave) & Firefox
+ * @param wallet wallet data
+ * @returns browser extension install url
+ */
+export const getWalletInstallUrl = (wallet: Wallet): string => {
+  const { extensionName, installUrl } = wallet;
+
+  // for Firefox
+  if (navigator.userAgent.match(/firefox|fxios/i)) {
+    switch (extensionName) {
+      case Extensions.SubwalletJS:
+        return 'https://addons.mozilla.org/firefox/addon/subwallet/';
+      case Extensions.TalismanJS:
+        return 'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/';
+      default:
+        return 'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/';
+    }
+  }
+
+  // for Chrome based browsers
+  return installUrl;
 };
 
 /**
