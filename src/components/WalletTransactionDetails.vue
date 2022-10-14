@@ -233,19 +233,11 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   get transactionFromHash(): { value: Nullable<string>; hash: Nullable<string>; translation: string; type: HashType } {
-    const { value, type } = this.getTransactionId(this.isSoraTx);
-    const hash = this.getTransactionHash(this.isSoraTx);
-    const translation = this.getTransactionTranslation(this.isSoraTx);
-
-    return { value, hash, translation, type };
+    return this.getTransactionHashData(this.isSoraTx);
   }
 
   get transactionToHash(): { value: Nullable<string>; hash: Nullable<string>; translation: string; type: HashType } {
-    const { value, type } = this.getTransactionId(!this.isSoraTx);
-    const hash = this.getTransactionHash(!this.isSoraTx);
-    const translation = this.getTransactionTranslation(!this.isSoraTx);
-
-    return { value, hash, translation, type };
+    return this.getTransactionHashData(!this.isSoraTx);
   }
 
   get isSetReferralOperation(): boolean {
@@ -315,6 +307,19 @@ export default class WalletTransactionDetails extends Mixins(
 
   public getNetworkFeeSymbol(isSoraTx = true): string {
     return isSoraTx ? KnownSymbols.XOR : KnownSymbols.ETH;
+  }
+
+  private getTransactionHashData(isSoraTx = true): {
+    value: Nullable<string>;
+    hash: Nullable<string>;
+    translation: string;
+    type: HashType;
+  } {
+    const { value, type } = this.getTransactionId(isSoraTx);
+    const hash = this.getTransactionHash(isSoraTx);
+    const translation = this.getTransactionTranslation(isSoraTx);
+
+    return { value, hash, translation, type };
   }
 
   private getTransactionHash(isSoraTx = true): Nullable<string> {
