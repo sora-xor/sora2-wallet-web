@@ -11,7 +11,7 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
     form=""
     label=""
     name=""
-    placeholder="any"
+    placeholder="From"
     prefix=""
     readonly="true"
     rows="2"
@@ -32,7 +32,7 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
     nativetype="button"
     size="medium"
     tabindex="0"
-    tooltip="Copy any"
+    tooltip="Copy From"
     tooltipplacement="top"
     type="action"
     usedesignsystem="true"
@@ -64,8 +64,8 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
           class="s-dropdown-menu__item"
         >
           
-          View in SORAScan
-        
+            View in SORAScan
+          
         </s-dropdown-item-stub>
       </a>
     </template>
@@ -84,7 +84,7 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
     form=""
     label=""
     name=""
-    placeholder="any"
+    placeholder="To"
     prefix=""
     readonly="true"
     rows="2"
@@ -105,7 +105,7 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
     nativetype="button"
     size="medium"
     tabindex="0"
-    tooltip="Copy any"
+    tooltip="Copy To"
     tooltipplacement="top"
     type="action"
     usedesignsystem="true"
@@ -137,8 +137,8 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
           class="s-dropdown-menu__item"
         >
           
-          View in SORAScan
-        
+            View in SORAScan
+          
         </s-dropdown-item-stub>
       </a>
     </template>
@@ -157,7 +157,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     form=""
     label=""
     name=""
-    placeholder="any"
+    placeholder="From"
     prefix=""
     readonly="true"
     rows="2"
@@ -178,7 +178,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     nativetype="button"
     size="medium"
     tabindex="0"
-    tooltip="Copy any"
+    tooltip="Copy From"
     tooltipplacement="top"
     type="action"
     usedesignsystem="true"
@@ -210,8 +210,8 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
           class="s-dropdown-menu__item"
         >
           
-          View in SORAScan
-        
+            View in SORAScan
+          
         </s-dropdown-item-stub>
       </a>
       <a
@@ -224,8 +224,8 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
           class="s-dropdown-menu__item"
         >
           
-          View in Subscan
-        
+            View in Subscan
+          
         </s-dropdown-item-stub>
       </a>
     </template>
@@ -244,7 +244,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     form=""
     label=""
     name=""
-    placeholder="any"
+    placeholder="To"
     prefix=""
     readonly="true"
     rows="2"
@@ -265,7 +265,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     nativetype="button"
     size="medium"
     tabindex="0"
-    tooltip="Copy any"
+    tooltip="Copy To"
     tooltipplacement="top"
     type="action"
     usedesignsystem="true"
@@ -297,8 +297,8 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
           class="s-dropdown-menu__item"
         >
           
-          View in SORAScan
-        
+            View in SORAScan
+          
         </s-dropdown-item-stub>
       </a>
       <a
@@ -311,8 +311,8 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
           class="s-dropdown-menu__item"
         >
           
-          View in Subscan
-        
+            View in Subscan
+          
         </s-dropdown-item-stub>
       </a>
     </template>
@@ -331,7 +331,7 @@ exports[`TransactionHashView.vue [type: block, env: Dev]: should be rendered cor
     form=""
     label=""
     name=""
-    placeholder="any"
+    placeholder="Block Id"
     prefix=""
     readonly="true"
     rows="2"
@@ -352,7 +352,7 @@ exports[`TransactionHashView.vue [type: block, env: Dev]: should be rendered cor
     nativetype="button"
     size="medium"
     tabindex="0"
-    tooltip="Copy any"
+    tooltip="Copy Block Id"
     tooltipplacement="top"
     type="action"
     usedesignsystem="true"
@@ -384,8 +384,8 @@ exports[`TransactionHashView.vue [type: block, env: Dev]: should be rendered cor
           class="s-dropdown-menu__item"
         >
           
-          View in SORAScan
-        
+            View in SORAScan
+          
         </s-dropdown-item-stub>
       </a>
     </template>
@@ -404,7 +404,7 @@ exports[`TransactionHashView.vue [type: block, env: Prod]: should be rendered co
     form=""
     label=""
     name=""
-    placeholder="any"
+    placeholder="Block Id"
     prefix=""
     readonly="true"
     rows="2"
@@ -425,7 +425,7 @@ exports[`TransactionHashView.vue [type: block, env: Prod]: should be rendered co
     nativetype="button"
     size="medium"
     tabindex="0"
-    tooltip="Copy any"
+    tooltip="Copy Block Id"
     tooltipplacement="top"
     type="action"
     usedesignsystem="true"
@@ -457,8 +457,8 @@ exports[`TransactionHashView.vue [type: block, env: Prod]: should be rendered co
           class="s-dropdown-menu__item"
         >
           
-          View in SORAScan
-        
+            View in SORAScan
+          
         </s-dropdown-item-stub>
       </a>
       <a
@@ -471,10 +471,274 @@ exports[`TransactionHashView.vue [type: block, env: Prod]: should be rendered co
           class="s-dropdown-menu__item"
         >
           
-          View in Subscan
-        
+            View in Subscan
+          
         </s-dropdown-item-stub>
       </a>
+    </template>
+  </s-dropdown-stub>
+</div>
+`;
+
+exports[`TransactionHashView.vue [type: ethAccount, env: Dev]: should be rendered correctly 1`] = `
+<div
+  class="s-input-container"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    form=""
+    label=""
+    name=""
+    placeholder="To"
+    prefix=""
+    readonly="true"
+    rows="2"
+    size="big"
+    suffix=""
+    tabindex="-1"
+    type="text"
+    usedesignsystem="true"
+    value="0x6F984C337a...42cef462e3ff"
+  />
+   
+  <s-button-stub
+    alternative="true"
+    borderradius="small"
+    class="s-button--copy"
+    icon="basic-copy-24"
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Copy To"
+    tooltipplacement="top"
+    type="action"
+    usedesignsystem="true"
+  />
+   
+  <s-dropdown-stub
+    borderradius="mini"
+    buttontype="secondary"
+    class="s-dropdown-menu"
+    hideonclick="true"
+    hidetimeout="150"
+    icon="basic-more-vertical-24"
+    placement="bottom-end"
+    popperclass=""
+    showtimeout="250"
+    size="medium"
+    tabindex="0"
+    trigger="hover"
+    type="ellipsis"
+  >
+    <template>
+      <s-dropdown-item-stub
+        class="s-dropdown-menu__item"
+      >
+        <span>
+          View in Etherscan
+        </span>
+      </s-dropdown-item-stub>
+    </template>
+  </s-dropdown-stub>
+</div>
+`;
+
+exports[`TransactionHashView.vue [type: ethAccount, env: Prod]: should be rendered correctly 1`] = `
+<div
+  class="s-input-container"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    form=""
+    label=""
+    name=""
+    placeholder="To"
+    prefix=""
+    readonly="true"
+    rows="2"
+    size="big"
+    suffix=""
+    tabindex="-1"
+    type="text"
+    usedesignsystem="true"
+    value="0x6F984C337a...42cef462e3ff"
+  />
+   
+  <s-button-stub
+    alternative="true"
+    borderradius="small"
+    class="s-button--copy"
+    icon="basic-copy-24"
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Copy To"
+    tooltipplacement="top"
+    type="action"
+    usedesignsystem="true"
+  />
+   
+  <s-dropdown-stub
+    borderradius="mini"
+    buttontype="secondary"
+    class="s-dropdown-menu"
+    hideonclick="true"
+    hidetimeout="150"
+    icon="basic-more-vertical-24"
+    placement="bottom-end"
+    popperclass=""
+    showtimeout="250"
+    size="medium"
+    tabindex="0"
+    trigger="hover"
+    type="ellipsis"
+  >
+    <template>
+      <s-dropdown-item-stub
+        class="s-dropdown-menu__item"
+      >
+        <span>
+          View in Etherscan
+        </span>
+      </s-dropdown-item-stub>
+    </template>
+  </s-dropdown-stub>
+</div>
+`;
+
+exports[`TransactionHashView.vue [type: ethTransaction, env: Dev]: should be rendered correctly 1`] = `
+<div
+  class="s-input-container"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    form=""
+    label=""
+    name=""
+    placeholder="Transaction Id"
+    prefix=""
+    readonly="true"
+    rows="2"
+    size="big"
+    suffix=""
+    tabindex="-1"
+    type="text"
+    usedesignsystem="true"
+    value="0x07f7ec4c5f...87b8674b2e80"
+  />
+   
+  <s-button-stub
+    alternative="true"
+    borderradius="small"
+    class="s-button--copy"
+    icon="basic-copy-24"
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Copy Transaction Id"
+    tooltipplacement="top"
+    type="action"
+    usedesignsystem="true"
+  />
+   
+  <s-dropdown-stub
+    borderradius="mini"
+    buttontype="secondary"
+    class="s-dropdown-menu"
+    hideonclick="true"
+    hidetimeout="150"
+    icon="basic-more-vertical-24"
+    placement="bottom-end"
+    popperclass=""
+    showtimeout="250"
+    size="medium"
+    tabindex="0"
+    trigger="hover"
+    type="ellipsis"
+  >
+    <template>
+      <s-dropdown-item-stub
+        class="s-dropdown-menu__item"
+      >
+        <span>
+          View in Etherscan
+        </span>
+      </s-dropdown-item-stub>
+    </template>
+  </s-dropdown-stub>
+</div>
+`;
+
+exports[`TransactionHashView.vue [type: ethTransaction, env: Prod]: should be rendered correctly 1`] = `
+<div
+  class="s-input-container"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    form=""
+    label=""
+    name=""
+    placeholder="Transaction Id"
+    prefix=""
+    readonly="true"
+    rows="2"
+    size="big"
+    suffix=""
+    tabindex="-1"
+    type="text"
+    usedesignsystem="true"
+    value="0x07f7ec4c5f...87b8674b2e80"
+  />
+   
+  <s-button-stub
+    alternative="true"
+    borderradius="small"
+    class="s-button--copy"
+    icon="basic-copy-24"
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Copy Transaction Id"
+    tooltipplacement="top"
+    type="action"
+    usedesignsystem="true"
+  />
+   
+  <s-dropdown-stub
+    borderradius="mini"
+    buttontype="secondary"
+    class="s-dropdown-menu"
+    hideonclick="true"
+    hidetimeout="150"
+    icon="basic-more-vertical-24"
+    placement="bottom-end"
+    popperclass=""
+    showtimeout="250"
+    size="medium"
+    tabindex="0"
+    trigger="hover"
+    type="ellipsis"
+  >
+    <template>
+      <s-dropdown-item-stub
+        class="s-dropdown-menu__item"
+      >
+        <span>
+          View in Etherscan
+        </span>
+      </s-dropdown-item-stub>
     </template>
   </s-dropdown-stub>
 </div>
@@ -491,7 +755,7 @@ exports[`TransactionHashView.vue [type: id, env: Dev]: should be rendered correc
     form=""
     label=""
     name=""
-    placeholder="any"
+    placeholder="Transaction Id"
     prefix=""
     readonly="true"
     rows="2"
@@ -512,7 +776,7 @@ exports[`TransactionHashView.vue [type: id, env: Dev]: should be rendered correc
     nativetype="button"
     size="medium"
     tabindex="0"
-    tooltip="Copy any"
+    tooltip="Copy Transaction Id"
     tooltipplacement="top"
     type="action"
     usedesignsystem="true"
@@ -544,8 +808,8 @@ exports[`TransactionHashView.vue [type: id, env: Dev]: should be rendered correc
           class="s-dropdown-menu__item"
         >
           
-          View in SORAScan
-        
+            View in SORAScan
+          
         </s-dropdown-item-stub>
       </a>
     </template>
@@ -564,7 +828,7 @@ exports[`TransactionHashView.vue [type: id, env: Prod]: should be rendered corre
     form=""
     label=""
     name=""
-    placeholder="any"
+    placeholder="Transaction Id"
     prefix=""
     readonly="true"
     rows="2"
@@ -585,7 +849,7 @@ exports[`TransactionHashView.vue [type: id, env: Prod]: should be rendered corre
     nativetype="button"
     size="medium"
     tabindex="0"
-    tooltip="Copy any"
+    tooltip="Copy Transaction Id"
     tooltipplacement="top"
     type="action"
     usedesignsystem="true"
@@ -617,8 +881,8 @@ exports[`TransactionHashView.vue [type: id, env: Prod]: should be rendered corre
           class="s-dropdown-menu__item"
         >
           
-          View in SORAScan
-        
+            View in SORAScan
+          
         </s-dropdown-item-stub>
       </a>
       <a
@@ -631,8 +895,8 @@ exports[`TransactionHashView.vue [type: id, env: Prod]: should be rendered corre
           class="s-dropdown-menu__item"
         >
           
-          View in Subscan
-        
+            View in Subscan
+          
         </s-dropdown-item-stub>
       </a>
     </template>

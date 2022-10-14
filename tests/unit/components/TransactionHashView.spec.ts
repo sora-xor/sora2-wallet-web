@@ -2,7 +2,7 @@ import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_TRANSACTION_HASH_VIEW } from '../../utils/TransactionHashViewMock';
 
 import TransactionHashView from '@/components/TransactionHashView.vue';
-import { SoraNetwork } from '@/consts';
+import { SoraNetwork, HashType } from '@/consts';
 
 const createStore = (env: SoraNetwork) =>
   useVuex({
@@ -23,12 +23,13 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
         propsData: item,
         store: createStore(SoraNetwork.Dev),
       });
+      const expectedLinks = [HashType.EthAccount, HashType.EthTransaction].includes(item.type) ? 0 : 1;
       const txLinks = wrapper
         .findAll('.s-input-container .transaction-link')
         .wrappers.map((item) => item.element) as Array<HTMLAnchorElement>;
       const txInputValue = wrapper.find('.s-input-container s-input-stub').props().value as string;
       expect(wrapper.element).toMatchSnapshot();
-      expect(txLinks.length).toBe(1);
+      expect(txLinks.length).toBe(expectedLinks);
       expect(txInputValue.length).toBe(formattedAddressLength + ellipsisLength);
     })
   );
@@ -39,12 +40,13 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
         propsData: item,
         store: createStore(SoraNetwork.Prod),
       });
+      const expectedLinks = [HashType.EthAccount, HashType.EthTransaction].includes(item.type) ? 0 : 2;
       const txLinks = wrapper
         .findAll('.s-input-container .transaction-link')
         .wrappers.map((item) => item.element) as Array<HTMLAnchorElement>;
       const txInputValue = wrapper.find('.s-input-container s-input-stub').props().value as string;
       expect(wrapper.element).toMatchSnapshot();
-      expect(txLinks.length).toBe(2);
+      expect(txLinks.length).toBe(expectedLinks);
       expect(txInputValue.length).toBe(formattedAddressLength + ellipsisLength);
     })
   );
