@@ -110,7 +110,7 @@ import InfoLine from './InfoLine.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import TransactionHashView from './TransactionHashView.vue';
 
-import { HashType, SoraNetwork, EthNetworkType } from '../consts';
+import { HashType, SoraNetwork } from '../consts';
 import { getter, state } from '../store/decorators';
 
 import type { BridgeHistory } from '@sora-substrate/util';
@@ -302,9 +302,7 @@ export default class WalletTransactionDetails extends Mixins(
       return this.t(`sora.${this.soraNetwork}`);
     }
 
-    const network = this.soraNetwork === SoraNetwork.Prod ? EthNetworkType.Mainnet : EthNetworkType.Sepolia;
-
-    return network ? this.t(`evm.${network}`) : '';
+    return this.t('ethereumText');
   }
 
   public getNetworkFee(isSoraTx = true): string {

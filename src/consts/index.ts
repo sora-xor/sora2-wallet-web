@@ -49,11 +49,6 @@ export enum SoraNetwork {
   Prod = 'Prod',
 }
 
-export enum EthNetworkType {
-  Mainnet = 'main',
-  Sepolia = 'sepolia',
-}
-
 export enum HashType {
   ID = 'id',
   Block = 'block',
