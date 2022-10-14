@@ -97,7 +97,7 @@ export default {
   },
   polkadotjs: {
     noExtensions:
-      'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
+      'No Polkadot{.js} extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
     noExtension: 'No {extension} extension was found. Please install it and reload this page',
     noAccounts: 'There seems to be no accounts in your {extension} extension. Please add an account and try again.',
     noAccount: '{extension} account error. Please check your account in the {extension} extension',
@@ -105,7 +105,7 @@ export default {
   },
   connection: {
     title: 'SORA Network account',
-    text: 'Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
+    text: 'Connect your SORA Network accounts or create new ones with Polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
     noAccounts: 'No account found in your {extension} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
     selectWallet: 'Select a wallet to work with',

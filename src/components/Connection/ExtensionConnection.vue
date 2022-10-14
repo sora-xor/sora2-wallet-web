@@ -73,7 +73,7 @@ import WalletAccount from '../WalletAccount.vue';
 import AccountCard from '../AccountCard.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
-import { state, action } from '../../store/decorators';
+import { state, action, getter } from '../../store/decorators';
 import { AppError, getWalletInstallUrl } from '../../util';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Extensions } from '../../consts';
@@ -97,7 +97,8 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.availableWallets availableWallets!: Array<Wallet>;
-  @state.account.selectedExtension private selectedExtension!: Extensions;
+
+  @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
 
   @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
@@ -141,7 +142,8 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
     if (this.isEntryView) return this.t('connection.text');
     if (this.isExtensionsView) return this.t('connection.selectWallet');
     if (this.polkadotJsAccounts.length) return this.t('connection.selectAccount');
-    return this.t('connection.noAccounts', { extension: this.selectedExtension });
+
+    return this.t('connection.noAccounts', { extension: this.selectedWalletTitle });
   }
 
   async handleActionClick(): Promise<void> {
