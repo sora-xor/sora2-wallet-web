@@ -97,6 +97,7 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.availableWallets availableWallets!: Array<Wallet>;
+  @state.account.selectedExtension private selectedExtension!: Extensions;
 
   @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
@@ -139,7 +140,8 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   get connectionText(): string {
     if (this.isEntryView) return this.t('connection.text');
     if (this.isExtensionsView) return this.t('connection.selectWallet');
-    return this.t(this.polkadotJsAccounts.length ? 'connection.selectAccount' : 'connection.noAccounts');
+    if (this.polkadotJsAccounts.length) return this.t('connection.selectAccount');
+    return this.t('connection.noAccounts', { extension: this.selectedExtension });
   }
 
   async handleActionClick(): Promise<void> {
