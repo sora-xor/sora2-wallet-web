@@ -43,7 +43,7 @@
             </template>
             <template #name>{{ wallet.title }}</template>
             <template #default v-if="!wallet.installed">
-              <a :href="wallet.installUrl" target="_blank" rel="nofollow noopener noreferrer">
+              <a :href="getWalletInstallUrl(wallet)" target="_blank" rel="nofollow noopener noreferrer">
                 <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
               </a>
             </template>
@@ -74,7 +74,7 @@ import AccountCard from '../AccountCard.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
 import { state, action } from '../../store/decorators';
-import { AppError } from '../../util';
+import { AppError, getWalletInstallUrl } from '../../util';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Extensions } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
@@ -91,6 +91,8 @@ enum Step {
 export default class ExtensionConnection extends Mixins(TranslationMixin, LoadingMixin) {
   readonly Step = Step;
   step = Step.First;
+
+  readonly getWalletInstallUrl = getWalletInstallUrl;
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
