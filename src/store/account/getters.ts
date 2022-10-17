@@ -1,5 +1,6 @@
 import { defineGetters } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
+import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Blacklist, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import { accountGetterContext } from './../account';
@@ -27,6 +28,15 @@ const getters = defineGetters<AccountState>()({
       name: state.name,
       source: state.source as Extensions,
     };
+  },
+  selectedWalletTitle(...args): string {
+    const { state } = accountGetterContext(args);
+
+    if (!state.selectedExtension) return '';
+
+    const wallet = state.availableWallets.find((wallet) => wallet.extensionName === state.selectedExtension);
+
+    return wallet ? wallet.title : state.selectedExtension;
   },
   polkadotJsAccounts(...args): Array<PolkadotJsAccount> {
     const { state } = accountGetterContext(args);
