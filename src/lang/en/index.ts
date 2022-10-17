@@ -97,23 +97,18 @@ export default {
   },
   polkadotjs: {
     noExtensions:
-      'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
+      'No Polkadot{.js} extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
     noExtension: 'No {extension} extension was found. Please install it and reload this page',
-    noAccounts: 'There seems to be no accounts in your Polkadot.js extension. Please add an account and try again.',
+    noAccounts: 'There seems to be no accounts in your {extension} extension. Please add an account and try again.',
     noAccount: '{extension} account error. Please check your account in the {extension} extension',
     noSigner: 'Access denied. Go to {extension} extension settings and open "Manage Website Access" to allow.',
   },
   connection: {
     title: 'SORA Network account',
-    text: 'Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
-    install:
-      'No polkadot.js extension found. Install it and <a href="#" onclick="window.location.reload(true);" class="wallet-connection-link">reload</a> the page.<br/><span class="wallet-connection-link">https://polkadot.js.org/extension/</span>',
-    noPermissions:
-      'Accidentally denied access for polkadot{.js}?</br>Go to polkadot{.js} settings and open "Manage Website Access" to allow.',
-    noAccounts: 'No account found in your polkadot{.js} browser extension. Please add an account and try again.',
+    text: 'Connect your SORA Network accounts or create new ones with Polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
+    noAccounts: 'No account found in your {extension} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
     selectWallet: 'Select a wallet to work with',
-    loadingTitle: 'Waiting for you to allow access to polkadot{.js} extension..',
     action: {
       install: 'Install extension',
       learnMore: 'Learn more',

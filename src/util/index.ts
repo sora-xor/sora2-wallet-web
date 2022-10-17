@@ -89,13 +89,14 @@ export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wall
   const wallet = getWalletByExtension(extension);
 
   if (!wallet) {
+    // we haven't wallet data, so extension key used in translation
     throw new AppError({ key: 'polkadotjs.noExtension', payload: { extension } });
   }
 
   await wallet.enable();
 
   if (!wallet.signer) {
-    throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension } });
+    throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension: wallet.title } });
   }
 
   return wallet;
@@ -111,13 +112,13 @@ export const getExtensionSigner = async (address: string, extension: Extensions)
   const accounts = await wallet.getAccounts();
 
   if (!accounts) {
-    throw new AppError({ key: 'polkadotjs.noAccounts', payload: { extension } });
+    throw new AppError({ key: 'polkadotjs.noAccounts', payload: { extension: wallet.title } });
   }
 
   const account = accounts.find((acc) => acc.address === address);
 
   if (!account) {
-    throw new AppError({ key: 'polkadotjs.noAccount', payload: { extension } });
+    throw new AppError({ key: 'polkadotjs.noAccount', payload: { extension: wallet.title } });
   }
 
   return { account: formatWalletAccount(account), signer: wallet.signer as Signer };
