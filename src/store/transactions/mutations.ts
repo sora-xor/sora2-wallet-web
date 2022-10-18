@@ -3,6 +3,7 @@ import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../../api';
 import type { TransactionsState } from './types';
+import type { EthBridgeUpdateHistory } from '../../consts';
 import type { PageInfo } from '../../services/subquery/types';
 
 const mutations = defineMutations<TransactionsState>()({
@@ -32,8 +33,13 @@ const mutations = defineMutations<TransactionsState>()({
     state.selectedTxId = null;
   },
   getHistory(state): void {
+    // show eth bridge history, if update fn exists
+    const ethBridgeHistory = state.updateEthBridgeHistory ? api.bridge.history : {};
     // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes
-    state.history = Object.freeze(api.history);
+    state.history = Object.freeze({ ...api.history, ...ethBridgeHistory });
+  },
+  setEthBridgeHistoryUpdateFn(state, updateEthBridgeHistory: EthBridgeUpdateHistory): void {
+    state.updateEthBridgeHistory = updateEthBridgeHistory;
   },
   setExternalHistory(state, history: AccountHistory<HistoryItem>): void {
     state.externalHistory = Object.freeze(history);

@@ -1,9 +1,11 @@
 import { Operation, TransactionStatus } from '@sora-substrate/util';
 import { BalanceType } from '@sora-substrate/util/build/assets/consts';
 
-import { AddAssetTabs, TokenTabs, WalletTabs } from '../../consts';
+import { AddAssetTabs, TokenTabs, WalletTabs, SoraNetwork } from '../../consts';
 
 export default {
+  soraText: 'SORA',
+  ethereumText: 'Ethereum',
   closeText: 'Close',
   backText: 'Back',
   createWalletText: 'Create wallet',
@@ -54,6 +56,8 @@ export default {
     [Operation.DemeterFarmingStakeToken]: 'Add Stake',
     [Operation.DemeterFarmingUnstakeToken]: 'Remove Stake',
     [Operation.DemeterFarmingGetRewards]: 'Claim Rewards',
+    [Operation.EthBridgeIncoming]: 'Hashi Bridge',
+    [Operation.EthBridgeOutgoing]: 'Hashi Bridge',
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
@@ -72,6 +76,8 @@ export default {
       [Operation.DemeterFarmingStakeToken]: 'Added {amount} {symbol} for staking',
       [Operation.DemeterFarmingUnstakeToken]: 'Removed {amount} {symbol} from staking',
       [Operation.DemeterFarmingGetRewards]: '{amount} {symbol} claimed successfully',
+      [Operation.EthBridgeIncoming]: 'Transfered {amount} {symbol} from Ethereum to SORA',
+      [Operation.EthBridgeOutgoing]: 'Transfered {amount} {symbol} from SORA to Ethereum',
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
@@ -93,6 +99,8 @@ export default {
       [Operation.DemeterFarmingStakeToken]: 'Failed to add {amount} {symbol} for staking',
       [Operation.DemeterFarmingUnstakeToken]: 'Failed to remove {amount} {symbol} from staking',
       [Operation.DemeterFarmingGetRewards]: 'Failed to claim {symbol}',
+      [Operation.EthBridgeIncoming]: 'Failed to transfer {amount} {symbol} from Ethereum to SORA',
+      [Operation.EthBridgeOutgoing]: 'Failed to transfer {amount} {symbol} from SORA to Ethereum',
     },
   },
   polkadotjs: {
@@ -439,5 +447,21 @@ export default {
     multicollateralBondingCurvePool: {
       PriceCalculationFailed: 'An error occurred while calculating the price',
     },
+  },
+  bridgeTransaction: {
+    steps: {
+      step: '{step} of 2',
+      step1: '1st',
+      step2: '2nd',
+    },
+    networkTitle: '{network} transaction',
+    viewInEtherscan: 'View in Etherscan',
+    transactionHash: 'Transaction hash',
+  },
+  sora: {
+    [SoraNetwork.Dev]: '@:soraText Devnet',
+    [SoraNetwork.Test]: '@:soraText Testnet',
+    [SoraNetwork.Stage]: '@:soraText Testnet',
+    [SoraNetwork.Prod]: '@:soraText Mainnet',
   },
 };
