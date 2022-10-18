@@ -53,6 +53,8 @@ export enum HashType {
   ID = 'id',
   Block = 'block',
   Account = 'account',
+  EthAccount = 'ethAccount',
+  EthTransaction = 'ethTransaction',
 }
 
 export enum ExplorerType {
@@ -93,6 +95,8 @@ export interface WalletPermissions {
   swapAssets?: boolean;
 }
 
+export type EthBridgeUpdateHistory = (updateWalletHistory: VoidFunction) => Promise<void>;
+
 export interface WalletAssetFilters {
   option: string;
   verifiedOnly: boolean;
@@ -103,6 +107,7 @@ export interface WalletInitOptions {
   withoutStore?: boolean;
   whiteListOverApi?: boolean;
   permissions?: WalletPermissions;
+  updateEthBridgeHistory?: EthBridgeUpdateHistory;
 }
 
 export interface NetworkFeeWarningOptions {
@@ -137,6 +142,19 @@ export enum PaginationButton {
   Prev = 'prev',
   Next = 'next',
   Last = 'last',
+}
+
+// states for Ethereum Bridge transaction
+export enum ETH_BRIDGE_STATES {
+  INITIAL = 'INITIAL',
+  SORA_SUBMITTED = 'SORA_SUBMITTED',
+  SORA_PENDING = 'SORA_PENDING',
+  SORA_REJECTED = 'SORA_REJECTED',
+  SORA_COMMITED = 'SORA_COMMITED',
+  EVM_SUBMITTED = 'EVM_SUBMITTED',
+  EVM_PENDING = 'EVM_PENDING',
+  EVM_REJECTED = 'EVM_REJECTED',
+  EVM_COMMITED = 'EVM_COMMITED',
 }
 
 export const ObjectInit = () => null;

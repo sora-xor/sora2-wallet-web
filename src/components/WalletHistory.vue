@@ -22,11 +22,7 @@
             <div class="history-item-info">
               <div class="history-item-operation ch3" :data-type="item.type">{{ t(`operations.${item.type}`) }}</div>
               <div class="history-item-title p4">{{ getMessage(item, shouldBalanceBeHidden) }}</div>
-              <s-icon
-                v-if="!isFinalizedStatus(item.status)"
-                :class="getStatusClass(item.status)"
-                :name="getStatusIcon(item.status)"
-              />
+              <s-icon v-if="!isFinalizedStatus(item)" :class="getStatusClass(item)" :name="getStatusIcon(item)" />
             </div>
             <div class="history-item-date">{{ formatDate(item.startTime) }}</div>
           </div>
@@ -51,17 +47,19 @@ import debounce from 'lodash/debounce';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 import { History, TransactionStatus } from '@sora-substrate/util';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
-import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
+import type { AccountHistory, HistoryItem, Operation, BridgeHistory } from '@sora-substrate/util';
 
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 import PaginationSearchMixin from './mixins/PaginationSearchMixin';
+import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
 import SearchInput from './SearchInput.vue';
 import HistoryPagination from './HistoryPagination.vue';
 import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames, PaginationButton } from '../consts';
 import { state, mutation, action } from '../store/decorators';
 import { SubqueryDataParserService } from '../services/subquery';
+import type { EthBridgeUpdateHistory } from '../consts';
 import type { ExternalHistoryParams } from '../types/history';
 import type { Route } from '../store/router/types';
 
@@ -71,11 +69,17 @@ import type { Route } from '../store/router/types';
     HistoryPagination,
   },
 })
-export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin, PaginationSearchMixin) {
+export default class WalletHistory extends Mixins(
+  LoadingMixin,
+  TransactionMixin,
+  PaginationSearchMixin,
+  EthBridgeTransactionMixin
+) {
   @state.account.assets private assets!: Array<Asset>;
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistory private externalHistory!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistoryTotal private externalHistoryTotal!: number;
+  @state.transactions.updateEthBridgeHistory private updateEthBridgeHistory!: Nullable<EthBridgeUpdateHistory>;
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
@@ -165,6 +169,9 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
   }
 
   async mounted() {
+    if (this.updateEthBridgeHistory) {
+      this.updateEthBridgeHistory(this.getHistory);
+    }
     this.updateHistory(true, 1, true);
   }
 
@@ -198,25 +205,36 @@ export default class WalletHistory extends Mixins(LoadingMixin, TransactionMixin
     );
   }
 
-  getStatus(status: string): string {
-    if ([TransactionStatus.Error, TransactionStatus.Invalid].includes(status as TransactionStatus)) {
+  private getStatus(item: HistoryItem): string {
+    let status = 'success';
+
+    if (this.isErrorStatus(item)) {
       status = TransactionStatus.Error;
-    } else if (!this.isFinalizedStatus(status)) {
+    } else if (!this.isFinalizedStatus(item)) {
       status = 'in_progress';
     }
+
     return status.toUpperCase();
   }
 
-  getStatusClass(status?: string): string {
-    return getStatusClass(this.getStatus(status || ''));
+  getStatusClass(item: HistoryItem): string {
+    return getStatusClass(this.getStatus(item));
   }
 
-  getStatusIcon(status?: string): string {
-    return getStatusIcon(this.getStatus(status || ''));
+  getStatusIcon(item: HistoryItem): string {
+    return getStatusIcon(this.getStatus(item));
   }
 
-  isFinalizedStatus(status?: TransactionStatus | string): boolean {
-    return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(status as TransactionStatus);
+  isFinalizedStatus(item: HistoryItem): boolean {
+    if (this.isEthBridgeTx(item)) return this.isEthBridgeTxToCompleted(item);
+
+    return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(item.status as TransactionStatus);
+  }
+
+  private isErrorStatus(item: HistoryItem): boolean {
+    if (this.isEthBridgeTx(item)) return this.isEthBridgeTxFromFailed(item) || this.isEthBridgeTxToFailed(item);
+
+    return [TransactionStatus.Error, TransactionStatus.Invalid].includes(item.status as TransactionStatus);
   }
 
   handleOpenTransactionDetails(id?: string): void {
