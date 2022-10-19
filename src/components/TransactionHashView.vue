@@ -15,20 +15,26 @@
       type="ellipsis"
       icon="basic-more-vertical-24"
       placement="bottom-end"
+      @select="isEthHash ? handleOpenEtherscan() : undefined"
     >
       <template slot="menu">
-        <a
-          v-for="link in explorerLinks"
-          :key="link.type"
-          class="transaction-link"
-          :href="link.value"
-          target="_blank"
-          rel="nofollow noopener"
-        >
-          <s-dropdown-item class="s-dropdown-menu__item">
-            {{ t(`transaction.viewIn.${link.type}`) }}
-          </s-dropdown-item>
-        </a>
+        <s-dropdown-item v-if="isEthHash" class="s-dropdown-menu__item">
+          <span>{{ t('bridgeTransaction.viewInEtherscan') }}</span>
+        </s-dropdown-item>
+        <template v-else>
+          <a
+            v-for="link in explorerLinks"
+            :key="link.type"
+            class="transaction-link"
+            :href="link.value"
+            target="_blank"
+            rel="nofollow noopener"
+          >
+            <s-dropdown-item class="s-dropdown-menu__item">
+              {{ t(`transaction.viewIn.${link.type}`) }}
+            </s-dropdown-item>
+          </a>
+        </template>
       </template>
     </s-dropdown>
   </div>
@@ -48,8 +54,13 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
   @Prop({ type: String, required: true }) readonly value!: string;
   @Prop({ type: String, required: true }) readonly type!: HashType;
   @Prop({ type: String, required: true }) readonly translation!: string;
+  @Prop({ type: String, default: '' }) readonly hash!: string;
 
   @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
+
+  get isEthHash(): boolean {
+    return [HashType.EthAccount, HashType.EthTransaction].includes(this.type);
+  }
 
   get formattedValue(): string {
     if (this.type === HashType.Account) {
@@ -58,7 +69,13 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
     return this.value;
   }
 
+  get displayValue(): string {
+    return this.hash || this.formattedValue;
+  }
+
   get explorerLinks(): Array<ExplorerLink> {
+    if (this.isEthHash) return [];
+
     const baseLinks = getExplorerLinks(this.soraNetwork);
     if ([HashType.Account, HashType.Block].includes(this.type)) {
       return baseLinks.map(({ type, value }) => ({ type, value: `${value}/${this.type}/${this.formattedValue}` }));
@@ -75,7 +92,15 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
   }
 
   get formattedAddress(): string {
-    return formatAddress(this.formattedValue, 24);
+    return formatAddress(this.displayValue, 24);
+  }
+
+  handleOpenEtherscan(): void {
+    const path = this.type === HashType.EthAccount ? 'address' : 'tx';
+    const base = this.soraNetwork !== SoraNetwork.Prod ? 'sepolia' + '.' : '';
+    const url = `https://${base}etherscan.io/${path}/${this.value}`;
+    const win = window.open(url, '_blank');
+    win && win.focus();
   }
 }
 </script>

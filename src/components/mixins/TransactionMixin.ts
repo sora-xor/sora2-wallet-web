@@ -55,6 +55,8 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
         Operation.DemeterFarmingGetRewards,
         Operation.DemeterFarmingStakeToken,
         Operation.DemeterFarmingUnstakeToken,
+        Operation.EthBridgeIncoming,
+        Operation.EthBridgeOutgoing,
       ].includes(value.type)
     ) {
       params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
