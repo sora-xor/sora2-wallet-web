@@ -35,10 +35,11 @@
           :asset-symbol="transactionSymbol2"
         />
         <info-line
+          v-if="transactionFromFee"
           is-formatted
           value-can-be-hidden
           :label="t('transaction.fee')"
-          :value="getNetworkFee(isSoraTx)"
+          :value="transactionFromFee"
           :asset-symbol="getNetworkFeeSymbol(isSoraTx)"
         />
       </div>
@@ -83,7 +84,7 @@
           is-formatted
           value-can-be-hidden
           :label="t('transaction.fee')"
-          :value="getNetworkFee(!isSoraTx)"
+          :value="transactionToFee"
           :asset-symbol="getNetworkFeeSymbol(!isSoraTx)"
         />
       </div>
@@ -211,6 +212,15 @@ export default class WalletTransactionDetails extends Mixins(
     return this.selectedTransaction.symbol2 || '';
   }
 
+  get transactionFromFee(): Nullable<string> {
+    return this.getNetworkFee(this.isSoraTx);
+  }
+
+  // ETH BRIDGE transaction
+  get transactionToFee(): Nullable<string> {
+    return this.getNetworkFee(!this.isSoraTx);
+  }
+
   get transactionFromDate(): Nullable<string> {
     if (!this.selectedTransaction.startTime) return null;
 
@@ -297,16 +307,18 @@ export default class WalletTransactionDetails extends Mixins(
     return this.t('ethereumText');
   }
 
-  public getNetworkFee(isSoraTx = true): string {
-    if (isSoraTx) {
-      return this.formatCodecNumber(this.selectedTransaction.soraNetworkFee as string);
-    } else {
-      return this.formatCodecNumber((this.selectedTransaction as BridgeHistory).ethereumNetworkFee as string);
-    }
-  }
-
   public getNetworkFeeSymbol(isSoraTx = true): string {
     return isSoraTx ? KnownSymbols.XOR : KnownSymbols.ETH;
+  }
+
+  private getNetworkFee(isSoraTx = true): Nullable<string> {
+    const fee = isSoraTx
+      ? this.selectedTransaction.soraNetworkFee
+      : (this.selectedTransaction as BridgeHistory).ethereumNetworkFee;
+
+    if (!fee) return null;
+
+    return this.formatCodecNumber(fee);
   }
 
   private getTransactionHashData(isSoraTx = true): {
