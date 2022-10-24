@@ -6,9 +6,11 @@ function initialState(): TransactionsState {
     externalHistory: {},
     externalHistoryTotal: 0,
     externalHistoryPagination: null,
+    externalHistorySubscription: null,
     activeTxsIds: [],
     updateActiveTxsId: null,
     selectedTxId: null,
+    updateEthBridgeHistory: null,
   };
 }
 

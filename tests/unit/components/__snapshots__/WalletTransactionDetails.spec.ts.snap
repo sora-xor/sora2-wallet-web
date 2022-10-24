@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rendered correctly 1`] = `
-<wallet-base-stub
-  showback="true"
-  showheader="true"
-  title="Add Liquidity"
-  tooltip=""
+<div
+  class="transaction-container"
 >
   <div
     class="transaction"
   >
+    <!---->
+     
     <transaction-hash-view-stub
-      translation="transaction.blockId"
+      hash=""
+      translation="transaction.txId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
@@ -71,9 +71,21 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         valuecanbehidden="true"
         valuetooltip=""
       />
+       
+      <info-line-stub
+        assetsymbol="XOR"
+        fiatvalue=""
+        isformatted="true"
+        label="Transaction Fee"
+        labeltooltip=""
+        value="0.0007"
+        valuecanbehidden="true"
+        valuetooltip=""
+      />
     </div>
      
     <transaction-hash-view-stub
+      hash=""
       translation="transaction.from"
       type="account"
       value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
@@ -81,21 +93,23 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
      
     <!---->
   </div>
-</wallet-base-stub>
+   
+  <!---->
+</div>
 `;
 
 exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rendered correctly 1`] = `
-<wallet-base-stub
-  showback="true"
-  showheader="true"
-  title="Register Asset"
-  tooltip=""
+<div
+  class="transaction-container"
 >
   <div
     class="transaction"
   >
+    <!---->
+     
     <transaction-hash-view-stub
-      translation="transaction.blockId"
+      hash=""
+      translation="transaction.txId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
@@ -137,9 +151,21 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
       <!---->
        
       <!---->
+       
+      <info-line-stub
+        assetsymbol="XOR"
+        fiatvalue=""
+        isformatted="true"
+        label="Transaction Fee"
+        labeltooltip=""
+        value="0.0007"
+        valuecanbehidden="true"
+        valuetooltip=""
+      />
     </div>
      
     <transaction-hash-view-stub
+      hash=""
       translation="transaction.from"
       type="account"
       value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
@@ -147,21 +173,23 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
      
     <!---->
   </div>
-</wallet-base-stub>
+   
+  <!---->
+</div>
 `;
 
 exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be rendered correctly 1`] = `
-<wallet-base-stub
-  showback="true"
-  showheader="true"
-  title="Remove Liquidity"
-  tooltip=""
+<div
+  class="transaction-container"
 >
   <div
     class="transaction"
   >
+    <!---->
+     
     <transaction-hash-view-stub
-      translation="transaction.blockId"
+      hash=""
+      translation="transaction.txId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
@@ -212,9 +240,21 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
       />
        
       <!---->
+       
+      <info-line-stub
+        assetsymbol="XOR"
+        fiatvalue=""
+        isformatted="true"
+        label="Transaction Fee"
+        labeltooltip=""
+        value="0.0007"
+        valuecanbehidden="true"
+        valuetooltip=""
+      />
     </div>
      
     <transaction-hash-view-stub
+      hash=""
       translation="transaction.from"
       type="account"
       value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
@@ -222,21 +262,23 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
      
     <!---->
   </div>
-</wallet-base-stub>
+   
+  <!---->
+</div>
 `;
 
 exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctly 1`] = `
-<wallet-base-stub
-  showback="true"
-  showheader="true"
-  title="Swap"
-  tooltip=""
+<div
+  class="transaction-container"
 >
   <div
     class="transaction"
   >
+    <!---->
+     
     <transaction-hash-view-stub
-      translation="transaction.blockId"
+      hash=""
+      translation="transaction.txId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
@@ -306,9 +348,21 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         valuecanbehidden="true"
         valuetooltip=""
       />
+       
+      <info-line-stub
+        assetsymbol="XOR"
+        fiatvalue=""
+        isformatted="true"
+        label="Transaction Fee"
+        labeltooltip=""
+        value="0.0007"
+        valuecanbehidden="true"
+        valuetooltip=""
+      />
     </div>
      
     <transaction-hash-view-stub
+      hash=""
       translation="transaction.from"
       type="account"
       value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
@@ -316,20 +370,22 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
      
     <!---->
   </div>
-</wallet-base-stub>
+   
+  <!---->
+</div>
 `;
 
 exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered correctly 1`] = `
-<wallet-base-stub
-  showback="true"
-  showheader="true"
-  title="Transfer"
-  tooltip=""
+<div
+  class="transaction-container"
 >
   <div
     class="transaction"
   >
+    <!---->
+     
     <transaction-hash-view-stub
+      hash="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
       translation="transaction.txId"
       type="id"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
@@ -381,19 +437,34 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
       />
        
       <!---->
+       
+      <info-line-stub
+        assetsymbol="XOR"
+        fiatvalue=""
+        isformatted="true"
+        label="Transaction Fee"
+        labeltooltip=""
+        value="0.0007"
+        valuecanbehidden="true"
+        valuetooltip=""
+      />
     </div>
      
     <transaction-hash-view-stub
+      hash=""
       translation="transaction.from"
       type="account"
       value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
      
     <transaction-hash-view-stub
+      hash=""
       translation="transaction.to"
       type="account"
       value="cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse"
     />
   </div>
-</wallet-base-stub>
+   
+  <!---->
+</div>
 `;

@@ -1,5 +1,6 @@
 import { Extensions } from '../consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+export type { KeyringPair$Json } from '@polkadot/keyring/types';
 
 export enum Modules {
   Account = 'Account',
@@ -15,6 +16,10 @@ export enum Operations {
   Liquidity = 'liquidity',
   Bridge = 'bridge',
 }
+
+export type AddressKeyMapping = {
+  [key: string]: string | null;
+};
 
 export interface PolkadotJsAccount {
   address: string;

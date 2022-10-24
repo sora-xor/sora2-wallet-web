@@ -24,14 +24,18 @@ export function initialState(): AccountState {
     polkadotJsAccounts: [],
     polkadotJsAccountsSubscription: null,
     whitelistArray: [],
+    blacklistArray: [],
     withoutFiatAndApy: false,
     fiatPriceAndApyObject: {},
-    fiatPriceAndApyTimer: null,
+    fiatPriceAndApySubscription: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
     selectedExtension: null,
     availableWallets: [],
     extensionAvailabilityTimer: null,
+    /** desktop key management */
+    addressKeyMapping: {},
+    addressPassphraseMapping: {},
   };
 }
 

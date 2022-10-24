@@ -1,113 +1,122 @@
 <template>
-  <wallet-base :title="asset.name" show-back @back="handleBack">
-    <template #actions>
+  <wallet-base :title="headerTitle" show-back :reset-focus="hasResetFocus" @back="handleBack">
+    <template v-if="!selectedTransaction" #actions>
       <s-button v-if="!isXor" type="action" :tooltip="t('asset.remove')" @click="handleRemoveAsset">
         <s-icon name="basic-eye-24" size="28" />
       </s-button>
     </template>
-    <s-card class="asset-details" primary>
-      <div class="asset-details-container s-flex">
-        <nft-details
-          v-if="isNft"
-          is-asset-details
-          :content-link="nftContentLink"
-          :token-name="asset.name"
-          :token-symbol="asset.symbol"
-          :token-description="asset.description"
-          @click-details="handleClickNftDetails"
-        />
-        <template v-else>
-          <token-logo :token="asset" size="bigger" />
-          <div :style="balanceStyles" :class="balanceDetailsClasses" @click="isXor && handleClickDetailedBalance()">
-            <formatted-amount
-              value-can-be-hidden
-              symbol-as-decimal
-              :value="balance"
-              :font-size-rate="FontSizeRate.SMALL"
-              :asset-symbol="asset.symbol"
+    <template v-if="!selectedTransaction">
+      <s-card class="asset-details" primary>
+        <div class="asset-details-container s-flex">
+          <nft-details
+            v-if="isNft"
+            is-asset-details
+            :content-link="nftContentLink"
+            :token-name="asset.name"
+            :token-symbol="asset.symbol"
+            :token-description="asset.description"
+            @click-details="handleClickNftDetails"
+          />
+          <template v-else>
+            <token-logo :token="asset" size="bigger" />
+            <div
+              v-button="isXor"
+              :style="balanceStyles"
+              :class="balanceDetailsClasses"
+              :tabindex="isXor ? 0 : -1"
+              @click="isXor && handleClickDetailedBalance()"
             >
-              <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
-            </formatted-amount>
+              <formatted-amount
+                value-can-be-hidden
+                symbol-as-decimal
+                :value="balance"
+                :font-size-rate="FontSizeRate.SMALL"
+                :asset-symbol="asset.symbol"
+              >
+                <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
+              </formatted-amount>
+            </div>
+          </template>
+          <formatted-amount
+            v-if="price && !isNft"
+            value-can-be-hidden
+            is-fiat-value
+            :value="getFiatBalance(asset)"
+            :font-size-rate="FontSizeRate.MEDIUM"
+          />
+          <div class="asset-details-actions">
+            <s-button
+              v-for="operation in operations"
+              :key="operation.type"
+              :class="['asset-details-action', operation.type]"
+              :tooltip="getOperationTooltip(operation)"
+              :disabled="isOperationDisabled(operation.type)"
+              type="action"
+              size="medium"
+              rounded
+              primary
+              @click="handleOperation(operation.type)"
+            >
+              <s-icon :name="operation.icon" size="28" />
+            </s-button>
+
+            <qr-code-scan-button primary @change="parseQrCodeValue" />
+
+            <s-button type="action" primary rounded :tooltip="t('code.receive')" @click="receiveByQrCode(asset)">
+              <s-icon name="finance-receive-show-QR-24" size="28" />
+            </s-button>
           </div>
-        </template>
-        <formatted-amount
-          v-if="price && !isNft"
-          value-can-be-hidden
-          is-fiat-value
-          :value="getFiatBalance(asset)"
-          :font-size-rate="FontSizeRate.MEDIUM"
-        />
-        <div class="asset-details-actions">
-          <s-button
-            v-for="operation in operations"
-            :key="operation.type"
-            :class="['asset-details-action', operation.type]"
-            :tooltip="getOperationTooltip(operation)"
-            :disabled="isOperationDisabled(operation.type)"
-            type="action"
-            size="medium"
-            rounded
-            primary
-            @click="handleOperation(operation.type)"
-          >
-            <s-icon :name="operation.icon" size="28" />
-          </s-button>
-
-          <qr-code-scan-button primary @change="parseQrCodeValue" />
-
-          <s-button type="action" primary rounded :tooltip="t('code.receive')" @click="receiveByQrCode(asset)">
-            <s-icon name="finance-receive-show-QR-24" size="28" />
-          </s-button>
+          <transition name="fadeHeight">
+            <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
+              <div v-for="balanceType in balanceTypes" :key="balanceType" class="balance s-flex p4">
+                <div class="balance-label">{{ t(`assets.balance.${balanceType}`) }}</div>
+                <formatted-amount-with-fiat-value
+                  value-can-be-hidden
+                  value-class="balance-value"
+                  :value="formatBalance(asset.balance[balanceType])"
+                  :font-size-rate="FontSizeRate.MEDIUM"
+                  :font-weight-rate="FontWeightRate.SMALL"
+                  :asset-symbol="asset.symbol"
+                  :fiat-value="getFiatBalance(asset, balanceType)"
+                  fiat-format-as-value
+                  with-left-shift
+                />
+              </div>
+              <div class="balance s-flex p4">
+                <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
+                <formatted-amount-with-fiat-value
+                  value-can-be-hidden
+                  value-class="balance-value"
+                  :value="totalBalance"
+                  :font-size-rate="FontSizeRate.MEDIUM"
+                  :font-weight-rate="FontWeightRate.SMALL"
+                  :asset-symbol="asset.symbol"
+                  :fiat-value="getFiatBalance(asset, BalanceType.Total)"
+                  fiat-format-as-value
+                  with-left-shift
+                />
+              </div>
+            </div>
+          </transition>
         </div>
+      </s-card>
+      <div v-if="isNft" class="asset-details-nft-container">
         <transition name="fadeHeight">
-          <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
-            <div v-for="type in balanceTypes" :key="type" class="balance s-flex p4">
-              <div class="balance-label">{{ t(`assets.balance.${type}`) }}</div>
-              <formatted-amount-with-fiat-value
-                value-can-be-hidden
-                value-class="balance-value"
-                :value="formatBalance(asset.balance[type])"
-                :font-size-rate="FontSizeRate.MEDIUM"
-                :font-weight-rate="FontWeightRate.SMALL"
-                :asset-symbol="asset.symbol"
-                :fiat-value="getFiatBalance(asset, type)"
-                fiat-format-as-value
-                with-left-shift
-              />
-            </div>
-            <div class="balance s-flex p4">
-              <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
-              <formatted-amount-with-fiat-value
-                value-can-be-hidden
-                value-class="balance-value"
-                :value="totalBalance"
-                :font-size-rate="FontSizeRate.MEDIUM"
-                :font-weight-rate="FontWeightRate.SMALL"
-                :asset-symbol="asset.symbol"
-                :fiat-value="getFiatBalance(asset, BalanceType.Total)"
-                fiat-format-as-value
-                with-left-shift
-              />
-            </div>
+          <div v-if="wasNftDetailsClicked" class="info-line-container">
+            <info-line :label="t('createToken.nft.supply.quantity')" :value="balance" />
+            <info-line
+              class="external-link"
+              :label="t('createToken.nft.source.label')"
+              :value="displayedNftContentLink"
+              :value-tooltip="nftLinkTooltipText"
+              @click.native.stop="handleCopyNftLink"
+            />
           </div>
         </transition>
       </div>
-    </s-card>
-    <div v-if="isNft" class="asset-details-nft-container">
-      <transition name="fadeHeight">
-        <div v-if="wasNftDetailsClicked" class="info-line-container">
-          <info-line :label="t('createToken.nft.supply.quantity')" :value="balance" />
-          <info-line
-            class="external-link"
-            :label="t('createToken.nft.source.label')"
-            :value="displayedNftContentLink"
-            :value-tooltip="nftLinkTooltipText"
-            @click.native.stop="handleCopyNftLink"
-          />
-        </div>
-      </transition>
-    </div>
-    <wallet-history :asset="asset" />
+    </template>
+    <wallet-transaction-details v-else />
+    <wallet-history v-show="!selectedTransaction" :asset="asset" />
   </wallet-base>
 </template>
 
@@ -123,6 +132,7 @@ import NftDetails from './NftDetails.vue';
 import InfoLine from './InfoLine.vue';
 import TokenLogo from './TokenLogo.vue';
 import WalletHistory from './WalletHistory.vue';
+import WalletTransactionDetails from './WalletTransactionDetails.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import { api } from '../api';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -132,8 +142,8 @@ import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import { RouteNames } from '../consts';
 import { copyToClipboard, delay, shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';
-import { state, getter } from '../store/decorators';
-import { Operations, PolkadotJsAccount } from '../types/common';
+import { state, getter, mutation } from '../store/decorators';
+import { Operations } from '../types/common';
 import type { WalletPermissions } from '../consts';
 
 interface Operation {
@@ -147,6 +157,7 @@ interface Operation {
     FormattedAmount,
     FormattedAmountWithFiatValue,
     WalletHistory,
+    WalletTransactionDetails,
     QrCodeScanButton,
     NftDetails,
     InfoLine,
@@ -161,7 +172,8 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @state.settings.permissions private permissions!: WalletPermissions;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
-  @getter.account.account private account!: PolkadotJsAccount;
+  @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
+  @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: VoidFn;
 
   wasBalanceDetailsClicked = false;
 
@@ -170,8 +182,18 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   wasNftDetailsClicked = false;
   nftContentLink = '';
 
+  get hasResetFocus(): string {
+    return this.selectedTransaction && this.selectedTransaction.id
+      ? this.selectedTransaction.id.toString()
+      : this.wasBalanceDetailsClicked.toString();
+  }
+
   get isNft(): boolean {
     return api.assets.isNft(this.asset);
+  }
+
+  get headerTitle(): string {
+    return !this.selectedTransaction ? this.asset.name : this.t(`operations.${this.selectedTransaction.type}`);
   }
 
   get nftLinkTooltipText(): string {
@@ -294,7 +316,11 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   handleBack(): void {
-    this.navigate({ name: RouteNames.Wallet });
+    if (this.selectedTransaction) {
+      this.resetTxDetailsId();
+    } else {
+      this.navigate({ name: RouteNames.Wallet });
+    }
   }
 
   getOperationTooltip(operation: Operation): string {
@@ -361,6 +387,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
     text-align: center;
     &--clickable {
       cursor: pointer;
+      @include focus-outline($withOffset: true);
     }
     & + .formatted-amount--fiat-value {
       width: 100%;

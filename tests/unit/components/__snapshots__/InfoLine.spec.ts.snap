@@ -356,7 +356,7 @@ exports[`InfoLine.vue [With Label Tooltip]: should be rendered correctly 1`] = `
     placement="right-start"
     popperclass="info-tooltip info-tooltip--info-line"
     showarrow="true"
-    tabindex="0"
+    tabindex="-1"
     theme="auto"
     usedesignsystem="true"
   >

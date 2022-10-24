@@ -7,6 +7,7 @@ import installWalletPlugins from './plugins';
 import SoraWallet from './SoraWallet.vue';
 import WalletAccount from './components/WalletAccount.vue';
 import WalletAvatar from './components/WalletAvatar.vue';
+import WalletBase from './components/WalletBase.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
 import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
@@ -18,7 +19,10 @@ import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatVa
 import TransactionHashView from './components/TransactionHashView.vue';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import TokenLogo from './components/TokenLogo.vue';
+import HistoryPagination from './components/HistoryPagination.vue';
 import DialogBase from './components/DialogBase.vue';
+import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
+import ConfirmDialog from './components/ConfirmDialog.vue';
 // Mixins
 import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
@@ -30,6 +34,7 @@ import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
 import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 import CopyAddressMixin from './components/mixins/CopyAddressMixin';
 import DialogMixin from './components/mixins/DialogMixin';
+import ConfirmTransactionMixin from './components/mixins/ConfirmTransactionMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
@@ -70,19 +75,19 @@ if (typeof window !== 'undefined' && window.Vue) {
 
 async function initWallet({
   withoutStore = false,
-  whiteListOverApi = false,
   permissions,
+  updateEthBridgeHistory,
 }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
   if (!withoutStore && !store) {
     await delay();
-    return await initWallet({ withoutStore, whiteListOverApi, permissions });
+    return await initWallet({ withoutStore, permissions, updateEthBridgeHistory });
   } else {
     if (withoutStore) {
       store = internalStore;
     }
     if (connection.loading) {
       await delay();
-      return await initWallet({ withoutStore, whiteListOverApi, permissions });
+      return await initWallet({ withoutStore, permissions, updateEthBridgeHistory });
     }
     if (!connection.api) {
       await connection.open();
@@ -91,18 +96,31 @@ async function initWallet({
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);
     }
+    if (updateEthBridgeHistory) {
+      store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
+    }
     try {
-      api.initialize();
+      await api.initialize();
     } catch (error) {
       console.error('Something went wrong during api initialization', error);
       throw error;
     }
-    await store.dispatch.wallet.account.getWhitelist(whiteListOverApi);
+
+    await store.dispatch.wallet.account.getWhitelist();
+    await store.dispatch.wallet.account.getNftBlacklist();
+
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(),
+      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.settings.isDesktop),
     ]);
-    await store.dispatch.wallet.account.checkSigner();
+
+    if (store.state.wallet.settings.isDesktop) {
+      api.initAccountStorage();
+      await store.dispatch.wallet.account.getPolkadotJsAccounts();
+    } else {
+      await store.dispatch.wallet.account.checkSigner();
+    }
+
     store.commit.wallet.settings.setWalletLoaded(true);
   }
 }
@@ -111,9 +129,11 @@ const components = {
   SoraWallet,
   WalletAccount,
   WalletAvatar,
+  WalletBase,
   AssetList,
   AssetListItem,
   AddAssetDetailsCard,
+  ConfirmDialog,
   TokenAddress,
   SearchInput,
   InfoLine,
@@ -122,7 +142,9 @@ const components = {
   TransactionHashView,
   NetworkFeeWarning,
   TokenLogo,
+  HistoryPagination,
   DialogBase,
+  NotificationEnablingPage,
 };
 
 const mixins = {
@@ -136,6 +158,7 @@ const mixins = {
   PaginationSearchMixin,
   CopyAddressMixin,
   DialogMixin,
+  ConfirmTransactionMixin,
 };
 
 const vuex = {
@@ -165,4 +188,5 @@ export {
   VUEX_TYPES,
   vuex,
 };
+
 export default SoraWalletElements;

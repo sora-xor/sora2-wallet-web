@@ -1,9 +1,11 @@
 import { Operation, TransactionStatus } from '@sora-substrate/util';
 import { BalanceType } from '@sora-substrate/util/build/assets/consts';
 
-import { AddAssetTabs, TokenTabs, WalletTabs } from '../../consts';
+import { AddAssetTabs, TokenTabs, WalletTabs, SoraNetwork } from '../../consts';
 
 export default {
+  soraText: 'SORA',
+  ethereumText: 'Ethereum',
   closeText: 'Close',
   backText: 'Back',
   createWalletText: 'Create wallet',
@@ -33,8 +35,10 @@ export default {
   errorText: 'Error',
   insufficientBalanceText: 'Insufficient {tokenSymbol} balance',
   unknownErrorText: 'ERROR Something went wrong...',
+  enterAccountError: 'Unable to enter account',
   transactionSubmittedText: 'Transaction was submitted',
   assetDeposit: 'Asset balance has been deposited',
+  ofText: '{first} of {second}',
   operations: {
     [Operation.Swap]: 'Swap',
     [Operation.SwapAndSend]: 'Swap and Send',
@@ -52,11 +56,13 @@ export default {
     [Operation.DemeterFarmingStakeToken]: 'Add Stake',
     [Operation.DemeterFarmingUnstakeToken]: 'Remove Stake',
     [Operation.DemeterFarmingGetRewards]: 'Claim Rewards',
+    [Operation.EthBridgeIncoming]: 'Hashi Bridge',
+    [Operation.EthBridgeOutgoing]: 'Hashi Bridge',
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
       [Operation.Swap]: 'Swapped {amount} {symbol} for {amount2} {symbol2}',
-      [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and sent to {address}',
+      [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
       [Operation.AddLiquidity]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Removed {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
@@ -70,11 +76,14 @@ export default {
       [Operation.DemeterFarmingStakeToken]: 'Added {amount} {symbol} for staking',
       [Operation.DemeterFarmingUnstakeToken]: 'Removed {amount} {symbol} from staking',
       [Operation.DemeterFarmingGetRewards]: '{amount} {symbol} claimed successfully',
+      [Operation.EthBridgeIncoming]: 'Transfered {amount} {symbol} from Ethereum to SORA',
+      [Operation.EthBridgeOutgoing]: 'Transfered {amount} {symbol} from SORA to Ethereum',
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
       [Operation.Swap]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2}',
-      [Operation.SwapAndSend]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2} and send to {address}',
+      [Operation.SwapAndSend]:
+        'Failed to swap {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
       [Operation.AddLiquidity]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Failed to remove {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
@@ -90,20 +99,22 @@ export default {
       [Operation.DemeterFarmingStakeToken]: 'Failed to add {amount} {symbol} for staking',
       [Operation.DemeterFarmingUnstakeToken]: 'Failed to remove {amount} {symbol} from staking',
       [Operation.DemeterFarmingGetRewards]: 'Failed to claim {symbol}',
+      [Operation.EthBridgeIncoming]: 'Failed to transfer {amount} {symbol} from Ethereum to SORA',
+      [Operation.EthBridgeOutgoing]: 'Failed to transfer {amount} {symbol} from SORA to Ethereum',
     },
   },
   polkadotjs: {
     noExtensions:
-      'No {polkadotJs} extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
+      'No Polkadot{.js} extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
     noExtension: 'No {extension} extension was found. Please install it and reload this page',
-    noAccounts: 'There seems to be no accounts in your {polkadotJs} extension. Please add an account and try again.',
+    noAccounts: 'There seems to be no accounts in your {extension} extension. Please add an account and try again.',
     noAccount: '{extension} account error. Please check your account in the {extension} extension',
     noSigner: 'Access denied. Go to {extension} extension settings and open "Manage Website Access" to allow.',
   },
   connection: {
-    title: '{sora} Network account',
-    text: 'Connect your {sora} Network accounts or create new ones with {polkadotJs} browser extension. This extension allows you to securely sign transactions and manage assets in {sora} Network.',
-    noAccounts: 'No account found in your {polkadotJs} browser extension. Please add an account and try again.',
+    title: 'SORA Network account',
+    text: 'Connect your SORA Network accounts or create new ones with Polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
+    noAccounts: 'No account found in your {extension} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
     selectWallet: 'Select a wallet to work with',
     action: {
@@ -155,10 +166,14 @@ export default {
     filterPlaceholder: 'Filter by Address, Symbol, Type or Block ID',
     empty: 'Your transactions will appear here',
     emptySearch: 'No transactions found',
+    firstText: 'First',
+    lastText: 'Last',
+    prevText: 'Previous',
+    nextText: 'Next',
   },
   assets: {
     empty: 'There are no assets',
-    totalAssetsValue: 'Your total assets value:',
+    totalAssetsValue: 'Total assets value:',
     add: '@:addAssetText',
     swap: '@:swapText',
     send: '@:sendText',
@@ -191,6 +206,8 @@ export default {
     import: 'Import an image',
     scan: 'Scan with camera',
     allowanceError: 'Check your camera availability and browser permissions to use it',
+    camera: 'Camera',
+    allowanceRequest: 'Press “Allow” access to camera',
   },
   addAsset: {
     title: '@:addAssetText',
@@ -287,6 +304,15 @@ export default {
       desc: 'Ability of NFT to divide into fractional parts. Liquidity provisioning only works with divisible assets',
     },
   },
+  filter: {
+    all: 'All',
+    token: 'Tokens',
+    nft: 'NFTs',
+    verifiedOnly: 'Show verified assets only',
+    zeroBalance: 'Hide 0 balance assets',
+    showAssets: 'Show assets',
+    show: 'Show',
+  },
   transaction: {
     title: 'Transaction details',
     blockId: 'Block Id',
@@ -324,6 +350,62 @@ export default {
     payoff:
       'You would have to use the Bridge to get XOR from other networks, get sent XOR from another {sora} account, or swap any other token already in your account into XOR.',
     button: 'Yes, I understand the risk',
+  },
+  desktop: {
+    welcome: {
+      header: 'Welcome to Polkaswap!',
+      headline: 'Let’s set up your account',
+      text: 'Create your SORA Network account or log into the old ones using mnemonic phrase or .json import. This allows you to securely sign transactions and manage assets in SORA Network.',
+      createAccount: 'Create an account',
+      importAccount: 'Import Account',
+    },
+    heading: {
+      seedPhraseTitle: 'Seed phrase',
+      confirmSeedTitle: 'Confirm seed phrase',
+      accountDetailsTitle: 'Account Details',
+      importTitle: 'Import account',
+    },
+    button: {
+      next: 'Next step',
+      skip: 'Skip',
+      createAccount: 'Create Account',
+      importAccount: 'Import account',
+    },
+    accountName: {
+      placeholder: 'Wallet name',
+      desc: 'This is the public name of your wallet which will be visible to everyone',
+    },
+    password: {
+      placeholder: 'Password',
+      desc: 'Ensure you are using a strong password for proper protection',
+    },
+    confirmPassword: {
+      placeholder: 'Confirm password',
+    },
+    accountMnemonic: {
+      placeholder: 'Mnemonic phrase',
+    },
+    seedAdviceText:
+      'This is a secret seed of your account. Make sure to store it on a non-digital carrier, for example - paper',
+    confirmSeedText: 'Confirm the seed phrase by clicking words in the correct order',
+    errorMnemonicText: 'Incorrect seed phrase order',
+    exportOptionText: 'Export .json account file',
+    exportJsonText:
+      'You will always be able to access your account by importing that .json file. Do not share it with anyone!',
+    addAccount: 'Add an account',
+    dialog: {
+      confirmTitle: 'Confirm with password',
+      confirmButton: 'Sign Transaction',
+      savePasswordText: 'Remember my password for next 15 minutes',
+      extendPasswordText: 'Extend period without password by 15 minutes',
+    },
+    errorMessages: {
+      password: 'Password did not match',
+      passwords: 'Passwords did not match',
+      mnemonic: 'Invalid bip39 mnemonic specified',
+      mnemonicLength: 'Mnemonic should contain {number} words',
+      jsonFields: 'JSON file does not have required fields',
+    },
   },
   historyErrorMessages: {
     generalError: 'Something went wrong',
@@ -363,5 +445,21 @@ export default {
     multicollateralBondingCurvePool: {
       PriceCalculationFailed: 'An error occurred while calculating the price',
     },
+  },
+  bridgeTransaction: {
+    steps: {
+      step: '{step} of 2',
+      step1: '1st',
+      step2: '2nd',
+    },
+    networkTitle: '{network} transaction',
+    viewInEtherscan: 'View in Etherscan',
+    transactionHash: 'Transaction hash',
+  },
+  sora: {
+    [SoraNetwork.Dev]: '@:soraText Devnet',
+    [SoraNetwork.Test]: '@:soraText Testnet',
+    [SoraNetwork.Stage]: '@:soraText Testnet',
+    [SoraNetwork.Prod]: '@:soraText Mainnet',
   },
 };

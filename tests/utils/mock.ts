@@ -94,6 +94,7 @@ export const MOCK_HISTORY: Array<History> = [
     symbol: KnownSymbols.XOR,
     from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
     to: 'cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse',
+    soraNetworkFee: '700000000000000',
   },
   {
     id: '2',
@@ -107,6 +108,7 @@ export const MOCK_HISTORY: Array<History> = [
     symbol: KnownSymbols.XOR,
     symbol2: KnownSymbols.PSWAP,
     from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
+    soraNetworkFee: '700000000000000',
   },
   {
     id: '3',
@@ -119,6 +121,7 @@ export const MOCK_HISTORY: Array<History> = [
     symbol: KnownSymbols.XOR,
     symbol2: KnownSymbols.PSWAP,
     from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
+    soraNetworkFee: '700000000000000',
   },
   {
     id: '4',
@@ -130,6 +133,7 @@ export const MOCK_HISTORY: Array<History> = [
     symbol: KnownSymbols.XOR,
     symbol2: KnownSymbols.PSWAP,
     from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
+    soraNetworkFee: '700000000000000',
   },
   {
     id: '5',
@@ -139,6 +143,7 @@ export const MOCK_HISTORY: Array<History> = [
     startTime: 1605048643745,
     symbol: 'TEST',
     from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
+    soraNetworkFee: '700000000000000',
   },
 ];
 

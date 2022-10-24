@@ -1,6 +1,6 @@
 <template>
-  <wallet-base :title="t('wallet.title', { sora: TranslationConsts.Sora })">
-    <template #actions>
+  <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
+    <template v-if="!selectedTransaction" #actions>
       <s-button
         v-if="permissions.createAssets"
         type="action"
@@ -11,7 +11,7 @@
       </s-button>
     </template>
 
-    <wallet-account>
+    <wallet-account v-if="!selectedTransaction">
       <qr-code-scan-button alternative @change="parseQrCodeValue" />
 
       <s-button type="action" alternative rounded :tooltip="t('code.receive')" @click="receiveByQrCode(null)">
@@ -23,17 +23,20 @@
       </s-button>
     </wallet-account>
 
-    <div class="wallet">
+    <div v-show="!selectedTransaction" class="wallet">
       <s-tabs :value="currentTab" type="rounded" @change="handleChangeTab">
         <s-tab v-for="tab in WalletTabs" :key="tab" :label="t(`wallet.${tab}`)" :name="tab" />
       </s-tabs>
       <component :is="currentTab" @swap="handleSwap" />
     </div>
+
+    <wallet-transaction-details v-if="selectedTransaction" />
   </wallet-base>
 </template>
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
+import type { HistoryItem } from '@sora-substrate/util';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
@@ -43,9 +46,10 @@ import WalletAccount from './WalletAccount.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletActivity from './WalletActivity.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
+import WalletTransactionDetails from './WalletTransactionDetails.vue';
 
 import { RouteNames, WalletTabs } from '../consts';
-import { state, action } from '../store/decorators';
+import { state, action, getter, mutation } from '../store/decorators';
 import type { WalletPermissions } from '../consts';
 
 @Component({
@@ -55,6 +59,7 @@ import type { WalletPermissions } from '../consts';
     WalletAssets,
     WalletActivity,
     QrCodeScanButton,
+    WalletTransactionDetails,
   },
 })
 export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) {
@@ -62,10 +67,16 @@ export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) 
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;
+  @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
+  @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: VoidFn;
 
   @action.account.logout private logout!: AsyncVoidFn;
 
   currentTab: WalletTabs = WalletTabs.Assets;
+
+  get headerTitle(): string {
+    return this.t(!this.selectedTransaction ? 'wallet.title' : this.t(`operations.${this.selectedTransaction.type}`));
+  }
 
   mounted(): void {
     if (this.currentRouteParams.currentTab) {
@@ -92,6 +103,12 @@ export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) 
     };
     this.navigate(navigationArgs);
     this.logout();
+  }
+
+  handleBack(): void {
+    if (this.selectedTransaction) {
+      this.resetTxDetailsId();
+    }
   }
 }
 </script>

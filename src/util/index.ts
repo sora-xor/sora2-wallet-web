@@ -9,9 +9,9 @@ import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
 import { api } from '../api';
-import { ExplorerLink, SoraNetwork, ExplorerType, Extensions, TranslationConsts } from '../consts';
-import type { PolkadotJsAccount } from '../types/common';
+import { ExplorerLink, SoraNetwork, ExplorerType, LoginStep, Extensions } from '../consts';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
+import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 
 export class AppError extends Error {
   public translationKey: string;
@@ -27,10 +27,19 @@ export class AppError extends Error {
 
 export const APP_NAME = 'Sora2 Wallet';
 
-export const WHITE_LIST_GITHUB_URL =
-  'https://raw.githubusercontent.com/sora-xor/polkaswap-exchange-web/develop/public/whitelist.json';
+export const WHITE_LIST_URL = 'https://whitelist.polkaswap2.io/whitelist.json';
+export const NFT_BLACK_LIST_URL = 'https://whitelist.polkaswap2.io/blacklist.json';
 
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
+
+export const getPolkadotJsAccounts = async (): Promise<any> => {
+  const accounts = await api.getAccounts();
+  const polkadotJsAccounts = accounts.map((account) => ({
+    address: account.address,
+    name: account.meta.name || '',
+  }));
+  return polkadotJsAccounts;
+};
 
 const formatWalletAccount = (account: WalletAccount): PolkadotJsAccount => ({
   address: account.address,
@@ -66,7 +75,9 @@ export const subscribeToPolkadotJsAccounts = async (
 
 export const getAppWallets = (): Wallet[] => {
   try {
-    return getWallets();
+    const wallets = getWallets();
+
+    return wallets;
   } catch (error) {
     throw new AppError({ key: 'polkadotjs.noExtensions', payload: { polkadotJs: TranslationConsts.PolkadotJs } });
   }
@@ -78,13 +89,14 @@ export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wall
   const wallet = getWalletByExtension(extension);
 
   if (!wallet) {
+    // we haven't wallet data, so extension key used in translation
     throw new AppError({ key: 'polkadotjs.noExtension', payload: { extension } });
   }
 
   await wallet.enable();
 
   if (!wallet.signer) {
-    throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension } });
+    throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension: wallet.title } });
   }
 
   return wallet;
@@ -100,16 +112,41 @@ export const getExtensionSigner = async (address: string, extension: Extensions)
   const accounts = await wallet.getAccounts();
 
   if (!accounts) {
-    throw new AppError({ key: 'polkadotjs.noAccounts', payload: { extension } });
+    throw new AppError({ key: 'polkadotjs.noAccounts', payload: { extension: wallet.title } });
   }
 
   const account = accounts.find((acc) => acc.address === address);
 
   if (!account) {
-    throw new AppError({ key: 'polkadotjs.noAccount', payload: { extension } });
+    throw new AppError({ key: 'polkadotjs.noAccount', payload: { extension: wallet.title } });
   }
 
   return { account: formatWalletAccount(account), signer: wallet.signer as Signer };
+};
+
+/**
+ * Get url to install wallet extension
+ * Extensions are available for Chrome based browsers (Chrome, Edge, Brave) & Firefox
+ * @param wallet wallet data
+ * @returns browser extension install url
+ */
+export const getWalletInstallUrl = (wallet: Wallet): string => {
+  const { extensionName, installUrl } = wallet;
+
+  // for Firefox
+  if (navigator.userAgent.match(/firefox|fxios/i)) {
+    switch (extensionName) {
+      case Extensions.SubwalletJS:
+        return 'https://addons.mozilla.org/firefox/addon/subwallet/';
+      case Extensions.TalismanJS:
+        return 'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/';
+      default:
+        return 'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/';
+    }
+  }
+
+  // for Chrome based browsers
+  return installUrl;
 };
 
 /**
@@ -211,6 +248,47 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
 
     return total;
   }, []);
+};
+
+export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
+  let currentStepIndex: number;
+
+  if (currentStep === LoginStep.Welcome) return LoginStep.AccountList;
+
+  const createFlow = [
+    LoginStep.Welcome,
+    LoginStep.SeedPhrase,
+    LoginStep.ConfirmSeedPhrase,
+    LoginStep.CreateCredentials,
+  ] as Array<LoginStep>;
+
+  currentStepIndex = createFlow.findIndex((stepValue) => stepValue === currentStep);
+
+  if (currentStepIndex !== -1) {
+    return createFlow[currentStepIndex - 1];
+  }
+
+  const importFlow = [LoginStep.Welcome, LoginStep.Import, LoginStep.ImportCredentials] as Array<LoginStep>;
+
+  currentStepIndex = importFlow.findIndex((stepValue) => stepValue === currentStep);
+
+  if (currentStepIndex !== -1) {
+    return importFlow[currentStepIndex - 1];
+  }
+
+  return LoginStep.Welcome;
+};
+
+export const parseJson = (file: File): Promise<KeyringPair$Json> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = () => {
+      const json = reader.result as string;
+      resolve(JSON.parse(json));
+    };
+    reader.onerror = (e) => reject(e);
+  });
 };
 
 export const getCssVariableValue = (name: string): string => {

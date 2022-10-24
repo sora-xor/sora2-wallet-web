@@ -3,7 +3,8 @@ import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../../api';
 import type { TransactionsState } from './types';
-import type { CursorPagination } from '../../types/history';
+import type { EthBridgeUpdateHistory } from '../../consts';
+import type { PageInfo } from '../../services/subquery/types';
 
 const mutations = defineMutations<TransactionsState>()({
   setActiveTxsSubscription(state, subscription: NodeJS.Timeout | number): void {
@@ -28,23 +29,40 @@ const mutations = defineMutations<TransactionsState>()({
   setTxDetailsId(state, id: string): void {
     state.selectedTxId = id;
   },
+  resetTxDetailsId(state): void {
+    state.selectedTxId = null;
+  },
   getHistory(state): void {
+    // show eth bridge history, if update fn exists
+    const ethBridgeHistory = state.updateEthBridgeHistory ? api.bridge.history : {};
     // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes
-    state.history = Object.freeze(api.history);
+    state.history = Object.freeze({ ...api.history, ...ethBridgeHistory });
+  },
+  setEthBridgeHistoryUpdateFn(state, updateEthBridgeHistory: EthBridgeUpdateHistory): void {
+    state.updateEthBridgeHistory = updateEthBridgeHistory;
   },
   setExternalHistory(state, history: AccountHistory<HistoryItem>): void {
     state.externalHistory = Object.freeze(history);
   },
-  setExternalHistoryTotal(state, total: number): void {
+  setExternalHistoryTotal(state, total = 0): void {
     state.externalHistoryTotal = total;
   },
-  setExternalHistoryPagination(state, pageInfo: Nullable<CursorPagination>): void {
+  setExternalHistoryPagination(state, pageInfo: Nullable<PageInfo>): void {
     state.externalHistoryPagination = pageInfo;
   },
   resetExternalHistory(state): void {
     state.externalHistory = {};
     state.externalHistoryTotal = 0;
     state.externalHistoryPagination = null;
+  },
+  setExternalHistorySubscription(state, subscription: VoidFunction): void {
+    state.externalHistorySubscription = subscription;
+  },
+  resetExternalHistorySubscription(state): void {
+    if (state.externalHistorySubscription) {
+      state.externalHistorySubscription();
+    }
+    state.externalHistorySubscription = null;
   },
 });
 

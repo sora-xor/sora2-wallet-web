@@ -42,7 +42,6 @@ const actions = defineActions({
   // Subscriptions dependent on chain state
   async activateNetwokSubscriptions(context): Promise<void> {
     await runParallel(context, [
-      'settings/subscribeOnSystemEvents',
       'settings/subscribeOnRuntimeVersion',
       'account/subscribeOnAssets',
       'account/subscribeOnAccountAssets',
@@ -50,24 +49,30 @@ const actions = defineActions({
   },
   async resetNetworkSubscriptions(context): Promise<void> {
     await runParallel(context, [
-      'settings/resetSystemEventsSubscription',
       'settings/resetRuntimeVersionSubscription',
       'account/resetAssetsSubscription',
       'account/resetAccountAssetsSubscription',
     ]);
   },
   // Internal subscriptions & timers
-  async activateInternalSubscriptions(context): Promise<void> {
-    await runParallel(context, [
+  async activateInternalSubscriptions(context, onDesktop: boolean): Promise<void> {
+    const subscriptions = [
       'transactions/trackActiveTxs',
-      'account/subscribeOnFiatPriceAndApyObjectUpdates',
-      'account/subscribeOnExtensionAvailability',
+      'transactions/subscribeOnExternalHistory',
+      'account/subscribeOnFiatPriceAndApy',
       'subscriptions/subscribeToStorageUpdates',
-    ]);
+    ];
+
+    if (!onDesktop) {
+      subscriptions.push('account/subscribeOnExtensionAvailability');
+    }
+
+    await runParallel(context, subscriptions);
   },
   async resetInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'transactions/resetActiveTxs',
+      'transactions/resetExternalHistorySubscription',
       'account/resetFiatPriceAndApySubscription',
       'account/resetExtensionAvailabilitySubscription',
       'subscriptions/resetStorageUpdatesSubscription',

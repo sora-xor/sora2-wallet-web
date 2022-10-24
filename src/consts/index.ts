@@ -2,6 +2,8 @@ import type { FPNumber, Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
+export const BLOCK_PRODUCE_TIME = 6 * 1000;
+
 export enum Extensions {
   PolkadotJS = 'polkadot-js',
   SubwalletJS = 'subwallet-js',
@@ -17,7 +19,6 @@ export enum RouteNames {
   ReceiveToken = 'ReceiveToken',
   AddAsset = 'AddAsset',
   SelectAsset = 'SelectAsset',
-  WalletTransactionDetails = 'WalletTransactionDetails',
 }
 
 export enum WalletTabs {
@@ -35,6 +36,12 @@ export enum AddAssetTabs {
   NFT = 'AddAssetNFT',
 }
 
+export enum WalletFilteringOptions {
+  ALL = 'All',
+  TOKEN = 'Tokens',
+  NFT = 'NFTs',
+}
+
 export enum SoraNetwork {
   Dev = 'Dev',
   Test = 'Test',
@@ -46,6 +53,8 @@ export enum HashType {
   ID = 'id',
   Block = 'block',
   Account = 'account',
+  EthAccount = 'ethAccount',
+  EthTransaction = 'ethTransaction',
 }
 
 export enum ExplorerType {
@@ -66,6 +75,16 @@ export enum Step {
   Warn = 'Warn',
 }
 
+export enum LoginStep {
+  Welcome = 'Welcome',
+  Import = 'Import',
+  ImportCredentials = 'Import/Credentials',
+  SeedPhrase = 'Create/SeedPhrase',
+  ConfirmSeedPhrase = 'Create/ConfirmSeedPhrase',
+  CreateCredentials = 'Create/Credentials',
+  AccountList = 'AccountList',
+}
+
 export interface WalletPermissions {
   addAssets?: boolean;
   addLiquidity?: boolean;
@@ -76,10 +95,19 @@ export interface WalletPermissions {
   swapAssets?: boolean;
 }
 
+export type EthBridgeUpdateHistory = (updateWalletHistory: VoidFunction) => Promise<void>;
+
+export interface WalletAssetFilters {
+  option: string;
+  verifiedOnly: boolean;
+  zeroBalance: boolean;
+}
+
 export interface WalletInitOptions {
   withoutStore?: boolean;
   whiteListOverApi?: boolean;
   permissions?: WalletPermissions;
+  updateEthBridgeHistory?: EthBridgeUpdateHistory;
 }
 
 export interface NetworkFeeWarningOptions {
@@ -107,6 +135,26 @@ export enum LogoSize {
   BIG = 'big',
   BIGGER = 'bigger',
   LARGE = 'large',
+}
+
+export enum PaginationButton {
+  First = 'first',
+  Prev = 'prev',
+  Next = 'next',
+  Last = 'last',
+}
+
+// states for Ethereum Bridge transaction
+export enum ETH_BRIDGE_STATES {
+  INITIAL = 'INITIAL',
+  SORA_SUBMITTED = 'SORA_SUBMITTED',
+  SORA_PENDING = 'SORA_PENDING',
+  SORA_REJECTED = 'SORA_REJECTED',
+  SORA_COMMITED = 'SORA_COMMITED',
+  EVM_SUBMITTED = 'EVM_SUBMITTED',
+  EVM_PENDING = 'EVM_PENDING',
+  EVM_REJECTED = 'EVM_REJECTED',
+  EVM_COMMITED = 'EVM_COMMITED',
 }
 
 export const ObjectInit = () => null;

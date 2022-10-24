@@ -27,7 +27,7 @@ import SoraWallet from './SoraWallet.vue';
 import { SoraNetwork } from './consts';
 import { state, mutation, getter, action } from './store/decorators';
 import type { ApiKeysObject } from './types/common';
-import { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: { SoraWallet },
@@ -63,7 +63,9 @@ export default class App extends Mixins(TransactionMixin) {
   @Watch('assetsToNotifyQueue')
   private handleNotifyOnDeposit(whitelistAssetArray: WhitelistArrayItem[]): void {
     if (!whitelistAssetArray.length) return;
-    this.notifyOnDeposit({ asset: whitelistAssetArray[0], message: this.t('assetDeposit') });
+    if ('Notification' in window) {
+      this.notifyOnDeposit({ asset: whitelistAssetArray[0], message: this.t('assetDeposit') });
+    }
   }
 
   @Watch('firstReadyTransaction', { deep: true })

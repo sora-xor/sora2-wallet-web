@@ -1,5 +1,6 @@
 import { defineActions } from 'direct-vuex';
-import { axiosInstance } from '@sora-substrate/util';
+import CryptoJS from 'crypto-js';
+import cryptoRandomString from 'crypto-random-string';
 import type { Signer } from '@polkadot/api/types';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
@@ -11,15 +12,19 @@ import {
   getAppWallets,
   getWallet,
   getExtensionSigner,
+  getPolkadotJsAccounts,
   subscribeToPolkadotJsAccounts,
-  WHITE_LIST_GITHUB_URL,
+  WHITE_LIST_URL,
+  NFT_BLACK_LIST_URL,
 } from '../../util';
-import { Extensions } from '../../consts';
+import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
+import type { FiatPriceAndApyObject } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
 import { pushNotification } from '../../util/notification';
 
-const UPDATE_PRICES_INTERVAL = 30 * 1000;
-const CHECK_EXTENSION_INTERVAL = 5_000;
+const CHECK_EXTENSION_INTERVAL = 5 * 1000;
+const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
+const PASSPHRASE_TIMEOUT = 15 * 60 * 1000; // 15min
 
 const actions = defineActions({
   async getSigner(context): Promise<Signer> {
@@ -35,17 +40,19 @@ const actions = defineActions({
     const { rootDispatch } = rootActionContext(context);
 
     await dispatch.subscribeOnAccountAssets();
+    await rootDispatch.wallet.transactions.subscribeOnExternalHistory();
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
   async logout(context): Promise<void> {
-    const { commit } = accountActionContext(context);
-    const { rootDispatch } = rootActionContext(context);
+    const { commit, getters } = accountActionContext(context);
+    const { rootDispatch, rootCommit } = rootActionContext(context);
 
     if (api.accountPair) {
-      api.logout();
+      api.logout(getters.isDesktop);
     }
     commit.resetAccountAssetsSubscription();
+    rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
 
     await rootDispatch.wallet.router.checkCurrentRoute();
@@ -73,7 +80,7 @@ const actions = defineActions({
     const { commit, getters, dispatch } = accountActionContext(context);
     commit.setPolkadotJsAccounts(accounts);
 
-    if (getters.isLoggedIn) {
+    if (getters.isLoggedIn && !getters.isDesktop) {
       try {
         await dispatch.getSigner();
       } catch (error) {
@@ -137,7 +144,11 @@ const actions = defineActions({
 
     commit.setExtensionAvailabilitySubscription(timer);
   },
-
+  async getPolkadotJsAccounts(context) {
+    const accounts = await getPolkadotJsAccounts();
+    const { dispatch } = accountActionContext(context);
+    await dispatch.updatePolkadotJsAccounts(accounts);
+  },
   async subscribeToPolkadotJsAccounts(context): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
 
@@ -169,7 +180,40 @@ const actions = defineActions({
       throw new Error((error as Error).message);
     }
   },
+  async importPolkadotJsDesktop(context, address: string) {
+    const { getters, commit, dispatch } = accountActionContext(context);
 
+    try {
+      const defaultAddress = api.formatAddress(address, false);
+      const account = getters.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
+
+      if (!account) {
+        throw new Error('polkadotjs.noAccount');
+      }
+
+      api.importByPolkadotJs(account.address, account.name, '');
+
+      commit.selectPolkadotJsAccount({ name: account.name });
+
+      await dispatch.afterLogin();
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  },
+  async setAccountPassphrase(context, passphrase) {
+    const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
+    const passphraseEncoded = CryptoJS.AES.encrypt(passphrase, key).toString();
+
+    const { commit } = accountActionContext(context);
+
+    commit.updateAddressGeneratedKey(key);
+    commit.setAccountPassphrase(passphraseEncoded);
+
+    const timer = setTimeout(() => {
+      commit.resetAccountPassphrase();
+      clearTimeout(timer);
+    }, PASSPHRASE_TIMEOUT);
+  },
   async syncWithStorage(context): Promise<void> {
     const { state, getters, commit, dispatch } = accountActionContext(context);
     // previous state
@@ -196,32 +240,25 @@ const actions = defineActions({
   async getAssets(context): Promise<void> {
     const { getters, commit } = accountActionContext(context);
     try {
-      const assets = await api.assets.getAssets(getters.whitelist);
+      const assets = await api.assets.getAssets(getters.whitelist, false, getters.blacklist);
       commit.updateAssets(assets);
     } catch (error) {
       commit.updateAssets([]);
     }
   },
+
   async subscribeOnAssets(context): Promise<void> {
-    const { commit, dispatch, getters } = accountActionContext(context);
-    commit.resetAssetsSubscription();
+    const { commit, dispatch } = accountActionContext(context);
+
     await dispatch.getAssets();
 
-    const subscription = api.system.updated.subscribe((events) => {
-      if (events.find((e) => e.event.section === 'assets' && e.event.method === 'AssetRegistered')) {
-        dispatch.getAssets();
-      }
+    const timer = setInterval(() => {
+      dispatch.getAssets();
+    }, UPDATE_ASSETS_INTERVAL);
 
-      const notificationEvent = events.find((e) => e.event.section === 'assets' && e.event.method === 'Transfer');
-      // 'to' address
-      if (notificationEvent && notificationEvent.event.data[1].toJSON() === getters.account.address) {
-        const assetAddress = (notificationEvent.event.data[2].toJSON() as any).code;
-        const depositedAsset = getters.whitelist[assetAddress] as WhitelistArrayItem;
-        commit.setAssetToNotify(depositedAsset);
-      }
-    });
-    commit.setAssetsSubscription(subscription);
+    commit.setAssetsSubscription(timer);
   },
+
   async subscribeOnAccountAssets(context): Promise<void> {
     const { commit, getters } = accountActionContext(context);
     commit.resetAccountAssetsSubscription();
@@ -238,15 +275,26 @@ const actions = defineActions({
       }
     }
   },
-  async getWhitelist(context, whiteListOverApi: boolean): Promise<void> {
+  async getWhitelist(context): Promise<void> {
     const { commit } = accountActionContext(context);
-    const url = whiteListOverApi ? WHITE_LIST_GITHUB_URL : '/whitelist.json';
     commit.clearWhitelist();
     try {
-      const { data } = await axiosInstance.get(url);
+      const response = await fetch(WHITE_LIST_URL);
+      const data = await response.json();
       commit.setWhitelist(data);
     } catch (error) {
       commit.clearWhitelist();
+    }
+  },
+  async getNftBlacklist(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+    commit.clearBlacklist();
+    try {
+      const response = await fetch(NFT_BLACK_LIST_URL);
+      const data = await response.json();
+      commit.setNftBlacklist(data);
+    } catch (error) {
+      commit.clearBlacklist();
     }
   },
   async getFiatPriceAndApyObject(context): Promise<void> {
@@ -262,29 +310,36 @@ const actions = defineActions({
       commit.clearFiatPriceAndApyObject();
     }
   },
-  async subscribeOnFiatPriceAndApyObjectUpdates(context): Promise<void> {
-    const { dispatch, commit } = accountActionContext(context);
-    dispatch.getFiatPriceAndApyObject();
+  async updateFiatPriceAndApyObject(context, fiatPriceAndApyRecord: FiatPriceAndApyObject): Promise<void> {
+    const {
+      commit,
+      state: { fiatPriceAndApyObject },
+    } = accountActionContext(context);
 
-    const timer = setInterval(() => {
-      dispatch.getFiatPriceAndApyObject();
-    }, UPDATE_PRICES_INTERVAL);
-    commit.setFiatPriceAndApyTimer(timer);
+    const updated = { ...(fiatPriceAndApyObject || {}), ...fiatPriceAndApyRecord };
+
+    commit.setFiatPriceAndApyObject(updated);
+  },
+  async subscribeOnFiatPriceAndApy(context): Promise<void> {
+    const { dispatch, commit } = accountActionContext(context);
+
+    await dispatch.getFiatPriceAndApyObject();
+
+    const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
+      dispatch.updateFiatPriceAndApyObject
+    );
+
+    commit.setFiatPriceAndApySubscription(subscription);
   },
   async getAccountReferralRewards(context): Promise<void> {
     const { state, commit } = accountActionContext(context);
     commit.clearReferralRewards();
-    try {
-      const data = await SubqueryExplorerService.getAccountReferralRewards(state.address);
-      if (!data) {
-        commit.clearReferralRewards();
-        return;
-      }
+    const data = await SubqueryExplorerService.getAccountReferralRewards(state.address);
+    if (data) {
       commit.setReferralRewards(data);
-    } catch (error) {
-      commit.clearReferralRewards();
     }
   },
+
   async notifyOnDeposit(context, data): Promise<void> {
     const { commit } = accountActionContext(context);
     const { asset, message }: { asset: WhitelistArrayItem; message: string } = data;

@@ -4,7 +4,7 @@ import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from 'rxjs';
 
 import { api } from '../../api';
-import { SoraNetwork, WalletPermissions } from '../../consts';
+import { SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
 import { runtimeStorage, storage } from '../../util/storage';
 import type { ApiKeysObject } from '../../types/common';
 import type { SettingsState } from './types';
@@ -37,6 +37,10 @@ const mutations = defineMutations<SettingsState>()({
     state.shouldBalanceBeHidden = !state.shouldBalanceBeHidden;
     storage.set('shouldBalanceBeHidden', state.shouldBalanceBeHidden);
   },
+  setFilterOptions(state, filters: WalletAssetFilters): void {
+    // settingsStorage.set('filters', JSON.stringify(filters));
+    state.filters = filters;
+  },
   setRuntimeVersion(state, version: number): void {
     state.runtimeVersion = version;
     runtimeStorage.set('version', version);
@@ -53,23 +57,23 @@ const mutations = defineMutations<SettingsState>()({
       state.runtimeVersionSubscription = null;
     }
   },
-  subscribeOnSystemEvents(state): void {
-    if (state.systemEventsSubscription) {
-      state.systemEventsSubscription.unsubscribe();
-    }
-    state.systemEventsSubscription = api.system.getEventsSubscription();
-  },
-  resetSystemEventsSubscription(state): void {
-    if (state.systemEventsSubscription) {
-      state.systemEventsSubscription.unsubscribe();
-      state.systemEventsSubscription = null;
-    }
-  },
   setApiKeys(state, keys: ApiKeysObject = {}): void {
     state.apiKeys = { ...state.apiKeys, ...keys };
   },
-  setNftStorage(state): void {
-    const nftStorage = new NFTStorage({ token: state.apiKeys.nftStorage });
+  setNftStorage(state, { marketplaceDid, ucan }: { marketplaceDid?: string; ucan?: string }): void {
+    let nftStorage;
+
+    if (marketplaceDid && ucan) {
+      // on prod environment
+      nftStorage = new NFTStorage({
+        token: ucan,
+        did: marketplaceDid,
+      });
+    } else {
+      // on dev, test environments
+      nftStorage = new NFTStorage({ token: state.apiKeys.nftStorage });
+    }
+
     state.nftStorage = nftStorage;
   },
   setSubqueryEndpoint(state, endpoint: string): void {

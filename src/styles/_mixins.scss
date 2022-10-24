@@ -16,6 +16,15 @@
   text-align: center;
 }
 
+@mixin three-dashes($topValue) {
+  width: 10px;
+  height: 2px;
+  top: $topValue;
+  position: absolute;
+  background-color: var(--s-color-base-content-tertiary);
+  border-radius: 1px;
+}
+
 @mixin custom-tabs {
   $tabs-class: '.el-tabs';
 
@@ -91,6 +100,30 @@
     }
     to {
       transform: rotate(359deg);
+    }
+  }
+}
+
+@mixin shake {
+  animation: shake 0.5s 1;
+  @keyframes shake {
+    from {
+      transform: translate(-2px);
+    }
+    20% {
+      transform: translate(4px);
+    }
+    40% {
+      transform: translate(-2px);
+    }
+    60% {
+      transform: translate(4px);
+    }
+    80% {
+      transform: translate(-2px);
+    }
+    to {
+      transform: translate(0px);
     }
   }
 }
@@ -204,5 +237,31 @@
   .#{$className} {
     height: $height;
     width: $width;
+  }
+}
+
+@mixin focus-outline($inner: false, $focusWithin: false, $borderRadius: '', $withOffset: false) {
+  $outline: 1px solid var(--s-color-outline);
+  @if $inner == true {
+    outline: $outline;
+    @if $borderRadius != '' {
+      border-radius: $borderRadius;
+    }
+  } @else {
+    @if $focusWithin == true {
+      &:focus-within {
+        outline: $outline;
+      }
+    } @else {
+      @if $withOffset == true {
+        outline-offset: -1px;
+      }
+      &:focus:not(:active) {
+        outline: $outline;
+        @if $borderRadius != '' {
+          border-radius: $borderRadius;
+        }
+      }
+    }
   }
 }

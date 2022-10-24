@@ -1,0 +1,164 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
+<div
+  class="wallet-assets-headline"
+>
+  <div
+    class="wallet-assets-headline__content"
+  >
+    <div
+      class="total-fiat-values"
+    >
+      <span
+        class="total-fiat-values__title"
+      >
+        Total assets value:
+      </span>
+       
+      <formatted-amount-stub
+        assetsymbol=""
+        fontsizerate="normal"
+        fontweightrate="normal"
+        integeronly="true"
+        isfiatvalue="true"
+        value="0"
+        valuecanbehidden="true"
+        withleftshift="true"
+      />
+    </div>
+     
+    <el-popover-stub
+      appendtobody="true"
+      arrowoffset="0"
+      boundariespadding="5"
+      closedelay="200"
+      offset="0"
+      opendelay="0"
+      placement="bottom"
+      popperclass="wallet-assets-headline__popover"
+      popperoptions="[object Object]"
+      tabindex="0"
+      transformorigin="true"
+      transition="fade-in-linear"
+      trigger="click"
+    >
+      <div
+        class="wallet-assets-headline__text"
+      >
+        Show assets
+      </div>
+       
+      <s-radio-group-stub
+        size="medium"
+        value="All"
+      >
+        <s-radio-stub
+          class="radio-btn"
+          label="All"
+          name=""
+          size="medium"
+          usedesignsystem="true"
+        >
+          
+          All
+        
+        </s-radio-stub>
+        <s-radio-stub
+          class="radio-btn"
+          label="Tokens"
+          name=""
+          size="medium"
+          usedesignsystem="true"
+        >
+          
+          Tokens
+        
+        </s-radio-stub>
+        <s-radio-stub
+          class="radio-btn"
+          label="NFTs"
+          name=""
+          size="medium"
+          usedesignsystem="true"
+        >
+          
+          NFTs
+        
+        </s-radio-stub>
+      </s-radio-group-stub>
+       
+      <s-divider-stub
+        class="wallet-assets-divider__popover"
+        contentposition="center"
+        direction="horizontal"
+        type="secondary"
+      />
+       
+      <div
+        class="wallet-assets-headline__switch"
+      >
+        <s-switch-stub
+          activeiconСlass=""
+          activetext=""
+          activevalue="true"
+          inactiveiconСlass=""
+          inactivetext=""
+          name=""
+          usedesignsystem="true"
+          width="40"
+        />
+         
+        <span>
+          Show verified assets only
+        </span>
+      </div>
+       
+      <div
+        class="wallet-assets-headline__switch"
+      >
+        <s-switch-stub
+          activeiconСlass=""
+          activetext=""
+          activevalue="true"
+          inactiveiconСlass=""
+          inactivetext=""
+          name=""
+          usedesignsystem="true"
+          width="40"
+        />
+         
+        <span>
+          Hide 0 balance assets
+        </span>
+      </div>
+       
+      <div
+        class="wallet-assets-headline__button"
+      >
+        
+        SHOW:
+        
+        <span
+          class="wallet-assets-headline__button-option"
+        >
+          ALL
+        </span>
+         
+        <s-icon-stub
+          class="wallet-assets-headline__button-icon"
+          name="basic-settings-24"
+          size="14px"
+        />
+      </div>
+    </el-popover-stub>
+  </div>
+   
+  <s-divider-stub
+    class="wallet-assets-divider"
+    contentposition="center"
+    direction="horizontal"
+    type="secondary"
+  />
+</div>
+`;

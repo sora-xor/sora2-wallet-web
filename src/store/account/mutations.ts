@@ -1,7 +1,7 @@
 import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
 import type { Wallet } from '@subwallet/wallet-connect/types';
-import type { Asset, AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from 'rxjs';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 
@@ -15,21 +15,21 @@ import type { FiatPriceAndApyObject, ReferrerRewards } from '../../services/subq
 import type { PolkadotJsAccount } from '../../types/common';
 
 const mutations = defineMutations<AccountState>()({
-  setFiatPriceAndApyTimer(state, timer: NodeJS.Timer | number): void {
-    state.fiatPriceAndApyTimer = timer;
+  setFiatPriceAndApySubscription(state, subscription: VoidFunction): void {
+    state.fiatPriceAndApySubscription = subscription;
   },
   resetFiatPriceAndApySubscription(state): void {
-    if (state.fiatPriceAndApyTimer) {
-      clearInterval(state.fiatPriceAndApyTimer as number);
-      state.fiatPriceAndApyTimer = null;
+    if (state.fiatPriceAndApySubscription) {
+      state.fiatPriceAndApySubscription();
     }
+    state.fiatPriceAndApySubscription = null;
   },
   resetAccount(state): void {
     const s = omit(
       [
         'whitelistArray',
         'fiatPriceAndApyObject',
-        'fiatPriceAndApyTimer',
+        'fiatPriceAndApySubscription',
         'assets',
         'polkadotJsAccounts',
         'polkadotJsAccountsSubscription',
@@ -43,12 +43,12 @@ const mutations = defineMutations<AccountState>()({
       state[key] = s[key];
     });
   },
-  setAssetsSubscription(state, subscription: Subscription): void {
-    state.assetsSubscription = subscription;
+  setAssetsSubscription(state, timer: NodeJS.Timer | number): void {
+    state.assetsSubscription = timer;
   },
   resetAssetsSubscription(state): void {
     if (state.assetsSubscription) {
-      state.assetsSubscription.unsubscribe();
+      clearInterval(state.assetsSubscription as number);
       state.assetsSubscription = null;
     }
   },
@@ -82,8 +82,14 @@ const mutations = defineMutations<AccountState>()({
   setWhitelist(state, whitelistArray: Array<WhitelistArrayItem>): void {
     state.whitelistArray = whitelistArray;
   },
+  setNftBlacklist(state, blacklistArray: Blacklist): void {
+    state.blacklistArray = blacklistArray;
+  },
   clearWhitelist(state): void {
     state.whitelistArray = [];
+  },
+  clearBlacklist(state): void {
+    state.blacklistArray = [];
   },
   setFiatPriceAndApyObject(state, object: FiatPriceAndApyObject): void {
     state.fiatPriceAndApyObject = object;
@@ -136,6 +142,28 @@ const mutations = defineMutations<AccountState>()({
       state.polkadotJsAccountsSubscription();
     }
     state.polkadotJsAccountsSubscription = null;
+  },
+  setAccountPassphrase(state, passphraseEncoded): void {
+    state.addressPassphraseMapping = {
+      ...state.addressPassphraseMapping,
+      [state.address]: passphraseEncoded,
+    };
+  },
+  updateAddressGeneratedKey(state, key) {
+    state.addressKeyMapping = {
+      ...state.addressKeyMapping,
+      [state.address]: key,
+    };
+  },
+  resetAccountPassphrase(state: AccountState) {
+    state.addressKeyMapping = {
+      ...state.addressKeyMapping,
+      [state.address]: null,
+    };
+    state.addressPassphraseMapping = {
+      ...state.addressPassphraseMapping,
+      [state.address]: null,
+    };
   },
 });
 
