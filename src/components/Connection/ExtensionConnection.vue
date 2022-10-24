@@ -1,5 +1,10 @@
 <template>
-  <wallet-base :title="t('connection.title')" :show-back="!isEntryView" @back="handleBackClick">
+  <wallet-base
+    :title="t('connection.title')"
+    :show-back="!isEntryView"
+    :reset-focus="`${isEntryView}${step}`"
+    @back="handleBackClick"
+  >
     <div class="wallet-connection" v-loading="loading">
       <template v-if="!loading">
         <p class="wallet-connection-text">{{ connectionText }}</p>
@@ -26,18 +31,20 @@
 
         <div v-else-if="isExtensionsView" class="wallet-connection-extensions">
           <account-card
+            v-button
             v-for="wallet in availableWallets"
             :key="wallet.extensionName"
             @click.native="handleSelectWallet(wallet)"
             class="wallet-connection-extension"
+            tabindex="0"
           >
             <template #avatar>
               <img :src="wallet.logo.src" :alt="wallet.logo.alt" />
             </template>
             <template #name>{{ wallet.title }}</template>
             <template #default v-if="!wallet.installed">
-              <a :href="wallet.installUrl" target="_blank" rel="nofollow noopener noreferrer">
-                <s-button size="small">{{ t('connection.wallet.install') }}</s-button>
+              <a :href="getWalletInstallUrl(wallet)" target="_blank" rel="nofollow noopener noreferrer">
+                <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
               </a>
             </template>
           </account-card>
@@ -45,11 +52,13 @@
 
         <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
           <wallet-account
+            v-button
             v-for="(account, index) in polkadotJsAccounts"
             :key="index"
             :polkadotAccount="account"
             @click.native="handleSelectAccount(account)"
             class="wallet-connection-account"
+            tabindex="0"
           />
         </s-scrollbar>
       </template>
@@ -64,8 +73,8 @@ import WalletAccount from '../WalletAccount.vue';
 import AccountCard from '../AccountCard.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
-import { state, action } from '../../store/decorators';
-import { AppError } from '../../util';
+import { state, action, getter } from '../../store/decorators';
+import { AppError, getWalletInstallUrl } from '../../util';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Extensions } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
@@ -83,9 +92,13 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   readonly Step = Step;
   step = Step.First;
 
+  readonly getWalletInstallUrl = getWalletInstallUrl;
+
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.availableWallets availableWallets!: Array<Wallet>;
+
+  @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
 
   @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
@@ -128,7 +141,9 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   get connectionText(): string {
     if (this.isEntryView) return this.t('connection.text');
     if (this.isExtensionsView) return this.t('connection.selectWallet');
-    return this.t(this.polkadotJsAccounts.length ? 'connection.selectAccount' : 'connection.noAccounts');
+    if (this.polkadotJsAccounts.length) return this.t('connection.selectAccount');
+
+    return this.t('connection.noAccounts', { extension: this.selectedWalletTitle });
   }
 
   async handleActionClick(): Promise<void> {
@@ -208,10 +223,14 @@ $account-height: 60px;
 .s-card.wallet-account.wallet-connection {
   &-account,
   &-extension {
+    @include focus-outline($withOffset: true);
     &:hover {
       cursor: pointer;
       border-color: var(--s-color-base-content-secondary);
     }
+  }
+  &-extension a {
+    @include focus-outline($borderRadius: var(--s-border-radius-small));
   }
 }
 </style>

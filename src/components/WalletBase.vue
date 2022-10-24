@@ -1,7 +1,7 @@
 <template>
   <s-card primary class="base" border-radius="medium" shadow="always" size="big">
     <template #header>
-      <div :class="headerClasses">
+      <div :class="headerClasses" ref="headerBase" :tabindex="hasFocusReset ? 0 : -1">
         <div v-if="showBack" class="base-title_back">
           <s-button type="action" :tooltip="t('backText')" @click="handleBackClick">
             <s-icon name="arrows-chevron-left-rounded-24" size="28" />
@@ -17,6 +17,7 @@
             border-radius="mini"
             :content="tooltip"
             placement="right"
+            tabindex="-1"
           >
             <s-icon name="info-16" size="18px" />
           </s-tooltip>
@@ -44,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
 
@@ -55,6 +56,24 @@ export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean;
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean;
   @Prop({ default: true, type: Boolean }) readonly showHeader!: boolean;
+  @Prop({ default: '', type: String }) readonly resetFocus!: string;
+
+  @Watch('resetFocus')
+  private async resetBaseFocus(value: string) {
+    if (value) {
+      this.hasFocusReset = true;
+      this.setFocusToHeader();
+      this.hasFocusReset = false;
+    }
+  }
+
+  setFocusToHeader() {
+    const editButtonRef = this.$refs.headerBase as any;
+    editButtonRef.focus();
+    editButtonRef.blur();
+  }
+
+  hasFocusReset = false;
 
   get headerClasses(): Array<string> {
     const cssClasses: Array<string> = ['base-title', 's-flex'];
@@ -65,6 +84,10 @@ export default class WalletBase extends Mixins(TranslationMixin) {
       cssClasses.push('base-title--actions');
     }
     return cssClasses;
+  }
+
+  mounted(): void {
+    this.setFocusToHeader();
   }
 
   handleBackClick(): void {

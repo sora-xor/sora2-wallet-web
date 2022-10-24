@@ -1,9 +1,10 @@
 <template>
   <div>
     <wallet-base
+      show-back
+      :reset-focus="step.toString()"
       :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)"
       :tooltip="tooltipContent"
-      show-back
       :showHeader="showAdditionalInfo"
       @back="handleBack"
     >
@@ -17,7 +18,7 @@
           />
           <template v-if="validAddress && isNotSoraAddress">
             <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
-            <s-tooltip :content="copyValueAssetId" :placement="top">
+            <s-tooltip :content="copyValueAssetId" placement="top">
               <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress, $event)">
                 {{ formattedSoraAddress }}
               </p>
@@ -31,7 +32,7 @@
             has-locale-string
             :delimiters="delimiters"
             :decimals="asset.decimals"
-            :max="getMax((asset || {}).address)"
+            :max="MaxInputNumber"
           >
             <div class="wallet-send-amount" slot="top">
               <div class="wallet-send-amount-title">{{ t('walletSend.amount') }}</div>

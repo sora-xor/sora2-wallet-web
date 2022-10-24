@@ -1,5 +1,6 @@
 import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
+import type { EthBridgeUpdateHistory } from '../../consts';
 import type { PageInfo } from '../../services/subquery/types';
 
 export type TransactionsState = {
@@ -11,4 +12,5 @@ export type TransactionsState = {
   activeTxsIds: Array<string>;
   updateActiveTxsId: Nullable<NodeJS.Timeout | number>;
   selectedTxId: Nullable<string>;
+  updateEthBridgeHistory: Nullable<EthBridgeUpdateHistory>;
 };

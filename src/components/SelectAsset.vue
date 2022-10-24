@@ -1,6 +1,6 @@
 <template>
   <wallet-base :title="t('asset.select')" show-back @back="handleBack">
-    <asset-list :assets="accountAssets" divider class="select-asset-list">
+    <asset-list :assets="accountAssets" divider class="select-asset-list" :with-tabindex="false">
       <template #default="asset">
         <s-button
           type="action"

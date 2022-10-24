@@ -10,6 +10,7 @@ function initialState(): TransactionsState {
     activeTxsIds: [],
     updateActiveTxsId: null,
     selectedTxId: null,
+    updateEthBridgeHistory: null,
   };
 }
 

@@ -2,6 +2,7 @@
 
 exports[`CreateToken.vue [Confirm NFT Token Step]: should be rendered correctly 1`] = `
 <wallet-base-stub
+  resetfocus="ConfirmNftToken"
   showback="true"
   showheader="true"
   title="Create"
@@ -37,6 +38,7 @@ exports[`CreateToken.vue [Confirm NFT Token Step]: should be rendered correctly 
 
 exports[`CreateToken.vue [Confirm Simple Token Step]: should be rendered correctly 1`] = `
 <wallet-base-stub
+  resetfocus="ConfirmSimpleToken"
   showback="true"
   showheader="true"
   title="Create"
@@ -72,6 +74,7 @@ exports[`CreateToken.vue [Confirm Simple Token Step]: should be rendered correct
 
 exports[`CreateToken.vue [Create NFT Token Step]: should be rendered correctly 1`] = `
 <wallet-base-stub
+  resetfocus="CreateNftToken"
   showback="true"
   showheader="true"
   title="Create"
@@ -107,6 +110,7 @@ exports[`CreateToken.vue [Create NFT Token Step]: should be rendered correctly 1
 
 exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
 <wallet-base-stub
+  resetfocus="CreateSimpleToken"
   showback="true"
   showheader="true"
   title="Create"
@@ -142,6 +146,7 @@ exports[`CreateToken.vue [Create Step]: should be rendered correctly 1`] = `
 
 exports[`CreateToken.vue [Warn Step]: should be rendered correctly 1`] = `
 <wallet-base-stub
+  resetfocus="Warn"
   showback="true"
   showheader="true"
   title="Create"

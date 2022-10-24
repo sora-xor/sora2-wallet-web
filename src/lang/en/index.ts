@@ -1,9 +1,11 @@
 import { Operation, TransactionStatus } from '@sora-substrate/util';
 import { BalanceType } from '@sora-substrate/util/build/assets/consts';
 
-import { AddAssetTabs, TokenTabs, WalletTabs } from '../../consts';
+import { AddAssetTabs, TokenTabs, WalletTabs, SoraNetwork } from '../../consts';
 
 export default {
+  soraText: 'SORA',
+  ethereumText: 'Ethereum',
   closeText: 'Close',
   backText: 'Back',
   createWalletText: 'Create wallet',
@@ -54,6 +56,8 @@ export default {
     [Operation.DemeterFarmingStakeToken]: 'Add Stake',
     [Operation.DemeterFarmingUnstakeToken]: 'Remove Stake',
     [Operation.DemeterFarmingGetRewards]: 'Claim Rewards',
+    [Operation.EthBridgeIncoming]: 'Hashi Bridge',
+    [Operation.EthBridgeOutgoing]: 'Hashi Bridge',
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
@@ -72,6 +76,8 @@ export default {
       [Operation.DemeterFarmingStakeToken]: 'Added {amount} {symbol} for staking',
       [Operation.DemeterFarmingUnstakeToken]: 'Removed {amount} {symbol} from staking',
       [Operation.DemeterFarmingGetRewards]: '{amount} {symbol} claimed successfully',
+      [Operation.EthBridgeIncoming]: 'Transfered {amount} {symbol} from Ethereum to SORA',
+      [Operation.EthBridgeOutgoing]: 'Transfered {amount} {symbol} from SORA to Ethereum',
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
@@ -93,27 +99,24 @@ export default {
       [Operation.DemeterFarmingStakeToken]: 'Failed to add {amount} {symbol} for staking',
       [Operation.DemeterFarmingUnstakeToken]: 'Failed to remove {amount} {symbol} from staking',
       [Operation.DemeterFarmingGetRewards]: 'Failed to claim {symbol}',
+      [Operation.EthBridgeIncoming]: 'Failed to transfer {amount} {symbol} from Ethereum to SORA',
+      [Operation.EthBridgeOutgoing]: 'Failed to transfer {amount} {symbol} from SORA to Ethereum',
     },
   },
   polkadotjs: {
     noExtensions:
-      'No Polkadot.js extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
+      'No Polkadot{.js} extension was found. Please install it and reload this page\nhttps://polkadot.js.org/extension/',
     noExtension: 'No {extension} extension was found. Please install it and reload this page',
-    noAccounts: 'There seems to be no accounts in your Polkadot.js extension. Please add an account and try again.',
+    noAccounts: 'There seems to be no accounts in your {extension} extension. Please add an account and try again.',
     noAccount: '{extension} account error. Please check your account in the {extension} extension',
     noSigner: 'Access denied. Go to {extension} extension settings and open "Manage Website Access" to allow.',
   },
   connection: {
     title: 'SORA Network account',
-    text: 'Connect your SORA Network accounts or create new ones with polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
-    install:
-      'No polkadot.js extension found. Install it and <a href="#" onclick="window.location.reload(true);" class="wallet-connection-link">reload</a> the page.<br/><span class="wallet-connection-link">https://polkadot.js.org/extension/</span>',
-    noPermissions:
-      'Accidentally denied access for polkadot{.js}?</br>Go to polkadot{.js} settings and open "Manage Website Access" to allow.',
-    noAccounts: 'No account found in your polkadot{.js} browser extension. Please add an account and try again.',
+    text: 'Connect your SORA Network accounts or create new ones with Polkadot{.js} browser extension. This extension allows you to securely sign transactions and manage assets in SORA Network.',
+    noAccounts: 'No account found in your {extension} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
     selectWallet: 'Select a wallet to work with',
-    loadingTitle: 'Waiting for you to allow access to polkadot{.js} extension..',
     action: {
       install: 'Install extension',
       learnMore: 'Learn more',
@@ -444,5 +447,21 @@ export default {
     multicollateralBondingCurvePool: {
       PriceCalculationFailed: 'An error occurred while calculating the price',
     },
+  },
+  bridgeTransaction: {
+    steps: {
+      step: '{step} of 2',
+      step1: '1st',
+      step2: '2nd',
+    },
+    networkTitle: '{network} transaction',
+    viewInEtherscan: 'View in Etherscan',
+    transactionHash: 'Transaction hash',
+  },
+  sora: {
+    [SoraNetwork.Dev]: '@:soraText Devnet',
+    [SoraNetwork.Test]: '@:soraText Testnet',
+    [SoraNetwork.Stage]: '@:soraText Testnet',
+    [SoraNetwork.Prod]: '@:soraText Mainnet',
   },
 };

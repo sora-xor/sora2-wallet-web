@@ -7,6 +7,7 @@ import installWalletPlugins from './plugins';
 import SoraWallet from './SoraWallet.vue';
 import WalletAccount from './components/WalletAccount.vue';
 import WalletAvatar from './components/WalletAvatar.vue';
+import WalletBase from './components/WalletBase.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
 import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
@@ -72,17 +73,21 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(SoraWalletElements, {});
 }
 
-async function initWallet({ withoutStore = false, permissions }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
+async function initWallet({
+  withoutStore = false,
+  permissions,
+  updateEthBridgeHistory,
+}: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
   if (!withoutStore && !store) {
     await delay();
-    return await initWallet({ withoutStore, permissions });
+    return await initWallet({ withoutStore, permissions, updateEthBridgeHistory });
   } else {
     if (withoutStore) {
       store = internalStore;
     }
     if (connection.loading) {
       await delay();
-      return await initWallet({ withoutStore, permissions });
+      return await initWallet({ withoutStore, permissions, updateEthBridgeHistory });
     }
     if (!connection.api) {
       await connection.open();
@@ -91,8 +96,11 @@ async function initWallet({ withoutStore = false, permissions }: WALLET_CONSTS.W
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);
     }
+    if (updateEthBridgeHistory) {
+      store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
+    }
     try {
-      api.initialize();
+      await api.initialize();
     } catch (error) {
       console.error('Something went wrong during api initialization', error);
       throw error;
@@ -121,6 +129,7 @@ const components = {
   SoraWallet,
   WalletAccount,
   WalletAvatar,
+  WalletBase,
   AssetList,
   AssetListItem,
   AddAssetDetailsCard,
