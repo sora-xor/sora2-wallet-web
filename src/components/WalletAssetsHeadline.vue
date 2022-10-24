@@ -1,6 +1,6 @@
 <template>
   <div class="wallet-assets-headline">
-    <div class="wallet-assets-headline__content">
+    <div :class="computedClasses">
       <div v-if="assetsFiatAmount" class="total-fiat-values">
         <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
         <formatted-amount value-can-be-hidden is-fiat-value integer-only with-left-shift :value="assetsFiatAmount" />
@@ -60,6 +60,14 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
 
   verifiedOnlySwitch = false;
   zeroBalanceSwitch = false;
+
+  get computedClasses(): string {
+    const baseClass = ['wallet-assets-headline__content'];
+    if (!this.assetsFiatAmount) {
+      baseClass.push('wallet-assets-headline__content--no-fiat');
+    }
+    return baseClass.join(' ');
+  }
 
   get onlyVerifiedAssets(): boolean {
     return this.filters.verifiedOnly;
@@ -166,7 +174,14 @@ $size-px: 16px;
     padding-top: #{$basic-spacing-extra-small};
     padding-bottom: #{$basic-spacing-extra-small};
     text-align: center;
+
+    &--no-fiat > span {
+      position: relative;
+      left: 100%;
+      transform: translateX(-100%);
+    }
   }
+
   &__switch {
     @include switch-block;
     padding-top: 0;
