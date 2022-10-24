@@ -12,11 +12,11 @@ export default class TranslationMixin extends Vue {
   readonly TranslationConsts = TranslationConsts;
 
   t(key: string, values?: any): string {
-    return this.$root.$t(key, values) as string;
+    return this.$root.$t(key, this.getValues(values)) as string;
   }
 
   tc(key: string, choice?: number, values?: any): string {
-    return this.$root.$tc(key, choice, values);
+    return this.$root.$tc(key, choice, this.getValues(values));
   }
 
   te(key: string): boolean {
@@ -32,5 +32,9 @@ export default class TranslationMixin extends Vue {
         break;
     }
     return dayjs(date).locale(locale).format(format);
+  }
+
+  private getValues(values?: any): object {
+    return { ...(values || {}), ...this.TranslationConsts };
   }
 }

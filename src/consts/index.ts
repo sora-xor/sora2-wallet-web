@@ -163,10 +163,12 @@ export enum TranslationConsts {
   Sora = 'SORA',
   Ethereum = 'Ethereum',
   Hashi = 'HASHI',
-  Xyk = 'XYK',
+  XYK = 'XYK',
   Metamask = 'MetaMask',
   Polkadot = 'Polkadot',
   Kusama = 'Kusama',
-  PolkadotJs = 'Polkadot.js',
+  PolkadotJs = 'Polkadot{.js}',
   Etherscan = 'Etherscan',
+  APR = 'APR', // Annual percentage rate
+  ROI = 'ROI', // Return of investment
 }

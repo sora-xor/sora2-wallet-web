@@ -79,7 +79,7 @@ export const getAppWallets = (): Wallet[] => {
 
     return wallets;
   } catch (error) {
-    throw new AppError({ key: 'polkadotjs.noExtensions', payload: { polkadotJs: TranslationConsts.PolkadotJs } });
+    throw new AppError({ key: 'polkadotjs.noExtensions' });
   }
 };
 
