@@ -63,7 +63,6 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
 
   get computedClasses(): string {
     const baseClass = ['wallet-assets-headline__content'];
-    console.log('this.assetsFiatAmount', this.assetsFiatAmount);
     if (!this.assetsFiatAmount) {
       baseClass.push('wallet-assets-headline__content--no-fiat');
     }
