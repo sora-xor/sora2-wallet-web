@@ -3,7 +3,7 @@
     <s-icon class="content__warning-icon" name="notifications-alert-triangle-24" size="64px" />
     <h2 class="content__header">{{ t('confirmNextTxFailure.header') }}</h2>
     <div class="content__info">{{ t('confirmNextTxFailure.info', { fee }) }}</div>
-    <div class="content__payoff">{{ t('confirmNextTxFailure.payoff', { sora: TranslationConsts.Sora }) }}</div>
+    <div class="content__payoff">{{ t('confirmNextTxFailure.payoff') }}</div>
     <s-button type="primary" class="content__button s-typography-button--large" @click="handleConfirm">
       {{ t('confirmNextTxFailure.button') }}
     </s-button>

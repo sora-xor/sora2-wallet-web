@@ -4,7 +4,7 @@
       class="wallet-fee"
       is-formatted
       :label="t('walletSend.fee')"
-      :label-tooltip="t('walletSend.feeTooltip', { sora: TranslationConsts.Sora })"
+      :label-tooltip="t('walletSend.feeTooltip')"
       :value="formattedValue"
       :asset-symbol="xor"
       :fiat-value="formattedFiatValue"

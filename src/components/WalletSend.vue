@@ -234,7 +234,7 @@ export default class WalletSend extends Mixins(
   }
 
   get tooltipContent(): string {
-    return this.step === 1 ? this.t('walletSend.tooltip', { sora: this.TranslationConsts.Sora }) : '';
+    return this.step === 1 ? this.t('walletSend.tooltip') : '';
   }
 
   get copyValueAssetId(): string {

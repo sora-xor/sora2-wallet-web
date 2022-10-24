@@ -33,6 +33,7 @@ export default {
   amountText: 'Amount',
   confirmText: 'Confirm',
   errorText: 'Error',
+  networkFeeTooltipText: "Network fee is used to ensure {Sora} system's growth and stable performance.",
   insufficientBalanceText: 'Insufficient {tokenSymbol} balance',
   unknownErrorText: 'ERROR Something went wrong...',
   enterAccountError: 'Unable to enter account',
