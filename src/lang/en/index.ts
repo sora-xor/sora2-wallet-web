@@ -4,8 +4,6 @@ import { BalanceType } from '@sora-substrate/util/build/assets/consts';
 import { AddAssetTabs, TokenTabs, WalletTabs, SoraNetwork } from '../../consts';
 
 export default {
-  soraText: 'SORA',
-  ethereumText: 'Ethereum',
   closeText: 'Close',
   backText: 'Back',
   createWalletText: 'Create wallet',
