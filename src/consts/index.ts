@@ -158,3 +158,19 @@ export enum ETH_BRIDGE_STATES {
 }
 
 export const ObjectInit = () => null;
+
+export enum TranslationConsts {
+  APR = 'APR', // Annual percentage rate
+  Ethereum = 'Ethereum',
+  Etherscan = 'Etherscan',
+  Hashi = 'HASHI',
+  Kusama = 'Kusama',
+  Metamask = 'MetaMask',
+  Polkadot = 'Polkadot',
+  PolkadotJs = 'Polkadot{.js}',
+  Polkaswap = 'Polkaswap',
+  ROI = 'ROI', // Return of investment
+  Sora = 'SORA',
+  TBC = 'TBC',
+  XYK = 'XYK',
+}
