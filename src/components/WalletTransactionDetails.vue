@@ -304,7 +304,7 @@ export default class WalletTransactionDetails extends Mixins(
       return this.t(`sora.${this.soraNetwork}`);
     }
 
-    return this.t('ethereumText');
+    return this.TranslationConsts.Ethereum;
   }
 
   public getNetworkFeeSymbol(isSoraTx = true): string {
