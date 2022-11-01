@@ -21,36 +21,39 @@ const actions = defineActions({
 
     if (!isLoggedIn) return;
 
-    const subscription = SubqueryExplorerService.createAccountHistorySubscription(
-      account.address,
-      async (transaction) => {
-        const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
+    try {
+      const subscription = SubqueryExplorerService.createAccountHistorySubscription(
+        account.address,
+        async (transaction) => {
+          const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
 
-        if (!historyItem) return;
-        // Don't handle bridge operations
-        if ([Operation.EthBridgeIncoming, Operation.EthBridgeOutgoing].includes(historyItem.type)) return;
+          if (!historyItem) return;
+          // Don't handle bridge operations
+          if ([Operation.EthBridgeIncoming, Operation.EthBridgeOutgoing].includes(historyItem.type)) return;
 
-        // Save history item to local history
-        // This will update unsynced transactions and restore pending transactions too
-        api.saveHistory(historyItem);
-        // Update storage - this will show new element on history view
-        commit.getHistory();
+          // Save history item to local history
+          // This will update unsynced transactions and restore pending transactions too
+          api.saveHistory(historyItem);
+          // Update storage - this will show new element on history view
+          commit.getHistory();
 
-        // Handle incoming Transfer or SwapAndSend
-        if (
-          [Operation.Transfer, Operation.SwapAndSend].includes(historyItem.type) &&
-          historyItem.to === account.address
-        ) {
-          const asset = rootGetters.wallet.account.whitelist[historyItem.assetAddress as string];
+          // Handle incoming Transfer or SwapAndSend
+          if (
+            [Operation.Transfer, Operation.SwapAndSend].includes(historyItem.type) &&
+            historyItem.to === account.address
+          ) {
+            const asset = rootGetters.wallet.account.whitelist[historyItem.assetAddress as string];
 
-          if (asset) {
-            rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
+            if (asset) {
+              rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
+            }
           }
         }
-      }
-    );
-
-    commit.setExternalHistorySubscription(subscription);
+      );
+      commit.setExternalHistorySubscription(subscription);
+    } catch (error) {
+      console.error(error);
+    }
   },
 
   /**
@@ -132,7 +135,7 @@ const actions = defineActions({
     const { commit, state } = transactionsActionContext(context);
     commit.resetActiveTxs();
 
-    const updateActiveTxsId = setInterval(async () => {
+    const updateActiveTxsId = setInterval(() => {
       if (state.activeTxsIds.length) {
         commit.getHistory();
       }
