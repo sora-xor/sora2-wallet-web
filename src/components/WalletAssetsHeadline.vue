@@ -53,7 +53,7 @@ enum Filter {
   },
 })
 export default class WalletAssetsHeadline extends Mixins(TranslationMixin, LoadingMixin) {
-  @Prop({ default: '', type: String }) readonly assetsFiatAmount!: string;
+  @Prop({ default: '0', type: String }) readonly assetsFiatAmount!: string;
 
   @state.settings.filters filters!: WalletAssetFilters;
   @mutation.settings.setFilterOptions private setFilterOptions!: (filter: WalletAssetFilters) => void;
