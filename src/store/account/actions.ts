@@ -311,6 +311,7 @@ const actions = defineActions({
     }
   },
   async updateFiatPriceAndApyObject(context, fiatPriceAndApyRecord: FiatPriceAndApyObject): Promise<void> {
+    // TODO: it might be mutation isn't it?
     const {
       commit,
       state: { fiatPriceAndApyObject },
@@ -322,14 +323,16 @@ const actions = defineActions({
   },
   async subscribeOnFiatPriceAndApy(context): Promise<void> {
     const { dispatch, commit } = accountActionContext(context);
-
+    commit.resetFiatPriceAndApySubscription();
     await dispatch.getFiatPriceAndApyObject();
-
-    const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
-      dispatch.updateFiatPriceAndApyObject
-    );
-
-    commit.setFiatPriceAndApySubscription(subscription);
+    try {
+      const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
+        dispatch.updateFiatPriceAndApyObject
+      );
+      commit.setFiatPriceAndApySubscription(subscription);
+    } catch (error) {
+      console.error(error);
+    }
   },
   async getAccountReferralRewards(context): Promise<void> {
     const { state, commit } = accountActionContext(context);
