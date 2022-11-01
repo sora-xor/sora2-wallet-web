@@ -30,6 +30,7 @@ const mutations = defineMutations<AccountState>()({
         'whitelistArray',
         'fiatPriceAndApyObject',
         'fiatPriceAndApySubscription',
+        'withoutFiatAndApy',
         'assets',
         'polkadotJsAccounts',
         'polkadotJsAccountsSubscription',
