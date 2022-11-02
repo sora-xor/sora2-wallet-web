@@ -23,13 +23,13 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
         propsData: item,
         store: createStore(SoraNetwork.Dev),
       });
-      const expectedLinks = [HashType.EthAccount, HashType.EthTransaction].includes(item.type) ? 0 : 1;
+      const expectedLinksCount = 0;
       const txLinks = wrapper
         .findAll('.s-input-container .transaction-link')
         .wrappers.map((item) => item.element) as Array<HTMLAnchorElement>;
       const txInputValue = wrapper.find('.s-input-container s-input-stub').props().value as string;
       expect(wrapper.element).toMatchSnapshot();
-      expect(txLinks.length).toBe(expectedLinks);
+      expect(txLinks.length).toBe(expectedLinksCount);
       expect(txInputValue.length).toBe(formattedAddressLength + ellipsisLength);
     })
   );
@@ -40,13 +40,13 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
         propsData: item,
         store: createStore(SoraNetwork.Prod),
       });
-      const expectedLinks = [HashType.EthAccount, HashType.EthTransaction].includes(item.type) ? 0 : 2;
+      const expectedLinksCount = [HashType.EthAccount, HashType.EthTransaction].includes(item.type) ? 0 : 1;
       const txLinks = wrapper
         .findAll('.s-input-container .transaction-link')
         .wrappers.map((item) => item.element) as Array<HTMLAnchorElement>;
       const txInputValue = wrapper.find('.s-input-container s-input-stub').props().value as string;
       expect(wrapper.element).toMatchSnapshot();
-      expect(txLinks.length).toBe(expectedLinks);
+      expect(txLinks.length).toBe(expectedLinksCount);
       expect(txInputValue.length).toBe(formattedAddressLength + ellipsisLength);
     })
   );

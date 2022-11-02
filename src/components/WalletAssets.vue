@@ -219,11 +219,11 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     const isWhitelisted = api.assets.isWhitelist(asset, this.whitelist);
     const hasZeroBalance = asset.balance.total === '0';
 
-    if (tokenType === WalletFilteringOptions.TOKEN && isNft) {
+    if (tokenType === WalletFilteringOptions.Currencies && isNft) {
       return false;
     }
 
-    if (tokenType === WalletFilteringOptions.NFT && !isNft) {
+    if (tokenType === WalletFilteringOptions.NFTs && !isNft) {
       return false;
     }
 
