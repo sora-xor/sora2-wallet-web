@@ -162,12 +162,15 @@ export const getExplorerLinks = (soraNetwork?: Nullable<SoraNetwork>): Array<Exp
         { type: ExplorerType.Subscan, value: 'https://sora.subscan.io' },
       ];
     case SoraNetwork.Stage:
-      return [{ type: ExplorerType.Sorascan, value: 'https://test.sorascan.com/sora-staging' }];
+      // { type: ExplorerType.Sorascan, value: 'https://test.sorascan.com/sora-staging' }
+      return [];
     case SoraNetwork.Test:
-      return [{ type: ExplorerType.Sorascan, value: 'https://sorascan.tst.sora2.soramitsu.co.jp/sora-test' }];
+      // { type: ExplorerType.Sorascan, value: 'https://sorascan.tst.sora2.soramitsu.co.jp/sora-test' }
+      return [];
     case SoraNetwork.Dev:
     default:
-      return [{ type: ExplorerType.Sorascan, value: 'https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev' }];
+      // { type: ExplorerType.Sorascan, value: 'https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev' }
+      return [];
   }
 };
 
