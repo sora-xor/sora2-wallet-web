@@ -158,7 +158,7 @@ export const getExplorerLinks = (soraNetwork?: Nullable<SoraNetwork>): Array<Exp
   switch (soraNetwork) {
     case SoraNetwork.Prod:
       return [
-        { type: ExplorerType.Sorascan, value: 'https://sorascan.com/sora-mainnet' },
+        // { type: ExplorerType.Sorascan, value: 'https://sorascan.com/sora-mainnet' },
         { type: ExplorerType.Subscan, value: 'https://sora.subscan.io' },
       ];
     case SoraNetwork.Stage:
