@@ -66,13 +66,13 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
         </s-radio-stub>
         <s-radio-stub
           class="radio-btn"
-          label="Tokens"
+          label="Currencies"
           name=""
           size="medium"
           usedesignsystem="true"
         >
           
-          Tokens
+          Currencies
         
         </s-radio-stub>
         <s-radio-stub

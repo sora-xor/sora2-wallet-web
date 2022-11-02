@@ -112,7 +112,7 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   }
 
   updated(): void {
-    if (this.filters.option === WalletFilteringOptions.NFT) {
+    if (this.filters.option === WalletFilteringOptions.NFTs) {
       // disable verified only switch as there are no whitelisted NFTs.
       this.verifiedOnlySwitch = true;
       if (this.onlyVerifiedAssets === true) {
@@ -125,11 +125,11 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
 
   get chosenOptionText(): string {
     switch (this.filters.option) {
-      case WalletFilteringOptions.ALL:
+      case WalletFilteringOptions.All:
         return this.t('filter.all');
-      case WalletFilteringOptions.TOKEN:
+      case WalletFilteringOptions.Currencies:
         return this.t('filter.token');
-      case WalletFilteringOptions.NFT:
+      case WalletFilteringOptions.NFTs:
         return this.t('filter.nft');
       default:
         return this.t('filter.all');

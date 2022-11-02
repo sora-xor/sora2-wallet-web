@@ -3,6 +3,7 @@
     <s-input :placeholder="t(translation)" :value="formattedAddress" readonly tabindex="-1" />
     <s-button
       class="s-button--copy"
+      :class="{ 'with-dropdown': hasExplorerLinks }"
       icon="basic-copy-24"
       :tooltip="copyTooltip(t(translation))"
       type="action"
@@ -10,6 +11,7 @@
       @click="handleCopyAddress(formattedValue, $event)"
     />
     <s-dropdown
+      v-if="hasExplorerLinks"
       class="s-dropdown-menu"
       borderRadius="mini"
       type="ellipsis"
@@ -58,6 +60,10 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
 
   @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
 
+  get hasExplorerLinks(): boolean {
+    return this.isEthHash || !!this.explorerLinks.length;
+  }
+
   get isEthHash(): boolean {
     return [HashType.EthAccount, HashType.EthTransaction].includes(this.type);
   }
@@ -77,6 +83,8 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
     if (this.isEthHash) return [];
 
     const baseLinks = getExplorerLinks(this.soraNetwork);
+    if (!baseLinks.length) return [];
+
     if ([HashType.Account, HashType.Block].includes(this.type)) {
       return baseLinks.map(({ type, value }) => ({ type, value: `${value}/${this.type}/${this.formattedValue}` }));
     }
@@ -141,7 +149,7 @@ $dropdown-width: var(--s-size-mini);
     bottom: 0;
     margin-top: auto;
     margin-bottom: auto;
-    right: calc(#{$dropdown-right} + #{$dropdown-width} + #{$basic-spacing-mini});
+    right: $basic-spacing-mini;
     z-index: 1;
     &,
     &:hover,
@@ -149,6 +157,9 @@ $dropdown-width: var(--s-size-mini);
     &:active {
       background-color: transparent;
       border-color: transparent;
+    }
+    &.with-dropdown {
+      right: calc(#{$dropdown-right} + #{$dropdown-width} + #{$basic-spacing-mini});
     }
   }
 }

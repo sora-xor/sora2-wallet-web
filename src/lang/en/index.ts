@@ -305,7 +305,7 @@ export default {
   },
   filter: {
     all: 'All',
-    token: 'Tokens',
+    token: 'Currencies',
     nft: 'NFTs',
     verifiedOnly: 'Show verified assets only',
     zeroBalance: 'Hide 0 balance assets',
