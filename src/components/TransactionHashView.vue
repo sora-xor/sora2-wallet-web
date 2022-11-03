@@ -149,7 +149,7 @@ $dropdown-width: var(--s-size-mini);
     bottom: 0;
     margin-top: auto;
     margin-bottom: auto;
-    right: $basic-spacing-mini;
+    right: $dropdown-right;
     z-index: 1;
     &,
     &:hover,
