@@ -2,7 +2,7 @@ import type { FPNumber, Operation } from '@sora-substrate/util';
 
 export const HiddenValue = '******';
 
-export const BLOCK_PRODUCE_TIME = 6 * 1000;
+export const BLOCK_PRODUCE_TIME = 6_000;
 
 export enum Extensions {
   PolkadotJS = 'polkadot-js',
@@ -37,9 +37,9 @@ export enum AddAssetTabs {
 }
 
 export enum WalletFilteringOptions {
-  ALL = 'All',
-  TOKEN = 'Tokens',
-  NFT = 'NFTs',
+  All = 'All',
+  Currencies = 'Currencies',
+  NFTs = 'NFTs',
 }
 
 export enum SoraNetwork {

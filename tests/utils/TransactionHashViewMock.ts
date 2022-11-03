@@ -1,4 +1,4 @@
-import { HashType, SoraNetwork } from '@/consts';
+import { HashType } from '@/consts';
 
 interface TxHashViewData {
   value: string;
