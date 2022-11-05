@@ -35,11 +35,12 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { mutation, state } from '@/store/decorators';
+import { mutation, state } from '../store/decorators';
+import { WalletAssetFilters, WalletFilteringOptions } from '../consts';
+
 import FormattedAmount from './FormattedAmount.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
-import { WalletAssetFilters, WalletFilteringOptions } from '../consts';
 
 enum Filter {
   verifiedOnly = 'verifiedOnly',
@@ -112,7 +113,7 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   }
 
   updated(): void {
-    if (this.filters.option === WalletFilteringOptions.NFTs) {
+    if (this.filters.option === WalletFilteringOptions.NFT) {
       // disable verified only switch as there are no whitelisted NFTs.
       this.verifiedOnlySwitch = true;
       if (this.onlyVerifiedAssets === true) {
@@ -129,8 +130,8 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
         return this.t('filter.all');
       case WalletFilteringOptions.Currencies:
         return this.t('filter.token');
-      case WalletFilteringOptions.NFTs:
-        return this.t('filter.nft');
+      case WalletFilteringOptions.NFT:
+        return this.TranslationConsts.NFT;
       default:
         return this.t('filter.all');
     }

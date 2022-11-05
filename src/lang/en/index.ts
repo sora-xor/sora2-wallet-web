@@ -216,9 +216,6 @@ export default {
       title: 'Tokens',
       switchBtn: 'Verified assets only',
     },
-    [AddAssetTabs.NFT]: {
-      title: 'NFTs',
-    },
     searchInputText: 'Search by Asset ID, Name or Ticker Symbol',
     empty: 'No tokens found',
     alreadyAttached: 'Token was already attached',
@@ -306,7 +303,6 @@ export default {
   filter: {
     all: 'All',
     token: 'Currencies',
-    nft: 'NFTs',
     verifiedOnly: 'Show verified assets only',
     zeroBalance: 'Hide 0 balance assets',
     showAssets: 'Show assets',
