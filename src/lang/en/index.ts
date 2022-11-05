@@ -242,7 +242,6 @@ export default {
     selectLocalFile: 'Select local file',
     enterTokenDescription: 'Enter description',
     [TokenTabs.Token]: 'Token',
-    [TokenTabs.NonFungibleToken]: 'NFT',
     nft: {
       source: {
         label: 'Source',
