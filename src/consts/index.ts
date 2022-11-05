@@ -39,7 +39,7 @@ export enum AddAssetTabs {
 export enum WalletFilteringOptions {
   All = 'All',
   Currencies = 'Currencies',
-  NFTs = 'NFTs',
+  NFT = 'NFT',
 }
 
 export enum SoraNetwork {
@@ -173,4 +173,5 @@ export enum TranslationConsts {
   Sora = 'SORA',
   TBC = 'TBC',
   XYK = 'XYK',
+  NFT = 'NFT',
 }
