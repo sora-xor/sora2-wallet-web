@@ -141,35 +141,6 @@ export default class WalletHistory extends Mixins(
     return this.externalHistoryTotal + this.internalHistory.length;
   }
 
-  get isFirstPage(): boolean {
-    return this.currentPage === 1 || this.loading;
-  }
-
-  get lastPage(): number {
-    return this.total ? Math.ceil(this.total / this.pageAmount) : 1;
-  }
-
-  get isLastPage(): boolean {
-    return this.currentPage === this.lastPage || this.loading;
-  }
-
-  get lastPageAmount(): number {
-    return this.total % this.pageAmount || this.pageAmount;
-  }
-
-  get directionShift(): number {
-    return this.isLtrDirection ? 0 : this.pageAmount - this.lastPageAmount;
-  }
-
-  get totalText(): string {
-    const upperNumber = this.pageAmount * this.currentPage;
-
-    return `${this.t('ofText', {
-      first: `${upperNumber - this.pageAmount + 1}-${upperNumber > this.total ? this.total : upperNumber}`,
-      second: this.total,
-    })}`;
-  }
-
   get hasVisibleTransactions(): boolean {
     return !!this.transactions.length;
   }
