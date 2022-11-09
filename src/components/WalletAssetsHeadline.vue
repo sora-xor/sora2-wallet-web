@@ -5,30 +5,30 @@
         <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
         <formatted-amount value-can-be-hidden is-fiat-value integer-only with-left-shift :value="assetsFiatAmount" />
       </div>
-      <el-popover popper-class="wallet-assets-headline__popover" trigger="click" :visible-arrow="false">
-        <div class="wallet-assets-headline__text">{{ t('filter.showAssets') }}</div>
+      <el-popover popper-class="wallet-assets-filter" trigger="click" :visible-arrow="false">
+        <div class="wallet-assets-filter__text">{{ t('filter.showAssets') }}</div>
         <s-radio-group v-model="selectedFilter">
-          <s-radio class="radio-btn" v-for="(filter, index) in filterOptionsText" :key="index" :label="getLabel(index)">
+          <s-radio size="small" v-for="(filter, index) in filterOptionsText" :key="index" :label="getLabel(index)">
             {{ filter }}
           </s-radio>
         </s-radio-group>
-        <s-divider class="wallet-assets-divider__popover" />
-        <div class="wallet-assets-headline__switch">
+        <s-divider class="wallet-assets-filter__divider" />
+        <div class="wallet-assets-filter__switch">
           <s-switch v-model="onlyVerifiedAssets" :disabled="verifiedOnlySwitch" />
           <span>{{ t('filter.verifiedOnly') }}</span>
         </div>
-        <div class="wallet-assets-headline__switch">
+        <div class="wallet-assets-filter__switch">
           <s-switch v-model="zeroBalanceAssets" :disabled="zeroBalanceSwitch" />
           <span>{{ t('filter.zeroBalance') }}</span>
         </div>
-        <div class="wallet-assets-headline__button" slot="reference">
-          {{ t('filter.show').toUpperCase() }}:
-          <span class="wallet-assets-headline__button-option">{{ chosenOptionText.toUpperCase() }}</span>
-          <s-icon class="wallet-assets-headline__button-icon" name="basic-settings-24" size="14px" />
+        <div class="wallet-assets-filter__button" slot="reference">
+          {{ showText }}:
+          <span class="wallet-assets-filter__button-option">{{ chosenOptionText }}</span>
+          <s-icon class="wallet-assets-filter__button-icon" name="basic-settings-24" size="14px" />
         </div>
       </el-popover>
     </div>
-    <s-divider class="wallet-assets-divider" />
+    <s-divider class="wallet-assets-headline__divider" />
   </div>
 </template>
 
@@ -109,9 +109,10 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   }
 
   get filterOptionsText(): Array<string> {
-    return [this.t('filter.all'), this.t('filter.token'), this.t('filter.nft')];
+    return [this.t('filter.all'), this.t('filter.token'), this.TranslationConsts.NFT];
   }
 
+  /** TODO: Refactor it */
   updated(): void {
     if (this.filters.option === WalletFilteringOptions.NFT) {
       // disable verified only switch as there are no whitelisted NFTs.
@@ -125,47 +126,25 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   }
 
   get chosenOptionText(): string {
+    let text = this.t('filter.all');
     switch (this.filters.option) {
-      case WalletFilteringOptions.All:
-        return this.t('filter.all');
       case WalletFilteringOptions.Currencies:
-        return this.t('filter.token');
+        text = this.t('filter.token');
+        break;
       case WalletFilteringOptions.NFT:
-        return this.TranslationConsts.NFT;
-      default:
-        return this.t('filter.all');
+        text = this.TranslationConsts.NFT;
+        break;
     }
+    return text.toUpperCase();
+  }
+
+  get showText(): string {
+    return this.t('filter.show').toUpperCase();
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.el-radio {
-  font-weight: 300;
-}
-.el-popover {
-  padding: 0 !important;
-}
-</style>
-
-<style lang="scss">
-$size-px: 16px;
-
-.radio-btn .el-radio {
-  &__label {
-    font-size: var(--s-font-size-medium);
-  }
-
-  &__inner {
-    width: 22px !important;
-    height: 22px !important;
-  }
-
-  &__inner::after {
-    width: 14px !important;
-    height: 14px !important;
-  }
-}
 .wallet-assets-headline {
   &__content {
     display: flex;
@@ -175,6 +154,7 @@ $size-px: 16px;
     padding-top: #{$basic-spacing-extra-small};
     padding-bottom: #{$basic-spacing-extra-small};
     text-align: center;
+    font-size: var(--s-font-size-mini);
 
     &--no-fiat > span {
       position: relative;
@@ -182,28 +162,62 @@ $size-px: 16px;
       transform: translateX(-100%);
     }
   }
+  &__divider {
+    margin: 0;
+  }
+}
+.total-fiat-values {
+  display: flex;
+  align-items: baseline;
+  &__title {
+    text-transform: uppercase;
+    padding-right: #{$basic-spacing-extra-mini};
+    white-space: nowrap;
+    font-weight: 300;
+    letter-spacing: var(--s-letter-spacing-small);
+  }
+  .formatted-amount--fiat-value {
+    display: block;
+    font-size: var(--s-font-size-small);
+    font-weight: 500;
+  }
+}
+</style>
+
+<style lang="scss">
+$size-px: 16px;
+
+.wallet-assets-filter {
+  &.el-popover {
+    background-color: var(--s-color-utility-body);
+    border-radius: $size-px;
+    color: var(--s-color-base-content-primary);
+    border: none;
+    padding: $size-px $size-px 0 $size-px;
+    font-size: var(--s-font-size-small);
+    .el-radio {
+      font-weight: 300;
+      margin-right: 20px;
+      & .el-radio__label {
+        font-size: var(--s-font-size-small);
+      }
+    }
+  }
 
   &__switch {
-    @include switch-block;
+    @include switch-block(var(--s-font-size-small));
     padding-top: 0;
-    padding-bottom: calc(var(--s-size-small / 2));
-
-    .el-switch__input:disabled + .el-switch__core {
-      background-color: var(--s-color-base-border-secondary) !important;
+    .s-switch.neumorphic .el-switch__input:disabled + .el-switch__core {
+      background-color: var(--s-color-base-border-secondary);
     }
   }
 
   &__text {
-    font-size: var(--s-font-size-medium);
     margin-bottom: 4px;
   }
 
-  &__popover {
-    background-color: var(--s-color-utility-body) !important;
-    border-radius: $size-px !important;
-    color: var(--s-color-base-content-primary) !important;
-    border: none !important;
-    padding: $size-px $size-px 0 $size-px !important;
+  &__divider {
+    margin: 16px 0;
   }
 
   &__button {
@@ -218,8 +232,8 @@ $size-px: 16px;
       color: var(--s-color-theme-accent);
     }
 
-    &-icon {
-      color: var(--s-color-base-content-tertiary) !important;
+    & &-icon {
+      color: var(--s-color-base-content-tertiary);
       margin-left: 6px;
     }
 
@@ -228,32 +242,6 @@ $size-px: 16px;
       background-color: var(--s-color-base-border-secondary);
       transition-delay: 0.05s;
     }
-  }
-}
-
-.total-fiat-values {
-  display: flex;
-  align-items: baseline;
-
-  &__title {
-    text-transform: uppercase;
-    padding-right: #{$basic-spacing-extra-mini};
-    white-space: nowrap;
-    font-weight: 300;
-    letter-spacing: var(--s-letter-spacing-small);
-  }
-  .formatted-amount--fiat-value {
-    display: block;
-    font-size: var(--s-font-size-small);
-    font-weight: 500;
-  }
-}
-
-.wallet-assets-divider {
-  margin: 0 !important;
-
-  &__popover {
-    margin: 4px 0 12px !important;
   }
 }
 </style>
