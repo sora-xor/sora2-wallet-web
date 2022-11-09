@@ -96,6 +96,15 @@ const mutations = defineMutations<AccountState>()({
     state.fiatPriceAndApyObject = object;
     state.withoutFiatAndApy = false;
   },
+  updateFiatPriceAndApyObject(state, fiatPriceAndApyRecord?: FiatPriceAndApyObject): void {
+    const fiatPriceAndApyObject = state.fiatPriceAndApyObject;
+    if (!fiatPriceAndApyRecord) {
+      return;
+    }
+    const updated = { ...(fiatPriceAndApyObject || {}), ...fiatPriceAndApyRecord };
+    state.fiatPriceAndApyObject = updated;
+    state.withoutFiatAndApy = false;
+  },
   /** When fiat price and apy request has an error */
   clearFiatPriceAndApyObject(state): void {
     state.fiatPriceAndApyObject = {};

@@ -213,11 +213,8 @@ export default {
     action: '@:addAssetText',
     success: 'Asset {symbol} was added successfully!',
     [AddAssetTabs.Token]: {
-      title: 'Tokens',
+      title: 'Currencies',
       switchBtn: 'Verified assets only',
-    },
-    [AddAssetTabs.NFT]: {
-      title: 'NFTs',
     },
     searchInputText: 'Search by Asset ID, Name or Ticker Symbol',
     empty: 'No tokens found',
@@ -245,7 +242,6 @@ export default {
     selectLocalFile: 'Select local file',
     enterTokenDescription: 'Enter description',
     [TokenTabs.Token]: 'Token',
-    [TokenTabs.NonFungibleToken]: 'NFT',
     nft: {
       source: {
         label: 'Source',
@@ -306,7 +302,6 @@ export default {
   filter: {
     all: 'All',
     token: 'Currencies',
-    nft: 'NFTs',
     verifiedOnly: 'Show verified assets only',
     zeroBalance: 'Hide 0 balance assets',
     showAssets: 'Show assets',
