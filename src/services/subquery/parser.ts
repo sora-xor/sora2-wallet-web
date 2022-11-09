@@ -5,7 +5,6 @@ import { FPNumber, Operation, TransactionStatus, HistoryItem } from '@sora-subst
 import { RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
-import type { TranslateResult } from 'vue-i18n';
 
 import store from '../../store';
 import { api } from '../../api';

@@ -97,14 +97,22 @@ export default class SubqueryExplorer implements Explorer {
     });
   }
 
-  public createFiatPriceAndApySubscription(handler: (entity: FiatPriceAndApyObject) => void): VoidFunction {
+  public createFiatPriceAndApySubscription(
+    handler: (entity: FiatPriceAndApyObject) => void,
+    errorHandler: () => void
+  ): VoidFunction {
     const createSubscription = this.subscribe(FiatPriceSubscription, {});
 
     return createSubscription((payload) => {
-      if (payload.data) {
-        const entity = this.parseFiatPriceAndApyEntity(payload.data.poolXYKs._entity);
-
-        handler(entity);
+      try {
+        if (payload.data) {
+          const entity = this.parseFiatPriceAndApyEntity(payload.data.poolXYKs._entity);
+          handler(entity);
+        } else {
+          errorHandler();
+        }
+      } catch (error) {
+        errorHandler();
       }
     });
   }
@@ -157,7 +165,7 @@ export default class SubqueryExplorer implements Explorer {
 
       return acc;
     } catch (error) {
-      console.error('Subquery is not available or data is incorrect!', error);
+      console.warn('Subquery is not available or data is incorrect!', error);
       return null;
     }
   }
@@ -190,7 +198,7 @@ export default class SubqueryExplorer implements Explorer {
 
       return { hasNextPage, endCursor, nodes };
     } catch (error) {
-      console.error('HistoricalPriceQuery: Subquery is not available or data is incorrect!', error);
+      console.warn('HistoricalPriceQuery: Subquery is not available or data is incorrect!', error);
       return null;
     }
   }
@@ -233,7 +241,7 @@ export default class SubqueryExplorer implements Explorer {
 
       return rewardsInfo;
     } catch (error) {
-      console.error('Subquery is not available or data is incorrect!', error);
+      console.warn('Subquery is not available or data is incorrect!', error);
       return null;
     }
   }

@@ -223,7 +223,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       return false;
     }
 
-    if (tokenType === WalletFilteringOptions.NFTs && !isNft) {
+    if (tokenType === WalletFilteringOptions.NFT && !isNft) {
       return false;
     }
 

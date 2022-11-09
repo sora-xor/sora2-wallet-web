@@ -2,7 +2,7 @@
   <wallet-base show-back :reset-focus="step" :title="createTokenTitle" :show-header="showHeader" @back="handleBack">
     <div class="token">
       <s-tabs v-if="showTabs" class="token__tab" type="rounded" :value="currentTab" @change="handleChangeTab">
-        <s-tab v-for="tab in TokenTabs" :key="tab" :label="t(`createToken.${tab}`)" :name="tab" />
+        <s-tab v-for="tab in TokenTabs" :key="tab" :label="getTabName(tab)" :name="tab" />
       </s-tabs>
       <component
         :is="currentTab"
@@ -39,7 +39,7 @@ export default class CreateToken extends Mixins(TranslationMixin) {
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
-  private step: Step = Step.CreateSimpleToken;
+  step = Step.CreateSimpleToken;
   currentTab: Step = Step.CreateSimpleToken;
   showTabs = true;
   showHeader = true;
@@ -47,6 +47,13 @@ export default class CreateToken extends Mixins(TranslationMixin) {
 
   get currentStep(): Step {
     return this.step;
+  }
+
+  getTabName(tab: TokenTabs): string {
+    if (tab === TokenTabs.NonFungibleToken) {
+      return this.TranslationConsts.NFT;
+    }
+    return this.t(`createToken.${tab}`);
   }
 
   handleChangeTab(value: Step): void {
