@@ -213,7 +213,7 @@ export default {
     action: '@:addAssetText',
     success: 'Asset {symbol} was added successfully!',
     [AddAssetTabs.Token]: {
-      title: 'Tokens',
+      title: 'Currencies',
       switchBtn: 'Verified assets only',
     },
     searchInputText: 'Search by Asset ID, Name or Ticker Symbol',
