@@ -4,7 +4,7 @@ import { interval } from 'rxjs';
 
 import type { FiatPriceAndApyObject } from '../subquery/types';
 
-const ceresUpdateInterval = interval(30_000);
+const ceresUpdateInterval = interval(60_000);
 
 export class CeresApiService {
   public static async getFiatPriceObject(): Promise<Nullable<FiatPriceAndApyObject>> {
