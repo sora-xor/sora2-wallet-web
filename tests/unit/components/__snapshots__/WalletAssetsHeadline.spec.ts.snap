@@ -36,7 +36,7 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
       offset="0"
       opendelay="0"
       placement="bottom"
-      popperclass="wallet-assets-headline__popover"
+      popperclass="wallet-assets-filter"
       popperoptions="[object Object]"
       tabindex="0"
       transformorigin="true"
@@ -44,7 +44,7 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
       trigger="click"
     >
       <div
-        class="wallet-assets-headline__text"
+        class="wallet-assets-filter__text"
       >
         Show assets
       </div>
@@ -54,10 +54,9 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
         value="All"
       >
         <s-radio-stub
-          class="radio-btn"
           label="All"
           name=""
-          size="medium"
+          size="small"
           usedesignsystem="true"
         >
           
@@ -65,10 +64,9 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
         
         </s-radio-stub>
         <s-radio-stub
-          class="radio-btn"
           label="Currencies"
           name=""
-          size="medium"
+          size="small"
           usedesignsystem="true"
         >
           
@@ -76,27 +74,26 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
         
         </s-radio-stub>
         <s-radio-stub
-          class="radio-btn"
-          label="NFTs"
+          label="NFT"
           name=""
-          size="medium"
+          size="small"
           usedesignsystem="true"
         >
           
-          NFTs
+          NFT
         
         </s-radio-stub>
       </s-radio-group-stub>
        
       <s-divider-stub
-        class="wallet-assets-divider__popover"
+        class="wallet-assets-filter__divider"
         contentposition="center"
         direction="horizontal"
         type="secondary"
       />
        
       <div
-        class="wallet-assets-headline__switch"
+        class="wallet-assets-filter__switch"
       >
         <s-switch-stub
           activeiconСlass=""
@@ -115,7 +112,7 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
       </div>
        
       <div
-        class="wallet-assets-headline__switch"
+        class="wallet-assets-filter__switch"
       >
         <s-switch-stub
           activeiconСlass=""
@@ -134,19 +131,19 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
       </div>
        
       <div
-        class="wallet-assets-headline__button"
+        class="wallet-assets-filter__button"
       >
         
         SHOW:
         
         <span
-          class="wallet-assets-headline__button-option"
+          class="wallet-assets-filter__button-option"
         >
           ALL
         </span>
          
         <s-icon-stub
-          class="wallet-assets-headline__button-icon"
+          class="wallet-assets-filter__button-icon"
           name="basic-settings-24"
           size="14px"
         />
@@ -155,7 +152,7 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
   </div>
    
   <s-divider-stub
-    class="wallet-assets-divider"
+    class="wallet-assets-headline__divider"
     contentposition="center"
     direction="horizontal"
     type="secondary"

@@ -19,11 +19,11 @@ exports[`AddAsset.vue [Custom Asset Tab]: should be rendered correctly 1`] = `
       value="AddAssetNFT"
     >
       <s-tab-stub
-        label="Tokens"
+        label="Currencies"
         name="AddAssetToken"
       />
       <s-tab-stub
-        label="NFTs"
+        label="NFT"
         name="AddAssetNFT"
       />
     </s-tabs-stub>
@@ -54,11 +54,11 @@ exports[`AddAsset.vue [Search Tab]: should be rendered correctly 1`] = `
       value="AddAssetToken"
     >
       <s-tab-stub
-        label="Tokens"
+        label="Currencies"
         name="AddAssetToken"
       />
       <s-tab-stub
-        label="NFTs"
+        label="NFT"
         name="AddAssetNFT"
       />
     </s-tabs-stub>
