@@ -96,6 +96,11 @@ $el-dialog-max-width: 496px;
     bottom: 0;
     left: 0;
     margin: 0;
+
+    > .el-scrollbar__wrap {
+      overflow-x: hidden;
+      overflow-y: scroll;
+    }
   }
 
   #{$el-dialog-class} {
