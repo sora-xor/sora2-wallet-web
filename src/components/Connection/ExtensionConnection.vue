@@ -89,7 +89,6 @@ enum Step {
   components: { AccountCard, WalletBase, WalletAccount },
 })
 export default class ExtensionConnection extends Mixins(TranslationMixin, LoadingMixin) {
-  readonly Step = Step;
   step = Step.First;
 
   readonly getWalletInstallUrl = getWalletInstallUrl;
@@ -139,7 +138,11 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   }
 
   get connectionText(): string {
-    if (this.isEntryView) return this.t('connection.text');
+    if (this.isEntryView) {
+      return this.t('connection.text', {
+        extensions: this.availableWallets.map(({ title }) => title).join(', '),
+      });
+    }
     if (this.isExtensionsView) return this.t('connection.selectWallet');
     if (this.polkadotJsAccounts.length) return this.t('connection.selectAccount');
 
