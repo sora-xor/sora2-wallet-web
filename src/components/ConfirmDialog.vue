@@ -78,7 +78,7 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
   handleConfirm(): void {
     try {
       api.unlockPair(this.accountPassword);
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === 'Unable to decode using the supplied passphrase') {
         this.$notify({
           message: this.t('desktop.errorMessages.password'),
