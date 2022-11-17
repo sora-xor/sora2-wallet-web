@@ -12,7 +12,6 @@ module.exports = {
           @import "@/styles/_layout.scss";
           @import "@/styles/_mixins.scss";
         `,
-        quietDeps: true,
       },
     },
   },
