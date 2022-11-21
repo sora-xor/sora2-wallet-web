@@ -34,7 +34,7 @@
       </s-button>
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
-      <s-form :class="getComputedClasses()">
+      <s-form :class="computedClasses">
         <s-input
           :placeholder="t('desktop.accountName.placeholder')"
           v-model="accountName"
@@ -50,14 +50,14 @@
         >
           <s-icon :name="iconPasswordStyle" class="eye-icon" size="18" slot="suffix" @click.native="toggleVisibility" />
         </s-input>
-        <p v-if="!json" class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
-        <s-input
-          v-if="!json"
-          type="password"
-          :placeholder="t('desktop.confirmPassword.placeholder')"
-          v-model="accountPasswordConfirm"
-          :disabled="loading"
-        />
+        <template v-if="!json">
+          <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
+          <s-input
+            type="password"
+            :placeholder="t('desktop.confirmPassword.placeholder')"
+            v-model="accountPasswordConfirm"
+            :disabled="loading"
+        /></template>
       </s-form>
 
       <s-button
@@ -139,7 +139,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     return this.hiddenInput ? 'basic-eye-no-24' : 'basic-filterlist-24';
   }
 
-  getComputedClasses(): string {
+  get computedClasses(): string {
     const baseClass = ['login__inputs'];
     if (this.json) baseClass.push('login__inputs--json');
     return baseClass.join(' ');
