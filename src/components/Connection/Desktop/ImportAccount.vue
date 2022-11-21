@@ -34,13 +34,14 @@
       </s-button>
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
-      <s-form class="login__inputs">
+      <s-form :class="computedClasses">
         <s-input
           :placeholder="t('desktop.accountName.placeholder')"
           v-model="accountName"
           :disabled="loading"
           :readonly="readonlyAccountName"
         ></s-input>
+        <p v-if="!json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
         <s-input
           :type="inputType"
           :placeholder="t('desktop.password.placeholder')"
@@ -49,6 +50,14 @@
         >
           <s-icon :name="iconPasswordStyle" class="eye-icon" size="18" slot="suffix" @click.native="toggleVisibility" />
         </s-input>
+        <template v-if="!json">
+          <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
+          <s-input
+            type="password"
+            :placeholder="t('desktop.confirmPassword.placeholder')"
+            v-model="accountPasswordConfirm"
+            :disabled="loading"
+        /></template>
       </s-form>
 
       <s-button
@@ -93,6 +102,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   mnemonicPhrase = '';
   accountName = '';
   accountPassword = '';
+  accountPasswordConfirm = '';
 
   json: Nullable<KeyringPair$Json> = null;
 
@@ -115,7 +125,10 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get disabledImportStep(): boolean {
-    return !(this.accountName && this.accountPassword);
+    if (this.json) {
+      return !(this.accountName && this.accountPassword);
+    }
+    return !(this.accountName && this.accountPassword && this.accountPasswordConfirm);
   }
 
   get inputType(): string {
@@ -124,6 +137,12 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
   get iconPasswordStyle(): string {
     return this.hiddenInput ? 'basic-eye-no-24' : 'basic-filterlist-24';
+  }
+
+  get computedClasses(): string {
+    const baseClass = ['login__inputs'];
+    if (this.json) baseClass.push('login__inputs--json');
+    return baseClass.join(' ');
   }
 
   toggleVisibility(): void {
@@ -234,9 +253,18 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     }
   }
 
-  async handleCredentialsInput() {
+  async handleCredentialsInput(): Promise<void> {
+    if (this.accountPassword !== this.accountPasswordConfirm) {
+      this.$notify({
+        message: this.t('desktop.errorMessages.passwords'),
+        type: 'error',
+        title: '',
+      });
+      return;
+    }
+
     try {
-      await api.createAccount(this.mnemonicPhrase, this.accountName, this.accountPassword);
+      api.createAccount(this.mnemonicPhrase, this.accountName, this.accountPassword);
       await this.getPolkadotJsAccounts();
       this.$emit('stepChange', LoginStep.AccountList);
     } catch (error) {
@@ -264,7 +292,9 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
     margin-top: 24px;
     display: flex;
     flex-direction: column;
-    gap: calc(var(--s-size-small) / 2);
+    &--json {
+      gap: calc(var(--s-size-small) / 2);
+    }
   }
 
   .json-upload {
