@@ -1,7 +1,6 @@
 import { defineGetters } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
-import type { Wallet } from '@subwallet/wallet-connect/types';
-import type { Blacklist, Whitelist } from '@sora-substrate/util/build/assets/types';
+import type { Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import { accountGetterContext } from './../account';
 import { api } from '../../api';
