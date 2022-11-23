@@ -38,38 +38,7 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
     usedesignsystem="true"
   />
    
-  <s-dropdown-stub
-    borderradius="mini"
-    buttontype="secondary"
-    class="s-dropdown-menu"
-    hideonclick="true"
-    hidetimeout="150"
-    icon="basic-more-vertical-24"
-    placement="bottom-end"
-    popperclass=""
-    showtimeout="250"
-    size="medium"
-    tabindex="0"
-    trigger="hover"
-    type="ellipsis"
-  >
-    <template>
-      <a
-        class="transaction-link"
-        href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
-        rel="nofollow noopener"
-        target="_blank"
-      >
-        <s-dropdown-item-stub
-          class="s-dropdown-menu__item"
-        >
-          
-            View in SORAScan
-          
-        </s-dropdown-item-stub>
-      </a>
-    </template>
-  </s-dropdown-stub>
+  <!---->
 </div>
 `;
 
@@ -111,38 +80,7 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
     usedesignsystem="true"
   />
    
-  <s-dropdown-stub
-    borderradius="mini"
-    buttontype="secondary"
-    class="s-dropdown-menu"
-    hideonclick="true"
-    hidetimeout="150"
-    icon="basic-more-vertical-24"
-    placement="bottom-end"
-    popperclass=""
-    showtimeout="250"
-    size="medium"
-    tabindex="0"
-    trigger="hover"
-    type="ellipsis"
-  >
-    <template>
-      <a
-        class="transaction-link"
-        href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
-        rel="nofollow noopener"
-        target="_blank"
-      >
-        <s-dropdown-item-stub
-          class="s-dropdown-menu__item"
-        >
-          
-            View in SORAScan
-          
-        </s-dropdown-item-stub>
-      </a>
-    </template>
-  </s-dropdown-stub>
+  <!---->
 </div>
 `;
 
@@ -172,7 +110,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
   <s-button-stub
     alternative="true"
     borderradius="small"
-    class="s-button--copy"
+    class="s-button--copy with-dropdown"
     icon="basic-copy-24"
     iconposition="left"
     nativetype="button"
@@ -200,20 +138,6 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     type="ellipsis"
   >
     <template>
-      <a
-        class="transaction-link"
-        href="https://sorascan.com/sora-mainnet/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
-        rel="nofollow noopener"
-        target="_blank"
-      >
-        <s-dropdown-item-stub
-          class="s-dropdown-menu__item"
-        >
-          
-            View in SORAScan
-          
-        </s-dropdown-item-stub>
-      </a>
       <a
         class="transaction-link"
         href="https://sora.subscan.io/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
@@ -259,7 +183,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
   <s-button-stub
     alternative="true"
     borderradius="small"
-    class="s-button--copy"
+    class="s-button--copy with-dropdown"
     icon="basic-copy-24"
     iconposition="left"
     nativetype="button"
@@ -287,20 +211,6 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     type="ellipsis"
   >
     <template>
-      <a
-        class="transaction-link"
-        href="https://sorascan.com/sora-mainnet/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
-        rel="nofollow noopener"
-        target="_blank"
-      >
-        <s-dropdown-item-stub
-          class="s-dropdown-menu__item"
-        >
-          
-            View in SORAScan
-          
-        </s-dropdown-item-stub>
-      </a>
       <a
         class="transaction-link"
         href="https://sora.subscan.io/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
@@ -358,38 +268,7 @@ exports[`TransactionHashView.vue [type: block, env: Dev]: should be rendered cor
     usedesignsystem="true"
   />
    
-  <s-dropdown-stub
-    borderradius="mini"
-    buttontype="secondary"
-    class="s-dropdown-menu"
-    hideonclick="true"
-    hidetimeout="150"
-    icon="basic-more-vertical-24"
-    placement="bottom-end"
-    popperclass=""
-    showtimeout="250"
-    size="medium"
-    tabindex="0"
-    trigger="hover"
-    type="ellipsis"
-  >
-    <template>
-      <a
-        class="transaction-link"
-        href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/block/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
-        rel="nofollow noopener"
-        target="_blank"
-      >
-        <s-dropdown-item-stub
-          class="s-dropdown-menu__item"
-        >
-          
-            View in SORAScan
-          
-        </s-dropdown-item-stub>
-      </a>
-    </template>
-  </s-dropdown-stub>
+  <!---->
 </div>
 `;
 
@@ -419,7 +298,7 @@ exports[`TransactionHashView.vue [type: block, env: Prod]: should be rendered co
   <s-button-stub
     alternative="true"
     borderradius="small"
-    class="s-button--copy"
+    class="s-button--copy with-dropdown"
     icon="basic-copy-24"
     iconposition="left"
     nativetype="button"
@@ -447,20 +326,6 @@ exports[`TransactionHashView.vue [type: block, env: Prod]: should be rendered co
     type="ellipsis"
   >
     <template>
-      <a
-        class="transaction-link"
-        href="https://sorascan.com/sora-mainnet/block/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
-        rel="nofollow noopener"
-        target="_blank"
-      >
-        <s-dropdown-item-stub
-          class="s-dropdown-menu__item"
-        >
-          
-            View in SORAScan
-          
-        </s-dropdown-item-stub>
-      </a>
       <a
         class="transaction-link"
         href="https://sora.subscan.io/block/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
@@ -506,7 +371,7 @@ exports[`TransactionHashView.vue [type: ethAccount, env: Dev]: should be rendere
   <s-button-stub
     alternative="true"
     borderradius="small"
-    class="s-button--copy"
+    class="s-button--copy with-dropdown"
     icon="basic-copy-24"
     iconposition="left"
     nativetype="button"
@@ -572,7 +437,7 @@ exports[`TransactionHashView.vue [type: ethAccount, env: Prod]: should be render
   <s-button-stub
     alternative="true"
     borderradius="small"
-    class="s-button--copy"
+    class="s-button--copy with-dropdown"
     icon="basic-copy-24"
     iconposition="left"
     nativetype="button"
@@ -638,7 +503,7 @@ exports[`TransactionHashView.vue [type: ethTransaction, env: Dev]: should be ren
   <s-button-stub
     alternative="true"
     borderradius="small"
-    class="s-button--copy"
+    class="s-button--copy with-dropdown"
     icon="basic-copy-24"
     iconposition="left"
     nativetype="button"
@@ -704,7 +569,7 @@ exports[`TransactionHashView.vue [type: ethTransaction, env: Prod]: should be re
   <s-button-stub
     alternative="true"
     borderradius="small"
-    class="s-button--copy"
+    class="s-button--copy with-dropdown"
     icon="basic-copy-24"
     iconposition="left"
     nativetype="button"
@@ -782,38 +647,7 @@ exports[`TransactionHashView.vue [type: id, env: Dev]: should be rendered correc
     usedesignsystem="true"
   />
    
-  <s-dropdown-stub
-    borderradius="mini"
-    buttontype="secondary"
-    class="s-dropdown-menu"
-    hideonclick="true"
-    hidetimeout="150"
-    icon="basic-more-vertical-24"
-    placement="bottom-end"
-    popperclass=""
-    showtimeout="250"
-    size="medium"
-    tabindex="0"
-    trigger="hover"
-    type="ellipsis"
-  >
-    <template>
-      <a
-        class="transaction-link"
-        href="https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev/transaction/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
-        rel="nofollow noopener"
-        target="_blank"
-      >
-        <s-dropdown-item-stub
-          class="s-dropdown-menu__item"
-        >
-          
-            View in SORAScan
-          
-        </s-dropdown-item-stub>
-      </a>
-    </template>
-  </s-dropdown-stub>
+  <!---->
 </div>
 `;
 
@@ -843,7 +677,7 @@ exports[`TransactionHashView.vue [type: id, env: Prod]: should be rendered corre
   <s-button-stub
     alternative="true"
     borderradius="small"
-    class="s-button--copy"
+    class="s-button--copy with-dropdown"
     icon="basic-copy-24"
     iconposition="left"
     nativetype="button"
@@ -871,20 +705,6 @@ exports[`TransactionHashView.vue [type: id, env: Prod]: should be rendered corre
     type="ellipsis"
   >
     <template>
-      <a
-        class="transaction-link"
-        href="https://sorascan.com/sora-mainnet/transaction/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
-        rel="nofollow noopener"
-        target="_blank"
-      >
-        <s-dropdown-item-stub
-          class="s-dropdown-menu__item"
-        >
-          
-            View in SORAScan
-          
-        </s-dropdown-item-stub>
-      </a>
       <a
         class="transaction-link"
         href="https://sora.subscan.io/extrinsic/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"

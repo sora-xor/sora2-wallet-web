@@ -307,8 +307,17 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   async createAccount(): Promise<void> {
-    if (this.accountPassword === this.accountPasswordConfirm) {
-      await api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
+    if (this.accountPassword !== this.accountPasswordConfirm) {
+      this.$notify({
+        message: this.t('desktop.errorMessages.passwords'),
+        type: 'error',
+        title: '',
+      });
+      return;
+    }
+
+    try {
+      api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
       await this.getPolkadotJsAccounts();
 
       if (this.toExport) {
@@ -320,9 +329,9 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
       }
 
       this.$emit('stepChange', LoginStep.AccountList);
-    } else {
+    } catch {
       this.$notify({
-        message: `Passwords did not match`,
+        message: this.t('unknownErrorText'),
         type: 'error',
         title: '',
       });

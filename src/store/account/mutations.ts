@@ -30,6 +30,7 @@ const mutations = defineMutations<AccountState>()({
         'whitelistArray',
         'fiatPriceAndApyObject',
         'fiatPriceAndApySubscription',
+        'withoutFiatAndApy',
         'assets',
         'polkadotJsAccounts',
         'polkadotJsAccountsSubscription',
@@ -93,6 +94,15 @@ const mutations = defineMutations<AccountState>()({
   },
   setFiatPriceAndApyObject(state, object: FiatPriceAndApyObject): void {
     state.fiatPriceAndApyObject = object;
+    state.withoutFiatAndApy = false;
+  },
+  updateFiatPriceAndApyObject(state, fiatPriceAndApyRecord?: FiatPriceAndApyObject): void {
+    const fiatPriceAndApyObject = state.fiatPriceAndApyObject;
+    if (!fiatPriceAndApyRecord) {
+      return;
+    }
+    const updated = { ...(fiatPriceAndApyObject || {}), ...fiatPriceAndApyRecord };
+    state.fiatPriceAndApyObject = updated;
     state.withoutFiatAndApy = false;
   },
   /** When fiat price and apy request has an error */

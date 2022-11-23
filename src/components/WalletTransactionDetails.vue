@@ -275,8 +275,9 @@ export default class WalletTransactionDetails extends Mixins(
     }
 
     if (error.name && error.section) {
-      errMessage = this.t(`historyErrorMessages.${error.section}.${error.name}`);
+      errMessage = this.t(`historyErrorMessages.${error.section.toLowerCase()}.${error.name.toLowerCase()}`);
       if (errMessage.startsWith('historyErrorMessages')) {
+        // was not found in json files
         return this.t(`historyErrorMessages.generalError`);
       }
     }
@@ -304,7 +305,7 @@ export default class WalletTransactionDetails extends Mixins(
       return this.t(`sora.${this.soraNetwork}`);
     }
 
-    return this.t('ethereumText');
+    return this.TranslationConsts.Ethereum;
   }
 
   public getNetworkFeeSymbol(isSoraTx = true): string {

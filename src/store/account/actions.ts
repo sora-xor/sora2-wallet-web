@@ -8,6 +8,8 @@ import { accountActionContext } from './../account';
 import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
+import { CeresApiService } from '../../services/ceres';
+import { pushNotification } from '../../util/notification';
 import {
   getAppWallets,
   getWallet,
@@ -18,9 +20,7 @@ import {
   NFT_BLACK_LIST_URL,
 } from '../../util';
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
-import type { FiatPriceAndApyObject } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
-import { pushNotification } from '../../util/notification';
 
 const CHECK_EXTENSION_INTERVAL = 5 * 1000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -300,36 +300,41 @@ const actions = defineActions({
   async getFiatPriceAndApyObject(context): Promise<void> {
     const { commit } = accountActionContext(context);
     try {
-      const data = await SubqueryExplorerService.getFiatPriceAndApyObject();
-      if (!data) {
-        commit.clearFiatPriceAndApyObject();
+      let data = await SubqueryExplorerService.getFiatPriceAndApyObject();
+      if (data) {
+        commit.setFiatPriceAndApyObject(data);
         return;
       }
-      commit.setFiatPriceAndApyObject(data);
+      data = await CeresApiService.getFiatPriceObject();
+      if (data) {
+        commit.setFiatPriceAndApyObject(data);
+        return;
+      }
+      // If data is empty
+      commit.clearFiatPriceAndApyObject();
     } catch (error) {
       commit.clearFiatPriceAndApyObject();
     }
   },
-  async updateFiatPriceAndApyObject(context, fiatPriceAndApyRecord: FiatPriceAndApyObject): Promise<void> {
-    const {
-      commit,
-      state: { fiatPriceAndApyObject },
-    } = accountActionContext(context);
-
-    const updated = { ...(fiatPriceAndApyObject || {}), ...fiatPriceAndApyRecord };
-
-    commit.setFiatPriceAndApyObject(updated);
-  },
   async subscribeOnFiatPriceAndApy(context): Promise<void> {
     const { dispatch, commit } = accountActionContext(context);
-
+    commit.resetFiatPriceAndApySubscription();
     await dispatch.getFiatPriceAndApyObject();
-
-    const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
-      dispatch.updateFiatPriceAndApyObject
-    );
-
-    commit.setFiatPriceAndApySubscription(subscription);
+    try {
+      const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
+        commit.updateFiatPriceAndApyObject,
+        commit.clearFiatPriceAndApyObject
+      );
+      commit.setFiatPriceAndApySubscription(subscription);
+    } catch (error) {
+      console.warn(error);
+      console.info('Subquery cannot set fiat subscription! CERES API will be used');
+      const subscription = CeresApiService.createFiatPriceSubscription(
+        commit.updateFiatPriceAndApyObject,
+        commit.clearFiatPriceAndApyObject
+      );
+      commit.setFiatPriceAndApySubscription(subscription);
+    }
   },
   async getAccountReferralRewards(context): Promise<void> {
     const { state, commit } = accountActionContext(context);
