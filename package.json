@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "1.11.1",
+  "version": "1.11.2",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@polkadot/vue-identicon": "2.6.1",
-    "@sora-substrate/util": "^1.11.2",
+    "@sora-substrate/util": "1.11.2",
     "@soramitsu/soramitsu-js-ui": "^1.0.39",
     "@subwallet/wallet-connect": "^0.2.3",
     "@urql/core": "^2.5.0",

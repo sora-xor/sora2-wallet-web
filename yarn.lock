@@ -2113,7 +2113,7 @@
     "@polkadot/types" "8.9.1"
     "@sora-substrate/type-definitions" "1.11.2"
 
-"@sora-substrate/util@^1.11.2":
+"@sora-substrate/util@1.11.2":
   version "1.11.2"
   resolved "https://registry.yarnpkg.com/@sora-substrate/util/-/util-1.11.2.tgz#ac329508eadab0ec009f18612260bc692dc0e8ed"
   integrity sha512-bbwpIx6wW5PYV69JayrF4keSTs/KNgGSvkQaIex/ny0pF0XVyAZyNu1dbuJPHYuOCKBWDQvuLXupt/AUJkY04w==
