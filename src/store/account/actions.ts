@@ -25,7 +25,7 @@ import type { PolkadotJsAccount } from '../../types/common';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
-const PASSPHRASE_TIMEOUT = 15 * 60 * 1000; // 15min
+const PASSPHRASE_TIMEOUT = 15 * 60_000; // 15min
 
 function subscribeOnFiatUsingSubquery(context: ActionContext<any, any>): void {
   const { commit } = accountActionContext(context);
