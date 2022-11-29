@@ -1,6 +1,7 @@
 import isEmpty from 'lodash/fp/isEmpty';
-import { FPNumber } from '@sora-substrate/util';
 import { interval } from 'rxjs';
+import { FPNumber } from '@sora-substrate/util';
+import { DAI } from '@sora-substrate/util/build/assets/consts';
 
 import type { FiatPriceAndApyObject } from '../subquery/types';
 
@@ -21,6 +22,9 @@ export class CeresApiService {
       }, {});
       if (isEmpty(cerestokenApiObj)) {
         return null;
+      }
+      if (!cerestokenApiObj[DAI.address]) {
+        cerestokenApiObj[DAI.address] = { price: FPNumber.ONE.toCodecString() };
       }
       return cerestokenApiObj;
     } catch (error) {

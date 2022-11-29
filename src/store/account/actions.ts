@@ -1,6 +1,7 @@
 import { defineActions } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
+import type { ActionContext } from 'vuex';
 import type { Signer } from '@polkadot/api/types';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
@@ -22,9 +23,61 @@ import {
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
 
-const CHECK_EXTENSION_INTERVAL = 5 * 1000;
+const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
-const PASSPHRASE_TIMEOUT = 15 * 60 * 1000; // 15min
+const PASSPHRASE_TIMEOUT = 15 * 60_000; // 15min
+
+function subscribeOnFiatUsingSubquery(context: ActionContext<any, any>): void {
+  const { commit } = accountActionContext(context);
+  const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
+    commit.updateFiatPriceAndApyObject,
+    commit.clearFiatPriceAndApyObject
+  );
+  commit.setFiatPriceAndApySubscription(subscription);
+}
+
+function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>, error?: Error): void {
+  const { commit } = accountActionContext(context);
+  if (error) {
+    console.warn(error);
+  }
+  console.info('Subquery cannot set fiat subscription! CERES API will be used');
+  const subscription = CeresApiService.createFiatPriceSubscription(
+    commit.updateFiatPriceAndApyObject,
+    commit.clearFiatPriceAndApyObject
+  );
+  commit.setFiatPriceAndApySubscription(subscription);
+}
+
+/**
+ * Returns `true`, if subquery is stable and up.
+ *
+ * Returns `false`, if subquery is down but CERES api works fine.
+ *
+ * Returns `null`, if both services are unavailable.
+ */
+async function getFiatPriceAndApyObject(context: ActionContext<any, any>): Promise<Nullable<boolean>> {
+  const { commit } = accountActionContext(context);
+  commit.resetFiatPriceAndApySubscription();
+  try {
+    let data = await SubqueryExplorerService.getFiatPriceAndApyObject();
+    if (data) {
+      commit.setFiatPriceAndApyObject(data);
+      return true;
+    }
+    data = await CeresApiService.getFiatPriceObject();
+    if (data) {
+      commit.setFiatPriceAndApyObject(data);
+      return false;
+    }
+    // If data is empty
+    commit.clearFiatPriceAndApyObject();
+    return null;
+  } catch (error) {
+    commit.clearFiatPriceAndApyObject();
+    return null;
+  }
+}
 
 const actions = defineActions({
   async getSigner(context): Promise<Signer> {
@@ -297,43 +350,17 @@ const actions = defineActions({
       commit.clearBlacklist();
     }
   },
-  async getFiatPriceAndApyObject(context): Promise<void> {
-    const { commit } = accountActionContext(context);
-    try {
-      let data = await SubqueryExplorerService.getFiatPriceAndApyObject();
-      if (data) {
-        commit.setFiatPriceAndApyObject(data);
-        return;
-      }
-      data = await CeresApiService.getFiatPriceObject();
-      if (data) {
-        commit.setFiatPriceAndApyObject(data);
-        return;
-      }
-      // If data is empty
-      commit.clearFiatPriceAndApyObject();
-    } catch (error) {
-      commit.clearFiatPriceAndApyObject();
-    }
-  },
   async subscribeOnFiatPriceAndApy(context): Promise<void> {
-    const { dispatch, commit } = accountActionContext(context);
-    commit.resetFiatPriceAndApySubscription();
-    await dispatch.getFiatPriceAndApyObject();
+    const isSubqueryAvailable = await getFiatPriceAndApyObject(context);
     try {
-      const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
-        commit.updateFiatPriceAndApyObject,
-        commit.clearFiatPriceAndApyObject
-      );
-      commit.setFiatPriceAndApySubscription(subscription);
+      if (isSubqueryAvailable) {
+        subscribeOnFiatUsingSubquery(context);
+      } else {
+        // Subscribe on CERES API anyway
+        subscribeOnFiatUsingCeresApi(context);
+      }
     } catch (error) {
-      console.warn(error);
-      console.info('Subquery cannot set fiat subscription! CERES API will be used');
-      const subscription = CeresApiService.createFiatPriceSubscription(
-        commit.updateFiatPriceAndApyObject,
-        commit.clearFiatPriceAndApyObject
-      );
-      commit.setFiatPriceAndApySubscription(subscription);
+      subscribeOnFiatUsingCeresApi(context, error as Error);
     }
   },
   async getAccountReferralRewards(context): Promise<void> {
