@@ -100,7 +100,10 @@ async function initWallet({
       store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
     try {
-      await api.initialize();
+      const withKeyringLoading = true;
+      const { isDesktop } = store.state.wallet.settings;
+
+      await api.initialize(withKeyringLoading, isDesktop);
     } catch (error) {
       console.error('Something went wrong during api initialization', error);
       throw error;
