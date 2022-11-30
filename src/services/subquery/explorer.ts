@@ -280,7 +280,7 @@ export default class SubqueryExplorer implements Explorer {
   public subscribe<T>(subscription: TypedDocumentNode<T>, variables = {}) {
     this.initClient();
 
-    return (handler: (payload: OperationResult<T, {}>) => void) => {
+    return (handler: (payload: OperationResult<T, any>) => void) => {
       const { unsubscribe } = pipe(
         this.client.subscription<ResultOf<typeof subscription>>(subscription, variables),
         subscribe((payload) => handler(payload))
