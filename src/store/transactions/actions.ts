@@ -9,7 +9,7 @@ import { SubqueryExplorerService, SubqueryDataParserService } from '../../servic
 import { historyElementsFilter } from '../../services/subquery/queries/historyElements';
 import type { ExternalHistoryParams } from '../../types/history';
 
-const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2 * 1000;
+const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2_000;
 
 const actions = defineActions({
   async subscribeOnExternalHistory(context): Promise<void> {
