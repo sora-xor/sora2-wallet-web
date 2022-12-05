@@ -57,7 +57,8 @@
             :placeholder="t('desktop.confirmPassword.placeholder')"
             v-model="accountPasswordConfirm"
             :disabled="loading"
-        /></template>
+          />
+        </template>
       </s-form>
 
       <s-button
@@ -203,6 +204,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
         this.accountName = name;
         this.readonlyAccountName = true;
         this.json = parsedJson;
+        this.mnemonicPhrase = '';
         this.$emit('stepChange', LoginStep.ImportCredentials);
       } catch {
         this.$notify({
