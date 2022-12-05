@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
 import DialogBase from './DialogBase.vue';
 import WalletAccount from './WalletAccount.vue';
 import DialogMixin from './mixins/DialogMixin';
@@ -49,6 +49,11 @@ import { api } from '../api';
 export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin, LoadingMixin) {
   @getter.account.passphrase passphrase!: Nullable<string>;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => AsyncVoidFn;
+
+  @Watch('isVisible')
+  private handleDialogChange(value: boolean): void {
+    this.setupFormState();
+  }
 
   accountPassword = '';
 
@@ -113,10 +118,6 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
     } else if (this.isVisible === false) {
       this.accountPassword = '';
     }
-  }
-
-  updated(): void {
-    this.setupFormState();
   }
 
   mounted(): void {
