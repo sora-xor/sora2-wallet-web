@@ -4,7 +4,7 @@ import pkg from '../package.json';
 import scss from 'rollup-plugin-scss';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import del from 'rollup-plugin-delete';
 import copy from 'rollup-plugin-copy';
 import json from 'rollup-plugin-json';

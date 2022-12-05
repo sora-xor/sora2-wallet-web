@@ -1,6 +1,5 @@
 <template>
-  <extension-connection v-if="!isDesktop" />
-  <desktop-connection v-else />
+  <component :is="component" v-bind="$attrs" v-on="$listeners" />
 </template>
 
 <script lang="ts">
@@ -16,5 +15,9 @@ import { state } from '../store/decorators';
 })
 export default class WalletConnection extends Vue {
   @state.settings.isDesktop isDesktop!: boolean;
+
+  get component(): string {
+    return this.isDesktop ? 'DesktopConnection' : 'ExtensionConnection';
+  }
 }
 </script>

@@ -237,7 +237,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
       api.restoreFromJson(json, this.accountPassword);
       await this.getPolkadotJsAccounts();
       this.$emit('stepChange', LoginStep.AccountList);
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === 'Unable to decode using the supplied passphrase') {
         this.$notify({
           message: this.t('desktop.errorMessages.password'),
@@ -269,7 +269,7 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
       api.createAccount(this.mnemonicPhrase, this.accountName, this.accountPassword);
       await this.getPolkadotJsAccounts();
       this.$emit('stepChange', LoginStep.AccountList);
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === 'Invalid bip39 mnemonic specified') {
         this.$notify({
           message: this.t('desktop.errorMessages.mnemonic'),
