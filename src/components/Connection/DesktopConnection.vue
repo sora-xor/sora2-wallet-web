@@ -1,6 +1,12 @@
 <template>
-  <wallet-base :title="t('connection.title')" :show-header="showHeader" :show-back="showBackBtn" @back="handleBack">
-    <div class="desktop-connection" v-loading="loading">
+  <wallet-base
+    v-loading="loading"
+    :title="t('connection.title')"
+    :show-header="showHeader"
+    :show-back="showBackBtn"
+    @back="handleBack"
+  >
+    <div class="desktop-connection">
       <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
       <create-account v-else-if="isCreateFlow" :step="step" class="login" @stepChange="setStep" />
       <import-account v-else-if="isImportFlow" :step="step" class="login" @stepChange="setStep" />
@@ -23,7 +29,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
 import WalletBase from '../WalletBase.vue';
 import WelcomePage from './Desktop/WelcomePage.vue';
 import CreateAccount from './Desktop/CreateAccount.vue';
-import ConnectedAccountList from './common/ConnectedAccountList.vue';
+import ConnectedAccountList from './Desktop/ConnectedAccountList.vue';
 import ImportAccount from './Desktop/ImportAccount.vue';
 import ConfirmDialog from '../ConfirmDialog.vue';
 import { LoginStep } from '../../consts';
