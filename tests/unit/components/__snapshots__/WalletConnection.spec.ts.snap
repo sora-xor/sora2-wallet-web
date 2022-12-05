@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WalletConnection.vue [Extension available]: Accounts should be rendered 1`] = `<extension-connection-stub />`;
+exports[`WalletConnection.vue [Extension available]: Accounts should be rendered 1`] = `<extensionconnection-stub />`;
 
-exports[`WalletConnection.vue [Extension available]: Connect account screen should be rendered 1`] = `<extension-connection-stub />`;
+exports[`WalletConnection.vue [Extension available]: Connect account screen should be rendered 1`] = `<extensionconnection-stub />`;
 
-exports[`WalletConnection.vue [Extension available]: Extensions should be rendered 1`] = `<extension-connection-stub />`;
+exports[`WalletConnection.vue [Extension available]: Extensions should be rendered 1`] = `<extensionconnection-stub />`;
 
-exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen should be rendered 1`] = `<extension-connection-stub />`;
+exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen should be rendered 1`] = `<extensionconnection-stub />`;

@@ -24,7 +24,7 @@
     </wallet-account>
 
     <div v-show="!selectedTransaction" class="wallet">
-      <s-tabs :value="currentTab" type="rounded" @change="handleChangeTab">
+      <s-tabs v-model="currentTab" type="rounded">
         <s-tab v-for="tab in WalletTabs" :key="tab" :label="t(`wallet.${tab}`)" :name="tab" />
       </s-tabs>
       <component :is="currentTab" @swap="handleSwap" />
@@ -82,10 +82,6 @@ export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) 
     if (this.currentRouteParams.currentTab) {
       this.currentTab = this.currentRouteParams.currentTab;
     }
-  }
-
-  handleChangeTab(value: WalletTabs): void {
-    this.currentTab = value;
   }
 
   handleSwap(asset: any): void {
