@@ -68,11 +68,26 @@ export enum MutationTypes {
   UPDATE = 'UPDATE',
 }
 
+/* eslint-disable camelcase */
 export type SubscriptionPayload<EntityData> = {
   id: string;
   mutation_type: MutationTypes;
   _entity: EntityData;
 };
+
+export type AccountEntity = {
+  id: string;
+  latest_history_element_id: string;
+};
+
+export type PoolXYKEntity = {
+  id: string;
+  strategicBonusApy: Nullable<string>;
+  strategic_bonus_apy?: Nullable<string>;
+  priceUSD: Nullable<string>;
+  price_u_s_d?: Nullable<string>;
+};
+/* eslint-enable camelcase */
 
 export type AssetSnapshot = {
   priceUSD: {
@@ -88,33 +103,11 @@ export type AssetSnapshot = {
   timestamp: number;
 };
 
-export type AccountEntity = {
-  id: string;
-  latest_history_element_id: string;
-};
-
-export type PoolXYKEntity = {
-  id: string;
-  strategicBonusApy: Nullable<string>;
-  strategic_bonus_apy?: Nullable<string>;
-  priceUSD: Nullable<string>;
-  price_u_s_d?: Nullable<string>;
-};
-
 export type FiatPriceAndApyObject = {
   [key: string]: {
     price?: CodecString;
     strategicBonusApy?: CodecString;
   };
-};
-
-export type HistoryElementsQueryResponse = {
-  edges: Array<{
-    cursor?: string;
-    node: HistoryElement;
-  }>;
-  pageInfo?: PageInfo;
-  totalCount?: number;
 };
 
 export type HistoryElementError = {
@@ -209,6 +202,17 @@ export type HistoryElementEthBridgeIncoming = {
   to: string;
 };
 
+export type ReferralSetReferrer = {
+  from: string; // referral
+  to: string; // referrer
+};
+
+export type ReferrerReserve = {
+  from: string;
+  to: string;
+  amount: string;
+};
+
 export type HistoryElement = {
   id: string;
   blockHash: string;
@@ -235,6 +239,15 @@ export type HistoryElement = {
   >;
 };
 
+export type HistoryElementsQueryResponse = {
+  edges: Array<{
+    cursor?: string;
+    node: HistoryElement;
+  }>;
+  pageInfo?: PageInfo;
+  totalCount?: number;
+};
+
 export type ReferrerRewards = {
   rewards: FPNumber;
   invitedUserRewards: {
@@ -250,17 +263,6 @@ export type ReferrerReward = {
   referrer: string;
   referral: string;
   timestamp: number;
-  amount: string;
-};
-
-export type ReferralSetReferrer = {
-  from: string; // referral
-  to: string; // referrer
-};
-
-export type ReferrerReserve = {
-  from: string;
-  to: string;
   amount: string;
 };
 

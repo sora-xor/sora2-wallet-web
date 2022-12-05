@@ -12,14 +12,7 @@
       >
         <wallet-account :polkadotAccount="account" />
       </div>
-      <s-card
-        v-if="isDesktop"
-        shadow="always"
-        size="small"
-        border-radius="medium"
-        class="logout"
-        @click.native="openWelcomePage"
-      >
+      <s-card shadow="always" size="small" border-radius="medium" class="logout" @click.native="openWelcomePage">
         <div class="connection__logout">
           <s-icon name="various-atom-24" class="connection__logout-icon" size="28" />
           <div class="connection__logout-text s-flex">{{ t('desktop.addAccount') }}</div>
@@ -30,11 +23,11 @@
 </template>
 
 <script lang="ts">
+import { Mixins, Component } from 'vue-property-decorator';
 import TranslationMixin from '@/components/mixins/TranslationMixin';
 import { LoginStep } from '@/consts';
-import { getter, state } from '../../../store/decorators';
+import { getter } from '../../../store/decorators';
 import { PolkadotJsAccount } from '@/types/common';
-import { Mixins, Component } from 'vue-property-decorator';
 
 import WalletAccount from '../../WalletAccount.vue';
 
@@ -42,7 +35,6 @@ import WalletAccount from '../../WalletAccount.vue';
   components: { WalletAccount },
 })
 export default class ConnectedAccountList extends Mixins(TranslationMixin) {
-  @state.settings.isDesktop isDesktop!: boolean;
   @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   handleClick(account: PolkadotJsAccount): void {

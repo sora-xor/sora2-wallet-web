@@ -1,7 +1,7 @@
 <template>
   <wallet-base :title="t('addAsset.title')" show-back :reset-focus="currentScreen" @back="handleBack">
     <div class="add-asset">
-      <s-tabs v-if="showTabs" :value="currentTab" type="rounded" @change="handleChangeTab">
+      <s-tabs v-if="showTabs" v-model="currentTab" type="rounded">
         <s-tab v-for="tab in AddAssetTabs" :key="tab" :label="getTabName(tab)" :name="tab" />
       </s-tabs>
       <keep-alive>
@@ -52,10 +52,6 @@ export default class AddAsset extends Mixins(TranslationMixin) {
       return this.TranslationConsts.NFT;
     }
     return this.t(`addAsset.${tab}.title`);
-  }
-
-  handleChangeTab(value: AddAssetTabs): void {
-    this.currentTab = value;
   }
 
   changeVisibility(): void {

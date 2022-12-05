@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
 import DialogBase from './DialogBase.vue';
 import WalletAccount from './WalletAccount.vue';
 import DialogMixin from './mixins/DialogMixin';
@@ -49,6 +49,11 @@ import { api } from '../api';
 export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin, LoadingMixin) {
   @getter.account.passphrase passphrase!: Nullable<string>;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => AsyncVoidFn;
+
+  @Watch('isVisible')
+  private handleDialogChange(value: boolean): void {
+    this.setupFormState();
+  }
 
   accountPassword = '';
 
@@ -78,16 +83,23 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
   handleConfirm(): void {
     try {
       api.unlockPair(this.accountPassword);
-    } catch (error) {
+    } catch (error: any) {
       if (error.message === 'Unable to decode using the supplied passphrase') {
         this.$notify({
           message: this.t('desktop.errorMessages.password'),
           type: 'error',
           title: '',
         });
+      } else {
+        this.$notify({
+          message: this.t('unknownErrorText'),
+          type: 'error',
+          title: '',
+        });
       }
 
       this.accountPassword = '';
+      this.closeDialog();
       return;
     }
 
