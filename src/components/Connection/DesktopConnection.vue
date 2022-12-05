@@ -149,5 +149,11 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
     color: var(--s-color-base-content-secondary);
     font-size: 14px;
   }
+
+  .el-textarea {
+    &__inner {
+      resize: none !important;
+    }
+  }
 }
 </style>

@@ -323,11 +323,6 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
 
 .input-textarea {
   margin-top: 30px !important;
-  .el-textarea {
-    &__inner {
-      resize: none !important;
-    }
-  }
 }
 
 .eye-icon:hover {
