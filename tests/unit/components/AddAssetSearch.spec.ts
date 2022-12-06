@@ -1,5 +1,5 @@
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
-import { MOCK_ACCOUNT_ASSETS, MOCK_ASSETS } from '../../utils/mock';
+import { MOCK_ACCOUNT_ASSETS, MOCK_ASSETS, MOCK_WHITE_LIST } from '../../utils/mock';
 import { MOCK_ADD_ASSET_SEARCH } from '../../utils/AddAssetSearchMock';
 
 import AddAssetSearch from '@/components/AddAsset/AddAssetTokenTab.vue';
@@ -21,6 +21,7 @@ const createStore = () =>
       }),
       getters: {
         accountAssetsAddressTable: () => accountAssetsAddressTableMock,
+        whitelist: () => MOCK_WHITE_LIST,
       },
     },
     router: {

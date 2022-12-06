@@ -123,7 +123,8 @@ export default {
       // TODO: we should find out how to solve an issue with @sora-substrate/util
       // For now build operation can be done like:
       targets: [{ src: 'lib/src/*', dest: 'lib' }],
-      hook: 'renderChunk',
+      hook: 'writeBundle',
+      verbose: true,
     }),
     del({
       targets: [
@@ -134,7 +135,8 @@ export default {
         'lib/SoraWallet.vue.d.ts',
         'lib/main.d.ts',
       ],
-      hook: 'writeBundle',
+      hook: 'closeBundle',
+      verbose: true,
     }),
   ],
 };

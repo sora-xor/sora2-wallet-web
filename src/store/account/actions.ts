@@ -296,7 +296,8 @@ const actions = defineActions({
       const assets = await api.assets.getAssets(getters.whitelist, false, getters.blacklist);
       commit.updateAssets(assets);
     } catch (error) {
-      commit.updateAssets([]);
+      console.warn('Connection was lost during getAssets operation');
+      // commit.updateAssets([]); TODO: refactor this place
     }
   },
 
@@ -332,7 +333,7 @@ const actions = defineActions({
     const { commit } = accountActionContext(context);
     commit.clearWhitelist();
     try {
-      const response = await fetch(WHITE_LIST_URL);
+      const response = await fetch(WHITE_LIST_URL, { cache: 'no-cache' });
       const data = await response.json();
       commit.setWhitelist(data);
     } catch (error) {
@@ -343,7 +344,7 @@ const actions = defineActions({
     const { commit } = accountActionContext(context);
     commit.clearBlacklist();
     try {
-      const response = await fetch(NFT_BLACK_LIST_URL);
+      const response = await fetch(NFT_BLACK_LIST_URL, { cache: 'no-cache' });
       const data = await response.json();
       commit.setNftBlacklist(data);
     } catch (error) {

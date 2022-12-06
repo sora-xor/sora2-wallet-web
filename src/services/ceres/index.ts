@@ -10,7 +10,7 @@ const ceresUpdateInterval = interval(60_000);
 export class CeresApiService {
   public static async getFiatPriceObject(): Promise<Nullable<FiatPriceAndApyObject>> {
     try {
-      const cerestokenApi = await fetch('https://cerestoken.io/api/pairs');
+      const cerestokenApi = await fetch('https://cerestoken.io/api/pairs', { cache: 'no-store' });
       const data = await cerestokenApi.json();
       const cerestokenApiObj = (data as Array<any>).reduce<FiatPriceAndApyObject>((acc, item) => {
         if (+item.price) {

@@ -48,8 +48,8 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
   @getter.account.whitelist private whitelist!: Whitelist;
-
-  showVerifiedAssetsOnly = false;
+  /** `true` by default cuz we have a lot of assets */
+  showVerifiedAssetsOnly = true;
 
   private get notAddedAssets(): Array<Asset> {
     return this.assets.filter(
