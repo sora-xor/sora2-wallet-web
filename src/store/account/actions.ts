@@ -296,7 +296,8 @@ const actions = defineActions({
       const assets = await api.assets.getAssets(getters.whitelist, false, getters.blacklist);
       commit.updateAssets(assets);
     } catch (error) {
-      commit.updateAssets([]);
+      console.warn('Connection was lost during getAssets operation');
+      // commit.updateAssets([]); TODO: refactor this place
     }
   },
 

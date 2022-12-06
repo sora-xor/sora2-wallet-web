@@ -26,6 +26,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
         inactivetext=""
         name=""
         usedesignsystem="true"
+        value="true"
         width="40"
       />
        
@@ -41,7 +42,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
         buffer="NaN"
         class="asset-list-inner hidden-scrollbar"
         item-size="NaN"
-        items="[object Object]"
+        items=""
         key-field="address"
         style="margin-right: 0px;"
       />
@@ -85,6 +86,7 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
         inactivetext=""
         name=""
         usedesignsystem="true"
+        value="true"
         width="40"
       />
        
@@ -144,6 +146,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
         inactivetext=""
         name=""
         usedesignsystem="true"
+        value="true"
         width="40"
       />
        
@@ -159,7 +162,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
         buffer="NaN"
         class="asset-list-inner hidden-scrollbar"
         item-size="NaN"
-        items="[object Object]"
+        items=""
         key-field="address"
         style="margin-right: 0px;"
       />
