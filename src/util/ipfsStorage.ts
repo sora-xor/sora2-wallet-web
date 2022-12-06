@@ -3,7 +3,7 @@ export class IpfsStorage {
   static UCAN_TOKEN_HOST_PROVIDER = 'https://ucan.polkaswap2.io/ucan.json';
 
   static async getUcanTokens(): Promise<Record<string, string>> {
-    const response = await fetch(this.UCAN_TOKEN_HOST_PROVIDER);
+    const response = await fetch(this.UCAN_TOKEN_HOST_PROVIDER, { cache: 'no-cache' });
     return response.json();
   }
 
