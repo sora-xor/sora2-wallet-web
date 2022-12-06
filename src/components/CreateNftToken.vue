@@ -194,7 +194,7 @@ export default class CreateNftToken extends Mixins(
 
   @state.settings.nftStorage private nftStorage!: NFTStorage;
   @mutation.router.navigate private navigate!: (options: Route) => void;
-  @action.settings.createNftStorageInstance private createNftStorageInstance!: () => AsyncVoidFn;
+  @action.settings.createNftStorageInstance private createNftStorageInstance!: AsyncVoidFn;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
@@ -354,6 +354,9 @@ export default class CreateNftToken extends Mixins(
   }
 
   async registerNftAsset(): Promise<void> {
+    if (!this.tokenContentIpfsParsed.trim()) {
+      throw new Error('IPFS Token issue');
+    }
     return api.assets.register(
       this.tokenSymbol,
       this.tokenName.trim(),
