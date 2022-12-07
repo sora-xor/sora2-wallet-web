@@ -12,6 +12,7 @@ export type AccountState = {
   name: string;
   source: string;
   assets: Array<Asset>;
+  assetsIds: Array<string>;
   assetsSubscription: Nullable<NodeJS.Timer | number>;
   accountAssets: Array<AccountAsset>;
   accountAssetsSubscription: Nullable<Subscription>;

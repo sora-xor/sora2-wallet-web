@@ -68,6 +68,9 @@ const mutations = defineMutations<AccountState>()({
     state.name = storage.get('name') || '';
     state.source = storage.get('source') || '';
   },
+  setAssetsIds(state, ids: string[]) {
+    state.assetsIds = ids;
+  },
   updateAssets(state, assets: Array<Asset>): void {
     state.assets = assets;
   },
