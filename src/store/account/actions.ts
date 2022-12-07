@@ -30,7 +30,7 @@ const PASSPHRASE_TIMEOUT = 15 * 60_000; // 15min
 
 // [TODO]: to js-lib
 const excludePoolXYKAssets = (assets: Asset[]) => assets.filter((asset) => asset.symbol !== PoolTokens.XYKPOOL);
-
+// [TODO]: change WsProvider timeout instead on this
 const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
   return Promise.race([
     func,
