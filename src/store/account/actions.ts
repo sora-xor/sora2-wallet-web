@@ -1,9 +1,10 @@
 import { defineActions } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
+import { PoolTokens } from '@sora-substrate/util/build/poolXyk/consts';
 import type { ActionContext } from 'vuex';
 import type { Signer } from '@polkadot/api/types';
-import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { Asset, AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { accountActionContext } from './../account';
 import { rootActionContext } from '../../store';
@@ -26,6 +27,18 @@ import type { PolkadotJsAccount } from '../../types/common';
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
 const PASSPHRASE_TIMEOUT = 15 * 60_000; // 15min
+
+// [TODO]: to js-lib
+const excludePoolXYKAssets = (assets: Asset[]) => assets.filter((asset) => asset.symbol !== PoolTokens.XYKPOOL);
+// [TODO]: change WsProvider timeout instead on this
+const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
+  return Promise.race([
+    func,
+    new Promise<never>((resolve, reject) => {
+      setTimeout(() => reject(new Error('Request Timeout')), timeout);
+    }),
+  ]);
+};
 
 function subscribeOnFiatUsingSubquery(context: ActionContext<any, any>): void {
   const { commit } = accountActionContext(context);
@@ -291,13 +304,34 @@ const actions = defineActions({
     }
   },
   async getAssets(context): Promise<void> {
-    const { getters, commit } = accountActionContext(context);
+    const { getters, commit, dispatch } = accountActionContext(context);
     try {
-      const assets = await api.assets.getAssets(getters.whitelist, false, getters.blacklist);
-      commit.updateAssets(assets);
+      const allAssets = await withTimeout(api.assets.getAssets(getters.whitelist, true, getters.blacklist));
+      const allIds = allAssets.map((asset) => asset.address);
+      const filtered = excludePoolXYKAssets(allAssets);
+
+      commit.setAssetsIds(allIds);
+      commit.updateAssets(filtered);
     } catch (error) {
       console.warn('Connection was lost during getAssets operation');
-      // commit.updateAssets([]); TODO: refactor this place
+      await dispatch.getAssets();
+    }
+  },
+
+  async getNewAssets(context): Promise<void> {
+    try {
+      const { commit, state } = accountActionContext(context);
+
+      const savedIds = new Set(state.assetsIds);
+      const ids = (await withTimeout(api.api.rpc.assets.listAssetIds())).map((codec) => codec.toString());
+      const newIds = ids.filter((id) => !savedIds.has(id));
+      const newAssets = await Promise.all(newIds.map((id) => withTimeout(api.assets.getAssetInfo(id))));
+      const newFilteredAssets = excludePoolXYKAssets(newAssets);
+
+      commit.setAssetsIds(ids);
+      commit.updateAssets([...state.assets, ...newFilteredAssets]);
+    } catch (error) {
+      console.warn('Error while updating assets:', error);
     }
   },
 
@@ -307,7 +341,7 @@ const actions = defineActions({
     await dispatch.getAssets();
 
     const timer = setInterval(() => {
-      dispatch.getAssets();
+      dispatch.getNewAssets();
     }, UPDATE_ASSETS_INTERVAL);
 
     commit.setAssetsSubscription(timer);

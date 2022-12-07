@@ -5,7 +5,7 @@ import type { AccountAsset, Asset, Whitelist } from '@sora-substrate/util/build/
 import { SoraNetwork, WalletPermissions, Extensions } from '@/consts';
 import type { PolkadotJsAccount, WhitelistIdsBySymbol } from '@/types/common';
 
-export const MOCK_NETWORK_FEE: {} = api.NetworkFee;
+export const MOCK_NETWORK_FEE = api.NetworkFee;
 
 export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
   {
