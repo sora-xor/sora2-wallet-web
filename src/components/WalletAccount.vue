@@ -8,7 +8,9 @@
       <!-- TODO: Add Copy address by Keyboard -->
       <s-tooltip :content="copyTooltip(t('account.walletAddress'))" tabindex="-1">
         <div class="account-credentials_address" @click="handleCopyAddress(address, $event)">
-          {{ formattedAddress }}
+          <p class="first">{{ address }}</p>
+          ...
+          <p>{{ secondPartOfAddress }}</p>
         </div>
       </s-tooltip>
     </template>
@@ -29,6 +31,8 @@ import CopyAddressMixin from './mixins/CopyAddressMixin';
 import { formatAddress, formatSoraAddress } from '../util';
 import { getter } from '../store/decorators';
 import type { PolkadotJsAccount } from '../types/common';
+
+const ADDRESS_LENGTH = 24;
 
 @Component({
   components: {
@@ -53,7 +57,12 @@ export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressM
   }
 
   get formattedAddress(): string {
-    return formatAddress(this.address, 24);
+    return formatAddress(this.address, ADDRESS_LENGTH);
+  }
+
+  get secondPartOfAddress(): string {
+    // TODO: Remove this dirty hack. It's made just for browser search
+    return this.address.slice(-ADDRESS_LENGTH / 2);
   }
 }
 </script>
@@ -70,8 +79,16 @@ export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressM
 </style>
 
 <style scoped lang="scss">
-.account-credentials_address:hover {
-  text-decoration: underline;
-  cursor: pointer;
+.account-credentials_address {
+  display: flex;
+  .first {
+    width: 100px;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }
 </style>
