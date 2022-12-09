@@ -22,7 +22,8 @@ import {
   NFT_BLACK_LIST_URL,
 } from '../../util';
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
-import type { PolkadotJsAccount } from '../../types/common';
+import { ConnectionStatus, PolkadotJsAccount } from '../../types/common';
+import { FiatPriceAndApyObject } from '@/services/subquery/types';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -41,10 +42,23 @@ const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
 };
 
 function subscribeOnFiatUsingSubquery(context: ActionContext<any, any>): void {
-  const { commit } = accountActionContext(context);
+  const { state, commit } = accountActionContext(context);
+  const { rootState, rootCommit } = rootActionContext(context);
   const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
-    commit.updateFiatPriceAndApyObject,
-    commit.clearFiatPriceAndApyObject
+    (payload?: FiatPriceAndApyObject) => {
+      commit.updateFiatPriceAndApyObject(payload);
+      if (rootState.wallet.settings.subqueryStatus !== ConnectionStatus.Available) {
+        rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Available);
+      }
+    },
+    () => {
+      if (rootState.wallet.settings.subqueryStatus !== ConnectionStatus.Unavailable) {
+        rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Unavailable);
+      }
+      if (!state.withoutFiatAndApy) {
+        commit.clearFiatPriceAndApyObject();
+      }
+    }
   );
   commit.setFiatPriceAndApySubscription(subscription);
 }
@@ -386,15 +400,20 @@ const actions = defineActions({
     }
   },
   async subscribeOnFiatPriceAndApy(context): Promise<void> {
+    const { rootCommit } = rootActionContext(context);
+    rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Loading);
     const isSubqueryAvailable = await getFiatPriceAndApyObject(context);
     try {
       if (isSubqueryAvailable) {
         subscribeOnFiatUsingSubquery(context);
+        rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Available);
       } else {
         // Subscribe on CERES API anyway
         subscribeOnFiatUsingCeresApi(context);
+        rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Unavailable);
       }
     } catch (error) {
+      rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Unavailable);
       subscribeOnFiatUsingCeresApi(context, error as Error);
     }
   },

@@ -41,3 +41,24 @@ export type ApiKeysObject = {
 export type AccountAssetsTable = {
   [key: string]: AccountAsset;
 };
+
+export enum ConnectionStatus {
+  Loading = 'loading',
+  Unavailable = 'unavailable',
+  Available = 'available',
+}
+
+export type StorageKey =
+  | 'address'
+  | 'name'
+  | 'source'
+  | 'filters'
+  | 'shouldBalanceBeHidden'
+  | 'storageReferral'
+  | 'slippageTolerance'
+  | 'marketAlgorithm'
+  | 'сhartsEnabled'
+  | 'transactionDeadline'
+  | 'evmAddress';
+
+export type RuntimeStorageKey = 'version' | 'networkFees';
