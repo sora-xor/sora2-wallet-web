@@ -26,7 +26,6 @@ export default class CameraPermissionMixin extends Mixins(TranslationMixin) {
 
       this.$notify({
         message: this.t('code.allowanceError'),
-        type: 'error',
         title: '',
       });
 
