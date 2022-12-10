@@ -35,6 +35,7 @@ import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 import CopyAddressMixin from './components/mixins/CopyAddressMixin';
 import DialogMixin from './components/mixins/DialogMixin';
 import ConfirmTransactionMixin from './components/mixins/ConfirmTransactionMixin';
+import CameraPermissionMixin from './components/mixins/CameraPermissionMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
@@ -162,6 +163,7 @@ const mixins = {
   CopyAddressMixin,
   DialogMixin,
   ConfirmTransactionMixin,
+  CameraPermissionMixin,
 };
 
 const vuex = {
