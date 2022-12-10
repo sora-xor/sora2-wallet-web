@@ -13,11 +13,15 @@ export default class CameraPermissionMixin extends Mixins(TranslationMixin) {
 
       if (!cameraAvailability) throw new Error(`[${context}]: Cannot find camera device`);
 
-      const cameraPermisssion = await checkCameraPermission();
+      const cameraPermission = await checkCameraPermission();
 
-      if (cameraPermisssion === 'denied') throw new Error(`[${context}]: Check camera browser permissions`);
+      if (cameraPermission === 'denied') throw new Error(`[${context}]: Check camera browser permissions`);
 
-      this.permissionDialogVisibility = cameraPermisssion !== 'granted';
+      this.permissionDialogVisibility = cameraPermission !== 'granted';
+
+      if (context === 'SoraCard' && cameraPermission === 'granted') {
+        return true;
+      }
       // request to allow use camera
       await navigator.mediaDevices.getUserMedia({ video: true });
       return true;
@@ -26,6 +30,7 @@ export default class CameraPermissionMixin extends Mixins(TranslationMixin) {
 
       this.$notify({
         message: this.t('code.allowanceError'),
+        type: context === 'QRcode' ? 'error' : undefined,
         title: '',
       });
 

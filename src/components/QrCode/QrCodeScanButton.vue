@@ -148,7 +148,7 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin, CameraPer
 
   async openScanDialog(): Promise<void> {
     try {
-      const mediaDevicesAllowance = await this.checkMediaDevicesAllowance('QR Code');
+      const mediaDevicesAllowance = await this.checkMediaDevicesAllowance('QRcode');
 
       if (!mediaDevicesAllowance) return;
 
