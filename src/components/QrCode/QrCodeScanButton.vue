@@ -82,6 +82,7 @@ import DialogBase from '../DialogBase.vue';
 import NotificationEnablingPage from '../NotificationEnablingPage.vue';
 
 import TranslationMixin from '../mixins/TranslationMixin';
+import CameraPermissionMixin from '../mixins/CameraPermissionMixin';
 
 import type SDropdown from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdown/SDropdown.vue';
 
@@ -98,7 +99,7 @@ const reader = new BrowserQRCodeReader();
     NotificationEnablingPage,
   },
 })
-export default class QrCodeScanButton extends Mixins(TranslationMixin) {
+export default class QrCodeScanButton extends Mixins(TranslationMixin, CameraPermissionMixin) {
   @Ref('input') readonly input!: HTMLInputElement;
   @Ref('preview') readonly preview!: HTMLVideoElement;
   @Ref('dropdown') readonly dropdown!: SDropdown;
@@ -110,7 +111,6 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
 
   scanProcess: Nullable<IScannerControls> = null;
   scanDialogVisibility = false;
-  permissionDialogVisibility = false;
 
   get scanerDialog(): boolean {
     return this.scanDialogVisibility;
@@ -146,60 +146,9 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin) {
     this.startScanProcess();
   }
 
-  async checkCameraPermission(): Promise<string> {
-    try {
-      const { state } = await navigator.permissions.query({ name: 'camera' } as any);
-
-      return state;
-    } catch (error) {
-      console.error(error);
-      return '';
-    }
-  }
-
-  async checkDevicesAvailability(): Promise<boolean> {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-
-      return devices.some((device) => device.kind === 'videoinput');
-    } catch (error) {
-      console.error(error);
-      return false;
-    }
-  }
-
-  async checkMediaDevicesAllowance(): Promise<boolean> {
-    try {
-      const cameraAvailability = await this.checkDevicesAvailability();
-
-      if (!cameraAvailability) throw new Error('[QR Code]: Cannot find camera device');
-
-      const cameraPermisssion = await this.checkCameraPermission();
-
-      if (cameraPermisssion === 'denied') throw new Error('[QR Code]: Check camera browser permissions');
-
-      this.permissionDialogVisibility = cameraPermisssion !== 'granted';
-      // request to allow use camera
-      await navigator.mediaDevices.getUserMedia({ video: true });
-      return true;
-    } catch (error) {
-      console.error(error);
-
-      this.$notify({
-        message: this.t('code.allowanceError'),
-        type: 'error',
-        title: '',
-      });
-
-      return false;
-    } finally {
-      this.permissionDialogVisibility = false;
-    }
-  }
-
   async openScanDialog(): Promise<void> {
     try {
-      const mediaDevicesAllowance = await this.checkMediaDevicesAllowance();
+      const mediaDevicesAllowance = await this.checkMediaDevicesAllowance('QRcode');
 
       if (!mediaDevicesAllowance) return;
 
