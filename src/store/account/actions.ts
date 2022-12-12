@@ -111,11 +111,11 @@ const actions = defineActions({
   },
 
   async logout(context): Promise<void> {
-    const { commit, getters } = accountActionContext(context);
+    const { commit, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
     if (api.accountPair) {
-      api.logout(getters.isDesktop);
+      api.logout(state.isDesktop);
     }
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
@@ -143,10 +143,11 @@ const actions = defineActions({
   },
 
   async updatePolkadotJsAccounts(context, accounts: Array<PolkadotJsAccount>): Promise<void> {
-    const { commit, getters, dispatch } = accountActionContext(context);
+    const { commit, getters, dispatch, state } = accountActionContext(context);
+
     commit.setPolkadotJsAccounts(accounts);
 
-    if (getters.isLoggedIn && !getters.isDesktop) {
+    if (getters.isLoggedIn && !state.isDesktop) {
       try {
         await dispatch.getSigner();
       } catch (error) {

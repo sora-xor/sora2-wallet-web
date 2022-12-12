@@ -173,7 +173,7 @@ export default class WalletSend extends Mixins(
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
-  @state.settings.isDesktop isDesktop!: boolean;
+  @state.account.isDesktop isDesktop!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;

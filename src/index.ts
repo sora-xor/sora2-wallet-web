@@ -102,7 +102,7 @@ async function initWallet({
     }
     try {
       const withKeyringLoading = true;
-      const { isDesktop } = store.state.wallet.settings;
+      const { isDesktop } = store.state.wallet.account;
 
       await api.initialize(withKeyringLoading, isDesktop);
     } catch (error) {
@@ -115,10 +115,10 @@ async function initWallet({
 
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.settings.isDesktop),
+      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
     ]);
 
-    if (store.state.wallet.settings.isDesktop) {
+    if (store.state.wallet.account.isDesktop) {
       api.initAccountStorage();
       await store.dispatch.wallet.account.getPolkadotJsAccounts();
     } else {

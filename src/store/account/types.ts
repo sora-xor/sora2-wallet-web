@@ -30,4 +30,5 @@ export type AccountState = {
   addressKeyMapping: AddressKeyMapping;
   addressPassphraseMapping: AddressKeyMapping;
   assetsToNotifyQueue: Array<WhitelistArrayItem>;
+  isDesktop: boolean;
 };

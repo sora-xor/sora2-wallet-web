@@ -14,7 +14,7 @@ import { state } from '../store/decorators';
   components: { ExtensionConnection, DesktopConnection },
 })
 export default class WalletConnection extends Vue {
-  @state.settings.isDesktop isDesktop!: boolean;
+  @state.account.isDesktop isDesktop!: boolean;
 
   get component(): string {
     return this.isDesktop ? 'DesktopConnection' : 'ExtensionConnection';
