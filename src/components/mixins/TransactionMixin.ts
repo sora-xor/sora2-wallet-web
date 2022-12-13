@@ -9,6 +9,7 @@ import TranslationMixin from './TranslationMixin';
 import LoadingMixin from './LoadingMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { HiddenValue } from '../../consts';
+import store from '../../store';
 import { getter, mutation, action, state } from '../../store/decorators';
 import type { PolkadotJsAccount, AccountAssetsTable } from '../../types/common';
 
@@ -27,16 +28,22 @@ const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
 export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
   // Desktop management
   @state.account.isDesktop isDesktop!: boolean;
-  @state.transactions.isConfirmTxDialogVisible private isConfirmTxDialogVisible!: boolean;
   @state.transactions.isTxApprovedViaConfirmTxDialog private isTxApprovedViaConfirmTxDialog!: boolean;
   @mutation.transactions.setConfirmTxDialogVisibility private setConfirmTxDialogVisibility!: (flag: boolean) => void;
 
   /** Only for Desktop management */
-  private async waitUntilConfirmTxDialogOpened(ms = 500): Promise<void> {
-    if (!this.isConfirmTxDialogVisible) return;
-
-    await delay(ms);
-    return await this.waitUntilConfirmTxDialogOpened();
+  private async waitUntilConfirmTxDialogOpened(): Promise<void> {
+    return new Promise((resolve) => {
+      const unsubscribe = store.original.watch(
+        (state) => state.wallet.transactions.isConfirmTxDialogVisible,
+        (value) => {
+          if (!value) {
+            unsubscribe();
+            resolve();
+          }
+        }
+      );
+    });
   }
 
   @getter.account.account account!: PolkadotJsAccount;

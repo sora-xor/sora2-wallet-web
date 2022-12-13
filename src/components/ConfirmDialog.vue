@@ -38,10 +38,13 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
+
 import DialogBase from './DialogBase.vue';
 import WalletAccount from './WalletAccount.vue';
+
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
+
 import { getter, action, state, mutation } from '../store/decorators';
 import { api } from '../api';
 
