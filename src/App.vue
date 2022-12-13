@@ -7,6 +7,7 @@
     <s-button class="hide-balance-switch" @click="toggleHideBalance">
       {{ shouldBalanceBeHidden ? 'hidden' : 'visible' }} balances
     </s-button>
+    <confirm-dialog v-if="isDesktop" />
   </s-design-system-provider>
 </template>
 
@@ -24,13 +25,14 @@ import env from '../public/env.json';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import { initWallet } from './index';
 import SoraWallet from './SoraWallet.vue';
+import ConfirmDialog from './components/ConfirmDialog.vue';
 import { SoraNetwork } from './consts';
 import { state, mutation, getter, action } from './store/decorators';
 import type { ApiKeysObject } from './types/common';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 @Component({
-  components: { SoraWallet },
+  components: { SoraWallet, ConfirmDialog },
 })
 export default class App extends Mixins(TransactionMixin) {
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;

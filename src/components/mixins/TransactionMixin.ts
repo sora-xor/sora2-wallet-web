@@ -9,7 +9,7 @@ import TranslationMixin from './TranslationMixin';
 import LoadingMixin from './LoadingMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { HiddenValue } from '../../consts';
-import { getter, mutation, action } from '../../store/decorators';
+import { getter, mutation, action, state } from '../../store/decorators';
 import type { PolkadotJsAccount, AccountAssetsTable } from '../../types/common';
 
 const twoAssetsBasedOperations = [
@@ -25,6 +25,20 @@ const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
 
 @Component
 export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
+  // Desktop management
+  @state.account.isDesktop isDesktop!: boolean;
+  @state.transactions.isConfirmTxDialogVisible private isConfirmTxDialogVisible!: boolean;
+  @state.transactions.isTxApprovedViaConfirmTxDialog private isTxApprovedViaConfirmTxDialog!: boolean;
+  @mutation.transactions.setConfirmTxDialogVisibility private setConfirmTxDialogVisibility!: (flag: boolean) => void;
+
+  /** Only for Desktop management */
+  private async waitUntilConfirmTxDialogOpened(ms = 500): Promise<void> {
+    if (!this.isConfirmTxDialogVisible) return;
+
+    await delay(ms);
+    return await this.waitUntilConfirmTxDialogOpened();
+  }
+
   @getter.account.account account!: PolkadotJsAccount;
   @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;
 
@@ -146,6 +160,18 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
   }
 
   async withNotifications(func: AsyncVoidFn): Promise<void> {
+    if (this.isDesktop) {
+      this.setConfirmTxDialogVisibility(true);
+      await this.waitUntilConfirmTxDialogOpened();
+      if (!this.isTxApprovedViaConfirmTxDialog) {
+        this.$notify({
+          message: this.t('unknownErrorText'), // TODO: [Desktop] Add cancel text
+          type: 'error',
+          title: '',
+        });
+        return;
+      }
+    }
     await this.withLoading(async () => {
       try {
         const time = Date.now();
@@ -160,6 +186,10 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
           title: '',
         });
         throw new Error((error as any).message);
+      } finally {
+        if (this.isDesktop) {
+          api.lockPair();
+        }
       }
     });
   }

@@ -273,13 +273,12 @@ const actions = defineActions({
 
     const { commit } = accountActionContext(context);
 
+    commit.resetAccountPassphraseTimer();
     commit.updateAddressGeneratedKey(key);
     commit.setAccountPassphrase(passphraseEncoded);
 
-    const timer = setTimeout(() => {
-      commit.resetAccountPassphrase();
-      clearTimeout(timer);
-    }, PASSPHRASE_TIMEOUT);
+    const timer = setTimeout(commit.resetAccountPassphrase, PASSPHRASE_TIMEOUT);
+    commit.setAccountPassphraseTimer(timer);
   },
   async syncWithStorage(context): Promise<void> {
     const { state, getters, commit, dispatch } = accountActionContext(context);
@@ -455,6 +454,11 @@ const actions = defineActions({
   async resetExtensionAvailabilitySubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
     commit.resetExtensionAvailabilitySubscription();
+  },
+  /** It's used **only** for subscriptions module */
+  async resetAccountPassphraseTimer(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+    commit.resetAccountPassphraseTimer();
   },
 });
 

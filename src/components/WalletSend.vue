@@ -119,7 +119,6 @@
         <wallet-fee v-if="showAdditionalInfo" :value="fee" />
       </div>
     </wallet-base>
-    <confirm-dialog :visible.sync="showConfirmTxDialog" @confirm="confirmTransactionDialog" />
   </div>
 </template>
 
@@ -136,12 +135,10 @@ import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
 import TokenLogo from './TokenLogo.vue';
-import ConfirmDialog from './ConfirmDialog.vue';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
-import ConfirmTransactionMixin from './mixins/ConfirmTransactionMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import { RouteNames } from '../consts';
 import { formatAddress, formatSoraAddress } from '../util';
@@ -157,15 +154,13 @@ import type { Route } from '../store/router/types';
     NetworkFeeWarning,
     WalletFee,
     TokenLogo,
-    ConfirmDialog,
   },
 })
 export default class WalletSend extends Mixins(
   TransactionMixin,
   FormattedAmountMixin,
   CopyAddressMixin,
-  NetworkFeeWarningMixin,
-  ConfirmTransactionMixin
+  NetworkFeeWarningMixin
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
 
@@ -173,7 +168,6 @@ export default class WalletSend extends Mixins(
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
-  @state.account.isDesktop isDesktop!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;
@@ -382,14 +376,6 @@ export default class WalletSend extends Mixins(
   }
 
   async handleConfirm(): Promise<void> {
-    if (this.isDesktop) {
-      this.openConfirmationDialog();
-      await this.waitOnNextTxConfirmation();
-      if (!this.isTxDialogConfirmed) {
-        return;
-      }
-    }
-
     await this.withNotifications(async () => {
       if (!this.hasEnoughXor) {
         throw new Error('walletSend.badAmount');

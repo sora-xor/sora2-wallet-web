@@ -39,6 +39,7 @@ export function initialState(): AccountState {
     isDesktop: true, // isElectron(), // NOTE: inverse flag here to debug desktop
     addressKeyMapping: {},
     addressPassphraseMapping: {},
+    accountPassphraseTimer: null,
   };
 }
 

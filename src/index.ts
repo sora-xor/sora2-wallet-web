@@ -34,7 +34,6 @@ import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
 import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 import CopyAddressMixin from './components/mixins/CopyAddressMixin';
 import DialogMixin from './components/mixins/DialogMixin';
-import ConfirmTransactionMixin from './components/mixins/ConfirmTransactionMixin';
 import CameraPermissionMixin from './components/mixins/CameraPermissionMixin';
 
 import en from './lang/en';
@@ -162,7 +161,6 @@ const mixins = {
   PaginationSearchMixin,
   CopyAddressMixin,
   DialogMixin,
-  ConfirmTransactionMixin,
   CameraPermissionMixin,
 };
 
