@@ -325,11 +325,14 @@ const actions = defineActions({
       const savedIds = new Set(state.assetsIds);
       const ids = (await withTimeout(api.api.rpc.assets.listAssetIds())).map((codec) => codec.toString());
       const newIds = ids.filter((id) => !savedIds.has(id));
-      const newAssets = await Promise.all(newIds.map((id) => withTimeout(api.assets.getAssetInfo(id))));
-      const newFilteredAssets = excludePoolXYKAssets(newAssets);
 
-      commit.setAssetsIds(ids);
-      commit.updateAssets([...state.assets, ...newFilteredAssets]);
+      if (newIds.length) {
+        const newAssets = await Promise.all(newIds.map((id) => withTimeout(api.assets.getAssetInfo(id))));
+        const newFilteredAssets = excludePoolXYKAssets(newAssets);
+
+        commit.setAssetsIds(ids);
+        commit.updateAssets([...state.assets, ...newFilteredAssets]);
+      }
     } catch (error) {
       console.warn('Error while updating assets:', error);
     }
