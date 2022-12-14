@@ -174,6 +174,28 @@ export const getExplorerLinks = (soraNetwork?: Nullable<SoraNetwork>): Array<Exp
   }
 };
 
+export async function checkDevicesAvailability(): Promise<boolean> {
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+
+    return devices.some((device) => device.kind === 'videoinput');
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+}
+
+export async function checkCameraPermission(): Promise<string> {
+  try {
+    const { state } = await navigator.permissions.query({ name: 'camera' } as any);
+
+    return state;
+  } catch (error) {
+    console.error(error);
+    return '';
+  }
+}
+
 export const copyToClipboard = async (text: string) => {
   try {
     return navigator.clipboard.writeText(text);
