@@ -21,8 +21,6 @@ exports[`WalletSend.vue [Confirm Step]: should be rendered correctly 1`] = `
       />
     </div>
   </wallet-base-stub>
-   
-  <confirm-dialog-stub />
 </div>
 `;
 
@@ -199,8 +197,6 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
       />
     </div>
   </wallet-base-stub>
-   
-  <confirm-dialog-stub />
 </div>
 `;
 
@@ -377,8 +373,6 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
       />
     </div>
   </wallet-base-stub>
-   
-  <confirm-dialog-stub />
 </div>
 `;
 
@@ -582,8 +576,6 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
       />
     </div>
   </wallet-base-stub>
-   
-  <confirm-dialog-stub />
 </div>
 `;
 
@@ -764,7 +756,5 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
       />
     </div>
   </wallet-base-stub>
-   
-  <confirm-dialog-stub />
 </div>
 `;
