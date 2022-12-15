@@ -75,6 +75,7 @@ const actions = defineActions({
       'transactions/resetExternalHistorySubscription',
       'account/resetFiatPriceAndApySubscription',
       'account/resetExtensionAvailabilitySubscription',
+      'account/resetAccountPassphraseTimer',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);
   },

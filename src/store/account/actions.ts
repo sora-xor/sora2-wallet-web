@@ -111,11 +111,11 @@ const actions = defineActions({
   },
 
   async logout(context): Promise<void> {
-    const { commit, getters } = accountActionContext(context);
+    const { commit, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
     if (api.accountPair) {
-      api.logout(getters.isDesktop);
+      api.logout(state.isDesktop);
     }
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
@@ -143,10 +143,11 @@ const actions = defineActions({
   },
 
   async updatePolkadotJsAccounts(context, accounts: Array<PolkadotJsAccount>): Promise<void> {
-    const { commit, getters, dispatch } = accountActionContext(context);
+    const { commit, getters, dispatch, state } = accountActionContext(context);
+
     commit.setPolkadotJsAccounts(accounts);
 
-    if (getters.isLoggedIn && !getters.isDesktop) {
+    if (getters.isLoggedIn && !state.isDesktop) {
       try {
         await dispatch.getSigner();
       } catch (error) {
@@ -272,13 +273,12 @@ const actions = defineActions({
 
     const { commit } = accountActionContext(context);
 
+    commit.resetAccountPassphraseTimer();
     commit.updateAddressGeneratedKey(key);
     commit.setAccountPassphrase(passphraseEncoded);
 
-    const timer = setTimeout(() => {
-      commit.resetAccountPassphrase();
-      clearTimeout(timer);
-    }, PASSPHRASE_TIMEOUT);
+    const timer = setTimeout(commit.resetAccountPassphrase, PASSPHRASE_TIMEOUT);
+    commit.setAccountPassphraseTimer(timer);
   },
   async syncWithStorage(context): Promise<void> {
     const { state, getters, commit, dispatch } = accountActionContext(context);
@@ -457,6 +457,11 @@ const actions = defineActions({
   async resetExtensionAvailabilitySubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
     commit.resetExtensionAvailabilitySubscription();
+  },
+  /** It's used **only** for subscriptions module */
+  async resetAccountPassphraseTimer(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+    commit.resetAccountPassphraseTimer();
   },
 });
 

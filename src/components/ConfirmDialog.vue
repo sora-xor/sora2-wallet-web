@@ -1,12 +1,12 @@
 <template>
-  <dialog-base :title="t('desktop.dialog.confirmTitle')" :visible.sync="isVisible">
+  <dialog-base :title="t('desktop.dialog.confirmTitle')" :visible.sync="visibility">
     <div class="confirm-dialog">
       <wallet-account class="confirm-dialog__account" />
       <s-input
         :type="inputType"
         :placeholder="t('desktop.password.placeholder')"
-        v-model="accountPassword"
-        :disabled="loading || isInputDisabled"
+        v-model="password"
+        :disabled="isInputDisabled"
         class="confirm-dialog__password"
       >
         <s-icon
@@ -15,7 +15,7 @@
           class="eye-icon"
           size="18"
           slot="suffix"
-          @click.native="toggleVisibility"
+          @click.native="togglePasswordVisibility"
         />
       </s-input>
       <div class="confirm-dialog__save-password">
@@ -23,7 +23,13 @@
         <span v-if="!passphrase">{{ t('desktop.dialog.savePasswordText') }}</span>
         <span v-else>{{ t('desktop.dialog.extendPasswordText') }}</span>
       </div>
-      <s-button @click="handleConfirm" type="primary" class="confirm-dialog__button" :disabled="disabled">
+      <s-button
+        type="primary"
+        class="confirm-dialog__button"
+        :disabled="disabled"
+        :loading="loading"
+        @click="handleConfirm"
+      >
         {{ t('desktop.dialog.confirmButton') }}
       </s-button>
     </div>
@@ -31,13 +37,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Watch } from 'vue-property-decorator';
+import { Component, Mixins } from 'vue-property-decorator';
+
 import DialogBase from './DialogBase.vue';
 import WalletAccount from './WalletAccount.vue';
-import DialogMixin from './mixins/DialogMixin';
+
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
-import { getter, action } from '../store/decorators';
+
+import { getter, action, state, mutation } from '../store/decorators';
 import { api } from '../api';
 
 @Component({
@@ -46,16 +54,24 @@ import { api } from '../api';
     WalletAccount,
   },
 })
-export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin, LoadingMixin) {
+export default class ConfirmDialog extends Mixins(TranslationMixin, LoadingMixin) {
+  @state.transactions.isConfirmTxDialogVisible private isConfirmTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
-  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => AsyncVoidFn;
+  @mutation.transactions.setConfirmTxDialogVisibility private setConfirmTxDialogVisibility!: (flag: boolean) => void;
+  @mutation.transactions.approveTxViaConfirmTxDialog private approveTxViaConfirmTxDialog!: VoidFn;
+  @mutation.transactions.resetTxApprovedViaConfirmTxDialog private resetTxApprovedViaConfirmTxDialog!: VoidFn;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
 
-  @Watch('isVisible')
-  private handleDialogChange(value: boolean): void {
-    this.setupFormState();
+  get visibility(): boolean {
+    return this.isConfirmTxDialogVisible;
   }
 
-  accountPassword = '';
+  set visibility(flag: boolean) {
+    this.setupFormState();
+    this.setConfirmTxDialogVisibility(flag);
+  }
+
+  password = '';
 
   savePassword = true;
   hiddenInput = true;
@@ -69,20 +85,20 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
   }
 
   get disabled(): boolean {
-    return !this.accountPassword;
+    return this.loading || !this.password;
   }
 
   get isInputDisabled(): boolean {
-    return !!this.passphrase;
+    return this.loading || !!this.passphrase;
   }
 
-  toggleVisibility(): void {
+  togglePasswordVisibility(): void {
     this.hiddenInput = !this.hiddenInput;
   }
 
-  handleConfirm(): void {
+  private confirm(): void {
     try {
-      api.unlockPair(this.accountPassword);
+      api.unlockPair(this.password);
     } catch (error: any) {
       if (error.message === 'Unable to decode using the supplied passphrase') {
         this.$notify({
@@ -98,25 +114,30 @@ export default class ConfirmDialog extends Mixins(DialogMixin, TranslationMixin,
         });
       }
 
-      this.accountPassword = '';
-      this.closeDialog();
+      this.setConfirmTxDialogVisibility(false);
       return;
     }
 
     if (this.savePassword) {
-      this.setAccountPassphrase(this.passphrase || this.accountPassword);
+      this.setAccountPassphrase(this.passphrase || this.password);
     }
 
-    this.$emit('confirm');
-    this.closeDialog();
-    this.accountPassword = '';
+    this.approveTxViaConfirmTxDialog();
+    this.setConfirmTxDialogVisibility(false);
+  }
+
+  handleConfirm(): void {
+    this.withLoading(this.confirm);
   }
 
   private setupFormState(): void {
+    if (this.visibility) {
+      this.resetTxApprovedViaConfirmTxDialog();
+    }
     if (this.passphrase) {
-      this.accountPassword = this.passphrase;
-    } else if (this.isVisible === false) {
-      this.accountPassword = '';
+      this.password = this.passphrase;
+    } else if (this.visibility === false) {
+      this.password = '';
     }
   }
 
