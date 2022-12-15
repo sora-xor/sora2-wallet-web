@@ -58,8 +58,8 @@ export default class ConfirmDialog extends Mixins(TranslationMixin, LoadingMixin
   @state.transactions.isConfirmTxDialogVisible private isConfirmTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
   @mutation.transactions.setConfirmTxDialogVisibility private setConfirmTxDialogVisibility!: (flag: boolean) => void;
-  @mutation.transactions.approveTxViaConfirmTxDialog private approveTxViaConfirmTxDialog!: VoidFn;
-  @mutation.transactions.resetTxApprovedViaConfirmTxDialog private resetTxApprovedViaConfirmTxDialog!: VoidFn;
+  @mutation.transactions.approveTxViaConfirmTxDialog private approveTxViaConfirmTxDialog!: FnWithoutArgs;
+  @mutation.transactions.resetTxApprovedViaConfirmTxDialog private resetTxApprovedViaConfirmTxDialog!: FnWithoutArgs;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
 
   get visibility(): boolean {

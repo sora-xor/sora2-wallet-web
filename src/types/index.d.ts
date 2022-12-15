@@ -1,5 +1,5 @@
 type Nullable<T> = T | null | undefined;
 
-type VoidFn = () => void;
+type FnWithoutArgs<T = void> = () => T;
 
-type AsyncVoidFn = () => Promise<void>;
+type AsyncFnWithoutArgs<T = void> = () => Promise<T>;
