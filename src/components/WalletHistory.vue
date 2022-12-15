@@ -83,8 +83,8 @@ export default class WalletHistory extends Mixins(
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
-  @mutation.transactions.resetExternalHistory private resetExternalHistory!: VoidFn;
-  @mutation.transactions.getHistory private getHistory!: VoidFn;
+  @mutation.transactions.resetExternalHistory private resetExternalHistory!: FnWithoutArgs;
+  @mutation.transactions.getHistory private getHistory!: FnWithoutArgs;
   @mutation.transactions.setTxDetailsId private setTxDetailsId!: (id: string) => void;
   @action.transactions.getExternalHistory private getExternalHistory!: (args?: ExternalHistoryParams) => Promise<void>;
 
