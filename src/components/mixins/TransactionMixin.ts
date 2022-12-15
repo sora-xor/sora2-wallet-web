@@ -166,7 +166,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     this.removeActiveTxs([value.id as string]);
   }
 
-  async withNotifications(func: AsyncVoidFn): Promise<void> {
+  async withNotifications(func: AsyncFnWithoutArgs): Promise<void> {
     if (this.isDesktop) {
       this.setConfirmTxDialogVisibility(true);
       await this.waitUntilConfirmTxDialogOpened();

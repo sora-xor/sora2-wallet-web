@@ -41,16 +41,16 @@ export default class App extends Mixins(TransactionMixin) {
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
   @getter.libraryTheme libraryTheme!: Theme;
 
-  @mutation.settings.toggleHideBalance toggleHideBalance!: VoidFn;
+  @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
   @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
   @mutation.settings.setSubqueryEndpoint private setSubqueryEndpoint!: (endpoint: string) => void;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
-  @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncVoidFn;
-  @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncVoidFn;
+  @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncFnWithoutArgs;
+  @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncFnWithoutArgs;
   @action.account.notifyOnDeposit private notifyOnDeposit!: (info: {
     asset: WhitelistArrayItem;
     message: string;
-  }) => AsyncVoidFn;
+  }) => Promise<void>;
 
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);
