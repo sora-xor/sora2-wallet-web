@@ -194,7 +194,7 @@ export default class CreateNftToken extends Mixins(
 
   @state.settings.nftStorage private nftStorage!: NFTStorage;
   @mutation.router.navigate private navigate!: (options: Route) => void;
-  @action.settings.createNftStorageInstance private createNftStorageInstance!: AsyncVoidFn;
+  @action.settings.createNftStorageInstance private createNftStorageInstance!: AsyncFnWithoutArgs;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 

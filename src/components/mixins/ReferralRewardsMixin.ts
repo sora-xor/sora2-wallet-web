@@ -7,5 +7,5 @@ import type { ReferrerRewards } from '../../services/subquery/types';
 export default class ReferralRewardsMixin extends Vue {
   @state.account.referralRewards referralRewards!: ReferrerRewards;
 
-  @action.account.getAccountReferralRewards getAccountReferralRewards!: AsyncVoidFn;
+  @action.account.getAccountReferralRewards getAccountReferralRewards!: AsyncFnWithoutArgs;
 }
