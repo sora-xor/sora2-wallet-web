@@ -13,4 +13,20 @@ export type TransactionsState = {
   updateActiveTxsId: Nullable<NodeJS.Timeout | number>;
   selectedTxId: Nullable<string>;
   updateEthBridgeHistory: Nullable<EthBridgeUpdateHistory>;
+  /**
+   * Confirm Ttransaction Dialog visibility
+   *
+   * Uses **only** without polkadot js based extensions for signing transactions.
+   *
+   * `true` when it's opened, `false` when it's closed
+   */
+  isConfirmTxDialogVisible: boolean;
+  /**
+   * Confirm Ttransaction Dialog approved TX state
+   *
+   * Uses **only** without polkadot js based extensions for signing transactions.
+   *
+   * `true` when TX is approved, `false` when it's cancelled
+   */
+  isTxApprovedViaConfirmTxDialog: boolean;
 };
