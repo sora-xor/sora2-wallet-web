@@ -64,6 +64,15 @@ const mutations = defineMutations<TransactionsState>()({
     }
     state.externalHistorySubscription = null;
   },
+  setConfirmTxDialogVisibility(state, visibility: boolean): void {
+    state.isConfirmTxDialogVisible = visibility;
+  },
+  approveTxViaConfirmTxDialog(state): void {
+    state.isTxApprovedViaConfirmTxDialog = true;
+  },
+  resetTxApprovedViaConfirmTxDialog(state): void {
+    state.isTxApprovedViaConfirmTxDialog = false;
+  },
 });
 
 export default mutations;

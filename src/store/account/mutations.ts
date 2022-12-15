@@ -162,13 +162,13 @@ const mutations = defineMutations<AccountState>()({
       [state.address]: passphraseEncoded,
     };
   },
-  updateAddressGeneratedKey(state, key) {
+  updateAddressGeneratedKey(state, key): void {
     state.addressKeyMapping = {
       ...state.addressKeyMapping,
       [state.address]: key,
     };
   },
-  resetAccountPassphrase(state: AccountState) {
+  resetAccountPassphrase(state): void {
     state.addressKeyMapping = {
       ...state.addressKeyMapping,
       [state.address]: null,
@@ -177,6 +177,15 @@ const mutations = defineMutations<AccountState>()({
       ...state.addressPassphraseMapping,
       [state.address]: null,
     };
+  },
+  setAccountPassphraseTimer(state, timer: NodeJS.Timeout): void {
+    state.accountPassphraseTimer = timer;
+  },
+  resetAccountPassphraseTimer(state): void {
+    if (state.accountPassphraseTimer) {
+      clearTimeout(state.accountPassphraseTimer);
+      state.accountPassphraseTimer = null;
+    }
   },
 });
 
