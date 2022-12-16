@@ -187,6 +187,10 @@ const mutations = defineMutations<AccountState>()({
       state.accountPassphraseTimer = null;
     }
   },
+  /** JUST FOR TESTING PURPOSES */
+  setIsDesktop(state, value: boolean): void {
+    state.isDesktop = value;
+  },
 });
 
 export default mutations;
