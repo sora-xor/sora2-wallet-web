@@ -13,6 +13,7 @@ import { SubqueryExplorerService } from '../../services/subquery';
 import { CeresApiService } from '../../services/ceres';
 import { pushNotification } from '../../util/notification';
 import {
+  delay,
   getAppWallets,
   getWallet,
   getExtensionSigner,
@@ -314,6 +315,7 @@ const actions = defineActions({
       commit.updateAssets(filtered);
     } catch (error) {
       console.warn('Connection was lost during getAssets operation');
+      await delay(UPDATE_ASSETS_INTERVAL);
       await dispatch.getAssets();
     }
   },
