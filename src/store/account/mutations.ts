@@ -28,10 +28,13 @@ const mutations = defineMutations<AccountState>()({
     const s = omit(
       [
         'whitelistArray',
+        'blacklistArray',
         'fiatPriceAndApyObject',
         'fiatPriceAndApySubscription',
         'withoutFiatAndApy',
         'assets',
+        'assetsIds',
+        'assetsSubscription',
         'polkadotJsAccounts',
         'polkadotJsAccountsSubscription',
         'selectedExtension',
