@@ -11,7 +11,7 @@ export default class LoadingMixin extends Vue {
 
   loading = false;
 
-  async withLoading(func: AsyncVoidFn | VoidFunction): Promise<any> {
+  async withLoading<T = void>(func: FnWithoutArgs<T> | AsyncFnWithoutArgs<T>): Promise<T> {
     this.loading = true;
     try {
       return await func();
@@ -28,7 +28,7 @@ export default class LoadingMixin extends Vue {
    * It is guaranteed that api has a connection
    * @param func
    */
-  async withApi(func: AsyncVoidFn | VoidFunction): Promise<any> {
+  async withApi<T = void>(func: FnWithoutArgs<T> | AsyncFnWithoutArgs<T>): Promise<T> {
     this.loading = true;
 
     if (!this.isWalletLoaded) {
@@ -39,7 +39,7 @@ export default class LoadingMixin extends Vue {
     }
   }
 
-  async withParentLoading(func: AsyncVoidFn): Promise<any> {
+  async withParentLoading<T = void>(func: FnWithoutArgs<T> | AsyncFnWithoutArgs<T>): Promise<T> {
     if (this.parentLoading) {
       await delay();
       return await this.withParentLoading(func);

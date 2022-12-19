@@ -34,7 +34,7 @@ import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
 import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 import CopyAddressMixin from './components/mixins/CopyAddressMixin';
 import DialogMixin from './components/mixins/DialogMixin';
-import ConfirmTransactionMixin from './components/mixins/ConfirmTransactionMixin';
+import CameraPermissionMixin from './components/mixins/CameraPermissionMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
@@ -101,8 +101,9 @@ async function initWallet({
     }
     try {
       const withKeyringLoading = true;
-      const { isDesktop } = store.state.wallet.settings;
-
+      const { isDesktop } = store.state.wallet.account;
+      // TODO: [Desktop]: Move TX sign, pair lock/unlock to api client with isDesktop flag below.
+      // This flag might be set via this method below
       await api.initialize(withKeyringLoading, isDesktop);
     } catch (error) {
       console.error('Something went wrong during api initialization', error);
@@ -114,10 +115,10 @@ async function initWallet({
 
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.settings.isDesktop),
+      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
     ]);
 
-    if (store.state.wallet.settings.isDesktop) {
+    if (store.state.wallet.account.isDesktop) {
       api.initAccountStorage();
       await store.dispatch.wallet.account.getPolkadotJsAccounts();
     } else {
@@ -161,7 +162,7 @@ const mixins = {
   PaginationSearchMixin,
   CopyAddressMixin,
   DialogMixin,
-  ConfirmTransactionMixin,
+  CameraPermissionMixin,
 };
 
 const vuex = {

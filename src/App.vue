@@ -7,6 +7,7 @@
     <s-button class="hide-balance-switch" @click="toggleHideBalance">
       {{ shouldBalanceBeHidden ? 'hidden' : 'visible' }} balances
     </s-button>
+    <confirm-dialog v-if="isDesktop" />
   </s-design-system-provider>
 </template>
 
@@ -24,13 +25,14 @@ import env from '../public/env.json';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import { initWallet } from './index';
 import SoraWallet from './SoraWallet.vue';
+import ConfirmDialog from './components/ConfirmDialog.vue';
 import { SoraNetwork } from './consts';
 import { state, mutation, getter, action } from './store/decorators';
 import type { ApiKeysObject } from './types/common';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 @Component({
-  components: { SoraWallet },
+  components: { SoraWallet, ConfirmDialog },
 })
 export default class App extends Mixins(TransactionMixin) {
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
@@ -39,16 +41,16 @@ export default class App extends Mixins(TransactionMixin) {
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
   @getter.libraryTheme libraryTheme!: Theme;
 
-  @mutation.settings.toggleHideBalance toggleHideBalance!: VoidFn;
+  @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
   @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
   @mutation.settings.setSubqueryEndpoint private setSubqueryEndpoint!: (endpoint: string) => void;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
-  @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncVoidFn;
-  @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncVoidFn;
+  @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncFnWithoutArgs;
+  @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncFnWithoutArgs;
   @action.account.notifyOnDeposit private notifyOnDeposit!: (info: {
     asset: WhitelistArrayItem;
     message: string;
-  }) => AsyncVoidFn;
+  }) => Promise<void>;
 
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);

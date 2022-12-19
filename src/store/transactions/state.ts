@@ -11,6 +11,8 @@ function initialState(): TransactionsState {
     updateActiveTxsId: null,
     selectedTxId: null,
     updateEthBridgeHistory: null,
+    isConfirmTxDialogVisible: false,
+    isTxApprovedViaConfirmTxDialog: false,
   };
 }
 

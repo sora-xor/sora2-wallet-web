@@ -173,7 +173,7 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
-  @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: VoidFn;
+  @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
 
   wasBalanceDetailsClicked = false;
 

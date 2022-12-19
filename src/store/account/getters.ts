@@ -17,8 +17,9 @@ const toHashTable = (list: Array<any>, key: string) => {
 };
 
 const getters = defineGetters<AccountState>()({
-  isLoggedIn(state, getters): boolean {
-    return !!(state.source && state.address) || (getters.isDesktop && !!state.address);
+  isLoggedIn(...args): boolean {
+    const { state } = accountGetterContext(args);
+    return !!(state.source && state.address) || (state.isDesktop && !!state.address);
   },
   account(...args): PolkadotJsAccount {
     const { state } = accountGetterContext(args);
@@ -65,9 +66,6 @@ const getters = defineGetters<AccountState>()({
       return decoded;
     }
     return null;
-  },
-  isDesktop(state, getters, rootState): boolean {
-    return rootState.wallet.settings.isDesktop;
   },
   blacklist(...args): any {
     const { state } = accountGetterContext(args);

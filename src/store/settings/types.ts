@@ -18,5 +18,4 @@ export type SettingsState = {
   runtimeVersionSubscription: Nullable<Subscription>;
   nftStorage: Nullable<NFTStorage>;
   subqueryEndpoint: Nullable<string>;
-  isDesktop: boolean;
 };

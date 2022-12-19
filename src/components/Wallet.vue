@@ -68,9 +68,9 @@ export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
-  @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: VoidFn;
+  @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
 
-  @action.account.logout private logout!: AsyncVoidFn;
+  @action.account.logout private logout!: AsyncFnWithoutArgs;
 
   currentTab: WalletTabs = WalletTabs.Assets;
 
