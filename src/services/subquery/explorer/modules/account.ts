@@ -7,7 +7,7 @@ import { HistoryElementsQuery } from '../../queries/historyElements';
 
 import { AccountHistorySubscription } from '../../subscriptions/account';
 
-import type { AccountReferralReward, ReferrerRewards, HistoryElement, HistoryElementsQueryResponse } from '../../types';
+import type { ReferrerRewards, HistoryElement, HistoryElementsQueryResponse } from '../../types';
 
 export class AccountModule extends BaseModule {
   /**
@@ -76,7 +76,7 @@ export class AccountModule extends BaseModule {
 
     return createSubscription(async (payload) => {
       if (payload.data) {
-        const txId = payload.data.accounts._entity.latest_history_element_id;
+        const txId = payload.data.payload._entity.latest_history_element_id;
         const variables = { filter: { id: { equalTo: txId } } };
         const response = await this.getHistory(variables);
 

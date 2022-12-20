@@ -247,6 +247,8 @@ export const shortenValue = (string: string, length = string.length / 2): string
   return `${string.slice(0, length / 2)}...${string.slice(-length / 2)}`;
 };
 
+export const formatStringNumber = (value: Nullable<string>) => (value ? new FPNumber(value) : FPNumber.ZERO);
+
 export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo>): Array<RewardsAmountHeaderItem> => {
   const rewardsHash = rewards.reduce((result, item) => {
     const isRewardsInfo = 'rewards' in item;

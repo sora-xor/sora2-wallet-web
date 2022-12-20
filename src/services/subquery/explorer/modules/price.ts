@@ -2,53 +2,38 @@ import { BaseModule } from './_base';
 
 import { FiatPriceQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
-
 import { FiatPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
 
 import { AssetSnapshotTypes } from '../../types';
 
+import { formatStringNumber } from '../../../../util';
+
 import type { AssetEntity, FiatPriceObject } from '../../types';
 
-export class PriceModule extends BaseModule {
-  public parseFiatPrice(entity: AssetEntity): FiatPriceObject {
-    console.log(this);
-    const acc = {};
-    const id = entity.id;
-    const priceFPNumber = this.formatStringNumber(entity.priceUSD || entity.price_u_s_d);
-    const isPriceFinity = priceFPNumber.isFinity();
-    if (isPriceFinity) {
-      acc[id] = priceFPNumber.toCodecString();
-    }
-    return acc;
+function parseFiatPrice(entity: AssetEntity): FiatPriceObject {
+  const acc = {};
+  const id = entity.id;
+  const priceFPNumber = formatStringNumber(entity.priceUSD || entity.price_u_s_d);
+  const isPriceFinity = priceFPNumber.isFinity();
+  if (isPriceFinity) {
+    acc[id] = priceFPNumber.toCodecString();
   }
+  return acc;
+}
 
+export class PriceModule extends BaseModule {
   /**
    * Get fiat price for each asset
    */
   public async getFiatPriceObject(): Promise<Nullable<FiatPriceObject>> {
-    const result = await this.fetchAndParseEntities(FiatPriceQuery, this.parseFiatPrice.bind(this));
-
-    return result;
+    return await this.fetchAndParseEntities(parseFiatPrice, FiatPriceQuery);
   }
 
   public createFiatPriceSubscription(
     handler: (entity: FiatPriceObject) => void,
     errorHandler: () => void
   ): VoidFunction {
-    const createSubscription = this.root.subscribe(FiatPriceSubscription, {});
-
-    return createSubscription((payload) => {
-      try {
-        if (payload.data) {
-          const entity = this.parseFiatPrice(payload.data.assets._entity);
-          handler(entity);
-        } else {
-          errorHandler();
-        }
-      } catch (error) {
-        errorHandler();
-      }
-    });
+    return this.createEntitySubscription(FiatPriceSubscription, {}, parseFiatPrice, handler, errorHandler);
   }
 
   /**

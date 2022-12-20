@@ -68,10 +68,12 @@ export enum MutationTypes {
 }
 
 /* eslint-disable camelcase */
-export type SubscriptionPayload<EntityData> = {
-  id: string;
-  mutation_type: MutationTypes;
-  _entity: EntityData;
+export type SubscriptionPayload<T> = {
+  payload: {
+    id: string;
+    mutation_type: MutationTypes;
+    _entity: T;
+  };
 };
 
 export type EntitiesQueryResponse<T> = {

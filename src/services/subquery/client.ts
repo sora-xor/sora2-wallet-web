@@ -24,7 +24,7 @@ const createSubscriptionExchange = (subscriptionClient: SubscriptionClient) => {
   });
 };
 
-export const createSubqueryClient = (url: string, subscriptions = false): Client => {
+export const createExplorerClient = (url: string, subscriptions = false): Client => {
   const exchanges = [...defaultExchanges];
 
   if (subscriptions) {
