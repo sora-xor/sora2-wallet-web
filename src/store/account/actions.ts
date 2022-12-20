@@ -402,7 +402,7 @@ const actions = defineActions({
       commit.clearBlacklist();
     }
   },
-  async subscribeOnFiatPriceAndApy(context): Promise<void> {
+  async subscribeOnFiatPrice(context): Promise<void> {
     const { rootCommit } = rootActionContext(context);
     rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Loading);
     const isSubqueryAvailable = await getFiatPriceObject(context);
