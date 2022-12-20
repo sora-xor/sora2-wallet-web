@@ -5,11 +5,11 @@ import { XOR } from '@sora-substrate/util/build/assets/consts';
 import { HistoryElementsQuery } from './queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from './queries/referrerRewards';
 import { HistoricalPriceQuery, historicalPriceFilter } from './queries/historicalPrice';
-import { FiatPriceQuery } from './queries/fiatPriceAndApy';
+import { FiatPriceQuery, ApyQuery } from './queries/fiatPriceAndApy';
 import { FiatPriceSubscription } from './subscriptions/fiatPriceAndApy';
 import { AccountHistorySubscription } from './subscriptions/account';
 import { SoraNetwork } from '../../consts';
-import { AssetSnapshotTypes } from './types';
+import { AssetSnapshotTypes, PoolApyObject } from './types';
 
 import { createSubqueryClient } from './client';
 
@@ -19,8 +19,9 @@ import store from '../../store';
 
 import type {
   Explorer,
+  AssetEntity,
   PoolXYKEntity,
-  FiatPriceAndApyObject,
+  FiatPriceObject,
   ReferrerRewards,
   AccountReferralReward,
   AssetSnapshot,
@@ -56,16 +57,16 @@ export default class SubqueryExplorer implements Explorer {
   }
 
   /**
-   * Fetch pools from poolXYKs
+   * Fetch apy from poolXYKs
    * @param after cursor of last element
    */
-  public async fetchPools(
+  public async fetchPoolsApy(
     after?: string
   ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: PoolXYKEntity[] }>> {
     try {
       const params = { after };
 
-      const response = await this.request(FiatPriceQuery, params);
+      const response = await this.request(ApyQuery, params);
 
       if (!response || !response.poolXYKs) return null;
 
@@ -73,6 +74,27 @@ export default class SubqueryExplorer implements Explorer {
         pageInfo: { hasNextPage, endCursor },
         nodes,
       } = response.poolXYKs;
+
+      return { hasNextPage, endCursor, nodes };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  public async fetchFiatPrices(
+    after?: string
+  ): Promise<Nullable<{ hasNextPage: boolean; endCursor: string; nodes: AssetEntity[] }>> {
+    try {
+      const params = { after };
+
+      const response = await this.request(FiatPriceQuery, params);
+
+      if (!response || !response.assets) return null;
+
+      const {
+        pageInfo: { hasNextPage, endCursor },
+        nodes,
+      } = response.assets;
 
       return { hasNextPage, endCursor, nodes };
     } catch (error) {
@@ -97,8 +119,8 @@ export default class SubqueryExplorer implements Explorer {
     });
   }
 
-  public createFiatPriceAndApySubscription(
-    handler: (entity: FiatPriceAndApyObject) => void,
+  public createFiatPriceSubscription(
+    handler: (entity: FiatPriceObject) => void,
     errorHandler: () => void
   ): VoidFunction {
     const createSubscription = this.subscribe(FiatPriceSubscription, {});
@@ -106,7 +128,7 @@ export default class SubqueryExplorer implements Explorer {
     return createSubscription((payload) => {
       try {
         if (payload.data) {
-          const entity = this.parseFiatPriceAndApyEntity(payload.data.poolXYKs._entity);
+          const entity = this.parseFiatPrice(payload.data.assets._entity);
           handler(entity);
         } else {
           errorHandler();
@@ -117,37 +139,39 @@ export default class SubqueryExplorer implements Explorer {
     });
   }
 
-  public parseFiatPriceAndApyEntity(entity: PoolXYKEntity): FiatPriceAndApyObject {
+  public parseFiatPrice(entity: AssetEntity): FiatPriceObject {
+    const acc = {};
+    const id = entity.id;
+    const priceFPNumber = format(entity.priceUSD || entity.price_u_s_d);
+    const isPriceFinity = priceFPNumber.isFinity();
+    if (isPriceFinity) {
+      acc[id] = priceFPNumber.toCodecString();
+    }
+    return acc;
+  }
+
+  public parseApy(entity: PoolXYKEntity): PoolApyObject {
     const acc = {};
     const id = entity.id;
     const strategicBonusApyFPNumber = format(entity.strategicBonusApy || entity.strategic_bonus_apy);
-    const priceFPNumber = format(entity.priceUSD || entity.price_u_s_d);
     const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
-    const isPriceFinity = priceFPNumber.isFinity();
-    if (isPriceFinity || isStrategicBonusApyFinity) {
-      acc[id] = {};
-    }
-    if (isPriceFinity) {
-      acc[id].price = priceFPNumber.toCodecString();
-    }
     if (isStrategicBonusApyFinity) {
-      acc[id].strategicBonusApy = strategicBonusApyFPNumber.toCodecString();
+      acc[id] = strategicBonusApyFPNumber.toCodecString();
     }
-
     return acc;
   }
 
   /**
    * Get fiat price & APY coefficient for each asset (without historical data)
    */
-  public async getFiatPriceAndApyObject(): Promise<Nullable<FiatPriceAndApyObject>> {
-    let acc: FiatPriceAndApyObject = {};
+  public async getFiatPriceObject(): Promise<Nullable<FiatPriceObject>> {
+    let acc: FiatPriceObject = {};
     let after = '';
     let hasNextPage = true;
 
     try {
       do {
-        const response = await this.fetchPools(after);
+        const response = await this.fetchFiatPrices(after);
 
         if (!response) {
           return Object.keys(acc).length ? acc : null;
@@ -156,8 +180,8 @@ export default class SubqueryExplorer implements Explorer {
         after = response.endCursor;
         hasNextPage = response.hasNextPage;
 
-        response.nodes.forEach((el: PoolXYKEntity) => {
-          const record = this.parseFiatPriceAndApyEntity(el);
+        response.nodes.forEach((el: AssetEntity) => {
+          const record = this.parseFiatPrice(el);
 
           acc = { ...acc, ...record };
         });

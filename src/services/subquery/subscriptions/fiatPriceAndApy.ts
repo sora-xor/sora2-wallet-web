@@ -1,10 +1,10 @@
 import { gql } from '@urql/core';
 
-import type { SubscriptionPayload, PoolXYKEntity } from '../types';
+import type { SubscriptionPayload, AssetEntity } from '../types';
 
-export const FiatPriceSubscription = gql<{ poolXYKs: SubscriptionPayload<PoolXYKEntity> }>`
+export const FiatPriceSubscription = gql<{ assets: SubscriptionPayload<AssetEntity> }>`
   subscription {
-    poolXYKs(mutation: [UPDATE, INSERT]) {
+    assets(mutation: [UPDATE, INSERT]) {
       id
       mutation_type
       _entity

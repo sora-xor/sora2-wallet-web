@@ -11,27 +11,43 @@ import { api } from '../../api';
 import { Extensions } from '../../consts';
 
 import type { AccountState } from './types';
-import type { FiatPriceAndApyObject, ReferrerRewards } from '../../services/subquery/types';
+import type { FiatPriceObject, ReferrerRewards } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';
 
 const mutations = defineMutations<AccountState>()({
-  setFiatPriceAndApySubscription(state, subscription: VoidFunction): void {
-    state.fiatPriceAndApySubscription = subscription;
+  // Fiat price
+  setFiatPriceObject(state, object: FiatPriceObject): void {
+    state.fiatPriceObject = object;
   },
-  resetFiatPriceAndApySubscription(state): void {
-    if (state.fiatPriceAndApySubscription) {
-      state.fiatPriceAndApySubscription();
+  updateFiatPriceObject(state, fiatPriceAndApyRecord?: FiatPriceObject): void {
+    if (!fiatPriceAndApyRecord) return;
+
+    const updated = { ...(state.fiatPriceObject || {}), ...fiatPriceAndApyRecord };
+
+    state.fiatPriceObject = updated;
+  },
+  /** When fiat price and apy request has an error */
+  clearFiatPriceObject(state): void {
+    state.fiatPriceObject = {};
+  },
+  setFiatPriceSubscription(state, subscription: VoidFunction): void {
+    state.fiatPriceSubscription = subscription;
+  },
+  resetFiatPriceSubscription(state): void {
+    if (state.fiatPriceSubscription) {
+      state.fiatPriceSubscription();
     }
-    state.fiatPriceAndApySubscription = null;
+    state.fiatPriceSubscription = null;
   },
   resetAccount(state): void {
     const s = omit(
       [
         'whitelistArray',
         'blacklistArray',
-        'fiatPriceAndApyObject',
-        'fiatPriceAndApySubscription',
-        'withoutFiatAndApy',
+        'fiatPriceObject',
+        'fiatPriceSubscription',
+        'poolApyObject',
+        'poolApySubscription',
         'assets',
         'assetsIds',
         'assetsSubscription',
@@ -97,24 +113,6 @@ const mutations = defineMutations<AccountState>()({
   },
   clearBlacklist(state): void {
     state.blacklistArray = [];
-  },
-  setFiatPriceAndApyObject(state, object: FiatPriceAndApyObject): void {
-    state.fiatPriceAndApyObject = object;
-    state.withoutFiatAndApy = false;
-  },
-  updateFiatPriceAndApyObject(state, fiatPriceAndApyRecord?: FiatPriceAndApyObject): void {
-    const fiatPriceAndApyObject = state.fiatPriceAndApyObject;
-    if (!fiatPriceAndApyRecord) {
-      return;
-    }
-    const updated = { ...(fiatPriceAndApyObject || {}), ...fiatPriceAndApyRecord };
-    state.fiatPriceAndApyObject = updated;
-    state.withoutFiatAndApy = false;
-  },
-  /** When fiat price and apy request has an error */
-  clearFiatPriceAndApyObject(state): void {
-    state.fiatPriceAndApyObject = {};
-    state.withoutFiatAndApy = true;
   },
   setReferralRewards(state, referralRewards: ReferrerRewards): void {
     state.referralRewards = referralRewards;

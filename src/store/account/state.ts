@@ -27,9 +27,10 @@ export function initialState(): AccountState {
     polkadotJsAccountsSubscription: null,
     whitelistArray: [],
     blacklistArray: [],
-    withoutFiatAndApy: false,
-    fiatPriceAndApyObject: {},
-    fiatPriceAndApySubscription: null,
+    fiatPriceObject: {},
+    fiatPriceSubscription: null,
+    poolApyObject: {},
+    poolApySubscription: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
     selectedExtension: null,

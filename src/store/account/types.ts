@@ -1,7 +1,7 @@
 import { Extensions } from '../../consts';
 
 import type { Wallet } from '@subwallet/wallet-connect/types';
-import type { FiatPriceAndApyObject, ReferrerRewards } from '@/services/subquery/types';
+import type { ReferrerRewards, FiatPriceObject, PoolApyObject } from '@/services/subquery/types';
 import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from 'rxjs';
 
@@ -20,9 +20,10 @@ export type AccountState = {
   polkadotJsAccountsSubscription: Nullable<VoidFunction>;
   whitelistArray: Array<WhitelistArrayItem>;
   blacklistArray: Blacklist;
-  withoutFiatAndApy: boolean;
-  fiatPriceAndApyObject: Nullable<FiatPriceAndApyObject>;
-  fiatPriceAndApySubscription: Nullable<VoidFunction>;
+  fiatPriceObject: FiatPriceObject;
+  fiatPriceSubscription: Nullable<VoidFunction>;
+  poolApyObject: PoolApyObject;
+  poolApySubscription: Nullable<VoidFunction>;
   referralRewards: ReferrerRewards;
   selectedExtension: Nullable<Extensions>;
   availableWallets: Array<Wallet>;

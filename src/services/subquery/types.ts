@@ -75,6 +75,14 @@ export type SubscriptionPayload<EntityData> = {
   _entity: EntityData;
 };
 
+export type AssetEntity = {
+  id: string;
+  priceUSD: string;
+  price_u_s_d?: Nullable<string>;
+  supply: string;
+  liquidity: string;
+};
+
 export type AccountEntity = {
   id: string;
   latest_history_element_id: string;
@@ -102,6 +110,10 @@ export type AssetSnapshot = {
   };
   timestamp: number;
 };
+
+export type FiatPriceObject = Record<string, CodecString>;
+
+export type PoolApyObject = Record<string, string>;
 
 export type FiatPriceAndApyObject = {
   [key: string]: {
