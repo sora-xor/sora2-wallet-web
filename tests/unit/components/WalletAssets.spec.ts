@@ -14,7 +14,7 @@ const createWrapper = (options = {}) =>
     ...options,
   });
 
-const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS) =>
+const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, withoutFiat = false) =>
   useVuex({
     settings: {
       state: () => ({
@@ -30,7 +30,7 @@ const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS) =
     account: {
       state: () => ({
         accountAssets: MOCK_ACCOUNT_ASSETS,
-        fiatPriceObject: MOCK_FIAT_PRICE_OBJECT,
+        fiatPriceObject: withoutFiat ? {} : MOCK_FIAT_PRICE_OBJECT,
       }),
       getters: {
         whitelist: () => MOCK_WHITE_LIST,
@@ -92,7 +92,7 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
 
   it('should not render fiat value when withoutFiatAndApy property is true', () => {
     const wrapper = createWrapper({
-      store: createStore(undefined),
+      store: createStore(undefined, true),
     });
     const fiatValue = wrapper.find('.wallet-assets--fiat');
 
