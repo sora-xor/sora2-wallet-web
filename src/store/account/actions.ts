@@ -43,7 +43,7 @@ const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
 
 function subscribeOnFiatUsingSubquery(context: ActionContext<any, any>): void {
   const { commit } = accountActionContext(context);
-  const subscription = SubqueryExplorerService.createFiatPriceSubscription(
+  const subscription = SubqueryExplorerService.price.createFiatPriceSubscription(
     commit.updateFiatPriceObject,
     commit.clearFiatPriceObject
   );
@@ -74,7 +74,7 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   const { commit } = accountActionContext(context);
   commit.resetFiatPriceSubscription();
   try {
-    let data = await SubqueryExplorerService.getFiatPriceObject();
+    let data = await SubqueryExplorerService.price.getFiatPriceObject();
     if (data) {
       commit.setFiatPriceObject(data);
       return true;
@@ -406,7 +406,7 @@ const actions = defineActions({
   async getAccountReferralRewards(context): Promise<void> {
     const { state, commit } = accountActionContext(context);
     commit.clearReferralRewards();
-    const data = await SubqueryExplorerService.getAccountReferralRewards(state.address);
+    const data = await SubqueryExplorerService.account.getReferralRewards(state.address);
     if (data) {
       commit.setReferralRewards(data);
     }
