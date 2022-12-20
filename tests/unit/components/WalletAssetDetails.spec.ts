@@ -1,11 +1,6 @@
 import WalletAssetDetails from '@/components/WalletAssetDetails.vue';
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
-import {
-  MOCK_ACCOUNT_ASSETS,
-  MOCK_FIAT_PRICE_AND_APY_OBJECT,
-  MOCK_HISTORY,
-  MOCK_WALLET_PERMISSIONS,
-} from '../../utils/mock';
+import { MOCK_ACCOUNT_ASSETS, MOCK_FIAT_PRICE_OBJECT, MOCK_HISTORY, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 import { MOCK_ACCOUNT } from '../../utils/WalletAccountMock';
 
 const createStore = ({ permissions = MOCK_WALLET_PERMISSIONS, isNotXor = false } = {}) =>
@@ -23,7 +18,7 @@ const createStore = ({ permissions = MOCK_WALLET_PERMISSIONS, isNotXor = false }
     account: {
       state: () => ({
         accountAssets: MOCK_ACCOUNT_ASSETS,
-        fiatPriceAndApyObject: MOCK_FIAT_PRICE_AND_APY_OBJECT,
+        fiatPriceObject: MOCK_FIAT_PRICE_OBJECT,
       }),
       getters: {
         account: () => MOCK_ACCOUNT,
