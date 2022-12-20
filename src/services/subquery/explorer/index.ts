@@ -10,7 +10,7 @@ import { SoraNetwork } from '../../../consts';
 
 import { createSubqueryClient } from '../client';
 
-import type { Client, OperationResult, ResultOf, TypedDocumentNode } from '../client';
+import type { Client, OperationResult, ResultOf, TypedDocumentNode, AnyVariables } from '../client';
 import type { Explorer } from '../types';
 
 export default class SubqueryExplorer implements Explorer {
@@ -36,7 +36,7 @@ export default class SubqueryExplorer implements Explorer {
     this.client = createSubqueryClient(url, true);
   }
 
-  public async request<T>(query: TypedDocumentNode<T>, variables = {}) {
+  public async request<T>(query: TypedDocumentNode<T>, variables: AnyVariables = {}) {
     this.initClient();
 
     const { data } = await this.client.query<ResultOf<typeof query>>(query, variables).toPromise();

@@ -4,10 +4,11 @@ import { PageInfoFragment } from '../fragments/pageInfo';
 
 import { AssetSnapshotTypes } from '../types';
 
-export const HistoricalPriceQuery = gql`
+import type { EntitiesQueryResponse, AssetSnapshot } from '../types';
+
+export const HistoricalPriceQuery = gql<EntitiesQueryResponse<AssetSnapshot>>`
   query HistoricalPriceQuery($after: Cursor = "", $filter: AssetSnapshotFilter, $first: Int = null) {
-    assetSnapshots(after: $after, first: $first, filter: $filter, orderBy: [TIMESTAMP_DESC]) {
-      totalCount
+    entities: assetSnapshots(after: $after, first: $first, filter: $filter, orderBy: [TIMESTAMP_DESC]) {
       pageInfo {
         ...PageInfoFragment
       }

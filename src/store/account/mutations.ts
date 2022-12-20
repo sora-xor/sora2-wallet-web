@@ -46,7 +46,6 @@ const mutations = defineMutations<AccountState>()({
         'blacklistArray',
         'fiatPriceObject',
         'fiatPriceSubscription',
-        'poolApyObject',
         'poolApySubscription',
         'assets',
         'assetsIds',

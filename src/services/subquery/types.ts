@@ -74,6 +74,13 @@ export type SubscriptionPayload<EntityData> = {
   _entity: EntityData;
 };
 
+export type EntitiesQueryResponse<T> = {
+  entities: {
+    pageInfo: PageInfo;
+    nodes: T[];
+  };
+};
+
 export type AssetEntity = {
   id: string;
   priceUSD: string;

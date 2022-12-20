@@ -1,27 +1,12 @@
 import { gql } from '@urql/core';
 
-import type { ResultOf } from '../client';
-import type { AssetEntity, PoolXYKEntity } from '../types';
-
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-type FiatPriceQueryResponse = {
-  assets: {
-    pageInfo: ResultOf<typeof PageInfoFragment>;
-    nodes: AssetEntity[];
-  };
-};
+import type { AssetEntity, PoolXYKEntity, EntitiesQueryResponse } from '../types';
 
-type ApyQueryResponse = {
-  poolXYKs: {
-    pageInfo: ResultOf<typeof PageInfoFragment>;
-    nodes: PoolXYKEntity[];
-  };
-};
-
-export const FiatPriceQuery = gql<FiatPriceQueryResponse>`
+export const FiatPriceQuery = gql<EntitiesQueryResponse<AssetEntity>>`
   query FiatPriceQuery($after: Cursor = "", $first: Int = 100) {
-    assets(first: $first, after: $after) {
+    entities: assets(first: $first, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }
@@ -34,9 +19,9 @@ export const FiatPriceQuery = gql<FiatPriceQueryResponse>`
   ${PageInfoFragment}
 `;
 
-export const ApyQuery = gql<ApyQueryResponse>`
+export const ApyQuery = gql<EntitiesQueryResponse<PoolXYKEntity>>`
   query ApyQuery($after: Cursor = "", $first: Int = 100) {
-    poolXYKs(first: $first, after: $after) {
+    entities: poolXYKs(first: $first, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }

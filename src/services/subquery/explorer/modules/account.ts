@@ -1,4 +1,5 @@
 import { FPNumber } from '@sora-substrate/math';
+import { BaseModule } from './_base';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
 
 import { ReferrerRewardsQuery, referrerRewardsFilter } from '../../queries/referrerRewards';
@@ -6,36 +7,18 @@ import { HistoryElementsQuery } from '../../queries/historyElements';
 
 import { AccountHistorySubscription } from '../../subscriptions/account';
 
-import type SubqueryExplorer from '../index';
 import type { AccountReferralReward, ReferrerRewards, HistoryElement, HistoryElementsQueryResponse } from '../../types';
 
-export class AccountModule {
-  private readonly root!: SubqueryExplorer;
-
-  constructor(root: SubqueryExplorer) {
-    this.root = root;
-  }
-
+export class AccountModule extends BaseModule {
   /**
    * Get Referral Rewards items by referral
    */
-  private async fetchAccountReferralRewards(
-    referrer: string,
-    after?: string
-  ): Promise<{ hasNextPage: boolean; endCursor: string; nodes: AccountReferralReward[] }> {
-    const variables = {
-      after,
-      filter: referrerRewardsFilter(referrer),
-    };
+  private async fetchAccountReferralRewards(referrer: string, after?: string) {
+    const filter = referrerRewardsFilter(referrer);
+    const variables = { after, filter };
+    const response = await this.fetchEntities(ReferrerRewardsQuery, variables);
 
-    const {
-      referrerRewards: {
-        nodes,
-        pageInfo: { hasNextPage, endCursor },
-      },
-    } = await this.root.request(ReferrerRewardsQuery, variables);
-
-    return { hasNextPage, endCursor, nodes };
+    return response;
   }
 
   /**
@@ -56,8 +39,8 @@ export class AccountModule {
 
         if (!response) return null;
 
-        after = response.endCursor;
-        hasNextPage = response.hasNextPage;
+        after = response.pageInfo.endCursor;
+        hasNextPage = response.pageInfo.hasNextPage;
 
         response.nodes.forEach((node) => {
           const referral = node.referral;

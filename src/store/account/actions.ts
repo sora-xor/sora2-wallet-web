@@ -403,6 +403,7 @@ const actions = defineActions({
       subscribeOnFiatUsingCeresApi(context, error as Error);
     }
   },
+
   async getAccountReferralRewards(context): Promise<void> {
     const { state, commit } = accountActionContext(context);
     commit.clearReferralRewards();

@@ -29,8 +29,6 @@ export function initialState(): AccountState {
     blacklistArray: [],
     fiatPriceObject: {},
     fiatPriceSubscription: null,
-    poolApyObject: {},
-    poolApySubscription: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
     selectedExtension: null,

@@ -2,9 +2,11 @@ import { gql } from '@urql/core';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-export const ReferrerRewardsQuery = gql`
+import type { AccountReferralReward, EntitiesQueryResponse } from '../types';
+
+export const ReferrerRewardsQuery = gql<EntitiesQueryResponse<AccountReferralReward>>`
   query ReferrerRewardsQuery($first: Int = 100, $filter: ReferrerRewardFilter, $after: Cursor = "") {
-    referrerRewards(first: $first, filter: $filter, after: $after) {
+    entities: referrerRewards(first: $first, filter: $filter, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }
