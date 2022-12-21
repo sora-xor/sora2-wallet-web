@@ -23,7 +23,8 @@ import {
   NFT_BLACK_LIST_URL,
 } from '../../util';
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
-import type { PolkadotJsAccount } from '../../types/common';
+import { ConnectionStatus, PolkadotJsAccount } from '../../types/common';
+import { FiatPriceObject } from '@/services/subquery/types';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -43,11 +44,22 @@ const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
 
 function subscribeOnFiatUsingSubquery(context: ActionContext<any, any>): void {
   const { commit } = accountActionContext(context);
-  const subscription = SubqueryExplorerService.createFiatPriceAndApySubscription(
-    commit.updateFiatPriceAndApyObject,
-    commit.clearFiatPriceAndApyObject
+  const { rootState, rootCommit } = rootActionContext(context);
+  const subscription = SubqueryExplorerService.price.createFiatPriceSubscription(
+    (payload?: FiatPriceObject) => {
+      commit.updateFiatPriceObject(payload);
+      if (rootState.wallet.settings.subqueryStatus !== ConnectionStatus.Available) {
+        rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Available);
+      }
+    },
+    () => {
+      if (rootState.wallet.settings.subqueryStatus !== ConnectionStatus.Unavailable) {
+        rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Unavailable);
+      }
+      commit.clearFiatPriceObject();
+    }
   );
-  commit.setFiatPriceAndApySubscription(subscription);
+  commit.setFiatPriceSubscription(subscription);
 }
 
 function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>, error?: Error): void {
@@ -57,10 +69,10 @@ function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>, error?: 
   }
   console.info('Subquery cannot set fiat subscription! CERES API will be used');
   const subscription = CeresApiService.createFiatPriceSubscription(
-    commit.updateFiatPriceAndApyObject,
-    commit.clearFiatPriceAndApyObject
+    commit.updateFiatPriceObject,
+    commit.clearFiatPriceObject
   );
-  commit.setFiatPriceAndApySubscription(subscription);
+  commit.setFiatPriceSubscription(subscription);
 }
 
 /**
@@ -70,25 +82,25 @@ function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>, error?: 
  *
  * Returns `null`, if both services are unavailable.
  */
-async function getFiatPriceAndApyObject(context: ActionContext<any, any>): Promise<Nullable<boolean>> {
+async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nullable<boolean>> {
   const { commit } = accountActionContext(context);
-  commit.resetFiatPriceAndApySubscription();
+  commit.resetFiatPriceSubscription();
   try {
-    let data = await SubqueryExplorerService.getFiatPriceAndApyObject();
+    let data = await SubqueryExplorerService.price.getFiatPriceObject();
     if (data) {
-      commit.setFiatPriceAndApyObject(data);
+      commit.setFiatPriceObject(data);
       return true;
     }
     data = await CeresApiService.getFiatPriceObject();
     if (data) {
-      commit.setFiatPriceAndApyObject(data);
+      commit.setFiatPriceObject(data);
       return false;
     }
     // If data is empty
-    commit.clearFiatPriceAndApyObject();
+    commit.clearFiatPriceObject();
     return null;
   } catch (error) {
-    commit.clearFiatPriceAndApyObject();
+    commit.clearFiatPriceObject();
     return null;
   }
 }
@@ -390,23 +402,29 @@ const actions = defineActions({
       commit.clearBlacklist();
     }
   },
-  async subscribeOnFiatPriceAndApy(context): Promise<void> {
-    const isSubqueryAvailable = await getFiatPriceAndApyObject(context);
+  async subscribeOnFiatPrice(context): Promise<void> {
+    const { rootCommit } = rootActionContext(context);
+    rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Loading);
+    const isSubqueryAvailable = await getFiatPriceObject(context);
     try {
       if (isSubqueryAvailable) {
         subscribeOnFiatUsingSubquery(context);
+        rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Available);
       } else {
         // Subscribe on CERES API anyway
         subscribeOnFiatUsingCeresApi(context);
+        rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Unavailable);
       }
     } catch (error) {
+      rootCommit.wallet.settings.setSubqueryStatus(ConnectionStatus.Unavailable);
       subscribeOnFiatUsingCeresApi(context, error as Error);
     }
   },
+
   async getAccountReferralRewards(context): Promise<void> {
     const { state, commit } = accountActionContext(context);
     commit.clearReferralRewards();
-    const data = await SubqueryExplorerService.getAccountReferralRewards(state.address);
+    const data = await SubqueryExplorerService.account.getReferralRewards(state.address);
     if (data) {
       commit.setReferralRewards(data);
     }
@@ -451,9 +469,9 @@ const actions = defineActions({
     commit.resetAccountAssetsSubscription();
   },
   /** It's used **only** for subscriptions module */
-  async resetFiatPriceAndApySubscription(context): Promise<void> {
+  async resetFiatPriceSubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
-    commit.resetFiatPriceAndApySubscription();
+    commit.resetFiatPriceSubscription();
   },
   /** It's used **only** for subscriptions module */
   async resetExtensionAvailabilitySubscription(context): Promise<void> {

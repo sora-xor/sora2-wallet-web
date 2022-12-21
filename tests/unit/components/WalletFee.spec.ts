@@ -1,5 +1,5 @@
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
-import { MOCK_FIAT_PRICE_AND_APY_OBJECT } from '../../utils/mock';
+import { MOCK_FIAT_PRICE_OBJECT } from '../../utils/mock';
 import { MOCK_WALLET_FEE } from '../../utils/WalletFeeMock';
 
 import WalletFee from '@/components/WalletFee.vue';
@@ -8,7 +8,7 @@ const createStore = () =>
   useVuex({
     account: {
       state: () => ({
-        fiatPriceAndApyObject: MOCK_FIAT_PRICE_AND_APY_OBJECT,
+        fiatPriceObject: MOCK_FIAT_PRICE_OBJECT,
       }),
     },
   });

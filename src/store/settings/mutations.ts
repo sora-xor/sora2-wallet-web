@@ -6,7 +6,7 @@ import type { Subscription } from 'rxjs';
 import { api } from '../../api';
 import { SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
 import { runtimeStorage, storage } from '../../util/storage';
-import type { ApiKeysObject } from '../../types/common';
+import type { ApiKeysObject, ConnectionStatus } from '../../types/common';
 import type { SettingsState } from './types';
 
 const mutations = defineMutations<SettingsState>()({
@@ -38,7 +38,7 @@ const mutations = defineMutations<SettingsState>()({
     storage.set('shouldBalanceBeHidden', state.shouldBalanceBeHidden);
   },
   setFilterOptions(state, filters: WalletAssetFilters): void {
-    // settingsStorage.set('filters', JSON.stringify(filters));
+    storage.set('filters', JSON.stringify(filters));
     state.filters = filters;
   },
   setRuntimeVersion(state, version: number): void {
@@ -61,7 +61,7 @@ const mutations = defineMutations<SettingsState>()({
     state.apiKeys = { ...state.apiKeys, ...keys };
   },
   setNftStorage(state, { marketplaceDid, ucan }: { marketplaceDid?: string; ucan?: string }): void {
-    let nftStorage;
+    let nftStorage: NFTStorage;
 
     if (marketplaceDid && ucan) {
       // on prod environment
@@ -78,6 +78,9 @@ const mutations = defineMutations<SettingsState>()({
   },
   setSubqueryEndpoint(state, endpoint: string): void {
     state.subqueryEndpoint = endpoint;
+  },
+  setSubqueryStatus(state, status: ConnectionStatus): void {
+    state.subqueryStatus = status;
   },
 });
 
