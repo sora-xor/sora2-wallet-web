@@ -1,14 +1,7 @@
 import type { History, CodecString, FPNumber } from '@sora-substrate/util';
 
-import type { SoraNetwork } from '../../consts';
-
 export interface ExplorerDataParser {
   parseTransactionAsHistoryItem: (transaction: any) => Promise<Nullable<History>>;
-}
-
-export interface Explorer {
-  soraNetwork: Nullable<SoraNetwork>;
-  getAccountTransactions: (variables?: any) => Promise<any>;
 }
 
 export enum ModuleNames {
@@ -69,10 +62,28 @@ export enum MutationTypes {
 }
 
 /* eslint-disable camelcase */
-export type SubscriptionPayload<EntityData> = {
+export type SubscriptionPayload<T> = {
+  payload: {
+    id: string;
+    mutation_type: MutationTypes;
+    _entity: T;
+  };
+};
+
+export type EntitiesQueryResponse<T> = {
+  entities: {
+    pageInfo: PageInfo;
+    nodes: T[];
+  };
+};
+
+export type AssetEntity = {
   id: string;
-  mutation_type: MutationTypes;
-  _entity: EntityData;
+  priceUSD: string;
+  supply: string;
+  liquidity: string;
+  // subscription payload fields
+  price_u_s_d?: Nullable<string>;
 };
 
 export type AccountEntity = {
@@ -82,14 +93,22 @@ export type AccountEntity = {
 
 export type PoolXYKEntity = {
   id: string;
-  strategicBonusApy: Nullable<string>;
-  strategic_bonus_apy?: Nullable<string>;
+  baseAssetId: string;
+  targetAssetId: string;
+  baseAssetReserves: CodecString;
+  targetAssetReserves: CodecString;
+  multiplier: number;
   priceUSD: Nullable<string>;
+  strategicBonusApy: Nullable<string>;
+  // subscription payload fields
   price_u_s_d?: Nullable<string>;
+  strategic_bonus_apy?: Nullable<string>;
 };
 /* eslint-enable camelcase */
 
-export type AssetSnapshot = {
+export type AssetSnapshotEntity = {
+  id: string;
+  assetId: string;
   priceUSD: {
     low: string;
     high: string;
@@ -101,14 +120,16 @@ export type AssetSnapshot = {
     amountUSD: string;
   };
   timestamp: number;
+  type: AssetSnapshotTypes;
+  liquidity: Nullable<CodecString>;
+  supply: CodecString;
+  mint: CodecString;
+  burn: CodecString;
 };
 
-export type FiatPriceAndApyObject = {
-  [key: string]: {
-    price?: CodecString;
-    strategicBonusApy?: CodecString;
-  };
-};
+export type FiatPriceObject = Record<string, CodecString>;
+
+export type PoolApyObject = Record<string, string>;
 
 export type HistoryElementError = {
   moduleErrorId: number;

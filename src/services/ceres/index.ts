@@ -3,20 +3,18 @@ import { interval } from 'rxjs';
 import { FPNumber } from '@sora-substrate/util';
 import { DAI } from '@sora-substrate/util/build/assets/consts';
 
-import type { FiatPriceAndApyObject } from '../subquery/types';
+import type { FiatPriceObject } from '../subquery/types';
 
 const ceresUpdateInterval = interval(60_000);
 
 export class CeresApiService {
-  public static async getFiatPriceObject(): Promise<Nullable<FiatPriceAndApyObject>> {
+  public static async getFiatPriceObject(): Promise<Nullable<FiatPriceObject>> {
     try {
       const cerestokenApi = await fetch('https://cerestoken.io/api/pairs', { cache: 'no-store' });
       const data = await cerestokenApi.json();
-      const cerestokenApiObj = (data as Array<any>).reduce<FiatPriceAndApyObject>((acc, item) => {
+      const cerestokenApiObj = (data as Array<any>).reduce<FiatPriceObject>((acc, item) => {
         if (+item.price) {
-          acc[item.asset_id] = {
-            price: new FPNumber(item.price).toCodecString(),
-          };
+          acc[item.asset_id] = new FPNumber(item.price).toCodecString();
         }
         return acc;
       }, {});
@@ -24,7 +22,7 @@ export class CeresApiService {
         return null;
       }
       if (!cerestokenApiObj[DAI.address]) {
-        cerestokenApiObj[DAI.address] = { price: FPNumber.ONE.toCodecString() };
+        cerestokenApiObj[DAI.address] = FPNumber.ONE.toCodecString();
       }
       return cerestokenApiObj;
     } catch (error) {
@@ -34,7 +32,7 @@ export class CeresApiService {
   }
 
   public static createFiatPriceSubscription(
-    handler: (entity?: FiatPriceAndApyObject) => void,
+    handler: (entity?: FiatPriceObject) => void,
     errorHandler: () => void
   ): VoidFunction {
     const { unsubscribe } = ceresUpdateInterval.subscribe(async () => {

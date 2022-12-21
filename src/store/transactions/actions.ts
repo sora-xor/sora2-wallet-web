@@ -22,7 +22,7 @@ const actions = defineActions({
     if (!isLoggedIn) return;
 
     try {
-      const subscription = SubqueryExplorerService.createAccountHistorySubscription(
+      const subscription = SubqueryExplorerService.account.createHistorySubscription(
         account.address,
         async (transaction) => {
           const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
@@ -90,7 +90,7 @@ const actions = defineActions({
     };
 
     try {
-      const response = await SubqueryExplorerService.getAccountTransactions(variables);
+      const response = await SubqueryExplorerService.account.getHistory(variables);
 
       if (!response) return;
 

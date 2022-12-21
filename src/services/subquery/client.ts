@@ -2,7 +2,7 @@ import { createClient, defaultExchanges, subscriptionExchange } from '@urql/core
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 import type { Client } from '@urql/core';
 
-export type { Client, OperationResult, TypedDocumentNode } from '@urql/core';
+export type { Client, OperationResult, TypedDocumentNode, AnyVariables } from '@urql/core';
 export type { ResultOf } from '@graphql-typed-document-node/core';
 
 // https://github.com/apollographql/subscriptions-transport-ws/blob/51270cc7dbaf09c7b9aa67368f1de58148c7d334/README.md#constructorurl-options-websocketimpl
@@ -24,7 +24,7 @@ const createSubscriptionExchange = (subscriptionClient: SubscriptionClient) => {
   });
 };
 
-export const createSubqueryClient = (url: string, subscriptions = false): Client => {
+export const createExplorerClient = (url: string, subscriptions = false): Client => {
   const exchanges = [...defaultExchanges];
 
   if (subscriptions) {

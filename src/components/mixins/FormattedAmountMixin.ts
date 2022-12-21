@@ -6,18 +6,18 @@ import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/type
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { FontSizeRate, FontWeightRate } from '../../consts';
 import { state } from '../../store/decorators';
-import type { FiatPriceAndApyObject } from '../../services/subquery/types';
+
+import type { FiatPriceObject } from '../../services/subquery/types';
 
 @Component
 export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {
   readonly FontSizeRate = FontSizeRate;
   readonly FontWeightRate = FontWeightRate;
 
-  @state.account.fiatPriceAndApyObject fiatPriceAndApyObject!: FiatPriceAndApyObject;
+  @state.account.fiatPriceObject fiatPriceObject!: FiatPriceObject;
 
   getAssetFiatPrice(asset: Asset | AccountAsset): Nullable<CodecString> {
-    const fiatObj = this.fiatPriceAndApyObject[asset.address];
-    return !fiatObj || !fiatObj.price ? null : fiatObj.price;
+    return this.fiatPriceObject[asset.address] || null;
   }
 
   getFiatBalance(asset?: Nullable<AccountAsset>, type = BalanceType.Transferable): Nullable<string> {
