@@ -59,7 +59,7 @@ const actions = defineActions({
     const subscriptions = [
       'transactions/trackActiveTxs',
       'transactions/subscribeOnExternalHistory',
-      'account/subscribeOnFiatPriceAndApy',
+      'account/subscribeOnFiatPrice',
       'subscriptions/subscribeToStorageUpdates',
     ];
 
@@ -73,7 +73,7 @@ const actions = defineActions({
     await runParallel(context, [
       'transactions/resetActiveTxs',
       'transactions/resetExternalHistorySubscription',
-      'account/resetFiatPriceAndApySubscription',
+      'account/resetFiatPriceSubscription',
       'account/resetExtensionAvailabilitySubscription',
       'account/resetAccountPassphraseTimer',
       'subscriptions/resetStorageUpdatesSubscription',

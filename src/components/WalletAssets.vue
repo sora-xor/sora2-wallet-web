@@ -81,6 +81,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import { api, FPNumber } from '@sora-substrate/util';
+import isEmpty from 'lodash/fp/isEmpty';
 import draggable from 'vuedraggable';
 import type { AccountAsset, Whitelist, Blacklist } from '@sora-substrate/util/build/assets/types';
 
@@ -108,7 +109,6 @@ import type { Route } from '../store/router/types';
 })
 export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, TranslationMixin) {
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
-  @state.account.withoutFiatAndApy private withoutFiatAndApy!: boolean;
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
   @state.settings.permissions permissions!: WalletPermissions;
   @state.settings.filters private filters!: WalletAssetFilters;
@@ -151,7 +151,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   get assetsFiatAmount(): Nullable<string> {
-    if (!this.formattedAccountAssets || this.withoutFiatAndApy) {
+    if (isEmpty(this.fiatPriceObject)) {
       return null;
     }
     if (!this.formattedAccountAssets.length) {
