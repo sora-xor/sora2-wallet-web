@@ -37,7 +37,6 @@
         <info-line
           v-if="transactionFromFee"
           is-formatted
-          value-can-be-hidden
           :label="t('transaction.fee')"
           :value="transactionFromFee"
           :asset-symbol="getNetworkFeeSymbol(isSoraTx)"
