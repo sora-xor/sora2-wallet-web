@@ -7,11 +7,23 @@ exports[`FormattedAmount.vue [FontSizeRate Medium, value can be hidden; hide bal
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -123,11 +135,23 @@ exports[`FormattedAmount.vue [FontSizeRate Normal, value can be hidden; hide bal
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -239,11 +263,23 @@ exports[`FormattedAmount.vue [FontSizeRate Small, value can be hidden; hide bala
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -355,11 +391,23 @@ exports[`FormattedAmount.vue [FontWeightRate Medium, value can be hidden; hide b
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -471,11 +519,23 @@ exports[`FormattedAmount.vue [FontWeightRate Normal, value can be hidden; hide b
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -587,11 +647,23 @@ exports[`FormattedAmount.vue [FontWeightRate Small, value can be hidden; hide ba
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -703,11 +775,23 @@ exports[`FormattedAmount.vue [Is Fiat Value With One Decimal Symbol, value can b
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -905,11 +989,23 @@ exports[`FormattedAmount.vue [Is Fiat Value Without Decimals, value can be hidde
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -1033,11 +1129,23 @@ exports[`FormattedAmount.vue [Is Fiat Value, value can be hidden; hide balances 
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -1235,11 +1343,27 @@ exports[`FormattedAmount.vue [Symbol In Decimal Container, value can be hidden; 
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <span
+        class="formatted-amount__symbol"
+      >
+        XOR
+      </span>
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -1363,11 +1487,23 @@ exports[`FormattedAmount.vue [Value only, value can be hidden; hide balances but
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -1479,11 +1615,23 @@ exports[`FormattedAmount.vue [With "0" Value, value can be hidden; hide balances
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -1627,11 +1775,23 @@ exports[`FormattedAmount.vue [With Integer, value can be hidden; hide balances b
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -1743,11 +1903,23 @@ exports[`FormattedAmount.vue [With Left Shift, value can be hidden; hide balance
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
     </span>
+     
+    <!---->
      
   </span>
 </span>
@@ -1867,10 +2039,26 @@ exports[`FormattedAmount.vue [With asset symbol, value can be hidden; hide balan
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
+    <!---->
+     
     <span
-      class="formatted-amount__integer"
+      class="formatted-amount__decimal"
     >
-      ******
+      <span
+        class="formatted-amount__decimal-value"
+      >
+        ******
+      </span>
+       
+      <!---->
+    </span>
+     
+    <span
+      class="formatted-amount__symbol"
+    >
+      XOR
     </span>
      
   </span>
@@ -2003,11 +2191,17 @@ exports[`FormattedAmount.vue [Without Decimals, value can be hidden; hide balanc
   <span
     class="formatted-amount__value"
   >
+    <!---->
+     
     <span
       class="formatted-amount__integer"
     >
       ******
     </span>
+     
+    <!---->
+     
+    <!---->
      
   </span>
 </span>

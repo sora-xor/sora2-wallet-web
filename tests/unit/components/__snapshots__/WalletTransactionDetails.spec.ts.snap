@@ -79,7 +79,6 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         label="Transaction Fee"
         labeltooltip=""
         value="0.0007"
-        valuecanbehidden="true"
         valuetooltip=""
       />
     </div>
@@ -159,7 +158,6 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
         label="Transaction Fee"
         labeltooltip=""
         value="0.0007"
-        valuecanbehidden="true"
         valuetooltip=""
       />
     </div>
@@ -248,7 +246,6 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
         label="Transaction Fee"
         labeltooltip=""
         value="0.0007"
-        valuecanbehidden="true"
         valuetooltip=""
       />
     </div>
@@ -356,7 +353,6 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         label="Transaction Fee"
         labeltooltip=""
         value="0.0007"
-        valuecanbehidden="true"
         valuetooltip=""
       />
     </div>
@@ -445,7 +441,6 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
         label="Transaction Fee"
         labeltooltip=""
         value="0.0007"
-        valuecanbehidden="true"
         valuetooltip=""
       />
     </div>
