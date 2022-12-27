@@ -9,16 +9,17 @@
     ref="parent"
   >
     <span class="formatted-amount__value" ref="child">
-      <template v-if="!valueCanBeHidden || !shouldBalanceBeHidden">
-        <span v-if="isFiatValue" class="formatted-amount__prefix">~$</span>
-        <span class="formatted-amount__integer">{{ formatted.integer }}</span>
-        <span v-if="!integerOnly" class="formatted-amount__decimal">
-          <span class="formatted-amount__decimal-value">{{ formatted.decimal }}</span>
-          <span v-if="assetSymbol && symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
-        </span>
-        <span v-if="assetSymbol && !symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
-      </template>
-      <span v-else class="formatted-amount__integer">{{ HiddenValue }}</span>
+      <span v-if="!isHiddenValue && (isFiatValue || $slots.prefix)" class="formatted-amount__prefix">
+        <slot name="prefix">~$</slot>
+      </span>
+      <span v-if="!isHiddenValue || (isHiddenValue && integerOnly)" class="formatted-amount__integer">{{
+        isHiddenValue ? HiddenValue : formatted.integer
+      }}</span>
+      <span v-if="!integerOnly" class="formatted-amount__decimal">
+        <span class="formatted-amount__decimal-value">{{ isHiddenValue ? HiddenValue : formatted.decimal }}</span>
+        <span v-if="assetSymbol && symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
+      </span>
+      <span v-if="assetSymbol && !symbolAsDecimal" class="formatted-amount__symbol">{{ assetSymbol }}</span>
       <slot />
     </span>
   </span>
@@ -134,6 +135,10 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
     };
   }
 
+  get isHiddenValue(): boolean {
+    return this.valueCanBeHidden && this.shouldBalanceBeHidden;
+  }
+
   get computedClasses(): string {
     const baseClass = 'formatted-amount';
     const classes = [baseClass];
@@ -206,8 +211,8 @@ $formatted-amount-class: '.formatted-amount';
     letter-spacing: var(--s-letter-spacing-small);
   }
   &--symbol-as-decimal {
-    #{$formatted-amount-class}__decimal-value {
-      margin-right: $basic-spacing-mini;
+    #{$formatted-amount-class}__symbol {
+      margin-left: $basic-spacing-mini;
     }
   }
   #{$formatted-amount-class}__decimal:not(:last-child) {
