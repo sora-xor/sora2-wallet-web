@@ -37,7 +37,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** VAL To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -67,7 +67,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** XOR To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -97,7 +97,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** XOR To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -127,7 +127,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** VAL To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -157,7 +157,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnVFi...P2nse
+            Sent ****** XOR To cnVFi...P2nse
           </div>
            
           <!---->
@@ -187,7 +187,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           <div
             class="history-item-title p4"
           >
-            Failed to swap ******  for ****** 
+            Failed to swap ****** XOR for ****** PSWAP
           </div>
            
           <s-icon-stub
@@ -220,7 +220,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           <div
             class="history-item-title p4"
           >
-            Supplied ******  and ****** 
+            Supplied ****** XOR and ****** PSWAP
           </div>
            
           <!---->
@@ -250,7 +250,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
           <div
             class="history-item-title p4"
           >
-            Removed ******  and ****** 
+            Removed ****** XOR and ****** PSWAP
           </div>
            
           <!---->
@@ -311,7 +311,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** VAL To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -341,7 +341,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** XOR To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -371,7 +371,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** XOR To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -401,7 +401,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** VAL To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -431,7 +431,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
           <div
             class="history-item-title p4"
           >
-            Failed to send ******  to cnVFi...P2nse
+            Failed to send ****** XOR to cnVFi...P2nse
           </div>
            
           <s-icon-stub
@@ -516,7 +516,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** VAL To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -546,7 +546,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** XOR To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -576,7 +576,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** XOR To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -606,7 +606,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnW4q...L2ftG
+            Sent ****** VAL To cnW4q...L2ftG
           </div>
            
           <!---->
@@ -636,7 +636,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
           <div
             class="history-item-title p4"
           >
-            Sent ******  To cnVFi...P2nse
+            Sent ****** XOR To cnVFi...P2nse
           </div>
            
           <s-icon-stub

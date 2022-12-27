@@ -88,8 +88,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     if (value.type === Operation.ClaimRewards) {
       params.rewards = groupRewardsByAssetsList(params.rewards)
         .map(({ amount, asset }) => {
-          if (hideAmountValues) return HiddenValue;
-          return `${this.formatStringValue(amount)} ${asset.symbol}`;
+          return `${hideAmountValues ? HiddenValue : this.formatStringValue(amount)} ${asset.symbol}`;
         })
         .join(` ${this.t('operations.andText')} `);
     }
@@ -102,8 +101,6 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     if (hideAmountValues) {
       params.amount = HiddenValue;
       params.amount2 = HiddenValue;
-      params.symbol = value.type === Operation.RegisterAsset ? HiddenValue : '';
-      params.symbol2 = '';
     }
     return this.t(`operations.${status}.${value.type}`, params);
   }
