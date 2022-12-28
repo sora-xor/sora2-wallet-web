@@ -35,7 +35,12 @@ export function waitForDocumentReady() {
     if (document.readyState === 'complete') {
       resolve();
     } else {
-      window.addEventListener('load', () => resolve());
+      const callback = () => {
+        window.removeEventListener('load', callback);
+        resolve();
+      };
+
+      window.addEventListener('load', callback);
     }
   });
 }
