@@ -38,7 +38,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import type { HistoryItem } from '@sora-substrate/util';
 
-import TranslationMixin from './mixins/TranslationMixin';
+import OperationsMixin from './mixins/OperationsMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 
 import WalletBase from './WalletBase.vue';
@@ -62,7 +62,7 @@ import type { WalletPermissions } from '../consts';
     WalletTransactionDetails,
   },
 })
-export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) {
+export default class Wallet extends Mixins(OperationsMixin, QrCodeParserMixin) {
   readonly WalletTabs = WalletTabs;
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
@@ -75,7 +75,9 @@ export default class Wallet extends Mixins(TranslationMixin, QrCodeParserMixin) 
   currentTab: WalletTabs = WalletTabs.Assets;
 
   get headerTitle(): string {
-    return this.t(!this.selectedTransaction ? 'wallet.title' : this.t(`operations.${this.selectedTransaction.type}`));
+    if (!this.selectedTransaction) return this.t('wallet.title');
+
+    return this.getTitle(this.selectedTransaction);
   }
 
   mounted(): void {
