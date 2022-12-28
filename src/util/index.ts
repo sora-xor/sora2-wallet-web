@@ -30,6 +30,21 @@ export const APP_NAME = 'Sora2 Wallet';
 export const WHITE_LIST_URL = 'https://whitelist.polkaswap2.io/whitelist.json';
 export const NFT_BLACK_LIST_URL = 'https://whitelist.polkaswap2.io/blacklist.json';
 
+export function waitForDocumentReady() {
+  return new Promise<void>((resolve) => {
+    if (document.readyState === 'complete') {
+      resolve();
+    } else {
+      const callback = () => {
+        window.removeEventListener('load', callback);
+        resolve();
+      };
+
+      window.addEventListener('load', callback);
+    }
+  });
+}
+
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
 export const getPolkadotJsAccounts = async (): Promise<any> => {
@@ -83,15 +98,15 @@ export const getAppWallets = (): Wallet[] => {
   }
 };
 
-export const getWalletByExtension = (extension: Extensions) => getWalletBySource(extension);
-
 export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wallet> => {
-  const wallet = getWalletByExtension(extension);
+  const wallet = getWalletBySource(extension);
 
   if (!wallet) {
     // we haven't wallet data, so extension key used in translation
     throw new AppError({ key: 'polkadotjs.noExtension', payload: { extension } });
   }
+
+  await waitForDocumentReady();
 
   await wallet.enable();
 
