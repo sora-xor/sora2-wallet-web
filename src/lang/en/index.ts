@@ -49,7 +49,7 @@ export default {
     [Operation.ClaimRewards]: 'Claim Rewards',
     [Operation.ReferralReserveXor]: 'Bond XOR',
     [Operation.ReferralUnreserveXor]: 'Unbond XOR',
-    [Operation.ReferralSetInvitedUser]: 'Set Referral',
+    [Operation.ReferralSetInvitedUser]: 'Set {role}',
     [Operation.DemeterFarmingDepositLiquidity]: 'Deposit Liquidity',
     [Operation.DemeterFarmingWithdrawLiquidity]: 'Withdraw Liquidity',
     [Operation.DemeterFarmingStakeToken]: 'Add Stake',
@@ -69,7 +69,7 @@ export default {
       [Operation.ClaimRewards]: 'Reward claimed successfully {rewards}',
       [Operation.ReferralReserveXor]: 'Bonded XOR successfully',
       [Operation.ReferralUnreserveXor]: 'Unbonded XOR successfully',
-      [Operation.ReferralSetInvitedUser]: 'Set Referral',
+      [Operation.ReferralSetInvitedUser]: 'Set {role} {address}',
       [Operation.DemeterFarmingDepositLiquidity]: 'Supplied {symbol} and {symbol2} {amount} LP tokens for farming',
       [Operation.DemeterFarmingWithdrawLiquidity]: 'Removed {symbol} and {symbol2} {amount} LP tokens from farming',
       [Operation.DemeterFarmingStakeToken]: 'Added {amount} {symbol} for staking',
@@ -90,7 +90,7 @@ export default {
       [Operation.ClaimRewards]: 'Failed to claim rewards {rewards}',
       [Operation.ReferralReserveXor]: 'Failed to bond XOR',
       [Operation.ReferralUnreserveXor]: 'Failed to unbonded XOR',
-      [Operation.ReferralSetInvitedUser]: 'Failed to set referral',
+      [Operation.ReferralSetInvitedUser]: 'Failed to set {role} {address}',
       [Operation.DemeterFarmingDepositLiquidity]:
         'Failed to supply {amount} {symbol} and {symbol2} LP tokens for farming',
       [Operation.DemeterFarmingWithdrawLiquidity]:

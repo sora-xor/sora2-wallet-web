@@ -1,31 +1,18 @@
 import findLast from 'lodash/fp/findLast';
 import { Component, Mixins } from 'vue-property-decorator';
-import { History, TransactionStatus, Operation } from '@sora-substrate/util';
+import { TransactionStatus, Operation } from '@sora-substrate/util';
 import type { HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../../api';
-import { delay, formatAddress, groupRewardsByAssetsList } from '../../util';
-import TranslationMixin from './TranslationMixin';
+import { delay } from '../../util';
+import OperationsMixin from './OperationsMixin';
 import LoadingMixin from './LoadingMixin';
-import NumberFormatterMixin from './NumberFormatterMixin';
-import { HiddenValue } from '../../consts';
 import store from '../../store';
 import { getter, mutation, action, state } from '../../store/decorators';
-import type { PolkadotJsAccount, AccountAssetsTable } from '../../types/common';
-
-const twoAssetsBasedOperations = [
-  Operation.AddLiquidity,
-  Operation.CreatePair,
-  Operation.RemoveLiquidity,
-  Operation.Swap,
-  Operation.SwapAndSend,
-  Operation.DemeterFarmingDepositLiquidity,
-  Operation.DemeterFarmingWithdrawLiquidity,
-];
-const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
+import type { AccountAssetsTable } from '../../types/common';
 
 @Component
-export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMixin, NumberFormatterMixin) {
+export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMixin) {
   // Desktop management
   @state.account.isDesktop isDesktop!: boolean;
   @state.transactions.isTxApprovedViaConfirmTxDialog private isTxApprovedViaConfirmTxDialog!: boolean;
@@ -46,64 +33,14 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
     });
   }
 
-  @getter.account.account account!: PolkadotJsAccount;
+  @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
+
   @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;
 
   @mutation.transactions.addActiveTx addActiveTransaction!: (id: string) => void;
   @mutation.transactions.removeActiveTxs removeActiveTxs!: (ids: string[]) => void;
 
   @action.account.addAsset private addAsset!: (address?: string) => Promise<void>;
-
-  getMessage(value?: History, hideAmountValues = false): string {
-    if (!value || !Object.values(Operation).includes(value.type as Operation)) {
-      return '';
-    }
-    const params = { ...value } as any;
-    if (accountIdBasedOperations.includes(value.type)) {
-      const isRecipient = this.account.address === value.to;
-      const address = isRecipient ? value.from : value.to;
-      const direction = isRecipient ? this.t('transaction.from') : this.t('transaction.to');
-      const action = isRecipient ? this.t('receivedText') : this.t('sentText');
-
-      params.address = formatAddress(address as string, 10);
-      params.direction = direction;
-      params.action = action;
-    }
-    if (
-      [
-        ...twoAssetsBasedOperations,
-        Operation.Transfer,
-        Operation.DemeterFarmingGetRewards,
-        Operation.DemeterFarmingStakeToken,
-        Operation.DemeterFarmingUnstakeToken,
-        Operation.EthBridgeIncoming,
-        Operation.EthBridgeOutgoing,
-      ].includes(value.type)
-    ) {
-      params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
-    }
-    if (twoAssetsBasedOperations.includes(value.type)) {
-      params.amount2 = params.amount2 ? this.formatStringValue(params.amount2, params.decimals2) : '';
-    }
-    if (value.type === Operation.ClaimRewards) {
-      params.rewards = groupRewardsByAssetsList(params.rewards)
-        .map(({ amount, asset }) => {
-          return `${hideAmountValues ? HiddenValue : this.formatStringValue(amount)} ${asset.symbol}`;
-        })
-        .join(` ${this.t('operations.andText')} `);
-    }
-    let status = value.status as TransactionStatus;
-    if ([TransactionStatus.Invalid, TransactionStatus.Usurped].includes(status)) {
-      status = TransactionStatus.Error;
-    } else if (status !== TransactionStatus.Error) {
-      status = TransactionStatus.Finalized;
-    }
-    if (hideAmountValues) {
-      params.amount = HiddenValue;
-      params.amount2 = HiddenValue;
-    }
-    return this.t(`operations.${status}.${value.type}`, params);
-  }
 
   private async getLastTransaction(time: number): Promise<HistoryItem> {
     const tx = findLast((item) => Number(item.startTime) > time, api.historyList);
@@ -126,7 +63,7 @@ export default class TransactionMixin extends Mixins(TranslationMixin, LoadingMi
       return;
     }
 
-    const message = this.getMessage(value);
+    const message = this.getMessage(value, this.shouldBalanceBeHidden);
     // is transaction has not been processed before
     const isNewTx = !oldValue || oldValue.id !== value.id;
 

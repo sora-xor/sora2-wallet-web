@@ -20,7 +20,7 @@
             @click="handleOpenTransactionDetails(item.id)"
           >
             <div class="history-item-info">
-              <div class="history-item-operation ch3" :data-type="item.type">{{ t(`operations.${item.type}`) }}</div>
+              <div class="history-item-operation ch3" :data-type="item.type">{{ getTitle(item) }}</div>
               <div class="history-item-title p4">{{ getMessage(item, shouldBalanceBeHidden) }}</div>
               <s-icon v-if="!isFinalizedStatus(item)" :class="getStatusClass(item)" :name="getStatusIcon(item)" />
             </div>
@@ -47,7 +47,7 @@ import debounce from 'lodash/debounce';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 import { History, TransactionStatus } from '@sora-substrate/util';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
-import type { AccountHistory, HistoryItem, Operation, BridgeHistory } from '@sora-substrate/util';
+import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
 
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
@@ -80,7 +80,6 @@ export default class WalletHistory extends Mixins(
   @state.transactions.externalHistory private externalHistory!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistoryTotal private externalHistoryTotal!: number;
   @state.transactions.updateEthBridgeHistory private updateEthBridgeHistory!: Nullable<EthBridgeUpdateHistory>;
-  @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.transactions.resetExternalHistory private resetExternalHistory!: FnWithoutArgs;
