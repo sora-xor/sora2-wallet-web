@@ -257,10 +257,6 @@ export default class WalletTransactionDetails extends Mixins(
     return this.isSetReferralOperation && this.account.address === this.selectedTransaction.to;
   }
 
-  get isInvitedUser(): boolean {
-    return this.isSetReferralOperation && this.account.address === this.selectedTransaction.from;
-  }
-
   get errorMessage(): Nullable<string> {
     const error = this.selectedTransaction.errorMessage;
     if (!error) {

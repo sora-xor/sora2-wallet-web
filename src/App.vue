@@ -35,7 +35,6 @@ import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types
   components: { SoraWallet, ConfirmDialog },
 })
 export default class App extends Mixins(TransactionMixin) {
-  @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
   @state.account.assetsToNotifyQueue assetsToNotifyQueue!: Array<WhitelistArrayItem>;
   @getter.transactions.firstReadyTx firstReadyTransaction!: Nullable<HistoryItem>;
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;

@@ -135,6 +135,7 @@ import WalletHistory from './WalletHistory.vue';
 import WalletTransactionDetails from './WalletTransactionDetails.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import { api } from '../api';
+import OperationsMixin from './mixins/OperationsMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
@@ -164,7 +165,12 @@ interface Operation {
     TokenLogo,
   },
 })
-export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, CopyAddressMixin, QrCodeParserMixin) {
+export default class WalletAssetDetails extends Mixins(
+  OperationsMixin,
+  FormattedAmountMixin,
+  CopyAddressMixin,
+  QrCodeParserMixin
+) {
   readonly balanceTypes = Object.values(BalanceType).filter((type) => type !== BalanceType.Total);
   readonly BalanceType = BalanceType;
 
@@ -193,7 +199,9 @@ export default class WalletAssetDetails extends Mixins(FormattedAmountMixin, Cop
   }
 
   get headerTitle(): string {
-    return !this.selectedTransaction ? this.asset.name : this.t(`operations.${this.selectedTransaction.type}`);
+    if (!this.selectedTransaction) return this.asset.name;
+
+    return this.getTitle(this.selectedTransaction);
   }
 
   get nftLinkTooltipText(): string {
