@@ -7637,7 +7637,7 @@ interface-blockstore@^1.0.0:
     it-take "^1.0.1"
     multiformats "^9.0.4"
 
-interface-blockstore@^2.0.2, interface-blockstore@^2.0.3:
+interface-blockstore@^2.0.2:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/interface-blockstore/-/interface-blockstore-2.0.3.tgz#b85270eb5180e65e46c9f66980a0fa4d98f5d73e"
   integrity sha512-OwVUnlNcx7H5HloK0Myv6c/C1q9cNG11HX6afdeU6q6kbuNj8jKCwVnmJHhC94LZaJ+9hvVOk4IUstb3Esg81w==
@@ -7771,18 +7771,18 @@ ipfs-unixfs-exporter@^7.0.4:
     multiformats "^9.4.2"
     uint8arrays "^3.0.0"
 
-ipfs-unixfs-importer@^9.0.4:
-  version "9.0.10"
-  resolved "https://registry.yarnpkg.com/ipfs-unixfs-importer/-/ipfs-unixfs-importer-9.0.10.tgz#2527ea0b4e018a9e80fa981101485babcd05c494"
-  integrity sha512-W+tQTVcSmXtFh7FWYWwPBGXJ1xDgREbIyI1E5JzDcimZLIyT5gGMfxR3oKPxxWj+GKMpP5ilvMQrbsPzWcm3Fw==
+ipfs-unixfs-importer@9.0.6, ipfs-unixfs-importer@^9.0.4:
+  version "9.0.6"
+  resolved "https://registry.yarnpkg.com/ipfs-unixfs-importer/-/ipfs-unixfs-importer-9.0.6.tgz#9d920388e4555f3249136c90a146387e8c88dd8d"
+  integrity sha512-FgzODqg4pvToEMZ88mFkHcU0s25CljmnqX2VX7K/VQDckiZIxhIiUTQRqQg/C7Em4uCzVp8YCxKUvl++w6kvNg==
   dependencies:
     "@ipld/dag-pb" "^2.0.2"
     "@multiformats/murmur3" "^1.0.3"
     bl "^5.0.0"
     err-code "^3.0.1"
     hamt-sharding "^2.0.0"
-    interface-blockstore "^2.0.3"
-    ipfs-unixfs "^6.0.0"
+    interface-blockstore "^1.0.0"
+    ipfs-unixfs "^6.0.6"
     it-all "^1.0.5"
     it-batch "^1.0.8"
     it-first "^1.0.6"
@@ -7792,7 +7792,7 @@ ipfs-unixfs-importer@^9.0.4:
     rabin-wasm "^0.1.4"
     uint8arrays "^3.0.0"
 
-ipfs-unixfs@6.0.6, ipfs-unixfs@^6.0.0, ipfs-unixfs@^6.0.3, ipfs-unixfs@^6.0.6:
+ipfs-unixfs@6.0.6, ipfs-unixfs@^6.0.3, ipfs-unixfs@^6.0.6:
   version "6.0.6"
   resolved "https://registry.yarnpkg.com/ipfs-unixfs/-/ipfs-unixfs-6.0.6.tgz#c44881c1bcd6a474c665e67108cbf31e54c63eec"
   integrity sha512-gTkjYKXuHnqIf6EFfS+ESaYEl3I3aaQQ0UX8MhpNzreMLEuMnuqpoI/uLLllTZa31WRplKixabbpRTSmTYRNwA==
