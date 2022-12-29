@@ -103,7 +103,7 @@
     "@polkadot/extension-dapp": "^0.44.7",
     "@polkadot/extension-inject": "^0.44.7",
     "@polkadot/util": "^10.2.1",
-    "ipfs-unixfs-exporter": "7.0.6"
+    "ipfs-unixfs": "6.0.6"
   },
   "postcss": {
     "plugins": {
