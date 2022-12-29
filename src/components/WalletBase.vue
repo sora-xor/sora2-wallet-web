@@ -115,7 +115,8 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 $button-size: var(--s-size-medium);
 
 .base {
-  width: $wallet-width;
+  max-width: $wallet-width;
+  width: 100%;
   font-size: var(--s-font-size-small);
   line-height: var(--s-line-height-base);
 

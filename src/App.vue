@@ -1,12 +1,14 @@
 <template>
-  <s-design-system-provider :value="libraryDesignSystem" id="app" class="app-wrapper">
-    <s-button class="theme-switch" @click="changeTheme">{{ libraryTheme }} theme</s-button>
+  <s-design-system-provider :value="libraryDesignSystem" id="app">
+    <div class="buttons">
+      <s-button class="theme-switch" @click="changeTheme">{{ libraryTheme }} theme</s-button>
+      <s-button class="hide-balance-switch" @click="toggleHideBalance">
+        {{ shouldBalanceBeHidden ? 'hidden' : 'visible' }} balances
+      </s-button>
+    </div>
     <div class="wallet-wrapper s-flex">
       <sora-wallet />
     </div>
-    <s-button class="hide-balance-switch" @click="toggleHideBalance">
-      {{ shouldBalanceBeHidden ? 'hidden' : 'visible' }} balances
-    </s-button>
     <confirm-dialog v-if="isDesktop" />
   </s-design-system-provider>
 </template>
@@ -166,12 +168,12 @@ html {
 
 <style scoped lang="scss">
 .wallet-wrapper {
-  margin: 40px 0;
+  margin: 40px auto;
   justify-content: center;
   align-items: center;
   height: 100vh;
 }
-.app-wrapper {
+.buttons {
   display: flex;
   justify-content: space-between;
 }

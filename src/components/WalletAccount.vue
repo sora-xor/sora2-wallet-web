@@ -72,7 +72,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressM
   border: 2px solid var(--s-color-base-border-secondary);
   border-radius: 50%;
 
-  svg circle:first-child {
+  & > circle:first-child {
     fill: var(--s-color-utility-surface);
   }
 }
