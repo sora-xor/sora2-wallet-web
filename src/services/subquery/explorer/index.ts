@@ -8,7 +8,7 @@ import { PoolModule } from './modules/pool';
 
 import { createExplorerClient } from '../client';
 
-import type { Client, OperationResult, ResultOf, TypedDocumentNode, AnyVariables } from '../client';
+import type { Client, OperationResult, TypedDocumentNode, AnyVariables } from '../client';
 
 export default class SubqueryExplorer {
   public client!: Client;
@@ -32,7 +32,7 @@ export default class SubqueryExplorer {
   public async request<T>(query: TypedDocumentNode<T>, variables: AnyVariables = {}) {
     this.initClient();
 
-    const { data } = await this.client.query<ResultOf<typeof query>>(query, variables).toPromise();
+    const { data } = await this.client.query(query, variables).toPromise();
 
     return data;
   }
@@ -43,7 +43,7 @@ export default class SubqueryExplorer {
 
     return (handler: (payload: OperationResult<T, any>) => void) => {
       const { unsubscribe } = pipe(
-        this.client.subscription<ResultOf<typeof subscription>>(subscription, variables),
+        this.client.subscription(subscription, variables),
         subscribe((payload) => handler(payload))
       );
 
