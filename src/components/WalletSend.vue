@@ -364,7 +364,7 @@ export default class WalletSend extends Mixins(
     if (
       !this.isXorSufficientForNextTx({
         type: Operation.Transfer,
-        isXorAccountAsset: this.isXorAccountAsset,
+        isXor: this.isXorAccountAsset,
         amount: this.getFPNumber(this.amount),
       })
     ) {
