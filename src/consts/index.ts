@@ -112,7 +112,7 @@ export interface WalletInitOptions {
 
 export interface NetworkFeeWarningOptions {
   type: Operation;
-  isXorAccountAsset?: boolean;
+  isXor?: boolean;
   amount?: FPNumber;
 }
 
