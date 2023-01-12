@@ -41,6 +41,10 @@ const mutations = defineMutations<SettingsState>()({
     storage.set('filters', JSON.stringify(filters));
     state.filters = filters;
   },
+  setAllowFeePopup(state, flag: boolean) {
+    localStorage.setItem('allowFeePopup', flag.toString());
+    state.allowFeePopup = flag;
+  },
   setRuntimeVersion(state, version: number): void {
     state.runtimeVersion = version;
     runtimeStorage.set('version', version);

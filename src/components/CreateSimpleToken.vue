@@ -155,11 +155,13 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
 
     this.$emit('showTabs');
 
-    if (this.hasEnoughXor && !this.isXorSufficientForNextTx({ type: Operation.RegisterAsset })) {
-      this.$emit('showHeader');
-      this.showFee = false;
-      this.$emit('stepChange', Step.Warn);
-      return;
+    if (this.allowFeePopup) {
+      if (this.hasEnoughXor && !this.isXorSufficientForNextTx({ type: Operation.RegisterAsset })) {
+        this.$emit('showHeader');
+        this.showFee = false;
+        this.$emit('stepChange', Step.Warn);
+        return;
+      }
     }
 
     this.showFee = true;

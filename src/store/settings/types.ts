@@ -11,6 +11,7 @@ export type SettingsState = {
   subqueryStatus: ConnectionStatus;
   permissions: WalletPermissions;
   filters: WalletAssetFilters;
+  allowFeePopup: boolean;
   soraNetwork: Nullable<SoraNetwork>;
   networkFees: NetworkFeesObject;
   shouldBalanceBeHidden: boolean;

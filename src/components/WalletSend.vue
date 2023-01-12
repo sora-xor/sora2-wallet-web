@@ -361,16 +361,18 @@ export default class WalletSend extends Mixins(
   }
 
   async handleSend(): Promise<void> {
-    if (
-      !this.isXorSufficientForNextTx({
-        type: Operation.Transfer,
-        isXor: this.isXorAccountAsset,
-        amount: this.getFPNumber(this.amount),
-      })
-    ) {
-      this.showAdditionalInfo = false;
-      this.step = 2;
-      return;
+    if (this.allowFeePopup) {
+      if (
+        !this.isXorSufficientForNextTx({
+          type: Operation.Transfer,
+          isXor: this.isXorAccountAsset,
+          amount: this.getFPNumber(this.amount),
+        })
+      ) {
+        this.showAdditionalInfo = false;
+        this.step = 2;
+        return;
+      }
     }
     this.step = 3;
   }
