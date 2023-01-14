@@ -53,6 +53,7 @@ export type StorageKey =
   | 'name'
   | 'source'
   | 'filters'
+  | 'allowFeePopup'
   | 'shouldBalanceBeHidden'
   | 'storageReferral'
   | 'slippageTolerance'

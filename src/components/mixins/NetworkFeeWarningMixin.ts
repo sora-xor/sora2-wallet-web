@@ -18,6 +18,7 @@ const PredefinedOperations = [
 @Component
 export default class NetworkFeeWarningMixin extends Mixins(NumberFormatterMixin) {
   @state.settings.networkFees networkFees!: NetworkFeesObject;
+  @state.settings.allowFeePopup allowFeePopup!: boolean;
   @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;
 
   get xorBalance(): FPNumber {
