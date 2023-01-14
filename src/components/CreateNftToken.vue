@@ -382,13 +382,11 @@ export default class CreateNftToken extends Mixins(
 
     this.$emit('showTabs');
 
-    if (this.allowFeePopup) {
-      if (this.hasEnoughXor && !this.isXorSufficientForNextTx({ type: Operation.RegisterAsset })) {
-        this.$emit('showHeader');
-        this.showFee = false;
-        this.$emit('stepChange', Step.Warn);
-        return;
-      }
+    if (this.allowFeePopup && this.hasEnoughXor && !this.isXorSufficientForNextTx({ type: Operation.RegisterAsset })) {
+      this.$emit('showHeader');
+      this.showFee = false;
+      this.$emit('stepChange', Step.Warn);
+      return;
     }
 
     this.showFee = true;
