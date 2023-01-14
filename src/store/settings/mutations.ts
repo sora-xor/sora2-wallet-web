@@ -5,7 +5,7 @@ import type { Subscription } from 'rxjs';
 
 import { api } from '../../api';
 import { SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
-import { runtimeStorage, storage } from '../../util/storage';
+import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 import type { ApiKeysObject, ConnectionStatus } from '../../types/common';
 import type { SettingsState } from './types';
 
@@ -42,7 +42,7 @@ const mutations = defineMutations<SettingsState>()({
     state.filters = filters;
   },
   setAllowFeePopup(state, flag: boolean) {
-    localStorage.setItem('allowFeePopup', flag.toString());
+    settingsStorage.set('allowFeePopup', flag.toString());
     state.allowFeePopup = flag;
   },
   setRuntimeVersion(state, version: number): void {

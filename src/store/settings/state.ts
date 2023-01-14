@@ -1,7 +1,7 @@
 import { WalletAssetFilters } from '@/consts';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 
-import { storage, runtimeStorage } from '../../util/storage';
+import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
 import { ConnectionStatus } from '../../types/common';
 import type { SettingsState } from './types';
 
@@ -10,7 +10,7 @@ function initialState(): SettingsState {
   const runtimeVersion = runtimeStorage.get('version');
   const filters = storage.get('filters');
   const { option, verifiedOnly, zeroBalance } = filters && JSON.parse(filters);
-  const allowFee = localStorage.getItem('allowFeePopup');
+  const allowFee = settingsStorage.get('allowFeePopup');
   const allowFeePopup = allowFee && JSON.parse(allowFee);
 
   return {
