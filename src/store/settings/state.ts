@@ -1,15 +1,17 @@
 import { WalletAssetFilters } from '@/consts';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 
-import { storage, runtimeStorage } from '../../util/storage';
+import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
 import { ConnectionStatus } from '../../types/common';
 import type { SettingsState } from './types';
 
 function initialState(): SettingsState {
   const shouldBalanceBeHidden = storage.get('shouldBalanceBeHidden');
-  const filters = storage.get('filters');
   const runtimeVersion = runtimeStorage.get('version');
+  const filters = storage.get('filters');
   const { option, verifiedOnly, zeroBalance } = filters && JSON.parse(filters);
+  const allowFee = settingsStorage.get('allowFeePopup');
+  const allowFeePopup = allowFee && JSON.parse(allowFee);
 
   return {
     apiKeys: {},
@@ -30,6 +32,7 @@ function initialState(): SettingsState {
       verifiedOnly: verifiedOnly || false,
       zeroBalance: zeroBalance || false,
     } as WalletAssetFilters,
+    allowFeePopup: allowFeePopup || true,
     soraNetwork: null,
     nftStorage: null,
     runtimeVersion: runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0,

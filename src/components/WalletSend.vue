@@ -360,6 +360,7 @@ export default class WalletSend extends Mixins(
 
   async handleSend(): Promise<void> {
     if (
+      this.allowFeePopup &&
       !this.isXorSufficientForNextTx({
         type: Operation.Transfer,
         isXor: this.isXorAccountAsset,
@@ -370,6 +371,7 @@ export default class WalletSend extends Mixins(
       this.step = 2;
       return;
     }
+
     this.step = 3;
   }
 
