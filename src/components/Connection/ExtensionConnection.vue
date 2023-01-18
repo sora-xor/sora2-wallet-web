@@ -4,8 +4,15 @@
     :show-back="!isEntryView"
     :reset-focus="`${isEntryView}${step}`"
     @back="handleBackClick"
+    v-loading="loading"
   >
-    <div class="wallet-connection" v-loading="loading">
+    <template v-if="isLoggedIn" #actions>
+      <s-button type="action" :tooltip="t('nextText')" @click="handleNextClick">
+        <s-icon name="arrows-chevron-right-rounded-24" size="28" />
+      </s-button>
+    </template>
+
+    <div class="wallet-connection">
       <template v-if="!loading">
         <p class="wallet-connection-text">{{ connectionText }}</p>
 
@@ -42,10 +49,18 @@
               <img :src="wallet.logo.src" :alt="wallet.logo.alt" />
             </template>
             <template #name>{{ wallet.title }}</template>
-            <template #default v-if="!wallet.installed">
-              <a :href="getWalletInstallUrl(wallet)" target="_blank" rel="nofollow noopener noreferrer">
+            <template #default>
+              <a
+                v-if="!wallet.installed"
+                :href="getWalletInstallUrl(wallet)"
+                target="_blank"
+                rel="nofollow noopener noreferrer"
+              >
                 <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
               </a>
+              <s-button v-if="source === wallet.extensionName" size="small" disabled>
+                {{ t('connection.wallet.connected') }}
+              </s-button>
             </template>
           </account-card>
         </div>
@@ -77,11 +92,13 @@ import WalletAccount from '../WalletAccount.vue';
 import AccountCard from '../AccountCard.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
-import { state, action, getter } from '../../store/decorators';
+import { state, action, getter, mutation } from '../../store/decorators';
 import { AppError, getWalletInstallUrl } from '../../util';
+import { RouteNames } from '../../consts';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Extensions } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
+import type { Route } from '../../store/router/types';
 
 enum Step {
   First = 1,
@@ -100,13 +117,17 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.availableWallets availableWallets!: Array<Wallet>;
+  @state.account.source source!: string;
 
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
   @getter.account.isConnectedAccount isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
+  @getter.account.isLoggedIn isLoggedIn!: boolean;
 
   @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
   @action.account.logout private logout!: AsyncFnWithoutArgs;
+
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   async mounted(): Promise<void> {
     await this.withApi(async () => {
@@ -207,6 +228,10 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
       this.navigateToEntry();
       this.logout();
     }
+  }
+
+  handleNextClick(): void {
+    this.navigate({ name: RouteNames.Wallet });
   }
 
   private showAlert(error: unknown): void {
