@@ -59,7 +59,11 @@
             @click.native="handleSelectAccount(account)"
             class="wallet-connection-account"
             tabindex="0"
-          />
+          >
+            <s-button v-if="isConnectedAccount(account)" size="small" disabled>
+              {{ t('connection.wallet.connected') }}
+            </s-button>
+          </wallet-account>
         </s-scrollbar>
       </template>
     </div>
@@ -98,9 +102,11 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   @state.account.availableWallets availableWallets!: Array<Wallet>;
 
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
+  @getter.account.isConnectedAccount isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
 
   @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
+  @action.account.logout private logout!: AsyncFnWithoutArgs;
 
   async mounted(): Promise<void> {
     await this.withApi(async () => {
@@ -199,6 +205,7 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
       this.navigateToExtensionsList();
     } else if (this.isExtensionsView) {
       this.navigateToEntry();
+      this.logout();
     }
   }
 
