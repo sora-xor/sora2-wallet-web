@@ -324,7 +324,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
         const accountJson = api.exportAccount(this.accountPassword);
         const blob = new Blob([accountJson], { type: 'application/json' });
         this.json.href = URL.createObjectURL(blob);
-        this.json.setAttribute('download', JSON.parse(accountJson).address);
+        this.json.setAttribute('download', (JSON.parse(accountJson) || {}).address || '');
         this.json.click();
       }
 
