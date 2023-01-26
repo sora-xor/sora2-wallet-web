@@ -31,6 +31,7 @@ export default {
   amountText: 'Amount',
   confirmText: 'Confirm',
   errorText: 'Error',
+  logoutText: 'Logout',
   doNotShowText: 'Don’t show me this again',
   networkFeeTooltipText: "Network fee is used to ensure {Sora} system's growth and stable performance.",
   insufficientBalanceText: 'Insufficient {tokenSymbol} balance',
