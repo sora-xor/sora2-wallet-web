@@ -1,12 +1,16 @@
 import { Storage } from '@sora-substrate/util';
-import { StorageKey, RuntimeStorageKey } from '../types/common';
-
+import { StorageKey, RuntimeStorageKey, SettingsStorageKey } from '../types/common';
+/**
+ * This storage is dependent on account login
+ */
 export const storage = new Storage<StorageKey>();
 
 /**
- * This storage will be dependent on runtime version
+ * This storage is dependent on runtime version
  */
 export const runtimeStorage = new Storage<RuntimeStorageKey>('runtime');
 
-// TODO: Combine with dexSettings storage when wallet repo migration
-export const settingsStorage = new Storage('dexSettings');
+/**
+ * Common storage
+ */
+export const settingsStorage = new Storage<SettingsStorageKey>('dexSettings');

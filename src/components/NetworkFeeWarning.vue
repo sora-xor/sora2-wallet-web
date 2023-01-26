@@ -37,7 +37,7 @@ export default class NetworkFeeWarning extends Mixins(TranslationMixin) {
 
 <style lang="scss">
 $inner-padding: 20px;
-
+// TODO: Set scoped. Remove important
 .content {
   font-family: var(--s-font-family-default) !important;
   display: flex;

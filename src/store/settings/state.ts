@@ -1,4 +1,4 @@
-import { WalletAssetFilters } from '@/consts';
+import { WalletAssetFilters, WalletFilteringOptions } from '@/consts';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 
 import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
@@ -11,7 +11,7 @@ function initialState(): SettingsState {
   const filters = storage.get('filters');
   const { option, verifiedOnly, zeroBalance } = filters && JSON.parse(filters);
   const allowFee = settingsStorage.get('allowFeePopup');
-  const allowFeePopup = allowFee && JSON.parse(allowFee);
+  const allowFeePopup = allowFee ? Boolean(JSON.parse(allowFee)) : false;
 
   return {
     apiKeys: {},
@@ -28,7 +28,7 @@ function initialState(): SettingsState {
       showAssetDetails: true,
     },
     filters: {
-      option: option || 'All',
+      option: option || WalletFilteringOptions.All,
       verifiedOnly: verifiedOnly || false,
       zeroBalance: zeroBalance || false,
     } as WalletAssetFilters,
