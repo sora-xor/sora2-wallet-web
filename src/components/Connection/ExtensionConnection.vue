@@ -123,8 +123,6 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   @getter.account.isConnectedAccount isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
   @getter.account.isLoggedIn isLoggedIn!: boolean;
 
-  @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
-
   @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
   @action.account.logout private logout!: AsyncFnWithoutArgs;
