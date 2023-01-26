@@ -1,5 +1,6 @@
 import { defineGetters } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
+import isEqual from 'lodash/fp/isEqual';
 import type { Whitelist } from '@sora-substrate/util/build/assets/types';
 
 import { accountGetterContext } from './../account';
@@ -19,7 +20,7 @@ const toHashTable = (list: Array<any>, key: string) => {
 const getters = defineGetters<AccountState>()({
   isLoggedIn(...args): boolean {
     const { state } = accountGetterContext(args);
-    return !!(state.source && state.address) || (state.isDesktop && !!state.address);
+    return !!state.address && (state.isDesktop || !!state.source);
   },
   account(...args): PolkadotJsAccount {
     const { state } = accountGetterContext(args);
@@ -70,6 +71,15 @@ const getters = defineGetters<AccountState>()({
   blacklist(...args): any {
     const { state } = accountGetterContext(args);
     return state.blacklistArray && state.blacklistArray.length ? state.blacklistArray : [];
+  },
+  isConnectedAccount(...args) {
+    const { state } = accountGetterContext(args);
+
+    return (account: PolkadotJsAccount): boolean => {
+      const { address, name, source } = state;
+      const formatted = { ...account, address: api.formatAddress(account.address) };
+      return isEqual(formatted)({ address, name, source });
+    };
   },
 });
 

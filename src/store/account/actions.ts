@@ -242,20 +242,26 @@ const actions = defineActions({
   },
 
   async importPolkadotJs(context, accountData: PolkadotJsAccount): Promise<void> {
-    const { commit, dispatch } = accountActionContext(context);
+    const { commit, dispatch, getters } = accountActionContext(context);
+    const { rootDispatch } = rootActionContext(context);
+
     try {
-      const source = accountData.source as Extensions;
-      const defaultAddress = api.formatAddress(accountData.address, false);
-      const { account, signer } = await getExtensionSigner(defaultAddress, source);
+      if (!getters.isConnectedAccount(accountData)) {
+        const defaultAddress = api.formatAddress(accountData.address, false);
+        const source = accountData.source as Extensions;
+        const { account, signer } = await getExtensionSigner(defaultAddress, source);
 
-      const name = account.name || '';
+        const name = account.name || '';
 
-      api.importByPolkadotJs(account.address, name, source);
-      api.setSigner(signer);
+        api.importByPolkadotJs(account.address, name, source);
+        api.setSigner(signer);
 
-      commit.selectPolkadotJsAccount({ name, source });
+        commit.selectPolkadotJsAccount({ name, source });
 
-      await dispatch.afterLogin();
+        await dispatch.afterLogin();
+      } else {
+        await rootDispatch.wallet.router.checkCurrentRoute();
+      }
     } catch (error) {
       throw new Error((error as Error).message);
     }
