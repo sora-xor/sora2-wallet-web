@@ -38,7 +38,7 @@ import CameraPermissionMixin from './components/mixins/CameraPermissionMixin';
 
 import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
-import { storage, runtimeStorage } from './util/storage';
+import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
@@ -180,6 +180,7 @@ export {
   connection,
   storage,
   runtimeStorage,
+  settingsStorage,
   getExplorerLinks,
   groupRewardsByAssetsList,
   WALLET_CONSTS,

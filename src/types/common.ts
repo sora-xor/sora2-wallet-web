@@ -53,7 +53,6 @@ export type StorageKey =
   | 'name'
   | 'source'
   | 'filters'
-  | 'allowFeePopup'
   | 'shouldBalanceBeHidden'
   | 'storageReferral'
   | 'slippageTolerance'
@@ -63,3 +62,4 @@ export type StorageKey =
   | 'evmAddress';
 
 export type RuntimeStorageKey = 'version' | 'networkFees';
+export type SettingsStorageKey = 'language' | 'node' | 'customNodes' | 'allowFeePopup';

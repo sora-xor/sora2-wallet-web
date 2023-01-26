@@ -98,7 +98,7 @@ export interface WalletPermissions {
 export type EthBridgeUpdateHistory = (updateWalletHistory: VoidFunction) => Promise<void>;
 
 export interface WalletAssetFilters {
-  option: string;
+  option: WalletFilteringOptions;
   verifiedOnly: boolean;
   zeroBalance: boolean;
 }

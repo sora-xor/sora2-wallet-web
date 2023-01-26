@@ -49,7 +49,7 @@ import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import WalletTransactionDetails from './WalletTransactionDetails.vue';
 
 import { RouteNames, WalletTabs } from '../consts';
-import { state, action, getter, mutation } from '../store/decorators';
+import { state, getter, mutation } from '../store/decorators';
 import type { WalletPermissions } from '../consts';
 
 @Component({
@@ -69,8 +69,6 @@ export default class Wallet extends Mixins(OperationsMixin, QrCodeParserMixin) {
   @state.settings.permissions permissions!: WalletPermissions;
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
   @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
-
-  @action.account.logout private logout!: AsyncFnWithoutArgs;
 
   currentTab: WalletTabs = WalletTabs.Assets;
 
@@ -100,7 +98,6 @@ export default class Wallet extends Mixins(OperationsMixin, QrCodeParserMixin) {
       params: { isAccountSwitch: true },
     };
     this.navigate(navigationArgs);
-    this.logout();
   }
 
   handleBack(): void {
