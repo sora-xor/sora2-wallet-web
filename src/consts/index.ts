@@ -5,6 +5,7 @@ export const HiddenValue = '******';
 export const BLOCK_PRODUCE_TIME = 6_000;
 
 export enum Extensions {
+  FearlessWallet = 'fearless-wallet',
   PolkadotJS = 'polkadot-js',
   SubwalletJS = 'subwallet-js',
   TalismanJS = 'talisman',
