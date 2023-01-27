@@ -289,7 +289,8 @@ $padding: 5px;
   }
 
   &__draggable {
-    height: calc(var(--s-asset-item-height--fiat) * 3);
+    $dirty-hack-for-users: 32px; // Who doesn't understand that this list is scrollable
+    height: calc(var(--s-asset-item-height--fiat) * 3 + #{$dirty-hack-for-users});
   }
 
   &--empty {
