@@ -8,6 +8,7 @@ import terser from '@rollup/plugin-terser';
 import del from 'rollup-plugin-delete';
 import copy from 'rollup-plugin-copy';
 import json from 'rollup-plugin-json';
+import image from '@rollup/plugin-image';
 
 export default {
   input: 'src/index.ts',
@@ -113,6 +114,7 @@ export default {
     scss({
       output: 'lib/soraneo-wallet-web.css',
     }),
+    image(),
     resolve(),
     // TODO: it is used to fix:
     // Error: Unexpected token (Note that you need @rollup/plugin-json to import JSON files)

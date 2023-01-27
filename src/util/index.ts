@@ -1,4 +1,4 @@
-import { getWallets, getWalletBySource } from '@subwallet/wallet-connect/dotsama/wallets';
+import { getWallets, getWalletBySource, addWallet } from '@subwallet/wallet-connect/dotsama/wallets';
 import type { Wallet, WalletAccount } from '@subwallet/wallet-connect/types';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
@@ -10,6 +10,7 @@ import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards
 
 import { api } from '../api';
 import { ExplorerLink, SoraNetwork, ExplorerType, LoginStep, Extensions } from '../consts';
+import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 
@@ -86,6 +87,18 @@ export const subscribeToPolkadotJsAccounts = async (
   await subscriptionResult;
 
   return unsubscribe;
+};
+
+export const addFearlessWalletLocally = () => {
+  addWallet({
+    extensionName: Extensions.FearlessWallet,
+    title: 'Fearless Wallet',
+    installUrl: 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc',
+    logo: {
+      src: FearlessWalletLogo as string,
+      alt: 'Fearless Wallet Extension',
+    },
+  });
 };
 
 export const getAppWallets = (): Wallet[] => {
