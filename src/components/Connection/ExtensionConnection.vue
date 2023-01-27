@@ -7,8 +7,8 @@
     v-loading="loading"
   >
     <template v-if="isLoggedIn" #actions>
-      <s-button type="action" :tooltip="t('nextText')" @click="handleNextClick">
-        <s-icon name="arrows-chevron-right-rounded-24" size="28" />
+      <s-button type="action" :tooltip="t('logoutText')" @click="handleLogout">
+        <s-icon name="basic-eye-24" size="28" />
       </s-button>
     </template>
 
@@ -224,14 +224,16 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   handleBackClick(): void {
     if (this.isAccountListView) {
       this.navigateToExtensionsList();
-    } else if (this.isExtensionsView) {
+    } else if (this.isExtensionsView && this.isLoggedIn) {
+      this.navigate({ name: RouteNames.Wallet });
+    } else {
       this.navigateToEntry();
-      this.logout();
     }
   }
 
-  handleNextClick(): void {
-    this.navigate({ name: RouteNames.Wallet });
+  handleLogout(): void {
+    this.navigateToEntry();
+    this.logout();
   }
 
   private showAlert(error: unknown): void {

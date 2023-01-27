@@ -26,7 +26,14 @@ export default class SearchInput extends Vue {
   @ModelSync('value', 'input', { type: String })
   readonly query!: string;
 
-  mounted(): void {
+  async mounted(): Promise<void> {
+    if (this.autofocus) {
+      await this.$nextTick();
+      this.focus();
+    }
+  }
+
+  activated(): void {
     if (this.autofocus) {
       this.focus();
     }
