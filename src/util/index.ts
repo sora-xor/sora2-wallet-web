@@ -10,7 +10,7 @@ import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards
 
 import { api } from '../api';
 import { ExplorerLink, SoraNetwork, ExplorerType, LoginStep, Extensions } from '../consts';
-import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg?inline';
+import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 
