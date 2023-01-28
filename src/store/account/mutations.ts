@@ -137,15 +137,7 @@ const mutations = defineMutations<AccountState>()({
     state.name = name;
   },
   setAvailableWallets(state, wallets: Wallet[]) {
-    state.availableWallets = wallets.sort((a, b) => {
-      if (a.extensionName === Extensions.FearlessWallet) {
-        return -1;
-      }
-      if (b.extensionName === Extensions.FearlessWallet) {
-        return 1;
-      }
-      return 0;
-    });
+    state.availableWallets = wallets;
   },
   setSelectedExtension(state, extension: Extensions) {
     state.selectedExtension = extension;
