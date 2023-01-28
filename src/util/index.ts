@@ -172,6 +172,8 @@ export const getWalletInstallUrl = (wallet: Wallet): string => {
   // for Firefox
   if (navigator.userAgent.match(/firefox|fxios/i)) {
     switch (extensionName) {
+      case Extensions.FearlessWallet:
+        return 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc';
       case Extensions.SubwalletJS:
         return 'https://addons.mozilla.org/firefox/addon/subwallet/';
       case Extensions.TalismanJS:
