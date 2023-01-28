@@ -40,7 +40,7 @@ import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
-import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
+import { addFearlessWalletLocally, delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
@@ -64,6 +64,7 @@ const SoraWalletElements: PluginObject<PluginOptions> = {
       throw new Error('Please provide vuex store.');
     }
     store = options.store;
+    addFearlessWalletLocally();
     installWalletPlugins(vue, store.original);
     vue.component('SoraWallet', SoraWallet); // Root component
   },

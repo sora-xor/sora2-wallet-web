@@ -103,7 +103,15 @@ export const addFearlessWalletLocally = () => {
 
 export const getAppWallets = (): Wallet[] => {
   try {
-    const wallets = getWallets();
+    const wallets = getWallets().sort((a, b) => {
+      if (a.extensionName === Extensions.FearlessWallet) {
+        return -1;
+      }
+      if (b.extensionName === Extensions.FearlessWallet) {
+        return 1;
+      }
+      return 0;
+    });
 
     return wallets;
   } catch (error) {

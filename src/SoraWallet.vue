@@ -28,7 +28,6 @@ import LoadingMixin from './components/mixins/LoadingMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
 
 import { state } from './store/decorators';
-import { addFearlessWalletLocally } from './util';
 import { Operations } from './types/common';
 import type { RouteNames } from './consts';
 
@@ -52,7 +51,6 @@ export default class SoraWallet extends Mixins(LoadingMixin, TranslationMixin) {
 
   async created(): Promise<void> {
     this.withApi(() => {}); // We need it just for loading state
-    addFearlessWalletLocally();
   }
 
   handleClose(): void {
