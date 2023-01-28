@@ -11,3 +11,4 @@ __mocks__
 Jenkinsfile
 jest.config.js
 cypress.json
+.jest
