@@ -1,7 +1,7 @@
 import { Operation, TransactionStatus } from '@sora-substrate/util';
 import { BalanceType } from '@sora-substrate/util/build/assets/consts';
 
-import { AddAssetTabs, TokenTabs, WalletTabs, SoraNetwork } from '../../consts';
+import { AddAssetTabs, TokenTabs, WalletTabs } from '../../consts';
 
 export default {
   closeText: 'Close',
@@ -451,11 +451,5 @@ export default {
     networkTitle: '{network} transaction',
     viewInEtherscan: 'View in {Etherscan}',
     transactionHash: 'Transaction hash',
-  },
-  sora: {
-    [SoraNetwork.Dev]: '{Sora} Devnet',
-    [SoraNetwork.Test]: '{Sora} Testnet',
-    [SoraNetwork.Stage]: '{Sora} Testnet',
-    [SoraNetwork.Prod]: '{Sora} Mainnet',
   },
 };

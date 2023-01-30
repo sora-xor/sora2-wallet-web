@@ -297,7 +297,7 @@ export default class WalletTransactionDetails extends Mixins(
 
   public getNetworkTitle(isSoraTx = true): string {
     if (isSoraTx) {
-      return this.t(`sora.${this.soraNetwork}`);
+      return this.TranslationConsts.soraNetwork[this.soraNetwork];
     }
 
     return this.TranslationConsts.Ethereum;
