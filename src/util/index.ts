@@ -103,7 +103,15 @@ export const addFearlessWalletLocally = () => {
 
 export const getAppWallets = (): Wallet[] => {
   try {
-    const wallets = getWallets();
+    const wallets = getWallets().sort((a, b) => {
+      if (a.extensionName === Extensions.FearlessWallet) {
+        return -1;
+      }
+      if (b.extensionName === Extensions.FearlessWallet) {
+        return 1;
+      }
+      return 0;
+    });
 
     return wallets;
   } catch (error) {
@@ -164,6 +172,8 @@ export const getWalletInstallUrl = (wallet: Wallet): string => {
   // for Firefox
   if (navigator.userAgent.match(/firefox|fxios/i)) {
     switch (extensionName) {
+      case Extensions.FearlessWallet:
+        return 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc';
       case Extensions.SubwalletJS:
         return 'https://addons.mozilla.org/firefox/addon/subwallet/';
       case Extensions.TalismanJS:
