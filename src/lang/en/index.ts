@@ -134,7 +134,6 @@ export default {
     title: '{Sora} Network account',
     [WalletTabs.Assets]: 'Assets',
     [WalletTabs.Activity]: 'Activity',
-    addAsset: '@:addAssetText',
     createToken: '@:createTokenText',
   },
   walletSend: {
@@ -175,7 +174,6 @@ export default {
   assets: {
     empty: 'There are no assets',
     totalAssetsValue: 'Total assets value:',
-    add: '@:addAssetText',
     swap: '@:swapText',
     send: '@:sendText',
     details: 'Details',
@@ -211,8 +209,6 @@ export default {
     allowanceRequest: 'Press “Allow” access to camera',
   },
   addAsset: {
-    title: '@:addAssetText',
-    action: '@:addAssetText',
     success: 'Asset {symbol} was added successfully!',
     [AddAssetTabs.Token]: {
       title: 'Currencies',
