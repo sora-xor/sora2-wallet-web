@@ -329,10 +329,7 @@ export default {
     to: 'To',
     referrer: 'Referrer',
     referral: 'Referral',
-    viewIn: {
-      sorascan: 'View in SORAScan',
-      subscan: 'View in Subscan',
-    },
+    viewIn: 'View in {explorer}',
     copy: 'Copy {value}',
     history: {
       created: 'Transaction for {amount} {symbol} has been created.',
@@ -449,7 +446,6 @@ export default {
       step2: '2nd',
     },
     networkTitle: '{network} transaction',
-    viewInEtherscan: 'View in {Etherscan}',
     transactionHash: 'Transaction hash',
   },
   sora: {
