@@ -23,7 +23,10 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
         propsData: item,
         store: createStore(SoraNetwork.Dev),
       });
-      const expectedLinksCount = 0;
+      let expectedLinksCount = HashType.Account === item.type ? 0 : 1;
+      if (item.type === HashType.ID && !item.block) {
+        expectedLinksCount = 0;
+      }
       const txLinks = wrapper
         .findAll('.s-input-container .transaction-link')
         .wrappers.map((item) => item.element) as Array<HTMLAnchorElement>;
@@ -40,7 +43,12 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
         propsData: item,
         store: createStore(SoraNetwork.Prod),
       });
-      const expectedLinksCount = [HashType.EthAccount, HashType.EthTransaction].includes(item.type) ? 0 : 1;
+      let expectedLinksCount = [HashType.EthAccount, HashType.EthTransaction, HashType.Account].includes(item.type)
+        ? 1
+        : 2;
+      if (item.type === HashType.ID && !item.block) {
+        expectedLinksCount = 1;
+      }
       const txLinks = wrapper
         .findAll('.s-input-container .transaction-link')
         .wrappers.map((item) => item.element) as Array<HTMLAnchorElement>;

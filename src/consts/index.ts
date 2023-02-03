@@ -61,6 +61,7 @@ export enum HashType {
 export enum ExplorerType {
   Sorascan = 'sorascan',
   Subscan = 'subscan',
+  Polkadot = 'polkadot',
 }
 
 export type ExplorerLink = {
@@ -175,4 +176,6 @@ export enum TranslationConsts {
   TBC = 'TBC',
   XYK = 'XYK',
   NFT = 'NFT',
+  SORAScan = 'SORAScan',
+  Subscan = 'Subscan',
 }
