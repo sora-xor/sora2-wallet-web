@@ -4,6 +4,7 @@ interface TxHashViewData {
   value: string;
   type: HashType;
   translation: string;
+  block?: Nullable<string>;
 }
 
 export const MOCK_TRANSACTION_HASH_VIEW: Array<TxHashViewData> = [
@@ -11,6 +12,12 @@ export const MOCK_TRANSACTION_HASH_VIEW: Array<TxHashViewData> = [
     value: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7',
     translation: 'transaction.txId',
     type: HashType.ID,
+  },
+  {
+    value: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7',
+    translation: 'transaction.txId',
+    type: HashType.ID,
+    block: '0xB9c77482e45F1F4d123DeRwQ5F52C74426C6D7',
   },
   {
     value: '0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7',
