@@ -62,8 +62,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 </style>
 
 <style lang="scss" scoped>
-@import '../styles/icons';
-
 .asset {
   align-items: center;
   height: var(--s-asset-item-height);
