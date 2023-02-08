@@ -2,7 +2,6 @@ import { gql } from '@urql/core';
 
 import { Operation } from '@sora-substrate/util';
 import { ModuleNames, ModuleMethods } from '../types';
-import { SubstrateEvents } from '../consts';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 

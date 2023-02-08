@@ -4,6 +4,8 @@ import { AccountModule } from './modules/account';
 import { PriceModule } from './modules/price';
 import { PoolModule } from './modules/pool';
 
+import store from '../../../store';
+
 import type { TypedDocumentNode, AnyVariables } from '../client';
 import type { EntitiesQueryResponse, SubscriptionPayload } from '../types';
 
@@ -79,7 +81,7 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
           const entity = parse(payload.data.payload._entity);
           handler(entity);
         } else {
-          errorHandler();
+          throw new Error('Subscription payload data is undefined');
         }
       } catch (error) {
         errorHandler();
