@@ -49,10 +49,11 @@ export type PageInfo = {
   endCursor: string;
 };
 
-export enum AssetSnapshotTypes {
+export enum SnapshotTypes {
   DEFAULT = 'DEFAULT',
   HOUR = 'HOUR',
   DAY = 'DAY',
+  MONTH = 'MONTH',
 }
 
 export enum MutationTypes {
@@ -120,7 +121,7 @@ export type AssetSnapshotEntity = {
     amountUSD: string;
   };
   timestamp: number;
-  type: AssetSnapshotTypes;
+  type: SnapshotTypes;
   liquidity: Nullable<CodecString>;
   supply: CodecString;
   mint: CodecString;
