@@ -25,8 +25,12 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
           class="wallet-assets-item s-flex"
         >
           <div
-            class="wallet-assets-three-dash"
-          />
+            class="wallet-assets-dashes"
+          >
+            <div
+              class="wallet-assets-three-dash"
+            />
+          </div>
            
           <asset-list-item-stub
             asset="[object Object]"
@@ -49,8 +53,12 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
           class="wallet-assets-item s-flex"
         >
           <div
-            class="wallet-assets-three-dash"
-          />
+            class="wallet-assets-dashes"
+          >
+            <div
+              class="wallet-assets-three-dash"
+            />
+          </div>
            
           <asset-list-item-stub
             asset="[object Object]"
@@ -73,8 +81,12 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
           class="wallet-assets-item s-flex"
         >
           <div
-            class="wallet-assets-three-dash"
-          />
+            class="wallet-assets-dashes"
+          >
+            <div
+              class="wallet-assets-three-dash"
+            />
+          </div>
            
           <asset-list-item-stub
             asset="[object Object]"
