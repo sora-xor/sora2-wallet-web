@@ -2,7 +2,7 @@ import { gql } from '@urql/core';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-import { AssetSnapshotTypes } from '../types';
+import { SnapshotTypes } from '../types';
 
 import type { EntitiesQueryResponse, AssetSnapshotEntity } from '../types';
 
@@ -22,7 +22,7 @@ export const HistoricalPriceQuery = gql<EntitiesQueryResponse<AssetSnapshotEntit
   ${PageInfoFragment}
 `;
 
-export const historicalPriceFilter = (assetAddress: string, type: AssetSnapshotTypes) => {
+export const historicalPriceFilter = (assetAddress: string, type: SnapshotTypes) => {
   return {
     and: [
       {

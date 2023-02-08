@@ -4,7 +4,7 @@ import { FiatPriceQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
 import { FiatPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
 
-import { AssetSnapshotTypes } from '../../types';
+import { SnapshotTypes } from '../../types';
 
 import { formatStringNumber } from '../../../../util';
 
@@ -25,15 +25,17 @@ export class PriceModule extends BaseModule {
   /**
    * Get fiat price for each asset
    */
-  public async getFiatPriceObject(): Promise<Nullable<FiatPriceObject>> {
-    return await this.fetchAndParseEntities(parseFiatPrice, FiatPriceQuery);
+  public async getFiatPriceObject(): Promise<FiatPriceObject> {
+    const result = await this.root.fetchAndParseEntities(parseFiatPrice, FiatPriceQuery);
+
+    return result.reduce((acc, item) => ({ ...acc, ...item }), {});
   }
 
   public createFiatPriceSubscription(
     handler: (entity: FiatPriceObject) => void,
     errorHandler: () => void
   ): VoidFunction {
-    return this.createEntitySubscription(FiatPriceSubscription, {}, parseFiatPrice, handler, errorHandler);
+    return this.root.createEntitySubscription(FiatPriceSubscription, {}, parseFiatPrice, handler, errorHandler);
   }
 
   /**
@@ -44,13 +46,13 @@ export class PriceModule extends BaseModule {
    */
   public async getHistoricalPriceForAsset(
     assetId: string,
-    type = AssetSnapshotTypes.DEFAULT,
+    type = SnapshotTypes.DEFAULT,
     first?: number,
     after?: string
   ) {
     const filter = historicalPriceFilter(assetId, type);
     const variables = { filter, first, after };
-    const response = await this.fetchEntities(HistoricalPriceQuery, variables);
+    const response = await this.root.fetchEntities(HistoricalPriceQuery, variables);
 
     return response;
   }
