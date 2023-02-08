@@ -34,7 +34,7 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
     parse: (entity: T) => R,
     query: TypedDocumentNode<EntitiesQueryResponse<T>>,
     variables: AnyVariables = {}
-  ): Promise<R[]> {
+  ): Promise<Nullable<R[]>> {
     const acc: any = [];
     let after = '';
     let hasNextPage = true;
@@ -44,7 +44,7 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
         const response = await this.fetchEntities(query, { ...variables, after });
 
         if (!response) {
-          return acc;
+          return null;
         }
 
         after = response.pageInfo.endCursor;
@@ -60,7 +60,7 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
       return acc;
     } catch (error) {
       console.warn('Subquery is not available or data is incorrect!', error);
-      return [];
+      return null;
     }
   }
 

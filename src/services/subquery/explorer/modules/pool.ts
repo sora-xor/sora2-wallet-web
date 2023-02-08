@@ -25,6 +25,8 @@ export class PoolModule extends BaseModule {
   public async getPoolsApyObject(): Promise<Nullable<PoolApyObject>> {
     const result = await this.root.fetchAndParseEntities(parseApy, ApyQuery);
 
+    if (!result) return null;
+
     return result.reduce((acc, item) => ({ ...acc, ...item }), {});
   }
 
