@@ -4,8 +4,6 @@ import { AccountModule } from './modules/account';
 import { PriceModule } from './modules/price';
 import { PoolModule } from './modules/pool';
 
-import store from '../../../store';
-
 import type { TypedDocumentNode, AnyVariables } from '../client';
 import type { EntitiesQueryResponse, SubscriptionPayload } from '../types';
 
@@ -23,21 +21,20 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
 
       if (!response || !response.entities) return null;
 
-      const { pageInfo, nodes } = response.entities;
-
-      return { pageInfo, nodes };
+      return response.entities;
     } catch (error) {
       console.warn('Subquery is not available or data is incorrect!', error);
       return null;
     }
   }
 
-  public async fetchAndParseEntities<T, R>(
-    parse: (entity: T) => R,
+  public async fetchAllEntities<T, R>(
     query: TypedDocumentNode<EntitiesQueryResponse<T>>,
-    variables: AnyVariables = {}
+    variables: AnyVariables = {},
+    parse?: (entity: T) => R
   ): Promise<Nullable<R[]>> {
     const acc: any = [];
+
     let after = '';
     let hasNextPage = true;
 
@@ -53,7 +50,7 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
         hasNextPage = response.pageInfo.hasNextPage;
 
         response.nodes.forEach((el) => {
-          const record = parse(el);
+          const record = parse ? parse(el) : el;
 
           acc.push(record);
         });

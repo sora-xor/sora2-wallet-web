@@ -7,7 +7,7 @@ import { HistoryElementsQuery } from '../../queries/historyElements';
 
 import { AccountHistorySubscription } from '../../subscriptions/account';
 
-import type { ReferrerRewards, HistoryElement, HistoryElementsQueryResponse } from '../../types';
+import type { ReferrerRewards, HistoryElement } from '../../types';
 
 export class AccountModule extends BaseModule {
   /**
@@ -64,10 +64,8 @@ export class AccountModule extends BaseModule {
     }
   }
 
-  public async getHistory(variables = {}): Promise<Nullable<HistoryElementsQueryResponse>> {
-    const { historyElements } = await this.root.request(HistoryElementsQuery, variables);
-
-    return historyElements as HistoryElementsQueryResponse;
+  public async getHistory(variables = {}) {
+    return await this.root.fetchEntities(HistoryElementsQuery, variables);
   }
 
   public createHistorySubscription(accountAddress: string, handler: (entity: HistoryElement) => void) {
@@ -80,8 +78,8 @@ export class AccountModule extends BaseModule {
         const variables = { filter: { id: { equalTo: txId } } };
         const response = await this.getHistory(variables);
 
-        if (response && Array.isArray(response.edges) && response.edges[0]) {
-          handler(response.edges[0].node);
+        if (response && Array.isArray(response.nodes) && response.nodes[0]) {
+          handler(response.nodes[0]);
         }
       }
     });
