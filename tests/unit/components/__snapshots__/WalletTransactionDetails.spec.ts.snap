@@ -10,8 +10,9 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
     <!---->
      
     <transaction-hash-view-stub
+      block=""
       hash=""
-      translation="transaction.txId"
+      translation="transaction.blockId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
@@ -84,6 +85,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
     </div>
      
     <transaction-hash-view-stub
+      block=""
       hash=""
       translation="transaction.from"
       type="account"
@@ -107,8 +109,9 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
     <!---->
      
     <transaction-hash-view-stub
+      block=""
       hash=""
-      translation="transaction.txId"
+      translation="transaction.blockId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
@@ -163,6 +166,7 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
     </div>
      
     <transaction-hash-view-stub
+      block=""
       hash=""
       translation="transaction.from"
       type="account"
@@ -186,8 +190,9 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
     <!---->
      
     <transaction-hash-view-stub
+      block=""
       hash=""
-      translation="transaction.txId"
+      translation="transaction.blockId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
@@ -251,6 +256,7 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
     </div>
      
     <transaction-hash-view-stub
+      block=""
       hash=""
       translation="transaction.from"
       type="account"
@@ -274,8 +280,9 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
     <!---->
      
     <transaction-hash-view-stub
+      block=""
       hash=""
-      translation="transaction.txId"
+      translation="transaction.blockId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
@@ -358,6 +365,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
     </div>
      
     <transaction-hash-view-stub
+      block=""
       hash=""
       translation="transaction.from"
       type="account"
@@ -381,6 +389,7 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
     <!---->
      
     <transaction-hash-view-stub
+      block="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
       hash="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
       translation="transaction.txId"
       type="id"
@@ -446,6 +455,7 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
     </div>
      
     <transaction-hash-view-stub
+      block=""
       hash=""
       translation="transaction.from"
       type="account"
@@ -453,6 +463,7 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
     />
      
     <transaction-hash-view-stub
+      block=""
       hash=""
       translation="transaction.to"
       type="account"

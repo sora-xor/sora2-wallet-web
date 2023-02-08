@@ -23,12 +23,14 @@ export class PoolModule extends BaseModule {
    * Get strategic bonus APY for each pool
    */
   public async getPoolsApyObject(): Promise<Nullable<PoolApyObject>> {
-    const result = await this.fetchAndParseEntities(parseApy, ApyQuery);
+    const result = await this.root.fetchAndParseEntities(parseApy, ApyQuery);
 
-    return result;
+    if (!result) return null;
+
+    return result.reduce((acc, item) => ({ ...acc, ...item }), {});
   }
 
   public createPoolsApySubscription(handler: (entity: PoolApyObject) => void, errorHandler: () => void): VoidFunction {
-    return this.createEntitySubscription(PoolsApySubscription, {}, parseApy, handler, errorHandler);
+    return this.root.createEntitySubscription(PoolsApySubscription, {}, parseApy, handler, errorHandler);
   }
 }
