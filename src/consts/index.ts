@@ -61,6 +61,7 @@ export enum HashType {
 export enum ExplorerType {
   Sorascan = 'sorascan',
   Subscan = 'subscan',
+  Polkadot = 'polkadot',
 }
 
 export type ExplorerLink = {
@@ -175,6 +176,8 @@ export const TranslationConsts = {
   TBC: 'TBC',
   XYK: 'XYK',
   NFT: 'NFT',
+  SORAScan = 'SORAScan',
+  Subscan = 'Subscan',
   QR: 'QR', // QR code
   IPFS: 'IPFS', // Inter-planetary file system
   // SORA networks

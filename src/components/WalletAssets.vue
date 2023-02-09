@@ -5,7 +5,7 @@
       <draggable v-model="assetList" class="wallet-assets__draggable">
         <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
-            <div class="wallet-assets-three-dash"></div>
+            <div class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
                 <formatted-amount-with-fiat-value
@@ -251,8 +251,15 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 <style lang="scss">
 $padding: 5px;
 
-.sortable-ghost {
-  opacity: 0.5;
+.sortable {
+  &-ghost {
+    opacity: 0.5;
+  }
+  &-drag {
+    .wallet-assets-divider {
+      display: none;
+    }
+  }
 }
 
 .wallet-assets {
@@ -264,6 +271,15 @@ $padding: 5px;
     &__wrapper {
       margin-left: calc(#{$padding} * -1);
     }
+  }
+
+  &-dashes {
+    position: absolute;
+    top: 25%;
+    height: 50%;
+    width: 10px;
+    cursor: grab;
+    z-index: 1;
   }
 
   &-three-dash {

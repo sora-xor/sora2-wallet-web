@@ -8,7 +8,7 @@ import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
-import { api } from '../api';
+import { api, connection } from '../api';
 import { ExplorerLink, SoraNetwork, ExplorerType, LoginStep, Extensions } from '../consts';
 import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
@@ -193,23 +193,22 @@ export const getWalletInstallUrl = (wallet: Wallet): string => {
  * Devnet will set by default
  */
 export const getExplorerLinks = (soraNetwork?: Nullable<SoraNetwork>): Array<ExplorerLink> => {
-  switch (soraNetwork) {
-    case SoraNetwork.Prod:
-      return [
-        // { type: ExplorerType.Sorascan, value: 'https://sorascan.com/sora-mainnet' },
-        { type: ExplorerType.Subscan, value: 'https://sora.subscan.io' },
-      ];
-    case SoraNetwork.Stage:
-      // { type: ExplorerType.Sorascan, value: 'https://test.sorascan.com/sora-staging' }
-      return [];
-    case SoraNetwork.Test:
-      // { type: ExplorerType.Sorascan, value: 'https://sorascan.tst.sora2.soramitsu.co.jp/sora-test' }
-      return [];
-    case SoraNetwork.Dev:
-    default:
-      // { type: ExplorerType.Sorascan, value: 'https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev' }
-      return [];
+  // SORAScan
+  // PROD { type: ExplorerType.Sorascan, value: 'https://sorascan.com/sora-mainnet' },
+  // STAGE { type: ExplorerType.Sorascan, value: 'https://test.sorascan.com/sora-staging' }
+  // TEST { type: ExplorerType.Sorascan, value: 'https://sorascan.tst.sora2.soramitsu.co.jp/sora-test' }
+  // DEV { type: ExplorerType.Sorascan, value: 'https://explorer.s2.dev.sora2.soramitsu.co.jp/sora-dev' }
+  const links: Array<ExplorerLink> = [];
+  if (soraNetwork === SoraNetwork.Prod) {
+    links.push({ type: ExplorerType.Subscan, value: 'https://sora.subscan.io' });
   }
+  return [
+    ...links,
+    {
+      type: ExplorerType.Polkadot,
+      value: `https://polkadot.js.org/apps/?rpc=${connection.endpoint}#/explorer/query`,
+    },
+  ];
 };
 
 export async function checkDevicesAvailability(): Promise<boolean> {

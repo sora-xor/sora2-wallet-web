@@ -256,7 +256,7 @@ exports[`TransactionHashView.vue [type: block, env: Dev]: should be rendered cor
   <s-button-stub
     alternative="true"
     borderradius="small"
-    class="s-button--copy"
+    class="s-button--copy with-dropdown"
     icon="basic-copy-24"
     iconposition="left"
     nativetype="button"
@@ -268,7 +268,38 @@ exports[`TransactionHashView.vue [type: block, env: Dev]: should be rendered cor
     usedesignsystem="true"
   />
    
-  <!---->
+  <s-dropdown-stub
+    borderradius="mini"
+    buttontype="secondary"
+    class="s-dropdown-menu"
+    hideonclick="true"
+    hidetimeout="150"
+    icon="basic-more-vertical-24"
+    placement="bottom-end"
+    popperclass=""
+    showtimeout="250"
+    size="medium"
+    tabindex="0"
+    trigger="hover"
+    type="ellipsis"
+  >
+    <template>
+      <a
+        class="transaction-link"
+        href="https://polkadot.js.org/apps/?rpc=#/explorer/query/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
+        rel="nofollow noopener"
+        target="_blank"
+      >
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
+            View in Polkadot
+          
+        </s-dropdown-item-stub>
+      </a>
+    </template>
+  </s-dropdown-stub>
 </div>
 `;
 
@@ -340,6 +371,20 @@ exports[`TransactionHashView.vue [type: block, env: Prod]: should be rendered co
           
         </s-dropdown-item-stub>
       </a>
+      <a
+        class="transaction-link"
+        href="https://polkadot.js.org/apps/?rpc=#/explorer/query/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
+        rel="nofollow noopener"
+        target="_blank"
+      >
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
+            View in Polkadot
+          
+        </s-dropdown-item-stub>
+      </a>
     </template>
   </s-dropdown-stub>
 </div>
@@ -399,13 +444,20 @@ exports[`TransactionHashView.vue [type: ethAccount, env: Dev]: should be rendere
     type="ellipsis"
   >
     <template>
-      <s-dropdown-item-stub
-        class="s-dropdown-menu__item"
+      <a
+        class="transaction-link"
+        href="https://sepolia.etherscan.io/address/0x6F984C337aD5b7C2084805042AE942cef462e3ff"
+        rel="nofollow noopener"
+        target="_blank"
       >
-        <span>
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
           View in Etherscan
-        </span>
-      </s-dropdown-item-stub>
+        
+        </s-dropdown-item-stub>
+      </a>
     </template>
   </s-dropdown-stub>
 </div>
@@ -465,13 +517,20 @@ exports[`TransactionHashView.vue [type: ethAccount, env: Prod]: should be render
     type="ellipsis"
   >
     <template>
-      <s-dropdown-item-stub
-        class="s-dropdown-menu__item"
+      <a
+        class="transaction-link"
+        href="https://etherscan.io/address/0x6F984C337aD5b7C2084805042AE942cef462e3ff"
+        rel="nofollow noopener"
+        target="_blank"
       >
-        <span>
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
           View in Etherscan
-        </span>
-      </s-dropdown-item-stub>
+        
+        </s-dropdown-item-stub>
+      </a>
     </template>
   </s-dropdown-stub>
 </div>
@@ -531,13 +590,20 @@ exports[`TransactionHashView.vue [type: ethTransaction, env: Dev]: should be ren
     type="ellipsis"
   >
     <template>
-      <s-dropdown-item-stub
-        class="s-dropdown-menu__item"
+      <a
+        class="transaction-link"
+        href="https://sepolia.etherscan.io/tx/0x07f7ec4c5f2638a2ad25dc77445fd01ee2f2ba51d14fe79cdfb187b8674b2e80"
+        rel="nofollow noopener"
+        target="_blank"
       >
-        <span>
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
           View in Etherscan
-        </span>
-      </s-dropdown-item-stub>
+        
+        </s-dropdown-item-stub>
+      </a>
     </template>
   </s-dropdown-stub>
 </div>
@@ -597,13 +663,20 @@ exports[`TransactionHashView.vue [type: ethTransaction, env: Prod]: should be re
     type="ellipsis"
   >
     <template>
-      <s-dropdown-item-stub
-        class="s-dropdown-menu__item"
+      <a
+        class="transaction-link"
+        href="https://etherscan.io/tx/0x07f7ec4c5f2638a2ad25dc77445fd01ee2f2ba51d14fe79cdfb187b8674b2e80"
+        rel="nofollow noopener"
+        target="_blank"
       >
-        <span>
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
           View in Etherscan
-        </span>
-      </s-dropdown-item-stub>
+        
+        </s-dropdown-item-stub>
+      </a>
     </template>
   </s-dropdown-stub>
 </div>
@@ -648,6 +721,79 @@ exports[`TransactionHashView.vue [type: id, env: Dev]: should be rendered correc
   />
    
   <!---->
+</div>
+`;
+
+exports[`TransactionHashView.vue [type: id, env: Dev]: should be rendered correctly 2`] = `
+<div
+  class="s-input-container"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    form=""
+    label=""
+    name=""
+    placeholder="Transaction Id"
+    prefix=""
+    readonly="true"
+    rows="2"
+    size="big"
+    suffix=""
+    tabindex="-1"
+    type="text"
+    usedesignsystem="true"
+    value="0xB8c77482e4...52C74426C6D7"
+  />
+   
+  <s-button-stub
+    alternative="true"
+    borderradius="small"
+    class="s-button--copy with-dropdown"
+    icon="basic-copy-24"
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Copy Transaction Id"
+    tooltipplacement="top"
+    type="action"
+    usedesignsystem="true"
+  />
+   
+  <s-dropdown-stub
+    borderradius="mini"
+    buttontype="secondary"
+    class="s-dropdown-menu"
+    hideonclick="true"
+    hidetimeout="150"
+    icon="basic-more-vertical-24"
+    placement="bottom-end"
+    popperclass=""
+    showtimeout="250"
+    size="medium"
+    tabindex="0"
+    trigger="hover"
+    type="ellipsis"
+  >
+    <template>
+      <a
+        class="transaction-link"
+        href="https://polkadot.js.org/apps/?rpc=#/explorer/query/0xB9c77482e45F1F4d123DeRwQ5F52C74426C6D7"
+        rel="nofollow noopener"
+        target="_blank"
+      >
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
+            View in Polkadot
+          
+        </s-dropdown-item-stub>
+      </a>
+    </template>
+  </s-dropdown-stub>
 </div>
 `;
 
@@ -716,6 +862,93 @@ exports[`TransactionHashView.vue [type: id, env: Prod]: should be rendered corre
         >
           
             View in Subscan
+          
+        </s-dropdown-item-stub>
+      </a>
+    </template>
+  </s-dropdown-stub>
+</div>
+`;
+
+exports[`TransactionHashView.vue [type: id, env: Prod]: should be rendered correctly 2`] = `
+<div
+  class="s-input-container"
+>
+  <s-input-stub
+    accept=""
+    autocomplete="off"
+    borderradius="small"
+    form=""
+    label=""
+    name=""
+    placeholder="Transaction Id"
+    prefix=""
+    readonly="true"
+    rows="2"
+    size="big"
+    suffix=""
+    tabindex="-1"
+    type="text"
+    usedesignsystem="true"
+    value="0xB8c77482e4...52C74426C6D7"
+  />
+   
+  <s-button-stub
+    alternative="true"
+    borderradius="small"
+    class="s-button--copy with-dropdown"
+    icon="basic-copy-24"
+    iconposition="left"
+    nativetype="button"
+    size="medium"
+    tabindex="0"
+    tooltip="Copy Transaction Id"
+    tooltipplacement="top"
+    type="action"
+    usedesignsystem="true"
+  />
+   
+  <s-dropdown-stub
+    borderradius="mini"
+    buttontype="secondary"
+    class="s-dropdown-menu"
+    hideonclick="true"
+    hidetimeout="150"
+    icon="basic-more-vertical-24"
+    placement="bottom-end"
+    popperclass=""
+    showtimeout="250"
+    size="medium"
+    tabindex="0"
+    trigger="hover"
+    type="ellipsis"
+  >
+    <template>
+      <a
+        class="transaction-link"
+        href="https://sora.subscan.io/extrinsic/0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
+        rel="nofollow noopener"
+        target="_blank"
+      >
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
+            View in Subscan
+          
+        </s-dropdown-item-stub>
+      </a>
+      <a
+        class="transaction-link"
+        href="https://polkadot.js.org/apps/?rpc=#/explorer/query/0xB9c77482e45F1F4d123DeRwQ5F52C74426C6D7"
+        rel="nofollow noopener"
+        target="_blank"
+      >
+        <s-dropdown-item-stub
+          class="s-dropdown-menu__item"
+        >
+          
+            View in Polkadot
           
         </s-dropdown-item-stub>
       </a>
