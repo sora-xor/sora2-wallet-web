@@ -51,19 +51,19 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import WalletBase from '../WalletBase.vue';
-import AccountList from './AccountList.vue';
-import AccountCard from '../AccountCard.vue';
-import ExtensionList from './ExtensionList.vue';
-import TranslationMixin from '../mixins/TranslationMixin';
-import LoadingMixin from '../mixins/LoadingMixin';
-import { state, action, getter, mutation } from '../../store/decorators';
-import { AppError } from '../../util';
-import { RouteNames } from '../../consts';
+import WalletBase from '@/components/WalletBase.vue';
+import AccountList from '@/components/Connection/AccountList.vue';
+import AccountCard from '@/components/AccountCard.vue';
+import ExtensionList from '@/components/Connection/ExtensionList.vue';
+import TranslationMixin from '@/components/mixins/TranslationMixin';
+import LoadingMixin from '@/components/mixins/LoadingMixin';
+import { state, action, getter, mutation } from '@/store/decorators';
+import { AppError } from '@/util';
+import { RouteNames } from '@/consts';
 import type { Wallet } from '@subwallet/wallet-connect/types';
-import type { Extensions } from '../../consts';
-import type { PolkadotJsAccount } from '../../types/common';
-import type { Route } from '../../store/router/types';
+import type { Extensions } from '@/consts';
+import type { PolkadotJsAccount } from '@/types/common';
+import type { Route } from '@/store/router/types';
 
 enum Step {
   First = 1,
