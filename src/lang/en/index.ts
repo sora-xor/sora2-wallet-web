@@ -1,7 +1,7 @@
 import { Operation, TransactionStatus } from '@sora-substrate/util';
 import { BalanceType } from '@sora-substrate/util/build/assets/consts';
 
-import { AddAssetTabs, TokenTabs, WalletTabs, SoraNetwork } from '../../consts';
+import { AddAssetTabs, TokenTabs, WalletTabs } from '../../consts';
 
 export default {
   closeText: 'Close',
@@ -134,7 +134,6 @@ export default {
     title: '{Sora} Network account',
     [WalletTabs.Assets]: 'Assets',
     [WalletTabs.Activity]: 'Activity',
-    addAsset: '@:addAssetText',
     createToken: '@:createTokenText',
   },
   walletSend: {
@@ -175,7 +174,6 @@ export default {
   assets: {
     empty: 'There are no assets',
     totalAssetsValue: 'Total assets value:',
-    add: '@:addAssetText',
     swap: '@:swapText',
     send: '@:sendText',
     details: 'Details',
@@ -211,8 +209,6 @@ export default {
     allowanceRequest: 'Press “Allow” access to camera',
   },
   addAsset: {
-    title: '@:addAssetText',
-    action: '@:addAssetText',
     success: 'Asset {symbol} was added successfully!',
     [AddAssetTabs.Token]: {
       title: 'Currencies',
@@ -447,11 +443,5 @@ export default {
     },
     networkTitle: '{network} transaction',
     transactionHash: 'Transaction hash',
-  },
-  sora: {
-    [SoraNetwork.Dev]: '{Sora} Devnet',
-    [SoraNetwork.Test]: '{Sora} Testnet',
-    [SoraNetwork.Stage]: '{Sora} Testnet',
-    [SoraNetwork.Prod]: '{Sora} Mainnet',
   },
 };
