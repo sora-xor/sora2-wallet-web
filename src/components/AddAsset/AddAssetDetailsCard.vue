@@ -23,7 +23,7 @@
       :disabled="!asset || !isConfirmed || loading"
       @click="handleAddAsset"
     >
-      {{ t('addAsset.action') }}
+      {{ t('addAssetText') }}
     </s-button>
   </div>
 </template>

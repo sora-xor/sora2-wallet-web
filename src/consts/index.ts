@@ -161,21 +161,31 @@ export enum ETH_BRIDGE_STATES {
 
 export const ObjectInit = () => null;
 
-export enum TranslationConsts {
-  APR = 'APR', // Annual percentage rate
-  Ethereum = 'Ethereum',
-  Etherscan = 'Etherscan',
-  Hashi = 'HASHI',
-  Kusama = 'Kusama',
-  Metamask = 'MetaMask',
-  Polkadot = 'Polkadot',
-  PolkadotJs = 'Polkadot{.js}',
-  Polkaswap = 'Polkaswap',
-  ROI = 'ROI', // Return of investment
-  Sora = 'SORA',
-  TBC = 'TBC',
-  XYK = 'XYK',
-  NFT = 'NFT',
-  SORAScan = 'SORAScan',
-  Subscan = 'Subscan',
-}
+/**
+ * DO NOT IMPORT THIS CONST!
+ *
+ * Contains wallet-specific words which shouldn't be translated.
+ * It's used in TranslationMixin of SORA Wallet project and it's extended in Polkaswap TranslationMixin.
+ */
+export const TranslationConsts = {
+  Ethereum: 'Ethereum',
+  Etherscan: 'Etherscan',
+  Hashi: 'HASHI',
+  PolkadotJs: 'Polkadot{.js}',
+  Sora: 'SORA',
+  TBC: 'TBC',
+  XYK: 'XYK',
+  NFT: 'NFT',
+  Polkadot: 'Polkadot',
+  SORAScan: 'SORAScan',
+  Subscan: 'Subscan',
+  QR: 'QR', // QR code
+  IPFS: 'IPFS', // Inter-planetary file system
+  // SORA networks
+  soraNetwork: {
+    Dev: 'SORA Devnet',
+    Test: 'SORA Testnet (private)',
+    Stage: 'SORA Testnet',
+    Prod: 'SORA Mainnet',
+  },
+} as const;

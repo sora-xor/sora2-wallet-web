@@ -15,7 +15,7 @@
       </div>
       <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset">
         <template #list-empty>
-          {{ t(`addAsset.${assetIsAlreadyAdded ? 'alreadyAttached' : 'empty'}`) }}
+          {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
         </template>
       </asset-list>
     </div>
