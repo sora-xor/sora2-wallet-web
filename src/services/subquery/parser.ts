@@ -28,7 +28,7 @@ import type {
   ExtrinsicEvent,
 } from './types';
 import { SubstrateEvents } from './consts';
-import i18n from '../../lang';
+import { ObjectInit } from '../../consts';
 
 const insensitive = (value: string) => value.toLowerCase();
 
@@ -101,8 +101,6 @@ const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asse
 
 const getTransactionId = (tx: HistoryElement): string => tx.id;
 
-const emptyFn = () => null;
-
 const isModuleMethod = (item: UtilityBatchCall, module: string, method: string) =>
   insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method);
 
@@ -112,7 +110,7 @@ const getBatchCall = (calls: Array<UtilityBatchCall>, { module, method }): Nulla
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
 
-  const operationGetter = getOr(emptyFn, [insensitive(module), method], OperationsMap);
+  const operationGetter = getOr(ObjectInit, [insensitive(module), method], OperationsMap);
 
   return operationGetter(data);
 };

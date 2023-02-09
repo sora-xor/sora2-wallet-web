@@ -73,7 +73,7 @@
       class="wallet-assets-add s-typography-button--large"
       @click="handleOpenAddAsset"
     >
-      {{ t('assets.add') }}
+      {{ t('addAssetText') }}
     </s-button>
   </div>
 </template>

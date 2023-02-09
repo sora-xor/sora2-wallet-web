@@ -6,11 +6,13 @@ import App from './App.vue';
 import i18n from './lang';
 import { connection } from './api';
 import installWalletPlugins from './plugins';
+import { addFearlessWalletLocally } from './util';
 import env from '../public/env.json';
 
 import './styles';
 
 installWalletPlugins(Vue, store.original);
+addFearlessWalletLocally();
 
 connection.endpoint = env.BLOCKCHAIN_URL;
 
