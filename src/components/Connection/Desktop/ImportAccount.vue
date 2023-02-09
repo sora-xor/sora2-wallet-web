@@ -83,13 +83,13 @@ import TranslationMixin from '../../mixins/TranslationMixin';
 import { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
 import { parseJson } from '../../../util';
 import { LoginStep } from '../../../consts';
-import { getter, action } from '../../../store/decorators';
+import { state, action } from '../../../store/decorators';
 
 @Component
 export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
 
-  @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   @action.account.importPolkadotJs importPolkadotJs!: (address: string) => Promise<void>;
   @action.account.getPolkadotJsAccounts getPolkadotJsAccounts!: () => Promise<void>;

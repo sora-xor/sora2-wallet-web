@@ -20,7 +20,7 @@ import { Mixins, Component } from 'vue-property-decorator';
 import { PolkadotJsAccount } from '@/types/common';
 import TokenLogo from '../../TokenLogo.vue';
 import TranslationMixin from '../../mixins/TranslationMixin';
-import { getter } from '../../../store/decorators';
+import { state } from '../../../store/decorators';
 
 @Component({
   components: {
@@ -28,7 +28,7 @@ import { getter } from '../../../store/decorators';
   },
 })
 export default class WelcomePage extends Mixins(TranslationMixin) {
-  @getter.account.polkadotJsAccounts private polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.account.polkadotJsAccounts private polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   get loggedIn(): boolean {
     return this.polkadotJsAccounts.length === 0;

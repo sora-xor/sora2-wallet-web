@@ -261,11 +261,11 @@ const actions = defineActions({
     }
   },
   async importPolkadotJsDesktop(context, address: string) {
-    const { getters, commit, dispatch } = accountActionContext(context);
+    const { state, commit, dispatch } = accountActionContext(context);
 
     try {
       const defaultAddress = api.formatAddress(address, false);
-      const account = getters.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
+      const account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
 
       if (!account) {
         throw new Error('polkadotjs.noAccount');

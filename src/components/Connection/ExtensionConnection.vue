@@ -36,50 +36,9 @@
           </s-button>
         </template>
 
-        <div v-else-if="isExtensionsView" class="wallet-connection-extensions">
-          <account-card
-            v-button
-            v-for="wallet in availableWallets"
-            :key="wallet.extensionName"
-            @click.native="handleSelectWallet(wallet)"
-            class="wallet-connection-extension"
-            tabindex="0"
-          >
-            <template #avatar>
-              <img :src="wallet.logo.src" :alt="wallet.logo.alt" />
-            </template>
-            <template #name>{{ wallet.title }}</template>
-            <template #default>
-              <a
-                v-if="!wallet.installed"
-                :href="getWalletInstallUrl(wallet)"
-                target="_blank"
-                rel="nofollow noopener noreferrer"
-              >
-                <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
-              </a>
-              <s-button v-if="source === wallet.extensionName" size="small" disabled>
-                {{ t('connection.wallet.connected') }}
-              </s-button>
-            </template>
-          </account-card>
-        </div>
+        <extension-list v-else-if="isExtensionsView" @select="handleSelectWallet" />
 
-        <s-scrollbar v-else-if="isAccountListView" class="wallet-connection-accounts">
-          <wallet-account
-            v-button
-            v-for="(account, index) in polkadotJsAccounts"
-            :key="index"
-            :polkadotAccount="account"
-            @click.native="handleSelectAccount(account)"
-            class="wallet-connection-account"
-            tabindex="0"
-          >
-            <s-button v-if="isConnectedAccount(account)" size="small" disabled>
-              {{ t('connection.wallet.connected') }}
-            </s-button>
-          </wallet-account>
-        </s-scrollbar>
+        <account-list v-else-if="isAccountListView" @select="handleSelectAccount" />
       </template>
     </div>
   </wallet-base>
@@ -88,12 +47,13 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import WalletBase from '../WalletBase.vue';
-import WalletAccount from '../WalletAccount.vue';
+import AccountList from './AccountList.vue';
 import AccountCard from '../AccountCard.vue';
+import ExtensionList from './ExtensionList.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
 import { state, action, getter, mutation } from '../../store/decorators';
-import { AppError, getWalletInstallUrl } from '../../util';
+import { AppError } from '../../util';
 import { RouteNames } from '../../consts';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Extensions } from '../../consts';
@@ -107,20 +67,16 @@ enum Step {
 }
 
 @Component({
-  components: { AccountCard, WalletBase, WalletAccount },
+  components: { AccountCard, WalletBase, AccountList, ExtensionList },
 })
 export default class ExtensionConnection extends Mixins(TranslationMixin, LoadingMixin) {
   step = Step.First;
 
-  readonly getWalletInstallUrl = getWalletInstallUrl;
-
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.availableWallets availableWallets!: Array<Wallet>;
-  @state.account.source source!: string;
 
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
-  @getter.account.isConnectedAccount isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
   @getter.account.isLoggedIn isLoggedIn!: boolean;
 
   @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
@@ -246,38 +202,7 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
 }
 </script>
 
-<style lang="scss">
-$account-height: 60px;
-
-.wallet-connection-accounts {
-  @include scrollbar($basic-spacing-big);
-}
-
-.wallet-connection-extension.s-card.neumorphic.s-size-small {
-  padding: calc(var(--s-basic-spacing) * 1.25) $basic-spacing-small;
-}
-
-.s-card.wallet-account.wallet-connection {
-  &-account,
-  &-extension {
-    @include focus-outline($withOffset: true);
-    &:hover {
-      cursor: pointer;
-      border-color: var(--s-color-base-content-secondary);
-    }
-  }
-  &-extension a {
-    @include focus-outline($borderRadius: var(--s-border-radius-small));
-  }
-}
-</style>
-
 <style scoped lang="scss">
-$account-height: 60px;
-$account-margin-bottom: var(--s-basic-spacing);
-$accounts-padding: calc(#{$account-margin-bottom} / 2);
-$accounts-number: 7;
-
 .wallet-connection {
   // Margin and padding are set for the loader
   margin: calc(var(--s-basic-spacing) * -1);
@@ -292,26 +217,10 @@ $accounts-number: 7;
     line-height: var(--s-line-height-base);
     color: var(--s-color-base-content-primary);
   }
-  &-accounts {
-    height: calc(
-      calc(#{$account-height} + #{$account-margin-bottom}) * #{$accounts-number} - #{$account-margin-bottom}
-    );
-  }
   &-action {
     width: 100%;
     & + & {
       margin-left: 0;
-    }
-  }
-  &-account {
-    height: $account-height;
-    &:not(:last-child) {
-      margin-bottom: var(--s-basic-spacing);
-    }
-  }
-  &-extension {
-    &:not(:last-child) {
-      margin-bottom: $basic-spacing-medium;
     }
   }
 }

@@ -45,7 +45,7 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   readonly LoginStep = LoginStep;
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<Asset>>;
-  @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @action.account.importPolkadotJsDesktop importPolkadotJsDesktop!: (address: string) => Promise<void>;
 
   showWelcomePage = true;
