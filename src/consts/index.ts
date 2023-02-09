@@ -176,8 +176,9 @@ export const TranslationConsts = {
   TBC: 'TBC',
   XYK: 'XYK',
   NFT: 'NFT',
-  SORAScan = 'SORAScan',
-  Subscan = 'Subscan',
+  Polkadot: 'Polkadot',
+  SORAScan: 'SORAScan',
+  Subscan: 'Subscan',
   QR: 'QR', // QR code
   IPFS: 'IPFS', // Inter-planetary file system
   // SORA networks
