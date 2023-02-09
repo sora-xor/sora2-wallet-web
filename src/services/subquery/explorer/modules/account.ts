@@ -16,7 +16,7 @@ export class AccountModule extends BaseModule {
   private async fetchAccountReferralRewards(referrer: string, after?: string) {
     const filter = referrerRewardsFilter(referrer);
     const variables = { after, filter };
-    const response = await this.fetchEntities(ReferrerRewardsQuery, variables);
+    const response = await this.root.fetchEntities(ReferrerRewardsQuery, variables);
 
     return response;
   }

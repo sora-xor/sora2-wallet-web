@@ -20,9 +20,11 @@
       @select="isEthHash ? handleOpenEtherscan() : undefined"
     >
       <template slot="menu">
-        <s-dropdown-item v-if="isEthHash" class="s-dropdown-menu__item">
-          <span>{{ t('bridgeTransaction.viewInEtherscan') }}</span>
-        </s-dropdown-item>
+        <a v-if="isEthHash" class="transaction-link" :href="etherscanLink" target="_blank" rel="nofollow noopener">
+          <s-dropdown-item class="s-dropdown-menu__item">
+            {{ t('transaction.viewIn', { explorer: TranslationConsts.Etherscan }) }}
+          </s-dropdown-item>
+        </a>
         <template v-else>
           <a
             v-for="link in explorerLinks"
@@ -33,7 +35,7 @@
             rel="nofollow noopener"
           >
             <s-dropdown-item class="s-dropdown-menu__item">
-              {{ t(`transaction.viewIn.${link.type}`) }}
+              {{ t('transaction.viewIn', { explorer: getExplorerTranslation(link.type) }) }}
             </s-dropdown-item>
           </a>
         </template>
@@ -57,6 +59,8 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
   @Prop({ type: String, required: true }) readonly type!: HashType;
   @Prop({ type: String, required: true }) readonly translation!: string;
   @Prop({ type: String, default: '' }) readonly hash!: string;
+  /** Should be set for SORA ID type for Polkadot explorer */
+  @Prop({ type: String, default: '' }) readonly block!: string;
 
   @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
 
@@ -85,29 +89,64 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
     const baseLinks = getExplorerLinks(this.soraNetwork);
     if (!baseLinks.length) return [];
 
-    if ([HashType.Account, HashType.Block].includes(this.type)) {
-      return baseLinks.map(({ type, value }) => ({ type, value: `${value}/${this.type}/${this.formattedValue}` }));
+    switch (this.type) {
+      case HashType.Account:
+        return baseLinks
+          .filter(({ type }) => type !== ExplorerType.Polkadot) // Cuz accounts cannot be parsed using Polkadot
+          .map(({ type, value }) => ({ type, value: `${value}/${this.type}/${this.formattedValue}` }));
+      case HashType.Block:
+        return baseLinks.map(({ type, value }) => {
+          const link = { type } as ExplorerLink;
+          if (type === ExplorerType.Polkadot) {
+            link.value = `${value}/${this.formattedValue}`;
+          } else {
+            link.value = `${value}/${this.type}/${this.formattedValue}`;
+          }
+          return link;
+        });
+      case HashType.ID:
+        return baseLinks
+          .map(({ type, value }) => {
+            const link = { type } as ExplorerLink;
+            if (type === ExplorerType.Sorascan) {
+              link.value = `${value}/transaction/${this.value}`;
+            } else if (type === ExplorerType.Subscan) {
+              link.value = `${value}/extrinsic/${this.value}`;
+            } else if (this.block) {
+              // ExplorerType.Polkadot
+              link.value = `${value}/${this.block}`;
+            }
+            return link;
+          })
+          .filter((value) => !!value.value); // Polkadot explorer won't be shown without block prop
+      default:
+        return [];
     }
-    return baseLinks.map(({ type, value }) => {
-      const link = { type } as ExplorerLink;
-      if (type === ExplorerType.Sorascan) {
-        link.value = `${value}/transaction/${this.value}`;
-      } else {
-        link.value = `${value}/extrinsic/${this.value}`;
-      }
-      return link;
-    });
   }
 
   get formattedAddress(): string {
     return formatAddress(this.displayValue, 24);
   }
 
-  handleOpenEtherscan(): void {
+  get etherscanLink(): string {
     const path = this.type === HashType.EthAccount ? 'address' : 'tx';
     const base = this.soraNetwork !== SoraNetwork.Prod ? 'sepolia' + '.' : '';
-    const url = `https://${base}etherscan.io/${path}/${this.value}`;
-    const win = window.open(url, '_blank');
+    return `https://${base}etherscan.io/${path}/${this.value}`;
+  }
+
+  getExplorerTranslation(type: ExplorerType): string {
+    switch (type) {
+      case ExplorerType.Polkadot:
+        return this.TranslationConsts.Polkadot;
+      case ExplorerType.Sorascan:
+        return this.TranslationConsts.SORAScan;
+      case ExplorerType.Subscan:
+        return this.TranslationConsts.Subscan;
+    }
+  }
+
+  handleOpenEtherscan(): void {
+    const win = window.open(this.etherscanLink, '_blank');
     win && win.focus();
   }
 }
