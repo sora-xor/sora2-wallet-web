@@ -1,10 +1,11 @@
 <template>
   <wallet-base
     :title="t('connection.title')"
-    :show-back="!isEntryView"
-    :reset-focus="`${isEntryView}${step}`"
+    :show-back="isLoggedIn || isAccountListView"
+    :reset-focus="`${isExtensionsView}${step}`"
     @back="handleBackClick"
     v-loading="loading"
+    title-center
   >
     <template v-if="isLoggedIn" #actions>
       <s-button type="action" :tooltip="t('logoutText')" @click="handleLogout">
@@ -16,15 +17,9 @@
       <template v-if="!loading">
         <p class="wallet-connection-text">{{ connectionText }}</p>
 
-        <template v-if="isEntryView || isUnableToSelectAccount">
-          <s-button
-            class="wallet-connection-action s-typography-button--large action-btn"
-            type="primary"
-            :loading="loading"
-            @click="handleActionClick"
-          >
-            {{ t(actionButtonText) }}
-          </s-button>
+        <template v-if="isExtensionsView">
+          <extension-list @select="handleSelectWallet" />
+
           <s-button
             class="wallet-connection-action s-typography-button--large learn-more-btn"
             type="tertiary"
@@ -36,9 +31,19 @@
           </s-button>
         </template>
 
-        <extension-list v-else-if="isExtensionsView" @select="handleSelectWallet" />
+        <template v-else>
+          <s-button
+            v-if="noAccounts"
+            class="wallet-connection-action s-typography-button--large action-btn"
+            type="primary"
+            :loading="loading"
+            @click="handleRefreshClick"
+          >
+            {{ t('connection.action.refresh') }}
+          </s-button>
 
-        <account-list v-else-if="isAccountListView" @select="handleSelectAccount" />
+          <account-list v-else @select="handleSelectAccount" />
+        </template>
       </template>
     </div>
   </wallet-base>
@@ -63,7 +68,6 @@ import type { Route } from '../../store/router/types';
 enum Step {
   First = 1,
   Second = 2,
-  Third = 3,
 }
 
 @Component({
@@ -85,59 +89,34 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
-  async mounted(): Promise<void> {
-    await this.withApi(async () => {
-      if (this.isAccountSwitch) {
-        this.navigateToExtensionsList();
-      }
-    });
-  }
-
-  get isAccountSwitch(): boolean {
-    return !!this.currentRouteParams.isAccountSwitch;
-  }
-
-  get isEntryView(): boolean {
+  get isExtensionsView(): boolean {
     return this.step === Step.First;
   }
 
-  get isExtensionsView(): boolean {
+  get isAccountListView(): boolean {
     return this.step === Step.Second;
   }
 
-  get isAccountListView(): boolean {
-    return this.step === Step.Third;
-  }
-
-  get isUnableToSelectAccount(): boolean {
-    return this.isAccountListView && !this.polkadotJsAccounts.length;
-  }
-
-  get actionButtonText(): string {
-    if (this.isUnableToSelectAccount) {
-      return 'connection.action.refresh';
-    }
-    return 'connection.action.connect';
+  get noAccounts(): boolean {
+    return !this.polkadotJsAccounts.length;
   }
 
   get connectionText(): string {
-    if (this.isEntryView) {
+    if (this.isExtensionsView) {
       return this.t('connection.text', {
         extensions: this.availableWallets.map(({ title }) => title).join(', '),
       });
     }
-    if (this.isExtensionsView) return this.t('connection.selectWallet');
-    if (this.polkadotJsAccounts.length) return this.t('connection.selectAccount');
 
-    return this.t('connection.noAccounts', { extension: this.selectedWalletTitle });
+    if (this.noAccounts) {
+      return this.t('connection.noAccounts', { extension: this.selectedWalletTitle });
+    }
+
+    return this.t('connection.selectAccount');
   }
 
-  async handleActionClick(): Promise<void> {
-    if (this.isUnableToSelectAccount) {
-      window.history.go();
-      return;
-    }
-    this.navigateToExtensionsList();
+  async handleRefreshClick(): Promise<void> {
+    window.history.go();
   }
 
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
@@ -146,7 +125,7 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
         await this.importPolkadotJs(account);
       } catch (error) {
         this.showAlert(error);
-        this.navigateToEntry();
+        this.navigateToExtensionsList();
       }
     });
   }
@@ -161,16 +140,12 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
     }
   }
 
-  private navigateToEntry(): void {
+  private navigateToExtensionsList(): void {
     this.step = Step.First;
   }
 
-  private navigateToExtensionsList(): void {
-    this.step = Step.Second;
-  }
-
   private navigateToAccountList(): void {
-    this.step = Step.Third;
+    this.step = Step.Second;
   }
 
   handleLearnMoreClick(): void {
@@ -182,13 +157,11 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
       this.navigateToExtensionsList();
     } else if (this.isExtensionsView && this.isLoggedIn) {
       this.navigate({ name: RouteNames.Wallet });
-    } else {
-      this.navigateToEntry();
     }
   }
 
   handleLogout(): void {
-    this.navigateToEntry();
+    this.navigateToExtensionsList();
     this.logout();
   }
 
@@ -204,21 +177,20 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
 
 <style scoped lang="scss">
 .wallet-connection {
-  // Margin and padding are set for the loader
-  margin: calc(var(--s-basic-spacing) * -1);
-  min-height: 204px;
-  padding: var(--s-basic-spacing);
   & > *:not(:first-child) {
-    margin-top: $basic-spacing-medium;
+    margin-top: $basic-spacing-big;
   }
+
   &-text {
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
     color: var(--s-color-base-content-primary);
   }
+
   &-action {
     width: 100%;
+
     & + & {
       margin-left: 0;
     }

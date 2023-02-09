@@ -93,11 +93,7 @@ export default class Wallet extends Mixins(OperationsMixin, QrCodeParserMixin) {
   }
 
   handleSwitchAccount(): void {
-    const navigationArgs = {
-      name: RouteNames.WalletConnection,
-      params: { isAccountSwitch: true },
-    };
-    this.navigate(navigationArgs);
+    this.navigate({ name: RouteNames.WalletConnection });
   }
 
   handleBack(): void {

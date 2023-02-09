@@ -1,5 +1,5 @@
 <template>
-  <connection-items>
+  <connection-items :size="availableWallets.length">
     <account-card
       v-button
       v-for="wallet in availableWallets"

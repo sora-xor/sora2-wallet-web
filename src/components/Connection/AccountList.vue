@@ -1,5 +1,5 @@
 <template>
-  <connection-items>
+  <connection-items :size="polkadotJsAccounts.length">
     <wallet-account
       v-button
       v-for="(account, index) in polkadotJsAccounts"

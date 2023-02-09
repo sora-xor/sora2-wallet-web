@@ -1,5 +1,5 @@
 <template>
-  <s-scrollbar class="connection-items">
+  <s-scrollbar :class="classes">
     <div class="connection-items-list">
       <slot />
     </div>
@@ -7,10 +7,23 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 
 @Component
-export default class ConnectionItems extends Vue {}
+export default class ConnectionItems extends Vue {
+  @Prop({ default: 0, type: Number }) readonly size!: number;
+
+  get classes() {
+    const base = 'connection-items';
+    const classes = [base];
+
+    if (this.size >= 7) {
+      classes.push(`${base}-fixed`);
+    }
+
+    return classes;
+  }
+}
 </script>
 
 <style lang="scss">
@@ -22,7 +35,9 @@ $item-number: 7;
 .connection-items {
   @include scrollbar($basic-spacing-big);
 
-  height: calc(calc(#{$item-height} + #{$item-margin-bottom}) * #{$item-number} - #{$item-margin-bottom});
+  &-fixed {
+    height: calc(calc(#{$item-height} + #{$item-margin-bottom}) * #{$item-number} - #{$item-margin-bottom});
+  }
 
   &-list {
     & > .account {
