@@ -64,7 +64,6 @@ const SoraWalletElements: PluginObject<PluginOptions> = {
       throw new Error('Please provide vuex store.');
     }
     store = options.store;
-    addFearlessWalletLocally();
     installWalletPlugins(vue, store.original);
     vue.component('SoraWallet', SoraWallet); // Root component
   },
@@ -100,6 +99,7 @@ async function initWallet({
     if (updateEthBridgeHistory) {
       store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
+    addFearlessWalletLocally();
     try {
       const withKeyringLoading = true;
       const { isDesktop } = store.state.wallet.account;

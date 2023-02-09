@@ -177,6 +177,8 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
 
 <style scoped lang="scss">
 .wallet-connection {
+  min-height: 102px;
+
   & > *:not(:first-child) {
     margin-top: $basic-spacing-big;
   }

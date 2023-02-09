@@ -38,6 +38,7 @@ export default class AccountCard extends Vue {}
   & > .el-card__body {
     display: flex;
     flex: 1;
+    align-items: center;
   }
 
   &-details {
