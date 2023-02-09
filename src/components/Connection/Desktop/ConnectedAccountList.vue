@@ -4,7 +4,7 @@
       {{ t('connection.selectAccount') }}
     </p>
 
-    <account-list @select="handleSelectAccount(account)" class="connection__accounts">
+    <account-list @select="handleSelectAccount" class="connection__accounts">
       <account-card v-button @click.native="openWelcomePage">
         <template #avatar>
           <s-icon name="various-atom-24" size="32" />

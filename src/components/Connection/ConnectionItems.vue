@@ -28,8 +28,7 @@ export default class ConnectionItems extends Vue {
 
 <style lang="scss">
 $item-height: 60px;
-$item-margin-bottom: var(--s-basic-spacing);
-$item-padding: calc(#{$item-margin-bottom} / 2);
+$item-margin-bottom: $basic-spacing;
 $item-number: 7;
 
 .connection-items {
@@ -54,7 +53,7 @@ $item-number: 7;
       }
 
       &:not(:last-child) {
-        margin-bottom: var(--s-basic-spacing);
+        margin-bottom: $item-margin-bottom;
       }
     }
   }
