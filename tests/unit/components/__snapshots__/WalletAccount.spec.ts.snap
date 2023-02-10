@@ -3,74 +3,70 @@
 exports[`WalletAccount.vue should be rendered correctly 1`] = `
 <s-card
   borderradius="medium"
-  class="wallet-account"
+  class="account"
   shadow="always"
   size="small"
 >
   <div
-    class="account s-flex"
+    class="account-avatar"
+  >
+    <wallet-avatar-stub
+      address="cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo"
+      class="account-gravatar"
+      size="28"
+      slot="avatar"
+      theme="polkadot"
+    />
+  </div>
+   
+  <div
+    class="account-details s-flex"
   >
     <div
-      class="account-avatar"
-    >
-      <wallet-avatar-stub
-        address="cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo"
-        class="account-gravatar"
-        size="28"
-        slot="avatar"
-        theme="polkadot"
-      />
-    </div>
-     
-    <div
-      class="account-details s-flex"
+      class="account-credentials s-flex"
     >
       <div
-        class="account-credentials s-flex"
+        class="account-credentials_name"
       >
-        <div
-          class="account-credentials_name"
-        >
-          Polkadot Name
-        </div>
-         
-        <div
-          class="account-credentials_description"
-        >
-          <s-tooltip-stub
-            animation="el-fade-in-linear"
-            borderradius="small"
-            closedelay="0"
-            content="Copy Wallet address"
-            hideafter="0"
-            offset="0"
-            opendelay="500"
-            placement="top"
-            showarrow="true"
-            tabindex="-1"
-            theme="auto"
-            usedesignsystem="true"
-          >
-            <div
-              class="account-credentials_address"
-            >
-              <p
-                class="first"
-              >
-                cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo
-              </p>
-              
-        ...
-        
-              <p>
-                TvL6UHcHDCvo
-              </p>
-            </div>
-          </s-tooltip-stub>
-        </div>
+        Polkadot Name
       </div>
        
+      <div
+        class="account-credentials_description"
+      >
+        <s-tooltip-stub
+          animation="el-fade-in-linear"
+          borderradius="small"
+          closedelay="0"
+          content="Copy Wallet address"
+          hideafter="0"
+          offset="0"
+          opendelay="500"
+          placement="top"
+          showarrow="true"
+          tabindex="-1"
+          theme="auto"
+          usedesignsystem="true"
+        >
+          <div
+            class="account-credentials_address"
+          >
+            <p
+              class="first"
+            >
+              cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo
+            </p>
+            
+        ...
+        
+            <p>
+              TvL6UHcHDCvo
+            </p>
+          </div>
+        </s-tooltip-stub>
+      </div>
     </div>
+     
   </div>
 </s-card>
 `;

@@ -40,7 +40,7 @@ import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
-import { addFearlessWalletLocally, delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
+import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
@@ -99,7 +99,6 @@ async function initWallet({
     if (updateEthBridgeHistory) {
       store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
-    addFearlessWalletLocally();
     try {
       const withKeyringLoading = true;
       const { isDesktop } = store.state.wallet.account;
