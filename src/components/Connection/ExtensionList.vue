@@ -17,6 +17,7 @@
           :href="getWalletInstallUrl(wallet)"
           target="_blank"
           rel="nofollow noopener noreferrer"
+          class="connection-action"
         >
           <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
         </a>

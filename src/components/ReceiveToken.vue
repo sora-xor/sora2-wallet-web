@@ -8,7 +8,7 @@
 
     <div class="receive-token">
       <qr-code ref="qrcode" :value="code" />
-      <wallet-account primary shadow="never" class="account-card" />
+      <wallet-account primary shadow="never" />
     </div>
   </wallet-base>
 </template>

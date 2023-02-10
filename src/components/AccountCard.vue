@@ -1,18 +1,20 @@
 <template>
-  <s-card v-bind="{ shadow: 'always', size: 'small', borderRadius: 'medium', ...$attrs }" class="account">
-    <div class="account-avatar">
-      <slot name="avatar" />
-    </div>
-    <div class="account-details s-flex">
-      <div class="account-credentials s-flex">
-        <div class="account-credentials_name">
-          <slot name="name" />
-        </div>
-        <div class="account-credentials_description">
-          <slot name="description" />
-        </div>
+  <s-card v-bind="{ shadow: 'always', size: 'small', borderRadius: 'medium', ...$attrs }" class="account-card">
+    <div class="account">
+      <div class="account-avatar">
+        <slot name="avatar" />
       </div>
-      <slot />
+      <div class="account-details s-flex">
+        <div class="account-credentials s-flex">
+          <div class="account-credentials_name">
+            <slot name="name" />
+          </div>
+          <div class="account-credentials_description">
+            <slot name="description" />
+          </div>
+        </div>
+        <slot />
+      </div>
     </div>
   </s-card>
 </template>
@@ -25,22 +27,22 @@ export default class AccountCard extends Vue {}
 </script>
 
 <style lang="scss">
-.account {
+.account-card {
   display: flex;
   align-items: center;
+
+  & > .el-card__body {
+    flex: 1;
+  }
 
   &.s-card.neumorphic {
     border-width: 1px;
     border-style: solid;
     border-color: transparent;
   }
+}
 
-  & > .el-card__body {
-    display: flex;
-    flex: 1;
-    align-items: center;
-  }
-
+.account {
   &-details {
     .el-button + .el-button {
       margin-left: 0;
@@ -54,6 +56,9 @@ $avatar-margin-right: #{$basic-spacing-small};
 $avatar-size: 32px;
 
 .account {
+  display: flex;
+  align-items: center;
+
   &-avatar {
     display: flex;
     flex-shrink: 0;

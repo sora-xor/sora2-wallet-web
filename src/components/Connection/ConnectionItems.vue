@@ -39,7 +39,7 @@ $item-number: 7;
   }
 
   &-list {
-    & > .account {
+    & > .account-card {
       @include focus-outline($withOffset: true);
       height: $item-height;
 
@@ -48,7 +48,7 @@ $item-number: 7;
         border-color: var(--s-color-base-content-secondary) !important;
       }
 
-      a {
+      a.connection-action {
         @include focus-outline($borderRadius: var(--s-border-radius-small));
       }
 
