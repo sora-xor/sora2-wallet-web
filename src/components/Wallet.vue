@@ -14,12 +14,26 @@
     <wallet-account v-if="!selectedTransaction">
       <qr-code-scan-button alternative @change="parseQrCodeValue" />
 
-      <s-button type="action" alternative rounded :tooltip="t('code.receive')" @click="receiveByQrCode(null)">
-        <s-icon name="finance-receive-show-QR-24" size="28" />
+      <s-button
+        type="action"
+        size="small"
+        alternative
+        rounded
+        :tooltip="t('code.receive')"
+        @click="receiveByQrCode(null)"
+      >
+        <s-icon name="finance-receive-show-QR-24" size="24" />
       </s-button>
 
-      <s-button type="action" alternative rounded :tooltip="t('account.switch')" @click="handleSwitchAccount">
-        <s-icon name="arrows-refresh-ccw-24" size="28" />
+      <s-button
+        type="action"
+        size="small"
+        alternative
+        rounded
+        :tooltip="t('account.switch')"
+        @click="handleSwitchAccount"
+      >
+        <s-icon name="arrows-refresh-ccw-24" size="24" />
       </s-button>
     </wallet-account>
 
