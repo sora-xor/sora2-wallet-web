@@ -43,6 +43,11 @@ export default class AccountCard extends Vue {}
 }
 
 .account {
+  &-avatar {
+    & > img {
+      max-width: 100%;
+    }
+  }
   &-details {
     .el-button + .el-button {
       margin-left: 0;
