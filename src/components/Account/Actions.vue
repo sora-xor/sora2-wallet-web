@@ -52,21 +52,21 @@ export default class AccountActions extends Mixins(LoadingMixin) {
         name: 'Rename Account',
         icon: 'basic-options-24',
       },
-      {
-        value: AccountActionTypes.Export,
-        name: 'Export .json',
-        icon: 'basic-pulse-24',
-      },
+      // {
+      //   value: AccountActionTypes.Export,
+      //   name: 'Export .json',
+      //   icon: 'basic-pulse-24',
+      // },
       {
         value: AccountActionTypes.Logout,
         name: 'Log out',
         icon: 'security-logout-24',
       },
-      {
-        value: AccountActionTypes.Delete,
-        name: 'Delete Account',
-        icon: 'paperclip-16',
-      },
+      // {
+      //   value: AccountActionTypes.Delete,
+      //   name: 'Delete Account',
+      //   icon: 'paperclip-16',
+      // },
     ];
   }
 
