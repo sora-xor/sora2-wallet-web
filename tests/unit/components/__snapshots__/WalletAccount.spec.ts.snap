@@ -3,12 +3,12 @@
 exports[`WalletAccount.vue should be rendered correctly 1`] = `
 <s-card
   borderradius="medium"
-  class="wallet-account"
+  class="account-card"
   shadow="always"
   size="small"
 >
   <div
-    class="account s-flex"
+    class="account"
   >
     <div
       class="account-avatar"

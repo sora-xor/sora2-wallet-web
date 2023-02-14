@@ -2,7 +2,7 @@
   <div class="qr-code-container">
     <s-button
       type="action"
-      size="medium"
+      size="small"
       rounded
       :tooltip="t('code.upload')"
       v-bind="$attrs"
@@ -242,7 +242,6 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin, CameraPer
       color: inherit;
 
       i.el-tooltip.el-dropdown-selfdefine {
-        font-size: 28px !important; // override style attr
         color: inherit;
       }
     }

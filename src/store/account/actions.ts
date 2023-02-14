@@ -1,6 +1,7 @@
 import { defineActions } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
+import { saveAs } from 'file-saver';
 import { PoolTokens } from '@sora-substrate/util/build/poolXyk/consts';
 import type { ActionContext } from 'vuex';
 import type { Signer } from '@polkadot/api/types';
@@ -26,6 +27,7 @@ import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
 
 import type { PolkadotJsAccount } from '../../types/common';
 import type { FiatPriceObject } from '@/services/subquery/types';
+import { ColumnAlignment } from '@soramitsu/soramitsu-js-ui/lib/components/Table';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -131,15 +133,16 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async checkSigner(context): Promise<void> {
+  async checkAccountConnection(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
     if (getters.isLoggedIn) {
       try {
-        const defaultAddress = api.formatAddress(state.address, false);
-        const { signer } = await getExtensionSigner(defaultAddress, state.source as Extensions);
+        if (!state.isDesktop) {
+          const signer = await dispatch.getSigner();
 
-        api.setSigner(signer);
+          api.setSigner(signer);
+        }
 
         await dispatch.afterLogin();
       } catch (error) {
@@ -218,11 +221,13 @@ const actions = defineActions({
 
     commit.setExtensionAvailabilitySubscription(timer);
   },
+
   async getPolkadotJsAccounts(context) {
-    const accounts = await getPolkadotJsAccounts();
     const { dispatch } = accountActionContext(context);
+    const accounts = await getPolkadotJsAccounts();
     await dispatch.updatePolkadotJsAccounts(accounts);
   },
+
   async subscribeToPolkadotJsAccounts(context): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
 
@@ -260,26 +265,59 @@ const actions = defineActions({
       throw new Error((error as Error).message);
     }
   },
-  async importPolkadotJsDesktop(context, address: string) {
-    const { getters, commit, dispatch } = accountActionContext(context);
+
+  async importPolkadotJsDesktop(context, accountData: PolkadotJsAccount): Promise<void> {
+    const { state, commit, dispatch, getters } = accountActionContext(context);
+    const { rootDispatch } = rootActionContext(context);
 
     try {
-      const defaultAddress = api.formatAddress(address, false);
-      const account = getters.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
+      if (!getters.isConnectedAccount(accountData)) {
+        const defaultAddress = api.formatAddress(accountData.address, false);
+        const account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
 
-      if (!account) {
-        throw new Error('polkadotjs.noAccount');
+        if (!account) {
+          throw new Error('polkadotjs.noAccount');
+        }
+
+        api.importByPolkadotJs(account.address, account.name, '');
+
+        commit.selectPolkadotJsAccount({ name: account.name });
+
+        await dispatch.afterLogin();
+      } else {
+        await rootDispatch.wallet.router.checkCurrentRoute();
       }
-
-      api.importByPolkadotJs(account.address, account.name, '');
-
-      commit.selectPolkadotJsAccount({ name: account.name });
-
-      await dispatch.afterLogin();
     } catch (error) {
       throw new Error((error as Error).message);
     }
   },
+
+  /**
+   * Desktop
+   */
+  async renameAccount(context, name: string) {
+    const { commit, dispatch } = accountActionContext(context);
+    // change name in api & storage
+    api.changeName(name);
+    // update account data from storage
+    commit.syncWithStorage();
+    // update account list in state
+    await dispatch.getPolkadotJsAccounts();
+  },
+
+  /**
+   * Desktop
+   */
+  async exportAccount(_, password: string) {
+    const accountJson = api.exportAccount(password);
+    const blob = new Blob([accountJson], { type: 'application/json' });
+    const filename = (JSON.parse(accountJson) || {}).address || '';
+    saveAs(blob, filename);
+  },
+
+  /**
+   * Desktop
+   */
   async setAccountPassphrase(context, passphrase) {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
     const passphraseEncoded = CryptoJS.AES.encrypt(passphrase, key).toString();
@@ -293,6 +331,7 @@ const actions = defineActions({
     const timer = setTimeout(commit.resetAccountPassphrase, PASSPHRASE_TIMEOUT);
     commit.setAccountPassphraseTimer(timer);
   },
+
   async syncWithStorage(context): Promise<void> {
     const { state, getters, commit, dispatch } = accountActionContext(context);
     // previous state

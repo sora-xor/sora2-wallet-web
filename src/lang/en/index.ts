@@ -117,7 +117,8 @@ export default {
     text: 'Connect or create your {Sora} Network account with {extensions} extensions. These extensions allow you to securely sign transactions and manage assets in {Sora} Network.',
     noAccounts: 'No account found in your {extension} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
-    selectWallet: 'Select a wallet to work with',
+    selectWallet:
+      'Extensions & Google auth store your SORA Network account securely. They allow you to sign transactions & manage assets.',
     action: {
       install: 'Install extension',
       learnMore: 'Learn more',
