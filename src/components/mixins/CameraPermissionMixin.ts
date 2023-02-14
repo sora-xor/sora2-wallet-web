@@ -1,6 +1,6 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
-import { checkDevicesAvailability, checkCameraPermission } from '@/util';
+import { checkDevicesAvailability, checkCameraPermission } from '../../util';
 import TranslationMixin from './TranslationMixin';
 
 @Component

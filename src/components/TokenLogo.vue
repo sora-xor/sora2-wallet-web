@@ -10,7 +10,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/util/build/assets/types';
 
 import NftTokenLogo from './NftTokenLogo.vue';
-import TranslationMixin from '@/components/mixins/TranslationMixin';
+import TranslationMixin from './mixins/TranslationMixin';
 
 import { api } from '../api';
 import { getter } from '../store/decorators';

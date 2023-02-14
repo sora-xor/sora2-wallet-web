@@ -2,9 +2,9 @@ import { Component, Prop, Mixins } from 'vue-property-decorator';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 import { state, getter, mutation, action } from '../../store/decorators';
-import { AccountAssetsTable } from '@/types/common';
-import { RouteNames } from '@/consts';
-import { Route } from '@/store/router/types';
+import { AccountAssetsTable } from '../../types/common';
+import { RouteNames } from '../../consts';
+import { Route } from '../../store/router/types';
 import TranslationMixin from './TranslationMixin';
 import LoadingMixin from './LoadingMixin';
 

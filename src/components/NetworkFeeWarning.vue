@@ -17,8 +17,8 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import { mutation } from '@/store/decorators';
-import TranslationMixin from '../components/mixins/TranslationMixin';
+import { mutation } from '../store/decorators';
+import TranslationMixin from './mixins/TranslationMixin';
 
 @Component
 export default class NetworkFeeWarning extends Mixins(TranslationMixin) {
