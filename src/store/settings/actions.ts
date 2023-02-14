@@ -5,9 +5,10 @@ import { defineActions } from 'direct-vuex';
 import { settingsActionContext } from './../settings';
 import { api } from '../../api';
 import { runtimeStorage } from '../../util/storage';
+import { IpfsStorage } from '../../util/ipfsStorage';
+import { SoraNetwork } from '../../consts';
+
 import type { ApiKeysObject } from '../../types/common';
-import { IpfsStorage } from '@/util/ipfsStorage';
-import { SoraNetwork } from '@/consts';
 
 function areKeysEqual(obj1: object, obj2: object): boolean {
   const obj1Keys = Object.keys(obj1).sort();
