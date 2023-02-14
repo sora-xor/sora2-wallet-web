@@ -31,14 +31,13 @@ import WelcomePage from '@/components/Connection/Desktop/WelcomePage.vue';
 import CreateAccount from '@/components/Connection/Desktop/CreateAccount.vue';
 import ConnectedAccountList from '@/components/Connection/Desktop/ConnectedAccountList.vue';
 import ImportAccount from '@/components/Connection/Desktop/ImportAccount.vue';
-import ConfirmDialog from '@/components/ConfirmDialog.vue';
 
 import { LoginStep } from '@/consts';
 import { getPreviousLoginStep } from '@/util';
 import { state, action } from '@/store/decorators';
 
 @Component({
-  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList, ConfirmDialog },
+  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList },
 })
 export default class DesktopConnection extends Mixins(TranslationMixin, LoadingMixin) {
   step: LoginStep = LoginStep.Welcome;

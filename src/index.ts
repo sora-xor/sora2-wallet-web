@@ -5,7 +5,7 @@ import installWalletPlugins from './plugins';
 
 // Components
 import SoraWallet from './SoraWallet.vue';
-import WalletAccount from './components/WalletAccount.vue';
+import WalletAccount from './components/Account/WalletAccount.vue';
 import WalletAvatar from './components/WalletAvatar.vue';
 import WalletBase from './components/WalletBase.vue';
 import AssetList from './components/AssetList.vue';

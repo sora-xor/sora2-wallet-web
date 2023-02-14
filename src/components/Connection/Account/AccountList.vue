@@ -20,7 +20,7 @@
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
 
-import WalletAccount from '@/components/WalletAccount.vue';
+import WalletAccount from '@/components/Account/WalletAccount.vue';
 import ConnectionItems from '@/components/Connection/ConnectionItems.vue';
 import TranslationMixin from '@/components/mixins/TranslationMixin';
 

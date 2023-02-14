@@ -52,7 +52,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import WalletBase from '@/components/WalletBase.vue';
-import AccountList from '@/components/Connection/AccountList.vue';
+import AccountList from '@/components/Connection/Account/AccountList.vue';
 import AccountCard from '@/components/AccountCard.vue';
 import ExtensionList from '@/components/Connection/ExtensionList.vue';
 import TranslationMixin from '@/components/mixins/TranslationMixin';

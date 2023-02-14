@@ -35,6 +35,8 @@
       >
         <s-icon name="arrows-refresh-ccw-24" size="24" />
       </s-button>
+
+      <account-actions />
     </wallet-account>
 
     <div v-show="!selectedTransaction" class="wallet">
@@ -56,11 +58,12 @@ import OperationsMixin from './mixins/OperationsMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 
 import WalletBase from './WalletBase.vue';
-import WalletAccount from './WalletAccount.vue';
+import WalletAccount from './Account/WalletAccount.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletActivity from './WalletActivity.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import WalletTransactionDetails from './WalletTransactionDetails.vue';
+import AccountActions from './Account/Actions.vue';
 
 import { RouteNames, WalletTabs } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
@@ -73,6 +76,7 @@ import type { WalletPermissions } from '../consts';
     WalletAssets,
     WalletActivity,
     QrCodeScanButton,
+    AccountActions,
     WalletTransactionDetails,
   },
 })

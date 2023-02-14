@@ -1,6 +1,7 @@
 import { defineActions } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
+import { saveAs } from 'file-saver';
 import { PoolTokens } from '@sora-substrate/util/build/poolXyk/consts';
 import type { ActionContext } from 'vuex';
 import type { Signer } from '@polkadot/api/types';
@@ -26,6 +27,7 @@ import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
 
 import type { PolkadotJsAccount } from '../../types/common';
 import type { FiatPriceObject } from '@/services/subquery/types';
+import { ColumnAlignment } from '@soramitsu/soramitsu-js-ui/lib/components/Table';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -218,11 +220,13 @@ const actions = defineActions({
 
     commit.setExtensionAvailabilitySubscription(timer);
   },
+
   async getPolkadotJsAccounts(context) {
     const accounts = await getPolkadotJsAccounts();
     const { dispatch } = accountActionContext(context);
     await dispatch.updatePolkadotJsAccounts(accounts);
   },
+
   async subscribeToPolkadotJsAccounts(context): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
 
@@ -260,6 +264,7 @@ const actions = defineActions({
       throw new Error((error as Error).message);
     }
   },
+
   async importPolkadotJsDesktop(context, address: string) {
     const { state, commit, dispatch } = accountActionContext(context);
 
@@ -280,6 +285,33 @@ const actions = defineActions({
       throw new Error((error as Error).message);
     }
   },
+
+  /**
+   * Desktop
+   */
+  async renameAccount(context, name: string) {
+    const { commit, dispatch } = accountActionContext(context);
+    // change name in api & storage
+    api.changeName(name);
+    // update account data from storage
+    commit.syncWithStorage();
+    // update account list in state
+    await dispatch.getPolkadotJsAccounts();
+  },
+
+  /**
+   * Desktop
+   */
+  async exportAccount(_, password: string) {
+    const accountJson = api.exportAccount(password);
+    const blob = new Blob([accountJson], { type: 'application/json' });
+    const filename = (JSON.parse(accountJson) || {}).address || '';
+    saveAs(blob, filename);
+  },
+
+  /**
+   * Desktop
+   */
   async setAccountPassphrase(context, passphrase) {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
     const passphraseEncoded = CryptoJS.AES.encrypt(passphrase, key).toString();
@@ -293,6 +325,7 @@ const actions = defineActions({
     const timer = setTimeout(commit.resetAccountPassphrase, PASSPHRASE_TIMEOUT);
     commit.setAccountPassphraseTimer(timer);
   },
+
   async syncWithStorage(context): Promise<void> {
     const { state, getters, commit, dispatch } = accountActionContext(context);
     // previous state

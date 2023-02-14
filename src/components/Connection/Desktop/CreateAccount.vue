@@ -119,7 +119,6 @@
 
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
-import { saveAs } from 'file-saver';
 import isEqual from 'lodash/fp/isEqual';
 
 import LoadingMixin from '../../../components/mixins/LoadingMixin';
@@ -132,6 +131,7 @@ import { action } from '../../../store/decorators';
 @Component
 export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @action.account.getPolkadotJsAccounts getPolkadotJsAccounts!: () => Promise<void>;
+  @action.account.exportAccount exportAccount!: (password: string) => Promise<void>;
 
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
 
@@ -143,7 +143,6 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   accountPasswordConfirm = '';
 
   seedPhraseToCompareIdx: Array<number> = [];
-  seedPhraseBoundToClass = new Map<string | undefined, string>();
 
   showErrorMessage = false;
   hiddenInput = true;
@@ -290,10 +289,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
         await this.getPolkadotJsAccounts();
 
         if (this.toExport) {
-          const accountJson = api.exportAccount(this.accountPassword);
-          const blob = new Blob([accountJson], { type: 'application/json' });
-          const filename = (JSON.parse(accountJson) || {}).address || '';
-          saveAs(blob, filename);
+          await this.exportAccount(this.accountPassword);
         }
 
         this.$emit('stepChange', LoginStep.AccountList);
