@@ -26,7 +26,7 @@ export class PriceModule extends BaseModule {
    * Get fiat price for each asset
    */
   public async getFiatPriceObject(): Promise<Nullable<FiatPriceObject>> {
-    const result = await this.root.fetchAndParseEntities(parseFiatPrice, FiatPriceQuery);
+    const result = await this.root.fetchAllEntities(FiatPriceQuery, {}, parseFiatPrice);
 
     if (!result) return null;
 

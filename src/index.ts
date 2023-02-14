@@ -5,7 +5,7 @@ import installWalletPlugins from './plugins';
 
 // Components
 import SoraWallet from './SoraWallet.vue';
-import WalletAccount from './components/WalletAccount.vue';
+import WalletAccount from './components/Account/WalletAccount.vue';
 import WalletAvatar from './components/WalletAvatar.vue';
 import WalletBase from './components/WalletBase.vue';
 import AssetList from './components/AssetList.vue';
@@ -40,7 +40,7 @@ import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
-import { addFearlessWalletLocally, delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
+import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
@@ -64,7 +64,6 @@ const SoraWalletElements: PluginObject<PluginOptions> = {
       throw new Error('Please provide vuex store.');
     }
     store = options.store;
-    addFearlessWalletLocally();
     installWalletPlugins(vue, store.original);
     vue.component('SoraWallet', SoraWallet); // Root component
   },
@@ -120,11 +119,10 @@ async function initWallet({
     ]);
 
     if (store.state.wallet.account.isDesktop) {
-      api.initAccountStorage();
       await store.dispatch.wallet.account.getPolkadotJsAccounts();
-    } else {
-      await store.dispatch.wallet.account.checkSigner();
     }
+
+    await store.dispatch.wallet.account.checkAccountConnection();
 
     store.commit.wallet.settings.setWalletLoaded(true);
   }

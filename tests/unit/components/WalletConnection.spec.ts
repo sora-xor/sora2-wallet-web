@@ -1,7 +1,7 @@
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import WalletConnection from '@/components/WalletConnection.vue';
 import WalletBase from '@/components/WalletBase.vue';
-import AccountCard from '@/components/AccountCard.vue';
+import AccountCard from '@/components/Account/AccountCard.vue';
 import {
   POLKADOT_JS_ACCOUNTS_MOCK,
   POLKADOT_WALLET_MOCK,

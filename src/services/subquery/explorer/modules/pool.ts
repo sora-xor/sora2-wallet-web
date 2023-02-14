@@ -23,7 +23,7 @@ export class PoolModule extends BaseModule {
    * Get strategic bonus APY for each pool
    */
   public async getPoolsApyObject(): Promise<Nullable<PoolApyObject>> {
-    const result = await this.root.fetchAndParseEntities(parseApy, ApyQuery);
+    const result = await this.root.fetchAllEntities(ApyQuery, {}, parseApy);
 
     if (!result) return null;
 
