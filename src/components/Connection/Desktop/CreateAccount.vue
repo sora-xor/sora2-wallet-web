@@ -5,7 +5,7 @@
     <template v-if="step === LoginStep.SeedPhrase">
       <div class="seed-grid">
         <div v-for="column in 3" :key="column" class="seed-grid__column">
-          <div v-for="(word, idx) in seedPhraseAsArray" :key="word">
+          <div v-for="(word, idx) in seedPhraseWords" :key="`${word}${idx}`">
             <div v-if="renderWord(column, idx)" class="seed-grid__word">
               <span class="seed-grid__word-number">{{ idx + 1 }}</span>
               <span>{{ word }}</span>
@@ -27,16 +27,14 @@
       }}</s-button>
     </template>
     <template v-if="step === LoginStep.ConfirmSeedPhrase">
-      <div class="login__random-order">
+      <div class="login__random-order login__order-container">
         <div
-          @click="chooseWord"
-          v-for="(word, idx) in randomizedSeedPhrase"
-          :key="getKey(word, idx)"
-          :ref="'word' + Number(idx + 1)"
-          :class="'word' + Number(idx + 1)"
-          class="login__random-word"
+          v-for="(word, idx) in randomizedSeedPhraseMap"
+          :key="idx"
+          :class="['login__random-word', { hidden: isHiddenWord(idx), incorrect }]"
+          @click="chooseWord(idx)"
         >
-          <s-button>
+          <s-button size="small">
             {{ word }}
           </s-button>
         </div>
@@ -47,15 +45,10 @@
         </p>
       </div>
       <div class="delimiter"></div>
-      <div class="login__correct-order">
-        <div
-          v-for="(word, idx) in seedPhraseToCompare"
-          @click="discardWord"
-          :key="'text' + Number(idx + 1)"
-          class="login__random-word"
-        >
-          <s-button>
-            {{ word }}
+      <div class="login__correct-order login__order-container">
+        <div v-for="idx in seedPhraseToCompareIdx" :key="idx" class="login__random-word" @click="discardWord(idx)">
+          <s-button size="small">
+            {{ randomizedSeedPhraseMap[idx] }}
           </s-button>
         </div>
       </div>
@@ -110,13 +103,13 @@
         <span>{{ t('desktop.exportOptionText') }}</span>
       </div>
       <p class="wallet-settings-create-token_desc">{{ t('desktop.exportJsonText') }}</p>
-      <a ref="json" class="download-json" />
       <s-button
         key="step3"
-        @click="createAccount"
         class="s-typography-button--large login-btn"
         type="primary"
         :disabled="isInputsNotFilled"
+        :loading="loading"
+        @click="createAccount"
       >
         {{ t('desktop.button.createAccount') }}
       </s-button>
@@ -125,22 +118,22 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
+import { Mixins, Component, Prop } from 'vue-property-decorator';
 import isEqual from 'lodash/fp/isEqual';
 
 import LoadingMixin from '../../../components/mixins/LoadingMixin';
 import TranslationMixin from '../../../components/mixins/TranslationMixin';
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
-import { copyToClipboard } from '../../../util';
+import { copyToClipboard, delay } from '../../../util';
 import { action } from '../../../store/decorators';
 
 @Component
 export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @action.account.getPolkadotJsAccounts getPolkadotJsAccounts!: () => Promise<void>;
+  @action.account.exportAccount exportAccount!: (password: string) => Promise<void>;
 
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
-  @Ref('json') readonly json!: HTMLLinkElement;
 
   readonly LoginStep = LoginStep;
   readonly PHRASE_LENGTH = 12;
@@ -148,15 +141,13 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   accountName = '';
   accountPassword = '';
   accountPasswordConfirm = '';
-  fileName = '';
-  href: string | null = null;
 
-  seedPhraseToCompare: Array<string | undefined> = [];
-  seedPhraseBoundToClass = new Map<string | undefined, string>();
+  seedPhraseToCompareIdx: Array<number> = [];
 
   showErrorMessage = false;
   hiddenInput = true;
   toExport = false;
+  incorrect = false;
 
   get title(): string {
     if (this.step === LoginStep.SeedPhrase) return this.t('desktop.heading.seedPhraseTitle');
@@ -204,80 +195,49 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     return !this.accountName || !this.accountPassword || !this.accountPasswordConfirm;
   }
 
-  getKey(word, idx): string {
-    const cssClass = 'word' + Number(idx + 1);
-    this.seedPhraseBoundToClass.set(word, cssClass);
-    return cssClass;
-  }
-
   get seedPhrase(): string {
     const { seed } = api.createSeed();
     return seed;
   }
 
-  get seedPhraseAsArray(): Array<string> {
-    const seedArray = this.seedPhrase.split(' ').map((word) => word.toUpperCase());
-    return seedArray;
+  get seedPhraseWords(): Array<string> {
+    return this.seedPhrase.split(' ').map((word) => word.toUpperCase());
   }
 
-  get randomizedSeedPhrase(): Array<string> {
-    return [...this.seedPhraseAsArray].sort(() => Math.random() - 0.5);
+  get randomizedSeedPhraseMap(): Record<number, string> {
+    return [...this.seedPhraseWords]
+      .sort(() => Math.random() - 0.5)
+      .reduce((acc, word, index) => ({ ...acc, [index]: word }), {});
+  }
+
+  get seedPhraseToCompare(): Array<string> {
+    return this.seedPhraseToCompareIdx.map((idx) => this.randomizedSeedPhraseMap[idx]);
+  }
+
+  isHiddenWord(wordIndex: number) {
+    return this.seedPhraseToCompareIdx.includes(wordIndex);
   }
 
   toggleVisibility(): void {
     this.hiddenInput = !this.hiddenInput;
   }
 
-  chooseWord(e: Event): void {
-    const clickedWord = e.currentTarget;
-    const targetClass = (clickedWord as HTMLElement).classList[1];
-    (this.$refs[`${targetClass}`] as HTMLElement)[0].classList.add('word--hidden');
-    const clickedWordText = ((clickedWord as HTMLElement).textContent as string).trim();
-    this.$nextTick(() => {
-      this.seedPhraseToCompare.push(clickedWordText);
-    });
+  chooseWord(index: number): void {
+    if (!this.seedPhraseToCompareIdx.includes(index)) {
+      this.seedPhraseToCompareIdx.push(index);
+    }
   }
 
-  discardWord(e: Event): void {
-    const clickedWordText = ((e.currentTarget as HTMLElement).textContent as string).trim();
-    const wordToDiscard = this.seedPhraseBoundToClass.get(clickedWordText);
-    (this.$refs[`${wordToDiscard}`] as HTMLElement)[0].classList.remove('word--hidden');
-    this.seedPhraseToCompare = this.seedPhraseToCompare.filter((word) => word !== clickedWordText);
-  }
-
-  discardAllWords(): void {
-    const wordsHtmlDOM = Array.from(new Array(this.PHRASE_LENGTH), (_, idx) => `word${idx + 1}`);
-    wordsHtmlDOM.forEach((value) => {
-      (this.$refs[value] as HTMLElement)[0].classList.remove('word--hidden');
-    });
-    wordsHtmlDOM.forEach((value) => {
-      (this.$refs[value] as HTMLElement)[0].classList.add('login__random-word--incorrect');
-    });
-    setTimeout(() => {
-      wordsHtmlDOM.forEach((value) => {
-        (this.$refs[value] as HTMLElement)[0].classList.remove('login__random-word--incorrect');
-      });
-    }, 2000);
+  discardWord(index: number): void {
+    this.seedPhraseToCompareIdx = this.seedPhraseToCompareIdx.filter((idx) => idx !== index);
   }
 
   async handleCopy(): Promise<void> {
     await copyToClipboard(this.seedPhrase);
   }
 
-  renderWord(column, index): boolean {
-    if (column === 1 && index < 4) {
-      return true;
-    }
-
-    if (column === 2 && index > 3 && index < 8) {
-      return true;
-    }
-
-    if (column === 3 && index > 7 && index < 12) {
-      return true;
-    }
-
-    return false;
+  renderWord(column: number, index: number): boolean {
+    return Math.floor(index / 4) === column - 1;
   }
 
   nextStep(): void {
@@ -295,7 +255,7 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
       setTimeout(() => {
         this.showErrorMessage = false;
       }, 4500);
-      this.seedPhraseToCompare = [];
+      this.seedPhraseToCompareIdx = [];
       this.runReturnAnimation();
     } else {
       this.$emit('stepChange', LoginStep.CreateCredentials);
@@ -303,7 +263,11 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   runReturnAnimation(): void {
-    this.discardAllWords();
+    this.incorrect = true;
+
+    setTimeout(() => {
+      this.incorrect = false;
+    }, 2000);
   }
 
   async createAccount(): Promise<void> {
@@ -316,31 +280,32 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
       return;
     }
 
-    try {
-      api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
-      await this.getPolkadotJsAccounts();
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution
+      await delay(500);
 
-      if (this.toExport) {
-        const accountJson = api.exportAccount(this.accountPassword);
-        const blob = new Blob([accountJson], { type: 'application/json' });
-        this.json.href = URL.createObjectURL(blob);
-        this.json.setAttribute('download', (JSON.parse(accountJson) || {}).address || '');
-        this.json.click();
+      try {
+        api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
+        await this.getPolkadotJsAccounts();
+
+        if (this.toExport) {
+          await this.exportAccount(this.accountPassword);
+        }
+
+        this.$emit('stepChange', LoginStep.AccountList);
+      } catch {
+        this.$notify({
+          message: this.t('unknownErrorText'),
+          type: 'error',
+          title: '',
+        });
       }
-
-      this.$emit('stepChange', LoginStep.AccountList);
-    } catch {
-      this.$notify({
-        message: this.t('unknownErrorText'),
-        type: 'error',
-        title: '',
-      });
-    }
+    });
   }
 
   beforeUpdate() {
     if (this.step !== LoginStep.ConfirmSeedPhrase) {
-      this.seedPhraseToCompare = [];
+      this.seedPhraseToCompareIdx = [];
     }
   }
 }
@@ -396,20 +361,19 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     }
   }
 
-  &__random-order {
+  &__order-container {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    width: 90% !important;
+    gap: 10px 8px;
+    min-height: 74px;
+  }
+
+  &__random-order {
     margin: 0px auto calc(var(--s-size-small) / 2) auto;
   }
 
   &__correct-order {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    min-height: 160px;
-    width: 90% !important;
     margin: var(--s-size-mini) auto;
   }
 
@@ -419,13 +383,15 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
       color: #000 !important;
     }
 
-    margin: 6px 4px !important;
-
     span {
       font-weight: 400 !important;
     }
 
-    &--incorrect {
+    &.hidden {
+      visibility: hidden;
+    }
+
+    &.incorrect {
       @include shake;
     }
   }
@@ -461,14 +427,6 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     height: 1px;
     background-color: var(--s-color-base-content-tertiary);
   }
-
-  .download-json {
-    display: none;
-  }
-}
-
-.word--hidden {
-  visibility: hidden;
 }
 </style>
 

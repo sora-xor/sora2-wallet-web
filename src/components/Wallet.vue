@@ -14,13 +14,29 @@
     <wallet-account v-if="!selectedTransaction">
       <qr-code-scan-button alternative @change="parseQrCodeValue" />
 
-      <s-button type="action" alternative rounded :tooltip="t('code.receive')" @click="receiveByQrCode(null)">
-        <s-icon name="finance-receive-show-QR-24" size="28" />
+      <s-button
+        type="action"
+        size="small"
+        alternative
+        rounded
+        :tooltip="t('code.receive')"
+        @click="receiveByQrCode(null)"
+      >
+        <s-icon name="finance-receive-show-QR-24" size="24" />
       </s-button>
 
-      <s-button type="action" alternative rounded :tooltip="t('account.switch')" @click="handleSwitchAccount">
-        <s-icon name="arrows-refresh-ccw-24" size="28" />
+      <s-button
+        type="action"
+        size="small"
+        alternative
+        rounded
+        :tooltip="t('account.switch')"
+        @click="handleSwitchAccount"
+      >
+        <s-icon name="arrows-refresh-ccw-24" size="24" />
       </s-button>
+
+      <account-actions v-if="isDesktop" />
     </wallet-account>
 
     <div v-show="!selectedTransaction" class="wallet">
@@ -42,11 +58,12 @@ import OperationsMixin from './mixins/OperationsMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 
 import WalletBase from './WalletBase.vue';
-import WalletAccount from './WalletAccount.vue';
+import WalletAccount from './Account/WalletAccount.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletActivity from './WalletActivity.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import WalletTransactionDetails from './WalletTransactionDetails.vue';
+import AccountActions from './Account/Actions.vue';
 
 import { RouteNames, WalletTabs } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
@@ -59,6 +76,7 @@ import type { WalletPermissions } from '../consts';
     WalletAssets,
     WalletActivity,
     QrCodeScanButton,
+    AccountActions,
     WalletTransactionDetails,
   },
 })
@@ -67,6 +85,7 @@ export default class Wallet extends Mixins(OperationsMixin, QrCodeParserMixin) {
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;
+  @state.account.isDesktop isDesktop!: boolean;
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
   @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
 
@@ -93,11 +112,7 @@ export default class Wallet extends Mixins(OperationsMixin, QrCodeParserMixin) {
   }
 
   handleSwitchAccount(): void {
-    const navigationArgs = {
-      name: RouteNames.WalletConnection,
-      params: { isAccountSwitch: true },
-    };
-    this.navigate(navigationArgs);
+    this.navigate({ name: RouteNames.WalletConnection });
   }
 
   handleBack(): void {

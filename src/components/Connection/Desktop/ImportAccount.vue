@@ -65,6 +65,7 @@
         @click="importAccount"
         key="step2"
         :disabled="disabledImportStep"
+        :loading="loading"
         class="s-typography-button--large login-btn"
         type="primary"
       >
@@ -81,15 +82,15 @@ import { api } from '@sora-substrate/util';
 import LoadingMixin from '@/components/mixins/LoadingMixin';
 import TranslationMixin from '../../mixins/TranslationMixin';
 import { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
-import { parseJson } from '../../../util';
+import { parseJson, delay } from '../../../util';
 import { LoginStep } from '../../../consts';
-import { getter, action } from '../../../store/decorators';
+import { state, action } from '../../../store/decorators';
 
 @Component
 export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
 
-  @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   @action.account.importPolkadotJs importPolkadotJs!: (address: string) => Promise<void>;
   @action.account.getPolkadotJsAccounts getPolkadotJsAccounts!: () => Promise<void>;
@@ -233,26 +234,31 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   async handleJsonInput(json: KeyringPair$Json): Promise<void> {
-    try {
-      api.restoreFromJson(json, this.accountPassword);
-      await this.getPolkadotJsAccounts();
-      this.$emit('stepChange', LoginStep.AccountList);
-    } catch (error: any) {
-      if (error.message === 'Unable to decode using the supplied passphrase') {
-        this.$notify({
-          message: this.t('desktop.errorMessages.password'),
-          type: 'error',
-          title: '',
-        });
-      } else {
-        this.$notify({
-          message: this.t('unknownErrorText'),
-          type: 'error',
-          title: '',
-        });
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution
+      await delay(500);
+
+      try {
+        api.restoreFromJson(json, this.accountPassword);
+        await this.getPolkadotJsAccounts();
+        this.$emit('stepChange', LoginStep.AccountList);
+      } catch (error: any) {
+        if (error.message === 'Unable to decode using the supplied passphrase') {
+          this.$notify({
+            message: this.t('desktop.errorMessages.password'),
+            type: 'error',
+            title: '',
+          });
+        } else {
+          this.$notify({
+            message: this.t('unknownErrorText'),
+            type: 'error',
+            title: '',
+          });
+        }
+        this.accountPassword = '';
       }
-      this.accountPassword = '';
-    }
+    });
   }
 
   async handleCredentialsInput(): Promise<void> {
@@ -265,25 +271,30 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
       return;
     }
 
-    try {
-      api.createAccount(this.mnemonicPhrase, this.accountName, this.accountPassword);
-      await this.getPolkadotJsAccounts();
-      this.$emit('stepChange', LoginStep.AccountList);
-    } catch (error: any) {
-      if (error.message === 'Invalid bip39 mnemonic specified') {
-        this.$notify({
-          message: this.t('desktop.errorMessages.mnemonic'),
-          type: 'error',
-          title: '',
-        });
-      } else {
-        this.$notify({
-          message: this.t('unknownErrorText'),
-          type: 'error',
-          title: '',
-        });
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution
+      await delay(500);
+
+      try {
+        api.createAccount(this.mnemonicPhrase, this.accountName, this.accountPassword);
+        await this.getPolkadotJsAccounts();
+        this.$emit('stepChange', LoginStep.AccountList);
+      } catch (error: any) {
+        if (error.message === 'Invalid bip39 mnemonic specified') {
+          this.$notify({
+            message: this.t('desktop.errorMessages.mnemonic'),
+            type: 'error',
+            title: '',
+          });
+        } else {
+          this.$notify({
+            message: this.t('unknownErrorText'),
+            type: 'error',
+            title: '',
+          });
+        }
       }
-    }
+    });
   }
 }
 </script>

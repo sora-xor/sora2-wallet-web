@@ -39,10 +39,6 @@ const getters = defineGetters<AccountState>()({
 
     return wallet ? wallet.title : state.selectedExtension;
   },
-  polkadotJsAccounts(...args): Array<PolkadotJsAccount> {
-    const { state } = accountGetterContext(args);
-    return state.polkadotJsAccounts;
-  },
   accountAssetsAddressTable(...args): AccountAssetsTable {
     const { state } = accountGetterContext(args);
     return toHashTable(state.accountAssets, 'address');
@@ -78,7 +74,11 @@ const getters = defineGetters<AccountState>()({
     return (account: PolkadotJsAccount): boolean => {
       const { address, name, source } = state;
       const formatted = { ...account, address: api.formatAddress(account.address) };
-      return isEqual(formatted)({ address, name, source });
+      const accountData: PolkadotJsAccount = { address, name };
+
+      if (source) accountData.source = source as Extensions;
+
+      return isEqual(formatted)(accountData);
     };
   },
 });

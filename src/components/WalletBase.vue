@@ -53,6 +53,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 export default class WalletBase extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly title!: string;
   @Prop({ default: '', type: String }) readonly tooltip!: string;
+  @Prop({ default: false, type: Boolean }) readonly titleCenter!: boolean;
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean;
   @Prop({ default: false, type: Boolean }) readonly showClose!: boolean;
   @Prop({ default: true, type: Boolean }) readonly showHeader!: boolean;
@@ -77,7 +78,7 @@ export default class WalletBase extends Mixins(TranslationMixin) {
 
   get headerClasses(): Array<string> {
     const cssClasses: Array<string> = ['base-title', 's-flex'];
-    if (this.showBack) {
+    if (this.showBack || this.titleCenter) {
       cssClasses.push('base-title--center');
     }
     if (this.showClose) {
