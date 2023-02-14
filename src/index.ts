@@ -119,11 +119,10 @@ async function initWallet({
     ]);
 
     if (store.state.wallet.account.isDesktop) {
-      api.initAccountStorage();
       await store.dispatch.wallet.account.getPolkadotJsAccounts();
-    } else {
-      await store.dispatch.wallet.account.checkSigner();
     }
+
+    await store.dispatch.wallet.account.checkAccountConnection();
 
     store.commit.wallet.settings.setWalletLoaded(true);
   }

@@ -52,8 +52,7 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 import WalletBase from '@/components/WalletBase.vue';
-import AccountList from '@/components/Connection/Account/AccountList.vue';
-import AccountCard from '@/components/AccountCard.vue';
+import AccountList from '@/components/Connection/AccountList.vue';
 import ExtensionList from '@/components/Connection/ExtensionList.vue';
 import TranslationMixin from '@/components/mixins/TranslationMixin';
 import LoadingMixin from '@/components/mixins/LoadingMixin';
@@ -71,7 +70,7 @@ enum Step {
 }
 
 @Component({
-  components: { AccountCard, WalletBase, AccountList, ExtensionList },
+  components: { WalletBase, AccountList, ExtensionList },
 })
 export default class ExtensionConnection extends Mixins(TranslationMixin, LoadingMixin) {
   step = Step.First;

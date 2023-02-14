@@ -24,7 +24,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import WalletAvatar from '../WalletAvatar.vue';
-import AccountCard from '../AccountCard.vue';
+import AccountCard from './AccountCard.vue';
 
 import TranslationMixin from '../mixins/TranslationMixin';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';

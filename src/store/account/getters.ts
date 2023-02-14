@@ -74,7 +74,11 @@ const getters = defineGetters<AccountState>()({
     return (account: PolkadotJsAccount): boolean => {
       const { address, name, source } = state;
       const formatted = { ...account, address: api.formatAddress(account.address) };
-      return isEqual(formatted)({ address, name, source });
+      const accountData: PolkadotJsAccount = { address, name };
+
+      if (source) accountData.source = source as Extensions;
+
+      return isEqual(formatted)(accountData);
     };
   },
 });

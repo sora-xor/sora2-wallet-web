@@ -21,8 +21,8 @@ import TranslationMixin from '@/components/mixins/TranslationMixin';
 import { LoginStep } from '@/consts';
 import { PolkadotJsAccount } from '@/types/common';
 
-import AccountList from '../Account/AccountList.vue';
-import AccountCard from '../../AccountCard.vue';
+import AccountList from '../AccountList.vue';
+import AccountCard from '../../Account/AccountCard.vue';
 
 @Component({
   components: { AccountList, AccountCard },

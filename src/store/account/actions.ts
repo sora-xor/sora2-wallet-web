@@ -133,15 +133,16 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async checkSigner(context): Promise<void> {
+  async checkAccountConnection(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
     if (getters.isLoggedIn) {
       try {
-        const defaultAddress = api.formatAddress(state.address, false);
-        const { signer } = await getExtensionSigner(defaultAddress, state.source as Extensions);
+        if (!state.isDesktop) {
+          const signer = await dispatch.getSigner();
 
-        api.setSigner(signer);
+          api.setSigner(signer);
+        }
 
         await dispatch.afterLogin();
       } catch (error) {
@@ -222,8 +223,8 @@ const actions = defineActions({
   },
 
   async getPolkadotJsAccounts(context) {
-    const accounts = await getPolkadotJsAccounts();
     const { dispatch } = accountActionContext(context);
+    const accounts = await getPolkadotJsAccounts();
     await dispatch.updatePolkadotJsAccounts(accounts);
   },
 
@@ -265,22 +266,27 @@ const actions = defineActions({
     }
   },
 
-  async importPolkadotJsDesktop(context, address: string) {
-    const { state, commit, dispatch } = accountActionContext(context);
+  async importPolkadotJsDesktop(context, accountData: PolkadotJsAccount): Promise<void> {
+    const { state, commit, dispatch, getters } = accountActionContext(context);
+    const { rootDispatch } = rootActionContext(context);
 
     try {
-      const defaultAddress = api.formatAddress(address, false);
-      const account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
+      if (!getters.isConnectedAccount(accountData)) {
+        const defaultAddress = api.formatAddress(accountData.address, false);
+        const account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
 
-      if (!account) {
-        throw new Error('polkadotjs.noAccount');
+        if (!account) {
+          throw new Error('polkadotjs.noAccount');
+        }
+
+        api.importByPolkadotJs(account.address, account.name, '');
+
+        commit.selectPolkadotJsAccount({ name: account.name });
+
+        await dispatch.afterLogin();
+      } else {
+        await rootDispatch.wallet.router.checkCurrentRoute();
       }
-
-      api.importByPolkadotJs(account.address, account.name, '');
-
-      commit.selectPolkadotJsAccount({ name: account.name });
-
-      await dispatch.afterLogin();
     } catch (error) {
       throw new Error((error as Error).message);
     }

@@ -34,7 +34,7 @@
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
 
-import AccountCard from '@/components/AccountCard.vue';
+import AccountCard from '@/components/Account/AccountCard.vue';
 import ConnectionItems from '@/components/Connection/ConnectionItems.vue';
 import TranslationMixin from '@/components/mixins/TranslationMixin';
 

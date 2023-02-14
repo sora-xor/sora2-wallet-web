@@ -22,7 +22,6 @@
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
 import type { PolkadotJsAccount } from '@/types/common';
-import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 import LoadingMixin from '@/components/mixins/LoadingMixin';
 import TranslationMixin from '@/components/mixins/TranslationMixin';
@@ -44,9 +43,8 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
 
   readonly LoginStep = LoginStep;
 
-  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<Asset>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @action.account.importPolkadotJsDesktop importPolkadotJsDesktop!: (address: string) => Promise<void>;
+  @action.account.importPolkadotJsDesktop importPolkadotJsDesktop!: (account: PolkadotJsAccount) => Promise<void>;
 
   get isCreateFlow(): boolean {
     return [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials].includes(this.step);
@@ -100,7 +98,7 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
     await this.withLoading(async () => {
       try {
-        await this.importPolkadotJsDesktop(account.address);
+        await this.importPolkadotJsDesktop(account);
       } catch (error) {
         this.$alert(this.t('enterAccountError'), this.t('errorText'));
       }
