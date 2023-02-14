@@ -5,7 +5,9 @@ import { ModuleNames, ModuleMethods } from '../types';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-export const HistoryElementsQuery = gql`
+import type { HistoryElement, EntitiesQueryResponse } from '../types';
+
+export const HistoryElementsQuery = gql<EntitiesQueryResponse<HistoryElement>>`
   query HistoryElements(
     $first: Int = null
     $last: Int = null
@@ -16,7 +18,7 @@ export const HistoryElementsQuery = gql`
     $filter: HistoryElementFilter
     $idsOnly: Boolean! = false
   ) {
-    historyElements(
+    entities: historyElements(
       first: $first
       last: $last
       offset: $offset
@@ -25,20 +27,17 @@ export const HistoryElementsQuery = gql`
       orderBy: $orderBy
       filter: $filter
     ) {
-      edges {
-        cursor @skip(if: $idsOnly)
-        node {
-          id
-          timestamp
-          blockHash @skip(if: $idsOnly)
-          blockHeight @skip(if: $idsOnly)
-          module @skip(if: $idsOnly)
-          method @skip(if: $idsOnly)
-          address @skip(if: $idsOnly)
-          networkFee @skip(if: $idsOnly)
-          execution @skip(if: $idsOnly)
-          data @skip(if: $idsOnly)
-        }
+      nodes {
+        id
+        timestamp
+        blockHash @skip(if: $idsOnly)
+        blockHeight @skip(if: $idsOnly)
+        module @skip(if: $idsOnly)
+        method @skip(if: $idsOnly)
+        address @skip(if: $idsOnly)
+        networkFee @skip(if: $idsOnly)
+        execution @skip(if: $idsOnly)
+        data @skip(if: $idsOnly)
       }
       pageInfo @skip(if: $idsOnly) {
         ...PageInfoFragment

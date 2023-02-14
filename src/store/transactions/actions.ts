@@ -94,13 +94,12 @@ const actions = defineActions({
 
       if (!response) return;
 
-      const { edges, pageInfo, totalCount } = response;
+      const { nodes, pageInfo, totalCount } = response;
       const buffer = {};
       const removeHistoryIds: Array<string> = [];
 
-      if (edges.length) {
-        for (const edge of edges) {
-          const transaction = edge.node;
+      if (nodes.length) {
+        for (const transaction of nodes) {
           const { id } = transaction;
 
           if (!(id in externalHistory)) {

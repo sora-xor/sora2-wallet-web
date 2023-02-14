@@ -10,7 +10,6 @@ import store from '../../store';
 import { api } from '../../api';
 import { ModuleNames, ModuleMethods } from './types';
 import type {
-  ExplorerDataParser,
   HistoryElement,
   HistoryElementError,
   HistoryElementSwap,
@@ -190,7 +189,7 @@ const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]
   return formatted;
 };
 
-export default class SubqueryDataParser implements ExplorerDataParser {
+export default class SubqueryDataParser {
   // Operations visible in wallet
   public static SUPPORTED_OPERATIONS = [
     Operation.Transfer,
