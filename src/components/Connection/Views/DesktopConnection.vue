@@ -21,19 +21,19 @@
 
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
-import type { PolkadotJsAccount } from '@/types/common';
+import type { PolkadotJsAccount } from '../../../types/common';
 
-import LoadingMixin from '@/components/mixins/LoadingMixin';
-import TranslationMixin from '@/components/mixins/TranslationMixin';
-import WalletBase from '@/components/WalletBase.vue';
-import WelcomePage from '@/components/Connection/Desktop/WelcomePage.vue';
-import CreateAccount from '@/components/Connection/Desktop/CreateAccount.vue';
-import ConnectedAccountList from '@/components/Connection/Desktop/ConnectedAccountList.vue';
-import ImportAccount from '@/components/Connection/Desktop/ImportAccount.vue';
+import LoadingMixin from '../../mixins/LoadingMixin';
+import TranslationMixin from '../../mixins/TranslationMixin';
+import WalletBase from '../../WalletBase.vue';
+import WelcomePage from '../Desktop/WelcomePage.vue';
+import CreateAccount from '../Desktop/CreateAccount.vue';
+import ConnectedAccountList from '../Desktop/ConnectedAccountList.vue';
+import ImportAccount from '../Desktop/ImportAccount.vue';
 
-import { LoginStep } from '@/consts';
-import { getPreviousLoginStep } from '@/util';
-import { state, action } from '@/store/decorators';
+import { LoginStep } from '../../../consts';
+import { getPreviousLoginStep } from '../../../util';
+import { state, action } from '../../../store/decorators';
 
 @Component({
   components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList },

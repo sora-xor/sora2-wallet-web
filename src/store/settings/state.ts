@@ -1,7 +1,7 @@
-import { WalletAssetFilters, WalletFilteringOptions } from '@/consts';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 
 import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
+import { WalletAssetFilters, WalletFilteringOptions } from '../../consts';
 import { ConnectionStatus } from '../../types/common';
 import type { SettingsState } from './types';
 

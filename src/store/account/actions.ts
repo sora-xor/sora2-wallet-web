@@ -26,8 +26,7 @@ import {
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
 
 import type { PolkadotJsAccount } from '../../types/common';
-import type { FiatPriceObject } from '@/services/subquery/types';
-import { ColumnAlignment } from '@soramitsu/soramitsu-js-ui/lib/components/Table';
+import type { FiatPriceObject } from '../../services/subquery/types';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
