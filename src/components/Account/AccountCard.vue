@@ -1,6 +1,6 @@
 <template>
-  <s-card v-bind="{ shadow: 'always', size: 'small', borderRadius: 'medium', ...$attrs }" class="wallet-account">
-    <div class="account s-flex">
+  <s-card v-bind="{ shadow: 'always', size: 'small', borderRadius: 'medium', ...$attrs }" class="account-card">
+    <div class="account">
       <div class="account-avatar">
         <slot name="avatar" />
       </div>
@@ -27,7 +27,27 @@ export default class AccountCard extends Vue {}
 </script>
 
 <style lang="scss">
+.account-card {
+  display: flex;
+  align-items: center;
+
+  & > .el-card__body {
+    flex: 1;
+  }
+
+  &.s-card.neumorphic {
+    border-width: 1px;
+    border-style: solid;
+    border-color: transparent;
+  }
+}
+
 .account {
+  &-avatar {
+    & > img {
+      max-width: 100%;
+    }
+  }
   &-details {
     .el-button + .el-button {
       margin-left: 0;
@@ -40,15 +60,13 @@ export default class AccountCard extends Vue {}
 $avatar-margin-right: #{$basic-spacing-small};
 $avatar-size: 32px;
 
-.wallet-account.s-card {
-  border: 1px solid transparent;
-}
-
 .account {
+  display: flex;
   align-items: center;
 
   &-avatar {
     display: flex;
+    align-items: center;
     flex-shrink: 0;
     margin-right: $avatar-margin-right;
     width: $avatar-size;
@@ -60,7 +78,6 @@ $avatar-size: 32px;
   &-details {
     flex: 1;
     align-items: center;
-    width: calc(100% - #{$avatar-size} - #{$avatar-margin-right});
   }
 
   &-credentials {

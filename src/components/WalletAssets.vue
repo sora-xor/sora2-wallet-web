@@ -35,7 +35,7 @@
                   :tooltip="t('assets.send')"
                   @click="handleAssetSend(asset)"
                 >
-                  <s-icon name="finance-send-24" size="28" />
+                  <s-icon name="finance-send-24" size="24" />
                 </s-button>
                 <s-button
                   v-if="permissions.swapAssets && asset.decimals"
@@ -46,7 +46,7 @@
                   :tooltip="t('assets.swap')"
                   @click="handleAssetSwap(asset)"
                 >
-                  <s-icon name="arrows-swap-24" size="28" />
+                  <s-icon name="arrows-swap-24" size="24" />
                 </s-button>
                 <s-button
                   v-if="permissions.showAssetDetails"
@@ -57,7 +57,7 @@
                   :tooltip="t('assets.details')"
                   @click="handleOpenAssetDetails(asset)"
                 >
-                  <s-icon name="arrows-chevron-right-rounded-24" size="28" />
+                  <s-icon name="arrows-chevron-right-rounded-24" size="24" />
                 </s-button>
               </template>
             </asset-list-item>
@@ -73,7 +73,7 @@
       class="wallet-assets-add s-typography-button--large"
       @click="handleOpenAddAsset"
     >
-      {{ t('assets.add') }}
+      {{ t('addAssetText') }}
     </s-button>
   </div>
 </template>

@@ -20,7 +20,7 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`
       iconposition="left"
       nativetype="button"
       rounded="true"
-      size="medium"
+      size="small"
       tabindex="0"
       tooltip="Receive"
       tooltipplacement="top"
@@ -29,7 +29,7 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`
     >
       <s-icon-stub
         name="finance-receive-show-QR-24"
-        size="28"
+        size="24"
       />
     </s-button-stub>
      
@@ -40,7 +40,7 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`
       iconposition="left"
       nativetype="button"
       rounded="true"
-      size="medium"
+      size="small"
       tabindex="0"
       tooltip="Switch account"
       tooltipplacement="top"
@@ -49,9 +49,11 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`
     >
       <s-icon-stub
         name="arrows-refresh-ccw-24"
-        size="28"
+        size="24"
       />
     </s-button-stub>
+     
+    <!---->
   </wallet-account-stub>
    
   <div
@@ -101,7 +103,7 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
       iconposition="left"
       nativetype="button"
       rounded="true"
-      size="medium"
+      size="small"
       tabindex="0"
       tooltip="Receive"
       tooltipplacement="top"
@@ -110,7 +112,7 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
     >
       <s-icon-stub
         name="finance-receive-show-QR-24"
-        size="28"
+        size="24"
       />
     </s-button-stub>
      
@@ -121,7 +123,7 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
       iconposition="left"
       nativetype="button"
       rounded="true"
-      size="medium"
+      size="small"
       tabindex="0"
       tooltip="Switch account"
       tooltipplacement="top"
@@ -130,9 +132,11 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
     >
       <s-icon-stub
         name="arrows-refresh-ccw-24"
-        size="28"
+        size="24"
       />
     </s-button-stub>
+     
+    <!---->
   </wallet-account-stub>
    
   <div

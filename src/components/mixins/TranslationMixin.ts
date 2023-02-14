@@ -9,6 +9,11 @@ dayjs.extend(localizedFormat);
 
 @Component
 export default class TranslationMixin extends Vue {
+  /**
+   * Contains wallet-specific words which shouldn't be translated.
+   *
+   * Will be extended in Polkaswap
+   */
   readonly TranslationConsts = TranslationConsts;
 
   t(key: string, values?: any): string {

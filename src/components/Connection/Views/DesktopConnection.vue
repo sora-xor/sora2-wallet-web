@@ -21,34 +21,30 @@
 
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
-import { PolkadotJsAccount } from '@/types/common';
-import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { PolkadotJsAccount } from '@/types/common';
 
-import LoadingMixin from '../mixins/LoadingMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
-import WalletBase from '../WalletBase.vue';
-import WelcomePage from './Desktop/WelcomePage.vue';
-import CreateAccount from './Desktop/CreateAccount.vue';
-import ConnectedAccountList from './Desktop/ConnectedAccountList.vue';
-import ImportAccount from './Desktop/ImportAccount.vue';
-import ConfirmDialog from '../ConfirmDialog.vue';
-import { LoginStep } from '../../consts';
-import { getPreviousLoginStep } from '../../util';
-import { state, getter, action } from '../../store/decorators';
+import LoadingMixin from '@/components/mixins/LoadingMixin';
+import TranslationMixin from '@/components/mixins/TranslationMixin';
+import WalletBase from '@/components/WalletBase.vue';
+import WelcomePage from '@/components/Connection/Desktop/WelcomePage.vue';
+import CreateAccount from '@/components/Connection/Desktop/CreateAccount.vue';
+import ConnectedAccountList from '@/components/Connection/Desktop/ConnectedAccountList.vue';
+import ImportAccount from '@/components/Connection/Desktop/ImportAccount.vue';
+
+import { LoginStep } from '@/consts';
+import { getPreviousLoginStep } from '@/util';
+import { state, action } from '@/store/decorators';
 
 @Component({
-  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList, ConfirmDialog },
+  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList },
 })
 export default class DesktopConnection extends Mixins(TranslationMixin, LoadingMixin) {
   step: LoginStep = LoginStep.Welcome;
 
   readonly LoginStep = LoginStep;
 
-  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<Asset>>;
-  @getter.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @action.account.importPolkadotJsDesktop importPolkadotJsDesktop!: (address: string) => Promise<void>;
-
-  showWelcomePage = true;
+  @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @action.account.importPolkadotJsDesktop importPolkadotJsDesktop!: (account: PolkadotJsAccount) => Promise<void>;
 
   get isCreateFlow(): boolean {
     return [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials].includes(this.step);
@@ -78,10 +74,6 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
     return false;
   }
 
-  get isAccountSwitch(): boolean {
-    return !!this.currentRouteParams.isAccountSwitch;
-  }
-
   createAccount(): void {
     this.step = LoginStep.SeedPhrase;
   }
@@ -106,7 +98,7 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
     await this.withLoading(async () => {
       try {
-        await this.importPolkadotJsDesktop(account.address);
+        await this.importPolkadotJsDesktop(account);
       } catch (error) {
         this.$alert(this.t('enterAccountError'), this.t('errorText'));
       }
@@ -114,13 +106,8 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
   }
 
   async mounted(): Promise<void> {
-    if (this.polkadotJsAccounts.length) {
-      this.step = LoginStep.AccountList;
-    } else {
-      this.step = LoginStep.Welcome;
-    }
     await this.withApi(async () => {
-      if (this.isAccountSwitch || this.polkadotJsAccounts.length) {
+      if (this.polkadotJsAccounts.length) {
         this.navigateToAccountList();
       }
     });

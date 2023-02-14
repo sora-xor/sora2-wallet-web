@@ -23,14 +23,15 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import WalletAvatar from './WalletAvatar.vue';
+import WalletAvatar from '../WalletAvatar.vue';
 import AccountCard from './AccountCard.vue';
 
-import TranslationMixin from './mixins/TranslationMixin';
-import CopyAddressMixin from './mixins/CopyAddressMixin';
-import { formatAddress, formatSoraAddress } from '../util';
-import { getter } from '../store/decorators';
-import type { PolkadotJsAccount } from '../types/common';
+import TranslationMixin from '../mixins/TranslationMixin';
+import CopyAddressMixin from '../mixins/CopyAddressMixin';
+import { formatAddress, formatSoraAddress } from '../../util';
+import { getter } from '../../store/decorators';
+import { ObjectInit } from '../../consts';
+import type { PolkadotJsAccount } from '../../types/common';
 
 const ADDRESS_LENGTH = 24;
 
@@ -43,7 +44,7 @@ const ADDRESS_LENGTH = 24;
 export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressMixin) {
   @getter.account.account private account!: PolkadotJsAccount;
 
-  @Prop({ default: () => null, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
+  @Prop({ default: ObjectInit, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
 
   get address(): string {
     if (this.polkadotAccount) {

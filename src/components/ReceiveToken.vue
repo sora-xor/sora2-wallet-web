@@ -8,7 +8,7 @@
 
     <div class="receive-token">
       <qr-code ref="qrcode" :value="code" />
-      <wallet-account primary shadow="never" class="account-card" />
+      <wallet-account primary shadow="never" />
     </div>
   </wallet-base>
 </template>
@@ -20,7 +20,7 @@ import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 import TranslationMixin from './mixins/TranslationMixin';
 
 import WalletBase from './WalletBase.vue';
-import WalletAccount from './WalletAccount.vue';
+import WalletAccount from './Account/WalletAccount.vue';
 import QrCode from './QrCode/QrCode.vue';
 
 import { api } from '../api';

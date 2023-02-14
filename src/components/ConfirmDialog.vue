@@ -40,7 +40,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
 import DialogBase from './DialogBase.vue';
-import WalletAccount from './WalletAccount.vue';
+import WalletAccount from './Account/WalletAccount.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -149,18 +149,16 @@ export default class ConfirmDialog extends Mixins(TranslationMixin, LoadingMixin
 
 <style lang="scss" scoped>
 .confirm-dialog {
-  &__password {
-    margin-top: calc(var(--s-size-small) / 2);
+  & > * {
+    margin-bottom: $basic-spacing-medium;
   }
 
   &__save-password {
-    margin-top: calc(var(--s-size-small) / 2);
     @include switch-block;
     padding: 0 #{$basic-spacing-small};
   }
 
   &__button {
-    margin: calc(var(--s-size-small) / 2) 0;
     width: 100%;
   }
 
