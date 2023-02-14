@@ -55,7 +55,7 @@ import WalletBase from '../../WalletBase.vue';
 import AccountList from '../AccountList.vue';
 import ExtensionList from '../ExtensionList.vue';
 import TranslationMixin from '../../mixins/TranslationMixin';
-import LoadingMixin from '../../LoadingMixin';
+import LoadingMixin from '../../mixins/LoadingMixin';
 import { state, action, getter, mutation } from '../../../store/decorators';
 import { AppError } from '../../../util';
 import { RouteNames } from '../../../consts';
