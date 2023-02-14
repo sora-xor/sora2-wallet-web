@@ -1,11 +1,11 @@
 import { Extensions } from '../../consts';
 
 import type { Wallet } from '@subwallet/wallet-connect/types';
-import type { ReferrerRewards, FiatPriceObject } from '@/services/subquery/types';
 import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from 'rxjs';
 
 import type { PolkadotJsAccount, AddressKeyMapping } from '../../types/common';
+import type { ReferrerRewards, FiatPriceObject } from '../../services/subquery/types';
 
 export type AccountState = {
   address: string;

@@ -20,13 +20,13 @@
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
 
-import WalletAccount from '@/components/Account/WalletAccount.vue';
-import ConnectionItems from '@/components/Connection/ConnectionItems.vue';
-import TranslationMixin from '@/components/mixins/TranslationMixin';
+import WalletAccount from '../Account/WalletAccount.vue';
+import ConnectionItems from './ConnectionItems.vue';
+import TranslationMixin from '../mixins/TranslationMixin';
 
-import { state, getter } from '@/store/decorators';
+import { state, getter } from '../../store/decorators';
 
-import type { PolkadotJsAccount } from '@/types/common';
+import type { PolkadotJsAccount } from '../../types/common';
 
 @Component({
   components: {

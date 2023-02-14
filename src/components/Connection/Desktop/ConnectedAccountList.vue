@@ -17,9 +17,9 @@
 
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
-import TranslationMixin from '@/components/mixins/TranslationMixin';
-import { LoginStep } from '@/consts';
-import { PolkadotJsAccount } from '@/types/common';
+import TranslationMixin from '../../mixins/TranslationMixin';
+import { LoginStep } from '../../../consts';
+import { PolkadotJsAccount } from '../../../types/common';
 
 import AccountList from '../AccountList.vue';
 import AccountCard from '../../Account/AccountCard.vue';

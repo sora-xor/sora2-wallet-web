@@ -79,7 +79,7 @@
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import { api } from '@sora-substrate/util';
-import LoadingMixin from '@/components/mixins/LoadingMixin';
+import LoadingMixin from '../../mixins/LoadingMixin';
 import TranslationMixin from '../../mixins/TranslationMixin';
 import { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
 import { parseJson, delay } from '../../../util';
