@@ -1,46 +1,17 @@
 <template>
-  <dialog-base :title="t('desktop.dialog.confirmTitle')" :visible.sync="visibility">
-    <div class="confirm-dialog">
-      <wallet-account class="confirm-dialog__account" />
-      <s-input
-        :type="inputType"
-        :placeholder="t('desktop.password.placeholder')"
-        v-model="password"
-        :disabled="isInputDisabled"
-        class="confirm-dialog__password"
-      >
-        <s-icon
-          v-if="!passphrase"
-          :name="iconPasswordStyle"
-          class="eye-icon"
-          size="18"
-          slot="suffix"
-          @click.native="togglePasswordVisibility"
-        />
-      </s-input>
-      <div class="confirm-dialog__save-password">
-        <s-switch v-model="savePassword" />
-        <span v-if="!passphrase">{{ t('desktop.dialog.savePasswordText') }}</span>
-        <span v-else>{{ t('desktop.dialog.extendPasswordText') }}</span>
-      </div>
-      <s-button
-        type="primary"
-        class="confirm-dialog__button"
-        :disabled="disabled"
-        :loading="loading"
-        @click="handleConfirm"
-      >
-        {{ t('desktop.dialog.confirmButton') }}
-      </s-button>
-    </div>
-  </dialog-base>
+  <account-confirm-dialog
+    :visible.sync="visibility"
+    :loading="loading"
+    :passphrase="passphrase"
+    :confirm-button-text="t('desktop.dialog.confirmButton')"
+    @confirm="handleConfirm"
+  />
 </template>
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
-import DialogBase from './DialogBase.vue';
-import WalletAccount from './Account/WalletAccount.vue';
+import AccountConfirmDialog from './Account/ConfirmDialog.vue';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -50,8 +21,7 @@ import { api } from '../api';
 
 @Component({
   components: {
-    DialogBase,
-    WalletAccount,
+    AccountConfirmDialog,
   },
 })
 export default class ConfirmDialog extends Mixins(TranslationMixin, LoadingMixin) {
@@ -71,34 +41,10 @@ export default class ConfirmDialog extends Mixins(TranslationMixin, LoadingMixin
     this.setConfirmTxDialogVisibility(flag);
   }
 
-  password = '';
-
-  savePassword = true;
-  hiddenInput = true;
-
-  get iconPasswordStyle(): string {
-    return this.hiddenInput ? 'basic-eye-no-24' : 'basic-filterlist-24';
-  }
-
-  get inputType(): string {
-    return this.hiddenInput ? 'password' : 'text';
-  }
-
-  get disabled(): boolean {
-    return this.loading || !this.password;
-  }
-
-  get isInputDisabled(): boolean {
-    return this.loading || !!this.passphrase;
-  }
-
-  togglePasswordVisibility(): void {
-    this.hiddenInput = !this.hiddenInput;
-  }
-
-  private confirm(): void {
+  private confirm({ password, save }: { password: string; save: boolean }): void {
     try {
-      api.unlockPair(this.password);
+      console.log(password);
+      api.unlockPair(password);
     } catch (error: any) {
       if (error.message === 'Unable to decode using the supplied passphrase') {
         this.$notify({
@@ -118,26 +64,21 @@ export default class ConfirmDialog extends Mixins(TranslationMixin, LoadingMixin
       return;
     }
 
-    if (this.savePassword) {
-      this.setAccountPassphrase(this.passphrase || this.password);
+    if (save) {
+      this.setAccountPassphrase(password);
     }
 
     this.approveTxViaConfirmTxDialog();
     this.setConfirmTxDialogVisibility(false);
   }
 
-  handleConfirm(): void {
-    this.withLoading(this.confirm);
+  handleConfirm(data: { password: string; save: boolean }): void {
+    this.withLoading(() => this.confirm(data));
   }
 
   private setupFormState(): void {
     if (this.visibility) {
       this.resetTxApprovedViaConfirmTxDialog();
-    }
-    if (this.passphrase) {
-      this.password = this.passphrase;
-    } else if (this.visibility === false) {
-      this.password = '';
     }
   }
 
@@ -146,27 +87,3 @@ export default class ConfirmDialog extends Mixins(TranslationMixin, LoadingMixin
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.confirm-dialog {
-  & > * {
-    margin-bottom: $basic-spacing-medium;
-  }
-
-  &__save-password {
-    @include switch-block;
-    padding: 0 #{$basic-spacing-small};
-  }
-
-  &__button {
-    width: 100%;
-  }
-
-  .eye-icon {
-    color: var(--s-color-base-content-tertiary);
-    &:hover {
-      cursor: pointer;
-    }
-  }
-}
-</style>
