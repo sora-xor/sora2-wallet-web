@@ -16,6 +16,7 @@
 
     <account-rename-dialog :visible.sync="accountRenameVisibility" :loading="loading" @confirm="handleAccountRename" />
     <account-export-dialog :visible.sync="accountExportVisibility" :loading="loading" @confirm="handleAccountExport" />
+    <account-delete-dialog :visible.sync="accountDeleteVisibility" />
   </div>
 </template>
 
@@ -27,6 +28,7 @@ import NotificationMixin from '../mixins/NotificationMixin';
 
 import AccountRenameDialog from './RenameDialog.vue';
 import AccountExportDialog from './ConfirmDialog.vue';
+import AccountDeleteDialog from './DeleteDialog.vue';
 
 import { action } from '../../store/decorators';
 
@@ -43,6 +45,7 @@ enum AccountActionTypes {
   components: {
     AccountRenameDialog,
     AccountExportDialog,
+    AccountDeleteDialog,
   },
 })
 export default class AccountActions extends Mixins(NotificationMixin, LoadingMixin) {
@@ -52,6 +55,7 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
 
   accountRenameVisibility = false;
   accountExportVisibility = false;
+  accountDeleteVisibility = false;
 
   get items() {
     return [
@@ -70,11 +74,11 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
         name: 'Log out',
         icon: 'security-logout-24',
       },
-      // {
-      //   value: AccountActionTypes.Delete,
-      //   name: 'Delete Account',
-      //   icon: 'paperclip-16',
-      // },
+      {
+        value: AccountActionTypes.Delete,
+        name: 'Delete Account',
+        icon: 'paperclip-16',
+      },
     ];
   }
 
@@ -90,6 +94,10 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
       }
       case AccountActionTypes.Logout: {
         this.logout();
+        break;
+      }
+      case AccountActionTypes.Delete: {
+        this.accountDeleteVisibility = true;
         break;
       }
     }
