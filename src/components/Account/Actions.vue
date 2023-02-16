@@ -14,7 +14,8 @@
       </template>
     </s-dropdown>
 
-    <account-rename-dialog :visible.sync="accountRenameVisibility" :laoding="loading" @confirm="handleAccountRename" />
+    <account-rename-dialog :visible.sync="accountRenameVisibility" :loading="loading" @confirm="handleAccountRename" />
+    <account-export-dialog :visible.sync="accountExportVisibility" :loading="loading" @confirm="handleAccountExport" />
   </div>
 </template>
 
@@ -24,8 +25,11 @@ import { Component, Mixins } from 'vue-property-decorator';
 import LoadingMixin from '../mixins/LoadingMixin';
 
 import AccountRenameDialog from './RenameDialog.vue';
+import AccountExportDialog from './ConfirmDialog.vue';
 
 import { action } from '../../store/decorators';
+
+import { delay } from '../../util';
 
 enum AccountActionTypes {
   Rename = 'rename',
@@ -37,13 +41,16 @@ enum AccountActionTypes {
 @Component({
   components: {
     AccountRenameDialog,
+    AccountExportDialog,
   },
 })
 export default class AccountActions extends Mixins(LoadingMixin) {
-  @action.account.renameAccount renameAccount!: (name: string) => Promise<void>;
+  @action.account.renameAccount private renameAccount!: (name: string) => Promise<void>;
+  @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
   @action.account.logout private logout!: AsyncFnWithoutArgs;
 
   accountRenameVisibility = false;
+  accountExportVisibility = false;
 
   get items() {
     return [
@@ -52,11 +59,11 @@ export default class AccountActions extends Mixins(LoadingMixin) {
         name: 'Rename Account',
         icon: 'basic-options-24',
       },
-      // {
-      //   value: AccountActionTypes.Export,
-      //   name: 'Export .json',
-      //   icon: 'basic-pulse-24',
-      // },
+      {
+        value: AccountActionTypes.Export,
+        name: 'Export .json',
+        icon: 'basic-pulse-24',
+      },
       {
         value: AccountActionTypes.Logout,
         name: 'Log out',
@@ -76,8 +83,13 @@ export default class AccountActions extends Mixins(LoadingMixin) {
         this.accountRenameVisibility = true;
         break;
       }
+      case AccountActionTypes.Export: {
+        this.accountExportVisibility = true;
+        break;
+      }
       case AccountActionTypes.Logout: {
         this.logout();
+        break;
       }
     }
   }
@@ -86,6 +98,15 @@ export default class AccountActions extends Mixins(LoadingMixin) {
     await this.withLoading(async () => {
       await this.renameAccount(name);
       this.accountRenameVisibility = false;
+    });
+  }
+
+  async handleAccountExport({ password }: { password: string }) {
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution
+      await delay(500);
+      await this.exportAccount(password);
+      this.accountExportVisibility = false;
     });
   }
 }

@@ -17,7 +17,7 @@
 import { Component, Mixins, Ref } from 'vue-property-decorator';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
-import TranslationMixin from './mixins/TranslationMixin';
+import NotificationMixin from './mixins/NotificationMixin';
 
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './Account/WalletAccount.vue';
@@ -37,7 +37,7 @@ import type { Route } from '../store/router/types';
     QrCode,
   },
 })
-export default class ReceiveToken extends Mixins(TranslationMixin) {
+export default class ReceiveToken extends Mixins(NotificationMixin) {
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset>;
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
@@ -64,19 +64,13 @@ export default class ReceiveToken extends Mixins(TranslationMixin) {
     return `substrate:${accountAddress}:0x${publicKey}:${accountName}:${assetAddress}`;
   }
 
-  async downloadCode(): Promise<void> {
-    try {
+  downloadCode(): void {
+    this.withAppNotification(async () => {
       const codeSvg = (this.qrcode as any).element as SVGSVGElement;
       const filename = `${this.asset.symbol}_${this.account.address}`;
 
       await svgSaveAs(codeSvg, filename, IMAGE_EXTENSIONS.JPEG);
-    } catch (error) {
-      this.$notify({
-        message: `${this.t('warningText')} ${error}`,
-        type: 'warning',
-        title: '',
-      });
-    }
+    });
   }
 
   handleBack(): void {

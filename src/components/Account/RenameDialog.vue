@@ -16,7 +16,7 @@
         :loading="loading"
         @click="handleConfirm"
       >
-        {{ t('desktop.dialog.confirmButton') }}
+        {{ t('confirmText') }}
       </s-button>
     </div>
   </dialog-base>

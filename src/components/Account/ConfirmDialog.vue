@@ -17,7 +17,7 @@
           @click.native="togglePasswordVisibility"
         />
       </s-input>
-      <div class="confirm-dialog__save-password">
+      <div v-if="savePassphrase" class="confirm-dialog__save-password">
         <s-switch v-model="savePassword" />
         <span v-if="!passphrase">{{ t('desktop.dialog.savePasswordText') }}</span>
         <span v-else>{{ t('desktop.dialog.extendPasswordText') }}</span>
@@ -52,6 +52,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
 })
 export default class AccountConfirmDialog extends Mixins(DialogMixin, TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly savePassphrase!: boolean;
   @Prop({ default: '', type: String }) readonly passphrase!: string;
   @Prop({ default: '', type: String }) readonly confirmButtonText!: string;
 
@@ -102,7 +103,7 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
   handleConfirm(): void {
     this.$emit('confirm', {
       password: this.password,
-      save: this.savePassword,
+      save: this.savePassphrase && this.savePassword,
     });
   }
 }

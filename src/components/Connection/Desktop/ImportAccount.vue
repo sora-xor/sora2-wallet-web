@@ -80,20 +80,27 @@ import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import { api } from '@sora-substrate/util';
 import LoadingMixin from '../../mixins/LoadingMixin';
-import TranslationMixin from '../../mixins/TranslationMixin';
+import NotificationMixin from '../../mixins/NotificationMixin';
 import { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
-import { parseJson, delay } from '../../../util';
+import { AppError, parseJson, delay } from '../../../util';
 import { LoginStep } from '../../../consts';
 import { state, action } from '../../../store/decorators';
 
 @Component
-export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin) {
+export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
 
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   @action.account.importPolkadotJs importPolkadotJs!: (address: string) => Promise<void>;
   @action.account.getPolkadotJsAccounts getPolkadotJsAccounts!: () => Promise<void>;
+
+  @action.account.createAccount private createAccount!: (data: {
+    seed: string;
+    name: string;
+    password: string;
+    passwordConfirm: string;
+  }) => Promise<void>;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
@@ -158,27 +165,21 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   nextStep(): void {
-    if (this.mnemonicPhrase.trim().split(' ').length !== this.PHRASE_LENGTH) {
-      this.$notify({
-        message: this.t('desktop.errorMessages.mnemonicLength', { number: this.PHRASE_LENGTH }),
-        type: 'error',
-        title: '',
-      });
-      this.mnemonicPhrase = '';
-      return;
-    }
+    this.withAppNotification(async () => {
+      try {
+        if (this.mnemonicPhrase.trim().split(' ').length !== this.PHRASE_LENGTH) {
+          throw new AppError({ key: 'desktop.errorMessages.mnemonicLength', payload: { number: this.PHRASE_LENGTH } });
+        }
+        if (!mnemonicValidate(this.mnemonicPhrase)) {
+          throw new AppError({ key: 'desktop.errorMessages.mnemonic' });
+        }
 
-    if (!mnemonicValidate(this.mnemonicPhrase)) {
-      this.$notify({
-        message: this.t('desktop.errorMessages.mnemonic'),
-        type: 'error',
-        title: '',
-      });
-      this.mnemonicPhrase = '';
-      return;
-    }
-
-    this.$emit('stepChange', LoginStep.ImportCredentials);
+        this.$emit('stepChange', LoginStep.ImportCredentials);
+      } catch (error) {
+        this.mnemonicPhrase = '';
+        throw error;
+      }
+    });
   }
 
   importJson(): void {
@@ -186,43 +187,27 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   async handleUploadJson(e): Promise<void> {
-    try {
+    this.withAppNotification(async () => {
       const jsonFile = e.target.files[0];
+
       if (!jsonFile) {
         return;
       }
 
       const parsedJson = await parseJson(jsonFile);
+      const name = parsedJson.meta.name as string;
+      const { address, encoded, encoding } = parsedJson;
 
-      try {
-        const { address, encoded, encoding } = parsedJson;
-        const name = parsedJson.meta.name as string;
-
-        if (!address && !encoded && !encoding && !name) {
-          throw new Error('JSON file does not contain required fields.');
-        }
-
-        this.accountName = name;
-        this.readonlyAccountName = true;
-        this.json = parsedJson;
-        this.mnemonicPhrase = '';
-        this.$emit('stepChange', LoginStep.ImportCredentials);
-      } catch {
-        this.$notify({
-          message: this.t('desktop.errorMessages.jsonFields'),
-          type: 'error',
-          title: '',
-        });
-
-        return;
+      if (!address && !encoded && !encoding && !name) {
+        throw new AppError({ key: 'desktop.errorMessages.jsonFields' });
       }
-    } catch (err) {
-      this.$notify({
-        message: this.t('unknownErrorText'),
-        type: 'error',
-        title: '',
-      });
-    }
+
+      this.accountName = name;
+      this.readonlyAccountName = true;
+      this.json = parsedJson;
+      this.mnemonicPhrase = '';
+      this.$emit('stepChange', LoginStep.ImportCredentials);
+    });
   }
 
   async importAccount(): Promise<void> {
@@ -238,62 +223,34 @@ export default class ImportAccount extends Mixins(TranslationMixin, LoadingMixin
       // hack: to render loading state before sync code execution
       await delay(500);
 
-      try {
-        api.restoreFromJson(json, this.accountPassword);
-        await this.getPolkadotJsAccounts();
-        this.$emit('stepChange', LoginStep.AccountList);
-      } catch (error: any) {
-        if (error.message === 'Unable to decode using the supplied passphrase') {
-          this.$notify({
-            message: this.t('desktop.errorMessages.password'),
-            type: 'error',
-            title: '',
-          });
-        } else {
-          this.$notify({
-            message: this.t('unknownErrorText'),
-            type: 'error',
-            title: '',
-          });
+      await this.withAppNotification(async () => {
+        try {
+          api.restoreFromJson(json, this.accountPassword);
+          await this.getPolkadotJsAccounts();
+          this.$emit('stepChange', LoginStep.AccountList);
+        } catch (error) {
+          this.accountPassword = '';
+          throw error;
         }
-        this.accountPassword = '';
-      }
+      });
     });
   }
 
   async handleCredentialsInput(): Promise<void> {
-    if (this.accountPassword !== this.accountPasswordConfirm) {
-      this.$notify({
-        message: this.t('desktop.errorMessages.passwords'),
-        type: 'error',
-        title: '',
-      });
-      return;
-    }
-
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution
       await delay(500);
 
-      try {
-        api.createAccount(this.mnemonicPhrase, this.accountName, this.accountPassword);
-        await this.getPolkadotJsAccounts();
+      await this.withAppNotification(async () => {
+        await this.createAccount({
+          seed: this.mnemonicPhrase,
+          name: this.accountName,
+          password: this.accountPassword,
+          passwordConfirm: this.accountPasswordConfirm,
+        });
+
         this.$emit('stepChange', LoginStep.AccountList);
-      } catch (error: any) {
-        if (error.message === 'Invalid bip39 mnemonic specified') {
-          this.$notify({
-            message: this.t('desktop.errorMessages.mnemonic'),
-            type: 'error',
-            title: '',
-          });
-        } else {
-          this.$notify({
-            message: this.t('unknownErrorText'),
-            type: 'error',
-            title: '',
-          });
-        }
-      }
+      });
     });
   }
 }

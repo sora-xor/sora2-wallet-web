@@ -63,23 +63,15 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
       return;
     }
 
-    const message = this.getMessage(value, this.shouldBalanceBeHidden);
+    const message = this.getOperationMessage(value, this.shouldBalanceBeHidden);
     // is transaction has not been processed before
     const isNewTx = !oldValue || oldValue.id !== value.id;
 
     if (value.status === TransactionStatus.Error) {
-      this.$notify({
-        message: message || this.t('unknownErrorText'),
-        type: 'error',
-        title: '',
-      });
+      this.showAppNotification(message, 'error');
     } else if (value.status === TransactionStatus.InBlock || isNewTx) {
       if (isNewTx) {
-        this.$notify({
-          message,
-          type: 'success',
-          title: '',
-        });
+        this.showAppNotification(message, 'success');
       }
       if (value.status === TransactionStatus.InBlock) return;
     } else if (value.type === Operation.RegisterAsset && value.assetAddress) {
@@ -88,11 +80,7 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
       if (!alreadyExists) {
         // Add asset automatically for registered assets for finalized txs made by the account
         this.addAsset(value.assetAddress).then(() => {
-          this.$notify({
-            message: this.t('addAsset.success', { symbol: value.symbol || '' }),
-            type: 'success',
-            title: '',
-          });
+          this.showAppNotification(this.t('addAsset.success', { symbol: value.symbol || '' }), 'success');
         });
       }
     }
@@ -105,33 +93,25 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
       this.setConfirmTxDialogVisibility(true);
       await this.waitUntilConfirmTxDialogOpened();
       if (!this.isTxApprovedViaConfirmTxDialog) {
-        this.$notify({
-          message: this.t('unknownErrorText'), // TODO: [Desktop] Add cancel text
-          type: 'error',
-          title: '',
-        });
+        // TODO: [Desktop] Add cancel text
+        this.showAppNotification(this.t(this.defaultErrorMessage), 'error');
         return;
       }
     }
     await this.withLoading(async () => {
-      try {
-        const time = Date.now();
-        await func();
-        const tx = await this.getLastTransaction(time);
-        this.addActiveTransaction(tx.id as string);
-        this.$notify({ message: this.t('transactionSubmittedText'), title: '' });
-      } catch (error) {
-        this.$notify({
-          message: this.t('unknownErrorText'),
-          type: 'error',
-          title: '',
-        });
-        throw new Error((error as any).message);
-      } finally {
-        if (this.isDesktop) {
-          api.lockPair();
+      await this.withAppNotification(async () => {
+        try {
+          const time = Date.now();
+          await func();
+          const tx = await this.getLastTransaction(time);
+          this.addActiveTransaction(tx.id as string);
+          this.showAppNotification(this.t('transactionSubmittedText'));
+        } finally {
+          if (this.isDesktop) {
+            api.lockPair();
+          }
         }
-      }
+      });
     });
   }
 }

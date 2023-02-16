@@ -21,7 +21,7 @@
           >
             <div class="history-item-info">
               <div class="history-item-operation ch3" :data-type="item.type">{{ getTitle(item) }}</div>
-              <div class="history-item-title p4">{{ getMessage(item, shouldBalanceBeHidden) }}</div>
+              <div class="history-item-title p4">{{ getOperationMessage(item, shouldBalanceBeHidden) }}</div>
               <s-icon v-if="!isFinalizedStatus(item)" :class="getStatusClass(item)" :name="getStatusIcon(item)" />
             </div>
             <div class="history-item-date">{{ formatDate(item.startTime) }}</div>

@@ -109,7 +109,7 @@
         type="primary"
         :disabled="isInputsNotFilled"
         :loading="loading"
-        @click="createAccount"
+        @click="handleAccountCreate"
       >
         {{ t('desktop.button.createAccount') }}
       </s-button>
@@ -122,16 +122,24 @@ import { Mixins, Component, Prop } from 'vue-property-decorator';
 import isEqual from 'lodash/fp/isEqual';
 
 import LoadingMixin from '../../../components/mixins/LoadingMixin';
-import TranslationMixin from '../../../components/mixins/TranslationMixin';
+import NotificationMixin from '../../../components/mixins/NotificationMixin';
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
 import { copyToClipboard, delay } from '../../../util';
 import { action } from '../../../store/decorators';
 
+import type { AppError } from '../../../util';
+
 @Component
-export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin) {
-  @action.account.getPolkadotJsAccounts getPolkadotJsAccounts!: () => Promise<void>;
-  @action.account.exportAccount exportAccount!: (password: string) => Promise<void>;
+export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixin) {
+  @action.account.createAccount private createAccount!: (data: {
+    seed: string;
+    name: string;
+    password: string;
+    passwordConfirm: string;
+  }) => Promise<void>;
+
+  @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
 
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
 
@@ -270,36 +278,26 @@ export default class CreateAccount extends Mixins(TranslationMixin, LoadingMixin
     }, 2000);
   }
 
-  async createAccount(): Promise<void> {
-    if (this.accountPassword !== this.accountPasswordConfirm) {
-      this.$notify({
-        message: this.t('desktop.errorMessages.passwords'),
-        type: 'error',
-        title: '',
-      });
-      return;
+  private async createNewAccount(): Promise<void> {
+    await this.createAccount({
+      seed: this.seedPhrase,
+      name: this.accountName,
+      password: this.accountPassword,
+      passwordConfirm: this.accountPasswordConfirm,
+    });
+
+    if (this.toExport) {
+      await this.exportAccount(this.accountPassword);
     }
 
+    this.$emit('stepChange', LoginStep.AccountList);
+  }
+
+  async handleAccountCreate(): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution
       await delay(500);
-
-      try {
-        api.createAccount(this.seedPhrase, this.accountName, this.accountPassword);
-        await this.getPolkadotJsAccounts();
-
-        if (this.toExport) {
-          await this.exportAccount(this.accountPassword);
-        }
-
-        this.$emit('stepChange', LoginStep.AccountList);
-      } catch {
-        this.$notify({
-          message: this.t('unknownErrorText'),
-          type: 'error',
-          title: '',
-        });
-      }
+      await this.withAppNotification(this.createNewAccount);
     });
   }
 

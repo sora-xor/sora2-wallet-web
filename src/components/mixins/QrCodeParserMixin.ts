@@ -1,7 +1,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import type { Asset, AccountAsset } from '@sora-substrate/util/build/assets/types';
 
-import TranlationMixin from './TranslationMixin';
+import NotificationMixin from './NotificationMixin';
 
 import { RouteNames } from '../../consts';
 import { api } from '../../api';
@@ -13,7 +13,7 @@ const reject = (message: string) => {
 };
 
 @Component
-export default class QrCodeParserMixin extends Mixins(TranlationMixin) {
+export default class QrCodeParserMixin extends Mixins(NotificationMixin) {
   @state.account.assets assets!: Array<Asset>;
 
   @mutation.router.navigate navigate!: (options: Route) => Promise<void>;
@@ -46,12 +46,7 @@ export default class QrCodeParserMixin extends Mixins(TranlationMixin) {
       });
     } catch (error) {
       console.error(error);
-
-      this.$notify({
-        message: this.t('code.invalid'),
-        type: 'error',
-        title: '',
-      });
+      this.showAppNotification(this.t('code.invalid'), 'error');
     }
   }
 
