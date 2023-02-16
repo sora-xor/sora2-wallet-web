@@ -98,6 +98,7 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
         return;
       }
     }
+
     await this.withLoading(async () => {
       await this.withAppNotification(async () => {
         try {

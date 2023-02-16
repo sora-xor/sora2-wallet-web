@@ -128,8 +128,6 @@ import { LoginStep } from '../../../consts';
 import { copyToClipboard, delay } from '../../../util';
 import { action } from '../../../store/decorators';
 
-import type { AppError } from '../../../util';
-
 @Component
 export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixin) {
   @action.account.createAccount private createAccount!: (data: {
@@ -259,15 +257,20 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
     }
     const isSeedPhraseMatched = isEqual(this.seedPhraseToCompare, this.seedPhrase);
     if (!isSeedPhraseMatched) {
-      this.showErrorMessage = true;
-      setTimeout(() => {
-        this.showErrorMessage = false;
-      }, 4500);
       this.seedPhraseToCompareIdx = [];
+      this.runErrorMessage();
       this.runReturnAnimation();
     } else {
       this.$emit('stepChange', LoginStep.CreateCredentials);
     }
+  }
+
+  runErrorMessage(): void {
+    this.showErrorMessage = true;
+
+    setTimeout(() => {
+      this.showErrorMessage = false;
+    }, 4500);
   }
 
   runReturnAnimation(): void {

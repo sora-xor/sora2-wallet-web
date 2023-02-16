@@ -23,6 +23,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
 import LoadingMixin from '../mixins/LoadingMixin';
+import NotificationMixin from '../mixins/NotificationMixin';
 
 import AccountRenameDialog from './RenameDialog.vue';
 import AccountExportDialog from './ConfirmDialog.vue';
@@ -44,7 +45,7 @@ enum AccountActionTypes {
     AccountExportDialog,
   },
 })
-export default class AccountActions extends Mixins(LoadingMixin) {
+export default class AccountActions extends Mixins(NotificationMixin, LoadingMixin) {
   @action.account.renameAccount private renameAccount!: (name: string) => Promise<void>;
   @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
   @action.account.logout private logout!: AsyncFnWithoutArgs;
@@ -96,8 +97,10 @@ export default class AccountActions extends Mixins(LoadingMixin) {
 
   async handleAccountRename(name: string) {
     await this.withLoading(async () => {
-      await this.renameAccount(name);
-      this.accountRenameVisibility = false;
+      await this.withAppNotification(async () => {
+        await this.renameAccount(name);
+        this.accountRenameVisibility = false;
+      });
     });
   }
 
@@ -105,8 +108,11 @@ export default class AccountActions extends Mixins(LoadingMixin) {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution
       await delay(500);
-      await this.exportAccount(password);
-      this.accountExportVisibility = false;
+
+      await this.withAppNotification(async () => {
+        await this.exportAccount(password);
+        this.accountExportVisibility = false;
+      });
     });
   }
 }
