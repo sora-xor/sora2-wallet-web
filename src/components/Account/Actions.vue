@@ -8,7 +8,13 @@
       @select="handleSelect"
     >
       <template slot="menu">
-        <s-dropdown-item v-for="{ value, name, icon } in items" :key="value" :value="value" :icon="icon">
+        <s-dropdown-item
+          v-for="{ value, name, icon, status } in items"
+          :key="value"
+          :value="value"
+          :icon="icon"
+          :class="['account-actions__item', status]"
+        >
           {{ name }}
         </s-dropdown-item>
       </template>
@@ -16,7 +22,7 @@
 
     <account-rename-dialog :visible.sync="accountRenameVisibility" :loading="loading" @confirm="handleAccountRename" />
     <account-export-dialog :visible.sync="accountExportVisibility" :loading="loading" @confirm="handleAccountExport" />
-    <account-delete-dialog :visible.sync="accountDeleteVisibility" />
+    <account-delete-dialog :visible.sync="accountDeleteVisibility" @confirm="handleAccountDelete" />
   </div>
 </template>
 
@@ -33,6 +39,7 @@ import AccountDeleteDialog from './DeleteDialog.vue';
 import { action } from '../../store/decorators';
 
 import { delay } from '../../util';
+import { settingsStorage } from '../../util/storage';
 
 enum AccountActionTypes {
   Rename = 'rename',
@@ -51,7 +58,7 @@ enum AccountActionTypes {
 export default class AccountActions extends Mixins(NotificationMixin, LoadingMixin) {
   @action.account.renameAccount private renameAccount!: (name: string) => Promise<void>;
   @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
-  @action.account.logout private logout!: AsyncFnWithoutArgs;
+  @action.account.logout private logout!: (forgetAccount?: boolean) => Promise<void>;
 
   accountRenameVisibility = false;
   accountExportVisibility = false;
@@ -78,6 +85,7 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
         value: AccountActionTypes.Delete,
         name: 'Delete Account',
         icon: 'paperclip-16',
+        status: 'error',
       },
     ];
   }
@@ -97,13 +105,20 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
         break;
       }
       case AccountActionTypes.Delete: {
-        this.accountDeleteVisibility = true;
+        const storageValue = settingsStorage.get('allowAccountDeletePopup');
+        const popupVisibility = storageValue ? Boolean(JSON.parse(storageValue)) : true;
+
+        if (popupVisibility) {
+          this.accountDeleteVisibility = true;
+        } else {
+          this.handleAccountDelete();
+        }
         break;
       }
     }
   }
 
-  async handleAccountRename(name: string) {
+  async handleAccountRename(name: string): Promise<void> {
     await this.withLoading(async () => {
       await this.withAppNotification(async () => {
         await this.renameAccount(name);
@@ -112,7 +127,7 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
     });
   }
 
-  async handleAccountExport({ password }: { password: string }) {
+  async handleAccountExport({ password }: { password: string }): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution
       await delay(500);
@@ -122,6 +137,14 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
         this.accountExportVisibility = false;
       });
     });
+  }
+
+  handleAccountDelete(allowAccountDeletePopup = true): void {
+    if (!allowAccountDeletePopup) {
+      settingsStorage.set('allowAccountDeletePopup', false);
+    }
+    this.accountDeleteVisibility = false;
+    this.logout(true);
   }
 }
 </script>
@@ -133,6 +156,26 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
 
     i.el-tooltip.el-dropdown-selfdefine {
       color: inherit;
+    }
+  }
+
+  &__item.el-dropdown-menu__item {
+    color: var(--s-color-base-content-primary);
+
+    & > i {
+      color: var(--s-color-base-content-tertiary);
+    }
+
+    &.error {
+      &,
+      &:hover,
+      &:focus,
+      &:active {
+        color: var(--s-color-status-error);
+        & > i {
+          color: inherit;
+        }
+      }
     }
   }
 }

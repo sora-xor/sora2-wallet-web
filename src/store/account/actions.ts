@@ -119,16 +119,21 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async logout(context): Promise<void> {
-    const { commit, state } = accountActionContext(context);
+  async logout(context, forgetAccount?: boolean): Promise<void> {
+    const { commit, dispatch, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
     if (api.accountPair) {
-      api.logout(state.isDesktop);
+      api.logout(!forgetAccount && state.isDesktop);
     }
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
+
+    if (state.isDesktop && forgetAccount) {
+      // update account list in state
+      await dispatch.getPolkadotJsAccounts();
+    }
 
     await rootDispatch.wallet.router.checkCurrentRoute();
   },

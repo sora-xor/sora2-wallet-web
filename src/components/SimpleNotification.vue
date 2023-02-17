@@ -8,7 +8,7 @@
       <slot name="text"></slot>
     </div>
     <slot />
-    <s-button type="primary" class="simple-notification__button s-typography-button--large" @click="close">{{
+    <s-button type="secondary" class="simple-notification__button s-typography-button--big" @click="close">{{
       t('closeText')
     }}</s-button>
   </div>
@@ -68,6 +68,10 @@ export default class SimpleNotification extends Mixins(TranslationMixin) {
 
   &__button {
     width: 100%;
+
+    & + & {
+      margin-top: $basic-spacing-small;
+    }
   }
 }
 </style>
