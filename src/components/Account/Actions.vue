@@ -68,22 +68,22 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
     return [
       {
         value: AccountActionTypes.Rename,
-        name: 'Rename Account',
+        name: this.t('account.rename'),
         icon: 'basic-options-24',
       },
       {
         value: AccountActionTypes.Export,
-        name: 'Export .json',
+        name: this.t('account.export'),
         icon: 'basic-pulse-24',
       },
       {
         value: AccountActionTypes.Logout,
-        name: 'Log out',
+        name: this.t('logoutText'),
         icon: 'security-logout-24',
       },
       {
         value: AccountActionTypes.Delete,
-        name: 'Delete Account',
+        name: this.t('account.delete'),
         icon: 'paperclip-16',
         status: 'error',
       },

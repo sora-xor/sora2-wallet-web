@@ -1,21 +1,20 @@
 <template>
   <dialog-base :visible.sync="isVisible">
     <simple-notification class="account-delete-dialog" @close="closeDialog">
-      <template #title>Assets at risk!</template>
-      <template #text>Account can’t be recovered without a seed phrase, .json file or if it’s stored in some extension. You will be
-        logged out.</template>
+      <template #title>{{ t('desktop.assetsAtRiskText') }}</template>
+      <template #text>{{ t('desktop.deleteAccountText') }}</template>
       <template>
         <s-divider class="account-delete-dialog__divider" />
         <div class="account-delete-dialog__switch">
           <s-switch v-model="hideDeleteDialog" />
-          <span>Don’t show me this again</span>
+          <span>{{ t('doNotShowText') }}</span>
         </div>
         <s-button
           type="primary"
           class="account-delete-dialog__button simple-notification__button s-typography-button--big"
           @click="handleConfirm"
         >
-          Yes, Log Out
+          {{ t('logoutText') }}
         </s-button>
       </template>
     </simple-notification>
@@ -29,6 +28,7 @@ import DialogBase from '../DialogBase.vue';
 import SimpleNotification from '../SimpleNotification.vue';
 
 import DialogMixin from '../mixins/DialogMixin';
+import TranslationMixin from '../mixins/TranslationMixin';
 
 @Component({
   components: {
@@ -36,7 +36,7 @@ import DialogMixin from '../mixins/DialogMixin';
     SimpleNotification,
   },
 })
-export default class AccountDeleteDialog extends Mixins(DialogMixin) {
+export default class AccountDeleteDialog extends Mixins(TranslationMixin, DialogMixin) {
   @Watch('isVisible')
   private setupFormState(visibility: boolean): void {
     if (!visibility) {

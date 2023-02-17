@@ -1,5 +1,5 @@
 <template>
-  <dialog-base title="Rename account" :visible.sync="isVisible">
+  <dialog-base :title="t('account.rename')" :visible.sync="isVisible">
     <div class="account-rename-dialog">
       <wallet-account />
       <s-input
