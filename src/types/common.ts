@@ -62,4 +62,10 @@ export type StorageKey =
   | 'evmAddress';
 
 export type RuntimeStorageKey = 'version' | 'networkFees';
-export type SettingsStorageKey = 'language' | 'node' | 'customNodes' | 'allowFeePopup' | 'disclaimerApprove';
+export type SettingsStorageKey =
+  | 'language'
+  | 'node'
+  | 'customNodes'
+  | 'allowFeePopup'
+  | 'disclaimerApprove'
+  | 'allowAccountDeletePopup';

@@ -54,7 +54,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 import WalletBase from '../../WalletBase.vue';
 import AccountList from '../AccountList.vue';
 import ExtensionList from '../ExtensionList.vue';
-import TranslationMixin from '../../mixins/TranslationMixin';
+import NotificationMixin from '../../mixins/NotificationMixin';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import { state, action, getter, mutation } from '../../../store/decorators';
 import { AppError } from '../../../util';
@@ -72,7 +72,7 @@ enum Step {
 @Component({
   components: { WalletBase, AccountList, ExtensionList },
 })
-export default class ExtensionConnection extends Mixins(TranslationMixin, LoadingMixin) {
+export default class ExtensionConnection extends Mixins(NotificationMixin, LoadingMixin) {
   step = Step.First;
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
@@ -120,23 +120,19 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
 
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
     await this.withLoading(async () => {
-      try {
+      await this.withAppAlert(async () => {
         await this.importPolkadotJs(account);
-      } catch (error) {
-        this.showAlert(error);
-        this.navigateToExtensionsList();
-      }
+      });
     });
   }
 
   async handleSelectWallet(wallet: Wallet): Promise<void> {
     if (!wallet.installed) return;
-    try {
+
+    await this.withAppAlert(async () => {
       await this.selectExtension(wallet.extensionName as Extensions);
       this.navigateToAccountList();
-    } catch (error) {
-      this.showAlert(error);
-    }
+    });
   }
 
   private navigateToExtensionsList(): void {
@@ -162,14 +158,6 @@ export default class ExtensionConnection extends Mixins(TranslationMixin, Loadin
   handleLogout(): void {
     this.navigateToExtensionsList();
     this.logout();
-  }
-
-  private showAlert(error: unknown): void {
-    const message =
-      error instanceof AppError
-        ? this.t(error.translationKey, error.translationPayload)
-        : this.t((error as Error).message);
-    this.$alert(message, this.t('errorText'));
   }
 }
 </script>
