@@ -161,6 +161,9 @@ export default {
     walletAddress: 'Wallet address',
     copy: 'Copy address',
     switch: 'Switch account',
+    delete: 'Delete account',
+    rename: 'Rename account',
+    export: 'Export .json',
   },
   history: {
     clearHistory: 'Clear history',
@@ -383,6 +386,9 @@ export default {
     exportJsonText:
       'You will always be able to access your account by importing that .json file. Do not share it with anyone!',
     addAccount: 'Add an account',
+    assetsAtRiskText: 'Assets at risk!',
+    deleteAccountText:
+      'Account can’t be recovered without a seed phrase, .json file or if it’s stored in some extension. You will be logged out.',
     dialog: {
       confirmTitle: 'Confirm with password',
       confirmButton: 'Sign Transaction',

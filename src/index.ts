@@ -23,12 +23,14 @@ import HistoryPagination from './components/HistoryPagination.vue';
 import DialogBase from './components/DialogBase.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
 import ConfirmDialog from './components/ConfirmDialog.vue';
+import SimpleNotification from './components/SimpleNotification.vue';
 // Mixins
 import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
+import NotificationMixin from './components/mixins/NotificationMixin';
 import LoadingMixin from './components/mixins/LoadingMixin';
 import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
 import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
@@ -148,6 +150,7 @@ const components = {
   HistoryPagination,
   DialogBase,
   NotificationEnablingPage,
+  SimpleNotification,
 };
 
 const mixins = {
@@ -156,6 +159,7 @@ const mixins = {
   FormattedAmountMixin,
   TransactionMixin,
   TranslationMixin,
+  NotificationMixin,
   LoadingMixin,
   ReferralRewardsMixin,
   PaginationSearchMixin,
