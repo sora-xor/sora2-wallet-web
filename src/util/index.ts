@@ -11,6 +11,7 @@ import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards
 import { api, connection } from '../api';
 import { ExplorerLink, SoraNetwork, ExplorerType, LoginStep, Extensions } from '../consts';
 import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg';
+import GoogleLogo from '../assets/img/GoogleLogo.svg';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 
@@ -30,6 +31,28 @@ export const APP_NAME = 'Sora2 Wallet';
 
 export const WHITE_LIST_URL = 'https://whitelist.polkaswap2.io/whitelist.json';
 export const NFT_BLACK_LIST_URL = 'https://whitelist.polkaswap2.io/blacklist.json';
+
+const FearlessWalletData = {
+  extensionName: Extensions.FearlessWallet,
+  title: 'Fearless Wallet',
+  installUrl: 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc',
+  logo: {
+    src: FearlessWalletLogo as string,
+    alt: 'Fearless Wallet Extension',
+  },
+};
+
+export const GoogleAuthWalletData = {
+  extensionName: Extensions.GoogleAuth,
+  title: 'Google',
+  installUrl: '',
+  logo: {
+    src: GoogleLogo as string,
+    alt: 'Google Auth',
+  },
+};
+
+export const ExternalWallets = [GoogleAuthWalletData];
 
 export function waitForDocumentReady() {
   return new Promise<void>((resolve) => {
@@ -90,15 +113,7 @@ export const subscribeToPolkadotJsAccounts = async (
 };
 
 export const addFearlessWalletLocally = () => {
-  addWallet({
-    extensionName: Extensions.FearlessWallet,
-    title: 'Fearless Wallet',
-    installUrl: 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc',
-    logo: {
-      src: FearlessWalletLogo as string,
-      alt: 'Fearless Wallet Extension',
-    },
-  });
+  addWallet(FearlessWalletData);
 };
 
 export const getAppWallets = (): Wallet[] => {

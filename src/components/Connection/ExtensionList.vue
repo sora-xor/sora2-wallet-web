@@ -1,8 +1,8 @@
 <template>
-  <connection-items :size="availableWallets.length">
+  <connection-items :size="wallets.length">
     <account-card
       v-button
-      v-for="wallet in availableWallets"
+      v-for="wallet in wallets"
       :key="wallet.extensionName"
       tabindex="0"
       @click.native="handleSelect(wallet)"
@@ -13,7 +13,7 @@
       <template #name>{{ wallet.title }}</template>
       <template #default>
         <a
-          v-if="!wallet.installed"
+          v-if="!wallet.installed && wallet.installUrl"
           :href="getWalletInstallUrl(wallet)"
           target="_blank"
           rel="nofollow noopener noreferrer"
@@ -32,7 +32,7 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component } from 'vue-property-decorator';
+import { Mixins, Component, Prop } from 'vue-property-decorator';
 
 import AccountCard from '../Account/AccountCard.vue';
 import ConnectionItems from './ConnectionItems.vue';
@@ -50,7 +50,8 @@ import type { Wallet } from '@subwallet/wallet-connect/types';
   },
 })
 export default class ExtensionList extends Mixins(TranslationMixin) {
-  @state.account.availableWallets availableWallets!: Array<Wallet>;
+  @Prop({ default: () => [], type: Array }) readonly wallets!: Wallet[];
+
   @state.account.source source!: string;
 
   readonly getWalletInstallUrl = getWalletInstallUrl;

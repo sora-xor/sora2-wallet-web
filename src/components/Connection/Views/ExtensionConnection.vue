@@ -18,7 +18,8 @@
         <p class="wallet-connection-text">{{ connectionText }}</p>
 
         <template v-if="isExtensionsView">
-          <extension-list @select="handleSelectWallet" />
+          <extension-list :wallets="externalWallets" @select="handleSelectWallet" />
+          <extension-list :wallets="internalWallets" @select="handleSelectWallet" />
 
           <s-button
             class="wallet-connection-action s-typography-button--large learn-more-btn"
@@ -57,8 +58,8 @@ import ExtensionList from '../ExtensionList.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import { state, action, getter, mutation } from '../../../store/decorators';
-import { AppError } from '../../../util';
 import { RouteNames } from '../../../consts';
+import { ExternalWallets } from '../../../util';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Extensions } from '../../../consts';
 import type { PolkadotJsAccount } from '../../../types/common';
@@ -73,11 +74,11 @@ enum Step {
   components: { WalletBase, AccountList, ExtensionList },
 })
 export default class ExtensionConnection extends Mixins(NotificationMixin, LoadingMixin) {
+  readonly externalWallets = ExternalWallets;
   step = Step.First;
 
-  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @state.account.availableWallets availableWallets!: Array<Wallet>;
+  @state.account.availableWallets internalWallets!: Array<Wallet>;
 
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
   @getter.account.isLoggedIn isLoggedIn!: boolean;
@@ -103,7 +104,7 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
   get connectionText(): string {
     if (this.isExtensionsView) {
       return this.t('connection.text', {
-        extensions: this.availableWallets.map(({ title }) => title).join(', '),
+        extensions: this.internalWallets.map(({ title }) => title).join(', '),
       });
     }
 
