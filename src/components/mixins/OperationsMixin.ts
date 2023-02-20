@@ -1,7 +1,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import { History, TransactionStatus, Operation } from '@sora-substrate/util';
 
-import TranslationMixin from './TranslationMixin';
+import NotificationMixin from './NotificationMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
 
 import { HiddenValue } from '../../consts';
@@ -23,7 +23,7 @@ const twoAssetsBasedOperations = [
 const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
 
 @Component
-export default class OperationsMixin extends Mixins(TranslationMixin, NumberFormatterMixin) {
+export default class OperationsMixin extends Mixins(NotificationMixin, NumberFormatterMixin) {
   @getter.account.account account!: PolkadotJsAccount;
 
   getTitle(value?: History): string {
@@ -41,7 +41,7 @@ export default class OperationsMixin extends Mixins(TranslationMixin, NumberForm
     return this.t(`operations.${value.type}`, params);
   }
 
-  getMessage(value?: History, hideAmountValues = false): string {
+  getOperationMessage(value?: History, hideAmountValues = false): string {
     if (!value || !Object.values(Operation).includes(value.type as Operation)) {
       return '';
     }

@@ -1,10 +1,10 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { checkDevicesAvailability, checkCameraPermission } from '../../util';
-import TranslationMixin from './TranslationMixin';
+import NotificationMixin from './NotificationMixin';
 
 @Component
-export default class CameraPermissionMixin extends Mixins(TranslationMixin) {
+export default class CameraPermissionMixin extends Mixins(NotificationMixin) {
   permissionDialogVisibility = false;
 
   async checkMediaDevicesAllowance(context: string): Promise<boolean> {
@@ -28,11 +28,7 @@ export default class CameraPermissionMixin extends Mixins(TranslationMixin) {
     } catch (error) {
       console.error(error);
 
-      this.$notify({
-        message: this.t('code.allowanceError'),
-        type: context === 'QRcode' ? 'error' : undefined,
-        title: '',
-      });
+      this.showAppNotification(this.t('code.allowanceError'), context === 'QRcode' ? 'error' : undefined);
 
       return false;
     } finally {

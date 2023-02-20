@@ -15,14 +15,14 @@ import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 
 export class AppError extends Error {
-  public translationKey: string;
-  public translationPayload: any;
+  public key: string;
+  public payload: any;
 
   constructor({ key = '', payload = {} } = {}, ...params) {
     super(...params);
     this.name = 'AppHandledError';
-    this.translationKey = key;
-    this.translationPayload = payload;
+    this.key = key;
+    this.payload = payload;
   }
 }
 

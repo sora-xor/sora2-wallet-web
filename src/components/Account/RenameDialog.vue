@@ -1,5 +1,5 @@
 <template>
-  <dialog-base title="Rename account" :visible.sync="isVisible">
+  <dialog-base :title="t('account.rename')" :visible.sync="isVisible">
     <div class="account-rename-dialog">
       <wallet-account />
       <s-input
@@ -16,14 +16,14 @@
         :loading="loading"
         @click="handleConfirm"
       >
-        Confirm
+        {{ t('confirmText') }}
       </s-button>
     </div>
   </dialog-base>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import DialogBase from '../DialogBase.vue';
 import WalletAccount from './WalletAccount.vue';
@@ -36,8 +36,15 @@ import TranslationMixin from '../mixins/TranslationMixin';
     WalletAccount,
   },
 })
-export default class RenameAccountDialog extends Mixins(DialogMixin, TranslationMixin) {
+export default class AccountRenameDialog extends Mixins(DialogMixin, TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
+
+  @Watch('isVisible')
+  private setupFormState(visibility: boolean): void {
+    if (!visibility) {
+      this.value = '';
+    }
+  }
 
   readonly MINLENGTH = 3;
 
@@ -53,7 +60,6 @@ export default class RenameAccountDialog extends Mixins(DialogMixin, Translation
 
   async handleConfirm(): Promise<void> {
     this.$emit('confirm', this.prepared);
-    this.value = '';
   }
 }
 </script>

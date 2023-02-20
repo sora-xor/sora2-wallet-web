@@ -5,11 +5,11 @@ import { state, getter, mutation, action } from '../../store/decorators';
 import { AccountAssetsTable } from '../../types/common';
 import { RouteNames } from '../../consts';
 import { Route } from '../../store/router/types';
-import TranslationMixin from './TranslationMixin';
+import NotificationMixin from './NotificationMixin';
 import LoadingMixin from './LoadingMixin';
 
 @Component
-export default class AddAssetMixin extends Mixins(TranslationMixin, LoadingMixin) {
+export default class AddAssetMixin extends Mixins(NotificationMixin, LoadingMixin) {
   @state.account.assets assets!: Array<Asset>;
   @state.account.accountAssets accountAssets!: Array<AccountAsset>;
 
@@ -46,12 +46,7 @@ export default class AddAssetMixin extends Mixins(TranslationMixin, LoadingMixin
     const asset: Partial<Asset> = addedAsset || {};
     await this.withLoading(async () => await this.addAsset(asset.address));
     this.navigate({ name: RouteNames.Wallet, params: { asset: addedAsset } });
-
-    this.$notify({
-      message: this.t('addAsset.success', { symbol: asset.symbol || '' }),
-      type: 'success',
-      title: '',
-    });
+    this.showAppNotification(this.t('addAsset.success', { symbol: asset.symbol || '' }), 'success');
   }
 
   handleSelectAsset(asset: Asset): void {

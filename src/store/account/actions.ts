@@ -22,6 +22,7 @@ import {
   subscribeToPolkadotJsAccounts,
   WHITE_LIST_URL,
   NFT_BLACK_LIST_URL,
+  AppError,
 } from '../../util';
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
 
@@ -118,16 +119,21 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async logout(context): Promise<void> {
-    const { commit, state } = accountActionContext(context);
+  async logout(context, forgetAccount?: boolean): Promise<void> {
+    const { commit, dispatch, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
     if (api.accountPair) {
-      api.logout(state.isDesktop);
+      api.logout(!forgetAccount && state.isDesktop);
     }
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
+
+    if (state.isDesktop && forgetAccount) {
+      // update account list in state
+      await dispatch.getPolkadotJsAccounts();
+    }
 
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
@@ -243,25 +249,21 @@ const actions = defineActions({
     const { commit, dispatch, getters } = accountActionContext(context);
     const { rootDispatch } = rootActionContext(context);
 
-    try {
-      if (!getters.isConnectedAccount(accountData)) {
-        const defaultAddress = api.formatAddress(accountData.address, false);
-        const source = accountData.source as Extensions;
-        const { account, signer } = await getExtensionSigner(defaultAddress, source);
+    if (!getters.isConnectedAccount(accountData)) {
+      const defaultAddress = api.formatAddress(accountData.address, false);
+      const source = accountData.source as Extensions;
+      const { account, signer } = await getExtensionSigner(defaultAddress, source);
 
-        const name = account.name || '';
+      const name = account.name || '';
 
-        api.importByPolkadotJs(account.address, name, source);
-        api.setSigner(signer);
+      api.importByPolkadotJs(account.address, name, source);
+      api.setSigner(signer);
 
-        commit.selectPolkadotJsAccount({ name, source });
+      commit.selectPolkadotJsAccount({ name, source });
 
-        await dispatch.afterLogin();
-      } else {
-        await rootDispatch.wallet.router.checkCurrentRoute();
-      }
-    } catch (error) {
-      throw new Error((error as Error).message);
+      await dispatch.afterLogin();
+    } else {
+      await rootDispatch.wallet.router.checkCurrentRoute();
     }
   },
 
@@ -269,26 +271,45 @@ const actions = defineActions({
     const { state, commit, dispatch, getters } = accountActionContext(context);
     const { rootDispatch } = rootActionContext(context);
 
-    try {
-      if (!getters.isConnectedAccount(accountData)) {
-        const defaultAddress = api.formatAddress(accountData.address, false);
-        const account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
+    if (!getters.isConnectedAccount(accountData)) {
+      const defaultAddress = api.formatAddress(accountData.address, false);
+      const account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
 
-        if (!account) {
-          throw new Error('polkadotjs.noAccount');
-        }
-
-        api.importByPolkadotJs(account.address, account.name, '');
-
-        commit.selectPolkadotJsAccount({ name: account.name });
-
-        await dispatch.afterLogin();
-      } else {
-        await rootDispatch.wallet.router.checkCurrentRoute();
+      if (!account) {
+        throw new Error('polkadotjs.noAccount');
       }
-    } catch (error) {
-      throw new Error((error as Error).message);
+
+      api.importByPolkadotJs(account.address, account.name, '');
+
+      commit.selectPolkadotJsAccount({ name: account.name });
+
+      await dispatch.afterLogin();
+    } else {
+      await rootDispatch.wallet.router.checkCurrentRoute();
     }
+  },
+
+  /**
+   * Desktop
+   */
+  async createAccount(
+    context,
+    {
+      seed,
+      name,
+      password,
+      passwordConfirm,
+    }: { seed: string; name: string; password: string; passwordConfirm?: string }
+  ) {
+    const { dispatch } = accountActionContext(context);
+
+    if (passwordConfirm && password !== passwordConfirm) {
+      throw new AppError({ key: 'desktop.errorMessages.passwords' });
+    }
+
+    api.createAccount(seed, name, password);
+    // update account list in state
+    await dispatch.getPolkadotJsAccounts();
   },
 
   /**
@@ -481,15 +502,8 @@ const actions = defineActions({
     const { rootState } = rootActionContext(context);
 
     const asset = rootState.wallet.router.currentRouteParams.asset as AccountAsset;
-    try {
-      await api.transfer(asset, to, amount);
-    } catch (error) {
-      const e = error as Error;
-      if (e.message.includes('Invalid decoded address')) {
-        throw new Error('walletSend.errorAddress');
-      }
-      throw new Error(e.message);
-    }
+
+    await api.transfer(asset, to, amount);
   },
   /** It's used **only** for subscriptions module */
   async resetAssetsSubscription(context): Promise<void> {

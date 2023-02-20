@@ -24,7 +24,7 @@ import { Mixins, Component } from 'vue-property-decorator';
 import type { PolkadotJsAccount } from '../../../types/common';
 
 import LoadingMixin from '../../mixins/LoadingMixin';
-import TranslationMixin from '../../mixins/TranslationMixin';
+import NotificationMixin from '../../mixins/NotificationMixin';
 import WalletBase from '../../WalletBase.vue';
 import WelcomePage from '../Desktop/WelcomePage.vue';
 import CreateAccount from '../Desktop/CreateAccount.vue';
@@ -38,7 +38,7 @@ import { state, action } from '../../../store/decorators';
 @Component({
   components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList },
 })
-export default class DesktopConnection extends Mixins(TranslationMixin, LoadingMixin) {
+export default class DesktopConnection extends Mixins(NotificationMixin, LoadingMixin) {
   step: LoginStep = LoginStep.Welcome;
 
   readonly LoginStep = LoginStep;
@@ -100,7 +100,7 @@ export default class DesktopConnection extends Mixins(TranslationMixin, LoadingM
       try {
         await this.importPolkadotJsDesktop(account);
       } catch (error) {
-        this.$alert(this.t('enterAccountError'), this.t('errorText'));
+        this.showAppAlert(this.t('enterAccountError'));
       }
     });
   }
