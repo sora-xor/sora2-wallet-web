@@ -2554,6 +2554,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/gapi@^0.0.44":
+  version "0.0.44"
+  resolved "https://registry.yarnpkg.com/@types/gapi/-/gapi-0.0.44.tgz#f097f7a0f59d63a59098a08a62a560ca168426fb"
+  integrity sha512-hsgJMfZ/pMwI15UlAYHMNwj8DRoigo1odhbPwEXdp19ZQwQAXbcRrpzaDsfc+9XM6RtGpvl4Ja7uW8A+KPCa7w==
+
 "@types/glob@^7.1.1":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.2.0.tgz#bc1b5bf3aa92f25bd5dd39f35c57361bdce5b2eb"
@@ -13516,6 +13521,11 @@ vue-observe-visibility@^0.4.4:
   version "0.4.6"
   resolved "https://registry.yarnpkg.com/vue-observe-visibility/-/vue-observe-visibility-0.4.6.tgz#878cb8ebcf3078e40807af29774e97105ebd519e"
   integrity sha512-xo0CEVdkjSjhJoDdLSvoZoQrw/H2BlzB5jrCBKGZNXN2zdZgMuZ9BKrxXDjNP2AxlcCoKc8OahI3F3r3JGLv2Q==
+
+vue-plugin-load-script@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/vue-plugin-load-script/-/vue-plugin-load-script-2.1.1.tgz#5c16fbb428dae38440022dbf7ab02bf0b2429e26"
+  integrity sha512-IViO0hNj4O39M8I1taX74B5PR5RI7IrlEt+dvAjOk3NRLwQ7ZrdexUo9+K++KBzGPJtaVL1+emTyMWeOtjZojw==
 
 vue-property-decorator@^9.1.2:
   version "9.1.2"
