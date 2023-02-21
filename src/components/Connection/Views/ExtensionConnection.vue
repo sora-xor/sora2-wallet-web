@@ -18,8 +18,14 @@
         <p class="wallet-connection-text">{{ connectionText }}</p>
 
         <template v-if="isExtensionsView">
-          <extension-list :wallets="externalWallets" @select="handleSelectWallet" />
-          <extension-list :wallets="internalWallets" @select="handleSelectWallet" />
+          <div class="wallet-connection-list">
+            <p class="wallet-connection-title">{{ t('connection.list.simplest') }}</p>
+            <extension-list :wallets="externalWallets" @select="handleSelectExternalWallet" />
+          </div>
+          <div class="wallet-connection-list">
+            <p class="wallet-connection-title">{{ t('connection.list.extensions') }}</p>
+            <extension-list :wallets="internalWallets" @select="handleSelectInternalWallet" />
+          </div>
 
           <s-button
             class="wallet-connection-action s-typography-button--large learn-more-btn"
@@ -103,9 +109,7 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
 
   get connectionText(): string {
     if (this.isExtensionsView) {
-      return this.t('connection.text', {
-        extensions: this.internalWallets.map(({ title }) => title).join(', '),
-      });
+      return this.t('connection.text');
     }
 
     if (this.noAccounts) {
@@ -127,7 +131,11 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
     });
   }
 
-  async handleSelectWallet(wallet: Wallet): Promise<void> {
+  async handleSelectExternalWallet(wallet: Wallet): Promise<void> {
+    console.log(wallet);
+  }
+
+  async handleSelectInternalWallet(wallet: Wallet): Promise<void> {
     if (!wallet.installed) return;
 
     await this.withAppAlert(async () => {
@@ -172,10 +180,18 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
   }
 
   &-text {
+    color: var(--s-color-base-content-primary);
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
-    color: var(--s-color-base-content-primary);
+  }
+
+  &-title {
+    color: var(--s-color-base-content-secondary);
+    font-size: var(--s-font-size-extra-small);
+    font-weight: 600;
+    line-height: var(--s-line-height-small);
+    text-transform: uppercase;
   }
 
   &-action {
@@ -184,6 +200,12 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
     & + & {
       margin-left: 0;
     }
+  }
+
+  &-list {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: $basic-spacing-small;
   }
 }
 </style>

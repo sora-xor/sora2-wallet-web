@@ -48,7 +48,7 @@ export const GoogleAuthWalletData = {
   installUrl: '',
   logo: {
     src: GoogleLogo as string,
-    alt: 'Google Auth',
+    alt: 'Google auth',
   },
 };
 
