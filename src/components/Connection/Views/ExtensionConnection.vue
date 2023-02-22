@@ -64,12 +64,13 @@ import ExtensionList from '../ExtensionList.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import { state, action, getter, mutation } from '../../../store/decorators';
-import { RouteNames } from '../../../consts';
+import { RouteNames, Extensions } from '../../../consts';
 import { ExternalWallets } from '../../../util';
 import type { Wallet } from '@subwallet/wallet-connect/types';
-import type { Extensions } from '../../../consts';
 import type { PolkadotJsAccount } from '../../../types/common';
 import type { Route } from '../../../store/router/types';
+
+import { googleManage } from '../../../services/google';
 
 enum Step {
   First = 1,
@@ -132,7 +133,9 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
   }
 
   async handleSelectExternalWallet(wallet: Wallet): Promise<void> {
-    console.log(wallet);
+    if (wallet.extensionName === Extensions.GoogleAuth) {
+      googleManage.auth();
+    }
   }
 
   async handleSelectInternalWallet(wallet: Wallet): Promise<void> {

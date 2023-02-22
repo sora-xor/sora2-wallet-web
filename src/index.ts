@@ -43,7 +43,6 @@ import internalStore, { modules } from './store'; // `internalStore` is required
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList, addFearlessWalletLocally } from './util';
-import { initGoogleAuthLibraries } from '././services/google/libraries';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
@@ -117,13 +116,7 @@ async function initWallet({
       store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
 
-    await Promise.all([
-      // load libraries
-      initGoogleAuthLibraries(),
-      // load whitelists
-      store.dispatch.wallet.account.getWhitelist(),
-      store.dispatch.wallet.account.getNftBlacklist(),
-    ]);
+    await Promise.all([store.dispatch.wallet.account.getWhitelist(), store.dispatch.wallet.account.getNftBlacklist()]);
 
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),

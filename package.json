@@ -58,6 +58,8 @@
     "@rollup/plugin-terser": "^0.2.0",
     "@types/crypto-js": "^4.1.1",
     "@types/gapi": "^0.0.44",
+    "@types/gapi.client.drive": "^3.0.15",
+    "@types/google.accounts": "^0.0.6",
     "@types/jest": "^29.2.4",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.11",

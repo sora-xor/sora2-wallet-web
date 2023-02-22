@@ -1449,6 +1449,22 @@
   resolved "https://registry.yarnpkg.com/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz#b2ac626d6cb9c8718ab459166d4bb405b8ffa78b"
   integrity sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A==
 
+"@maxim_mazurok/gapi.client.discovery-v1@latest":
+  version "0.0.20200806"
+  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.discovery-v1/-/gapi.client.discovery-v1-0.0.20200806.tgz#c257738ef5bbf9fefa5b10b0decd444a5f3328b4"
+  integrity sha512-0pZtrElj8bc0YROIo7nH8VVvks/iww/L68l7r74oC9+ksSVO3Lum1zUR8dXTvJ7TqLGaNYiiNaUZianK6doh/w==
+  dependencies:
+    "@types/gapi.client" "*"
+    "@types/gapi.client.discovery" "*"
+
+"@maxim_mazurok/gapi.client.drive-v3@latest":
+  version "0.0.20230212"
+  resolved "https://registry.yarnpkg.com/@maxim_mazurok/gapi.client.drive-v3/-/gapi.client.drive-v3-0.0.20230212.tgz#fb0b03fb76deefe6b7edbabaac2d0fcd89d55bee"
+  integrity sha512-mTrCT5QoBKnENURkoLgt+JxtZzppelSDMa+XAm4kjma53RMn7vA9TahLU4jQdaOSO1pGFHBHnplJgZ1PWYExIA==
+  dependencies:
+    "@types/gapi.client" "*"
+    "@types/gapi.client.discovery" "*"
+
 "@metamask/object-multiplex@^1.1.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@metamask/object-multiplex/-/object-multiplex-1.2.0.tgz#38fc15c142f61939391e1b9a8eed679696c7e4f4"
@@ -2554,6 +2570,25 @@
   dependencies:
     "@types/node" "*"
 
+"@types/gapi.client.discovery@*":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client.discovery/-/gapi.client.discovery-1.0.9.tgz#e2472989baa01f2e32a2d5a80981da8513f875ae"
+  integrity sha512-51fXpt7DM7+zPG5pgwnNr3KaRXmyszznu66VPpV7+FAu0LGtpTohvdfvkRCnCn2Z6EgNTq/baFAtCa/9ylHOug==
+  dependencies:
+    "@maxim_mazurok/gapi.client.discovery-v1" latest
+
+"@types/gapi.client.drive@^3.0.15":
+  version "3.0.15"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client.drive/-/gapi.client.drive-3.0.15.tgz#4c93f2335ccb53fa4032d8971e8d14e3a5a37783"
+  integrity sha512-qEfI0LxUBadOLmym4FkaNGpI4ibBCBPJHiUFWKIv0GIp7yKT2d+wztJYKr9giIRecErUCF+jGSDw1fzTZ6hPVQ==
+  dependencies:
+    "@maxim_mazurok/gapi.client.drive-v3" latest
+
+"@types/gapi.client@*":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@types/gapi.client/-/gapi.client-1.0.5.tgz#a6eb97e664fe51656c5b52258bd0afef28c76308"
+  integrity sha512-OTpbBMuzfC4lkvaomxqskI/iWRGW3zOZbDXZLNSyiuswTiSSGgILRLkg0POuZ4EgzEdaYaTlXpnXiCp07ri/Yw==
+
 "@types/gapi@^0.0.44":
   version "0.0.44"
   resolved "https://registry.yarnpkg.com/@types/gapi/-/gapi-0.0.44.tgz#f097f7a0f59d63a59098a08a62a560ca168426fb"
@@ -2566,6 +2601,11 @@
   dependencies:
     "@types/minimatch" "*"
     "@types/node" "*"
+
+"@types/google.accounts@^0.0.6":
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/@types/google.accounts/-/google.accounts-0.0.6.tgz#f4b8571f93d9086f420b976de0fcb1b28307956e"
+  integrity sha512-6+SAci9zmUjZFdKVghK0oeBOnf+uVT2Actd+SMC7AjUsejp+VuAw6OkTwasZrEo6I1By/Hlt+mKhuXvfLrcYMQ==
 
 "@types/graceful-fs@^4.1.2":
   version "4.1.5"
