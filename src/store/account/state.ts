@@ -35,7 +35,7 @@ export function initialState(): AccountState {
     availableWallets: [],
     extensionAvailabilityTimer: null,
     /** desktop key management */
-    isDesktop: isElectron(), // NOTE: inverse flag here to debug desktop
+    isDesktop: !isElectron(), // NOTE: inverse flag here to debug desktop
     addressKeyMapping: {},
     addressPassphraseMapping: {},
     accountPassphraseTimer: null,

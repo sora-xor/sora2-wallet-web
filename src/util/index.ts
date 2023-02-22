@@ -334,28 +334,19 @@ export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
 
   if (currentStep === LoginStep.Welcome) return LoginStep.AccountList;
 
-  const createFlow = [
-    LoginStep.Welcome,
-    LoginStep.SeedPhrase,
-    LoginStep.ConfirmSeedPhrase,
-    LoginStep.CreateCredentials,
-  ] as Array<LoginStep>;
+  const createFlow: LoginStep[] = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
 
-  currentStepIndex = createFlow.findIndex((stepValue) => stepValue === currentStep);
+  const importFlow: LoginStep[] = [LoginStep.Import, LoginStep.ImportCredentials];
 
-  if (currentStepIndex !== -1) {
-    return createFlow[currentStepIndex - 1];
-  }
+  [createFlow, importFlow].forEach((flow) => {
+    currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
 
-  const importFlow = [LoginStep.Welcome, LoginStep.Import, LoginStep.ImportCredentials] as Array<LoginStep>;
+    if (currentStepIndex !== -1) {
+      return flow[currentStepIndex - 1];
+    }
+  });
 
-  currentStepIndex = importFlow.findIndex((stepValue) => stepValue === currentStep);
-
-  if (currentStepIndex !== -1) {
-    return importFlow[currentStepIndex - 1];
-  }
-
-  return LoginStep.Welcome;
+  return LoginStep.AccountList;
 };
 
 export const parseJson = (file: File): Promise<KeyringPair$Json> => {

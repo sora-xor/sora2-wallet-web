@@ -10,10 +10,12 @@
       <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
       <create-account v-else-if="isCreateFlow" :step="step" class="login" @stepChange="setStep" />
       <import-account v-else-if="isImportFlow" :step="step" class="login" @stepChange="setStep" />
-      <connected-account-list
+      <external-account-list
         v-else-if="isAccountList"
-        @handleSelectAccount="handleSelectAccount"
-        @stepChange="setStep"
+        :text="t('connection.selectAccount')"
+        @select="handleSelectAccount"
+        @create="createAccount"
+        @import="importAccount"
       />
     </div>
   </wallet-base>
@@ -25,10 +27,11 @@ import type { PolkadotJsAccount } from '../../../types/common';
 
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
+
 import WalletBase from '../../WalletBase.vue';
 import WelcomePage from '../Desktop/WelcomePage.vue';
 import CreateAccount from '../Desktop/CreateAccount.vue';
-import ConnectedAccountList from '../Desktop/ConnectedAccountList.vue';
+import ExternalAccountList from '../External/AccountList.vue';
 import ImportAccount from '../Desktop/ImportAccount.vue';
 
 import { LoginStep } from '../../../consts';
@@ -36,7 +39,7 @@ import { getPreviousLoginStep } from '../../../util';
 import { state, action } from '../../../store/decorators';
 
 @Component({
-  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList },
+  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ExternalAccountList },
 })
 export default class DesktopConnection extends Mixins(NotificationMixin, LoadingMixin) {
   step: LoginStep = LoginStep.Welcome;
