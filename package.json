@@ -15,7 +15,7 @@
     "build": "rm -rf lib && rollup -c ./build/rollup.config.js",
     "serve": "vue-cli-service serve",
     "test:unit": "vue-cli-service test:unit --silent",
-    "test:e2e": "vue-cli-service test:e2e --headless",
+    "test:e2e": "vue-cli-service test:e2e",
     "test:e2e-ui": "vue-cli-service test:e2e",
     "test:all": "yarn test:unit",
     "lint": "vue-cli-service lint"

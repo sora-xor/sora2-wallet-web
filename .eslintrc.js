@@ -25,6 +25,8 @@ module.exports = {
       },
     ],
     'vue/html-indent': ['warn', 2],
+    '@typescript-eslint/ban-ts-ignore': 0,
+    '@typescript-eslint/camelcase': 0,
     '@typescript-eslint/explicit-function-return-type': ['off'],
     '@typescript-eslint/no-explicit-any': ['off'],
     '@typescript-eslint/no-use-before-define': ['off'],
