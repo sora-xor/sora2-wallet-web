@@ -8,8 +8,8 @@
   >
     <div class="desktop-connection">
       <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
-      <create-account v-else-if="isCreateFlow" :step.sync="step" class="login" />
-      <import-account v-else-if="isImportFlow" :step.sync="step" class="login" />
+      <create-account v-else-if="isCreateFlow" :step.sync="step" />
+      <import-account v-else-if="isImportFlow" :step.sync="step" />
       <external-account-list
         v-else-if="isAccountList"
         :text="t('connection.selectAccount')"
@@ -117,33 +117,3 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
   }
 }
 </script>
-
-<style lang="scss">
-.login {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  &-btn {
-    margin: 8px 0 !important;
-    width: 100%;
-  }
-
-  &__title {
-    font-weight: 400;
-    font-size: var(--s-font-size-large);
-  }
-
-  &__step-count {
-    color: var(--s-color-base-content-secondary);
-    font-size: 14px;
-  }
-
-  .el-textarea {
-    &__inner {
-      resize: none !important;
-    }
-  }
-}
-</style>

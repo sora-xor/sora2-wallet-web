@@ -7,7 +7,8 @@ type GoogleOauthOptions = {
 };
 
 export class GoogleOauth {
-  public tokenClient!: google.accounts.oauth2.TokenClient;
+  public readonly options!: GoogleOauthOptions;
+  public client!: google.accounts.oauth2.TokenClient;
 
   private authCallback = (token?: google.accounts.oauth2.TokenResponse) => {};
   private authErrorCallback = (error?: google.accounts.oauth2.ClientConfigError) => {
@@ -15,12 +16,18 @@ export class GoogleOauth {
   };
 
   constructor(options: GoogleOauthOptions) {
-    this.init(options);
+    this.options = options;
   }
 
-  private async init(options: GoogleOauthOptions): Promise<void> {
+  get ready(): boolean {
+    return !!this.client;
+  }
+
+  public async init(): Promise<void> {
+    if (this.ready) return;
+
     await this.load();
-    this.initClient(options);
+    this.initClient(this.options);
   }
 
   private async load(): Promise<void> {
@@ -28,7 +35,7 @@ export class GoogleOauth {
   }
 
   private initClient({ clientId, scope }: GoogleOauthOptions): void {
-    this.tokenClient = google.accounts.oauth2.initTokenClient({
+    this.client = google.accounts.oauth2.initTokenClient({
       client_id: clientId,
       scope,
       callback: (token) => this.authCallback(token),
@@ -49,11 +56,11 @@ export class GoogleOauth {
     });
   }
 
-  async getToken(): Promise<void> {
+  public async getToken(): Promise<void> {
     await this.waitForAuthFinalization(() => {
       // Prompt the user to select a Google Account and ask for consent to share their data
       // when establishing a new session.
-      this.tokenClient.requestAccessToken({ prompt: 'consent' });
+      this.client.requestAccessToken({ prompt: 'consent' });
     });
   }
 }

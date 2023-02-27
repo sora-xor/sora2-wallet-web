@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="login">
     <div class="login__title">{{ title }}</div>
     <div class="login__step-count">Step {{ stepNumber }} / 3</div>
     <template v-if="step === LoginStep.SeedPhrase">
@@ -432,6 +432,8 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
 </style>
 
 <style lang="scss" scoped>
+@include account-create-import-view;
+
 .wallet-settings-create-token {
   &_desc {
     color: var(--s-color-base-content-primary);

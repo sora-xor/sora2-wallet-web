@@ -134,7 +134,10 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
 
   async handleSelectExternalWallet(wallet: Wallet): Promise<void> {
     if (wallet.extensionName === Extensions.GoogleAuth) {
-      googleManage.auth();
+      await this.withAppNotification(async () => {
+        await googleManage.auth();
+        this.navigate({ name: RouteNames.GoogleConnection });
+      });
     }
   }
 

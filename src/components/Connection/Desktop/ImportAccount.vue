@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="login">
     <div class="login__title">{{ title }}</div>
     <template v-if="step === LoginStep.Import">
       <s-input
@@ -252,6 +252,8 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
 </script>
 
 <style lang="scss" scoped>
+@include account-create-import-view;
+
 .login {
   &__inputs {
     margin-top: 24px;

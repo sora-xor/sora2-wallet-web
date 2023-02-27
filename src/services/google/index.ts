@@ -40,7 +40,13 @@ class GoogleManage {
     this.oauth = oauth;
   }
 
+  async init(): Promise<void> {
+    await Promise.all([this.api, this.oauth].map((client) => client.init()));
+  }
+
   async auth(): Promise<void> {
+    await this.init();
+
     if (!this.api.hasToken) {
       await this.oauth.getToken();
     }

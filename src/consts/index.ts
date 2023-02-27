@@ -13,6 +13,7 @@ export enum Extensions {
 }
 
 export enum RouteNames {
+  GoogleConnection = 'GoogleConnection',
   WalletConnection = 'WalletConnection',
   WalletSend = 'WalletSend',
   Wallet = 'Wallet',

@@ -1,11 +1,13 @@
 <template>
-  <wallet-base title="Connect via Google">
+  <wallet-base title="Connect via Google" :show-header="showHeader" show-back @back="handleBack">
     <external-account-list
       v-if="isAccountList"
       text="You can create or link an existing account via Google auth. It stores accounts in Gdrive using encryption."
+      @create="createAccount"
+      @import="importAccount"
     />
-    <create-account v-else-if="isCreateFlow" :step="step" />
-    <import-account v-else-if="isImportFlow" :step="step" />
+    <create-account v-else-if="isCreateFlow" :step.sync="step" />
+    <import-account v-else-if="isImportFlow" :step.sync="step" />
   </wallet-base>
 </template>
 
@@ -20,8 +22,11 @@ import ExternalAccountList from '../External/AccountList.vue';
 import CreateAccount from '../Desktop/CreateAccount.vue';
 import ImportAccount from '../Desktop/ImportAccount.vue';
 
-import { LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
+import { state, action, getter, mutation } from '../../../store/decorators';
+import { RouteNames, LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
 import { getPreviousLoginStep } from '../../../util';
+
+import type { Route } from '../../../store/router/types';
 
 @Component({
   components: {
@@ -32,6 +37,8 @@ import { getPreviousLoginStep } from '../../../util';
   },
 })
 export default class GoogleConnection extends Mixins(NotificationMixin, LoadingMixin) {
+  @mutation.router.navigate private navigate!: (options: Route) => void;
+
   step: LoginStep = LoginStep.AccountList;
 
   readonly LoginStep = LoginStep;
@@ -48,6 +55,10 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
     return this.step === LoginStep.AccountList;
   }
 
+  get showHeader(): boolean {
+    return this.step === LoginStep.AccountList;
+  }
+
   createAccount(): void {
     this.step = LoginStep.SeedPhrase;
   }
@@ -56,17 +67,18 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
     this.step = LoginStep.Import;
   }
 
-  setStep(step: LoginStep): void {
-    this.step = step;
-  }
-
   navigateToAccountList(): void {
     this.step = LoginStep.AccountList;
   }
 
   handleBack(): void {
     const step = getPreviousLoginStep(this.step);
-    this.step = step;
+
+    if (step === this.step) {
+      this.navigate({ name: RouteNames.WalletConnection });
+    } else {
+      this.step = step;
+    }
   }
 }
 </script>

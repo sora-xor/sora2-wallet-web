@@ -7,17 +7,26 @@ type GoogleApiOptions = {
 };
 
 export class GoogleApi {
+  public readonly options!: GoogleApiOptions;
+  private _ready = false;
+
   constructor(options: GoogleApiOptions) {
-    this.init(options);
+    this.options = options;
+  }
+
+  get ready(): boolean {
+    return this._ready;
   }
 
   get hasToken(): boolean {
     return !!gapi.client.getToken();
   }
 
-  private async init(options: GoogleApiOptions): Promise<void> {
+  public async init(): Promise<void> {
+    if (this.ready) return;
+
     await this.load();
-    await this.initClient(options);
+    await this.initClient(this.options);
   }
 
   private async load(): Promise<void> {
@@ -27,7 +36,13 @@ export class GoogleApi {
   private async initClient({ apiKey, discoveryDocs }: GoogleApiOptions): Promise<void> {
     return new Promise((resolve, reject) => {
       gapi.load('client', () => {
-        gapi.client.init({ apiKey, discoveryDocs }).then(resolve).catch(reject);
+        gapi.client
+          .init({ apiKey, discoveryDocs })
+          .then(() => {
+            this._ready = true;
+            resolve();
+          })
+          .catch(reject);
       });
     });
   }
