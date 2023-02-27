@@ -45,6 +45,8 @@ export default class WelcomePage extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss" scoped>
+@include login-view;
+
 .welcome-page {
   display: flex;
   flex-direction: column;

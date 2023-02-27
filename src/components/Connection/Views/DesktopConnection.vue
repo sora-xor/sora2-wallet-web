@@ -30,9 +30,9 @@ import NotificationMixin from '../../mixins/NotificationMixin';
 
 import WalletBase from '../../WalletBase.vue';
 import WelcomePage from '../Desktop/WelcomePage.vue';
-import CreateAccount from '../Desktop/CreateAccount.vue';
+import CreateAccount from '../External/CreateAccount.vue';
 import ExternalAccountList from '../External/AccountList.vue';
-import ImportAccount from '../Desktop/ImportAccount.vue';
+import ImportAccount from '../External/ImportAccount.vue';
 
 import { LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
 import { getPreviousLoginStep } from '../../../util';

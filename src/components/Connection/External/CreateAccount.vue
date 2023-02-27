@@ -3,7 +3,7 @@
     <div class="login__title">{{ title }}</div>
     <div class="login__step-count">Step {{ stepNumber }} / 3</div>
     <template v-if="step === LoginStep.SeedPhrase">
-      <div class="seed-grid">
+      <div class="seed-grid s-flex">
         <div v-for="column in 3" :key="column" class="seed-grid__column">
           <div v-for="(word, idx) in seedPhraseWords" :key="`${word}${idx}`">
             <div v-if="renderWord(column, idx)" class="seed-grid__word">
@@ -121,8 +121,8 @@
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 import isEqual from 'lodash/fp/isEqual';
 
-import LoadingMixin from '../../../components/mixins/LoadingMixin';
-import NotificationMixin from '../../../components/mixins/NotificationMixin';
+import LoadingMixin from '../../mixins/LoadingMixin';
+import NotificationMixin from '../../mixins/NotificationMixin';
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
 import { copyToClipboard, delay } from '../../../util';
@@ -432,7 +432,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
 </style>
 
 <style lang="scss" scoped>
-@include account-create-import-view;
+@include login-view;
 
 .wallet-settings-create-token {
   &_desc {

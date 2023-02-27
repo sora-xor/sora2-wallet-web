@@ -328,7 +328,7 @@ const actions = defineActions({
   /**
    * Desktop
    */
-  async restoreAccountFromJson(_, { json, password }: { json: KeyringPair$Json; password: string }) {
+  async restoreAccountFromJson(context, { json, password }: { json: KeyringPair$Json; password: string }) {
     const { dispatch } = accountActionContext(context);
     // restore from json file
     api.restoreFromJson(json, password);

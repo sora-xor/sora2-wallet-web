@@ -7,7 +7,7 @@
       @import="importAccount"
     />
     <create-account v-else-if="isCreateFlow" :step.sync="step" />
-    <import-account v-else-if="isImportFlow" :step.sync="step" />
+    <!-- <import-account v-else-if="isImportFlow" :step.sync="step" /> -->
   </wallet-base>
 </template>
 
@@ -19,8 +19,8 @@ import NotificationMixin from '../../mixins/NotificationMixin';
 
 import WalletBase from '../../WalletBase.vue';
 import ExternalAccountList from '../External/AccountList.vue';
-import CreateAccount from '../Desktop/CreateAccount.vue';
-import ImportAccount from '../Desktop/ImportAccount.vue';
+import CreateAccount from '../External/CreateAccount.vue';
+import ImportAccount from '../External/ImportAccount.vue';
 
 import { state, action, getter, mutation } from '../../../store/decorators';
 import { RouteNames, LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
@@ -64,7 +64,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
   }
 
   importAccount(): void {
-    this.step = LoginStep.Import;
+    // this.step = LoginStep.Import;
   }
 
   navigateToAccountList(): void {

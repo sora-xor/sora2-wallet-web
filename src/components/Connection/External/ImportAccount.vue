@@ -252,7 +252,7 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
 </script>
 
 <style lang="scss" scoped>
-@include account-create-import-view;
+@include login-view;
 
 .login {
   &__inputs {
