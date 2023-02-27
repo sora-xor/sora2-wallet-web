@@ -8,8 +8,8 @@
   >
     <div class="desktop-connection">
       <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
-      <create-account v-else-if="isCreateFlow" :step="step" class="login" @stepChange="setStep" />
-      <import-account v-else-if="isImportFlow" :step="step" class="login" @stepChange="setStep" />
+      <create-account v-else-if="isCreateFlow" :step.sync="step" class="login" />
+      <import-account v-else-if="isImportFlow" :step.sync="step" class="login" />
       <external-account-list
         v-else-if="isAccountList"
         :text="t('connection.selectAccount')"
@@ -34,7 +34,7 @@ import CreateAccount from '../Desktop/CreateAccount.vue';
 import ExternalAccountList from '../External/AccountList.vue';
 import ImportAccount from '../Desktop/ImportAccount.vue';
 
-import { LoginStep } from '../../../consts';
+import { LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
 import { getPreviousLoginStep } from '../../../util';
 import { state, action } from '../../../store/decorators';
 
@@ -50,11 +50,11 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
   @action.account.importPolkadotJsDesktop importPolkadotJsDesktop!: (account: PolkadotJsAccount) => Promise<void>;
 
   get isCreateFlow(): boolean {
-    return [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials].includes(this.step);
+    return AccountCreateFlow.includes(this.step);
   }
 
   get isImportFlow(): boolean {
-    return [LoginStep.Import, LoginStep.ImportCredentials].includes(this.step);
+    return AccountImportFlow.includes(this.step);
   }
 
   get isAccountList(): boolean {

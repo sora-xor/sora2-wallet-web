@@ -88,6 +88,9 @@ export enum LoginStep {
   AccountList = 'AccountList',
 }
 
+export const AccountImportFlow = [LoginStep.Import, LoginStep.ImportCredentials];
+export const AccountCreateFlow = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
+
 export interface WalletPermissions {
   addAssets?: boolean;
   addLiquidity?: boolean;

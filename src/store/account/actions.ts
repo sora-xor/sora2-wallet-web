@@ -26,7 +26,7 @@ import {
 } from '../../util';
 import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
 
-import type { PolkadotJsAccount } from '../../types/common';
+import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
@@ -321,6 +321,17 @@ const actions = defineActions({
     api.changeName(name);
     // update account data from storage
     commit.syncWithStorage();
+    // update account list in state
+    await dispatch.getPolkadotJsAccounts();
+  },
+
+  /**
+   * Desktop
+   */
+  async restoreAccountFromJson(_, { json, password }: { json: KeyringPair$Json; password: string }) {
+    const { dispatch } = accountActionContext(context);
+    // restore from json file
+    api.restoreFromJson(json, password);
     // update account list in state
     await dispatch.getPolkadotJsAccounts();
   },

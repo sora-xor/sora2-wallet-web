@@ -9,7 +9,15 @@ import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
 import { api, connection } from '../api';
-import { ExplorerLink, SoraNetwork, ExplorerType, LoginStep, Extensions } from '../consts';
+import {
+  ExplorerLink,
+  SoraNetwork,
+  ExplorerType,
+  LoginStep,
+  Extensions,
+  AccountImportFlow,
+  AccountCreateFlow,
+} from '../consts';
 import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg';
 import GoogleLogo from '../assets/img/GoogleLogo.svg';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
@@ -330,21 +338,13 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
 };
 
 export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
-  let currentStepIndex: number;
+  for (const flow of [AccountCreateFlow, AccountImportFlow]) {
+    const currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
 
-  if (currentStep === LoginStep.Welcome) return LoginStep.AccountList;
-
-  const createFlow: LoginStep[] = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
-
-  const importFlow: LoginStep[] = [LoginStep.Import, LoginStep.ImportCredentials];
-
-  [createFlow, importFlow].forEach((flow) => {
-    currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
-
-    if (currentStepIndex !== -1) {
+    if (currentStepIndex > 0) {
       return flow[currentStepIndex - 1];
     }
-  });
+  }
 
   return LoginStep.AccountList;
 };

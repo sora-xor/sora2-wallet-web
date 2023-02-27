@@ -130,6 +130,8 @@ import { action } from '../../../store/decorators';
 
 @Component
 export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixin) {
+  @Prop({ type: String, required: true }) readonly step!: LoginStep;
+
   @action.account.createAccount private createAccount!: (data: {
     seed: string;
     name: string;
@@ -138,8 +140,6 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
   }) => Promise<void>;
 
   @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
-
-  @Prop({ type: String, required: true }) readonly step!: LoginStep;
 
   readonly LoginStep = LoginStep;
   readonly PHRASE_LENGTH = 12;
@@ -247,12 +247,12 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
   }
 
   nextStep(): void {
-    this.$emit('stepChange', LoginStep.ConfirmSeedPhrase);
+    this.$emit('update:step', LoginStep.ConfirmSeedPhrase);
   }
 
   handleMnemonicCheck(): void {
     if (this.seedPhraseToCompare.length < this.PHRASE_LENGTH) {
-      this.$emit('stepChange', LoginStep.CreateCredentials);
+      this.$emit('update:step', LoginStep.CreateCredentials);
       return;
     }
     const isSeedPhraseMatched = isEqual(this.seedPhraseToCompare, this.seedPhrase);
@@ -261,7 +261,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
       this.runErrorMessage();
       this.runReturnAnimation();
     } else {
-      this.$emit('stepChange', LoginStep.CreateCredentials);
+      this.$emit('update:step', LoginStep.CreateCredentials);
     }
   }
 
@@ -293,7 +293,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
       await this.exportAccount(this.accountPassword);
     }
 
-    this.$emit('stepChange', LoginStep.AccountList);
+    this.$emit('update:step', LoginStep.AccountList);
   }
 
   async handleAccountCreate(): Promise<void> {

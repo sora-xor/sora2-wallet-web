@@ -78,22 +78,21 @@
 <script lang="ts">
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
-import { api } from '@sora-substrate/util';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
-import { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
+import { KeyringPair$Json } from '../../../types/common';
 import { AppError, parseJson, delay } from '../../../util';
 import { LoginStep } from '../../../consts';
-import { state, action } from '../../../store/decorators';
+import { action } from '../../../store/decorators';
 
 @Component
 export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
 
-  @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-
-  @action.account.importPolkadotJs importPolkadotJs!: (address: string) => Promise<void>;
-  @action.account.getPolkadotJsAccounts getPolkadotJsAccounts!: () => Promise<void>;
+  @action.account.restoreAccountFromJson private restoreAccountFromJson!: (data: {
+    password: string;
+    json: KeyringPair$Json;
+  }) => Promise<void>;
 
   @action.account.createAccount private createAccount!: (data: {
     seed: string;
@@ -134,10 +133,7 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
   }
 
   get disabledImportStep(): boolean {
-    if (this.json) {
-      return !(this.accountName && this.accountPassword);
-    }
-    return !(this.accountName && this.accountPassword && this.accountPasswordConfirm);
+    return !(this.accountName && this.accountPassword) || (!this.json && !this.accountPasswordConfirm);
   }
 
   get inputType(): string {
@@ -174,7 +170,7 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
           throw new AppError({ key: 'desktop.errorMessages.mnemonic' });
         }
 
-        this.$emit('stepChange', LoginStep.ImportCredentials);
+        this.$emit('update:step', LoginStep.ImportCredentials);
       } catch (error) {
         this.mnemonicPhrase = '';
         throw error;
@@ -206,7 +202,7 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
       this.readonlyAccountName = true;
       this.json = parsedJson;
       this.mnemonicPhrase = '';
-      this.$emit('stepChange', LoginStep.ImportCredentials);
+      this.$emit('update:step', LoginStep.ImportCredentials);
     });
   }
 
@@ -225,9 +221,8 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
 
       await this.withAppNotification(async () => {
         try {
-          api.restoreFromJson(json, this.accountPassword);
-          await this.getPolkadotJsAccounts();
-          this.$emit('stepChange', LoginStep.AccountList);
+          await this.restoreAccountFromJson({ json, password: this.accountPassword });
+          this.$emit('update:step', LoginStep.AccountList);
         } catch (error) {
           this.accountPassword = '';
           throw error;
@@ -249,7 +244,7 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
           passwordConfirm: this.accountPasswordConfirm,
         });
 
-        this.$emit('stepChange', LoginStep.AccountList);
+        this.$emit('update:step', LoginStep.AccountList);
       });
     });
   }
