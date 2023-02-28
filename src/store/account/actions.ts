@@ -397,13 +397,11 @@ const actions = defineActions({
 
       const savedIds = new Set(state.assetsIds);
       const ids = (await withTimeout(api.api.rpc.assets.listAssetIds())).map((codec) => codec.toString());
-      const newIds = ids.filter((id) => !savedIds.has(id));
+      const newIds = ids.filter((id) => !savedIds.has(id)).filter((address) => !getters.blacklist.includes(address));
 
       if (newIds.length) {
         const newAssets = await Promise.all(newIds.map((id) => withTimeout(api.assets.getAssetInfo(id))));
-        const newFilteredAssets = excludePoolXYKAssets(newAssets).filter(
-          ({ address }) => !getters.blacklist.includes(address)
-        );
+        const newFilteredAssets = excludePoolXYKAssets(newAssets);
 
         commit.setAssetsIds(ids);
         commit.updateAssets([...state.assets, ...newFilteredAssets]);
