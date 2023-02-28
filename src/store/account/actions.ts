@@ -409,11 +409,11 @@ const actions = defineActions({
 
   async getNewAssets(context): Promise<void> {
     try {
-      const { commit, state } = accountActionContext(context);
+      const { state, getters, commit } = accountActionContext(context);
 
       const savedIds = new Set(state.assetsIds);
       const ids = (await withTimeout(api.api.rpc.assets.listAssetIds())).map((codec) => codec.toString());
-      const newIds = ids.filter((id) => !savedIds.has(id));
+      const newIds = ids.filter((id) => !savedIds.has(id)).filter((address) => !getters.blacklist.includes(address));
 
       if (newIds.length) {
         const newAssets = await Promise.all(newIds.map((id) => withTimeout(api.assets.getAssetInfo(id))));
