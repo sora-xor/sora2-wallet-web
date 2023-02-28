@@ -2,11 +2,11 @@ import { defineActions } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
 import { saveAs } from 'file-saver';
-import { PoolTokens } from '@sora-substrate/util/build/poolXyk/consts';
+import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
 import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { ActionContext } from 'vuex';
 import type { Signer } from '@polkadot/api/types';
-import type { Asset, AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { accountActionContext } from './../account';
 import { rootActionContext } from '../../store';
@@ -34,8 +34,6 @@ const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
 const PASSPHRASE_TIMEOUT = 15 * 60_000; // 15min
 
-// [TODO]: to js-lib
-const excludePoolXYKAssets = (assets: Asset[]) => assets.filter((asset) => asset.symbol !== PoolTokens.XYKPOOL);
 // [TODO]: change WsProvider timeout instead on this
 const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
   return Promise.race([
@@ -133,7 +131,6 @@ const actions = defineActions({
     commit.resetAccount();
 
     if (state.isDesktop && forgetAccount) {
-      // update account list in state
       await dispatch.getPolkadotJsAccounts();
     }
 
@@ -248,10 +245,12 @@ const actions = defineActions({
   },
 
   async importPolkadotJs(context, accountData: PolkadotJsAccount): Promise<void> {
-    const { commit, dispatch, getters } = accountActionContext(context);
+    const { commit, dispatch, getters, state } = accountActionContext(context);
     const { rootDispatch } = rootActionContext(context);
 
     if (!getters.isConnectedAccount(accountData)) {
+      await dispatch.logout(!state.isDesktop);
+
       const defaultAddress = api.formatAddress(accountData.address, false);
       const source = accountData.source as Extensions;
       const { account, signer } = await getExtensionSigner(defaultAddress, source);
@@ -274,6 +273,8 @@ const actions = defineActions({
     const { rootDispatch } = rootActionContext(context);
 
     if (!getters.isConnectedAccount(accountData)) {
+      await dispatch.logout(!state.isDesktop);
+
       const defaultAddress = api.formatAddress(accountData.address, false);
       const account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
 
@@ -412,8 +413,8 @@ const actions = defineActions({
       const { state, getters, commit } = accountActionContext(context);
 
       const savedIds = new Set(state.assetsIds);
-      const ids = (await withTimeout(api.api.rpc.assets.listAssetIds())).map((codec) => codec.toString());
-      const newIds = ids.filter((id) => !savedIds.has(id)).filter((address) => !getters.blacklist.includes(address));
+      const ids = await withTimeout(api.assets.getAssetsIds(getters.blacklist));
+      const newIds = ids.filter((id) => !savedIds.has(id));
 
       if (newIds.length) {
         const newAssets = await Promise.all(newIds.map((id) => withTimeout(api.assets.getAssetInfo(id))));

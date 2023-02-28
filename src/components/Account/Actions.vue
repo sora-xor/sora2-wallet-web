@@ -144,7 +144,7 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
       settingsStorage.set('allowAccountDeletePopup', false);
     }
     this.accountDeleteVisibility = false;
-    this.logout();
+    this.logout(true);
   }
 }
 </script>
