@@ -210,7 +210,7 @@ export default {
     scan: 'Scan with camera',
     allowanceError: 'Check your camera availability and browser permissions to use it',
     camera: 'Camera',
-    allowanceRequest: 'Press “Allow” access to camera',
+    allowanceRequest: 'Press “Allow” to access camera',
   },
   addAsset: {
     success: 'Asset {symbol} was added successfully!',
