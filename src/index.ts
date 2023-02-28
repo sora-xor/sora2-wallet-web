@@ -97,11 +97,7 @@ async function initWallet({
     }
 
     try {
-      const withKeyringLoading = true;
-      const { isDesktop } = store.state.wallet.account;
-      // TODO: [Desktop]: Move TX sign, pair lock/unlock to api client with isDesktop flag below.
-      // This flag might be set via this method below
-      await api.initialize(withKeyringLoading, isDesktop);
+      await api.initialize(true);
     } catch (error) {
       console.error('Something went wrong during api initialization', error);
       throw error;

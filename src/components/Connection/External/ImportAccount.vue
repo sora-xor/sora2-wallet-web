@@ -78,6 +78,8 @@
 <script lang="ts">
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
+import type { CreateResult } from '@polkadot/ui-keyring/types';
+
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
 import { KeyringPair$Json } from '../../../types/common';
@@ -99,7 +101,7 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
     name: string;
     password: string;
     passwordConfirm: string;
-  }) => Promise<void>;
+  }) => Promise<CreateResult>;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 

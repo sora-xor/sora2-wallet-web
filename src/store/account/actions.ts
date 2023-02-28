@@ -3,6 +3,7 @@ import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
 import { saveAs } from 'file-saver';
 import { PoolTokens } from '@sora-substrate/util/build/poolXyk/consts';
+import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { ActionContext } from 'vuex';
 import type { Signer } from '@polkadot/api/types';
 import type { Asset, AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
@@ -124,8 +125,9 @@ const actions = defineActions({
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
     if (api.accountPair) {
-      api.logout(!forgetAccount && state.isDesktop);
+      api.logout(forgetAccount);
     }
+
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
@@ -256,7 +258,7 @@ const actions = defineActions({
 
       const name = account.name || '';
 
-      api.importByPolkadotJs(account.address, name, source);
+      api.loginAccount(account.address, name, source, true);
       api.setSigner(signer);
 
       commit.selectPolkadotJsAccount({ name, source });
@@ -279,7 +281,7 @@ const actions = defineActions({
         throw new Error('polkadotjs.noAccount');
       }
 
-      api.importByPolkadotJs(account.address, account.name, '');
+      api.loginAccount(account.address, account.name, '', false);
 
       commit.selectPolkadotJsAccount({ name: account.name });
 
@@ -300,16 +302,18 @@ const actions = defineActions({
       password,
       passwordConfirm,
     }: { seed: string; name: string; password: string; passwordConfirm?: string }
-  ) {
+  ): Promise<CreateResult> {
     const { dispatch } = accountActionContext(context);
 
     if (passwordConfirm && password !== passwordConfirm) {
       throw new AppError({ key: 'desktop.errorMessages.passwords' });
     }
 
-    api.createAccount(seed, name, password);
+    const account = api.addAccount(seed, name, password);
     // update account list in state
     await dispatch.getPolkadotJsAccounts();
+
+    return account;
   },
 
   /**
@@ -318,7 +322,7 @@ const actions = defineActions({
   async renameAccount(context, name: string) {
     const { commit, dispatch } = accountActionContext(context);
     // change name in api & storage
-    api.changeName(name);
+    api.changeAccountName(name);
     // update account data from storage
     commit.syncWithStorage();
     // update account list in state
@@ -331,7 +335,7 @@ const actions = defineActions({
   async restoreAccountFromJson(context, { json, password }: { json: KeyringPair$Json; password: string }) {
     const { dispatch } = accountActionContext(context);
     // restore from json file
-    api.restoreFromJson(json, password);
+    api.restoreAccountFromJson(json, password);
     // update account list in state
     await dispatch.getPolkadotJsAccounts();
   },
@@ -339,8 +343,9 @@ const actions = defineActions({
   /**
    * Desktop
    */
-  async exportAccount(_, password: string) {
-    const accountJson = api.exportAccount(password);
+  async exportAccount(_, { account, password }: { account?: CreateResult; password: string }) {
+    const acc = account || api.account;
+    const accountJson = api.exportAccount(acc.pair, password);
     const blob = new Blob([accountJson], { type: 'application/json' });
     const filename = (JSON.parse(accountJson) || {}).address || '';
     saveAs(blob, filename);
@@ -389,7 +394,7 @@ const actions = defineActions({
   async getAssets(context): Promise<void> {
     const { getters, commit, dispatch } = accountActionContext(context);
     try {
-      const allAssets = await withTimeout(api.assets.getAssets(getters.whitelist, true, getters.blacklist));
+      const allAssets = await withTimeout(api.assets.getAssets(true, getters.whitelist, getters.blacklist));
       const allIds = allAssets.map((asset) => asset.address);
       const filtered = excludePoolXYKAssets(allAssets);
 

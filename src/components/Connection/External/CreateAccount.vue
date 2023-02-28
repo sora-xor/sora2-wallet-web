@@ -120,6 +120,7 @@
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 import isEqual from 'lodash/fp/isEqual';
+import type { CreateResult } from '@polkadot/ui-keyring/types';
 
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -137,9 +138,12 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
     name: string;
     password: string;
     passwordConfirm: string;
-  }) => Promise<void>;
+  }) => Promise<CreateResult>;
 
-  @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
+  @action.account.exportAccount private exportAccount!: (data: {
+    account?: CreateResult;
+    password: string;
+  }) => Promise<void>;
 
   readonly LoginStep = LoginStep;
   readonly PHRASE_LENGTH = 12;
@@ -282,7 +286,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
   }
 
   private async createNewAccount(): Promise<void> {
-    await this.createAccount({
+    const account = await this.createAccount({
       seed: this.seedPhrase,
       name: this.accountName,
       password: this.accountPassword,
@@ -290,7 +294,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
     });
 
     if (this.toExport) {
-      await this.exportAccount(this.accountPassword);
+      await this.exportAccount({ account, password: this.accountPassword });
     }
 
     this.$emit('update:step', LoginStep.AccountList);

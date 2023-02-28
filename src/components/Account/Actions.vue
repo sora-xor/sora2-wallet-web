@@ -57,7 +57,7 @@ enum AccountActionTypes {
 })
 export default class AccountActions extends Mixins(NotificationMixin, LoadingMixin) {
   @action.account.renameAccount private renameAccount!: (name: string) => Promise<void>;
-  @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
+  @action.account.exportAccount private exportAccount!: ({ password }: { password: string }) => Promise<void>;
   @action.account.logout private logout!: (forgetAccount?: boolean) => Promise<void>;
 
   accountRenameVisibility = false;
@@ -101,7 +101,7 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
         break;
       }
       case AccountActionTypes.Logout: {
-        this.logout();
+        this.logout(false);
         break;
       }
       case AccountActionTypes.Delete: {
@@ -133,7 +133,7 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
       await delay(500);
 
       await this.withAppNotification(async () => {
-        await this.exportAccount(password);
+        await this.exportAccount({ password });
         this.accountExportVisibility = false;
       });
     });
@@ -144,7 +144,7 @@ export default class AccountActions extends Mixins(NotificationMixin, LoadingMix
       settingsStorage.set('allowAccountDeletePopup', false);
     }
     this.accountDeleteVisibility = false;
-    this.logout(true);
+    this.logout();
   }
 }
 </script>
