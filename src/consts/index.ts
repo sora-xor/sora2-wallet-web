@@ -4,7 +4,7 @@ export const HiddenValue = '******';
 
 export const BLOCK_PRODUCE_TIME = 6_000;
 
-export enum Extensions {
+export enum AppWallet {
   GoogleAuth = 'google-auth',
   FearlessWallet = 'fearless-wallet',
   PolkadotJS = 'polkadot-js',

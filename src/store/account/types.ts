@@ -1,4 +1,4 @@
-import { Extensions } from '../../consts';
+import { AppWallet } from '../../consts';
 
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
@@ -23,9 +23,9 @@ export type AccountState = {
   fiatPriceObject: FiatPriceObject;
   fiatPriceSubscription: Nullable<VoidFunction>;
   referralRewards: ReferrerRewards;
-  selectedExtension: Nullable<Extensions>;
+  selectedWallet: Nullable<AppWallet>;
   availableWallets: Array<Wallet>;
-  extensionAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
+  walletAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
   addressKeyMapping: AddressKeyMapping;
   addressPassphraseMapping: AddressKeyMapping;
   assetsToNotifyQueue: Array<WhitelistArrayItem>;

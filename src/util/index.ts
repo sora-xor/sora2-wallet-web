@@ -14,12 +14,11 @@ import {
   SoraNetwork,
   ExplorerType,
   LoginStep,
-  Extensions,
+  AppWallet,
   AccountImportFlow,
   AccountCreateFlow,
 } from '../consts';
-import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg';
-import GoogleLogo from '../assets/img/GoogleLogo.svg';
+import { FearlessWalletInfo } from '../consts/wallets';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 
@@ -40,28 +39,6 @@ export const APP_NAME = 'Sora2 Wallet';
 export const WHITE_LIST_URL = 'https://whitelist.polkaswap2.io/whitelist.json';
 export const NFT_BLACK_LIST_URL = 'https://whitelist.polkaswap2.io/blacklist.json';
 
-const FearlessWalletData = {
-  extensionName: Extensions.FearlessWallet,
-  title: 'Fearless Wallet',
-  installUrl: 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc',
-  logo: {
-    src: FearlessWalletLogo as string,
-    alt: 'Fearless Wallet Extension',
-  },
-};
-
-export const GoogleAuthWalletData = {
-  extensionName: Extensions.GoogleAuth,
-  title: 'Google',
-  installUrl: '',
-  logo: {
-    src: GoogleLogo as string,
-    alt: 'Google auth',
-  },
-};
-
-export const ExternalWallets = [GoogleAuthWalletData];
-
 export function waitForDocumentReady() {
   return new Promise<void>((resolve) => {
     if (document.readyState === 'complete') {
@@ -79,7 +56,7 @@ export function waitForDocumentReady() {
 
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
-export const getPolkadotJsAccounts = async (): Promise<any> => {
+export const getImportedAccounts = async (): Promise<PolkadotJsAccount[]> => {
   const accounts = await api.getAccounts();
   const polkadotJsAccounts = accounts.map((account) => ({
     address: account.address,
@@ -91,18 +68,18 @@ export const getPolkadotJsAccounts = async (): Promise<any> => {
 const formatWalletAccount = (account: WalletAccount): PolkadotJsAccount => ({
   address: account.address,
   name: account.name || '',
-  source: account.source as Extensions,
+  source: account.source as AppWallet,
 });
 
 const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAccount[] => {
   return (accounts || []).map((account) => formatWalletAccount(account));
 };
 
-export const subscribeToPolkadotJsAccounts = async (
-  extension: Extensions,
+export const subscribeToWalletAccounts = async (
+  wallet: AppWallet,
   callback: (accounts: PolkadotJsAccount[]) => void
 ): Promise<Nullable<Unsubcall>> => {
-  const wallet = await getWallet(extension);
+  const appWallet = await getWallet(wallet);
 
   let resolveCall: VoidFunction;
 
@@ -110,7 +87,7 @@ export const subscribeToPolkadotJsAccounts = async (
     resolveCall = resolve;
   });
 
-  const unsubscribe = await wallet.subscribeAccounts((injectedAccounts) => {
+  const unsubscribe = await appWallet.subscribeAccounts((injectedAccounts) => {
     callback(formatWalletAccounts(injectedAccounts));
     resolveCall();
   });
@@ -121,16 +98,16 @@ export const subscribeToPolkadotJsAccounts = async (
 };
 
 export const addFearlessWalletLocally = () => {
-  addWallet(FearlessWalletData);
+  addWallet(FearlessWalletInfo);
 };
 
 export const getAppWallets = (): Wallet[] => {
   try {
     const wallets = getWallets().sort((a, b) => {
-      if (a.extensionName === Extensions.FearlessWallet) {
+      if (a.extensionName === AppWallet.FearlessWallet) {
         return -1;
       }
-      if (b.extensionName === Extensions.FearlessWallet) {
+      if (b.extensionName === AppWallet.FearlessWallet) {
         return 1;
       }
       return 0;
@@ -142,7 +119,7 @@ export const getAppWallets = (): Wallet[] => {
   }
 };
 
-export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wallet> => {
+export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Wallet> => {
   const wallet = getWalletBySource(extension);
 
   if (!wallet) {
@@ -166,8 +143,8 @@ export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wall
  * @param address
  * @returns
  */
-export const getExtensionSigner = async (address: string, extension: Extensions) => {
-  const wallet = await getWallet(extension);
+export const getWalletSigner = async (address: string, appWallet: AppWallet) => {
+  const wallet = await getWallet(appWallet);
   const accounts = await wallet.getAccounts();
 
   if (!accounts) {
@@ -195,14 +172,16 @@ export const getWalletInstallUrl = (wallet: Wallet): string => {
   // for Firefox
   if (navigator.userAgent.match(/firefox|fxios/i)) {
     switch (extensionName) {
-      case Extensions.FearlessWallet:
+      case AppWallet.FearlessWallet:
         return 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc';
-      case Extensions.SubwalletJS:
+      case AppWallet.SubwalletJS:
         return 'https://addons.mozilla.org/firefox/addon/subwallet/';
-      case Extensions.TalismanJS:
+      case AppWallet.TalismanJS:
         return 'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/';
-      default:
+      case AppWallet.PolkadotJS:
         return 'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/';
+      default:
+        return '';
     }
   }
 

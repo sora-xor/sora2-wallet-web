@@ -18,14 +18,14 @@ import {
   delay,
   getAppWallets,
   getWallet,
-  getExtensionSigner,
-  getPolkadotJsAccounts,
-  subscribeToPolkadotJsAccounts,
+  getWalletSigner,
+  getImportedAccounts,
+  subscribeToWalletAccounts,
   WHITE_LIST_URL,
   NFT_BLACK_LIST_URL,
   AppError,
 } from '../../util';
-import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
+import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
 
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
@@ -100,11 +100,17 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   }
 }
 
+function logoutApi(forgetAccount?: boolean): void {
+  if (api.accountPair) {
+    api.logout(forgetAccount);
+  }
+}
+
 const actions = defineActions({
   async getSigner(context): Promise<Signer> {
     const { state } = accountActionContext(context);
     const defaultAddress = api.formatAddress(state.address, false);
-    const { signer } = await getExtensionSigner(defaultAddress, state.source as Extensions);
+    const { signer } = await getWalletSigner(defaultAddress, state.source as AppWallet);
 
     return signer;
   },
@@ -122,16 +128,14 @@ const actions = defineActions({
     const { commit, dispatch, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    if (api.accountPair) {
-      api.logout(forgetAccount);
-    }
+    logoutApi(forgetAccount);
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
 
     if (state.isDesktop && forgetAccount) {
-      await dispatch.getPolkadotJsAccounts();
+      await dispatch.getImportedAccounts();
     }
 
     await rootDispatch.wallet.router.checkCurrentRoute();
@@ -156,10 +160,10 @@ const actions = defineActions({
     }
   },
 
-  async updatePolkadotJsAccounts(context, accounts: Array<PolkadotJsAccount>): Promise<void> {
+  async updateAccountsList(context, accounts: Array<PolkadotJsAccount>): Promise<void> {
     const { commit, getters, dispatch, state } = accountActionContext(context);
 
-    commit.setPolkadotJsAccounts(accounts);
+    commit.setWalletAccounts(accounts);
 
     if (getters.isLoggedIn && !state.isDesktop) {
       try {
@@ -171,7 +175,7 @@ const actions = defineActions({
   },
 
   /**
-   * Update the list of installed extensions
+   * Update the list of installed extensions & internal wallets
    */
   async updateAvailableWallets(context): Promise<void> {
     const { commit } = accountActionContext(context);
@@ -186,11 +190,11 @@ const actions = defineActions({
     }
   },
 
-  async checkSelectedExtension(context): Promise<void> {
+  async checkSelectedWallet(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
     try {
-      if (state.selectedExtension) {
-        await getWallet(state.selectedExtension);
+      if (state.selectedWallet) {
+        await getWallet(state.selectedWallet);
       }
     } catch (error) {
       console.error(error);
@@ -201,90 +205,78 @@ const actions = defineActions({
     }
   },
 
-  async selectExtension(context, extension: Extensions) {
+  async selectWallet(context, extension: AppWallet) {
     const { commit, dispatch } = accountActionContext(context);
 
-    commit.resetPolkadotJsAccountsSubscription();
+    commit.resetWalletAccountsSubscription();
 
     await getWallet(extension);
 
-    commit.setSelectedExtension(extension);
+    commit.setSelectedWallet(extension);
 
-    await dispatch.subscribeToPolkadotJsAccounts();
+    await dispatch.subscribeToWalletAccounts();
   },
 
-  async subscribeOnExtensionAvailability(context): Promise<void> {
+  async subscribeOnWalletAvailability(context): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
 
     const runChecks = async () =>
-      await Promise.all([dispatch.updateAvailableWallets(), dispatch.checkSelectedExtension()]);
+      await Promise.all([dispatch.updateAvailableWallets(), dispatch.checkSelectedWallet()]);
 
     await runChecks();
 
     const timer = setInterval(runChecks, CHECK_EXTENSION_INTERVAL);
 
-    commit.setExtensionAvailabilitySubscription(timer);
+    commit.setWalletAvailabilitySubscription(timer);
   },
 
-  async getPolkadotJsAccounts(context) {
+  async getImportedAccounts(context) {
     const { dispatch } = accountActionContext(context);
-    const accounts = await getPolkadotJsAccounts();
-    await dispatch.updatePolkadotJsAccounts(accounts);
+    const accounts = await getImportedAccounts();
+    await dispatch.updateAccountsList(accounts);
   },
 
-  async subscribeToPolkadotJsAccounts(context): Promise<void> {
+  async subscribeToWalletAccounts(context): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
 
-    if (!state.selectedExtension) return;
+    if (!state.selectedWallet) return;
 
-    const subscription = await subscribeToPolkadotJsAccounts(state.selectedExtension, (accounts) => {
-      dispatch.updatePolkadotJsAccounts(accounts);
+    const subscription = await subscribeToWalletAccounts(state.selectedWallet, (accounts) => {
+      dispatch.updateAccountsList(accounts);
     });
 
-    commit.setPolkadotJsAccountsSubscription(subscription);
+    commit.setWalletAccountsSubscription(subscription);
   },
 
-  async importPolkadotJs(context, accountData: PolkadotJsAccount): Promise<void> {
+  async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
     const { commit, dispatch, getters, state } = accountActionContext(context);
     const { rootDispatch } = rootActionContext(context);
 
     if (!getters.isConnectedAccount(accountData)) {
-      await dispatch.logout(!state.isDesktop);
+      // Desktop has not source
+      const source = (accountData.source as AppWallet) || '';
+      // Don't forget account on Desktop
+      logoutApi(!source);
 
       const defaultAddress = api.formatAddress(accountData.address, false);
-      const source = accountData.source as Extensions;
-      const { account, signer } = await getExtensionSigner(defaultAddress, source);
 
-      const name = account.name || '';
+      let account!: PolkadotJsAccount | undefined;
 
-      api.loginAccount(account.address, name, source, true);
-      api.setSigner(signer);
+      if (source) {
+        const walletData = await getWalletSigner(defaultAddress, source);
+        account = walletData.account;
+        api.setSigner(walletData.signer);
+      } else {
+        account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
 
-      commit.selectPolkadotJsAccount({ name, source });
-
-      await dispatch.afterLogin();
-    } else {
-      await rootDispatch.wallet.router.checkCurrentRoute();
-    }
-  },
-
-  async importPolkadotJsDesktop(context, accountData: PolkadotJsAccount): Promise<void> {
-    const { state, commit, dispatch, getters } = accountActionContext(context);
-    const { rootDispatch } = rootActionContext(context);
-
-    if (!getters.isConnectedAccount(accountData)) {
-      await dispatch.logout(!state.isDesktop);
-
-      const defaultAddress = api.formatAddress(accountData.address, false);
-      const account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
-
-      if (!account) {
-        throw new Error('polkadotjs.noAccount');
+        if (!account) {
+          throw new Error('polkadotjs.noAccount');
+        }
       }
 
-      api.loginAccount(account.address, account.name, '', false);
+      api.loginAccount(account.address, account.name, source, !!source);
 
-      commit.selectPolkadotJsAccount({ name: account.name });
+      commit.selectWalletAccount({ name: account.name, source });
 
       await dispatch.afterLogin();
     } else {
@@ -312,7 +304,7 @@ const actions = defineActions({
 
     const account = api.addAccount(seed, name, password);
     // update account list in state
-    await dispatch.getPolkadotJsAccounts();
+    await dispatch.getImportedAccounts();
 
     return account;
   },
@@ -327,7 +319,7 @@ const actions = defineActions({
     // update account data from storage
     commit.syncWithStorage();
     // update account list in state
-    await dispatch.getPolkadotJsAccounts();
+    await dispatch.getImportedAccounts();
   },
 
   /**
@@ -338,7 +330,7 @@ const actions = defineActions({
     // restore from json file
     api.restoreAccountFromJson(json, password);
     // update account list in state
-    await dispatch.getPolkadotJsAccounts();
+    await dispatch.getImportedAccounts();
   },
 
   /**
@@ -380,8 +372,8 @@ const actions = defineActions({
     // check log in/out state changes after sync
     if (getters.isLoggedIn !== wasLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
-        const account = { address: state.address, name: state.name, source: state.source as Extensions };
-        await dispatch.importPolkadotJs(account);
+        const account = { address: state.address, name: state.name, source: state.source as AppWallet };
+        await dispatch.loginAccount(account);
       } else {
         await dispatch.logout();
       }
@@ -538,9 +530,9 @@ const actions = defineActions({
     commit.resetFiatPriceSubscription();
   },
   /** It's used **only** for subscriptions module */
-  async resetExtensionAvailabilitySubscription(context): Promise<void> {
+  async resetWalletAvailabilitySubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
-    commit.resetExtensionAvailabilitySubscription();
+    commit.resetWalletAvailabilitySubscription();
   },
   /** It's used **only** for subscriptions module */
   async resetAccountPassphraseTimer(context): Promise<void> {

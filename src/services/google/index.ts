@@ -32,10 +32,10 @@ class GoogleDriveApi extends GoogleApi {
 }
 
 class GoogleManage {
-  public readonly api!: GoogleApi;
+  public readonly api!: GoogleDriveApi;
   public readonly oauth!: GoogleOauth;
 
-  constructor({ api, oauth }: { api: GoogleApi; oauth: GoogleOauth }) {
+  constructor({ api, oauth }: { api: GoogleDriveApi; oauth: GoogleOauth }) {
     this.api = api;
     this.oauth = oauth;
   }

@@ -1,4 +1,4 @@
-import { Extensions } from '../consts';
+import { AppWallet } from '../consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 export type { KeyringPair$Json } from '@polkadot/keyring/types';
 
@@ -24,7 +24,7 @@ export type AddressKeyMapping = {
 export interface PolkadotJsAccount {
   address: string;
   name: string;
-  source?: Extensions;
+  source?: AppWallet;
 }
 
 export type WhitelistIdsBySymbol = { [key: string]: string };

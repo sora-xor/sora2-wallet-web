@@ -8,7 +8,7 @@ import type { Unsubcall } from '@polkadot/extension-inject/types';
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
 import { storage } from '../../util/storage';
 import { api } from '../../api';
-import { Extensions } from '../../consts';
+import { AppWallet } from '../../consts';
 
 import type { AccountState } from './types';
 import type { FiatPriceObject, ReferrerRewards } from '../../services/subquery/types';
@@ -52,9 +52,9 @@ const mutations = defineMutations<AccountState>()({
         'assetsSubscription',
         'polkadotJsAccounts',
         'polkadotJsAccountsSubscription',
-        'selectedExtension',
+        'selectedWallet',
         'availableWallets',
-        'extensionAvailabilityTimer',
+        'walletAvailabilityTimer',
       ],
       initialState()
     );
@@ -119,19 +119,19 @@ const mutations = defineMutations<AccountState>()({
   clearReferralRewards(state): void {
     state.referralRewards = EMPTY_REFERRAL_REWARDS;
   },
-  setPolkadotJsAccounts(state, polkadotJsAccounts: Array<PolkadotJsAccount>): void {
+  setWalletAccounts(state, polkadotJsAccounts: Array<PolkadotJsAccount> = []): void {
     state.polkadotJsAccounts = polkadotJsAccounts;
   },
-  setPolkadotJsAccountsSubscription(state, subscription: Nullable<Unsubcall>): void {
+  setWalletAccountsSubscription(state, subscription: Nullable<Unsubcall>): void {
     state.polkadotJsAccountsSubscription = subscription;
   },
-  resetPolkadotJsAccountsSubscription(state): void {
+  resetWalletAccountsSubscription(state): void {
     if (typeof state.polkadotJsAccountsSubscription === 'function') {
       state.polkadotJsAccountsSubscription();
     }
     state.polkadotJsAccountsSubscription = null;
   },
-  selectPolkadotJsAccount(state, { name = '', source = '' } = {}): void {
+  selectWalletAccount(state, { name = '', source = '' } = {}): void {
     state.address = api.address;
     state.source = source;
     state.name = name;
@@ -139,16 +139,16 @@ const mutations = defineMutations<AccountState>()({
   setAvailableWallets(state, wallets: Wallet[]) {
     state.availableWallets = wallets;
   },
-  setSelectedExtension(state, extension: Extensions) {
-    state.selectedExtension = extension;
+  setSelectedWallet(state, extension: Nullable<AppWallet> = null) {
+    state.selectedWallet = extension;
   },
-  setExtensionAvailabilitySubscription(state, timeout: NodeJS.Timeout | number): void {
-    state.extensionAvailabilityTimer = timeout;
+  setWalletAvailabilitySubscription(state, timeout: NodeJS.Timeout | number): void {
+    state.walletAvailabilityTimer = timeout;
   },
-  resetExtensionAvailabilitySubscription(state): void {
-    if (state.extensionAvailabilityTimer) {
-      clearInterval(state.extensionAvailabilityTimer as number);
-      state.extensionAvailabilityTimer = null;
+  resetWalletAvailabilitySubscription(state): void {
+    if (state.walletAvailabilityTimer) {
+      clearInterval(state.walletAvailabilityTimer as number);
+      state.walletAvailabilityTimer = null;
     }
     state.polkadotJsAccounts = [];
     if (typeof state.polkadotJsAccountsSubscription === 'function') {

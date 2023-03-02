@@ -20,11 +20,11 @@
         <template v-if="isExtensionsView">
           <div class="wallet-connection-list">
             <p class="wallet-connection-title">{{ t('connection.list.simplest') }}</p>
-            <extension-list :wallets="externalWallets" @select="handleSelectExternalWallet" />
+            <extension-list :wallets="wallets.internal" @select="handleSelectWallet" />
           </div>
           <div class="wallet-connection-list">
             <p class="wallet-connection-title">{{ t('connection.list.extensions') }}</p>
-            <extension-list :wallets="internalWallets" @select="handleSelectInternalWallet" />
+            <extension-list :wallets="wallets.external" @select="handleSelectWallet" />
           </div>
 
           <s-button
@@ -64,13 +64,10 @@ import ExtensionList from '../ExtensionList.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import { state, action, getter, mutation } from '../../../store/decorators';
-import { RouteNames, Extensions } from '../../../consts';
-import { ExternalWallets } from '../../../util';
+import { RouteNames, AppWallet } from '../../../consts';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { PolkadotJsAccount } from '../../../types/common';
 import type { Route } from '../../../store/router/types';
-
-import { googleManage } from '../../../services/google';
 
 enum Step {
   First = 1,
@@ -81,17 +78,16 @@ enum Step {
   components: { WalletBase, AccountList, ExtensionList },
 })
 export default class ExtensionConnection extends Mixins(NotificationMixin, LoadingMixin) {
-  readonly externalWallets = ExternalWallets;
   step = Step.First;
 
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @state.account.availableWallets internalWallets!: Array<Wallet>;
 
+  @getter.account.wallets wallets!: { internal: Wallet[]; external: Wallet[] };
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
   @getter.account.isLoggedIn isLoggedIn!: boolean;
 
-  @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
-  @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
+  @action.account.loginAccount private loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
+  @action.account.selectWallet private selectWallet!: (wallet: AppWallet) => Promise<void>;
   @action.account.logout private logout!: AsyncFnWithoutArgs;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
@@ -127,25 +123,18 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
     await this.withLoading(async () => {
       await this.withAppAlert(async () => {
-        await this.importPolkadotJs(account);
+        await this.loginAccount(account);
       });
     });
   }
 
-  async handleSelectExternalWallet(wallet: Wallet): Promise<void> {
-    if (wallet.extensionName === Extensions.GoogleAuth) {
-      await this.withAppNotification(async () => {
-        await googleManage.auth();
-        this.navigate({ name: RouteNames.GoogleConnection });
-      });
-    }
-  }
+  async handleSelectWallet(wallet: Wallet): Promise<void> {
+    console.log(wallet);
 
-  async handleSelectInternalWallet(wallet: Wallet): Promise<void> {
     if (!wallet.installed) return;
 
     await this.withAppAlert(async () => {
-      await this.selectExtension(wallet.extensionName as Extensions);
+      await this.selectWallet(wallet.extensionName as AppWallet);
       this.navigateToAccountList();
     });
   }

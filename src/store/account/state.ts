@@ -31,11 +31,11 @@ export function initialState(): AccountState {
     fiatPriceSubscription: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
-    selectedExtension: null,
+    selectedWallet: null,
     availableWallets: [],
-    extensionAvailabilityTimer: null,
+    walletAvailabilityTimer: null,
     /** desktop key management */
-    isDesktop: !isElectron(), // NOTE: inverse flag here to debug desktop
+    isDesktop: isElectron(), // NOTE: inverse flag here to debug desktop
     addressKeyMapping: {},
     addressPassphraseMapping: {},
     accountPassphraseTimer: null,

@@ -47,7 +47,7 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
   readonly LoginStep = LoginStep;
 
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @action.account.importPolkadotJsDesktop importPolkadotJsDesktop!: (account: PolkadotJsAccount) => Promise<void>;
+  @action.account.loginAccount loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
 
   get isCreateFlow(): boolean {
     return AccountCreateFlow.includes(this.step);
@@ -101,7 +101,7 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
     await this.withLoading(async () => {
       try {
-        await this.importPolkadotJsDesktop(account);
+        await this.loginAccount(account);
       } catch (error) {
         this.showAppAlert(this.t('enterAccountError'));
       }
