@@ -1,4 +1,4 @@
-import type { WalletInfo } from '@subwallet/wallet-connect/types';
+import type { Wallet, WalletInfo } from '@subwallet/wallet-connect/types';
 
 import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg';
 
@@ -15,3 +15,5 @@ export const FearlessWalletInfo: WalletInfo = {
 };
 
 export const InternalWallets = [AppWallet.GoogleAuth];
+
+export const isInternalWallet = (wallet: Wallet) => InternalWallets.includes(wallet.extensionName as AppWallet);

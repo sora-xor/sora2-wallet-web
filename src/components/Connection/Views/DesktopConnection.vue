@@ -10,7 +10,7 @@
       <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
       <create-account v-else-if="isCreateFlow" :step.sync="step" />
       <import-account v-else-if="isImportFlow" :step.sync="step" />
-      <external-account-list
+      <internal-account-list
         v-else-if="isAccountList"
         :text="t('connection.selectAccount')"
         @select="handleSelectAccount"
@@ -30,16 +30,16 @@ import NotificationMixin from '../../mixins/NotificationMixin';
 
 import WalletBase from '../../WalletBase.vue';
 import WelcomePage from '../Desktop/WelcomePage.vue';
-import CreateAccount from '../External/CreateAccount.vue';
-import ExternalAccountList from '../External/AccountList.vue';
-import ImportAccount from '../External/ImportAccount.vue';
+import CreateAccount from '../Internal/CreateAccount.vue';
+import InternalAccountList from '../Internal/AccountList.vue';
+import ImportAccount from '../Internal/ImportAccount.vue';
 
 import { LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
 import { getPreviousLoginStep } from '../../../util';
 import { state, action } from '../../../store/decorators';
 
 @Component({
-  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ExternalAccountList },
+  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, InternalAccountList },
 })
 export default class DesktopConnection extends Mixins(NotificationMixin, LoadingMixin) {
   step: LoginStep = LoginStep.Welcome;

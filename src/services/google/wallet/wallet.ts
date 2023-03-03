@@ -47,11 +47,16 @@ class GoogleAuthWallet {
   }
 }
 
-export const addGoogleAuthWalletLocally = () => {
+export const googleAuthWallet = new GoogleAuthWallet();
+
+const injectGoogleAuthWallet = () => {
   const injectedWindow = window as any;
 
   injectedWindow.injectedWeb3 = injectedWindow.injectedWeb3 || {};
-  injectedWindow.injectedWeb3[GoogleAuthWalletInfo.extensionName] = new GoogleAuthWallet();
+  injectedWindow.injectedWeb3[GoogleAuthWalletInfo.extensionName] = googleAuthWallet;
+};
 
+export const addGoogleAuthWalletLocally = () => {
+  injectGoogleAuthWallet();
   addWallet(GoogleAuthWalletInfo);
 };

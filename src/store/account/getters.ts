@@ -7,7 +7,7 @@ import type { Wallet } from '@subwallet/wallet-connect/types';
 import { accountGetterContext } from './../account';
 import { api } from '../../api';
 import { AppWallet } from '../../consts';
-import { InternalWallets } from '../../consts/wallets';
+import { isInternalWallet } from '../../consts/wallets';
 import type { AccountState } from './types';
 import type { AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
 
@@ -36,12 +36,12 @@ const getters = defineGetters<AccountState>()({
     const { state } = accountGetterContext(args);
 
     const wallets: { internal: Wallet[]; external: Wallet[] } = {
-      internal: [], // api integrations
+      internal: [], // api integrations, app signing
       external: [], // extensions
     };
 
     return state.availableWallets.reduce((buffer, wallet) => {
-      if (InternalWallets.includes(wallet.extensionName as AppWallet)) {
+      if (isInternalWallet(wallet)) {
         buffer.internal.push(wallet);
       } else {
         buffer.external.push(wallet);

@@ -18,9 +18,9 @@ import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
 
 import WalletBase from '../../WalletBase.vue';
-import ExternalAccountList from '../External/AccountList.vue';
-import CreateAccount from '../External/CreateAccount.vue';
-import ImportAccount from '../External/ImportAccount.vue';
+import CreateAccount from '../Internal/CreateAccount.vue';
+import ImportAccount from '../Internal/ImportAccount.vue';
+import InternalAccountList from '../Internal/AccountList.vue';
 
 import { state, action, getter, mutation } from '../../../store/decorators';
 import { RouteNames, LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
@@ -33,7 +33,7 @@ import type { Route } from '../../../store/router/types';
     WalletBase,
     CreateAccount,
     ImportAccount,
-    ExternalAccountList,
+    InternalAccountList,
   },
 })
 export default class GoogleConnection extends Mixins(NotificationMixin, LoadingMixin) {

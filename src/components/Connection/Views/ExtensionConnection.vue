@@ -65,6 +65,7 @@ import NotificationMixin from '../../mixins/NotificationMixin';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import { state, action, getter, mutation } from '../../../store/decorators';
 import { RouteNames, AppWallet } from '../../../consts';
+import { isInternalWallet } from '../../../consts/wallets';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { PolkadotJsAccount } from '../../../types/common';
 import type { Route } from '../../../store/router/types';
@@ -129,13 +130,16 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
   }
 
   async handleSelectWallet(wallet: Wallet): Promise<void> {
-    console.log(wallet);
-
     if (!wallet.installed) return;
 
     await this.withAppAlert(async () => {
       await this.selectWallet(wallet.extensionName as AppWallet);
-      this.navigateToAccountList();
+
+      if (isInternalWallet(wallet)) {
+        this.navigate({ name: RouteNames.GoogleConnection });
+      } else {
+        this.navigateToAccountList();
+      }
     });
   }
 
