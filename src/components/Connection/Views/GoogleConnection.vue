@@ -10,7 +10,11 @@
     <create-account v-else-if="isCreateFlow" :step.sync="step" :create-account="handleAccountCreate" />
     <!-- <import-account v-else-if="isImportFlow" :step.sync="step" /> -->
 
-    <account-confirm-dialog :visible.sync="accountLoginVisibility" @confirm="handleAccountLogin" />
+    <account-confirm-dialog
+      :visible.sync="accountLoginVisibility"
+      :account="accountLoginData"
+      @confirm="handleAccountLogin"
+    />
   </wallet-base>
 </template>
 
@@ -59,7 +63,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
   step: LoginStep = LoginStep.AccountList;
 
   accountLoginVisibility = false;
-  accountLoginAddress = '';
+  accountLoginData: Nullable<PolkadotJsAccount> = null;
 
   get isCreateFlow(): boolean {
     return AccountCreateFlow.includes(this.step);
@@ -96,11 +100,8 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
   }
 
   handleSelectAccount(account: PolkadotJsAccount): void {
-    this.accountLoginAddress = account.address;
+    this.accountLoginData = account;
     this.accountLoginVisibility = true;
-    // const acc = await GDriveWallet.accounts.getAccount(account.address);
-
-    // console.log(acc);
   }
 
   async handleAccountLogin({ password }: { password: string }) {
@@ -109,7 +110,9 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
       await delay(500);
 
       await this.withAppNotification(async () => {
-        const json = await GDriveWallet.accounts.getAccount(this.accountLoginAddress);
+        if (!this.accountLoginData) throw new Error('polkadotjs.noAccount');
+
+        const json = await GDriveWallet.accounts.getAccount(this.accountLoginData.address);
 
         if (!json) throw new Error('polkadotjs.noAccount');
 
@@ -121,6 +124,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
         });
 
         this.accountLoginVisibility = false;
+        this.accountLoginData = null;
       });
     });
   }

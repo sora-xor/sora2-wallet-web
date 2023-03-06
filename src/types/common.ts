@@ -52,6 +52,7 @@ export type StorageKey =
   | 'address'
   | 'name'
   | 'source'
+  | 'isExternal'
   | 'filters'
   | 'shouldBalanceBeHidden'
   | 'storageReferral'

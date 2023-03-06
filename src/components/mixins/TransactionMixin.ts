@@ -14,7 +14,7 @@ import type { AccountAssetsTable } from '../../types/common';
 @Component
 export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMixin) {
   // Desktop management
-  @state.account.isDesktop isDesktop!: boolean;
+  @state.account.isExternal isExternal!: boolean;
   @state.transactions.isTxApprovedViaConfirmTxDialog private isTxApprovedViaConfirmTxDialog!: boolean;
   @mutation.transactions.setConfirmTxDialogVisibility private setConfirmTxDialogVisibility!: (flag: boolean) => void;
 
@@ -89,7 +89,7 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
   }
 
   async withNotifications(func: AsyncFnWithoutArgs): Promise<void> {
-    if (this.isDesktop) {
+    if (!this.isExternal) {
       this.setConfirmTxDialogVisibility(true);
       await this.waitUntilConfirmTxDialogOpened();
       if (!this.isTxApprovedViaConfirmTxDialog) {
@@ -101,17 +101,11 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
 
     await this.withLoading(async () => {
       await this.withAppNotification(async () => {
-        try {
-          const time = Date.now();
-          await func();
-          const tx = await this.getLastTransaction(time);
-          this.addActiveTransaction(tx.id as string);
-          this.showAppNotification(this.t('transactionSubmittedText'));
-        } finally {
-          if (this.isDesktop) {
-            api.lockPair();
-          }
-        }
+        const time = Date.now();
+        await func();
+        const tx = await this.getLastTransaction(time);
+        this.addActiveTransaction(tx.id as string);
+        this.showAppNotification(this.t('transactionSubmittedText'));
       });
     });
   }

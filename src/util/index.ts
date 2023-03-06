@@ -138,7 +138,7 @@ export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Walle
 
   await wallet.enable();
 
-  if (!wallet.signer) {
+  if (typeof wallet.signer !== 'object') {
     throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension: wallet.title } });
   }
 

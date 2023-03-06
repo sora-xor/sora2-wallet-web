@@ -25,6 +25,7 @@ import {
   AppError,
 } from '../../util';
 import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
+import { isInternalSource } from '../../consts/wallets';
 
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
@@ -152,7 +153,7 @@ const actions = defineActions({
 
     if (getters.isLoggedIn) {
       try {
-        if (!state.isDesktop) {
+        if (state.isExternal) {
           const signer = await dispatch.getSigner();
 
           api.setSigner(signer);
@@ -171,7 +172,7 @@ const actions = defineActions({
 
     commit.setWalletAccounts(accounts);
 
-    if (getters.isLoggedIn && !state.isDesktop) {
+    if (getters.isLoggedIn && state.isExternal) {
       try {
         await dispatch.getSigner();
       } catch (error) {
@@ -261,14 +262,15 @@ const actions = defineActions({
     if (!getters.isConnectedAccount(accountData)) {
       // Desktop has not source
       const source = (accountData.source as AppWallet) || '';
+      const isExternal = !isInternalSource(source);
       // Don't forget account on Desktop
-      logoutApi(!source);
+      logoutApi(isExternal);
 
       const defaultAddress = api.formatAddress(accountData.address, false);
 
       let account!: PolkadotJsAccount | undefined;
 
-      if (source) {
+      if (isExternal) {
         const walletData = await getWalletSigner(defaultAddress, source);
         account = walletData.account;
         api.setSigner(walletData.signer);
@@ -280,7 +282,7 @@ const actions = defineActions({
         }
       }
 
-      api.loginAccount(account.address, account.name, source, !!source);
+      api.loginAccount(account.address, account.name, source, isExternal);
 
       commit.selectWalletAccount({ name: account.name, source });
 

@@ -82,9 +82,12 @@ const mutations = defineMutations<AccountState>()({
     }
   },
   syncWithStorage(state): void {
-    state.address = storage.get('address') || '';
-    state.name = storage.get('name') || '';
-    state.source = storage.get('source') || '';
+    const isExternal = storage.get('isExternal');
+
+    state.address = storage.get('address');
+    state.name = storage.get('name');
+    state.source = storage.get('source');
+    state.isExternal = isExternal ? JSON.parse(isExternal) : false;
   },
   setAssetsIds(state, ids: string[]) {
     state.assetsIds = ids;

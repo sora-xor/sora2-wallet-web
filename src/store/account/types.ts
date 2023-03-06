@@ -20,6 +20,7 @@ export type AccountState = {
   address: string;
   name: string;
   source: string;
+  isExternal: boolean;
   assets: Array<Asset>;
   assetsIds: Array<string>;
   assetsSubscription: Nullable<NodeJS.Timer | number>;

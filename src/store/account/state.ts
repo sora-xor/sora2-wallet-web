@@ -10,11 +10,14 @@ export const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {
   invitedUserRewards: {},
 };
 
+const isExternal = storage.get('isExternal');
+
 export function initialState(): AccountState {
   return {
     address: storage.get('address') || '',
     name: storage.get('name') || '',
     source: storage.get('source') || '',
+    isExternal: isExternal ? JSON.parse(isExternal) : false,
     assets: [],
     assetsIds: [],
     assetsToNotifyQueue: [],

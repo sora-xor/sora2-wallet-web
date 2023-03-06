@@ -1,7 +1,7 @@
 <template>
   <dialog-base :title="t('desktop.dialog.confirmTitle')" :visible.sync="isVisible">
     <div class="confirm-dialog">
-      <wallet-account />
+      <wallet-account :polkadot-account="account" />
       <s-input
         :type="passwordInputType"
         :placeholder="t('desktop.password.placeholder')"
@@ -44,6 +44,9 @@ import WalletAccount from './WalletAccount.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 
+import { ObjectInit } from '../../consts';
+import type { PolkadotJsAccount } from '../../types/common';
+
 @Component({
   components: {
     DialogBase,
@@ -51,6 +54,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
   },
 })
 export default class AccountConfirmDialog extends Mixins(DialogMixin, TranslationMixin) {
+  @Prop({ default: ObjectInit, type: Object }) readonly account!: PolkadotJsAccount;
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
   @Prop({ default: false, type: Boolean }) readonly savePassphrase!: boolean;
   @Prop({ default: '', type: String }) readonly passphrase!: string;

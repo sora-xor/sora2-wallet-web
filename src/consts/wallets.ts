@@ -16,4 +16,5 @@ export const FearlessWalletInfo: WalletInfo = {
 
 export const InternalWallets = [AppWallet.GoogleDrive];
 
-export const isInternalWallet = (wallet: Wallet) => InternalWallets.includes(wallet.extensionName as AppWallet);
+export const isInternalSource = (source?: AppWallet) => !source || InternalWallets.includes(source);
+export const isInternalWallet = (wallet: Wallet) => isInternalSource(wallet.extensionName as AppWallet);

@@ -36,7 +36,7 @@
         <s-icon name="arrows-refresh-ccw-24" size="24" />
       </s-button>
 
-      <account-actions v-if="isDesktop" />
+      <account-actions v-if="!isExternal" />
     </wallet-account>
 
     <div v-show="!selectedTransaction" class="wallet">
@@ -85,7 +85,7 @@ export default class Wallet extends Mixins(OperationsMixin, QrCodeParserMixin) {
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;
-  @state.account.isDesktop isDesktop!: boolean;
+  @state.account.isExternal isExternal!: boolean;
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
   @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
 

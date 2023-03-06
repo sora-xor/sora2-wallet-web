@@ -9,7 +9,7 @@
     <div class="wallet-wrapper s-flex">
       <sora-wallet />
     </div>
-    <confirm-dialog v-if="isDesktop" />
+    <confirm-dialog />
   </s-design-system-provider>
 </template>
 

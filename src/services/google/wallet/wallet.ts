@@ -41,7 +41,7 @@ class GoogleDriveWallet {
       name: this.name,
       accounts: this.accounts,
       provider: undefined,
-      signer: this.access,
+      signer: this.access ? null : undefined,
       metadata: undefined,
     };
   }
