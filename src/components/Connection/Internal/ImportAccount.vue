@@ -78,7 +78,6 @@
 <script lang="ts">
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
-import type { CreateResult } from '@polkadot/ui-keyring/types';
 
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -86,6 +85,8 @@ import { KeyringPair$Json } from '../../../types/common';
 import { AppError, parseJson, delay } from '../../../util';
 import { LoginStep } from '../../../consts';
 import { action } from '../../../store/decorators';
+
+import type { CreateAccountArgs } from '../../../store/account/types';
 
 @Component
 export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixin) {
@@ -96,12 +97,7 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
     json: KeyringPair$Json;
   }) => Promise<void>;
 
-  @action.account.createAccount private createAccount!: (data: {
-    seed: string;
-    name: string;
-    password: string;
-    passwordConfirm: string;
-  }) => Promise<CreateResult>;
+  @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
@@ -244,6 +240,7 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
           name: this.accountName,
           password: this.accountPassword,
           passwordConfirm: this.accountPasswordConfirm,
+          saveAccount: true,
         });
 
         this.$emit('update:step', LoginStep.AccountList);

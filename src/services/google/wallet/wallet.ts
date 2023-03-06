@@ -9,8 +9,8 @@ import { googleManage } from '../index';
 
 import Accounts from './accounts';
 
-const GoogleAuthWalletInfo: WalletInfo = {
-  extensionName: AppWallet.GoogleAuth,
+const GoogleDriveWalletInfo: WalletInfo = {
+  extensionName: AppWallet.GoogleDrive,
   title: 'Google',
   installUrl: '',
   logo: {
@@ -19,12 +19,12 @@ const GoogleAuthWalletInfo: WalletInfo = {
   },
 };
 
-class GoogleAuthWallet {
+class GoogleDriveWallet {
   public readonly version = '0.0.1';
-  public readonly name = GoogleAuthWalletInfo.extensionName;
+  public readonly name: AppWallet = AppWallet.GoogleDrive;
 
   private access!: boolean;
-  private readonly accounts!: Accounts;
+  public readonly accounts!: Accounts;
 
   constructor() {
     this.accounts = new Accounts();
@@ -47,16 +47,16 @@ class GoogleAuthWallet {
   }
 }
 
-export const googleAuthWallet = new GoogleAuthWallet();
+export const GDriveWallet = new GoogleDriveWallet();
 
-const injectGoogleAuthWallet = () => {
+const injectGoogleDriveWallet = () => {
   const injectedWindow = window as any;
 
   injectedWindow.injectedWeb3 = injectedWindow.injectedWeb3 || {};
-  injectedWindow.injectedWeb3[GoogleAuthWalletInfo.extensionName] = googleAuthWallet;
+  injectedWindow.injectedWeb3[GoogleDriveWalletInfo.extensionName] = GDriveWallet;
 };
 
-export const addGoogleAuthWalletLocally = () => {
-  injectGoogleAuthWallet();
-  addWallet(GoogleAuthWalletInfo);
+export const addGoogleDriveWalletLocally = () => {
+  injectGoogleDriveWallet();
+  addWallet(GoogleDriveWalletInfo);
 };

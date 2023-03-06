@@ -5,7 +5,7 @@ export const HiddenValue = '******';
 export const BLOCK_PRODUCE_TIME = 6_000;
 
 export enum AppWallet {
-  GoogleAuth = 'google-auth',
+  GoogleDrive = 'google-drive',
   FearlessWallet = 'fearless-wallet',
   PolkadotJS = 'polkadot-js',
   SubwalletJS = 'subwallet-js',

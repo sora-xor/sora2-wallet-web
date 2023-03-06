@@ -14,7 +14,7 @@
         @create="navigateToCreateAccount"
         @import="navigateToImportAccount"
       />
-      <create-account v-else-if="isCreateFlow" :step.sync="step" :create-account="createAccount" />
+      <create-account v-else-if="isCreateFlow" :step.sync="step" :create-account="handleAccountCreate" />
       <import-account v-else-if="isImportFlow" :step.sync="step" />
       <welcome-page v-else @create="navigateToCreateAccount" @import="navigateToImportAccount" />
     </div>
@@ -37,7 +37,7 @@ import { LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts
 import { getPreviousLoginStep } from '../../../util';
 import { state, action } from '../../../store/decorators';
 
-import type { PolkadotJsAccount } from '../../../types/common';
+import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
 import type { CreateAccountArgs } from '../../../store/account/types';
 
 @Component({
@@ -52,7 +52,7 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
 
   @action.account.loginAccount loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
 
-  @action.account.createAccount createAccount!: (data: CreateAccountArgs) => Promise<{ json: string; name: string }>;
+  @action.account.createAccount createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
 
   get isCreateFlow(): boolean {
     return AccountCreateFlow.includes(this.step);
@@ -106,6 +106,10 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
         this.showAppAlert(this.t('enterAccountError'));
       }
     });
+  }
+
+  async handleAccountCreate(data: CreateAccountArgs) {
+    await this.createAccount({ ...data, saveAccount: true });
   }
 
   async mounted(): Promise<void> {

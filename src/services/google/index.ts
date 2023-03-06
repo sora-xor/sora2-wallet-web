@@ -12,6 +12,29 @@ const SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
 
 class GoogleDriveApi extends GoogleApi {
+  private prepareData(
+    json: string,
+    { name, address, boundary = 'foo_bar_baz' }: { name: string; address: string; boundary: string }
+  ) {
+    const metadata = {
+      name,
+      mimeType: 'application/json',
+      description: address,
+      parents: ['appDataFolder'],
+    };
+
+    return `
+--${boundary}
+Content-Type: application/json; charset=UTF-8
+
+${JSON.stringify(metadata)}
+--${boundary}
+Content-Type: application/json
+
+${json}
+--${boundary}--`;
+  }
+
   public async getFiles() {
     const response = await gapi.client.drive.files.list({
       fields: 'files(id,name,description)',
@@ -28,6 +51,31 @@ class GoogleDriveApi extends GoogleApi {
     });
 
     return response;
+  }
+
+  public async createFile(json: string, { name, address }: { name: string; address: string }) {
+    const boundary = 'foo_bar_baz';
+    const body = this.prepareData(json, { name, address, boundary });
+    const length = body.length;
+    const request = gapi.client.request({
+      path: '/upload/drive/v3/files',
+      method: 'POST',
+      params: { uploadType: 'multipart' },
+      headers: {
+        'Content-Type': `multipart/related; boundary=${boundary}`,
+        'Content-Length': length.toString(),
+      },
+      body,
+    });
+
+    await new Promise((resolve, reject) => {
+      try {
+        request.execute(resolve);
+      } catch (error) {
+        console.error(error);
+        reject(error);
+      }
+    });
   }
 }
 
@@ -118,19 +166,19 @@ export const googleManage = new GoogleManage({
 // --foo_bar_baz--`;
 //   }
 
-//   public async getFiles(token?: string): Promise<IGetFilesResponse> {
-//     const { data } = await axios.get<IGetFilesResponse>(
-//       `${this.baseURL}/files?fields=files(id,name,description)&spaces=appDataFolder`,
-//       {
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//           ...this.config.headers,
-//         },
-//       }
-//     );
+// public async getFiles(token?: string): Promise<IGetFilesResponse> {
+//   const { data } = await axios.get<IGetFilesResponse>(
+//     `${this.baseURL}/files?fields=files(id,name,description)&spaces=appDataFolder`,
+//     {
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//         ...this.config.headers,
+//       },
+//     }
+//   );
 
-//     return data;
-//   }
+//   return data;
+// }
 
 //   public async getFile(id: string, token?: string | undefined): Promise<KeyringPair$Json> {
 //     const { data } = await axios.get<KeyringPair$Json>(`${this.baseURL}/files/${id}?alt=media`, {

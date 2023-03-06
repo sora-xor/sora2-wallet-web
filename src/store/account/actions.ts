@@ -3,7 +3,6 @@ import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
 import { saveAs } from 'file-saver';
 import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
-import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { ActionContext } from 'vuex';
 import type { Signer } from '@polkadot/api/types';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
@@ -297,7 +296,7 @@ const actions = defineActions({
   async createAccount(
     context,
     { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
-  ): Promise<{ name: string; json: string }> {
+  ): Promise<KeyringPair$Json> {
     const { dispatch } = accountActionContext(context);
 
     if (passwordConfirm && password !== passwordConfirm) {
@@ -305,10 +304,10 @@ const actions = defineActions({
     }
 
     const pair = api.createAccountPair(seed, name);
-    const json = api.exportAccount(pair, password);
+    const json = pair.toJson(password);
 
     if (exportAccount) {
-      exportAccountJson(json);
+      exportAccountJson(JSON.stringify(json));
     }
 
     if (saveAccount) {
@@ -317,7 +316,7 @@ const actions = defineActions({
       await dispatch.getImportedAccounts();
     }
 
-    return { name, json };
+    return json;
   },
 
   /**

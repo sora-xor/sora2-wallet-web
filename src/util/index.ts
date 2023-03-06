@@ -75,6 +75,13 @@ const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAc
   return (accounts || []).map((account) => formatWalletAccount(account));
 };
 
+export const getWalletAccounts = async (wallet: AppWallet): Promise<WalletAccount[]> => {
+  const appWallet = await getWallet(wallet);
+  const accounts = await appWallet.getAccounts();
+
+  return accounts || [];
+};
+
 export const subscribeToWalletAccounts = async (
   wallet: AppWallet,
   callback: (accounts: PolkadotJsAccount[]) => void

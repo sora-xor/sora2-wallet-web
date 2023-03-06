@@ -5,13 +5,13 @@
     </p>
 
     <account-list @select="handleSelectAccount" class="connection__accounts">
-      <account-card v-button @click.native="handleCreateAccount">
+      <account-card class="connection__button" v-button @click.native="handleCreateAccount">
         <template #avatar>
           <s-icon name="basic-circle-plus-24" size="32" />
         </template>
         <template #name>{{ t('desktop.button.createAccount') }}</template>
       </account-card>
-      <account-card v-button @click.native="handleImportAccount">
+      <account-card class="connection__button" v-button @click.native="handleImportAccount">
         <template #avatar>
           <s-icon name="basic-download-bold-24" size="32" />
         </template>
@@ -53,8 +53,10 @@ export default class ExternalAccountList extends Mixins(TranslationMixin) {
 
 <style scoped lang="scss">
 .connection {
-  & > *:not(:last-child) {
-    margin-bottom: $basic-spacing-medium;
+  & > * {
+    &:not(:last-child) {
+      margin-bottom: $basic-spacing-medium;
+    }
   }
 
   &__text {
