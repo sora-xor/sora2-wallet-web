@@ -7,23 +7,22 @@
     @back="handleBack"
   >
     <div class="desktop-connection">
-      <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
-      <create-account v-else-if="isCreateFlow" :step.sync="step" />
-      <import-account v-else-if="isImportFlow" :step.sync="step" />
       <internal-account-list
-        v-else-if="isAccountList"
+        v-if="isAccountList"
         :text="t('connection.selectAccount')"
         @select="handleSelectAccount"
-        @create="createAccount"
-        @import="importAccount"
+        @create="navigateToCreateAccount"
+        @import="navigateToImportAccount"
       />
+      <create-account v-else-if="isCreateFlow" :step.sync="step" :create-account="createAccount" />
+      <import-account v-else-if="isImportFlow" :step.sync="step" />
+      <welcome-page v-else @create="navigateToCreateAccount" @import="navigateToImportAccount" />
     </div>
   </wallet-base>
 </template>
 
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
-import type { PolkadotJsAccount } from '../../../types/common';
 
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -38,6 +37,9 @@ import { LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts
 import { getPreviousLoginStep } from '../../../util';
 import { state, action } from '../../../store/decorators';
 
+import type { PolkadotJsAccount } from '../../../types/common';
+import type { CreateAccountArgs } from '../../../store/account/types';
+
 @Component({
   components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, InternalAccountList },
 })
@@ -47,7 +49,10 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
   readonly LoginStep = LoginStep;
 
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+
   @action.account.loginAccount loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
+
+  @action.account.createAccount createAccount!: (data: CreateAccountArgs) => Promise<{ json: string; name: string }>;
 
   get isCreateFlow(): boolean {
     return AccountCreateFlow.includes(this.step);
@@ -77,16 +82,12 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
     return false;
   }
 
-  createAccount(): void {
+  navigateToCreateAccount(): void {
     this.step = LoginStep.SeedPhrase;
   }
 
-  importAccount(): void {
+  navigateToImportAccount(): void {
     this.step = LoginStep.Import;
-  }
-
-  setStep(step: LoginStep): void {
-    this.step = step;
   }
 
   navigateToAccountList(): void {
@@ -94,8 +95,7 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
   }
 
   handleBack(): void {
-    const step = getPreviousLoginStep(this.step);
-    this.step = step;
+    this.step = getPreviousLoginStep(this.step);
   }
 
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {

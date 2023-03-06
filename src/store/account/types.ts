@@ -7,6 +7,15 @@ import type { Subscription } from 'rxjs';
 import type { PolkadotJsAccount, AddressKeyMapping } from '../../types/common';
 import type { ReferrerRewards, FiatPriceObject } from '../../services/subquery/types';
 
+export type CreateAccountArgs = {
+  seed: string;
+  name: string;
+  password: string;
+  passwordConfirm?: string;
+  saveAccount?: boolean;
+  exportAccount?: boolean;
+};
+
 export type AccountState = {
   address: string;
   name: string;

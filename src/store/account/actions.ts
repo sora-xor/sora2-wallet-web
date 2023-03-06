@@ -29,6 +29,7 @@ import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
 
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
+import type { CreateAccountArgs } from './types';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -104,6 +105,12 @@ function logoutApi(forgetAccount?: boolean): void {
   if (api.accountPair) {
     api.logout(forgetAccount);
   }
+}
+
+function exportAccountJson(accountJson: string): void {
+  const blob = new Blob([accountJson], { type: 'application/json' });
+  const filename = (JSON.parse(accountJson) || {}).address || '';
+  saveAs(blob, filename);
 }
 
 const actions = defineActions({
@@ -289,24 +296,28 @@ const actions = defineActions({
    */
   async createAccount(
     context,
-    {
-      seed,
-      name,
-      password,
-      passwordConfirm,
-    }: { seed: string; name: string; password: string; passwordConfirm?: string }
-  ): Promise<CreateResult> {
+    { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
+  ): Promise<{ name: string; json: string }> {
     const { dispatch } = accountActionContext(context);
 
     if (passwordConfirm && password !== passwordConfirm) {
       throw new AppError({ key: 'desktop.errorMessages.passwords' });
     }
 
-    const account = api.addAccount(seed, name, password);
-    // update account list in state
-    await dispatch.getImportedAccounts();
+    const pair = api.createAccountPair(seed, name);
+    const json = api.exportAccount(pair, password);
 
-    return account;
+    if (exportAccount) {
+      exportAccountJson(json);
+    }
+
+    if (saveAccount) {
+      api.addAccountPair(pair, password);
+      // update account list in state
+      await dispatch.getImportedAccounts();
+    }
+
+    return { name, json };
   },
 
   /**
@@ -336,12 +347,9 @@ const actions = defineActions({
   /**
    * Desktop
    */
-  async exportAccount(_, { account, password }: { account?: CreateResult; password: string }) {
-    const acc = account || api.account;
-    const accountJson = api.exportAccount(acc.pair, password);
-    const blob = new Blob([accountJson], { type: 'application/json' });
-    const filename = (JSON.parse(accountJson) || {}).address || '';
-    saveAs(blob, filename);
+  exportAccount(_, password: string): void {
+    const accountJson = api.exportAccount(api.accountPair, password);
+    exportAccountJson(accountJson);
   },
 
   /**
