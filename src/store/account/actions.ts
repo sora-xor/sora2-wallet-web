@@ -148,37 +148,23 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async checkAccountConnection(context): Promise<void> {
+  async checkAccountConnection(context, initialCheck?: boolean): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
     if (getters.isLoggedIn) {
       try {
         // if we have account source, we should check it
         if (state.source) {
-          await dispatch.selectWallet(state.source as AppWallet);
-
           const signer = await dispatch.getSigner();
 
-          api.setSigner(signer);
+          if (initialCheck) api.setSigner(signer);
         }
 
-        await dispatch.afterLogin();
+        if (initialCheck) {
+          await dispatch.afterLogin();
+        }
       } catch (error) {
         console.error(error);
-        await dispatch.logout();
-      }
-    }
-  },
-
-  async updateAccountsList(context, accounts: Array<PolkadotJsAccount>): Promise<void> {
-    const { commit, getters, dispatch, state } = accountActionContext(context);
-
-    commit.setWalletAccounts(accounts);
-
-    if (getters.isLoggedIn && state.source) {
-      try {
-        await dispatch.getSigner();
-      } catch (error) {
         await dispatch.logout();
       }
     }
@@ -216,6 +202,7 @@ const actions = defineActions({
   },
 
   async selectWallet(context, extension: AppWallet) {
+    console.log('selectWallet');
     const { commit, dispatch } = accountActionContext(context);
 
     commit.resetWalletAccountsSubscription();
@@ -241,18 +228,26 @@ const actions = defineActions({
   },
 
   async getImportedAccounts(context) {
-    const { dispatch } = accountActionContext(context);
+    const { commit, dispatch } = accountActionContext(context);
     const accounts = await getImportedAccounts();
-    await dispatch.updateAccountsList(accounts);
+
+    commit.setWalletAccounts(accounts);
+
+    await dispatch.checkAccountConnection();
   },
 
   async subscribeToWalletAccounts(context): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
+    const wallet = state.selectedWallet;
 
-    if (!state.selectedWallet) return;
+    if (!wallet) return;
 
-    const subscription = await subscribeToWalletAccounts(state.selectedWallet, (accounts) => {
-      dispatch.updateAccountsList(accounts);
+    const subscription = await subscribeToWalletAccounts(wallet, (accounts) => {
+      if (wallet === state.selectedWallet) {
+        commit.setWalletAccounts(accounts);
+      }
+
+      dispatch.checkAccountConnection();
     });
 
     commit.setWalletAccountsSubscription(subscription);

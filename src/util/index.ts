@@ -88,13 +88,12 @@ export const subscribeToWalletAccounts = async (
   });
 
   const unsubscribe = await appWallet.subscribeAccounts((injectedAccounts) => {
-    console.log('injectedAccounts', injectedAccounts);
     callback(formatWalletAccounts(injectedAccounts));
     resolveCall();
   });
 
   await subscriptionResult;
-
+  // [TODO]: research why unsubscribe not works with extensions
   return unsubscribe;
 };
 

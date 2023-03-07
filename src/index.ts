@@ -125,7 +125,7 @@ async function initWallet({
       await store.dispatch.wallet.account.getImportedAccounts();
     }
 
-    await store.dispatch.wallet.account.checkAccountConnection();
+    await store.dispatch.wallet.account.checkAccountConnection(true);
 
     store.commit.wallet.settings.setWalletLoaded(true);
   }

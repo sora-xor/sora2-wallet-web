@@ -56,7 +56,7 @@ export default class Accounts implements InjectedAccounts {
   public subscribe(accountsCallback: (accounts: InjectedAccount[]) => unknown): Unsubcall {
     this.accountsCallback = accountsCallback;
     this.updateAccounts();
-    this.accountsUpdateInterval = setInterval(this.updateAccounts.bind(this), 5000);
+    this.accountsUpdateInterval = setInterval(this.updateAccounts.bind(this), 15000);
 
     return this.unsubscribe.bind(this);
   }
