@@ -100,9 +100,25 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
     await GDriveWallet.accounts.add(accountJson);
   }
 
-  handleSelectAccount(account: PolkadotJsAccount): void {
-    this.accountLoginData = account;
-    this.accountLoginVisibility = true;
+  handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {
+    if (isConnected) {
+      this.navigate({ name: RouteNames.Wallet });
+    } else {
+      this.accountLoginData = account;
+      this.accountLoginVisibility = true;
+    }
+  }
+
+  private async restoreAccount(password: string): Promise<KeyringPair$Json> {
+    if (!this.accountLoginData) throw new Error('polkadotjs.noAccount');
+
+    const json = await GDriveWallet.accounts.getAccount(this.accountLoginData.address);
+
+    if (!json) throw new Error('polkadotjs.noAccount');
+
+    await this.restoreAccountFromJson({ json, password });
+
+    return json;
   }
 
   async handleAccountLogin({ password }: { password: string }) {
@@ -111,13 +127,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
       await delay(500);
 
       await this.withAppNotification(async () => {
-        if (!this.accountLoginData) throw new Error('polkadotjs.noAccount');
-
-        const json = await GDriveWallet.accounts.getAccount(this.accountLoginData.address);
-
-        if (!json) throw new Error('polkadotjs.noAccount');
-
-        await this.restoreAccountFromJson({ json, password });
+        const json = await this.restoreAccount(password);
         await this.loginAccount({
           address: json.address,
           name: (json.meta.name as string) || '',

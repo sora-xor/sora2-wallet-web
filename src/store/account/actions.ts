@@ -153,7 +153,8 @@ const actions = defineActions({
 
     if (getters.isLoggedIn) {
       try {
-        if (state.isExternal) {
+        // if we have account source, we should check it
+        if (state.source) {
           const signer = await dispatch.getSigner();
 
           api.setSigner(signer);
@@ -172,7 +173,7 @@ const actions = defineActions({
 
     commit.setWalletAccounts(accounts);
 
-    if (getters.isLoggedIn && state.isExternal) {
+    if (getters.isLoggedIn && state.source) {
       try {
         await dispatch.getSigner();
       } catch (error) {
@@ -270,7 +271,7 @@ const actions = defineActions({
 
       let account!: PolkadotJsAccount | undefined;
 
-      if (isExternal) {
+      if (source) {
         const walletData = await getWalletSigner(defaultAddress, source);
         account = walletData.account;
         api.setSigner(walletData.signer);
@@ -284,7 +285,7 @@ const actions = defineActions({
 
       api.loginAccount(account.address, account.name, source, isExternal);
 
-      commit.selectWalletAccount({ name: account.name, source });
+      commit.syncWithStorage();
 
       await dispatch.afterLogin();
     } else {

@@ -134,11 +134,6 @@ const mutations = defineMutations<AccountState>()({
     }
     state.polkadotJsAccountsSubscription = null;
   },
-  selectWalletAccount(state, { name = '', source = '' } = {}): void {
-    state.address = api.address;
-    state.source = source;
-    state.name = name;
-  },
   setAvailableWallets(state, wallets: Wallet[]) {
     state.availableWallets = wallets;
   },

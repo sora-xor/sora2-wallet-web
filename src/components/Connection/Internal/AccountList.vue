@@ -37,8 +37,8 @@ import type { PolkadotJsAccount } from '../../../types/common';
 export default class ExternalAccountList extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly text!: string;
 
-  handleSelectAccount(account: PolkadotJsAccount): void {
-    this.$emit('select', account);
+  handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {
+    this.$emit('select', account, isConnected);
   }
 
   handleCreateAccount(): void {
