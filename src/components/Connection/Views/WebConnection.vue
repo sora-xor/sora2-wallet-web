@@ -82,7 +82,7 @@ enum Step {
 @Component({
   components: { WalletBase, AccountList, ExtensionList },
 })
-export default class ExtensionConnection extends Mixins(NotificationMixin, LoadingMixin) {
+export default class WebConnection extends Mixins(NotificationMixin, LoadingMixin) {
   step = Step.First;
 
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;

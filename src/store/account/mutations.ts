@@ -130,6 +130,7 @@ const mutations = defineMutations<AccountState>()({
   },
   resetWalletAccountsSubscription(state): void {
     if (typeof state.polkadotJsAccountsSubscription === 'function') {
+      console.log('unsubscribe');
       state.polkadotJsAccountsSubscription();
     }
     state.polkadotJsAccountsSubscription = null;

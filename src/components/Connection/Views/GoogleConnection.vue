@@ -79,7 +79,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
   }
 
   get showHeader(): boolean {
-    return this.step === LoginStep.AccountList;
+    return this.isAccountList;
   }
 
   navigateToCreateAccount(): void {
@@ -127,10 +127,11 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
       await delay(500);
 
       await this.withAppNotification(async () => {
-        const json = await this.restoreAccount(password);
+        const { address, meta } = await this.restoreAccount(password);
+
         await this.loginAccount({
-          address: json.address,
-          name: (json.meta.name as string) || '',
+          address,
+          name: (meta.name as string) || '',
           source: GDriveWallet.name,
         });
 

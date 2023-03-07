@@ -155,6 +155,8 @@ const actions = defineActions({
       try {
         // if we have account source, we should check it
         if (state.source) {
+          await dispatch.selectWallet(state.source as AppWallet);
+
           const signer = await dispatch.getSigner();
 
           api.setSigner(signer);
