@@ -125,12 +125,16 @@ export default class WebConnection extends Mixins(NotificationMixin, LoadingMixi
     window.history.go();
   }
 
-  async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
-    await this.withLoading(async () => {
-      await this.withAppAlert(async () => {
-        await this.loginAccount(account);
+  async handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
+    if (isConnected) {
+      this.navigate({ name: RouteNames.Wallet });
+    } else {
+      await this.withLoading(async () => {
+        await this.withAppAlert(async () => {
+          await this.loginAccount(account);
+        });
       });
-    });
+    }
   }
 
   async handleSelectWallet(wallet: Wallet): Promise<void> {

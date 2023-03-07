@@ -153,8 +153,8 @@ const actions = defineActions({
 
     if (getters.isLoggedIn) {
       try {
-        // if we have account source, we should check it
-        if (state.source) {
+        // if account from extension, we should check it
+        if (state.isExternal) {
           const signer = await dispatch.getSigner();
 
           if (initialCheck) api.setSigner(signer);
@@ -254,40 +254,36 @@ const actions = defineActions({
   },
 
   async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
-    const { commit, dispatch, getters, state } = accountActionContext(context);
-    const { rootDispatch } = rootActionContext(context);
+    const { commit, dispatch, state } = accountActionContext(context);
 
-    if (!getters.isConnectedAccount(accountData)) {
-      // Desktop has not source
-      const source = (accountData.source as AppWallet) || '';
-      const isExternal = !isInternalSource(source);
-      // Don't forget account on Desktop
-      logoutApi(!state.isDesktop);
+    // Desktop has not source
+    const source = (accountData.source as AppWallet) || '';
+    const isExternal = !isInternalSource(source);
+    // Don't forget account on Desktop
+    logoutApi(!state.isDesktop);
 
-      const defaultAddress = api.formatAddress(accountData.address, false);
+    const defaultAddress = api.formatAddress(accountData.address, false);
 
-      let account!: PolkadotJsAccount | undefined;
+    let account!: PolkadotJsAccount | undefined;
 
-      if (source) {
-        const walletData = await getWalletSigner(defaultAddress, source);
-        account = walletData.account;
-        api.setSigner(walletData.signer);
-      } else {
-        account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
-
-        if (!account) {
-          throw new Error('polkadotjs.noAccount');
-        }
-      }
-
-      api.loginAccount(account.address, account.name, source, isExternal);
-
-      commit.syncWithStorage();
-
-      await dispatch.afterLogin();
+    if (source) {
+      const walletData = await getWalletSigner(defaultAddress, source);
+      account = walletData.account;
+      api.setSigner(walletData.signer);
     } else {
-      await rootDispatch.wallet.router.checkCurrentRoute();
+      const accounts = await getImportedAccounts();
+      account = accounts.find((acc) => acc.address === defaultAddress);
+
+      if (!account) {
+        throw new Error('polkadotjs.noAccount');
+      }
     }
+
+    await api.loginAccount(account.address, account.name, source, isExternal);
+
+    commit.syncWithStorage();
+
+    await dispatch.afterLogin();
   },
 
   /**
@@ -382,11 +378,17 @@ const actions = defineActions({
 
     commit.syncWithStorage();
 
+    console.log('syncWithStorage action', getters.isLoggedIn, wasLoggedIn);
+
     // check log in/out state changes after sync
     if (getters.isLoggedIn !== wasLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
-        const account = { address: state.address, name: state.name, source: state.source as AppWallet };
-        await dispatch.loginAccount(account);
+        if (isInternalSource(state.source as AppWallet)) {
+          return window.location.reload();
+        } else {
+          const account = { address: state.address, name: state.name, source: state.source as AppWallet };
+          await dispatch.loginAccount(account);
+        }
       } else {
         await dispatch.logout();
       }
