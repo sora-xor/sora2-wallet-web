@@ -135,7 +135,7 @@ const actions = defineActions({
     const { commit, dispatch, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    logoutApi(forgetAccount);
+    logoutApi(!state.isDesktop || forgetAccount);
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
@@ -264,7 +264,7 @@ const actions = defineActions({
       const source = (accountData.source as AppWallet) || '';
       const isExternal = !isInternalSource(source);
       // Don't forget account on Desktop
-      logoutApi(isExternal);
+      logoutApi(!state.isDesktop);
 
       const defaultAddress = api.formatAddress(accountData.address, false);
 
@@ -299,7 +299,7 @@ const actions = defineActions({
     context,
     { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
   ): Promise<KeyringPair$Json> {
-    const { dispatch } = accountActionContext(context);
+    const { dispatch, state } = accountActionContext(context);
 
     if (passwordConfirm && password !== passwordConfirm) {
       throw new AppError({ key: 'desktop.errorMessages.passwords' });
@@ -315,7 +315,9 @@ const actions = defineActions({
     if (saveAccount) {
       api.addAccountPair(pair, password);
       // update account list in state
-      await dispatch.getImportedAccounts();
+      if (state.isDesktop) {
+        await dispatch.getImportedAccounts();
+      }
     }
 
     return json;
@@ -325,24 +327,28 @@ const actions = defineActions({
    * Desktop
    */
   async renameAccount(context, name: string) {
-    const { commit, dispatch } = accountActionContext(context);
+    const { commit, dispatch, state } = accountActionContext(context);
     // change name in api & storage
     api.changeAccountName(name);
     // update account data from storage
     commit.syncWithStorage();
     // update account list in state
-    await dispatch.getImportedAccounts();
+    if (state.isDesktop) {
+      await dispatch.getImportedAccounts();
+    }
   },
 
   /**
    * Desktop
    */
   async restoreAccountFromJson(context, { json, password }: { json: KeyringPair$Json; password: string }) {
-    const { dispatch } = accountActionContext(context);
+    const { dispatch, state } = accountActionContext(context);
     // restore from json file
     api.restoreAccountFromJson(json, password);
     // update account list in state
-    await dispatch.getImportedAccounts();
+    if (state.isDesktop) {
+      await dispatch.getImportedAccounts();
+    }
   },
 
   /**

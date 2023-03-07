@@ -13,6 +13,7 @@
     <account-confirm-dialog
       :visible.sync="accountLoginVisibility"
       :account="accountLoginData"
+      :loading="loading"
       @confirm="handleAccountLogin"
     />
   </wallet-base>

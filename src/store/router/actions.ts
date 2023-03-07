@@ -20,10 +20,12 @@ const actions = defineActions({
     const { rootGetters } = rootActionContext(context);
     const { currentRoute } = state;
     const { isLoggedIn } = rootGetters.wallet.account;
+    const connectionRoutes = [RouteNames.WalletConnection, RouteNames.GoogleConnection];
+    const isConnectionRoute = connectionRoutes.includes(currentRoute);
 
-    if (isLoggedIn && currentRoute === RouteNames.WalletConnection) {
+    if (isLoggedIn && isConnectionRoute) {
       commit.navigate({ name: RouteNames.Wallet });
-    } else if (!isLoggedIn && currentRoute !== RouteNames.WalletConnection) {
+    } else if (!isLoggedIn && !isConnectionRoute) {
       commit.navigate({ name: RouteNames.WalletConnection });
     }
   },
