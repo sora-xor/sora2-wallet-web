@@ -264,22 +264,20 @@ const actions = defineActions({
 
     const defaultAddress = api.formatAddress(accountData.address, false);
 
-    let account!: PolkadotJsAccount | undefined;
-
-    if (source) {
-      const walletData = await getWalletSigner(defaultAddress, source);
-      account = walletData.account;
-      api.setSigner(walletData.signer);
-    } else {
+    if (isExternal) {
+      // we should update signer
+      const { signer } = await getWalletSigner(defaultAddress, source);
+      api.setSigner(signer);
+    } else if (state.isDesktop) {
+      // check that account is added to keyring
       const accounts = await getImportedAccounts();
-      account = accounts.find((acc) => acc.address === defaultAddress);
 
-      if (!account) {
+      if (!accounts.find((acc) => acc.address === defaultAddress)) {
         throw new Error('polkadotjs.noAccount');
       }
     }
 
-    await api.loginAccount(account.address, account.name, source, isExternal);
+    await api.loginAccount(accountData.address, accountData.name, source, isExternal);
 
     commit.syncWithStorage();
 
@@ -383,12 +381,12 @@ const actions = defineActions({
     // check log in/out state changes after sync
     if (getters.isLoggedIn !== wasLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
-        if (isInternalSource(state.source as AppWallet)) {
-          return window.location.reload();
-        } else {
-          const account = { address: state.address, name: state.name, source: state.source as AppWallet };
-          await dispatch.loginAccount(account);
-        }
+        // if (isInternalSource(state.source as AppWallet)) {
+        //   return window.location.reload();
+        // } else {
+        const account = { address: state.address, name: state.name, source: state.source as AppWallet };
+        await dispatch.loginAccount(account);
+        // }
       } else {
         await dispatch.logout();
       }
