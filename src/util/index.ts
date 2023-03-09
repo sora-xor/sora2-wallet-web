@@ -98,7 +98,9 @@ export const subscribeToWalletAccounts = async (
 };
 
 export const addFearlessWalletLocally = () => {
-  addWallet(FearlessWalletInfo);
+  if (!getWalletBySource(FearlessWalletInfo.extensionName)) {
+    addWallet(FearlessWalletInfo);
+  }
 };
 
 export const getAppWallets = (): Wallet[] => {

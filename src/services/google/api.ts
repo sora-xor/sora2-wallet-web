@@ -43,3 +43,67 @@ export class GoogleApi {
     });
   }
 }
+
+export class GoogleDriveApi extends GoogleApi {
+  private prepareData(
+    json: string,
+    { name, address, boundary = 'foo_bar_baz' }: { name: string; address: string; boundary: string }
+  ) {
+    const metadata = {
+      name,
+      mimeType: 'application/json',
+      description: address,
+      parents: ['appDataFolder'],
+    };
+
+    return `
+--${boundary}
+Content-Type: application/json; charset=UTF-8
+
+${JSON.stringify(metadata)}
+--${boundary}
+Content-Type: application/json
+
+${json}
+--${boundary}--`;
+  }
+
+  public async getFiles() {
+    return await gapi.client.drive.files.list({
+      fields: 'files(id,name,description)',
+      spaces: 'appDataFolder',
+    });
+  }
+
+  public async getFile(id: string) {
+    return await gapi.client.drive.files.get({
+      fileId: id,
+      alt: 'media',
+    });
+  }
+
+  public async createFile(json: string, { name, address }: { name: string; address: string }) {
+    const boundary = 'foo_bar_baz';
+    const body = this.prepareData(json, { name, address, boundary });
+    const length = body.length;
+    const request = gapi.client.request({
+      path: '/upload/drive/v3/files',
+      method: 'POST',
+      params: { uploadType: 'multipart' },
+      headers: {
+        'Content-Type': `multipart/related; boundary=${boundary}`,
+        'Content-Length': length.toString(),
+      },
+      body,
+    });
+
+    await new Promise((resolve, reject) => {
+      try {
+        request.execute(resolve);
+      } catch (error) {
+        console.error(error);
+        reject(error);
+      }
+    });
+  }
+}

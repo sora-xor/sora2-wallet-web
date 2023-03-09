@@ -43,7 +43,7 @@ import internalStore, { modules } from './store'; // `internalStore` is required
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList, addFearlessWalletLocally } from './util';
-import { addGoogleDriveWalletLocally } from './services/google/wallet/wallet';
+import { addGDriveWalletLocally } from './services/google/wallet/wallet';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
@@ -105,7 +105,7 @@ async function initWallet({
     }
 
     addFearlessWalletLocally();
-    addGoogleDriveWalletLocally();
+    addGDriveWalletLocally();
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);

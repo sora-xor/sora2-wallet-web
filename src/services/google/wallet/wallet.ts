@@ -1,15 +1,15 @@
-import { addWallet } from '@subwallet/wallet-connect/dotsama/wallets';
+import { addWallet, getWalletBySource } from '@subwallet/wallet-connect/dotsama/wallets';
 import type { WalletInfo } from '@subwallet/wallet-connect/types';
 
 import GoogleLogo from '../../../assets/img/GoogleLogo.svg';
 
 import { AppWallet } from '../../../consts';
 
-import { googleManage } from '../index';
+import { googleStorage } from '../index';
 
 import Accounts from './accounts';
 
-const GoogleDriveWalletInfo: WalletInfo = {
+const GDriveWalletInfo: WalletInfo = {
   extensionName: AppWallet.GoogleDrive,
   title: 'Google',
   installUrl: '',
@@ -33,7 +33,7 @@ class GoogleDriveWallet {
 
   async enable() {
     try {
-      await googleManage.auth();
+      await googleStorage.auth();
       this.access = true;
     } catch {
       this.access = false;
@@ -52,14 +52,17 @@ class GoogleDriveWallet {
 
 export const GDriveWallet = new GoogleDriveWallet();
 
-const injectGoogleDriveWallet = () => {
+const injectGDriveWallet = () => {
   const injectedWindow = window as any;
 
   injectedWindow.injectedWeb3 = injectedWindow.injectedWeb3 || {};
-  injectedWindow.injectedWeb3[GoogleDriveWalletInfo.extensionName] = GDriveWallet;
+  injectedWindow.injectedWeb3[GDriveWallet.name] = GDriveWallet;
 };
 
-export const addGoogleDriveWalletLocally = () => {
-  injectGoogleDriveWallet();
-  addWallet(GoogleDriveWalletInfo);
+export const addGDriveWalletLocally = () => {
+  injectGDriveWallet();
+
+  if (!getWalletBySource(GDriveWalletInfo.extensionName)) {
+    addWallet(GDriveWalletInfo);
+  }
 };

@@ -1,7 +1,7 @@
 import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
-import { googleManage } from '../index';
+import { googleStorage } from '../index';
 
 interface IAccountMetadata extends InjectedAccount {
   id: string;
@@ -24,15 +24,15 @@ export default class Accounts implements InjectedAccounts {
     const json = JSON.stringify(accountJson);
     const name = (meta.name as string) || '';
 
-    await googleManage.api.createFile(json, { name, address });
+    await googleStorage.create(json, address, name);
     await this.updateAccounts();
   }
 
   public async get(): Promise<InjectedAccount[]> {
-    const { result } = await googleManage.api.getFiles();
+    const files = await googleStorage.getAll();
 
-    this.accountsList = result.files
-      ? result.files.map((file) => ({
+    this.accountsList = files
+      ? files.map((file) => ({
           address: file.description || '',
           name: file.name || '',
           id: file.id as string,
@@ -48,9 +48,9 @@ export default class Accounts implements InjectedAccounts {
     if (!account) return null;
 
     const id = account.id;
-    const { result } = await googleManage.api.getFile(id);
+    const json = await googleStorage.get(id);
 
-    return result as KeyringPair$Json;
+    return json as KeyringPair$Json;
   }
 
   public subscribe(accountsCallback: (accounts: InjectedAccount[]) => unknown): Unsubcall {

@@ -1,9 +1,4 @@
-// import { axiosInstance as axios } from '@sora-substrate/util';
-
-// import type { KeyringPair$Json } from '@polkadot/keyring/types';
-// import type { FilesResponse, ICreateFile, IGetFilesResponse, VerifyTokenResponse } from './types';
-
-import { GoogleApi } from './api';
+import { GoogleDriveApi } from './api';
 import { GoogleOauth } from './oauth';
 
 const CLIENT_ID = '498393666682-9eeiioee0a2sgb1671e9qir645f9n6cv.apps.googleusercontent.com';
@@ -11,73 +6,9 @@ const API_KEY = 'AIzaSyAzj7JxB-j8pJixtt6JSqLPhG0y02CGYOU';
 const SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
 
-class GoogleDriveApi extends GoogleApi {
-  private prepareData(
-    json: string,
-    { name, address, boundary = 'foo_bar_baz' }: { name: string; address: string; boundary: string }
-  ) {
-    const metadata = {
-      name,
-      mimeType: 'application/json',
-      description: address,
-      parents: ['appDataFolder'],
-    };
-
-    return `
---${boundary}
-Content-Type: application/json; charset=UTF-8
-
-${JSON.stringify(metadata)}
---${boundary}
-Content-Type: application/json
-
-${json}
---${boundary}--`;
-  }
-
-  public async getFiles() {
-    return await gapi.client.drive.files.list({
-      fields: 'files(id,name,description)',
-      spaces: 'appDataFolder',
-    });
-  }
-
-  public async getFile(id: string) {
-    return await gapi.client.drive.files.get({
-      fileId: id,
-      alt: 'media',
-    });
-  }
-
-  public async createFile(json: string, { name, address }: { name: string; address: string }) {
-    const boundary = 'foo_bar_baz';
-    const body = this.prepareData(json, { name, address, boundary });
-    const length = body.length;
-    const request = gapi.client.request({
-      path: '/upload/drive/v3/files',
-      method: 'POST',
-      params: { uploadType: 'multipart' },
-      headers: {
-        'Content-Type': `multipart/related; boundary=${boundary}`,
-        'Content-Length': length.toString(),
-      },
-      body,
-    });
-
-    await new Promise((resolve, reject) => {
-      try {
-        request.execute(resolve);
-      } catch (error) {
-        console.error(error);
-        reject(error);
-      }
-    });
-  }
-}
-
-class GoogleManage {
-  public readonly api!: GoogleDriveApi;
-  public readonly oauth!: GoogleOauth;
+class GoogleAccountStorage {
+  protected readonly api!: GoogleDriveApi;
+  protected readonly oauth!: GoogleOauth;
 
   constructor({ api, oauth }: { api: GoogleDriveApi; oauth: GoogleOauth }) {
     this.api = api;
@@ -92,9 +23,28 @@ class GoogleManage {
     await this.init();
     await this.oauth.checkToken();
   }
+
+  async get(id: string) {
+    await this.auth();
+    const response = await this.api.getFile(id);
+
+    return response.result;
+  }
+
+  async getAll() {
+    await this.auth();
+    const response = await this.api.getFiles();
+
+    return response.result.files;
+  }
+
+  async create(json: string, address: string, name: string) {
+    await this.auth();
+    await this.api.createFile(json, { name, address });
+  }
 }
 
-export const googleManage = new GoogleManage({
+export const googleStorage = new GoogleAccountStorage({
   api: new GoogleDriveApi({ apiKey: API_KEY, discoveryDocs: [DISCOVERY_DOC] }),
   oauth: new GoogleOauth({ clientId: CLIENT_ID, scope: SCOPE }),
 });
