@@ -18,10 +18,6 @@ export class GoogleApi {
     return this._ready;
   }
 
-  get hasToken(): boolean {
-    return !!gapi.client.getToken();
-  }
-
   public async init(): Promise<void> {
     if (this.ready) return;
 

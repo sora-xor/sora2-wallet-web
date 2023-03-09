@@ -25,7 +25,7 @@ const actions = defineActions({
 
     if (isLoggedIn && isConnectionRoute) {
       commit.navigate({ name: RouteNames.Wallet });
-    } else if (!isLoggedIn && !isConnectionRoute) {
+    } else if (!isLoggedIn && currentRoute !== RouteNames.WalletConnection) {
       commit.navigate({ name: RouteNames.WalletConnection });
     }
   },

@@ -36,21 +36,17 @@ ${json}
   }
 
   public async getFiles() {
-    const response = await gapi.client.drive.files.list({
+    return await gapi.client.drive.files.list({
       fields: 'files(id,name,description)',
       spaces: 'appDataFolder',
     });
-
-    return response;
   }
 
   public async getFile(id: string) {
-    const response = await gapi.client.drive.files.get({
+    return await gapi.client.drive.files.get({
       fileId: id,
       alt: 'media',
     });
-
-    return response;
   }
 
   public async createFile(json: string, { name, address }: { name: string; address: string }) {
@@ -94,10 +90,7 @@ class GoogleManage {
 
   async auth(): Promise<void> {
     await this.init();
-
-    if (!this.api.hasToken) {
-      await this.oauth.getToken();
-    }
+    await this.oauth.checkToken();
   }
 }
 

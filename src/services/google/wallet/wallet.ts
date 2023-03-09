@@ -32,9 +32,12 @@ class GoogleDriveWallet {
   }
 
   async enable() {
-    await googleManage.auth();
-
-    this.access = true;
+    try {
+      await googleManage.auth();
+      this.access = true;
+    } catch {
+      this.access = false;
+    }
 
     return {
       version: '0.0.1',

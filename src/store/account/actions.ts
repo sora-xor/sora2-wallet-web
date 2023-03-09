@@ -128,6 +128,7 @@ const actions = defineActions({
 
     await dispatch.subscribeOnAccountAssets();
     await rootDispatch.wallet.transactions.subscribeOnExternalHistory();
+    await dispatch.resetSelectedWallet();
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
@@ -187,22 +188,18 @@ const actions = defineActions({
   },
 
   async checkSelectedWallet(context): Promise<void> {
-    const { dispatch, getters, state } = accountActionContext(context);
+    const { dispatch, state } = accountActionContext(context);
     try {
       if (state.selectedWallet) {
         await getWallet(state.selectedWallet);
       }
-    } catch (error) {
-      console.error(error);
-
-      if (getters.isLoggedIn) {
-        await dispatch.logout();
-      }
+    } catch {
+      await dispatch.resetSelectedWallet();
+      await dispatch.logout();
     }
   },
 
-  async selectWallet(context, extension: AppWallet) {
-    console.log('selectWallet');
+  async selectWallet(context, extension: AppWallet): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
 
     commit.resetWalletAccountsSubscription();
@@ -212,6 +209,13 @@ const actions = defineActions({
     commit.setSelectedWallet(extension);
 
     await dispatch.subscribeToWalletAccounts();
+  },
+
+  resetSelectedWallet(context): void {
+    const { commit } = accountActionContext(context);
+
+    commit.resetWalletAccountsSubscription();
+    commit.setSelectedWallet();
   },
 
   async subscribeOnWalletAvailability(context): Promise<void> {
@@ -376,17 +380,11 @@ const actions = defineActions({
 
     commit.syncWithStorage();
 
-    console.log('syncWithStorage action', getters.isLoggedIn, wasLoggedIn);
-
     // check log in/out state changes after sync
     if (getters.isLoggedIn !== wasLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
-        // if (isInternalSource(state.source as AppWallet)) {
-        //   return window.location.reload();
-        // } else {
         const account = { address: state.address, name: state.name, source: state.source as AppWallet };
         await dispatch.loginAccount(account);
-        // }
       } else {
         await dispatch.logout();
       }
@@ -397,6 +395,7 @@ const actions = defineActions({
       await api.assets.updateAccountAssets();
     }
   },
+
   async getAssets(context): Promise<void> {
     const { getters, commit, dispatch } = accountActionContext(context);
     try {

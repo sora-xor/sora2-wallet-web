@@ -8,12 +8,16 @@ type GoogleOauthOptions = {
 
 export class GoogleOauth {
   public readonly options!: GoogleOauthOptions;
-  public client!: google.accounts.oauth2.TokenClient;
 
-  private authCallback = (token?: google.accounts.oauth2.TokenResponse) => {};
-  private authErrorCallback = (error?: google.accounts.oauth2.ClientConfigError) => {
+  private client!: google.accounts.oauth2.TokenClient;
+  private token!: Nullable<google.accounts.oauth2.TokenResponse>;
+
+  private authCallback = (token: google.accounts.oauth2.TokenResponse) => {};
+  private authErrorCallback = (error: google.accounts.oauth2.ClientConfigError) => {
     console.error(error);
   };
+
+  private isAuthProcess = false;
 
   constructor(options: GoogleOauthOptions) {
     this.options = options;
@@ -43,20 +47,34 @@ export class GoogleOauth {
     });
   }
 
-  private async waitForAuthFinalization(func: AsyncFnWithoutArgs | FnWithoutArgs): Promise<void> {
+  private async waitForAuthFinalization(func: FnWithoutArgs): Promise<void> {
     await new Promise<void>((resolve, reject) => {
-      this.authCallback = () => {
+      this.authCallback = (token) => {
+        const expiresIn = String(Date.now() + +token.expires_in * 1000);
+        this.token = { ...token, expires_in: expiresIn };
+        this.isAuthProcess = false;
         resolve();
       };
       this.authErrorCallback = (error) => {
+        this.token = null;
+        this.isAuthProcess = false;
         reject(error);
       };
 
+      this.isAuthProcess = true;
       func();
     });
   }
 
+  public async checkToken(): Promise<void> {
+    if (!this.token || Date.now() + 59 * 60 * 1000 > Number(this.token.expires_in)) {
+      await this.getToken();
+    }
+  }
+
   public async getToken(): Promise<void> {
+    if (this.isAuthProcess) return;
+
     await this.waitForAuthFinalization(() => {
       // Prompt the user to select a Google Account and ask for consent to share their data
       // when establishing a new session.
