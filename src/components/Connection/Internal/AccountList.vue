@@ -5,6 +5,10 @@
     </p>
 
     <account-list @select="handleSelectAccount" class="connection__accounts">
+      <template #menu="account">
+        <account-actions-menu :actions="AccountActions" @select="handleAccountAction($event, account)" />
+      </template>
+
       <account-card class="connection__button" v-button @click.native="handleCreateAccount">
         <template #avatar>
           <s-icon name="basic-circle-plus-24" size="32" />
@@ -18,24 +22,32 @@
         <template #name>{{ t('desktop.button.importAccount') }}</template>
       </account-card>
     </account-list>
+
+    <account-delete-dialog :visible.sync="accountDeleteVisibility" :loading="loading" @confirm="handleAccountDelete" />
   </div>
 </template>
 
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
-import TranslationMixin from '../../mixins/TranslationMixin';
+import AccountActionsMixin from '../../mixins/AccountActionsMixin';
 
 import AccountList from '../AccountList.vue';
 import AccountCard from '../../Account/AccountCard.vue';
+import AccountActionsMenu from '../../Account/ActionsMenu.vue';
+import AccountDeleteDialog from '../../Account/DeleteDialog.vue';
+
+import { AccountActionTypes } from '../../../consts';
 
 import type { PolkadotJsAccount } from '../../../types/common';
 
 @Component({
-  components: { AccountList, AccountCard },
+  components: { AccountList, AccountCard, AccountActionsMenu, AccountDeleteDialog },
 })
-export default class ExternalAccountList extends Mixins(TranslationMixin) {
+export default class ExternalAccountList extends Mixins(AccountActionsMixin) {
   @Prop({ default: '', type: String }) readonly text!: string;
+
+  readonly AccountActions = [AccountActionTypes.Delete];
 
   handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {
     this.$emit('select', account, isConnected);

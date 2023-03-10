@@ -12,6 +12,7 @@
         <s-button
           type="primary"
           class="account-delete-dialog__button simple-notification__button s-typography-button--big"
+          :loading="loading"
           @click="handleConfirm"
         >
           {{ t('logoutText') }}
@@ -22,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Watch } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import DialogBase from '../DialogBase.vue';
 import SimpleNotification from '../SimpleNotification.vue';
@@ -37,6 +38,8 @@ import TranslationMixin from '../mixins/TranslationMixin';
   },
 })
 export default class AccountDeleteDialog extends Mixins(TranslationMixin, DialogMixin) {
+  @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
+
   @Watch('isVisible')
   private setupFormState(visibility: boolean): void {
     if (!visibility) {

@@ -36,7 +36,7 @@
         <s-icon name="arrows-refresh-ccw-24" size="24" />
       </s-button>
 
-      <account-actions v-if="!isExternal" />
+      <account-actions-menu v-if="!isExternal" :actions="AccountActions" @select="handleAccountActionType" />
     </wallet-account>
 
     <div v-show="!selectedTransaction" class="wallet">
@@ -47,6 +47,24 @@
     </div>
 
     <wallet-transaction-details v-if="selectedTransaction" />
+
+    <template v-if="!isExternal">
+      <account-rename-dialog
+        :visible.sync="accountRenameVisibility"
+        :loading="loading"
+        @confirm="handleAccountRename"
+      />
+      <account-export-dialog
+        :visible.sync="accountExportVisibility"
+        :loading="loading"
+        @confirm="handleAccountExport"
+      />
+      <account-delete-dialog
+        :visible.sync="accountDeleteVisibility"
+        :loading="loading"
+        @confirm="handleAccountDelete"
+      />
+    </template>
   </wallet-base>
 </template>
 
@@ -54,6 +72,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 import type { HistoryItem } from '@sora-substrate/util';
 
+import AccountActionsMixin from './mixins/AccountActionsMixin';
 import OperationsMixin from './mixins/OperationsMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 
@@ -63,9 +82,13 @@ import WalletAssets from './WalletAssets.vue';
 import WalletActivity from './WalletActivity.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import WalletTransactionDetails from './WalletTransactionDetails.vue';
-import AccountActions from './Account/Actions.vue';
 
-import { RouteNames, WalletTabs } from '../consts';
+import AccountActionsMenu from './Account/ActionsMenu.vue';
+import AccountRenameDialog from './Account/RenameDialog.vue';
+import AccountExportDialog from './Account/ConfirmDialog.vue';
+import AccountDeleteDialog from './Account/DeleteDialog.vue';
+
+import { RouteNames, WalletTabs, AccountActionTypes } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
 import type { WalletPermissions } from '../consts';
 
@@ -76,17 +99,28 @@ import type { WalletPermissions } from '../consts';
     WalletAssets,
     WalletActivity,
     QrCodeScanButton,
-    AccountActions,
     WalletTransactionDetails,
+    AccountActionsMenu,
+    AccountRenameDialog,
+    AccountExportDialog,
+    AccountDeleteDialog,
   },
 })
-export default class Wallet extends Mixins(OperationsMixin, QrCodeParserMixin) {
+export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin, QrCodeParserMixin) {
   readonly WalletTabs = WalletTabs;
+  readonly AccountActions = [
+    AccountActionTypes.Rename,
+    AccountActionTypes.Export,
+    AccountActionTypes.Logout,
+    AccountActionTypes.Delete,
+  ];
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;
   @state.account.isExternal isExternal!: boolean;
+
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
+
   @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
 
   currentTab: WalletTabs = WalletTabs.Assets;
@@ -113,6 +147,10 @@ export default class Wallet extends Mixins(OperationsMixin, QrCodeParserMixin) {
 
   handleSwitchAccount(): void {
     this.navigate({ name: RouteNames.WalletConnection });
+  }
+
+  handleAccountActionType(actionType: string) {
+    this.handleAccountAction(actionType, this.account);
   }
 
   handleBack(): void {

@@ -249,7 +249,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
       this.$emit('update:step', LoginStep.CreateCredentials);
       return;
     }
-    const isSeedPhraseMatched = isEqual(this.seedPhraseToCompare, this.seedPhrase);
+    const isSeedPhraseMatched = isEqual(this.seedPhraseToCompare.join(' ').toLowerCase(), this.seedPhrase);
     if (!isSeedPhraseMatched) {
       this.seedPhraseToCompareIdx = [];
       this.runErrorMessage();

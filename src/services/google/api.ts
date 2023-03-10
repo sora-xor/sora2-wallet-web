@@ -82,6 +82,21 @@ ${json}
     });
   }
 
+  public async updateFilename(id: string, name: string) {
+    await gapi.client.drive.files.update({
+      fileId: id,
+      resource: {
+        name,
+      },
+    });
+  }
+
+  public async deleteFile(id: string) {
+    await gapi.client.drive.files.delete({
+      fileId: id,
+    });
+  }
+
   public async createFile(json: string, { name, address }: { name: string; address: string }) {
     const boundary = 'foo_bar_baz';
     const body = this.prepareData(json, { name, address, boundary });

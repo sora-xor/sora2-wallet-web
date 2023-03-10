@@ -2,6 +2,7 @@ import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/ext
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
 import { googleStorage } from '../index';
+import { api } from '../../../api';
 
 interface IAccountMetadata extends InjectedAccount {
   id: string;
@@ -19,12 +20,37 @@ export default class Accounts implements InjectedAccounts {
     }
   }
 
+  private async getAccountId(address: string): Promise<string> {
+    await this.get();
+
+    const defaultAddress = api.formatAddress(address, false);
+    const account = this.accountsList.find((acc) => acc.address === defaultAddress);
+
+    if (!account) throw new Error(`Account not found: ${address}`);
+
+    return account.id;
+  }
+
   public async add(accountJson: KeyringPair$Json): Promise<void> {
     const { address, meta } = accountJson;
     const json = JSON.stringify(accountJson);
     const name = (meta.name as string) || '';
 
     await googleStorage.create(json, address, name);
+    await this.updateAccounts();
+  }
+
+  public async changeName(address: string, name: string) {
+    const id = await this.getAccountId(address);
+
+    await googleStorage.update(id, name);
+    await this.updateAccounts();
+  }
+
+  public async delete(address: string): Promise<void> {
+    const id = await this.getAccountId(address);
+
+    await googleStorage.delete(id);
     await this.updateAccounts();
   }
 
@@ -43,11 +69,7 @@ export default class Accounts implements InjectedAccounts {
   }
 
   public async getAccount(address: string): Promise<Nullable<KeyringPair$Json>> {
-    const account = this.accountsList.find((acc) => acc.address === address);
-
-    if (!account) return null;
-
-    const id = account.id;
+    const id = await this.getAccountId(address);
     const json = await googleStorage.get(id);
 
     return json as KeyringPair$Json;

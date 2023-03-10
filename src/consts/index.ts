@@ -12,6 +12,13 @@ export enum AppWallet {
   TalismanJS = 'talisman',
 }
 
+export enum AccountActionTypes {
+  Rename = 'rename',
+  Export = 'export',
+  Logout = 'logout',
+  Delete = 'delete',
+}
+
 export enum RouteNames {
   GoogleConnection = 'GoogleConnection',
   WalletConnection = 'WalletConnection',

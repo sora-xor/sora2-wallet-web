@@ -11,6 +11,8 @@
       <s-button v-if="isConnected" size="small" disabled>
         {{ t('connection.wallet.connected') }}
       </s-button>
+
+      <slot name="menu" v-bind="account" />
     </wallet-account>
 
     <slot />

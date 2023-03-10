@@ -50,8 +50,8 @@ export class GoogleOauth {
   private async waitForAuthFinalization(func: FnWithoutArgs): Promise<void> {
     await new Promise<void>((resolve, reject) => {
       this.authCallback = (token) => {
-        const expiresIn = String(Date.now() + +token.expires_in * 1000);
-        this.token = { ...token, expires_in: expiresIn };
+        const expires = String(Date.now() + +token.expires_in * 1000);
+        this.token = { ...token, expires_in: expires };
         this.isAuthProcess = false;
         resolve();
       };
@@ -67,7 +67,7 @@ export class GoogleOauth {
   }
 
   public async checkToken(): Promise<void> {
-    if (!this.token || Date.now() + 59 * 60 * 1000 > Number(this.token.expires_in)) {
+    if (!this.token || Date.now() + 5 * 60 * 1000 > Number(this.token.expires_in)) {
       await this.getToken();
     }
   }
