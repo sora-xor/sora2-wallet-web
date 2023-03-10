@@ -42,7 +42,7 @@ import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
-import { delay, getExplorerLinks, groupRewardsByAssetsList } from './util';
+import { delay, getExplorerLinks, groupRewardsByAssetsList, addFearlessWalletLocally } from './util';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
@@ -114,6 +114,8 @@ async function initWallet({
 
     await store.dispatch.wallet.account.getWhitelist();
     await store.dispatch.wallet.account.getNftBlacklist();
+
+    addFearlessWalletLocally();
 
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
