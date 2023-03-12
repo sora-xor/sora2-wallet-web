@@ -1,4 +1,4 @@
-import { Extensions } from '../consts';
+import type { Extensions } from '../consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 export type { KeyringPair$Json } from '@polkadot/keyring/types';
 

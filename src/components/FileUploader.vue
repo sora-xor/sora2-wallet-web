@@ -19,6 +19,7 @@
 
 <script lang="ts">
 import { Mixins, Component, Ref, Prop } from 'vue-property-decorator';
+
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 import { IMAGE_MIME_TYPES } from '../util/image';

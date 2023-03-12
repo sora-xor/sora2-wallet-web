@@ -33,6 +33,7 @@
 
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
+import type { Wallet } from '@subwallet/wallet-connect/types';
 
 import AccountCard from '../Account/AccountCard.vue';
 import ConnectionItems from './ConnectionItems.vue';
@@ -40,8 +41,6 @@ import TranslationMixin from '../mixins/TranslationMixin';
 
 import { state } from '../../store/decorators';
 import { getWalletInstallUrl } from '../../util';
-
-import type { Wallet } from '@subwallet/wallet-connect/types';
 
 @Component({
   components: {

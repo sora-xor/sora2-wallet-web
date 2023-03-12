@@ -1,6 +1,7 @@
 import { Vue, Component } from 'vue-property-decorator';
-import { FPNumber, CodecString } from '@sora-substrate/util';
+import { FPNumber } from '@sora-substrate/util';
 import { MaxTotalSupply } from '@sora-substrate/util/build/assets/consts';
+import type { CodecString } from '@sora-substrate/util';
 
 @Component
 export default class NumberFormatterMixin extends Vue {

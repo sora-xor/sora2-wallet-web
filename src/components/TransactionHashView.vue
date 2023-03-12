@@ -47,11 +47,12 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { formatAddress, getExplorerLinks, formatSoraAddress } from '../util';
 import TranslationMixin from './mixins/TranslationMixin';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
-import { ExplorerLink, SoraNetwork, HashType, ExplorerType } from '../consts';
+import { formatAddress, getExplorerLinks, formatSoraAddress } from '../util';
 import { state } from '../store/decorators';
+import { HashType, ExplorerType, SoraNetwork } from '../consts';
+import type { ExplorerLink } from '../consts';
 
 @Component
 export default class TransactionHashView extends Mixins(TranslationMixin, CopyAddressMixin) {

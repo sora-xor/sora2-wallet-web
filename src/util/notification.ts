@@ -1,4 +1,5 @@
-import { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+
 import { getBase64Icon } from './image';
 
 export async function pushNotification(asset: WhitelistArrayItem, message: string): Promise<void> {

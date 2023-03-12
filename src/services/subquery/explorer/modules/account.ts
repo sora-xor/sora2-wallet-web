@@ -1,6 +1,7 @@
 import { FPNumber } from '@sora-substrate/math';
-import { BaseModule } from './_base';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
+
+import { BaseModule } from './_base';
 
 import { ReferrerRewardsQuery, referrerRewardsFilter } from '../../queries/referrerRewards';
 import { HistoryElementsQuery } from '../../queries/historyElements';

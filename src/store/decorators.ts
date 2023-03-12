@@ -2,13 +2,13 @@ import type { VueDecorator } from 'vue-class-component';
 
 import store from '../store';
 import { WalletModules } from './wallet';
+import { VuexOperation, createDecoratorsObject, attachDecorator } from './util';
 import type {
   WalletCommitDecorators,
   WalletDispatchDecorators,
   WalletGettersDecorators,
   WalletStateDecorators,
 } from './types';
-import { VuexOperation, createDecoratorsObject, attachDecorator } from './util';
 
 const walletState = {} as WalletStateDecorators;
 const walletGetter = {} as WalletGettersDecorators;

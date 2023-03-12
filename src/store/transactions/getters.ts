@@ -1,5 +1,6 @@
 import { defineGetters } from 'direct-vuex';
-import { HistoryItem, TransactionStatus } from '@sora-substrate/util';
+import { TransactionStatus } from '@sora-substrate/util';
+import type { HistoryItem } from '@sora-substrate/util';
 
 import { transactionsGetterContext } from './../transactions';
 import type { TransactionsState } from './types';

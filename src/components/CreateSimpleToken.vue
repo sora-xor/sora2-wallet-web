@@ -62,9 +62,7 @@
         :loading="loading"
         @click="onConfirm"
       >
-        <template v-if="!hasEnoughXor">{{
-          t('createToken.insufficientBalance', { symbol: KnownSymbols.XOR })
-        }}</template>
+        <template v-if="!hasEnoughXor">{{ t('createToken.insufficientBalance', { symbol: XOR }) }}</template>
         <template v-else>{{ t('createToken.confirm') }}</template>
       </s-button>
     </template>
@@ -75,7 +73,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { FPNumber, Operation } from '@sora-substrate/util';
-import { KnownSymbols, MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
+import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
 
 import WalletBase from './WalletBase.vue';
 import InfoLine from './InfoLine.vue';
@@ -99,7 +97,7 @@ import type { Route } from '../store/router/types';
   },
 })
 export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFormatterMixin, NetworkFeeWarningMixin) {
-  readonly KnownSymbols = KnownSymbols;
+  readonly XOR = XOR.symbol;
   readonly Step = Step;
   readonly decimals = FPNumber.DEFAULT_PRECISION;
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
