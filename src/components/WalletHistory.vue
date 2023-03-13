@@ -43,11 +43,11 @@
 </template>
 
 <script lang="ts">
-import debounce from 'lodash/debounce';
+import debounce from 'lodash/fp/debounce';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
-import { History, TransactionStatus } from '@sora-substrate/util';
+import { TransactionStatus } from '@sora-substrate/util';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
-import type { AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
+import type { History, AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
 
 import LoadingMixin from './mixins/LoadingMixin';
 import TransactionMixin from './mixins/TransactionMixin';
@@ -55,6 +55,7 @@ import PaginationSearchMixin from './mixins/PaginationSearchMixin';
 import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
 import SearchInput from './SearchInput.vue';
 import HistoryPagination from './HistoryPagination.vue';
+
 import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames, PaginationButton } from '../consts';
 import { state, mutation, action } from '../store/decorators';
@@ -95,8 +96,7 @@ export default class WalletHistory extends Mixins(
   }
 
   readonly pageAmount = 8; // override PaginationSearchMixin
-  readonly updateCommonHistory = debounce(() => this.updateHistory(true, 1, true), 500);
-  readonly PaginationButton = PaginationButton;
+  readonly updateCommonHistory = debounce(500)(() => this.updateHistory(true, 1, true));
 
   get assetAddress(): string {
     return (this.asset && this.asset.address) || '';

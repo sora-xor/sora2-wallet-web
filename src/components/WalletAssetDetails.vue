@@ -126,6 +126,10 @@ import { XOR, BalanceType } from '@sora-substrate/util/build/assets/consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/util';
 
+import OperationsMixin from './mixins/OperationsMixin';
+import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import WalletBase from './WalletBase.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import NftDetails from './NftDetails.vue';
@@ -134,12 +138,9 @@ import TokenLogo from './TokenLogo.vue';
 import WalletHistory from './WalletHistory.vue';
 import WalletTransactionDetails from './WalletTransactionDetails.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
-import { api } from '../api';
-import OperationsMixin from './mixins/OperationsMixin';
-import FormattedAmountMixin from './mixins/FormattedAmountMixin';
-import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
-import QrCodeParserMixin from './mixins/QrCodeParserMixin';
+
+import { api } from '../api';
 import { RouteNames } from '../consts';
 import { copyToClipboard, delay, shortenValue } from '../util';
 import { IpfsStorage } from '../util/ipfsStorage';

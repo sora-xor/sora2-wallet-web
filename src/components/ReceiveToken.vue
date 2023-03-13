@@ -24,9 +24,9 @@ import WalletAccount from './Account/WalletAccount.vue';
 import QrCode from './QrCode/QrCode.vue';
 
 import { api } from '../api';
-import { RouteNames } from '../consts';
 import { svgSaveAs, IMAGE_EXTENSIONS } from '../util/image';
 import { state, getter, mutation } from '../store/decorators';
+import type { RouteNames } from '../consts';
 import type { PolkadotJsAccount } from '../types/common';
 import type { Route } from '../store/router/types';
 

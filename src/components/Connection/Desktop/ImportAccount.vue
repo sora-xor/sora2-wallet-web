@@ -79,12 +79,13 @@
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 import { api } from '@sora-substrate/util';
+
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
-import { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
 import { AppError, parseJson, delay } from '../../../util';
 import { LoginStep } from '../../../consts';
 import { state, action } from '../../../store/decorators';
+import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
 
 @Component
 export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixin) {

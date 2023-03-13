@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "1.15.8",
+  "version": "1.15.9",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@polkadot/vue-identicon": "2.9.14",
-    "@sora-substrate/util": "1.15.6",
+    "@sora-substrate/util": "1.15.7",
     "@soramitsu/soramitsu-js-ui": "^1.0.45",
     "@subwallet/wallet-connect": "^0.2.3",
     "@urql/core": "^3.0.5",
@@ -55,7 +55,9 @@
     "@rollup/plugin-image": "^3.0.2",
     "@rollup/plugin-node-resolve": "^15.0.1",
     "@rollup/plugin-terser": "^0.2.0",
+    "@types/base-64": "^1.0.0",
     "@types/crypto-js": "^4.1.1",
+    "@types/file-saver": "^2.0.5",
     "@types/jest": "^29.2.4",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.11.11",

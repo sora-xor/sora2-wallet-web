@@ -10,8 +10,9 @@
 </template>
 
 <script lang="ts">
-import { Asset } from '@sora-substrate/util/build/assets/types';
 import { Component, Prop, Vue, Ref } from 'vue-property-decorator';
+import type { Asset } from '@sora-substrate/util/build/assets/types';
+
 import { IpfsStorage } from '../util/ipfsStorage';
 
 @Component
