@@ -1,14 +1,14 @@
 <template>
   <wallet-base title="Connect via Google" :show-header="showHeader" show-back @back="handleBack">
-    <internal-account-list
+    <account-list-step
       v-if="isAccountList"
       text="You can create or link an existing account via Google auth. It stores accounts in Gdrive using encryption."
       @select="handleSelectAccount"
       @create="navigateToCreateAccount"
-      @import="importAccount"
+      @import="navigateToImportAccount"
     />
-    <create-account v-else-if="isCreateFlow" :step.sync="step" :create-account="handleAccountCreate" />
-    <!-- <import-account v-else-if="isImportFlow" :step.sync="step" /> -->
+    <create-account-step v-else-if="isCreateFlow" :step.sync="step" :create-account="handleAccountCreate" />
+    <!-- <import-account-step v-else-if="isImportFlow" :step.sync="step" /> -->
 
     <account-confirm-dialog
       :visible.sync="accountLoginVisibility"
@@ -26,26 +26,26 @@ import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
 
 import WalletBase from '../../WalletBase.vue';
-import CreateAccount from '../Internal/CreateAccount.vue';
-import ImportAccount from '../Internal/ImportAccount.vue';
-import InternalAccountList from '../Internal/AccountList.vue';
+import CreateAccountStep from '../Step/CreateAccount.vue';
+// import ImportAccountStep from '../Step/ImportExternalAccount.vue';
+import AccountListStep from '../Step/AccountList.vue';
 import AccountConfirmDialog from '../../Account/ConfirmDialog.vue';
 
 import { state, action, getter, mutation } from '../../../store/decorators';
-import { RouteNames, LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
+import { RouteNames, LoginStep, AccountImportExternalFlow, AccountCreateFlow } from '../../../consts';
 import { delay, getPreviousLoginStep } from '../../../util';
 import { GDriveWallet } from '../../../services/google/wallet/wallet';
 
 import type { Route } from '../../../store/router/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
-import type { CreateAccountArgs } from '../../../store/account/types';
+import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 
 @Component({
   components: {
     WalletBase,
-    CreateAccount,
-    ImportAccount,
-    InternalAccountList,
+    CreateAccountStep,
+    // ImportAccountStep,
+    AccountListStep,
     AccountConfirmDialog,
   },
 })
@@ -56,10 +56,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
 
   @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
 
-  @action.account.restoreAccountFromJson private restoreAccountFromJson!: (data: {
-    password: string;
-    json: KeyringPair$Json;
-  }) => Promise<void>;
+  @action.account.restoreAccountFromJson private restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
   step: LoginStep = LoginStep.AccountList;
 
@@ -71,7 +68,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
   }
 
   get isImportFlow(): boolean {
-    return AccountImportFlow.includes(this.step);
+    return AccountImportExternalFlow.includes(this.step);
   }
 
   get isAccountList(): boolean {
@@ -86,8 +83,8 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
     this.step = LoginStep.SeedPhrase;
   }
 
-  importAccount(): void {
-    // this.step = LoginStep.Import;
+  navigateToImportAccount(): void {
+    this.step = LoginStep.ImportExternalExtensionList;
   }
 
   navigateToAccountList(): void {
@@ -109,14 +106,14 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
     }
   }
 
-  private async restoreAccount(password: string): Promise<KeyringPair$Json> {
+  private async loadAccountJson(password: string): Promise<KeyringPair$Json> {
     if (!this.accountLoginData) throw new Error('polkadotjs.noAccount');
 
     const json = await GDriveWallet.accounts.getAccount(this.accountLoginData.address);
 
     if (!json) throw new Error('polkadotjs.noAccount');
 
-    await this.restoreAccountFromJson({ json, password });
+    await this.restoreAccount({ json, password });
 
     return json;
   }
@@ -127,7 +124,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
       await delay(500);
 
       await this.withAppNotification(async () => {
-        const { address, meta } = await this.restoreAccount(password);
+        const { address, meta } = await this.loadAccountJson(password);
 
         await this.loginAccount({
           address,

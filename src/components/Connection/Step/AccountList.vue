@@ -44,7 +44,7 @@ import type { PolkadotJsAccount } from '../../../types/common';
 @Component({
   components: { AccountList, AccountCard, AccountActionsMenu, AccountDeleteDialog },
 })
-export default class ExternalAccountList extends Mixins(AccountActionsMixin) {
+export default class AccountListStep extends Mixins(AccountActionsMixin) {
   @Prop({ default: '', type: String }) readonly text!: string;
 
   readonly AccountActions = [AccountActionTypes.Delete];

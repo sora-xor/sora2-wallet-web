@@ -4,7 +4,7 @@ import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from 'rxjs';
 
-import type { PolkadotJsAccount, AddressKeyMapping } from '../../types/common';
+import type { PolkadotJsAccount, AddressKeyMapping, KeyringPair$Json } from '../../types/common';
 import type { ReferrerRewards, FiatPriceObject } from '../../services/subquery/types';
 
 export type CreateAccountArgs = {
@@ -14,6 +14,11 @@ export type CreateAccountArgs = {
   passwordConfirm?: string;
   saveAccount?: boolean;
   exportAccount?: boolean;
+};
+
+export type RestoreAccountArgs = {
+  json: KeyringPair$Json;
+  password: string;
 };
 
 export type AccountState = {

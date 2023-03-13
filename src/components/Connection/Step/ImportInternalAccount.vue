@@ -79,25 +79,19 @@
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 
-import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
-import { KeyringPair$Json } from '../../../types/common';
-import { AppError, parseJson, delay } from '../../../util';
-import { LoginStep } from '../../../consts';
-import { action } from '../../../store/decorators';
 
-import type { CreateAccountArgs } from '../../../store/account/types';
+import { KeyringPair$Json } from '../../../types/common';
+import { AppError, parseJson } from '../../../util';
+import { LoginStep } from '../../../consts';
+
+import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 
 @Component
-export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixin) {
+export default class ImportInternalAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
-
-  @action.account.restoreAccountFromJson private restoreAccountFromJson!: (data: {
-    password: string;
-    json: KeyringPair$Json;
-  }) => Promise<void>;
-
-  @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
+  @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
+  @Prop({ type: Function, default: () => {} }) readonly restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
@@ -206,46 +200,18 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
 
   async importAccount(): Promise<void> {
     if (this.json) {
-      this.handleJsonInput(this.json);
+      await this.restoreAccount({ json: this.json, password: this.accountPassword });
     } else {
-      this.handleCredentialsInput();
+      await this.createAccount({
+        seed: this.mnemonicPhrase,
+        name: this.accountName,
+        password: this.accountPassword,
+        passwordConfirm: this.accountPasswordConfirm,
+      });
     }
-  }
 
-  async handleJsonInput(json: KeyringPair$Json): Promise<void> {
-    await this.withLoading(async () => {
-      // hack: to render loading state before sync code execution
-      await delay(500);
-
-      await this.withAppNotification(async () => {
-        try {
-          await this.restoreAccountFromJson({ json, password: this.accountPassword });
-          this.$emit('update:step', LoginStep.AccountList);
-        } catch (error) {
-          this.accountPassword = '';
-          throw error;
-        }
-      });
-    });
-  }
-
-  async handleCredentialsInput(): Promise<void> {
-    await this.withLoading(async () => {
-      // hack: to render loading state before sync code execution
-      await delay(500);
-
-      await this.withAppNotification(async () => {
-        await this.createAccount({
-          seed: this.mnemonicPhrase,
-          name: this.accountName,
-          password: this.accountPassword,
-          passwordConfirm: this.accountPasswordConfirm,
-          saveAccount: true,
-        });
-
-        this.$emit('update:step', LoginStep.AccountList);
-      });
-    });
+    this.accountPassword = '';
+    this.accountPasswordConfirm = '';
   }
 }
 </script>

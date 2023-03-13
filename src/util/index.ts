@@ -15,7 +15,8 @@ import {
   ExplorerType,
   LoginStep,
   AppWallet,
-  AccountImportFlow,
+  AccountImportInternalFlow,
+  AccountImportExternalFlow,
   AccountCreateFlow,
 } from '../consts';
 import { FearlessWalletInfo } from '../consts/wallets';
@@ -319,7 +320,7 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
 };
 
 export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
-  for (const flow of [AccountCreateFlow, AccountImportFlow]) {
+  for (const flow of [AccountCreateFlow, AccountImportInternalFlow, AccountImportExternalFlow]) {
     const currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
 
     if (currentStepIndex > 0) {

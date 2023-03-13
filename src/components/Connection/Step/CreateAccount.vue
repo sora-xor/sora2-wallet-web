@@ -121,17 +121,16 @@
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 import isEqual from 'lodash/fp/isEqual';
 
-import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
 
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
-import { copyToClipboard, delay } from '../../../util';
+import { copyToClipboard } from '../../../util';
 
 import type { CreateAccountArgs } from '../../../store/account/types';
 
 @Component
-export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixin) {
+export default class CreateAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
 
@@ -275,23 +274,13 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
     }, 2000);
   }
 
-  private async createNewAccount(): Promise<void> {
+  async handleAccountCreate(): Promise<void> {
     await this.createAccount({
       seed: this.seedPhrase,
       name: this.accountName,
       password: this.accountPassword,
       passwordConfirm: this.accountPasswordConfirm,
       exportAccount: this.toExport,
-    });
-
-    this.$emit('update:step', LoginStep.AccountList);
-  }
-
-  async handleAccountCreate(): Promise<void> {
-    await this.withLoading(async () => {
-      // hack: to render loading state before sync code execution
-      await delay(500);
-      await this.withAppNotification(this.createNewAccount);
     });
   }
 

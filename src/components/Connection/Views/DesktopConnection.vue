@@ -14,8 +14,13 @@
         @create="navigateToCreateAccount"
         @import="navigateToImportAccount"
       />
-      <create-account v-else-if="isCreateFlow" :step.sync="step" :create-account="handleAccountCreate" />
-      <import-account v-else-if="isImportFlow" :step.sync="step" />
+      <create-account v-else-if="isCreateFlow" :step.sync="step" :create-account="handleCreateAccount" />
+      <import-account
+        v-else-if="isImportFlow"
+        :step.sync="step"
+        :create-account="handleCreateAccount"
+        :restore-account="handleRestoreAccount"
+      />
       <welcome-page v-else @create="navigateToCreateAccount" @import="navigateToImportAccount" />
     </div>
   </wallet-base>
@@ -29,16 +34,16 @@ import NotificationMixin from '../../mixins/NotificationMixin';
 
 import WalletBase from '../../WalletBase.vue';
 import WelcomePage from '../Desktop/WelcomePage.vue';
-import CreateAccount from '../Internal/CreateAccount.vue';
-import InternalAccountList from '../Internal/AccountList.vue';
-import ImportAccount from '../Internal/ImportAccount.vue';
+import CreateAccount from '../Step/CreateAccount.vue';
+import InternalAccountList from '../Step/AccountList.vue';
+import ImportAccount from '../Step/ImportInternalAccount.vue';
 
-import { LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
-import { getPreviousLoginStep } from '../../../util';
+import { LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
+import { getPreviousLoginStep, delay } from '../../../util';
 import { state, action } from '../../../store/decorators';
 
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
-import type { CreateAccountArgs } from '../../../store/account/types';
+import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 
 @Component({
   components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, InternalAccountList },
@@ -50,16 +55,16 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
 
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
-  @action.account.loginAccount loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
-
-  @action.account.createAccount createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
+  @action.account.loginAccount private loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
+  @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
+  @action.account.restoreAccountFromJson private restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
   get isCreateFlow(): boolean {
     return AccountCreateFlow.includes(this.step);
   }
 
   get isImportFlow(): boolean {
-    return AccountImportFlow.includes(this.step);
+    return AccountImportInternalFlow.includes(this.step);
   }
 
   get isAccountList(): boolean {
@@ -108,8 +113,26 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
     });
   }
 
-  async handleAccountCreate(data: CreateAccountArgs) {
-    await this.createAccount({ ...data, saveAccount: true });
+  async handleCreateAccount(data: CreateAccountArgs) {
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution
+      await delay(500);
+      await this.withAppNotification(async () => {
+        await this.createAccount({ ...data, saveAccount: true });
+        this.navigateToAccountList();
+      });
+    });
+  }
+
+  async handleRestoreAccount(data: RestoreAccountArgs) {
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution
+      await delay(500);
+      await this.withAppNotification(async () => {
+        await this.restoreAccount(data);
+        this.navigateToAccountList();
+      });
+    });
   }
 
   async mounted(): Promise<void> {

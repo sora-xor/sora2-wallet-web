@@ -29,7 +29,7 @@ import { isInternalSource } from '../../consts/wallets';
 
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
-import type { CreateAccountArgs } from './types';
+import type { CreateAccountArgs, RestoreAccountArgs } from './types';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -322,12 +322,10 @@ const actions = defineActions({
   /**
    * Desktop
    */
-  async renameAccount(context, name: string) {
-    const { commit, dispatch, state } = accountActionContext(context);
-    // change name in api & storage
-    api.changeAccountName(name);
-    // update account data from storage
-    commit.syncWithStorage();
+  async restoreAccountFromJson(context, { json, password }: RestoreAccountArgs) {
+    const { dispatch, state } = accountActionContext(context);
+    // restore from json file
+    api.restoreAccountFromJson(json, password);
     // update account list in state
     if (state.isDesktop) {
       await dispatch.getImportedAccounts();
@@ -337,10 +335,12 @@ const actions = defineActions({
   /**
    * Desktop
    */
-  async restoreAccountFromJson(context, { json, password }: { json: KeyringPair$Json; password: string }) {
-    const { dispatch, state } = accountActionContext(context);
-    // restore from json file
-    api.restoreAccountFromJson(json, password);
+  async renameAccount(context, name: string) {
+    const { commit, dispatch, state } = accountActionContext(context);
+    // change name in api & storage
+    api.changeAccountName(name);
+    // update account data from storage
+    commit.syncWithStorage();
     // update account list in state
     if (state.isDesktop) {
       await dispatch.getImportedAccounts();
