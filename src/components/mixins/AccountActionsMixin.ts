@@ -24,7 +24,6 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
   selectedAccount: Nullable<PolkadotJsAccount> = null;
 
   handleAccountAction(actionType: string, account: PolkadotJsAccount): void {
-    console.log(actionType, account);
     this.selectedAccount = { ...account };
 
     switch (actionType) {

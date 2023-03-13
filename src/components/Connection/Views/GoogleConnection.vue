@@ -7,8 +7,19 @@
       @create="navigateToCreateAccount"
       @import="navigateToImportAccount"
     />
-    <create-account-step v-else-if="isCreateFlow" :step.sync="step" :create-account="handleAccountCreate" />
-    <!-- <import-account-step v-else-if="isImportFlow" :step.sync="step" /> -->
+    <create-account-step
+      v-else-if="isCreateFlow"
+      :step.sync="step"
+      :loading="loading"
+      :create-account="handleAccountCreate"
+    />
+    <import-account-step
+      v-else-if="isImportFlow"
+      :step.sync="step"
+      :loading="loading"
+      :restore-account="handleAccountImport"
+      json-only
+    />
 
     <account-confirm-dialog
       :visible.sync="accountLoginVisibility"
@@ -27,12 +38,12 @@ import NotificationMixin from '../../mixins/NotificationMixin';
 
 import WalletBase from '../../WalletBase.vue';
 import CreateAccountStep from '../Step/CreateAccount.vue';
-// import ImportAccountStep from '../Step/ImportExternalAccount.vue';
+import ImportAccountStep from '../Step/ImportInternalAccount.vue';
 import AccountListStep from '../Step/AccountList.vue';
 import AccountConfirmDialog from '../../Account/ConfirmDialog.vue';
 
-import { state, action, getter, mutation } from '../../../store/decorators';
-import { RouteNames, LoginStep, AccountImportExternalFlow, AccountCreateFlow } from '../../../consts';
+import { action, mutation } from '../../../store/decorators';
+import { RouteNames, LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
 import { delay, getPreviousLoginStep } from '../../../util';
 import { GDriveWallet } from '../../../services/google/wallet/wallet';
 
@@ -44,7 +55,7 @@ import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/accou
   components: {
     WalletBase,
     CreateAccountStep,
-    // ImportAccountStep,
+    ImportAccountStep,
     AccountListStep,
     AccountConfirmDialog,
   },
@@ -68,7 +79,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
   }
 
   get isImportFlow(): boolean {
-    return AccountImportExternalFlow.includes(this.step);
+    return AccountImportInternalFlow.includes(this.step);
   }
 
   get isAccountList(): boolean {
@@ -84,17 +95,38 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
   }
 
   navigateToImportAccount(): void {
-    this.step = LoginStep.ImportExternalExtensionList;
+    this.step = LoginStep.Import;
   }
 
   navigateToAccountList(): void {
     this.step = LoginStep.AccountList;
   }
 
-  async handleAccountCreate(data: CreateAccountArgs): Promise<void> {
-    const accountJson = await this.createAccount(data);
+  async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
+    await this.withLoading(async () => {
+      await this.withAppNotification(async () => {
+        const { json } = data;
 
-    await GDriveWallet.accounts.add(accountJson);
+        await GDriveWallet.accounts.add(json);
+
+        this.navigateToAccountList();
+      });
+    });
+  }
+
+  async handleAccountCreate(data: CreateAccountArgs): Promise<void> {
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution
+      await delay(500);
+
+      await this.withAppNotification(async () => {
+        const accountJson = await this.createAccount(data);
+
+        await GDriveWallet.accounts.add(accountJson);
+
+        this.navigateToAccountList();
+      });
+    });
   }
 
   handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {

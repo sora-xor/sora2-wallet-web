@@ -20,11 +20,15 @@ export default class Accounts implements InjectedAccounts {
     }
   }
 
+  private getAccountByAddress(address: string): Nullable<IAccountMetadata> {
+    const defaultAddress = api.formatAddress(address, false);
+    return this.accountsList.find((acc) => acc.address === defaultAddress);
+  }
+
   private async getAccountId(address: string): Promise<string> {
     await this.get();
 
-    const defaultAddress = api.formatAddress(address, false);
-    const account = this.accountsList.find((acc) => acc.address === defaultAddress);
+    const account = this.getAccountByAddress(address);
 
     if (!account) throw new Error(`Account not found: ${address}`);
 
@@ -33,6 +37,9 @@ export default class Accounts implements InjectedAccounts {
 
   public async add(accountJson: KeyringPair$Json): Promise<void> {
     const { address, meta } = accountJson;
+
+    if (this.getAccountByAddress(address)) return;
+
     const json = JSON.stringify(accountJson);
     const name = (meta.name as string) || '';
 

@@ -101,6 +101,17 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   }
 }
 
+function logoutApi(context: ActionContext<any, any>, forgetAddress?: string) {
+  const { state } = accountActionContext(context);
+
+  // Don't forget account on Desktop, if forgetAddress is not passed
+  if (!state.isDesktop || forgetAddress) {
+    api.forgetAccount(forgetAddress);
+  }
+
+  api.logout();
+}
+
 function exportAccountJson(accountJson: string): void {
   const blob = new Blob([accountJson], { type: 'application/json' });
   const filename = (JSON.parse(accountJson) || {}).address || '';
@@ -130,11 +141,7 @@ const actions = defineActions({
     const { commit, dispatch, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    if (!state.isDesktop || forgetAddress) {
-      api.forgetAccount(forgetAddress);
-    }
-
-    api.logout();
+    logoutApi(context, forgetAddress);
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
@@ -262,12 +269,7 @@ const actions = defineActions({
     const source = (accountData.source as AppWallet) || '';
     const isExternal = !isInternalSource(source);
 
-    // Don't forget account on Desktop
-    if (!state.isDesktop) {
-      api.forgetAccount();
-    }
-
-    api.logout();
+    logoutApi(context);
 
     const defaultAddress = api.formatAddress(accountData.address, false);
 

@@ -2,15 +2,32 @@
   <div class="login">
     <div class="login__title">{{ title }}</div>
     <template v-if="step === LoginStep.Import">
-      <s-input
-        class="input-textarea"
-        type="textarea"
-        :placeholder="t('desktop.accountMnemonic.placeholder')"
-        :maxlength="255"
-        v-model="mnemonicPhrase"
-        @input="handleMnemonicInput"
-      />
-      <p class="line">or</p>
+      <template v-if="!jsonOnly">
+        <s-input
+          :disabled="loading"
+          :placeholder="t('desktop.accountMnemonic.placeholder')"
+          :maxlength="255"
+          v-model="mnemonicPhrase"
+          class="input-textarea"
+          type="textarea"
+          @input="handleMnemonicInput"
+        />
+        <s-button
+          :disabled="disabledNextStep"
+          class="s-typography-button--large login-btn"
+          key="step1"
+          type="primary"
+          @click="nextStep"
+        >
+          {{ t('desktop.button.next') }}
+        </s-button>
+        <p class="line">or</p>
+      </template>
+
+      <p v-if="jsonOnly" class="login__text">
+        Export your account from polkadot.js compatible browser extension in .json format to upload it here.
+      </p>
+
       <input
         ref="fileInput"
         id="contentFile"
@@ -22,43 +39,53 @@
       <s-button @click="importJson" class="s-typography-button--large login-btn">
         {{ t('importText') }} .JSON
       </s-button>
-      <s-button
-        @click="nextStep"
-        key="step1"
-        :disabled="disabledNextStep"
-        class="s-typography-button--large login-btn"
-        type="primary"
-      >
-        {{ t('desktop.button.next') }}
-      </s-button>
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
       <s-form :class="computedClasses">
         <s-input
+          :disabled="loading"
           :placeholder="t('desktop.accountName.placeholder')"
-          v-model="accountName"
           :readonly="readonlyAccountName"
+          v-model="accountName"
         ></s-input>
-        <p v-if="!json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
-        <s-input :type="inputType" :placeholder="t('desktop.password.placeholder')" v-model="accountPassword">
-          <s-icon :name="iconPasswordStyle" class="eye-icon" size="18" slot="suffix" @click.native="toggleVisibility" />
-        </s-input>
-        <template v-if="!json">
-          <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
+
+        <p v-if="!jsonOnly && !json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+
+        <template v-if="!jsonOnly">
           <s-input
-            type="password"
-            :placeholder="t('desktop.confirmPassword.placeholder')"
-            v-model="accountPasswordConfirm"
-          />
+            :type="inputType"
+            :disabled="loading"
+            :placeholder="t('desktop.password.placeholder')"
+            v-model="accountPassword"
+          >
+            <s-icon
+              :name="iconPasswordStyle"
+              class="eye-icon"
+              size="18"
+              slot="suffix"
+              @click.native="toggleVisibility"
+            />
+          </s-input>
+
+          <template v-if="!json">
+            <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
+            <s-input
+              type="password"
+              :disabled="loading"
+              :placeholder="t('desktop.confirmPassword.placeholder')"
+              v-model="accountPasswordConfirm"
+            />
+          </template>
         </template>
       </s-form>
 
       <s-button
-        @click="importAccount"
-        key="step2"
         :disabled="disabledImportStep"
+        :loading="loading"
         class="s-typography-button--large login-btn"
+        key="step2"
         type="primary"
+        @click="importAccount"
       >
         {{ t('desktop.button.importAccount') }}
       </s-button>
@@ -81,6 +108,8 @@ import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/accou
 @Component
 export default class ImportInternalAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
+  @Prop({ type: Boolean, default: false }) readonly jsonOnly!: boolean;
+  @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
   @Prop({ type: Function, default: () => {} }) readonly restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
@@ -116,6 +145,8 @@ export default class ImportInternalAccountStep extends Mixins(NotificationMixin)
   }
 
   get disabledImportStep(): boolean {
+    if (this.jsonOnly) return !(this.accountName && this.json);
+
     return !(this.accountName && this.accountPassword) || (!this.json && !this.accountPasswordConfirm);
   }
 
@@ -212,16 +243,16 @@ export default class ImportInternalAccountStep extends Mixins(NotificationMixin)
 
 .login {
   &__inputs {
-    margin-top: 24px;
     display: flex;
     flex-direction: column;
-    &--json {
-      gap: calc(var(--s-size-small) / 2);
-    }
   }
 
   .json-upload {
     display: none;
+  }
+
+  .input-textarea.s-textarea {
+    margin-bottom: 0;
   }
 }
 .line {
@@ -240,10 +271,6 @@ export default class ImportInternalAccountStep extends Mixins(NotificationMixin)
   margin: auto;
   margin-left: 10px;
   margin-right: 10px;
-}
-
-.input-textarea {
-  margin-top: 30px !important;
 }
 
 .eye-icon:hover {
