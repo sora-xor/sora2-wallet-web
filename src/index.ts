@@ -116,6 +116,8 @@ async function initWallet({
 
     await Promise.all([store.dispatch.wallet.account.getWhitelist(), store.dispatch.wallet.account.getNftBlacklist()]);
 
+    addFearlessWalletLocally();
+
     await Promise.all([
       store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
       store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
