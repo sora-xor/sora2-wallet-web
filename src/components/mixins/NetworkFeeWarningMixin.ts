@@ -1,6 +1,7 @@
 import { Mixins, Component } from 'vue-property-decorator';
-import { FPNumber, NetworkFeesObject, Operation } from '@sora-substrate/util';
+import { FPNumber, Operation } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
+import type { NetworkFeesObject } from '@sora-substrate/util';
 
 import NumberFormatterMixin from './NumberFormatterMixin';
 import { NetworkFeeWarningOptions } from '../../consts';

@@ -1,13 +1,16 @@
 import getOr from 'lodash/fp/getOr';
 import omit from 'lodash/fp/omit';
 import { BN } from '@polkadot/util';
-import { FPNumber, Operation, TransactionStatus, HistoryItem } from '@sora-substrate/util';
 import { RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
+import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
+import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 
 import store from '../../store';
 import { api } from '../../api';
+import { SubstrateEvents } from './consts';
+import { ObjectInit } from '../../consts';
 import { ModuleNames, ModuleMethods } from './types';
 import type {
   HistoryElement,
@@ -26,8 +29,6 @@ import type {
   ClaimedRewardItem,
   ExtrinsicEvent,
 } from './types';
-import { SubstrateEvents } from './consts';
-import { ObjectInit } from '../../consts';
 
 const insensitive = (value: string) => value.toLowerCase();
 
