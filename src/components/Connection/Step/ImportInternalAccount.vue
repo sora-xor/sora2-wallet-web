@@ -6,7 +6,6 @@
         class="input-textarea"
         type="textarea"
         :placeholder="t('desktop.accountMnemonic.placeholder')"
-        :disabled="loading"
         :maxlength="255"
         v-model="mnemonicPhrase"
         @input="handleMnemonicInput"
@@ -38,16 +37,10 @@
         <s-input
           :placeholder="t('desktop.accountName.placeholder')"
           v-model="accountName"
-          :disabled="loading"
           :readonly="readonlyAccountName"
         ></s-input>
         <p v-if="!json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
-        <s-input
-          :type="inputType"
-          :placeholder="t('desktop.password.placeholder')"
-          v-model="accountPassword"
-          :disabled="loading"
-        >
+        <s-input :type="inputType" :placeholder="t('desktop.password.placeholder')" v-model="accountPassword">
           <s-icon :name="iconPasswordStyle" class="eye-icon" size="18" slot="suffix" @click.native="toggleVisibility" />
         </s-input>
         <template v-if="!json">
@@ -56,7 +49,6 @@
             type="password"
             :placeholder="t('desktop.confirmPassword.placeholder')"
             v-model="accountPasswordConfirm"
-            :disabled="loading"
           />
         </template>
       </s-form>
@@ -65,7 +57,6 @@
         @click="importAccount"
         key="step2"
         :disabled="disabledImportStep"
-        :loading="loading"
         class="s-typography-button--large login-btn"
         type="primary"
       >

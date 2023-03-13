@@ -69,18 +69,9 @@
     <template v-else-if="step === LoginStep.CreateCredentials">
       <div class="login__inputs">
         <s-form>
-          <s-input
-            :placeholder="t('desktop.accountName.placeholder')"
-            v-model="accountName"
-            :disabled="loading"
-          ></s-input>
+          <s-input :placeholder="t('desktop.accountName.placeholder')" v-model="accountName"></s-input>
           <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
-          <s-input
-            :type="inputType"
-            :placeholder="t('desktop.password.placeholder')"
-            v-model="accountPassword"
-            :disabled="loading"
-          >
+          <s-input :type="inputType" :placeholder="t('desktop.password.placeholder')" v-model="accountPassword">
             <s-icon
               :name="iconPasswordStyle"
               size="18"
@@ -94,12 +85,11 @@
             type="password"
             :placeholder="t('desktop.confirmPassword.placeholder')"
             v-model="accountPasswordConfirm"
-            :disabled="loading"
           ></s-input>
         </s-form>
       </div>
       <div class="wallet-settings-create-token_export">
-        <s-switch v-model="toExport" :disabled="loading" />
+        <s-switch v-model="toExport" />
         <span>{{ t('desktop.exportOptionText') }}</span>
       </div>
       <p class="wallet-settings-create-token_desc">{{ t('desktop.exportJsonText') }}</p>
@@ -108,7 +98,6 @@
         class="s-typography-button--large login-btn"
         type="primary"
         :disabled="isInputsNotFilled"
-        :loading="loading"
         @click="handleAccountCreate"
       >
         {{ t('desktop.button.createAccount') }}

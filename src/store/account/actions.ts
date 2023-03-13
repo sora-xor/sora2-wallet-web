@@ -101,12 +101,6 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   }
 }
 
-function logoutApi(forgetAccount?: boolean): void {
-  if (api.accountPair) {
-    api.logout(forgetAccount);
-  }
-}
-
 function exportAccountJson(accountJson: string): void {
   const blob = new Blob([accountJson], { type: 'application/json' });
   const filename = (JSON.parse(accountJson) || {}).address || '';
@@ -132,17 +126,21 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async logout(context, forgetAccount?: boolean): Promise<void> {
+  async logout(context, forgetAddress?: string): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    logoutApi(!state.isDesktop || forgetAccount);
+    if (!state.isDesktop || forgetAddress) {
+      api.forgetAccount(forgetAddress);
+    }
+
+    api.logout();
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
 
-    if (state.isDesktop && forgetAccount) {
+    if (state.isDesktop && forgetAddress) {
       await dispatch.getImportedAccounts();
     }
 
@@ -263,8 +261,13 @@ const actions = defineActions({
     // Desktop has not source
     const source = (accountData.source as AppWallet) || '';
     const isExternal = !isInternalSource(source);
+
     // Don't forget account on Desktop
-    logoutApi(!state.isDesktop);
+    if (!state.isDesktop) {
+      api.forgetAccount();
+    }
+
+    api.logout();
 
     const defaultAddress = api.formatAddress(accountData.address, false);
 

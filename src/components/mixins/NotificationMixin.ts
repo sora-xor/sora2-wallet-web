@@ -51,21 +51,23 @@ export default class NotificationMixin extends Mixins(TranslationMixin) {
     });
   }
 
-  async withAppNotification(func: AsyncFnWithoutArgs): Promise<void> {
+  async withAppNotification(func: AsyncFnWithoutArgs, throwable = false): Promise<void> {
     try {
       await func();
     } catch (error) {
       const message = this.getErrorMessage(error);
       this.showAppNotification(message, 'error');
+      if (throwable) throw error;
     }
   }
 
-  async withAppAlert(func: AsyncFnWithoutArgs): Promise<void> {
+  async withAppAlert(func: AsyncFnWithoutArgs, throwable = false): Promise<void> {
     try {
       await func();
     } catch (error) {
       const message = this.getErrorMessage(error);
       this.showAppAlert(message, this.t('errorText'));
+      if (throwable) throw error;
     }
   }
 }

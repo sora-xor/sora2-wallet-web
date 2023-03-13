@@ -15,7 +15,7 @@ import type { PolkadotJsAccount } from '../../types/common';
 export default class AccountActionsMixin extends Mixins(LoadingMixin, NotificationMixin) {
   @action.account.renameAccount private renameAccount!: (name: string) => Promise<void>;
   @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
-  @action.account.logout private logout!: (forgetAccount?: boolean) => Promise<void>;
+  @action.account.logout private logout!: (forgetAddress?: string) => Promise<void>;
 
   accountRenameVisibility = false;
   accountExportVisibility = false;
@@ -37,7 +37,7 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
         break;
       }
       case AccountActionTypes.Logout: {
-        this.logout(false);
+        this.logout();
         break;
       }
       case AccountActionTypes.Delete: {
@@ -94,8 +94,9 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
           await GDriveWallet.accounts.delete(this.selectedAccount.address);
         }
 
+        await this.logout(this.selectedAccount.address);
+
         this.accountDeleteVisibility = false;
-        this.logout(true);
       });
     });
   }
