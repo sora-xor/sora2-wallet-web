@@ -15,7 +15,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { FPNumber } from '@sora-substrate/util';
-import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
+import { XOR } from '@sora-substrate/util/build/assets/consts';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -37,7 +37,7 @@ export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountM
   @Prop({ required: true, validator: isFPNumber }) readonly value!: FPNumber;
 
   get xor(): string {
-    return KnownSymbols.XOR;
+    return XOR.symbol;
   }
 
   private formatValue(value: FPNumber): string {

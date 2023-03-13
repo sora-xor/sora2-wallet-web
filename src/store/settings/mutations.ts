@@ -4,8 +4,8 @@ import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from 'rxjs';
 
 import { api } from '../../api';
-import { SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
+import type { SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
 import type { ApiKeysObject, ConnectionStatus } from '../../types/common';
 import type { SettingsState } from './types';
 

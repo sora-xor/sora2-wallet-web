@@ -21,7 +21,6 @@
 
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
-import type { PolkadotJsAccount } from '../../../types/common';
 
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -34,6 +33,7 @@ import ImportAccount from '../Desktop/ImportAccount.vue';
 import { LoginStep } from '../../../consts';
 import { getPreviousLoginStep } from '../../../util';
 import { state, action } from '../../../store/decorators';
+import type { PolkadotJsAccount } from '../../../types/common';
 
 @Component({
   components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList },

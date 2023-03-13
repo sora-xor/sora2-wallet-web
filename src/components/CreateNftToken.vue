@@ -144,9 +144,10 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
-import { File as ImageNFT, NFTStorage } from 'nft.storage';
+import { File as ImageNFT } from 'nft.storage';
 import { FPNumber, Operation } from '@sora-substrate/util';
 import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
+import type { NFTStorage } from 'nft.storage';
 
 import NftDetails from './NftDetails.vue';
 import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
@@ -163,8 +164,8 @@ import { RouteNames, Step } from '../consts';
 import { api } from '../api';
 import { IpfsStorage } from '../util/ipfsStorage';
 import { state, mutation, action } from '../store/decorators';
-import type { Route } from '../store/router/types';
 import { IMAGE_MIME_TYPES } from '../util/image';
+import type { Route } from '../store/router/types';
 
 @Component({
   components: {

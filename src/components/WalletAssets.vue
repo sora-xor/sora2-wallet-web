@@ -94,8 +94,9 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 
-import { RouteNames, HiddenValue, WalletAssetFilters, WalletPermissions, WalletFilteringOptions } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
+import { RouteNames, HiddenValue, WalletFilteringOptions } from '../consts';
+import type { WalletAssetFilters, WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';
 
 @Component({

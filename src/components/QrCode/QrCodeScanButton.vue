@@ -77,14 +77,12 @@
 import { Component, Ref, Mixins } from 'vue-property-decorator';
 import { BrowserQRCodeReader } from '@zxing/browser';
 import type { IScannerControls } from '@zxing/browser';
+import type SDropdown from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdown/SDropdown.vue';
 
 import DialogBase from '../DialogBase.vue';
 import NotificationEnablingPage from '../NotificationEnablingPage.vue';
-
 import TranslationMixin from '../mixins/TranslationMixin';
 import CameraPermissionMixin from '../mixins/CameraPermissionMixin';
-
-import type SDropdown from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdown/SDropdown.vue';
 
 enum SCAN_TYPES {
   FILE = 'file',
