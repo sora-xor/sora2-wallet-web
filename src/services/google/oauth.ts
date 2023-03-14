@@ -9,8 +9,7 @@ type GoogleOauthOptions = {
 const FIVE_MINUTES = 5 * 60 * 1000;
 
 export class GoogleOauth {
-  public readonly options!: GoogleOauthOptions;
-
+  private readonly options!: GoogleOauthOptions;
   private client!: google.accounts.oauth2.TokenClient;
   private token!: Nullable<google.accounts.oauth2.TokenResponse>;
 
@@ -78,8 +77,8 @@ export class GoogleOauth {
     if (this.isAuthProcess) return;
 
     await this.waitForAuthFinalization(() => {
-      // Prompt the user to select a Google Account and ask for consent to share their data
-      // when establishing a new session.
+      // Prompt the user to select a Google Account
+      // Ask for consent to share their data at first time
       this.client.requestAccessToken({ prompt: 'select_account' });
     });
   }

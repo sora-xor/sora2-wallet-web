@@ -7,7 +7,7 @@ type GoogleApiOptions = {
 };
 
 export class GoogleApi {
-  public readonly options!: GoogleApiOptions;
+  private readonly options!: GoogleApiOptions;
   private _ready = false;
 
   constructor(options: GoogleApiOptions) {
@@ -44,7 +44,13 @@ export class GoogleApi {
   }
 }
 
+const DRIVE_DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
+
 export class GoogleDriveApi extends GoogleApi {
+  constructor(apiKey: string) {
+    super({ apiKey, discoveryDocs: [DRIVE_DISCOVERY_DOC] });
+  }
+
   private prepareData(
     json: string,
     { name, address, boundary = 'foo_bar_baz' }: { name: string; address: string; boundary: string }
