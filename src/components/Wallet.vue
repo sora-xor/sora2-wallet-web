@@ -36,7 +36,7 @@
         <s-icon name="arrows-refresh-ccw-24" size="24" />
       </s-button>
 
-      <account-actions-menu v-if="!isExternal" :actions="AccountActions" @select="handleAccountActionType" />
+      <account-actions-menu v-if="!isExternal" :actions="accountActions" @select="handleAccountActionType" />
     </wallet-account>
 
     <div v-show="!selectedTransaction" class="wallet">
@@ -88,7 +88,7 @@ import AccountRenameDialog from './Account/RenameDialog.vue';
 import AccountExportDialog from './Account/ConfirmDialog.vue';
 import AccountDeleteDialog from './Account/DeleteDialog.vue';
 
-import { RouteNames, WalletTabs, AccountActionTypes } from '../consts';
+import { RouteNames, WalletTabs } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
 import type { WalletPermissions } from '../consts';
 
@@ -108,12 +108,6 @@ import type { WalletPermissions } from '../consts';
 })
 export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin, QrCodeParserMixin) {
   readonly WalletTabs = WalletTabs;
-  readonly AccountActions = [
-    AccountActionTypes.Rename,
-    AccountActionTypes.Export,
-    AccountActionTypes.Logout,
-    AccountActionTypes.Delete,
-  ];
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;

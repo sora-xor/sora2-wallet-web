@@ -3,7 +3,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 import LoadingMixin from './LoadingMixin';
 import NotificationMixin from './NotificationMixin';
 
-import { action } from '../../store/decorators';
+import { action, getter } from '../../store/decorators';
 import { delay } from '../../util';
 import { settingsStorage } from '../../util/storage';
 import { AppWallet, AccountActionTypes } from '../../consts';
@@ -17,11 +17,25 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
   @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
   @action.account.logout private logout!: (forgetAddress?: string) => Promise<void>;
 
+  @getter.account.isLoggedIn private isLoggedIn!: boolean;
+
   accountRenameVisibility = false;
   accountExportVisibility = false;
   accountDeleteVisibility = false;
 
   selectedAccount: Nullable<PolkadotJsAccount> = null;
+
+  get accountActions(): AccountActionTypes[] {
+    const buffer: AccountActionTypes[] = [];
+
+    if (this.isLoggedIn) {
+      buffer.push(AccountActionTypes.Rename, AccountActionTypes.Export, AccountActionTypes.Logout);
+    }
+
+    buffer.push(AccountActionTypes.Delete);
+
+    return buffer;
+  }
 
   handleAccountAction(actionType: string, account: PolkadotJsAccount): void {
     this.selectedAccount = { ...account };
@@ -71,7 +85,7 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
   async handleAccountExport({ password }: { password: string }): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution
-      await delay(500);
+      await delay();
 
       await this.withAppNotification(async () => {
         await this.exportAccount(password);

@@ -207,13 +207,20 @@ const actions = defineActions({
   async selectWallet(context, extension: AppWallet): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
 
-    commit.resetWalletAccountsSubscription();
+    try {
+      commit.resetWalletAccountsSubscription();
+      commit.setSelectedWallet(extension);
+      commit.setSelectedWalletLoading(true);
 
-    await getWallet(extension);
+      await getWallet(extension);
 
-    commit.setSelectedWallet(extension);
+      commit.setSelectedWalletLoading(false);
 
-    await dispatch.subscribeToWalletAccounts();
+      await dispatch.subscribeToWalletAccounts();
+    } catch (error) {
+      dispatch.resetSelectedWallet();
+      throw error;
+    }
   },
 
   resetSelectedWallet(context): void {
@@ -221,6 +228,7 @@ const actions = defineActions({
 
     commit.resetWalletAccountsSubscription();
     commit.setSelectedWallet();
+    commit.setSelectedWalletLoading(false);
   },
 
   async subscribeOnWalletAvailability(context): Promise<void> {

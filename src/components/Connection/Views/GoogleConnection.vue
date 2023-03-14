@@ -117,7 +117,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
   async handleAccountCreate(data: CreateAccountArgs): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution
-      await delay(500);
+      await delay();
 
       await this.withAppNotification(async () => {
         const accountJson = await this.createAccount(data);
@@ -153,7 +153,7 @@ export default class GoogleConnection extends Mixins(NotificationMixin, LoadingM
   async handleAccountLogin({ password }: { password: string }) {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution
-      await delay(500);
+      await delay();
 
       await this.withAppNotification(async () => {
         const { address, meta } = await this.loadAccountJson(password);

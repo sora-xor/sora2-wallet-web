@@ -35,6 +35,7 @@ export function initialState(): AccountState {
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
     selectedWallet: null,
+    selectedWalletLoading: false,
     availableWallets: [],
     walletAvailabilityTimer: null,
     /** desktop key management */

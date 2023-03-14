@@ -383,7 +383,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   &__step-count {
-    margin: 6px 0 16px 0;
+    margin: 0px 0 16px 0;
   }
 
   &__create-account-desc {

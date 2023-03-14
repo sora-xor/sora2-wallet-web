@@ -205,14 +205,13 @@ export default class ImportInternalAccountStep extends Mixins(NotificationMixin)
       }
 
       const parsedJson = await parseJson(jsonFile);
-      const name = parsedJson.meta.name as string;
-      const { address, encoded, encoding } = parsedJson;
+      const { address, encoded, encoding, meta } = parsedJson;
 
-      if (!address && !encoded && !encoding && !name) {
+      if (!(address || encoded || encoding || meta)) {
         throw new AppError({ key: 'desktop.errorMessages.jsonFields' });
       }
 
-      this.accountName = name;
+      this.accountName = meta.name as string;
       this.readonlyAccountName = true;
       this.json = parsedJson;
       this.mnemonicPhrase = '';

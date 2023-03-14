@@ -39,6 +39,7 @@ export type AccountState = {
   fiatPriceSubscription: Nullable<VoidFunction>;
   referralRewards: ReferrerRewards;
   selectedWallet: Nullable<AppWallet>;
+  selectedWalletLoading: boolean;
   availableWallets: Array<Wallet>;
   walletAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
   addressKeyMapping: AddressKeyMapping;

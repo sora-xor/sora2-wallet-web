@@ -1,27 +1,31 @@
 <template>
-  <div class="connection">
-    <p v-if="text" class="connection__text">
-      {{ text }}
-    </p>
+  <div>
+    <div class="connection">
+      <p v-if="text" class="connection__text">
+        {{ text }}
+      </p>
 
-    <account-list @select="handleSelectAccount" class="connection__accounts">
-      <template #menu="account">
-        <account-actions-menu :actions="AccountActions" @select="handleAccountAction($event, account)" />
-      </template>
+      <account-list @select="handleSelectAccount" class="connection__accounts">
+        <template #menu="account">
+          <account-actions-menu :actions="accountActions" @select="handleAccountAction($event, account)" />
+        </template>
+      </account-list>
 
-      <account-card class="connection__button" v-button @click.native="handleCreateAccount">
-        <template #avatar>
-          <s-icon name="basic-circle-plus-24" size="32" />
-        </template>
-        <template #name>{{ t('desktop.button.createAccount') }}</template>
-      </account-card>
-      <account-card class="connection__button" v-button @click.native="handleImportAccount">
-        <template #avatar>
-          <s-icon name="basic-download-bold-24" size="32" />
-        </template>
-        <template #name>{{ t('desktop.button.importAccount') }}</template>
-      </account-card>
-    </account-list>
+      <connection-items>
+        <account-card class="connection__button" v-button @click.native="handleCreateAccount">
+          <template #avatar>
+            <s-icon name="basic-circle-plus-24" size="32" class="connection__button-icon" />
+          </template>
+          <template #name>{{ t('desktop.button.createAccount') }}</template>
+        </account-card>
+        <account-card class="connection__button" v-button @click.native="handleImportAccount">
+          <template #avatar>
+            <s-icon name="el-icon-link" size="32" class="connection__button-icon" />
+          </template>
+          <template #name>{{ t('desktop.button.importAccount') }}</template>
+        </account-card>
+      </connection-items>
+    </div>
 
     <account-delete-dialog :visible.sync="accountDeleteVisibility" :loading="loading" @confirm="handleAccountDelete" />
   </div>
@@ -36,18 +40,15 @@ import AccountList from '../AccountList.vue';
 import AccountCard from '../../Account/AccountCard.vue';
 import AccountActionsMenu from '../../Account/ActionsMenu.vue';
 import AccountDeleteDialog from '../../Account/DeleteDialog.vue';
-
-import { AccountActionTypes } from '../../../consts';
+import ConnectionItems from '../ConnectionItems.vue';
 
 import type { PolkadotJsAccount } from '../../../types/common';
 
 @Component({
-  components: { AccountList, AccountCard, AccountActionsMenu, AccountDeleteDialog },
+  components: { AccountList, AccountCard, AccountActionsMenu, AccountDeleteDialog, ConnectionItems },
 })
 export default class AccountListStep extends Mixins(AccountActionsMixin) {
   @Prop({ default: '', type: String }) readonly text!: string;
-
-  readonly AccountActions = [AccountActionTypes.Delete];
 
   handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {
     this.$emit('select', account, isConnected);

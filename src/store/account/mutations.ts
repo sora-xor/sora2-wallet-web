@@ -140,6 +140,9 @@ const mutations = defineMutations<AccountState>()({
   setSelectedWallet(state, extension: Nullable<AppWallet> = null) {
     state.selectedWallet = extension;
   },
+  setSelectedWalletLoading(state, flag: boolean) {
+    state.selectedWalletLoading = flag;
+  },
   setWalletAvailabilitySubscription(state, timeout: NodeJS.Timeout | number): void {
     state.walletAvailabilityTimer = timeout;
   },
