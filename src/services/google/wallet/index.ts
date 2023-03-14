@@ -15,7 +15,7 @@ const GDriveWalletInfo: WalletInfo = {
   installUrl: '',
   logo: {
     src: GoogleLogo as string,
-    alt: 'Google auth',
+    alt: 'Google',
   },
 };
 
@@ -40,7 +40,7 @@ class GoogleDriveWallet {
     }
 
     return {
-      version: '0.0.1',
+      version: this.version,
       name: this.name,
       accounts: this.accounts,
       provider: undefined,

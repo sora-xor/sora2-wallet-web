@@ -25,7 +25,7 @@
           {{ t('connection.wallet.connected') }}
         </s-button>
         <span class="connection-loading" v-else-if="selectedWallet === wallet.extensionName && selectedWalletLoading">
-          <s-icon name="el-icon-loading" size="20" class="connection-loading-icon" />
+          <s-icon name="el-icon-loading" size="16" class="connection-loading-icon" />
         </span>
       </template>
     </account-card>

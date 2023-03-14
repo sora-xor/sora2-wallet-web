@@ -20,7 +20,7 @@ export enum AccountActionTypes {
 }
 
 export enum RouteNames {
-  GoogleConnection = 'GoogleConnection',
+  InternalConnection = 'InternalConnection',
   WalletConnection = 'WalletConnection',
   WalletSend = 'WalletSend',
   Wallet = 'Wallet',

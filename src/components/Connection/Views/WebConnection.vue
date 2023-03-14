@@ -144,7 +144,7 @@ export default class WebConnection extends Mixins(NotificationMixin, LoadingMixi
       await this.selectWallet(wallet.extensionName as AppWallet);
 
       if (isInternalWallet(wallet)) {
-        this.navigate({ name: RouteNames.GoogleConnection });
+        this.navigate({ name: RouteNames.InternalConnection });
       } else {
         this.navigateToAccountList();
       }

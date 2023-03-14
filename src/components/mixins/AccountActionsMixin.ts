@@ -7,7 +7,7 @@ import { action, getter } from '../../store/decorators';
 import { delay } from '../../util';
 import { settingsStorage } from '../../util/storage';
 import { AppWallet, AccountActionTypes } from '../../consts';
-import { GDriveWallet } from '../../services/google/wallet/wallet';
+import { GDriveWallet } from '../../services/google/wallet';
 
 import type { PolkadotJsAccount } from '../../types/common';
 

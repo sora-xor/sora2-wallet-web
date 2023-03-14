@@ -23,7 +23,7 @@ import WalletAssetDetails from './components/WalletAssetDetails.vue';
 import WalletConnection from './components/WalletConnection.vue';
 import WalletSend from './components/WalletSend.vue';
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue';
-import GoogleConnection from './components/Connection/Views/GoogleConnection.vue';
+import InternalConnection from './components/Connection/Views/InternalConnection.vue';
 
 import LoadingMixin from './components/mixins/LoadingMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
@@ -43,7 +43,7 @@ import type { RouteNames } from './consts';
     WalletConnection,
     WalletSend,
     WalletTransactionDetails,
-    GoogleConnection,
+    InternalConnection,
   },
 })
 export default class SoraWallet extends Mixins(LoadingMixin, TranslationMixin) {

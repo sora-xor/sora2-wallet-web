@@ -20,7 +20,7 @@ const actions = defineActions({
     const { rootGetters } = rootActionContext(context);
     const { currentRoute } = state;
     const { isLoggedIn } = rootGetters.wallet.account;
-    const connectionRoutes = [RouteNames.WalletConnection, RouteNames.GoogleConnection];
+    const connectionRoutes = [RouteNames.WalletConnection, RouteNames.InternalConnection];
     const isConnectionRoute = connectionRoutes.includes(currentRoute);
 
     if (isLoggedIn && isConnectionRoute) {

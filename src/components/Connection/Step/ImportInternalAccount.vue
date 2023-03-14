@@ -25,7 +25,7 @@
       </template>
 
       <p v-if="jsonOnly" class="login__text">
-        Export your account from polkadot.js compatible browser extension in .json format to upload it here.
+        {{ t('desktop.exportJsonDescriptionText') }}
       </p>
 
       <input

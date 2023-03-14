@@ -19,7 +19,7 @@ import {
   AccountImportExternalFlow,
   AccountCreateFlow,
 } from '../consts';
-import { FearlessWalletInfo } from '../consts/wallets';
+import { FearlessWalletInfo, isInternalWallet } from '../consts/wallets';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 
@@ -135,7 +135,9 @@ export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Walle
   await wallet.enable();
 
   if (typeof wallet.signer !== 'object') {
-    throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension: wallet.title } });
+    const key = isInternalWallet(wallet) ? 'polkadotjs.connectionError' : 'polkadotjs.noSigner';
+
+    throw new AppError({ key, payload: { extension: wallet.title } });
   }
 
   return wallet;

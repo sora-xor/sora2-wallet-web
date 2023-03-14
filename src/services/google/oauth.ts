@@ -6,6 +6,8 @@ type GoogleOauthOptions = {
   scope: string;
 };
 
+const FIVE_MINUTES = 5 * 60 * 1000;
+
 export class GoogleOauth {
   public readonly options!: GoogleOauthOptions;
 
@@ -50,7 +52,7 @@ export class GoogleOauth {
   private async waitForAuthFinalization(func: FnWithoutArgs): Promise<void> {
     await new Promise<void>((resolve, reject) => {
       this.authCallback = (token) => {
-        const expires = String(Date.now() + +token.expires_in * 1000);
+        const expires = String(Date.now() + Number(token.expires_in) * 1000);
         this.token = { ...token, expires_in: expires };
         this.isAuthProcess = false;
         resolve();
@@ -67,7 +69,7 @@ export class GoogleOauth {
   }
 
   public async checkToken(): Promise<void> {
-    if (!this.token || Date.now() + 5 * 60 * 1000 > Number(this.token.expires_in)) {
+    if (!this.token || Date.now() + FIVE_MINUTES > Number(this.token.expires_in)) {
       await this.getToken();
     }
   }
@@ -78,7 +80,7 @@ export class GoogleOauth {
     await this.waitForAuthFinalization(() => {
       // Prompt the user to select a Google Account and ask for consent to share their data
       // when establishing a new session.
-      this.client.requestAccessToken({ prompt: 'consent' });
+      this.client.requestAccessToken({ prompt: 'select_account' });
     });
   }
 }
