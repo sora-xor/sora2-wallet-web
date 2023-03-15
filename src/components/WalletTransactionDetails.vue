@@ -99,8 +99,9 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import { TransactionStatus, Operation, HistoryItem } from '@sora-substrate/util';
 import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
+import { TransactionStatus, Operation } from '@sora-substrate/util';
+import type { HistoryItem, BridgeHistory } from '@sora-substrate/util';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
@@ -112,8 +113,6 @@ import TransactionHashView from './TransactionHashView.vue';
 
 import { HashType, SoraNetwork } from '../consts';
 import { getter, state } from '../store/decorators';
-
-import type { BridgeHistory } from '@sora-substrate/util';
 import type { PolkadotJsAccount } from '../types/common';
 
 @Component({

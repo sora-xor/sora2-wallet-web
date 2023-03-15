@@ -27,7 +27,6 @@ import ConnectionItems from './ConnectionItems.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 
 import { state, getter } from '../../store/decorators';
-
 import type { PolkadotJsAccount } from '../../types/common';
 
 @Component({

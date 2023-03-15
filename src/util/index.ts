@@ -1,11 +1,9 @@
 import { getWallets, getWalletBySource, addWallet } from '@subwallet/wallet-connect/dotsama/wallets';
+import { FPNumber } from '@sora-substrate/util';
+import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 import type { Wallet, WalletAccount } from '@subwallet/wallet-connect/types';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
-
-import { FPNumber } from '@sora-substrate/util';
-import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
-
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
 import { api, connection } from '../api';

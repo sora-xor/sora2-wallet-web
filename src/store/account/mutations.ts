@@ -8,8 +8,8 @@ import type { Unsubcall } from '@polkadot/extension-inject/types';
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
 import { storage } from '../../util/storage';
 import { api } from '../../api';
-import { AppWallet } from '../../consts';
 
+import type { AppWallet } from '../../consts';
 import type { AccountState } from './types';
 import type { FiatPriceObject, ReferrerRewards } from '../../services/subquery/types';
 import type { PolkadotJsAccount } from '../../types/common';

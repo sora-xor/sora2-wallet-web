@@ -58,6 +58,7 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
+import type { Wallet } from '@subwallet/wallet-connect/types';
 
 import WalletBase from '../../WalletBase.vue';
 import AccountList from '../AccountList.vue';
@@ -70,7 +71,6 @@ import { state, action, getter, mutation } from '../../../store/decorators';
 import { RouteNames, AppWallet } from '../../../consts';
 import { isInternalWallet } from '../../../consts/wallets';
 
-import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { PolkadotJsAccount } from '../../../types/common';
 import type { Route } from '../../../store/router/types';
 

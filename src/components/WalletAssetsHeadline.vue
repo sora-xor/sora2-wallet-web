@@ -35,12 +35,13 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { mutation, state } from '../store/decorators';
-import { WalletAssetFilters, WalletFilteringOptions } from '../consts';
-
 import FormattedAmount from './FormattedAmount.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
+
+import { mutation, state } from '../store/decorators';
+import { WalletFilteringOptions } from '../consts';
+import type { WalletAssetFilters } from '../consts';
 
 enum Filter {
   verifiedOnly = 'verifiedOnly',

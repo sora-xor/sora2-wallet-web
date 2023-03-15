@@ -3,10 +3,11 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { TransactionStatus, Operation } from '@sora-substrate/util';
 import type { HistoryItem } from '@sora-substrate/util';
 
-import { api } from '../../api';
-import { delay } from '../../util';
 import OperationsMixin from './OperationsMixin';
 import LoadingMixin from './LoadingMixin';
+
+import { api } from '../../api';
+import { delay } from '../../util';
 import store from '../../store';
 import { getter, mutation, action, state } from '../../store/decorators';
 import type { AccountAssetsTable } from '../../types/common';

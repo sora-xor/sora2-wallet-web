@@ -99,10 +99,10 @@ import { mnemonicValidate } from '@polkadot/util-crypto';
 
 import NotificationMixin from '../../mixins/NotificationMixin';
 
-import { KeyringPair$Json } from '../../../types/common';
 import { AppError, parseJson } from '../../../util';
 import { LoginStep } from '../../../consts';
 
+import type { KeyringPair$Json } from '../../../types/common';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 
 @Component

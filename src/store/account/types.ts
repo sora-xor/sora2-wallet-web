@@ -1,9 +1,8 @@
-import { AppWallet } from '../../consts';
-
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from 'rxjs';
 
+import type { AppWallet } from '../../consts';
 import type { PolkadotJsAccount, AddressKeyMapping, KeyringPair$Json } from '../../types/common';
 import type { ReferrerRewards, FiatPriceObject } from '../../services/subquery/types';
 
