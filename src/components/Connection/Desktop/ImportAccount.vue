@@ -226,7 +226,7 @@ export default class ImportAccount extends Mixins(NotificationMixin, LoadingMixi
 
       await this.withAppNotification(async () => {
         try {
-          api.restoreFromJson(json, this.accountPassword);
+          api.restoreAccountFromJson(json, this.accountPassword);
           await this.getPolkadotJsAccounts();
           this.$emit('stepChange', LoginStep.AccountList);
         } catch (error) {
