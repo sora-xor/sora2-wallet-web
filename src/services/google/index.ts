@@ -2,6 +2,7 @@ import { GoogleDriveApi } from './api';
 import { GoogleOauth } from './oauth';
 
 const DRIVE_APPDATA_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
+const DRIVE_DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
 
 class GoogleAccountStorage {
   protected readonly api!: GoogleDriveApi;
@@ -10,6 +11,11 @@ class GoogleAccountStorage {
   constructor({ api, oauth }: { api: GoogleDriveApi; oauth: GoogleOauth }) {
     this.api = api;
     this.oauth = oauth;
+  }
+
+  setOptions(apiKey: string, clientId: string) {
+    this.api.setOptions({ apiKey, discoveryDocs: [DRIVE_DISCOVERY_DOC] });
+    this.oauth.setOptions({ clientId, scope: DRIVE_APPDATA_SCOPE });
   }
 
   async init(): Promise<void> {
@@ -51,10 +57,7 @@ class GoogleAccountStorage {
   }
 }
 
-export const googleStorage = new GoogleAccountStorage({
-  api: new GoogleDriveApi(process.env.GOOGLE_API_KEY as string),
-  oauth: new GoogleOauth({
-    clientId: process.env.GOOGLE_CLIENT_ID as string,
-    scope: DRIVE_APPDATA_SCOPE,
-  }),
+export const GDriveStorage = new GoogleAccountStorage({
+  api: new GoogleDriveApi(),
+  oauth: new GoogleOauth(),
 });

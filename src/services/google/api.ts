@@ -7,19 +7,20 @@ type GoogleApiOptions = {
 };
 
 export class GoogleApi {
-  private readonly options!: GoogleApiOptions;
+  private options!: GoogleApiOptions;
   private _ready = false;
-
-  constructor(options: GoogleApiOptions) {
-    this.options = options;
-  }
 
   get ready(): boolean {
     return this._ready;
   }
 
+  public setOptions(options: GoogleApiOptions): void {
+    this.options = { ...options };
+  }
+
   public async init(): Promise<void> {
     if (this.ready) return;
+    if (!this.options) throw new Error(`[${this.constructor.name}]: Options should be set before inintialization`);
 
     await this.load();
     await this.initClient(this.options);
@@ -44,13 +45,7 @@ export class GoogleApi {
   }
 }
 
-const DRIVE_DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
-
 export class GoogleDriveApi extends GoogleApi {
-  constructor(apiKey: string) {
-    super({ apiKey, discoveryDocs: [DRIVE_DISCOVERY_DOC] });
-  }
-
   private prepareData(
     json: string,
     { name, address, boundary = 'foo_bar_baz' }: { name: string; address: string; boundary: string }

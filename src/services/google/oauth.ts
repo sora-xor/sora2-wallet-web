@@ -9,7 +9,7 @@ type GoogleOauthOptions = {
 const FIVE_MINUTES = 5 * 60 * 1000;
 
 export class GoogleOauth {
-  private readonly options!: GoogleOauthOptions;
+  private options!: GoogleOauthOptions;
   private client!: google.accounts.oauth2.TokenClient;
   private token!: Nullable<google.accounts.oauth2.TokenResponse>;
 
@@ -20,16 +20,17 @@ export class GoogleOauth {
 
   private isAuthProcess = false;
 
-  constructor(options: GoogleOauthOptions) {
-    this.options = options;
-  }
-
   get ready(): boolean {
     return !!this.client;
   }
 
+  public setOptions(options: GoogleOauthOptions): void {
+    this.options = { ...options };
+  }
+
   public async init(): Promise<void> {
     if (this.ready) return;
+    if (!this.options) throw new Error(`[${this.constructor.name}]: Options should be set before inintialization`);
 
     await this.load();
     this.initClient(this.options);

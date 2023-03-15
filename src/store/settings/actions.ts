@@ -6,6 +6,7 @@ import { settingsActionContext } from './../settings';
 import { api } from '../../api';
 import { runtimeStorage } from '../../util/storage';
 import { IpfsStorage } from '../../util/ipfsStorage';
+import { GDriveStorage } from '../../services/google';
 import { SoraNetwork } from '../../consts';
 
 import type { ApiKeysObject } from '../../types/common';
@@ -18,8 +19,17 @@ function areKeysEqual(obj1: object, obj2: object): boolean {
 
 const actions = defineActions({
   async setApiKeys(context, keys: ApiKeysObject): Promise<void> {
-    const { commit } = settingsActionContext(context);
+    const { commit, state } = settingsActionContext(context);
+
     commit.setApiKeys(keys);
+
+    const {
+      apiKeys: { googleApi, googleClientId },
+    } = state;
+
+    if (googleApi && googleClientId) {
+      GDriveStorage.setOptions(googleApi, googleClientId);
+    }
   },
   async createNftStorageInstance(context) {
     const { state, commit } = settingsActionContext(context);

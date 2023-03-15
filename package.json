@@ -79,7 +79,6 @@
     "@vue/test-utils": "^1.2.2",
     "@vue/vue2-jest": "^27.0.0-alpha.2",
     "cypress": "^8.5.0",
-    "dotenv-webpack": "^8.0.1",
     "eslint": "^7.29.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-node": "^11.1.0",

@@ -1,7 +1,7 @@
 import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
-import { googleStorage } from '../index';
+import { GDriveStorage } from '../index';
 import { api } from '../../../api';
 
 interface IAccountMetadata extends InjectedAccount {
@@ -43,26 +43,26 @@ export default class Accounts implements InjectedAccounts {
     const json = JSON.stringify(accountJson);
     const name = (meta.name as string) || '';
 
-    await googleStorage.create(json, address, name);
+    await GDriveStorage.create(json, address, name);
     await this.updateAccounts();
   }
 
   public async changeName(address: string, name: string) {
     const id = await this.getAccountId(address);
 
-    await googleStorage.update(id, name);
+    await GDriveStorage.update(id, name);
     await this.updateAccounts();
   }
 
   public async delete(address: string): Promise<void> {
     const id = await this.getAccountId(address);
 
-    await googleStorage.delete(id);
+    await GDriveStorage.delete(id);
     await this.updateAccounts();
   }
 
   public async get(): Promise<InjectedAccount[]> {
-    const files = await googleStorage.getAll();
+    const files = await GDriveStorage.getAll();
 
     this.accountsList = files
       ? files.map((file) => ({
@@ -77,7 +77,7 @@ export default class Accounts implements InjectedAccounts {
 
   public async getAccount(address: string): Promise<Nullable<KeyringPair$Json>> {
     const id = await this.getAccountId(address);
-    const json = await googleStorage.get(id);
+    const json = await GDriveStorage.get(id);
 
     return json as KeyringPair$Json;
   }

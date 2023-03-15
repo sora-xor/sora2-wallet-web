@@ -5,7 +5,7 @@ import GoogleLogo from '../../../assets/img/GoogleLogo.svg';
 
 import { AppWallet } from '../../../consts';
 
-import { googleStorage } from '../index';
+import { GDriveStorage } from '../index';
 
 import Accounts from './accounts';
 
@@ -33,7 +33,7 @@ class GoogleDriveWallet {
 
   async enable() {
     try {
-      await googleStorage.auth();
+      await GDriveStorage.auth();
       this.access = true;
     } catch {
       this.access = false;
