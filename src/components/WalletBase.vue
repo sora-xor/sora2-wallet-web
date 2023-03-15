@@ -2,7 +2,7 @@
   <s-card primary class="base" border-radius="medium" shadow="always" size="big">
     <template #header>
       <div :class="headerClasses" ref="headerBase" :tabindex="hasFocusReset ? 0 : -1">
-        <div v-if="showBack" class="base-title_back">
+        <div v-if="showBack" :class="backButtonClass">
           <s-button type="action" :tooltip="t('backText')" @click="handleBackClick">
             <s-icon name="arrows-chevron-left-rounded-24" size="28" />
           </s-button>
@@ -87,6 +87,12 @@ export default class WalletBase extends Mixins(TranslationMixin) {
     return cssClasses;
   }
 
+  get backButtonClass(): Array<string> {
+    const base = ['base-title_back'];
+    if (!this.showBack) base.push('base-title_back--hidden');
+    return base;
+  }
+
   mounted(): void {
     this.setFocusToHeader();
   }
@@ -155,6 +161,10 @@ $button-size: var(--s-size-medium);
     &_back {
       position: absolute;
       left: 0;
+
+      &--hidden {
+        display: none;
+      }
     }
     &_action,
     &_trash,

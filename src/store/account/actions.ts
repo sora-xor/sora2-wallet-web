@@ -101,6 +101,17 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   }
 }
 
+function logoutApi(context: ActionContext<any, any>, forgetAccount?: boolean) {
+  const { state } = accountActionContext(context);
+
+  // Don't forget account on Desktop, if forgetAddress is not passed
+  if (!state.isDesktop || forgetAccount) {
+    api.forgetAccount();
+  }
+
+  api.logout();
+}
+
 const actions = defineActions({
   async getSigner(context): Promise<Signer> {
     const { state } = accountActionContext(context);
@@ -123,9 +134,8 @@ const actions = defineActions({
     const { commit, dispatch, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    if (api.accountPair) {
-      api.logout(!forgetAccount && state.isDesktop);
-    }
+    logoutApi(context, forgetAccount);
+
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
@@ -252,11 +262,14 @@ const actions = defineActions({
     if (!getters.isConnectedAccount(accountData)) {
       const defaultAddress = api.formatAddress(accountData.address, false);
       const source = accountData.source as Extensions;
+
+      logoutApi(context);
+
       const { account, signer } = await getExtensionSigner(defaultAddress, source);
 
       const name = account.name || '';
 
-      api.importByPolkadotJs(account.address, name, source);
+      api.loginAccount(account.address, name, source, true);
       api.setSigner(signer);
 
       commit.selectPolkadotJsAccount({ name, source });
@@ -275,11 +288,13 @@ const actions = defineActions({
       const defaultAddress = api.formatAddress(accountData.address, false);
       const account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
 
+      logoutApi(context);
+
       if (!account) {
         throw new Error('polkadotjs.noAccount');
       }
 
-      api.importByPolkadotJs(account.address, account.name, '');
+      api.loginAccount(account.address, account.name, '', false);
 
       commit.selectPolkadotJsAccount({ name: account.name });
 
@@ -307,7 +322,10 @@ const actions = defineActions({
       throw new AppError({ key: 'desktop.errorMessages.passwords' });
     }
 
-    api.createAccount(seed, name, password);
+    const pair = api.createAccountPair(seed, name);
+
+    api.addAccountPair(pair, password);
+
     // update account list in state
     await dispatch.getPolkadotJsAccounts();
   },
@@ -318,7 +336,7 @@ const actions = defineActions({
   async renameAccount(context, name: string) {
     const { commit, dispatch } = accountActionContext(context);
     // change name in api & storage
-    api.changeName(name);
+    api.changeAccountName(name);
     // update account data from storage
     commit.syncWithStorage();
     // update account list in state
@@ -329,7 +347,7 @@ const actions = defineActions({
    * Desktop
    */
   async exportAccount(_, password: string) {
-    const accountJson = api.exportAccount(password);
+    const accountJson = api.exportAccount(api.accountPair, password);
     const blob = new Blob([accountJson], { type: 'application/json' });
     const filename = (JSON.parse(accountJson) || {}).address || '';
     saveAs(blob, filename);
@@ -378,7 +396,7 @@ const actions = defineActions({
   async getAssets(context): Promise<void> {
     const { getters, commit, dispatch } = accountActionContext(context);
     try {
-      const allAssets = await withTimeout(api.assets.getAssets(getters.whitelist, true, getters.blacklist));
+      const allAssets = await withTimeout(api.assets.getAssets(true, getters.whitelist, getters.blacklist));
       const allIds = allAssets.map((asset) => asset.address);
       const filtered = excludePoolXYKAssets(allAssets);
 
