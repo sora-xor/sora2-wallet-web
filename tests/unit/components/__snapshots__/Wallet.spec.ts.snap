@@ -80,6 +80,8 @@ exports[`Wallet.vue [WalletTabs.WalletActivity]: should be rendered correctly 1`
   </div>
    
   <!---->
+   
+  <!---->
 </wallet-base-stub>
 `;
 
@@ -161,6 +163,8 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
      
     <walletassets-stub />
   </div>
+   
+  <!---->
    
   <!---->
 </wallet-base-stub>
