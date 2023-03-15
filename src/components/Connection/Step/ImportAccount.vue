@@ -106,7 +106,7 @@ import type { KeyringPair$Json } from '../../../types/common';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 
 @Component
-export default class ImportInternalAccountStep extends Mixins(NotificationMixin) {
+export default class ImportAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: Boolean, default: false }) readonly jsonOnly!: boolean;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;

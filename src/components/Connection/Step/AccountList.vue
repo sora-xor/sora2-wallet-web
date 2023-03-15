@@ -12,13 +12,13 @@
       </account-list>
 
       <connection-items>
-        <account-card class="connection__button" v-button @click.native="handleCreateAccount">
+        <account-card class="connection__button" v-button tabindex="0" @click.native="handleCreateAccount">
           <template #avatar>
             <s-icon name="basic-circle-plus-24" size="28" class="connection__button-icon" />
           </template>
           <template #name>{{ t('desktop.button.createAccount') }}</template>
         </account-card>
-        <account-card class="connection__button" v-button @click.native="handleImportAccount">
+        <account-card class="connection__button" v-button tabindex="0" @click.native="handleImportAccount">
           <template #avatar>
             <s-icon name="el-icon-link" size="28" class="connection__button-icon" />
           </template>

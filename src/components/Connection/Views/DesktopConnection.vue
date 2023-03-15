@@ -7,15 +7,15 @@
     @back="handleBack"
   >
     <div class="desktop-connection">
-      <internal-account-list
+      <account-list-step
         v-if="isAccountList"
         :text="t('connection.selectAccount')"
         @select="handleSelectAccount"
         @create="navigateToCreateAccount"
         @import="navigateToImportAccount"
       />
-      <create-account v-else-if="isCreateFlow" :step.sync="step" :create-account="handleCreateAccount" />
-      <import-account
+      <create-account-step v-else-if="isCreateFlow" :step.sync="step" :create-account="handleCreateAccount" />
+      <import-account-step
         v-else-if="isImportFlow"
         :step.sync="step"
         :create-account="handleCreateAccount"
@@ -34,9 +34,9 @@ import NotificationMixin from '../../mixins/NotificationMixin';
 
 import WalletBase from '../../WalletBase.vue';
 import WelcomePage from '../Desktop/WelcomePage.vue';
-import CreateAccount from '../Step/CreateAccount.vue';
-import InternalAccountList from '../Step/AccountList.vue';
-import ImportAccount from '../Step/ImportInternalAccount.vue';
+import AccountListStep from '../Step/AccountList.vue';
+import CreateAccountStep from '../Step/CreateAccount.vue';
+import ImportAccountStep from '../Step/ImportAccount.vue';
 
 import { LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
 import { getPreviousLoginStep, delay } from '../../../util';
@@ -46,7 +46,7 @@ import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common'
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 
 @Component({
-  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, InternalAccountList },
+  components: { WalletBase, WelcomePage, CreateAccountStep, ImportAccountStep, AccountListStep },
 })
 export default class DesktopConnection extends Mixins(NotificationMixin, LoadingMixin) {
   step: LoginStep = LoginStep.Welcome;

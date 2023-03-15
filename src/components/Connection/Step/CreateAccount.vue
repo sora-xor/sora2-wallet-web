@@ -118,7 +118,7 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 import isEqual from 'lodash/fp/isEqual';
 
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -134,6 +134,13 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
+
+  @Watch('step')
+  private resetSeedPhraseToCompareIdx() {
+    if (this.step !== LoginStep.ConfirmSeedPhrase) {
+      this.seedPhraseToCompareIdx = [];
+    }
+  }
 
   readonly LoginStep = LoginStep;
   readonly PHRASE_LENGTH = 12;
@@ -185,10 +192,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   get btnTypeConfirmStep(): string {
-    if (this.seedPhraseToCompare.length === this.PHRASE_LENGTH) {
-      return 'primary';
-    }
-    return 'secondary';
+    return this.seedPhraseToCompare.length === this.PHRASE_LENGTH ? 'primary' : 'secondary';
   }
 
   get isInputsNotFilled(): boolean {
@@ -201,7 +205,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   get seedPhraseWords(): Array<string> {
-    return this.seedPhrase.split(' ').map((word) => word.toUpperCase());
+    return this.seedPhrase.split(' ');
   }
 
   get randomizedSeedPhraseMap(): Record<number, string> {
@@ -214,7 +218,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     return this.seedPhraseToCompareIdx.map((idx) => this.randomizedSeedPhraseMap[idx]);
   }
 
-  isHiddenWord(wordIndex: number) {
+  isHiddenWord(wordIndex: number): boolean {
     return this.seedPhraseToCompareIdx.includes(wordIndex);
   }
 
@@ -223,7 +227,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   chooseWord(index: number): void {
-    if (!this.seedPhraseToCompareIdx.includes(index)) {
+    if (!this.isHiddenWord(index)) {
       this.seedPhraseToCompareIdx.push(index);
     }
   }
@@ -249,7 +253,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
       this.$emit('update:step', LoginStep.CreateCredentials);
       return;
     }
-    const isSeedPhraseMatched = isEqual(this.seedPhraseToCompare.join(' ').toLowerCase(), this.seedPhrase);
+    const isSeedPhraseMatched = isEqual(this.seedPhraseToCompare.join(' '), this.seedPhrase);
     if (!isSeedPhraseMatched) {
       this.seedPhraseToCompareIdx = [];
       this.runErrorMessage();
@@ -284,12 +288,6 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
       exportAccount: this.toExport,
     });
   }
-
-  beforeUpdate() {
-    if (this.step !== LoginStep.ConfirmSeedPhrase) {
-      this.seedPhraseToCompareIdx = [];
-    }
-  }
 }
 </script>
 
@@ -297,6 +295,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
 .seed-grid {
   &__word {
     margin: 10px 20px;
+    text-transform: uppercase;
 
     &-number {
       margin-right: 8px;

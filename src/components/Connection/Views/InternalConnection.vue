@@ -1,5 +1,11 @@
 <template>
   <wallet-base :title="title" :show-header="showHeader" show-back @back="handleBack">
+    <template v-if="isLoggedIn" #actions>
+      <s-button type="action" :tooltip="t('logoutText')" @click="handleLogout">
+        <s-icon name="basic-eye-24" size="28" />
+      </s-button>
+    </template>
+
     <account-list-step
       v-if="isAccountList"
       :text="text"
@@ -38,7 +44,7 @@ import NotificationMixin from '../../mixins/NotificationMixin';
 
 import WalletBase from '../../WalletBase.vue';
 import CreateAccountStep from '../Step/CreateAccount.vue';
-import ImportAccountStep from '../Step/ImportInternalAccount.vue';
+import ImportAccountStep from '../Step/ImportAccount.vue';
 import AccountListStep from '../Step/AccountList.vue';
 import AccountConfirmDialog from '../../Account/ConfirmDialog.vue';
 
@@ -64,11 +70,11 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
   @action.account.loginAccount private loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
-
+  @action.account.logout private logout!: AsyncFnWithoutArgs;
   @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
-
   @action.account.restoreAccountFromJson private restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
+  @getter.account.isLoggedIn isLoggedIn!: boolean;
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
 
   @state.account.selectedWallet private selectedWallet!: AppWallet;
@@ -196,6 +202,11 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     } else {
       this.step = step;
     }
+  }
+
+  handleLogout(): void {
+    this.navigate({ name: RouteNames.WalletConnection });
+    this.logout();
   }
 }
 </script>

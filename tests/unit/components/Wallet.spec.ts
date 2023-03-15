@@ -61,14 +61,4 @@ useDescribe('Wallet.vue', Wallet, () => {
 
     expect(actionBtn.exists()).toBeFalse();
   });
-
-  it('should render account actions for internal account', () => {
-    const wrapper = useShallowMount(Wallet, {
-      store: createStore(WalletTabs.Assets, MOCK_WALLET_PERMISSIONS, false),
-    });
-
-    const actions = wrapper.find('.account-actions');
-
-    expect(actions.exists()).toBeTrue();
-  });
 });

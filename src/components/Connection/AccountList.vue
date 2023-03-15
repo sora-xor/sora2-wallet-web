@@ -1,5 +1,5 @@
 <template>
-  <connection-items :size="accountList.length">
+  <connection-items v-if="accountList.length" :size="accountList.length">
     <wallet-account
       v-button
       v-for="{ account, isConnected } in accountList"
