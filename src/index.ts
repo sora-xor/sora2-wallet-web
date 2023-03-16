@@ -43,6 +43,7 @@ import internalStore, { modules } from './store'; // `internalStore` is required
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList, addFearlessWalletLocally } from './util';
+import { ScriptLoader } from './util/scriptLoader';
 import { addGDriveWalletLocally } from './services/google/wallet';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
@@ -191,6 +192,7 @@ export {
   WALLET_TYPES,
   components,
   mixins,
+  ScriptLoader,
   historyElementsFilter,
   SubqueryExplorerService,
   SUBQUERY_TYPES,
