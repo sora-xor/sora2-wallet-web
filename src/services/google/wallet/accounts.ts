@@ -8,27 +8,34 @@ interface IAccountMetadata extends InjectedAccount {
   id: string;
 }
 
+const ACCOUNTS_UPDATE_INTERVAL = 30_000;
+
 export default class Accounts implements InjectedAccounts {
-  private accountsList: IAccountMetadata[] = [];
+  private _list: IAccountMetadata[] = [];
   private accountsCallback: Nullable<(accounts: InjectedAccount[]) => unknown> = null;
   private accountsUpdateInterval: Nullable<NodeJS.Timer> = null;
 
-  private async updateAccounts(): Promise<void> {
-    await this.get();
+  private get accountsList(): IAccountMetadata[] {
+    return this._list;
+  }
+
+  private set accountsList(accounts: IAccountMetadata[]) {
+    this._list = accounts;
+
     if (typeof this.accountsCallback === 'function') {
-      this.accountsCallback(this.accountsList);
+      this.accountsCallback(this._list);
     }
   }
 
-  private getAccountByAddress(address: string): Nullable<IAccountMetadata> {
+  private findAccountByAddress(address: string): Nullable<IAccountMetadata> {
     const defaultAddress = api.formatAddress(address, false);
     return this.accountsList.find((acc) => acc.address === defaultAddress);
   }
 
-  private async getAccountId(address: string): Promise<string> {
+  private async findAccountById(address: string): Promise<string> {
     await this.get();
 
-    const account = this.getAccountByAddress(address);
+    const account = this.findAccountByAddress(address);
 
     if (!account) throw new Error(`Account not found: ${address}`);
 
@@ -38,27 +45,32 @@ export default class Accounts implements InjectedAccounts {
   public async add(accountJson: KeyringPair$Json): Promise<void> {
     const { address, meta } = accountJson;
 
-    if (this.getAccountByAddress(address)) return;
+    if (this.findAccountByAddress(address)) return;
 
     const json = JSON.stringify(accountJson);
     const name = (meta.name as string) || '';
 
     await GDriveStorage.create(json, address, name);
-    await this.updateAccounts();
+    await this.get();
   }
 
   public async changeName(address: string, name: string) {
-    const id = await this.getAccountId(address);
+    const id = await this.findAccountById(address);
 
     await GDriveStorage.update(id, name);
-    await this.updateAccounts();
+    // if account name updated in storage, we don't need to do request, just update it locally
+    this.accountsList = this.accountsList.map((account) => ({
+      ...account,
+      name: account.id === id ? name : account.name,
+    }));
   }
 
   public async delete(address: string): Promise<void> {
-    const id = await this.getAccountId(address);
+    const id = await this.findAccountById(address);
 
     await GDriveStorage.delete(id);
-    await this.updateAccounts();
+    // if account deleted in storage, we don't need to do request, just remove it locally
+    this.accountsList = this.accountsList.filter((account) => account.id !== id);
   }
 
   public async get(): Promise<InjectedAccount[]> {
@@ -76,7 +88,7 @@ export default class Accounts implements InjectedAccounts {
   }
 
   public async getAccount(address: string): Promise<Nullable<KeyringPair$Json>> {
-    const id = await this.getAccountId(address);
+    const id = await this.findAccountById(address);
     const json = await GDriveStorage.get(id);
 
     return json as KeyringPair$Json;
@@ -84,8 +96,8 @@ export default class Accounts implements InjectedAccounts {
 
   public subscribe(accountsCallback: (accounts: InjectedAccount[]) => unknown): Unsubcall {
     this.accountsCallback = accountsCallback;
-    this.updateAccounts();
-    this.accountsUpdateInterval = setInterval(this.updateAccounts.bind(this), 15000);
+
+    this.accountsUpdateInterval = setInterval(this.get.bind(this), ACCOUNTS_UPDATE_INTERVAL);
 
     return this.unsubscribe.bind(this);
   }

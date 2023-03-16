@@ -88,7 +88,7 @@ import AccountRenameDialog from './Account/RenameDialog.vue';
 import AccountExportDialog from './Account/ConfirmDialog.vue';
 import AccountDeleteDialog from './Account/DeleteDialog.vue';
 
-import { RouteNames, WalletTabs } from '../consts';
+import { RouteNames, WalletTabs, AccountActionTypes } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
 import type { WalletPermissions } from '../consts';
 
@@ -108,6 +108,12 @@ import type { WalletPermissions } from '../consts';
 })
 export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin, QrCodeParserMixin) {
   readonly WalletTabs = WalletTabs;
+  readonly accountActions = [
+    AccountActionTypes.Rename,
+    AccountActionTypes.Export,
+    AccountActionTypes.Logout,
+    AccountActionTypes.Delete,
+  ];
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;

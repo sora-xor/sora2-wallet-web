@@ -19,6 +19,7 @@ import {
   getWallet,
   getWalletSigner,
   getImportedAccounts,
+  getWalletAccounts,
   subscribeToWalletAccounts,
   WHITE_LIST_URL,
   NFT_BLACK_LIST_URL,
@@ -259,13 +260,19 @@ const actions = defineActions({
 
     if (!wallet) return;
 
-    const subscription = await subscribeToWalletAccounts(wallet, (accounts) => {
+    const callback = (accounts: PolkadotJsAccount[]) => {
       if (wallet === state.selectedWallet) {
         commit.setWalletAccounts(accounts);
       }
 
       dispatch.checkAccountConnection();
-    });
+    };
+
+    const accounts = await getWalletAccounts(wallet);
+
+    callback(accounts);
+
+    const subscription = await subscribeToWalletAccounts(wallet, callback);
 
     commit.setWalletAccountsSubscription(subscription);
   },

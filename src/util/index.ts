@@ -74,25 +74,24 @@ const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAc
   return (accounts || []).map((account) => formatWalletAccount(account));
 };
 
+export const getWalletAccounts = async (wallet: AppWallet) => {
+  const appWallet = await getWallet(wallet);
+  const accounts = await appWallet.getAccounts();
+
+  return formatWalletAccounts(accounts);
+};
+
 export const subscribeToWalletAccounts = async (
   wallet: AppWallet,
   callback: (accounts: PolkadotJsAccount[]) => void
 ): Promise<Nullable<Unsubcall>> => {
   const appWallet = await getWallet(wallet);
 
-  let resolveCall: VoidFunction;
-
-  const subscriptionResult = new Promise<void>((resolve) => {
-    resolveCall = resolve;
-  });
-
   const unsubscribe = await appWallet.subscribeAccounts((injectedAccounts) => {
     callback(formatWalletAccounts(injectedAccounts));
-    resolveCall();
   });
 
-  await subscriptionResult;
-  // [TODO]: research why unsubscribe not works with extensions
+  // [TODO]: Wait for Polkadot.js extension release, because unsubscribe not works now
   return unsubscribe;
 };
 

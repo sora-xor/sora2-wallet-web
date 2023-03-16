@@ -42,6 +42,8 @@ import AccountActionsMenu from '../../Account/ActionsMenu.vue';
 import AccountDeleteDialog from '../../Account/DeleteDialog.vue';
 import ConnectionItems from '../ConnectionItems.vue';
 
+import { AccountActionTypes } from '../../../consts';
+
 import type { PolkadotJsAccount } from '../../../types/common';
 
 @Component({
@@ -49,6 +51,8 @@ import type { PolkadotJsAccount } from '../../../types/common';
 })
 export default class AccountListStep extends Mixins(AccountActionsMixin) {
   @Prop({ default: '', type: String }) readonly text!: string;
+
+  readonly accountActions = [AccountActionTypes.Delete];
 
   handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {
     this.$emit('select', account, isConnected);
