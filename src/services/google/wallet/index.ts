@@ -1,27 +1,13 @@
 import { addWallet, getWalletBySource } from '@subwallet/wallet-connect/dotsama/wallets';
-import type { WalletInfo } from '@subwallet/wallet-connect/types';
 
-import GoogleLogo from '../../../assets/img/GoogleLogo.svg';
-
-import { AppWallet } from '../../../consts';
-
+import { GDriveWalletInfo } from '../../../consts/wallets';
 import { GDriveStorage } from '../index';
 
 import Accounts from './accounts';
 
-const GDriveWalletInfo: WalletInfo = {
-  extensionName: AppWallet.GoogleDrive,
-  title: 'Google',
-  installUrl: '',
-  logo: {
-    src: GoogleLogo as string,
-    alt: 'Google',
-  },
-};
-
 class GoogleDriveWallet {
   public readonly version = '0.0.1';
-  public readonly name: AppWallet = AppWallet.GoogleDrive;
+  public readonly name = GDriveWalletInfo.extensionName;
 
   private access!: boolean;
   public readonly accounts!: Accounts;

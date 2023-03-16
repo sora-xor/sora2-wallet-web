@@ -1,6 +1,7 @@
 import type { Wallet, WalletInfo } from '@subwallet/wallet-connect/types';
 
 import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg';
+import GoogleLogo from '../assets/img/GoogleLogo.svg';
 
 import { AppWallet } from './index';
 
@@ -11,6 +12,16 @@ export const FearlessWalletInfo: WalletInfo = {
   logo: {
     src: FearlessWalletLogo as string,
     alt: 'Fearless Wallet Extension',
+  },
+};
+
+export const GDriveWalletInfo: WalletInfo = {
+  extensionName: AppWallet.GoogleDrive,
+  title: 'Google',
+  installUrl: '',
+  logo: {
+    src: GoogleLogo as string,
+    alt: 'Google',
   },
 };
 
