@@ -71,6 +71,7 @@ export default class SimpleNotification extends Mixins(TranslationMixin) {
 
     & + & {
       margin-top: $basic-spacing-small;
+      margin-left: 0px;
     }
   }
 }

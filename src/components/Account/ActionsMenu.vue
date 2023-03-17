@@ -95,10 +95,3 @@ export default class AccountActionsMenu extends Mixins(NotificationMixin, Loadin
   }
 }
 </style>
-
-<style lang="scss" scoped>
-.account-actions {
-  display: flex;
-  color: var(--s-color-base-content-tertiary);
-}
-</style>
