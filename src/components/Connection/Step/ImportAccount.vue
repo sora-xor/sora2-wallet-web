@@ -241,10 +241,8 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 @include login-view;
 
 .login {
-  &__inputs {
-    display: flex;
-    flex-direction: column;
-    gap: $basic-spacing-medium;
+  &__title {
+    margin-top: -54px;
   }
 
   .json-upload {
@@ -255,6 +253,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     margin-bottom: 0;
   }
 }
+
 .line {
   width: 100%;
   display: flex;

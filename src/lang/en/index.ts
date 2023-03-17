@@ -30,6 +30,8 @@ export default {
   addressText: 'Address',
   amountText: 'Amount',
   confirmText: 'Confirm',
+  copyPhraseText: 'Copy Phrase',
+  stepText: 'Step',
   errorText: 'Error',
   logoutText: 'Logout',
   doNotShowText: 'Don’t show me this again',

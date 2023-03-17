@@ -270,7 +270,6 @@
   .login {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     gap: $basic-spacing-medium;
   
@@ -282,10 +281,18 @@
         }
       }
     }
-  
+
+    &__inputs {
+      display: flex;
+      flex-direction: column;
+      gap: $basic-spacing-medium;
+      width: 100%;
+    }
+
     &__title {
       font-weight: 400;
       font-size: var(--s-font-size-large);
+      text-align: center;
     }
 
     &__text {

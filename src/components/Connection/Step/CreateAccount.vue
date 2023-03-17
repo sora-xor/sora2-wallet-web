@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <div class="login__title">{{ title }}</div>
-    <div class="login__step-count">Step {{ stepNumber }} / 3</div>
+    <div class="login__step-count">{{ t('stepText') }} {{ stepNumber }} / 3</div>
     <template v-if="step === LoginStep.SeedPhrase">
       <div class="seed-grid s-flex">
         <div v-for="column in 3" :key="column" class="seed-grid__column">
@@ -14,7 +14,7 @@
         </div>
       </div>
       <s-button @click="handleCopy" class="login__copy-seed">
-        <span>Copy phrase</span>
+        <span>{{ t('copyPhraseText') }}</span>
         <s-icon name="basic-copy-24" size="18"></s-icon>
       </s-button>
       <div class="login__text-advice">
@@ -291,22 +291,9 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
 }
 </script>
 
-<style lang="scss">
-.seed-grid {
-  &__word {
-    margin: 10px 20px;
-    text-transform: uppercase;
+<style lang="scss" scoped>
+@include login-view;
 
-    &-number {
-      margin-right: 8px;
-      color: var(--s-color-base-content-secondary);
-    }
-  }
-
-  &__column {
-    display: inline-block;
-  }
-}
 .login {
   &__title {
     margin-top: -54px;
@@ -377,10 +364,6 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     }
   }
 
-  &__inputs {
-    width: 100%;
-  }
-
   &__step-count {
     margin: 0px 0 16px 0;
   }
@@ -408,10 +391,22 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     background-color: var(--s-color-base-content-tertiary);
   }
 }
-</style>
 
-<style lang="scss" scoped>
-@include login-view;
+.seed-grid {
+  &__word {
+    margin: 10px 20px;
+    text-transform: uppercase;
+
+    &-number {
+      margin-right: 8px;
+      color: var(--s-color-base-content-secondary);
+    }
+  }
+
+  &__column {
+    display: inline-block;
+  }
+}
 
 .wallet-settings-create-token {
   &_desc {
@@ -428,6 +423,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     padding: 0 #{$basic-spacing-small};
   }
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 1s;

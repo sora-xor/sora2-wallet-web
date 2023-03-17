@@ -74,15 +74,9 @@ export default class AccountActionsMenu extends Mixins(NotificationMixin, Loadin
 .account-actions {
   &.el-dropdown {
     color: inherit;
-
-    i.el-tooltip.el-dropdown-selfdefine {
-      color: inherit;
-    }
   }
 
   &__item.el-dropdown-menu__item {
-    color: var(--s-color-base-content-primary);
-
     & > i {
       color: var(--s-color-base-content-tertiary);
     }

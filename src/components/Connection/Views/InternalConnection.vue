@@ -1,6 +1,6 @@
 <template>
   <wallet-base :title="title" :show-header="showHeader" show-back @back="handleBack">
-    <template v-if="isLoggedIn" #actions>
+    <template v-if="logoutButtonVisibility" #actions>
       <s-button type="action" :tooltip="t('logoutText')" @click="handleLogout">
         <s-icon name="basic-eye-24" size="28" />
       </s-button>
@@ -90,6 +90,10 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
   get text(): string {
     return this.t('connection.internalText', { wallet: this.selectedWalletTitle });
+  }
+
+  get logoutButtonVisibility(): boolean {
+    return this.isLoggedIn && !this.isCreateFlow && !this.isImportFlow;
   }
 
   get isCreateFlow(): boolean {

@@ -104,5 +104,19 @@ export default class AccountListStep extends Mixins(AccountActionsMixin) {
     line-height: var(--s-line-height-base);
     color: var(--s-color-base-content-primary);
   }
+
+  &__button {
+    &-icon {
+      color: var(--s-color-base-content-tertiary);
+    }
+
+    &:hover,
+    &:focus,
+    &:active {
+      .connection__button-icon {
+        color: var(--s-color-base-content-secondary);
+      }
+    }
+  }
 }
 </style>
