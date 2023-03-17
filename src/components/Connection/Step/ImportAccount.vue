@@ -244,6 +244,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   &__inputs {
     display: flex;
     flex-direction: column;
+    gap: $basic-spacing-medium;
   }
 
   .json-upload {

@@ -276,6 +276,11 @@
   
     &-btn {
       width: 100%;
+      &.el-button {
+        & + & {
+          margin-left: 0;
+        }
+      }
     }
   
     &__title {

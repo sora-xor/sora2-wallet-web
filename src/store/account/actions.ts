@@ -308,9 +308,6 @@ const actions = defineActions({
     await dispatch.afterLogin();
   },
 
-  /**
-   * Desktop
-   */
   async createAccount(
     context,
     { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
@@ -339,9 +336,6 @@ const actions = defineActions({
     return json;
   },
 
-  /**
-   * Desktop
-   */
   async restoreAccountFromJson(context, { json, password }: RestoreAccountArgs) {
     const { dispatch, state } = accountActionContext(context);
     // restore from json file
@@ -352,13 +346,10 @@ const actions = defineActions({
     }
   },
 
-  /**
-   * Desktop
-   */
-  async renameAccount(context, name: string) {
+  async renameAccount(context, { address, name }: { address: string; name: string }) {
     const { commit, dispatch, state } = accountActionContext(context);
     // change name in api & storage
-    api.changeAccountName(name);
+    api.changeAccountName(address, name);
     // update account data from storage
     commit.syncWithStorage();
     // update account list in state
@@ -367,11 +358,18 @@ const actions = defineActions({
     }
   },
 
+  exportAccountFromJson(_, { json, password }: { json: KeyringPair$Json; password: string }): void {
+    const pair = api.createAccountPairFromJson(json);
+    const accountJson = api.exportAccount(pair, password);
+    exportAccountJson(accountJson);
+  },
+
   /**
    * Desktop
    */
-  exportAccount(_, password: string): void {
-    const accountJson = api.exportAccount(api.accountPair, password);
+  exportAccount(_, { address, password }: { address: string; password: string }): void {
+    const pair = api.getAccountPair(address);
+    const accountJson = api.exportAccount(pair, password);
     exportAccountJson(accountJson);
   },
 

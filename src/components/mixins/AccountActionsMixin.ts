@@ -9,12 +9,17 @@ import { settingsStorage } from '../../util/storage';
 import { AppWallet, AccountActionTypes } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
 
-import type { PolkadotJsAccount } from '../../types/common';
+import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 
 @Component
 export default class AccountActionsMixin extends Mixins(LoadingMixin, NotificationMixin) {
-  @action.account.renameAccount private renameAccount!: (name: string) => Promise<void>;
-  @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
+  @action.account.renameAccount private renameAccount!: (data: { address: string; name: string }) => Promise<void>;
+  @action.account.exportAccount private exportAccount!: (data: { address: string; password: string }) => Promise<void>;
+  @action.account.exportAccountFromJson private exportAccountFromJson!: (data: {
+    json: KeyringPair$Json;
+    password: string;
+  }) => Promise<void>;
+
   @action.account.logout private logout!: (forgetAddress?: string) => Promise<void>;
 
   @getter.account.isConnectedAccount private isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
@@ -60,12 +65,14 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
       await this.withAppNotification(async () => {
         if (!this.selectedAccount) return;
 
-        if (this.selectedAccount.source === AppWallet.GoogleDrive) {
-          await GDriveWallet.accounts.changeName(this.selectedAccount.address, name);
+        const { address, source } = this.selectedAccount;
+
+        if (source === AppWallet.GoogleDrive) {
+          await GDriveWallet.accounts.changeName(address, name);
         }
 
-        if (this.isConnectedAccount(this.selectedAccount)) {
-          await this.renameAccount(name);
+        if (this.isConnectedAccount(this.selectedAccount) || !source) {
+          await this.renameAccount({ address, name });
         }
 
         this.accountRenameVisibility = false;
@@ -79,7 +86,20 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
       await delay();
 
       await this.withAppNotification(async () => {
-        await this.exportAccount(password);
+        if (!this.selectedAccount) return;
+
+        const { address, source } = this.selectedAccount;
+
+        if (source === AppWallet.GoogleDrive) {
+          const json = await GDriveWallet.accounts.getAccount(address);
+
+          if (!json) throw new Error('polkadotjs.noAccount');
+
+          await this.exportAccountFromJson({ json, password });
+        } else {
+          await this.exportAccount({ address, password });
+        }
+
         this.accountExportVisibility = false;
       });
     });

@@ -1,6 +1,6 @@
 <template>
-  <div class="welcome-page">
-    <div v-if="loggedIn" class="welcome-page">
+  <div class="login welcome-page__block">
+    <div v-if="loggedIn" class="welcome-page__block">
       <token-logo class="pswap-desktop-logo" tokenSymbol="PSWAP" />
       <h3 class="welcome-page__header">{{ t('desktop.welcome.header') }}</h3>
       <h3 class="welcome-page__headline">{{ t('desktop.welcome.headline') }}</h3>
@@ -50,10 +50,12 @@ export default class WelcomePage extends Mixins(TranslationMixin) {
 @include login-view;
 
 .welcome-page {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  &__block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
   &__headline {
     margin-bottom: calc(var(--s-size-small) / 2);
