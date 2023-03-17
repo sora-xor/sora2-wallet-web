@@ -1,7 +1,7 @@
 <template>
   <dialog-base :title="t('account.rename')" :visible.sync="isVisible">
     <div class="account-rename-dialog">
-      <wallet-account />
+      <wallet-account :polkadot-account="account" />
       <s-input
         type="text"
         :placeholder="t('desktop.accountName.placeholder')"
@@ -30,6 +30,10 @@ import WalletAccount from './WalletAccount.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 
+import { ObjectInit } from '../../consts';
+
+import type { PolkadotJsAccount } from '../../types/common';
+
 @Component({
   components: {
     DialogBase,
@@ -37,6 +41,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
   },
 })
 export default class AccountRenameDialog extends Mixins(DialogMixin, TranslationMixin) {
+  @Prop({ default: ObjectInit, type: Object }) readonly account!: PolkadotJsAccount;
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
 
   @Watch('isVisible')

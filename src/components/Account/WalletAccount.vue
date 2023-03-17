@@ -31,6 +31,7 @@ import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import { formatAddress, formatSoraAddress } from '../../util';
 import { getter } from '../../store/decorators';
 import { ObjectInit } from '../../consts';
+
 import type { PolkadotJsAccount } from '../../types/common';
 
 const ADDRESS_LENGTH = 24;

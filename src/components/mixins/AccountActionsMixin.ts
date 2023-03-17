@@ -3,7 +3,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 import LoadingMixin from './LoadingMixin';
 import NotificationMixin from './NotificationMixin';
 
-import { action } from '../../store/decorators';
+import { action, getter } from '../../store/decorators';
 import { delay } from '../../util';
 import { settingsStorage } from '../../util/storage';
 import { AppWallet, AccountActionTypes } from '../../consts';
@@ -16,6 +16,8 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
   @action.account.renameAccount private renameAccount!: (name: string) => Promise<void>;
   @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
   @action.account.logout private logout!: (forgetAddress?: string) => Promise<void>;
+
+  @getter.account.isConnectedAccount private isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
 
   accountRenameVisibility = false;
   accountExportVisibility = false;
@@ -62,7 +64,10 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
           await GDriveWallet.accounts.changeName(this.selectedAccount.address, name);
         }
 
-        await this.renameAccount(name);
+        if (this.isConnectedAccount(this.selectedAccount)) {
+          await this.renameAccount(name);
+        }
+
         this.accountRenameVisibility = false;
       });
     });

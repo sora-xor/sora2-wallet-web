@@ -27,6 +27,13 @@
       </connection-items>
     </div>
 
+    <account-rename-dialog
+      :account="selectedAccount"
+      :visible.sync="accountRenameVisibility"
+      :loading="loading"
+      @confirm="handleAccountRename"
+    />
+
     <account-delete-dialog :visible.sync="accountDeleteVisibility" :loading="loading" @confirm="handleAccountDelete" />
   </div>
 </template>
@@ -39,6 +46,7 @@ import AccountActionsMixin from '../../mixins/AccountActionsMixin';
 import AccountList from '../AccountList.vue';
 import AccountCard from '../../Account/AccountCard.vue';
 import AccountActionsMenu from '../../Account/ActionsMenu.vue';
+import AccountRenameDialog from '../../Account/RenameDialog.vue';
 import AccountDeleteDialog from '../../Account/DeleteDialog.vue';
 import ConnectionItems from '../ConnectionItems.vue';
 
@@ -47,12 +55,19 @@ import { AccountActionTypes } from '../../../consts';
 import type { PolkadotJsAccount } from '../../../types/common';
 
 @Component({
-  components: { AccountList, AccountCard, AccountActionsMenu, AccountDeleteDialog, ConnectionItems },
+  components: {
+    AccountList,
+    AccountCard,
+    AccountActionsMenu,
+    AccountRenameDialog,
+    AccountDeleteDialog,
+    ConnectionItems,
+  },
 })
 export default class AccountListStep extends Mixins(AccountActionsMixin) {
   @Prop({ default: '', type: String }) readonly text!: string;
 
-  readonly accountActions = [AccountActionTypes.Delete];
+  readonly accountActions = [AccountActionTypes.Rename, AccountActionTypes.Delete];
 
   handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {
     this.$emit('select', account, isConnected);
