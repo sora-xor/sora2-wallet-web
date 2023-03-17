@@ -41,19 +41,14 @@ class GoogleAccountStorage {
     return response.result.files;
   }
 
-  async create(json: string, address: string, name: string) {
+  async create(data: { json: string; address: string; name: string }, id?: string) {
     await this.auth();
-    await this.api.createFile(json, { name, address });
+    await this.api.createFile(data, id);
   }
 
   async delete(id: string) {
     await this.auth();
     await this.api.deleteFile(id);
-  }
-
-  async update(id: string, name: string) {
-    await this.auth();
-    await this.api.updateFilename(id, name);
   }
 }
 

@@ -47,15 +47,19 @@ export class GoogleApi {
 
 export class GoogleDriveApi extends GoogleApi {
   private prepareData(
-    json: string,
-    { name, address, boundary = 'foo_bar_baz' }: { name: string; address: string; boundary: string }
+    content: string,
+    { name, address, boundary = 'foo_bar_baz' }: { name: string; address: string; boundary: string },
+    update = false
   ) {
-    const metadata = {
+    const metadata: any = {
       name,
       mimeType: 'application/json',
       description: address,
-      parents: ['appDataFolder'],
     };
+
+    if (!update) {
+      metadata.parents = ['appDataFolder'];
+    }
 
     return `
 --${boundary}
@@ -65,7 +69,7 @@ ${JSON.stringify(metadata)}
 --${boundary}
 Content-Type: application/json
 
-${json}
+${content}
 --${boundary}--`;
   }
 
@@ -83,28 +87,19 @@ ${json}
     });
   }
 
-  public async updateFilename(id: string, name: string) {
-    await gapi.client.drive.files.update({
-      fileId: id,
-      resource: {
-        name,
-      },
-    });
-  }
-
   public async deleteFile(id: string) {
     await gapi.client.drive.files.delete({
       fileId: id,
     });
   }
 
-  public async createFile(json: string, { name, address }: { name: string; address: string }) {
+  public async createFile({ json, name, address }: { json: string; name: string; address: string }, id?: string) {
     const boundary = 'foo_bar_baz';
-    const body = this.prepareData(json, { name, address, boundary });
+    const body = this.prepareData(json, { name, address, boundary }, !!id);
     const length = body.length;
     const request = gapi.client.request({
-      path: '/upload/drive/v3/files',
-      method: 'POST',
+      path: `/upload/drive/v3/files${id ? '/' + id : ''}`,
+      method: id ? 'PATCH' : 'POST',
       params: { uploadType: 'multipart' },
       headers: {
         'Content-Type': `multipart/related; boundary=${boundary}`,

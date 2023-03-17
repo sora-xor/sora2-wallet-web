@@ -50,14 +50,20 @@ export default class Accounts implements InjectedAccounts {
     const json = JSON.stringify(accountJson);
     const name = (meta.name as string) || '';
 
-    await GDriveStorage.create(json, address, name);
+    await GDriveStorage.create({ json, address, name });
     await this.get();
   }
 
   public async changeName(address: string, name: string) {
     const id = await this.findAccountById(address);
+    const accountJson = (await GDriveStorage.get(id)) as KeyringPair$Json;
 
-    await GDriveStorage.update(id, name);
+    accountJson.meta = accountJson.meta || {};
+    accountJson.meta.name = name;
+
+    const json = JSON.stringify(accountJson);
+
+    await GDriveStorage.create({ json, address: accountJson.address, name }, id);
     // if account name updated in storage, we don't need to do request, just update it locally
     this.accountsList = this.accountsList.map((account) => ({
       ...account,
@@ -87,7 +93,7 @@ export default class Accounts implements InjectedAccounts {
     return this.accountsList;
   }
 
-  public async getAccount(address: string): Promise<Nullable<KeyringPair$Json>> {
+  public async getAccount(address: string): Promise<KeyringPair$Json> {
     const id = await this.findAccountById(address);
     const json = await GDriveStorage.get(id);
 
