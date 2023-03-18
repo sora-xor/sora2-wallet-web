@@ -4,273 +4,267 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
 <div
   class="history s-flex"
 >
-  <s-form-stub
-    class="history-form"
-    labelposition="right"
-    validateonrulechange="true"
+  <search-input-stub
+    autofocus="true"
+    class="history--search"
+    placeholder="Filter by Address, Symbol, Type or Block ID"
+    value=""
+  />
+   
+  <div
+    class="history-items"
   >
-    <search-input-stub
-      autofocus="true"
-      class="history--search"
-      placeholder="Filter by Address, Symbol, Type or Block ID"
-      value=""
-    />
-     
     <div
-      class="history-items"
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
     >
       <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
+        class="history-item-info"
       >
         <div
-          class="history-item-info"
+          class="history-item-operation ch3"
+          data-type="Transfer"
         >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** VAL To cnW4q...L2ftG
-          </div>
-           
-          <!---->
+          Transfer
         </div>
          
         <div
-          class="history-item-date"
+          class="history-item-title p4"
         >
-          Nov 27, 2020 11:59:59 PM
+          Sent ****** VAL To cnW4q...L2ftG
         </div>
+         
+        <!---->
       </div>
+       
       <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
+        class="history-item-date"
       >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** XOR To cnW4q...L2ftG
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** XOR To cnW4q...L2ftG
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** VAL To cnW4q...L2ftG
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** XOR To cnVFi...P2nse
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Swap"
-          >
-            Swap
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Failed to swap ****** XOR for ****** PSWAP
-          </div>
-           
-          <s-icon-stub
-            class="info-status info-status--error"
-            name="basic-clear-X-xs-24"
-          />
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="AddLiquidity"
-          >
-            Add Liquidity
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Supplied ****** XOR and ****** PSWAP
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="RemoveLiquidity"
-          >
-            Remove Liquidity
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Removed ****** XOR and ****** PSWAP
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
+        Nov 27, 2020 11:59:59 PM
       </div>
     </div>
-     
-    <history-pagination-stub
-      currentpage="1"
-      lastpage="2"
-      pageamount="8"
-      total="9"
-    />
-  </s-form-stub>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** XOR To cnW4q...L2ftG
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** XOR To cnW4q...L2ftG
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** VAL To cnW4q...L2ftG
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** XOR To cnVFi...P2nse
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Swap"
+        >
+          Swap
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Failed to swap ****** XOR for ****** PSWAP
+        </div>
+         
+        <s-icon-stub
+          class="info-status info-status--error"
+          name="basic-clear-X-xs-24"
+        />
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="AddLiquidity"
+        >
+          Add Liquidity
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Supplied ****** XOR and ****** PSWAP
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="RemoveLiquidity"
+        >
+          Remove Liquidity
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Removed ****** XOR and ****** PSWAP
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+  </div>
+   
+  <history-pagination-stub
+    currentpage="1"
+    lastpage="2"
+    pageamount="8"
+    total="9"
+  />
 </div>
 `;
 
@@ -278,178 +272,172 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
 <div
   class="history s-flex"
 >
-  <s-form-stub
-    class="history-form"
-    labelposition="right"
-    validateonrulechange="true"
+  <search-input-stub
+    autofocus="true"
+    class="history--search"
+    placeholder="Filter by Address, Symbol, Type or Block ID"
+    value=""
+  />
+   
+  <div
+    class="history-items"
   >
-    <search-input-stub
-      autofocus="true"
-      class="history--search"
-      placeholder="Filter by Address, Symbol, Type or Block ID"
-      value=""
-    />
-     
     <div
-      class="history-items"
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
     >
       <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
+        class="history-item-info"
       >
         <div
-          class="history-item-info"
+          class="history-item-operation ch3"
+          data-type="Transfer"
         >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** VAL To cnW4q...L2ftG
-          </div>
-           
-          <!---->
+          Transfer
         </div>
          
         <div
-          class="history-item-date"
+          class="history-item-title p4"
         >
-          Nov 27, 2020 11:59:59 PM
+          Sent ****** VAL To cnW4q...L2ftG
         </div>
+         
+        <!---->
       </div>
+       
       <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
+        class="history-item-date"
       >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** XOR To cnW4q...L2ftG
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** XOR To cnW4q...L2ftG
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** VAL To cnW4q...L2ftG
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Failed to send ****** XOR to cnVFi...P2nse
-          </div>
-           
-          <s-icon-stub
-            class="info-status info-status--error"
-            name="basic-clear-X-xs-24"
-          />
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
+        Nov 27, 2020 11:59:59 PM
       </div>
     </div>
-     
-    <!---->
-  </s-form-stub>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** XOR To cnW4q...L2ftG
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** XOR To cnW4q...L2ftG
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** VAL To cnW4q...L2ftG
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Failed to send ****** XOR to cnVFi...P2nse
+        </div>
+         
+        <s-icon-stub
+          class="info-status info-status--error"
+          name="basic-clear-X-xs-24"
+        />
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+  </div>
+   
+  <!---->
 </div>
 `;
 
@@ -457,25 +445,19 @@ exports[`WalletHistory.vue should render history empty text when no transacion 1
 <div
   class="history s-flex"
 >
-  <s-form-stub
-    class="history-form"
-    labelposition="right"
-    validateonrulechange="true"
+  <!---->
+   
+  <div
+    class="history-items"
   >
-    <!---->
-     
     <div
-      class="history-items"
+      class="history-empty p4"
     >
-      <div
-        class="history-empty p4"
-      >
-        Your transactions will appear here
-      </div>
+      Your transactions will appear here
     </div>
-     
-    <!---->
-  </s-form-stub>
+  </div>
+   
+  <!---->
 </div>
 `;
 
@@ -483,177 +465,171 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
 <div
   class="history s-flex"
 >
-  <s-form-stub
-    class="history-form"
-    labelposition="right"
-    validateonrulechange="true"
+  <search-input-stub
+    autofocus="true"
+    class="history--search"
+    placeholder="Filter by Address, Symbol, Type or Block ID"
+    value=""
+  />
+   
+  <div
+    class="history-items"
   >
-    <search-input-stub
-      autofocus="true"
-      class="history--search"
-      placeholder="Filter by Address, Symbol, Type or Block ID"
-      value=""
-    />
-     
     <div
-      class="history-items"
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
     >
       <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
+        class="history-item-info"
       >
         <div
-          class="history-item-info"
+          class="history-item-operation ch3"
+          data-type="Transfer"
         >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** VAL To cnW4q...L2ftG
-          </div>
-           
-          <!---->
+          Transfer
         </div>
          
         <div
-          class="history-item-date"
+          class="history-item-title p4"
         >
-          Nov 27, 2020 11:59:59 PM
+          Sent ****** VAL To cnW4q...L2ftG
         </div>
+         
+        <!---->
       </div>
+       
       <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
+        class="history-item-date"
       >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** XOR To cnW4q...L2ftG
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** XOR To cnW4q...L2ftG
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** VAL To cnW4q...L2ftG
-          </div>
-           
-          <!---->
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
-      </div>
-      <div
-        class="history-item s-flex"
-        role="button"
-        tabindex="0"
-      >
-        <div
-          class="history-item-info"
-        >
-          <div
-            class="history-item-operation ch3"
-            data-type="Transfer"
-          >
-            Transfer
-          </div>
-           
-          <div
-            class="history-item-title p4"
-          >
-            Sent ****** XOR To cnVFi...P2nse
-          </div>
-           
-          <s-icon-stub
-            class="info-status info-status--loading"
-            name="refresh-16"
-          />
-        </div>
-         
-        <div
-          class="history-item-date"
-        >
-          Nov 27, 2020 11:59:59 PM
-        </div>
+        Nov 27, 2020 11:59:59 PM
       </div>
     </div>
-     
-    <!---->
-  </s-form-stub>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** XOR To cnW4q...L2ftG
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** XOR To cnW4q...L2ftG
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** VAL To cnW4q...L2ftG
+        </div>
+         
+        <!---->
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+    <div
+      class="history-item s-flex"
+      role="button"
+      tabindex="0"
+    >
+      <div
+        class="history-item-info"
+      >
+        <div
+          class="history-item-operation ch3"
+          data-type="Transfer"
+        >
+          Transfer
+        </div>
+         
+        <div
+          class="history-item-title p4"
+        >
+          Sent ****** XOR To cnVFi...P2nse
+        </div>
+         
+        <s-icon-stub
+          class="info-status info-status--loading"
+          name="refresh-16"
+        />
+      </div>
+       
+      <div
+        class="history-item-date"
+      >
+        Nov 27, 2020 11:59:59 PM
+      </div>
+    </div>
+  </div>
+   
+  <!---->
 </div>
 `;
