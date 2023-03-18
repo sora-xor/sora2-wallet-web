@@ -113,7 +113,7 @@ $el-dialog-max-width: 496px;
         padding: $basic-spacing-big $basic-spacing-big $basic-spacing;
       }
       &__body {
-        padding: $basic-spacing $basic-spacing-big;
+        padding: $basic-spacing $basic-spacing-big $basic-spacing-big;
       }
       &__footer {
         padding: $basic-spacing $basic-spacing-big $basic-spacing-big;

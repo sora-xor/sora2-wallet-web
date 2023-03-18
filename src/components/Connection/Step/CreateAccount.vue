@@ -67,52 +67,47 @@
       </s-button>
     </template>
     <template v-else-if="step === LoginStep.CreateCredentials">
-      <div class="login__inputs">
-        <s-form>
-          <s-input
-            :disabled="loading"
-            :placeholder="t('desktop.accountName.placeholder')"
-            v-model="accountName"
-          ></s-input>
-          <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
-          <s-input
-            :disabled="loading"
-            :type="inputType"
-            :placeholder="t('desktop.password.placeholder')"
-            v-model="accountPassword"
-          >
-            <s-icon
-              :name="iconPasswordStyle"
-              size="18"
-              class="eye-icon"
-              slot="suffix"
-              @click.native="toggleVisibility"
-            />
-          </s-input>
-          <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
-          <s-input
-            type="password"
-            :disabled="loading"
-            :placeholder="t('desktop.confirmPassword.placeholder')"
-            v-model="accountPasswordConfirm"
-          ></s-input>
-        </s-form>
-      </div>
-      <div class="wallet-settings-create-token_export">
-        <s-switch v-model="toExport" :disabled="loading" />
-        <span>{{ t('desktop.exportOptionText') }}</span>
-      </div>
-      <p class="wallet-settings-create-token_desc">{{ t('desktop.exportJsonText') }}</p>
-      <s-button
-        key="step3"
-        class="s-typography-button--large login-btn"
-        type="primary"
-        :disabled="isInputsNotFilled"
-        :loading="loading"
-        @click="handleAccountCreate"
-      >
-        {{ t('desktop.button.createAccount') }}
-      </s-button>
+      <s-form class="login__inputs" @submit.native.prevent="handleAccountCreate">
+        <s-input
+          :disabled="loading"
+          :placeholder="t('desktop.accountName.placeholder')"
+          v-model="accountName"
+        ></s-input>
+        <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+        <s-input
+          :disabled="loading"
+          :type="inputType"
+          :placeholder="t('desktop.password.placeholder')"
+          v-model="accountPassword"
+        >
+          <s-icon :name="iconPasswordStyle" size="18" class="eye-icon" slot="suffix" @click.native="toggleVisibility" />
+        </s-input>
+        <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
+        <s-input
+          type="password"
+          :disabled="loading"
+          :placeholder="t('desktop.confirmPassword.placeholder')"
+          v-model="accountPasswordConfirm"
+        ></s-input>
+
+        <div class="wallet-settings-create-token_export">
+          <s-switch v-model="toExport" :disabled="loading" />
+          <span>{{ t('desktop.exportOptionText') }}</span>
+        </div>
+
+        <p class="wallet-settings-create-token_desc">{{ t('desktop.exportJsonText') }}</p>
+
+        <s-button
+          key="step3"
+          class="s-typography-button--large login-btn"
+          type="primary"
+          native-type="submit"
+          :disabled="isInputsNotFilled"
+          :loading="loading"
+        >
+          {{ t('desktop.button.createAccount') }}
+        </s-button>
+      </s-form>
     </template>
   </div>
 </template>
@@ -373,7 +368,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
-    padding: var(--s-basic-spacing) #{$basic-spacing-small} #{$basic-spacing-medium};
+    padding: 0 #{$basic-spacing-small};
     width: 330px !important;
   }
 
@@ -414,7 +409,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
-    padding: var(--s-basic-spacing) #{$basic-spacing-small} #{$basic-spacing-medium};
+    padding: 0 #{$basic-spacing-small};
   }
 
   &_export {

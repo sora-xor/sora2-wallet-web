@@ -41,7 +41,7 @@
       </s-button>
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
-      <s-form :class="computedClasses">
+      <s-form :class="computedClasses" @submit.native.prevent="importAccount">
         <s-input
           :disabled="loading"
           :placeholder="t('desktop.accountName.placeholder')"
@@ -77,18 +77,18 @@
             />
           </template>
         </template>
-      </s-form>
 
-      <s-button
-        :disabled="disabledImportStep"
-        :loading="loading"
-        class="s-typography-button--large login-btn"
-        key="step2"
-        type="primary"
-        @click="importAccount"
-      >
-        {{ t('desktop.button.importAccount') }}
-      </s-button>
+        <s-button
+          :disabled="disabledImportStep"
+          :loading="loading"
+          class="s-typography-button--large login-btn"
+          key="step2"
+          type="primary"
+          native-type="submit"
+        >
+          {{ t('desktop.button.importAccount') }}
+        </s-button>
+      </s-form>
     </template>
   </div>
 </template>

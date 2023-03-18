@@ -1,6 +1,6 @@
 <template>
-  <dialog-base :title="t('account.rename')" :visible.sync="isVisible">
-    <div class="account-rename-dialog">
+  <dialog-base :title="t('account.rename')" :visible.sync="isVisible" class="account-rename-dialog">
+    <s-form class="account-rename-dialog__form" @submit.native.prevent="handleConfirm">
       <wallet-account :polkadot-account="account" />
       <s-input
         type="text"
@@ -11,14 +11,14 @@
       />
       <s-button
         type="primary"
+        native-type="submit"
         class="account-rename-dialog__button"
         :disabled="!valid"
         :loading="loading"
-        @click="handleConfirm"
       >
         {{ t('confirmText') }}
       </s-button>
-    </div>
+    </s-form>
   </dialog-base>
 </template>
 
@@ -71,8 +71,10 @@ export default class AccountRenameDialog extends Mixins(DialogMixin, Translation
 
 <style lang="scss" scoped>
 .account-rename-dialog {
-  & > * {
-    margin-bottom: $basic-spacing-medium;
+  &__form {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: $basic-spacing-medium;
   }
 
   &__button {

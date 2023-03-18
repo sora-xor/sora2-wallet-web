@@ -1,6 +1,6 @@
 <template>
-  <dialog-base :title="t('desktop.dialog.confirmTitle')" :visible.sync="isVisible">
-    <div class="confirm-dialog">
+  <dialog-base :title="t('desktop.dialog.confirmTitle')" :visible.sync="isVisible" class="confirm-dialog">
+    <s-form class="confirm-dialog__form" @submit.native.prevent="handleConfirm">
       <wallet-account :polkadot-account="account" />
       <s-input
         :type="passwordInputType"
@@ -24,14 +24,14 @@
       </div>
       <s-button
         type="primary"
+        native-type="submit"
         class="confirm-dialog__button"
         :disabled="isConfirmDisabled"
         :loading="loading"
-        @click="handleConfirm"
       >
         {{ confirmText }}
       </s-button>
-    </div>
+    </s-form>
   </dialog-base>
 </template>
 
@@ -115,8 +115,10 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
 
 <style lang="scss" scoped>
 .confirm-dialog {
-  & > * {
-    margin-bottom: $basic-spacing-medium;
+  &__form {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: $basic-spacing-medium;
   }
 
   &__save-password {

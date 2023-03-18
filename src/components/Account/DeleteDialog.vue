@@ -1,6 +1,6 @@
 <template>
-  <dialog-base :visible.sync="isVisible">
-    <simple-notification class="account-delete-dialog" @close="closeDialog">
+  <dialog-base :visible.sync="isVisible" class="account-delete-dialog">
+    <simple-notification @submit.native.prevent="handleConfirm" @close="closeDialog">
       <template #title>{{ t('desktop.assetsAtRiskText') }}</template>
       <template #text>{{ t('desktop.deleteAccountText') }}</template>
       <template>
@@ -11,9 +11,9 @@
         </div>
         <s-button
           type="primary"
+          native-type="submit"
           class="account-delete-dialog__button simple-notification__button s-typography-button--big"
           :loading="loading"
-          @click="handleConfirm"
         >
           {{ t('logoutText') }}
         </s-button>
@@ -69,6 +69,7 @@ export default class AccountDeleteDialog extends Mixins(TranslationMixin, Dialog
   &__button.el-button.neumorphic.s-primary {
     background-color: red;
     color: white;
+    width: 100%;
   }
 }
 </style>

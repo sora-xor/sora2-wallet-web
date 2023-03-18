@@ -1,5 +1,5 @@
 <template>
-  <div class="simple-notification">
+  <s-form class="simple-notification">
     <s-icon :class="['simple-notification-icon', { success }]" :name="iconName" size="64" />
     <div class="simple-notification__title">
       <slot name="title"></slot>
@@ -11,7 +11,7 @@
     <s-button type="secondary" class="simple-notification__button s-typography-button--big" @click="close">{{
       t('closeText')
     }}</s-button>
-  </div>
+  </s-form>
 </template>
 
 <script lang="ts">
@@ -39,10 +39,7 @@ export default class SimpleNotification extends Mixins(TranslationMixin) {
   flex-flow: column nowrap;
   align-items: center;
   text-align: center;
-
-  & > *:not(:first-child) {
-    margin-top: $basic-spacing-medium;
-  }
+  gap: $basic-spacing-medium;
 
   &-icon {
     color: var(--s-color-status-error);
@@ -70,7 +67,6 @@ export default class SimpleNotification extends Mixins(TranslationMixin) {
     width: 100%;
 
     & + & {
-      margin-top: $basic-spacing-small;
       margin-left: 0px;
     }
   }
