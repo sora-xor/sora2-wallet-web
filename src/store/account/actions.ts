@@ -102,17 +102,6 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   }
 }
 
-function logoutApi(context: ActionContext<any, any>, forgetAddress?: string) {
-  const { state } = accountActionContext(context);
-
-  // Don't forget account on Desktop, if forgetAddress is not passed
-  if (!state.isDesktop || forgetAddress) {
-    api.forgetAccount(forgetAddress);
-  }
-
-  api.logout();
-}
-
 function exportAccountJson(accountJson: string): void {
   const blob = new Blob([accountJson], { type: 'application/json' });
   const filename = (JSON.parse(accountJson) || {}).address || '';
@@ -142,7 +131,12 @@ const actions = defineActions({
     const { commit, dispatch, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    logoutApi(context, forgetAddress);
+    // Don't forget account on Desktop, if forgetAddress is not passed
+    if (!state.isDesktop || forgetAddress) {
+      api.forgetAccount(forgetAddress);
+    }
+
+    api.logout();
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
@@ -283,10 +277,17 @@ const actions = defineActions({
     // Desktop has not source
     const source = (accountData.source as AppWallet) || '';
     const isExternal = !isInternalSource(source);
-
-    logoutApi(context);
-
     const defaultAddress = api.formatAddress(accountData.address, false);
+    const soraAddress = api.formatAddress(defaultAddress);
+
+    // Don't forget account:
+    // 1) on Desktop;
+    // 2) When the login and api addresses are the same;
+    if (!state.isDesktop && api.address !== soraAddress) {
+      api.forgetAccount();
+    }
+
+    api.logout();
 
     if (isExternal) {
       // we should update signer
@@ -301,7 +302,7 @@ const actions = defineActions({
       }
     }
 
-    await api.loginAccount(accountData.address, accountData.name, source, isExternal);
+    await api.loginAccount(defaultAddress, accountData.name, source, isExternal);
 
     commit.syncWithStorage();
 
