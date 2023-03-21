@@ -142,7 +142,7 @@ export default {
   wallet: {
     title: '{Sora} Network account',
     [WalletTabs.Assets]: 'Assets',
-    [WalletTabs.Activity]: 'Activity',
+    [WalletTabs.History]: 'Activity',
     createToken: '@:createTokenText',
   },
   walletSend: {

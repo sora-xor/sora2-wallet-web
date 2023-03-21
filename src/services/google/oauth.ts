@@ -31,6 +31,7 @@ export class GoogleOauth {
   public async init(): Promise<void> {
     if (this.ready) return;
     if (!this.options) throw new Error(`[${this.constructor.name}]: Options should be set before inintialization`);
+    if (!this.options.clientId) throw new Error(`[${this.constructor.name}]: Client ID is required`);
 
     await this.load();
     this.initClient(this.options);

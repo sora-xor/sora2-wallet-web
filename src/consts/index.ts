@@ -33,7 +33,7 @@ export enum RouteNames {
 
 export enum WalletTabs {
   Assets = 'WalletAssets',
-  Activity = 'WalletActivity',
+  History = 'WalletHistory',
 }
 
 export enum TokenTabs {

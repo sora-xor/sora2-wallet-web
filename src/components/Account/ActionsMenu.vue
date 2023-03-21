@@ -74,6 +74,7 @@ export default class AccountActionsMenu extends Mixins(NotificationMixin, Loadin
 .account-actions {
   &.el-dropdown {
     color: inherit;
+    line-height: 0;
   }
 
   &__item.el-dropdown-menu__item {

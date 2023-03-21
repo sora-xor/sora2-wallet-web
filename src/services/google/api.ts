@@ -21,6 +21,7 @@ export class GoogleApi {
   public async init(): Promise<void> {
     if (this.ready) return;
     if (!this.options) throw new Error(`[${this.constructor.name}]: Options should be set before inintialization`);
+    if (!this.options.apiKey) throw new Error(`[${this.constructor.name}]: Api key is required`);
 
     await this.load();
     await this.initClient(this.options);

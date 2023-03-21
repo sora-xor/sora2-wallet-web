@@ -79,7 +79,7 @@ import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import WalletBase from './WalletBase.vue';
 import WalletAccount from './Account/WalletAccount.vue';
 import WalletAssets from './WalletAssets.vue';
-import WalletActivity from './WalletActivity.vue';
+import WalletHistory from './WalletHistory.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import WalletTransactionDetails from './WalletTransactionDetails.vue';
 
@@ -97,7 +97,7 @@ import type { WalletPermissions } from '../consts';
     WalletBase,
     WalletAccount,
     WalletAssets,
-    WalletActivity,
+    WalletHistory,
     QrCodeScanButton,
     WalletTransactionDetails,
     AccountActionsMenu,
