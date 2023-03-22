@@ -18,6 +18,7 @@ import NotificationMixin from './mixins/NotificationMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 
 import { getter, action, state, mutation } from '../store/decorators';
+import { delay } from '../util';
 import { api } from '../api';
 
 @Component({
@@ -42,21 +43,23 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
     this.setConfirmTxDialogVisibility(flag);
   }
 
-  private confirm({ password, save }: { password: string; save: boolean }): void {
-    this.withAppNotification(async () => {
-      api.unlockPair(password);
+  async handleConfirm({ password, save }: { password: string; save: boolean }): Promise<void> {
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
 
-      if (save) {
-        this.setAccountPassphrase(password);
-      }
+      await this.withAppNotification(async () => {
+        api.unlockPair(password);
 
-      this.approveTxViaConfirmTxDialog();
-      this.setConfirmTxDialogVisibility(false);
+        if (save) {
+          this.setAccountPassphrase(password);
+        }
+
+        this.approveTxViaConfirmTxDialog();
+        this.setConfirmTxDialogVisibility(false);
+      });
     });
-  }
-
-  handleConfirm(data: { password: string; save: boolean }): void {
-    this.withLoading(() => this.confirm(data));
   }
 
   private setupFormState(): void {

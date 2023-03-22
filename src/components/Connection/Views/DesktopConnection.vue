@@ -115,8 +115,10 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
 
   async handleCreateAccount(data: CreateAccountArgs) {
     await this.withLoading(async () => {
-      // hack: to render loading state before sync code execution
-      await delay();
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
+
       await this.withAppNotification(async () => {
         await this.createAccount({ ...data, saveAccount: true });
         this.navigateToAccountList();
@@ -126,8 +128,10 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
 
   async handleRestoreAccount(data: RestoreAccountArgs) {
     await this.withLoading(async () => {
-      // hack: to render loading state before sync code execution
-      await delay();
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
+
       await this.withAppNotification(async () => {
         await this.restoreAccount(data);
         this.navigateToAccountList();

@@ -82,8 +82,9 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
 
   async handleAccountExport({ password }: { password: string }): Promise<void> {
     await this.withLoading(async () => {
-      // hack: to render loading state before sync code execution
-      await delay();
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
 
       await this.withAppNotification(async () => {
         if (!this.selectedAccount) return;

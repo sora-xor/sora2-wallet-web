@@ -140,8 +140,9 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
   async handleAccountCreate(data: CreateAccountArgs): Promise<void> {
     await this.withLoading(async () => {
-      // hack: to render loading state before sync code execution
-      await delay();
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
 
       await this.withAppNotification(async () => {
         const accountJson = await this.createAccount(data);
@@ -180,8 +181,9 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
   async handleAccountLogin({ password }: { password: string }) {
     await this.withLoading(async () => {
-      // hack: to render loading state before sync code execution
-      await delay();
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
 
       await this.withAppNotification(async () => {
         const { address, meta } = await this.loadAccountJson(password);

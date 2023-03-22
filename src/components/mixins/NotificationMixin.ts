@@ -12,6 +12,7 @@ export default class NotificationMixin extends Mixins(TranslationMixin) {
     ['Invalid decoded address', 'walletSend.errorAddress'],
     ['Invalid bip39 mnemonic specified', 'desktop.errorMessages.mnemonic'],
     ['Unable to decode using the supplied passphrase', 'desktop.errorMessages.password'],
+    ['is not allowed to interact with this extension', 'polkadotjs.noSigner'],
   ];
 
   getErrorMessage(error: unknown) {
