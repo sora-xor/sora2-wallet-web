@@ -77,7 +77,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         >
           <s-icon-stub
             name="finance-send-24"
-            size="28"
+            size="24"
           />
         </s-button-stub>
         <s-button-stub
@@ -97,7 +97,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         >
           <s-icon-stub
             name="arrows-swap-24"
-            size="28"
+            size="24"
           />
         </s-button-stub>
         <s-button-stub
@@ -117,7 +117,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         >
           <s-icon-stub
             name="basic-drop-24"
-            size="28"
+            size="24"
           />
         </s-button-stub>
         <s-button-stub
@@ -137,12 +137,13 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         >
           <s-icon-stub
             name="grid-block-distribute-vertically-24"
-            size="28"
+            size="24"
           />
         </s-button-stub>
          
         <qr-code-scan-button-stub
           primary=""
+          size="medium"
         />
          
         <s-button-stub
@@ -161,7 +162,7 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
         >
           <s-icon-stub
             name="finance-receive-show-QR-24"
-            size="28"
+            size="24"
           />
         </s-button-stub>
       </div>
@@ -259,7 +260,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
         >
           <s-icon-stub
             name="finance-send-24"
-            size="28"
+            size="24"
           />
         </s-button-stub>
         <s-button-stub
@@ -279,7 +280,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
         >
           <s-icon-stub
             name="arrows-swap-24"
-            size="28"
+            size="24"
           />
         </s-button-stub>
         <s-button-stub
@@ -299,7 +300,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
         >
           <s-icon-stub
             name="basic-drop-24"
-            size="28"
+            size="24"
           />
         </s-button-stub>
         <s-button-stub
@@ -319,12 +320,13 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
         >
           <s-icon-stub
             name="grid-block-distribute-vertically-24"
-            size="28"
+            size="24"
           />
         </s-button-stub>
          
         <qr-code-scan-button-stub
           primary=""
+          size="medium"
         />
          
         <s-button-stub
@@ -343,7 +345,7 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
         >
           <s-icon-stub
             name="finance-receive-show-QR-24"
-            size="28"
+            size="24"
           />
         </s-button-stub>
       </div>
