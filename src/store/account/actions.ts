@@ -336,7 +336,7 @@ const actions = defineActions({
   async renameAccount(context, name: string) {
     const { commit, dispatch } = accountActionContext(context);
     // change name in api & storage
-    api.changeAccountName(name);
+    api.changeAccountName(api.address, name);
     // update account data from storage
     commit.syncWithStorage();
     // update account list in state
