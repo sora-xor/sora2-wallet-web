@@ -57,13 +57,13 @@
               primary
               @click="handleOperation(operation.type)"
             >
-              <s-icon :name="operation.icon" size="28" />
+              <s-icon :name="operation.icon" size="24" />
             </s-button>
 
-            <qr-code-scan-button primary @change="parseQrCodeValue" />
+            <qr-code-scan-button primary size="medium" @change="parseQrCodeValue" />
 
             <s-button type="action" primary rounded :tooltip="t('code.receive')" @click="receiveByQrCode(asset)">
-              <s-icon name="finance-receive-show-QR-24" size="28" />
+              <s-icon name="finance-receive-show-QR-24" size="24" />
             </s-button>
           </div>
           <transition name="fadeHeight">

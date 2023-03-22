@@ -1,11 +1,13 @@
 <template>
   <div class="qr-code-container">
     <s-button
-      type="action"
-      size="small"
-      rounded
+      v-bind="{
+        type: 'action',
+        size: 'small',
+        ...$attrs,
+      }"
       :tooltip="t('code.upload')"
-      v-bind="$attrs"
+      rounded
       class="qr-code-button"
       @click="handleButtonClick"
     >
