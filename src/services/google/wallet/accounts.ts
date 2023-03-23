@@ -84,7 +84,7 @@ export default class Accounts implements InjectedAccounts {
 
     this.accountsList = files
       ? files.map((file) => ({
-          address: file.description || '',
+          address: api.formatAddress(file.description || '', false),
           name: file.name || '',
           id: file.id as string,
         }))

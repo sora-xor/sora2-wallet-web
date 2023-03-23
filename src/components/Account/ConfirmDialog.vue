@@ -3,13 +3,13 @@
     <s-form class="confirm-dialog__form" @submit.native.prevent="handleConfirm">
       <wallet-account :polkadot-account="account" />
       <s-input
+        v-if="!passphrase"
         :type="passwordInputType"
         :placeholder="t('desktop.password.placeholder')"
-        :disabled="isInputDisabled"
+        :disabled="loading"
         v-model="password"
       >
         <s-icon
-          v-if="!passphrase"
           :name="passwordIcon"
           class="eye-icon"
           size="18"
@@ -64,11 +64,11 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
   private setupFormState(visibility: boolean): void {
     if (!visibility) {
       this.model = '';
+      this.hiddenInput = true;
     }
   }
 
   model = '';
-
   savePassword = true;
   hiddenInput = true;
 
@@ -94,10 +94,6 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
 
   get isConfirmDisabled(): boolean {
     return this.loading || !this.password;
-  }
-
-  get isInputDisabled(): boolean {
-    return this.loading || !!this.passphrase;
   }
 
   togglePasswordVisibility(): void {
