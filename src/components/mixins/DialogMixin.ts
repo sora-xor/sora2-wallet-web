@@ -32,10 +32,6 @@ export default class DialogMixin extends Vue {
       if (!modalNodes.includes(node)) {
         node.prevTabindex = node.getAttribute('tabindex'); // save the previous tabindex state so we can restore it on close
         node.setAttribute('tabindex', '-1');
-        // tabindex=-1 does not prevent the mouse from focusing the node (which
-        // would show a focus outline around the element). Prevent this by disabling
-        // outline styles while the modal is open
-        // @see https://www.sitepoint.com/when-do-elements-take-the-focus/
         node.style.outline = 'none';
       }
     }
