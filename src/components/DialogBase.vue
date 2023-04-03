@@ -12,6 +12,11 @@
     }"
   >
     <template #title>
+      <div v-if="showBack">
+        <s-button type="action" @click="handleBackClick">
+          <s-icon name="arrows-chevron-left-rounded-24" size="28" />
+        </s-button>
+      </div>
       <slot name="title">
         <span class="el-dialog__title">{{ title }}</span>
       </slot>
@@ -36,6 +41,7 @@ export default class DialogBase extends Mixins(DialogMixin) {
   @Prop({ default: '', type: String }) readonly customClass!: string;
   @Prop({ default: '', type: String }) readonly title!: string;
   @Prop({ default: '', type: String }) readonly width!: string;
+  @Prop({ default: false, type: Boolean }) readonly showBack!: boolean;
   @Prop({ default: true, type: Boolean }) readonly showCloseButton!: boolean;
 
   get computedCustomClasses(): string {
@@ -66,6 +72,10 @@ export default class DialogBase extends Mixins(DialogMixin) {
     dialogWrapper.appendChild(scrollbar.$el);
     const scrollbarView = scrollbar.$el.getElementsByClassName('el-scrollbar__view')[0];
     scrollbarView.appendChild(dialog);
+  }
+
+  handleBackClick(): void {
+    this.$emit('back');
   }
 
   /**

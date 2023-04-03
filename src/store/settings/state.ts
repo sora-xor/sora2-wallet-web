@@ -8,8 +8,8 @@ import type { SettingsState } from './types';
 function initialState(): SettingsState {
   const shouldBalanceBeHidden = storage.get('shouldBalanceBeHidden');
   const runtimeVersion = runtimeStorage.get('version');
-  const filters = storage.get('filters');
   const allowFee = settingsStorage.get('allowFeePopup');
+  const filters = storage.get('filters');
   const { option, verifiedOnly, zeroBalance } = filters && JSON.parse(filters);
 
   return {
