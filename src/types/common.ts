@@ -63,9 +63,12 @@ export type StorageKey =
 
 export type RuntimeStorageKey = 'version' | 'networkFees';
 export type SettingsStorageKey =
+  | 'alerts'
   | 'language'
   | 'node'
   | 'customNodes'
   | 'allowFeePopup'
   | 'disclaimerApprove'
   | 'allowAccountDeletePopup';
+
+export type NotificationType = 'balanceChange' | 'priceAlert';
