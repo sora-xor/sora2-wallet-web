@@ -3,7 +3,7 @@
     <template #header>
       <div :class="headerClasses" ref="headerBase" :tabindex="hasFocusReset ? 0 : -1">
         <div v-if="showBack" :class="backButtonClass">
-          <s-button type="action" :tooltip="t('backText')" @click="handleBackClick">
+          <s-button type="action" @click="handleBackClick">
             <s-icon name="arrows-chevron-left-rounded-24" size="28" />
           </s-button>
         </div>
