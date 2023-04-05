@@ -394,7 +394,7 @@ const actions = defineActions({
     }
   },
   async getAssets(context): Promise<void> {
-    const { getters, commit, dispatch } = accountActionContext(context);
+    const { getters, commit } = accountActionContext(context);
     try {
       const allAssets = await withTimeout(api.assets.getAssets(true, getters.whitelist, getters.blacklist));
       const allIds = allAssets.map((asset) => asset.address);
@@ -404,8 +404,7 @@ const actions = defineActions({
       commit.updateAssets(filtered);
     } catch (error) {
       console.warn('Connection was lost during getAssets operation');
-      await delay(UPDATE_ASSETS_INTERVAL);
-      await dispatch.getAssets();
+      throw error;
     }
   },
 
