@@ -68,6 +68,7 @@ export type SettingsStorageKey =
   | 'node'
   | 'customNodes'
   | 'allowFeePopup'
+  | 'allowTopUpAlerts'
   | 'disclaimerApprove'
   | 'allowAccountDeletePopup';
 
