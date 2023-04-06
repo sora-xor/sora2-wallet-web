@@ -30,7 +30,7 @@ export default class NotificationEnablingPage extends Vue {}
   height: 100%;
   background-color: #000;
   opacity: 0.9;
-  z-index: 300;
+  z-index: 3000;
 
   &__instructions {
     display: flex;
