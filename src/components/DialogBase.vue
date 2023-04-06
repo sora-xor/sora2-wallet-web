@@ -18,7 +18,19 @@
         </s-button>
       </div>
       <slot name="title">
-        <span class="el-dialog__title">{{ title }}</span>
+        <span class="el-dialog__title">
+          {{ title }}
+          <s-tooltip
+            v-if="tooltip"
+            border-radius="mini"
+            class="el-dialog__tooltip-icon"
+            :content="tooltip"
+            placement="top"
+            tabindex="-1"
+          >
+            <s-icon name="info-16" size="18px" />
+          </s-tooltip>
+        </span>
       </slot>
       <slot v-if="showCloseButton" name="close">
         <s-button class="el-dialog__close" type="action" icon="x-16" @click="closeDialog" />
@@ -40,6 +52,7 @@ import DialogMixin from './mixins/DialogMixin';
 export default class DialogBase extends Mixins(DialogMixin) {
   @Prop({ default: '', type: String }) readonly customClass!: string;
   @Prop({ default: '', type: String }) readonly title!: string;
+  @Prop({ default: '', type: String }) readonly tooltip!: string;
   @Prop({ default: '', type: String }) readonly width!: string;
   @Prop({ default: false, type: Boolean }) readonly showBack!: boolean;
   @Prop({ default: true, type: Boolean }) readonly showCloseButton!: boolean;
@@ -141,6 +154,14 @@ $el-dialog-max-width: 496px;
         font-weight: 300 !important;
         line-height: var(--s-line-height-small);
         letter-spacing: var(--s-letter-spacing-mini);
+      }
+
+      #{$el-dialog-class}__tooltip-icon {
+        margin-left: 4px;
+        color: var(--s-color-base-content-tertiary);
+        &:hover {
+          cursor: pointer;
+        }
       }
 
       #{$el-dialog-class}__close {
