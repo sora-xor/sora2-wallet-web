@@ -314,3 +314,34 @@
     }
   }
 }
+
+@mixin drag-drop-content {
+  .placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  &__icon {
+    color: var(--s-color-base-content-tertiary) !important;
+    font-size: var(--s-size-small) !important;
+    margin-bottom: calc(var(--s-size-small) / 2);
+  }
+
+  &__icon.icon--error {
+    color: var(--s-color-theme-accent) !important;
+  }
+
+  &__btn {
+    margin-top: calc(var(--s-size-small) / 2) !important;
+    height: 32px !important;
+  }
+
+  &__placeholder {
+    letter-spacing: var(--s-letter-spacing-small);
+    color: var(--s-color-base-content-primary);
+    font-size: calc(var(--s-size-small) / 2);
+    text-align: center;
+    padding: 0 50px;
+  }
+}

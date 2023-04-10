@@ -45,11 +45,11 @@ export default class FileUploader extends Mixins(LoadingMixin, TranslationMixin)
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
 
-  private isImgDraggedOver = false;
+  private isFileDraggedOver = false;
   private isClearBtnShown = false;
 
   get dropZoneClass(): string {
-    return this.isImgDraggedOver || this.isLinkProvided ? 'drop-zone--over' : '';
+    return this.isFileDraggedOver || this.isLinkProvided ? 'drop-zone--over' : '';
   }
 
   get clearBtnShown(): boolean {
@@ -77,7 +77,7 @@ export default class FileUploader extends Mixins(LoadingMixin, TranslationMixin)
       return;
     }
 
-    if (file.type.startsWith('image/')) {
+    if (this.accept.includes(file.type)) {
       this.fileInput.files = event.dataTransfer.files as FileList;
       this.upload();
       this.isClearBtnShown = true;
@@ -85,11 +85,11 @@ export default class FileUploader extends Mixins(LoadingMixin, TranslationMixin)
   }
 
   dragOver(): void {
-    this.isImgDraggedOver = true;
+    this.isFileDraggedOver = true;
   }
 
   dragCancelled(): void {
-    this.isImgDraggedOver = false;
+    this.isFileDraggedOver = false;
   }
 
   openFileUpload(): void {
@@ -120,7 +120,7 @@ export default class FileUploader extends Mixins(LoadingMixin, TranslationMixin)
     }
 
     this.$emit('upload', file);
-    this.isImgDraggedOver = true;
+    this.isFileDraggedOver = true;
     this.isClearBtnShown = true;
   }
 
@@ -133,7 +133,7 @@ export default class FileUploader extends Mixins(LoadingMixin, TranslationMixin)
   resetFileInput(): void {
     this.fileInput.value = '';
     this.isClearBtnShown = false;
-    this.isImgDraggedOver = false;
+    this.isFileDraggedOver = false;
   }
 }
 </script>
@@ -141,7 +141,15 @@ export default class FileUploader extends Mixins(LoadingMixin, TranslationMixin)
 <style lang="scss">
 .drop-zone {
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   border: 2px dashed var(--s-color-base-content-tertiary);
+  border-radius: var(--s-border-radius-small);
+  padding: $basic-spacing-small;
+  position: relative;
+  width: 100%;
+
   &--over {
     border-style: solid;
     cursor: initial;

@@ -28,7 +28,14 @@
         {{ t('desktop.exportJsonDescriptionText') }}
       </p>
 
-      <input
+      <file-uploader accept="application/json" class="upload-json" @upload="handleUploadJson">
+        <div class="placeholder">
+          <s-icon class="upload-json__icon" name="el-icon-document" size="28" />
+          <span class="upload-json__placeholder">Drag & drop or choose .json file</span>
+        </div>
+      </file-uploader>
+
+      <!-- <input
         ref="fileInput"
         id="contentFile"
         type="file"
@@ -38,7 +45,7 @@
       />
       <s-button @click="importJson" class="s-typography-button--large login-btn">
         {{ t('importText') }} .JSON
-      </s-button>
+      </s-button> -->
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
       <s-form :class="computedClasses" @submit.native.prevent="importAccount">
@@ -98,6 +105,7 @@ import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 
 import NotificationMixin from '../../mixins/NotificationMixin';
+import FileUploader from '../../FileUploader.vue';
 
 import { AppError, parseJson } from '../../../util';
 import { LoginStep } from '../../../consts';
@@ -105,7 +113,11 @@ import { LoginStep } from '../../../consts';
 import type { KeyringPair$Json } from '../../../types/common';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 
-@Component
+@Component({
+  components: {
+    FileUploader,
+  },
+})
 export default class ImportAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: Boolean, default: false }) readonly jsonOnly!: boolean;
@@ -196,10 +208,8 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     this.fileInput.click();
   }
 
-  async handleUploadJson(e): Promise<void> {
+  async handleUploadJson(jsonFile: File): Promise<void> {
     this.withAppNotification(async () => {
-      const jsonFile = e.target.files[0];
-
       if (!jsonFile) {
         return;
       }
@@ -274,5 +284,9 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
 .eye-icon:hover {
   cursor: pointer;
+}
+
+.upload-json {
+  @include drag-drop-content;
 }
 </style>

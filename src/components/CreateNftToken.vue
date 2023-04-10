@@ -486,23 +486,14 @@ export default class CreateNftToken extends Mixins(
 }
 
 .preview-image-create-nft {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  border-radius: var(--s-border-radius-small);
   margin: #{$basic-spacing-medium} 0;
   height: 200px;
-  position: relative;
+
+  @include drag-drop-content;
 
   .image {
     margin: 0 auto;
     height: 176px;
-  }
-
-  .placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
   }
 
   &__content {
@@ -510,29 +501,6 @@ export default class CreateNftToken extends Mixins(
     width: 176px;
     object-fit: cover;
     border-radius: calc(var(--s-border-radius-mini) * 0.75);
-  }
-
-  &__icon {
-    color: var(--s-color-base-content-tertiary) !important;
-    font-size: var(--s-size-small) !important;
-    margin-bottom: calc(var(--s-size-small) / 2);
-  }
-
-  &__icon.icon--error {
-    color: var(--s-color-theme-accent) !important;
-  }
-
-  &__btn {
-    margin-top: calc(var(--s-size-small) / 2) !important;
-    height: 32px !important;
-  }
-
-  &__placeholder {
-    letter-spacing: var(--s-letter-spacing-small);
-    color: var(--s-color-base-content-primary);
-    font-size: calc(var(--s-size-small) / 2);
-    text-align: center;
-    padding: 0 50px;
   }
 }
 
