@@ -1,6 +1,7 @@
 import { Subject } from 'rxjs';
 import { FPNumber } from '@sora-substrate/util';
 
+import Singleton from '@/decorators';
 import { Alert } from '@/types/common';
 import store from '@/store';
 import { getBase64Icon } from '../../util/image';
@@ -8,14 +9,14 @@ import type { FiatPriceObject } from '../subquery/types';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 export class AlertsApiService {
-  static fiatPriceObject: FiatPriceObject = {};
-  static alerts = [] as Array<Alert>;
+  private fiatPriceObject: FiatPriceObject = {};
+  public alerts = [] as Array<Alert>;
 
-  private static isAlertSetByUser(): boolean {
+  private isAlertSetByUser(): boolean {
     return !!store.state.wallet.settings.alerts.length;
   }
 
-  static async pushNotification(asset: WhitelistArrayItem, message: string): Promise<void> {
+  public async pushNotification(asset: WhitelistArrayItem, message: string): Promise<void> {
     try {
       if (Notification.permission === 'granted') {
         const notification = new Notification(asset.symbol, {
@@ -33,7 +34,7 @@ export class AlertsApiService {
     }
   }
 
-  private static checkAlerts() {
+  private checkAlerts() {
     this.alerts.forEach((alert, position) => {
       if (alert.wasNotified) return;
 
@@ -45,10 +46,7 @@ export class AlertsApiService {
       if (alert.type === 'onDrop') {
         if (FPNumber.lte(currentPrice, desiredPrice)) {
           const asset = store.getters.wallet.account.whitelist[tokenAddress];
-          AlertsApiService.pushNotification(
-            asset as WhitelistArrayItem,
-            `${alert.token} price dropped to ${desiredPrice}`
-          );
+          this.pushNotification(asset as WhitelistArrayItem, `${alert.token} price dropped to ${desiredPrice}`);
           alert.once ? this.removeAlert(position) : this.setAlertAsNotified(position, true);
         }
 
@@ -58,17 +56,14 @@ export class AlertsApiService {
       if (alert.type === 'onRaise') {
         if (FPNumber.gte(currentPrice, desiredPrice)) {
           const asset = store.getters.wallet.account.whitelist[tokenAddress];
-          AlertsApiService.pushNotification(
-            asset as WhitelistArrayItem,
-            `${alert.token} price increased to ${desiredPrice}`
-          );
+          this.pushNotification(asset as WhitelistArrayItem, `${alert.token} price increased to ${desiredPrice}`);
           alert.once ? this.removeAlert(position) : this.setAlertAsNotified(position, true);
         }
       }
     });
   }
 
-  private static resetPriceAlerts(): void {
+  private resetPriceAlerts(): void {
     this.alerts.forEach((alert, position) => {
       if (!alert.wasNotified) return alert;
 
@@ -93,20 +88,20 @@ export class AlertsApiService {
     });
   }
 
-  public static removeAlert(position: number): void {
+  public removeAlert(position: number): void {
     store.commit.wallet.settings.removePriceAlert(position);
   }
 
-  public static setAlertAsNotified(position: number, value: boolean): void {
+  public setAlertAsNotified(position: number, value: boolean): void {
     store.commit.wallet.settings.setPriceAlertAsNotified({ position, value });
   }
 
-  static createPriceAlertSubscription(): Subject<FiatPriceObject> {
+  createPriceAlertSubscription(): Subject<FiatPriceObject> {
     const alertSubject = new Subject<FiatPriceObject>();
 
     alertSubject.subscribe({
       next: (fiatPriceObject: FiatPriceObject) => {
-        if (!AlertsApiService.isAlertSetByUser()) return;
+        if (!this.isAlertSetByUser()) return;
 
         this.alerts = store.state.wallet.settings.alerts;
 
@@ -120,3 +115,5 @@ export class AlertsApiService {
     return alertSubject;
   }
 }
+
+export default new (Singleton(AlertsApiService))();

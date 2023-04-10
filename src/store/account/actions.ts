@@ -27,7 +27,7 @@ import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
 
 import type { PolkadotJsAccount } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
-import { AlertsApiService } from '@/services/alerts';
+import alertsApiService from '@/services/alerts';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -482,7 +482,7 @@ const actions = defineActions({
   async subscribeOnAlerts(context): Promise<void> {
     const { commit } = accountActionContext(context);
 
-    const alertSubject = AlertsApiService.createPriceAlertSubscription();
+    const alertSubject = alertsApiService.createPriceAlertSubscription();
     commit.setAlertSubject(alertSubject);
   },
   async subscribeOnFiatPrice(context): Promise<void> {
@@ -511,7 +511,7 @@ const actions = defineActions({
   async notifyOnDeposit(context, data): Promise<void> {
     const { commit } = accountActionContext(context);
     const { asset, message }: { asset: WhitelistArrayItem; message: string } = data;
-    AlertsApiService.pushNotification(asset, message);
+    alertsApiService.pushNotification(asset, message);
     commit.popAssetFromNotificationQueue();
   },
   async addAsset(_, address?: string): Promise<void> {
