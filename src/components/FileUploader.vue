@@ -58,30 +58,16 @@ export default class FileUploader extends Mixins(LoadingMixin, TranslationMixin)
 
   dropImage(event: DragEvent): void {
     event.preventDefault();
-    if (!event.dataTransfer) {
+
+    if (
+      !(event.dataTransfer && event.dataTransfer.files[0] && this.accept.includes(event.dataTransfer.files[0].type))
+    ) {
       this.resetFileInput();
       return;
     }
 
-    const file = event.dataTransfer.files[0];
-
-    if (!file) {
-      this.resetFileInput();
-      return;
-    }
-
-    if (file.size > this.limit) {
-      this.dragCancelled();
-      this.$emit('showLimit');
-      this.resetFileInput();
-      return;
-    }
-
-    if (this.accept.includes(file.type)) {
-      this.fileInput.files = event.dataTransfer.files as FileList;
-      this.upload();
-      this.isClearBtnShown = true;
-    }
+    this.fileInput.files = event.dataTransfer.files as FileList;
+    this.upload();
   }
 
   dragOver(): void {

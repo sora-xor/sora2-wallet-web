@@ -28,24 +28,27 @@
         {{ t('desktop.exportJsonDescriptionText') }}
       </p>
 
-      <file-uploader accept="application/json" class="upload-json" @upload="handleUploadJson">
+      <file-uploader ref="uploader" accept="application/json" class="upload-json" @upload="handleUploadJson">
         <div class="placeholder">
           <s-icon class="upload-json__icon" name="el-icon-document" size="28" />
           <span class="upload-json__placeholder">Drag & drop or choose .json file</span>
         </div>
       </file-uploader>
 
-      <!-- <input
-        ref="fileInput"
-        id="contentFile"
-        type="file"
-        accept="application/json"
-        class="json-upload"
-        @change="handleUploadJson"
-      />
-      <s-button @click="importJson" class="s-typography-button--large login-btn">
-        {{ t('importText') }} .JSON
-      </s-button> -->
+      <s-card shadow="always" class="import-steps">
+        <div class="import-step">
+          <div class="import-step__count">1</div>
+          <div class="import-step__text">Go to the wallet of your use</div>
+        </div>
+        <div class="import-step">
+          <div class="import-step__count">2</div>
+          <div class="import-step__text">Select the account you want to export</div>
+        </div>
+        <div class="import-step">
+          <div class="import-step__count">3</div>
+          <div class="import-step__text">Export the .json file</div>
+        </div>
+      </s-card>
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
       <s-form :class="computedClasses" @submit.native.prevent="importAccount">
@@ -125,7 +128,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
   @Prop({ type: Function, default: () => {} }) readonly restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
-  @Ref('fileInput') readonly fileInput!: HTMLInputElement;
+  @Ref('uploader') readonly uploader!: HTMLFormElement;
 
   readonly LoginStep = LoginStep;
 
@@ -204,10 +207,6 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     });
   }
 
-  importJson(): void {
-    this.fileInput.click();
-  }
-
   async handleUploadJson(jsonFile: File): Promise<void> {
     this.withAppNotification(async () => {
       if (!jsonFile) {
@@ -218,6 +217,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
       const { address, encoded, encoding, meta } = parsedJson;
 
       if (!(address || encoded || encoding || meta)) {
+        this.uploader.resetFileInput();
         throw new AppError({ key: 'desktop.errorMessages.jsonFields' });
       }
 
@@ -288,5 +288,47 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
 .upload-json {
   @include drag-drop-content;
+}
+
+.import-steps {
+  width: 100%;
+}
+
+.import-step {
+  display: flex;
+  align-items: center;
+  padding: $basic-spacing-small 0;
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--s-color-base-border-secondary);
+  }
+
+  &__count {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: var(--s-size-small);
+    height: var(--s-size-small);
+    font-size: 24px;
+    font-weight: 300;
+    background: white;
+    color: var(--s-color-base-content-tertiary);
+    border-radius: 50%;
+    text-align: center;
+    margin-right: $basic-spacing-small;
+  }
+
+  &__text {
+    font-size: var(--s-font-size-medium);
+  }
 }
 </style>

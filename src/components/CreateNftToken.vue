@@ -198,6 +198,7 @@ export default class CreateNftToken extends Mixins(
   @action.settings.createNftStorageInstance private createNftStorageInstance!: AsyncFnWithoutArgs;
 
   @Ref('fileInput') readonly fileInput!: HTMLInputElement;
+  @Ref('uploader') readonly uploader!: HTMLFormElement;
 
   imageLoading = false;
   fileExceedsLimit = false;
@@ -274,7 +275,7 @@ export default class CreateNftToken extends Mixins(
   }
 
   handleInputLinkChange(link: string): void {
-    (this.$refs.uploader as HTMLFormElement).resetFileInput();
+    this.uploader.resetFileInput();
     this.resetFileInput();
     this.fileExceedsLimit = false;
     this.contentSrcLink = '';
