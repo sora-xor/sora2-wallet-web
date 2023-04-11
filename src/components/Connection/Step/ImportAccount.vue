@@ -49,6 +49,27 @@
           <div class="import-step__text">Export the .json file</div>
         </div>
       </s-card>
+
+      <div class="export-tutorial">
+        <div class="export-tutorial-title">Export tutorials</div>
+        <div class="export-tutorial-grid">
+          <a
+            v-for="{ logo, title, link } in Tutorials"
+            :key="title"
+            :href="link"
+            target="_blank"
+            rel="nofollow noopener noreferrer"
+            class="export-tutorial-grid-item"
+          >
+            <s-card shadow="always">
+              <div class="extension-tutorial">
+                <img class="extension-tutorial-logo" :src="logo" />
+                <span class="extension-tutorial-title">{{ title }}</span>
+              </div>
+            </s-card>
+          </a>
+        </div>
+      </div>
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
       <s-form :class="computedClasses" @submit.native.prevent="importAccount">
@@ -107,6 +128,10 @@
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 
+import PolkadotLogo from '@subwallet/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg';
+import SubWalletLogo from '@subwallet/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg';
+import FearlessLogo from '../../../assets/img/FearlessWalletLogo.svg';
+
 import NotificationMixin from '../../mixins/NotificationMixin';
 import FileUploader from '../../FileUploader.vue';
 
@@ -129,6 +154,24 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: Function, default: () => {} }) readonly restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
   @Ref('uploader') readonly uploader!: HTMLFormElement;
+
+  readonly Tutorials = [
+    {
+      logo: FearlessLogo,
+      title: 'Fearless',
+      link: 'https://wiki.fearlesswallet.io/accounts/walkthrough/exporting-and-importing-a-wallet-using-a-json-file',
+    },
+    {
+      logo: PolkadotLogo,
+      title: 'Polkadot{.js}',
+      link: 'https://support.polkadot.network/support/solutions/articles/65000177677-how-to-export-your-json-backup-file',
+    },
+    {
+      logo: SubWalletLogo,
+      title: 'Subwallet',
+      link: 'https://docs.subwallet.app/extension-user-guide/export-and-backup-an-account',
+    },
+  ];
 
   readonly LoginStep = LoginStep;
 
@@ -329,6 +372,50 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
   &__text {
     font-size: var(--s-font-size-medium);
+  }
+}
+
+.export-tutorial {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: $basic-spacing-small;
+  width: 100%;
+
+  &-title {
+    font-weight: 600;
+    font-size: var(--s-font-size-extra-small);
+    text-transform: uppercase;
+  }
+
+  &-grid {
+    display: flex;
+    gap: $basic-spacing-small;
+
+    &-item {
+      @include focus-outline($withOffset: true);
+      @include columns(3, $basic-spacing-mini);
+
+      border-width: 1px;
+      border-style: solid;
+      border-color: transparent;
+      border-radius: var(--s-border-radius-small);
+
+      &:hover {
+        border-color: var(--s-color-base-content-secondary);
+      }
+    }
+  }
+}
+
+.extension-tutorial {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: $basic-spacing-mini;
+
+  &-logo {
+    width: var(--s-size-small);
+    height: var(--s-size-small);
   }
 }
 </style>

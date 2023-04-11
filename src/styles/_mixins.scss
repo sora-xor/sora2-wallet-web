@@ -345,3 +345,7 @@
     padding: 0 50px;
   }
 }
+
+@mixin columns($columns, $gap) {
+  width: calc((100% / $columns) - ((#{$gap} * (#{$columns} - 1)) / $columns));
+}
