@@ -8,6 +8,7 @@ import { getBase64Icon } from '../../util/image';
 import type { FiatPriceObject } from '../subquery/types';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
+@Singleton
 export class AlertsApiService {
   private fiatPriceObject: FiatPriceObject = {};
   public alerts = [] as Array<Alert>;
@@ -46,7 +47,7 @@ export class AlertsApiService {
       if (alert.type === 'onDrop') {
         if (FPNumber.lte(currentPrice, desiredPrice)) {
           const asset = store.getters.wallet.account.whitelist[tokenAddress];
-          this.pushNotification(asset as WhitelistArrayItem, `${alert.token} price dropped to ${desiredPrice}`);
+          this.pushNotification(asset as WhitelistArrayItem, `${alert.token} price dropped to $${desiredPrice}`);
           alert.once ? this.removeAlert(position) : this.setAlertAsNotified(position, true);
         }
 
@@ -56,7 +57,7 @@ export class AlertsApiService {
       if (alert.type === 'onRaise') {
         if (FPNumber.gte(currentPrice, desiredPrice)) {
           const asset = store.getters.wallet.account.whitelist[tokenAddress];
-          this.pushNotification(asset as WhitelistArrayItem, `${alert.token} price increased to ${desiredPrice}`);
+          this.pushNotification(asset as WhitelistArrayItem, `${alert.token} price raised to $${desiredPrice}`);
           alert.once ? this.removeAlert(position) : this.setAlertAsNotified(position, true);
         }
       }
@@ -107,8 +108,8 @@ export class AlertsApiService {
 
         this.fiatPriceObject = fiatPriceObject;
 
-        this.resetPriceAlerts();
         this.checkAlerts();
+        this.resetPriceAlerts();
       },
     });
 
@@ -116,4 +117,4 @@ export class AlertsApiService {
   }
 }
 
-export default new (Singleton(AlertsApiService))();
+export default new AlertsApiService();
