@@ -73,6 +73,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   @action.account.logout private logout!: AsyncFnWithoutArgs;
   @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
   @action.account.restoreAccountFromJson private restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
+  @action.account.resetSelectedWallet private resetSelectedWallet!: FnWithoutArgs;
 
   @getter.account.isLoggedIn isLoggedIn!: boolean;
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
@@ -213,6 +214,10 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   handleLogout(): void {
     this.navigate({ name: RouteNames.WalletConnection });
     this.logout();
+  }
+
+  beforeDestroy(): void {
+    this.resetSelectedWallet();
   }
 }
 </script>

@@ -8,7 +8,7 @@ interface IAccountMetadata extends InjectedAccount {
   id: string;
 }
 
-const ACCOUNTS_UPDATE_INTERVAL = 30_000;
+const ACCOUNTS_UPDATE_INTERVAL = 60_000;
 
 export default class Accounts implements InjectedAccounts {
   private _list: IAccountMetadata[] = [];
