@@ -31,27 +31,29 @@
       <file-uploader ref="uploader" accept="application/json" class="upload-json" @upload="handleUploadJson">
         <div class="placeholder">
           <s-icon class="upload-json__icon" name="el-icon-document" size="28" />
-          <span class="upload-json__placeholder">Drag & drop or choose .json file</span>
+          <span class="upload-json__placeholder">{{
+            t('dragAndDropText', { extension: TranslationConsts.JSON })
+          }}</span>
         </div>
       </file-uploader>
 
       <s-card shadow="always" class="import-steps">
         <div class="import-step">
           <div class="import-step__count">1</div>
-          <div class="import-step__text">Go to the wallet of your use</div>
+          <div class="import-step__text">{{ t('desktop.importSteps.selectWallet') }}</div>
         </div>
         <div class="import-step">
           <div class="import-step__count">2</div>
-          <div class="import-step__text">Select the account you want to export</div>
+          <div class="import-step__text">{{ t('desktop.importSteps.selectAccount') }}</div>
         </div>
         <div class="import-step">
           <div class="import-step__count">3</div>
-          <div class="import-step__text">Export the .json file</div>
+          <div class="import-step__text">{{ t('desktop.importSteps.exportAccount') }}</div>
         </div>
       </s-card>
 
       <div class="export-tutorial">
-        <div class="export-tutorial-title">Export tutorials</div>
+        <div class="export-tutorial-title">{{ t('desktop.exportTutorialsText') }}</div>
         <div class="export-tutorial-grid">
           <a
             v-for="{ logo, title, link } in Tutorials"

@@ -41,6 +41,7 @@ export default {
   enterAccountError: 'Unable to enter account',
   transactionSubmittedText: 'Transaction was submitted',
   assetDeposit: 'Asset balance has been deposited',
+  dragAndDropText: 'Drag & drop or choose {extension} file',
   ofText: '{first} of {second}',
   operations: {
     [Operation.Swap]: 'Swap',
@@ -412,6 +413,12 @@ export default {
       mnemonicLength: 'Mnemonic should contain {number} words',
       jsonFields: 'JSON file does not have required fields',
     },
+    importSteps: {
+      selectWallet: 'Go to the wallet of your use',
+      selectAccount: 'Select the account you want to export',
+      exportAccount: 'Export the {JSON} file',
+    },
+    exportTutorialsText: 'Export tutorials',
   },
   historyErrorMessages: {
     generalError: 'Something went wrong',
