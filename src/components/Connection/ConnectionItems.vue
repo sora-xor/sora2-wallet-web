@@ -39,6 +39,10 @@ $item-number: 7;
   }
 
   &-list {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: $item-margin-bottom;
+
     & > .account-card {
       @include focus-outline($withOffset: true);
       height: $item-height;
@@ -50,10 +54,6 @@ $item-number: 7;
 
       a.connection-action {
         @include focus-outline($borderRadius: var(--s-border-radius-small));
-      }
-
-      &:not(:last-child) {
-        margin-bottom: $item-margin-bottom;
       }
     }
   }

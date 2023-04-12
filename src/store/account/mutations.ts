@@ -17,12 +17,12 @@ import type { PolkadotJsAccount } from '../../types/common';
 const mutations = defineMutations<AccountState>()({
   // Fiat price
   setFiatPriceObject(state, object: FiatPriceObject): void {
-    state.fiatPriceObject = object;
+    state.fiatPriceObject = Object.freeze(object);
   },
   updateFiatPriceObject(state, fiatPriceAndApyRecord?: FiatPriceObject): void {
     if (!fiatPriceAndApyRecord) return;
 
-    const updated = { ...(state.fiatPriceObject || {}), ...fiatPriceAndApyRecord };
+    const updated = Object.freeze({ ...(state.fiatPriceObject || {}), ...fiatPriceAndApyRecord });
 
     state.fiatPriceObject = updated;
   },
@@ -46,7 +46,6 @@ const mutations = defineMutations<AccountState>()({
         'blacklistArray',
         'fiatPriceObject',
         'fiatPriceSubscription',
-        'poolApySubscription',
         'assets',
         'assetsIds',
         'assetsSubscription',
@@ -90,10 +89,10 @@ const mutations = defineMutations<AccountState>()({
     state.isExternal = isExternal ? JSON.parse(isExternal) : false;
   },
   setAssetsIds(state, ids: string[]) {
-    state.assetsIds = ids;
+    state.assetsIds = Object.freeze(ids);
   },
   updateAssets(state, assets: Array<Asset>): void {
-    state.assets = assets;
+    state.assets = Object.freeze(assets);
   },
   updateAccountAssets(state, accountAssets: Array<AccountAsset>): void {
     state.accountAssets = accountAssets;
@@ -105,10 +104,10 @@ const mutations = defineMutations<AccountState>()({
     state.assetsToNotifyQueue.shift();
   },
   setWhitelist(state, whitelistArray: Array<WhitelistArrayItem>): void {
-    state.whitelistArray = whitelistArray;
+    state.whitelistArray = Object.freeze(whitelistArray);
   },
   setNftBlacklist(state, blacklistArray: Blacklist): void {
-    state.blacklistArray = blacklistArray;
+    state.blacklistArray = Object.freeze(blacklistArray);
   },
   clearWhitelist(state): void {
     state.whitelistArray = [];

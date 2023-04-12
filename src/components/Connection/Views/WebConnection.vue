@@ -180,11 +180,10 @@ export default class WebConnection extends Mixins(NotificationMixin, LoadingMixi
 
 <style scoped lang="scss">
 .wallet-connection {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: $basic-spacing-big;
   min-height: 102px;
-
-  & > *:not(:first-child) {
-    margin-top: $basic-spacing-big;
-  }
 
   &-text {
     color: var(--s-color-base-content-primary);

@@ -19,10 +19,10 @@
 import { Mixins, Component } from 'vue-property-decorator';
 
 import TokenLogo from '../../TokenLogo.vue';
-
-import { PolkadotJsAccount } from '../../../types/common';
 import TranslationMixin from '../../mixins/TranslationMixin';
 import { state } from '../../../store/decorators';
+
+import type { PolkadotJsAccount } from '../../../types/common';
 
 @Component({
   components: {

@@ -1,7 +1,7 @@
 import { defineGetters } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
 import isEqual from 'lodash/fp/isEqual';
-import type { Whitelist } from '@sora-substrate/util/build/assets/types';
+import type { Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 
 import { accountGetterContext } from './../account';
@@ -64,12 +64,14 @@ const getters = defineGetters<AccountState>()({
   },
   whitelist(...args): Whitelist {
     const { state } = accountGetterContext(args);
-    return state.whitelistArray && state.whitelistArray.length ? api.assets.getWhitelist(state.whitelistArray) : {};
+    return state.whitelistArray && state.whitelistArray.length
+      ? api.assets.getWhitelist(state.whitelistArray as WhitelistArrayItem[])
+      : {};
   },
   whitelistIdsBySymbol(...args): any {
     const { state } = accountGetterContext(args);
     return state.whitelistArray && state.whitelistArray.length
-      ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray)
+      ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray as WhitelistArrayItem[])
       : {};
   },
   passphrase(...args): Nullable<string> {

@@ -92,11 +92,9 @@ export default class AccountListStep extends Mixins(AccountActionsMixin) {
 
 <style scoped lang="scss">
 .connection {
-  & > * {
-    &:not(:last-child) {
-      margin-bottom: $basic-spacing-medium;
-    }
-  }
+  display: flex;
+  flex-flow: column nowrap;
+  gap: $basic-spacing-medium;
 
   &__text {
     font-size: var(--s-font-size-extra-small);

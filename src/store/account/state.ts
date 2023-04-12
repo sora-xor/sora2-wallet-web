@@ -28,8 +28,10 @@ export function initialState(): AccountState {
     /** polkadot js accounts & subscription */
     polkadotJsAccounts: [],
     polkadotJsAccountsSubscription: null,
+    /** whitelist & blacklist */
     whitelistArray: [],
     blacklistArray: [],
+    /** fiat prices & subscription */
     fiatPriceObject: {},
     fiatPriceSubscription: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
