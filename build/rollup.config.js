@@ -157,6 +157,8 @@ export default {
     '@soramitsu/soramitsu-js-ui/lib/utils/DesignSystem',
     '@soramitsu/soramitsu-js-ui/lib/utils/Theme',
     '@subwallet/wallet-connect/dotsama/wallets',
+    '@subwallet/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg',
+    '@subwallet/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg',
     '@subwallet/wallet-connect/types',
     'dayjs/plugin/localizedFormat',
     'element-ui/lib/popover',
