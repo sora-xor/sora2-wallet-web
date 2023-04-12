@@ -24,10 +24,6 @@
         <p class="line">or</p>
       </template>
 
-      <p v-if="jsonOnly" class="login__text">
-        {{ t('desktop.exportJsonDescriptionText') }}
-      </p>
-
       <file-uploader ref="uploader" accept="application/json" class="upload-json" @upload="handleUploadJson">
         <div class="placeholder">
           <s-icon class="upload-json__icon" name="el-icon-document" size="28" />

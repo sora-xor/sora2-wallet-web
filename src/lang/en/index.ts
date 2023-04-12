@@ -392,8 +392,6 @@ export default {
     confirmSeedText: 'Confirm the seed phrase by clicking words in the correct order',
     errorMnemonicText: 'Incorrect seed phrase order',
     exportOptionText: 'Export .json account file',
-    exportJsonDescriptionText:
-      'Export your account from {PolkadotJs} compatible browser extension in .json format to upload it here.',
     exportJsonText:
       'You will always be able to access your account by importing that .json file. Do not share it with anyone!',
     addAccount: 'Add an account',
