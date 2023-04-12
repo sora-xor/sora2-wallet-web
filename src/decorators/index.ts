@@ -4,7 +4,7 @@ function Singleton<T extends new (...args: any[]) => any>(Ctr: T): T {
   return class {
     constructor(...args: any[]) {
       if (instance) {
-        console.error('You cannot instantiate a singleton twice!');
+        console.error(`[${instance.name}]::You cannot instantiate a singleton multiple times!`);
         return instance;
       }
 
