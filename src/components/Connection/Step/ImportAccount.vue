@@ -38,17 +38,9 @@
       </file-uploader>
 
       <s-card shadow="always" class="import-steps">
-        <div class="import-step">
-          <div class="import-step__count">1</div>
-          <div class="import-step__text">{{ t('desktop.importSteps.selectWallet') }}</div>
-        </div>
-        <div class="import-step">
-          <div class="import-step__count">2</div>
-          <div class="import-step__text">{{ t('desktop.importSteps.selectAccount') }}</div>
-        </div>
-        <div class="import-step">
-          <div class="import-step__count">3</div>
-          <div class="import-step__text">{{ t('desktop.importSteps.exportAccount') }}</div>
+        <div v-for="(text, index) in importSteps" :key="index" class="import-step">
+          <div class="import-step__count">{{ index + 1 }}</div>
+          <div class="import-step__text">{{ text }}</div>
         </div>
       </s-card>
 
@@ -222,6 +214,14 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     const baseClass = ['login__inputs'];
     if (this.json) baseClass.push('login__inputs--json');
     return baseClass.join(' ');
+  }
+
+  get importSteps(): string[] {
+    return [
+      this.t('desktop.importSteps.selectWallet'),
+      this.t('desktop.importSteps.selectAccount'),
+      this.t('desktop.importSteps.exportAccount'),
+    ];
   }
 
   toggleVisibility(): void {
