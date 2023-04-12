@@ -30,7 +30,7 @@ export interface PolkadotJsAccount {
 export interface Alert {
   token: string;
   price: string;
-  type: 'onDrop' | 'onRaise';
+  type: 'drop' | 'raise';
   once: boolean;
   wasNotified?: boolean;
 }

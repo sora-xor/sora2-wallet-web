@@ -44,7 +44,7 @@ export class AlertsApiService {
       const currentPrice = FPNumber.fromCodecValue(this.fiatPriceObject[tokenAddress]);
       const desiredPrice = FPNumber.fromNatural(alert.price);
 
-      if (alert.type === 'onDrop') {
+      if (alert.type === 'drop') {
         if (FPNumber.lte(currentPrice, desiredPrice)) {
           const asset = store.getters.wallet.account.whitelist[tokenAddress];
           this.pushNotification(asset as WhitelistArrayItem, `Token price dropped to $${desiredPrice}`);
@@ -54,7 +54,7 @@ export class AlertsApiService {
         return;
       }
 
-      if (alert.type === 'onRaise') {
+      if (alert.type === 'raise') {
         if (FPNumber.gte(currentPrice, desiredPrice)) {
           const asset = store.getters.wallet.account.whitelist[tokenAddress];
           this.pushNotification(asset as WhitelistArrayItem, `Token price raised to $${desiredPrice}`);
@@ -73,7 +73,7 @@ export class AlertsApiService {
       const currentPrice = FPNumber.fromCodecValue(this.fiatPriceObject[tokenAddress]);
       const desiredPrice = FPNumber.fromNatural(alert.price);
 
-      if (alert.type === 'onDrop') {
+      if (alert.type === 'drop') {
         if (FPNumber.gt(currentPrice, desiredPrice)) {
           this.setAlertAsNotified(position, false);
         }
@@ -81,7 +81,7 @@ export class AlertsApiService {
         return;
       }
 
-      if (alert.type === 'onRaise') {
+      if (alert.type === 'raise') {
         if (FPNumber.lt(currentPrice, desiredPrice)) {
           this.setAlertAsNotified(position, false);
         }
