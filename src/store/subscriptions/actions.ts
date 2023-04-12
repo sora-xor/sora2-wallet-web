@@ -60,6 +60,7 @@ const actions = defineActions({
       'transactions/trackActiveTxs',
       'transactions/subscribeOnExternalHistory',
       'account/subscribeOnFiatPrice',
+      'account/subscribeOnAlerts',
       'subscriptions/subscribeToStorageUpdates',
     ];
 

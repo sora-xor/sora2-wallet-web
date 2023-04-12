@@ -14,7 +14,7 @@ const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2_000;
 const actions = defineActions({
   async subscribeOnExternalHistory(context): Promise<void> {
     const { commit } = transactionsActionContext(context);
-    const { rootGetters, rootCommit } = rootActionContext(context);
+    const { rootState, rootGetters, rootCommit } = rootActionContext(context);
     const { isLoggedIn, account } = rootGetters.wallet.account;
 
     commit.resetExternalHistorySubscription();
@@ -44,7 +44,7 @@ const actions = defineActions({
           ) {
             const asset = rootGetters.wallet.account.whitelist[historyItem.assetAddress as string];
 
-            if (asset) {
+            if (asset && rootState.wallet.settings.allowTopUpAlert) {
               rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
             }
           }

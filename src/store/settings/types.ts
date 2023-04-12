@@ -3,10 +3,12 @@ import type { NFTStorage } from 'nft.storage';
 import type { Subscription } from 'rxjs';
 
 import type { SoraNetwork, WalletPermissions, WalletAssetFilters } from '../../consts';
-import type { ApiKeysObject, ConnectionStatus } from '../../types/common';
+import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
 
 export type SettingsState = {
   apiKeys: ApiKeysObject;
+  alerts: Array<Alert>;
+  allowTopUpAlert: boolean;
   isWalletLoaded: boolean;
   subqueryStatus: ConnectionStatus;
   permissions: WalletPermissions;
