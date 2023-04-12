@@ -19,6 +19,7 @@ export function initialState(): AccountState {
     assetsIds: [],
     assetsToNotifyQueue: [],
     assetsSubscription: null,
+    alertSubject: null,
     /** account assets & subscription */
     accountAssets: [],
     accountAssetsSubscription: null,
