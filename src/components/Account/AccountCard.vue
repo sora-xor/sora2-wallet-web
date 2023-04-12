@@ -33,6 +33,7 @@ export default class AccountCard extends Vue {}
 
   & > .el-card__body {
     flex: 1;
+    max-width: 100%;
   }
 
   &.s-card.neumorphic {
@@ -57,19 +58,19 @@ export default class AccountCard extends Vue {}
 </style>
 
 <style scoped lang="scss">
-$avatar-margin-right: #{$basic-spacing-small};
+$gap: $basic-spacing-small;
 $avatar-size: 32px;
 
 .account {
   display: flex;
   align-items: center;
+  gap: $gap;
 
   &-avatar {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    margin-right: $avatar-margin-right;
     width: $avatar-size;
     height: $avatar-size;
     border-radius: 50%;
@@ -79,6 +80,7 @@ $avatar-size: 32px;
   &-details {
     flex: 1;
     align-items: center;
+    max-width: calc(100% - $gap - $avatar-size);
   }
 
   &-credentials {
