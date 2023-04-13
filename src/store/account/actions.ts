@@ -12,7 +12,6 @@ import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
 import { CeresApiService } from '../../services/ceres';
-import { pushNotification } from '../../util/notification';
 import {
   delay,
   getAppWallets,
@@ -27,6 +26,8 @@ import {
 } from '../../util';
 import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
 import { isInternalSource } from '../../consts/wallets';
+
+import alertsApiService from '../../services/alerts';
 
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
@@ -416,18 +417,17 @@ const actions = defineActions({
   },
 
   async getAssets(context): Promise<void> {
-    const { getters, commit, dispatch } = accountActionContext(context);
+    const { getters, commit } = accountActionContext(context);
     try {
       const allAssets = await withTimeout(api.assets.getAssets(true, getters.whitelist, getters.blacklist));
       const allIds = allAssets.map((asset) => asset.address);
       const filtered = excludePoolXYKAssets(allAssets);
 
       commit.setAssetsIds(allIds);
-      commit.updateAssets(filtered);
+      commit.setAssets(filtered);
     } catch (error) {
       console.warn('Connection was lost during getAssets operation');
-      await delay(UPDATE_ASSETS_INTERVAL);
-      await dispatch.getAssets();
+      throw error;
     }
   },
 
@@ -444,7 +444,7 @@ const actions = defineActions({
         const newFilteredAssets = excludePoolXYKAssets(newAssets);
 
         commit.setAssetsIds(ids);
-        commit.updateAssets([...state.assets, ...newFilteredAssets]);
+        commit.setAssets([...state.assets, ...newFilteredAssets]);
       }
     } catch (error) {
       console.warn('Error while updating assets:', error);
@@ -470,12 +470,15 @@ const actions = defineActions({
     if (getters.isLoggedIn) {
       try {
         const subscription = api.assets.balanceUpdated.subscribe(() => {
-          commit.updateAccountAssets(api.assets.accountAssets);
+          const filtered = api.assets.accountAssets.filter(
+            (asset) => !api.assets.isNftBlacklisted(asset, getters.blacklist)
+          );
+          commit.setAccountAssets(filtered);
         });
         commit.setAccountAssetsSubscription(subscription);
         await api.assets.updateAccountAssets();
       } catch (error) {
-        commit.updateAccountAssets([]);
+        commit.setAccountAssets([]);
       }
     }
   },
@@ -500,6 +503,12 @@ const actions = defineActions({
     } catch (error) {
       commit.clearBlacklist();
     }
+  },
+  async subscribeOnAlerts(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+
+    const alertSubject = alertsApiService.createPriceAlertSubscription();
+    commit.setAlertSubject(alertSubject);
   },
   async subscribeOnFiatPrice(context): Promise<void> {
     const isSubqueryAvailable = await getFiatPriceObject(context);
@@ -527,7 +536,7 @@ const actions = defineActions({
   async notifyOnDeposit(context, data): Promise<void> {
     const { commit } = accountActionContext(context);
     const { asset, message }: { asset: WhitelistArrayItem; message: string } = data;
-    pushNotification(asset, message);
+    alertsApiService.pushNotification(asset, message);
     commit.popAssetFromNotificationQueue();
   },
   async addAsset(_, address?: string): Promise<void> {

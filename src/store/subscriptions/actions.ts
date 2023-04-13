@@ -8,13 +8,8 @@ import { rootActionContext } from '../../store';
 const runParallel = async (context: ActionContext<any, any>, actionTypes: Array<string>): Promise<void> => {
   const { rootDispatch } = rootActionContext(context);
   const actions = actionTypes.map((value) => value.split('/'));
-  const results = await Promise.allSettled(actions.map(([module, fn]) => rootDispatch.wallet[module][fn]()));
 
-  results.forEach((result) => {
-    if (result.status === 'rejected') {
-      console.error(result.reason);
-    }
-  });
+  await Promise.all(actions.map(([module, fn]) => rootDispatch.wallet[module][fn]()));
 };
 
 const actions = defineActions({
@@ -60,6 +55,7 @@ const actions = defineActions({
       'transactions/trackActiveTxs',
       'transactions/subscribeOnExternalHistory',
       'account/subscribeOnFiatPrice',
+      'account/subscribeOnAlerts',
       'subscriptions/subscribeToStorageUpdates',
     ];
 
