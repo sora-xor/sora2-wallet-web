@@ -401,11 +401,10 @@ const actions = defineActions({
       const filtered = excludePoolXYKAssets(allAssets);
 
       commit.setAssetsIds(allIds);
-      commit.updateAssets(filtered);
+      commit.setAssets(filtered);
     } catch (error) {
       console.warn('Connection was lost during getAssets operation');
-      await delay(UPDATE_ASSETS_INTERVAL);
-      await dispatch.getAssets();
+      throw error;
     }
   },
 
@@ -422,7 +421,7 @@ const actions = defineActions({
         const newFilteredAssets = excludePoolXYKAssets(newAssets);
 
         commit.setAssetsIds(ids);
-        commit.updateAssets([...state.assets, ...newFilteredAssets]);
+        commit.setAssets([...state.assets, ...newFilteredAssets]);
       }
     } catch (error) {
       console.warn('Error while updating assets:', error);
@@ -448,12 +447,15 @@ const actions = defineActions({
     if (getters.isLoggedIn) {
       try {
         const subscription = api.assets.balanceUpdated.subscribe(() => {
-          commit.updateAccountAssets(api.assets.accountAssets);
+          const filtered = api.assets.accountAssets.filter(
+            (asset) => !api.assets.isNftBlacklisted(asset, getters.blacklist)
+          );
+          commit.setAccountAssets(filtered);
         });
         commit.setAccountAssetsSubscription(subscription);
         await api.assets.updateAccountAssets();
       } catch (error) {
-        commit.updateAccountAssets([]);
+        commit.setAccountAssets([]);
       }
     }
   },
