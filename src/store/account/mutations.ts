@@ -101,10 +101,10 @@ const mutations = defineMutations<AccountState>()({
   setAssetsIds(state, ids: string[]) {
     state.assetsIds = ids;
   },
-  updateAssets(state, assets: Array<Asset>): void {
+  setAssets(state, assets: Array<Asset>): void {
     state.assets = assets;
   },
-  updateAccountAssets(state, accountAssets: Array<AccountAsset>): void {
+  setAccountAssets(state, accountAssets: Array<AccountAsset>): void {
     state.accountAssets = accountAssets;
   },
   setAssetToNotify(state, asset: WhitelistArrayItem): void {
