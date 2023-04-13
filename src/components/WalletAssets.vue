@@ -117,7 +117,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @getter.account.whitelist private whitelist!: Whitelist;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
-  @mutation.account.updateAccountAssets private updateAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
+  @mutation.account.setAccountAssets private setAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
 
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
@@ -127,13 +127,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   set assetList(accountAssets: Array<AccountAsset>) {
-    console.log('set', accountAssets);
     if (!accountAssets.length) return;
 
     const assetsAddresses = accountAssets.map((asset) => asset.address);
     api.assets.accountAssetsAddresses = assetsAddresses;
     api.assets.updateAccountAssets();
-    this.updateAccountAssets(accountAssets);
+    this.setAccountAssets(accountAssets);
   }
 
   get computedClasses(): string {
