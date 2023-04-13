@@ -447,7 +447,10 @@ const actions = defineActions({
     if (getters.isLoggedIn) {
       try {
         const subscription = api.assets.balanceUpdated.subscribe(() => {
-          commit.updateAccountAssets(api.assets.accountAssets);
+          const filtered = api.assets.accountAssets.filter(
+            (asset) => !api.assets.isNftBlacklisted(asset, getters.blacklist)
+          );
+          commit.updateAccountAssets(filtered);
         });
         commit.setAccountAssetsSubscription(subscription);
         await api.assets.updateAccountAssets();
