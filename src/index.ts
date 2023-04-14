@@ -76,57 +76,68 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(SoraWalletElements, {});
 }
 
+const waitForStore = async (withoutStore = false): Promise<void> => {
+  if (withoutStore) {
+    store = internalStore;
+  } else if (!store) {
+    await delay(100);
+    await waitForStore(withoutStore);
+  }
+};
+
+const waitForConnection = async (): Promise<void> => {
+  if (connection.loading) {
+    await delay(100);
+    await waitForConnection();
+  } else if (!connection.api) {
+    await connection.open();
+    console.info('Connected to blockchain', connection.endpoint);
+  }
+};
+
+const initWalletCore = async (): Promise<void> => {};
+
+let walletCoreLoaded = false;
+
 async function initWallet({
   withoutStore = false,
   permissions,
   updateEthBridgeHistory,
 }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
-  if (!withoutStore && !store) {
-    await delay();
-    return await initWallet({ withoutStore, permissions, updateEthBridgeHistory });
-  } else {
-    if (withoutStore) {
-      store = internalStore;
-    }
-    if (connection.loading) {
-      await delay();
-      return await initWallet({ withoutStore, permissions, updateEthBridgeHistory });
-    }
-    if (!connection.api) {
-      await connection.open();
-      console.info('Connected to blockchain', connection.endpoint);
-    }
+  await Promise.all([waitForStore(withoutStore), waitForConnection(), api.initKeyring(true)]);
+
+  if (!walletCoreLoaded) {
+    addFearlessWalletLocally();
+
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);
     }
     if (updateEthBridgeHistory) {
       store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
-    try {
-      await api.initialize(true);
-    } catch (error) {
-      console.error('Something went wrong during api initialization', error);
-      throw error;
-    }
 
-    await store.dispatch.wallet.account.getWhitelist();
-    await store.dispatch.wallet.account.getNftBlacklist();
-
-    addFearlessWalletLocally();
-
-    await Promise.all([
-      store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
-    ]);
+    store.dispatch.wallet.account.getWhitelist();
+    store.dispatch.wallet.account.getNftBlacklist();
 
     if (store.state.wallet.account.isDesktop) {
       await store.dispatch.wallet.account.getPolkadotJsAccounts();
     }
 
-    await store.dispatch.wallet.account.checkAccountConnection();
+    api.restoreActiveAccount();
 
-    store.commit.wallet.settings.setWalletLoaded(true);
+    walletCoreLoaded = true;
   }
+
+  await api.initialize(false);
+
+  await Promise.all([
+    store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
+    store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
+  ]);
+
+  await store.dispatch.wallet.account.checkAccountConnection();
+
+  store.commit.wallet.settings.setWalletLoaded(true);
 }
 
 const components = {
