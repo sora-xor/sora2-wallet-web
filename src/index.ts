@@ -77,11 +77,41 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 const waitForStore = async (withoutStore = false): Promise<void> => {
-  if (withoutStore) {
-    store = internalStore;
-  } else if (!store) {
-    await delay(100);
-    await waitForStore(withoutStore);
+  if (!store) {
+    if (withoutStore) {
+      store = internalStore;
+    } else {
+      await delay(100);
+      await waitForStore(withoutStore);
+    }
+  }
+};
+
+let walletCoreLoaded = false;
+
+const waitForCore = async ({
+  withoutStore = false,
+  permissions,
+  updateEthBridgeHistory,
+}: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> => {
+  if (!walletCoreLoaded) {
+    await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
+
+    addFearlessWalletLocally();
+
+    if (permissions) {
+      store.commit.wallet.settings.setPermissions(permissions);
+    }
+    if (updateEthBridgeHistory) {
+      store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
+    }
+
+    store.dispatch.wallet.account.getWhitelist();
+    store.dispatch.wallet.account.getNftBlacklist();
+
+    await checkActiveAccount();
+
+    walletCoreLoaded = true;
   }
 };
 
@@ -95,47 +125,25 @@ const waitForConnection = async (): Promise<void> => {
   }
 };
 
-const initWalletCore = async (): Promise<void> => {};
-
-let walletCoreLoaded = false;
-
-async function initWallet({
-  withoutStore = false,
-  permissions,
-  updateEthBridgeHistory,
-}: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
-  await Promise.all([waitForStore(withoutStore), waitForConnection(), api.initKeyring(true)]);
-
-  if (!walletCoreLoaded) {
-    addFearlessWalletLocally();
-
-    if (permissions) {
-      store.commit.wallet.settings.setPermissions(permissions);
-    }
-    if (updateEthBridgeHistory) {
-      store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
-    }
-
-    store.dispatch.wallet.account.getWhitelist();
-    store.dispatch.wallet.account.getNftBlacklist();
-
-    if (store.state.wallet.account.isDesktop) {
-      await store.dispatch.wallet.account.getPolkadotJsAccounts();
-    }
-
-    api.restoreActiveAccount();
-
-    walletCoreLoaded = true;
+const checkActiveAccount = async (): Promise<void> => {
+  if (store.state.wallet.account.isDesktop) {
+    await store.dispatch.wallet.account.getPolkadotJsAccounts();
   }
 
-  await api.initialize(false);
+  api.restoreActiveAccount();
+
+  await store.dispatch.wallet.account.checkSigner();
+  await store.dispatch.wallet.router.checkCurrentRoute();
+};
+
+async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
+  await Promise.all([waitForCore(options), waitForConnection()]);
 
   await Promise.all([
+    api.initialize(false),
     store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
     store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
   ]);
-
-  await store.dispatch.wallet.account.checkAccountConnection();
 
   store.commit.wallet.settings.setWalletLoaded(true);
 }

@@ -28,6 +28,7 @@ import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
 import alertsApiService from '@/services/alerts';
+import getters from './getters';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -148,18 +149,14 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async checkAccountConnection(context): Promise<void> {
+  async checkSigner(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
-    if (getters.isLoggedIn) {
+    if (getters.isLoggedIn && !state.isDesktop) {
       try {
-        if (!state.isDesktop) {
-          const signer = await dispatch.getSigner();
+        const signer = await dispatch.getSigner();
 
-          api.setSigner(signer);
-        }
-
-        await dispatch.afterLogin();
+        api.setSigner(signer);
       } catch (error) {
         console.error(error);
         await dispatch.logout();
