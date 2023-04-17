@@ -118,6 +118,15 @@ export const getAppWallets = (): Wallet[] => {
   }
 };
 
+const waitForWalletEnable = async (wallet: Wallet): Promise<void> => {
+  await wallet.enable();
+
+  if (!wallet.extension) {
+    await delay();
+    await waitForWalletEnable(wallet);
+  }
+};
+
 export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wallet> => {
   const wallet = getWalletBySource(extension);
 
@@ -127,8 +136,7 @@ export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wall
   }
 
   await waitForDocumentReady();
-
-  await wallet.enable();
+  await waitForWalletEnable(wallet);
 
   if (!wallet.signer) {
     throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension: wallet.title } });

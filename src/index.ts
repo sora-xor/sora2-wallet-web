@@ -89,7 +89,7 @@ const waitForStore = async (withoutStore = false): Promise<void> => {
 
 let walletCoreLoaded = false;
 
-const waitForCore = async ({
+export const waitForCore = async ({
   withoutStore = false,
   permissions,
   updateEthBridgeHistory,
@@ -130,7 +130,7 @@ const checkActiveAccount = async (): Promise<void> => {
     await store.dispatch.wallet.account.getPolkadotJsAccounts();
   }
 
-  api.restoreActiveAccount();
+  await api.restoreActiveAccount();
 
   await store.dispatch.wallet.account.checkSigner();
   await store.dispatch.wallet.router.checkCurrentRoute();
