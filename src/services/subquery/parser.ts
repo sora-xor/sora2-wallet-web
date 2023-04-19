@@ -1,7 +1,7 @@
 import getOr from 'lodash/fp/getOr';
 import omit from 'lodash/fp/omit';
 import { BN } from '@polkadot/util';
-import { RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
+import { RewardType, RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
 import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
@@ -182,7 +182,7 @@ const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]
       formatted.push({
         amount,
         asset,
-        type: RewardingEvents.Unspecified,
+        type: ['' as RewardType, RewardingEvents.Unspecified],
       });
     }
   }
