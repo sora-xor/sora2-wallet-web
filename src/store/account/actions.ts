@@ -12,6 +12,7 @@ import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
 import { CeresApiService } from '../../services/ceres';
+import { pushNotification } from '../../util/notification';
 import {
   delay,
   getAppWallets,
@@ -27,8 +28,6 @@ import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
 
 import type { PolkadotJsAccount } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
-import alertsApiService from '@/services/alerts';
-import getters from './getters';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -478,12 +477,6 @@ const actions = defineActions({
       commit.clearBlacklist();
     }
   },
-  async subscribeOnAlerts(context): Promise<void> {
-    const { commit } = accountActionContext(context);
-
-    const alertSubject = alertsApiService.createPriceAlertSubscription();
-    commit.setAlertSubject(alertSubject);
-  },
   async subscribeOnFiatPrice(context): Promise<void> {
     const isSubqueryAvailable = await getFiatPriceObject(context);
     try {
@@ -510,7 +503,7 @@ const actions = defineActions({
   async notifyOnDeposit(context, data): Promise<void> {
     const { commit } = accountActionContext(context);
     const { asset, message }: { asset: WhitelistArrayItem; message: string } = data;
-    alertsApiService.pushNotification(asset, message);
+    pushNotification(asset, message);
     commit.popAssetFromNotificationQueue();
   },
   async addAsset(_, address?: string): Promise<void> {
