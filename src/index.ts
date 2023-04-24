@@ -89,7 +89,7 @@ const waitForStore = async (withoutStore = false): Promise<void> => {
 
 let walletCoreLoaded = false;
 
-export const waitForCore = async ({
+const waitForCore = async ({
   withoutStore = false,
   permissions,
   updateEthBridgeHistory,
@@ -197,6 +197,7 @@ const vuex = {
 
 export {
   initWallet,
+  waitForCore,
   en,
   api,
   connection,
