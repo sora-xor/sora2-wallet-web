@@ -148,7 +148,7 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async checkAccountConnection(context): Promise<void> {
+  async checkSigner(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
     if (getters.isLoggedIn && !state.isDesktop) {
