@@ -12,7 +12,7 @@ import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
 import { CeresApiService } from '../../services/ceres';
-import { pushNotification } from '../../util/notification';
+import alertsApiService from '../../services/alerts';
 import {
   delay,
   getAppWallets,
@@ -496,6 +496,12 @@ const actions = defineActions({
       commit.clearBlacklist();
     }
   },
+  async subscribeOnAlerts(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+
+    const alertSubject = alertsApiService.createPriceAlertSubscription();
+    commit.setAlertSubject(alertSubject);
+  },
   async subscribeOnFiatPrice(context): Promise<void> {
     const isSubqueryAvailable = await getFiatPriceObject(context);
     try {
@@ -522,7 +528,7 @@ const actions = defineActions({
   async notifyOnDeposit(context, data): Promise<void> {
     const { commit } = accountActionContext(context);
     const { asset, message }: { asset: WhitelistArrayItem; message: string } = data;
-    pushNotification(asset, message);
+    alertsApiService.pushNotification(asset, message);
     commit.popAssetFromNotificationQueue();
   },
   async addAsset(_, address?: string): Promise<void> {
