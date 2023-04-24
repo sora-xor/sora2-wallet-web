@@ -151,15 +151,11 @@ const actions = defineActions({
   async checkAccountConnection(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
-    if (getters.isLoggedIn) {
+    if (getters.isLoggedIn && !state.isDesktop) {
       try {
-        if (!state.isDesktop) {
-          const signer = await dispatch.getSigner();
+        const signer = await dispatch.getSigner();
 
-          api.setSigner(signer);
-        }
-
-        await dispatch.afterLogin();
+        api.setSigner(signer);
       } catch (error) {
         console.error(error);
         await dispatch.logout();
