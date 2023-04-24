@@ -109,10 +109,11 @@ const waitForCore = async ({
       store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
 
+    await checkActiveAccount();
+
     store.dispatch.wallet.account.getWhitelist();
     store.dispatch.wallet.account.getNftBlacklist();
-
-    await checkActiveAccount();
+    store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop);
 
     walletCoreLoaded = true;
   }
@@ -142,11 +143,7 @@ const checkActiveAccount = async (): Promise<void> => {
 async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
   await Promise.all([waitForCore(options), waitForConnection()]);
 
-  await Promise.all([
-    api.initialize(false),
-    store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-    store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
-  ]);
+  await Promise.all([api.initialize(false), store.dispatch.wallet.subscriptions.activateNetwokSubscriptions()]);
 
   store.commit.wallet.settings.setWalletLoaded(true);
 }
