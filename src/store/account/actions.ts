@@ -28,8 +28,6 @@ import {
 import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
 import { isInternalSource } from '../../consts/wallets';
 
-import alertsApiService from '../../services/alerts';
-
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
 import type { CreateAccountArgs, RestoreAccountArgs } from './types';

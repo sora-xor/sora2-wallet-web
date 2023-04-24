@@ -130,7 +130,7 @@ const waitForConnection = async (): Promise<void> => {
 
 const checkActiveAccount = async (): Promise<void> => {
   if (store.state.wallet.account.isDesktop) {
-    await store.dispatch.wallet.account.getPolkadotJsAccounts();
+    await store.dispatch.wallet.account.getImportedAccounts();
   }
 
   await api.restoreActiveAccount();
