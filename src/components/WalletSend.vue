@@ -9,12 +9,15 @@
   >
     <div class="wallet-send">
       <template v-if="step === 1">
-        <s-input
-          class="wallet-send-address"
-          :maxlength="128"
-          :placeholder="t('walletSend.address')"
-          v-model="address"
-        />
+        <s-input class="wallet-send-address" :maxlength="128" :placeholder="t('walletSend.address')" v-model="address">
+          <s-icon
+            class="wallet-send-address-book"
+            name="basic-user-24"
+            size="18"
+            @click.native="openAddressBook"
+            slot="right"
+          />
+        </s-input>
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
           <s-tooltip :content="copyValueAssetId" placement="top">
@@ -24,6 +27,10 @@
           </s-tooltip>
         </template>
         <p v-if="isAccountAddress" class="wallet-send-address-error">{{ t('walletSend.addressError') }}</p>
+        <div v-if="newAddressDetected" class="wallet-send__new-address">
+          <span class="wallet-send__new-address-msg">New address detected</span>
+          <span class="wallet-send__new-address-save" @click="saveContact(address)">Save as contact</span>
+        </div>
         <s-float-input
           v-model="amount"
           class="wallet-send-input"
@@ -116,6 +123,13 @@
         </s-button>
       </template>
       <wallet-fee v-if="showAdditionalInfo" :value="fee" />
+      <address-book-dialog :visible.sync="showAddressBookDialog" @open-add-contact="saveContact" />
+      <set-contact-dialog
+        :prefilledAddress="prefilledAddress"
+        :isEditMode="isEditMode"
+        :visible.sync="showSetContactDialog"
+        @open-address-book="openAddressBook"
+      />
     </div>
   </wallet-base>
 </template>
@@ -134,6 +148,8 @@ import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
 import TokenLogo from './TokenLogo.vue';
+import SetContactDialog from './AddressBook/SetContactDialog.vue';
+import AddressBookDialog from './AddressBook/AddressBookDialog.vue';
 
 import TransactionMixin from './mixins/TransactionMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -144,6 +160,7 @@ import { formatAddress, formatSoraAddress } from '../util';
 import { api } from '../api';
 import { state, mutation, action } from '../store/decorators';
 import type { Route } from '../store/router/types';
+import { Book, PolkadotJsAccount } from '@/types/common';
 
 @Component({
   components: {
@@ -153,6 +170,8 @@ import type { Route } from '../store/router/types';
     NetworkFeeWarning,
     WalletFee,
     TokenLogo,
+    SetContactDialog,
+    AddressBookDialog,
   },
 })
 export default class WalletSend extends Mixins(
@@ -167,6 +186,8 @@ export default class WalletSend extends Mixins(
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.account.book private book!: Book;
+  @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;
@@ -176,6 +197,10 @@ export default class WalletSend extends Mixins(
   amount = '';
   showWarningFeeNotification = false;
   showAdditionalInfo = true;
+  showSetContactDialog = false;
+  showAddressBookDialog = false;
+  prefilledAddress = '';
+  isEditMode = false;
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
@@ -334,6 +359,12 @@ export default class WalletSend extends Mixins(
     return this.asset.address === XOR.address;
   }
 
+  get newAddressDetected(): boolean {
+    if (!this.validAddress) return false;
+    const found = this.polkadotJsAccounts.find((account) => formatSoraAddress(account.address) === this.address);
+    return !this.book[this.address] && !found;
+  }
+
   getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
   }
@@ -395,6 +426,16 @@ export default class WalletSend extends Mixins(
     if (this.assetBalanceSubscription) {
       this.assetBalanceSubscription.unsubscribe();
     }
+  }
+
+  saveContact(address, isEditMode): void {
+    this.isEditMode = isEditMode;
+    this.prefilledAddress = address;
+    this.showSetContactDialog = true;
+  }
+
+  openAddressBook(): void {
+    this.showAddressBookDialog = true;
   }
 }
 </script>
@@ -481,6 +522,30 @@ $logo-size: var(--s-size-mini);
       text-align: right;
     }
   }
+
+  &__new-address {
+    background: rgba(248, 8, 123, 0.09);
+    height: 50px;
+    width: 100%;
+    border-radius: 16px;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--s-color-base-content-primary);
+    padding: 0 10px;
+
+    &-msg {
+      font-weight: 330;
+    }
+
+    &-save {
+      color: var(--s-color-theme-accent);
+      &:hover {
+        cursor: pointer;
+      }
+    }
+  }
   .nft-image {
     position: absolute;
     z-index: 1;
@@ -527,6 +592,16 @@ $logo-size: var(--s-size-mini);
       font-size: var(--s-font-size-mini);
       line-height: var(--s-line-height-base);
       letter-spacing: var(--s-letter-spacing-small);
+    }
+    &-book {
+      background: var(--s-color-base-content-tertiary);
+      color: var(--s-color-base-background);
+      padding: 2px;
+      border-radius: 4px;
+      margin-left: 8px;
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
   &-amount {

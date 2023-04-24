@@ -3,7 +3,7 @@ import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-s
 import type { Subscription } from 'rxjs';
 
 import type { Extensions } from '../../consts';
-import type { PolkadotJsAccount, AddressKeyMapping } from '../../types/common';
+import type { PolkadotJsAccount, AddressKeyMapping, Book } from '../../types/common';
 import type { ReferrerRewards, FiatPriceObject } from '../../services/subquery/types';
 
 export type AccountState = {
@@ -15,6 +15,7 @@ export type AccountState = {
   assetsSubscription: Nullable<NodeJS.Timer | number>;
   accountAssets: Array<AccountAsset>;
   accountAssetsSubscription: Nullable<Subscription>;
+  book: Nullable<Book>;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
   polkadotJsAccountsSubscription: Nullable<VoidFunction>;
   whitelistArray: Array<WhitelistArrayItem>;

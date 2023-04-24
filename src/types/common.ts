@@ -21,6 +21,10 @@ export type AddressKeyMapping = {
   [key: string]: string | null;
 };
 
+export type Book = {
+  [address: string]: string;
+};
+
 export interface PolkadotJsAccount {
   address: string;
   name: string;
@@ -59,7 +63,8 @@ export type StorageKey =
   | 'marketAlgorithm'
   | 'сhartsEnabled'
   | 'transactionDeadline'
-  | 'evmAddress';
+  | 'evmAddress'
+  | 'book';
 
 export type RuntimeStorageKey = 'version' | 'networkFees';
 export type SettingsStorageKey =
