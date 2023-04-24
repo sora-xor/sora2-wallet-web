@@ -12,6 +12,7 @@ import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
 import { CeresApiService } from '../../services/ceres';
+import { pushNotification } from '../../util/notification';
 import {
   delay,
   getAppWallets,
@@ -150,21 +151,14 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async checkAccountConnection(context, initialCheck?: boolean): Promise<void> {
+  async checkSigner(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
-    if (getters.isLoggedIn) {
+    if (getters.isLoggedIn && state.isExternal) {
       try {
-        // if account from extension, we should check it
-        if (state.isExternal) {
-          const signer = await dispatch.getSigner();
+        const signer = await dispatch.getSigner();
 
-          if (initialCheck) api.setSigner(signer);
-        }
-
-        if (initialCheck) {
-          await dispatch.afterLogin();
-        }
+        api.setSigner(signer);
       } catch (error) {
         console.error(error);
         await dispatch.logout();
@@ -246,7 +240,7 @@ const actions = defineActions({
 
     commit.setWalletAccounts(accounts);
 
-    await dispatch.checkAccountConnection();
+    await dispatch.checkSigner();
   },
 
   async subscribeToWalletAccounts(context): Promise<void> {
@@ -260,7 +254,7 @@ const actions = defineActions({
         commit.setWalletAccounts(accounts);
       }
 
-      dispatch.checkAccountConnection();
+      dispatch.checkSigner();
     };
 
     const accounts = await getWalletAccounts(wallet);
@@ -504,12 +498,6 @@ const actions = defineActions({
       commit.clearBlacklist();
     }
   },
-  async subscribeOnAlerts(context): Promise<void> {
-    const { commit } = accountActionContext(context);
-
-    const alertSubject = alertsApiService.createPriceAlertSubscription();
-    commit.setAlertSubject(alertSubject);
-  },
   async subscribeOnFiatPrice(context): Promise<void> {
     const isSubqueryAvailable = await getFiatPriceObject(context);
     try {
@@ -536,7 +524,7 @@ const actions = defineActions({
   async notifyOnDeposit(context, data): Promise<void> {
     const { commit } = accountActionContext(context);
     const { asset, message }: { asset: WhitelistArrayItem; message: string } = data;
-    alertsApiService.pushNotification(asset, message);
+    pushNotification(asset, message);
     commit.popAssetFromNotificationQueue();
   },
   async addAsset(_, address?: string): Promise<void> {

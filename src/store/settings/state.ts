@@ -2,13 +2,10 @@ import type { NetworkFeesObject } from '@sora-substrate/util';
 
 import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
 import { WalletAssetFilters, WalletFilteringOptions } from '../../consts';
-import { Alert, ConnectionStatus } from '../../types/common';
+import { ConnectionStatus } from '../../types/common';
 import type { SettingsState } from './types';
 
 function initialState(): SettingsState {
-  const priceAlerts = settingsStorage.get('alerts');
-  const alerts = priceAlerts && JSON.parse(priceAlerts);
-  const allowTopUpAlerts = settingsStorage.get('allowTopUpAlerts');
   const shouldBalanceBeHidden = storage.get('shouldBalanceBeHidden');
   const runtimeVersion = runtimeStorage.get('version');
   const allowFee = settingsStorage.get('allowFeePopup');
@@ -17,8 +14,6 @@ function initialState(): SettingsState {
 
   return {
     apiKeys: {},
-    alerts: (alerts || []) as Array<Alert>,
-    allowTopUpAlert: allowTopUpAlerts ? Boolean(JSON.parse(allowTopUpAlerts)) : false,
     subqueryEndpoint: null,
     subqueryStatus: ConnectionStatus.Unavailable,
     isWalletLoaded: false, // wallet is loading

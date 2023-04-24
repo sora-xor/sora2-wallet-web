@@ -28,14 +28,6 @@ export interface PolkadotJsAccount {
   source?: AppWallet;
 }
 
-export interface Alert {
-  token: string;
-  price: string;
-  type: 'drop' | 'raise';
-  once: boolean;
-  wasNotified?: boolean;
-}
-
 export type WhitelistIdsBySymbol = { [key: string]: string };
 
 export type Permissions = {

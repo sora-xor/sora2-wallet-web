@@ -2,7 +2,7 @@ import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
-import type { Subscription, Subject } from 'rxjs';
+import type { Subscription } from 'rxjs';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
@@ -24,24 +24,11 @@ const mutations = defineMutations<AccountState>()({
 
     const updated = Object.freeze({ ...(state.fiatPriceObject || {}), ...fiatPriceAndApyRecord });
 
-    if (state.alertSubject) {
-      state.alertSubject.next(updated);
-    }
-
     state.fiatPriceObject = updated;
   },
   /** When fiat price and apy request has an error */
   clearFiatPriceObject(state): void {
     state.fiatPriceObject = {};
-  },
-  setAlertSubject(state, alertSubject: Subject<FiatPriceObject>) {
-    state.alertSubject = alertSubject;
-  },
-  resetAlertSubscription(state) {
-    if (state.alertSubject) {
-      state.alertSubject.unsubscribe();
-    }
-    state.alertSubject = null;
   },
   setFiatPriceSubscription(state, subscription: VoidFunction): void {
     state.fiatPriceSubscription = subscription;

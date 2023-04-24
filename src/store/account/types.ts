@@ -1,6 +1,6 @@
 import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
-import type { Subscription, Subject } from 'rxjs';
+import type { Subscription } from 'rxjs';
 
 import type { AppWallet } from '../../consts';
 import type { PolkadotJsAccount, AddressKeyMapping, KeyringPair$Json } from '../../types/common';
@@ -29,7 +29,6 @@ export type AccountState = {
   assetsIds: Readonly<string[]>;
   assetsSubscription: Nullable<NodeJS.Timer | number>;
   accountAssets: Array<AccountAsset>;
-  alertSubject: Nullable<Subject<FiatPriceObject>>;
   accountAssetsSubscription: Nullable<Subscription>;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
   polkadotJsAccountsSubscription: Nullable<VoidFunction>;

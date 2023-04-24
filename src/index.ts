@@ -78,33 +78,26 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(SoraWalletElements, {});
 }
 
-async function initWallet({
+const waitForStore = async (withoutStore = false): Promise<void> => {
+  if (!store) {
+    if (withoutStore) {
+      store = internalStore;
+    } else {
+      await delay(100);
+      await waitForStore(withoutStore);
+    }
+  }
+};
+
+let walletCoreLoaded = false;
+
+const waitForCore = async ({
   withoutStore = false,
   permissions,
   updateEthBridgeHistory,
-}: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
-  if (!withoutStore && !store) {
-    await delay();
-    return await initWallet({ withoutStore, permissions, updateEthBridgeHistory });
-  } else {
-    if (withoutStore) {
-      store = internalStore;
-    }
-    if (connection.loading) {
-      await delay();
-      return await initWallet({ withoutStore, permissions, updateEthBridgeHistory });
-    }
-    if (!connection.api) {
-      await connection.open();
-      console.info('Connected to blockchain', connection.endpoint);
-    }
-
-    try {
-      await api.initialize(true);
-    } catch (error) {
-      console.error('Something went wrong during api initialization', error);
-      throw error;
-    }
+}: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> => {
+  if (!walletCoreLoaded) {
+    await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
     addFearlessWalletLocally();
     addGDriveWalletLocally();
@@ -116,21 +109,46 @@ async function initWallet({
       store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
 
-    await Promise.all([store.dispatch.wallet.account.getWhitelist(), store.dispatch.wallet.account.getNftBlacklist()]);
+    store.dispatch.wallet.account.getWhitelist();
+    store.dispatch.wallet.account.getNftBlacklist();
 
-    await Promise.all([
-      store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-      store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
-    ]);
+    await checkActiveAccount();
 
-    if (store.state.wallet.account.isDesktop) {
-      await store.dispatch.wallet.account.getImportedAccounts();
-    }
-
-    await store.dispatch.wallet.account.checkAccountConnection(true);
-
-    store.commit.wallet.settings.setWalletLoaded(true);
+    walletCoreLoaded = true;
   }
+};
+
+const waitForConnection = async (): Promise<void> => {
+  if (connection.loading) {
+    await delay(100);
+    await waitForConnection();
+  } else if (!connection.api) {
+    await connection.open();
+    console.info('Connected to blockchain', connection.endpoint);
+  }
+};
+
+const checkActiveAccount = async (): Promise<void> => {
+  if (store.state.wallet.account.isDesktop) {
+    await store.dispatch.wallet.account.getPolkadotJsAccounts();
+  }
+
+  await api.restoreActiveAccount();
+
+  await store.dispatch.wallet.account.checkSigner();
+  await store.dispatch.wallet.router.checkCurrentRoute();
+};
+
+async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
+  await Promise.all([waitForCore(options), waitForConnection()]);
+
+  await Promise.all([
+    api.initialize(false),
+    store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
+    store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
+  ]);
+
+  store.commit.wallet.settings.setWalletLoaded(true);
 }
 
 const components = {
@@ -182,6 +200,7 @@ const vuex = {
 
 export {
   initWallet,
+  waitForCore,
   en,
   api,
   connection,

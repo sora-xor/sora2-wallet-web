@@ -5,8 +5,8 @@ import type { Subscription } from 'rxjs';
 
 import { api } from '../../api';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
-import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
-import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
+import type { SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
+import type { ApiKeysObject, ConnectionStatus } from '../../types/common';
 import type { SettingsState } from './types';
 
 const mutations = defineMutations<SettingsState>()({
@@ -85,30 +85,6 @@ const mutations = defineMutations<SettingsState>()({
   },
   setSubqueryStatus(state, status: ConnectionStatus): void {
     state.subqueryStatus = status;
-  },
-  setDepositNotifications(state, allow: boolean): void {
-    state.allowTopUpAlert = allow;
-    settingsStorage.set('allowTopUpAlerts', allow);
-  },
-  addPriceAlert(state, alert: Alert): void {
-    const alerts = [alert, ...state.alerts].slice(0, MAX_ALERTS_NUMBER);
-    state.alerts = alerts;
-    settingsStorage.set('alerts', JSON.stringify(alerts));
-  },
-  removePriceAlert(state, position: number): void {
-    state.alerts.splice(position, 1);
-    settingsStorage.set('alerts', JSON.stringify(state.alerts));
-  },
-
-  editPriceAlert(state, { alert, position }): void {
-    state.alerts[position] = alert;
-    settingsStorage.set('alerts', JSON.stringify(state.alerts));
-  },
-  setPriceAlertAsNotified(state, { position, value }): void {
-    const alert = state.alerts[position];
-    alert.wasNotified = value;
-    state.alerts[position] = alert;
-    settingsStorage.set('alerts', JSON.stringify(state.alerts));
   },
 });
 
