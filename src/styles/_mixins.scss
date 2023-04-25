@@ -309,7 +309,7 @@
   
     .el-textarea {
       &__inner {
-        resize: none !important;
+        resize: none;
       }
     }
   }
@@ -323,17 +323,16 @@
   }
 
   &__icon {
-    color: var(--s-color-base-content-tertiary) !important;
-    font-size: var(--s-size-small) !important;
+    color: var(--s-color-base-content-tertiary);
     margin-bottom: calc(var(--s-size-small) / 2);
-  }
 
-  &__icon.icon--error {
-    color: var(--s-color-theme-accent) !important;
+    &.icon--error {
+      color: var(--s-color-theme-accent);
+    }
   }
 
   &__btn {
-    margin-top: calc(var(--s-size-small) / 2) !important;
+    margin-top: calc(var(--s-size-small) / 2);
     height: 32px !important;
   }
 

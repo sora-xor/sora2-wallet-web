@@ -26,7 +26,7 @@
 
       <file-uploader ref="uploader" accept="application/json" class="upload-json" @upload="handleUploadJson">
         <div class="placeholder">
-          <s-icon class="upload-json__icon" name="el-icon-document" size="28" />
+          <s-icon class="upload-json__icon" name="el-icon-document" size="32px" />
           <span class="upload-json__placeholder">{{
             t('dragAndDropText', { extension: TranslationConsts.JSON })
           }}</span>

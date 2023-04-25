@@ -31,14 +31,14 @@ const actions = defineActions({
     const { commit, state } = transactionsActionContext(context);
     const { rootState } = rootActionContext(context);
 
-    if (!rootState.wallet.account.isExternal) {
-      commit.setConfirmTxDialogVisibility(true);
+    if (!rootState.wallet.account.isExternal) return;
 
-      await waitUntilConfirmTxDialogOpened();
+    commit.setConfirmTxDialogVisibility(true);
 
-      if (!state.isTxApprovedViaConfirmTxDialog) {
-        throw new Error('Cancelled');
-      }
+    await waitUntilConfirmTxDialogOpened();
+
+    if (!state.isTxApprovedViaConfirmTxDialog) {
+      throw new Error('Cancelled');
     }
   },
 

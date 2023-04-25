@@ -1,10 +1,12 @@
 import { addWallet, getWalletBySource } from '@subwallet/wallet-connect/dotsama/wallets';
+import { Singleton } from '../../../decorators';
 
 import { GDriveWalletInfo } from '../../../consts/wallets';
 import { GDriveStorage } from '../index';
 
 import Accounts from './accounts';
 
+@Singleton
 class GoogleDriveWallet {
   public readonly version = '0.0.1';
   public readonly name = GDriveWalletInfo.extensionName;

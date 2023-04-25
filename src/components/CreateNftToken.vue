@@ -30,16 +30,16 @@
       >
         <div v-if="imageLoading" v-loading="imageLoading" />
         <div v-else-if="fileExceedsLimit" class="placeholder">
-          <s-icon class="preview-image-create-nft__icon icon--error" name="basic-clear-X-24" size="64px" />
+          <s-icon class="preview-image-create-nft__icon icon--error" name="basic-clear-X-24" size="32px" />
           <span>{{ t('createToken.nft.image.placeholderFileLimit', { value: FILE_SIZE_LIMIT }) }}</span>
           <s-button class="preview-image-create-nft__btn">{{ t('createToken.nft.source.limit') }}</s-button>
         </div>
         <div v-else-if="!tokenContentLink && !file" class="placeholder">
-          <s-icon class="preview-image-create-nft__icon" name="camera-16" size="64px" />
+          <s-icon class="preview-image-create-nft__icon" name="camera-16" size="32px" />
           <span class="preview-image-create-nft__placeholder">{{ t('createToken.nft.image.placeholderNoImage') }}</span>
         </div>
         <div v-else-if="badSource && !file" class="placeholder">
-          <s-icon class="preview-image-create-nft__icon icon--error" name="basic-clear-X-24" size="64px" />
+          <s-icon class="preview-image-create-nft__icon icon--error" name="basic-clear-X-24" size="32px" />
           <span class="preview-image-create-nft__placeholder">{{
             t('createToken.nft.image.placeholderBadSource')
           }}</span>
@@ -464,7 +464,7 @@ export default class CreateNftToken extends Mixins(
   height: 54px;
 
   &__inner {
-    resize: none !important;
+    resize: none;
     scrollbar-width: none; /* Firefox - not customizable */
 
     &:hover::-webkit-scrollbar {

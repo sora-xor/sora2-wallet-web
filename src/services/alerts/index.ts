@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 import { FPNumber } from '@sora-substrate/util';
 
-import Singleton from '@/decorators';
+import { Singleton } from '@/decorators';
 import { Alert } from '@/types/common';
 import store from '@/store';
 import { getBase64Icon } from '../../util/image';
