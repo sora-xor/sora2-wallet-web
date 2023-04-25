@@ -18,11 +18,11 @@
         <p class="wallet-connection-text">{{ connectionText }}</p>
 
         <template v-if="isExtensionsView">
-          <div class="wallet-connection-list">
+          <div v-if="wallets.internal.length" class="wallet-connection-list">
             <p class="wallet-connection-title">{{ t('connection.list.simplest') }}</p>
             <extension-list :wallets="wallets.internal" @select="handleSelectWallet" />
           </div>
-          <div class="wallet-connection-list">
+          <div v-if="wallets.external.length" class="wallet-connection-list">
             <p class="wallet-connection-title">{{ t('connection.list.extensions') }}</p>
             <extension-list :wallets="wallets.external" @select="handleSelectWallet" />
           </div>

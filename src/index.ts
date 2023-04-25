@@ -45,7 +45,6 @@ import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList, addFearlessWalletLocally } from './util';
 import { ScriptLoader } from './util/scriptLoader';
-import { addGDriveWalletLocally } from './services/google/wallet';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
@@ -100,7 +99,6 @@ const waitForCore = async ({
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
     addFearlessWalletLocally();
-    addGDriveWalletLocally();
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);

@@ -30,6 +30,7 @@ function initialState(): SettingsState {
       sendAssets: true,
       swapAssets: true,
       showAssetDetails: true,
+      googleLogin: true,
     },
     filters: {
       option: option || WalletFilteringOptions.All,

@@ -111,6 +111,7 @@ export interface WalletPermissions {
   sendAssets?: boolean;
   showAssetDetails?: boolean;
   swapAssets?: boolean;
+  googleLogin?: boolean;
 }
 
 export type EthBridgeUpdateHistory = (updateWalletHistory: VoidFunction) => Promise<void>;
@@ -123,7 +124,6 @@ export interface WalletAssetFilters {
 
 export interface WalletInitOptions {
   withoutStore?: boolean;
-  whiteListOverApi?: boolean;
   permissions?: WalletPermissions;
   updateEthBridgeHistory?: EthBridgeUpdateHistory;
 }

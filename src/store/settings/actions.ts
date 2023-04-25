@@ -9,6 +9,8 @@ import { IpfsStorage } from '../../util/ipfsStorage';
 import { GDriveStorage } from '../../services/google';
 import { SoraNetwork } from '../../consts';
 
+import { addGDriveWalletLocally } from '../../services/google/wallet';
+
 import type { ApiKeysObject } from '../../types/common';
 
 function areKeysEqual(obj1: object, obj2: object): boolean {
@@ -28,6 +30,7 @@ const actions = defineActions({
     } = state;
 
     if (googleApi && googleClientId) {
+      addGDriveWalletLocally();
       GDriveStorage.setOptions(googleApi, googleClientId);
     }
   },

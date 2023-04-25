@@ -57,7 +57,7 @@ export default class App extends Mixins(TransactionMixin) {
     await this.setApiKeys(env.API_KEYS);
     this.setSubqueryEndpoint(env.SUBQUERY_ENDPOINT);
     this.setSoraNetwork(SoraNetwork.Dev);
-    await initWallet({ withoutStore: true, whiteListOverApi: true }); // We don't need storage for local development
+    await initWallet({ withoutStore: true }); // We don't need storage for local development
     const localeLanguage = navigator.language;
     FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2);
     FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2);
