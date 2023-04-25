@@ -111,7 +111,6 @@ export interface WalletPermissions {
   sendAssets?: boolean;
   showAssetDetails?: boolean;
   swapAssets?: boolean;
-  googleLogin?: boolean;
 }
 
 export type EthBridgeUpdateHistory = (updateWalletHistory: VoidFunction) => Promise<void>;
