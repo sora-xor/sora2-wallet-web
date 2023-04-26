@@ -1,8 +1,8 @@
 <template>
-  <connection-items :size="availableWallets.length">
+  <connection-items :size="wallets.length">
     <account-card
       v-button
-      v-for="wallet in availableWallets"
+      v-for="wallet in wallets"
       :key="wallet.extensionName"
       tabindex="0"
       @click.native="handleSelect(wallet)"
@@ -13,7 +13,7 @@
       <template #name>{{ wallet.title }}</template>
       <template #default>
         <a
-          v-if="!wallet.installed"
+          v-if="!wallet.installed && wallet.installUrl"
           :href="getWalletInstallUrl(wallet)"
           target="_blank"
           rel="nofollow noopener noreferrer"
@@ -21,9 +21,12 @@
         >
           <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
         </a>
-        <s-button v-if="source === wallet.extensionName" size="small" disabled>
+        <s-button v-else-if="source === wallet.extensionName" size="small" disabled>
           {{ t('connection.wallet.connected') }}
         </s-button>
+        <span class="connection-loading" v-else-if="selectedWallet === wallet.extensionName && selectedWalletLoading">
+          <s-icon name="el-icon-loading" size="16" class="connection-loading-icon" />
+        </span>
       </template>
     </account-card>
 
@@ -32,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component } from 'vue-property-decorator';
+import { Mixins, Component, Prop } from 'vue-property-decorator';
 import type { Wallet } from '@subwallet/wallet-connect/types';
 
 import AccountCard from '../Account/AccountCard.vue';
@@ -49,13 +52,28 @@ import { getWalletInstallUrl } from '../../util';
   },
 })
 export default class ExtensionList extends Mixins(TranslationMixin) {
-  @state.account.availableWallets availableWallets!: Array<Wallet>;
+  @Prop({ default: () => [], type: Array }) readonly wallets!: Wallet[];
+
   @state.account.source source!: string;
+  @state.account.selectedWallet selectedWallet!: string;
+  @state.account.selectedWalletLoading selectedWalletLoading!: boolean;
 
   readonly getWalletInstallUrl = getWalletInstallUrl;
 
   handleSelect(wallet: Wallet): void {
-    this.$emit('select', wallet);
+    if (wallet.extensionName !== this.selectedWallet || !this.selectedWalletLoading) {
+      this.$emit('select', wallet);
+    }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.connection-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--s-size-small);
+  height: var(--s-size-small);
+}
+</style>

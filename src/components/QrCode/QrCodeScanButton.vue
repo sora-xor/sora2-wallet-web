@@ -246,14 +246,11 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin, CameraPer
       }
     }
 
-    &__item {
-      border-radius: calc(var(--s-border-radius-mini) / 2);
+    &__item.el-dropdown-menu__item {
+      & > i {
+        color: var(--s-color-base-content-tertiary);
+      }
     }
-  }
-}
-.device-select-popper {
-  .el-select-dropdown__item {
-    border-radius: calc(var(--s-border-radius-mini) / 2);
   }
 }
 </style>

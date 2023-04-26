@@ -9,7 +9,7 @@
     <div class="wallet-wrapper s-flex">
       <sora-wallet />
     </div>
-    <confirm-dialog v-if="isDesktop" />
+    <confirm-dialog />
   </s-design-system-provider>
 </template>
 
@@ -42,9 +42,9 @@ export default class App extends Mixins(TransactionMixin) {
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
   @getter.libraryTheme libraryTheme!: Theme;
 
-  @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
   @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
   @mutation.settings.setSubqueryEndpoint private setSubqueryEndpoint!: (endpoint: string) => void;
+  @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncFnWithoutArgs;
   @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncFnWithoutArgs;
@@ -57,7 +57,7 @@ export default class App extends Mixins(TransactionMixin) {
     await this.setApiKeys(env.API_KEYS);
     this.setSubqueryEndpoint(env.SUBQUERY_ENDPOINT);
     this.setSoraNetwork(SoraNetwork.Dev);
-    await initWallet({ withoutStore: true, whiteListOverApi: true }); // We don't need storage for local development
+    await initWallet({ withoutStore: true }); // We don't need storage for local development
     const localeLanguage = navigator.language;
     FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2);
     FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2);

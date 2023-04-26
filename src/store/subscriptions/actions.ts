@@ -55,11 +55,12 @@ const actions = defineActions({
       'transactions/trackActiveTxs',
       'transactions/subscribeOnExternalHistory',
       'account/subscribeOnFiatPrice',
+      'account/subscribeOnAlerts',
       'subscriptions/subscribeToStorageUpdates',
     ];
 
     if (!onDesktop) {
-      subscriptions.push('account/subscribeOnExtensionAvailability');
+      subscriptions.push('account/subscribeOnWalletAvailability');
     }
 
     await runParallel(context, subscriptions);
@@ -69,7 +70,7 @@ const actions = defineActions({
       'transactions/resetActiveTxs',
       'transactions/resetExternalHistorySubscription',
       'account/resetFiatPriceSubscription',
-      'account/resetExtensionAvailabilitySubscription',
+      'account/resetWalletAvailabilitySubscription',
       'account/resetAccountPassphraseTimer',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);

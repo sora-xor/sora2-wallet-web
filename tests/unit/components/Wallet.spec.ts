@@ -6,7 +6,11 @@ import { WalletTabs } from '@/consts';
 
 import type { WalletPermissions } from '../../../src/consts';
 
-const createStore = (currentTab: WalletTabs, permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS) =>
+const createStore = (
+  currentTab: WalletTabs,
+  permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS,
+  isExternal = true
+) =>
   useVuex({
     settings: {
       state: () => ({
@@ -21,6 +25,7 @@ const createStore = (currentTab: WalletTabs, permissions: WalletPermissions = MO
     account: {
       state: () => ({
         permissions,
+        isExternal,
       }),
       getters: {
         account: () => MOCK_ACCOUNT,

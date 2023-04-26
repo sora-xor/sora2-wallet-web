@@ -1,6 +1,6 @@
 <template>
-  <div class="welcome-page">
-    <div v-if="loggedIn" class="welcome-page">
+  <div class="login welcome-page__block">
+    <div v-if="loggedIn" class="welcome-page__block">
       <token-logo class="pswap-desktop-logo" tokenSymbol="PSWAP" />
       <h3 class="welcome-page__header">{{ t('desktop.welcome.header') }}</h3>
       <h3 class="welcome-page__headline">{{ t('desktop.welcome.headline') }}</h3>
@@ -19,10 +19,10 @@
 import { Mixins, Component } from 'vue-property-decorator';
 
 import TokenLogo from '../../TokenLogo.vue';
-
-import { PolkadotJsAccount } from '../../../types/common';
 import TranslationMixin from '../../mixins/TranslationMixin';
 import { state } from '../../../store/decorators';
+
+import type { PolkadotJsAccount } from '../../../types/common';
 
 @Component({
   components: {
@@ -47,11 +47,15 @@ export default class WelcomePage extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss" scoped>
+@include login-view;
+
 .welcome-page {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  &__block {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
 
   &__headline {
     margin-bottom: calc(var(--s-size-small) / 2);
