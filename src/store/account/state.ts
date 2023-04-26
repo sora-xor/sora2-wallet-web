@@ -24,6 +24,7 @@ export function initialState(): AccountState {
     assetsToNotifyQueue: [],
     assetsSubscription: null,
     book: (book || {}) as Book,
+    alertSubject: null,
     /** account assets & subscription */
     accountAssets: [],
     accountAssetsSubscription: null,
