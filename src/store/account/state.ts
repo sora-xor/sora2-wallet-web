@@ -15,16 +15,6 @@ export function initialState(): AccountState {
   const addressBook = storage.get('book');
   const book = addressBook && JSON.parse(addressBook);
 
-  // const book = {
-  //   cnUaaC2q8z1SFkZcPNDQ38maLVFhuNeuZeFQnUCRLEM8FvMs4: 'Mr Makoto',
-  //   cnUPy2FsUiovqicx9Decf6dBrPAD9RcEDUxo9DWSbqkw1vtPR: 'Rustem',
-  //   cnVDcsDK6cvS6VBP36SbwM3GhQQWe9kxzZEgfqSRABRoCfn79: 'Tarmo',
-  //   cnW7Y7awFb6b83tnSVaWbyQizs8rGpfFJKDaEX7q3HZwSEC7T: 'Artem007',
-  //   cnUAqZtsK9u17ABeurDk46rpc5QvHVyrss2UsCFS46weH93zG: '#..234134',
-  //   cnUXnonneSuLxGvue6unKK3Tmg26KxUABmpgARjvseCKbvtcP: '+79231343123',
-  //   cnTcozghXT3ZqyGx2gMapzVb3695y3mQkLTcqVbucSyuBKPHH: 'artem',
-  // };
-
   return {
     address: storage.get('address') || '',
     name: storage.get('name') || '',

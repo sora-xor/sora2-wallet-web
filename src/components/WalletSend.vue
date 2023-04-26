@@ -9,15 +9,48 @@
   >
     <div class="wallet-send">
       <template v-if="step === 1">
-        <s-input class="wallet-send-address" :maxlength="128" :placeholder="t('walletSend.address')" v-model="address">
+        <s-input
+          v-if="!bookProvidedAddress"
+          class="wallet-send-address"
+          :maxlength="128"
+          :placeholder="t('walletSend.address')"
+          v-model="address"
+        >
           <s-icon
-            class="wallet-send-address-book"
+            class="wallet-send-address-book-icon-open"
             name="basic-user-24"
             size="18"
             @click.native="openAddressBook"
             slot="right"
           />
         </s-input>
+        <account-card v-else class="wallet-send-address-book-input" v-button>
+          <template #avatar>
+            <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
+          </template>
+          <template #name>
+            <span class="condition">{{ name }}</span>
+          </template>
+          <template #description>
+            <s-tooltip :content="copyTooltip(t('account.walletAddress'))" tabindex="-1">
+              <div @click="handleCopyAddress(address, $event)">
+                <p class="first">{{ formatBookAddress(address) }}</p>
+              </div>
+            </s-tooltip>
+          </template>
+          <s-icon
+            class="wallet-send-address-book-icon-unlink"
+            name="el-icon-link"
+            size="20"
+            @click.native="unlinkAddress"
+          />
+          <s-icon
+            class="wallet-send-address-book-icon-open"
+            name="basic-user-24"
+            size="18"
+            @click.native="openAddressBook"
+          />
+        </account-card>
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
           <s-tooltip :content="copyValueAssetId" placement="top">
@@ -123,7 +156,11 @@
         </s-button>
       </template>
       <wallet-fee v-if="showAdditionalInfo" :value="fee" />
-      <address-book-dialog :visible.sync="showAddressBookDialog" @open-add-contact="saveContact" />
+      <address-book-dialog
+        :visible.sync="showAddressBookDialog"
+        @open-add-contact="saveContact"
+        @choose-address="chooseAddress"
+      />
       <set-contact-dialog
         :prefilledAddress="prefilledAddress"
         :isEditMode="isEditMode"
@@ -143,6 +180,8 @@ import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/as
 import type { Subscription } from 'rxjs';
 
 import WalletBase from './WalletBase.vue';
+import AccountCard from './Account/AccountCard.vue';
+import WalletAvatar from './WalletAvatar.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
@@ -165,6 +204,8 @@ import { Book, PolkadotJsAccount } from '@/types/common';
 @Component({
   components: {
     WalletBase,
+    WalletAvatar,
+    AccountCard,
     FormattedAmount,
     FormattedAmountWithFiatValue,
     NetworkFeeWarning,
@@ -201,6 +242,8 @@ export default class WalletSend extends Mixins(
   showAddressBookDialog = false;
   prefilledAddress = '';
   isEditMode = false;
+  bookProvidedAddress = false;
+  name = '';
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
@@ -369,6 +412,10 @@ export default class WalletSend extends Mixins(
     return formatAddress(asset.address, 10);
   }
 
+  formatBookAddress(address: string): string {
+    return formatAddress(address, 20);
+  }
+
   handleBack(): void {
     if (this.step !== 1) {
       this.showAdditionalInfo = true;
@@ -428,14 +475,26 @@ export default class WalletSend extends Mixins(
     }
   }
 
-  saveContact(address, isEditMode): void {
+  saveContact(address, isEditMode = false): void {
     this.isEditMode = isEditMode;
     this.prefilledAddress = address;
     this.showSetContactDialog = true;
   }
 
+  chooseAddress(address: string, name: string): void {
+    this.name = name;
+    this.address = address;
+    this.bookProvidedAddress = true;
+  }
+
   openAddressBook(): void {
     this.showAddressBookDialog = true;
+  }
+
+  unlinkAddress(): void {
+    this.name = '';
+    this.address = '';
+    this.bookProvidedAddress = false;
   }
 }
 </script>
@@ -593,15 +652,27 @@ $logo-size: var(--s-size-mini);
       line-height: var(--s-line-height-base);
       letter-spacing: var(--s-letter-spacing-small);
     }
-    &-book {
+    &-book-icon-open {
       background: var(--s-color-base-content-tertiary);
       color: var(--s-color-base-background);
       padding: 2px;
       border-radius: 4px;
-      margin-left: 8px;
+
       &:hover {
         cursor: pointer;
       }
+    }
+    &-book-icon-unlink {
+      color: var(--s-color-base-content-secondary);
+      margin-right: 10px;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
+    &-book-input.s-card.neumorphic.s-size-small {
+      margin-bottom: 8px;
+      padding-right: 15px;
     }
   }
   &-amount {

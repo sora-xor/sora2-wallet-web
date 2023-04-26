@@ -28,10 +28,10 @@
                 </s-tooltip>
               </template>
               <s-tooltip border-radius="mini" :content="'On-chain identity'" placement="top" tabindex="-1">
-                <div class="address-book__on-chain-name">{{ identity }}</div>
+                <div v-if="identity" class="address-book__on-chain-name">{{ identity }}</div>
               </s-tooltip>
               <el-popover popper-class="address-book-popover book-popover" trigger="click" :visible-arrow="false">
-                <div class="address-book__option">
+                <div class="address-book__option" @click="handleSelectAddress(address, name)">
                   <s-icon name="finance-send-24" size="16" />
                   <span>{{ 'Send tokens' }}</span>
                 </div>
@@ -50,7 +50,7 @@
             </account-card>
           </div>
         </div>
-        <div class="address-book__list">
+        <div class="address-book__list" ref="bookRef">
           <span v-if="foundRecords.length" class="address-book__sections">My book</span>
           <div v-for="({ address, name, identity }, index) in foundRecords" :key="index">
             <account-card class="address-book__contact" v-button>
@@ -68,10 +68,10 @@
                 </s-tooltip>
               </template>
               <s-tooltip border-radius="mini" :content="'On-chain identity'" placement="top" tabindex="-1">
-                <div class="address-book__on-chain-name">{{ identity }}</div>
+                <div v-if="identity" class="address-book__on-chain-name">{{ identity }}</div>
               </s-tooltip>
               <el-popover popper-class="address-book-popover book-popover" trigger="click" :visible-arrow="false">
-                <div class="address-book__option" @click="handleEditRecord('record', index)">
+                <div class="address-book__option" @click="handleSelectAddress(address, name)">
                   <s-icon name="finance-send-24" size="16" />
                   <span>{{ 'Send tokens' }}</span>
                 </div>
@@ -103,7 +103,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Ref } from 'vue-property-decorator';
 
 import AccountCard from '../Account/AccountCard.vue';
 import AccountList from '../Connection/AccountList.vue';
@@ -139,6 +139,8 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 
   @action.account.selectExtension selectExtension!: (extension: Extensions) => Promise<void>;
 
+  @Ref('bookRef') private readonly bookRef!: HTMLInputElement;
+
   setContact(address: Nullable<string>, isEditMode = false): void {
     this.$emit('open-add-contact', address, isEditMode);
   }
@@ -148,9 +150,11 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 
   search = '';
 
-  async getIdentity(address: string) {
-    return 'Mr. James Bond';
-    // return await api.getAccountOnChainIdentity(address);
+  async getIdentity(address: string): Promise<string> {
+    const entity = await api.getAccountOnChainIdentity(address);
+    if (!entity) return '';
+
+    return entity.legalName;
   }
 
   async getFormattedAddressBook(book) {
@@ -230,6 +234,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   handleEditRecord(address: string): void {
     const isEditMode = true;
     this.setContact(address, isEditMode);
+    this.closePopover();
   }
 
   handleDeleteRecord(address: string): void {
@@ -242,7 +247,15 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     this.addressBook = this.sortBookAlphabetically(formattedBook);
   }
 
-  handleSelectAccount(account): void {}
+  closePopover(): void {
+    this.bookRef.click();
+  }
+
+  handleSelectAddress(address: string, name: string): void {
+    this.$emit('choose-address', address, name);
+    this.closePopover();
+    this.closeDialog();
+  }
 
   async mounted(): Promise<void> {
     await this.updateAddressBook();
