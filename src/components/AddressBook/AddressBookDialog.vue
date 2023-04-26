@@ -15,10 +15,16 @@
           <div v-for="({ address, name, identity }, index) in foundRecordsExtension" :key="index">
             <account-card class="address-book__contact" v-button>
               <template #avatar>
-                <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
+                <wallet-avatar
+                  @click.native="handleSelectAddress(address, name)"
+                  slot="avatar"
+                  class="account-gravatar"
+                  :address="address"
+                  :size="28"
+                />
               </template>
               <template #name>
-                <span class="condition">{{ name }}</span>
+                <span @click="handleSelectAddress(address, name)" class="account-name">{{ name }}</span>
               </template>
               <template #description>
                 <s-tooltip :content="copyTooltip(t('account.walletAddress'))" tabindex="-1">
@@ -58,7 +64,7 @@
                 <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
               </template>
               <template #name>
-                <span class="condition">{{ name }}</span>
+                <span class="account-name">{{ name }}</span>
               </template>
               <template #description>
                 <s-tooltip :content="copyTooltip(t('account.walletAddress'))" tabindex="-1">
@@ -389,6 +395,13 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     margin-left: calc(calc(var(--s-basic-spacing) * 3) * -1);
     margin-right: calc(calc(var(--s-basic-spacing) * 3) * -1);
     height: 400px;
+  }
+}
+
+.address-book__contact {
+  .account-gravatar,
+  .account-name:hover {
+    cursor: pointer;
   }
 }
 .options-icon {

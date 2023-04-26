@@ -26,14 +26,14 @@
         </s-input>
         <account-card v-else class="wallet-send-address-book-input" v-button>
           <template #avatar>
-            <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
+            <wallet-avatar slot="avatar" :address="address" :size="28" />
           </template>
           <template #name>
-            <span class="condition">{{ name }}</span>
+            <span>{{ name }}</span>
           </template>
           <template #description>
             <s-tooltip :content="copyTooltip(t('account.walletAddress'))" tabindex="-1">
-              <div @click="handleCopyAddress(address, $event)">
+              <div class="wallet-send-address-book-copy" @click="handleCopyAddress(address, $event)">
                 <p class="first">{{ formatBookAddress(address) }}</p>
               </div>
             </s-tooltip>
@@ -413,7 +413,7 @@ export default class WalletSend extends Mixins(
   }
 
   formatBookAddress(address: string): string {
-    return formatAddress(address, 20);
+    return formatAddress(address, 24);
   }
 
   handleBack(): void {
@@ -656,6 +656,7 @@ $logo-size: var(--s-size-mini);
       background: var(--s-color-base-content-tertiary);
       color: var(--s-color-base-background);
       padding: 2px;
+      margin-left: 4px;
       border-radius: 4px;
 
       &:hover {
@@ -664,12 +665,15 @@ $logo-size: var(--s-size-mini);
     }
     &-book-icon-unlink {
       color: var(--s-color-base-content-secondary);
-      margin-right: 10px;
+      margin-right: 6px;
       &:hover {
         cursor: pointer;
       }
     }
-
+    &-book-copy:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
     &-book-input.s-card.neumorphic.s-size-small {
       margin-bottom: 8px;
       padding-right: 15px;
