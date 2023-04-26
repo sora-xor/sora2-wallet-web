@@ -2,39 +2,40 @@ import { defineActions } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
 import { saveAs } from 'file-saver';
-import { PoolTokens } from '@sora-substrate/util/build/poolXyk/consts';
+import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
 import type { ActionContext } from 'vuex';
 import type { Signer } from '@polkadot/api/types';
-import type { Asset, AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { accountActionContext } from './../account';
 import { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService } from '../../services/subquery';
 import { CeresApiService } from '../../services/ceres';
+import alertsApiService from '../../services/alerts';
 import {
   delay,
   getAppWallets,
   getWallet,
-  getExtensionSigner,
-  getPolkadotJsAccounts,
-  subscribeToPolkadotJsAccounts,
+  getWalletSigner,
+  getImportedAccounts,
+  getWalletAccounts,
+  subscribeToWalletAccounts,
   WHITE_LIST_URL,
   NFT_BLACK_LIST_URL,
   AppError,
 } from '../../util';
-import { Extensions, BLOCK_PRODUCE_TIME } from '../../consts';
+import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
+import { isInternalSource } from '../../consts/wallets';
 
-import type { PolkadotJsAccount } from '../../types/common';
+import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { FiatPriceObject } from '../../services/subquery/types';
-import alertsApiService from '@/services/alerts';
+import type { CreateAccountArgs, RestoreAccountArgs } from './types';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
 const PASSPHRASE_TIMEOUT = 15 * 60_000; // 15min
 
-// [TODO]: to js-lib
-const excludePoolXYKAssets = (assets: Asset[]) => assets.filter((asset) => asset.symbol !== PoolTokens.XYKPOOL);
 // [TODO]: change WsProvider timeout instead on this
 const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
   return Promise.race([
@@ -101,22 +102,17 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   }
 }
 
-function logoutApi(context: ActionContext<any, any>, forgetAccount?: boolean) {
-  const { state } = accountActionContext(context);
-
-  // Don't forget account on Desktop, if forgetAddress is not passed
-  if (!state.isDesktop || forgetAccount) {
-    api.forgetAccount();
-  }
-
-  api.logout();
+function exportAccountJson(accountJson: string): void {
+  const blob = new Blob([accountJson], { type: 'application/json' });
+  const filename = (JSON.parse(accountJson) || {}).address || '';
+  saveAs(blob, filename);
 }
 
 const actions = defineActions({
   async getSigner(context): Promise<Signer> {
     const { state } = accountActionContext(context);
     const defaultAddress = api.formatAddress(state.address, false);
-    const { signer } = await getExtensionSigner(defaultAddress, state.source as Extensions);
+    const { signer } = await getWalletSigner(defaultAddress, state.source as AppWallet);
 
     return signer;
   },
@@ -127,22 +123,27 @@ const actions = defineActions({
 
     await dispatch.subscribeOnAccountAssets();
     await rootDispatch.wallet.transactions.subscribeOnExternalHistory();
+    await dispatch.resetSelectedWallet();
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async logout(context, forgetAccount?: boolean): Promise<void> {
+  async logout(context, forgetAddress?: string): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    logoutApi(context, forgetAccount);
+    // Don't forget account on Desktop, if forgetAddress is not passed
+    if (!state.isDesktop || forgetAddress) {
+      api.forgetAccount(forgetAddress);
+    }
+
+    api.logout();
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
 
-    if (state.isDesktop && forgetAccount) {
-      // update account list in state
-      await dispatch.getPolkadotJsAccounts();
+    if (state.isDesktop && forgetAddress) {
+      await dispatch.getImportedAccounts();
     }
 
     await rootDispatch.wallet.router.checkCurrentRoute();
@@ -151,7 +152,7 @@ const actions = defineActions({
   async checkSigner(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
-    if (getters.isLoggedIn && !state.isDesktop) {
+    if (getters.isLoggedIn && state.isExternal) {
       try {
         const signer = await dispatch.getSigner();
 
@@ -163,22 +164,8 @@ const actions = defineActions({
     }
   },
 
-  async updatePolkadotJsAccounts(context, accounts: Array<PolkadotJsAccount>): Promise<void> {
-    const { commit, getters, dispatch, state } = accountActionContext(context);
-
-    commit.setPolkadotJsAccounts(accounts);
-
-    if (getters.isLoggedIn && !state.isDesktop) {
-      try {
-        await dispatch.getSigner();
-      } catch (error) {
-        await dispatch.logout();
-      }
-    }
-  },
-
   /**
-   * Update the list of installed extensions
+   * Update the list of installed extensions & internal wallets
    */
   async updateAvailableWallets(context): Promise<void> {
     const { commit } = accountActionContext(context);
@@ -193,160 +180,191 @@ const actions = defineActions({
     }
   },
 
-  async checkSelectedExtension(context): Promise<void> {
-    const { dispatch, getters, state } = accountActionContext(context);
+  async checkSelectedWallet(context): Promise<void> {
+    const { dispatch, state } = accountActionContext(context);
     try {
-      if (state.selectedExtension) {
-        await getWallet(state.selectedExtension);
+      if (state.selectedWallet) {
+        await getWallet(state.selectedWallet);
       }
-    } catch (error) {
-      console.error(error);
-
-      if (getters.isLoggedIn) {
-        await dispatch.logout();
-      }
+    } catch {
+      await dispatch.resetSelectedWallet();
+      await dispatch.logout();
     }
   },
 
-  async selectExtension(context, extension: Extensions) {
+  async selectWallet(context, extension: AppWallet): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
 
-    commit.resetPolkadotJsAccountsSubscription();
+    try {
+      commit.resetWalletAccountsSubscription();
+      commit.setSelectedWallet(extension);
+      commit.setSelectedWalletLoading(true);
 
-    await getWallet(extension);
+      await getWallet(extension);
 
-    commit.setSelectedExtension(extension);
+      commit.setSelectedWalletLoading(false);
 
-    await dispatch.subscribeToPolkadotJsAccounts();
+      await dispatch.subscribeToWalletAccounts();
+    } catch (error) {
+      dispatch.resetSelectedWallet();
+      throw error;
+    }
   },
 
-  async subscribeOnExtensionAvailability(context): Promise<void> {
+  resetSelectedWallet(context): void {
+    const { commit } = accountActionContext(context);
+
+    commit.resetWalletAccountsSubscription();
+    commit.setSelectedWallet();
+    commit.setSelectedWalletLoading(false);
+  },
+
+  async subscribeOnWalletAvailability(context): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
 
     const runChecks = async () =>
-      await Promise.all([dispatch.updateAvailableWallets(), dispatch.checkSelectedExtension()]);
+      await Promise.all([dispatch.updateAvailableWallets(), dispatch.checkSelectedWallet()]);
 
     await runChecks();
 
     const timer = setInterval(runChecks, CHECK_EXTENSION_INTERVAL);
 
-    commit.setExtensionAvailabilitySubscription(timer);
+    commit.setWalletAvailabilitySubscription(timer);
   },
 
-  async getPolkadotJsAccounts(context) {
-    const { dispatch } = accountActionContext(context);
-    const accounts = await getPolkadotJsAccounts();
-    await dispatch.updatePolkadotJsAccounts(accounts);
+  async getImportedAccounts(context) {
+    const { commit, dispatch } = accountActionContext(context);
+    const accounts = await getImportedAccounts();
+
+    commit.setWalletAccounts(accounts);
+
+    await dispatch.checkSigner();
   },
 
-  async subscribeToPolkadotJsAccounts(context): Promise<void> {
+  async subscribeToWalletAccounts(context): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
+    const wallet = state.selectedWallet;
 
-    if (!state.selectedExtension) return;
+    if (!wallet) return;
 
-    const subscription = await subscribeToPolkadotJsAccounts(state.selectedExtension, (accounts) => {
-      dispatch.updatePolkadotJsAccounts(accounts);
-    });
-
-    commit.setPolkadotJsAccountsSubscription(subscription);
-  },
-
-  async importPolkadotJs(context, accountData: PolkadotJsAccount): Promise<void> {
-    const { commit, dispatch, getters } = accountActionContext(context);
-    const { rootDispatch } = rootActionContext(context);
-
-    if (!getters.isConnectedAccount(accountData)) {
-      const defaultAddress = api.formatAddress(accountData.address, false);
-      const source = accountData.source as Extensions;
-
-      logoutApi(context);
-
-      const { account, signer } = await getExtensionSigner(defaultAddress, source);
-
-      const name = account.name || '';
-
-      api.loginAccount(account.address, name, source, true);
-      api.setSigner(signer);
-
-      commit.selectPolkadotJsAccount({ name, source });
-
-      await dispatch.afterLogin();
-    } else {
-      await rootDispatch.wallet.router.checkCurrentRoute();
-    }
-  },
-
-  async importPolkadotJsDesktop(context, accountData: PolkadotJsAccount): Promise<void> {
-    const { state, commit, dispatch, getters } = accountActionContext(context);
-    const { rootDispatch } = rootActionContext(context);
-
-    if (!getters.isConnectedAccount(accountData)) {
-      const defaultAddress = api.formatAddress(accountData.address, false);
-      const account = state.polkadotJsAccounts.find((acc) => acc.address === defaultAddress);
-
-      logoutApi(context);
-
-      if (!account) {
-        throw new Error('polkadotjs.noAccount');
+    const callback = (accounts: PolkadotJsAccount[]) => {
+      if (wallet === state.selectedWallet) {
+        commit.setWalletAccounts(accounts);
       }
 
-      api.loginAccount(account.address, account.name, '', false);
+      dispatch.checkSigner();
+    };
 
-      commit.selectPolkadotJsAccount({ name: account.name });
+    const accounts = await getWalletAccounts(wallet);
 
-      await dispatch.afterLogin();
-    } else {
-      await rootDispatch.wallet.router.checkCurrentRoute();
-    }
+    callback(accounts);
+
+    const subscription = await subscribeToWalletAccounts(wallet, callback);
+
+    commit.setWalletAccountsSubscription(subscription);
   },
 
-  /**
-   * Desktop
-   */
+  async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
+    const { commit, dispatch, state } = accountActionContext(context);
+
+    // Desktop has not source
+    const source = (accountData.source as AppWallet) || '';
+    const isExternal = !isInternalSource(source);
+    const defaultAddress = api.formatAddress(accountData.address, false);
+    const soraAddress = api.formatAddress(defaultAddress);
+
+    // Don't forget account:
+    // 1) on Desktop;
+    // 2) When the login and api addresses are the same;
+    if (!state.isDesktop && api.address !== soraAddress) {
+      api.forgetAccount();
+    }
+
+    api.logout();
+
+    if (isExternal) {
+      // we should update signer
+      const { signer } = await getWalletSigner(defaultAddress, source);
+      api.setSigner(signer);
+    } else if (state.isDesktop) {
+      // check that account is added to keyring
+      const accounts = await getImportedAccounts();
+
+      if (!accounts.find((acc) => acc.address === defaultAddress)) {
+        throw new Error('polkadotjs.noAccount');
+      }
+    }
+
+    await api.loginAccount(defaultAddress, accountData.name, source, isExternal);
+
+    commit.syncWithStorage();
+
+    await dispatch.afterLogin();
+  },
+
   async createAccount(
     context,
-    {
-      seed,
-      name,
-      password,
-      passwordConfirm,
-    }: { seed: string; name: string; password: string; passwordConfirm?: string }
-  ) {
-    const { dispatch } = accountActionContext(context);
+    { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
+  ): Promise<KeyringPair$Json> {
+    const { dispatch, state } = accountActionContext(context);
 
     if (passwordConfirm && password !== passwordConfirm) {
       throw new AppError({ key: 'desktop.errorMessages.passwords' });
     }
 
     const pair = api.createAccountPair(seed, name);
+    const json = pair.toJson(password);
 
-    api.addAccountPair(pair, password);
+    if (exportAccount) {
+      exportAccountJson(JSON.stringify(json));
+    }
 
-    // update account list in state
-    await dispatch.getPolkadotJsAccounts();
+    if (saveAccount) {
+      api.addAccountPair(pair, password);
+      // update account list in state
+      if (state.isDesktop) {
+        await dispatch.getImportedAccounts();
+      }
+    }
+
+    return json;
   },
 
-  /**
-   * Desktop
-   */
-  async renameAccount(context, name: string) {
-    const { commit, dispatch } = accountActionContext(context);
+  async restoreAccountFromJson(context, { json, password }: RestoreAccountArgs) {
+    const { dispatch, state } = accountActionContext(context);
+    // restore from json file
+    api.restoreAccountFromJson(json, password);
+    // update account list in state
+    if (state.isDesktop) {
+      await dispatch.getImportedAccounts();
+    }
+  },
+
+  async renameAccount(context, { address, name }: { address: string; name: string }) {
+    const { commit, dispatch, state } = accountActionContext(context);
     // change name in api & storage
-    api.changeAccountName(api.address, name);
+    api.changeAccountName(address, name);
     // update account data from storage
     commit.syncWithStorage();
     // update account list in state
-    await dispatch.getPolkadotJsAccounts();
+    if (state.isDesktop) {
+      await dispatch.getImportedAccounts();
+    }
+  },
+
+  exportAccountFromJson(_, { json, password }: { json: KeyringPair$Json; password: string }): void {
+    const pair = api.createAccountPairFromJson(json);
+    const accountJson = api.exportAccount(pair, password);
+    exportAccountJson(accountJson);
   },
 
   /**
    * Desktop
    */
-  async exportAccount(_, password: string) {
-    const accountJson = api.exportAccount(api.accountPair, password);
-    const blob = new Blob([accountJson], { type: 'application/json' });
-    const filename = (JSON.parse(accountJson) || {}).address || '';
-    saveAs(blob, filename);
+  exportAccount(_, { address, password }: { address: string; password: string }): void {
+    const pair = api.getAccountPair(address);
+    const accountJson = api.exportAccount(pair, password);
+    exportAccountJson(accountJson);
   },
 
   /**
@@ -377,8 +395,8 @@ const actions = defineActions({
     // check log in/out state changes after sync
     if (getters.isLoggedIn !== wasLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
-        const account = { address: state.address, name: state.name, source: state.source as Extensions };
-        await dispatch.importPolkadotJs(account);
+        const account = { address: state.address, name: state.name, source: state.source as AppWallet };
+        await dispatch.loginAccount(account);
       } else {
         await dispatch.logout();
       }
@@ -389,6 +407,7 @@ const actions = defineActions({
       await api.assets.updateAccountAssets();
     }
   },
+
   async getAssets(context): Promise<void> {
     const { getters, commit } = accountActionContext(context);
     try {
@@ -409,8 +428,8 @@ const actions = defineActions({
       const { state, getters, commit } = accountActionContext(context);
 
       const savedIds = new Set(state.assetsIds);
-      const ids = (await withTimeout(api.api.rpc.assets.listAssetIds())).map((codec) => codec.toString());
-      const newIds = ids.filter((id) => !savedIds.has(id)).filter((address) => !getters.blacklist.includes(address));
+      const ids = await withTimeout(api.assets.getAssetsIds(getters.blacklist));
+      const newIds = ids.filter((id) => !savedIds.has(id));
 
       if (newIds.length) {
         const newAssets = await Promise.all(newIds.map((id) => withTimeout(api.assets.getAssetInfo(id))));
@@ -543,9 +562,9 @@ const actions = defineActions({
     commit.resetFiatPriceSubscription();
   },
   /** It's used **only** for subscriptions module */
-  async resetExtensionAvailabilitySubscription(context): Promise<void> {
+  async resetWalletAvailabilitySubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
-    commit.resetExtensionAvailabilitySubscription();
+    commit.resetWalletAvailabilitySubscription();
   },
   /** It's used **only** for subscriptions module */
   async resetAccountPassphraseTimer(context): Promise<void> {

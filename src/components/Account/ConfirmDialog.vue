@@ -1,15 +1,15 @@
 <template>
-  <dialog-base :title="t('desktop.dialog.confirmTitle')" :visible.sync="isVisible">
-    <div class="confirm-dialog">
-      <wallet-account />
+  <dialog-base :title="t('desktop.dialog.confirmTitle')" :visible.sync="isVisible" class="confirm-dialog">
+    <s-form class="confirm-dialog__form" @submit.native.prevent="handleConfirm">
+      <wallet-account :polkadot-account="account" />
       <s-input
+        v-if="!passphrase"
         :type="passwordInputType"
         :placeholder="t('desktop.password.placeholder')"
-        :disabled="isInputDisabled"
+        :disabled="loading"
         v-model="password"
       >
         <s-icon
-          v-if="!passphrase"
           :name="passwordIcon"
           class="eye-icon"
           size="18"
@@ -24,14 +24,14 @@
       </div>
       <s-button
         type="primary"
+        native-type="submit"
         class="confirm-dialog__button"
         :disabled="isConfirmDisabled"
         :loading="loading"
-        @click="handleConfirm"
       >
         {{ confirmText }}
       </s-button>
-    </div>
+    </s-form>
   </dialog-base>
 </template>
 
@@ -44,6 +44,9 @@ import WalletAccount from './WalletAccount.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 
+import { ObjectInit } from '../../consts';
+import type { PolkadotJsAccount } from '../../types/common';
+
 @Component({
   components: {
     DialogBase,
@@ -51,6 +54,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
   },
 })
 export default class AccountConfirmDialog extends Mixins(DialogMixin, TranslationMixin) {
+  @Prop({ default: ObjectInit, type: Object }) readonly account!: PolkadotJsAccount;
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
   @Prop({ default: false, type: Boolean }) readonly savePassphrase!: boolean;
   @Prop({ default: '', type: String }) readonly passphrase!: string;
@@ -60,11 +64,11 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
   private setupFormState(visibility: boolean): void {
     if (!visibility) {
       this.model = '';
+      this.hiddenInput = true;
     }
   }
 
   model = '';
-
   savePassword = true;
   hiddenInput = true;
 
@@ -92,10 +96,6 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
     return this.loading || !this.password;
   }
 
-  get isInputDisabled(): boolean {
-    return this.loading || !!this.passphrase;
-  }
-
   togglePasswordVisibility(): void {
     this.hiddenInput = !this.hiddenInput;
   }
@@ -111,8 +111,10 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
 
 <style lang="scss" scoped>
 .confirm-dialog {
-  & > * {
-    margin-bottom: $basic-spacing-medium;
+  &__form {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: $basic-spacing-medium;
   }
 
   &__save-password {

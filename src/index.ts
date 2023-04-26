@@ -44,6 +44,7 @@ import internalStore, { modules } from './store'; // `internalStore` is required
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
 import { delay, getExplorerLinks, groupRewardsByAssetsList, addFearlessWalletLocally } from './util';
+import { ScriptLoader } from './util/scriptLoader';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
@@ -106,10 +107,11 @@ const waitForCore = async ({
       store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
 
+    await checkActiveAccount();
+
     store.dispatch.wallet.account.getWhitelist();
     store.dispatch.wallet.account.getNftBlacklist();
-
-    await checkActiveAccount();
+    store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop);
 
     walletCoreLoaded = true;
   }
@@ -127,7 +129,7 @@ const waitForConnection = async (): Promise<void> => {
 
 const checkActiveAccount = async (): Promise<void> => {
   if (store.state.wallet.account.isDesktop) {
-    await store.dispatch.wallet.account.getPolkadotJsAccounts();
+    await store.dispatch.wallet.account.getImportedAccounts();
   }
 
   await api.restoreActiveAccount();
@@ -139,11 +141,7 @@ const checkActiveAccount = async (): Promise<void> => {
 async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
   await Promise.all([waitForCore(options), waitForConnection()]);
 
-  await Promise.all([
-    api.initialize(false),
-    store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-    store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
-  ]);
+  await Promise.all([api.initialize(false), store.dispatch.wallet.subscriptions.activateNetwokSubscriptions()]);
 
   store.commit.wallet.settings.setWalletLoaded(true);
 }
@@ -210,6 +208,7 @@ export {
   WALLET_TYPES,
   components,
   mixins,
+  ScriptLoader,
   historyElementsFilter,
   SubqueryExplorerService,
   SUBQUERY_TYPES,

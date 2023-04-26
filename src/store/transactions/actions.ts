@@ -3,7 +3,7 @@ import { Operation } from '@sora-substrate/util';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 import { transactionsActionContext } from './../transactions';
-import { rootActionContext } from '../../store';
+import store, { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../../services/subquery';
 import { historyElementsFilter } from '../../services/subquery/queries/historyElements';
@@ -11,7 +11,37 @@ import type { ExternalHistoryParams } from '../../types/history';
 
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2_000;
 
+/** Only for Desktop management */
+async function waitUntilConfirmTxDialogOpened(): Promise<void> {
+  return new Promise((resolve) => {
+    const unsubscribe = store.original.watch(
+      (state) => state.wallet.transactions.isConfirmTxDialogVisible,
+      (value) => {
+        if (!value) {
+          unsubscribe();
+          resolve();
+        }
+      }
+    );
+  });
+}
+
 const actions = defineActions({
+  async beforeTransactionSign(context): Promise<void> {
+    const { commit, state } = transactionsActionContext(context);
+    const { rootState } = rootActionContext(context);
+
+    if (!rootState.wallet.account.isExternal) return;
+
+    commit.setConfirmTxDialogVisibility(true);
+
+    await waitUntilConfirmTxDialogOpened();
+
+    if (!state.isTxApprovedViaConfirmTxDialog) {
+      throw new Error('Cancelled');
+    }
+  },
+
   async subscribeOnExternalHistory(context): Promise<void> {
     const { commit } = transactionsActionContext(context);
     const { rootState, rootGetters, rootCommit } = rootActionContext(context);

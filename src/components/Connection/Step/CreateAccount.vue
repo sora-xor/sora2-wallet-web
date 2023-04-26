@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div class="login">
     <div class="login__title">{{ title }}</div>
-    <div class="login__step-count">Step {{ stepNumber }} / 3</div>
+    <div class="login__step-count">{{ t('stepText') }} {{ stepNumber }} / 3</div>
     <template v-if="step === LoginStep.SeedPhrase">
-      <div class="seed-grid">
+      <div class="seed-grid s-flex">
         <div v-for="column in 3" :key="column" class="seed-grid__column">
           <div v-for="(word, idx) in seedPhraseWords" :key="`${word}${idx}`">
             <div v-if="renderWord(column, idx)" class="seed-grid__word">
@@ -14,7 +14,7 @@
         </div>
       </div>
       <s-button @click="handleCopy" class="login__copy-seed">
-        <span>Copy phrase</span>
+        <span>{{ t('copyPhraseText') }}</span>
         <s-icon name="basic-copy-24" size="18"></s-icon>
       </s-button>
       <div class="login__text-advice">
@@ -67,79 +67,75 @@
       </s-button>
     </template>
     <template v-else-if="step === LoginStep.CreateCredentials">
-      <div class="login__inputs">
-        <s-form>
-          <s-input
-            :placeholder="t('desktop.accountName.placeholder')"
-            v-model="accountName"
-            :disabled="loading"
-          ></s-input>
-          <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
-          <s-input
-            :type="inputType"
-            :placeholder="t('desktop.password.placeholder')"
-            v-model="accountPassword"
-            :disabled="loading"
-          >
-            <s-icon
-              :name="iconPasswordStyle"
-              size="18"
-              class="eye-icon"
-              slot="suffix"
-              @click.native="toggleVisibility"
-            />
-          </s-input>
-          <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
-          <s-input
-            type="password"
-            :placeholder="t('desktop.confirmPassword.placeholder')"
-            v-model="accountPasswordConfirm"
-            :disabled="loading"
-          ></s-input>
-        </s-form>
-      </div>
-      <div class="wallet-settings-create-token_export">
-        <s-switch v-model="toExport" :disabled="loading" />
-        <span>{{ t('desktop.exportOptionText') }}</span>
-      </div>
-      <p class="wallet-settings-create-token_desc">{{ t('desktop.exportJsonText') }}</p>
-      <s-button
-        key="step3"
-        class="s-typography-button--large login-btn"
-        type="primary"
-        :disabled="isInputsNotFilled"
-        :loading="loading"
-        @click="handleAccountCreate"
-      >
-        {{ t('desktop.button.createAccount') }}
-      </s-button>
+      <s-form class="login__inputs" @submit.native.prevent="handleAccountCreate">
+        <s-input
+          :disabled="loading"
+          :placeholder="t('desktop.accountName.placeholder')"
+          v-model="accountName"
+        ></s-input>
+        <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+        <s-input
+          :disabled="loading"
+          :type="inputType"
+          :placeholder="t('desktop.password.placeholder')"
+          v-model="accountPassword"
+        >
+          <s-icon :name="iconPasswordStyle" size="18" class="eye-icon" slot="suffix" @click.native="toggleVisibility" />
+        </s-input>
+        <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
+        <s-input
+          type="password"
+          :disabled="loading"
+          :placeholder="t('desktop.confirmPassword.placeholder')"
+          v-model="accountPasswordConfirm"
+        ></s-input>
+
+        <div class="wallet-settings-create-token_export">
+          <s-switch v-model="toExport" :disabled="loading" />
+          <span>{{ t('desktop.exportOptionText') }}</span>
+        </div>
+
+        <p class="wallet-settings-create-token_desc">{{ t('desktop.exportJsonText') }}</p>
+
+        <s-button
+          key="step3"
+          class="s-typography-button--large login-btn"
+          type="primary"
+          native-type="submit"
+          :disabled="isInputsNotFilled"
+          :loading="loading"
+        >
+          {{ t('desktop.button.createAccount') }}
+        </s-button>
+      </s-form>
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 import isEqual from 'lodash/fp/isEqual';
 
-import LoadingMixin from '../../../components/mixins/LoadingMixin';
-import NotificationMixin from '../../../components/mixins/NotificationMixin';
+import NotificationMixin from '../../mixins/NotificationMixin';
+
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
-import { copyToClipboard, delay } from '../../../util';
-import { action } from '../../../store/decorators';
+import { copyToClipboard } from '../../../util';
+
+import type { CreateAccountArgs } from '../../../store/account/types';
 
 @Component
-export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixin) {
-  @action.account.createAccount private createAccount!: (data: {
-    seed: string;
-    name: string;
-    password: string;
-    passwordConfirm: string;
-  }) => Promise<void>;
-
-  @action.account.exportAccount private exportAccount!: (password: string) => Promise<void>;
-
+export default class CreateAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
+  @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
+  @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
+
+  @Watch('step')
+  private resetSeedPhraseToCompareIdx() {
+    if (this.step !== LoginStep.ConfirmSeedPhrase) {
+      this.seedPhraseToCompareIdx = [];
+    }
+  }
 
   readonly LoginStep = LoginStep;
   readonly PHRASE_LENGTH = 12;
@@ -191,10 +187,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
   }
 
   get btnTypeConfirmStep(): string {
-    if (this.seedPhraseToCompare.length === this.PHRASE_LENGTH) {
-      return 'primary';
-    }
-    return 'secondary';
+    return this.seedPhraseToCompare.length === this.PHRASE_LENGTH ? 'primary' : 'secondary';
   }
 
   get isInputsNotFilled(): boolean {
@@ -207,7 +200,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
   }
 
   get seedPhraseWords(): Array<string> {
-    return this.seedPhrase.split(' ').map((word) => word.toUpperCase());
+    return this.seedPhrase.split(' ');
   }
 
   get randomizedSeedPhraseMap(): Record<number, string> {
@@ -220,7 +213,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
     return this.seedPhraseToCompareIdx.map((idx) => this.randomizedSeedPhraseMap[idx]);
   }
 
-  isHiddenWord(wordIndex: number) {
+  isHiddenWord(wordIndex: number): boolean {
     return this.seedPhraseToCompareIdx.includes(wordIndex);
   }
 
@@ -229,7 +222,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
   }
 
   chooseWord(index: number): void {
-    if (!this.seedPhraseToCompareIdx.includes(index)) {
+    if (!this.isHiddenWord(index)) {
       this.seedPhraseToCompareIdx.push(index);
     }
   }
@@ -247,21 +240,21 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
   }
 
   nextStep(): void {
-    this.$emit('stepChange', LoginStep.ConfirmSeedPhrase);
+    this.$emit('update:step', LoginStep.ConfirmSeedPhrase);
   }
 
   handleMnemonicCheck(): void {
     if (this.seedPhraseToCompare.length < this.PHRASE_LENGTH) {
-      this.$emit('stepChange', LoginStep.CreateCredentials);
+      this.$emit('update:step', LoginStep.CreateCredentials);
       return;
     }
-    const isSeedPhraseMatched = isEqual(this.seedPhraseToCompare, this.seedPhrase);
+    const isSeedPhraseMatched = isEqual(this.seedPhraseToCompare.join(' '), this.seedPhrase);
     if (!isSeedPhraseMatched) {
       this.seedPhraseToCompareIdx = [];
       this.runErrorMessage();
       this.runReturnAnimation();
     } else {
-      this.$emit('stepChange', LoginStep.CreateCredentials);
+      this.$emit('update:step', LoginStep.CreateCredentials);
     }
   }
 
@@ -281,52 +274,21 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
     }, 2000);
   }
 
-  private async createNewAccount(): Promise<void> {
+  async handleAccountCreate(): Promise<void> {
     await this.createAccount({
       seed: this.seedPhrase,
       name: this.accountName,
       password: this.accountPassword,
       passwordConfirm: this.accountPasswordConfirm,
+      exportAccount: this.toExport,
     });
-
-    if (this.toExport) {
-      await this.exportAccount(this.accountPassword);
-    }
-
-    this.$emit('stepChange', LoginStep.AccountList);
-  }
-
-  async handleAccountCreate(): Promise<void> {
-    await this.withLoading(async () => {
-      // hack: to render loading state before sync code execution
-      await delay(500);
-      await this.withAppNotification(this.createNewAccount);
-    });
-  }
-
-  beforeUpdate() {
-    if (this.step !== LoginStep.ConfirmSeedPhrase) {
-      this.seedPhraseToCompareIdx = [];
-    }
   }
 }
 </script>
 
-<style lang="scss">
-.seed-grid {
-  &__word {
-    margin: 10px 20px;
+<style lang="scss" scoped>
+@include login-view;
 
-    &-number {
-      margin-right: 8px;
-      color: var(--s-color-base-content-secondary);
-    }
-  }
-
-  &__column {
-    display: inline-block;
-  }
-}
 .login {
   &__title {
     margin-top: -54px;
@@ -397,13 +359,8 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
     }
   }
 
-  &__inputs {
-    width: 100%;
-    margin-bottom: calc(var(--s-size-small) / 2);
-  }
-
   &__step-count {
-    margin: 6px 0 16px 0;
+    margin: 0px 0 16px 0;
   }
 
   &__create-account-desc {
@@ -411,7 +368,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
-    padding: var(--s-basic-spacing) #{$basic-spacing-small} #{$basic-spacing-medium};
+    padding: 0 #{$basic-spacing-small};
     width: 330px !important;
   }
 
@@ -429,16 +386,30 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
     background-color: var(--s-color-base-content-tertiary);
   }
 }
-</style>
 
-<style lang="scss" scoped>
+.seed-grid {
+  &__word {
+    margin: 10px 20px;
+    text-transform: uppercase;
+
+    &-number {
+      margin-right: 8px;
+      color: var(--s-color-base-content-secondary);
+    }
+  }
+
+  &__column {
+    display: inline-block;
+  }
+}
+
 .wallet-settings-create-token {
   &_desc {
     color: var(--s-color-base-content-primary);
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
-    padding: var(--s-basic-spacing) #{$basic-spacing-small} #{$basic-spacing-medium};
+    padding: 0 #{$basic-spacing-small};
   }
 
   &_export {
@@ -447,6 +418,7 @@ export default class CreateAccount extends Mixins(NotificationMixin, LoadingMixi
     padding: 0 #{$basic-spacing-small};
   }
 }
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 1s;

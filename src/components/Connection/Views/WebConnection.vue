@@ -18,7 +18,14 @@
         <p class="wallet-connection-text">{{ connectionText }}</p>
 
         <template v-if="isExtensionsView">
-          <extension-list @select="handleSelectWallet" />
+          <div v-if="wallets.internal.length" class="wallet-connection-list">
+            <p class="wallet-connection-title">{{ t('connection.list.simplest') }}</p>
+            <extension-list :wallets="wallets.internal" @select="handleSelectWallet" />
+          </div>
+          <div v-if="wallets.external.length" class="wallet-connection-list">
+            <p class="wallet-connection-title">{{ t('connection.list.extensions') }}</p>
+            <extension-list :wallets="wallets.external" @select="handleSelectWallet" />
+          </div>
 
           <s-button
             class="wallet-connection-action s-typography-button--large learn-more-btn"
@@ -56,12 +63,14 @@ import type { Wallet } from '@subwallet/wallet-connect/types';
 import WalletBase from '../../WalletBase.vue';
 import AccountList from '../AccountList.vue';
 import ExtensionList from '../ExtensionList.vue';
+
 import NotificationMixin from '../../mixins/NotificationMixin';
 import LoadingMixin from '../../mixins/LoadingMixin';
 
 import { state, action, getter, mutation } from '../../../store/decorators';
-import { RouteNames } from '../../../consts';
-import type { Extensions } from '../../../consts';
+import { RouteNames, AppWallet } from '../../../consts';
+import { isInternalWallet } from '../../../consts/wallets';
+
 import type { PolkadotJsAccount } from '../../../types/common';
 import type { Route } from '../../../store/router/types';
 
@@ -73,18 +82,17 @@ enum Step {
 @Component({
   components: { WalletBase, AccountList, ExtensionList },
 })
-export default class ExtensionConnection extends Mixins(NotificationMixin, LoadingMixin) {
+export default class WebConnection extends Mixins(NotificationMixin, LoadingMixin) {
   step = Step.First;
 
-  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<boolean>>;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @state.account.availableWallets availableWallets!: Array<Wallet>;
 
+  @getter.account.wallets wallets!: { internal: Wallet[]; external: Wallet[] };
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
   @getter.account.isLoggedIn isLoggedIn!: boolean;
 
-  @action.account.importPolkadotJs private importPolkadotJs!: (account: PolkadotJsAccount) => Promise<void>;
-  @action.account.selectExtension private selectExtension!: (extension: Extensions) => Promise<void>;
+  @action.account.loginAccount private loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
+  @action.account.selectWallet private selectWallet!: (wallet: AppWallet) => Promise<void>;
   @action.account.logout private logout!: AsyncFnWithoutArgs;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
@@ -103,9 +111,7 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
 
   get connectionText(): string {
     if (this.isExtensionsView) {
-      return this.t('connection.text', {
-        extensions: this.availableWallets.map(({ title }) => title).join(', '),
-      });
+      return this.t('connection.text');
     }
 
     if (this.noAccounts) {
@@ -119,20 +125,29 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
     window.history.go();
   }
 
-  async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
-    await this.withLoading(async () => {
-      await this.withAppAlert(async () => {
-        await this.importPolkadotJs(account);
+  async handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
+    if (isConnected) {
+      this.navigate({ name: RouteNames.Wallet });
+    } else {
+      await this.withLoading(async () => {
+        await this.withAppAlert(async () => {
+          await this.loginAccount(account);
+        });
       });
-    });
+    }
   }
 
   async handleSelectWallet(wallet: Wallet): Promise<void> {
     if (!wallet.installed) return;
 
     await this.withAppAlert(async () => {
-      await this.selectExtension(wallet.extensionName as Extensions);
-      this.navigateToAccountList();
+      await this.selectWallet(wallet.extensionName as AppWallet);
+
+      if (isInternalWallet(wallet)) {
+        this.navigate({ name: RouteNames.InternalConnection });
+      } else {
+        this.navigateToAccountList();
+      }
     });
   }
 
@@ -165,17 +180,24 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
 
 <style scoped lang="scss">
 .wallet-connection {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: $basic-spacing-big;
   min-height: 102px;
 
-  & > *:not(:first-child) {
-    margin-top: $basic-spacing-big;
-  }
-
   &-text {
+    color: var(--s-color-base-content-primary);
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
-    color: var(--s-color-base-content-primary);
+  }
+
+  &-title {
+    color: var(--s-color-base-content-secondary);
+    font-size: var(--s-font-size-extra-small);
+    font-weight: 600;
+    line-height: var(--s-line-height-small);
+    text-transform: uppercase;
   }
 
   &-action {
@@ -184,6 +206,12 @@ export default class ExtensionConnection extends Mixins(NotificationMixin, Loadi
     & + & {
       margin-left: 0;
     }
+  }
+
+  &-list {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: $basic-spacing-small;
   }
 }
 </style>

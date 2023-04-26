@@ -2,30 +2,46 @@ import type { Wallet } from '@subwallet/wallet-connect/types';
 import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Subscription, Subject } from 'rxjs';
 
-import type { Extensions } from '../../consts';
-import type { PolkadotJsAccount, AddressKeyMapping } from '../../types/common';
+import type { AppWallet } from '../../consts';
+import type { PolkadotJsAccount, AddressKeyMapping, KeyringPair$Json } from '../../types/common';
 import type { ReferrerRewards, FiatPriceObject } from '../../services/subquery/types';
+
+export type CreateAccountArgs = {
+  seed: string;
+  name: string;
+  password: string;
+  passwordConfirm?: string;
+  saveAccount?: boolean;
+  exportAccount?: boolean;
+};
+
+export type RestoreAccountArgs = {
+  json: KeyringPair$Json;
+  password: string;
+};
 
 export type AccountState = {
   address: string;
   name: string;
   source: string;
-  assets: Array<Asset>;
-  assetsIds: Array<string>;
+  isExternal: boolean;
+  assets: Readonly<Asset[]>;
+  assetsIds: Readonly<string[]>;
   assetsSubscription: Nullable<NodeJS.Timer | number>;
   accountAssets: Array<AccountAsset>;
   alertSubject: Nullable<Subject<FiatPriceObject>>;
   accountAssetsSubscription: Nullable<Subscription>;
   polkadotJsAccounts: Array<PolkadotJsAccount>;
   polkadotJsAccountsSubscription: Nullable<VoidFunction>;
-  whitelistArray: Array<WhitelistArrayItem>;
-  blacklistArray: Blacklist;
-  fiatPriceObject: FiatPriceObject;
+  whitelistArray: Readonly<WhitelistArrayItem[]>;
+  blacklistArray: Readonly<Blacklist>;
+  fiatPriceObject: Readonly<FiatPriceObject>;
   fiatPriceSubscription: Nullable<VoidFunction>;
   referralRewards: ReferrerRewards;
-  selectedExtension: Nullable<Extensions>;
+  selectedWallet: Nullable<AppWallet>;
+  selectedWalletLoading: boolean;
   availableWallets: Array<Wallet>;
-  extensionAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
+  walletAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
   addressKeyMapping: AddressKeyMapping;
   addressPassphraseMapping: AddressKeyMapping;
   assetsToNotifyQueue: Array<WhitelistArrayItem>;
