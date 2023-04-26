@@ -31,7 +31,7 @@ const actions = defineActions({
     const { commit, state } = transactionsActionContext(context);
     const { rootState } = rootActionContext(context);
 
-    if (!rootState.wallet.account.isExternal) return;
+    if (rootState.wallet.account.isExternal) return;
 
     commit.setConfirmTxDialogVisibility(true);
 
