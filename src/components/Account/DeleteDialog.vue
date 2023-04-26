@@ -1,6 +1,6 @@
 <template>
-  <dialog-base :visible.sync="isVisible">
-    <simple-notification class="account-delete-dialog" @close="closeDialog">
+  <dialog-base :visible.sync="isVisible" class="account-delete-dialog">
+    <simple-notification @submit.native.prevent="handleConfirm" @close="closeDialog">
       <template #title>{{ t('desktop.assetsAtRiskText') }}</template>
       <template #text>{{ t('desktop.deleteAccountText') }}</template>
       <template>
@@ -11,8 +11,9 @@
         </div>
         <s-button
           type="primary"
+          native-type="submit"
           class="account-delete-dialog__button simple-notification__button s-typography-button--big"
-          @click="handleConfirm"
+          :loading="loading"
         >
           {{ t('logoutText') }}
         </s-button>
@@ -22,7 +23,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Watch } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import DialogBase from '../DialogBase.vue';
 import SimpleNotification from '../SimpleNotification.vue';
@@ -37,6 +38,8 @@ import TranslationMixin from '../mixins/TranslationMixin';
   },
 })
 export default class AccountDeleteDialog extends Mixins(TranslationMixin, DialogMixin) {
+  @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
+
   @Watch('isVisible')
   private setupFormState(visibility: boolean): void {
     if (!visibility) {
@@ -66,6 +69,7 @@ export default class AccountDeleteDialog extends Mixins(TranslationMixin, Dialog
   &__button.el-button.neumorphic.s-primary {
     background-color: red;
     color: white;
+    width: 100%;
   }
 }
 </style>

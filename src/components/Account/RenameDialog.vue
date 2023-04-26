@@ -1,7 +1,7 @@
 <template>
-  <dialog-base :title="t('account.rename')" :visible.sync="isVisible">
-    <div class="account-rename-dialog">
-      <wallet-account />
+  <dialog-base :title="t('account.rename')" :visible.sync="isVisible" class="account-rename-dialog">
+    <s-form class="account-rename-dialog__form" @submit.native.prevent="handleConfirm">
+      <wallet-account :polkadot-account="account" />
       <s-input
         type="text"
         :placeholder="t('desktop.accountName.placeholder')"
@@ -11,14 +11,14 @@
       />
       <s-button
         type="primary"
+        native-type="submit"
         class="account-rename-dialog__button"
         :disabled="!valid"
         :loading="loading"
-        @click="handleConfirm"
       >
         {{ t('confirmText') }}
       </s-button>
-    </div>
+    </s-form>
   </dialog-base>
 </template>
 
@@ -30,6 +30,10 @@ import WalletAccount from './WalletAccount.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 
+import { ObjectInit } from '../../consts';
+
+import type { PolkadotJsAccount } from '../../types/common';
+
 @Component({
   components: {
     DialogBase,
@@ -37,6 +41,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
   },
 })
 export default class AccountRenameDialog extends Mixins(DialogMixin, TranslationMixin) {
+  @Prop({ default: ObjectInit, type: Object }) readonly account!: PolkadotJsAccount;
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
 
   @Watch('isVisible')
@@ -66,8 +71,10 @@ export default class AccountRenameDialog extends Mixins(DialogMixin, Translation
 
 <style lang="scss" scoped>
 .account-rename-dialog {
-  & > * {
-    margin-bottom: $basic-spacing-medium;
+  &__form {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: $basic-spacing-medium;
   }
 
   &__button {

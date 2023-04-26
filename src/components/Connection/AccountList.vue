@@ -1,16 +1,18 @@
 <template>
-  <connection-items :size="polkadotJsAccounts.length">
+  <connection-items v-if="accountList.length" :size="accountList.length">
     <wallet-account
       v-button
-      v-for="(account, index) in polkadotJsAccounts"
-      :key="index"
+      v-for="{ account, isConnected } in accountList"
+      :key="account.address"
       :polkadotAccount="account"
       tabindex="0"
-      @click.native="handleSelectAccount(account)"
+      @click.native="handleSelectAccount(account, isConnected)"
     >
-      <s-button v-if="isConnectedAccount(account)" size="small" disabled>
+      <s-button v-if="isConnected" size="small" disabled>
         {{ t('connection.wallet.connected') }}
       </s-button>
+
+      <slot name="menu" v-bind="account" />
     </wallet-account>
 
     <slot />
@@ -37,8 +39,15 @@ export default class AccountList extends Mixins(TranslationMixin) {
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @getter.account.isConnectedAccount isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
 
-  handleSelectAccount(account: PolkadotJsAccount): void {
-    this.$emit('select', account);
+  get accountList() {
+    return this.polkadotJsAccounts.map((account) => ({
+      account,
+      isConnected: this.isConnectedAccount(account),
+    }));
+  }
+
+  handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {
+    this.$emit('select', account, isConnected);
   }
 }
 </script>

@@ -6,10 +6,18 @@ import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 
-import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg';
 import { api, connection } from '../api';
-import { SoraNetwork, ExplorerType, LoginStep, Extensions } from '../consts';
-import type { ExplorerLink } from '../consts';
+import {
+  ExplorerLink,
+  SoraNetwork,
+  ExplorerType,
+  LoginStep,
+  AppWallet,
+  AccountImportInternalFlow,
+  AccountImportExternalFlow,
+  AccountCreateFlow,
+} from '../consts';
+import { FearlessWalletInfo, isInternalWallet } from '../consts/wallets';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 
@@ -47,7 +55,7 @@ export function waitForDocumentReady() {
 
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
-export const getPolkadotJsAccounts = async (): Promise<any> => {
+export const getImportedAccounts = async (): Promise<PolkadotJsAccount[]> => {
   const accounts = await api.getAccounts();
   const polkadotJsAccounts = accounts.map((account) => ({
     address: account.address,
@@ -59,54 +67,47 @@ export const getPolkadotJsAccounts = async (): Promise<any> => {
 const formatWalletAccount = (account: WalletAccount): PolkadotJsAccount => ({
   address: account.address,
   name: account.name || '',
-  source: account.source as Extensions,
+  source: account.source as AppWallet,
 });
 
 const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAccount[] => {
   return (accounts || []).map((account) => formatWalletAccount(account));
 };
 
-export const subscribeToPolkadotJsAccounts = async (
-  extension: Extensions,
+export const getWalletAccounts = async (wallet: AppWallet) => {
+  const appWallet = await getWallet(wallet);
+  const accounts = await appWallet.getAccounts();
+
+  return formatWalletAccounts(accounts);
+};
+
+export const subscribeToWalletAccounts = async (
+  wallet: AppWallet,
   callback: (accounts: PolkadotJsAccount[]) => void
 ): Promise<Nullable<Unsubcall>> => {
-  const wallet = await getWallet(extension);
+  const appWallet = await getWallet(wallet);
 
-  let resolveCall: VoidFunction;
-
-  const subscriptionResult = new Promise<void>((resolve) => {
-    resolveCall = resolve;
-  });
-
-  const unsubscribe = await wallet.subscribeAccounts((injectedAccounts) => {
+  const unsubscribe = await appWallet.subscribeAccounts((injectedAccounts) => {
     callback(formatWalletAccounts(injectedAccounts));
-    resolveCall();
   });
 
-  await subscriptionResult;
-
+  // [TODO]: Wait for Polkadot.js extension release, because unsubscribe not works now
   return unsubscribe;
 };
 
 export const addFearlessWalletLocally = () => {
-  addWallet({
-    extensionName: Extensions.FearlessWallet,
-    title: 'Fearless Wallet',
-    installUrl: 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc',
-    logo: {
-      src: FearlessWalletLogo as string,
-      alt: 'Fearless Wallet Extension',
-    },
-  });
+  if (!getWalletBySource(FearlessWalletInfo.extensionName)) {
+    addWallet(FearlessWalletInfo);
+  }
 };
 
 export const getAppWallets = (): Wallet[] => {
   try {
     const wallets = getWallets().sort((a, b) => {
-      if (a.extensionName === Extensions.FearlessWallet) {
+      if (a.extensionName === AppWallet.FearlessWallet) {
         return -1;
       }
-      if (b.extensionName === Extensions.FearlessWallet) {
+      if (b.extensionName === AppWallet.FearlessWallet) {
         return 1;
       }
       return 0;
@@ -127,7 +128,7 @@ const waitForWalletEnable = async (wallet: Wallet): Promise<void> => {
   }
 };
 
-export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wallet> => {
+export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Wallet> => {
   const wallet = getWalletBySource(extension);
 
   if (!wallet) {
@@ -138,8 +139,10 @@ export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wall
   await waitForDocumentReady();
   await waitForWalletEnable(wallet);
 
-  if (!wallet.signer) {
-    throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension: wallet.title } });
+  if (typeof wallet.signer !== 'object') {
+    const key = isInternalWallet(wallet) ? 'polkadotjs.connectionError' : 'polkadotjs.noSigner';
+
+    throw new AppError({ key, payload: { extension: wallet.title } });
   }
 
   return wallet;
@@ -150,8 +153,8 @@ export const getWallet = async (extension = Extensions.PolkadotJS): Promise<Wall
  * @param address
  * @returns
  */
-export const getExtensionSigner = async (address: string, extension: Extensions) => {
-  const wallet = await getWallet(extension);
+export const getWalletSigner = async (address: string, appWallet: AppWallet) => {
+  const wallet = await getWallet(appWallet);
   const accounts = await wallet.getAccounts();
 
   if (!accounts) {
@@ -179,14 +182,16 @@ export const getWalletInstallUrl = (wallet: Wallet): string => {
   // for Firefox
   if (navigator.userAgent.match(/firefox|fxios/i)) {
     switch (extensionName) {
-      case Extensions.FearlessWallet:
+      case AppWallet.FearlessWallet:
         return 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc';
-      case Extensions.SubwalletJS:
+      case AppWallet.SubwalletJS:
         return 'https://addons.mozilla.org/firefox/addon/subwallet/';
-      case Extensions.TalismanJS:
+      case AppWallet.TalismanJS:
         return 'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/';
-      default:
+      case AppWallet.PolkadotJS:
         return 'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/';
+      default:
+        return '';
     }
   }
 
@@ -322,32 +327,15 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
 };
 
 export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
-  let currentStepIndex: number;
+  for (const flow of [AccountCreateFlow, AccountImportInternalFlow, AccountImportExternalFlow]) {
+    const currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
 
-  if (currentStep === LoginStep.Welcome) return LoginStep.AccountList;
-
-  const createFlow = [
-    LoginStep.Welcome,
-    LoginStep.SeedPhrase,
-    LoginStep.ConfirmSeedPhrase,
-    LoginStep.CreateCredentials,
-  ] as Array<LoginStep>;
-
-  currentStepIndex = createFlow.findIndex((stepValue) => stepValue === currentStep);
-
-  if (currentStepIndex !== -1) {
-    return createFlow[currentStepIndex - 1];
+    if (currentStepIndex > 0) {
+      return flow[currentStepIndex - 1];
+    }
   }
 
-  const importFlow = [LoginStep.Welcome, LoginStep.Import, LoginStep.ImportCredentials] as Array<LoginStep>;
-
-  currentStepIndex = importFlow.findIndex((stepValue) => stepValue === currentStep);
-
-  if (currentStepIndex !== -1) {
-    return importFlow[currentStepIndex - 1];
-  }
-
-  return LoginStep.Welcome;
+  return LoginStep.AccountList;
 };
 
 export const parseJson = (file: File): Promise<KeyringPair$Json> => {
