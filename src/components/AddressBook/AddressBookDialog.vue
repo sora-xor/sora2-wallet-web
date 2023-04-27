@@ -124,7 +124,7 @@ import { formatAddress, formatSoraAddress } from '@/util';
 import { state, action, mutation } from '../../store/decorators';
 import { api } from '@sora-substrate/util';
 import { Book, PolkadotJsAccount } from '@/types/common';
-import { Extensions } from '@/consts';
+import { AppWallet } from '@/consts';
 @Component({
   components: {
     DialogBase,
@@ -143,7 +143,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 
   @mutation.account.removeAddressFromBook removeAddressFromBook!: (address) => void;
 
-  @action.account.selectExtension selectExtension!: (extension: Extensions) => Promise<void>;
+  @action.account.selectWallet selectExtension!: (extension: AppWallet) => Promise<void>;
 
   @Ref('bookRef') private readonly bookRef!: HTMLInputElement;
 
@@ -265,7 +265,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 
   async mounted(): Promise<void> {
     await this.updateAddressBook();
-    await this.selectExtension(this.selectedExtension as Extensions);
+    await this.selectExtension(this.selectedExtension as AppWallet);
     this.extensionAccounts = (await this.getFormattedExtensionList(this.polkadotJsAccounts)).filter(this.filterRecord);
 
     this.$root.$on('updateAddressBook', () => {

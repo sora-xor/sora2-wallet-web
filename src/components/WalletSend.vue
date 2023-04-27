@@ -24,33 +24,7 @@
             slot="right"
           />
         </s-input>
-        <account-card v-else class="wallet-send-address-book-input" v-button>
-          <template #avatar>
-            <wallet-avatar slot="avatar" :address="address" :size="28" />
-          </template>
-          <template #name>
-            <span>{{ name }}</span>
-          </template>
-          <template #description>
-            <s-tooltip :content="copyTooltip(t('account.walletAddress'))" tabindex="-1">
-              <div class="wallet-send-address-book-copy" @click="handleCopyAddress(address, $event)">
-                <p class="first">{{ formatBookAddress(address) }}</p>
-              </div>
-            </s-tooltip>
-          </template>
-          <s-icon
-            class="wallet-send-address-book-icon-unlink"
-            name="el-icon-link"
-            size="20"
-            @click.native="unlinkAddress"
-          />
-          <s-icon
-            class="wallet-send-address-book-icon-open"
-            name="basic-user-24"
-            size="18"
-            @click.native="openAddressBook"
-          />
-        </account-card>
+        <address-record v-else :record="record" @unlink-address="unlinkAddress" @open-address-book="openAddressBook" />
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
           <s-tooltip :content="copyValueAssetId" placement="top">
@@ -182,12 +156,12 @@ import type { Subscription } from 'rxjs';
 
 import WalletBase from './WalletBase.vue';
 import AccountCard from './Account/AccountCard.vue';
-import WalletAvatar from './WalletAvatar.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
 import TokenLogo from './TokenLogo.vue';
+import AddressRecord from './AddressBook/Address.vue';
 import SetContactDialog from './AddressBook/SetContactDialog.vue';
 import AddressBookDialog from './AddressBook/AddressBookDialog.vue';
 
@@ -204,8 +178,8 @@ import { Book, PolkadotJsAccount } from '@/types/common';
 
 @Component({
   components: {
+    AddressRecord,
     WalletBase,
-    WalletAvatar,
     AccountCard,
     FormattedAmount,
     FormattedAmountWithFiatValue,
@@ -244,7 +218,7 @@ export default class WalletSend extends Mixins(
   prefilledAddress = '';
   isEditMode = false;
   bookProvidedAddress = false;
-  name = '';
+  record: Record<string, string> = { name: '', address: '' };
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
@@ -413,6 +387,7 @@ export default class WalletSend extends Mixins(
     return formatAddress(asset.address, 10);
   }
 
+  // remove
   formatBookAddress(address: string): string {
     return formatAddress(address, 24);
   }
@@ -481,8 +456,7 @@ export default class WalletSend extends Mixins(
   }
 
   chooseAddress(address: string, name: string): void {
-    this.name = name;
-    this.address = address;
+    this.record = { name, address };
     this.bookProvidedAddress = true;
   }
 
@@ -491,8 +465,8 @@ export default class WalletSend extends Mixins(
   }
 
   unlinkAddress(): void {
-    this.name = '';
-    this.address = '';
+    this.record.name = '';
+    this.record.address = '';
     this.bookProvidedAddress = false;
   }
 }
@@ -661,17 +635,6 @@ $logo-size: var(--s-size-mini);
       &:hover {
         cursor: pointer;
       }
-    }
-    &-book-icon-unlink {
-      color: var(--s-color-base-content-secondary);
-      margin-right: 6px;
-      &:hover {
-        cursor: pointer;
-      }
-    }
-    &-book-copy:hover {
-      text-decoration: underline;
-      cursor: pointer;
     }
     &-book-input.s-card.neumorphic.s-size-small {
       margin-bottom: 8px;
