@@ -155,7 +155,6 @@ import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/as
 import type { Subscription } from 'rxjs';
 
 import WalletBase from './WalletBase.vue';
-import AccountCard from './Account/AccountCard.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
@@ -174,13 +173,12 @@ import { formatAddress, formatSoraAddress } from '../util';
 import { api } from '../api';
 import { state, mutation, action } from '../store/decorators';
 import type { Route } from '../store/router/types';
-import { Book, PolkadotJsAccount } from '@/types/common';
+import type { Book, PolkadotJsAccount } from '@/types/common';
 
 @Component({
   components: {
     AddressRecord,
     WalletBase,
-    AccountCard,
     FormattedAmount,
     FormattedAmountWithFiatValue,
     NetworkFeeWarning,
@@ -385,11 +383,6 @@ export default class WalletSend extends Mixins(
 
   getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
-  }
-
-  // remove
-  formatBookAddress(address: string): string {
-    return formatAddress(address, 24);
   }
 
   handleBack(): void {
