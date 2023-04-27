@@ -24,7 +24,20 @@
             slot="right"
           />
         </s-input>
-        <address-record v-else :record="record" @unlink-address="unlinkAddress" @open-address-book="openAddressBook" />
+        <address-record v-else :record="record" class="wallet-send-address-book-record">
+          <s-icon
+            class="wallet-send-address-book-icon-unlink"
+            name="el-icon-link"
+            size="20"
+            @click.native="unlinkAddress"
+          />
+          <s-icon
+            class="wallet-send-address-book-icon-open is-set"
+            name="basic-user-24"
+            size="18"
+            @click.native="openAddressBook"
+          />
+        </address-record>
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
           <s-tooltip :content="copyValueAssetId" placement="top">
@@ -160,7 +173,7 @@ import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
 import WalletFee from './WalletFee.vue';
 import TokenLogo from './TokenLogo.vue';
-import AddressRecord from './AddressBook/Address.vue';
+import AddressRecord from './AddressBook/AddressRecord.vue';
 import SetContactDialog from './AddressBook/SetContactDialog.vue';
 import AddressBookDialog from './AddressBook/AddressBookDialog.vue';
 
@@ -486,6 +499,7 @@ export default class WalletSend extends Mixins(
 <style scoped lang="scss">
 $logo-size: var(--s-size-mini);
 // TODO: fix typography issues here
+
 .wallet-send {
   .asset {
     align-items: center;
@@ -629,9 +643,22 @@ $logo-size: var(--s-size-mini);
         cursor: pointer;
       }
     }
-    &-book-input.s-card.neumorphic.s-size-small {
+    &-book-icon-open.is-set {
+      margin-right: 3px;
+    }
+    &-book-icon-unlink {
+      color: var(--s-color-base-content-secondary);
+      margin-right: 6px;
+      &:hover {
+        cursor: pointer;
+      }
+    }
+    &-book-copy:hover {
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    &-book-record {
       margin-bottom: 8px;
-      padding-right: 15px;
     }
   }
   &-amount {

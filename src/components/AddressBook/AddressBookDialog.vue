@@ -13,87 +13,29 @@
         <div class="address-book__extension-list">
           <span v-if="foundRecordsExtension.length" class="address-book__sections">My extension accounts</span>
           <div v-for="({ address, name, identity }, index) in foundRecordsExtension" :key="index">
-            <account-card class="address-book__contact" v-button>
-              <template #avatar>
-                <wallet-avatar
-                  @click.native="handleSelectAddress(address, name)"
-                  slot="avatar"
-                  class="account-gravatar"
-                  :address="address"
-                  :size="28"
-                />
-              </template>
-              <template #name>
-                <span @click="handleSelectAddress(address, name)" class="account-name">{{ name }}</span>
-              </template>
-              <template #description>
-                <s-tooltip :content="copyTooltip(t('account.walletAddress'))" tabindex="-1">
-                  <div class="address-book__address" @click="handleCopyAddress(address, $event)">
-                    <p class="first">{{ getFormattedAddress(address) }}</p>
-                  </div>
-                </s-tooltip>
-              </template>
-              <s-tooltip border-radius="mini" :content="'On-chain identity'" placement="top" tabindex="-1">
-                <div v-if="identity" class="address-book__on-chain-name">{{ identity }}</div>
-              </s-tooltip>
-              <el-popover popper-class="address-book-popover book-popover" trigger="click" :visible-arrow="false">
-                <div class="address-book__option" @click="handleSelectAddress(address, name)">
-                  <s-icon name="finance-send-24" size="16" />
-                  <span>{{ 'Send tokens' }}</span>
-                </div>
-                <div class="address-book__option--not-active">
-                  <s-icon name="el-icon-edit" />
-                  <span>{{ 'Edit contact' }}</span>
-                </div>
-                <div class="address-book__option--not-active">
-                  <s-icon name="el-icon-delete" />
-                  <span>{{ 'Delete' }}</span>
-                </div>
-                <div slot="reference">
-                  <s-icon class="options-icon" name="basic-more-vertical-24" />
-                </div>
-              </el-popover>
-            </account-card>
+            <address-record :record="{ address, name, identity }" showIdentity @select-address="handleSelectAddress">
+              <options
+                :record="{ address, name }"
+                :withActiveOptions="false"
+                @edit="handleEditRecord"
+                @delete="handleDeleteRecord"
+                @select-address="handleSelectAddress"
+              />
+            </address-record>
           </div>
         </div>
         <div class="address-book__list" ref="bookRef">
           <span v-if="foundRecords.length" class="address-book__sections">My book</span>
           <div v-for="({ address, name, identity }, index) in foundRecords" :key="index">
-            <account-card class="address-book__contact" v-button>
-              <template #avatar>
-                <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
-              </template>
-              <template #name>
-                <span class="account-name">{{ name }}</span>
-              </template>
-              <template #description>
-                <s-tooltip :content="copyTooltip(t('account.walletAddress'))" tabindex="-1">
-                  <div class="address-book__address" @click="handleCopyAddress(address, $event)">
-                    <p class="first">{{ getFormattedAddress(address) }}</p>
-                  </div>
-                </s-tooltip>
-              </template>
-              <s-tooltip border-radius="mini" :content="'On-chain identity'" placement="top" tabindex="-1">
-                <div v-if="identity" class="address-book__on-chain-name">{{ identity }}</div>
-              </s-tooltip>
-              <el-popover popper-class="address-book-popover book-popover" trigger="click" :visible-arrow="false">
-                <div class="address-book__option" @click="handleSelectAddress(address, name)">
-                  <s-icon name="finance-send-24" size="16" />
-                  <span>{{ 'Send tokens' }}</span>
-                </div>
-                <div class="address-book__option" @click="handleEditRecord(address)">
-                  <s-icon name="el-icon-edit" />
-                  <span>{{ 'Edit contact' }}</span>
-                </div>
-                <div class="address-book__option" @click="handleDeleteRecord(address)">
-                  <s-icon name="el-icon-delete" />
-                  <span>{{ 'Delete' }}</span>
-                </div>
-                <div slot="reference">
-                  <s-icon class="options-icon" name="basic-more-vertical-24" />
-                </div>
-              </el-popover>
-            </account-card>
+            <address-record :record="{ address, name, identity }" showIdentity @select-address="handleSelectAddress">
+              <options
+                :record="{ address, name }"
+                :withActiveOptions="true"
+                @edit="handleEditRecord"
+                @delete="handleDeleteRecord"
+                @select-address="handleSelectAddress"
+              />
+            </address-record>
           </div>
         </div>
         <div v-if="showNoRecordsFound" class="address-book__no-found-records">No records found</div>
@@ -113,7 +55,9 @@ import { Component, Mixins, Ref } from 'vue-property-decorator';
 
 import AccountCard from '../Account/AccountCard.vue';
 import AccountList from '../Connection/AccountList.vue';
+import AddressRecord from './AddressRecord.vue';
 import WalletAvatar from '../WalletAvatar.vue';
+import Options from './Options.vue';
 import DialogBase from '../DialogBase.vue';
 import WalletAccount from '../Account/WalletAccount.vue';
 import SearchInput from '../SearchInput.vue';
@@ -130,6 +74,8 @@ import { AppWallet } from '@/consts';
     DialogBase,
     AccountCard,
     AccountList,
+    AddressRecord,
+    Options,
     WalletAvatar,
     SearchInput,
     WalletAccount,
@@ -221,6 +167,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     return this.addressBook.length || this.extensionAccounts.length;
   }
 
+  // check
   get showNoRecordsFound(): boolean {
     return !(this.foundRecords.length || this.foundRecordsExtension.length);
   }
@@ -287,7 +234,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 
 .address-book-scrollbar.el-scrollbar .el-scrollbar__view {
   padding-left: calc(var(--s-basic-spacing) * 3);
-  padding-right: calc(var(--s-basic-spacing));
+  padding-right: calc(var(--s-basic-spacing) * 2);
 }
 </style>
 
@@ -310,70 +257,8 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     color: var(--s-color-base-content-secondary);
   }
 
-  &__contact {
-    margin-bottom: 8px;
-    margin-right: 10px;
-  }
-
   &__search {
     margin-bottom: 16px;
-  }
-
-  &__on-chain-name {
-    border-radius: calc(var(--s-border-radius-mini) / 2);
-    padding: $inner-spacing-mini;
-    background-color: var(--s-color-utility-surface);
-    color: var(--s-color-base-content-secondary);
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
-  &__option {
-    font-weight: 300;
-    font-size: 16px;
-    line-height: 200%;
-    letter-spacing: -0.02em;
-
-    span {
-      margin-left: $inner-spacing-mini;
-      font-size: var(--s-font-size-medium);
-    }
-
-    &:hover {
-      cursor: pointer;
-    }
-
-    &:hover i {
-      cursor: pointer;
-      color: var(--s-color-base-content-primary);
-    }
-
-    i {
-      color: var(--s-color-base-content-secondary);
-    }
-
-    &--not-active {
-      color: var(--s-color-base-content-tertiary);
-
-      span {
-        margin-left: $inner-spacing-mini;
-        font-size: var(--s-font-size-medium);
-        font-weight: 300;
-        font-size: 16px;
-        line-height: 200%;
-        letter-spacing: -0.02em;
-      }
-    }
-
-    &--not-active:hover {
-      cursor: not-allowed;
-    }
-  }
-
-  &__address:hover {
-    text-decoration: underline;
-    cursor: pointer;
   }
 
   &__no-contacts {
@@ -395,19 +280,6 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     margin-left: calc(calc(var(--s-basic-spacing) * 3) * -1);
     margin-right: calc(calc(var(--s-basic-spacing) * 3) * -1);
     height: 400px;
-  }
-}
-
-.address-book__contact {
-  .account-gravatar,
-  .account-name:hover {
-    cursor: pointer;
-  }
-}
-.options-icon {
-  color: var(--s-color-base-content-tertiary);
-  &:hover {
-    cursor: pointer;
   }
 }
 </style>
