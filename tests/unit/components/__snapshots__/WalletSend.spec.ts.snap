@@ -18,6 +18,12 @@ exports[`WalletSend.vue [Confirm Step]: should be rendered correctly 1`] = `
     <wallet-fee-stub
       value="0"
     />
+     
+    <address-book-dialog-stub />
+     
+    <set-contact-dialog-stub
+      prefilledaddress=""
+    />
   </div>
 </wallet-base-stub>
 `;
@@ -51,7 +57,15 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
       type="text"
       usedesignsystem="true"
       value=""
-    />
+    >
+      <s-icon-stub
+        class="wallet-send-address-book-icon-open"
+        name="basic-user-24"
+        size="18"
+      />
+    </s-input-stub>
+     
+    <!---->
      
     <!---->
      
@@ -192,6 +206,12 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
     <wallet-fee-stub
       value="0"
     />
+     
+    <address-book-dialog-stub />
+     
+    <set-contact-dialog-stub
+      prefilledaddress=""
+    />
   </div>
 </wallet-base-stub>
 `;
@@ -225,7 +245,15 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
       type="text"
       usedesignsystem="true"
       value="12345"
-    />
+    >
+      <s-icon-stub
+        class="wallet-send-address-book-icon-open"
+        name="basic-user-24"
+        size="18"
+      />
+    </s-input-stub>
+     
+    <!---->
      
     <!---->
      
@@ -365,6 +393,12 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
      
     <wallet-fee-stub
       value="0"
+    />
+     
+    <address-book-dialog-stub />
+     
+    <set-contact-dialog-stub
+      prefilledaddress=""
     />
   </div>
 </wallet-base-stub>
@@ -600,7 +634,13 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
       type="text"
       usedesignsystem="true"
       value="dfsakljfdlkjfhfkjladshslfjafds"
-    />
+    >
+      <s-icon-stub
+        class="wallet-send-address-book-icon-open"
+        name="basic-user-24"
+        size="18"
+      />
+    </s-input-stub>
      
     <!---->
      
@@ -609,6 +649,8 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
     >
       You cannot send tokens to the same acount that you are currently connected to.
     </p>
+     
+    <!---->
      
     <s-float-input-stub
       class="wallet-send-input"
@@ -744,6 +786,12 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
      
     <wallet-fee-stub
       value="0"
+    />
+     
+    <address-book-dialog-stub />
+     
+    <set-contact-dialog-stub
+      prefilledaddress=""
     />
   </div>
 </wallet-base-stub>
