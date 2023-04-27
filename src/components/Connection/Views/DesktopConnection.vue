@@ -7,14 +7,21 @@
     @back="handleBack"
   >
     <div class="desktop-connection">
-      <welcome-page v-if="step === LoginStep.Welcome" @create="createAccount" @import="importAccount" />
-      <create-account v-else-if="isCreateFlow" :step="step" class="login" @stepChange="setStep" />
-      <import-account v-else-if="isImportFlow" :step="step" class="login" @stepChange="setStep" />
-      <connected-account-list
-        v-else-if="isAccountList"
-        @handleSelectAccount="handleSelectAccount"
-        @stepChange="setStep"
+      <account-list-step
+        v-if="isAccountList"
+        :text="t('connection.selectAccount')"
+        @select="handleSelectAccount"
+        @create="navigateToCreateAccount"
+        @import="navigateToImportAccount"
       />
+      <create-account-step v-else-if="isCreateFlow" :step.sync="step" :create-account="handleCreateAccount" />
+      <import-account-step
+        v-else-if="isImportFlow"
+        :step.sync="step"
+        :create-account="handleCreateAccount"
+        :restore-account="handleRestoreAccount"
+      />
+      <welcome-page v-else @create="navigateToCreateAccount" @import="navigateToImportAccount" />
     </div>
   </wallet-base>
 </template>
@@ -24,19 +31,22 @@ import { Mixins, Component } from 'vue-property-decorator';
 
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
+
 import WalletBase from '../../WalletBase.vue';
 import WelcomePage from '../Desktop/WelcomePage.vue';
-import CreateAccount from '../Desktop/CreateAccount.vue';
-import ConnectedAccountList from '../Desktop/ConnectedAccountList.vue';
-import ImportAccount from '../Desktop/ImportAccount.vue';
+import AccountListStep from '../Step/AccountList.vue';
+import CreateAccountStep from '../Step/CreateAccount.vue';
+import ImportAccountStep from '../Step/ImportAccount.vue';
 
-import { LoginStep } from '../../../consts';
-import { getPreviousLoginStep } from '../../../util';
+import { LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
+import { getPreviousLoginStep, delay } from '../../../util';
 import { state, action } from '../../../store/decorators';
-import type { PolkadotJsAccount } from '../../../types/common';
+
+import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
+import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 
 @Component({
-  components: { WalletBase, WelcomePage, CreateAccount, ImportAccount, ConnectedAccountList },
+  components: { WalletBase, WelcomePage, CreateAccountStep, ImportAccountStep, AccountListStep },
 })
 export default class DesktopConnection extends Mixins(NotificationMixin, LoadingMixin) {
   step: LoginStep = LoginStep.Welcome;
@@ -44,14 +54,17 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
   readonly LoginStep = LoginStep;
 
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @action.account.importPolkadotJsDesktop importPolkadotJsDesktop!: (account: PolkadotJsAccount) => Promise<void>;
+
+  @action.account.loginAccount private loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
+  @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
+  @action.account.restoreAccountFromJson private restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
   get isCreateFlow(): boolean {
-    return [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials].includes(this.step);
+    return AccountCreateFlow.includes(this.step);
   }
 
   get isImportFlow(): boolean {
-    return [LoginStep.Import, LoginStep.ImportCredentials].includes(this.step);
+    return AccountImportInternalFlow.includes(this.step);
   }
 
   get isAccountList(): boolean {
@@ -74,16 +87,12 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
     return false;
   }
 
-  createAccount(): void {
+  navigateToCreateAccount(): void {
     this.step = LoginStep.SeedPhrase;
   }
 
-  importAccount(): void {
+  navigateToImportAccount(): void {
     this.step = LoginStep.Import;
-  }
-
-  setStep(step: LoginStep): void {
-    this.step = step;
   }
 
   navigateToAccountList(): void {
@@ -91,17 +100,42 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
   }
 
   handleBack(): void {
-    const step = getPreviousLoginStep(this.step);
-    this.step = step;
+    this.step = getPreviousLoginStep(this.step);
   }
 
   async handleSelectAccount(account: PolkadotJsAccount): Promise<void> {
     await this.withLoading(async () => {
       try {
-        await this.importPolkadotJsDesktop(account);
+        await this.loginAccount(account);
       } catch (error) {
         this.showAppAlert(this.t('enterAccountError'));
       }
+    });
+  }
+
+  async handleCreateAccount(data: CreateAccountArgs) {
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
+
+      await this.withAppNotification(async () => {
+        await this.createAccount({ ...data, saveAccount: true });
+        this.navigateToAccountList();
+      });
+    });
+  }
+
+  async handleRestoreAccount(data: RestoreAccountArgs) {
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
+
+      await this.withAppNotification(async () => {
+        await this.restoreAccount(data);
+        this.navigateToAccountList();
+      });
     });
   }
 
@@ -114,33 +148,3 @@ export default class DesktopConnection extends Mixins(NotificationMixin, Loading
   }
 }
 </script>
-
-<style lang="scss">
-.login {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  &-btn {
-    margin: 8px 0 !important;
-    width: 100%;
-  }
-
-  &__title {
-    font-weight: 400;
-    font-size: var(--s-font-size-large);
-  }
-
-  &__step-count {
-    color: var(--s-color-base-content-secondary);
-    font-size: 14px;
-  }
-
-  .el-textarea {
-    &__inner {
-      resize: none !important;
-    }
-  }
-}
-</style>

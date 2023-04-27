@@ -1,5 +1,6 @@
-import type { Extensions } from '../consts';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+
+import type { AppWallet } from '../consts';
 export type { KeyringPair$Json } from '@polkadot/keyring/types';
 
 export enum Modules {
@@ -28,7 +29,7 @@ export type Book = {
 export interface PolkadotJsAccount {
   address: string;
   name: string;
-  source?: Extensions;
+  source?: AppWallet;
 }
 
 export interface Alert {
@@ -64,6 +65,7 @@ export type StorageKey =
   | 'address'
   | 'name'
   | 'source'
+  | 'isExternal'
   | 'filters'
   | 'shouldBalanceBeHidden'
   | 'storageReferral'

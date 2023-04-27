@@ -1,44 +1,42 @@
 <template>
   <div class="history s-flex">
-    <s-form class="history-form" :show-message="false">
-      <search-input
-        v-if="hasTransactions"
-        :placeholder="t('history.filterPlaceholder')"
-        v-model="query"
-        autofocus
-        @clear="resetSearch"
-        class="history--search"
-      />
-      <div class="history-items" v-loading="loading">
-        <template v-if="hasVisibleTransactions">
-          <div
-            class="history-item s-flex"
-            v-for="(item, index) in transactions"
-            v-button
-            :key="index"
-            tabindex="0"
-            @click="handleOpenTransactionDetails(item.id)"
-          >
-            <div class="history-item-info">
-              <div class="history-item-operation ch3" :data-type="item.type">{{ getTitle(item) }}</div>
-              <div class="history-item-title p4">{{ getOperationMessage(item, shouldBalanceBeHidden) }}</div>
-              <s-icon v-if="!isFinalizedStatus(item)" :class="getStatusClass(item)" :name="getStatusIcon(item)" />
-            </div>
-            <div class="history-item-date">{{ formatDate(item.startTime) }}</div>
+    <search-input
+      v-if="hasTransactions"
+      :placeholder="t('history.filterPlaceholder')"
+      v-model="query"
+      autofocus
+      @clear="resetSearch"
+      class="history--search"
+    />
+    <div class="history-items" v-loading="loading">
+      <template v-if="hasVisibleTransactions">
+        <div
+          class="history-item s-flex"
+          v-for="(item, index) in transactions"
+          v-button
+          :key="index"
+          tabindex="0"
+          @click="handleOpenTransactionDetails(item.id)"
+        >
+          <div class="history-item-info">
+            <div class="history-item-operation ch3" :data-type="item.type">{{ getTitle(item) }}</div>
+            <div class="history-item-title p4">{{ getOperationMessage(item, shouldBalanceBeHidden) }}</div>
+            <s-icon v-if="!isFinalizedStatus(item)" :class="getStatusClass(item)" :name="getStatusIcon(item)" />
           </div>
-        </template>
-        <div v-else class="history-empty p4">{{ t(`history.${hasTransactions ? 'emptySearch' : 'empty'}`) }}</div>
-      </div>
-      <history-pagination
-        v-if="hasVisibleTransactions && total > pageAmount"
-        :current-page="currentPage"
-        :page-amount="pageAmount"
-        :total="total"
-        :loading="loading"
-        :last-page="lastPage"
-        @pagination-click="handlePaginationClick"
-      />
-    </s-form>
+          <div class="history-item-date">{{ formatDate(item.startTime) }}</div>
+        </div>
+      </template>
+      <div v-else class="history-empty p4">{{ t(`history.${hasTransactions ? 'emptySearch' : 'empty'}`) }}</div>
+    </div>
+    <history-pagination
+      v-if="hasVisibleTransactions && total > pageAmount"
+      :current-page="currentPage"
+      :page-amount="pageAmount"
+      :total="total"
+      :loading="loading"
+      :last-page="lastPage"
+      @pagination-click="handlePaginationClick"
+    />
   </div>
 </template>
 
@@ -297,19 +295,6 @@ export default class WalletHistory extends Mixins(
   }
 }
 </script>
-
-<style lang="scss">
-.history {
-  .el-card__body {
-    padding: #{$basic-spacing-medium} #{$basic-spacing-medium} calc(var(--s-basic-spacing) * 2.5);
-  }
-  &--search {
-    .el-input__inner {
-      padding-right: var(--s-size-medium);
-    }
-  }
-}
-</style>
 
 <style scoped lang="scss">
 @import '../styles/icons';

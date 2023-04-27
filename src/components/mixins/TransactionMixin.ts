@@ -14,26 +14,6 @@ import type { AccountAssetsTable } from '../../types/common';
 
 @Component
 export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMixin) {
-  // Desktop management
-  @state.account.isDesktop isDesktop!: boolean;
-  @state.transactions.isTxApprovedViaConfirmTxDialog private isTxApprovedViaConfirmTxDialog!: boolean;
-  @mutation.transactions.setConfirmTxDialogVisibility private setConfirmTxDialogVisibility!: (flag: boolean) => void;
-
-  /** Only for Desktop management */
-  private async waitUntilConfirmTxDialogOpened(): Promise<void> {
-    return new Promise((resolve) => {
-      const unsubscribe = store.original.watch(
-        (state) => state.wallet.transactions.isConfirmTxDialogVisible,
-        (value) => {
-          if (!value) {
-            unsubscribe();
-            resolve();
-          }
-        }
-      );
-    });
-  }
-
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
   @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;
@@ -42,6 +22,8 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
   @mutation.transactions.removeActiveTxs removeActiveTxs!: (ids: string[]) => void;
 
   @action.account.addAsset private addAsset!: (address?: string) => Promise<void>;
+
+  @action.transactions.beforeTransactionSign private beforeTransactionSign!: AsyncFnWithoutArgs;
 
   private async getLastTransaction(time: number): Promise<HistoryItem> {
     const tx = findLast((item) => Number(item.startTime) > time, api.historyList);
@@ -90,29 +72,14 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
   }
 
   async withNotifications(func: AsyncFnWithoutArgs): Promise<void> {
-    if (this.isDesktop) {
-      this.setConfirmTxDialogVisibility(true);
-      await this.waitUntilConfirmTxDialogOpened();
-      if (!this.isTxApprovedViaConfirmTxDialog) {
-        // TODO: [Desktop] Add cancel text
-        this.showAppNotification(this.t(this.defaultErrorMessage), 'error');
-        return;
-      }
-    }
-
     await this.withLoading(async () => {
       await this.withAppNotification(async () => {
-        try {
-          const time = Date.now();
-          await func();
-          const tx = await this.getLastTransaction(time);
-          this.addActiveTransaction(tx.id as string);
-          this.showAppNotification(this.t('transactionSubmittedText'));
-        } finally {
-          if (this.isDesktop) {
-            api.lockPair();
-          }
-        }
+        await this.beforeTransactionSign();
+        const time = Date.now();
+        await func();
+        const tx = await this.getLastTransaction(time);
+        this.addActiveTransaction(tx.id as string);
+        this.showAppNotification(this.t('transactionSubmittedText'));
       });
     });
   }

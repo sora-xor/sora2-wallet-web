@@ -14,7 +14,7 @@
         </s-radio-group>
         <s-divider class="wallet-assets-filter__divider" />
         <div class="wallet-assets-filter__switch">
-          <s-switch v-model="onlyVerifiedAssets" :disabled="verifiedOnlySwitch" />
+          <s-switch v-model="onlyVerifiedAssets" :disabled="verifiedOnlySwitchDisabled" />
           <span>{{ t('filter.verifiedOnly') }}</span>
         </div>
         <div class="wallet-assets-filter__switch">
@@ -60,7 +60,6 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   @state.settings.filters filters!: WalletAssetFilters;
   @mutation.settings.setFilterOptions private setFilterOptions!: (filter: WalletAssetFilters) => void;
 
-  verifiedOnlySwitch = false;
   zeroBalanceSwitch = false;
 
   get computedClasses(): string {
@@ -93,6 +92,10 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
 
   set selectedFilter(value) {
     this.updateFilters(Filter.option, value);
+
+    if (this.filters.option === WalletFilteringOptions.NFT) {
+      this.onlyVerifiedAssets = false;
+    }
   }
 
   getLabel(index: number): string {
@@ -113,17 +116,9 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
     return [this.t('filter.all'), this.t('filter.token'), this.TranslationConsts.NFT];
   }
 
-  /** TODO: Refactor it */
-  updated(): void {
-    if (this.filters.option === WalletFilteringOptions.NFT) {
-      // disable verified only switch as there are no whitelisted NFTs.
-      this.verifiedOnlySwitch = true;
-      if (this.onlyVerifiedAssets === true) {
-        this.onlyVerifiedAssets = false;
-      }
-    } else {
-      this.verifiedOnlySwitch = false;
-    }
+  get verifiedOnlySwitchDisabled(): boolean {
+    // disable verified only switch as there are no whitelisted NFTs.
+    return this.filters.option === WalletFilteringOptions.NFT;
   }
 
   get chosenOptionText(): string {

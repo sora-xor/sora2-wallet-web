@@ -5,14 +5,23 @@ export const HiddenValue = '******';
 export const BLOCK_PRODUCE_TIME = 6_000;
 export const MAX_ALERTS_NUMBER = 5;
 
-export enum Extensions {
+export enum AppWallet {
+  GoogleDrive = 'google-drive',
   FearlessWallet = 'fearless-wallet',
   PolkadotJS = 'polkadot-js',
   SubwalletJS = 'subwallet-js',
   TalismanJS = 'talisman',
 }
 
+export enum AccountActionTypes {
+  Rename = 'rename',
+  Export = 'export',
+  Logout = 'logout',
+  Delete = 'delete',
+}
+
 export enum RouteNames {
+  InternalConnection = 'InternalConnection',
   WalletConnection = 'WalletConnection',
   WalletSend = 'WalletSend',
   Wallet = 'Wallet',
@@ -25,7 +34,7 @@ export enum RouteNames {
 
 export enum WalletTabs {
   Assets = 'WalletAssets',
-  Activity = 'WalletActivity',
+  History = 'WalletHistory',
 }
 
 export enum TokenTabs {
@@ -82,11 +91,17 @@ export enum LoginStep {
   Welcome = 'Welcome',
   Import = 'Import',
   ImportCredentials = 'Import/Credentials',
+  ImportExternalExtensionList = 'ImportExternal/ExtensionList',
+  ImportExternalAcccountList = 'ImportExternal/AccountList',
   SeedPhrase = 'Create/SeedPhrase',
   ConfirmSeedPhrase = 'Create/ConfirmSeedPhrase',
   CreateCredentials = 'Create/Credentials',
   AccountList = 'AccountList',
 }
+
+export const AccountImportInternalFlow = [LoginStep.Import, LoginStep.ImportCredentials];
+export const AccountImportExternalFlow = [LoginStep.ImportExternalExtensionList, LoginStep.ImportExternalAcccountList];
+export const AccountCreateFlow = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
 
 export interface WalletPermissions {
   addAssets?: boolean;
@@ -108,7 +123,6 @@ export interface WalletAssetFilters {
 
 export interface WalletInitOptions {
   withoutStore?: boolean;
-  whiteListOverApi?: boolean;
   permissions?: WalletPermissions;
   updateEthBridgeHistory?: EthBridgeUpdateHistory;
 }
@@ -189,4 +203,5 @@ export const TranslationConsts = {
     Stage: 'SORA Testnet',
     Prod: 'SORA Mainnet',
   },
+  JSON: '.json',
 } as const;

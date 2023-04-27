@@ -14,4 +14,4 @@ function Singleton<T extends new (...args: any[]) => any>(Ctr: T): T {
   } as T;
 }
 
-export default Singleton;
+export { Singleton };

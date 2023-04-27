@@ -1,11 +1,13 @@
 import { defineGetters } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
 import isEqual from 'lodash/fp/isEqual';
-import type { Whitelist } from '@sora-substrate/util/build/assets/types';
+import type { Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { Wallet } from '@subwallet/wallet-connect/types';
 
 import { accountGetterContext } from './../account';
 import { api } from '../../api';
-import type { Extensions } from '../../consts';
+import { AppWallet } from '../../consts';
+import { isInternalWallet } from '../../consts/wallets';
 import type { AccountState } from './types';
 import type { AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
 
@@ -27,17 +29,34 @@ const getters = defineGetters<AccountState>()({
     return {
       address: state.address,
       name: state.name,
-      source: state.source as Extensions,
+      source: state.source as AppWallet,
     };
+  },
+  wallets(...args): { internal: Wallet[]; external: Wallet[] } {
+    const { state } = accountGetterContext(args);
+
+    const wallets: { internal: Wallet[]; external: Wallet[] } = {
+      internal: [], // api integrations, app signing
+      external: [], // extensions
+    };
+
+    return state.availableWallets.reduce((buffer, wallet) => {
+      if (isInternalWallet(wallet)) {
+        buffer.internal.push(wallet);
+      } else {
+        buffer.external.push(wallet);
+      }
+      return buffer;
+    }, wallets);
   },
   selectedWalletTitle(...args): string {
     const { state } = accountGetterContext(args);
 
-    if (!state.selectedExtension) return '';
+    if (!state.selectedWallet) return '';
 
-    const wallet = state.availableWallets.find((wallet) => wallet.extensionName === state.selectedExtension);
+    const wallet = state.availableWallets.find((wallet) => wallet.extensionName === state.selectedWallet);
 
-    return wallet ? wallet.title : state.selectedExtension;
+    return wallet ? wallet.title : state.selectedWallet;
   },
   accountAssetsAddressTable(...args): AccountAssetsTable {
     const { state } = accountGetterContext(args);
@@ -45,12 +64,14 @@ const getters = defineGetters<AccountState>()({
   },
   whitelist(...args): Whitelist {
     const { state } = accountGetterContext(args);
-    return state.whitelistArray && state.whitelistArray.length ? api.assets.getWhitelist(state.whitelistArray) : {};
+    return state.whitelistArray && state.whitelistArray.length
+      ? api.assets.getWhitelist(state.whitelistArray as WhitelistArrayItem[])
+      : {};
   },
   whitelistIdsBySymbol(...args): any {
     const { state } = accountGetterContext(args);
     return state.whitelistArray && state.whitelistArray.length
-      ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray)
+      ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray as WhitelistArrayItem[])
       : {};
   },
   passphrase(...args): Nullable<string> {
@@ -76,7 +97,7 @@ const getters = defineGetters<AccountState>()({
       const formatted = { ...account, address: api.formatAddress(account.address) };
       const accountData: PolkadotJsAccount = { address, name };
 
-      if (source) accountData.source = source as Extensions;
+      if (source) accountData.source = source as AppWallet;
 
       return isEqual(formatted)(accountData);
     };

@@ -11,6 +11,8 @@ export const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {
   invitedUserRewards: {},
 };
 
+const isExternal = storage.get('isExternal');
+
 export function initialState(): AccountState {
   const addressBook = storage.get('book');
   const book = addressBook && JSON.parse(addressBook);
@@ -19,6 +21,7 @@ export function initialState(): AccountState {
     address: storage.get('address') || '',
     name: storage.get('name') || '',
     source: storage.get('source') || '',
+    isExternal: isExternal ? JSON.parse(isExternal) : false,
     assets: [],
     assetsIds: [],
     assetsToNotifyQueue: [],
@@ -31,15 +34,18 @@ export function initialState(): AccountState {
     /** polkadot js accounts & subscription */
     polkadotJsAccounts: [],
     polkadotJsAccountsSubscription: null,
+    /** whitelist & blacklist */
     whitelistArray: [],
     blacklistArray: [],
+    /** fiat prices & subscription */
     fiatPriceObject: {},
     fiatPriceSubscription: null,
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
-    selectedExtension: null,
+    selectedWallet: null,
+    selectedWalletLoading: false,
     availableWallets: [],
-    extensionAvailabilityTimer: null,
+    walletAvailabilityTimer: null,
     /** desktop key management */
     isDesktop: isElectron(), // NOTE: inverse flag here to debug desktop
     addressKeyMapping: {},

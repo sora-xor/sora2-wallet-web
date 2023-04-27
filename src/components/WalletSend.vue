@@ -150,6 +150,7 @@
           class="wallet-send-action s-typography-button--large"
           type="primary"
           :disabled="sendButtonDisabled"
+          :loading="loading"
           @click="handleConfirm"
         >
           {{ sendButtonDisabledText || t('walletSend.confirm') }}
@@ -456,12 +457,10 @@ export default class WalletSend extends Mixins(
 
   async handleConfirm(): Promise<void> {
     await this.withNotifications(async () => {
-      if (!this.hasEnoughXor) {
-        throw new Error('walletSend.badAmount');
-      }
+      if (!this.hasEnoughXor) throw new Error('walletSend.badAmount');
       await this.transfer({ to: this.address, amount: this.amount });
+      this.navigate({ name: RouteNames.Wallet });
     });
-    this.navigate({ name: RouteNames.Wallet });
   }
 
   confirmNextTxFailure(): void {

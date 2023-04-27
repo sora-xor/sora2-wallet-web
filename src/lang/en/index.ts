@@ -30,6 +30,8 @@ export default {
   addressText: 'Address',
   amountText: 'Amount',
   confirmText: 'Confirm',
+  copyPhraseText: 'Copy Phrase',
+  stepText: 'Step',
   errorText: 'Error',
   logoutText: 'Logout',
   doNotShowText: 'Don’t show me this again',
@@ -39,6 +41,7 @@ export default {
   enterAccountError: 'Unable to enter account',
   transactionSubmittedText: 'Transaction was submitted',
   assetDeposit: 'Asset balance has been deposited',
+  dragAndDropText: 'Drag & drop or choose {extension} file',
   ofText: '{first} of {second}',
   operations: {
     [Operation.Swap]: 'Swap',
@@ -111,14 +114,20 @@ export default {
     noAccounts: 'There seems to be no accounts in your {extension} extension. Please add an account and try again.',
     noAccount: '{extension} account error. Please check your account in the {extension} extension',
     noSigner: 'Access denied. Go to {extension} extension settings and open "Manage Website Access" to allow.',
+    connectionError:
+      'An error occured while connecting the wallet. You can try to connect the wallet via {extension} again',
   },
   connection: {
     title: '{Sora} Network account',
-    text: 'Connect or create your {Sora} Network account with {extensions} extensions. These extensions allow you to securely sign transactions and manage assets in {Sora} Network.',
+    text: 'Extensions & Google store your {Sora} Network account securely. They allow you to sign transactions & manage assets.',
+    internalTitle: 'Connect via {wallet}',
+    internalText: 'You can create or link an existing account via {wallet}. It stores accounts using encryption.',
     noAccounts: 'No account found in your {extension} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
-    selectWallet:
-      'Extensions & Google auth store your SORA Network account securely. They allow you to sign transactions & manage assets.',
+    list: {
+      simplest: 'Simplest option',
+      extensions: 'Extensions',
+    },
     action: {
       install: 'Install extension',
       learnMore: 'Learn more',
@@ -134,7 +143,7 @@ export default {
   wallet: {
     title: '{Sora} Network account',
     [WalletTabs.Assets]: 'Assets',
-    [WalletTabs.Activity]: 'Activity',
+    [WalletTabs.History]: 'Activity',
     createToken: '@:createTokenText',
   },
   walletSend: {
@@ -402,6 +411,12 @@ export default {
       mnemonicLength: 'Mnemonic should contain {number} words',
       jsonFields: 'JSON file does not have required fields',
     },
+    importSteps: {
+      selectWallet: 'Go to the wallet of your use',
+      selectAccount: 'Select the account you want to export',
+      exportAccount: 'Export the {JSON} file',
+    },
+    exportTutorialsText: 'Export tutorials',
   },
   historyErrorMessages: {
     generalError: 'Something went wrong',

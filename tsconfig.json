@@ -16,7 +16,7 @@
     "declaration": true,
     "outDir": "./lib",
     "baseUrl": ".",
-    "types": ["webpack-env", "element-ui", "jest", "cypress"],
+    "types": ["webpack-env", "element-ui", "jest", "cypress", "google.accounts", "gapi", "gapi.client.drive"],
     "paths": {
       "@/*": ["src/*"]
     },

@@ -69,6 +69,7 @@ $avatar-size: 32px;
   &-avatar {
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-shrink: 0;
     width: $avatar-size;
     height: $avatar-size;

@@ -60,7 +60,7 @@ const actions = defineActions({
     ];
 
     if (!onDesktop) {
-      subscriptions.push('account/subscribeOnExtensionAvailability');
+      subscriptions.push('account/subscribeOnWalletAvailability');
     }
 
     await runParallel(context, subscriptions);
@@ -70,7 +70,7 @@ const actions = defineActions({
       'transactions/resetActiveTxs',
       'transactions/resetExternalHistorySubscription',
       'account/resetFiatPriceSubscription',
-      'account/resetExtensionAvailabilitySubscription',
+      'account/resetWalletAvailabilitySubscription',
       'account/resetAccountPassphraseTimer',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);
