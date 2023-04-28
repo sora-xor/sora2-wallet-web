@@ -389,7 +389,7 @@ export default class WalletSend extends Mixins(
   }
 
   get newAddressDetected(): boolean {
-    if (!this.validAddress) return false;
+    if (!this.validAddress || !this.polkadotJsAccounts) return false;
     const found = this.polkadotJsAccounts.find((account) => formatSoraAddress(account.address) === this.address);
     return !this.book[this.address] && !found;
   }

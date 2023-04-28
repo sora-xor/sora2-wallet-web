@@ -433,7 +433,13 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
       type="text"
       usedesignsystem="true"
       value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
-    />
+    >
+      <s-icon-stub
+        class="wallet-send-address-book-icon-open"
+        name="basic-user-24"
+        size="18"
+      />
+    </s-input-stub>
      
     <p
       class="wallet-send-address-warning"
@@ -463,6 +469,8 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
           
       </p>
     </s-tooltip-stub>
+     
+    <!---->
      
     <!---->
      
@@ -600,6 +608,12 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
      
     <wallet-fee-stub
       value="0"
+    />
+     
+    <address-book-dialog-stub />
+     
+    <set-contact-dialog-stub
+      prefilledaddress=""
     />
   </div>
 </wallet-base-stub>
