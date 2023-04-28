@@ -457,7 +457,7 @@ export default class WalletSend extends Mixins(
 
   saveContact(address, isEditMode = false): void {
     this.isEditMode = isEditMode;
-    this.prefilledAddress = formatSoraAddress(address);
+    this.prefilledAddress = address ? formatSoraAddress(address) : '';
     this.showSetContactDialog = true;
   }
 
