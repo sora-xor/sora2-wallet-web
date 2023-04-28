@@ -232,7 +232,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 .address-book {
   &__btn {
     width: 100%;
-    margin-bottom: 16px;
+    margin-bottom: calc($basic-spacing * 2);
     .el-button {
       width: 100%;
     }
@@ -240,20 +240,20 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 
   &__sections {
     display: block;
-    font-size: 14px;
+    font-size: var(--s-font-size-small);
     text-transform: uppercase;
-    margin: 8px 0;
+    margin: $basic-spacing 0;
     font-weight: 500;
     color: var(--s-color-base-content-secondary);
   }
 
   &__search {
-    margin-bottom: 16px;
+    margin-bottom: calc($basic-spacing * 2);
   }
 
   &__no-contacts {
     color: var(--s-color-base-content-secondary);
-    font-size: 16px;
+    font-size: var(--s-font-size-medium);
     text-align: center;
     height: 150px;
     line-height: 120px;
@@ -262,8 +262,8 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   &__no-found-records {
     text-align: center;
     color: var(--s-color-base-content-secondary);
-    margin-top: 8px;
-    font-size: 15px;
+    margin-top: $basic-spacing;
+    font-size: var(--s-font-size-medium);
   }
 
   &-scrollbar {

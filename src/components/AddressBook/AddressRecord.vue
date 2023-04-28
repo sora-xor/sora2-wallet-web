@@ -67,7 +67,7 @@ export default class Address extends Mixins(TranslationMixin, CopyAddressMixin) 
 <style lang="scss">
 .address-book {
   &__contact {
-    margin-bottom: 8px;
+    margin-bottom: $basic-spacing;
   }
 
   &__on-chain-name {

@@ -51,8 +51,8 @@ export default class Options extends Mixins(TranslationMixin) {
 <style lang="scss" scoped>
 .address-book {
   &__option {
+    font-size: var(--s-font-size-medium);
     font-weight: 300;
-    font-size: 16px;
     line-height: 200%;
     letter-spacing: -0.02em;
 
@@ -80,8 +80,8 @@ export default class Options extends Mixins(TranslationMixin) {
       span {
         margin-left: $inner-spacing-mini;
         font-size: var(--s-font-size-medium);
+        font-size: var(--s-font-size-medium);
         font-weight: 300;
-        font-size: 16px;
         line-height: 200%;
         letter-spacing: -0.02em;
       }

@@ -166,7 +166,7 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   justify-content: space-between;
 
   &__input {
-    margin-bottom: 8px;
+    margin-bottom: $basic-spacing;
 
     .s-input__input .el-input.is-disabled .el-input__inner {
       cursor: default;
@@ -176,7 +176,7 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
 
   &__btn {
     width: 100%;
-    margin-bottom: 16px;
+    margin-bottom: calc($basic-spacing * 2);
     .el-button {
       width: 100%;
     }
@@ -185,9 +185,9 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   &-error {
     color: var(--s-color-status-error);
     margin-bottom: var(--s-basic-spacing);
-    font-weight: 400;
     font-size: var(--s-font-size-extra-small);
     line-height: var(--s-line-height-base);
+    font-weight: 400;
   }
 }
 </style>

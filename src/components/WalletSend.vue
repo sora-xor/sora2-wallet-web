@@ -660,7 +660,7 @@ $logo-size: var(--s-size-mini);
       cursor: pointer;
     }
     &-book-record {
-      margin-bottom: 8px;
+      margin-bottom: $basic-spacing;
     }
   }
   &-amount {
