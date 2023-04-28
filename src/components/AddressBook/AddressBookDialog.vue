@@ -11,8 +11,10 @@
       />
       <s-scrollbar class="address-book-scrollbar">
         <div class="address-book__extension-list">
-          <span v-if="foundRecordsExtension.length" class="address-book__sections">My extension accounts</span>
-          <div v-for="({ address, name, identity }, index) in foundRecordsExtension" :key="index">
+          <span v-if="foundRecords(extensionAccounts).length" class="address-book__sections">
+            My extension accounts
+          </span>
+          <div v-for="({ address, name, identity }, index) in foundRecords(extensionAccounts)" :key="index">
             <address-record :record="{ address, name, identity }" showIdentity @select-address="handleSelectAddress">
               <options
                 :record="{ address, name }"
@@ -25,8 +27,8 @@
           </div>
         </div>
         <div class="address-book__list" ref="bookRef">
-          <span v-if="foundRecords.length" class="address-book__sections">My book</span>
-          <div v-for="({ address, name, identity }, index) in foundRecords" :key="index">
+          <span v-if="foundRecords(addressBook).length" class="address-book__sections">My book</span>
+          <div v-for="({ address, name, identity }, index) in foundRecords(addressBook)" :key="index">
             <address-record :record="{ address, name, identity }" showIdentity @select-address="handleSelectAddress">
               <options
                 :record="{ address, name }"
@@ -133,21 +135,10 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     );
   }
 
-  get foundRecords() {
-    if (!this.searchValue) return this.addressBook;
+  foundRecords(records) {
+    if (!this.searchValue) return records;
 
-    return this.addressBook.filter(
-      ({ address = '', name = '', identity = '' }) =>
-        address.toLowerCase() === this.searchValue ||
-        name.toLowerCase().includes(this.searchValue) ||
-        identity.toLowerCase().includes(this.searchValue)
-    );
-  }
-
-  get foundRecordsExtension() {
-    if (!this.searchValue) return this.extensionAccounts;
-
-    return this.extensionAccounts.filter(
+    return records.filter(
       ({ address = '', name = '', identity = '' }) =>
         address.toLowerCase() === this.searchValue ||
         name.toLowerCase().includes(this.searchValue) ||
@@ -168,7 +159,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   }
 
   get showNoRecordsFound(): boolean {
-    return !(this.foundRecords.length || this.foundRecordsExtension.length);
+    return !(this.foundRecords(this.addressBook).length || this.foundRecords(this.extensionAccounts).length);
   }
 
   sortBookAlphabetically(book) {
