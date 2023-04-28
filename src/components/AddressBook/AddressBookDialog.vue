@@ -52,7 +52,6 @@
 
 <script lang="ts">
 import { Component, Mixins, Ref } from 'vue-property-decorator';
-
 import AccountCard from '../Account/AccountCard.vue';
 import AccountList from '../Connection/AccountList.vue';
 import AddressRecord from './AddressRecord.vue';
@@ -69,6 +68,7 @@ import { state, action, mutation } from '../../store/decorators';
 import { api } from '@sora-substrate/util';
 import { Book, PolkadotJsAccount } from '@/types/common';
 import { AppWallet } from '@/consts';
+
 @Component({
   components: {
     DialogBase,
@@ -167,7 +167,6 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     return this.addressBook.length || this.extensionAccounts.length;
   }
 
-  // check
   get showNoRecordsFound(): boolean {
     return !(this.foundRecords.length || this.foundRecordsExtension.length);
   }

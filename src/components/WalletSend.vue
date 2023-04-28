@@ -457,11 +457,12 @@ export default class WalletSend extends Mixins(
 
   saveContact(address, isEditMode = false): void {
     this.isEditMode = isEditMode;
-    this.prefilledAddress = address;
+    this.prefilledAddress = formatSoraAddress(address);
     this.showSetContactDialog = true;
   }
 
   chooseAddress(address: string, name: string): void {
+    this.address = address;
     this.record = { name, address };
     this.bookProvidedAddress = true;
   }
@@ -473,6 +474,7 @@ export default class WalletSend extends Mixins(
   unlinkAddress(): void {
     this.record.name = '';
     this.record.address = '';
+    this.address = '';
     this.bookProvidedAddress = false;
   }
 }

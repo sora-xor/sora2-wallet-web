@@ -24,7 +24,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 import TranslationMixin from '../mixins/TranslationMixin';
 
 @Component
-export default class SetContactDialog extends Mixins(TranslationMixin) {
+export default class Options extends Mixins(TranslationMixin) {
   @Prop({ default: { name: '', record: '' }, type: Object }) readonly record!: Record<string, string>;
   @Prop({ default: true, type: Boolean }) readonly withActiveOptions!: boolean;
 
