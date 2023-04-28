@@ -22,7 +22,13 @@
       </s-tooltip>
     </template>
     <s-tooltip border-radius="mini" :content="'On-chain identity'" placement="top" tabindex="-1">
-      <div v-if="record.identity" class="address-book__on-chain-name">{{ record.identity }}</div>
+      <div
+        v-if="record.identity"
+        @click="handleSelectAddress(record.address, record.name)"
+        class="address-book__on-chain-name"
+      >
+        {{ record.identity }}
+      </div>
     </s-tooltip>
     <slot />
   </account-card>
