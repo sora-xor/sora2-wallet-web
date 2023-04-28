@@ -71,6 +71,17 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
     this.addressInput.focus();
   }
 
+  @Watch('address')
+  async handleAddressInput(address: string): Promise<void> {
+    if (!api.validateAddress(address)) {
+      this.onChainIdentity = 'None';
+      return;
+    }
+
+    const entity = await api.getAccountOnChainIdentity(address);
+    this.onChainIdentity = entity ? entity.legalName : 'None';
+  }
+
   address = '';
   name = '';
   onChainIdentity = 'None';
