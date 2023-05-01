@@ -22,10 +22,11 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import TranslationMixin from '../mixins/TranslationMixin';
+import type { AccountBook } from '@/types/common';
 
 @Component
 export default class Options extends Mixins(TranslationMixin) {
-  @Prop({ default: { name: '', record: '' }, type: Object }) readonly record!: Record<string, string>;
+  @Prop({ default: { name: '', address: '' }, type: Object }) readonly record!: AccountBook;
   @Prop({ default: true, type: Boolean }) readonly withActiveOptions!: boolean;
 
   get computedClass(): string {

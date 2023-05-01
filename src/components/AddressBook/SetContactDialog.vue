@@ -36,7 +36,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
 import { formatSoraAddress } from '@/util';
 import { state, getter, mutation } from '@/store/decorators';
-import { Book, PolkadotJsAccount } from '@/types/common';
+import type { AccountBook, Book, PolkadotJsAccount } from '@/types/common';
 
 @Component({
   components: {
@@ -46,8 +46,8 @@ import { Book, PolkadotJsAccount } from '@/types/common';
 export default class SetContactDialog extends Mixins(DialogMixin, TranslationMixin, LoadingMixin) {
   @state.account.book book!: Book;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @getter.account.account account!: any;
-  @mutation.account.setAddressToBook setAddressToBook!: (record) => void;
+  @getter.account.account account!: PolkadotJsAccount;
+  @mutation.account.setAddressToBook setAddressToBook!: (record: AccountBook) => void;
 
   @Prop({ default: '', type: String }) readonly prefilledAddress!: string;
   @Prop({ default: false, type: Boolean }) readonly isEditMode!: boolean;

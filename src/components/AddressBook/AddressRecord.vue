@@ -41,6 +41,7 @@ import WalletAvatar from '../WalletAvatar.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import { formatAddress } from '@/util';
+import type { AccountBook } from '@/types/common';
 
 @Component({
   components: {
@@ -49,7 +50,7 @@ import { formatAddress } from '@/util';
   },
 })
 export default class Address extends Mixins(TranslationMixin, CopyAddressMixin) {
-  @Prop({ default: { name: '', address: '', identity: '' }, type: Object }) readonly record!: Record<string, string>;
+  @Prop({ default: { name: '', address: '', identity: '' }, type: Object }) readonly record!: AccountBook;
   @Prop({ default: false, type: Boolean }) readonly showIdentity!: boolean;
 
   unlinkAddress(): void {

@@ -23,7 +23,13 @@ export type AddressKeyMapping = {
 };
 
 export type Book = {
-  [address: string]: string;
+  address: string;
+};
+
+export type AccountBook = {
+  address: string;
+  name: string;
+  identity?: string;
 };
 
 export interface PolkadotJsAccount {

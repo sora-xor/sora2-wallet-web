@@ -68,8 +68,8 @@ import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import { formatAddress, formatSoraAddress } from '@/util';
 import { state, action, mutation } from '../../store/decorators';
 import { api } from '@sora-substrate/util';
-import { Book, PolkadotJsAccount } from '@/types/common';
-import { AppWallet } from '@/consts';
+import type { AppWallet } from '@/consts';
+import type { AccountBook, Book, PolkadotJsAccount } from '@/types/common';
 
 @Component({
   components: {
@@ -89,9 +89,9 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   @state.account.source selectedExtension!: string;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
-  @mutation.account.removeAddressFromBook removeAddressFromBook!: (address) => void;
+  @mutation.account.removeAddressFromBook removeAddressFromBook!: (address: string) => void;
 
-  @action.account.selectWallet selectExtension!: (extension: AppWallet) => Promise<void>;
+  @action.account.selectWallet selectWallet!: (extension: AppWallet) => Promise<void>;
 
   @Ref('bookRef') private readonly bookRef!: HTMLInputElement;
 
@@ -99,8 +99,8 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     this.$emit('open-add-contact', address, isEditMode);
   }
 
-  addressBook = [] as any;
-  extensionAccounts = [] as any;
+  addressBook: Array<AccountBook> = [];
+  extensionAccounts: Array<AccountBook> = [];
 
   search = '';
 
@@ -111,7 +111,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     return entity.legalName;
   }
 
-  async getFormattedAddressBook(book) {
+  async getFormattedAddressBook(book: Book): Promise<AccountBook[]> {
     return Promise.all(
       Object.entries(book).map(async ([address, name]) => {
         return {
@@ -123,7 +123,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     );
   }
 
-  async getFormattedExtensionList(accounts) {
+  async getFormattedExtensionList(accounts: Array<PolkadotJsAccount>): Promise<AccountBook[]> {
     return Promise.all(
       accounts.map(async ({ address, name }) => {
         return {
@@ -135,7 +135,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     );
   }
 
-  foundRecords(records) {
+  foundRecords(records: AccountBook[]) {
     if (!this.searchValue) return records;
 
     return records.filter(
@@ -150,23 +150,23 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     return this.search ? this.search.trim().toLowerCase() : '';
   }
 
-  getFormattedAddress(address): string {
+  getFormattedAddress(address: string): string {
     return formatAddress(address);
   }
 
   get userHasContacts(): boolean {
-    return this.addressBook.length || this.extensionAccounts.length;
+    return !!this.addressBook.length || !!this.extensionAccounts.length;
   }
 
   get showNoRecordsFound(): boolean {
     return !(this.foundRecords(this.addressBook).length || this.foundRecords(this.extensionAccounts).length);
   }
 
-  sortBookAlphabetically(book) {
+  sortBookAlphabetically(book: AccountBook[]) {
     return book.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
   }
 
-  filterRecord(account) {
+  filterRecord(account: AccountBook): boolean {
     return account.address !== this.address;
   }
 
@@ -202,7 +202,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 
   async mounted(): Promise<void> {
     await this.updateAddressBook();
-    await this.selectExtension(this.selectedExtension as AppWallet);
+    await this.selectWallet(this.selectedExtension as AppWallet);
     this.extensionAccounts = (await this.getFormattedExtensionList(this.polkadotJsAccounts)).filter(this.filterRecord);
 
     this.$root.$on('updateAddressBook', () => {

@@ -12,7 +12,7 @@ import { api } from '../../api';
 import type { AppWallet } from '../../consts';
 import type { AccountState } from './types';
 import type { FiatPriceObject, ReferrerRewards } from '../../services/subquery/types';
-import type { Book, PolkadotJsAccount } from '../../types/common';
+import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
 
 const mutations = defineMutations<AccountState>()({
   // Fiat price
@@ -204,9 +204,9 @@ const mutations = defineMutations<AccountState>()({
   setIsDesktop(state, value: boolean): void {
     state.isDesktop = value;
   },
-  setAddressToBook(state, { address, name }: Book): void {
+  setAddressToBook(state, { address, name }: AccountBook): void {
     const addressBook = { ...state.book, [address]: name };
-    state.book = addressBook;
+    state.book = addressBook as Book;
     storage.set('book', JSON.stringify(addressBook));
   },
   removeAddressFromBook(state, address: string): void {
