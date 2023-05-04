@@ -14,7 +14,6 @@ import { SubqueryExplorerService } from '../../services/subquery';
 import { CeresApiService } from '../../services/ceres';
 import alertsApiService from '../../services/alerts';
 import {
-  delay,
   getAppWallets,
   getWallet,
   getWalletSigner,
