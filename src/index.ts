@@ -43,7 +43,7 @@ import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
-import { delay, getExplorerLinks, groupRewardsByAssetsList, addFearlessWalletLocally } from './util';
+import { delay, getExplorerLinks, groupRewardsByAssetsList, addFearlessWalletLocally, getWallet } from './util';
 import { ScriptLoader } from './util/scriptLoader';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
@@ -204,6 +204,7 @@ export {
   settingsStorage,
   getExplorerLinks,
   groupRewardsByAssetsList,
+  getWallet,
   WALLET_CONSTS,
   WALLET_TYPES,
   components,
