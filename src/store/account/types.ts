@@ -23,7 +23,7 @@ export type RestoreAccountArgs = {
 export type AccountState = {
   address: string;
   name: string;
-  source: string;
+  source: AppWallet | '';
   isExternal: boolean;
   assets: Readonly<Asset[]>;
   assetsIds: Readonly<string[]>;
