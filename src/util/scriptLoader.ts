@@ -7,6 +7,7 @@ export class ScriptLoader {
       if (debug) console.info(`[${this.name}] Script loaded: ${src}`);
     } catch (error) {
       if (debug) console.error(error);
+      throw error;
     }
   }
 
