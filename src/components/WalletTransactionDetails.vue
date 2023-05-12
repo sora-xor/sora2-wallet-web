@@ -309,7 +309,7 @@ export default class WalletTransactionDetails extends Mixins(
   private getNetworkFee(isSoraTx = true): Nullable<string> {
     const fee = isSoraTx
       ? this.selectedTransaction.soraNetworkFee
-      : (this.selectedTransaction as BridgeHistory).ethereumNetworkFee;
+      : (this.selectedTransaction as BridgeHistory).externalNetworkFee;
 
     if (!fee) return null;
 
@@ -332,7 +332,7 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   private getTransactionHash(isSoraTx = true): Nullable<string> {
-    if (!isSoraTx) return (this.selectedTransaction as BridgeHistory).ethereumHash;
+    if (!isSoraTx) return (this.selectedTransaction as BridgeHistory).externalHash;
 
     return this.isEthBridgeOperation ? (this.selectedTransaction as BridgeHistory).hash : this.selectedTransaction.txId;
   }
@@ -341,7 +341,7 @@ export default class WalletTransactionDetails extends Mixins(
     if (!isSoraTx) {
       return {
         type: HashType.EthTransaction,
-        value: (this.selectedTransaction as BridgeHistory).ethereumHash,
+        value: (this.selectedTransaction as BridgeHistory).externalHash,
       };
     }
 
