@@ -217,7 +217,9 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     // asset
     const isNft = api.assets.isNft(asset);
     const isWhitelisted = api.assets.isWhitelist(asset, this.whitelist);
-    const hasZeroBalance = asset.balance.total === '0';
+    const hasZeroBalance = !asset.decimals
+      ? asset.balance.total === '0' // for non-divisible tokens
+      : asset.balance.total[8] === undefined; // for 0.00000009 and less
 
     if (tokenType === WalletFilteringOptions.Currencies && isNft) {
       return false;
