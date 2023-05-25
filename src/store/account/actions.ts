@@ -182,7 +182,7 @@ const actions = defineActions({
   async checkSelectedWallet(context): Promise<void> {
     const { dispatch, state } = accountActionContext(context);
     try {
-      if (state.selectedWallet) {
+      if (state.selectedWallet && !state.selectedWalletLoading) {
         await getWallet(state.selectedWallet);
       }
     } catch {
