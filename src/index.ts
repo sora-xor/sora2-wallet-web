@@ -92,13 +92,14 @@ let walletCoreLoaded = false;
 
 const waitForCore = async ({
   withoutStore = false,
+  appName,
   permissions,
   updateEthBridgeHistory,
 }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> => {
   if (!walletCoreLoaded) {
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
-    initAppWallets();
+    initAppWallets(appName);
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);

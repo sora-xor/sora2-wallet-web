@@ -96,7 +96,7 @@ export const subscribeToWalletAccounts = async (
   return unsubscribe;
 };
 
-export const initAppWallets = () => initialize(TranslationConsts.Polkaswap);
+export const initAppWallets = (appName?: string) => initialize(appName ?? TranslationConsts.Polkaswap);
 
 export const getAppWallets = (): Wallet[] => {
   try {

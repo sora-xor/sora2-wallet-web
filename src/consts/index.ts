@@ -125,6 +125,7 @@ export interface WalletInitOptions {
   withoutStore?: boolean;
   permissions?: WalletPermissions;
   updateEthBridgeHistory?: EthBridgeUpdateHistory;
+  appName?: string;
 }
 
 export interface NetworkFeeWarningOptions {
