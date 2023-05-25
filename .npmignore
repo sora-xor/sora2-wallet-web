@@ -12,3 +12,4 @@ Jenkinsfile
 jest.config.js
 cypress.json
 .jest
+coverage
