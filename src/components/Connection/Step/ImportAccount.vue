@@ -120,7 +120,7 @@ import { mnemonicValidate } from '@polkadot/util-crypto';
 
 import PolkadotLogo from '@sora-test/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg';
 import SubWalletLogo from '@sora-test/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg';
-import FearlessLogo from '../../../assets/img/FearlessWalletLogo.svg';
+import FearlessLogo from '@sora-test/wallet-connect/dotsama/predefinedWallet/FearlessWalletLogo.svg';
 
 import NotificationMixin from '../../mixins/NotificationMixin';
 import FileUploader from '../../FileUploader.vue';
