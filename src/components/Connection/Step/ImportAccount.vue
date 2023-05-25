@@ -118,8 +118,8 @@
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
 
-import PolkadotLogo from '@subwallet/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg';
-import SubWalletLogo from '@subwallet/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg';
+import PolkadotLogo from '@sora-test/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg';
+import SubWalletLogo from '@sora-test/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg';
 import FearlessLogo from '../../../assets/img/FearlessWalletLogo.svg';
 
 import NotificationMixin from '../../mixins/NotificationMixin';

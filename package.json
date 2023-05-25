@@ -24,7 +24,7 @@
     "@polkadot/vue-identicon": "2.12.1",
     "@sora-substrate/util": "1.17.8",
     "@soramitsu/soramitsu-js-ui": "^1.0.45",
-    "@subwallet/wallet-connect": "^0.2.3",
+    "@sora-test/wallet-connect": "^0.0.9",
     "@urql/core": "^3.0.5",
     "@zxing/browser": "^0.1.1",
     "@zxing/library": "^0.19.1",

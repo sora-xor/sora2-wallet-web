@@ -8,7 +8,6 @@ import LoadingMixin from './LoadingMixin';
 
 import { api } from '../../api';
 import { delay } from '../../util';
-import store from '../../store';
 import { getter, mutation, action, state } from '../../store/decorators';
 import type { AccountAssetsTable } from '../../types/common';
 

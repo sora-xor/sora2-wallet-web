@@ -183,6 +183,7 @@ export const ObjectInit = () => null;
  * It's used in TranslationMixin of SORA Wallet project and it's extended in Polkaswap TranslationMixin.
  */
 export const TranslationConsts = {
+  Polkaswap: 'Polkaswap',
   Ethereum: 'Ethereum',
   Etherscan: 'Etherscan',
   Hashi: 'HASHI',

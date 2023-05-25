@@ -1,6 +1,6 @@
 import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
-import type { Wallet } from '@subwallet/wallet-connect/types';
+import type { Wallet } from '@sora-test/wallet-connect/types';
 import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
 import type { Subscription, Subject } from 'rxjs';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
