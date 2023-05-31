@@ -98,7 +98,7 @@ const mutations = defineMutations<AccountState>()({
 
     state.address = storage.get('address');
     state.name = storage.get('name');
-    state.source = storage.get('source');
+    state.source = storage.get('source') as AppWallet;
     state.isExternal = isExternal ? JSON.parse(isExternal) : false;
   },
   setAssetsIds(state, ids: string[]) {

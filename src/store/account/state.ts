@@ -3,6 +3,7 @@ import { FPNumber } from '@sora-substrate/util';
 
 import { storage } from '../../util/storage';
 import type { ReferrerRewards } from '../../services/subquery/types';
+import type { AppWallet } from '../../consts';
 import type { AccountState } from './types';
 import type { Book } from '@/types/common';
 
@@ -20,7 +21,7 @@ export function initialState(): AccountState {
   return {
     address: storage.get('address') || '',
     name: storage.get('name') || '',
-    source: storage.get('source') || '',
+    source: (storage.get('source') as AppWallet) || '',
     isExternal: isExternal ? JSON.parse(isExternal) : false,
     assets: [],
     assetsIds: [],

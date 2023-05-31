@@ -91,6 +91,9 @@ export type SettingsStorageKey =
   | 'allowFeePopup'
   | 'allowTopUpAlerts'
   | 'disclaimerApprove'
-  | 'allowAccountDeletePopup';
+  | 'allowAccountDeletePopup'
+  | 'evmAddress'
+  | 'evmNetwork'
+  | 'bridgeType';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';
