@@ -1,7 +1,7 @@
 import isElectron from 'is-electron';
 import { FPNumber } from '@sora-substrate/util';
 
-import { storage } from '../../util/storage';
+import { storage, settingsStorage } from '../../util/storage';
 import type { ReferrerRewards } from '../../services/subquery/types';
 import type { AppWallet } from '../../consts';
 import type { AccountState } from './types';
@@ -15,7 +15,7 @@ export const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {
 const isExternal = storage.get('isExternal');
 
 export function initialState(): AccountState {
-  const addressBook = storage.get('book');
+  const addressBook = settingsStorage.get('book');
   const book = addressBook && JSON.parse(addressBook);
 
   return {

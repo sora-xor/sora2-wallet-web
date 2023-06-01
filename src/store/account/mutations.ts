@@ -6,7 +6,7 @@ import type { Subscription, Subject } from 'rxjs';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
-import { storage } from '../../util/storage';
+import { storage, settingsStorage } from '../../util/storage';
 import { api } from '../../api';
 
 import type { AppWallet } from '../../consts';
@@ -207,12 +207,12 @@ const mutations = defineMutations<AccountState>()({
   setAddressToBook(state, { address, name }: AccountBook): void {
     const addressBook = { ...state.book, [address]: name };
     state.book = addressBook as Book;
-    storage.set('book', JSON.stringify(addressBook));
+    settingsStorage.set('book', JSON.stringify(addressBook));
   },
   removeAddressFromBook(state, address: string): void {
     if (state.book) {
       delete state.book[address];
-      storage.set('book', JSON.stringify(state.book));
+      settingsStorage.set('book', JSON.stringify(state.book));
     }
   },
 });

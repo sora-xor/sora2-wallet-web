@@ -78,9 +78,7 @@ export type StorageKey =
   | 'slippageTolerance'
   | 'marketAlgorithm'
   | 'сhartsEnabled'
-  | 'transactionDeadline'
-  | 'evmAddress'
-  | 'book';
+  | 'transactionDeadline';
 
 export type RuntimeStorageKey = 'version' | 'networkFees';
 export type SettingsStorageKey =
@@ -94,6 +92,7 @@ export type SettingsStorageKey =
   | 'allowAccountDeletePopup'
   | 'evmAddress'
   | 'evmNetwork'
-  | 'bridgeType';
+  | 'bridgeType'
+  | 'book';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';
