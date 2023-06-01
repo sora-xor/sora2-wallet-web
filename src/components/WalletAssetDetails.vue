@@ -121,32 +121,33 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
 import { XOR, BalanceType } from '@sora-substrate/util/build/assets/consts';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
-import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/util';
-
-import OperationsMixin from './mixins/OperationsMixin';
-import FormattedAmountMixin from './mixins/FormattedAmountMixin';
-import CopyAddressMixin from './mixins/CopyAddressMixin';
-import QrCodeParserMixin from './mixins/QrCodeParserMixin';
-import WalletBase from './WalletBase.vue';
-import FormattedAmount from './FormattedAmount.vue';
-import NftDetails from './NftDetails.vue';
-import InfoLine from './InfoLine.vue';
-import TokenLogo from './TokenLogo.vue';
-import WalletHistory from './WalletHistory.vue';
-import WalletTransactionDetails from './WalletTransactionDetails.vue';
-import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
-import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { RouteNames } from '../consts';
-import { copyToClipboard, delay, shortenValue } from '../util';
-import { IpfsStorage } from '../util/ipfsStorage';
 import { state, getter, mutation } from '../store/decorators';
 import { Operations } from '../types/common';
+import { copyToClipboard, delay, shortenValue } from '../util';
+import { IpfsStorage } from '../util/ipfsStorage';
+
+import FormattedAmount from './FormattedAmount.vue';
+import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import InfoLine from './InfoLine.vue';
+import NftDetails from './NftDetails.vue';
+import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
+import TokenLogo from './TokenLogo.vue';
+import WalletBase from './WalletBase.vue';
+import WalletHistory from './WalletHistory.vue';
+import WalletTransactionDetails from './WalletTransactionDetails.vue';
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import OperationsMixin from './mixins/OperationsMixin';
+import QrCodeParserMixin from './mixins/QrCodeParserMixin';
+
 import type { WalletPermissions } from '../consts';
+import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/util';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 interface Operation {
   type: Operations;

@@ -1,9 +1,10 @@
-import isElectron from 'is-electron';
 import { FPNumber } from '@sora-substrate/util';
+import isElectron from 'is-electron';
 
 import { storage } from '../../util/storage';
+
+import type { AppWallet, AppWallet } from '../../consts';
 import type { ReferrerRewards } from '../../services/subquery/types';
-import type { AppWallet } from '../../consts';
 import type { AccountState } from './types';
 
 export const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {

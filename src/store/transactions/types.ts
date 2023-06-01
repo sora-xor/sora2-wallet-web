@@ -1,7 +1,6 @@
-import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
-
 import type { EthBridgeUpdateHistory } from '../../consts';
 import type { PageInfo } from '../../services/subquery/types';
+import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 export type TransactionsState = {
   history: AccountHistory<HistoryItem>;

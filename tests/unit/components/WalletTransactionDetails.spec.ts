@@ -1,9 +1,9 @@
-import type { HistoryItem } from '@sora-substrate/util';
+import WalletTransactionDetails from '@/components/WalletTransactionDetails.vue';
 
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNTS, MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock';
 
-import WalletTransactionDetails from '@/components/WalletTransactionDetails.vue';
+import type { HistoryItem } from '@sora-substrate/util';
 
 const createStore = (tx: HistoryItem) =>
   useVuex({

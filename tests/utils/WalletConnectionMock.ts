@@ -1,5 +1,6 @@
-import type { PolkadotJsAccount } from '../../src/types/common';
 import { AppWallet } from '../../src/consts';
+
+import type { PolkadotJsAccount } from '../../src/types/common';
 
 export const POLKADOT_JS_ACCOUNTS_MOCK: Array<PolkadotJsAccount> = [
   { address: '5GBrh18cWZA6anJDPP7mX4WhYQFMZc8wMxP62RNaMPTfEJ1E', name: 'nikita', source: AppWallet.PolkadotJS },

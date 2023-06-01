@@ -1,8 +1,8 @@
-import { useDescribe, useShallowMount, useVuex } from '../../utils';
-import { MOCK_TRANSACTION_HASH_VIEW } from '../../utils/TransactionHashViewMock';
-
 import TransactionHashView from '@/components/TransactionHashView.vue';
 import { SoraNetwork, HashType } from '@/consts';
+
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
+import { MOCK_TRANSACTION_HASH_VIEW } from '../../utils/TransactionHashViewMock';
 
 const createStore = (env: SoraNetwork) =>
   useVuex({

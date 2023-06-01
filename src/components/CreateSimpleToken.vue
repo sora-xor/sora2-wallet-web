@@ -71,21 +71,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { FPNumber, Operation } from '@sora-substrate/util';
 import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import WalletBase from './WalletBase.vue';
-import InfoLine from './InfoLine.vue';
-import WalletFee from './WalletFee.vue';
-
-import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
-import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
-import TransactionMixin from './mixins/TransactionMixin';
-import NumberFormatterMixin from './mixins/NumberFormatterMixin';
-import { RouteNames, Step } from '../consts';
 import { api } from '../api';
+import { RouteNames, Step } from '../consts';
 import { mutation } from '../store/decorators';
+
+import InfoLine from './InfoLine.vue';
+import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
+import WalletBase from './WalletBase.vue';
+import WalletFee from './WalletFee.vue';
+import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
+import NumberFormatterMixin from './mixins/NumberFormatterMixin';
+import TransactionMixin from './mixins/TransactionMixin';
+
 import type { Route } from '../store/router/types';
 
 @Component({

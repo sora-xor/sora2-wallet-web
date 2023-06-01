@@ -1,9 +1,9 @@
 import omit from 'lodash/fp/omit';
 
+import FormattedAmount from '@/components/FormattedAmount.vue';
+
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_FORMATTED_AMOUNT } from '../../utils/FormattedAmountMock';
-
-import FormattedAmount from '@/components/FormattedAmount.vue';
 
 const createStore = (shouldBalanceBeHidden = false) =>
   useVuex({

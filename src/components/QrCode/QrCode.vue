@@ -3,9 +3,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Ref, Vue, Watch } from 'vue-property-decorator';
-import { EncodeHintType, QRCodeDecoderErrorCorrectionLevel } from '@zxing/library';
 import { BrowserQRCodeSvgWriter } from '@zxing/browser';
+import { EncodeHintType, QRCodeDecoderErrorCorrectionLevel } from '@zxing/library';
+import { Component, Prop, Ref, Vue, Watch } from 'vue-property-decorator';
 
 const writer = new BrowserQRCodeSvgWriter();
 const hints = new Map();

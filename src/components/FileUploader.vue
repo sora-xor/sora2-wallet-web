@@ -20,9 +20,10 @@
 <script lang="ts">
 import { Mixins, Component, Ref, Prop } from 'vue-property-decorator';
 
+import { IMAGE_MIME_TYPES } from '../util/image';
+
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
-import { IMAGE_MIME_TYPES } from '../util/image';
 
 const FILE_TYPES_LIST_STRING = Object.values(IMAGE_MIME_TYPES).join(',');
 

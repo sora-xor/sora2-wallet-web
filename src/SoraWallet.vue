@@ -12,25 +12,24 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 import AddAsset from './components/AddAsset/AddAsset.vue';
-import SelectAsset from './components/SelectAsset.vue';
+import InternalConnection from './components/Connection/Views/InternalConnection.vue';
 import CreateToken from './components/CreateToken.vue';
 import ReceiveToken from './components/ReceiveToken.vue';
+import SelectAsset from './components/SelectAsset.vue';
 import Wallet from './components/Wallet.vue';
 import WalletAssetDetails from './components/WalletAssetDetails.vue';
 import WalletConnection from './components/WalletConnection.vue';
 import WalletSend from './components/WalletSend.vue';
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue';
-import InternalConnection from './components/Connection/Views/InternalConnection.vue';
-
 import LoadingMixin from './components/mixins/LoadingMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
-
 import { state } from './store/decorators';
 import { Operations } from './types/common';
+
 import type { RouteNames } from './consts';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {

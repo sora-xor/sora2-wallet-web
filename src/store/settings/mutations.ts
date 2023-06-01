@@ -1,13 +1,14 @@
 import { defineMutations } from 'direct-vuex';
 import { NFTStorage } from 'nft.storage';
-import type { NetworkFeesObject } from '@sora-substrate/util';
-import type { Subscription } from 'rxjs';
 
 import { api } from '../../api';
-import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
+import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
+
 import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
 import type { SettingsState } from './types';
+import type { NetworkFeesObject } from '@sora-substrate/util';
+import type { Subscription } from 'rxjs';
 
 const mutations = defineMutations<SettingsState>()({
   setWalletLoaded(state, flag: boolean): void {

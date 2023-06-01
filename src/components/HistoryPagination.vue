@@ -39,8 +39,9 @@
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
-import TranslationMixin from './mixins/TranslationMixin';
 import { PaginationButton } from '../consts';
+
+import TranslationMixin from './mixins/TranslationMixin';
 
 @Component
 export default class HistoryPagination extends Mixins(TranslationMixin) {

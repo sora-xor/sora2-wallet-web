@@ -46,17 +46,15 @@
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
-import AccountActionsMixin from '../../mixins/AccountActionsMixin';
-
-import AccountList from '../AccountList.vue';
+import { AccountActionTypes } from '../../../consts';
 import AccountCard from '../../Account/AccountCard.vue';
 import AccountActionsMenu from '../../Account/ActionsMenu.vue';
-import AccountRenameDialog from '../../Account/RenameDialog.vue';
 import AccountExportDialog from '../../Account/ConfirmDialog.vue';
 import AccountDeleteDialog from '../../Account/DeleteDialog.vue';
+import AccountRenameDialog from '../../Account/RenameDialog.vue';
+import AccountActionsMixin from '../../mixins/AccountActionsMixin';
+import AccountList from '../AccountList.vue';
 import ConnectionItems from '../ConnectionItems.vue';
-
-import { AccountActionTypes } from '../../../consts';
 
 import type { PolkadotJsAccount } from '../../../types/common';
 

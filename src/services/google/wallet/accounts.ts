@@ -1,8 +1,8 @@
+import { api } from '../../../api';
+import { GDriveStorage } from '../index';
+
 import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
-
-import { GDriveStorage } from '../index';
-import { api } from '../../../api';
 
 interface IAccountMetadata extends InjectedAccount {
   id: string;

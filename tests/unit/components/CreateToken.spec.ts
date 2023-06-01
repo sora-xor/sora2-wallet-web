@@ -1,9 +1,9 @@
 import omit from 'lodash/fp/omit';
 
+import CreateToken from '@/components/CreateToken.vue';
+
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_CREATE_TOKEN } from '../../utils/CreateTokenMock';
-
-import CreateToken from '@/components/CreateToken.vue';
 
 const createStore = () =>
   useVuex({

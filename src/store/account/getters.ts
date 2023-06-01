@@ -1,15 +1,17 @@
-import { defineGetters } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
+import { defineGetters } from 'direct-vuex';
 import isEqual from 'lodash/fp/isEqual';
-import type { Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
-import type { Wallet } from '@subwallet/wallet-connect/types';
 
-import { accountGetterContext } from './../account';
 import { api } from '../../api';
 import { AppWallet } from '../../consts';
 import { isInternalWallet } from '../../consts/wallets';
-import type { AccountState } from './types';
+
+import { accountGetterContext } from './../account';
+
 import type { AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
+import type { AccountState } from './types';
+import type { Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { Wallet } from '@sora-test/wallet-connect/types';
 
 const toHashTable = (list: Array<any>, key: string) => {
   return list.reduce((result, item) => {

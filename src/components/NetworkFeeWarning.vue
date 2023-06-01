@@ -19,6 +19,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { mutation } from '../store/decorators';
+
 import TranslationMixin from './mixins/TranslationMixin';
 
 @Component

@@ -1,15 +1,15 @@
-import isEqual from 'lodash/fp/isEqual';
-import isEmpty from 'lodash/fp/isEmpty';
 import { defineActions } from 'direct-vuex';
+import isEmpty from 'lodash/fp/isEmpty';
+import isEqual from 'lodash/fp/isEqual';
+
+import { api } from '../../api';
+import { SoraNetwork } from '../../consts';
+import { GDriveStorage } from '../../services/google';
+import { addGDriveWalletLocally } from '../../services/google/wallet';
+import { IpfsStorage } from '../../util/ipfsStorage';
+import { runtimeStorage } from '../../util/storage';
 
 import { settingsActionContext } from './../settings';
-import { api } from '../../api';
-import { runtimeStorage } from '../../util/storage';
-import { IpfsStorage } from '../../util/ipfsStorage';
-import { GDriveStorage } from '../../services/google';
-import { SoraNetwork } from '../../consts';
-
-import { addGDriveWalletLocally } from '../../services/google/wallet';
 
 import type { ApiKeysObject } from '../../types/common';
 

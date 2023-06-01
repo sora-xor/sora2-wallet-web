@@ -1,14 +1,15 @@
-import vue from 'rollup-plugin-vue';
-import typescript from 'rollup-plugin-typescript2';
-import pkg from '../package.json';
-import scss from 'rollup-plugin-scss';
-import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import terser from '@rollup/plugin-terser';
-import del from 'rollup-plugin-delete';
-import copy from 'rollup-plugin-copy';
-import json from 'rollup-plugin-json';
 import image from '@rollup/plugin-image';
+import resolve from '@rollup/plugin-node-resolve';
+import terser from '@rollup/plugin-terser';
+import copy from 'rollup-plugin-copy';
+import del from 'rollup-plugin-delete';
+import json from 'rollup-plugin-json';
+import scss from 'rollup-plugin-scss';
+import typescript from 'rollup-plugin-typescript2';
+import vue from 'rollup-plugin-vue';
+
+import pkg from '../package.json';
 
 const globals = {
   '@polkadot/util': 'util$1',
@@ -50,7 +51,7 @@ const globals = {
   '@soramitsu/soramitsu-js-ui/lib/types/Theme': 'Theme',
   '@soramitsu/soramitsu-js-ui/lib/types/directives': 'Directives',
   '@soramitsu/soramitsu-js-ui/lib/utils': 'utils',
-  '@subwallet/wallet-connect/dotsama/wallets': 'wallets',
+  '@sora-test/wallet-connect/dotsama/wallets': 'wallets',
   '@urql/core': 'core',
   '@zxing/browser': 'browser',
   '@zxing/library': 'library',
@@ -156,10 +157,10 @@ export default {
     '@soramitsu/soramitsu-js-ui/lib/utils',
     '@soramitsu/soramitsu-js-ui/lib/utils/DesignSystem',
     '@soramitsu/soramitsu-js-ui/lib/utils/Theme',
-    '@subwallet/wallet-connect/dotsama/wallets',
-    '@subwallet/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg',
-    '@subwallet/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg',
-    '@subwallet/wallet-connect/types',
+    '@sora-test/wallet-connect/dotsama/wallets',
+    '@sora-test/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg',
+    '@sora-test/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg',
+    '@sora-test/wallet-connect/types',
     'dayjs/plugin/localizedFormat',
     'element-ui/lib/popover',
     'lodash/fp/concat',

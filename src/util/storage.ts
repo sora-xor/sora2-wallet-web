@@ -1,4 +1,5 @@
 import { Storage } from '@sora-substrate/util';
+
 import type { StorageKey, RuntimeStorageKey, SettingsStorageKey } from '../types/common';
 /**
  * This storage is dependent on account login

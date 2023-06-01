@@ -1,11 +1,10 @@
-import { useDescribe, useShallowMount, useVuex } from '../../utils';
-import { MOCK_ACCOUNT_ASSETS, MOCK_ASSETS, MOCK_WHITE_LIST } from '../../utils/mock';
-import { MOCK_ADD_ASSET_SEARCH } from '../../utils/AddAssetSearchMock';
-
 import AddAssetSearch from '@/components/AddAsset/AddAssetTokenTab.vue';
-
 import AssetList from '@/components/AssetList.vue';
 import AssetListItem from '@/components/AssetListItem.vue';
+
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
+import { MOCK_ADD_ASSET_SEARCH } from '../../utils/AddAssetSearchMock';
+import { MOCK_ACCOUNT_ASSETS, MOCK_ASSETS, MOCK_WHITE_LIST } from '../../utils/mock';
 
 const accountAssetsAddressTableMock = MOCK_ACCOUNT_ASSETS.reduce((param, item) => {
   param[item.address] = item;

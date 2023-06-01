@@ -12,10 +12,10 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import TranslationMixin from './mixins/TranslationMixin';
-import CopyAddressMixin from './mixins/CopyAddressMixin';
-
 import { formatAddress } from '../util';
+
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import TranslationMixin from './mixins/TranslationMixin';
 
 @Component
 export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMixin) {

@@ -1,7 +1,7 @@
-import { useDescribe, useShallowMount, useVuex } from '../../utils';
-
 import AccountCard from '@/components/Account/AccountCard.vue';
 import WalletAccount from '@/components/Account/WalletAccount.vue';
+
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT, MOCK_ACCOUNT_POLKADOT, MOCK_ADDRESS } from '../../utils/WalletAccountMock';
 
 const createStore = () =>
