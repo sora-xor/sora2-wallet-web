@@ -1,14 +1,15 @@
-import vue from 'rollup-plugin-vue';
-import typescript from 'rollup-plugin-typescript2';
-import pkg from '../package.json';
-import scss from 'rollup-plugin-scss';
-import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import terser from '@rollup/plugin-terser';
-import del from 'rollup-plugin-delete';
-import copy from 'rollup-plugin-copy';
-import json from 'rollup-plugin-json';
 import image from '@rollup/plugin-image';
+import resolve from '@rollup/plugin-node-resolve';
+import terser from '@rollup/plugin-terser';
+import copy from 'rollup-plugin-copy';
+import del from 'rollup-plugin-delete';
+import json from 'rollup-plugin-json';
+import scss from 'rollup-plugin-scss';
+import typescript from 'rollup-plugin-typescript2';
+import vue from 'rollup-plugin-vue';
+
+import pkg from '../package.json';
 
 const globals = {
   '@polkadot/util': 'util$1',
