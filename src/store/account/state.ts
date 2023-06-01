@@ -3,7 +3,7 @@ import isElectron from 'is-electron';
 
 import { storage } from '../../util/storage';
 
-import type { AppWallet, AppWallet } from '../../consts';
+import type { AppWallet } from '../../consts';
 import type { ReferrerRewards } from '../../services/subquery/types';
 import type { AccountState } from './types';
 
