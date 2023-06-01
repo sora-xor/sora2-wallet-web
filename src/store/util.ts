@@ -8,7 +8,7 @@ export enum VuexOperation {
   Action = 'action',
 }
 
-function getVuexMapFn(type: VuexOperation) {
+function getVuexMapFn(type: VuexOperation): any {
   switch (type) {
     case VuexOperation.State:
       return mapState;
