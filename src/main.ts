@@ -1,13 +1,15 @@
 // This file is only for local usage
 import Vue from 'vue';
-import store from './store';
-import './store/decorators';
-import App from './App.vue';
-import i18n from './lang';
-import { connection } from './api';
-import installWalletPlugins from './plugins';
+
 import env from '../public/env.json';
 
+import App from './App.vue';
+import { connection } from './api';
+import i18n from './lang';
+import installWalletPlugins from './plugins';
+import store from './store';
+
+import './store/decorators';
 import './styles';
 
 installWalletPlugins(Vue, store.original);

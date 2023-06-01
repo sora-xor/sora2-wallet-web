@@ -1,11 +1,11 @@
 import { defineModule, localActionContext } from 'direct-vuex';
 
-import mutations from './mutations';
-import state from './state';
-import actions from './actions';
-
 import { prepareWalletActionContext } from '../../store';
 import { WalletModule } from '../wallet';
+
+import actions from './actions';
+import mutations from './mutations';
+import state from './state';
 
 const router = defineModule({
   namespaced: true,

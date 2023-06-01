@@ -5,10 +5,10 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 
-import WebConnection from './Connection/Views/WebConnection.vue';
-import DesktopConnection from './Connection/Views/DesktopConnection.vue';
-
 import { state } from '../store/decorators';
+
+import DesktopConnection from './Connection/Views/DesktopConnection.vue';
+import WebConnection from './Connection/Views/WebConnection.vue';
 
 @Component({
   components: { WebConnection, DesktopConnection },

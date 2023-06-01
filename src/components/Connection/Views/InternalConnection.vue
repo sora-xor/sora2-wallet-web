@@ -39,23 +39,21 @@
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
 
+import { AppWallet, RouteNames, LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
+import { GDriveWallet } from '../../../services/google/wallet';
+import { action, mutation, getter, state } from '../../../store/decorators';
+import { delay, getPreviousLoginStep } from '../../../util';
+import AccountConfirmDialog from '../../Account/ConfirmDialog.vue';
+import WalletBase from '../../WalletBase.vue';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
-
-import WalletBase from '../../WalletBase.vue';
+import AccountListStep from '../Step/AccountList.vue';
 import CreateAccountStep from '../Step/CreateAccount.vue';
 import ImportAccountStep from '../Step/ImportAccount.vue';
-import AccountListStep from '../Step/AccountList.vue';
-import AccountConfirmDialog from '../../Account/ConfirmDialog.vue';
 
-import { action, mutation, getter, state } from '../../../store/decorators';
-import { AppWallet, RouteNames, LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
-import { delay, getPreviousLoginStep } from '../../../util';
-import { GDriveWallet } from '../../../services/google/wallet';
-
+import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 import type { Route } from '../../../store/router/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
-import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 
 @Component({
   components: {

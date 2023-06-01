@@ -47,11 +47,13 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import TranslationMixin from './mixins/TranslationMixin';
-import CopyAddressMixin from './mixins/CopyAddressMixin';
-import { formatAddress, getExplorerLinks, formatSoraAddress } from '../util';
-import { state } from '../store/decorators';
 import { HashType, ExplorerType, SoraNetwork } from '../consts';
+import { state } from '../store/decorators';
+import { formatAddress, getExplorerLinks, formatSoraAddress } from '../util';
+
+import CopyAddressMixin from './mixins/CopyAddressMixin';
+import TranslationMixin from './mixins/TranslationMixin';
+
 import type { ExplorerLink } from '../consts';
 
 @Component

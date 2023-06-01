@@ -1,6 +1,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 
 import { state, action } from '../../store/decorators';
+
 import type { ReferrerRewards } from '../../services/subquery/types';
 
 @Component

@@ -29,18 +29,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
 import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
-import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import TranslationMixin from '../mixins/TranslationMixin';
+import { api } from '../../api';
+import { getter } from '../../store/decorators';
+import AssetListItem from '../AssetListItem.vue';
+import WalletBase from '../WalletBase.vue';
 import AddAssetMixin from '../mixins/AddAssetMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
-import WalletBase from '../WalletBase.vue';
-import AssetListItem from '../AssetListItem.vue';
-import { api } from '../../api';
+import TranslationMixin from '../mixins/TranslationMixin';
+
 import type { WhitelistIdsBySymbol } from '../../types/common';
-import { getter } from '../../store/decorators';
+import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {

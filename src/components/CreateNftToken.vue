@@ -143,29 +143,30 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
-import { File as ImageNFT } from 'nft.storage';
 import { FPNumber, Operation } from '@sora-substrate/util';
 import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
-import type { NFTStorage } from 'nft.storage';
+import { File as ImageNFT } from 'nft.storage';
+import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
 
-import NftDetails from './NftDetails.vue';
-import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
-import FileUploader from './FileUploader.vue';
-import InfoLine from './InfoLine.vue';
-import WalletFee from './WalletFee.vue';
-
-import TranslationMixin from '../components/mixins/TranslationMixin';
-import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
+import { api } from '../api';
 import LoadingMixin from '../components/mixins/LoadingMixin';
 import TransactionMixin from '../components/mixins/TransactionMixin';
-import NumberFormatterMixin from './mixins/NumberFormatterMixin';
+import TranslationMixin from '../components/mixins/TranslationMixin';
 import { RouteNames, Step } from '../consts';
-import { api } from '../api';
-import { IpfsStorage } from '../util/ipfsStorage';
 import { state, mutation, action } from '../store/decorators';
 import { IMAGE_MIME_TYPES } from '../util/image';
+import { IpfsStorage } from '../util/ipfsStorage';
+
+import FileUploader from './FileUploader.vue';
+import InfoLine from './InfoLine.vue';
+import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
+import NftDetails from './NftDetails.vue';
+import WalletFee from './WalletFee.vue';
+import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
+import NumberFormatterMixin from './mixins/NumberFormatterMixin';
+
 import type { Route } from '../store/router/types';
+import type { NFTStorage } from 'nft.storage';
 
 @Component({
   components: {

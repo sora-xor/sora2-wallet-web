@@ -1,4 +1,5 @@
 import { RouteNames } from '../../consts';
+
 import type { RouterState } from './types';
 
 function initialState(): RouterState {

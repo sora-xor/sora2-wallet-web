@@ -1,7 +1,7 @@
-import isEmpty from 'lodash/fp/isEmpty';
-import { interval } from 'rxjs';
 import { FPNumber } from '@sora-substrate/util';
 import { DAI } from '@sora-substrate/util/build/assets/consts';
+import isEmpty from 'lodash/fp/isEmpty';
+import { interval } from 'rxjs';
 
 import type { FiatPriceObject } from '../subquery/types';
 

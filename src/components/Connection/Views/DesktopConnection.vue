@@ -29,21 +29,19 @@
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
 
+import { LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
+import { state, action } from '../../../store/decorators';
+import { getPreviousLoginStep, delay } from '../../../util';
+import WalletBase from '../../WalletBase.vue';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
-
-import WalletBase from '../../WalletBase.vue';
 import WelcomePage from '../Desktop/WelcomePage.vue';
 import AccountListStep from '../Step/AccountList.vue';
 import CreateAccountStep from '../Step/CreateAccount.vue';
 import ImportAccountStep from '../Step/ImportAccount.vue';
 
-import { LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
-import { getPreviousLoginStep, delay } from '../../../util';
-import { state, action } from '../../../store/decorators';
-
-import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
+import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
 
 @Component({
   components: { WalletBase, WelcomePage, CreateAccountStep, ImportAccountStep, AccountListStep },

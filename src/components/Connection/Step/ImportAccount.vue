@@ -115,21 +115,19 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { mnemonicValidate } from '@polkadot/util-crypto';
-
+import FearlessLogo from '@sora-test/wallet-connect/dotsama/predefinedWallet/FearlessWalletLogo.svg';
 import PolkadotLogo from '@sora-test/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg';
 import SubWalletLogo from '@sora-test/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg';
-import FearlessLogo from '@sora-test/wallet-connect/dotsama/predefinedWallet/FearlessWalletLogo.svg';
+import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 
-import NotificationMixin from '../../mixins/NotificationMixin';
-import FileUploader from '../../FileUploader.vue';
-
-import { AppError, parseJson } from '../../../util';
 import { LoginStep } from '../../../consts';
+import { AppError, parseJson } from '../../../util';
+import FileUploader from '../../FileUploader.vue';
+import NotificationMixin from '../../mixins/NotificationMixin';
 
-import type { KeyringPair$Json } from '../../../types/common';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
+import type { KeyringPair$Json } from '../../../types/common';
 
 @Component({
   components: {

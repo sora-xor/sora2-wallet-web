@@ -1,9 +1,9 @@
 import omit from 'lodash/fp/omit';
 
+import InfoLine from '@/components/InfoLine.vue';
+
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_INFO_LINE } from '../../utils/InfoLineMock';
-
-import InfoLine from '@/components/InfoLine.vue';
 
 const createStore = (shouldBalanceBeHidden = true) =>
   useVuex({

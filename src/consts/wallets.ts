@@ -1,8 +1,8 @@
-import type { Wallet, WalletInfo } from '@sora-test/wallet-connect/types';
-
 import GoogleLogo from '../assets/img/GoogleLogo.svg';
 
 import { AppWallet } from './index';
+
+import type { Wallet, WalletInfo } from '@sora-test/wallet-connect/types';
 
 export const GDriveWalletInfo: WalletInfo = {
   extensionName: AppWallet.GoogleDrive,

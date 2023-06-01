@@ -1,6 +1,6 @@
-import { Vue, Component } from 'vue-property-decorator';
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import { Vue, Component } from 'vue-property-decorator';
 
 import { TranslationConsts } from '../../consts';
 

@@ -36,13 +36,14 @@
 
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
-import type { Wallet } from '@sora-test/wallet-connect/types';
-
-import AccountCard from '../Account/AccountCard.vue';
-import ConnectionItems from './ConnectionItems.vue';
-import TranslationMixin from '../mixins/TranslationMixin';
 
 import { state } from '../../store/decorators';
+import AccountCard from '../Account/AccountCard.vue';
+import TranslationMixin from '../mixins/TranslationMixin';
+
+import ConnectionItems from './ConnectionItems.vue';
+
+import type { Wallet } from '@sora-test/wallet-connect/types';
 
 @Component({
   components: {

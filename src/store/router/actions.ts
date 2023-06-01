@@ -1,8 +1,9 @@
 import { defineActions } from 'direct-vuex';
 
-import { routerActionContext } from './../router';
-import { rootActionContext } from '../../store';
 import { RouteNames } from '../../consts';
+import { rootActionContext } from '../../store';
+
+import { routerActionContext } from './../router';
 
 const actions = defineActions({
   async back(context): Promise<void> {

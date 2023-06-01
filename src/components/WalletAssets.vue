@@ -79,25 +79,25 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
 import { api, FPNumber } from '@sora-substrate/util';
 import isEmpty from 'lodash/fp/isEmpty';
+import { Component, Mixins } from 'vue-property-decorator';
 import draggable from 'vuedraggable';
-import type { AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/types';
+
+import { RouteNames, HiddenValue, WalletFilteringOptions } from '../consts';
+import { state, getter, mutation } from '../store/decorators';
 
 import AssetList from './AssetList.vue';
 import AssetListItem from './AssetListItem.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
-
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 
-import { state, getter, mutation } from '../store/decorators';
-import { RouteNames, HiddenValue, WalletFilteringOptions } from '../consts';
 import type { WalletAssetFilters, WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';
+import type { AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {

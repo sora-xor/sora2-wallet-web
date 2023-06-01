@@ -21,14 +21,15 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import type { Asset } from '@sora-substrate/util/build/assets/types';
 
+import { api } from '../../api';
 import AssetList from '../AssetList.vue';
 import SearchInput from '../SearchInput.vue';
+import AddAssetMixin from '../mixins/AddAssetMixin';
+
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
-import AddAssetMixin from '../mixins/AddAssetMixin';
-import { api } from '../../api';
+import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {
