@@ -1,4 +1,4 @@
-import type { Wallet } from '@subwallet/wallet-connect/types';
+import type { Wallet } from '@sora-test/wallet-connect/types';
 import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Subscription, Subject } from 'rxjs';
 

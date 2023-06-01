@@ -43,7 +43,7 @@ import en from './lang/en';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 import { api, connection } from './api';
-import { delay, getExplorerLinks, groupRewardsByAssetsList, addFearlessWalletLocally, getWallet } from './util';
+import { delay, getExplorerLinks, groupRewardsByAssetsList, initAppWallets, getWallet } from './util';
 import { ScriptLoader } from './util/scriptLoader';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
@@ -92,13 +92,14 @@ let walletCoreLoaded = false;
 
 const waitForCore = async ({
   withoutStore = false,
+  appName,
   permissions,
   updateEthBridgeHistory,
 }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> => {
   if (!walletCoreLoaded) {
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
-    addFearlessWalletLocally();
+    initAppWallets(appName);
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);
