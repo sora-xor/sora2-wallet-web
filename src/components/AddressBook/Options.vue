@@ -2,15 +2,15 @@
   <el-popover popper-class="address-book-popover book-popover" trigger="click" :visible-arrow="false">
     <div class="address-book__option" @click="handleSelectAddress(record.address, record.name)">
       <s-icon name="finance-send-24" size="16" />
-      <span>{{ 'Send tokens' }}</span>
+      <span>{{ t('addressBook.options.send') }}</span>
     </div>
     <div :class="computedClass" @click="handleEditRecord(record.address)">
       <s-icon name="el-icon-edit" />
-      <span>{{ 'Edit contact' }}</span>
+      <span>{{ t('addressBook.options.edit') }}</span>
     </div>
     <div :class="computedClass" @click="handleDeleteRecord(record.address)">
       <s-icon name="el-icon-delete" />
-      <span>{{ 'Delete' }}</span>
+      <span>{{ t('addressBook.options.delete') }}</span>
     </div>
     <div slot="reference">
       <s-icon class="address-book__option-icon" name="basic-more-vertical-24" />

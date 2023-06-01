@@ -21,7 +21,7 @@
         </div>
       </s-tooltip>
     </template>
-    <s-tooltip border-radius="mini" :content="'On-chain identity'" placement="top" tabindex="-1">
+    <s-tooltip border-radius="mini" :content="t('addressBook.identity')" placement="top" tabindex="-1">
       <div
         v-if="record.identity"
         @click="handleSelectAddress(record.address, record.name)"

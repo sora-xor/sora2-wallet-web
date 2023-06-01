@@ -1,10 +1,10 @@
 <template>
-  <dialog-base :title="'Your contacts'" :visible.sync="isVisible">
+  <dialog-base :title="t('addressBook.dialogTitle')" :visible.sync="isVisible">
     <div v-if="userHasContacts">
       <search-input
         autofocus
         v-model="search"
-        :placeholder="'Search by address, name or identity'"
+        :placeholder="t('addressBook.searchPlaceholder')"
         :maxlength="100"
         class="address-book__search"
         @clear="resetSearch"
@@ -40,13 +40,15 @@
             </address-record>
           </div>
         </div>
-        <div v-if="showNoRecordsFound" class="address-book__no-found-records">No records found</div>
+        <div v-if="showNoRecordsFound" class="address-book__no-found-records">
+          {{ t('addressBook.noFoundRecords') }}
+        </div>
       </s-scrollbar>
     </div>
-    <div v-else class="address-book__no-contacts">You don’t have any contacts added yet</div>
+    <div v-else class="address-book__no-contacts">{{ t('addressBook.noContacts') }}</div>
     <div class="address-book__btn">
       <s-button @click="setContact(null)" class="s-typography-button--large">
-        {{ 'Add contact' }}
+        {{ t('addressBook.addContact') }}
       </s-button>
     </div>
   </dialog-base>

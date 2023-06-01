@@ -1,19 +1,19 @@
 <template>
-  <dialog-base :title="title" :visible.sync="isVisible" :tooltip="'this is very important feature'">
+  <dialog-base :title="title" :visible.sync="isVisible" :tooltip="tooltip">
     <div class="set-address">
       <s-input
         ref="address"
         class="set-address__input"
-        :placeholder="'Name'"
+        :placeholder="t('nameText')"
         v-model="name"
         :disabled="loading"
         :maxlength="30"
       />
-      <s-input class="set-address__input" :placeholder="'Address'" v-model="address" :disabled="inputDisabled" />
+      <s-input class="set-address__input" :placeholder="t('addressText')" v-model="address" :disabled="inputDisabled" />
       <p v-if="isAccountAddress" class="set-address-error">{{ t('walletSend.addressError') }}</p>
       <s-input
         class="set-address__input"
-        :placeholder="'On-chain identity'"
+        :placeholder="t('addressBook.identity')"
         v-model="onChainIdentity"
         :disabled="true"
       />
@@ -74,17 +74,17 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   @Watch('address')
   async handleAddressInput(address: string): Promise<void> {
     if (!api.validateAddress(address)) {
-      this.onChainIdentity = 'None';
+      this.onChainIdentity = this.t('addressBook.none');
       return;
     }
 
     const entity = await api.getAccountOnChainIdentity(address);
-    this.onChainIdentity = entity ? entity.legalName : 'None';
+    this.onChainIdentity = entity ? entity.legalName : this.t('addressBook.none');
   }
 
   address = '';
   name = '';
-  onChainIdentity = 'None';
+  onChainIdentity = this.t('addressBook.none');
 
   setContact(): void {
     this.setAddressToBook({ address: this.address, name: this.name });
@@ -94,17 +94,21 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   }
 
   get title(): string {
-    return this.isEditMode ? 'Edit contact' : 'Add address';
+    return this.isEditMode ? this.t('addressBook.options.edit') : this.t('addressBook.addContact');
+  }
+
+  get tooltip(): string {
+    return this.t('addressBook.tooltip');
   }
 
   get btnText(): string {
-    if (!this.name) return 'Enter name';
+    if (!this.name) return this.t('addressBook.btn.enterName');
     if (!this.validAddress) {
       return this.t(`walletSend.${this.emptyAddress ? 'enterAddress' : 'badAddress'}`);
     }
 
-    if (this.isAddressAdded(this.address) && !this.isEditMode) return 'Already present';
-    return this.isEditMode ? 'Save changes' : 'Save';
+    if (this.isAddressAdded(this.address) && !this.isEditMode) return this.t('addressBook.btn.present');
+    return this.isEditMode ? this.t('addressBook.btn.saveChanges') : this.t('saveText');
   }
 
   get btnDisabled(): boolean {

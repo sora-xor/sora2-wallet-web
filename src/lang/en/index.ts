@@ -174,6 +174,26 @@ export default {
     rename: 'Rename account',
     export: 'Export .json',
   },
+  addressBook: {
+    searchPlaceholder: 'Search by address, name or identity',
+    noFoundRecords: 'No records found',
+    noContacts: 'You don’t have any contacts added yet',
+    addContact: 'Add contact',
+    dialogTitle: 'Your contacts',
+    identity: 'On-chain identity',
+    none: 'None',
+    tooltip: 'Collect address book by providing name and address to keep your contacts organized and up-to-date',
+    options: {
+      send: 'Send tokens',
+      edit: 'Edit contact',
+      delete: 'Delete',
+    },
+    btn: {
+      enterName: 'Enter name',
+      present: 'Already present',
+      saveChanges: 'Save changes',
+    },
+  },
   history: {
     clearHistory: 'Clear history',
     filterPlaceholder: 'Filter by Address, Symbol, Type or Block ID',
