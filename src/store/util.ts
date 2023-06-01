@@ -1,5 +1,5 @@
-import { mapGetters, mapState, mapActions, mapMutations } from 'vuex';
 import { createDecorator, VueDecorator } from 'vue-class-component';
+import { mapGetters, mapState, mapActions, mapMutations } from 'vuex';
 
 export enum VuexOperation {
   State = 'state',

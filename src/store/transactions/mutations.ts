@@ -1,10 +1,11 @@
 import { defineMutations } from 'direct-vuex';
-import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 import { api } from '../../api';
-import type { TransactionsState } from './types';
+
 import type { EthBridgeUpdateHistory } from '../../consts';
 import type { PageInfo } from '../../services/subquery/types';
+import type { TransactionsState } from './types';
+import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 const mutations = defineMutations<TransactionsState>()({
   setActiveTxsSubscription(state, subscription: NodeJS.Timeout | number): void {

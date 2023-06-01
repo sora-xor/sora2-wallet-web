@@ -1,8 +1,8 @@
-import { useDescribe, useShallowMount, useVuex } from '../../utils';
-import { MOCK_ACCOUNT, MOCK_HISTORY, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
-
 import Wallet from '@/components/Wallet.vue';
 import { WalletTabs } from '@/consts';
+
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
+import { MOCK_ACCOUNT, MOCK_HISTORY, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 
 import type { WalletPermissions } from '../../../src/consts';
 

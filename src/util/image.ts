@@ -1,5 +1,5 @@
-import { saveAs } from 'file-saver';
 import base64 from 'base-64';
+import { saveAs } from 'file-saver';
 
 export enum IMAGE_EXTENSIONS {
   SVG = '.svg',

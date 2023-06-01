@@ -25,17 +25,18 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
-import AssetList from '../AssetList.vue';
-import SearchInput from '../SearchInput.vue';
-import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
-
-import LoadingMixin from '../mixins/LoadingMixin';
-import AddAssetMixin from '../mixins/AddAssetMixin';
+import { api } from '../../api';
 import { AddAssetTabs } from '../../consts';
 import { getter } from '../../store/decorators';
-import { api } from '../../api';
+import AssetList from '../AssetList.vue';
+import SearchInput from '../SearchInput.vue';
+import AddAssetMixin from '../mixins/AddAssetMixin';
+import LoadingMixin from '../mixins/LoadingMixin';
+
+import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
+
+import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {

@@ -3,8 +3,8 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
 import Identicon from '@polkadot/vue-identicon';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
 enum THEMES {
   POLKADOT = 'polkadot',

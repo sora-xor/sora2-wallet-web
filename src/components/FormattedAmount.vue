@@ -26,12 +26,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { FPNumber } from '@sora-substrate/util';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { FontSizeRate, FontWeightRate, HiddenValue } from '../consts';
-import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import { state } from '../store/decorators';
+
+import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 
 interface FormattedAmountValues {
   integer: string;

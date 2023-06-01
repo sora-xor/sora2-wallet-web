@@ -35,12 +35,13 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import FormattedAmount from './FormattedAmount.vue';
-import TranslationMixin from './mixins/TranslationMixin';
-import LoadingMixin from './mixins/LoadingMixin';
-
-import { mutation, state } from '../store/decorators';
 import { WalletFilteringOptions } from '../consts';
+import { mutation, state } from '../store/decorators';
+
+import FormattedAmount from './FormattedAmount.vue';
+import LoadingMixin from './mixins/LoadingMixin';
+import TranslationMixin from './mixins/TranslationMixin';
+
 import type { WalletAssetFilters } from '../consts';
 
 enum Filter {

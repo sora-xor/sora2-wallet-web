@@ -98,22 +98,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
-import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 import { TransactionStatus, Operation } from '@sora-substrate/util';
-import type { HistoryItem, BridgeHistory } from '@sora-substrate/util';
-
-import TranslationMixin from './mixins/TranslationMixin';
-import NumberFormatterMixin from './mixins/NumberFormatterMixin';
-import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
-import WalletBase from './WalletBase.vue';
-import InfoLine from './InfoLine.vue';
-import FormattedAmount from './FormattedAmount.vue';
-import TransactionHashView from './TransactionHashView.vue';
+import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
+import { Component, Mixins } from 'vue-property-decorator';
 
 import { HashType, SoraNetwork } from '../consts';
 import { getter, state } from '../store/decorators';
+
+import FormattedAmount from './FormattedAmount.vue';
+import InfoLine from './InfoLine.vue';
+import TransactionHashView from './TransactionHashView.vue';
+import WalletBase from './WalletBase.vue';
+import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
+import NumberFormatterMixin from './mixins/NumberFormatterMixin';
+import TranslationMixin from './mixins/TranslationMixin';
+
 import type { PolkadotJsAccount } from '../types/common';
+import type { HistoryItem, BridgeHistory } from '@sora-substrate/util';
 
 @Component({
   components: {

@@ -1,13 +1,13 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
-import LoadingMixin from './LoadingMixin';
-import NotificationMixin from './NotificationMixin';
-
+import { AppWallet, AccountActionTypes } from '../../consts';
+import { GDriveWallet } from '../../services/google/wallet';
 import { action, getter } from '../../store/decorators';
 import { delay } from '../../util';
 import { settingsStorage } from '../../util/storage';
-import { AppWallet, AccountActionTypes } from '../../consts';
-import { GDriveWallet } from '../../services/google/wallet';
+
+import LoadingMixin from './LoadingMixin';
+import NotificationMixin from './NotificationMixin';
 
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 

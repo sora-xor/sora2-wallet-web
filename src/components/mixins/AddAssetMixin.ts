@@ -1,12 +1,14 @@
 import { Component, Prop, Mixins } from 'vue-property-decorator';
-import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
-import { state, getter, mutation, action } from '../../store/decorators';
 import { RouteNames } from '../../consts';
-import NotificationMixin from './NotificationMixin';
+import { state, getter, mutation, action } from '../../store/decorators';
+
 import LoadingMixin from './LoadingMixin';
+import NotificationMixin from './NotificationMixin';
+
 import type { Route } from '../../store/router/types';
 import type { AccountAssetsTable } from '../../types/common';
+import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component
 export default class AddAssetMixin extends Mixins(NotificationMixin, LoadingMixin) {

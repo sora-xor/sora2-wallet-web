@@ -1,5 +1,5 @@
-import { ScriptLoader } from '../../util/scriptLoader';
 import { waitForDocumentReady } from '../../util';
+import { ScriptLoader } from '../../util/scriptLoader';
 
 type GoogleApiOptions = {
   apiKey: string;

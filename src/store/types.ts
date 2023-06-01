@@ -1,6 +1,5 @@
-import type { VueDecorator } from 'vue-class-component';
-
 import type store from './index';
+import type { VueDecorator } from 'vue-class-component';
 
 export type BaseDecorator<T> = Record<keyof T, VueDecorator>;
 

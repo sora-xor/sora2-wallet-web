@@ -44,14 +44,15 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
-import type { Asset } from '@sora-substrate/util/build/assets/types';
-import type { RecycleScroller } from 'vue-virtual-scroller';
-
-import TranslationMixin from './mixins/TranslationMixin';
-import AssetListItem from './AssetListItem.vue';
-import Scrollbar from './ScrollBar.vue';
 
 import { delay, getCssVariableValue, getScrollbarWidth } from '../util';
+
+import AssetListItem from './AssetListItem.vue';
+import Scrollbar from './ScrollBar.vue';
+import TranslationMixin from './mixins/TranslationMixin';
+
+import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { RecycleScroller } from 'vue-virtual-scroller';
 
 @Component({
   components: {

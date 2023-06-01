@@ -1,9 +1,8 @@
+import type { SoraNetwork, WalletPermissions, WalletAssetFilters } from '../../consts';
+import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { NFTStorage } from 'nft.storage';
 import type { Subscription } from 'rxjs';
-
-import type { SoraNetwork, WalletPermissions, WalletAssetFilters } from '../../consts';
-import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
 
 export type SettingsState = {
   apiKeys: ApiKeysObject;

@@ -15,20 +15,20 @@
 
 <script lang="ts">
 import { Component, Mixins, Ref } from 'vue-property-decorator';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
-
-import NotificationMixin from './mixins/NotificationMixin';
-
-import WalletBase from './WalletBase.vue';
-import WalletAccount from './Account/WalletAccount.vue';
-import QrCode from './QrCode/QrCode.vue';
 
 import { api } from '../api';
-import { svgSaveAs, IMAGE_EXTENSIONS } from '../util/image';
 import { state, getter, mutation } from '../store/decorators';
+import { svgSaveAs, IMAGE_EXTENSIONS } from '../util/image';
+
+import WalletAccount from './Account/WalletAccount.vue';
+import QrCode from './QrCode/QrCode.vue';
+import WalletBase from './WalletBase.vue';
+import NotificationMixin from './mixins/NotificationMixin';
+
 import type { RouteNames } from '../consts';
-import type { PolkadotJsAccount } from '../types/common';
 import type { Route } from '../store/router/types';
+import type { PolkadotJsAccount } from '../types/common';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {

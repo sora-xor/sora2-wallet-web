@@ -1,12 +1,10 @@
-import { BaseModule } from './_base';
-
+import { formatStringNumber } from '../../../../util';
 import { FiatPriceQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
 import { FiatPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
-
 import { SnapshotTypes } from '../../types';
 
-import { formatStringNumber } from '../../../../util';
+import { BaseModule } from './_base';
 
 import type { AssetEntity, FiatPriceObject } from '../../types';
 

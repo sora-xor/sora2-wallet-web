@@ -1,5 +1,6 @@
-import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import TokenLogo from '@/components/TokenLogo.vue';
+
+import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS_NFT, MOCK_WHITE_LIST, MOCK_WHITELIST_IDS_BY_SYMBOL } from '../../utils/mock';
 
 // TODO: [RUSTEM]: please add more test cases for 1) symbol prop, 2) token prop, 3) whitelisted 4) non-whitelisted

@@ -1,6 +1,5 @@
-import type { CodecString } from '@sora-substrate/util';
-
 import type { NodesConnection } from './subquery';
+import type { CodecString } from '@sora-substrate/util';
 
 // Subquery Enums
 export enum SnapshotTypes {

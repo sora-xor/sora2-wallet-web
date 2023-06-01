@@ -1,8 +1,9 @@
-import Vuex from 'vuex';
 import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
+import Vuex from 'vuex';
+
+import WalletBase from '@/components/WalletBase.vue';
 
 import { useDescribe, useMount } from '../../utils';
-import WalletBase from '@/components/WalletBase.vue';
 
 const createStore = () =>
   new Vuex.Store({

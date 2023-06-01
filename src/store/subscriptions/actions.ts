@@ -1,9 +1,11 @@
 import { defineActions } from 'direct-vuex';
 import debounce from 'lodash/fp/debounce';
-import type { ActionContext } from 'vuex';
+
+import { rootActionContext } from '../../store';
 
 import { subscriptionsActionContext } from './../subscriptions';
-import { rootActionContext } from '../../store';
+
+import type { ActionContext } from 'vuex';
 
 const runParallel = async (context: ActionContext<any, any>, actionTypes: Array<string>): Promise<void> => {
   const { rootDispatch } = rootActionContext(context);
