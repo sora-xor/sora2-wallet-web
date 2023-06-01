@@ -2,7 +2,7 @@ import { defineGetters } from 'direct-vuex';
 import CryptoJS from 'crypto-js';
 import isEqual from 'lodash/fp/isEqual';
 import type { Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
-import type { Wallet } from '@subwallet/wallet-connect/types';
+import type { Wallet } from '@sora-test/wallet-connect/types';
 
 import { accountGetterContext } from './../account';
 import { api } from '../../api';

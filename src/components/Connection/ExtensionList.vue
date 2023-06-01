@@ -14,7 +14,7 @@
       <template #default>
         <a
           v-if="!wallet.installed && wallet.installUrl"
-          :href="getWalletInstallUrl(wallet)"
+          :href="wallet.installUrl"
           target="_blank"
           rel="nofollow noopener noreferrer"
           class="connection-action"
@@ -36,14 +36,13 @@
 
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
-import type { Wallet } from '@subwallet/wallet-connect/types';
+import type { Wallet } from '@sora-test/wallet-connect/types';
 
 import AccountCard from '../Account/AccountCard.vue';
 import ConnectionItems from './ConnectionItems.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 
 import { state } from '../../store/decorators';
-import { getWalletInstallUrl } from '../../util';
 
 @Component({
   components: {
@@ -57,8 +56,6 @@ export default class ExtensionList extends Mixins(TranslationMixin) {
   @state.account.source source!: string;
   @state.account.selectedWallet selectedWallet!: string;
   @state.account.selectedWalletLoading selectedWalletLoading!: boolean;
-
-  readonly getWalletInstallUrl = getWalletInstallUrl;
 
   handleSelect(wallet: Wallet): void {
     if (wallet.extensionName !== this.selectedWallet || !this.selectedWalletLoading) {

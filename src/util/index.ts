@@ -1,7 +1,7 @@
-import { getWallets, getWalletBySource, addWallet } from '@subwallet/wallet-connect/dotsama/wallets';
+import { getWallets, getWalletBySource, initialize } from '@sora-test/wallet-connect/dotsama/wallets';
 import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
-import type { Wallet, WalletAccount } from '@subwallet/wallet-connect/types';
+import type { Wallet, WalletAccount } from '@sora-test/wallet-connect/types';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
@@ -16,8 +16,9 @@ import {
   AccountImportInternalFlow,
   AccountImportExternalFlow,
   AccountCreateFlow,
+  TranslationConsts,
 } from '../consts';
-import { FearlessWalletInfo, isInternalWallet } from '../consts/wallets';
+import { isInternalWallet } from '../consts/wallets';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 
@@ -95,11 +96,7 @@ export const subscribeToWalletAccounts = async (
   return unsubscribe;
 };
 
-export const addFearlessWalletLocally = () => {
-  if (!getWalletBySource(FearlessWalletInfo.extensionName)) {
-    addWallet(FearlessWalletInfo);
-  }
-};
+export const initAppWallets = (appName?: string) => initialize(appName ?? TranslationConsts.Polkaswap);
 
 export const getAppWallets = (): Wallet[] => {
   try {
@@ -170,35 +167,6 @@ export const getWalletSigner = async (address: string, appWallet: AppWallet) => 
   }
 
   return { account: formatWalletAccount(account), signer: wallet.signer as Signer };
-};
-
-/**
- * Get url to install wallet extension
- * Extensions are available for Chrome based browsers (Chrome, Edge, Brave) & Firefox
- * @param wallet wallet data
- * @returns browser extension install url
- */
-export const getWalletInstallUrl = (wallet: Wallet): string => {
-  const { extensionName, installUrl } = wallet;
-
-  // for Firefox
-  if (navigator.userAgent.match(/firefox|fxios/i)) {
-    switch (extensionName) {
-      case AppWallet.FearlessWallet:
-        return 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc';
-      case AppWallet.SubwalletJS:
-        return 'https://addons.mozilla.org/firefox/addon/subwallet/';
-      case AppWallet.TalismanJS:
-        return 'https://addons.mozilla.org/firefox/addon/talisman-wallet-extension/';
-      case AppWallet.PolkadotJS:
-        return 'https://addons.mozilla.org/firefox/addon/polkadot-js-extension/';
-      default:
-        return '';
-    }
-  }
-
-  // for Chrome based browsers
-  return installUrl;
 };
 
 /**
