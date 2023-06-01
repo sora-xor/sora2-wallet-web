@@ -1,5 +1,5 @@
-import { mapGetters, mapState, mapActions, mapMutations } from 'vuex';
 import { createDecorator, VueDecorator } from 'vue-class-component';
+import { mapGetters, mapState, mapActions, mapMutations } from 'vuex';
 
 export enum VuexOperation {
   State = 'state',
@@ -8,7 +8,7 @@ export enum VuexOperation {
   Action = 'action',
 }
 
-function getVuexMapFn(type: VuexOperation) {
+function getVuexMapFn(type: VuexOperation): any {
   switch (type) {
     case VuexOperation.State:
       return mapState;

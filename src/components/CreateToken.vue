@@ -18,13 +18,14 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
-import CreateSimpleToken from './CreateSimpleToken.vue';
-import CreateNftToken from './CreateNftToken.vue';
-import WalletBase from './WalletBase.vue';
-
-import TranslationMixin from './mixins/TranslationMixin';
 import { TokenTabs, Step, RouteNames } from '../consts';
 import { mutation } from '../store/decorators';
+
+import CreateNftToken from './CreateNftToken.vue';
+import CreateSimpleToken from './CreateSimpleToken.vue';
+import WalletBase from './WalletBase.vue';
+import TranslationMixin from './mixins/TranslationMixin';
+
 import type { Route } from '../store/router/types';
 
 @Component({

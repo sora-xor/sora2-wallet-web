@@ -1,8 +1,10 @@
 import { Component, Mixins } from 'vue-property-decorator';
-import type { MessageType } from 'element-ui/types/message';
+
+import { AppError } from '../../util';
 
 import TranslationMixin from './TranslationMixin';
-import { AppError } from '../../util';
+
+import type { MessageType } from 'element-ui/types/message';
 
 @Component
 export default class NotificationMixin extends Mixins(TranslationMixin) {

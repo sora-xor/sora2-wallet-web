@@ -1,12 +1,13 @@
 import { Component, Mixins } from 'vue-property-decorator';
-import type { Asset, AccountAsset } from '@sora-substrate/util/build/assets/types';
+
+import { api } from '../../api';
+import { RouteNames } from '../../consts';
+import { state, mutation } from '../../store/decorators';
 
 import NotificationMixin from './NotificationMixin';
 
-import { RouteNames } from '../../consts';
-import { api } from '../../api';
-import { state, mutation } from '../../store/decorators';
 import type { Route } from '../../store/router/types';
+import type { Asset, AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 const reject = (message: string) => {
   throw new Error(`[QR Code]: ${message}`);

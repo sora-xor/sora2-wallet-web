@@ -7,15 +7,16 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/util/build/assets/types';
+
+import { api } from '../api';
+import { LogoSize, ObjectInit } from '../consts';
+import { getter } from '../store/decorators';
 
 import NftTokenLogo from './NftTokenLogo.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 
-import { api } from '../api';
-import { getter } from '../store/decorators';
-import { LogoSize, ObjectInit } from '../consts';
 import type { WhitelistIdsBySymbol } from '../types/common';
+import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {

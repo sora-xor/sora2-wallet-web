@@ -1,4 +1,5 @@
 import WalletAssetsHeadline from '@/components/WalletAssetsHeadline.vue';
+
 import { useDescribe, useShallowMount, useMount, useVuex } from '../../utils';
 
 const createStore = () =>

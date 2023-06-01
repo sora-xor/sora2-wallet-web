@@ -15,23 +15,25 @@
 
 <script lang="ts">
 // This file is only for local usage
-import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { FPNumber, HistoryItem } from '@sora-substrate/util';
 import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils';
-import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
-import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import env from '../public/env.json';
 
-import TransactionMixin from './components/mixins/TransactionMixin';
-import { initWallet } from './index';
 import SoraWallet from './SoraWallet.vue';
 import ConfirmDialog from './components/ConfirmDialog.vue';
+import TransactionMixin from './components/mixins/TransactionMixin';
 import { SoraNetwork } from './consts';
 import { state, mutation, getter, action } from './store/decorators';
+
+import { initWallet } from './index';
+
 import type { ApiKeysObject } from './types/common';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
+import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 
 @Component({
   components: { SoraWallet, ConfirmDialog },
@@ -57,7 +59,7 @@ export default class App extends Mixins(TransactionMixin) {
     await this.setApiKeys(env.API_KEYS);
     this.setSubqueryEndpoint(env.SUBQUERY_ENDPOINT);
     this.setSoraNetwork(SoraNetwork.Dev);
-    await initWallet({ withoutStore: true }); // We don't need storage for local development
+    await initWallet({ withoutStore: true, appName: 'APP NAME HERE' }); // We don't need storage for local development
     const localeLanguage = navigator.language;
     FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2);
     FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2);

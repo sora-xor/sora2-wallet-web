@@ -1,16 +1,16 @@
+import { TransactionStatus, Operation } from '@sora-substrate/util';
 import findLast from 'lodash/fp/findLast';
 import { Component, Mixins } from 'vue-property-decorator';
-import { TransactionStatus, Operation } from '@sora-substrate/util';
-import type { HistoryItem } from '@sora-substrate/util';
-
-import OperationsMixin from './OperationsMixin';
-import LoadingMixin from './LoadingMixin';
 
 import { api } from '../../api';
-import { delay } from '../../util';
-import store from '../../store';
 import { getter, mutation, action, state } from '../../store/decorators';
+import { delay } from '../../util';
+
+import LoadingMixin from './LoadingMixin';
+import OperationsMixin from './OperationsMixin';
+
 import type { AccountAssetsTable } from '../../types/common';
+import type { HistoryItem } from '@sora-substrate/util';
 
 @Component
 export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMixin) {

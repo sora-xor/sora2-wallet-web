@@ -52,10 +52,10 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator';
 
-import FormattedAmount from './FormattedAmount.vue';
-
 import { FontSizeRate, FontWeightRate, HiddenValue } from '../consts';
 import { state } from '../store/decorators';
+
+import FormattedAmount from './FormattedAmount.vue';
 
 @Component({
   components: { FormattedAmount },

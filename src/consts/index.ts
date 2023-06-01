@@ -125,6 +125,7 @@ export interface WalletInitOptions {
   withoutStore?: boolean;
   permissions?: WalletPermissions;
   updateEthBridgeHistory?: EthBridgeUpdateHistory;
+  appName?: string;
 }
 
 export interface NetworkFeeWarningOptions {
@@ -177,12 +178,13 @@ export enum ETH_BRIDGE_STATES {
 export const ObjectInit = () => null;
 
 /**
- * DO NOT IMPORT THIS CONST!
+ * DO NOT IMPORT THIS CONST if you use TranslationMixin
  *
  * Contains wallet-specific words which shouldn't be translated.
  * It's used in TranslationMixin of SORA Wallet project and it's extended in Polkaswap TranslationMixin.
  */
 export const TranslationConsts = {
+  Polkaswap: 'Polkaswap',
   Ethereum: 'Ethereum',
   Etherscan: 'Etherscan',
   Hashi: 'HASHI',

@@ -1,6 +1,7 @@
-import { Vue, Component } from 'vue-property-decorator';
 import { FPNumber } from '@sora-substrate/util';
 import { MaxTotalSupply } from '@sora-substrate/util/build/assets/consts';
+import { Vue, Component } from 'vue-property-decorator';
+
 import type { CodecString } from '@sora-substrate/util';
 
 @Component

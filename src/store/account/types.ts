@@ -1,10 +1,9 @@
-import type { Wallet } from '@subwallet/wallet-connect/types';
-import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
-import type { Subscription, Subject } from 'rxjs';
-
 import type { AppWallet } from '../../consts';
-import type { PolkadotJsAccount, AddressKeyMapping, KeyringPair$Json } from '../../types/common';
 import type { ReferrerRewards, FiatPriceObject } from '../../services/subquery/types';
+import type { PolkadotJsAccount, AddressKeyMapping, KeyringPair$Json } from '../../types/common';
+import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { Wallet } from '@sora-test/wallet-connect/types';
+import type { Subscription, Subject } from 'rxjs';
 
 export type CreateAccountArgs = {
   seed: string;

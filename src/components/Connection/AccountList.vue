@@ -22,11 +22,12 @@
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
 
+import { state, getter } from '../../store/decorators';
 import WalletAccount from '../Account/WalletAccount.vue';
-import ConnectionItems from './ConnectionItems.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 
-import { state, getter } from '../../store/decorators';
+import ConnectionItems from './ConnectionItems.vue';
+
 import type { PolkadotJsAccount } from '../../types/common';
 
 @Component({

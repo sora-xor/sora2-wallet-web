@@ -12,14 +12,13 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
-import AccountConfirmDialog from './Account/ConfirmDialog.vue';
-
-import NotificationMixin from './mixins/NotificationMixin';
-import LoadingMixin from './mixins/LoadingMixin';
-
+import { api } from '../api';
 import { getter, action, state, mutation } from '../store/decorators';
 import { delay } from '../util';
-import { api } from '../api';
+
+import AccountConfirmDialog from './Account/ConfirmDialog.vue';
+import LoadingMixin from './mixins/LoadingMixin';
+import NotificationMixin from './mixins/NotificationMixin';
 
 @Component({
   components: {

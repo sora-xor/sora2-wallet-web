@@ -23,14 +23,14 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import WalletAvatar from '../WalletAvatar.vue';
-import AccountCard from './AccountCard.vue';
-
-import TranslationMixin from '../mixins/TranslationMixin';
-import CopyAddressMixin from '../mixins/CopyAddressMixin';
-import { formatAddress, formatSoraAddress } from '../../util';
-import { getter } from '../../store/decorators';
 import { ObjectInit } from '../../consts';
+import { getter } from '../../store/decorators';
+import { formatAddress, formatSoraAddress } from '../../util';
+import WalletAvatar from '../WalletAvatar.vue';
+import CopyAddressMixin from '../mixins/CopyAddressMixin';
+import TranslationMixin from '../mixins/TranslationMixin';
+
+import AccountCard from './AccountCard.vue';
 
 import type { PolkadotJsAccount } from '../../types/common';
 

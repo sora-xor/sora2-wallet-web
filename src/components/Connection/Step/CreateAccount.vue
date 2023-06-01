@@ -113,14 +113,13 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 import isEqual from 'lodash/fp/isEqual';
-
-import NotificationMixin from '../../mixins/NotificationMixin';
+import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
 import { copyToClipboard } from '../../../util';
+import NotificationMixin from '../../mixins/NotificationMixin';
 
 import type { CreateAccountArgs } from '../../../store/account/types';
 

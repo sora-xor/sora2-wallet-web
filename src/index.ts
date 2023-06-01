@@ -1,58 +1,56 @@
-import type Vue from 'vue';
-import type { PluginObject } from 'vue';
-
-import installWalletPlugins from './plugins';
-
 // Components
 import SoraWallet from './SoraWallet.vue';
-import WalletAccount from './components/Account/WalletAccount.vue';
-import WalletAvatar from './components/WalletAvatar.vue';
-import WalletBase from './components/WalletBase.vue';
+import { api, connection } from './api';
 import AccountCard from './components/Account/AccountCard.vue';
+import WalletAccount from './components/Account/WalletAccount.vue';
+import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
-import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
-import TokenAddress from './components/TokenAddress.vue';
-import SearchInput from './components/SearchInput.vue';
-import InfoLine from './components/InfoLine.vue';
+import ConfirmDialog from './components/ConfirmDialog.vue';
+import DialogBase from './components/DialogBase.vue';
 import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';
-import TransactionHashView from './components/TransactionHashView.vue';
-import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
-import TokenLogo from './components/TokenLogo.vue';
 import HistoryPagination from './components/HistoryPagination.vue';
-import DialogBase from './components/DialogBase.vue';
+import InfoLine from './components/InfoLine.vue';
+import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
-import ConfirmDialog from './components/ConfirmDialog.vue';
+import SearchInput from './components/SearchInput.vue';
 import SimpleNotification from './components/SimpleNotification.vue';
+import TokenAddress from './components/TokenAddress.vue';
+import TokenLogo from './components/TokenLogo.vue';
+import TransactionHashView from './components/TransactionHashView.vue';
+import WalletAvatar from './components/WalletAvatar.vue';
+import WalletBase from './components/WalletBase.vue';
 // Mixins
-import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
-import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
-import FormattedAmountMixin from './components/mixins/FormattedAmountMixin';
-import TransactionMixin from './components/mixins/TransactionMixin';
-import TranslationMixin from './components/mixins/TranslationMixin';
-import NotificationMixin from './components/mixins/NotificationMixin';
-import LoadingMixin from './components/mixins/LoadingMixin';
-import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
-import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
+import CameraPermissionMixin from './components/mixins/CameraPermissionMixin';
 import CopyAddressMixin from './components/mixins/CopyAddressMixin';
 import DialogMixin from './components/mixins/DialogMixin';
-import CameraPermissionMixin from './components/mixins/CameraPermissionMixin';
-
+import FormattedAmountMixin from './components/mixins/FormattedAmountMixin';
+import LoadingMixin from './components/mixins/LoadingMixin';
+import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
+import NotificationMixin from './components/mixins/NotificationMixin';
+import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
+import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
+import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
+import TransactionMixin from './components/mixins/TransactionMixin';
+import TranslationMixin from './components/mixins/TranslationMixin';
+import * as WALLET_CONSTS from './consts';
 import en from './lang/en';
-import internalStore, { modules } from './store'; // `internalStore` is required for local usage
-import { storage, runtimeStorage, settingsStorage } from './util/storage';
-import { api, connection } from './api';
-import { delay, getExplorerLinks, groupRewardsByAssetsList, addFearlessWalletLocally, getWallet } from './util';
-import { ScriptLoader } from './util/scriptLoader';
+import installWalletPlugins from './plugins';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
-import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
-import * as VUEX_TYPES from './store/types';
 import * as SUBQUERY_TYPES from './services/subquery/types';
-import * as WALLET_CONSTS from './consts';
-import * as WALLET_TYPES from './types/common';
+import internalStore, { modules } from './store'; // `internalStore` is required for local usage
+import * as VUEX_TYPES from './store/types';
+import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
 import { WalletModules } from './store/wallet';
+import * as WALLET_TYPES from './types/common';
+import { delay, getExplorerLinks, groupRewardsByAssetsList, initAppWallets, getWallet } from './util';
+import { ScriptLoader } from './util/scriptLoader';
+import { storage, runtimeStorage, settingsStorage } from './util/storage';
+
+import type { PluginObject } from 'vue';
+import type Vue from 'vue';
 
 type Store = typeof internalStore;
 
@@ -92,13 +90,14 @@ let walletCoreLoaded = false;
 
 const waitForCore = async ({
   withoutStore = false,
+  appName,
   permissions,
   updateEthBridgeHistory,
 }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> => {
   if (!walletCoreLoaded) {
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
-    addFearlessWalletLocally();
+    initAppWallets(appName);
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);

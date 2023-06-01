@@ -27,7 +27,6 @@ import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import DialogBase from '../DialogBase.vue';
 import SimpleNotification from '../SimpleNotification.vue';
-
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 

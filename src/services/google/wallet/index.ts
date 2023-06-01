@@ -1,7 +1,9 @@
-import { addWallet, getWalletBySource } from '@subwallet/wallet-connect/dotsama/wallets';
-import { Singleton } from '../../../decorators';
+import { addWallet, getWalletBySource } from '@sora-test/wallet-connect/dotsama/wallets';
+
+import { TranslationConsts } from '@/consts';
 
 import { GDriveWalletInfo } from '../../../consts/wallets';
+import { Singleton } from '../../../decorators';
 import { GDriveStorage } from '../index';
 
 import Accounts from './accounts';
@@ -51,6 +53,6 @@ export const addGDriveWalletLocally = () => {
   injectGDriveWallet();
 
   if (!getWalletBySource(GDriveWalletInfo.extensionName)) {
-    addWallet(GDriveWalletInfo);
+    addWallet(GDriveWalletInfo, TranslationConsts.Polkaswap);
   }
 };

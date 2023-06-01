@@ -1,9 +1,9 @@
-import Vue, { VueConstructor } from 'vue';
-import Vuex from 'vuex';
-import VueI18n from 'vue-i18n';
-import { createLocalVue, shallowMount, mount } from '@vue/test-utils';
 import SoramitsuElements, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui';
+import { createLocalVue, shallowMount, mount } from '@vue/test-utils';
 import ElPopover from 'element-ui/lib/popover';
+import Vue, { VueConstructor } from 'vue';
+import VueI18n from 'vue-i18n';
+import Vuex from 'vuex';
 
 import i18n from '../../src/lang';
 

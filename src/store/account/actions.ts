@@ -1,20 +1,17 @@
-import { defineActions } from 'direct-vuex';
+import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
 import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
+import { defineActions } from 'direct-vuex';
 import { saveAs } from 'file-saver';
-import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
-import type { ActionContext } from 'vuex';
-import type { Signer } from '@polkadot/api/types';
-import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
-import { accountActionContext } from './../account';
-import { rootActionContext } from '../../store';
 import { api } from '../../api';
-import { SubqueryExplorerService } from '../../services/subquery';
-import { CeresApiService } from '../../services/ceres';
+import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
+import { isInternalSource } from '../../consts/wallets';
 import alertsApiService from '../../services/alerts';
+import { CeresApiService } from '../../services/ceres';
+import { SubqueryExplorerService } from '../../services/subquery';
+import { rootActionContext } from '../../store';
 import {
-  delay,
   getAppWallets,
   getWallet,
   getWalletSigner,
@@ -25,12 +22,15 @@ import {
   NFT_BLACK_LIST_URL,
   AppError,
 } from '../../util';
-import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
-import { isInternalSource } from '../../consts/wallets';
 
-import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
+import { accountActionContext } from './../account';
+
 import type { FiatPriceObject } from '../../services/subquery/types';
+import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { CreateAccountArgs, RestoreAccountArgs } from './types';
+import type { Signer } from '@polkadot/api/types';
+import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { ActionContext } from 'vuex';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
@@ -183,7 +183,7 @@ const actions = defineActions({
   async checkSelectedWallet(context): Promise<void> {
     const { dispatch, state } = accountActionContext(context);
     try {
-      if (state.selectedWallet) {
+      if (state.selectedWallet && !state.selectedWalletLoading) {
         await getWallet(state.selectedWallet);
       }
     } catch {

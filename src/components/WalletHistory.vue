@@ -41,26 +41,27 @@
 </template>
 
 <script lang="ts">
+import { TransactionStatus } from '@sora-substrate/util';
 import debounce from 'lodash/fp/debounce';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
-import { TransactionStatus } from '@sora-substrate/util';
-import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
-import type { History, AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
 
-import LoadingMixin from './mixins/LoadingMixin';
-import TransactionMixin from './mixins/TransactionMixin';
-import PaginationSearchMixin from './mixins/PaginationSearchMixin';
-import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
-import SearchInput from './SearchInput.vue';
-import HistoryPagination from './HistoryPagination.vue';
-
-import { getStatusIcon, getStatusClass } from '../util';
 import { RouteNames, PaginationButton } from '../consts';
-import { state, mutation, action } from '../store/decorators';
 import { SubqueryDataParserService } from '../services/subquery';
+import { state, mutation, action } from '../store/decorators';
+import { getStatusIcon, getStatusClass } from '../util';
+
+import HistoryPagination from './HistoryPagination.vue';
+import SearchInput from './SearchInput.vue';
+import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
+import LoadingMixin from './mixins/LoadingMixin';
+import PaginationSearchMixin from './mixins/PaginationSearchMixin';
+import TransactionMixin from './mixins/TransactionMixin';
+
 import type { EthBridgeUpdateHistory } from '../consts';
-import type { ExternalHistoryParams } from '../types/history';
 import type { Route } from '../store/router/types';
+import type { ExternalHistoryParams } from '../types/history';
+import type { History, AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
+import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {

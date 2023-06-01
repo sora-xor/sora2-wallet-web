@@ -20,13 +20,13 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
-import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 import NftTokenLogo from './NftTokenLogo.vue';
-import TokenLogo from './TokenLogo.vue';
 import TokenAddress from './TokenAddress.vue';
-
+import TokenLogo from './TokenLogo.vue';
 import TranslationMixin from './mixins/TranslationMixin';
+
+import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {

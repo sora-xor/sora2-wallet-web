@@ -1,9 +1,9 @@
-import type { NetworkFeesObject } from '@sora-substrate/util';
-
-import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
 import { WalletAssetFilters, WalletFilteringOptions } from '../../consts';
 import { Alert, ConnectionStatus } from '../../types/common';
+import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
+
 import type { SettingsState } from './types';
+import type { NetworkFeesObject } from '@sora-substrate/util';
 
 function initialState(): SettingsState {
   const priceAlerts = settingsStorage.get('alerts');

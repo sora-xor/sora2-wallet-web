@@ -1,7 +1,7 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 
-import { delay } from '../../util';
 import { state } from '../../store/decorators';
+import { delay } from '../../util';
 
 @Component
 export default class LoadingMixin extends Vue {

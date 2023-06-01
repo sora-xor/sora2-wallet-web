@@ -1,10 +1,10 @@
 import { defineModule } from 'direct-vuex';
 
-import router from './router';
-import subscriptions from './subscriptions';
-import settings from './settings';
-import transactions from './transactions';
 import account from './account';
+import router from './router';
+import settings from './settings';
+import subscriptions from './subscriptions';
+import transactions from './transactions';
 
 const wallet = defineModule({
   namespaced: true,
