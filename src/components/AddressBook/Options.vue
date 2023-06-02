@@ -22,6 +22,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import TranslationMixin from '../mixins/TranslationMixin';
+
 import type { AccountBook } from '@/types/common';
 
 @Component

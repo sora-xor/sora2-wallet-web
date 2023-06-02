@@ -55,21 +55,25 @@
 </template>
 
 <script lang="ts">
+import { api } from '@sora-substrate/util';
 import { Component, Mixins, Ref } from 'vue-property-decorator';
+
+import { formatAddress, formatSoraAddress } from '@/util';
+
+import { state, action, mutation } from '../../store/decorators';
 import AccountCard from '../Account/AccountCard.vue';
-import AccountList from '../Connection/AccountList.vue';
-import AddressRecord from './AddressRecord.vue';
-import WalletAvatar from '../WalletAvatar.vue';
-import Options from './Options.vue';
-import DialogBase from '../DialogBase.vue';
 import WalletAccount from '../Account/WalletAccount.vue';
+import AccountList from '../Connection/AccountList.vue';
+import DialogBase from '../DialogBase.vue';
 import SearchInput from '../SearchInput.vue';
+import WalletAvatar from '../WalletAvatar.vue';
+import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
-import CopyAddressMixin from '../mixins/CopyAddressMixin';
-import { formatAddress, formatSoraAddress } from '@/util';
-import { state, action, mutation } from '../../store/decorators';
-import { api } from '@sora-substrate/util';
+
+import AddressRecord from './AddressRecord.vue';
+import Options from './Options.vue';
+
 import type { AppWallet } from '@/consts';
 import type { AccountBook, Book, PolkadotJsAccount } from '@/types/common';
 

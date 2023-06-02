@@ -24,11 +24,14 @@
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
+
+import { formatAddress } from '@/util';
+
 import AccountCard from '../Account/AccountCard.vue';
 import WalletAvatar from '../WalletAvatar.vue';
-import TranslationMixin from '../mixins/TranslationMixin';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';
-import { formatAddress } from '@/util';
+import TranslationMixin from '../mixins/TranslationMixin';
+
 import type { AccountBook } from '@/types/common';
 
 @Component({

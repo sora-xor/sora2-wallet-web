@@ -29,13 +29,15 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
-import DialogBase from '../DialogBase.vue';
-import { api } from '../../api';
-import DialogMixin from '../mixins/DialogMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
-import LoadingMixin from '../mixins/LoadingMixin';
-import { formatSoraAddress } from '@/util';
 import { state, getter, mutation } from '@/store/decorators';
+import { formatSoraAddress } from '@/util';
+
+import { api } from '../../api';
+import DialogBase from '../DialogBase.vue';
+import DialogMixin from '../mixins/DialogMixin';
+import LoadingMixin from '../mixins/LoadingMixin';
+import TranslationMixin from '../mixins/TranslationMixin';
+
 import type { AccountBook, Book, PolkadotJsAccount } from '@/types/common';
 
 @Component({
