@@ -38,13 +38,13 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
+import { ObjectInit } from '../../consts';
 import DialogBase from '../DialogBase.vue';
-import WalletAccount from './WalletAccount.vue';
-
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 
-import { ObjectInit } from '../../consts';
+import WalletAccount from './WalletAccount.vue';
+
 import type { PolkadotJsAccount } from '../../types/common';
 
 @Component({

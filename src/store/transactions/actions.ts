@@ -1,13 +1,15 @@
-import { defineActions } from 'direct-vuex';
 import { Operation } from '@sora-substrate/util';
-import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import { defineActions } from 'direct-vuex';
 
-import { transactionsActionContext } from './../transactions';
-import store, { rootActionContext } from '../../store';
 import { api } from '../../api';
 import { SubqueryExplorerService, SubqueryDataParserService } from '../../services/subquery';
 import { historyElementsFilter } from '../../services/subquery/queries/historyElements';
+import store, { rootActionContext } from '../../store';
+
+import { transactionsActionContext } from './../transactions';
+
 import type { ExternalHistoryParams } from '../../types/history';
+import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2_000;
 

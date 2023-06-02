@@ -1,9 +1,10 @@
-import isElectron from 'is-electron';
 import { FPNumber } from '@sora-substrate/util';
+import isElectron from 'is-electron';
 
 import { storage, settingsStorage } from '../../util/storage';
-import type { ReferrerRewards } from '../../services/subquery/types';
+
 import type { AppWallet } from '../../consts';
+import type { ReferrerRewards } from '../../services/subquery/types';
 import type { AccountState } from './types';
 import type { Book } from '@/types/common';
 

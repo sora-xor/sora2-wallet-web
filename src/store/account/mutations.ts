@@ -1,18 +1,19 @@
 import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
-import type { Wallet } from '@sora-test/wallet-connect/types';
-import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
-import type { Subscription, Subject } from 'rxjs';
-import type { Unsubcall } from '@polkadot/extension-inject/types';
+
+import { api } from '../../api';
+import { storage, settingsStorage } from '../../util/storage';
 
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
-import { storage, settingsStorage } from '../../util/storage';
-import { api } from '../../api';
 
 import type { AppWallet } from '../../consts';
-import type { AccountState } from './types';
 import type { FiatPriceObject, ReferrerRewards } from '../../services/subquery/types';
 import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
+import type { AccountState } from './types';
+import type { Unsubcall } from '@polkadot/extension-inject/types';
+import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
+import type { Wallet } from '@sora-test/wallet-connect/types';
+import type { Subscription, Subject } from 'rxjs';
 
 const mutations = defineMutations<AccountState>()({
   // Fiat price

@@ -1,9 +1,9 @@
 import Identicon from '@polkadot/vue-identicon';
 
+import WalletAvatar from '@/components/WalletAvatar.vue';
+
 import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_WALLET_AVATAR } from '../../utils/WalletAvatarMock';
-
-import WalletAvatar from '@/components/WalletAvatar.vue';
 
 useDescribe('WalletAvatar.vue', WalletAvatar, () => {
   MOCK_WALLET_AVATAR.map((item) =>

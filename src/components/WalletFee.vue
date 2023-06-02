@@ -13,13 +13,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { FPNumber } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import TranslationMixin from './mixins/TranslationMixin';
-import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import InfoLine from './InfoLine.vue';
+import FormattedAmountMixin from './mixins/FormattedAmountMixin';
+import TranslationMixin from './mixins/TranslationMixin';
 
 function isFPNumber(value: unknown): boolean {
   if (value instanceof FPNumber) {

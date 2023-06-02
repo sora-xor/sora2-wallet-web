@@ -23,10 +23,9 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
+import { AccountActionTypes } from '../../consts';
 import LoadingMixin from '../mixins/LoadingMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
-
-import { AccountActionTypes } from '../../consts';
 
 const ActionsData = {
   [AccountActionTypes.Rename]: {

@@ -1,9 +1,10 @@
+import { createDirectStore } from 'direct-vuex';
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { createDirectStore } from 'direct-vuex';
-import type { Store } from 'vuex';
 
 import wallet, { WalletModule } from './wallet';
+
+import type { Store } from 'vuex';
 
 Vue.use(Vuex);
 

@@ -1,12 +1,12 @@
 import { defineModule, localActionContext, localGetterContext } from 'direct-vuex';
 
-import mutations from './mutations';
-import state from './state';
-import actions from './actions';
-import getters from './getters';
-
 import { prepareWalletActionContext } from '../../store';
 import { WalletModule } from '../wallet';
+
+import actions from './actions';
+import getters from './getters';
+import mutations from './mutations';
+import state from './state';
 
 const transactions = defineModule({
   namespaced: true,

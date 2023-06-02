@@ -1,9 +1,10 @@
-import { defineGetters } from 'direct-vuex';
 import { TransactionStatus } from '@sora-substrate/util';
-import type { HistoryItem } from '@sora-substrate/util';
+import { defineGetters } from 'direct-vuex';
 
 import { transactionsGetterContext } from './../transactions';
+
 import type { TransactionsState } from './types';
+import type { HistoryItem } from '@sora-substrate/util';
 
 const getters = defineGetters<TransactionsState>()({
   activeTxs(...args): Array<HistoryItem> {

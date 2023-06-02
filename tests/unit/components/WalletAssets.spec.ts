@@ -1,5 +1,6 @@
 import WalletAssets from '@/components/WalletAssets.vue';
 
+import { WalletPermissions } from '../../../src/consts';
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import {
   MOCK_ACCOUNT_ASSETS,
@@ -7,7 +8,6 @@ import {
   MOCK_WALLET_PERMISSIONS,
   MOCK_WHITE_LIST,
 } from '../../utils/mock';
-import { WalletPermissions } from '../../../src/consts';
 
 const createWrapper = (options = {}) =>
   useShallowMount(WalletAssets, {

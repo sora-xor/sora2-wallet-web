@@ -11,9 +11,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Ref } from 'vue-property-decorator';
-import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 import { IpfsStorage } from '../util/ipfsStorage';
+
+import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component
 export default class NftTokenLogo extends Vue {

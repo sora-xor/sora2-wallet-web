@@ -1,7 +1,8 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
-import TranslationMixin from './TranslationMixin';
 import { copyToClipboard, delay } from '../../util';
+
+import TranslationMixin from './TranslationMixin';
 
 @Component
 export default class CopyAddressMixin extends Mixins(TranslationMixin) {

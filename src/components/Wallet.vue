@@ -70,27 +70,26 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import type { HistoryItem } from '@sora-substrate/util';
 
+import { RouteNames, WalletTabs, AccountActionTypes } from '../consts';
+import { state, getter, mutation } from '../store/decorators';
+
+import AccountActionsMenu from './Account/ActionsMenu.vue';
+import AccountExportDialog from './Account/ConfirmDialog.vue';
+import AccountDeleteDialog from './Account/DeleteDialog.vue';
+import AccountRenameDialog from './Account/RenameDialog.vue';
+import WalletAccount from './Account/WalletAccount.vue';
+import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
+import WalletAssets from './WalletAssets.vue';
+import WalletBase from './WalletBase.vue';
+import WalletHistory from './WalletHistory.vue';
+import WalletTransactionDetails from './WalletTransactionDetails.vue';
 import AccountActionsMixin from './mixins/AccountActionsMixin';
 import OperationsMixin from './mixins/OperationsMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 
-import WalletBase from './WalletBase.vue';
-import WalletAccount from './Account/WalletAccount.vue';
-import WalletAssets from './WalletAssets.vue';
-import WalletHistory from './WalletHistory.vue';
-import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
-import WalletTransactionDetails from './WalletTransactionDetails.vue';
-
-import AccountActionsMenu from './Account/ActionsMenu.vue';
-import AccountRenameDialog from './Account/RenameDialog.vue';
-import AccountExportDialog from './Account/ConfirmDialog.vue';
-import AccountDeleteDialog from './Account/DeleteDialog.vue';
-
-import { RouteNames, WalletTabs, AccountActionTypes } from '../consts';
-import { state, getter, mutation } from '../store/decorators';
 import type { WalletPermissions } from '../consts';
+import type { HistoryItem } from '@sora-substrate/util';
 
 @Component({
   components: {

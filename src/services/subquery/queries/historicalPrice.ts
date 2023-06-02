@@ -1,7 +1,6 @@
 import { gql } from '@urql/core';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
-
 import { SnapshotTypes } from '../types';
 
 import type { EntitiesQueryResponse, AssetSnapshotEntity } from '../types';

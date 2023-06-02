@@ -1,14 +1,15 @@
-import { Component, Mixins } from 'vue-property-decorator';
 import { TransactionStatus, Operation } from '@sora-substrate/util';
-import type { History } from '@sora-substrate/util';
+import { Component, Mixins } from 'vue-property-decorator';
+
+import { HiddenValue } from '../../consts';
+import { getter } from '../../store/decorators';
+import { formatAddress, groupRewardsByAssetsList } from '../../util';
 
 import NotificationMixin from './NotificationMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
 
-import { HiddenValue } from '../../consts';
-import { formatAddress, groupRewardsByAssetsList } from '../../util';
-import { getter } from '../../store/decorators';
 import type { PolkadotJsAccount } from '../../types/common';
+import type { History } from '@sora-substrate/util';
 
 const twoAssetsBasedOperations = [
   Operation.AddLiquidity,

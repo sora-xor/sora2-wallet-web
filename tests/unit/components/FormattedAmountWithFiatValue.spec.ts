@@ -1,7 +1,7 @@
+import FormattedAmountWithFiatValue from '@/components/FormattedAmountWithFiatValue.vue';
+
 import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_FORMATTED_AMOUNT_WITH_FIAT_VALUE } from '../../utils/FormattedAmountWithFiatValueMock';
-
-import FormattedAmountWithFiatValue from '@/components/FormattedAmountWithFiatValue.vue';
 
 useDescribe('FormattedAmountWithFiatValue.vue', FormattedAmountWithFiatValue, () => {
   MOCK_FORMATTED_AMOUNT_WITH_FIAT_VALUE.map((item) =>

@@ -1,10 +1,8 @@
 import { pipe, subscribe } from 'wonka';
 
 import store from '../../../store';
-
-import { createExplorerClient } from '../client';
-
 import { ConnectionStatus } from '../../../types/common';
+import { createExplorerClient } from '../client';
 
 import type { Client, OperationResult, TypedDocumentNode, AnyVariables } from '../client';
 
