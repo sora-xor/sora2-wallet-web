@@ -58,7 +58,7 @@
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
-import type { Wallet } from '@subwallet/wallet-connect/types';
+import type { Wallet } from '@sora-test/wallet-connect/types';
 
 import WalletBase from '../../WalletBase.vue';
 import AccountList from '../AccountList.vue';
