@@ -182,6 +182,8 @@ export default {
     dialogTitle: 'Your contacts',
     identity: 'On-chain identity',
     none: 'None',
+    detected: 'New address detected',
+    save: 'Save as contact',
     tooltip: 'Collect address book by providing name and address to keep your contacts organized and up-to-date',
     options: {
       send: 'Send tokens',

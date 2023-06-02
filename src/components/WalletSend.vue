@@ -27,7 +27,7 @@
         <address-record v-else :record="record" class="wallet-send-address-book-record">
           <s-icon
             class="wallet-send-address-book-icon-unlink"
-            name="el-icon-link"
+            name="el-icon-close"
             size="20"
             @click.native="unlinkAddress"
           />
@@ -48,8 +48,8 @@
         </template>
         <p v-if="isAccountAddress" class="wallet-send-address-error">{{ t('walletSend.addressError') }}</p>
         <div v-if="newAddressDetected" class="wallet-send__new-address">
-          <span class="wallet-send__new-address-msg">New address detected</span>
-          <span class="wallet-send__new-address-save" @click="saveContact(address)">Save as contact</span>
+          <span class="wallet-send__new-address-msg">{{ t('addressBook.detected') }}</span>
+          <span class="wallet-send__new-address-save" @click="saveContact(address)">{{ t('addressBook.save') }}</span>
         </div>
         <s-float-input
           v-model="amount"
@@ -643,16 +643,18 @@ $logo-size: var(--s-size-mini);
 
       &:hover {
         cursor: pointer;
+        background: var(--s-color-base-content-secondary);
       }
     }
     &-book-icon-open.is-set {
       margin-right: 3px;
     }
     &-book-icon-unlink {
-      color: var(--s-color-base-content-secondary);
+      color: var(--s-color-base-content-tertiary);
       margin-right: 6px;
       &:hover {
         cursor: pointer;
+        color: var(--s-color-base-content-secondary);
       }
     }
     &-book-copy:hover {
