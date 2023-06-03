@@ -185,6 +185,8 @@ export default {
     detected: 'New address detected',
     save: 'Save as contact',
     tooltip: 'Collect address book by providing name and address to keep your contacts organized and up-to-date',
+    notSoraAddress:
+      'This address will be saved as SORA address below. Make sure the recipient can access the SORA chain:',
     options: {
       send: 'Send tokens',
       edit: 'Edit contact',

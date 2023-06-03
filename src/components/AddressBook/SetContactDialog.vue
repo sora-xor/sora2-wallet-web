@@ -11,6 +11,14 @@
       />
       <s-input class="set-address__input" :placeholder="t('addressText')" v-model="address" :disabled="inputDisabled" />
       <p v-if="isAccountAddress" class="set-address-error">{{ t('walletSend.addressError') }}</p>
+      <template v-if="validAddress && isNotSoraAddress">
+        <p class="wallet-send-address-warning">{{ t('addressBook.notSoraAddress') }}</p>
+        <s-tooltip :content="copyValueAssetId" placement="top">
+          <p class="wallet-send-address-formatted" @click="handleCopyAddress(formattedSoraAddress, $event)">
+            {{ formattedSoraAddress }}
+          </p>
+        </s-tooltip>
+      </template>
       <s-input
         class="set-address__input"
         :placeholder="t('addressBook.identity')"
@@ -34,6 +42,7 @@ import { formatSoraAddress } from '@/util';
 
 import { api } from '../../api';
 import DialogBase from '../DialogBase.vue';
+import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
@@ -45,7 +54,7 @@ import type { AccountBook, Book, PolkadotJsAccount } from '@/types/common';
     DialogBase,
   },
 })
-export default class SetContactDialog extends Mixins(DialogMixin, TranslationMixin, LoadingMixin) {
+export default class SetContactDialog extends Mixins(DialogMixin, TranslationMixin, LoadingMixin, CopyAddressMixin) {
   @state.account.book book!: Book;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @getter.account.account account!: PolkadotJsAccount;
@@ -89,7 +98,7 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   onChainIdentity = this.t('addressBook.none');
 
   setContact(): void {
-    this.setAddressToBook({ address: this.address, name: this.name });
+    this.setAddressToBook({ address: formatSoraAddress(this.address), name: this.name });
     this.$root.$emit('updateAddressBook');
     this.closeDialog();
     this.$emit('open-address-book');
@@ -101,6 +110,10 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
 
   get tooltip(): string {
     return this.t('addressBook.tooltip');
+  }
+
+  get copyValueAssetId(): string {
+    return this.copyTooltip(this.t('assets.assetId'));
   }
 
   get btnText(): string {
@@ -132,8 +145,14 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
     return this.isEditMode;
   }
 
+  get isNotSoraAddress(): boolean {
+    return !!this.formattedSoraAddress && this.address.slice(0, 2) !== 'cn';
+  }
+
   isAddressAdded(address: string): boolean {
-    const found = this.polkadotJsAccounts.find((account) => formatSoraAddress(account.address) === address);
+    const found = this.polkadotJsAccounts.find(
+      (account) => formatSoraAddress(account.address) === formatSoraAddress(address)
+    );
     return !!this.book[address] || Boolean(found);
   }
 
@@ -164,6 +183,33 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.wallet-send {
+  &-address-warning {
+    color: var(--s-color-status-warning);
+    margin-bottom: var(--s-basic-spacing);
+    font-weight: 400;
+    font-size: var(--s-font-size-extra-small);
+    line-height: var(--s-line-height-base);
+    padding-right: calc(var(--s-basic-spacing) * 2);
+    padding-left: calc(var(--s-basic-spacing) * 2);
+  }
+
+  &-address-formatted {
+    margin: 0 auto;
+    margin-bottom: calc(var(--s-basic-spacing));
+    font-weight: 200;
+    font-size: var(--s-font-size-mini);
+    line-height: var(--s-line-height-base);
+    letter-spacing: var(--s-letter-spacing-small);
+    cursor: pointer;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+</style>
 
 <style lang="scss">
 .set-address {
