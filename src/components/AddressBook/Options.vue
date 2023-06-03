@@ -86,7 +86,6 @@ export default class Options extends Mixins(TranslationMixin) {
       span {
         margin-left: $inner-spacing-mini;
         font-size: var(--s-font-size-medium);
-        font-size: var(--s-font-size-medium);
         font-weight: 300;
         line-height: 200%;
         letter-spacing: -0.02em;
