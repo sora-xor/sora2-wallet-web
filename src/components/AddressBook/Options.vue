@@ -12,7 +12,7 @@
       <s-icon name="el-icon-delete" />
       <span>{{ t('addressBook.options.delete') }}</span>
     </div>
-    <div slot="reference">
+    <div slot="reference" @click="handleOpenOptions">
       <s-icon class="address-book__option-icon" name="basic-more-vertical-24" />
     </div>
   </el-popover>
@@ -36,6 +36,10 @@ export default class Options extends Mixins(TranslationMixin) {
 
   handleSelectAddress(address: string, name: string): void {
     this.$emit('select-address', address, name);
+  }
+
+  handleOpenOptions(event: Event): void {
+    event.stopPropagation();
   }
 
   handleEditRecord(address: string): void {
@@ -97,6 +101,7 @@ export default class Options extends Mixins(TranslationMixin) {
       color: var(--s-color-base-content-tertiary);
       &:hover {
         cursor: pointer;
+        color: var(--s-color-base-content-secondary);
       }
     }
   }
