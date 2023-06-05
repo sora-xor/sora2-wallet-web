@@ -22,10 +22,10 @@ import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import env from '../public/env.json';
 
-import SoraWallet from './SoraWallet.vue';
 import ConfirmDialog from './components/ConfirmDialog.vue';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import { SoraNetwork } from './consts';
+import SoraWallet from './SoraWallet.vue';
 import { state, mutation, getter, action } from './store/decorators';
 
 import { initWallet } from './index';

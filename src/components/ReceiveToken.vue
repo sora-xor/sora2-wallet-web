@@ -21,9 +21,9 @@ import { state, getter, mutation } from '../store/decorators';
 import { svgSaveAs, IMAGE_EXTENSIONS } from '../util/image';
 
 import WalletAccount from './Account/WalletAccount.vue';
+import NotificationMixin from './mixins/NotificationMixin';
 import QrCode from './QrCode/QrCode.vue';
 import WalletBase from './WalletBase.vue';
-import NotificationMixin from './mixins/NotificationMixin';
 
 import type { RouteNames } from '../consts';
 import type { Route } from '../store/router/types';

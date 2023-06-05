@@ -12,8 +12,8 @@ import { api } from '../api';
 import { LogoSize, ObjectInit } from '../consts';
 import { getter } from '../store/decorators';
 
-import NftTokenLogo from './NftTokenLogo.vue';
 import TranslationMixin from './mixins/TranslationMixin';
+import NftTokenLogo from './NftTokenLogo.vue';
 
 import type { WhitelistIdsBySymbol } from '../types/common';
 import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/util/build/assets/types';
