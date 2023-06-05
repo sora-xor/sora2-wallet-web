@@ -23,8 +23,8 @@ import { RouteNames } from '../consts';
 import { state, mutation } from '../store/decorators';
 
 import AssetList from './AssetList.vue';
-import WalletBase from './WalletBase.vue';
 import TranslationMixin from './mixins/TranslationMixin';
+import WalletBase from './WalletBase.vue';
 
 import type { Route } from '../store/router/types';
 import type { AccountAsset } from '@sora-substrate/util/build/assets/types';

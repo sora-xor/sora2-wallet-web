@@ -80,9 +80,9 @@ import { BrowserQRCodeReader } from '@zxing/browser';
 import { Component, Ref, Mixins } from 'vue-property-decorator';
 
 import DialogBase from '../DialogBase.vue';
-import NotificationEnablingPage from '../NotificationEnablingPage.vue';
 import CameraPermissionMixin from '../mixins/CameraPermissionMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
+import NotificationEnablingPage from '../NotificationEnablingPage.vue';
 
 import type SDropdown from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdown/SDropdown.vue';
 import type { IScannerControls } from '@zxing/browser';
