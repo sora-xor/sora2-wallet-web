@@ -79,14 +79,14 @@ import AccountExportDialog from './Account/ConfirmDialog.vue';
 import AccountDeleteDialog from './Account/DeleteDialog.vue';
 import AccountRenameDialog from './Account/RenameDialog.vue';
 import WalletAccount from './Account/WalletAccount.vue';
+import AccountActionsMixin from './mixins/AccountActionsMixin';
+import OperationsMixin from './mixins/OperationsMixin';
+import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletBase from './WalletBase.vue';
 import WalletHistory from './WalletHistory.vue';
 import WalletTransactionDetails from './WalletTransactionDetails.vue';
-import AccountActionsMixin from './mixins/AccountActionsMixin';
-import OperationsMixin from './mixins/OperationsMixin';
-import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 
 import type { WalletPermissions } from '../consts';
 import type { HistoryItem } from '@sora-substrate/util';

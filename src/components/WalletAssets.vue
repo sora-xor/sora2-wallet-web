@@ -90,10 +90,10 @@ import { state, getter, mutation } from '../store/decorators';
 import AssetList from './AssetList.vue';
 import AssetListItem from './AssetListItem.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
-import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import TranslationMixin from './mixins/TranslationMixin';
+import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
 
 import type { WalletAssetFilters, WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';

@@ -159,11 +159,11 @@ import { IpfsStorage } from '../util/ipfsStorage';
 
 import FileUploader from './FileUploader.vue';
 import InfoLine from './InfoLine.vue';
+import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
+import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
 import NftDetails from './NftDetails.vue';
 import WalletFee from './WalletFee.vue';
-import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
-import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 
 import type { Route } from '../store/router/types';
 import type { NFTStorage } from 'nft.storage';

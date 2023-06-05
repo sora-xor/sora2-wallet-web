@@ -1,5 +1,4 @@
 // Components
-import SoraWallet from './SoraWallet.vue';
 import { api, connection } from './api';
 import AccountCard from './components/Account/AccountCard.vue';
 import WalletAccount from './components/Account/WalletAccount.vue';
@@ -12,15 +11,6 @@ import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';
 import HistoryPagination from './components/HistoryPagination.vue';
 import InfoLine from './components/InfoLine.vue';
-import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
-import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
-import SearchInput from './components/SearchInput.vue';
-import SimpleNotification from './components/SimpleNotification.vue';
-import TokenAddress from './components/TokenAddress.vue';
-import TokenLogo from './components/TokenLogo.vue';
-import TransactionHashView from './components/TransactionHashView.vue';
-import WalletAvatar from './components/WalletAvatar.vue';
-import WalletBase from './components/WalletBase.vue';
 // Mixins
 import CameraPermissionMixin from './components/mixins/CameraPermissionMixin';
 import CopyAddressMixin from './components/mixins/CopyAddressMixin';
@@ -34,12 +24,22 @@ import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
+import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
+import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
+import SearchInput from './components/SearchInput.vue';
+import SimpleNotification from './components/SimpleNotification.vue';
+import TokenAddress from './components/TokenAddress.vue';
+import TokenLogo from './components/TokenLogo.vue';
+import TransactionHashView from './components/TransactionHashView.vue';
+import WalletAvatar from './components/WalletAvatar.vue';
+import WalletBase from './components/WalletBase.vue';
 import * as WALLET_CONSTS from './consts';
 import en from './lang/en';
 import installWalletPlugins from './plugins';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import * as SUBQUERY_TYPES from './services/subquery/types';
+import SoraWallet from './SoraWallet.vue';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import * as VUEX_TYPES from './store/types';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';

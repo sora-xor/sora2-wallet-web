@@ -62,9 +62,9 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { RouteNames, AppWallet } from '../../../consts';
 import { isInternalWallet } from '../../../consts/wallets';
 import { state, action, getter, mutation } from '../../../store/decorators';
-import WalletBase from '../../WalletBase.vue';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
+import WalletBase from '../../WalletBase.vue';
 import AccountList from '../AccountList.vue';
 import ExtensionList from '../ExtensionList.vue';
 

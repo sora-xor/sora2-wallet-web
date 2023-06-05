@@ -80,12 +80,12 @@ import { RouteNames, Step } from '../consts';
 import { mutation } from '../store/decorators';
 
 import InfoLine from './InfoLine.vue';
-import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
-import WalletBase from './WalletBase.vue';
-import WalletFee from './WalletFee.vue';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import TransactionMixin from './mixins/TransactionMixin';
+import NetworkFeeWarningDialog from './NetworkFeeWarning.vue';
+import WalletBase from './WalletBase.vue';
+import WalletFee from './WalletFee.vue';
 
 import type { Route } from '../store/router/types';
 

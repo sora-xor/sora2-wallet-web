@@ -35,10 +35,10 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { api } from '../../api';
 import { getter } from '../../store/decorators';
 import AssetListItem from '../AssetListItem.vue';
-import WalletBase from '../WalletBase.vue';
 import AddAssetMixin from '../mixins/AddAssetMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
+import WalletBase from '../WalletBase.vue';
 
 import type { WhitelistIdsBySymbol } from '../../types/common';
 import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';

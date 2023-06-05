@@ -20,8 +20,8 @@ import { Component, Mixins } from 'vue-property-decorator';
 
 import { RouteNames, AddAssetTabs } from '../../consts';
 import { mutation } from '../../store/decorators';
-import WalletBase from '../WalletBase.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
+import WalletBase from '../WalletBase.vue';
 
 import AddAssetNFT from './AddAssetNftTab.vue';
 import AddAssetToken from './AddAssetTokenTab.vue';

@@ -15,7 +15,7 @@ const createStore = (shouldBalanceBeHidden = false) =>
   });
 
 useDescribe('FormattedAmount.vue', FormattedAmount, () => {
-  MOCK_FORMATTED_AMOUNT.map((item) => {
+  MOCK_FORMATTED_AMOUNT.forEach((item) => {
     it(`[${item.title}]: should be rendered correctly`, () => {
       const propsData = omit(['title'], item);
       const wrapper = useShallowMount(FormattedAmount, { store: createStore(), propsData });
