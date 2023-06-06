@@ -46,7 +46,15 @@ import * as VUEX_TYPES from './store/types';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
 import { WalletModules } from './store/wallet';
 import * as WALLET_TYPES from './types/common';
-import { delay, getExplorerLinks, groupRewardsByAssetsList, initAppWallets, getWallet } from './util';
+import {
+  delay,
+  getExplorerLinks,
+  groupRewardsByAssetsList,
+  initAppWallets,
+  getWallet,
+  getWalletAccounts,
+  subscribeToWalletAccounts,
+} from './util';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
@@ -206,6 +214,8 @@ export {
   getExplorerLinks,
   groupRewardsByAssetsList,
   getWallet,
+  getWalletAccounts,
+  subscribeToWalletAccounts,
   WALLET_CONSTS,
   WALLET_TYPES,
   components,
