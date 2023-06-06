@@ -28,8 +28,6 @@ import TokenLogo from './TokenLogo.vue';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 
-import type { Asset } from '@sora-substrate/util/build/assets/types';
-
 @Component({
   components: {
     NftTokenLogo,

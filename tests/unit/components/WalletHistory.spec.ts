@@ -3,6 +3,7 @@ import { TransactionStatus, HistoryItem } from '@sora-substrate/util';
 import WalletHistory from '@/components/WalletHistory.vue';
 
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
+import { MOCK_ACCOUNT_ASSETS, MOCK_ACCOUNT_HISTORY, MOCK_EXTERNAL_HISTORY, MOCK_ASSETS } from '../../utils/mock';
 import { MOCK_ACCOUNT } from '../../utils/WalletAccountMock';
 
 import type { PolkadotJsAccount } from '../../../src/types/common';

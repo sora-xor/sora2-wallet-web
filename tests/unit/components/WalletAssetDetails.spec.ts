@@ -3,7 +3,6 @@ import WalletAssetDetails from '@/components/WalletAssetDetails.vue';
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS, MOCK_FIAT_PRICE_OBJECT, MOCK_HISTORY, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 import { MOCK_ACCOUNT } from '../../utils/WalletAccountMock';
-import { MOCK_ACCOUNT_ASSETS, MOCK_FIAT_PRICE_OBJECT, MOCK_HISTORY, MOCK_WALLET_PERMISSIONS } from '../../utils/mock';
 
 const createStore = ({ permissions = MOCK_WALLET_PERMISSIONS, isNotXor = false } = {}) =>
   useVuex({
