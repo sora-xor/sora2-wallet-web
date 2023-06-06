@@ -1,7 +1,6 @@
 import { addWallet, getWalletBySource } from '@sora-test/wallet-connect/dotsama/wallets';
 
-import { TranslationConsts } from '@/consts';
-
+import { TranslationConsts } from '../../../consts';
 import { GDriveWalletInfo } from '../../../consts/wallets';
 import { Singleton } from '../../../decorators';
 import { GDriveStorage } from '../index';

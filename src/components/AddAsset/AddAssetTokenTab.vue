@@ -30,9 +30,9 @@ import { api } from '../../api';
 import { AddAssetTabs } from '../../consts';
 import { getter } from '../../store/decorators';
 import AssetList from '../AssetList.vue';
-import SearchInput from '../SearchInput.vue';
 import AddAssetMixin from '../mixins/AddAssetMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
+import SearchInput from '../SearchInput.vue';
 
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 

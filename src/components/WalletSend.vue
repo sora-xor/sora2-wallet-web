@@ -174,14 +174,14 @@ import AddressRecord from './AddressBook/AddressRecord.vue';
 import SetContactDialog from './AddressBook/SetContactDialog.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
-import NetworkFeeWarning from './NetworkFeeWarning.vue';
-import TokenLogo from './TokenLogo.vue';
-import WalletBase from './WalletBase.vue';
-import WalletFee from './WalletFee.vue';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import TransactionMixin from './mixins/TransactionMixin';
+import NetworkFeeWarning from './NetworkFeeWarning.vue';
+import TokenLogo from './TokenLogo.vue';
+import WalletBase from './WalletBase.vue';
+import WalletFee from './WalletFee.vue';
 
 import type { Route } from '../store/router/types';
 import type { Book, PolkadotJsAccount } from '@/types/common';

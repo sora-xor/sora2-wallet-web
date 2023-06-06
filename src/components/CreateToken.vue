@@ -23,8 +23,8 @@ import { mutation } from '../store/decorators';
 
 import CreateNftToken from './CreateNftToken.vue';
 import CreateSimpleToken from './CreateSimpleToken.vue';
-import WalletBase from './WalletBase.vue';
 import TranslationMixin from './mixins/TranslationMixin';
+import WalletBase from './WalletBase.vue';
 
 import type { Route } from '../store/router/types';
 
