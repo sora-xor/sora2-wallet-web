@@ -39,6 +39,7 @@ import debounce from 'lodash/debounce';
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
 import { state, getter, mutation } from '@/store/decorators';
+import type { AccountBook, Book, PolkadotJsAccount } from '@/types/common';
 import { formatSoraAddress } from '@/util';
 
 import { api } from '../../api';
@@ -47,8 +48,6 @@ import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
-
-import type { AccountBook, Book, PolkadotJsAccount } from '@/types/common';
 
 @Component({
   components: {

@@ -21,9 +21,9 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import TranslationMixin from '../mixins/TranslationMixin';
-
 import type { AccountBook } from '@/types/common';
+
+import TranslationMixin from '../mixins/TranslationMixin';
 
 @Component
 export default class Options extends Mixins(TranslationMixin) {
