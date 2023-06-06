@@ -107,11 +107,11 @@ import { getter, state } from '../store/decorators';
 
 import FormattedAmount from './FormattedAmount.vue';
 import InfoLine from './InfoLine.vue';
-import TransactionHashView from './TransactionHashView.vue';
-import WalletBase from './WalletBase.vue';
 import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import TranslationMixin from './mixins/TranslationMixin';
+import TransactionHashView from './TransactionHashView.vue';
+import WalletBase from './WalletBase.vue';
 
 import type { PolkadotJsAccount } from '../types/common';
 import type { HistoryItem, BridgeHistory } from '@sora-substrate/util';
