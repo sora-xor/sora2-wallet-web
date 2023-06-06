@@ -4,9 +4,8 @@ import WalletHistory from '@/components/WalletHistory.vue';
 
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT } from '../../utils/WalletAccountMock';
-import { MOCK_ACCOUNT_ASSETS, MOCK_ACCOUNT_HISTORY, MOCK_EXTERNAL_HISTORY, MOCK_ASSETS } from '../../utils/mock';
 
-import type { PolkadotJsAccount } from '@/types/common';
+import type { PolkadotJsAccount } from '../../../src/types/common';
 
 const createStore = ({ history = {}, externalHistory = {} } = {}) =>
   useVuex({

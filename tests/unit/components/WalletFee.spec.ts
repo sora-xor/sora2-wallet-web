@@ -1,8 +1,8 @@
 import WalletFee from '@/components/WalletFee.vue';
 
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
-import { MOCK_WALLET_FEE } from '../../utils/WalletFeeMock';
 import { MOCK_FIAT_PRICE_OBJECT } from '../../utils/mock';
+import { MOCK_WALLET_FEE } from '../../utils/WalletFeeMock';
 
 const createStore = () =>
   useVuex({

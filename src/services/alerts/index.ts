@@ -1,12 +1,11 @@
 import { FPNumber } from '@sora-substrate/util';
 import { Subject } from 'rxjs';
 
-import { Singleton } from '@/decorators';
-import store from '@/store';
-import { Alert } from '@/types/common';
-
+import { Singleton } from '../../decorators';
+import store from '../../store';
 import { getBase64Icon } from '../../util/image';
 
+import type { Alert } from '../../types/common';
 import type { FiatPriceObject } from '../subquery/types';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 

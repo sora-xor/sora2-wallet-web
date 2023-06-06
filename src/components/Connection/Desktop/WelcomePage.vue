@@ -19,8 +19,8 @@
 import { Mixins, Component } from 'vue-property-decorator';
 
 import { state } from '../../../store/decorators';
-import TokenLogo from '../../TokenLogo.vue';
 import TranslationMixin from '../../mixins/TranslationMixin';
+import TokenLogo from '../../TokenLogo.vue';
 
 import type { PolkadotJsAccount } from '../../../types/common';
 

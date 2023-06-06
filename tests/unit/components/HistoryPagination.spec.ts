@@ -6,7 +6,7 @@ import { useDescribe, useShallowMount } from '../../utils';
 import { MOCK_HISTORY_PAGINATION } from '../../utils/HistoryPaginationMock';
 
 useDescribe('HistoryPagination.vue', HistoryPagination, () => {
-  MOCK_HISTORY_PAGINATION.map((item) => {
+  MOCK_HISTORY_PAGINATION.forEach((item) => {
     it(`[${item.title}]: should be rendered correctly`, () => {
       const propsData = omit(['title'], item);
       const wrapper = useShallowMount(HistoryPagination, { propsData });

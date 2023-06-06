@@ -24,8 +24,8 @@ import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import AssetList from '../AssetList.vue';
-import SearchInput from '../SearchInput.vue';
 import AddAssetMixin from '../mixins/AddAssetMixin';
+import SearchInput from '../SearchInput.vue';
 
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
