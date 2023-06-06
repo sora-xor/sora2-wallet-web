@@ -35,6 +35,7 @@
 </template>
 
 <script lang="ts">
+import debounce from 'lodash/debounce';
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
 import { state, getter, mutation } from '@/store/decorators';
@@ -83,25 +84,31 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   }
 
   @Watch('address')
-  async handleAddressInput(address: string): Promise<void> {
+  handleAddressInput(address: string): void {
     if (!api.validateAddress(address)) {
       this.onChainIdentity = this.t('addressBook.none');
       return;
     }
 
-    const entity = await api.getAccountOnChainIdentity(address);
-    this.onChainIdentity = entity ? entity.legalName : this.t('addressBook.none');
+    this.defineIdentity(address);
   }
 
   address = '';
   name = '';
   onChainIdentity = this.t('addressBook.none');
 
+  defineIdentity = debounce(this.getIdentity, 500);
+
   setContact(): void {
     this.setAddressToBook({ address: formatSoraAddress(this.address), name: this.name });
     this.$root.$emit('updateAddressBook');
     this.closeDialog();
     this.$emit('open-address-book');
+  }
+
+  async getIdentity(address: string): Promise<void> {
+    const entity = await api.getAccountOnChainIdentity(address);
+    this.onChainIdentity = entity ? entity.legalName : this.t('addressBook.none');
   }
 
   get title(): string {
