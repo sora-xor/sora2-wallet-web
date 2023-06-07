@@ -9,7 +9,13 @@
         :disabled="loading"
         :maxlength="30"
       />
-      <s-input class="set-address__input" :placeholder="t('addressText')" v-model="address" :disabled="inputDisabled" />
+      <s-input
+        class="set-address__input"
+        :placeholder="t('addressText')"
+        v-model="address"
+        :disabled="inputDisabled"
+        @input="defineIdentity"
+      />
       <p v-if="isAccountAddress" class="set-address-error">{{ t('walletSend.addressError') }}</p>
       <template v-if="validAddress && isNotSoraAddress">
         <p class="wallet-send-address-warning">{{ t('addressBook.notSoraAddress') }}</p>
@@ -19,12 +25,7 @@
           </p>
         </s-tooltip>
       </template>
-      <s-input
-        class="set-address__input"
-        :placeholder="t('addressBook.identity')"
-        v-model="onChainIdentity"
-        :disabled="true"
-      />
+      <s-input class="set-address__input" :placeholder="t('addressBook.identity')" v-model="onChainIdentity" disabled />
       <div class="set-address__btn">
         <s-button @click="setContact" type="primary" class="s-typography-button--large" :disabled="btnDisabled">
           {{ btnText }}
@@ -35,19 +36,19 @@
 </template>
 
 <script lang="ts">
-import debounce from 'lodash/debounce';
+import debounce from 'lodash/fp/debounce';
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
-import { state, getter, mutation } from '@/store/decorators';
-import type { AccountBook, Book, PolkadotJsAccount } from '@/types/common';
-import { formatSoraAddress } from '@/util';
-
 import { api } from '../../api';
+import { state, getter, mutation } from '../../store/decorators';
+import { formatSoraAddress } from '../../util';
 import DialogBase from '../DialogBase.vue';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
+
+import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
 
 @Component({
   components: {
@@ -82,21 +83,11 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
     this.addressInput.focus();
   }
 
-  @Watch('address')
-  handleAddressInput(address: string): void {
-    if (!api.validateAddress(address)) {
-      this.onChainIdentity = this.t('addressBook.none');
-      return;
-    }
-
-    this.defineIdentity(address);
-  }
-
   address = '';
   name = '';
   onChainIdentity = this.t('addressBook.none');
 
-  defineIdentity = debounce(this.getIdentity, 500);
+  defineIdentity = debounce(500)(this.getIdentity);
 
   setContact(): void {
     this.setAddressToBook({ address: formatSoraAddress(this.address), name: this.name });
@@ -106,6 +97,11 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   }
 
   async getIdentity(address: string): Promise<void> {
+    if (!api.validateAddress(address)) {
+      this.onChainIdentity = this.t('addressBook.none');
+      return;
+    }
+
     const entity = await api.getAccountOnChainIdentity(address);
     this.onChainIdentity = entity ? entity.legalName : this.t('addressBook.none');
   }

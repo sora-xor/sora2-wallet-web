@@ -58,11 +58,8 @@
 import { api } from '@sora-substrate/util';
 import { Component, Mixins, Ref } from 'vue-property-decorator';
 
-import type { AppWallet } from '@/consts';
-import type { AccountBook, Book, PolkadotJsAccount } from '@/types/common';
-import { formatAddress, formatSoraAddress } from '@/util';
-
 import { state, action, mutation } from '../../store/decorators';
+import { formatAddress, formatSoraAddress } from '../../util';
 import AccountCard from '../Account/AccountCard.vue';
 import WalletAccount from '../Account/WalletAccount.vue';
 import AccountList from '../Connection/AccountList.vue';
@@ -75,6 +72,9 @@ import WalletAvatar from '../WalletAvatar.vue';
 
 import AddressRecord from './AddressRecord.vue';
 import Options from './Options.vue';
+
+import type { AppWallet } from '../../consts';
+import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
 
 @Component({
   components: {
