@@ -1,4 +1,5 @@
 import { api } from '../../../api';
+import { AppError, formatAddress } from '../../../util';
 import { GDriveStorage } from '../index';
 
 import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/extension-inject/types';
@@ -45,7 +46,13 @@ export default class Accounts implements InjectedAccounts {
   public async add(accountJson: KeyringPair$Json): Promise<void> {
     const { address, meta } = accountJson;
 
-    if (this.findAccountByAddress(address)) return;
+    if (this.findAccountByAddress(address))
+      throw new AppError({
+        key: 'desktop.errorMessages.alreadyImported',
+        payload: {
+          address: formatAddress(api.formatAddress(address)),
+        },
+      });
 
     const json = JSON.stringify(accountJson);
     const name = (meta.name as string) || '';

@@ -74,14 +74,7 @@
           v-model="accountName"
         ></s-input>
         <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
-        <s-input
-          :disabled="loading"
-          :type="inputType"
-          :placeholder="t('desktop.password.placeholder')"
-          v-model="accountPassword"
-        >
-          <s-icon :name="iconPasswordStyle" size="18" class="eye-icon" slot="suffix" @click.native="toggleVisibility" />
-        </s-input>
+        <password-input v-model="accountPassword" :disabled="loading" />
         <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
         <s-input
           type="password"
@@ -119,11 +112,16 @@ import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
 import { copyToClipboard } from '../../../util';
+import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
 
 import type { CreateAccountArgs } from '../../../store/account/types';
 
-@Component
+@Component({
+  components: {
+    PasswordInput,
+  },
+})
 export default class CreateAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
@@ -146,7 +144,6 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   seedPhraseToCompareIdx: Array<number> = [];
 
   showErrorMessage = false;
-  hiddenInput = true;
   toExport = false;
   incorrect = false;
 
@@ -175,14 +172,6 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
       return this.t('desktop.button.next');
     }
     return this.t('desktop.button.skip');
-  }
-
-  get inputType(): string {
-    return this.hiddenInput ? 'password' : 'text';
-  }
-
-  get iconPasswordStyle(): string {
-    return this.hiddenInput ? 'basic-eye-no-24' : 'basic-filterlist-24';
   }
 
   get btnTypeConfirmStep(): string {
@@ -214,10 +203,6 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
 
   isHiddenWord(wordIndex: number): boolean {
     return this.seedPhraseToCompareIdx.includes(wordIndex);
-  }
-
-  toggleVisibility(): void {
-    this.hiddenInput = !this.hiddenInput;
   }
 
   chooseWord(index: number): void {

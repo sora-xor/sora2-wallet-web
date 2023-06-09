@@ -51,11 +51,11 @@ import { state, mutation, action } from '../store/decorators';
 import { getStatusIcon, getStatusClass } from '../util';
 
 import HistoryPagination from './HistoryPagination.vue';
+import SearchInput from './Input/SearchInput.vue';
 import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
 import LoadingMixin from './mixins/LoadingMixin';
 import PaginationSearchMixin from './mixins/PaginationSearchMixin';
 import TransactionMixin from './mixins/TransactionMixin';
-import SearchInput from './SearchInput.vue';
 
 import type { EthBridgeUpdateHistory } from '../consts';
 import type { Route } from '../store/router/types';
