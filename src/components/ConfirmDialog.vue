@@ -45,7 +45,6 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
   }
 
   async handleConfirm({ password, save }: { password: string; save: boolean }): Promise<void> {
-    console.log(password, save);
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
