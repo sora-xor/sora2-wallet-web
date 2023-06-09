@@ -15,38 +15,17 @@
 </template>
 
 <script lang="ts">
-import { Component, ModelSync, Prop, Ref, Vue } from 'vue-property-decorator';
+import { Component, ModelSync, Mixins } from 'vue-property-decorator';
+
+import InputFocusMixin from '../mixins/InputFocusMixin';
 
 @Component
-export default class SearchInput extends Vue {
-  @Prop({ default: false, type: Boolean }) readonly autofocus!: boolean;
-
-  @Ref('input') readonly input!: any;
-
+export default class SearchInput extends Mixins(InputFocusMixin) {
   @ModelSync('value', 'input', { type: String })
   readonly query!: string;
 
-  async mounted(): Promise<void> {
-    if (this.autofocus) {
-      await this.$nextTick();
-      this.focus();
-    }
-  }
-
-  activated(): void {
-    if (this.autofocus) {
-      this.focus();
-    }
-  }
-
   handleClearSearch(): void {
     this.$emit('clear');
-  }
-
-  focus(): void {
-    if (this.input && typeof this.input.focus === 'function') {
-      this.input.focus();
-    }
   }
 }
 </script>
