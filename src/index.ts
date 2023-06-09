@@ -13,6 +13,7 @@ import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatVa
 import HistoryPagination from './components/HistoryPagination.vue';
 import InfoLine from './components/InfoLine.vue';
 // Mixins
+import SearchInput from './components/Input/SearchInput.vue';
 import CameraPermissionMixin from './components/mixins/CameraPermissionMixin';
 import CopyAddressMixin from './components/mixins/CopyAddressMixin';
 import DialogMixin from './components/mixins/DialogMixin';
@@ -27,7 +28,6 @@ import TransactionMixin from './components/mixins/TransactionMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
-import SearchInput from './components/SearchInput.vue';
 import SimpleNotification from './components/SimpleNotification.vue';
 import TokenAddress from './components/TokenAddress.vue';
 import TokenLogo from './components/TokenLogo.vue';
@@ -46,7 +46,15 @@ import * as VUEX_TYPES from './store/types';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
 import { WalletModules } from './store/wallet';
 import * as WALLET_TYPES from './types/common';
-import { delay, getExplorerLinks, groupRewardsByAssetsList, initAppWallets, getWallet } from './util';
+import {
+  delay,
+  getExplorerLinks,
+  groupRewardsByAssetsList,
+  initAppWallets,
+  getWallet,
+  getWalletAccounts,
+  subscribeToWalletAccounts,
+} from './util';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
@@ -206,6 +214,8 @@ export {
   getExplorerLinks,
   groupRewardsByAssetsList,
   getWallet,
+  getWalletAccounts,
+  subscribeToWalletAccounts,
   WALLET_CONSTS,
   WALLET_TYPES,
   components,

@@ -73,20 +73,7 @@
         <p v-if="!jsonOnly && !json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
 
         <template v-if="!jsonOnly">
-          <s-input
-            :type="inputType"
-            :disabled="loading"
-            :placeholder="t('desktop.password.placeholder')"
-            v-model="accountPassword"
-          >
-            <s-icon
-              :name="iconPasswordStyle"
-              class="eye-icon"
-              size="18"
-              slot="suffix"
-              @click.native="toggleVisibility"
-            />
-          </s-input>
+          <password-input v-model="accountPassword" :disabled="loading" />
 
           <template v-if="!json">
             <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
@@ -124,6 +111,7 @@ import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 import { LoginStep } from '../../../consts';
 import { AppError, parseJson } from '../../../util';
 import FileUploader from '../../FileUploader.vue';
+import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
 
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
@@ -132,6 +120,7 @@ import type { KeyringPair$Json } from '../../../types/common';
 @Component({
   components: {
     FileUploader,
+    PasswordInput,
   },
 })
 export default class ImportAccountStep extends Mixins(NotificationMixin) {
@@ -172,7 +161,6 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
   json: Nullable<KeyringPair$Json> = null;
 
-  hiddenInput = true;
   readonlyAccountName = false;
 
   get title(): string {
@@ -196,14 +184,6 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     return !(this.accountName && this.accountPassword) || (!this.json && !this.accountPasswordConfirm);
   }
 
-  get inputType(): string {
-    return this.hiddenInput ? 'password' : 'text';
-  }
-
-  get iconPasswordStyle(): string {
-    return this.hiddenInput ? 'basic-eye-no-24' : 'basic-filterlist-24';
-  }
-
   get computedClasses(): string {
     const baseClass = ['login__inputs'];
     if (this.json) baseClass.push('login__inputs--json');
@@ -216,10 +196,6 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
       this.t('desktop.importSteps.selectAccount'),
       this.t('desktop.importSteps.exportAccount'),
     ];
-  }
-
-  toggleVisibility(): void {
-    this.hiddenInput = !this.hiddenInput;
   }
 
   handleMnemonicInput(char) {

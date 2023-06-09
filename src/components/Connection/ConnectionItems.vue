@@ -1,6 +1,6 @@
 <template>
-  <s-scrollbar :class="classes">
-    <div class="connection-items-list">
+  <s-scrollbar class="connection-items" :style="style">
+    <div class="connection-items-list" :style="{ gap: `${itemOffset}px` }">
       <slot />
     </div>
   </s-scrollbar>
@@ -12,36 +12,32 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 @Component
 export default class ConnectionItems extends Vue {
   @Prop({ default: 0, type: Number }) readonly size!: number;
+  @Prop({ default: 7, type: Number }) readonly visible!: number;
+  @Prop({ default: 8, type: Number }) readonly itemOffset!: number;
+  @Prop({ default: 60, type: Number }) readonly itemHeight!: number;
 
-  get classes() {
-    const base = 'connection-items';
-    const classes = [base];
+  get style() {
+    const styles: Partial<CSSStyleDeclaration> = {};
 
-    if (this.size >= 7) {
-      classes.push(`${base}-fixed`);
+    if (this.size >= this.visible) {
+      const height = (this.itemHeight + this.itemOffset) * this.visible - this.itemOffset;
+      styles.height = `${height}px`;
     }
 
-    return classes;
+    return styles;
   }
 }
 </script>
 
 <style lang="scss">
 $item-height: 60px;
-$item-margin-bottom: $basic-spacing;
-$item-number: 7;
 
 .connection-items {
   @include scrollbar($basic-spacing-big);
 
-  &-fixed {
-    height: calc(calc(#{$item-height} + #{$item-margin-bottom}) * #{$item-number} - #{$item-margin-bottom});
-  }
-
   &-list {
     display: flex;
     flex-flow: column nowrap;
-    gap: $item-margin-bottom;
 
     & > .account-card {
       @include focus-outline($withOffset: true);

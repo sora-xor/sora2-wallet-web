@@ -126,13 +126,15 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
     await this.withLoading(async () => {
       await this.withAppNotification(async () => {
-        const { json } = data;
+        try {
+          const { json } = data;
 
-        if (this.selectedWallet === AppWallet.GoogleDrive) {
-          await GDriveWallet.accounts.add(json);
+          if (this.selectedWallet === AppWallet.GoogleDrive) {
+            await GDriveWallet.accounts.add(json);
+          }
+        } finally {
+          this.navigateToAccountList();
         }
-
-        this.navigateToAccountList();
       });
     });
   }
