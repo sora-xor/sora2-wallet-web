@@ -32,6 +32,8 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
   @mutation.transactions.approveTxViaConfirmTxDialog private approveTxViaConfirmTxDialog!: FnWithoutArgs;
   @mutation.transactions.resetTxApprovedViaConfirmTxDialog private resetTxApprovedViaConfirmTxDialog!: FnWithoutArgs;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
+  @mutation.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
+  @mutation.account.resetAccountPassphraseTimer private resetAccountPassphraseTimer!: FnWithoutArgs;
 
   get visibility(): boolean {
     return this.isConfirmTxDialogVisible;
@@ -53,6 +55,9 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
 
         if (save) {
           this.setAccountPassphrase(password);
+        } else {
+          this.resetAccountPassphrase();
+          this.resetAccountPassphraseTimer();
         }
 
         this.approveTxViaConfirmTxDialog();

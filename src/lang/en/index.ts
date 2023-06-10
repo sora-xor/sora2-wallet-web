@@ -399,7 +399,7 @@ export default {
     },
     accountName: {
       placeholder: 'Wallet name',
-      desc: 'This is the public name of your wallet which will be visible to everyone',
+      desc: 'This is the name of your wallet which will be visible to you',
     },
     password: {
       placeholder: 'Password',
@@ -434,6 +434,7 @@ export default {
       mnemonic: 'Invalid bip39 mnemonic specified',
       mnemonicLength: 'Mnemonic should contain {number} words',
       jsonFields: 'JSON file does not have required fields',
+      alreadyImported: 'Account already imported {address}',
     },
     importSteps: {
       selectWallet: 'Go to the wallet of your use',
