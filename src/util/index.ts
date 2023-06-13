@@ -122,9 +122,18 @@ const waitForWalletInjected = async (wallet: Wallet): Promise<void> => {
   const injected = injectedWindow.injectedWeb3[wallet.extensionName];
 
   if (!injected) {
-    await delay();
+    await delay(200);
     await waitForWalletInjected(wallet);
   }
+};
+
+const waitForWalletInject = async (wallet: Wallet): Promise<void> => {
+  return Promise.race([
+    waitForWalletInjected(wallet),
+    delay(6_000).then(() => {
+      throw new Error(`${wallet.extensionName} extension inject timeout`);
+    }),
+  ]);
 };
 
 export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Wallet> => {
@@ -136,7 +145,7 @@ export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Walle
   }
 
   await waitForDocumentReady();
-  await waitForWalletInjected(wallet);
+  await waitForWalletInject(wallet);
   await wallet.enable();
 
   if (typeof wallet.signer !== 'object') {
