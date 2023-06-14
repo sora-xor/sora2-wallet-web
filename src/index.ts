@@ -115,10 +115,10 @@ const waitForCore = async ({
       store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
 
-    await checkActiveAccount();
-
     store.dispatch.wallet.account.getWhitelist();
     store.dispatch.wallet.account.getNftBlacklist();
+
+    await checkActiveAccount();
     store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop);
 
     walletCoreLoaded = true;
