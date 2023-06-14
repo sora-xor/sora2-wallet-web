@@ -130,7 +130,7 @@ const waitForWalletInjected = async (wallet: Wallet): Promise<void> => {
 const waitForWalletInject = async (wallet: Wallet): Promise<void> => {
   return Promise.race([
     waitForWalletInjected(wallet),
-    delay(6_000).then(() => {
+    delay(30_000).then(() => {
       throw new Error(`${wallet.extensionName} extension inject timeout`);
     }),
   ]);
