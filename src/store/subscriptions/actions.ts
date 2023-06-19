@@ -39,14 +39,14 @@ const actions = defineActions({
   // Subscriptions dependent on chain state
   async activateNetwokSubscriptions(context): Promise<void> {
     await runParallel(context, [
-      'settings/subscribeOnRuntimeVersion',
+      'settings/subscribeOnFeeMultiplierAndRuntime',
       'account/subscribeOnAssets',
       'account/subscribeOnAccountAssets',
     ]);
   },
   async resetNetworkSubscriptions(context): Promise<void> {
     await runParallel(context, [
-      'settings/resetRuntimeVersionSubscription',
+      'settings/resetFeeMultiplierAndRuntimeSubscriptions',
       'account/resetAssetsSubscription',
       'account/resetAccountAssetsSubscription',
     ]);

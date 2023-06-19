@@ -46,20 +46,24 @@ const mutations = defineMutations<SettingsState>()({
     settingsStorage.set('allowFeePopup', flag.toString());
     state.allowFeePopup = flag;
   },
+  setFeeMultiplier(state, multiplier: number): void {
+    state.feeMultiplier = multiplier;
+    runtimeStorage.set('feeMultiplier', multiplier);
+  },
   setRuntimeVersion(state, version: number): void {
     state.runtimeVersion = version;
     runtimeStorage.set('version', version);
   },
-  setRuntimeVersionSubscription(state, subscription: Subscription): void {
-    if (state.runtimeVersionSubscription) {
-      state.runtimeVersionSubscription.unsubscribe();
+  setFeeMultiplierAndRuntimeSubscriptions(state, subscription: Subscription): void {
+    if (state.feeMultiplierAndRuntimeSubscriptions) {
+      state.feeMultiplierAndRuntimeSubscriptions.unsubscribe();
     }
-    state.runtimeVersionSubscription = subscription;
+    state.feeMultiplierAndRuntimeSubscriptions = subscription;
   },
-  resetRuntimeVersionSubscription(state): void {
-    if (state.runtimeVersionSubscription) {
-      state.runtimeVersionSubscription.unsubscribe();
-      state.runtimeVersionSubscription = null;
+  resetFeeMultiplierAndRuntimeSubscriptions(state): void {
+    if (state.feeMultiplierAndRuntimeSubscriptions) {
+      state.feeMultiplierAndRuntimeSubscriptions.unsubscribe();
+      state.feeMultiplierAndRuntimeSubscriptions = null;
     }
   },
   setApiKeys(state, keys: ApiKeysObject = {}): void {

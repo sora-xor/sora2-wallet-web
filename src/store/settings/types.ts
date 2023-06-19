@@ -16,8 +16,9 @@ export type SettingsState = {
   soraNetwork: Nullable<SoraNetwork>;
   networkFees: NetworkFeesObject;
   shouldBalanceBeHidden: boolean;
+  feeMultiplier: number;
   runtimeVersion: number;
-  runtimeVersionSubscription: Nullable<Subscription>;
+  feeMultiplierAndRuntimeSubscriptions: Nullable<Subscription>;
   nftStorage: Nullable<NFTStorage>;
   subqueryEndpoint: Nullable<string>;
 };
