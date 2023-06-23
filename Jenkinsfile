@@ -1,4 +1,4 @@
-@Library('jenkins-library') _
+@Library('jenkins-library@feature/DOPS-2462/sonar_js') _
 
 def pipeline = new org.js.LibPipeline(
     steps: this,
