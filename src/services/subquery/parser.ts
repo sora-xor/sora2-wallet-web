@@ -230,7 +230,7 @@ export default class SubqueryDataParser {
 
     const id = getTransactionId(transaction);
     const timestamp = getTransactionTimestamp(transaction);
-    const blockHeight = transaction.blockHeight;
+    const blockHeight = +transaction.blockHeight;
     const blockId = transaction.blockHash;
 
     // common attributes
