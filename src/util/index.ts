@@ -117,13 +117,14 @@ export const getAppWallets = (): Wallet[] => {
   }
 };
 
-const waitForWalletInjected = async (wallet: Wallet): Promise<void> => {
+// [TODO]: find solution for case, then wallet disabled
+const waitForWalletInject = async (wallet: Wallet): Promise<void> => {
   const injectedWindow = window as any;
   const injected = injectedWindow.injectedWeb3[wallet.extensionName];
 
   if (!injected) {
-    await delay();
-    await waitForWalletInjected(wallet);
+    await delay(200);
+    await waitForWalletInject(wallet);
   }
 };
 
@@ -136,7 +137,7 @@ export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Walle
   }
 
   await waitForDocumentReady();
-  await waitForWalletInjected(wallet);
+  await waitForWalletInject(wallet);
   await wallet.enable();
 
   if (typeof wallet.signer !== 'object') {

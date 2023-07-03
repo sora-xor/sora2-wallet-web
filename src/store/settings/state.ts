@@ -10,6 +10,7 @@ function initialState(): SettingsState {
   const alerts = priceAlerts && JSON.parse(priceAlerts);
   const allowTopUpAlerts = settingsStorage.get('allowTopUpAlerts');
   const shouldBalanceBeHidden = storage.get('shouldBalanceBeHidden');
+  const feeMultiplier = runtimeStorage.get('feeMultiplier');
   const runtimeVersion = runtimeStorage.get('version');
   const allowFee = settingsStorage.get('allowFeePopup');
   const filters = storage.get('filters');
@@ -39,8 +40,9 @@ function initialState(): SettingsState {
     allowFeePopup: allowFee ? Boolean(JSON.parse(allowFee)) : true,
     soraNetwork: null,
     nftStorage: null,
+    feeMultiplier: feeMultiplier ? Number(JSON.parse(feeMultiplier)) : 0,
     runtimeVersion: runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0,
-    runtimeVersionSubscription: null,
+    feeMultiplierAndRuntimeSubscriptions: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
     shouldBalanceBeHidden: shouldBalanceBeHidden ? Boolean(JSON.parse(shouldBalanceBeHidden)) : false,
   };

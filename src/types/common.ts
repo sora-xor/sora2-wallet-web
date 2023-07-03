@@ -80,7 +80,7 @@ export type StorageKey =
   | 'сhartsEnabled'
   | 'transactionDeadline';
 
-export type RuntimeStorageKey = 'version' | 'networkFees';
+export type RuntimeStorageKey = 'version' | 'networkFees' | 'feeMultiplier';
 export type SettingsStorageKey =
   | 'alerts'
   | 'language'

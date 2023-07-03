@@ -1,6 +1,7 @@
 import { defineActions } from 'direct-vuex';
 import isEmpty from 'lodash/fp/isEmpty';
 import isEqual from 'lodash/fp/isEqual';
+import { combineLatest } from 'rxjs';
 
 import { api } from '../../api';
 import { SoraNetwork } from '../../consts';
@@ -48,29 +49,46 @@ const actions = defineActions({
       commit.setNftStorage({});
     }
   },
-  async subscribeOnRuntimeVersion(context): Promise<void> {
+  async subscribeOnFeeMultiplierAndRuntime(context): Promise<void> {
     const { commit } = settingsActionContext(context);
-    const runtimeVersionSubscription = api.system.getRuntimeVersionObservable().subscribe(async (version) => {
+
+    const subscription = combineLatest([
+      api.system.getRuntimeVersionObservable(),
+      api.system.getNetworkFeeMultiplierObservable(),
+    ]).subscribe(async ([runtime, multiplier]) => {
       const runtimeVersion = runtimeStorage.get('version');
+      const feeMultiplier = runtimeStorage.get('feeMultiplier');
       const networkFeesObj = runtimeStorage.get('networkFees');
-      const currentVersion = runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0;
+      const localMultiplier = feeMultiplier ? Number(JSON.parse(feeMultiplier)) : 0;
+      const localRuntime = runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0;
       const networkFees = networkFeesObj ? JSON.parse(networkFeesObj) : {};
-      if (currentVersion === version && !isEmpty(networkFees) && areKeysEqual(networkFees, api.NetworkFee)) {
+
+      if (
+        localRuntime === runtime &&
+        localMultiplier === multiplier &&
+        !isEmpty(networkFees) &&
+        areKeysEqual(networkFees, api.NetworkFee)
+      ) {
         commit.setNetworkFees(networkFees);
         return;
       }
-      if (currentVersion !== version) {
-        commit.setRuntimeVersion(version);
+      if (localMultiplier !== multiplier) {
+        commit.setFeeMultiplier(multiplier);
       }
+      if (localRuntime !== runtime) {
+        commit.setRuntimeVersion(runtime);
+      }
+
       await api.calcStaticNetworkFees();
       commit.updateNetworkFees(api.NetworkFee);
     });
-    commit.setRuntimeVersionSubscription(runtimeVersionSubscription);
+
+    commit.setFeeMultiplierAndRuntimeSubscriptions(subscription);
   },
   /** It's used **only** for subscriptions module */
-  async resetRuntimeVersionSubscription(context): Promise<void> {
+  async resetFeeMultiplierAndRuntimeSubscriptions(context): Promise<void> {
     const { commit } = settingsActionContext(context);
-    commit.resetRuntimeVersionSubscription();
+    commit.resetFeeMultiplierAndRuntimeSubscriptions();
   },
 });
 
