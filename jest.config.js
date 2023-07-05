@@ -13,4 +13,8 @@ module.exports = {
   transformIgnorePatterns: ['node_modules/?!(@polkadot/util)'],
   clearMocks: true,
   setupFilesAfterEnv: ['jest-extended'],
+  collectCoverage: true,
+  collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx,vue}'],
+  coverageReporters: ['lcov'],
+  coveragePathIgnorePatterns: ['node_modules/', 'coverage/'],
 };
