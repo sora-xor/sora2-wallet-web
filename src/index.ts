@@ -37,6 +37,7 @@ import WalletBase from './components/WalletBase.vue';
 import * as WALLET_CONSTS from './consts';
 import en from './lang/en';
 import installWalletPlugins from './plugins';
+import AlertsApiService from './services/alerts';
 import { SubqueryExplorerService } from './services/subquery';
 import { historyElementsFilter } from './services/subquery/queries/historyElements';
 import * as SUBQUERY_TYPES from './services/subquery/types';
@@ -226,6 +227,7 @@ export {
   ScriptLoader,
   historyElementsFilter,
   SubqueryExplorerService,
+  AlertsApiService,
   SUBQUERY_TYPES,
   VUEX_TYPES,
   vuex,
