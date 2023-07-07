@@ -13,6 +13,7 @@ import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types
 export class AlertsApiService {
   private fiatPriceObject: FiatPriceObject = {};
   public alerts = [] as Array<Alert>;
+  public baseRoute = 'https://polkaswap.io/#/';
 
   private isAlertSetByUser(): boolean {
     return !!store.state.wallet.settings.alerts.length;
@@ -26,9 +27,9 @@ export class AlertsApiService {
           icon: await getBase64Icon(asset.icon),
         });
 
-        notification.onclick = function (event) {
+        notification.onclick = (event) => {
           event.preventDefault(); // prevent the browser from focusing the Notification's tab
-          window.open('https://polkaswap.io/#/wallet');
+          window.open(`${this.baseRoute}wallet`);
         };
       }
     } catch {
