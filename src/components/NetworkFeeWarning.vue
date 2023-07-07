@@ -33,10 +33,6 @@ export default class NetworkFeeWarning extends Mixins(TranslationMixin) {
 
   hidePopup = false;
 
-  @mutation.settings.setAllowFeePopup private setAllowFeePopup!: (flag: boolean) => void;
-
-  hidePopup = false;
-
   async handleConfirm(): Promise<void> {
     this.setAllowFeePopup(!this.hidePopup);
     this.$emit('confirm');
@@ -46,7 +42,7 @@ export default class NetworkFeeWarning extends Mixins(TranslationMixin) {
 
 <style scoped lang="scss">
 $inner-padding: 20px;
-// TODO: Set scoped. Remove important
+
 .content {
   display: flex;
   flex-direction: column;
