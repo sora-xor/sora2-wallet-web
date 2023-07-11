@@ -175,6 +175,8 @@ export default {
     export: 'Export .json',
   },
   addressBook: {
+    myExtAccounts: 'My extension accounts',
+    myBook: 'My Book',
     searchPlaceholder: 'Search by address, name or identity',
     noFoundRecords: 'No records found',
     noContacts: 'You don’t have any contacts added yet',
