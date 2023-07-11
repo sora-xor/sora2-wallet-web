@@ -64,10 +64,10 @@ import AccountCard from '../Account/AccountCard.vue';
 import WalletAccount from '../Account/WalletAccount.vue';
 import AccountList from '../Connection/AccountList.vue';
 import DialogBase from '../DialogBase.vue';
+import SearchInput from '../Input/SearchInput.vue';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
-import SearchInput from '../SearchInput.vue';
 import WalletAvatar from '../WalletAvatar.vue';
 
 import AddressRecord from './AddressRecord.vue';
