@@ -2,13 +2,13 @@ import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
 
 import { api } from '../../api';
-import { storage } from '../../util/storage';
+import { storage, settingsStorage } from '../../util/storage';
 
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
 
 import type { AppWallet } from '../../consts';
 import type { FiatPriceObject, ReferrerRewards } from '../../services/subquery/types';
-import type { PolkadotJsAccount } from '../../types/common';
+import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
 import type { AccountState } from './types';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
@@ -204,6 +204,17 @@ const mutations = defineMutations<AccountState>()({
   /** JUST FOR TESTING PURPOSES */
   setIsDesktop(state, value: boolean): void {
     state.isDesktop = value;
+  },
+  setAddressToBook(state, { address, name }: AccountBook): void {
+    const addressBook = { ...state.book, [address]: name };
+    state.book = addressBook as Book;
+    settingsStorage.set('book', JSON.stringify(addressBook));
+  },
+  removeAddressFromBook(state, address: string): void {
+    if (state.book) {
+      delete state.book[address];
+      settingsStorage.set('book', JSON.stringify(state.book));
+    }
   },
 });
 
