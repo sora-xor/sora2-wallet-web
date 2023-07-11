@@ -149,11 +149,10 @@ async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promis
 
   await checkActiveAccount();
 
-  await Promise.all([
-    api.initialize(false),
-    store.dispatch.wallet.subscriptions.activateNetwokSubscriptions(),
-    store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop),
-  ]);
+  // don't wait for finalization of internal & external services subscriptions
+  store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop);
+  // wait for finalization of network subscriptions
+  await Promise.all([api.initialize(false), store.dispatch.wallet.subscriptions.activateNetwokSubscriptions()]);
 
   store.commit.wallet.settings.setWalletLoaded(true);
 }
