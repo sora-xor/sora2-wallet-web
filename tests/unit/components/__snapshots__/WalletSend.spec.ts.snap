@@ -680,8 +680,6 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
       <div
         class="wallet-send-amount"
       >
-        <!---->
-         
         <div
           class="wallet-send-amount-title"
         >
