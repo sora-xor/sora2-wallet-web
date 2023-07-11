@@ -22,6 +22,16 @@ export type AddressKeyMapping = {
   [key: string]: string | null;
 };
 
+export type Book = {
+  address: string;
+};
+
+export type AccountBook = {
+  address: string;
+  name: string;
+  identity?: string;
+};
+
 export interface PolkadotJsAccount {
   address: string;
   name: string;
@@ -82,6 +92,7 @@ export type SettingsStorageKey =
   | 'allowAccountDeletePopup'
   | 'evmAddress'
   | 'evmNetwork'
-  | 'bridgeType';
+  | 'bridgeType'
+  | 'book';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';
