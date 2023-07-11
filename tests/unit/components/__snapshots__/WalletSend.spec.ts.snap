@@ -13,6 +13,8 @@ exports[`WalletSend.vue [Confirm Step]: should be rendered correctly 1`] = `
   >
     <network-fee-warning-stub
       fee="0"
+      payoff="true"
+      symbol="XOR"
     />
      
     <wallet-fee-stub

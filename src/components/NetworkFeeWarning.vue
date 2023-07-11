@@ -2,8 +2,8 @@
   <div class="content">
     <s-icon class="content__warning-icon" name="notifications-alert-triangle-24" size="64px" />
     <h2 class="content__header">{{ t('confirmNextTxFailure.header') }}</h2>
-    <div class="content__info">{{ t('confirmNextTxFailure.info', { fee }) }}</div>
-    <div class="content__payoff">{{ t('confirmNextTxFailure.payoff') }}</div>
+    <div class="content__info">{{ t('confirmNextTxFailure.info', { fee, symbol }) }}</div>
+    <div v-if="payoff" class="content__payoff">{{ t('confirmNextTxFailure.payoff') }}</div>
     <div class="content__line"></div>
     <div class="content__switch">
       <s-switch v-model="hidePopup" />
@@ -16,6 +16,7 @@
 </template>
 
 <script lang="ts">
+import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { mutation } from '../store/decorators';
@@ -25,6 +26,8 @@ import TranslationMixin from './mixins/TranslationMixin';
 @Component
 export default class NetworkFeeWarning extends Mixins(TranslationMixin) {
   @Prop({ type: String }) readonly fee!: string;
+  @Prop({ type: String, default: KnownSymbols.XOR }) readonly symbol!: string;
+  @Prop({ type: Boolean, default: true }) readonly payoff!: boolean;
 
   @mutation.settings.setAllowFeePopup private setAllowFeePopup!: (flag: boolean) => void;
 
@@ -37,11 +40,10 @@ export default class NetworkFeeWarning extends Mixins(TranslationMixin) {
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 $inner-padding: 20px;
-// TODO: Set scoped. Remove important
+
 .content {
-  font-family: var(--s-font-family-default) !important;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,7 +51,7 @@ $inner-padding: 20px;
   margin-top: calc(var(--s-size-big) * -1);
 
   &__warning-icon {
-    color: var(--s-color-status-error) !important;
+    color: var(--s-color-status-error);
     margin-top: calc(var(--s-size-mini) / 3);
     margin-bottom: $inner-padding;
   }
