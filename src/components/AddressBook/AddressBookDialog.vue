@@ -233,6 +233,11 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 .address-book-scrollbar {
   @include scrollbar($basic-spacing-big);
 }
+
+.address-book-scrollbar.el-scrollbar .el-scrollbar__view {
+  padding-left: calc(var(--s-basic-spacing) * 3);
+  padding-right: calc(var(--s-basic-spacing) * 2);
+}
 </style>
 
 <style lang="scss" scoped>
