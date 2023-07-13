@@ -190,6 +190,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   handleDeleteRecord(address: string): void {
     this.removeAddressFromBook(address);
     this.addressBook = this.addressBook.filter((record) => record.address !== address);
+    this.closePopover();
   }
 
   async updateAddressBook(): Promise<void> {
