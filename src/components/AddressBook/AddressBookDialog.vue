@@ -230,9 +230,8 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   font-size: var(--s-font-size-small);
 }
 
-.address-book-scrollbar.el-scrollbar .el-scrollbar__view {
-  padding-left: calc(var(--s-basic-spacing) * 3);
-  padding-right: calc(var(--s-basic-spacing) * 2);
+.address-book-scrollbar {
+  @include scrollbar($basic-spacing-big);
 }
 </style>
 
@@ -275,8 +274,6 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   }
 
   &-scrollbar {
-    margin-left: calc(calc(var(--s-basic-spacing) * 3) * -1);
-    margin-right: calc(calc(var(--s-basic-spacing) * 3) * -1);
     height: 400px;
   }
 }
