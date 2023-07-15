@@ -12,14 +12,14 @@
       <s-icon name="el-icon-delete" />
       <span>{{ t('addressBook.options.delete') }}</span>
     </div>
-    <div slot="reference" @click="handleOpenOptions" ref="clickOutside">
+    <div slot="reference" @click="handleOpenOptions">
       <s-icon class="address-book__option-icon" name="basic-more-vertical-24" />
     </div>
   </el-popover>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import TranslationMixin from '../mixins/TranslationMixin';
 
@@ -29,10 +29,6 @@ import type { AccountBook } from '../../types/common';
 export default class Options extends Mixins(TranslationMixin) {
   @Prop({ default: { name: '', address: '' }, type: Object }) readonly record!: AccountBook;
   @Prop({ default: true, type: Boolean }) readonly withActiveOptions!: boolean;
-
-  wasClicked = false;
-
-  @Ref('clickOutside') private readonly clickOutside!: HTMLInputElement;
 
   get computedClass(): string {
     return this.withActiveOptions ? 'address-book__option' : 'address-book__option--not-active';
@@ -44,6 +40,7 @@ export default class Options extends Mixins(TranslationMixin) {
 
   handleOpenOptions(event: Event): void {
     event.stopPropagation();
+    this.$root.$emit('closePopover');
   }
 
   handleEditRecord(address: string): void {

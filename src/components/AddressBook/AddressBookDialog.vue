@@ -216,6 +216,10 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     this.$root.$on('updateAddressBook', () => {
       this.updateAddressBook();
     });
+
+    this.$root.$on('closePopover', () => {
+      this.closePopover();
+    });
   }
 }
 </script>
