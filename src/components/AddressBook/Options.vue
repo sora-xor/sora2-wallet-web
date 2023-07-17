@@ -40,6 +40,7 @@ export default class Options extends Mixins(TranslationMixin) {
 
   handleOpenOptions(event: Event): void {
     event.stopPropagation();
+    this.$root.$emit('closePopover');
   }
 
   handleEditRecord(address: string): void {
