@@ -199,7 +199,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   }
 
   closePopover(): void {
-    this.bookRef.click();
+    if (this.bookRef) this.bookRef.click();
   }
 
   handleSelectAddress(address: string, name: string): void {
