@@ -391,9 +391,17 @@ export default class WalletSend extends Mixins(
   }
 
   get newAddressDetected(): boolean {
-    if (!this.validAddress || !this.polkadotJsAccounts) return false;
-    const found = this.polkadotJsAccounts.find((account) => formatSoraAddress(account.address) === this.address);
-    return !this.book[this.address] && !found;
+    if (!this.validAddress) return false;
+
+    const formattedAddress = formatSoraAddress(this.address);
+
+    let found;
+
+    if (this.polkadotJsAccounts && this.polkadotJsAccounts.length) {
+      found = this.polkadotJsAccounts.find((account) => formatSoraAddress(account.address) === formattedAddress);
+    }
+
+    return !this.book[formattedAddress] && !found;
   }
 
   getFormattedAddress(asset: AccountAsset): string {
