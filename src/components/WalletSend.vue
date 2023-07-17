@@ -397,7 +397,7 @@ export default class WalletSend extends Mixins(
 
     let found;
 
-    if (this.polkadotJsAccounts) {
+    if (this.polkadotJsAccounts && this.polkadotJsAccounts.length) {
       found = this.polkadotJsAccounts.find((account) => formatSoraAddress(account.address) === formattedAddress);
     }
 
