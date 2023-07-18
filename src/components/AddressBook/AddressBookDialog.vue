@@ -190,6 +190,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   handleDeleteRecord(address: string): void {
     this.removeAddressFromBook(address);
     this.addressBook = this.addressBook.filter((record) => record.address !== address);
+    this.closePopover();
   }
 
   async updateAddressBook(): Promise<void> {
@@ -198,7 +199,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   }
 
   closePopover(): void {
-    this.bookRef.click();
+    if (this.bookRef) this.bookRef.click();
   }
 
   handleSelectAddress(address: string, name: string): void {
@@ -215,6 +216,10 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     this.$root.$on('updateAddressBook', () => {
       this.updateAddressBook();
     });
+
+    this.$root.$on('closePopover', () => {
+      this.closePopover();
+    });
   }
 }
 </script>
@@ -227,6 +232,10 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   border: none;
   padding: $basic-spacing $inner-spacing-mini $basic-spacing $basic-spacing;
   font-size: var(--s-font-size-small);
+}
+
+.address-book-scrollbar {
+  @include scrollbar($basic-spacing-big);
 }
 
 .address-book-scrollbar.el-scrollbar .el-scrollbar__view {
@@ -274,8 +283,6 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   }
 
   &-scrollbar {
-    margin-left: calc(calc(var(--s-basic-spacing) * 3) * -1);
-    margin-right: calc(calc(var(--s-basic-spacing) * 3) * -1);
     height: 400px;
   }
 }
