@@ -21,9 +21,6 @@ useDescribe('CreateToken.vue', CreateToken, () => {
       const wrapper = useShallowMount(CreateToken, {
         store: createStore(),
         data: () => data,
-        computed: {
-          hasEnoughXor: () => item.hasEnoughXor,
-        },
       });
       expect(wrapper.element).toMatchSnapshot();
     })
