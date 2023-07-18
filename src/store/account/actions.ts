@@ -156,7 +156,9 @@ const actions = defineActions({
       try {
         const signer = await dispatch.getSigner();
 
-        api.setSigner(signer);
+        if (state.isExternal) {
+          api.setSigner(signer);
+        }
       } catch (error) {
         console.error(error);
         await dispatch.logout();
