@@ -7,7 +7,8 @@ def pipeline = new org.js.LibPipeline(
     buildDockerImage: 'build-tools/node:14-ubuntu-cypress',
     secretScannerExclusion: '.*env.json',
     sonarSrcPath: 'src',
-    sonarTestsPath: 'tests'
+    sonarTestsPath: 'tests',
+    dojoProductType: 'sora'
 )
 
 pipeline.runPipeline()
