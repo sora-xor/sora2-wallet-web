@@ -29,6 +29,9 @@ const createStore = ({ permissions = MOCK_WALLET_PERMISSIONS, isNotXor = false }
       state: () => ({
         history: MOCK_HISTORY,
       }),
+      getters: {
+        selectedTx: () => null,
+      },
     },
   });
 

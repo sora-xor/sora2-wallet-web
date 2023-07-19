@@ -43,6 +43,9 @@ const createStore = ({ history = {}, externalHistory = {} } = {}) =>
       actions: {
         getExternalHistory: jest.fn(),
       },
+      getters: {
+        selectedTx: () => null,
+      },
     },
   });
 

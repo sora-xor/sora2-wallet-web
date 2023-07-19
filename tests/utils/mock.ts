@@ -258,6 +258,19 @@ export const MOCK_ACCOUNT: PolkadotJsAccount = {
   source: AppWallet.PolkadotJS,
 };
 
+export const MOCK_POLKADOTJS_ACCOUNTS: Array<PolkadotJsAccount> = [
+  {
+    address: 'cnV1qZzFyBzkXS4xfmEnXue4SPhAbFNqcvULKSdzkfPEEZsBe',
+    name: 'Not SORA Account',
+    source: AppWallet.PolkadotJS,
+  },
+  {
+    address: 'cnVLhRTA8ap3XZTtzyn82dSBMoF8WHeCCcf6vbjxr6KxQqNhB',
+    name: 'Fearless Mock Account',
+    source: AppWallet.FearlessWallet,
+  },
+];
+
 export const MOCK_WALLET_PERMISSIONS: WalletPermissions = {
   addAssets: true,
   addLiquidity: true,

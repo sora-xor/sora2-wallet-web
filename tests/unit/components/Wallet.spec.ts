@@ -38,6 +38,9 @@ const createStore = (
       state: () => ({
         history: MOCK_HISTORY,
       }),
+      getters: {
+        selectedTx: () => null,
+      },
     },
   });
 

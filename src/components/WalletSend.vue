@@ -164,8 +164,6 @@ import { FPNumber, Operation } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
-import type { Book, PolkadotJsAccount } from '@/types/common';
-
 import { api } from '../api';
 import { RouteNames } from '../consts';
 import { state, mutation, action } from '../store/decorators';
@@ -186,6 +184,7 @@ import WalletBase from './WalletBase.vue';
 import WalletFee from './WalletFee.vue';
 
 import type { Route } from '../store/router/types';
+import type { Book, PolkadotJsAccount } from '../types/common';
 import type { CodecString } from '@sora-substrate/util';
 import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/assets/types';
 import type { Subscription } from 'rxjs';
@@ -395,7 +394,7 @@ export default class WalletSend extends Mixins(
 
     const formattedAddress = formatSoraAddress(this.address);
 
-    let found;
+    let found: Nullable<PolkadotJsAccount>;
 
     if (this.polkadotJsAccounts && this.polkadotJsAccounts.length) {
       found = this.polkadotJsAccounts.find((account) => formatSoraAddress(account.address) === formattedAddress);
