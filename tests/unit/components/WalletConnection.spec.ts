@@ -55,11 +55,10 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
         WalletBase,
         AccountCard,
       },
+      data: () => ({
+        step: 2,
+      }),
     });
-
-    wrapper.setData({ step: 2 });
-
-    await wrapper.vm.$nextTick();
 
     expect(wrapper.element).toMatchSnapshot();
   });
@@ -70,11 +69,10 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
       stubs: {
         WalletBase,
       },
+      data: () => ({
+        step: 3,
+      }),
     });
-
-    wrapper.setData({ step: 3 });
-
-    await wrapper.vm.$nextTick();
 
     expect(wrapper.element).toMatchSnapshot();
   });
@@ -85,11 +83,10 @@ useDescribe('WalletConnection.vue', WalletConnection, () => {
       stubs: {
         WalletBase,
       },
+      data: () => ({
+        step: 3,
+      }),
     });
-
-    wrapper.setData({ step: 3 });
-
-    await wrapper.vm.$nextTick();
 
     expect(wrapper.element).toMatchSnapshot();
   });

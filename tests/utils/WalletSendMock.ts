@@ -27,6 +27,12 @@ export const MOCK_WALLET_SEND: Array<WalletSend> = [
     amount: '',
   },
   {
+    title: 'Create Step: Not SORA Address',
+    step: 1,
+    address: MOCK_ACCOUNTS[1].address,
+    amount: '',
+  },
+  {
     title: 'Confirm Step',
     step: 2,
     address: '',

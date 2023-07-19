@@ -22,9 +22,8 @@ export type AddressKeyMapping = {
   [key: string]: string | null;
 };
 
-export type Book = {
-  address: string;
-};
+/** `{ address: name }` */
+export type Book = Record<string, string>;
 
 export type AccountBook = {
   address: string;
