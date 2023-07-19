@@ -248,6 +248,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 .address-book {
   &__btn {
     width: 100%;
+    margin-top: calc($basic-spacing * 2);
     margin-bottom: calc($basic-spacing * 2);
     .el-button {
       width: 100%;
