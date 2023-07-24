@@ -1,23 +1,16 @@
 <template>
-  <dialog-base :visible.sync="isVisible" class="account-delete-dialog">
-    <simple-notification @submit.native.prevent="handleConfirm" @close="closeDialog">
+  <dialog-base :visible.sync="isVisible">
+    <simple-notification
+      optional
+      modal-content
+      v-model="hideDeleteDialog"
+      :button-text="t('logoutText')"
+      :loading="loading"
+      @submit.native.prevent="handleConfirm"
+      class="account-delete-dialog-content"
+    >
       <template #title>{{ t('desktop.assetsAtRiskText') }}</template>
       <template #text>{{ t('desktop.deleteAccountText') }}</template>
-      <template>
-        <s-divider class="account-delete-dialog__divider" />
-        <div class="account-delete-dialog__switch">
-          <s-switch v-model="hideDeleteDialog" />
-          <span>{{ t('doNotShowText') }}</span>
-        </div>
-        <s-button
-          type="primary"
-          native-type="submit"
-          class="account-delete-dialog__button simple-notification__button s-typography-button--big"
-          :loading="loading"
-        >
-          {{ t('logoutText') }}
-        </s-button>
-      </template>
     </simple-notification>
   </dialog-base>
 </template>
@@ -53,22 +46,3 @@ export default class AccountDeleteDialog extends Mixins(TranslationMixin, Dialog
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.account-delete-dialog {
-  &__divider {
-    margin: 0;
-  }
-
-  &__switch {
-    @include switch-block;
-    padding: 0;
-  }
-
-  &__button.el-button.neumorphic.s-primary {
-    background-color: red;
-    color: white;
-    width: 100%;
-  }
-}
-</style>
