@@ -7,7 +7,6 @@
       :button-text="t('logoutText')"
       :loading="loading"
       @submit.native.prevent="handleConfirm"
-      class="account-delete-dialog-content"
     >
       <template #title>{{ t('desktop.assetsAtRiskText') }}</template>
       <template #text>{{ t('desktop.deleteAccountText') }}</template>

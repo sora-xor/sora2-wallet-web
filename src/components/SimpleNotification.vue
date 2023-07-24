@@ -1,17 +1,13 @@
 <template>
   <s-form :class="['simple-notification', { 'modal-content': modalContent }]">
     <s-icon :class="['simple-notification-icon', { success }]" :name="iconName" size="64" />
-
     <div class="simple-notification__title">
       <slot name="title"></slot>
     </div>
-
     <div v-if="$slots.text" class="simple-notification__text">
       <slot name="text"></slot>
     </div>
-
     <slot />
-
     <template v-if="optional">
       <s-divider class="simple-notification__divider" />
       <div class="simple-notification__switch">
@@ -19,7 +15,6 @@
         <span>{{ t('doNotShowText') }}</span>
       </div>
     </template>
-
     <s-button
       type="primary"
       native-type="submit"
