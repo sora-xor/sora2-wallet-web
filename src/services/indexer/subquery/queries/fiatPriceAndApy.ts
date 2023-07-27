@@ -2,26 +2,28 @@ import { gql } from '@urql/core';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-import type { SubqueryAssetEntity, SubqueryPoolXYKEntity, SubqueryEntitiesQueryResponse } from '../types';
+import type { SubqueryAssetEntity, SubqueryPoolXYKEntity, SubqueryConnectionQueryResponse } from '../types';
 
-export const FiatPriceQuery = gql<SubqueryEntitiesQueryResponse<SubqueryAssetEntity>>`
+export const FiatPriceQuery = gql<SubqueryConnectionQueryResponse<SubqueryAssetEntity>>`
   query SubqueryFiatPriceQuery($after: Cursor = "", $first: Int = 100) {
-    entities: assets(first: $first, after: $after) {
+    data: assets(first: $first, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }
-      nodes {
-        id
-        priceUSD
+      edges {
+        node {
+          id
+          priceUSD
+        }
       }
     }
   }
   ${PageInfoFragment}
 `;
 
-export const ApyQuery = gql<SubqueryEntitiesQueryResponse<SubqueryPoolXYKEntity>>`
+export const ApyQuery = gql<SubqueryConnectionQueryResponse<SubqueryPoolXYKEntity>>`
   query SubqueryApyQuery($after: Cursor = "", $first: Int = 100) {
-    entities: poolXYKs(first: $first, after: $after) {
+    data: poolXYKs(first: $first, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }

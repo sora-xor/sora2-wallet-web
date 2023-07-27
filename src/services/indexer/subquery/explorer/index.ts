@@ -1,27 +1,27 @@
 import BaseSubqueryExplorer from './base';
 
-import { AccountModule } from './modules/account';
-import { PriceModule } from './modules/price';
-import { PoolModule } from './modules/pool';
+import { SubqueryAccountModule } from './modules/account';
+import { SubqueryPriceModule } from './modules/price';
+import { SubqueryPoolModule } from './modules/pool';
 
 import type { TypedDocumentNode, AnyVariables } from '../client';
-import type { SubqueryEntitiesQueryResponse, SubquerySubscriptionPayload } from '../types';
+import type { SubqueryConnectionQueryResponse, SubquerySubscriptionPayload } from '../types';
 
 export default class SubqueryExplorer extends BaseSubqueryExplorer {
-  public readonly account: AccountModule = new AccountModule(this);
-  public readonly price: PriceModule = new PriceModule(this);
-  public readonly pool: PoolModule = new PoolModule(this);
+  public readonly account: SubqueryAccountModule = new SubqueryAccountModule(this);
+  public readonly price: SubqueryPriceModule = new SubqueryPriceModule(this);
+  public readonly pool: SubqueryPoolModule = new SubqueryPoolModule(this);
 
   public async fetchEntities<T>(
-    query: TypedDocumentNode<SubqueryEntitiesQueryResponse<T>>,
+    query: TypedDocumentNode<SubqueryConnectionQueryResponse<T>>,
     variables?: AnyVariables
-  ): Promise<Nullable<SubqueryEntitiesQueryResponse<T>['entities']>> {
+  ): Promise<Nullable<SubqueryConnectionQueryResponse<T>['data']>> {
     try {
       const response = await this.request(query, variables);
 
-      if (!response || !response.entities) return null;
+      if (!response || !response.data) return null;
 
-      return response.entities;
+      return response.data;
     } catch (error) {
       console.warn('Subquery is not available or data is incorrect!', error);
       return null;
@@ -29,7 +29,7 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
   }
 
   public async fetchAllEntities<T, R>(
-    query: TypedDocumentNode<SubqueryEntitiesQueryResponse<T>>,
+    query: TypedDocumentNode<SubqueryConnectionQueryResponse<T>>,
     variables: AnyVariables = {},
     parse?: (entity: T) => R
   ): Promise<Nullable<R[]>> {
@@ -49,8 +49,8 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
         after = response.pageInfo.endCursor;
         hasNextPage = response.pageInfo.hasNextPage;
 
-        response.nodes.forEach((el) => {
-          const record = parse ? parse(el) : el;
+        response.edges.forEach((el) => {
+          const record = parse ? parse(el.node) : el.node;
 
           acc.push(record);
         });

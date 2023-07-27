@@ -167,8 +167,6 @@ export type ExtrinsicEvent = {
   data: any[];
 };
 
-export type HistoryElementCalls = UtilityBatchCall[];
-
 export type HistoryElementEthBridgeOutgoing = {
   amount: string;
   assetId: string;
@@ -194,6 +192,22 @@ export type ReferrerReserve = {
   amount: string;
 };
 
+export type HistoryElementData = Nullable<
+  | HistoryElementSwap
+  | HistoryElementSwapTransfer
+  | HistoryElementTransfer
+  | HistoryElementLiquidityOperation
+  | HistoryElementAssetRegistration
+  | ReferralSetReferrer
+  | ReferrerReserve
+  | HistoryElementEthBridgeOutgoing
+  | HistoryElementEthBridgeIncoming
+  | HistoryElementRewardsClaim
+  | HistoryElementDemeterFarming
+>;
+
+export type HistoryElementCalls = UtilityBatchCall[];
+
 export type HistoryElement = {
   id: string;
   blockHash: string;
@@ -204,19 +218,7 @@ export type HistoryElement = {
   networkFee: string;
   execution: HistoryElementExecution;
   timestamp: number;
-  data: Nullable<
-    | HistoryElementSwap
-    | HistoryElementSwapTransfer
-    | HistoryElementTransfer
-    | HistoryElementLiquidityOperation
-    | HistoryElementAssetRegistration
-    | ReferralSetReferrer
-    | ReferrerReserve
-    | HistoryElementEthBridgeOutgoing
-    | HistoryElementEthBridgeIncoming
-    | HistoryElementRewardsClaim
-    | HistoryElementDemeterFarming
-  >;
+  data: HistoryElementData;
   calls: HistoryElementCalls;
 };
 

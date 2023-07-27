@@ -1,10 +1,10 @@
-import { BaseModule } from './_base';
+import { SubqueryBaseModule } from './_base';
 
 import { FiatPriceQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
 import { FiatPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
 
-import { SubquerySnapshotTypes } from '../../types';
+import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
 import { formatStringNumber } from '../../../../../util';
 
@@ -21,7 +21,7 @@ function parseFiatPrice(entity: SubqueryAssetEntity): FiatPriceObject {
   return acc;
 }
 
-export class PriceModule extends BaseModule {
+export class SubqueryPriceModule extends SubqueryBaseModule {
   /**
    * Get fiat price for each asset
    */
@@ -48,14 +48,14 @@ export class PriceModule extends BaseModule {
    */
   public async getHistoricalPriceForAsset(
     assetId: string,
-    type = SubquerySnapshotTypes.DEFAULT,
+    type = SnapshotTypes.DEFAULT,
     first?: number,
     after?: string
-  ) {
+  ): Promise<Nullable<ConnectionQueryResponseData<AssetSnapshotEntity>>> {
     const filter = historicalPriceFilter(assetId, type);
     const variables = { filter, first, after };
-    const response = await this.root.fetchEntities(HistoricalPriceQuery, variables);
+    const data = await this.root.fetchEntities(HistoricalPriceQuery, variables);
 
-    return response;
+    return data;
   }
 }

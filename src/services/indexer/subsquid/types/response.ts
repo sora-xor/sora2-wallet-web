@@ -1,24 +1,15 @@
-import { MutationTypes, SubsquidNodesConnection, SubsquidNodesConnectionInfo } from './subquery';
+import { ConnectionQueryResponseData } from '../../types';
+import { SubsquidQueryResponseInfo } from './subsquid';
 
-/* eslint-disable camelcase */
-export type SubscriptionPayload<T> = {
-  payload: {
-    id: string;
-    mutation_type: MutationTypes;
-    _entity: T;
-  };
-};
-/* eslint-enable camelcase */
-
-export type SubscriptionResponse<T> = {
+export type SubsquidQueryResponse<T> = {
   nodes: T[];
+  info: SubsquidQueryResponseInfo;
 };
 
-export type NodesQueryResponse<T> = {
+export type SubsquidConnectionQueryResponse<T> = {
+  data: ConnectionQueryResponseData<T>;
+};
+
+export type SubsquidSubscriptionResponse<T> = {
   nodes: T[];
-  info: SubsquidNodesConnectionInfo;
-};
-
-export type EntitiesConnectionQueryResponse<T> = {
-  entities: SubsquidNodesConnection<T>;
 };

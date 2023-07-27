@@ -2,7 +2,7 @@ import { formatStringNumber } from '../../../../../util';
 import { ApyQuery } from '../../queries/fiatPriceAndApy';
 import { PoolsApySubscription } from '../../subscriptions/fiatPriceAndApy';
 
-import { BaseModule } from './_base';
+import { SubqueryBaseModule } from './_base';
 
 import type { SubqueryPoolXYKEntity, PoolApyObject } from '../../types';
 
@@ -17,7 +17,7 @@ function parseApy(entity: SubqueryPoolXYKEntity): PoolApyObject {
   return acc;
 }
 
-export class PoolModule extends BaseModule {
+export class SubqueryPoolModule extends SubqueryBaseModule {
   /**
    * Get strategic bonus APY for each pool
    */

@@ -1,14 +1,6 @@
 import type { CodecString } from '@sora-substrate/util';
 
-import type { SubqueryNodesConnection } from './subquery';
-
-// Subquery Enums
-export enum SubquerySnapshotTypes {
-  DEFAULT = 'DEFAULT',
-  HOUR = 'HOUR',
-  DAY = 'DAY',
-  MONTH = 'MONTH',
-}
+import { ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
 // Subquery Models
 /* eslint-disable camelcase */
@@ -35,7 +27,7 @@ export type SubqueryAssetSnapshotBaseEntity = {
     amountUSD: string;
   };
   timestamp: number;
-  type: SubquerySnapshotTypes;
+  type: SnapshotTypes;
   liquidity: Nullable<CodecString>;
   supply: CodecString;
   mint: CodecString;
@@ -61,8 +53,8 @@ export type SubqueryAssetSnapshotEntity = SubqueryAssetSnapshotBaseEntity & {
 };
 
 export type SubqueryAssetEntity = SubqueryAssetBaseEntity & {
-  data: SubqueryNodesConnection<SubqueryAssetSnapshotBaseEntity>;
-  poolXYK: SubqueryNodesConnection<SubqueryPoolXYKBaseEntity>;
+  data: ConnectionQueryResponseData<SubqueryAssetSnapshotBaseEntity>;
+  poolXYK: ConnectionQueryResponseData<SubqueryPoolXYKBaseEntity>;
 };
 
 export type SubqueryAccountEntity = {
@@ -86,7 +78,7 @@ export type SubqueryNetworkStatsEntity = {
 
 export type SubqueryNetworkSnapshotEntity = {
   id: string;
-  type: SubquerySnapshotTypes;
+  type: SnapshotTypes;
   timestamp: number;
   accounts: number;
   transactions: number;

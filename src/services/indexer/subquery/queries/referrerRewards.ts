@@ -2,17 +2,19 @@ import { gql } from '@urql/core';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-import type { SubqueryReferrerRewardEntity, SubqueryEntitiesQueryResponse } from '../types';
+import type { SubqueryReferrerRewardEntity, SubqueryConnectionQueryResponse } from '../types';
 
-export const ReferrerRewardsQuery = gql<SubqueryEntitiesQueryResponse<SubqueryReferrerRewardEntity>>`
+export const ReferrerRewardsQuery = gql<SubqueryConnectionQueryResponse<SubqueryReferrerRewardEntity>>`
   query SubqueryReferrerRewardsQuery($first: Int = 100, $filter: ReferrerRewardFilter, $after: Cursor = "") {
-    entities: referrerRewards(first: $first, filter: $filter, after: $after) {
+    data: referrerRewards(first: $first, filter: $filter, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }
-      nodes {
-        referral
-        amount
+      edges {
+        node {
+          referral
+          amount
+        }
       }
     }
   }

@@ -5,9 +5,9 @@ import { ModuleNames, ModuleMethods } from '../types';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-import type { SubqueryHistoryElement, SubqueryEntitiesQueryResponse } from '../types';
+import type { SubqueryHistoryElement, SubqueryConnectionQueryResponse } from '../types';
 
-export const HistoryElementsQuery = gql<SubqueryEntitiesQueryResponse<SubqueryHistoryElement>>`
+export const HistoryElementsQuery = gql<SubqueryConnectionQueryResponse<SubqueryHistoryElement>>`
   query SubqueryHistoryElements(
     $first: Int = null
     $last: Int = null
@@ -18,7 +18,7 @@ export const HistoryElementsQuery = gql<SubqueryEntitiesQueryResponse<SubqueryHi
     $filter: HistoryElementFilter
     $idsOnly: Boolean! = false
   ) {
-    entities: historyElements(
+    data: historyElements(
       first: $first
       last: $last
       offset: $offset
@@ -27,17 +27,19 @@ export const HistoryElementsQuery = gql<SubqueryEntitiesQueryResponse<SubqueryHi
       orderBy: $orderBy
       filter: $filter
     ) {
-      nodes {
-        id
-        timestamp
-        blockHash @skip(if: $idsOnly)
-        blockHeight @skip(if: $idsOnly)
-        module @skip(if: $idsOnly)
-        method @skip(if: $idsOnly)
-        address @skip(if: $idsOnly)
-        networkFee @skip(if: $idsOnly)
-        execution @skip(if: $idsOnly)
-        data @skip(if: $idsOnly)
+      edges {
+        node {
+          id
+          timestamp
+          blockHash @skip(if: $idsOnly)
+          blockHeight @skip(if: $idsOnly)
+          module @skip(if: $idsOnly)
+          method @skip(if: $idsOnly)
+          address @skip(if: $idsOnly)
+          networkFee @skip(if: $idsOnly)
+          execution @skip(if: $idsOnly)
+          data @skip(if: $idsOnly)
+        }
       }
       pageInfo @skip(if: $idsOnly) {
         ...PageInfoFragment

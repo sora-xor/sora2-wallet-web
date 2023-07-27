@@ -5,11 +5,19 @@ import { HistoryElementsQuery } from '../../queries/historyElements';
 import { ReferrerRewardsQuery, referrerRewardsFilter } from '../../queries/referrerRewards';
 import { AccountHistorySubscription } from '../../subscriptions/account';
 
-import { BaseModule } from './_base';
+import { SubqueryBaseModule } from './_base';
 
-import type { ReferrerRewards, SubqueryHistoryElement } from '../../types';
+import type {
+  ConnectionQueryResponseData,
+  HistoryElement,
+  HistoryElementCalls,
+  HistoryElementData,
+  QueryResponseData,
+  ReferrerRewards,
+  SubqueryHistoryElement,
+} from '../../types';
 
-export class AccountModule extends BaseModule {
+export class SubqueryAccountModule extends SubqueryBaseModule {
   /**
    * Get Referral Rewards items by referral
    */
@@ -42,7 +50,8 @@ export class AccountModule extends BaseModule {
         after = response.pageInfo.endCursor;
         hasNextPage = response.pageInfo.hasNextPage;
 
-        response.nodes.forEach((node) => {
+        response.edges.forEach((edge) => {
+          const node = edge.node;
           const referral = node.referral;
           const amount = FPNumber.fromCodecValue(node.amount, XOR.decimals);
 
@@ -64,8 +73,45 @@ export class AccountModule extends BaseModule {
     }
   }
 
-  public async getHistory(variables = {}) {
-    return await this.root.fetchEntities(HistoryElementsQuery, variables);
+  public async getHistory(variables = {}): Promise<Nullable<QueryResponseData<HistoryElement>>> {
+    const data = await this.getHistoryPaged(variables);
+    if (data) {
+      return {
+        nodes: data.edges.map((edge) => edge.node),
+        totalCount: data.totalCount,
+      };
+    }
+    return data;
+  }
+
+  public async getHistoryPaged(variables = {}): Promise<Nullable<ConnectionQueryResponseData<HistoryElement>>> {
+    const data = await this.root.fetchEntities(HistoryElementsQuery, variables);
+    if (data) {
+      return {
+        ...data,
+        edges: data.edges.map((edge) => {
+          let data: HistoryElementData = null;
+          let calls: HistoryElementCalls = [];
+          if (Array.isArray(edge.node.data)) {
+            calls = edge.node.data.map((call) => ({
+              ...call,
+              data: call.data.args,
+            }));
+          } else {
+            data = edge.node.data;
+          }
+          return {
+            ...edge,
+            node: {
+              ...edge.node,
+              data,
+              calls,
+            },
+          };
+        }),
+      };
+    }
+    return data;
   }
 
   public createHistorySubscription(accountAddress: string, handler: (entity: SubqueryHistoryElement) => void) {

@@ -2,27 +2,29 @@ import { gql } from '@urql/core';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-import { SubquerySnapshotTypes } from '../types';
+import { SnapshotTypes } from '../types';
 
-import type { SubqueryEntitiesQueryResponse, SubqueryAssetSnapshotEntity } from '../types';
+import type { SubqueryConnectionQueryResponse, SubqueryAssetSnapshotEntity } from '../types';
 
-export const HistoricalPriceQuery = gql<SubqueryEntitiesQueryResponse<SubqueryAssetSnapshotEntity>>`
+export const HistoricalPriceQuery = gql<SubqueryConnectionQueryResponse<SubqueryAssetSnapshotEntity>>`
   query SubqueryHistoricalPriceQuery($after: Cursor = "", $filter: AssetSnapshotFilter, $first: Int = null) {
-    entities: assetSnapshots(after: $after, first: $first, filter: $filter, orderBy: [TIMESTAMP_DESC]) {
+    data: assetSnapshots(after: $after, first: $first, filter: $filter, orderBy: [TIMESTAMP_DESC]) {
       pageInfo {
         ...PageInfoFragment
       }
-      nodes {
-        priceUSD
-        volume
-        timestamp
+      edges {
+        node {
+          priceUSD
+          volume
+          timestamp
+        }
       }
     }
   }
   ${PageInfoFragment}
 `;
 
-export const historicalPriceFilter = (assetAddress: string, type: SubquerySnapshotTypes) => {
+export const historicalPriceFilter = (assetAddress: string, type: SnapshotTypes) => {
   return {
     and: [
       {

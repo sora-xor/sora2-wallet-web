@@ -18,7 +18,7 @@ function parseApy(entity: SubsquidPoolXYKEntity): PoolApyObject {
   return acc;
 }
 
-export class PoolModule extends BaseModule {
+export class SubsquidPoolModule extends BaseModule {
   /**
    * Get strategic bonus APY for each pool
    */

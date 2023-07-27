@@ -9,7 +9,7 @@ import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
 import { isInternalSource } from '../../consts/wallets';
 import alertsApiService from '../../services/alerts';
 import { CeresApiService } from '../../services/ceres';
-import { Indexer } from '../../services/indexer';
+import { getCurrentIndexer } from '../../services/indexer';
 import store, { rootActionContext } from '../../store';
 import {
   getAppWallets,
@@ -48,7 +48,8 @@ const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
 
 function subscribeOnFiatUsingIndexer(context: ActionContext<any, any>): void {
   const { commit } = accountActionContext(context);
-  const subscription = Indexer.ExplorerService.price.createFiatPriceSubscription(
+  const indexer = getCurrentIndexer();
+  const subscription = indexer.services.explorer.price.createFiatPriceSubscription(
     (payload?: FiatPriceObject) => {
       commit.updateFiatPriceObject(payload);
     },
@@ -83,7 +84,8 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   const { commit } = accountActionContext(context);
   commit.resetFiatPriceSubscription();
   try {
-    let data = await Indexer.ExplorerService.price.getFiatPriceObject();
+    const indexer = getCurrentIndexer();
+    let data = await indexer.services.explorer.price.getFiatPriceObject();
     if (data) {
       commit.setFiatPriceObject(data);
       return true;
@@ -521,7 +523,8 @@ const actions = defineActions({
   async getAccountReferralRewards(context): Promise<void> {
     const { state, commit } = accountActionContext(context);
     commit.clearReferralRewards();
-    const data = await Indexer.ExplorerService.account.getReferralRewards(state.address);
+    const indexer = getCurrentIndexer();
+    const data = await indexer.services.explorer.account.getReferralRewards(state.address);
     if (data) {
       commit.setReferralRewards(data);
     }

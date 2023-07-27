@@ -4,9 +4,11 @@ import { gql } from '@urql/core';
 
 import { ModuleNames, ModuleMethods } from '../types';
 
-import type { SubsquidHistoryElement, NodesQueryResponse } from '../types';
+import { PageInfoFragment } from '../fragments/pageInfo';
 
-export const HistoryElementsQuery = gql<NodesQueryResponse<SubsquidHistoryElement>>`
+import type { SubsquidHistoryElement, SubsquidQueryResponse, SubsquidConnectionQueryResponse } from '../types';
+
+export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryElement>>`
   query SubsquidHistoryElements(
     $limit: Int
     $offset: Int = null
@@ -37,6 +39,44 @@ export const HistoryElementsQuery = gql<NodesQueryResponse<SubsquidHistoryElemen
       data @skip(if: $idsOnly)
     }
   }
+`;
+
+export const HistoryElementsConnectionQuery = gql<SubsquidConnectionQueryResponse<SubsquidHistoryElement>>`
+  query SubsquidHistoryElements(
+    $first: Int
+    $after: String = null
+    $orderBy: [HistoryElementOrderByInput!] = timestamp_DESC
+    $filter: HistoryElementWhereInput
+    $idsOnly: Boolean! = false
+  ) {
+    data: historyElementsConnection(first: $first, after: $after, orderBy: $orderBy, where: $filter) {
+      pageInfo {
+        ...PageInfoFragment
+      }
+      edges {
+        node {
+          id
+          timestamp
+          blockHash @skip(if: $idsOnly)
+          blockHeight @skip(if: $idsOnly)
+          module @skip(if: $idsOnly)
+          method @skip(if: $idsOnly)
+          address @skip(if: $idsOnly)
+          networkFee @skip(if: $idsOnly)
+          execution @skip(if: $idsOnly) {
+            success
+            error {
+              moduleErrorId
+              moduleErrorIndex
+              nonModuleErrorMessage
+            }
+          }
+          data @skip(if: $idsOnly)
+        }
+      }
+    }
+  }
+  ${PageInfoFragment}
 `;
 
 type DataCriteria = {

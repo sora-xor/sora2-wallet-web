@@ -1,13 +1,5 @@
 import type { CodecString } from '@sora-substrate/util';
-import { AssetEntity } from '../../types/models';
-
-// Subsquid Enums
-export enum SubsquidSnapshotTypes {
-  DEFAULT = 'DEFAULT',
-  HOUR = 'HOUR',
-  DAY = 'DAY',
-  MONTH = 'MONTH',
-}
+import { SnapshotTypes } from '../../types';
 
 // Subsquid Models
 /* eslint-disable camelcase */
@@ -20,7 +12,6 @@ export type SubsquidAssetBaseEntity = {
 
 export type SubsquidAssetSnapshotBaseEntity = {
   id: string;
-  asset: SubsquidAssetBaseEntity;
   priceUSD: {
     low: string;
     high: string;
@@ -32,7 +23,7 @@ export type SubsquidAssetSnapshotBaseEntity = {
     amountUSD: string;
   };
   timestamp: number;
-  type: SubsquidSnapshotTypes;
+  type: SnapshotTypes;
   liquidity: Nullable<CodecString>;
   supply: CodecString;
   mint: CodecString;
@@ -75,7 +66,7 @@ export type SubsquidNetworkStatsEntity = {
 
 export type SubsquidNetworkSnapshotEntity = {
   id: string;
-  type: SubsquidSnapshotTypes;
+  type: SnapshotTypes;
   timestamp: number;
   accounts: number;
   transactions: number;

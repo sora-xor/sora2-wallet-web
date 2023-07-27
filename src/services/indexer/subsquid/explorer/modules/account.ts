@@ -4,13 +4,19 @@ import { XOR } from '@sora-substrate/util/build/assets/consts';
 import { BaseModule } from './_base';
 
 import { ReferrerRewardsQuery, referrerRewardsFilter } from '../../queries/referrerRewards';
-import { HistoryElementsQuery } from '../../queries/historyElements';
+import { HistoryElementsConnectionQuery, HistoryElementsQuery } from '../../queries/historyElements';
 
 import { AccountHistorySubscription } from '../../subscriptions/account';
 
-import type { ReferrerRewards, SubsquidHistoryElement } from '../../types';
+import type {
+  ConnectionQueryResponseData,
+  HistoryElement,
+  QueryResponseData,
+  ReferrerRewards,
+  SubsquidHistoryElement,
+} from '../../types';
 
-export class AccountModule extends BaseModule {
+export class SubsquidAccountModule extends BaseModule {
   /**
    * Get Referral Rewards items by referral
    */
@@ -65,8 +71,12 @@ export class AccountModule extends BaseModule {
     }
   }
 
-  public async getHistory(variables = {}) {
+  public async getHistory(variables = {}): Promise<Nullable<QueryResponseData<HistoryElement>>> {
     return await this.root.fetchEntities(HistoryElementsQuery, variables);
+  }
+
+  public async getHistoryPaged(variables = {}): Promise<Nullable<ConnectionQueryResponseData<HistoryElement>>> {
+    return await this.root.fetchEntitiesConnection(HistoryElementsConnectionQuery, variables);
   }
 
   public createHistorySubscription(accountAddress: string, handler: (entity: SubsquidHistoryElement) => void) {

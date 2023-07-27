@@ -1,6 +1,6 @@
 import type SubqueryExplorer from '../index';
 
-export class BaseModule {
+export class SubqueryBaseModule {
   protected readonly root!: SubqueryExplorer;
 
   constructor(root: SubqueryExplorer) {

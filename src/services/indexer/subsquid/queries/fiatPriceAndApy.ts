@@ -2,11 +2,11 @@ import { gql } from '@urql/core';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-import type { SubsquidAssetEntity, SubsquidPoolXYKEntity, EntitiesConnectionQueryResponse } from '../types';
+import type { SubsquidAssetEntity, SubsquidPoolXYKEntity, SubsquidConnectionQueryResponse } from '../types';
 
-export const FiatPriceQuery = gql<EntitiesConnectionQueryResponse<SubsquidAssetEntity>>`
+export const FiatPriceQuery = gql<SubsquidConnectionQueryResponse<SubsquidAssetEntity>>`
   query SubsquidFiatPriceQuery($after: String = null, $first: Int = 100) {
-    entities: assetsConnection(orderBy: id_ASC, first: $first, after: $after) {
+    data: assetsConnection(orderBy: id_ASC, first: $first, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }
@@ -21,9 +21,9 @@ export const FiatPriceQuery = gql<EntitiesConnectionQueryResponse<SubsquidAssetE
   ${PageInfoFragment}
 `;
 
-export const ApyQuery = gql<EntitiesConnectionQueryResponse<SubsquidPoolXYKEntity>>`
+export const ApyQuery = gql<SubsquidConnectionQueryResponse<SubsquidPoolXYKEntity>>`
   query SubsquidApyQuery($after: String = null, $first: Int = 100) {
-    entities: poolXyksConnection(orderBy: id_ASC, first: $first, after: $after) {
+    data: poolXyksConnection(orderBy: id_ASC, first: $first, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }

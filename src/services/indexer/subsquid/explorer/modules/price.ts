@@ -2,7 +2,7 @@ import { formatStringNumber } from '../../../../../util';
 import { FiatPriceQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
 import { FiatPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
-import { SubsquidSnapshotTypes } from '../../types';
+import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
 import { BaseModule } from './_base';
 
@@ -19,7 +19,7 @@ function parseFiatPrice(entity: SubsquidAssetEntity): FiatPriceObject {
   return acc;
 }
 
-export class PriceModule extends BaseModule {
+export class SubsquidPriceModule extends BaseModule {
   /**
    * Get fiat price for each asset
    */
@@ -46,14 +46,29 @@ export class PriceModule extends BaseModule {
    */
   public async getHistoricalPriceForAsset(
     assetId: string,
-    type = SubsquidSnapshotTypes.DEFAULT,
+    type = SnapshotTypes.DEFAULT,
     first?: number,
     after?: string
-  ) {
+  ): Promise<Nullable<ConnectionQueryResponseData<AssetSnapshotEntity>>> {
     const filter = historicalPriceFilter(assetId, type);
     const variables = { filter, first, after };
-    const response = await this.root.fetchEntitiesConnection(HistoricalPriceQuery, variables);
+    const data = await this.root.fetchEntitiesConnection(HistoricalPriceQuery, variables);
 
-    return response;
+    if (data) {
+      return {
+        ...data,
+        edges: data.edges.map((edge) => {
+          return {
+            ...edge,
+            node: {
+              ...edge.node,
+              assetId: edge.node.asset.id,
+            },
+          };
+        }),
+      };
+    }
+
+    return data;
   }
 }

@@ -38,7 +38,7 @@ import * as WALLET_CONSTS from './consts';
 import en from './lang/en';
 import installWalletPlugins from './plugins';
 import AlertsApiService from './services/alerts';
-import { Indexer } from './services/indexer';
+import { getCurrentIndexer } from './services/indexer';
 import { historyElementsFilter } from './services/indexer/subsquid/queries/historyElements';
 import * as SUBQUERY_TYPES from './services/indexer/subsquid/types';
 import SoraWallet from './SoraWallet.vue';
@@ -226,7 +226,7 @@ export {
   ScriptLoader,
   historyElementsFilter,
   AlertsApiService,
-  Indexer,
+  getCurrentIndexer,
   SUBQUERY_TYPES,
   VUEX_TYPES,
   vuex,

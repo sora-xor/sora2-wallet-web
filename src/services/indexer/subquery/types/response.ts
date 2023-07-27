@@ -1,4 +1,5 @@
-import { SubqueryMutationTypes, SubqueryNodesConnection } from './subquery';
+import { ConnectionQueryResponseData } from '../../types';
+import { SubqueryMutationTypes } from './subquery';
 
 /* eslint-disable camelcase */
 export type SubquerySubscriptionPayload<T> = {
@@ -10,6 +11,6 @@ export type SubquerySubscriptionPayload<T> = {
 };
 /* eslint-enable camelcase */
 
-export type SubqueryEntitiesQueryResponse<T> = {
-  entities: SubqueryNodesConnection<T>;
+export type SubqueryConnectionQueryResponse<T> = {
+  data: ConnectionQueryResponseData<T>;
 };
