@@ -238,9 +238,7 @@ const createAccountAddressCriteria = (address: string) => {
       address_eq: address,
     },
     {
-      data_jsonContains: {
-        to: address,
-      },
+      dataTo_eq: address,
     },
   ];
 };
@@ -314,14 +312,10 @@ export const historyElementsFilter = ({
     // account address criteria
     if (isAccountAddress(search)) {
       queryFilters.push({
-        data_jsonContains: {
-          from: search,
-        },
+        dataFrom_eq: search,
       });
       queryFilters.push({
-        data_jsonContains: {
-          to: search,
-        },
+        dataTo_eq: search,
       });
       // asset address criteria
     } else if (isAssetAddress(search)) {
