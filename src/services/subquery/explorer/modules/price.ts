@@ -24,7 +24,7 @@ export class PriceModule extends BaseModule {
    * Get fiat price for each asset
    */
   public async getFiatPriceObject(): Promise<Nullable<FiatPriceObject>> {
-    const result = await this.root.fetchAllEntities(FiatPriceQuery, {}, parseFiatPrice);
+    const result = await this.root.fetchAllEntitiesConnection(FiatPriceQuery, {}, parseFiatPrice);
 
     if (!result) return null;
 
@@ -52,7 +52,7 @@ export class PriceModule extends BaseModule {
   ) {
     const filter = historicalPriceFilter(assetId, type);
     const variables = { filter, first, after };
-    const response = await this.root.fetchEntities(HistoricalPriceQuery, variables);
+    const response = await this.root.fetchEntitiesConnection(HistoricalPriceQuery, variables);
 
     return response;
   }

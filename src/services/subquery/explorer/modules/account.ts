@@ -16,7 +16,7 @@ export class AccountModule extends BaseModule {
   private async fetchAccountReferralRewards(referrer: string, after?: string | null) {
     const filter = referrerRewardsFilter(referrer);
     const variables = { after, filter };
-    const response = await this.root.fetchEntities(ReferrerRewardsQuery, variables);
+    const response = await this.root.fetchEntitiesConnection(ReferrerRewardsQuery, variables);
 
     return response;
   }
@@ -78,8 +78,8 @@ export class AccountModule extends BaseModule {
         const variables = { filter: { id_eq: txId } };
         const response = await this.getHistory(variables);
 
-        if (response && Array.isArray(response.edges) && response.edges[0]) {
-          handler(response.edges[0].node);
+        if (response && Array.isArray(response.nodes) && response.nodes[0]) {
+          handler(response.nodes[0]);
         }
       }
     });

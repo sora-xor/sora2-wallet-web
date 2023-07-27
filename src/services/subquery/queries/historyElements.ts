@@ -2,12 +2,11 @@
 import { Operation } from '@sora-substrate/util';
 import { gql } from '@urql/core';
 
-import { PageInfoFragment } from '../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
-import type { HistoryElement, EntitiesQueryResponse } from '../types';
+import type { HistoryElement, NodesQueryResponse } from '../types';
 
-export const HistoryElementsQuery = gql<EntitiesQueryResponse<HistoryElement>>`
+export const HistoryElementsQuery = gql<NodesQueryResponse<HistoryElement>>`
   query HistoryElements(
     $limit: Int
     $offset: Int = null
@@ -18,7 +17,7 @@ export const HistoryElementsQuery = gql<EntitiesQueryResponse<HistoryElement>>`
     info: historyElementsConnection(first: 0, orderBy: $orderBy, where: $filter) {
       totalCount
     }
-    entities: historyElements(limit: $limit, offset: $offset, orderBy: $orderBy, where: $filter) {
+    nodes: historyElements(limit: $limit, offset: $offset, orderBy: $orderBy, where: $filter) {
       id
       timestamp
       blockHash @skip(if: $idsOnly)

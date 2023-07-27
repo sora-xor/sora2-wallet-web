@@ -16,6 +16,10 @@ export type EdgeConnection<T> = {
   node: T;
 };
 
+export type NodesConnectionInfo = {
+  totalCount: number;
+};
+
 export type NodesConnection<T> = {
   edges: EdgeConnection<T>[];
   pageInfo: PageInfo;

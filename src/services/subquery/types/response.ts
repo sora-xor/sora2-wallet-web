@@ -1,4 +1,4 @@
-import { MutationTypes, NodesConnection } from './subquery';
+import { MutationTypes, NodesConnection, NodesConnectionInfo } from './subquery';
 
 /* eslint-disable camelcase */
 export type SubscriptionPayload<T> = {
@@ -10,6 +10,11 @@ export type SubscriptionPayload<T> = {
 };
 /* eslint-enable camelcase */
 
-export type EntitiesQueryResponse<T> = {
+export type NodesQueryResponse<T> = {
+  nodes: T[];
+  info: NodesConnectionInfo;
+};
+
+export type EntitiesConnectionQueryResponse<T> = {
   entities: NodesConnection<T>;
 };

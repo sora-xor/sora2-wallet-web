@@ -126,13 +126,12 @@ const actions = defineActions({
 
       if (!response) return;
 
-      console.log('response', response);
-      const { edges, pageInfo, totalCount } = response;
+      const { nodes, totalCount } = response;
       const buffer = {};
       const removeHistoryIds: Array<string> = [];
 
-      if (edges.length) {
-        for (const { node: transaction } of edges) {
+      if (nodes.length) {
+        for (const transaction of nodes) {
           const { id } = transaction;
 
           if (!(id in externalHistory)) {
@@ -155,7 +154,6 @@ const actions = defineActions({
 
       commit.setExternalHistory({ ...externalHistory, ...buffer });
       commit.setExternalHistoryTotal(totalCount);
-      commit.setExternalHistoryPagination(pageInfo);
     } catch (error) {
       console.error(error);
     }

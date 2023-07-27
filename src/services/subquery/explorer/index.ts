@@ -4,7 +4,12 @@ import { PoolModule } from './modules/pool';
 import { PriceModule } from './modules/price';
 
 import type { TypedDocumentNode, AnyVariables } from '../client';
-import type { EntitiesQueryResponse, SubscriptionPayload } from '../types';
+import type {
+  EntitiesConnectionQueryResponse,
+  NodesConnectionInfo,
+  NodesQueryResponse,
+  SubscriptionPayload,
+} from '../types';
 
 export default class SubqueryExplorer extends BaseSubqueryExplorer {
   public readonly account: AccountModule = new AccountModule(this);
@@ -12,9 +17,25 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
   public readonly pool: PoolModule = new PoolModule(this);
 
   public async fetchEntities<T>(
-    query: TypedDocumentNode<EntitiesQueryResponse<T>>,
+    query: TypedDocumentNode<NodesQueryResponse<T>>,
     variables?: AnyVariables
-  ): Promise<Nullable<EntitiesQueryResponse<T>['entities']>> {
+  ): Promise<Nullable<{ nodes: T[]; totalCount: NodesConnectionInfo['totalCount'] }>> {
+    try {
+      const response = await this.request(query, variables);
+
+      if (!response) return null;
+
+      return { nodes: response.nodes, totalCount: response.info.totalCount };
+    } catch (error) {
+      console.warn('Subquery is not available or data is incorrect!', error);
+      return null;
+    }
+  }
+
+  public async fetchEntitiesConnection<T>(
+    query: TypedDocumentNode<EntitiesConnectionQueryResponse<T>>,
+    variables?: AnyVariables
+  ): Promise<Nullable<EntitiesConnectionQueryResponse<T>['entities']>> {
     try {
       const response = await this.request(query, variables);
 
@@ -27,8 +48,8 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
     }
   }
 
-  public async fetchAllEntities<T, R>(
-    query: TypedDocumentNode<EntitiesQueryResponse<T>>,
+  public async fetchAllEntitiesConnection<T, R>(
+    query: TypedDocumentNode<EntitiesConnectionQueryResponse<T>>,
     variables: AnyVariables = {},
     parse?: (entity: T) => R
   ): Promise<Nullable<R[]>> {
@@ -39,7 +60,7 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
 
     try {
       do {
-        const response = await this.fetchEntities(query, { ...variables, after });
+        const response = await this.fetchEntitiesConnection(query, { ...variables, after });
 
         if (!response) {
           return null;
