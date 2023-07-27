@@ -6,7 +6,7 @@ import store from '../../store';
 import { getBase64Icon } from '../../util/image';
 
 import type { Alert } from '../../types/common';
-import type { FiatPriceObject } from '../subquery/types';
+import type { FiatPriceObject } from '../indexer/subsquid/types';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 
 @Singleton

@@ -38,9 +38,9 @@ import * as WALLET_CONSTS from './consts';
 import en from './lang/en';
 import installWalletPlugins from './plugins';
 import AlertsApiService from './services/alerts';
-import { SubqueryExplorerService } from './services/subquery';
-import { historyElementsFilter } from './services/subquery/queries/historyElements';
-import * as SUBQUERY_TYPES from './services/subquery/types';
+import { Indexer } from './services/indexer';
+import { historyElementsFilter } from './services/indexer/subsquid/queries/historyElements';
+import * as SUBQUERY_TYPES from './services/indexer/subsquid/types';
 import SoraWallet from './SoraWallet.vue';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import * as VUEX_TYPES from './store/types';
@@ -225,8 +225,8 @@ export {
   mixins,
   ScriptLoader,
   historyElementsFilter,
-  SubqueryExplorerService,
   AlertsApiService,
+  Indexer,
   SUBQUERY_TYPES,
   VUEX_TYPES,
   vuex,

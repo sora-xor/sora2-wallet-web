@@ -3,7 +3,7 @@ import { defineMutations } from 'direct-vuex';
 import { api } from '../../api';
 
 import type { EthBridgeUpdateHistory } from '../../consts';
-import type { PageInfo } from '../../services/subquery/types';
+import type { PageInfo } from '../../services/indexer/subsquid/types';
 import type { TransactionsState } from './types';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 

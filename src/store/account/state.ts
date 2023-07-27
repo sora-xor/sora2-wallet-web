@@ -6,7 +6,7 @@ import type { Book } from '@/types/common';
 import { storage, settingsStorage } from '../../util/storage';
 
 import type { AppWallet } from '../../consts';
-import type { ReferrerRewards } from '../../services/subquery/types';
+import type { ReferrerRewards } from '../../services/indexer/subsquid/types';
 import type { AccountState } from './types';
 
 export const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {

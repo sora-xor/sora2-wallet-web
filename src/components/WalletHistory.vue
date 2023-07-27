@@ -46,7 +46,7 @@ import debounce from 'lodash/fp/debounce';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import { RouteNames, PaginationButton } from '../consts';
-import { SubqueryDataParserService } from '../services/subquery';
+import { Indexer } from '../services/indexer';
 import { state, mutation, action } from '../store/decorators';
 import { getStatusIcon, getStatusClass } from '../util';
 
@@ -150,7 +150,7 @@ export default class WalletHistory extends Mixins(
   get queryOperationNames(): Array<Operation> {
     if (!this.searchQuery) return [];
 
-    return SubqueryDataParserService.supportedOperations.filter((operation) =>
+    return Indexer.DataParserService.supportedOperations.filter((operation) =>
       this.t(`operations.${operation}`).toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }

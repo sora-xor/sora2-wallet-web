@@ -67,6 +67,7 @@ export enum ConnectionStatus {
 }
 
 export type StorageKey =
+  | 'indexerType'
   | 'address'
   | 'name'
   | 'source'

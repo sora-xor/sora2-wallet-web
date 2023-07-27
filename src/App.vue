@@ -2,6 +2,7 @@
   <s-design-system-provider :value="libraryDesignSystem" id="app">
     <div class="buttons">
       <s-button class="theme-switch" @click="changeTheme">{{ libraryTheme }} theme</s-button>
+      <s-button class="theme-switch" @click="changeIndexer">{{ indexerType }} indexer</s-button>
       <s-button class="hide-balance-switch" @click="toggleHideBalance">
         {{ shouldBalanceBeHidden ? 'hidden' : 'visible' }} balances
       </s-button>
@@ -27,6 +28,7 @@ import TransactionMixin from './components/mixins/TransactionMixin';
 import { SoraNetwork } from './consts';
 import SoraWallet from './SoraWallet.vue';
 import { state, mutation, getter, action } from './store/decorators';
+import IndexerType from './types/indexer';
 
 import { initWallet } from './index';
 
@@ -40,12 +42,15 @@ import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 })
 export default class App extends Mixins(TransactionMixin) {
   @state.account.assetsToNotifyQueue assetsToNotifyQueue!: Array<WhitelistArrayItem>;
+  @state.settings.indexerType indexerType!: IndexerType;
   @getter.transactions.firstReadyTx firstReadyTransaction!: Nullable<HistoryItem>;
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
   @getter.libraryTheme libraryTheme!: Theme;
 
+  @mutation.settings.setIndexerType private setIndexerType!: (IndexerType: IndexerType) => void;
   @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
   @mutation.settings.setSubqueryEndpoint private setSubqueryEndpoint!: (endpoint: string) => void;
+  @mutation.settings.setSubsquidEndpoint private setSubsquidEndpoint!: (endpoint: string) => void;
   @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncFnWithoutArgs;
@@ -58,6 +63,7 @@ export default class App extends Mixins(TransactionMixin) {
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);
     this.setSubqueryEndpoint(env.SUBQUERY_ENDPOINT);
+    this.setSubsquidEndpoint(env.SUBSQUID_ENDPOINT);
     this.setSoraNetwork(SoraNetwork.Dev);
     await initWallet({ withoutStore: true, appName: 'APP NAME HERE' }); // We don't need storage for local development
     const localeLanguage = navigator.language;
@@ -85,6 +91,10 @@ export default class App extends Mixins(TransactionMixin) {
 
   changeTheme(): void {
     switchTheme();
+  }
+
+  changeIndexer() {
+    this.setIndexerType(this.indexerType === IndexerType.SUBSQUID ? IndexerType.SUBQUERY : IndexerType.SUBSQUID);
   }
 }
 </script>

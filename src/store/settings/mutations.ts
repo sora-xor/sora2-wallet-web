@@ -1,6 +1,8 @@
 import { defineMutations } from 'direct-vuex';
 import { NFTStorage } from 'nft.storage';
 
+import IndexerType from '@/types/indexer';
+
 import { api } from '../../api';
 import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
@@ -11,6 +13,10 @@ import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from 'rxjs';
 
 const mutations = defineMutations<SettingsState>()({
+  setIndexerType(state, indexerType: IndexerType): void {
+    state.indexerType = indexerType;
+    storage.set('indexerType', indexerType);
+  },
   setWalletLoaded(state, flag: boolean): void {
     state.isWalletLoaded = flag;
   },
@@ -88,8 +94,14 @@ const mutations = defineMutations<SettingsState>()({
   setSubqueryEndpoint(state, endpoint: string): void {
     state.subqueryEndpoint = endpoint;
   },
+  setSubsquidEndpoint(state, endpoint: string): void {
+    state.subsquidEndpoint = endpoint;
+  },
   setSubqueryStatus(state, status: ConnectionStatus): void {
     state.subqueryStatus = status;
+  },
+  setSubsquidStatus(state, status: ConnectionStatus): void {
+    state.subsquidStatus = status;
   },
   setDepositNotifications(state, allow: boolean): void {
     state.allowTopUpAlert = allow;

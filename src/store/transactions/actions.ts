@@ -2,8 +2,7 @@ import { Operation } from '@sora-substrate/util';
 import { defineActions } from 'direct-vuex';
 
 import { api } from '../../api';
-import { SubqueryExplorerService, SubqueryDataParserService } from '../../services/subquery';
-import { historyElementsFilter } from '../../services/subquery/queries/historyElements';
+import { Indexer } from '../../services/indexer';
 import store, { rootActionContext } from '../../store';
 
 import { transactionsActionContext } from './../transactions';
@@ -54,10 +53,10 @@ const actions = defineActions({
     if (!isLoggedIn) return;
 
     try {
-      const subscription = SubqueryExplorerService.account.createHistorySubscription(
+      const subscription = Indexer.ExplorerService.account.createHistorySubscription(
         account.address,
         async (transaction) => {
-          const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
+          const historyItem = await Indexer.DataParserService.parseTransactionAsHistoryItem(transaction as any); // TODO: remove any type
 
           if (!historyItem) return;
           // Don't handle bridge operations
@@ -107,8 +106,8 @@ const actions = defineActions({
 
     if (pagination && ((next && !pagination.hasNextPage) || (!next && !pagination.hasPreviousPage))) return;
 
-    const operations = SubqueryDataParserService.supportedOperations;
-    const filter = historyElementsFilter({
+    const operations = Indexer.DataParserService.supportedOperations;
+    const filter = Indexer.historyElementsFilter({
       address,
       assetAddress,
       operations,
@@ -122,7 +121,7 @@ const actions = defineActions({
     };
 
     try {
-      const response = await SubqueryExplorerService.account.getHistory(variables);
+      const response = await Indexer.ExplorerService.account.getHistory(variables);
 
       if (!response) return;
 
@@ -135,7 +134,7 @@ const actions = defineActions({
           const { id } = transaction;
 
           if (!(id in externalHistory)) {
-            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
+            const historyItem = await Indexer.DataParserService.parseTransactionAsHistoryItem(transaction as any); // TODO: remove any type
 
             if (historyItem) {
               buffer[id] = historyItem;
