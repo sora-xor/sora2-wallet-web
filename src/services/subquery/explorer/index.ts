@@ -8,7 +8,7 @@ import type {
   EntitiesConnectionQueryResponse,
   NodesConnectionInfo,
   NodesQueryResponse,
-  SubscriptionPayload,
+  SubscriptionResponse,
 } from '../types';
 
 export default class SubqueryExplorer extends BaseSubqueryExplorer {
@@ -84,7 +84,7 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
   }
 
   public createEntitySubscription<T, R>(
-    subscription: TypedDocumentNode<SubscriptionPayload<T>>,
+    subscription: TypedDocumentNode<SubscriptionResponse<T>>,
     variables: AnyVariables = {},
     parse: (entity: T) => R,
     handler: (entity: R) => void,
@@ -95,7 +95,7 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
     return createSubscription((payload) => {
       try {
         if (payload.data) {
-          const entity = parse(payload.data.payload._entity);
+          const entity = parse(payload.data.nodes[0]);
           handler(entity);
         } else {
           throw new Error('Subscription payload data is undefined');

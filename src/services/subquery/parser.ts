@@ -20,7 +20,7 @@ import type {
   HistoryElementTransfer,
   HistoryElementAssetRegistration,
   HistoryElementRewardsClaim,
-  HistoryElementUtilityBatchAll,
+  HistoryElementCalls,
   HistoryElementDemeterFarming,
   UtilityBatchCall,
   ReferralSetReferrer,
@@ -48,7 +48,7 @@ const OperationsMap = {
     [ModuleMethods.LiquidityProxySwapTransfer]: () => Operation.SwapAndSend,
   },
   [insensitive(ModuleNames.Utility)]: {
-    [ModuleMethods.UtilityBatchAll]: (data: HistoryElementUtilityBatchAll) => {
+    [ModuleMethods.UtilityBatchAll]: (data: HistoryElementCalls) => {
       if (!Array.isArray(data)) return null;
 
       if (
@@ -300,8 +300,8 @@ export default class SubqueryDataParser {
         return payload;
       }
       case Operation.CreatePair: {
-        const data = transaction.data as HistoryElementUtilityBatchAll;
-        const call = getBatchCall(data, {
+        const calls = transaction.calls as HistoryElementCalls;
+        const call = getBatchCall(calls, {
           module: ModuleNames.PoolXYK,
           method: ModuleMethods.PoolXYKDepositLiquidity,
         });
@@ -312,11 +312,11 @@ export default class SubqueryDataParser {
         }
 
         const {
-          input_asset_a: assetAddress,
-          input_asset_b: asset2Address,
-          input_a_desired: amount,
-          input_b_desired: amount2,
-        } = call.data.args;
+          inputAssetA: assetAddress,
+          inputAssetB: asset2Address,
+          inputADesired: amount,
+          inputBDesired: amount2,
+        } = call.data;
 
         const asset = await getAssetByAddress(assetAddress as string);
         const asset2 = await getAssetByAddress(asset2Address as string);

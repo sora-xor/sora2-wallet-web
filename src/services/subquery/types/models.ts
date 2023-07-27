@@ -16,8 +16,6 @@ type AssetBaseEntity = {
   priceUSD: string;
   supply: string;
   liquidity: string;
-  // subscription payload fields
-  price_u_s_d?: Nullable<string>;
 };
 
 type AssetSnapshotBaseEntity = {
@@ -50,9 +48,6 @@ type PoolXYKBaseEntity = {
   multiplier: number;
   priceUSD: Nullable<string>;
   strategicBonusApy: Nullable<string>;
-  // subscription payload fields
-  price_u_s_d?: Nullable<string>;
-  strategic_bonus_apy?: Nullable<string>;
 };
 
 export type AssetSnapshotEntity = AssetSnapshotBaseEntity & {
@@ -62,11 +57,6 @@ export type AssetSnapshotEntity = AssetSnapshotBaseEntity & {
 export type AssetEntity = AssetBaseEntity & {
   data: NodesConnection<AssetSnapshotBaseEntity>;
   poolXYK: NodesConnection<PoolXYKBaseEntity>;
-};
-
-export type AccountEntity = {
-  id: string;
-  latest_history_element_id: string;
 };
 
 export type PoolXYKEntity = PoolXYKBaseEntity & {
@@ -164,10 +154,7 @@ export type HistoryElementRewardsClaim = Nullable<ClaimedRewardItem[]>;
 
 export type UtilityBatchCall = {
   data: {
-    args: {
-      [key: string]: string | number;
-    };
-    callIndex: string;
+    [key: string]: string | number;
   };
   hash: string;
   callId: string;
@@ -181,7 +168,7 @@ export type ExtrinsicEvent = {
   data: any[];
 };
 
-export type HistoryElementUtilityBatchAll = UtilityBatchCall[];
+export type HistoryElementCalls = UtilityBatchCall[];
 
 export type HistoryElementEthBridgeOutgoing = {
   amount: string;
@@ -224,7 +211,6 @@ export type HistoryElement = {
     | HistoryElementTransfer
     | HistoryElementLiquidityOperation
     | HistoryElementAssetRegistration
-    | HistoryElementUtilityBatchAll
     | ReferralSetReferrer
     | ReferrerReserve
     | HistoryElementEthBridgeOutgoing
@@ -232,4 +218,10 @@ export type HistoryElement = {
     | HistoryElementRewardsClaim
     | HistoryElementDemeterFarming
   >;
+  calls: HistoryElementCalls;
+};
+
+export type AccountEntity = {
+  id: string;
+  latestHistoryElement: HistoryElement;
 };

@@ -1,23 +1,59 @@
 import { gql } from '@urql/core';
 
-import type { SubscriptionPayload, AssetEntity, PoolXYKEntity } from '../types';
+import type { AssetEntity, PoolXYKEntity, SubscriptionResponse } from '../types';
 
-export const FiatPriceSubscription = gql<SubscriptionPayload<AssetEntity>>`
+export const FiatPriceSubscription = gql<SubscriptionResponse<AssetEntity>>`
   subscription {
-    payload: assets(mutation: [UPDATE, INSERT]) {
-      id
-      mutation_type
-      _entity
+    nodes: assets(limit: 50, orderBy: updatedAtBlock_DESC) {
+      poolXYK {
+        id
+        baseAssetId
+        targetAssetId
+        baseAssetReserves
+        targetAssetReserves
+        multiplier
+        priceUSD
+        strategicBonusApy
+      }
+      data {
+        id
+        assetId
+        priceUSD {
+          low
+          high
+          open
+          close
+        }
+        volume {
+          amount
+          amountUSD
+        }
+        timestamp
+        type
+        liquidity
+        supply
+        mint
+        burn
+      }
     }
   }
 `;
 
-export const PoolsApySubscription = gql<SubscriptionPayload<PoolXYKEntity>>`
+export const PoolsApySubscription = gql<SubscriptionResponse<PoolXYKEntity>>`
   subscription {
-    payload: poolXYKs(mutation: [UPDATE, INSERT]) {
-      id
-      mutation_type
-      _entity
+    nodes: poolXYKs(limit: 50, orderBy: updatedAtBlock_DESC) {
+      baseAsset {
+        id
+        priceUSD
+        supply
+        liquidity
+      }
+      targetAsset {
+        id
+        priceUSD
+        supply
+        liquidity
+      }
     }
   }
 `;

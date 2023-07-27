@@ -10,6 +10,10 @@ export type SubscriptionPayload<T> = {
 };
 /* eslint-enable camelcase */
 
+export type SubscriptionResponse<T> = {
+  nodes: T[];
+};
+
 export type NodesQueryResponse<T> = {
   nodes: T[];
   info: NodesConnectionInfo;

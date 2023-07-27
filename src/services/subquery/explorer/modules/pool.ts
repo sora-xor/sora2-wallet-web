@@ -9,7 +9,7 @@ import type { PoolXYKEntity, PoolApyObject } from '../../types';
 function parseApy(entity: PoolXYKEntity): PoolApyObject {
   const acc = {};
   const id = entity.id;
-  const strategicBonusApyFPNumber = formatStringNumber(entity.strategicBonusApy || entity.strategic_bonus_apy);
+  const strategicBonusApyFPNumber = formatStringNumber(entity.strategicBonusApy);
   const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
   if (isStrategicBonusApyFinity) {
     acc[id] = strategicBonusApyFPNumber.toCodecString();

@@ -74,7 +74,7 @@ export class AccountModule extends BaseModule {
 
     return createSubscription(async (payload) => {
       if (payload.data) {
-        const txId = payload.data.payload._entity.latest_history_element_id;
+        const txId = payload.data.nodes[0].latestHistoryElement.id;
         const variables = { filter: { id_eq: txId } };
         const response = await this.getHistory(variables);
 

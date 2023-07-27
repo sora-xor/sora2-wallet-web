@@ -1,10 +1,10 @@
 import { gql } from '@urql/core';
 
-import type { SubscriptionPayload, AccountEntity } from '../types';
+import type { AccountEntity, SubscriptionResponse } from '../types';
 
-export const AccountHistorySubscription = gql<SubscriptionPayload<AccountEntity>>`
+export const AccountHistorySubscription = gql<SubscriptionResponse<AccountEntity>>`
   subscription AccountHistorySubscription($id: [ID!]) {
-    payload: accounts(where: { id_eq: $id }) {
+    entities: accounts(where: { id_eq: $id }) {
       id
       latestHistoryElement {
         id

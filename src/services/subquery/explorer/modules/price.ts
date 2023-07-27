@@ -11,7 +11,7 @@ import type { AssetEntity, FiatPriceObject } from '../../types';
 function parseFiatPrice(entity: AssetEntity): FiatPriceObject {
   const acc = {};
   const id = entity.id;
-  const priceFPNumber = formatStringNumber(entity.priceUSD || entity.price_u_s_d);
+  const priceFPNumber = formatStringNumber(entity.priceUSD);
   const isPriceFinity = priceFPNumber.isFinity();
   if (isPriceFinity) {
     acc[id] = priceFPNumber.toCodecString();
