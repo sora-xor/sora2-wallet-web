@@ -1,4 +1,5 @@
-import { api, connection } from '@sora-substrate/util';
+import { connection } from '@sora-substrate/connection';
+import { api } from '@sora-substrate/util';
 
 import { storage } from '../util/storage';
 
