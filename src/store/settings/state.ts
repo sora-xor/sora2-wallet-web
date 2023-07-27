@@ -1,6 +1,4 @@
-import IndexerType from '@/types/indexer';
-
-import { WalletAssetFilters, WalletFilteringOptions } from '../../consts';
+import { WalletAssetFilters, WalletFilteringOptions, IndexerType } from '../../consts';
 import { Alert, ConnectionStatus } from '../../types/common';
 import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
 

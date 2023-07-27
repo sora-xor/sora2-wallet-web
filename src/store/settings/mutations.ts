@@ -1,10 +1,8 @@
 import { defineMutations } from 'direct-vuex';
 import { NFTStorage } from 'nft.storage';
 
-import IndexerType from '@/types/indexer';
-
 import { api } from '../../api';
-import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
+import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions, IndexerType } from '../../consts';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 
 import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';

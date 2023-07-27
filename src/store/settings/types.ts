@@ -1,4 +1,4 @@
-import IndexerType from '@/types/indexer';
+import { IndexerType } from '@/consts';
 
 import type { SoraNetwork, WalletPermissions, WalletAssetFilters } from '../../consts';
 import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';

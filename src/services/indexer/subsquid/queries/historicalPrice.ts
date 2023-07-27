@@ -13,6 +13,9 @@ export const HistoricalPriceQuery = gql<SubsquidConnectionQueryResponse<Subsquid
       }
       edges {
         node {
+          asset {
+            id
+          }
           priceUSD {
             close
             high
@@ -35,7 +38,7 @@ export const historicalPriceFilter = (assetAddress: string, type: SnapshotTypes)
   return {
     AND: [
       {
-        assetId_eq: assetAddress,
+        asset: { id_eq: assetAddress },
       },
       {
         type_eq: type,

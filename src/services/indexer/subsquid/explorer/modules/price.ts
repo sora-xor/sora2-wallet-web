@@ -48,8 +48,12 @@ export class SubsquidPriceModule extends BaseModule {
     assetId: string,
     type = SnapshotTypes.DEFAULT,
     first?: number,
-    after?: string
+    after?: string | null
   ): Promise<Nullable<ConnectionQueryResponseData<AssetSnapshotEntity>>> {
+    if (after === '') {
+      after = null;
+    }
+
     const filter = historicalPriceFilter(assetId, type);
     const variables = { filter, first, after };
     const data = await this.root.fetchEntitiesConnection(HistoricalPriceQuery, variables);

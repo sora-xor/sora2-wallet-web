@@ -1,4 +1,4 @@
-import IndexerType from '@/types/indexer';
+import { IndexerType } from '@/consts';
 import store from '../../store';
 
 import {

@@ -14,6 +14,7 @@ export const HistoricalPriceQuery = gql<SubqueryConnectionQueryResponse<Subquery
       }
       edges {
         node {
+          assetId
           priceUSD
           volume
           timestamp
