@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { Operation } from '@sora-substrate/util';
 import { gql } from '@urql/core';
 
@@ -8,48 +9,46 @@ import type { HistoryElement, EntitiesQueryResponse } from '../types';
 
 export const HistoryElementsQuery = gql<EntitiesQueryResponse<HistoryElement>>`
   query HistoryElements(
-    $first: Int = null
-    $last: Int = null
+    $limit: Int
     $offset: Int = null
-    $after: Cursor = ""
-    $before: Cursor = ""
-    $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC
-    $filter: HistoryElementFilter
+    $orderBy: [HistoryElementOrderByInput!] = timestamp_DESC
+    $filter: HistoryElementWhereInput
     $idsOnly: Boolean! = false
   ) {
-    entities: historyElements(
-      first: $first
-      last: $last
-      offset: $offset
-      before: $before
-      after: $after
-      orderBy: $orderBy
-      filter: $filter
-    ) {
-      nodes {
-        id
-        timestamp
-        blockHash @skip(if: $idsOnly)
-        blockHeight @skip(if: $idsOnly)
-        module @skip(if: $idsOnly)
-        method @skip(if: $idsOnly)
-        address @skip(if: $idsOnly)
-        networkFee @skip(if: $idsOnly)
-        execution @skip(if: $idsOnly)
-        data @skip(if: $idsOnly)
+    info: historyElementsConnection(first: 0, orderBy: $orderBy, where: $filter) {
+      totalCount
+    }
+    entities: historyElements(limit: $limit, offset: $offset, orderBy: $orderBy, where: $filter) {
+      id
+      timestamp
+      blockHash @skip(if: $idsOnly)
+      blockHeight @skip(if: $idsOnly)
+      module @skip(if: $idsOnly)
+      method @skip(if: $idsOnly)
+      address @skip(if: $idsOnly)
+      networkFee @skip(if: $idsOnly)
+      execution @skip(if: $idsOnly) {
+        success
+        error {
+          moduleErrorId
+          moduleErrorIndex
+          nonModuleErrorMessage
+        }
       }
-      pageInfo @skip(if: $idsOnly) {
-        ...PageInfoFragment
-      }
-      totalCount @skip(if: $idsOnly)
+      data @skip(if: $idsOnly)
     }
   }
-  ${PageInfoFragment}
 `;
 
 type DataCriteria = {
-  data: {
-    contains: {
+  data_jsonContains: {
+    [key: string]: any;
+  };
+};
+
+type CallsDataCriteria = {
+  calls_some: {
+    data_jsonContains: {
       [key: string]: any;
     };
   };
@@ -63,157 +62,91 @@ const RewardsClaimExtrinsics = [
 ];
 
 const DemeterFarmingDeposit = {
-  module: {
-    equalTo: ModuleNames.DemeterFarming,
-  },
-  method: {
-    equalTo: ModuleMethods.DemeterFarmingDeposit,
-  },
+  module_eq: ModuleNames.DemeterFarming,
+  method_eq: ModuleMethods.DemeterFarmingDeposit,
 };
 
 const DemeterFarmingWithdraw = {
-  module: {
-    equalTo: ModuleNames.DemeterFarming,
-  },
-  method: {
-    equalTo: ModuleMethods.DemeterFarmingWithdraw,
-  },
+  module_eq: ModuleNames.DemeterFarming,
+  method_eq: ModuleMethods.DemeterFarmingWithdraw,
 };
 
 const OperationFilterMap = {
   [Operation.Swap]: {
-    module: {
-      equalTo: ModuleNames.LiquidityProxy,
-    },
-    method: {
-      equalTo: ModuleMethods.LiquidityProxySwap,
-    },
+    module_eq: ModuleNames.LiquidityProxy,
+    method_eq: ModuleMethods.LiquidityProxySwap,
   },
   [Operation.SwapAndSend]: {
-    module: {
-      equalTo: ModuleNames.LiquidityProxy,
-    },
-    method: {
-      equalTo: ModuleMethods.LiquidityProxySwapTransfer,
-    },
+    module_eq: ModuleNames.LiquidityProxy,
+    method_eq: ModuleMethods.LiquidityProxySwapTransfer,
   },
   [Operation.Transfer]: {
-    module: {
-      equalTo: ModuleNames.Assets,
-    },
-    method: {
-      equalTo: ModuleMethods.AssetsTransfer,
-    },
+    module_eq: ModuleNames.Assets,
+    method_eq: ModuleMethods.AssetsTransfer,
   },
   [Operation.RegisterAsset]: {
-    module: {
-      equalTo: ModuleNames.Assets,
-    },
-    method: {
-      equalTo: ModuleMethods.AssetsRegister,
-    },
+    module_eq: ModuleNames.Assets,
+    method_eq: ModuleMethods.AssetsRegister,
   },
   [Operation.CreatePair]: {
-    module: {
-      equalTo: ModuleNames.Utility,
-    },
-    method: {
-      equalTo: ModuleMethods.UtilityBatchAll,
-    },
-    data: {
-      contains: [
-        {
-          module: ModuleNames.PoolXYK,
-          method: ModuleMethods.PoolXYKInitializePool,
+    module_eq: ModuleNames.Utility,
+    method_eq: ModuleMethods.UtilityBatchAll,
+    OR: [
+      {
+        calls_some: {
+          module_containsInsensitive: ModuleNames.PoolXYK,
+          method_eq: ModuleMethods.PoolXYKInitializePool,
         },
-        {
-          module: ModuleNames.PoolXYK,
-          method: ModuleMethods.PoolXYKDepositLiquidity,
+      },
+      {
+        calls_some: {
+          module_containsInsensitive: ModuleNames.PoolXYK,
+          method_eq: ModuleMethods.PoolXYKDepositLiquidity,
         },
-      ],
-    },
+      },
+    ],
   },
   [Operation.AddLiquidity]: {
-    module: {
-      includesInsensitive: ModuleNames.PoolXYK,
-    },
-    method: {
-      equalTo: ModuleMethods.PoolXYKDepositLiquidity,
-    },
+    module_containsInsensitive: ModuleNames.PoolXYK,
+    method_eq: ModuleMethods.PoolXYKDepositLiquidity,
   },
   [Operation.RemoveLiquidity]: {
-    module: {
-      includesInsensitive: ModuleNames.PoolXYK,
-    },
-    method: {
-      equalTo: ModuleMethods.PoolXYKWithdrawLiquidity,
-    },
+    module_containsInsensitive: ModuleNames.PoolXYK,
+    method_eq: ModuleMethods.PoolXYKWithdrawLiquidity,
   },
   [Operation.ReferralSetInvitedUser]: {
-    module: {
-      equalTo: ModuleNames.Referrals,
-    },
-    method: {
-      equalTo: ModuleMethods.ReferralsSetReferrer,
-    },
+    module_eq: ModuleNames.Referrals,
+    method_eq: ModuleMethods.ReferralsSetReferrer,
   },
   [Operation.ReferralReserveXor]: {
-    module: {
-      equalTo: ModuleNames.Referrals,
-    },
-    method: {
-      equalTo: ModuleMethods.ReferralsReserve,
-    },
+    module_eq: ModuleNames.Referrals,
+    method_eq: ModuleMethods.ReferralsReserve,
   },
   [Operation.ReferralUnreserveXor]: {
-    module: {
-      equalTo: ModuleNames.Referrals,
-    },
-    method: {
-      equalTo: ModuleMethods.ReferralsUnreserve,
-    },
+    module_eq: ModuleNames.Referrals,
+    method_eq: ModuleMethods.ReferralsUnreserve,
   },
   [Operation.EthBridgeOutgoing]: {
-    module: {
-      equalTo: ModuleNames.EthBridge,
-    },
-    method: {
-      equalTo: ModuleMethods.EthBridgeTransferToSidechain,
-    },
+    module_eq: ModuleNames.EthBridge,
+    method_eq: ModuleMethods.EthBridgeTransferToSidechain,
   },
   [Operation.EthBridgeIncoming]: {
-    module: {
-      equalTo: ModuleNames.BridgeMultisig,
-    },
-    method: {
-      equalTo: ModuleMethods.BridgeMultisigAsMulti,
-    },
+    module_eq: ModuleNames.BridgeMultisig,
+    method_eq: ModuleMethods.BridgeMultisigAsMulti,
   },
   [Operation.ClaimRewards]: {
-    or: [
+    OR: [
       ...RewardsClaimExtrinsics.map(([module, method]) => ({
-        module: {
-          equalTo: module,
-        },
-        method: {
-          equalTo: method,
-        },
+        module_eq: module,
+        method_eq: method,
       })),
       {
-        module: {
-          equalTo: ModuleNames.Utility,
-        },
-        method: {
-          equalTo: ModuleMethods.UtilityBatchAll,
-        },
-        or: RewardsClaimExtrinsics.map(([module, method]) => ({
-          data: {
-            contains: [
-              {
-                module,
-                method,
-              },
-            ],
+        module_eq: ModuleNames.Utility,
+        method_eq: ModuleMethods.UtilityBatchAll,
+        OR: RewardsClaimExtrinsics.map(([module, method]) => ({
+          calls_some: {
+            module_containsInsensitive: module,
+            method_eq: method,
           },
         })),
       },
@@ -225,12 +158,8 @@ const OperationFilterMap = {
   [Operation.DemeterFarmingStakeToken]: DemeterFarmingDeposit,
   [Operation.DemeterFarmingUnstakeToken]: DemeterFarmingWithdraw,
   [Operation.DemeterFarmingGetRewards]: {
-    module: {
-      equalTo: ModuleNames.DemeterFarming,
-    },
-    method: {
-      equalTo: ModuleMethods.DemeterFarmingGetRewards,
-    },
+    module_eq: ModuleNames.DemeterFarming,
+    method_eq: ModuleMethods.DemeterFarmingGetRewards,
   },
 };
 
@@ -244,15 +173,13 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
   }, []);
 };
 
-const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
+const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
   const attributes = ['assetId', 'baseAssetId', 'targetAssetId'];
 
-  const criterias = attributes.reduce((result: Array<DataCriteria>, attr) => {
+  const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
     result.push({
-      data: {
-        contains: {
-          [attr]: assetAddress,
-        },
+      data_jsonContains: {
+        [attr]: assetAddress,
       },
     });
 
@@ -261,28 +188,20 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
 
   // for rewards claim operation
   criterias.push({
-    data: {
-      contains: [
-        {
-          assetId: assetAddress,
-        },
-      ],
+    calls_some: {
+      data_jsonContains: {
+        assetId: assetAddress,
+      },
     },
   });
 
   // for create pair operation
   ['input_asset_a', 'input_asset_b'].forEach((attr) => {
     criterias.push({
-      data: {
-        contains: [
-          {
-            data: {
-              args: {
-                [attr]: assetAddress,
-              },
-            },
-          },
-        ],
+      calls_some: {
+        data_jsonContains: {
+          [attr]: assetAddress,
+        },
       },
     });
   });
@@ -293,15 +212,11 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
 const createAccountAddressCriteria = (address: string) => {
   return [
     {
-      address: {
-        equalTo: address,
-      },
+      address_eq: address,
     },
     {
-      data: {
-        contains: {
-          to: address,
-        },
+      data_jsonContains: {
+        to: address,
       },
     },
   ];
@@ -332,40 +247,36 @@ export const historyElementsFilter = ({
   query: { search = '', operationNames = [], assetsAddresses = [] } = {},
 }: HistoryElementsFilterOptions = {}): any => {
   const filter: any = {
-    and: [],
+    AND: [],
   };
 
   if (operations.length) {
-    filter.and.push({
-      or: createOperationsCriteria(operations),
+    filter.AND.push({
+      OR: createOperationsCriteria(operations),
     });
   }
 
   if (address) {
-    filter.and.push({
-      or: createAccountAddressCriteria(address),
+    filter.AND.push({
+      OR: createAccountAddressCriteria(address),
     });
   }
 
   if (assetAddress) {
-    filter.and.push({
-      or: createAssetCriteria(assetAddress),
+    filter.AND.push({
+      OR: createAssetCriteria(assetAddress),
     });
   }
 
   if (timestamp) {
-    filter.and.push({
-      timestamp: {
-        greaterThan: timestamp,
-      },
+    filter.AND.push({
+      timestamp_gt: timestamp,
     });
   }
 
   if (ids.length) {
-    filter.and.push({
-      id: {
-        in: ids,
-      },
+    filter.AND.push({
+      id_in: ids,
     });
   }
 
@@ -374,25 +285,19 @@ export const historyElementsFilter = ({
   if (search) {
     // search criteria
     queryFilters.push({
-      blockHash: {
-        includesInsensitive: search,
-      },
+      blockHash_containsInsensitive: search,
     });
 
     // account address criteria
     if (isAccountAddress(search)) {
       queryFilters.push({
-        data: {
-          contains: {
-            from: search,
-          },
+        data_jsonContains: {
+          from: search,
         },
       });
       queryFilters.push({
-        data: {
-          contains: {
-            to: search,
-          },
+        data_jsonContains: {
+          to: search,
         },
       });
       // asset address criteria
@@ -414,8 +319,8 @@ export const historyElementsFilter = ({
   }
 
   if (queryFilters.length) {
-    filter.and.push({
-      or: queryFilters,
+    filter.AND.push({
+      OR: queryFilters,
     });
   }
 

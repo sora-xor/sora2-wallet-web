@@ -5,14 +5,16 @@ import { PageInfoFragment } from '../fragments/pageInfo';
 import type { ReferrerRewardEntity, EntitiesQueryResponse } from '../types';
 
 export const ReferrerRewardsQuery = gql<EntitiesQueryResponse<ReferrerRewardEntity>>`
-  query ReferrerRewardsQuery($first: Int = 100, $filter: ReferrerRewardFilter, $after: Cursor = "") {
-    entities: referrerRewards(first: $first, filter: $filter, after: $after) {
+  query ReferrerRewardsQuery($first: Int = 100, $filter: ReferrerRewardWhereInput, $after: String = null) {
+    entities: referrerRewards(first: $first, where: $filter, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }
-      nodes {
-        referral
-        amount
+      edges {
+        node {
+          referral
+          amount
+        }
       }
     }
   }
@@ -23,8 +25,6 @@ export const referrerRewardsFilter = (referrer?: string) => {
   if (!referrer) return undefined;
 
   return {
-    referrer: {
-      equalTo: referrer,
-    },
+    referrer_eq: referrer,
   };
 };

@@ -13,7 +13,7 @@ export class AccountModule extends BaseModule {
   /**
    * Get Referral Rewards items by referral
    */
-  private async fetchAccountReferralRewards(referrer: string, after?: string) {
+  private async fetchAccountReferralRewards(referrer: string, after?: string | null) {
     const filter = referrerRewardsFilter(referrer);
     const variables = { after, filter };
     const response = await this.root.fetchEntities(ReferrerRewardsQuery, variables);
@@ -30,7 +30,7 @@ export class AccountModule extends BaseModule {
       invitedUserRewards: {},
     };
 
-    let after = '';
+    let after: string | null = null;
     let hasNextPage = true;
 
     try {
@@ -42,7 +42,7 @@ export class AccountModule extends BaseModule {
         after = response.pageInfo.endCursor;
         hasNextPage = response.pageInfo.hasNextPage;
 
-        response.nodes.forEach((node) => {
+        response.edges.forEach(({ node }) => {
           const referral = node.referral;
           const amount = FPNumber.fromCodecValue(node.amount, XOR.decimals);
 
@@ -75,11 +75,11 @@ export class AccountModule extends BaseModule {
     return createSubscription(async (payload) => {
       if (payload.data) {
         const txId = payload.data.payload._entity.latest_history_element_id;
-        const variables = { filter: { id: { equalTo: txId } } };
+        const variables = { filter: { id_eq: txId } };
         const response = await this.getHistory(variables);
 
-        if (response && Array.isArray(response.nodes) && response.nodes[0]) {
-          handler(response.nodes[0]);
+        if (response && Array.isArray(response.edges) && response.edges[0]) {
+          handler(response.edges[0].node);
         }
       }
     });

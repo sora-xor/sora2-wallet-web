@@ -5,14 +5,16 @@ import { PageInfoFragment } from '../fragments/pageInfo';
 import type { AssetEntity, PoolXYKEntity, EntitiesQueryResponse } from '../types';
 
 export const FiatPriceQuery = gql<EntitiesQueryResponse<AssetEntity>>`
-  query FiatPriceQuery($after: Cursor = "", $first: Int = 100) {
-    entities: assets(first: $first, after: $after) {
+  query FiatPriceQuery($after: String = null, $first: Int = 100) {
+    entities: assetsConnection(orderBy: id_ASC, first: $first, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }
-      nodes {
-        id
-        priceUSD
+      edges {
+        node {
+          id
+          priceUSD
+        }
       }
     }
   }
@@ -20,14 +22,16 @@ export const FiatPriceQuery = gql<EntitiesQueryResponse<AssetEntity>>`
 `;
 
 export const ApyQuery = gql<EntitiesQueryResponse<PoolXYKEntity>>`
-  query ApyQuery($after: Cursor = "", $first: Int = 100) {
-    entities: poolXYKs(first: $first, after: $after) {
+  query ApyQuery($after: String = null, $first: Int = 100) {
+    entities: poolXyksConnection(orderBy: id_ASC, first: $first, after: $after) {
       pageInfo {
         ...PageInfoFragment
       }
-      nodes {
-        id
-        strategicBonusApy
+      edges {
+        node {
+          id
+          strategicBonusApy
+        }
       }
     }
   }

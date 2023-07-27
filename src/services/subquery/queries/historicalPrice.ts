@@ -6,15 +6,25 @@ import { SnapshotTypes } from '../types';
 import type { EntitiesQueryResponse, AssetSnapshotEntity } from '../types';
 
 export const HistoricalPriceQuery = gql<EntitiesQueryResponse<AssetSnapshotEntity>>`
-  query HistoricalPriceQuery($after: Cursor = "", $filter: AssetSnapshotFilter, $first: Int = null) {
-    entities: assetSnapshots(after: $after, first: $first, filter: $filter, orderBy: [TIMESTAMP_DESC]) {
+  query HistoricalPriceQuery($after: String = null, $filter: AssetSnapshotWhereInput, $first: Int = null) {
+    entities: assetSnapshotsConnection(after: $after, first: $first, where: $filter, orderBy: [timestamp_DESC]) {
       pageInfo {
         ...PageInfoFragment
       }
-      nodes {
-        priceUSD
-        volume
-        timestamp
+      edges {
+        node {
+          priceUSD {
+            close
+            high
+            low
+            open
+          }
+          volume {
+            amount
+            amountUSD
+          }
+          timestamp
+        }
       }
     }
   }
@@ -23,16 +33,12 @@ export const HistoricalPriceQuery = gql<EntitiesQueryResponse<AssetSnapshotEntit
 
 export const historicalPriceFilter = (assetAddress: string, type: SnapshotTypes) => {
   return {
-    and: [
+    AND: [
       {
-        assetId: {
-          equalTo: assetAddress,
-        },
+        assetId_eq: assetAddress,
       },
       {
-        type: {
-          equalTo: type,
-        },
+        type_eq: type,
       },
     ],
   };

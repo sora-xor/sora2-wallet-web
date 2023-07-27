@@ -117,7 +117,7 @@ const actions = defineActions({
 
     const variables = {
       filter,
-      first: pageAmount,
+      limit: pageAmount,
       offset: pageAmount * (page - 1),
     };
 
@@ -126,12 +126,13 @@ const actions = defineActions({
 
       if (!response) return;
 
-      const { nodes, pageInfo, totalCount } = response;
+      console.log('response', response);
+      const { edges, pageInfo, totalCount } = response;
       const buffer = {};
       const removeHistoryIds: Array<string> = [];
 
-      if (nodes.length) {
-        for (const transaction of nodes) {
+      if (edges.length) {
+        for (const { node: transaction } of edges) {
           const { id } = transaction;
 
           if (!(id in externalHistory)) {

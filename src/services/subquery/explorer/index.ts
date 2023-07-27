@@ -34,7 +34,7 @@ export default class SubqueryExplorer extends BaseSubqueryExplorer {
   ): Promise<Nullable<R[]>> {
     const acc: any = [];
 
-    let after = '';
+    let after: string | null = null;
     let hasNextPage = true;
 
     try {
