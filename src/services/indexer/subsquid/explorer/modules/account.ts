@@ -84,7 +84,7 @@ export class SubsquidAccountModule extends BaseModule {
     const createSubscription = this.root.subscribe(AccountHistorySubscription, variables);
 
     return createSubscription(async (payload) => {
-      if (payload.data) {
+      if (payload.data?.nodes.length) {
         const txId = payload.data.nodes[0].latestHistoryElement.id;
         const variables = { filter: { id_eq: txId } };
         const response = await this.getHistory(variables);
