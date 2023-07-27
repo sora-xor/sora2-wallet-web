@@ -1,4 +1,5 @@
 import { ConnectionQueryResponseData } from '../../types';
+
 import { SubqueryMutationTypes } from './subquery';
 
 /* eslint-disable camelcase */

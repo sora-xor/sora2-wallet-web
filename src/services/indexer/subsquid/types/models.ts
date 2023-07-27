@@ -1,5 +1,6 @@
-import type { CodecString } from '@sora-substrate/util';
 import { SnapshotTypes } from '../../types';
+
+import type { CodecString } from '@sora-substrate/util';
 
 // Subsquid Models
 /* eslint-disable camelcase */

@@ -1,6 +1,6 @@
-import type { CodecString } from '@sora-substrate/util';
-
 import { ConnectionQueryResponseData, SnapshotTypes } from '../../types';
+
+import type { CodecString } from '@sora-substrate/util';
 
 // Subquery Models
 /* eslint-disable camelcase */

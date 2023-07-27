@@ -1,9 +1,8 @@
-import { BaseModule } from './_base';
-
+import { formatStringNumber } from '../../../../../util';
 import { ApyQuery } from '../../queries/fiatPriceAndApy';
 import { PoolsApySubscription } from '../../subscriptions/fiatPriceAndApy';
 
-import { formatStringNumber } from '../../../../../util';
+import { BaseModule } from './_base';
 
 import type { SubsquidPoolXYKEntity, PoolApyObject } from '../../types';
 
