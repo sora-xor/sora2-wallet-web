@@ -25,7 +25,7 @@ import {
 
 import { accountActionContext } from './../account';
 
-import type { FiatPriceObject } from '../../services/indexer/subsquid/types';
+import type { FiatPriceObject } from '../../services/indexer/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { CreateAccountArgs, RestoreAccountArgs } from './types';
 import type { Signer } from '@polkadot/api/types';
