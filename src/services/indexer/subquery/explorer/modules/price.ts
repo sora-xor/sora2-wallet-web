@@ -1,12 +1,10 @@
-import { SubqueryBaseModule } from './_base';
-
+import { formatStringNumber } from '../../../../../util';
 import { FiatPriceQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
 import { FiatPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
-
 import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
-import { formatStringNumber } from '../../../../../util';
+import { SubqueryBaseModule } from './_base';
 
 import type { SubqueryAssetEntity, FiatPriceObject } from '../../types';
 

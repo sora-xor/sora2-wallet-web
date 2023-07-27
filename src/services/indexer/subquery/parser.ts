@@ -1,17 +1,16 @@
+import { BN } from '@polkadot/util';
+import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
+import { RewardType, RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
 import getOr from 'lodash/fp/getOr';
 import omit from 'lodash/fp/omit';
-import { BN } from '@polkadot/util';
-import { RewardType, RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
-import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
-import type { HistoryItem } from '@sora-substrate/util';
-import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
-import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 
-import store from '../../../store';
 import { api } from '../../../api';
-import { SubstrateEvents } from './consts';
 import { ObjectInit } from '../../../consts';
+import store from '../../../store';
+
+import { SubstrateEvents } from './consts';
 import { ModuleNames, ModuleMethods } from './types';
+
 import type {
   SubqueryHistoryElement,
   SubqueryHistoryElementError,
@@ -29,6 +28,9 @@ import type {
   SubqueryClaimedRewardItem,
   SubqueryExtrinsicEvent,
 } from './types';
+import type { HistoryItem } from '@sora-substrate/util';
+import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
+import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 
 const insensitive = (value: string) => value.toLowerCase();
 

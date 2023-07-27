@@ -1,9 +1,8 @@
+import { Operation } from '@sora-substrate/util';
 import { gql } from '@urql/core';
 
-import { Operation } from '@sora-substrate/util';
-import { ModuleNames, ModuleMethods } from '../types';
-
 import { PageInfoFragment } from '../fragments/pageInfo';
+import { ModuleNames, ModuleMethods } from '../types';
 
 import type { SubqueryHistoryElement, SubqueryConnectionQueryResponse } from '../types';
 

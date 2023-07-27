@@ -1,8 +1,7 @@
 import BaseSubqueryExplorer from './base';
-
 import { SubqueryAccountModule } from './modules/account';
-import { SubqueryPriceModule } from './modules/price';
 import { SubqueryPoolModule } from './modules/pool';
+import { SubqueryPriceModule } from './modules/price';
 
 import type { TypedDocumentNode, AnyVariables } from '../client';
 import type { SubqueryConnectionQueryResponse, SubquerySubscriptionPayload } from '../types';

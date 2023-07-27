@@ -1,12 +1,11 @@
 import { FPNumber } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
 
-import { BaseModule } from './_base';
-
-import { ReferrerRewardsQuery, referrerRewardsFilter } from '../../queries/referrerRewards';
 import { HistoryElementsConnectionQuery, HistoryElementsQuery } from '../../queries/historyElements';
-
+import { ReferrerRewardsQuery, referrerRewardsFilter } from '../../queries/referrerRewards';
 import { AccountHistorySubscription } from '../../subscriptions/account';
+
+import { BaseModule } from './_base';
 
 import type {
   ConnectionQueryResponseData,
