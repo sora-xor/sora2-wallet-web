@@ -85,6 +85,7 @@ export type SettingsStorageKey =
   | 'alerts'
   | 'language'
   | 'node'
+  | 'indexer'
   | 'customNodes'
   | 'allowFeePopup'
   | 'allowTopUpAlerts'

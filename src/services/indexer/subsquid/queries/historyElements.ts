@@ -42,7 +42,7 @@ export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryEle
 `;
 
 export const HistoryElementsConnectionQuery = gql<SubsquidConnectionQueryResponse<SubsquidHistoryElement>>`
-  query SubsquidHistoryElements(
+  query SubsquidHistoryElementsConnection(
     $first: Int
     $after: String = null
     $orderBy: [HistoryElementOrderByInput!] = timestamp_DESC
@@ -130,19 +130,9 @@ const OperationFilterMap = {
   [Operation.CreatePair]: {
     module_eq: ModuleNames.Utility,
     method_eq: ModuleMethods.UtilityBatchAll,
-    OR: [
-      {
-        calls_some: {
-          module_containsInsensitive: ModuleNames.PoolXYK,
-          method_eq: ModuleMethods.PoolXYKInitializePool,
-        },
-      },
-      {
-        calls_some: {
-          module_containsInsensitive: ModuleNames.PoolXYK,
-          method_eq: ModuleMethods.PoolXYKDepositLiquidity,
-        },
-      },
+    callNames_containsAny: [
+      ModuleNames.PoolXYK + '.' + ModuleMethods.PoolXYKInitializePool,
+      ModuleNames.PoolXYK + '.' + ModuleMethods.PoolXYKDepositLiquidity,
     ],
   },
   [Operation.AddLiquidity]: {
@@ -182,12 +172,7 @@ const OperationFilterMap = {
       {
         module_eq: ModuleNames.Utility,
         method_eq: ModuleMethods.UtilityBatchAll,
-        OR: RewardsClaimExtrinsics.map(([module, method]) => ({
-          calls_some: {
-            module_containsInsensitive: module,
-            method_eq: method,
-          },
-        })),
+        callNames_containsAny: RewardsClaimExtrinsics.map(([module, method]) => module + '.' + method),
       },
     ],
   },

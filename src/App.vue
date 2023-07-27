@@ -25,10 +25,9 @@ import env from '../public/env.json';
 
 import ConfirmDialog from './components/ConfirmDialog.vue';
 import TransactionMixin from './components/mixins/TransactionMixin';
-import { SoraNetwork } from './consts';
+import { SoraNetwork, IndexerType } from './consts';
 import SoraWallet from './SoraWallet.vue';
 import { state, mutation, getter, action } from './store/decorators';
-import IndexerType from './types/indexer';
 
 import { initWallet } from './index';
 
