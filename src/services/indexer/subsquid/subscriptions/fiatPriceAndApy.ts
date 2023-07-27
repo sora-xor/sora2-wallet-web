@@ -4,44 +4,18 @@ import type { SubsquidAssetEntity, SubsquidPoolXYKEntity, SubscriptionResponse }
 
 export const FiatPriceSubscription = gql<SubscriptionResponse<SubsquidAssetEntity>>`
   subscription SubsquidFiatPriceSubscription {
-    nodes: assets(limit: 50, orderBy: updatedAtBlock_DESC) {
-      poolXYK {
-        id
-        baseAssetId
-        targetAssetId
-        baseAssetReserves
-        targetAssetReserves
-        multiplier
-        priceUSD
-        strategicBonusApy
-      }
-      data {
-        id
-        assetId
-        priceUSD {
-          low
-          high
-          open
-          close
-        }
-        volume {
-          amount
-          amountUSD
-        }
-        timestamp
-        type
-        liquidity
-        supply
-        mint
-        burn
-      }
+    nodes: assets(limit: 10, orderBy: updatedAtBlock_DESC) {
+      id
+      liquidity
+      priceUSD
+      supply
     }
   }
 `;
 
 export const PoolsApySubscription = gql<SubscriptionResponse<SubsquidPoolXYKEntity>>`
   subscription SubsquidPoolsApySubscription {
-    nodes: poolXYKs(limit: 50, orderBy: updatedAtBlock_DESC) {
+    nodes: poolXYKs(limit: 10, orderBy: updatedAtBlock_DESC) {
       baseAsset {
         id
         priceUSD

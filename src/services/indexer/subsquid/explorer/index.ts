@@ -69,8 +69,8 @@ export default class SubsquidExplorer extends BaseSubsquidExplorer {
         after = response.pageInfo.endCursor;
         hasNextPage = response.pageInfo.hasNextPage;
 
-        response.nodes.forEach((el) => {
-          const record = parse ? parse(el) : el;
+        response.edges.forEach((el) => {
+          const record = parse ? parse(el.node) : el.node;
 
           acc.push(record);
         });
@@ -95,8 +95,8 @@ export default class SubsquidExplorer extends BaseSubsquidExplorer {
     return createSubscription((payload) => {
       try {
         if (payload.data) {
-          const entity = parse(payload.data.nodes[0]);
-          handler(entity);
+          const entities = payload.data.nodes.map((node) => parse(node));
+          entities.forEach((entity) => handler(entity));
         } else {
           throw new Error('Subscription payload data is undefined');
         }

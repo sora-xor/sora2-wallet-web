@@ -1,4 +1,5 @@
 import type { CodecString } from '@sora-substrate/util';
+import { AssetEntity } from '../../types/models';
 
 // Subsquid Enums
 export enum SubsquidSnapshotTypes {
@@ -19,7 +20,7 @@ export type SubsquidAssetBaseEntity = {
 
 export type SubsquidAssetSnapshotBaseEntity = {
   id: string;
-  assetId: string;
+  asset: SubsquidAssetBaseEntity;
   priceUSD: {
     low: string;
     high: string;
@@ -40,8 +41,8 @@ export type SubsquidAssetSnapshotBaseEntity = {
 
 export type SubsquidPoolXYKBaseEntity = {
   id: string;
-  baseAssetId: string;
-  targetAssetId: string;
+  baseAsset: SubsquidAssetBaseEntity;
+  targetAsset: SubsquidAssetBaseEntity;
   baseAssetReserves: CodecString;
   targetAssetReserves: CodecString;
   multiplier: number;

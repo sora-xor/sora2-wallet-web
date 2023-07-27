@@ -506,7 +506,6 @@ const actions = defineActions({
   },
   async subscribeOnFiatPrice(context): Promise<void> {
     const isIndexerAvailable = await getFiatPriceObject(context);
-    console.log('isIndexerAvailable', isIndexerAvailable);
     try {
       if (isIndexerAvailable) {
         subscribeOnFiatUsingIndexer(context);
