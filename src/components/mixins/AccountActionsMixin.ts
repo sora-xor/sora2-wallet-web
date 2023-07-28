@@ -92,7 +92,7 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
         const { address, source } = this.selectedAccount;
 
         if (source === AppWallet.GoogleDrive) {
-          const json = await GDriveWallet.accounts.getAccount(address);
+          const json = await GDriveWallet.accounts.getAccount(address, password);
 
           if (!json) throw new Error('polkadotjs.noAccount');
 

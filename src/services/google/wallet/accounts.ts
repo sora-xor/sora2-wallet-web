@@ -2,6 +2,7 @@ import { api } from '../../../api';
 import { AppError, formatAddress } from '../../../util';
 import { GDriveStorage } from '../index';
 
+import type { EncryptedBackupAccount } from '../types';
 import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
@@ -29,11 +30,12 @@ export default class Accounts implements InjectedAccounts {
   }
 
   private findAccountByAddress(address: string): Nullable<IAccountMetadata> {
-    const defaultAddress = api.formatAddress(address, false);
-    return this.accountsList.find((acc) => acc.address === defaultAddress);
+    const soraAddress = api.formatAddress(address);
+
+    return this.accountsList.find((acc) => acc.address === soraAddress);
   }
 
-  private async findAccountById(address: string): Promise<string> {
+  private async getAccountIdByAddress(address: string): Promise<string> {
     await this.get();
 
     const account = this.findAccountByAddress(address);
@@ -43,34 +45,46 @@ export default class Accounts implements InjectedAccounts {
     return account.id;
   }
 
-  public async add(accountJson: KeyringPair$Json): Promise<void> {
-    const { address, meta } = accountJson;
+  public async add(accountPairJson: KeyringPair$Json): Promise<void> {
+    const { address, meta } = accountPairJson;
 
-    if (this.findAccountByAddress(address))
+    if (this.findAccountByAddress(address)) {
+      const formattedSoraAddress = formatAddress(api.formatAddress(address));
+
       throw new AppError({
         key: 'desktop.errorMessages.alreadyImported',
         payload: {
-          address: formatAddress(api.formatAddress(address)),
+          address: formattedSoraAddress,
         },
       });
+    }
 
-    const json = JSON.stringify(accountJson);
-    const name = (meta.name as string) || '';
+    const fileData = {
+      name: api.formatAddress(address),
+      description: (meta.name as string) || '',
+      json: JSON.stringify(accountPairJson),
+    };
 
-    await GDriveStorage.create({ json, address, name });
+    await GDriveStorage.create(fileData);
     await this.get();
   }
 
   public async changeName(address: string, name: string) {
-    const id = await this.findAccountById(address);
-    const accountJson = (await GDriveStorage.get(id)) as KeyringPair$Json;
+    const id = await this.getAccountIdByAddress(address);
+    const file = await GDriveStorage.get(id);
 
-    accountJson.meta = accountJson.meta || {};
-    accountJson.meta.name = name;
+    // backupFile.name = name;
 
-    const json = JSON.stringify(accountJson);
+    // accountJson.meta = accountJson.meta || {};
+    // accountJson.meta.name = name;
 
-    await GDriveStorage.create({ json, address: accountJson.address, name }, id);
+    const fileData = {
+      name: api.formatAddress(address),
+      description: name,
+      json: JSON.stringify(backupFile),
+    };
+
+    await GDriveStorage.update(id, fileData);
     // if account name updated in storage, we don't need to do request, just update it locally
     this.accountsList = this.accountsList.map((account) => ({
       ...account,
@@ -79,7 +93,7 @@ export default class Accounts implements InjectedAccounts {
   }
 
   public async delete(address: string): Promise<void> {
-    const id = await this.findAccountById(address);
+    const id = await this.getAccountIdByAddress(address);
 
     await GDriveStorage.delete(id);
     // if account deleted in storage, we don't need to do request, just remove it locally
@@ -91,8 +105,8 @@ export default class Accounts implements InjectedAccounts {
 
     this.accountsList = files
       ? files.map((file) => ({
-          address: api.formatAddress(file.description || '', false),
-          name: file.name || '',
+          name: file.description || '',
+          address: file.name || '',
           id: file.id as string,
         }))
       : [];
@@ -100,9 +114,9 @@ export default class Accounts implements InjectedAccounts {
     return this.accountsList;
   }
 
-  public async getAccount(address: string): Promise<KeyringPair$Json> {
-    const id = await this.findAccountById(address);
-    const json = await GDriveStorage.get(id);
+  public async getAccount(address: string, password: string): Promise<KeyringPair$Json> {
+    const id = await this.getAccountIdByAddress(address);
+    const accountBackup = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
 
     return json as KeyringPair$Json;
   }

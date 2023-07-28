@@ -171,7 +171,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
       throw new Error('polkadotjs.noAccount');
     }
 
-    const json = await GDriveWallet.accounts.getAccount(this.accountLoginData.address);
+    const json = await GDriveWallet.accounts.getAccount(this.accountLoginData.address, password);
 
     if (!json) throw new Error('polkadotjs.noAccount');
 
