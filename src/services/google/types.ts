@@ -14,14 +14,26 @@ export type Seed = {
   ethSeed?: string;
 };
 
+export type DecryptedBackupAccount = {
+  name: string;
+  address: string;
+  mnemonicPhrase: Nullable<string>;
+  cryptoType: string;
+  substrateDerivationPath: Nullable<string>;
+  ethDerivationPath: Nullable<string>;
+  backupAccountType: BackupAccountType[];
+  seed: Nullable<Seed>;
+  json: Nullable<Json>;
+};
+
 export type EncryptedBackupAccount = {
   name: string;
   address: string;
-  encryptedMnemonicPhrase?: string;
-  encryptedEthDerivationPath?: string;
-  encryptedSubstrateDerivationPath?: string;
+  encryptedMnemonicPhrase: Nullable<string>;
+  encryptedEthDerivationPath: Nullable<string>;
+  encryptedSubstrateDerivationPath: Nullable<string>;
   cryptoType: string;
   backupAccountType: BackupAccountType[];
-  encryptedSeed?: Seed;
-  json?: Json;
+  encryptedSeed: Nullable<Seed>;
+  json: Nullable<Json>;
 };
