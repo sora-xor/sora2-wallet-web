@@ -1,8 +1,9 @@
 import { api } from '../../../api';
 import { AppError, formatAddress } from '../../../util';
+import { BackupAccountCrypto } from '../backup/account';
 import { GDriveStorage } from '../index';
 
-import type { EncryptedBackupAccount } from '../types';
+import type { EncryptedBackupAccount } from '../backup/types';
 import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
@@ -114,11 +115,19 @@ export default class Accounts implements InjectedAccounts {
     return this.accountsList;
   }
 
-  public async getAccount(address: string, password: string): Promise<KeyringPair$Json> {
+  public async getAccount(address: string, password: string): Promise<Nullable<KeyringPair$Json>> {
     const id = await this.getAccountIdByAddress(address);
-    const accountBackup = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
+    const file = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
+    const account = BackupAccountCrypto.decryptAccount(file, password);
 
-    return json as KeyringPair$Json;
+    // [TODO] pair from mnemonic
+    // [TODO] pair from seed
+
+    if (account.json?.substrateJson) {
+      return JSON.parse(account.json.substrateJson) as KeyringPair$Json;
+    }
+
+    return null;
   }
 
   public subscribe(accountsCallback: (accounts: InjectedAccount[]) => unknown): Unsubcall {

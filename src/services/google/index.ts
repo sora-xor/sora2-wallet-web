@@ -3,8 +3,6 @@ import { Singleton } from '../../decorators';
 import { GoogleDriveApi } from './api';
 import { GoogleOauth } from './oauth';
 
-import type { EncryptedBackupAccount } from './types';
-
 const DRIVE_APPDATA_SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 const DRIVE_DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
 
