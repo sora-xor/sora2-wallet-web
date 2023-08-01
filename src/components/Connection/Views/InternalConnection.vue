@@ -125,12 +125,16 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
   async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
     await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
+
       await this.withAppNotification(async () => {
         try {
-          const { json } = data;
+          const { json, password } = data;
 
           if (this.selectedWallet === AppWallet.GoogleDrive) {
-            await GDriveWallet.accounts.add(json);
+            await GDriveWallet.accounts.add(json, password);
           }
         } finally {
           this.navigateToAccountList();
@@ -149,7 +153,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
         const accountJson = await this.createAccount(data);
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
-          await GDriveWallet.accounts.add(accountJson, data);
+          await GDriveWallet.accounts.add(accountJson, data.password, data.seed);
         }
 
         this.navigateToAccountList();

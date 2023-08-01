@@ -17,6 +17,14 @@ interface IAccountMetadata extends InjectedAccount {
 
 const ACCOUNTS_UPDATE_INTERVAL = 60_000;
 
+const prepareAccountFile = (account: EncryptedBackupAccount | DecryptedBackupAccount) => {
+  return {
+    name: `${account.address}.json`,
+    description: account.name,
+    json: JSON.stringify(account),
+  };
+};
+
 export default class Accounts implements InjectedAccounts {
   private _list: IAccountMetadata[] = [];
   private accountsCallback: Nullable<(accounts: InjectedAccount[]) => unknown> = null;
@@ -35,9 +43,9 @@ export default class Accounts implements InjectedAccounts {
   }
 
   private findAccountByAddress(address: string): Nullable<IAccountMetadata> {
-    const soraAddress = api.formatAddress(address);
+    const defaultAddress = api.formatAddress(address, false);
 
-    return this.accountsList.find((acc) => acc.address === soraAddress);
+    return this.accountsList.find((acc) => acc.address === defaultAddress);
   }
 
   private async getAccountIdByAddress(address: string): Promise<string> {
@@ -50,53 +58,42 @@ export default class Accounts implements InjectedAccounts {
     return account.id;
   }
 
-  public async add(accountPairJson: KeyringPair$Json, data?: { seed: string; password: string }): Promise<void> {
+  public async add(accountPairJson: KeyringPair$Json, password: string, passphrase?: string): Promise<void> {
     const { address, meta } = accountPairJson;
 
     if (this.findAccountByAddress(address)) {
-      const formattedSoraAddress = formatAddress(api.formatAddress(address));
-
       throw new AppError({
         key: 'desktop.errorMessages.alreadyImported',
         payload: {
-          address: formattedSoraAddress,
+          address: formatAddress(api.formatAddress(address)),
         },
       });
     }
 
-    const soraAddress = api.formatAddress(address);
-    const accountName = (meta?.name as string) || '';
-    const mnemonicPhrase = data?.seed;
-    const password = data?.password;
+    const pair = api.createAccountPairFromJson(accountPairJson);
+    const substrateJson = api.exportAccount(pair, password);
 
-    const account: DecryptedBackupAccount = {
-      name: accountName,
-      address: soraAddress,
-      cryptoType: 'SR25519',
+    const decryptedAccount: DecryptedBackupAccount = {
+      name: (meta?.name as string) || '',
+      address: api.formatAddress(address),
+      cryptoType: 'sr25519'.toUpperCase(),
       backupAccountType: [BackupAccountType.JSON],
-      mnemonicPhrase,
+      mnemonicPhrase: passphrase,
       substrateDerivationPath: null,
       ethDerivationPath: null,
       seed: null,
       json: {
-        substrateJson: JSON.stringify(accountPairJson),
+        substrateJson,
       },
     };
 
-    if (mnemonicPhrase && password) {
-      const substrateSeed = u8aToHex(mnemonicToMiniSecret(mnemonicPhrase));
-
-      account.seed = { substrateSeed };
-      account.backupAccountType.push(BackupAccountType.PASSHRASE, BackupAccountType.SEED);
+    if (passphrase) {
+      decryptedAccount.seed = { substrateSeed: u8aToHex(mnemonicToMiniSecret(passphrase)) };
+      decryptedAccount.backupAccountType.push(BackupAccountType.PASSHRASE, BackupAccountType.SEED);
     }
 
-    const encryptedAccount = password ? BackupAccountCrypto.encryptAccount(account, password) : account;
-
-    const fileData = {
-      name: `${soraAddress}.json`,
-      description: accountName,
-      json: JSON.stringify(encryptedAccount),
-    };
+    const encryptedAccount = BackupAccountCrypto.encryptAccount(decryptedAccount, password);
+    const fileData = prepareAccountFile(encryptedAccount);
 
     await GDriveStorage.create(fileData);
     await this.get();
@@ -104,23 +101,18 @@ export default class Accounts implements InjectedAccounts {
 
   public async changeName(address: string, name: string) {
     const id = await this.getAccountIdByAddress(address);
-    const file = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
+    const encryptedAccount = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
     // update name in root
-    file.name = name;
+    encryptedAccount.name = name;
     // update name in substrateJson
-    if (file.json?.substrateJson) {
-      const substrateJson = JSON.parse(file.json.substrateJson);
+    if (encryptedAccount.json?.substrateJson) {
+      const substrateJson = JSON.parse(encryptedAccount.json.substrateJson);
       substrateJson.meta = substrateJson.meta || {};
       substrateJson.meta.name = name;
-
-      file.json.substrateJson = JSON.stringify(substrateJson);
+      encryptedAccount.json.substrateJson = JSON.stringify(substrateJson);
     }
 
-    const fileData = {
-      name: api.formatAddress(address),
-      description: name,
-      json: JSON.stringify(file),
-    };
+    const fileData = prepareAccountFile(encryptedAccount);
 
     await GDriveStorage.update(id, fileData);
     // if account name updated in storage, we don't need to do request, just update it locally
@@ -142,10 +134,10 @@ export default class Accounts implements InjectedAccounts {
     const files = await GDriveStorage.getAll();
 
     this.accountsList = files
-      ? files.map((file) => ({
-          name: file.description || '',
-          address: (file.name || '').replace(/\.json$/, ''),
-          id: file.id as string,
+      ? files.map(({ id, name = '', description = '' }) => ({
+          address: api.formatAddress(name.replace(/\.json$/, ''), false), // formatted account address (extension like)
+          name: description, // account name
+          id: id as string,
         }))
       : [];
 
@@ -154,18 +146,19 @@ export default class Accounts implements InjectedAccounts {
 
   public async getAccount(address: string, password: string): Promise<Nullable<KeyringPair$Json>> {
     const id = await this.getAccountIdByAddress(address);
-    const file = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
-    const account = BackupAccountCrypto.decryptAccount(file, password);
-    const suri = account.mnemonicPhrase || account.seed?.substrateSeed;
+    const encryptedAccount = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
+    const decryptedAccount = BackupAccountCrypto.decryptAccount(encryptedAccount, password);
 
-    if (suri) {
-      const pair = api.createAccountPair(suri, account.name);
-
-      return pair.toJson(password);
+    if (decryptedAccount.json?.substrateJson) {
+      return JSON.parse(decryptedAccount.json.substrateJson) as KeyringPair$Json;
     }
 
-    if (account.json?.substrateJson) {
-      return JSON.parse(account.json.substrateJson) as KeyringPair$Json;
+    const suri = decryptedAccount.mnemonicPhrase || decryptedAccount.seed?.substrateSeed;
+
+    if (suri) {
+      const pair = api.createAccountPair(suri, decryptedAccount.name);
+
+      return pair.toJson(password);
     }
 
     return null;
