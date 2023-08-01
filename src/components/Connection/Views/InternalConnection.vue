@@ -149,7 +149,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
         const accountJson = await this.createAccount(data);
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
-          await GDriveWallet.accounts.add(accountJson);
+          await GDriveWallet.accounts.add(accountJson, data);
         }
 
         this.navigateToAccountList();

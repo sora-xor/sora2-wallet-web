@@ -1,9 +1,13 @@
+import { u8aToHex } from '@polkadot/util';
+import { mnemonicToMiniSecret } from '@polkadot/util-crypto';
+
 import { api } from '../../../api';
 import { AppError, formatAddress } from '../../../util';
 import { BackupAccountCrypto } from '../backup/account';
+import { BackupAccountType } from '../backup/types';
 import { GDriveStorage } from '../index';
 
-import type { EncryptedBackupAccount } from '../backup/types';
+import type { EncryptedBackupAccount, DecryptedBackupAccount } from '../backup/types';
 import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
@@ -46,7 +50,7 @@ export default class Accounts implements InjectedAccounts {
     return account.id;
   }
 
-  public async add(accountPairJson: KeyringPair$Json): Promise<void> {
+  public async add(accountPairJson: KeyringPair$Json, data?: { seed: string; password: string }): Promise<void> {
     const { address, meta } = accountPairJson;
 
     if (this.findAccountByAddress(address)) {
@@ -60,10 +64,38 @@ export default class Accounts implements InjectedAccounts {
       });
     }
 
+    const soraAddress = api.formatAddress(address);
+    const accountName = (meta?.name as string) || '';
+    const mnemonicPhrase = data?.seed;
+    const password = data?.password;
+
+    const account: DecryptedBackupAccount = {
+      name: accountName,
+      address: soraAddress,
+      cryptoType: 'SR25519',
+      backupAccountType: [BackupAccountType.JSON],
+      mnemonicPhrase,
+      substrateDerivationPath: null,
+      ethDerivationPath: null,
+      seed: null,
+      json: {
+        substrateJson: JSON.stringify(accountPairJson),
+      },
+    };
+
+    if (mnemonicPhrase && password) {
+      const substrateSeed = u8aToHex(mnemonicToMiniSecret(mnemonicPhrase));
+
+      account.seed = { substrateSeed };
+      account.backupAccountType.push(BackupAccountType.PASSHRASE, BackupAccountType.SEED);
+    }
+
+    const encryptedAccount = password ? BackupAccountCrypto.encryptAccount(account, password) : account;
+
     const fileData = {
-      name: api.formatAddress(address),
-      description: (meta.name as string) || '',
-      json: JSON.stringify(accountPairJson),
+      name: `${soraAddress}.json`,
+      description: accountName,
+      json: JSON.stringify(encryptedAccount),
     };
 
     await GDriveStorage.create(fileData);
@@ -72,17 +104,22 @@ export default class Accounts implements InjectedAccounts {
 
   public async changeName(address: string, name: string) {
     const id = await this.getAccountIdByAddress(address);
-    const file = await GDriveStorage.get(id);
+    const file = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
+    // update name in root
+    file.name = name;
+    // update name in substrateJson
+    if (file.json?.substrateJson) {
+      const substrateJson = JSON.parse(file.json.substrateJson);
+      substrateJson.meta = substrateJson.meta || {};
+      substrateJson.meta.name = name;
 
-    // backupFile.name = name;
-
-    // accountJson.meta = accountJson.meta || {};
-    // accountJson.meta.name = name;
+      file.json.substrateJson = JSON.stringify(substrateJson);
+    }
 
     const fileData = {
       name: api.formatAddress(address),
       description: name,
-      json: JSON.stringify(backupFile),
+      json: JSON.stringify(file),
     };
 
     await GDriveStorage.update(id, fileData);
@@ -107,7 +144,7 @@ export default class Accounts implements InjectedAccounts {
     this.accountsList = files
       ? files.map((file) => ({
           name: file.description || '',
-          address: file.name || '',
+          address: (file.name || '').replace(/\.json$/, ''),
           id: file.id as string,
         }))
       : [];
@@ -119,9 +156,13 @@ export default class Accounts implements InjectedAccounts {
     const id = await this.getAccountIdByAddress(address);
     const file = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
     const account = BackupAccountCrypto.decryptAccount(file, password);
+    const suri = account.mnemonicPhrase || account.seed?.substrateSeed;
 
-    // [TODO] pair from mnemonic
-    // [TODO] pair from seed
+    if (suri) {
+      const pair = api.createAccountPair(suri, account.name);
+
+      return pair.toJson(password);
+    }
 
     if (account.json?.substrateJson) {
       return JSON.parse(account.json.substrateJson) as KeyringPair$Json;
