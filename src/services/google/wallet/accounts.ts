@@ -1,10 +1,8 @@
 import { api } from '../../../api';
-import { BackupAccountCrypto } from '../backup/account';
-import { generateSeed } from '../backup/crypto';
-import { BackupAccountType } from '../backup/types';
+import { BackupAccountMapper } from '../backup/mapper';
 import { GDriveStorage } from '../index';
 
-import type { EncryptedBackupAccount, DecryptedBackupAccount } from '../backup/types';
+import type { EncryptedBackupAccount } from '../backup/types';
 import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
@@ -56,34 +54,9 @@ export default class Accounts implements InjectedAccounts {
   }
 
   public async add(accountPairJson: KeyringPair$Json, password: string, passphrase?: string): Promise<void> {
-    // password check
-    const pair = api.createAccountPairFromJson(accountPairJson);
-    const substrateJson = api.exportAccount(pair, password);
-    // existance check
     if (this.findAccountByAddress(accountPairJson.address)) return;
 
-    const { address, meta } = accountPairJson;
-
-    const decryptedAccount: DecryptedBackupAccount = {
-      name: (meta?.name as string) || '',
-      address: api.formatAddress(address),
-      cryptoType: 'sr25519'.toUpperCase(),
-      backupAccountType: [BackupAccountType.JSON],
-      mnemonicPhrase: passphrase,
-      substrateDerivationPath: null,
-      ethDerivationPath: null,
-      seed: null,
-      json: {
-        substrateJson,
-      },
-    };
-
-    if (passphrase) {
-      decryptedAccount.seed = { substrateSeed: generateSeed(passphrase) };
-      decryptedAccount.backupAccountType.push(BackupAccountType.PASSHRASE, BackupAccountType.SEED);
-    }
-
-    const encryptedAccount = BackupAccountCrypto.encryptAccount(decryptedAccount, password);
+    const encryptedAccount = BackupAccountMapper.createFromPairJson(accountPairJson, password, passphrase);
     const fileData = prepareAccountFile(encryptedAccount);
 
     await GDriveStorage.create(fileData);
@@ -93,17 +66,8 @@ export default class Accounts implements InjectedAccounts {
   public async changeName(address: string, name: string) {
     const id = await this.getAccountIdByAddress(address);
     const encryptedAccount = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
-    // update name in root
-    encryptedAccount.name = name;
-    // update name in substrateJson
-    if (encryptedAccount.json?.substrateJson) {
-      const substrateJson = JSON.parse(encryptedAccount.json.substrateJson);
-      substrateJson.meta = substrateJson.meta || {};
-      substrateJson.meta.name = name;
-      encryptedAccount.json.substrateJson = JSON.stringify(substrateJson);
-    }
-
-    const fileData = prepareAccountFile(encryptedAccount);
+    const updated = BackupAccountMapper.changeName(encryptedAccount, name);
+    const fileData = prepareAccountFile(updated);
 
     await GDriveStorage.update(id, fileData);
     // if account name updated in storage, we don't need to do request, just update it locally
@@ -138,21 +102,9 @@ export default class Accounts implements InjectedAccounts {
   public async getAccount(address: string, password: string): Promise<Nullable<KeyringPair$Json>> {
     const id = await this.getAccountIdByAddress(address);
     const encryptedAccount = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
-    const decryptedAccount = BackupAccountCrypto.decryptAccount(encryptedAccount, password);
+    const json = BackupAccountMapper.getPairJson(encryptedAccount, password);
 
-    if (decryptedAccount.json?.substrateJson) {
-      return JSON.parse(decryptedAccount.json.substrateJson) as KeyringPair$Json;
-    }
-
-    const suri = decryptedAccount.mnemonicPhrase || decryptedAccount.seed?.substrateSeed;
-
-    if (suri) {
-      const pair = api.createAccountPair(suri, decryptedAccount.name);
-
-      return pair.toJson(password);
-    }
-
-    return null;
+    return json;
   }
 
   public subscribe(accountsCallback: (accounts: InjectedAccount[]) => unknown): Unsubcall {

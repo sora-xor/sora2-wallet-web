@@ -2,7 +2,6 @@ import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
 import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
 import { defineActions } from 'direct-vuex';
-import { saveAs } from 'file-saver';
 
 import { api } from '../../api';
 import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
@@ -21,6 +20,7 @@ import {
   WHITE_LIST_URL,
   NFT_BLACK_LIST_URL,
   AppError,
+  exportAccountJson,
 } from '../../util';
 
 import { accountActionContext } from './../account';
@@ -100,12 +100,6 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
     commit.clearFiatPriceObject();
     return null;
   }
-}
-
-function exportAccountJson(accountJson: string): void {
-  const blob = new Blob([accountJson], { type: 'application/json' });
-  const filename = (JSON.parse(accountJson) || {}).address || '';
-  saveAs(blob, filename);
 }
 
 const actions = defineActions({
@@ -318,7 +312,7 @@ const actions = defineActions({
     const json = pair.toJson(password);
 
     if (exportAccount) {
-      exportAccountJson(JSON.stringify(json));
+      exportAccountJson(json);
     }
 
     if (saveAccount) {
@@ -354,18 +348,12 @@ const actions = defineActions({
     }
   },
 
-  exportAccountFromJson(_, { json, password }: { json: KeyringPair$Json; password: string }): void {
-    const pair = api.createAccountPairFromJson(json);
-    const accountJson = api.exportAccount(pair, password);
-    exportAccountJson(accountJson);
-  },
-
   /**
    * Desktop
    */
   exportAccount(_, { address, password }: { address: string; password: string }): void {
     const pair = api.getAccountPair(address);
-    const accountJson = api.exportAccount(pair, password);
+    const accountJson = pair.toJson(password);
     exportAccountJson(accountJson);
   },
 

@@ -3,22 +3,18 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { AppWallet, AccountActionTypes } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
 import { action, getter } from '../../store/decorators';
-import { delay } from '../../util';
+import { delay, verifyAccountJson, exportAccountJson } from '../../util';
 import { settingsStorage } from '../../util/storage';
 
 import LoadingMixin from './LoadingMixin';
 import NotificationMixin from './NotificationMixin';
 
-import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
+import type { PolkadotJsAccount } from '../../types/common';
 
 @Component
 export default class AccountActionsMixin extends Mixins(LoadingMixin, NotificationMixin) {
   @action.account.renameAccount private renameAccount!: (data: { address: string; name: string }) => Promise<void>;
   @action.account.exportAccount private exportAccount!: (data: { address: string; password: string }) => Promise<void>;
-  @action.account.exportAccountFromJson private exportAccountFromJson!: (data: {
-    json: KeyringPair$Json;
-    password: string;
-  }) => Promise<void>;
 
   @action.account.logout private logout!: (forgetAddress?: string) => Promise<void>;
 
@@ -96,7 +92,9 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
 
           if (!json) throw new Error('polkadotjs.noAccount');
 
-          await this.exportAccountFromJson({ json, password });
+          const verified = verifyAccountJson(json, password);
+
+          exportAccountJson(verified);
         } else {
           await this.exportAccount({ address, password });
         }

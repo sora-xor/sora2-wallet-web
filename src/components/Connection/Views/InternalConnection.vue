@@ -42,7 +42,7 @@ import { Mixins, Component } from 'vue-property-decorator';
 import { AppWallet, RouteNames, LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
 import { GDriveWallet } from '../../../services/google/wallet';
 import { action, mutation, getter, state } from '../../../store/decorators';
-import { delay, getPreviousLoginStep } from '../../../util';
+import { delay, getPreviousLoginStep, verifyAccountJson } from '../../../util';
 import AccountConfirmDialog from '../../Account/ConfirmDialog.vue';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -131,9 +131,10 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
       await this.withAppNotification(async () => {
         const { json, password } = data;
+        const verified = verifyAccountJson(json, password);
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
-          await GDriveWallet.accounts.add(json, password);
+          await GDriveWallet.accounts.add(verified, password);
         }
 
         this.navigateToAccountList();
