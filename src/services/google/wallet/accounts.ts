@@ -14,7 +14,7 @@ interface IAccountMetadata extends InjectedAccount {
 
 const ACCOUNTS_UPDATE_INTERVAL = 60_000;
 
-const prepareAccountFile = (account: EncryptedBackupAccount | DecryptedBackupAccount) => {
+const prepareAccountFile = (account: EncryptedBackupAccount) => {
   return {
     name: `${account.address}.json`,
     description: account.name,

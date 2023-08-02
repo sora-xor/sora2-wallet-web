@@ -155,7 +155,6 @@ export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Walle
  * @returns
  */
 export const getWalletSigner = async (address: string, appWallet: AppWallet) => {
-  console.log('getWalletSigner', address, appWallet);
   const wallet = await getWallet(appWallet);
   const accounts = await wallet.getAccounts();
 
