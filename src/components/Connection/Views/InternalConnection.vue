@@ -130,15 +130,13 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
       await delay(250);
 
       await this.withAppNotification(async () => {
-        try {
-          const { json, password } = data;
+        const { json, password } = data;
 
-          if (this.selectedWallet === AppWallet.GoogleDrive) {
-            await GDriveWallet.accounts.add(json, password);
-          }
-        } finally {
-          this.navigateToAccountList();
+        if (this.selectedWallet === AppWallet.GoogleDrive) {
+          await GDriveWallet.accounts.add(json, password);
         }
+
+        this.navigateToAccountList();
       });
     });
   }

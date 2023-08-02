@@ -215,6 +215,12 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
           throw new AppError({ key: 'desktop.errorMessages.mnemonic' });
         }
 
+        this.accountName = '';
+        this.readonlyAccountName = false;
+        this.json = null;
+        this.accountPassword = '';
+        this.accountPasswordConfirm = '';
+
         this.$emit('update:step', LoginStep.ImportCredentials);
       } catch (error) {
         this.mnemonicPhrase = '';

@@ -1,5 +1,12 @@
 import { stringToU8a, u8aConcat, u8aToHex, hexToU8a, u8aFixLength, u8aToString } from '@polkadot/util';
-import { naclEncrypt, naclDecrypt, scryptEncode, scryptToU8a, scryptFromU8a } from '@polkadot/util-crypto';
+import {
+  naclEncrypt,
+  naclDecrypt,
+  scryptEncode,
+  scryptToU8a,
+  scryptFromU8a,
+  mnemonicToMiniSecret,
+} from '@polkadot/util-crypto';
 import { SCRYPT_LENGTH, NONCE_LENGTH } from '@polkadot/util-crypto/json/constants';
 
 const encrypt = (data: Uint8Array, passphrase: string): Uint8Array => {
@@ -38,4 +45,8 @@ export const decryptFromHex = (encryptedMessage: string, passphrase: string): st
   const decrypted = decrypt(encryptedMessageBytes, passphrase);
 
   return u8aToString(decrypted);
+};
+
+export const generateSeed = (mnemonic: string) => {
+  return u8aToHex(mnemonicToMiniSecret(mnemonic));
 };

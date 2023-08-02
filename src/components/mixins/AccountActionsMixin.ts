@@ -119,7 +119,9 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
           await GDriveWallet.accounts.delete(this.selectedAccount.address);
         }
 
-        await this.logout(this.selectedAccount.address);
+        if (this.isConnectedAccount(this.selectedAccount)) {
+          await this.logout(this.selectedAccount.address);
+        }
 
         this.accountDeleteVisibility = false;
       });

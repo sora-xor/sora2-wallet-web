@@ -1,9 +1,6 @@
-import { u8aToHex } from '@polkadot/util';
-import { mnemonicToMiniSecret } from '@polkadot/util-crypto';
-
 import { api } from '../../../api';
-import { AppError, formatAddress } from '../../../util';
 import { BackupAccountCrypto } from '../backup/account';
+import { generateSeed } from '../backup/crypto';
 import { BackupAccountType } from '../backup/types';
 import { GDriveStorage } from '../index';
 
@@ -59,19 +56,13 @@ export default class Accounts implements InjectedAccounts {
   }
 
   public async add(accountPairJson: KeyringPair$Json, password: string, passphrase?: string): Promise<void> {
-    const { address, meta } = accountPairJson;
-
-    if (this.findAccountByAddress(address)) {
-      throw new AppError({
-        key: 'desktop.errorMessages.alreadyImported',
-        payload: {
-          address: formatAddress(api.formatAddress(address)),
-        },
-      });
-    }
-
+    // password check
     const pair = api.createAccountPairFromJson(accountPairJson);
     const substrateJson = api.exportAccount(pair, password);
+    // existance check
+    if (this.findAccountByAddress(accountPairJson.address)) return;
+
+    const { address, meta } = accountPairJson;
 
     const decryptedAccount: DecryptedBackupAccount = {
       name: (meta?.name as string) || '',
@@ -88,7 +79,7 @@ export default class Accounts implements InjectedAccounts {
     };
 
     if (passphrase) {
-      decryptedAccount.seed = { substrateSeed: u8aToHex(mnemonicToMiniSecret(passphrase)) };
+      decryptedAccount.seed = { substrateSeed: generateSeed(passphrase) };
       decryptedAccount.backupAccountType.push(BackupAccountType.PASSHRASE, BackupAccountType.SEED);
     }
 
