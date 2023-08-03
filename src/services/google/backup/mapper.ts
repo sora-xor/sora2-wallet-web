@@ -1,11 +1,11 @@
 import { api } from '../../../api';
 import { formatSoraAddress } from '../../../util';
-import { BackupAccountType } from '../types';
 
 import { BackupAccountCrypto } from './account';
 import { generateSeed } from './crypto';
+import { BackupAccountType } from './types';
 
-import type { DecryptedBackupAccount, EncryptedBackupAccount } from '../types';
+import type { DecryptedBackupAccount, EncryptedBackupAccount } from './types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
 export class BackupAccountMapper {
@@ -43,11 +43,12 @@ export class BackupAccountMapper {
       seed: null,
       json: {
         substrateJson: JSON.stringify(pairJson),
+        ethJson: null,
       },
     };
 
     if (mnemonicPhrase) {
-      decryptedAccount.seed = { substrateSeed: generateSeed(mnemonicPhrase) };
+      decryptedAccount.seed = { substrateSeed: generateSeed(mnemonicPhrase), ethSeed: null };
       decryptedAccount.backupAccountType.push(BackupAccountType.PASSHRASE, BackupAccountType.SEED);
     }
 

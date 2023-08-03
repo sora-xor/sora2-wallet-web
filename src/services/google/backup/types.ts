@@ -5,23 +5,23 @@ export enum BackupAccountType {
 }
 
 export type Json = {
-  substrateJson?: string;
-  ethJson?: string;
+  substrateJson: Nullable<string>;
+  ethJson: Nullable<string>;
 };
 
 export type Seed = {
-  substrateSeed?: string;
-  ethSeed?: string;
+  substrateSeed: Nullable<string>;
+  ethSeed: Nullable<string>;
 };
 
 export type DecryptedBackupAccount = {
   name: string;
   address: string;
-  cryptoType: string;
-  backupAccountType: BackupAccountType[];
   mnemonicPhrase: Nullable<string>;
+  cryptoType: string;
   substrateDerivationPath: Nullable<string>;
   ethDerivationPath: Nullable<string>;
+  backupAccountType: BackupAccountType[];
   seed: Nullable<Seed>;
   json: Nullable<Json>;
 };
@@ -29,11 +29,11 @@ export type DecryptedBackupAccount = {
 export type EncryptedBackupAccount = {
   name: string;
   address: string;
-  cryptoType: string;
-  backupAccountType: BackupAccountType[];
   encryptedMnemonicPhrase: Nullable<string>;
   encryptedEthDerivationPath: Nullable<string>;
   encryptedSubstrateDerivationPath: Nullable<string>;
+  cryptoType: string;
+  backupAccountType: BackupAccountType[];
   encryptedSeed: Nullable<Seed>;
   json: Nullable<Json>;
 };
