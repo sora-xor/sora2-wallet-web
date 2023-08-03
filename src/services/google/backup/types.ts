@@ -1,7 +1,7 @@
 export enum BackupAccountType {
-  PASSHRASE = 'PASSHRASE',
-  JSON = 'JSON',
-  SEED = 'SEED',
+  PASSHRASE = 'passphrase',
+  JSON = 'json',
+  SEED = 'seed',
 }
 
 export type Json = {

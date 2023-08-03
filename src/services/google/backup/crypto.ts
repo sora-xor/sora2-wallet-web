@@ -9,6 +9,9 @@ import {
 } from '@polkadot/util-crypto';
 import { SCRYPT_LENGTH, NONCE_LENGTH } from '@polkadot/util-crypto/json/constants';
 
+const toHex = (data: Uint8Array): string => u8aToHex(data, -1, false);
+const fromHex = (data: string): Uint8Array => hexToU8a(data, -1);
+
 const encrypt = (data: Uint8Array, passphrase: string): Uint8Array => {
   const encoded = data;
   const { params, password, salt } = scryptEncode(passphrase);
@@ -37,16 +40,18 @@ export const encryptToHex = (message: string, passphrase: string): string => {
   const messageBytes = stringToU8a(message);
   const encrypted = encrypt(messageBytes, passphrase);
 
-  return u8aToHex(encrypted);
+  return toHex(encrypted);
 };
 
 export const decryptFromHex = (encryptedMessage: string, passphrase: string): string => {
-  const encryptedMessageBytes = hexToU8a(encryptedMessage);
+  const encryptedMessageBytes = fromHex(encryptedMessage);
   const decrypted = decrypt(encryptedMessageBytes, passphrase);
 
   return u8aToString(decrypted);
 };
 
 export const generateSeed = (mnemonic: string) => {
-  return u8aToHex(mnemonicToMiniSecret(mnemonic));
+  const seedBytes = mnemonicToMiniSecret(mnemonic);
+
+  return toHex(seedBytes);
 };
