@@ -347,15 +347,6 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     margin: 0px 0 16px 0;
   }
 
-  &__create-account-desc {
-    color: var(--s-color-base-content-primary);
-    font-size: var(--s-font-size-extra-small);
-    font-weight: 300;
-    line-height: var(--s-line-height-base);
-    padding: 0 #{$basic-spacing-small};
-    width: 330px !important;
-  }
-
   .eye-icon {
     color: var(--s-color-base-content-tertiary);
     &:hover {

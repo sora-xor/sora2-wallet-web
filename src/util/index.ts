@@ -1,6 +1,7 @@
 import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 import { getWallets, getWalletBySource, initialize } from '@sora-test/wallet-connect/dotsama/wallets';
+import { saveAs } from 'file-saver';
 
 import { api, connection } from '../api';
 import {
@@ -320,6 +321,20 @@ export const parseJson = (file: File): Promise<KeyringPair$Json> => {
     };
     reader.onerror = (e) => reject(e);
   });
+};
+
+export const exportAccountJson = (pairJson: KeyringPair$Json): void => {
+  const accountJson = JSON.stringify(pairJson);
+  const blob = new Blob([accountJson], { type: 'application/json' });
+  const filename = pairJson.address || '';
+  saveAs(blob, filename);
+};
+
+export const verifyAccountJson = (pairJson: KeyringPair$Json, password: string): KeyringPair$Json => {
+  const pair = api.createAccountPairFromJson(pairJson);
+  const accountJson = pair.toJson(password);
+
+  return accountJson;
 };
 
 export const getCssVariableValue = (name: string): string => {

@@ -42,7 +42,7 @@ import { Mixins, Component } from 'vue-property-decorator';
 import { AppWallet, RouteNames, LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
 import { GDriveWallet } from '../../../services/google/wallet';
 import { action, mutation, getter, state } from '../../../store/decorators';
-import { delay, getPreviousLoginStep } from '../../../util';
+import { delay, getPreviousLoginStep, verifyAccountJson } from '../../../util';
 import AccountConfirmDialog from '../../Account/ConfirmDialog.vue';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -125,16 +125,19 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
   async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
     await this.withLoading(async () => {
-      await this.withAppNotification(async () => {
-        try {
-          const { json } = data;
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
 
-          if (this.selectedWallet === AppWallet.GoogleDrive) {
-            await GDriveWallet.accounts.add(json);
-          }
-        } finally {
-          this.navigateToAccountList();
+      await this.withAppNotification(async () => {
+        const { json, password } = data;
+        const verified = verifyAccountJson(json, password);
+
+        if (this.selectedWallet === AppWallet.GoogleDrive) {
+          await GDriveWallet.accounts.add(verified, password);
         }
+
+        this.navigateToAccountList();
       });
     });
   }
@@ -149,7 +152,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
         const accountJson = await this.createAccount(data);
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
-          await GDriveWallet.accounts.add(accountJson);
+          await GDriveWallet.accounts.add(accountJson, data.password, data.seed);
         }
 
         this.navigateToAccountList();
@@ -171,7 +174,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
       throw new Error('polkadotjs.noAccount');
     }
 
-    const json = await GDriveWallet.accounts.getAccount(this.accountLoginData.address);
+    const json = await GDriveWallet.accounts.getAccount(this.accountLoginData.address, password);
 
     if (!json) throw new Error('polkadotjs.noAccount');
 

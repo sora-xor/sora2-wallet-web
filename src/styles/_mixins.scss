@@ -306,6 +306,14 @@
       color: var(--s-color-base-content-secondary);
       font-size: 14px;
     }
+
+    &__create-account-desc {
+      color: var(--s-color-base-content-primary);
+      font-size: var(--s-font-size-extra-small);
+      font-weight: 300;
+      line-height: var(--s-line-height-base);
+      padding: 0 #{$basic-spacing-small};
+    }
   
     .el-textarea {
       &__inner {
