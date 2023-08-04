@@ -33,33 +33,35 @@
         </div>
       </file-uploader>
 
-      <s-card shadow="always" class="import-steps">
-        <div v-for="(text, index) in importSteps" :key="index" class="import-step">
-          <div class="import-step__count">{{ index + 1 }}</div>
-          <div class="import-step__text">{{ text }}</div>
-        </div>
-      </s-card>
+      <template v-if="jsonOnly">
+        <s-card shadow="always" class="import-steps">
+          <div v-for="(text, index) in importSteps" :key="index" class="import-step">
+            <div class="import-step__count">{{ index + 1 }}</div>
+            <div class="import-step__text">{{ text }}</div>
+          </div>
+        </s-card>
 
-      <div class="export-tutorial">
-        <div class="export-tutorial-title">{{ t('desktop.exportTutorialsText') }}</div>
-        <div class="export-tutorial-grid">
-          <a
-            v-for="{ logo, title, link } in Tutorials"
-            :key="title"
-            :href="link"
-            target="_blank"
-            rel="nofollow noopener noreferrer"
-            class="export-tutorial-grid-item"
-          >
-            <s-card shadow="always">
-              <div class="extension-tutorial">
-                <img class="extension-tutorial-logo" :src="logo" />
-                <span class="extension-tutorial-title">{{ title }}</span>
-              </div>
-            </s-card>
-          </a>
+        <div class="export-tutorial">
+          <div class="export-tutorial-title">{{ t('desktop.exportTutorialsText') }}</div>
+          <div class="export-tutorial-grid">
+            <a
+              v-for="{ logo, title, link } in Tutorials"
+              :key="title"
+              :href="link"
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+              class="export-tutorial-grid-item"
+            >
+              <s-card shadow="always">
+                <div class="extension-tutorial">
+                  <img class="extension-tutorial-logo" :src="logo" />
+                  <span class="extension-tutorial-title">{{ title }}</span>
+                </div>
+              </s-card>
+            </a>
+          </div>
         </div>
-      </div>
+      </template>
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
       <s-form :class="computedClasses" @submit.native.prevent="importAccount">
@@ -72,18 +74,17 @@
 
         <p v-if="!jsonOnly && !json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
 
-        <template v-if="!jsonOnly">
-          <password-input v-model="accountPassword" :disabled="loading" />
+        <password-input v-model="accountPassword" :disabled="loading" />
 
-          <template v-if="!json">
-            <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
-            <s-input
-              type="password"
-              :disabled="loading"
-              :placeholder="t('desktop.confirmPassword.placeholder')"
-              v-model="accountPasswordConfirm"
-            />
-          </template>
+        <template v-if="!json">
+          <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
+
+          <s-input
+            type="password"
+            :disabled="loading"
+            :placeholder="t('desktop.confirmPassword.placeholder')"
+            v-model="accountPasswordConfirm"
+          />
         </template>
 
         <s-button
@@ -179,7 +180,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   }
 
   get disabledImportStep(): boolean {
-    if (this.jsonOnly) return !(this.accountName && this.json);
+    if (this.jsonOnly) return !(this.accountName && this.json && this.accountPassword);
 
     return !(this.accountName && this.accountPassword) || (!this.json && !this.accountPasswordConfirm);
   }
@@ -213,6 +214,12 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
         if (!mnemonicValidate(this.mnemonicPhrase)) {
           throw new AppError({ key: 'desktop.errorMessages.mnemonic' });
         }
+
+        this.accountName = '';
+        this.readonlyAccountName = false;
+        this.json = null;
+        this.accountPassword = '';
+        this.accountPasswordConfirm = '';
 
         this.$emit('update:step', LoginStep.ImportCredentials);
       } catch (error) {
