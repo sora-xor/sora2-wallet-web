@@ -2,7 +2,7 @@ import { api } from '../../../api';
 import { formatSoraAddress } from '../../../util';
 
 import { BackupAccountCrypto } from './account';
-import { generateSeed } from './crypto';
+import { generateSeed, prepareSeed } from './crypto';
 import { BackupAccountType } from './types';
 
 import type { DecryptedBackupAccount, EncryptedBackupAccount } from './types';
@@ -12,16 +12,21 @@ export class BackupAccountMapper {
   public static getPairJson(encryptedAccount: EncryptedBackupAccount, password: string): Nullable<KeyringPair$Json> {
     const decryptedAccount = BackupAccountCrypto.decryptAccount(encryptedAccount, password);
 
-    if (decryptedAccount.json?.substrateJson) {
-      return JSON.parse(decryptedAccount.json.substrateJson) as KeyringPair$Json;
-    }
-
-    const suri = decryptedAccount.mnemonicPhrase || decryptedAccount.seed?.substrateSeed;
-
-    if (suri) {
-      const pair = api.createAccountPair(suri, decryptedAccount.name);
+    if (decryptedAccount.mnemonicPhrase) {
+      const pair = api.createAccountPair(decryptedAccount.mnemonicPhrase, decryptedAccount.name);
 
       return pair.toJson(password);
+    }
+
+    if (decryptedAccount.seed?.substrateSeed) {
+      const seed = prepareSeed(decryptedAccount.seed.substrateSeed);
+      const pair = api.createAccountPair(seed, decryptedAccount.name);
+
+      return pair.toJson(password);
+    }
+
+    if (decryptedAccount.json?.substrateJson) {
+      return JSON.parse(decryptedAccount.json.substrateJson) as KeyringPair$Json;
     }
 
     return null;
