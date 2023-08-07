@@ -1,4 +1,4 @@
-import { stringToU8a, u8aConcat, u8aToHex, hexToU8a, u8aFixLength, u8aToString } from '@polkadot/util';
+import { stringToU8a, u8aConcat, u8aToHex, hexToU8a, u8aFixLength, u8aToString, isHex } from '@polkadot/util';
 import {
   naclEncrypt,
   naclDecrypt,
@@ -54,4 +54,8 @@ export const generateSeed = (mnemonic: string) => {
   const seedBytes = mnemonicToMiniSecret(mnemonic);
 
   return toHex(seedBytes);
+};
+
+export const prepareSeed = (rawSeed: string) => {
+  return isHex(rawSeed) ? rawSeed : `0x${rawSeed}`;
 };
