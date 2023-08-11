@@ -213,10 +213,8 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
           throw new AppError({ key: 'desktop.errorMessages.mnemonic' });
         }
 
-        this.accountName = '';
         this.json = null;
-        this.accountPassword = '';
-        this.accountPasswordConfirm = '';
+        this.resetForm();
 
         this.$emit('update:step', LoginStep.ImportCredentials);
       } catch (error) {
@@ -228,14 +226,12 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
   async handleUploadJson(jsonFile: File): Promise<void> {
     this.withAppNotification(async () => {
-      if (!jsonFile) {
-        return;
-      }
+      if (!jsonFile) return;
 
       const parsedJson = await parseJson(jsonFile);
       const { address, encoded, encoding, meta = {} } = parsedJson;
 
-      if (!(address || encoded || encoding)) {
+      if (!(address && encoded && encoding)) {
         this.uploader.resetFileInput();
         throw new AppError({ key: 'desktop.errorMessages.jsonFields' });
       }
@@ -259,6 +255,11 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
       });
     }
 
+    this.resetForm();
+  }
+
+  private resetForm(): void {
+    this.accountName = '';
     this.accountPassword = '';
     this.accountPasswordConfirm = '';
   }
