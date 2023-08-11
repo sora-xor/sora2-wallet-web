@@ -35,6 +35,7 @@ import AccountCard from './AccountCard.vue';
 import type { PolkadotJsAccount } from '../../types/common';
 
 const ADDRESS_LENGTH = 24;
+const DEFAULT_NAME = '<unknown>';
 
 @Component({
   components: {
@@ -55,7 +56,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressM
   }
 
   get name(): string {
-    return (this.polkadotAccount || this.account).name;
+    return (this.polkadotAccount || this.account).name || DEFAULT_NAME;
   }
 
   get formattedAddress(): string {
