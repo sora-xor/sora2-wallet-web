@@ -93,12 +93,13 @@ import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
 export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMixin, TranslationMixin) {
   @state.account.address address!: string;
   @state.account.book book!: Book;
-  @state.account.source selectedExtension!: string;
-  @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.account.source private selectedExtension!: string;
+  @state.account.polkadotJsAccounts private polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
-  @mutation.account.removeAddressFromBook removeAddressFromBook!: (address: string) => void;
+  @mutation.account.removeAddressFromBook private removeAddressFromBook!: (address: string) => void;
 
-  @action.account.selectWallet selectWallet!: (extension: AppWallet) => Promise<void>;
+  @action.account.selectWallet private selectWallet!: (extension: AppWallet) => Promise<void>;
+  @action.account.resetSelectedWallet private resetSelectedWallet!: FnWithoutArgs;
 
   @Ref('bookRef') private readonly bookRef!: HTMLInputElement;
 
@@ -213,13 +214,14 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     await this.selectWallet(this.selectedExtension as AppWallet);
     this.extensionAccounts = (await this.getFormattedExtensionList(this.polkadotJsAccounts)).filter(this.filterRecord);
 
-    this.$root.$on('updateAddressBook', () => {
-      this.updateAddressBook();
-    });
+    this.$root.$on('updateAddressBook', this.updateAddressBook);
+    this.$root.$on('closePopover', this.closePopover);
+  }
 
-    this.$root.$on('closePopover', () => {
-      this.closePopover();
-    });
+  beforeDestroy(): void {
+    this.resetSelectedWallet();
+    this.$root.$off('updateAddressBook', this.updateAddressBook);
+    this.$root.$off('closePopover', this.closePopover);
   }
 }
 </script>

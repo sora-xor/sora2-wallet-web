@@ -103,14 +103,6 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
 }
 
 const actions = defineActions({
-  async getSigner(context): Promise<Signer> {
-    const { state } = accountActionContext(context);
-    const defaultAddress = api.formatAddress(state.address, false);
-    const { signer } = await getWalletSigner(defaultAddress, state.source as AppWallet);
-
-    return signer;
-  },
-
   async afterLogin(context): Promise<void> {
     const { dispatch } = accountActionContext(context);
     const { rootDispatch } = rootActionContext(context);
@@ -148,7 +140,7 @@ const actions = defineActions({
 
     if (getters.isLoggedIn) {
       try {
-        const signer = await dispatch.getSigner();
+        const signer = await getWalletSigner(state.source as AppWallet);
 
         if (state.isExternal) {
           api.setSigner(signer);
@@ -280,15 +272,14 @@ const actions = defineActions({
 
     if (isExternal) {
       // we should update signer
-      const { signer } = await getWalletSigner(defaultAddress, source);
+      const signer = await getWalletSigner(source);
       api.setSigner(signer);
-    } else if (state.isDesktop) {
-      // check that account is added to keyring
-      const accounts = await getImportedAccounts();
+    }
 
-      if (!accounts.find((acc) => acc.address === defaultAddress)) {
-        throw new Error('polkadotjs.noAccount');
-      }
+    const accounts = state.isDesktop ? await getImportedAccounts() : await getWalletAccounts(source);
+
+    if (!accounts.find((acc) => acc.address === defaultAddress)) {
+      throw new Error('polkadotjs.noAccount');
     }
 
     await api.loginAccount(defaultAddress, accountData.name, source, isExternal);

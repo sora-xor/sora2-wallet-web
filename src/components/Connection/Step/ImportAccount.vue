@@ -65,14 +65,12 @@
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
       <s-form :class="computedClasses" @submit.native.prevent="importAccount">
-        <s-input
-          :disabled="loading"
-          :placeholder="t('desktop.accountName.placeholder')"
-          :readonly="readonlyAccountName"
-          v-model="accountName"
-        ></s-input>
+        <wallet-account v-if="json" :polkadot-account="{ name: accountName, address: json.address }" />
+        <template v-else>
+          <s-input :disabled="loading" :placeholder="t('desktop.accountName.placeholder')" v-model="accountName" />
 
-        <p v-if="!jsonOnly && !json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+          <p v-if="!json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+        </template>
 
         <password-input v-model="accountPassword" :disabled="loading" />
 
@@ -111,6 +109,7 @@ import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 
 import { LoginStep } from '../../../consts';
 import { AppError, parseJson } from '../../../util';
+import WalletAccount from '../../Account/WalletAccount.vue';
 import FileUploader from '../../FileUploader.vue';
 import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -122,6 +121,7 @@ import type { KeyringPair$Json } from '../../../types/common';
   components: {
     FileUploader,
     PasswordInput,
+    WalletAccount,
   },
 })
 export default class ImportAccountStep extends Mixins(NotificationMixin) {
@@ -162,8 +162,6 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
   json: Nullable<KeyringPair$Json> = null;
 
-  readonlyAccountName = false;
-
   get title(): string {
     switch (this.step) {
       case LoginStep.Import:
@@ -180,9 +178,9 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   }
 
   get disabledImportStep(): boolean {
-    if (this.jsonOnly) return !(this.accountName && this.json && this.accountPassword);
+    if (this.json) return !this.accountPassword;
 
-    return !(this.accountName && this.accountPassword) || (!this.json && !this.accountPasswordConfirm);
+    return !(this.accountName && this.accountPassword && this.accountPasswordConfirm);
   }
 
   get computedClasses(): string {
@@ -215,11 +213,8 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
           throw new AppError({ key: 'desktop.errorMessages.mnemonic' });
         }
 
-        this.accountName = '';
-        this.readonlyAccountName = false;
         this.json = null;
-        this.accountPassword = '';
-        this.accountPasswordConfirm = '';
+        this.resetForm();
 
         this.$emit('update:step', LoginStep.ImportCredentials);
       } catch (error) {
@@ -231,20 +226,17 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
   async handleUploadJson(jsonFile: File): Promise<void> {
     this.withAppNotification(async () => {
-      if (!jsonFile) {
-        return;
-      }
+      if (!jsonFile) return;
 
       const parsedJson = await parseJson(jsonFile);
-      const { address, encoded, encoding, meta } = parsedJson;
+      const { address, encoded, encoding, meta = {} } = parsedJson;
 
-      if (!(address || encoded || encoding || meta)) {
+      if (!(address && encoded && encoding)) {
         this.uploader.resetFileInput();
         throw new AppError({ key: 'desktop.errorMessages.jsonFields' });
       }
 
-      this.accountName = meta.name as string;
-      this.readonlyAccountName = true;
+      this.accountName = (meta.name || '') as string;
       this.json = parsedJson;
       this.mnemonicPhrase = '';
       this.$emit('update:step', LoginStep.ImportCredentials);
@@ -263,6 +255,11 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
       });
     }
 
+    this.resetForm();
+  }
+
+  private resetForm(): void {
+    this.accountName = '';
     this.accountPassword = '';
     this.accountPasswordConfirm = '';
   }
@@ -378,6 +375,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
       border-style: solid;
       border-color: transparent;
       border-radius: var(--s-border-radius-small);
+      text-decoration: none;
 
       &:hover {
         border-color: var(--s-color-base-content-secondary);
