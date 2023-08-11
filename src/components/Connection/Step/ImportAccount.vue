@@ -374,6 +374,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
       border-style: solid;
       border-color: transparent;
       border-radius: var(--s-border-radius-small);
+      text-decoration: none;
 
       &:hover {
         border-color: var(--s-color-base-content-secondary);
