@@ -65,14 +65,17 @@
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
       <s-form :class="computedClasses" @submit.native.prevent="importAccount">
-        <s-input
-          :disabled="loading"
-          :placeholder="t('desktop.accountName.placeholder')"
-          :readonly="readonlyAccountName"
-          v-model="accountName"
-        ></s-input>
+        <wallet-account v-if="jsonOnly" :polkadot-account="{ name: accountName, address: json.address }" />
+        <template v-else>
+          <s-input
+            :disabled="loading"
+            :placeholder="t('desktop.accountName.placeholder')"
+            :readonly="readonlyAccountName"
+            v-model="accountName"
+          />
 
-        <p v-if="!jsonOnly && !json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+          <p v-if="!json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+        </template>
 
         <password-input v-model="accountPassword" :disabled="loading" />
 
@@ -111,6 +114,7 @@ import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 
 import { LoginStep } from '../../../consts';
 import { AppError, parseJson } from '../../../util';
+import WalletAccount from '../../Account/WalletAccount.vue';
 import FileUploader from '../../FileUploader.vue';
 import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -122,6 +126,7 @@ import type { KeyringPair$Json } from '../../../types/common';
   components: {
     FileUploader,
     PasswordInput,
+    WalletAccount,
   },
 })
 export default class ImportAccountStep extends Mixins(NotificationMixin) {
