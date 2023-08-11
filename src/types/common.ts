@@ -25,17 +25,15 @@ export type AddressKeyMapping = {
 /** `{ address: name }` */
 export type Book = Record<string, string>;
 
-export type AccountBook = {
-  address: string;
-  name: string;
-  identity?: string;
-};
-
 export interface PolkadotJsAccount {
   address: string;
   name: string;
   source?: AppWallet;
 }
+
+export type AccountBook = PolkadotJsAccount & {
+  identity?: string;
+};
 
 export interface Alert {
   token: string;

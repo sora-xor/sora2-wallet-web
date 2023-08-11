@@ -180,7 +180,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   }
 
   get disabledImportStep(): boolean {
-    if (this.jsonOnly) return !(this.accountName && this.json && this.accountPassword);
+    if (this.jsonOnly) return !(this.json && this.accountPassword);
 
     return !(this.accountName && this.accountPassword) || (!this.json && !this.accountPasswordConfirm);
   }
@@ -236,14 +236,14 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
       }
 
       const parsedJson = await parseJson(jsonFile);
-      const { address, encoded, encoding, meta } = parsedJson;
+      const { address, encoded, encoding, meta = {} } = parsedJson;
 
-      if (!(address || encoded || encoding || meta)) {
+      if (!(address || encoded || encoding)) {
         this.uploader.resetFileInput();
         throw new AppError({ key: 'desktop.errorMessages.jsonFields' });
       }
 
-      this.accountName = meta.name as string;
+      this.accountName = (meta.name || '') as string;
       this.readonlyAccountName = true;
       this.json = parsedJson;
       this.mnemonicPhrase = '';
