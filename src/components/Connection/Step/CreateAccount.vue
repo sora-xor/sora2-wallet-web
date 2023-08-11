@@ -82,6 +82,9 @@
           :placeholder="t('desktop.confirmPassword.placeholder')"
           v-model="accountPasswordConfirm"
         ></s-input>
+        <p v-if="!arePasswordsEqual" class="login__create-account-desc error">
+          {{ t('desktop.errorMessages.passwords') }}
+        </p>
 
         <div class="wallet-settings-create-token_export">
           <s-switch v-model="toExport" :disabled="loading" />
@@ -95,7 +98,7 @@
           class="s-typography-button--large login-btn"
           type="primary"
           native-type="submit"
-          :disabled="isInputsNotFilled"
+          :disabled="btnConfirmDisabled"
           :loading="loading"
         >
           {{ t('desktop.button.createAccount') }}
@@ -178,8 +181,16 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     return this.seedPhraseToCompare.length === this.PHRASE_LENGTH ? 'primary' : 'secondary';
   }
 
+  get btnConfirmDisabled(): boolean {
+    return this.isInputsNotFilled || !this.arePasswordsEqual;
+  }
+
   get isInputsNotFilled(): boolean {
     return !this.accountName || !this.accountPassword || !this.accountPasswordConfirm;
+  }
+
+  get arePasswordsEqual(): boolean {
+    return this.accountPassword === this.accountPasswordConfirm;
   }
 
   get seedPhrase(): string {

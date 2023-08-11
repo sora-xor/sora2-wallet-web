@@ -313,6 +313,8 @@
       font-weight: 300;
       line-height: var(--s-line-height-base);
       padding: 0 #{$basic-spacing-small};
+
+      @include status-color;
     }
   
     .el-textarea {
@@ -350,6 +352,14 @@
     font-size: calc(var(--s-size-small) / 2);
     text-align: center;
     padding: 0 50px;
+  }
+}
+
+@mixin status-color($prop: 'color') {
+  @each $status in ('success', 'info', 'warning', 'error') {
+    &.#{$status} {
+      #{$prop}: var(--s-color-status-#{$status});
+    }
   }
 }
 
