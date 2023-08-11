@@ -65,14 +65,9 @@
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
       <s-form :class="computedClasses" @submit.native.prevent="importAccount">
-        <wallet-account v-if="jsonOnly" :polkadot-account="{ name: accountName, address: json.address }" />
+        <wallet-account v-if="json" :polkadot-account="{ name: accountName, address: json.address }" />
         <template v-else>
-          <s-input
-            :disabled="loading"
-            :placeholder="t('desktop.accountName.placeholder')"
-            :readonly="readonlyAccountName"
-            v-model="accountName"
-          />
+          <s-input :disabled="loading" :placeholder="t('desktop.accountName.placeholder')" v-model="accountName" />
 
           <p v-if="!json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
         </template>
@@ -167,8 +162,6 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
   json: Nullable<KeyringPair$Json> = null;
 
-  readonlyAccountName = false;
-
   get title(): string {
     switch (this.step) {
       case LoginStep.Import:
@@ -185,9 +178,9 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   }
 
   get disabledImportStep(): boolean {
-    if (this.jsonOnly) return !(this.json && this.accountPassword);
+    if (this.json) return !this.accountPassword;
 
-    return !(this.accountName && this.accountPassword) || (!this.json && !this.accountPasswordConfirm);
+    return !(this.accountName && this.accountPassword && this.accountPasswordConfirm);
   }
 
   get computedClasses(): string {
@@ -221,7 +214,6 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
         }
 
         this.accountName = '';
-        this.readonlyAccountName = false;
         this.json = null;
         this.accountPassword = '';
         this.accountPasswordConfirm = '';
@@ -249,7 +241,6 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
       }
 
       this.accountName = (meta.name || '') as string;
-      this.readonlyAccountName = true;
       this.json = parsedJson;
       this.mnemonicPhrase = '';
       this.$emit('update:step', LoginStep.ImportCredentials);
