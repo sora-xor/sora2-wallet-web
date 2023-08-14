@@ -4,6 +4,7 @@
     border-radius="mini"
     icon="basic-more-vertical-24"
     class="account-actions"
+    popper-class="account-actions-menu"
     v-on="$listeners"
   >
     <template slot="menu">
@@ -11,9 +12,9 @@
         v-for="{ value, name, icon, status } in items"
         :key="value"
         :value="value"
-        :icon="icon"
         :class="['account-actions__item', status]"
       >
+        <s-icon :name="icon" size="16" />
         {{ name }}
       </s-dropdown-item>
     </template>
@@ -48,6 +49,21 @@ const ActionsData = {
     icon: 'paperclip-16',
     status: 'error',
   },
+  [AccountActionTypes.BookSend]: {
+    name: 'addressBook.options.send',
+    icon: 'finance-send-24',
+    status: '',
+  },
+  [AccountActionTypes.BookEdit]: {
+    name: 'addressBook.options.edit',
+    icon: 'el-icon-edit',
+    status: '',
+  },
+  [AccountActionTypes.BookDelete]: {
+    name: 'addressBook.options.delete',
+    icon: 'el-icon-delete',
+    status: '',
+  },
 };
 
 @Component
@@ -68,6 +84,14 @@ export default class AccountActionsMenu extends Mixins(NotificationMixin, Loadin
   }
 }
 </script>
+
+<style lang="scss">
+.account-actions-menu {
+  .s-icon-undefined {
+    display: none;
+  }
+}
+</style>
 
 <style lang="scss">
 .account-actions {

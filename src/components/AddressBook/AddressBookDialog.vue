@@ -10,35 +10,24 @@
         @clear="resetSearch"
       />
       <s-scrollbar class="address-book-scrollbar">
-        <div class="address-book__extension-list">
-          <span v-if="foundRecords(extensionAccounts).length" class="address-book__sections">
+        <div v-if="extensionAccountsFiltered.length" class="address-book__extension-list">
+          <span class="address-book__sections">
             {{ t('addressBook.myExtAccounts') }}
           </span>
-          <div v-for="({ address, name, identity }, index) in foundRecords(extensionAccounts)" :key="index">
-            <address-record :record="{ address, name, identity }" showIdentity @select-address="handleSelectAddress">
-              <options
-                :record="{ address, name }"
-                :withActiveOptions="false"
-                @edit="handleEditRecord"
-                @delete="handleDeleteRecord"
-                @select-address="handleSelectAddress"
-              />
+          <div v-for="(record, index) in extensionAccountsFiltered" :key="index">
+            <address-record :record="record" @click.native="handleSelectAddress(record)">
+              <s-button v-if="record.isConnected" size="small" disabled>
+                {{ t('connection.wallet.connected') }}
+              </s-button>
+              <account-actions-menu :actions="accountActions" @select="handleContactAction($event, record)" />
             </address-record>
           </div>
         </div>
-        <div class="address-book__list" ref="bookRef">
-          <span v-if="foundRecords(addressBook).length" class="address-book__sections">{{
-            t('addressBook.myBook')
-          }}</span>
-          <div v-for="({ address, name, identity }, index) in foundRecords(addressBook)" :key="index">
-            <address-record :record="{ address, name, identity }" showIdentity @select-address="handleSelectAddress">
-              <options
-                :record="{ address, name }"
-                :withActiveOptions="true"
-                @edit="handleEditRecord"
-                @delete="handleDeleteRecord"
-                @select-address="handleSelectAddress"
-              />
+        <div v-if="addressBookFiltered.length" class="address-book__list">
+          <span class="address-book__sections">{{ t('addressBook.myBook') }}</span>
+          <div v-for="(record, index) in addressBookFiltered" :key="index">
+            <address-record :record="record" @click.native="handleSelectAddress(record)">
+              <account-actions-menu :actions="contactActions" @select="handleContactAction($event, record)" />
             </address-record>
           </div>
         </div>
@@ -58,41 +47,37 @@
 
 <script lang="ts">
 import { api } from '@sora-substrate/util';
-import { Component, Mixins, Ref } from 'vue-property-decorator';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
 
-import { state, action, mutation } from '../../store/decorators';
-import { formatAddress, formatSoraAddress } from '../../util';
-import AccountCard from '../Account/AccountCard.vue';
-import WalletAccount from '../Account/WalletAccount.vue';
-import AccountList from '../Connection/AccountList.vue';
+import { AccountActionTypes } from '../../consts';
+import { state, action, mutation, getter } from '../../store/decorators';
+import { formatSoraAddress } from '../../util';
+import AccountActionsMenu from '../Account/ActionsMenu.vue';
 import DialogBase from '../DialogBase.vue';
 import SearchInput from '../Input/SearchInput.vue';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
-import WalletAvatar from '../WalletAvatar.vue';
 
 import AddressRecord from './AddressRecord.vue';
-import Options from './Options.vue';
 
 import type { AppWallet } from '../../consts';
 import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
 
+type AccountRecord = AccountBook & {
+  isConnected: boolean;
+};
+
 @Component({
   components: {
     DialogBase,
-    AccountCard,
-    AccountList,
+    AccountActionsMenu,
     AddressRecord,
-    Options,
-    WalletAvatar,
     SearchInput,
-    WalletAccount,
   },
 })
 export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMixin, TranslationMixin) {
-  @state.account.address address!: string;
-  @state.account.book book!: Book;
+  @state.account.book private book!: Book;
   @state.account.source private selectedExtension!: string;
   @state.account.polkadotJsAccounts private polkadotJsAccounts!: Array<PolkadotJsAccount>;
 
@@ -101,49 +86,85 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   @action.account.selectWallet private selectWallet!: (extension: AppWallet) => Promise<void>;
   @action.account.resetSelectedWallet private resetSelectedWallet!: FnWithoutArgs;
 
-  @Ref('bookRef') private readonly bookRef!: HTMLInputElement;
+  @getter.account.isConnectedAccount private isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
 
-  setContact(address: Nullable<string>, isEditMode = false): void {
-    this.$emit('open-add-contact', address, isEditMode);
+  readonly accountActions = [AccountActionTypes.BookSend];
+  readonly contactActions = [AccountActionTypes.BookSend, AccountActionTypes.BookEdit, AccountActionTypes.BookDelete];
+
+  identities: Record<string, string> = {};
+
+  @Watch('book')
+  private updateBookIdentities(book: Book) {
+    Object.keys(book).forEach((address) => this.updateIdentity(address));
   }
 
-  addressBook: Array<AccountBook> = [];
-  extensionAccounts: Array<AccountBook> = [];
+  @Watch('polkadotJsAccounts')
+  private updateAccountsIdentities(polkadotJsAccounts: Array<PolkadotJsAccount>) {
+    polkadotJsAccounts.forEach(({ address }) => this.updateIdentity(address));
+  }
 
   search = '';
 
-  async getIdentity(address: string): Promise<string> {
-    const entity = await api.getAccountOnChainIdentity(address);
-    if (!entity) return '';
+  get addressBook(): AccountRecord[] {
+    const accounts = Object.entries(this.book).map(([address, name]) => ({ address, name }));
 
-    return entity.legalName;
+    return this.prepareRecords(accounts);
   }
 
-  async getFormattedAddressBook(book: Book): Promise<AccountBook[]> {
-    return Promise.all(
-      Object.entries(book).map(async ([address, name]) => {
-        return {
-          address,
-          name,
-          identity: await this.getIdentity(address),
-        };
-      })
-    );
+  get addressBookFiltered() {
+    return this.foundRecords(this.addressBook);
   }
 
-  async getFormattedExtensionList(accounts: Array<PolkadotJsAccount>): Promise<AccountBook[]> {
-    return Promise.all(
-      accounts.map(async ({ address, name }) => {
-        return {
-          address: formatSoraAddress(address),
-          name,
-          identity: await this.getIdentity(address),
-        };
-      })
-    );
+  get extensionAccounts() {
+    return this.prepareRecords(this.polkadotJsAccounts);
   }
 
-  foundRecords(records: AccountBook[]) {
+  get extensionAccountsFiltered() {
+    return this.foundRecords(this.extensionAccounts);
+  }
+
+  get searchValue(): string {
+    return this.search ? this.search.trim().toLowerCase() : '';
+  }
+
+  get userHasContacts(): boolean {
+    return !!this.addressBook.length || !!this.extensionAccounts.length;
+  }
+
+  get showNoRecordsFound(): boolean {
+    return !(this.addressBookFiltered.length || this.extensionAccountsFiltered.length);
+  }
+
+  private async updateIdentity(address: string): Promise<void> {
+    const key = formatSoraAddress(address);
+
+    if (key in this.identities) return;
+
+    const entity = await api.getAccountOnChainIdentity(key);
+    const identity = entity ? entity.legalName : '';
+
+    this.identities[key] = identity;
+  }
+
+  private formatAccount(account: AccountBook): AccountRecord {
+    const soraAddress = formatSoraAddress(account.address);
+
+    return {
+      address: soraAddress,
+      name: account.name,
+      identity: this.identities[soraAddress],
+      isConnected: this.isConnectedAccount(account),
+    };
+  }
+
+  private prepareRecords(accounts: AccountBook[]): AccountRecord[] {
+    const records = accounts.map((account) => this.formatAccount(account));
+    const sorted = records.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
+
+    return sorted;
+  }
+
+  private foundRecords(records: AccountRecord[]) {
     if (!this.searchValue) return records;
 
     return records.filter(
@@ -154,74 +175,42 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     );
   }
 
-  get searchValue(): string {
-    return this.search ? this.search.trim().toLowerCase() : '';
-  }
-
-  getFormattedAddress(address: string): string {
-    return formatAddress(address);
-  }
-
-  get userHasContacts(): boolean {
-    return !!this.addressBook.length || !!this.extensionAccounts.length;
-  }
-
-  get showNoRecordsFound(): boolean {
-    return !(this.foundRecords(this.addressBook).length || this.foundRecords(this.extensionAccounts).length);
-  }
-
-  sortBookAlphabetically(book: AccountBook[]) {
-    return book.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
-  }
-
-  filterRecord(account: AccountBook): boolean {
-    return account.address !== this.address;
-  }
-
   resetSearch(): void {
     this.search = '';
   }
 
-  handleEditRecord(address: string): void {
-    const isEditMode = true;
-    this.setContact(address, isEditMode);
-    this.closePopover();
-  }
-
-  handleDeleteRecord(address: string): void {
-    this.removeAddressFromBook(address);
-    this.addressBook = this.addressBook.filter((record) => record.address !== address);
-    this.closePopover();
-  }
-
-  async updateAddressBook(): Promise<void> {
-    const formattedBook = (await this.getFormattedAddressBook(this.book)).filter(this.filterRecord);
-    this.addressBook = this.sortBookAlphabetically(formattedBook);
-  }
-
-  closePopover(): void {
-    if (this.bookRef) this.bookRef.click();
-  }
-
-  handleSelectAddress(address: string, name: string): void {
-    this.$emit('choose-address', address, name);
-    this.closePopover();
+  handleSelectAddress(record: AccountBook): void {
+    this.$emit('choose-address', record);
     this.closeDialog();
   }
 
-  async mounted(): Promise<void> {
-    await this.updateAddressBook();
-    await this.selectWallet(this.selectedExtension as AppWallet);
-    this.extensionAccounts = (await this.getFormattedExtensionList(this.polkadotJsAccounts)).filter(this.filterRecord);
+  handleContactAction(actionType: string, { address, name }: AccountBook): void {
+    switch (actionType) {
+      case AccountActionTypes.BookSend: {
+        this.handleSelectAddress({ address, name });
+        break;
+      }
+      case AccountActionTypes.BookEdit: {
+        this.setContact(address, true);
+        break;
+      }
+      case AccountActionTypes.BookDelete: {
+        this.removeAddressFromBook(address);
+        break;
+      }
+    }
+  }
 
-    this.$root.$on('updateAddressBook', this.updateAddressBook);
-    this.$root.$on('closePopover', this.closePopover);
+  setContact(address: Nullable<string>, isEditMode = false): void {
+    this.$emit('open-add-contact', address, isEditMode);
+  }
+
+  async mounted(): Promise<void> {
+    await this.selectWallet(this.selectedExtension as AppWallet);
   }
 
   beforeDestroy(): void {
     this.resetSelectedWallet();
-    this.$root.$off('updateAddressBook', this.updateAddressBook);
-    this.$root.$off('closePopover', this.closePopover);
   }
 }
 </script>

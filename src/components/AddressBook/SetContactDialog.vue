@@ -16,7 +16,6 @@
         :disabled="inputDisabled"
         @input="defineIdentity"
       />
-      <p v-if="isAccountAddress" class="set-address-error">{{ t('walletSend.addressError') }}</p>
       <template v-if="validAddress && isNotSoraAddress">
         <p class="wallet-send-address-warning">{{ t('addressBook.notSoraAddress') }}</p>
         <s-tooltip :content="copyValueAssetId" placement="top">
@@ -91,7 +90,6 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
 
   setContact(): void {
     this.setAddressToBook({ address: formatSoraAddress(this.address), name: this.name });
-    this.$root.$emit('updateAddressBook');
     this.closeDialog();
     this.$emit('open-address-book');
   }
@@ -129,13 +127,7 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   }
 
   get btnDisabled(): boolean {
-    if (
-      !this.validAddress ||
-      !this.address ||
-      !this.name ||
-      this.isAccountAddress ||
-      this.isAddressAdded(this.address)
-    ) {
+    if (!this.validAddress || !this.address || !this.name || this.isAddressAdded(this.address)) {
       if (this.isEditMode && this.name) return false;
 
       return true;
@@ -162,10 +154,6 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
     return !this.address.trim();
   }
 
-  get isAccountAddress(): boolean {
-    return [this.address, this.formattedSoraAddress].includes(this.account.address);
-  }
-
   get formattedSoraAddress(): string {
     if (this.emptyAddress) {
       return '';
@@ -181,7 +169,7 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
     if (this.emptyAddress) {
       return false;
     }
-    return api.validateAddress(this.address) && !this.isAccountAddress;
+    return api.validateAddress(this.address);
   }
 }
 </script>

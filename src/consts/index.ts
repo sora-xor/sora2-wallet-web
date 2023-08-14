@@ -14,10 +14,15 @@ export enum AppWallet {
 }
 
 export enum AccountActionTypes {
+  // Account
   Rename = 'rename',
   Export = 'export',
   Logout = 'logout',
   Delete = 'delete',
+  // Book
+  BookSend = 'bookSend',
+  BookEdit = 'bookEdit',
+  BookDelete = 'bookDelete',
 }
 
 export enum RouteNames {

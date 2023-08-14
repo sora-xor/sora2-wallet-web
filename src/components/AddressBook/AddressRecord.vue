@@ -1,9 +1,5 @@
 <template>
-  <wallet-account
-    :polkadot-account="record"
-    class="address-book__contact"
-    @click.native="handleSelectAddress(record.address, record.name)"
-  >
+  <wallet-account :polkadot-account="record" class="address-book__contact">
     <s-tooltip border-radius="mini" :content="t('addressBook.identity')" placement="top" tabindex="-1">
       <div v-if="record.identity" class="address-book__on-chain-name">
         {{ record.identity }}
@@ -31,18 +27,6 @@ import type { AccountBook } from '../../types/common';
 })
 export default class Address extends Mixins(TranslationMixin, CopyAddressMixin) {
   @Prop({ default: { name: '', address: '', identity: '' }, type: Object }) readonly record!: AccountBook;
-
-  unlinkAddress(): void {
-    this.$emit('unlink-address');
-  }
-
-  openAddressBook(): void {
-    this.$emit('open-address-book');
-  }
-
-  handleSelectAddress(address: string, name: string): void {
-    this.$emit('select-address', address, name);
-  }
 }
 </script>
 
