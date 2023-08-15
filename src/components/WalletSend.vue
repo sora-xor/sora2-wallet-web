@@ -9,7 +9,7 @@
   >
     <div class="wallet-send">
       <template v-if="step === 1">
-        <address-book-input v-model="address" class="wallet-send-address" />
+        <address-book-input v-model="address" exclude-connected class="wallet-send-address" />
 
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
