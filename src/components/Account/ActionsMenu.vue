@@ -86,6 +86,7 @@ export default class AccountActionsMenu extends Mixins(NotificationMixin, Loadin
 </script>
 
 <style lang="scss">
+// [UI LIB 1.0.46] remove after ui lib update
 .account-actions-menu {
   .s-icon-undefined {
     display: none;

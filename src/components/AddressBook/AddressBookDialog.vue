@@ -1,5 +1,5 @@
 <template>
-  <dialog-base :title="t('addressBook.dialogTitle')" :visible.sync="isVisible">
+  <dialog-base :title="t('addressBook.dialogTitle')" :visible.sync="isVisible" append-to-body>
     <template v-if="userHasContacts">
       <search-input
         autofocus

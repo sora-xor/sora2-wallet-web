@@ -5,7 +5,15 @@
       <s-icon class="book-icon-open is-set" name="basic-user-24" size="18" @click.native="openAddressBook" />
     </address-record>
 
-    <s-input v-else :maxlength="128" :placeholder="t('walletSend.address')" v-model="address">
+    <s-input
+      v-else
+      v-model="address"
+      v-bind="{
+        maxlength: 128,
+        placeholder: t('walletSend.address'),
+        ...$attrs,
+      }"
+    >
       <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" slot="right" />
     </s-input>
 
@@ -49,6 +57,7 @@ import type { AppWallet } from '../../consts';
 import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
 
 @Component({
+  inheritAttrs: false,
   components: {
     AddressRecord,
     AddressBookDialog,

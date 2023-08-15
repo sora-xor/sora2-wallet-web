@@ -1,5 +1,5 @@
 <template>
-  <dialog-base :title="title" :visible.sync="isVisible" :tooltip="tooltip">
+  <dialog-base :title="title" :visible.sync="isVisible" :tooltip="tooltip" append-to-body>
     <div class="set-address">
       <s-input
         ref="address"
