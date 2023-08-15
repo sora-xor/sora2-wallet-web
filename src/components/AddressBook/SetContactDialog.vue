@@ -214,7 +214,6 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
 
   &__btn {
     width: 100%;
-    margin-bottom: calc($basic-spacing * 2);
     .el-button {
       width: 100%;
     }

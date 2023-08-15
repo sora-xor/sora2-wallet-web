@@ -1,6 +1,6 @@
 <template>
   <dialog-base :title="t('addressBook.dialogTitle')" :visible.sync="isVisible">
-    <div v-if="userHasContacts">
+    <template v-if="userHasContacts">
       <search-input
         autofocus
         v-model="search"
@@ -32,13 +32,11 @@
           {{ t('addressBook.noFoundRecords') }}
         </div>
       </s-scrollbar>
-    </div>
+    </template>
     <div v-else class="address-book__no-contacts">{{ t('addressBook.noContacts') }}</div>
-    <div class="address-book__btn">
-      <s-button @click="setContact(null)" class="s-typography-button--large">
-        {{ t('addressBook.addContact') }}
-      </s-button>
-    </div>
+    <s-button @click="setContact(null)" class="address-book__btn s-typography-button--large">
+      {{ t('addressBook.addContact') }}
+    </s-button>
   </dialog-base>
 </template>
 
@@ -214,7 +212,6 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   &__btn {
     width: 100%;
     margin-top: calc($basic-spacing * 2);
-    margin-bottom: calc($basic-spacing * 2);
     .el-button {
       width: 100%;
     }
