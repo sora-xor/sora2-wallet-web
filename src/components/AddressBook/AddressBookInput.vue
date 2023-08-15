@@ -11,10 +11,14 @@
       v-bind="{
         maxlength: 128,
         placeholder: t('walletSend.address'),
+        borderRadius: 'medium',
         ...$attrs,
       }"
     >
-      <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" slot="right" />
+      <template #right>
+        <s-icon v-if="address" class="book-icon-unlink" name="el-icon-close" size="20" @click.native="unlinkAddress" />
+        <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
+      </template>
     </s-input>
 
     <div v-if="newAddressDetected" class="new-address">
@@ -47,6 +51,7 @@ import { Component, Mixins, ModelSync, Prop } from 'vue-property-decorator';
 
 import { mutation, state } from '../../store/decorators';
 import { formatSoraAddress, subscribeToWalletAccounts } from '../../util';
+import SearchInput from '../Input/SearchInput.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 
 import AddressBookDialog from './AddressBookDialog.vue';
@@ -59,6 +64,7 @@ import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
 @Component({
   inheritAttrs: false,
   components: {
+    SearchInput,
     AddressRecord,
     AddressBookDialog,
     SetContactDialog,
@@ -190,10 +196,6 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   &:hover {
     cursor: pointer;
     background: var(--s-color-base-content-secondary);
-  }
-
-  &.is-set {
-    margin-right: 3px;
   }
 }
 
