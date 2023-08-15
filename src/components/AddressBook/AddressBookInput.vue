@@ -2,7 +2,7 @@
   <div class="address-input">
     <address-record v-if="record" :record="record">
       <s-icon class="book-icon-unlink" name="el-icon-close" size="20" @click.native="unlinkAddress" />
-      <s-icon class="book-icon-open is-set" name="basic-user-24" size="18" @click.native="openAddressBook" />
+      <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
     </address-record>
 
     <s-input
