@@ -20,12 +20,6 @@ exports[`WalletSend.vue [Confirm Step]: should be rendered correctly 1`] = `
     <wallet-fee-stub
       value="0"
     />
-     
-    <address-book-dialog-stub />
-     
-    <set-contact-dialog-stub
-      prefilledaddress=""
-    />
   </div>
 </wallet-base-stub>
 `;
@@ -41,33 +35,11 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
   <div
     class="wallet-send"
   >
-    <s-input-stub
-      accept=""
-      autocomplete="off"
-      borderradius="small"
+    <address-book-input-stub
       class="wallet-send-address"
-      form=""
-      label=""
-      maxlength="128"
-      name=""
-      placeholder="Address"
-      prefix=""
-      rows="2"
-      size="big"
-      suffix=""
-      tabindex="0"
-      type="text"
-      usedesignsystem="true"
+      excludeconnected="true"
       value=""
-    >
-      <s-icon-stub
-        class="wallet-send-address-book-icon-open"
-        name="basic-user-24"
-        size="18"
-      />
-    </s-input-stub>
-     
-    <!---->
+    />
      
     <!---->
      
@@ -208,12 +180,6 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
     <wallet-fee-stub
       value="0"
     />
-     
-    <address-book-dialog-stub />
-     
-    <set-contact-dialog-stub
-      prefilledaddress=""
-    />
   </div>
 </wallet-base-stub>
 `;
@@ -229,33 +195,11 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
   <div
     class="wallet-send"
   >
-    <s-input-stub
-      accept=""
-      autocomplete="off"
-      borderradius="small"
+    <address-book-input-stub
       class="wallet-send-address"
-      form=""
-      label=""
-      maxlength="128"
-      name=""
-      placeholder="Address"
-      prefix=""
-      rows="2"
-      size="big"
-      suffix=""
-      tabindex="0"
-      type="text"
-      usedesignsystem="true"
+      excludeconnected="true"
       value="12345"
-    >
-      <s-icon-stub
-        class="wallet-send-address-book-icon-open"
-        name="basic-user-24"
-        size="18"
-      />
-    </s-input-stub>
-     
-    <!---->
+    />
      
     <!---->
      
@@ -396,12 +340,6 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
     <wallet-fee-stub
       value="0"
     />
-     
-    <address-book-dialog-stub />
-     
-    <set-contact-dialog-stub
-      prefilledaddress=""
-    />
   </div>
 </wallet-base-stub>
 `;
@@ -417,31 +355,11 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
   <div
     class="wallet-send"
   >
-    <s-input-stub
-      accept=""
-      autocomplete="off"
-      borderradius="small"
+    <address-book-input-stub
       class="wallet-send-address"
-      form=""
-      label=""
-      maxlength="128"
-      name=""
-      placeholder="Address"
-      prefix=""
-      rows="2"
-      size="big"
-      suffix=""
-      tabindex="0"
-      type="text"
-      usedesignsystem="true"
+      excludeconnected="true"
       value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
-    >
-      <s-icon-stub
-        class="wallet-send-address-book-icon-open"
-        name="basic-user-24"
-        size="18"
-      />
-    </s-input-stub>
+    />
      
     <p
       class="wallet-send-address-warning"
@@ -471,8 +389,6 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
           
       </p>
     </s-tooltip-stub>
-     
-    <!---->
      
     <!---->
      
@@ -611,12 +527,6 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
     <wallet-fee-stub
       value="0"
     />
-     
-    <address-book-dialog-stub />
-     
-    <set-contact-dialog-stub
-      prefilledaddress=""
-    />
   </div>
 </wallet-base-stub>
 `;
@@ -632,31 +542,11 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
   <div
     class="wallet-send"
   >
-    <s-input-stub
-      accept=""
-      autocomplete="off"
-      borderradius="small"
+    <address-book-input-stub
       class="wallet-send-address"
-      form=""
-      label=""
-      maxlength="128"
-      name=""
-      placeholder="Address"
-      prefix=""
-      rows="2"
-      size="big"
-      suffix=""
-      tabindex="0"
-      type="text"
-      usedesignsystem="true"
+      excludeconnected="true"
       value="dfsakljfdlkjfhfkjladshslfjafds"
-    >
-      <s-icon-stub
-        class="wallet-send-address-book-icon-open"
-        name="basic-user-24"
-        size="18"
-      />
-    </s-input-stub>
+    />
      
     <!---->
      
@@ -665,8 +555,6 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
     >
       You cannot send tokens to the same acount that you are currently connected to.
     </p>
-     
-    <!---->
      
     <s-float-input-stub
       class="wallet-send-input"
@@ -802,12 +690,6 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
      
     <wallet-fee-stub
       value="0"
-    />
-     
-    <address-book-dialog-stub />
-     
-    <set-contact-dialog-stub
-      prefilledaddress=""
     />
   </div>
 </wallet-base-stub>
