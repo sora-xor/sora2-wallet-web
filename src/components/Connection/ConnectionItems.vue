@@ -45,11 +45,11 @@ $item-height: 60px;
 
       &.s-card.neumorphic {
         border-width: 1px;
-      }
 
-      &:hover {
-        cursor: pointer;
-        border-color: var(--s-color-base-content-secondary) !important;
+        &:hover {
+          cursor: pointer;
+          border-color: var(--s-color-base-content-secondary);
+        }
       }
 
       a.connection-action {

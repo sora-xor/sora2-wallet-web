@@ -75,14 +75,14 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly excludeConnected!: boolean;
   @Prop({ default: '', type: String }) readonly value!: string;
 
+  @Watch('books')
   @Watch('isValidAddress')
-  private updateName(isValid: boolean) {
-    if (!isValid) {
+  private updateName(): void {
+    if (!this.isValidAddress) {
       this.name = '';
     } else if (!this.name) {
-      const books = { ...this.accountBook, ...this.addressBook };
       const key = formatSoraAddress(this.address);
-      this.name = books[key] || '';
+      this.name = this.books[key] || '';
     }
   }
 
@@ -116,6 +116,10 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
         [key]: name,
       };
     }, {});
+  }
+
+  get books(): Book {
+    return { ...this.accountBook, ...this.addressBook };
   }
 
   get bookRecords(): PolkadotJsAccount[] {
@@ -178,7 +182,6 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     if (this.accountsSubscription) {
       this.accountsSubscription();
       this.accountsSubscription = null;
-      this.accountsRecords = [];
     }
   }
 }

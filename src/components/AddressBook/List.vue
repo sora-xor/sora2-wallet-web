@@ -233,13 +233,13 @@ export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixi
 
   &__list {
     &-item {
-      &.s-card.neumorphic {
+      &.account-card.s-card.neumorphic {
         border-width: 1px;
-      }
 
-      &:hover {
-        cursor: pointer;
-        border-color: var(--s-color-base-content-secondary);
+        &:hover {
+          cursor: pointer;
+          border-color: var(--s-color-base-content-secondary);
+        }
       }
 
       & + & {
