@@ -20,6 +20,7 @@
             with-identity
             :polkadot-account="record"
             @click.native="selectRecord(record)"
+            @identity="updateIdentity($event, record.address)"
             class="address-book__list-item"
           >
             <account-actions-menu :actions="accountActions" @select="handleContactAction($event, record)" />
@@ -63,7 +64,7 @@ import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 
-import type { AccountBook, PolkadotJsAccount } from '../../types/common';
+import type { PolkadotJsAccount } from '../../types/common';
 
 @Component({
   components: {
@@ -73,7 +74,7 @@ import type { AccountBook, PolkadotJsAccount } from '../../types/common';
     SearchInput,
   },
 })
-export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMixin, TranslationMixin) {
+export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixin, TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly accounts!: PolkadotJsAccount[];
   @Prop({ default: () => [], type: Array }) readonly records!: PolkadotJsAccount[];
   @Prop({ default: '', type: String }) readonly excludedAddress!: string;
@@ -82,24 +83,25 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
   readonly contactActions = [AccountActionTypes.BookSend, AccountActionTypes.BookEdit, AccountActionTypes.BookDelete];
 
   search = '';
+  identities: Record<string, string> = {};
 
   get searchValue(): string {
     return this.search ? this.search.trim().toLowerCase() : '';
   }
 
-  get addressBook(): AccountBook[] {
-    return this.prepareRecords(this.records);
+  get addressBook(): PolkadotJsAccount[] {
+    return this.prepareRecords(this.records, this.identities);
   }
 
-  get addressBookFiltered(): AccountBook[] {
+  get addressBookFiltered(): PolkadotJsAccount[] {
     return this.foundRecords(this.addressBook);
   }
 
-  get accountBook(): AccountBook[] {
-    return this.prepareRecords(this.accounts);
+  get accountBook(): PolkadotJsAccount[] {
+    return this.prepareRecords(this.accounts, this.identities);
   }
 
-  get accountBookFiltered(): AccountBook[] {
+  get accountBookFiltered(): PolkadotJsAccount[] {
     return this.foundRecords(this.accountBook);
   }
 
@@ -111,24 +113,26 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     return !(this.addressBookFiltered.length || this.accountBookFiltered.length);
   }
 
-  private formatAccount(account: PolkadotJsAccount): AccountBook {
-    const soraAddress = formatSoraAddress(account.address);
+  private formatAccount(account: PolkadotJsAccount, identities: Record<string, string>): PolkadotJsAccount {
+    const address = formatSoraAddress(account.address);
+    const identity = identities[address];
 
     return {
-      address: soraAddress,
+      address,
       name: account.name,
+      identity,
     };
   }
 
-  private prepareRecords(accounts: PolkadotJsAccount[]): AccountBook[] {
-    const records = accounts.map((account) => this.formatAccount(account));
+  private prepareRecords(accounts: PolkadotJsAccount[], identities: Record<string, string>): PolkadotJsAccount[] {
+    const records = accounts.map((account) => this.formatAccount(account, identities));
     const filtered = records.filter((record) => record.address !== this.excludedAddress);
     const sorted = filtered.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
 
     return sorted;
   }
 
-  private foundRecords(records: AccountBook[]): AccountBook[] {
+  private foundRecords(records: PolkadotJsAccount[]): PolkadotJsAccount[] {
     if (!this.searchValue) return records;
 
     return records.filter(
@@ -143,7 +147,7 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     this.search = '';
   }
 
-  selectRecord(record: AccountBook): void {
+  selectRecord(record: PolkadotJsAccount): void {
     this.$emit('select', record);
     this.closeDialog();
   }
@@ -156,7 +160,11 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     this.$emit('remove', address);
   }
 
-  handleContactAction(actionType: string, { address, name }: AccountBook): void {
+  updateIdentity(identity: string, address: string): void {
+    this.identities = { ...this.identities, [address]: identity };
+  }
+
+  handleContactAction(actionType: string, { address, name }: PolkadotJsAccount): void {
     switch (actionType) {
       case AccountActionTypes.BookSend: {
         this.selectRecord({ address, name });

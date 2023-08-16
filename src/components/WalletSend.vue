@@ -129,7 +129,7 @@ import { RouteNames } from '../consts';
 import { state, mutation, action } from '../store/decorators';
 import { formatAddress, formatSoraAddress } from '../util';
 
-import AddressBookInput from './AddressBook/AddressBookInput.vue';
+import AddressBookInput from './AddressBook/Input.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import CopyAddressMixin from './mixins/CopyAddressMixin';

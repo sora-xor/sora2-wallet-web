@@ -39,7 +39,7 @@ import debounce from 'lodash/fp/debounce';
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
 import { api } from '../../api';
-import { formatSoraAddress } from '../../util';
+import { formatSoraAddress, getAccountIdentity } from '../../util';
 import DialogBase from '../DialogBase.vue';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
@@ -53,7 +53,7 @@ import type { Book, PolkadotJsAccount } from '../../types/common';
     DialogBase,
   },
 })
-export default class SetContactDialog extends Mixins(DialogMixin, TranslationMixin, LoadingMixin, CopyAddressMixin) {
+export default class AddressBookContact extends Mixins(DialogMixin, TranslationMixin, LoadingMixin, CopyAddressMixin) {
   @Prop({ default: () => ({}), type: Object }) readonly book!: Book;
   @Prop({ default: () => [], type: Array }) readonly accounts!: PolkadotJsAccount[];
   @Prop({ default: '', type: String }) readonly prefilledAddress!: string;
@@ -85,19 +85,13 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   defineIdentity = debounce(500)(this.getIdentity);
 
   setContact(): void {
-    const record = { address: formatSoraAddress(this.address), name: this.name };
+    const record = { address: this.formattedSoraAddress, name: this.name };
     this.$emit('add', record);
     this.closeDialog();
   }
 
   async getIdentity(address: string): Promise<void> {
-    if (!api.validateAddress(address)) {
-      this.onChainIdentity = this.t('addressBook.none');
-      return;
-    }
-
-    const entity = await api.getAccountOnChainIdentity(address);
-    this.onChainIdentity = entity ? entity.legalName : this.t('addressBook.none');
+    this.onChainIdentity = await getAccountIdentity(address, this.t('addressBook.none'));
   }
 
   get title(): string {
@@ -140,9 +134,7 @@ export default class SetContactDialog extends Mixins(DialogMixin, TranslationMix
   }
 
   get isAddressAdded(): boolean {
-    const found = this.accounts.find(
-      (account) => formatSoraAddress(account.address) === formatSoraAddress(this.address)
-    );
+    const found = this.accounts.find((account) => formatSoraAddress(account.address) === this.formattedSoraAddress);
     return !!this.book[this.address] || Boolean(found);
   }
 

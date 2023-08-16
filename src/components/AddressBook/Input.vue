@@ -21,12 +21,12 @@
       </template>
     </s-input>
 
-    <div v-if="newAddressDetected" class="new-address">
+    <div v-if="isNewAddress" class="new-address">
       <span class="new-address-msg">{{ t('addressBook.detected') }}</span>
       <span class="new-address-save" @click="openContact(address)">{{ t('addressBook.save') }}</span>
     </div>
 
-    <address-book-dialog
+    <address-book-list
       :visible.sync="showAddressBookDialog"
       :accounts="accountsRecords"
       :records="bookRecords"
@@ -35,7 +35,7 @@
       @select="chooseRecord"
       @remove="removeAddressFromBook"
     />
-    <set-contact-dialog
+    <address-book-contact
       :accounts="accountsRecords"
       :book="addressBook"
       :prefilled-address="prefilledAddress"
@@ -56,19 +56,19 @@ import WalletAccount from '../Account/WalletAccount.vue';
 import SearchInput from '../Input/SearchInput.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 
-import AddressBookDialog from './AddressBookDialog.vue';
-import SetContactDialog from './SetContactDialog.vue';
+import AddressBookContact from './Contact.vue';
+import AddressBookList from './List.vue';
 
 import type { AppWallet } from '../../consts';
-import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
+import type { Book, PolkadotJsAccount } from '../../types/common';
 
 @Component({
   inheritAttrs: false,
   components: {
     SearchInput,
     WalletAccount,
-    AddressBookDialog,
-    SetContactDialog,
+    AddressBookList,
+    AddressBookContact,
   },
 })
 export default class AddressBookInput extends Mixins(TranslationMixin) {
@@ -96,7 +96,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   @state.account.book private addressBook!: Book;
   @state.account.source private source!: AppWallet;
 
-  @mutation.account.setAddressToBook setAddressToBook!: (record: AccountBook) => void;
+  @mutation.account.setAddressToBook setAddressToBook!: (record: PolkadotJsAccount) => void;
   @mutation.account.removeAddressFromBook removeAddressFromBook!: (address: string) => void;
 
   showAddressBookDialog = false;
@@ -122,7 +122,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     return Object.entries(this.addressBook).map(([address, name]) => ({ address, name }));
   }
 
-  get newAddressDetected(): boolean {
+  get isNewAddress(): boolean {
     if (!this.address) return false;
 
     try {
@@ -143,7 +143,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     return api.validateAddress(this.address);
   }
 
-  get record(): Nullable<AccountBook> {
+  get record(): Nullable<PolkadotJsAccount> {
     const { address, name, isValidAddress } = this;
 
     return isValidAddress && name ? { address, name } : null;
@@ -153,7 +153,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     this.showAddressBookDialog = true;
   }
 
-  chooseRecord({ name, address }: AccountBook): void {
+  chooseRecord({ name, address }: PolkadotJsAccount): void {
     this.address = address;
     this.name = name;
   }

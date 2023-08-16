@@ -3,7 +3,7 @@ import { api, connection } from './api';
 import AccountCard from './components/Account/AccountCard.vue';
 import WalletAccount from './components/Account/WalletAccount.vue';
 import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
-import AddressBookInput from './components/AddressBook/AddressBookInput.vue';
+import AddressBookInput from './components/AddressBook/Input.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
 import ConfirmDialog from './components/ConfirmDialog.vue';

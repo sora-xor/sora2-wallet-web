@@ -243,10 +243,6 @@ const actions = defineActions({
       dispatch.checkSigner();
     };
 
-    const accounts = await getWalletAccounts(wallet);
-
-    callback(accounts);
-
     const subscription = await subscribeToWalletAccounts(wallet, callback);
 
     commit.setWalletAccountsSubscription(subscription);
