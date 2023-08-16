@@ -1,7 +1,7 @@
 <template>
   <div class="address-input">
     <address-record v-if="record" :record="record">
-      <s-icon class="book-icon-unlink" name="el-icon-close" size="20" @click.native="unlinkAddress" />
+      <s-icon class="book-icon-unlink" name="el-icon-close" size="20" @click.native="resetAddress" />
       <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
     </address-record>
 
@@ -16,7 +16,7 @@
       }"
     >
       <template #right>
-        <s-icon v-if="address" class="book-icon-unlink" name="el-icon-close" size="20" @click.native="unlinkAddress" />
+        <s-icon v-if="address" class="book-icon-unlink" name="el-icon-close" size="20" @click.native="resetAddress" />
         <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
       </template>
     </s-input>
@@ -32,12 +32,12 @@
       :records="bookRecords"
       :excluded-address="excludedAddress"
       @open="openContact"
-      @select="chooseAddress"
+      @select="chooseRecord"
       @remove="removeAddressFromBook"
     />
     <set-contact-dialog
       :accounts="accountsRecords"
-      :book="book"
+      :book="addressBook"
       :prefilled-address="prefilledAddress"
       :is-edit-mode="isEditMode"
       :visible.sync="showSetContactDialog"
@@ -47,8 +47,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, ModelSync, Prop } from 'vue-property-decorator';
+import { Component, Mixins, ModelSync, Prop, Watch } from 'vue-property-decorator';
 
+import { api } from '../../api';
 import { mutation, state } from '../../store/decorators';
 import { formatSoraAddress, subscribeToWalletAccounts } from '../../util';
 import SearchInput from '../Input/SearchInput.vue';
@@ -72,12 +73,27 @@ import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
 })
 export default class AddressBookInput extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly excludeConnected!: boolean;
+  @Prop({ default: '', type: String }) readonly value!: string;
+
+  @Watch('isValidAddress')
+  private updateName(isValid: boolean) {
+    if (!isValid) {
+      this.name = '';
+    } else if (!this.name) {
+      const books = { ...this.accountBook, ...this.addressBook };
+      const key = formatSoraAddress(this.address);
+      this.name = books[key] || '';
+    }
+  }
 
   @ModelSync('value', 'input', { default: '', type: String })
-  readonly address!: string;
+  address!: string;
+
+  name = '';
+  prefilledAddress = '';
 
   @state.account.address private connected!: string;
-  @state.account.book private book!: Book;
+  @state.account.book private addressBook!: Book;
   @state.account.source private source!: AppWallet;
 
   @mutation.account.setAddressToBook setAddressToBook!: (record: AccountBook) => void;
@@ -88,14 +104,22 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
 
   isEditMode = false;
 
-  prefilledAddress = '';
-  record: Nullable<AccountBook> = null;
-
   accountsSubscription: Nullable<any> = null;
   accountsRecords: PolkadotJsAccount[] = [];
 
+  get accountBook(): Book {
+    return this.accountsRecords.reduce((book, { address, name }) => {
+      const key = formatSoraAddress(address);
+
+      return {
+        ...book,
+        [key]: name,
+      };
+    }, {});
+  }
+
   get bookRecords(): PolkadotJsAccount[] {
-    return Object.entries(this.book).map(([address, name]) => ({ address, name }));
+    return Object.entries(this.addressBook).map(([address, name]) => ({ address, name }));
   }
 
   get newAddressDetected(): boolean {
@@ -105,7 +129,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
       const formattedAddress = formatSoraAddress(this.address);
       const found = this.accountsRecords.find((account) => formatSoraAddress(account.address) === formattedAddress);
 
-      return !this.book[formattedAddress] && !found;
+      return !this.addressBook[formattedAddress] && !found;
     } catch {
       return false;
     }
@@ -115,17 +139,23 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     return this.excludeConnected ? this.connected : '';
   }
 
+  get isValidAddress(): boolean {
+    return api.validateAddress(this.address);
+  }
+
+  get record(): Nullable<AccountBook> {
+    const { address, name, isValidAddress } = this;
+
+    return isValidAddress && name ? { address, name } : null;
+  }
+
   openAddressBook(): void {
     this.showAddressBookDialog = true;
   }
 
-  updateAddress(address: string): void {
-    this.$emit('input', address);
-  }
-
-  chooseAddress({ name, address }: AccountBook): void {
-    this.record = { name, address };
-    this.updateAddress(address);
+  chooseRecord({ name, address }: AccountBook): void {
+    this.address = address;
+    this.name = name;
   }
 
   openContact(address: Nullable<string>, isEditMode = false): void {
@@ -134,9 +164,8 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     this.showSetContactDialog = true;
   }
 
-  unlinkAddress(): void {
-    this.record = null;
-    this.updateAddress('');
+  resetAddress(): void {
+    this.address = '';
   }
 
   async mounted(): Promise<void> {
