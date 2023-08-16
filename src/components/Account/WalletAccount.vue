@@ -15,19 +15,29 @@
       </s-tooltip>
     </template>
     <template #default>
+      <s-tooltip
+        v-if="identity"
+        border-radius="mini"
+        :content="t('addressBook.identity')"
+        placement="top"
+        tabindex="-1"
+      >
+        <div class="account-on-chain-name">{{ identity }}</div>
+      </s-tooltip>
       <slot />
     </template>
   </account-card>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
+import { api } from '../../api';
 import { ObjectInit } from '../../consts';
 import { getter } from '../../store/decorators';
 import { formatAddress, formatSoraAddress } from '../../util';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
+import LoadingMixin from '../mixins/LoadingMixin';
 import WalletAvatar from '../WalletAvatar.vue';
 
 import AccountCard from './AccountCard.vue';
@@ -43,10 +53,24 @@ const DEFAULT_NAME = '<unknown>';
     WalletAvatar,
   },
 })
-export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressMixin) {
+export default class WalletAccount extends Mixins(CopyAddressMixin, LoadingMixin) {
+  @Prop({ default: ObjectInit, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
+  @Prop({ default: false, type: Boolean }) readonly withIdentity!: boolean;
+
   @getter.account.account private account!: PolkadotJsAccount;
 
-  @Prop({ default: ObjectInit, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
+  identity = '';
+
+  @Watch('address', { immediate: true })
+  private async updateIdentity(value: string) {
+    if (!this.withIdentity) return;
+
+    await this.withApi(async () => {
+      const entity = await api.getAccountOnChainIdentity(value);
+
+      this.identity = entity ? entity.legalName : '';
+    });
+  }
 
   get address(): string {
     if (this.polkadotAccount) {
@@ -93,5 +117,16 @@ export default class WalletAccount extends Mixins(TranslationMixin, CopyAddressM
     text-decoration: underline;
     cursor: pointer;
   }
+}
+
+.account-on-chain-name {
+  max-width: 167px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  border-radius: calc(var(--s-border-radius-mini) / 2);
+  padding: $inner-spacing-mini;
+  background-color: var(--s-color-utility-surface);
+  color: var(--s-color-base-content-secondary);
 }
 </style>

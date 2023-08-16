@@ -1,9 +1,9 @@
 <template>
   <div class="address-input">
-    <address-record v-if="record" :record="record">
+    <wallet-account v-if="record" :polkadot-account="record">
       <s-icon class="book-icon-unlink" name="el-icon-close" size="20" @click.native="resetAddress" />
       <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
-    </address-record>
+    </wallet-account>
 
     <s-input
       v-else
@@ -52,11 +52,11 @@ import { Component, Mixins, ModelSync, Prop, Watch } from 'vue-property-decorato
 import { api } from '../../api';
 import { mutation, state } from '../../store/decorators';
 import { formatSoraAddress, subscribeToWalletAccounts } from '../../util';
+import WalletAccount from '../Account/WalletAccount.vue';
 import SearchInput from '../Input/SearchInput.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 
 import AddressBookDialog from './AddressBookDialog.vue';
-import AddressRecord from './AddressRecord.vue';
 import SetContactDialog from './SetContactDialog.vue';
 
 import type { AppWallet } from '../../consts';
@@ -66,7 +66,7 @@ import type { AccountBook, Book, PolkadotJsAccount } from '../../types/common';
   inheritAttrs: false,
   components: {
     SearchInput,
-    AddressRecord,
+    WalletAccount,
     AddressBookDialog,
     SetContactDialog,
   },

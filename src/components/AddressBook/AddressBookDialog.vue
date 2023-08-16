@@ -10,23 +10,33 @@
         @clear="resetSearch"
       />
       <s-scrollbar class="address-book-scrollbar">
-        <div v-if="accountBookFiltered.length" class="address-book__extension-list">
+        <div v-if="accountBookFiltered.length" class="address-book__list">
           <span class="address-book__sections">
             {{ t('addressBook.myExtAccounts') }}
           </span>
-          <div v-for="(record, index) in accountBookFiltered" :key="index">
-            <address-record :record="record" @click.native="selectRecord(record)">
-              <account-actions-menu :actions="accountActions" @select="handleContactAction($event, record)" />
-            </address-record>
-          </div>
+          <wallet-account
+            v-for="(record, index) in accountBookFiltered"
+            :key="index"
+            with-identity
+            :polkadot-account="record"
+            @click.native="selectRecord(record)"
+            class="address-book__list-item"
+          >
+            <account-actions-menu :actions="accountActions" @select="handleContactAction($event, record)" />
+          </wallet-account>
         </div>
         <div v-if="addressBookFiltered.length" class="address-book__list">
           <span class="address-book__sections">{{ t('addressBook.myBook') }}</span>
-          <div v-for="(record, index) in addressBookFiltered" :key="index">
-            <address-record :record="record" @click.native="selectRecord(record)">
-              <account-actions-menu :actions="contactActions" @select="handleContactAction($event, record)" />
-            </address-record>
-          </div>
+          <wallet-account
+            v-for="(record, index) in addressBookFiltered"
+            :key="index"
+            with-identity
+            :polkadot-account="record"
+            @click.native="selectRecord(record)"
+            class="address-book__list-item"
+          >
+            <account-actions-menu :actions="contactActions" @select="handleContactAction($event, record)" />
+          </wallet-account>
         </div>
         <div v-if="showNoRecordsFound" class="address-book__no-found-records">
           {{ t('addressBook.noFoundRecords') }}
@@ -41,19 +51,17 @@
 </template>
 
 <script lang="ts">
-import { api } from '@sora-substrate/util';
-import { Component, Mixins, Watch, Prop } from 'vue-property-decorator';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { AccountActionTypes } from '../../consts';
 import { formatSoraAddress } from '../../util';
 import AccountActionsMenu from '../Account/ActionsMenu.vue';
+import WalletAccount from '../Account/WalletAccount.vue';
 import DialogBase from '../DialogBase.vue';
 import SearchInput from '../Input/SearchInput.vue';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
-
-import AddressRecord from './AddressRecord.vue';
 
 import type { AccountBook, PolkadotJsAccount } from '../../types/common';
 
@@ -61,7 +69,7 @@ import type { AccountBook, PolkadotJsAccount } from '../../types/common';
   components: {
     DialogBase,
     AccountActionsMenu,
-    AddressRecord,
+    WalletAccount,
     SearchInput,
   },
 })
@@ -72,14 +80,6 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 
   readonly accountActions = [AccountActionTypes.BookSend];
   readonly contactActions = [AccountActionTypes.BookSend, AccountActionTypes.BookEdit, AccountActionTypes.BookDelete];
-
-  private identities: Record<string, string> = {};
-
-  @Watch('accounts')
-  @Watch('records')
-  private async updateIdentities(items: PolkadotJsAccount[]): Promise<void> {
-    await Promise.all(items.map(({ address }) => this.updateIdentity(address)));
-  }
 
   search = '';
 
@@ -111,24 +111,12 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
     return !(this.addressBookFiltered.length || this.accountBookFiltered.length);
   }
 
-  private async updateIdentity(address: string): Promise<void> {
-    const key = formatSoraAddress(address);
-
-    if (key in this.identities) return;
-
-    const entity = await api.getAccountOnChainIdentity(key);
-    const identity = entity ? entity.legalName : '';
-
-    this.identities[key] = identity;
-  }
-
   private formatAccount(account: PolkadotJsAccount): AccountBook {
     const soraAddress = formatSoraAddress(account.address);
 
     return {
       address: soraAddress,
       name: account.name,
-      identity: this.identities[soraAddress],
     };
   }
 
@@ -188,22 +176,8 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 </script>
 
 <style lang="scss">
-.address-book-popover.book-popover {
-  background-color: var(--s-color-utility-body);
-  border-radius: $basic-spacing;
-  color: var(--s-color-base-content-primary);
-  border: none;
-  padding: $basic-spacing $inner-spacing-mini $basic-spacing $basic-spacing;
-  font-size: var(--s-font-size-small);
-}
-
 .address-book-scrollbar {
   @include scrollbar($basic-spacing-big);
-}
-
-.address-book-scrollbar.el-scrollbar .el-scrollbar__view {
-  padding-left: calc(var(--s-basic-spacing) * 3);
-  padding-right: calc(var(--s-basic-spacing) * 2);
 }
 </style>
 
@@ -247,6 +221,23 @@ export default class AddressBookDialog extends Mixins(CopyAddressMixin, DialogMi
 
   &-scrollbar {
     height: 400px;
+  }
+
+  &__list {
+    &-item {
+      &.s-card.neumorphic {
+        border-width: 1px;
+      }
+
+      &:hover {
+        cursor: pointer;
+        border-color: var(--s-color-base-content-secondary);
+      }
+
+      & + & {
+        margin-top: $basic-spacing;
+      }
+    }
   }
 }
 </style>
