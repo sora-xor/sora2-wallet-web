@@ -12,7 +12,7 @@
       <s-scrollbar class="address-book-scrollbar">
         <div class="address-book__extension-list">
           <span v-if="foundRecords(extensionAccounts).length" class="address-book__sections">
-            {{ t('addressBook.myExtAccounts') }}
+            {{ t('addressBook.myAccounts') }}
           </span>
           <div v-for="({ address, name, identity }, index) in foundRecords(extensionAccounts)" :key="index">
             <address-record :record="{ address, name, identity }" showIdentity @select-address="handleSelectAddress">
