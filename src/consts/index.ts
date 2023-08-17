@@ -210,5 +210,5 @@ export const TranslationConsts = {
     Stage: 'SORA Testnet',
     Prod: 'SORA Mainnet',
   },
-  JSON: '.json',
+  JSON: 'JSON',
 } as const;

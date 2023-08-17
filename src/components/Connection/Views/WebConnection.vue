@@ -19,7 +19,7 @@
 
         <template v-if="isExtensionsView">
           <div v-if="wallets.internal.length" class="wallet-connection-list">
-            <p class="wallet-connection-title">{{ t('connection.list.simplest') }}</p>
+            <p class="wallet-connection-title">{{ t('connection.list.integrated') }}</p>
             <extension-list :wallets="wallets.internal" @select="handleSelectWallet" />
           </div>
           <div v-if="wallets.external.length" class="wallet-connection-list">
