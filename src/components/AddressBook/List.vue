@@ -12,7 +12,7 @@
       <s-scrollbar class="address-book-scrollbar">
         <div v-if="accountBookFiltered.length" class="address-book__list">
           <span class="address-book__sections">
-            {{ t('addressBook.myExtAccounts') }}
+            {{ t('addressBook.myAccounts') }}
           </span>
           <wallet-account
             v-for="(record, index) in accountBookFiltered"
