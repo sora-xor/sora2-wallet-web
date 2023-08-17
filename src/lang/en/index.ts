@@ -402,7 +402,7 @@ export default {
     },
     accountName: {
       placeholder: 'Account name',
-      desc: 'This is the name of your account. It will be visible only to you in Polkaswap.',
+      desc: 'This is the name of your account. It will be visible only to you in {Polkaswap}.',
     },
     password: {
       placeholder: 'Password',
@@ -421,9 +421,9 @@ export default {
       'If someone asks you for your passphrase they are most likely trying to scam you and steal your assets!',
     confirmSeedText: 'Confirm the passphrase by clicking the words in the correct order',
     errorMnemonicText: 'Incorrect passphrase order',
-    exportOptionText: 'Export JSON file for account restoration',
+    exportOptionText: 'Export {JSON} file for account restoration',
     exportJsonText:
-      'You will always be able to restore your account by importing this JSON file. Do not share it with anyone! Store it safely, preferably encrypted.',
+      'You will always be able to restore your account by importing this {JSON} file. Do not share it with anyone! Store it safely, preferably encrypted.',
     addAccount: 'Add an account',
     assetsAtRiskText: 'Assets at risk!',
     deleteAccountText:
