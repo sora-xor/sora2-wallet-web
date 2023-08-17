@@ -127,7 +127,7 @@ export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixi
   private prepareRecords(accounts: PolkadotJsAccount[], identities: Record<string, string>): PolkadotJsAccount[] {
     const records = accounts.map((account) => this.formatAccount(account, identities));
     const filtered = records.filter((record) => record.address !== this.excludedAddress);
-    const sorted = filtered.sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
+    const sorted = [...filtered].sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
 
     return sorted;
   }
