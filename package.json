@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@polkadot/vue-identicon": "2.12.1",
-    "@sora-substrate/util": "1.20.0",
+    "@sora-substrate/util": "1.20.1",
     "@sora-test/wallet-connect": "^0.0.9",
     "@soramitsu/soramitsu-js-ui": "^1.0.45",
     "@urql/core": "^3.0.5",
