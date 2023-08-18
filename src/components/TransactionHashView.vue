@@ -155,15 +155,6 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
 }
 </script>
 
-<style lang="scss">
-.s-dropdown-menu {
-  // TODO: fix UI library
-  &__item {
-    border-radius: calc(var(--s-border-radius-mini) / 2);
-  }
-}
-</style>
-
 <style scoped lang="scss">
 $dropdown-right: 15px;
 $dropdown-width: var(--s-size-mini);

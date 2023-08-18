@@ -37,9 +37,13 @@ export default class AccountCard extends Vue {}
   }
 
   &.s-card.neumorphic {
-    border-width: 1px;
+    border-width: 0px;
     border-style: solid;
     border-color: transparent;
+
+    &.s-size-small {
+      padding: $basic-spacing $basic-spacing-medium;
+    }
   }
 }
 
