@@ -102,6 +102,12 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   }
 }
 
+async function updateApiSigner(source: AppWallet) {
+  const signer = await getWalletSigner(source);
+
+  api.setSigner(signer);
+}
+
 const actions = defineActions({
   async afterLogin(context): Promise<void> {
     const { dispatch } = accountActionContext(context);
@@ -138,13 +144,9 @@ const actions = defineActions({
   async checkSigner(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
-    if (getters.isLoggedIn) {
+    if (getters.isLoggedIn && state.isExternal && state.source) {
       try {
-        const signer = await getWalletSigner(state.source as AppWallet);
-
-        if (state.isExternal) {
-          api.setSigner(signer);
-        }
+        await updateApiSigner(state.source);
       } catch (error) {
         console.error(error);
         await dispatch.logout();
@@ -243,10 +245,6 @@ const actions = defineActions({
       dispatch.checkSigner();
     };
 
-    const accounts = await getWalletAccounts(wallet);
-
-    callback(accounts);
-
     const subscription = await subscribeToWalletAccounts(wallet, callback);
 
     commit.setWalletAccountsSubscription(subscription);
@@ -272,8 +270,7 @@ const actions = defineActions({
 
     if (isExternal) {
       // we should update signer
-      const signer = await getWalletSigner(source);
-      api.setSigner(signer);
+      await updateApiSigner(source);
     }
 
     const accounts = state.isDesktop ? await getImportedAccounts() : await getWalletAccounts(source);

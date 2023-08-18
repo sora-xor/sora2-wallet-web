@@ -56,6 +56,15 @@ export function waitForDocumentReady() {
   });
 }
 
+export const getAccountIdentity = async (address: string, none = ''): Promise<string> => {
+  if (!api.validateAddress(address)) return none;
+
+  const entity = await api.getAccountOnChainIdentity(address);
+  const identity = entity ? entity.legalName : none;
+
+  return identity;
+};
+
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
 export const getImportedAccounts = async (): Promise<PolkadotJsAccount[]> => {
@@ -89,6 +98,9 @@ export const subscribeToWalletAccounts = async (
   callback: (accounts: PolkadotJsAccount[]) => void
 ): Promise<Nullable<Unsubcall>> => {
   const appWallet = await getWallet(wallet);
+  const accounts = await getWalletAccounts(wallet);
+
+  callback(accounts);
 
   const unsubscribe = await appWallet.subscribeAccounts((injectedAccounts) => {
     callback(formatWalletAccounts(injectedAccounts));

@@ -43,9 +43,13 @@ $item-height: 60px;
       @include focus-outline($withOffset: true);
       height: $item-height;
 
-      &:hover {
-        cursor: pointer;
-        border-color: var(--s-color-base-content-secondary) !important;
+      &.s-card.neumorphic {
+        border-width: 1px;
+
+        &:hover {
+          cursor: pointer;
+          border-color: var(--s-color-base-content-secondary);
+        }
       }
 
       a.connection-action {
