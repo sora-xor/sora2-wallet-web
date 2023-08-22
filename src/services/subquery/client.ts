@@ -1,4 +1,4 @@
-import { createClient, defaultExchanges, subscriptionExchange } from '@urql/core';
+import { createClient, fetchExchange, subscriptionExchange } from '@urql/core';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 
 import type { Client } from '@urql/core';
@@ -25,7 +25,7 @@ const createSubscriptionExchange = (subscriptionClient: SubscriptionClient) => {
 };
 
 export const createExplorerClient = (url: string, subscriptions = false): Client => {
-  const exchanges = [...defaultExchanges];
+  const exchanges = [fetchExchange];
 
   if (subscriptions) {
     const subscriptionClient = createSubscriptionClient(url);
