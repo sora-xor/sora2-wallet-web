@@ -14,10 +14,15 @@ export enum AppWallet {
 }
 
 export enum AccountActionTypes {
+  // Account
   Rename = 'rename',
   Export = 'export',
   Logout = 'logout',
   Delete = 'delete',
+  // Book
+  BookSend = 'bookSend',
+  BookEdit = 'bookEdit',
+  BookDelete = 'bookDelete',
 }
 
 export enum RouteNames {
@@ -205,5 +210,5 @@ export const TranslationConsts = {
     Stage: 'SORA Testnet',
     Prod: 'SORA Mainnet',
   },
-  JSON: '.json',
+  JSON: 'JSON',
 } as const;

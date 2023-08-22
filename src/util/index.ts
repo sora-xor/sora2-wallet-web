@@ -56,6 +56,15 @@ export function waitForDocumentReady() {
   });
 }
 
+export const getAccountIdentity = async (address: string, none = ''): Promise<string> => {
+  if (!api.validateAddress(address)) return none;
+
+  const entity = await api.getAccountOnChainIdentity(address);
+  const identity = entity ? entity.legalName : none;
+
+  return identity;
+};
+
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
 export const getImportedAccounts = async (): Promise<PolkadotJsAccount[]> => {
@@ -89,6 +98,9 @@ export const subscribeToWalletAccounts = async (
   callback: (accounts: PolkadotJsAccount[]) => void
 ): Promise<Nullable<Unsubcall>> => {
   const appWallet = await getWallet(wallet);
+  const accounts = await getWalletAccounts(wallet);
+
+  callback(accounts);
 
   const unsubscribe = await appWallet.subscribeAccounts((injectedAccounts) => {
     callback(formatWalletAccounts(injectedAccounts));
@@ -151,25 +163,14 @@ export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Walle
 };
 
 /**
- * Retrieves a provider for a specific address and return signer
- * @param address
+ * Retrieves a provider for a specific wallet
+ * @param appWallet
  * @returns
  */
-export const getWalletSigner = async (address: string, appWallet: AppWallet) => {
+export const getWalletSigner = async (appWallet: AppWallet) => {
   const wallet = await getWallet(appWallet);
-  const accounts = await wallet.getAccounts();
 
-  if (!accounts) {
-    throw new AppError({ key: 'polkadotjs.noAccounts', payload: { extension: wallet.title } });
-  }
-
-  const account = accounts.find((acc) => acc.address === address);
-
-  if (!account) {
-    throw new AppError({ key: 'polkadotjs.noAccount', payload: { extension: wallet.title } });
-  }
-
-  return { account: formatWalletAccount(account), signer: wallet.signer as Signer };
+  return wallet.signer as Signer;
 };
 
 /**

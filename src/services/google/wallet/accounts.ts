@@ -23,7 +23,7 @@ const prepareAccountFile = (account: EncryptedBackupAccount) => {
 export default class Accounts implements InjectedAccounts {
   private _list: IAccountMetadata[] = [];
   private accountsCallback: Nullable<(accounts: InjectedAccount[]) => unknown> = null;
-  private accountsUpdateInterval: Nullable<NodeJS.Timer> = null;
+  private accountsUpdateInterval: Nullable<NodeJS.Timeout> = null;
 
   private get accountsList(): IAccountMetadata[] {
     return this._list;

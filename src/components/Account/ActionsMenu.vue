@@ -4,6 +4,7 @@
     border-radius="mini"
     icon="basic-more-vertical-24"
     class="account-actions"
+    popper-class="account-actions-menu"
     v-on="$listeners"
   >
     <template slot="menu">
@@ -11,8 +12,8 @@
         v-for="{ value, name, icon, status } in items"
         :key="value"
         :value="value"
-        :icon="icon"
         :class="['account-actions__item', status]"
+        :icon="icon"
       >
         {{ name }}
       </s-dropdown-item>
@@ -47,6 +48,21 @@ const ActionsData = {
     name: 'account.delete',
     icon: 'paperclip-16',
     status: 'error',
+  },
+  [AccountActionTypes.BookSend]: {
+    name: 'addressBook.options.send',
+    icon: 'finance-send-24',
+    status: '',
+  },
+  [AccountActionTypes.BookEdit]: {
+    name: 'addressBook.options.edit',
+    icon: 'el-icon-edit',
+    status: '',
+  },
+  [AccountActionTypes.BookDelete]: {
+    name: 'addressBook.options.delete',
+    icon: 'el-icon-delete',
+    status: '',
   },
 };
 

@@ -18,9 +18,9 @@
         <s-icon name="basic-copy-24" size="18"></s-icon>
       </s-button>
       <div class="login__text-advice">
-        <p>
-          {{ t('desktop.seedAdviceText') }}
-        </p>
+        <p>{{ t('desktop.seedAdviceText', { wallet: selectedWalletTitle }) }}</p>
+        <p>{{ t('desktop.seedAdviceAdditionTitle') }}</p>
+        <p>{{ t('desktop.seedAdviceAdditionText') }}</p>
       </div>
       <s-button key="step1" @click="nextStep" class="s-typography-button--large login-btn" type="primary">{{
         t('desktop.button.next')
@@ -82,6 +82,9 @@
           :placeholder="t('desktop.confirmPassword.placeholder')"
           v-model="accountPasswordConfirm"
         ></s-input>
+        <p v-if="!arePasswordsEqual" class="login__create-account-desc error">
+          {{ t('desktop.errorMessages.passwords') }}
+        </p>
 
         <div class="wallet-settings-create-token_export">
           <s-switch v-model="toExport" :disabled="loading" />
@@ -95,7 +98,7 @@
           class="s-typography-button--large login-btn"
           type="primary"
           native-type="submit"
-          :disabled="isInputsNotFilled"
+          :disabled="btnConfirmDisabled"
           :loading="loading"
         >
           {{ t('desktop.button.createAccount') }}
@@ -111,6 +114,7 @@ import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
+import { getter } from '../../../store/decorators';
 import { copyToClipboard } from '../../../util';
 import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -126,6 +130,8 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
+
+  @getter.account.selectedWalletTitle selectedWalletTitle!: string;
 
   @Watch('step')
   private resetSeedPhraseToCompareIdx() {
@@ -178,8 +184,16 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     return this.seedPhraseToCompare.length === this.PHRASE_LENGTH ? 'primary' : 'secondary';
   }
 
+  get btnConfirmDisabled(): boolean {
+    return this.isInputsNotFilled || !this.arePasswordsEqual;
+  }
+
   get isInputsNotFilled(): boolean {
     return !this.accountName || !this.accountPassword || !this.accountPasswordConfirm;
+  }
+
+  get arePasswordsEqual(): boolean {
+    return this.accountPassword === this.accountPasswordConfirm;
   }
 
   get seedPhrase(): string {
@@ -282,6 +296,14 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     text-align: center;
     margin-bottom: 8px;
     font-weight: 300;
+    p {
+      &:first-child {
+        margin-bottom: $basic-spacing-medium;
+      }
+      &:not(:first-child) {
+        font-weight: 600;
+      }
+    }
   }
 
   &__text-confirm {
