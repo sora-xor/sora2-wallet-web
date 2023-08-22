@@ -14,6 +14,7 @@
   "scripts": {
     "build": "rm -rf lib && rollup -c ./build/rollup.config.js",
     "serve": "vue-cli-service serve",
+    "inspect": "vue-cli-service inspect > .webpack-config.js",
     "test:unit": "vue-cli-service test:unit --silent",
     "test:e2e": "vue-cli-service test:e2e --headless",
     "test:e2e-ui": "vue-cli-service test:e2e",
