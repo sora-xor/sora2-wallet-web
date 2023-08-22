@@ -99,6 +99,14 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.LiquidityProxySwapTransfer,
     },
   },
+  [Operation.SwapTransferBatch]: {
+    module: {
+      equalTo: ModuleNames.LiquidityProxy,
+    },
+    method: {
+      equalTo: ModuleMethods.LiquidityProxySwapTransferBatch,
+    },
+  },
   [Operation.Transfer]: {
     module: {
       equalTo: ModuleNames.Assets,
@@ -303,6 +311,21 @@ const createAccountAddressCriteria = (address: string) => {
       data: {
         contains: {
           to: address,
+        },
+      },
+    },
+    {
+      data: {
+        contains: {
+          receivers: [
+            {
+              receivers: [
+                {
+                  accountId: address,
+                },
+              ],
+            },
+          ],
         },
       },
     },

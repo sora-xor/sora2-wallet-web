@@ -21,6 +21,7 @@ export enum ModuleMethods {
   PoolXYKWithdrawLiquidity = 'withdrawLiquidity',
   LiquidityProxySwap = 'swap',
   LiquidityProxySwapTransfer = 'swapTransfer',
+  LiquidityProxySwapTransferBatch = 'swapTransferBatch',
   UtilityBatchAll = 'batchAll',
   ReferralsSetReferrer = 'setReferrer',
   ReferralsReserve = 'reserve',

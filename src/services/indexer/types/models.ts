@@ -117,6 +117,38 @@ export type HistoryElementSwapTransfer = HistoryElementSwap & {
   to: string;
 };
 
+export type SwapTransferBatchTransferParam = {
+  from: string;
+  to: string;
+  amount: string;
+  assetId: string;
+};
+
+type SwapTransferBatchExchangeParam = {
+  from: string;
+  to: string;
+  amount: string;
+  assetId: string;
+};
+
+export type HistoryElementSwapTransferBatch = {
+  inputAssetId: string;
+  selectedMarket: string;
+  liquidityProviderFee: string;
+  maxInputAmount: string;
+  blockNumber: string;
+  from: string;
+
+  adarFee: string;
+  inputAmount: string;
+  networkFee: string;
+  actualFee: string;
+  receivers: any;
+
+  transfers: Array<SwapTransferBatchTransferParam>;
+  exchanges: Array<SwapTransferBatchExchangeParam>;
+};
+
 export type HistoryElementTransfer = {
   amount: string;
   assetId: string;
@@ -195,6 +227,7 @@ export type ReferrerReserve = {
 export type HistoryElementData = Nullable<
   | HistoryElementSwap
   | HistoryElementSwapTransfer
+  | HistoryElementSwapTransferBatch
   | HistoryElementTransfer
   | HistoryElementLiquidityOperation
   | HistoryElementAssetRegistration

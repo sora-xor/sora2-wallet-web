@@ -13,20 +13,22 @@ import { ModuleNames, ModuleMethods } from './types';
 
 import type {
   SubqueryHistoryElement,
-  SubqueryHistoryElementError,
-  SubqueryHistoryElementSwap,
-  SubqueryHistoryElementSwapTransfer,
-  SubqueryHistoryElementLiquidityOperation,
-  SubqueryHistoryElementTransfer,
-  SubqueryHistoryElementAssetRegistration,
-  SubqueryHistoryElementRewardsClaim,
+  HistoryElementError,
+  HistoryElementSwap,
+  HistoryElementSwapTransfer,
+  HistoryElementLiquidityOperation,
+  HistoryElementTransfer,
+  HistoryElementAssetRegistration,
+  HistoryElementRewardsClaim,
+  HistoryElementDemeterFarming,
   SubqueryHistoryElementUtilityBatchAll,
-  SubqueryHistoryElementDemeterFarming,
-  SubqueryUtilityBatchCall,
-  SubqueryReferralSetReferrer,
-  SubqueryReferrerReserve,
-  SubqueryClaimedRewardItem,
-  SubqueryExtrinsicEvent,
+  UtilityBatchCall,
+  ReferralSetReferrer,
+  ReferrerReserve,
+  ClaimedRewardItem,
+  ExtrinsicEvent,
+  HistoryElementSwapTransferBatch,
+  SwapTransferBatchTransferParam,
 } from './types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
@@ -46,6 +48,7 @@ const OperationsMap = {
   [insensitive(ModuleNames.LiquidityProxy)]: {
     [ModuleMethods.LiquidityProxySwap]: () => Operation.Swap,
     [ModuleMethods.LiquidityProxySwapTransfer]: () => Operation.SwapAndSend,
+    [ModuleMethods.LiquidityProxySwapTransferBatch]: () => Operation.SwapTransferBatch,
   },
   [insensitive(ModuleNames.Utility)]: {
     [ModuleMethods.UtilityBatchAll]: (data: SubqueryHistoryElementUtilityBatchAll) => {
@@ -89,10 +92,10 @@ const OperationsMap = {
     [ModuleMethods.VestedRewardsClaimCrowdloanRewards]: () => Operation.ClaimRewards,
   },
   [insensitive(ModuleNames.DemeterFarming)]: {
-    [ModuleMethods.DemeterFarmingDeposit]: (data: SubqueryHistoryElementDemeterFarming) => {
+    [ModuleMethods.DemeterFarmingDeposit]: (data: HistoryElementDemeterFarming) => {
       return data.isFarm ? Operation.DemeterFarmingDepositLiquidity : Operation.DemeterFarmingStakeToken;
     },
-    [ModuleMethods.DemeterFarmingWithdraw]: (data: SubqueryHistoryElementDemeterFarming) => {
+    [ModuleMethods.DemeterFarmingWithdraw]: (data: HistoryElementDemeterFarming) => {
       return data.isFarm ? Operation.DemeterFarmingWithdrawLiquidity : Operation.DemeterFarmingUnstakeToken;
     },
     [ModuleMethods.DemeterFarmingGetRewards]: () => Operation.DemeterFarmingGetRewards,
@@ -103,10 +106,10 @@ const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asse
 
 const getTransactionId = (tx: SubqueryHistoryElement): string => tx.id;
 
-const isModuleMethod = (item: SubqueryUtilityBatchCall, module: string, method: string) =>
+const isModuleMethod = (item: UtilityBatchCall, module: string, method: string) =>
   insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method);
 
-const getBatchCall = (calls: Array<SubqueryUtilityBatchCall>, { module, method }): Nullable<SubqueryUtilityBatchCall> =>
+const getBatchCall = (calls: Array<UtilityBatchCall>, { module, method }): Nullable<UtilityBatchCall> =>
   calls.find((item) => isModuleMethod(item, module, method));
 
 const getTransactionOperationType = (tx: SubqueryHistoryElement): Nullable<Operation> => {
@@ -123,7 +126,7 @@ const getTransactionTimestamp = (tx: SubqueryHistoryElement): number => {
   return !Number.isNaN(timestamp) ? timestamp : Date.now();
 };
 
-const getErrorMessage = (historyElementError: SubqueryHistoryElementError): Record<string, string> => {
+const getErrorMessage = (historyElementError: HistoryElementError): Record<string, string> => {
   try {
     const [error, index] = [new BN(historyElementError.moduleErrorId), new BN(historyElementError.moduleErrorIndex)];
     const { name, section } = api.api.registry.findMetaError({ error, index });
@@ -157,8 +160,8 @@ const logOperationDataParsingError = (operation: Operation, transaction: Subquer
   console.error(`Couldn't parse ${operation} data.`, transaction);
 };
 
-const getRewardsFromEvents = (events: SubqueryExtrinsicEvent[]): SubqueryClaimedRewardItem[] => {
-  return events.reduce<SubqueryClaimedRewardItem[]>((buffer, event) => {
+const getRewardsFromEvents = (events: ExtrinsicEvent[]): ClaimedRewardItem[] => {
+  return events.reduce<ClaimedRewardItem[]>((buffer, event) => {
     if (
       event.method === SubstrateEvents.CurrenciesTransferred.method &&
       event.section === SubstrateEvents.CurrenciesTransferred.section
@@ -174,7 +177,7 @@ const getRewardsFromEvents = (events: SubqueryExtrinsicEvent[]): SubqueryClaimed
   }, []);
 };
 
-const formatRewards = async (rewards: SubqueryClaimedRewardItem[]): Promise<RewardInfo[]> => {
+const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]> => {
   const formatted: RewardInfo[] = [];
 
   for (const { assetId, amount } of rewards) {
@@ -198,6 +201,7 @@ export default class SubqueryDataParser {
     Operation.Transfer,
     Operation.Swap,
     Operation.SwapAndSend,
+    Operation.SwapTransferBatch,
     Operation.CreatePair,
     Operation.AddLiquidity,
     Operation.RemoveLiquidity,
@@ -259,7 +263,7 @@ export default class SubqueryDataParser {
     switch (type) {
       case Operation.Swap:
       case Operation.SwapAndSend: {
-        const data = transaction.data as SubqueryHistoryElementSwap & SubqueryHistoryElementSwapTransfer;
+        const data = transaction.data as HistoryElementSwap & HistoryElementSwapTransfer;
 
         const assetAddress = data.baseAssetId;
         const asset2Address = data.targetAssetId;
@@ -281,9 +285,63 @@ export default class SubqueryDataParser {
 
         return payload;
       }
+      case Operation.SwapTransferBatch: {
+        const data = transaction.data as HistoryElementSwapTransferBatch;
+
+        const inputAssetId = data.inputAssetId;
+        const inputAsset = await getAssetByAddress(inputAssetId);
+        const transfers = data.transfers;
+        const exchanges = data.exchanges;
+
+        const outcomeAssetsIds = data.receivers.map((item) => item.outcomeAssetId?.code);
+        const resolveAssets = async (assetAddressesArray: Array<string>) => {
+          const result: Array<Nullable<Asset>> = [];
+          assetAddressesArray.forEach(async (address) => {
+            result.push(await getAssetByAddress(address));
+          });
+          return result;
+        };
+        const assetsList = await resolveAssets(outcomeAssetsIds);
+
+        payload.assetAddress = inputAssetId;
+        payload.liquiditySource = data.selectedMarket;
+        payload.amount = data.inputAmount;
+        payload.symbol = getAssetSymbol(inputAsset);
+
+        payload.payload = {};
+
+        payload.payload.adarFee = data.adarFee;
+        payload.payload.maxInputAmount = data.maxInputAmount;
+        payload.payload.networkFee = data.networkFee;
+        payload.payload.blockNumber = data.blockNumber;
+        payload.payload.actualFee = data.actualFee;
+        payload.payload.transfers = transfers;
+        payload.payload.exchanges = exchanges;
+        if (transfers.length > 0) {
+          payload.payload.receivers = data.receivers.reduce((acc, data) => {
+            const receiversData = data.receivers.map((receiver) => {
+              const transfer = transfers?.find(
+                (transfer) => transfer.to === receiver.accountId
+              ) as SwapTransferBatchTransferParam;
+              const assetAddress = transfer?.assetId || data.outcomeAssetId?.code;
+              const asset = assetsList.find((asset) => asset?.address === assetAddress);
+              return {
+                accountId: receiver.accountId,
+                asset,
+                amount: transfer?.amount || '0',
+                symbol: getAssetSymbol(asset),
+              };
+            });
+            return [...acc, ...receiversData];
+          }, []);
+        } else {
+          payload.payload.receivers = [];
+        }
+        return payload;
+      }
       case Operation.AddLiquidity:
       case Operation.RemoveLiquidity: {
-        const data = transaction.data as SubqueryHistoryElementLiquidityOperation;
+        const data = transaction.data as HistoryElementLiquidityOperation;
 
         const assetAddress = data.baseAssetId;
         const asset2Address = data.targetAssetId;
@@ -331,7 +389,7 @@ export default class SubqueryDataParser {
         return payload;
       }
       case Operation.Transfer: {
-        const data = transaction.data as SubqueryHistoryElementTransfer;
+        const data = transaction.data as HistoryElementTransfer;
 
         const assetAddress = data.assetId;
         const asset = await getAssetByAddress(assetAddress);
@@ -344,7 +402,7 @@ export default class SubqueryDataParser {
         return payload;
       }
       case Operation.RegisterAsset: {
-        const data = transaction.data as SubqueryHistoryElementAssetRegistration;
+        const data = transaction.data as HistoryElementAssetRegistration;
 
         const assetAddress = data.assetId;
         const asset = await getAssetByAddress(assetAddress);
@@ -354,19 +412,19 @@ export default class SubqueryDataParser {
         return payload;
       }
       case Operation.ReferralSetInvitedUser: {
-        const data = transaction.data as SubqueryReferralSetReferrer;
+        const data = transaction.data as ReferralSetReferrer;
         payload.to = data.to;
         return payload;
       }
       case Operation.ReferralReserveXor:
       case Operation.ReferralUnreserveXor: {
-        const data = transaction.data as SubqueryReferrerReserve;
+        const data = transaction.data as ReferrerReserve;
         payload.amount = data.amount;
         return payload;
       }
       case Operation.ClaimRewards: {
         const rewardsData =
-          transaction.module === ModuleNames.Utility ? [] : (transaction.data as SubqueryHistoryElementRewardsClaim);
+          transaction.module === ModuleNames.Utility ? [] : (transaction.data as HistoryElementRewardsClaim);
 
         (payload as RewardClaimHistory).rewards = Array.isArray(rewardsData) ? await formatRewards(rewardsData) : [];
 
@@ -374,7 +432,7 @@ export default class SubqueryDataParser {
       }
       case Operation.DemeterFarmingDepositLiquidity:
       case Operation.DemeterFarmingWithdrawLiquidity: {
-        const data = transaction.data as SubqueryHistoryElementDemeterFarming;
+        const data = transaction.data as HistoryElementDemeterFarming;
 
         const assetAddress = data.baseAssetId as string;
         const asset2Address = data.assetId;
@@ -393,7 +451,7 @@ export default class SubqueryDataParser {
       case Operation.DemeterFarmingStakeToken:
       case Operation.DemeterFarmingUnstakeToken:
       case Operation.DemeterFarmingGetRewards: {
-        const data = transaction.data as SubqueryHistoryElementDemeterFarming;
+        const data = transaction.data as HistoryElementDemeterFarming;
 
         const assetAddress = data.assetId;
         const asset = await getAssetByAddress(assetAddress);
