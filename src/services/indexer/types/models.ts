@@ -1,4 +1,4 @@
-import { SubqueryUtilityBatchCall } from '../subquery/types';
+import { SubqueryHistoryElementUtilityBatchAll, SubqueryUtilityBatchCall } from '../subquery/types';
 import { SubsquidUtilityBatchCall } from '../subsquid/types';
 
 import type { CodecString } from '@sora-substrate/util';
@@ -226,6 +226,7 @@ export type HistoryElementData = Nullable<
   | HistoryElementTransfer
   | HistoryElementLiquidityOperation
   | HistoryElementAssetRegistration
+  | SubqueryHistoryElementUtilityBatchAll
   | ReferralSetReferrer
   | ReferrerReserve
   | HistoryElementEthBridgeOutgoing
