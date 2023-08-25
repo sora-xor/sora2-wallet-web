@@ -6,7 +6,7 @@
     <div class="adar-tx-details__txs-container">
       <div v-for="(recipient, idx) in txsList" :key="idx">
         <transaction-hash-view
-          :translation="'accountId'"
+          :translation="'transaction.to'"
           :value="recipient.accountId"
           :type="HashType.Account"
           class="adar-tx-details__account-id"
@@ -14,7 +14,7 @@
         <info-line
           is-formatted
           value-can-be-hidden
-          :label="'amount'"
+          :label="t('transaction.amount')"
           :value="recipient.amount"
           :asset-symbol="recipient.symbol"
         />
