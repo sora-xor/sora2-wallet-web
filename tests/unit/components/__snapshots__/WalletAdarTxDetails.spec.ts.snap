@@ -1,0 +1,78 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WalletAdarTxDetails.vue [SwapTransferBatch, finalized]: should be rendered correctly 1`] = `
+<div
+  class="adar-tx-details"
+>
+  <div
+    class="adar-tx-details__title"
+  >
+    
+    ADAR transaction details
+  
+  </div>
+   
+  <div
+    class="adar-tx-details__txs-container"
+  >
+    <div>
+      <transaction-hash-view-stub
+        block=""
+        class="adar-tx-details__account-id"
+        hash=""
+        translation="transaction.to"
+        type="account"
+        value="cnSmwADqUFSbXA5iGZYizXwCwNPHHt7dTG2ZApDQPkq92TFCT"
+      />
+       
+      <info-line-stub
+        assetsymbol="XOR"
+        fiatvalue=""
+        isformatted="true"
+        label="Amount"
+        labeltooltip=""
+        value="0.732178089913374904"
+        valuecanbehidden="true"
+        valuetooltip=""
+      />
+    </div>
+    <div>
+      <transaction-hash-view-stub
+        block=""
+        class="adar-tx-details__account-id"
+        hash=""
+        translation="transaction.to"
+        type="account"
+        value="cnV2xJFCvXN9fx3DHt9FJWovPkVVBu1vtuzmhr2QnedmZqQ6J"
+      />
+       
+      <info-line-stub
+        assetsymbol="VAL"
+        fiatvalue=""
+        isformatted="true"
+        label="Amount"
+        labeltooltip=""
+        value="0.883650537081023890"
+        valuecanbehidden="true"
+        valuetooltip=""
+      />
+    </div>
+  </div>
+   
+  <s-pagination-stub
+    borderradius="small"
+    class="adar-tx-details__pagination-panel"
+    currentpage="1"
+    layout="prev, total, next"
+    nexttext=""
+    oftext="of"
+    pagesize="4"
+    pagesizes="10,20,30,40,50,100"
+    perpagetext="Rows per page"
+    popperclass=""
+    prevtext=""
+    total="2"
+    totaltext="Total"
+  />
+</div>
+`;
