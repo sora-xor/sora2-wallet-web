@@ -6,9 +6,6 @@ import { storage, settingsStorage } from '../../util/storage';
 
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
 
-import type { AppWallet } from '../../consts';
-import type { FiatPriceObject, ReferrerRewards } from '../../services/subquery/types';
-import type { Book, PolkadotJsAccount } from '../../types/common';
 import type { AccountState } from './types';
 import type { AppWallet } from '../../consts';
 import type { FiatPriceObject, ReferrerRewards } from '../../services/subquery/types';
