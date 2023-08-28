@@ -1,10 +1,10 @@
 import commonjs from '@rollup/plugin-commonjs';
 import image from '@rollup/plugin-image';
+import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import copy from 'rollup-plugin-copy';
 import del from 'rollup-plugin-delete';
-import json from 'rollup-plugin-json';
 import scss from 'rollup-plugin-scss';
 import typescript from 'rollup-plugin-typescript2';
 import vue from 'rollup-plugin-vue';
@@ -22,6 +22,8 @@ const globals = {
   '@sora-substrate/util/build/assets/consts': 'consts$1',
   '@sora-substrate/util/build/poolXyk/consts': 'consts$2',
   '@sora-substrate/util/build/rewards/consts': 'consts$2',
+  '@sora-test/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg': 'PolkadotLogo',
+  '@sora-test/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg': 'SubWalletLogo',
   '@soramitsu/soramitsu-js-ui/lib/components/Button/SButton': 'SButton',
   '@soramitsu/soramitsu-js-ui/lib/components/Card/SCard': 'SCard',
   '@soramitsu/soramitsu-js-ui/lib/components/DesignSystem/SDesignSystemProvider': 'SDesignSystemProvider',
@@ -209,9 +211,6 @@ export default {
       output: 'lib/soraneo-wallet-web.css',
     }),
     image(),
-    // TODO: it is used to fix:
-    // Error: Unexpected token (Note that you need @rollup/plugin-json to import JSON files)
-    // node_modules/elliptic/package.json
     json(),
     terser({
       compress: true,
