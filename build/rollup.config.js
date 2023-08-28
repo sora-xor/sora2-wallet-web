@@ -1,10 +1,10 @@
 import commonjs from '@rollup/plugin-commonjs';
 import image from '@rollup/plugin-image';
+import json from '@rollup/plugin-json';
 import resolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
 import copy from 'rollup-plugin-copy';
 import del from 'rollup-plugin-delete';
-import json from 'rollup-plugin-json';
 import scss from 'rollup-plugin-scss';
 import typescript from 'rollup-plugin-typescript2';
 import vue from 'rollup-plugin-vue';
@@ -209,9 +209,6 @@ export default {
       output: 'lib/soraneo-wallet-web.css',
     }),
     image(),
-    // TODO: it is used to fix:
-    // Error: Unexpected token (Note that you need @rollup/plugin-json to import JSON files)
-    // node_modules/elliptic/package.json
     json(),
     terser({
       compress: true,
