@@ -86,8 +86,15 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     }
   }
 
-  @ModelSync('value', 'input', { default: '', type: String })
-  address!: string;
+  get address(): string {
+    return this.value;
+  }
+
+  set address(value: string) {
+    const prepared = value.trim();
+
+    this.$emit('input', prepared);
+  }
 
   name = '';
   prefilledAddress = '';
