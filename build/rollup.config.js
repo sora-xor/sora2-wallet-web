@@ -22,6 +22,8 @@ const globals = {
   '@sora-substrate/util/build/assets/consts': 'consts$1',
   '@sora-substrate/util/build/poolXyk/consts': 'consts$2',
   '@sora-substrate/util/build/rewards/consts': 'consts$2',
+  '@sora-test/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg': 'PolkadotLogo',
+  '@sora-test/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg': 'SubWalletLogo',
   '@soramitsu/soramitsu-js-ui/lib/components/Button/SButton': 'SButton',
   '@soramitsu/soramitsu-js-ui/lib/components/Card/SCard': 'SCard',
   '@soramitsu/soramitsu-js-ui/lib/components/DesignSystem/SDesignSystemProvider': 'SDesignSystemProvider',
