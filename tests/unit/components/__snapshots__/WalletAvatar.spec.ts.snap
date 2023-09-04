@@ -1,6 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WalletAvatar.vue [With Beachball Theme]: should be rendered correctly 1`] = `<!--(a, b, c, d) =&gt; createElement$1(vm, a, b, c, d, true)-->`;
+exports[`WalletAvatar.vue [With Beachball Theme]: should be rendered correctly 1`] = `
+<!--function (a, b, c, d) {
+    return createElement(vm, a, b, c, d, true);
+  }-->
+`;
 
 exports[`WalletAvatar.vue [With Empty Address]: should be rendered correctly 1`] = `
 <svg
