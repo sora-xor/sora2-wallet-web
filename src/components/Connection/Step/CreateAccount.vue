@@ -1,10 +1,10 @@
 <template>
   <div class="login">
     <div class="login__title">{{ title }}</div>
-    <div class="login__step-count">{{ t('stepText') }} {{ stepNumber }} / 3</div>
+    <div class="login__step-count">{{ t('stepText') }} {{ stepNumber }} / {{ ColumnsCount }}</div>
     <template v-if="step === LoginStep.SeedPhrase">
       <div class="seed-grid s-flex">
-        <div v-for="column in 3" :key="column" class="seed-grid__column">
+        <div v-for="column in ColumnsCount" :key="column" class="seed-grid__column">
           <div v-for="(word, idx) in seedPhraseWords" :key="`${word}${idx}`">
             <div v-if="renderWord(column, idx)" class="seed-grid__word">
               <span class="seed-grid__word-number">{{ idx + 1 }}</span>
@@ -127,6 +127,8 @@ import type { CreateAccountArgs } from '../../../store/account/types';
   },
 })
 export default class CreateAccountStep extends Mixins(NotificationMixin) {
+  readonly ColumnsCount = 3;
+
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
