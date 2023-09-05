@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="title" :show-header="showHeader" show-back @back="handleBack">
+  <wallet-base show-header show-back :title="title" @back="handleBack">
     <template v-if="logoutButtonVisibility" #actions>
       <s-button type="action" :tooltip="t('logoutText')" @click="handleLogout">
         <s-icon name="basic-eye-24" size="28" />
@@ -73,18 +73,41 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   @action.account.restoreAccountFromJson private restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
   @action.account.resetSelectedWallet private resetSelectedWallet!: FnWithoutArgs;
 
-  @getter.account.isLoggedIn isLoggedIn!: boolean;
+  @getter.account.isLoggedIn private isLoggedIn!: boolean;
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
 
   @state.account.selectedWallet private selectedWallet!: AppWallet;
 
   step: LoginStep = LoginStep.AccountList;
-
   accountLoginVisibility = false;
   accountLoginData: Nullable<PolkadotJsAccount> = null;
 
   get title(): string {
-    return this.t('connection.internalTitle', { wallet: this.selectedWalletTitle });
+    if (this.isAccountList) {
+      return this.t('connection.internalTitle', { wallet: this.selectedWalletTitle });
+    } else if (this.isCreateFlow) {
+      switch (this.step) {
+        case LoginStep.SeedPhrase:
+          return this.t('desktop.heading.seedPhraseTitle');
+        case LoginStep.ConfirmSeedPhrase:
+          return this.t('desktop.heading.confirmSeedTitle');
+        case LoginStep.CreateCredentials:
+          return this.t('desktop.heading.accountDetailsTitle');
+        default:
+          return '';
+      }
+    } else if (this.isImportFlow) {
+      switch (this.step) {
+        case LoginStep.Import:
+          return this.t('desktop.heading.importTitle');
+        case LoginStep.ImportCredentials:
+          return this.t('desktop.heading.accountDetailsTitle');
+        default:
+          return '';
+      }
+    } else {
+      return '';
+    }
   }
 
   get text(): string {
@@ -105,10 +128,6 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
   get isAccountList(): boolean {
     return this.step === LoginStep.AccountList;
-  }
-
-  get showHeader(): boolean {
-    return this.isAccountList;
   }
 
   navigateToCreateAccount(): void {
