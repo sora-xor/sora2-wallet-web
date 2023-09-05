@@ -1,38 +1,38 @@
 <template>
   <div class="login">
-    <div class="login__title">{{ title }}</div>
     <template v-if="step === LoginStep.Import">
+      <!-- Mnemonic phrase imput (only for desktop version) -->
       <template v-if="!jsonOnly">
         <s-input
+          class="input-textarea"
+          type="textarea"
           :disabled="loading"
           :placeholder="t('desktop.accountMnemonic.placeholder')"
           :maxlength="255"
           v-model="mnemonicPhrase"
-          class="input-textarea"
-          type="textarea"
           @input="handleMnemonicInput"
         />
         <s-button
-          :disabled="disabledNextStep"
           class="s-typography-button--large login-btn"
           key="step1"
           type="primary"
+          :disabled="disabledNextStep"
           @click="nextStep"
         >
           {{ t('desktop.button.next') }}
         </s-button>
         <p class="line">or</p>
       </template>
-
+      <!-- JSON upload area -->
       <file-uploader ref="uploader" accept="application/json" class="upload-json" @upload="handleUploadJson">
         <div class="placeholder">
           <s-icon class="upload-json__icon" name="el-icon-document" size="32px" />
-          <span class="upload-json__placeholder">{{
-            t('dragAndDropText', { extension: TranslationConsts.JSON })
-          }}</span>
+          <span class="upload-json__placeholder">
+            {{ t('dragAndDropText', { extension: TranslationConsts.JSON }) }}
+          </span>
         </div>
       </file-uploader>
-
+      <!-- Import instructions (only for non desktop version) -->
       <template v-if="jsonOnly">
         <s-card shadow="always" class="import-steps">
           <div v-for="(text, index) in importSteps" :key="index" class="import-step">
@@ -40,7 +40,6 @@
             <div class="import-step__text">{{ text }}</div>
           </div>
         </s-card>
-
         <div class="export-tutorial">
           <div class="export-tutorial-title">{{ t('desktop.exportTutorialsText') }}</div>
           <div class="export-tutorial-grid">
@@ -69,7 +68,7 @@
         <template v-else>
           <s-input :disabled="loading" :placeholder="t('desktop.accountName.placeholder')" v-model="accountName" />
 
-          <p v-if="!json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+          <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
         </template>
 
         <password-input v-model="accountPassword" :disabled="loading" />
@@ -133,6 +132,8 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
   @Ref('uploader') readonly uploader!: HTMLFormElement;
 
+  readonly LoginStep = LoginStep;
+  readonly PhraseLength = 12;
   readonly Tutorials = [
     {
       logo: FearlessLogo,
@@ -151,27 +152,11 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     },
   ];
 
-  readonly LoginStep = LoginStep;
-
-  readonly PHRASE_LENGTH = 12;
-
   mnemonicPhrase = '';
   accountName = '';
   accountPassword = '';
   accountPasswordConfirm = '';
-
   json: Nullable<KeyringPair$Json> = null;
-
-  get title(): string {
-    switch (this.step) {
-      case LoginStep.Import:
-        return this.t('desktop.heading.importTitle');
-      case LoginStep.ImportCredentials:
-        return this.t('desktop.heading.accountDetailsTitle');
-      default:
-        return '';
-    }
-  }
 
   get disabledNextStep(): boolean {
     return this.mnemonicPhrase.length === 0;
@@ -197,7 +182,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     ];
   }
 
-  handleMnemonicInput(char) {
+  handleMnemonicInput(char: string) {
     const letter = char.replace('.', '').replace('  ', ' ');
 
     if (/^[a-z ]+$/.test(letter)) this.mnemonicPhrase = letter;
@@ -206,8 +191,8 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   nextStep(): void {
     this.withAppNotification(async () => {
       try {
-        if (this.mnemonicPhrase.trim().split(' ').length !== this.PHRASE_LENGTH) {
-          throw new AppError({ key: 'desktop.errorMessages.mnemonicLength', payload: { number: this.PHRASE_LENGTH } });
+        if (this.mnemonicPhrase.trim().split(' ').length !== this.PhraseLength) {
+          throw new AppError({ key: 'desktop.errorMessages.mnemonicLength', payload: { number: this.PhraseLength } });
         }
         if (!mnemonicValidate(this.mnemonicPhrase)) {
           throw new AppError({ key: 'desktop.errorMessages.mnemonic' });
@@ -244,17 +229,15 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   }
 
   async importAccount(): Promise<void> {
-    if (this.json) {
-      await this.restoreAccount({ json: this.json, password: this.accountPassword });
-    } else {
-      await this.createAccount({
-        seed: this.mnemonicPhrase,
-        name: this.accountName,
-        password: this.accountPassword,
-        passwordConfirm: this.accountPasswordConfirm,
-      });
-    }
-
+    const action = this.json
+      ? this.restoreAccount({ json: this.json, password: this.accountPassword })
+      : this.createAccount({
+          seed: this.mnemonicPhrase,
+          name: this.accountName,
+          password: this.accountPassword,
+          passwordConfirm: this.accountPasswordConfirm,
+        });
+    await action;
     this.resetForm();
   }
 
@@ -270,14 +253,9 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 @include login-view;
 
 .login {
-  &__title {
-    margin-top: -54px;
-  }
-
   .json-upload {
     display: none;
   }
-
   .input-textarea.s-textarea {
     margin-bottom: 0;
   }
@@ -289,16 +267,16 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   flex-direction: row;
   text-transform: uppercase;
   color: var(--s-color-base-content-secondary);
-}
 
-.line::before,
-.line::after {
-  content: '';
-  flex: 1 1;
-  border-bottom: 2px solid var(--s-color-base-content-tertiary);
-  margin: auto;
-  margin-left: 10px;
-  margin-right: 10px;
+  &::before,
+  &::after {
+    content: '';
+    flex: 1 1;
+    border-bottom: 2px solid var(--s-color-base-content-tertiary);
+    margin: auto;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
 }
 
 .eye-icon:hover {
@@ -339,8 +317,9 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     height: var(--s-size-small);
     font-size: 24px;
     font-weight: 300;
-    background: white;
-    color: var(--s-color-base-content-tertiary);
+    background: var(--s-color-base-content-tertiary);
+    color: var(--s-color-base-on-accent);
+    box-shadow: var(--s-shadow-element-pressed);
     border-radius: 50%;
     text-align: center;
     margin-right: $basic-spacing-small;

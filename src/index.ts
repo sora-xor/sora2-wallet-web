@@ -1,5 +1,5 @@
-// Components
 import { api, connection } from './api';
+// Components & Mixins
 import AccountCard from './components/Account/AccountCard.vue';
 import WalletAccount from './components/Account/WalletAccount.vue';
 import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
@@ -13,7 +13,6 @@ import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';
 import HistoryPagination from './components/HistoryPagination.vue';
 import InfoLine from './components/InfoLine.vue';
-// Mixins
 import SearchInput from './components/Input/SearchInput.vue';
 import CameraPermissionMixin from './components/mixins/CameraPermissionMixin';
 import CopyAddressMixin from './components/mixins/CopyAddressMixin';
