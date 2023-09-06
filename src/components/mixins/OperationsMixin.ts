@@ -21,6 +21,18 @@ const twoAssetsBasedOperations = [
   Operation.DemeterFarmingWithdrawLiquidity,
 ];
 
+const amountBasedOperations = [
+  ...twoAssetsBasedOperations,
+  Operation.Transfer,
+  Operation.DemeterFarmingGetRewards,
+  Operation.DemeterFarmingStakeToken,
+  Operation.DemeterFarmingUnstakeToken,
+  Operation.EthBridgeIncoming,
+  Operation.EthBridgeOutgoing,
+  Operation.ReferralReserveXor,
+  Operation.ReferralUnreserveXor,
+];
+
 const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
 
 @Component
@@ -57,17 +69,7 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
       params.direction = direction;
       params.action = action;
     }
-    if (
-      [
-        ...twoAssetsBasedOperations,
-        Operation.Transfer,
-        Operation.DemeterFarmingGetRewards,
-        Operation.DemeterFarmingStakeToken,
-        Operation.DemeterFarmingUnstakeToken,
-        Operation.EthBridgeIncoming,
-        Operation.EthBridgeOutgoing,
-      ].includes(value.type)
-    ) {
+    if (amountBasedOperations.includes(value.type)) {
       params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
     }
     if (twoAssetsBasedOperations.includes(value.type)) {
