@@ -1,10 +1,10 @@
 <template>
   <div class="login">
-    <div class="login__title">{{ title }}</div>
-    <div class="login__step-count">{{ t('stepText') }} {{ stepNumber }} / 3</div>
+    <div class="login__step-count">{{ t('stepText') }} {{ stepNumber }} / {{ ColumnsCount }}</div>
+    <!-- Create/SeedPhrase -->
     <template v-if="step === LoginStep.SeedPhrase">
       <div class="seed-grid s-flex">
-        <div v-for="column in 3" :key="column" class="seed-grid__column">
+        <div v-for="column in ColumnsCount" :key="column" class="seed-grid__column">
           <div v-for="(word, idx) in seedPhraseWords" :key="`${word}${idx}`">
             <div v-if="renderWord(column, idx)" class="seed-grid__word">
               <span class="seed-grid__word-number">{{ idx + 1 }}</span>
@@ -13,19 +13,19 @@
           </div>
         </div>
       </div>
-      <s-button @click="handleCopy" class="login__copy-seed">
+      <s-button @click="handleCopy" size="mini" class="login__copy-seed" icon="basic-copy-24" icon-position="right">
         <span>{{ t('copyPhraseText') }}</span>
-        <s-icon name="basic-copy-24" size="18"></s-icon>
       </s-button>
       <div class="login__text-advice">
-        <p>
-          {{ t('desktop.seedAdviceText') }}
-        </p>
+        <p>{{ t('desktop.seedAdviceText', { wallet: selectedWalletTitle }) }}</p>
+        <p>{{ t('desktop.seedAdviceAdditionTitle') }}</p>
+        <p>{{ t('desktop.seedAdviceAdditionText') }}</p>
       </div>
       <s-button key="step1" @click="nextStep" class="s-typography-button--large login-btn" type="primary">{{
         t('desktop.button.next')
       }}</s-button>
     </template>
+    <!-- Create/ConfirmSeedPhrase -->
     <template v-if="step === LoginStep.ConfirmSeedPhrase">
       <div class="login__random-order login__order-container">
         <div
@@ -34,22 +34,16 @@
           :class="['login__random-word', { hidden: isHiddenWord(idx), incorrect }]"
           @click="chooseWord(idx)"
         >
-          <s-button size="small">
-            {{ word }}
-          </s-button>
+          <s-button size="small">{{ word }}</s-button>
         </div>
       </div>
       <div class="login__text-confirm">
-        <p>
-          {{ t('desktop.confirmSeedText') }}
-        </p>
+        <p>{{ t('desktop.confirmSeedText') }}</p>
       </div>
       <div class="delimiter"></div>
       <div class="login__correct-order login__order-container">
         <div v-for="idx in seedPhraseToCompareIdx" :key="idx" class="login__random-word" @click="discardWord(idx)">
-          <s-button size="small">
-            {{ randomizedSeedPhraseMap[idx] }}
-          </s-button>
+          <s-button size="small">{{ randomizedSeedPhraseMap[idx] }}</s-button>
         </div>
       </div>
       <div class="login__error">
@@ -59,20 +53,17 @@
       </div>
       <s-button
         key="step2"
-        @click="handleMnemonicCheck"
         class="s-typography-button--large login-btn"
         :type="btnTypeConfirmStep"
+        @click="handleMnemonicCheck"
       >
         {{ btnTextConfirmStep }}
       </s-button>
     </template>
+    <!-- Create/Credentials -->
     <template v-else-if="step === LoginStep.CreateCredentials">
       <s-form class="login__inputs" @submit.native.prevent="handleAccountCreate">
-        <s-input
-          :disabled="loading"
-          :placeholder="t('desktop.accountName.placeholder')"
-          v-model="accountName"
-        ></s-input>
+        <s-input :disabled="loading" :placeholder="t('desktop.accountName.placeholder')" v-model="accountName" />
         <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
         <password-input v-model="accountPassword" :disabled="loading" />
         <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
@@ -81,7 +72,10 @@
           :disabled="loading"
           :placeholder="t('desktop.confirmPassword.placeholder')"
           v-model="accountPasswordConfirm"
-        ></s-input>
+        />
+        <p v-if="!arePasswordsEqual" class="login__create-account-desc error">
+          {{ t('desktop.errorMessages.passwords') }}
+        </p>
 
         <div class="wallet-settings-create-token_export">
           <s-switch v-model="toExport" :disabled="loading" />
@@ -95,7 +89,7 @@
           class="s-typography-button--large login-btn"
           type="primary"
           native-type="submit"
-          :disabled="isInputsNotFilled"
+          :disabled="btnConfirmDisabled"
           :loading="loading"
         >
           {{ t('desktop.button.createAccount') }}
@@ -111,6 +105,7 @@ import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
+import { getter } from '../../../store/decorators';
 import { copyToClipboard } from '../../../util';
 import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -123,19 +118,22 @@ import type { CreateAccountArgs } from '../../../store/account/types';
   },
 })
 export default class CreateAccountStep extends Mixins(NotificationMixin) {
+  readonly ColumnsCount = 3;
+  readonly LoginStep = LoginStep;
+  readonly PhraseLength = 12;
+
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
 
+  @getter.account.selectedWalletTitle selectedWalletTitle!: string;
+
   @Watch('step')
-  private resetSeedPhraseToCompareIdx() {
-    if (this.step !== LoginStep.ConfirmSeedPhrase) {
+  private resetSeedPhraseToCompareIdx(value: LoginStep) {
+    if (value !== LoginStep.ConfirmSeedPhrase) {
       this.seedPhraseToCompareIdx = [];
     }
   }
-
-  readonly LoginStep = LoginStep;
-  readonly PHRASE_LENGTH = 12;
 
   accountName = '';
   accountPassword = '';
@@ -146,13 +144,6 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   showErrorMessage = false;
   toExport = false;
   incorrect = false;
-
-  get title(): string {
-    if (this.step === LoginStep.SeedPhrase) return this.t('desktop.heading.seedPhraseTitle');
-    if (this.step === LoginStep.ConfirmSeedPhrase) return this.t('desktop.heading.confirmSeedTitle');
-    if (this.step === LoginStep.CreateCredentials) return this.t('desktop.heading.accountDetailsTitle');
-    return '';
-  }
 
   get stepNumber(): number {
     switch (this.step) {
@@ -168,18 +159,26 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   get btnTextConfirmStep(): string {
-    if (this.seedPhraseToCompare.length === this.PHRASE_LENGTH) {
+    if (this.seedPhraseToCompare.length === this.PhraseLength) {
       return this.t('desktop.button.next');
     }
     return this.t('desktop.button.skip');
   }
 
   get btnTypeConfirmStep(): string {
-    return this.seedPhraseToCompare.length === this.PHRASE_LENGTH ? 'primary' : 'secondary';
+    return this.seedPhraseToCompare.length === this.PhraseLength ? 'primary' : 'secondary';
+  }
+
+  get btnConfirmDisabled(): boolean {
+    return this.isInputsNotFilled || !this.arePasswordsEqual;
   }
 
   get isInputsNotFilled(): boolean {
     return !this.accountName || !this.accountPassword || !this.accountPasswordConfirm;
+  }
+
+  get arePasswordsEqual(): boolean {
+    return this.accountPassword === this.accountPasswordConfirm;
   }
 
   get seedPhrase(): string {
@@ -228,7 +227,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   handleMnemonicCheck(): void {
-    if (this.seedPhraseToCompare.length < this.PHRASE_LENGTH) {
+    if (this.seedPhraseToCompare.length < this.PhraseLength) {
       this.$emit('update:step', LoginStep.CreateCredentials);
       return;
     }
@@ -247,7 +246,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
 
     setTimeout(() => {
       this.showErrorMessage = false;
-    }, 4500);
+    }, 4_500);
   }
 
   runReturnAnimation(): void {
@@ -255,11 +254,11 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
 
     setTimeout(() => {
       this.incorrect = false;
-    }, 2000);
+    }, 2_000);
   }
 
-  async handleAccountCreate(): Promise<void> {
-    await this.createAccount({
+  handleAccountCreate(): Promise<void> {
+    return this.createAccount({
       seed: this.seedPhrase,
       name: this.accountName,
       password: this.accountPassword,
@@ -274,14 +273,18 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
 @include login-view;
 
 .login {
-  &__title {
-    margin-top: -54px;
-  }
-
   &__text-advice {
     text-align: center;
-    margin-bottom: 8px;
+    margin-bottom: $basic-spacing;
     font-weight: 300;
+    p {
+      &:first-child {
+        margin-bottom: $basic-spacing-medium;
+      }
+      &:not(:first-child) {
+        font-weight: 600;
+      }
+    }
   }
 
   &__text-confirm {
@@ -292,20 +295,14 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
 
   &__error {
     height: 20px;
-    margin-bottom: 6px;
+    margin-bottom: $basic-spacing-extra-small;
     &-text {
       color: var(--s-color-status-error);
     }
   }
 
   &__copy-seed {
-    margin: 8px 0 28px 0 !important;
-    height: 28px !important;
-    font-size: calc(var(--s-size-mini) / 2) !important;
-
-    .s-icon-basic-copy-24 {
-      margin-left: 6px;
-    }
+    margin: $basic-spacing 0 $basic-spacing-big 0;
   }
 
   &__order-container {
@@ -317,23 +314,14 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   &__random-order {
-    margin: 0px auto calc(var(--s-size-small) / 2) auto;
+    margin: 0px auto $basic-spacing-mini auto;
   }
 
   &__correct-order {
-    margin: var(--s-size-mini) auto;
+    margin: $basic-spacing-mini auto;
   }
 
   &__random-word {
-    button {
-      background-color: #f4f0f1 !important;
-      color: #000 !important;
-    }
-
-    span {
-      font-weight: 400 !important;
-    }
-
     &.hidden {
       visibility: hidden;
     }
@@ -344,16 +332,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   &__step-count {
-    margin: 0px 0 16px 0;
-  }
-
-  &__create-account-desc {
-    color: var(--s-color-base-content-primary);
-    font-size: var(--s-font-size-extra-small);
-    font-weight: 300;
-    line-height: var(--s-line-height-base);
-    padding: 0 #{$basic-spacing-small};
-    width: 330px !important;
+    margin-bottom: $basic-spacing-medium;
   }
 
   .eye-icon {
@@ -364,7 +343,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   .delimiter {
-    margin: calc(var(--s-size-small) / 2) 0 var(--s-size-mini) 0;
+    margin: $basic-spacing-mini 0 $basic-spacing-mini 0;
     width: 100%;
     height: 1px;
     background-color: var(--s-color-base-content-tertiary);
@@ -377,7 +356,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     text-transform: uppercase;
 
     &-number {
-      margin-right: 8px;
+      margin-right: $basic-spacing;
       color: var(--s-color-base-content-secondary);
     }
   }
@@ -393,13 +372,13 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
     font-size: var(--s-font-size-extra-small);
     font-weight: 300;
     line-height: var(--s-line-height-base);
-    padding: 0 #{$basic-spacing-small};
+    padding: 0 $basic-spacing-small;
   }
 
   &_export {
     @include switch-block;
     align-self: start;
-    padding: 0 #{$basic-spacing-small};
+    padding: 0 $basic-spacing-small;
   }
 }
 

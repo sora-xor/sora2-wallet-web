@@ -47,64 +47,106 @@ export class GoogleApi {
 }
 
 export class GoogleDriveApi extends GoogleApi {
-  private prepareData(
-    content: string,
-    { name, address, boundary = 'foo_bar_baz' }: { name: string; address: string; boundary: string },
-    update = false
-  ) {
-    const metadata: any = {
-      name,
-      mimeType: 'application/json',
-      description: address,
-    };
+  protected readonly mimeType = {
+    json: 'application/json',
+    folder: 'application/vnd.google-apps.folder',
+  };
 
-    if (!update) {
-      metadata.parents = ['appDataFolder'];
-    }
+  protected readonly boundary = 'foo_bar_baz';
 
+  private prepareContent(content: string, metadata: gapi.client.drive.File): string {
     return `
---${boundary}
-Content-Type: application/json; charset=UTF-8
+--${this.boundary}
+Content-Type: ${this.mimeType.json}; charset=UTF-8
 
 ${JSON.stringify(metadata)}
---${boundary}
-Content-Type: application/json
+--${this.boundary}
+Content-Type: ${this.mimeType.json}
 
 ${content}
---${boundary}--`;
+--${this.boundary}--`;
   }
 
-  public async getFiles() {
-    return await gapi.client.drive.files.list({
-      fields: 'files(id,name,description)',
-      spaces: 'appDataFolder',
+  prepareBody(content: string, { name, description, mimeType = this.mimeType.json }: gapi.client.drive.File) {
+    const metadata: gapi.client.drive.File = {
+      name,
+      description,
+      mimeType,
+    };
+
+    return this.prepareContent(content, metadata);
+  }
+
+  public async getFolderId(name: string, parent: string): Promise<string | undefined> {
+    const query = `name = '${name}'`;
+    const files = await this.getFiles(parent, query);
+
+    return files?.[0]?.id;
+  }
+
+  public async createFile(metadata: gapi.client.drive.File): Promise<string> {
+    const response = await gapi.client.drive.files.create({
+      resource: metadata,
+      fields: 'id',
     });
+    const id = response.result.id;
+
+    if (!id) throw new Error(`[${this.constructor.name}]: Unable to create file metadata`);
+
+    return id;
   }
 
-  public async getFile(id: string) {
-    return await gapi.client.drive.files.get({
-      fileId: id,
+  /**
+   * Create a folder
+   * @param name name of the folder
+   * @param parent the name of the parent folder, if the new one should be a subfolder
+   * @returns the created folder ID
+   */
+  public async createFolder(name: string, parent?: string): Promise<string | undefined> {
+    const parents = parent ? [parent] : undefined;
+    const metadata = {
+      name,
+      mimeType: this.mimeType.folder,
+      parents,
+    };
+    const id = await this.createFile(metadata);
+
+    return id;
+  }
+
+  public async getFiles(spaces: string, q?: string) {
+    const response = await gapi.client.drive.files.list({
+      fields: 'files(id,name,description)',
+      spaces,
+      q,
+    });
+
+    return response.result.files;
+  }
+
+  public async readFile(fileId: string) {
+    const response = await gapi.client.drive.files.get({
+      fileId,
       alt: 'media',
     });
+
+    return response.result;
   }
 
-  public async deleteFile(id: string) {
+  public async deleteFile(fileId: string) {
     await gapi.client.drive.files.delete({
-      fileId: id,
+      fileId,
     });
   }
 
-  public async createFile({ json, name, address }: { json: string; name: string; address: string }, id?: string) {
-    const boundary = 'foo_bar_baz';
-    const body = this.prepareData(json, { name, address, boundary }, !!id);
-    const length = body.length;
+  public async updateFile(fileId: string, body: string): Promise<void> {
     const request = gapi.client.request({
-      path: `/upload/drive/v3/files${id ? '/' + id : ''}`,
-      method: id ? 'PATCH' : 'POST',
+      path: `/upload/drive/v3/files/${fileId}`,
+      method: 'PATCH',
       params: { uploadType: 'multipart' },
       headers: {
-        'Content-Type': `multipart/related; boundary=${boundary}`,
-        'Content-Length': length.toString(),
+        'Content-Type': `multipart/related; boundary=${this.boundary}`,
+        'Content-Length': body.length.toString(),
       },
       body,
     });

@@ -30,7 +30,7 @@ export default {
   addressText: 'Address',
   amountText: 'Amount',
   confirmText: 'Confirm',
-  copyPhraseText: 'Copy Phrase',
+  copyPhraseText: 'Copy Passphrase',
   stepText: 'Step',
   errorText: 'Error',
   logoutText: 'Logout',
@@ -72,8 +72,8 @@ export default {
       [Operation.CreatePair]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RegisterAsset]: 'Registered {symbol} asset',
       [Operation.ClaimRewards]: 'Reward claimed successfully {rewards}',
-      [Operation.ReferralReserveXor]: 'Bonded XOR successfully',
-      [Operation.ReferralUnreserveXor]: 'Unbonded XOR successfully',
+      [Operation.ReferralReserveXor]: 'Bonded {amount} XOR',
+      [Operation.ReferralUnreserveXor]: 'Unbonded {amount} XOR',
       [Operation.ReferralSetInvitedUser]: 'Set {role} {address}',
       [Operation.DemeterFarmingDepositLiquidity]: 'Supplied {symbol} and {symbol2} {amount} LP tokens for farming',
       [Operation.DemeterFarmingWithdrawLiquidity]: 'Removed {symbol} and {symbol2} {amount} LP tokens from farming',
@@ -93,8 +93,8 @@ export default {
       [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RegisterAsset]: 'Failed to register {symbol} asset',
       [Operation.ClaimRewards]: 'Failed to claim rewards {rewards}',
-      [Operation.ReferralReserveXor]: 'Failed to bond XOR',
-      [Operation.ReferralUnreserveXor]: 'Failed to unbonded XOR',
+      [Operation.ReferralReserveXor]: 'Failed to bond {amount} XOR',
+      [Operation.ReferralUnreserveXor]: 'Failed to unbonded {amount} XOR',
       [Operation.ReferralSetInvitedUser]: 'Failed to set {role} {address}',
       [Operation.DemeterFarmingDepositLiquidity]:
         'Failed to supply {amount} {symbol} and {symbol2} LP tokens for farming',
@@ -119,13 +119,14 @@ export default {
   },
   connection: {
     title: '{Sora} Network account',
-    text: 'Extensions & Google store your {Sora} Network account securely. They allow you to sign transactions & manage assets.',
-    internalTitle: 'Connect via {wallet}',
-    internalText: 'You can create or link an existing account via {wallet}. It stores accounts using encryption.',
+    text: 'In order to manage assets and sign transactions on {Sora}, an account must be connected. {Sora} accounts can be created and connected using our integrated wallets or browser extensions.',
+    internalTitle: 'Connect with {wallet}',
+    internalText:
+      'You can create or import an existing {Sora} account to connect with your {wallet} account. All data that is stored by {wallet} is encrypted using built-in advanced encryption.',
     noAccounts: 'No account found in your {extension} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
     list: {
-      simplest: 'Simplest option',
+      integrated: 'Integrated',
       extensions: 'Extensions',
     },
     action: {
@@ -175,7 +176,7 @@ export default {
     export: 'Export .json',
   },
   addressBook: {
-    myExtAccounts: 'My extension accounts',
+    myAccounts: 'My accounts',
     myBook: 'My Book',
     searchPlaceholder: 'Search by address, name or identity',
     noFoundRecords: 'No records found',
@@ -388,8 +389,8 @@ export default {
       importAccount: 'Import Account',
     },
     heading: {
-      seedPhraseTitle: 'Seed phrase',
-      confirmSeedTitle: 'Confirm seed phrase',
+      seedPhraseTitle: 'Passphrase',
+      confirmSeedTitle: 'Confirm passphrase',
       accountDetailsTitle: 'Account Details',
       importTitle: 'Import account',
     },
@@ -400,12 +401,12 @@ export default {
       importAccount: 'Import account',
     },
     accountName: {
-      placeholder: 'Wallet name',
-      desc: 'This is the name of your wallet which will be visible to you',
+      placeholder: 'Account name',
+      desc: 'This is the name of your account. It will be visible only to you in {Polkaswap}.',
     },
     password: {
       placeholder: 'Password',
-      desc: 'Ensure you are using a strong password for proper protection',
+      desc: 'Ensure you are using a strong unique password for proper protection (8 characters minimum)',
     },
     confirmPassword: {
       placeholder: 'Confirm password',
@@ -414,12 +415,15 @@ export default {
       placeholder: 'Mnemonic phrase',
     },
     seedAdviceText:
-      'This is a secret seed of your account. Make sure to store it on a non-digital carrier, for example - paper',
-    confirmSeedText: 'Confirm the seed phrase by clicking words in the correct order',
-    errorMnemonicText: 'Incorrect seed phrase order',
-    exportOptionText: 'Export .json account file',
+      'The 12-word passphrase is a private key to regain access to your {Sora} account in case you lose access to your {wallet} account. Store it safely in the exact order it appears above.',
+    seedAdviceAdditionTitle: 'Never share your passphrase with anyone!',
+    seedAdviceAdditionText:
+      'If someone asks you for your passphrase they are most likely trying to scam you and steal your assets!',
+    confirmSeedText: 'Confirm the passphrase by clicking the words in the correct order',
+    errorMnemonicText: 'Incorrect passphrase order',
+    exportOptionText: 'Export {JSON} file for account restoration',
     exportJsonText:
-      'You will always be able to access your account by importing that .json file. Do not share it with anyone!',
+      'You will always be able to restore your account by importing this {JSON} file. Do not share it with anyone! Store it safely, preferably encrypted.',
     addAccount: 'Add an account',
     assetsAtRiskText: 'Assets at risk!',
     deleteAccountText:
@@ -439,7 +443,7 @@ export default {
       alreadyImported: 'Account already imported {address}',
     },
     importSteps: {
-      selectWallet: 'Go to the wallet of your use',
+      selectWallet: 'Open the wallet with your existing account(s)',
       selectAccount: 'Select the account you want to export',
       exportAccount: 'Export the {JSON} file',
     },

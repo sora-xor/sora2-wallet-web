@@ -1,7 +1,8 @@
 import { api } from '../../../api';
-import { AppError, formatAddress } from '../../../util';
+import { BackupAccountMapper } from '../backup/mapper';
 import { GDriveStorage } from '../index';
 
+import type { EncryptedBackupAccount } from '../backup/types';
 import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/extension-inject/types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
@@ -11,10 +12,18 @@ interface IAccountMetadata extends InjectedAccount {
 
 const ACCOUNTS_UPDATE_INTERVAL = 60_000;
 
+const prepareAccountFile = (account: EncryptedBackupAccount) => {
+  return {
+    name: `${account.address}.json`,
+    description: account.name,
+    json: JSON.stringify(account),
+  };
+};
+
 export default class Accounts implements InjectedAccounts {
   private _list: IAccountMetadata[] = [];
   private accountsCallback: Nullable<(accounts: InjectedAccount[]) => unknown> = null;
-  private accountsUpdateInterval: Nullable<NodeJS.Timer> = null;
+  private accountsUpdateInterval: Nullable<NodeJS.Timeout> = null;
 
   private get accountsList(): IAccountMetadata[] {
     return this._list;
@@ -30,10 +39,11 @@ export default class Accounts implements InjectedAccounts {
 
   private findAccountByAddress(address: string): Nullable<IAccountMetadata> {
     const defaultAddress = api.formatAddress(address, false);
+
     return this.accountsList.find((acc) => acc.address === defaultAddress);
   }
 
-  private async findAccountById(address: string): Promise<string> {
+  private async getAccountIdByAddress(address: string): Promise<string> {
     await this.get();
 
     const account = this.findAccountByAddress(address);
@@ -43,34 +53,23 @@ export default class Accounts implements InjectedAccounts {
     return account.id;
   }
 
-  public async add(accountJson: KeyringPair$Json): Promise<void> {
-    const { address, meta } = accountJson;
+  public async add(accountPairJson: KeyringPair$Json, password: string, passphrase?: string): Promise<void> {
+    if (this.findAccountByAddress(accountPairJson.address)) return;
 
-    if (this.findAccountByAddress(address))
-      throw new AppError({
-        key: 'desktop.errorMessages.alreadyImported',
-        payload: {
-          address: formatAddress(api.formatAddress(address)),
-        },
-      });
+    const encryptedAccount = BackupAccountMapper.createFromPairJson(accountPairJson, password, passphrase);
+    const fileData = prepareAccountFile(encryptedAccount);
 
-    const json = JSON.stringify(accountJson);
-    const name = (meta.name as string) || '';
-
-    await GDriveStorage.create({ json, address, name });
+    await GDriveStorage.create(fileData);
     await this.get();
   }
 
   public async changeName(address: string, name: string) {
-    const id = await this.findAccountById(address);
-    const accountJson = (await GDriveStorage.get(id)) as KeyringPair$Json;
+    const id = await this.getAccountIdByAddress(address);
+    const encryptedAccount = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
+    const updated = BackupAccountMapper.changeName(encryptedAccount, name);
+    const fileData = prepareAccountFile(updated);
 
-    accountJson.meta = accountJson.meta || {};
-    accountJson.meta.name = name;
-
-    const json = JSON.stringify(accountJson);
-
-    await GDriveStorage.create({ json, address: accountJson.address, name }, id);
+    await GDriveStorage.update(id, fileData);
     // if account name updated in storage, we don't need to do request, just update it locally
     this.accountsList = this.accountsList.map((account) => ({
       ...account,
@@ -79,7 +78,7 @@ export default class Accounts implements InjectedAccounts {
   }
 
   public async delete(address: string): Promise<void> {
-    const id = await this.findAccountById(address);
+    const id = await this.getAccountIdByAddress(address);
 
     await GDriveStorage.delete(id);
     // if account deleted in storage, we don't need to do request, just remove it locally
@@ -90,21 +89,22 @@ export default class Accounts implements InjectedAccounts {
     const files = await GDriveStorage.getAll();
 
     this.accountsList = files
-      ? files.map((file) => ({
-          address: api.formatAddress(file.description || '', false),
-          name: file.name || '',
-          id: file.id as string,
+      ? files.map(({ id, name = '', description = '' }) => ({
+          address: api.formatAddress(name.replace(/\.json$/, ''), false), // formatted account address (extension like)
+          name: description, // account name
+          id: id as string,
         }))
       : [];
 
     return this.accountsList;
   }
 
-  public async getAccount(address: string): Promise<KeyringPair$Json> {
-    const id = await this.findAccountById(address);
-    const json = await GDriveStorage.get(id);
+  public async getAccount(address: string, password: string): Promise<Nullable<KeyringPair$Json>> {
+    const id = await this.getAccountIdByAddress(address);
+    const encryptedAccount = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
+    const json = BackupAccountMapper.getPairJson(encryptedAccount, password);
 
-    return json as KeyringPair$Json;
+    return json;
   }
 
   public subscribe(accountsCallback: (accounts: InjectedAccount[]) => unknown): Unsubcall {

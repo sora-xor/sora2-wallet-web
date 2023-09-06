@@ -70,6 +70,8 @@ exports[`WalletAccount.vue should be rendered correctly 1`] = `
         </div>
       </div>
        
+      <!---->
+       
     </div>
   </div>
 </s-card>

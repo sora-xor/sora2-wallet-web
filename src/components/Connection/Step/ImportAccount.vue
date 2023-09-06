@@ -1,89 +1,87 @@
 <template>
   <div class="login">
-    <div class="login__title">{{ title }}</div>
     <template v-if="step === LoginStep.Import">
+      <!-- Mnemonic phrase imput (only for desktop version) -->
       <template v-if="!jsonOnly">
         <s-input
+          class="input-textarea"
+          type="textarea"
           :disabled="loading"
           :placeholder="t('desktop.accountMnemonic.placeholder')"
           :maxlength="255"
           v-model="mnemonicPhrase"
-          class="input-textarea"
-          type="textarea"
           @input="handleMnemonicInput"
         />
         <s-button
-          :disabled="disabledNextStep"
           class="s-typography-button--large login-btn"
           key="step1"
           type="primary"
+          :disabled="disabledNextStep"
           @click="nextStep"
         >
           {{ t('desktop.button.next') }}
         </s-button>
         <p class="line">or</p>
       </template>
-
+      <!-- JSON upload area -->
       <file-uploader ref="uploader" accept="application/json" class="upload-json" @upload="handleUploadJson">
         <div class="placeholder">
           <s-icon class="upload-json__icon" name="el-icon-document" size="32px" />
-          <span class="upload-json__placeholder">{{
-            t('dragAndDropText', { extension: TranslationConsts.JSON })
-          }}</span>
+          <span class="upload-json__placeholder">
+            {{ t('dragAndDropText', { extension: TranslationConsts.JSON }) }}
+          </span>
         </div>
       </file-uploader>
-
-      <s-card shadow="always" class="import-steps">
-        <div v-for="(text, index) in importSteps" :key="index" class="import-step">
-          <div class="import-step__count">{{ index + 1 }}</div>
-          <div class="import-step__text">{{ text }}</div>
+      <!-- Import instructions (only for non desktop version) -->
+      <template v-if="jsonOnly">
+        <s-card shadow="always" class="import-steps">
+          <div v-for="(text, index) in importSteps" :key="index" class="import-step">
+            <div class="import-step__count">{{ index + 1 }}</div>
+            <div class="import-step__text">{{ text }}</div>
+          </div>
+        </s-card>
+        <div class="export-tutorial">
+          <div class="export-tutorial-title">{{ t('desktop.exportTutorialsText') }}</div>
+          <div class="export-tutorial-grid">
+            <a
+              v-for="{ logo, title, link } in Tutorials"
+              :key="title"
+              :href="link"
+              target="_blank"
+              rel="nofollow noopener noreferrer"
+              class="export-tutorial-grid-item"
+            >
+              <s-card shadow="always">
+                <div class="extension-tutorial">
+                  <img class="extension-tutorial-logo" :src="logo" />
+                  <span class="extension-tutorial-title">{{ title }}</span>
+                </div>
+              </s-card>
+            </a>
+          </div>
         </div>
-      </s-card>
-
-      <div class="export-tutorial">
-        <div class="export-tutorial-title">{{ t('desktop.exportTutorialsText') }}</div>
-        <div class="export-tutorial-grid">
-          <a
-            v-for="{ logo, title, link } in Tutorials"
-            :key="title"
-            :href="link"
-            target="_blank"
-            rel="nofollow noopener noreferrer"
-            class="export-tutorial-grid-item"
-          >
-            <s-card shadow="always">
-              <div class="extension-tutorial">
-                <img class="extension-tutorial-logo" :src="logo" />
-                <span class="extension-tutorial-title">{{ title }}</span>
-              </div>
-            </s-card>
-          </a>
-        </div>
-      </div>
+      </template>
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
       <s-form :class="computedClasses" @submit.native.prevent="importAccount">
-        <s-input
-          :disabled="loading"
-          :placeholder="t('desktop.accountName.placeholder')"
-          :readonly="readonlyAccountName"
-          v-model="accountName"
-        ></s-input>
+        <wallet-account v-if="json" :polkadot-account="{ name: accountName, address: json.address }" />
+        <template v-else>
+          <s-input :disabled="loading" :placeholder="t('desktop.accountName.placeholder')" v-model="accountName" />
 
-        <p v-if="!jsonOnly && !json" class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+          <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
+        </template>
 
-        <template v-if="!jsonOnly">
-          <password-input v-model="accountPassword" :disabled="loading" />
+        <password-input v-model="accountPassword" :disabled="loading" />
 
-          <template v-if="!json">
-            <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
-            <s-input
-              type="password"
-              :disabled="loading"
-              :placeholder="t('desktop.confirmPassword.placeholder')"
-              v-model="accountPasswordConfirm"
-            />
-          </template>
+        <template v-if="!json">
+          <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
+
+          <s-input
+            type="password"
+            :disabled="loading"
+            :placeholder="t('desktop.confirmPassword.placeholder')"
+            v-model="accountPasswordConfirm"
+          />
         </template>
 
         <s-button
@@ -110,6 +108,7 @@ import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 
 import { LoginStep } from '../../../consts';
 import { AppError, parseJson } from '../../../util';
+import WalletAccount from '../../Account/WalletAccount.vue';
 import FileUploader from '../../FileUploader.vue';
 import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -121,6 +120,7 @@ import type { KeyringPair$Json } from '../../../types/common';
   components: {
     FileUploader,
     PasswordInput,
+    WalletAccount,
   },
 })
 export default class ImportAccountStep extends Mixins(NotificationMixin) {
@@ -132,6 +132,8 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
   @Ref('uploader') readonly uploader!: HTMLFormElement;
 
+  readonly LoginStep = LoginStep;
+  readonly PhraseLength = 12;
   readonly Tutorials = [
     {
       logo: FearlessLogo,
@@ -150,38 +152,20 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     },
   ];
 
-  readonly LoginStep = LoginStep;
-
-  readonly PHRASE_LENGTH = 12;
-
   mnemonicPhrase = '';
   accountName = '';
   accountPassword = '';
   accountPasswordConfirm = '';
-
   json: Nullable<KeyringPair$Json> = null;
-
-  readonlyAccountName = false;
-
-  get title(): string {
-    switch (this.step) {
-      case LoginStep.Import:
-        return this.t('desktop.heading.importTitle');
-      case LoginStep.ImportCredentials:
-        return this.t('desktop.heading.accountDetailsTitle');
-      default:
-        return '';
-    }
-  }
 
   get disabledNextStep(): boolean {
     return this.mnemonicPhrase.length === 0;
   }
 
   get disabledImportStep(): boolean {
-    if (this.jsonOnly) return !(this.accountName && this.json);
+    if (this.json) return !this.accountPassword;
 
-    return !(this.accountName && this.accountPassword) || (!this.json && !this.accountPasswordConfirm);
+    return !(this.accountName && this.accountPassword && this.accountPasswordConfirm);
   }
 
   get computedClasses(): string {
@@ -198,7 +182,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     ];
   }
 
-  handleMnemonicInput(char) {
+  handleMnemonicInput(char: string) {
     const letter = char.replace('.', '').replace('  ', ' ');
 
     if (/^[a-z ]+$/.test(letter)) this.mnemonicPhrase = letter;
@@ -207,12 +191,15 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   nextStep(): void {
     this.withAppNotification(async () => {
       try {
-        if (this.mnemonicPhrase.trim().split(' ').length !== this.PHRASE_LENGTH) {
-          throw new AppError({ key: 'desktop.errorMessages.mnemonicLength', payload: { number: this.PHRASE_LENGTH } });
+        if (this.mnemonicPhrase.trim().split(' ').length !== this.PhraseLength) {
+          throw new AppError({ key: 'desktop.errorMessages.mnemonicLength', payload: { number: this.PhraseLength } });
         }
         if (!mnemonicValidate(this.mnemonicPhrase)) {
           throw new AppError({ key: 'desktop.errorMessages.mnemonic' });
         }
+
+        this.json = null;
+        this.resetForm();
 
         this.$emit('update:step', LoginStep.ImportCredentials);
       } catch (error) {
@@ -224,20 +211,17 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 
   async handleUploadJson(jsonFile: File): Promise<void> {
     this.withAppNotification(async () => {
-      if (!jsonFile) {
-        return;
-      }
+      if (!jsonFile) return;
 
       const parsedJson = await parseJson(jsonFile);
-      const { address, encoded, encoding, meta } = parsedJson;
+      const { address, encoded, encoding, meta = {} } = parsedJson;
 
-      if (!(address || encoded || encoding || meta)) {
+      if (!(address && encoded && encoding)) {
         this.uploader.resetFileInput();
         throw new AppError({ key: 'desktop.errorMessages.jsonFields' });
       }
 
-      this.accountName = meta.name as string;
-      this.readonlyAccountName = true;
+      this.accountName = (meta.name || '') as string;
       this.json = parsedJson;
       this.mnemonicPhrase = '';
       this.$emit('update:step', LoginStep.ImportCredentials);
@@ -245,17 +229,20 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   }
 
   async importAccount(): Promise<void> {
-    if (this.json) {
-      await this.restoreAccount({ json: this.json, password: this.accountPassword });
-    } else {
-      await this.createAccount({
-        seed: this.mnemonicPhrase,
-        name: this.accountName,
-        password: this.accountPassword,
-        passwordConfirm: this.accountPasswordConfirm,
-      });
-    }
+    const action = this.json
+      ? this.restoreAccount({ json: this.json, password: this.accountPassword })
+      : this.createAccount({
+          seed: this.mnemonicPhrase,
+          name: this.accountName,
+          password: this.accountPassword,
+          passwordConfirm: this.accountPasswordConfirm,
+        });
+    await action;
+    this.resetForm();
+  }
 
+  private resetForm(): void {
+    this.accountName = '';
     this.accountPassword = '';
     this.accountPasswordConfirm = '';
   }
@@ -266,14 +253,9 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
 @include login-view;
 
 .login {
-  &__title {
-    margin-top: -54px;
-  }
-
   .json-upload {
     display: none;
   }
-
   .input-textarea.s-textarea {
     margin-bottom: 0;
   }
@@ -285,16 +267,16 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   flex-direction: row;
   text-transform: uppercase;
   color: var(--s-color-base-content-secondary);
-}
 
-.line::before,
-.line::after {
-  content: '';
-  flex: 1 1;
-  border-bottom: 2px solid var(--s-color-base-content-tertiary);
-  margin: auto;
-  margin-left: 10px;
-  margin-right: 10px;
+  &::before,
+  &::after {
+    content: '';
+    flex: 1 1;
+    border-bottom: 2px solid var(--s-color-base-content-tertiary);
+    margin: auto;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
 }
 
 .eye-icon:hover {
@@ -335,8 +317,9 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     height: var(--s-size-small);
     font-size: 24px;
     font-weight: 300;
-    background: white;
-    color: var(--s-color-base-content-tertiary);
+    background: var(--s-color-base-content-tertiary);
+    color: var(--s-color-base-on-accent);
+    box-shadow: var(--s-shadow-element-pressed);
     border-radius: 50%;
     text-align: center;
     margin-right: $basic-spacing-small;
@@ -371,6 +354,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
       border-style: solid;
       border-color: transparent;
       border-radius: var(--s-border-radius-small);
+      text-decoration: none;
 
       &:hover {
         border-color: var(--s-color-base-content-secondary);

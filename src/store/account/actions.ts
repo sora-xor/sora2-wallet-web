@@ -2,7 +2,6 @@ import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
 import CryptoJS from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
 import { defineActions } from 'direct-vuex';
-import { saveAs } from 'file-saver';
 
 import { api } from '../../api';
 import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
@@ -21,6 +20,7 @@ import {
   WHITE_LIST_URL,
   NFT_BLACK_LIST_URL,
   AppError,
+  exportAccountJson,
 } from '../../util';
 
 import { accountActionContext } from './../account';
@@ -104,21 +104,13 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   }
 }
 
-function exportAccountJson(accountJson: string): void {
-  const blob = new Blob([accountJson], { type: 'application/json' });
-  const filename = (JSON.parse(accountJson) || {}).address || '';
-  saveAs(blob, filename);
+async function updateApiSigner(source: AppWallet) {
+  const signer = await getWalletSigner(source);
+
+  api.setSigner(signer);
 }
 
 const actions = defineActions({
-  async getSigner(context): Promise<Signer> {
-    const { state } = accountActionContext(context);
-    const defaultAddress = api.formatAddress(state.address, false);
-    const { signer } = await getWalletSigner(defaultAddress, state.source as AppWallet);
-
-    return signer;
-  },
-
   async afterLogin(context): Promise<void> {
     const { dispatch } = accountActionContext(context);
     const { rootDispatch } = rootActionContext(context);
@@ -154,13 +146,9 @@ const actions = defineActions({
   async checkSigner(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
-    if (getters.isLoggedIn) {
+    if (getters.isLoggedIn && state.isExternal && state.source) {
       try {
-        const signer = await dispatch.getSigner();
-
-        if (state.isExternal) {
-          api.setSigner(signer);
-        }
+        await updateApiSigner(state.source);
       } catch (error) {
         console.error(error);
         await dispatch.logout();
@@ -259,10 +247,6 @@ const actions = defineActions({
       dispatch.checkSigner();
     };
 
-    const accounts = await getWalletAccounts(wallet);
-
-    callback(accounts);
-
     const subscription = await subscribeToWalletAccounts(wallet, callback);
 
     commit.setWalletAccountsSubscription(subscription);
@@ -288,15 +272,13 @@ const actions = defineActions({
 
     if (isExternal) {
       // we should update signer
-      const { signer } = await getWalletSigner(defaultAddress, source);
-      api.setSigner(signer);
-    } else if (state.isDesktop) {
-      // check that account is added to keyring
-      const accounts = await getImportedAccounts();
+      await updateApiSigner(source);
+    }
 
-      if (!accounts.find((acc) => acc.address === defaultAddress)) {
-        throw new Error('polkadotjs.noAccount');
-      }
+    const accounts = state.isDesktop ? await getImportedAccounts() : await getWalletAccounts(source);
+
+    if (!accounts.find((acc) => acc.address === defaultAddress)) {
+      throw new Error('polkadotjs.noAccount');
     }
 
     await api.loginAccount(defaultAddress, accountData.name, source, isExternal);
@@ -320,7 +302,7 @@ const actions = defineActions({
     const json = pair.toJson(password);
 
     if (exportAccount) {
-      exportAccountJson(JSON.stringify(json));
+      exportAccountJson(json);
     }
 
     if (saveAccount) {
@@ -356,18 +338,12 @@ const actions = defineActions({
     }
   },
 
-  exportAccountFromJson(_, { json, password }: { json: KeyringPair$Json; password: string }): void {
-    const pair = api.createAccountPairFromJson(json);
-    const accountJson = api.exportAccount(pair, password);
-    exportAccountJson(accountJson);
-  },
-
   /**
    * Desktop
    */
   exportAccount(_, { address, password }: { address: string; password: string }): void {
     const pair = api.getAccountPair(address);
-    const accountJson = api.exportAccount(pair, password);
+    const accountJson = pair.toJson(password);
     exportAccountJson(accountJson);
   },
 
