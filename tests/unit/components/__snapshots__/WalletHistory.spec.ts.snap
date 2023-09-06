@@ -41,7 +41,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -71,7 +71,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -101,7 +101,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -131,7 +131,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -161,7 +161,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -194,7 +194,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -224,7 +224,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -254,7 +254,7 @@ exports[`WalletHistory.vue should be rendered correctly 1`] = `
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
   </div>
@@ -309,7 +309,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -339,7 +339,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -369,7 +369,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -399,7 +399,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -432,7 +432,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
   </div>
@@ -502,7 +502,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -532,7 +532,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -562,7 +562,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -592,7 +592,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
     <div
@@ -625,7 +625,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
       <div
         class="history-item-date"
       >
-        Nov 27, 2020 11:59:59 PM
+        Nov 27, 2020 11:59 PM
       </div>
     </div>
   </div>
