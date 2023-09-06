@@ -23,7 +23,7 @@
             <div class="history-item-title p4">{{ getOperationMessage(item, shouldBalanceBeHidden) }}</div>
             <s-icon v-if="!isFinalizedStatus(item)" :class="getStatusClass(item)" :name="getStatusIcon(item)" />
           </div>
-          <div class="history-item-date">{{ formatDate(item.startTime) }}</div>
+          <div class="history-item-date">{{ formatDate(item.startTime, DateFormat) }}</div>
         </div>
       </template>
       <div v-else class="history-empty p4">{{ t(`history.${hasTransactions ? 'emptySearch' : 'empty'}`) }}</div>
@@ -75,6 +75,9 @@ export default class WalletHistory extends Mixins(
   PaginationSearchMixin,
   EthBridgeTransactionMixin
 ) {
+  /** Date format without seconds, full date time will be available in TX Details */
+  readonly DateFormat = 'll LT';
+
   @state.account.assets private assets!: Array<Asset>;
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistory private externalHistory!: AccountHistory<HistoryItem>;
