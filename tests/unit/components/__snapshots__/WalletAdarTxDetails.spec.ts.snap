@@ -8,7 +8,7 @@ exports[`WalletAdarTxDetails.vue [SwapTransferBatch, finalized]: should be rende
     class="adar-tx-details__title"
   >
     
-    ADAR transaction details
+    Transaction details
   
   </div>
    
