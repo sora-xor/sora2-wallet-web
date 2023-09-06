@@ -47,7 +47,7 @@ export default {
   operations: {
     [Operation.Swap]: 'Swap',
     [Operation.SwapAndSend]: 'Swap and Send',
-    [Operation.SwapTransferBatch]: 'ADAR transfer',
+    [Operation.SwapTransferBatch]: '{ADAR} transfer',
     [Operation.Transfer]: 'Transfer',
     [Operation.AddLiquidity]: 'Add Liquidity',
     [Operation.RemoveLiquidity]: 'Remove Liquidity',
@@ -91,7 +91,7 @@ export default {
       [Operation.Swap]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2}',
       [Operation.SwapAndSend]:
         'Failed to swap {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
-      [Operation.SwapTransferBatch]: 'Failed to do ADAR transfer to multiple addresses',
+      [Operation.SwapTransferBatch]: 'Failed to do {ADAR} transfer to multiple addresses',
       [Operation.AddLiquidity]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Failed to remove {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
@@ -371,7 +371,7 @@ export default {
     referral: 'Referral',
     viewIn: 'View in {explorer}',
     copy: 'Copy {value}',
-    adarTxDetailsTitle: 'ADAR transaction details',
+    adarTxDetailsTitle: '{ADAR} transaction details',
     history: {
       created: 'Transaction for {amount} {symbol} has been created.',
       submitted: 'Transaction submitted with fee of {fee} {symbol}',
