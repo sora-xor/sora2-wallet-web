@@ -2,7 +2,7 @@
   <div :class="computedClasses" v-loading="loading">
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @update-filter="updateFilter" />
     <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
-      <draggable v-model="assetList" class="wallet-assets__draggable" :options="{ handle: '.wallet-assets-dashes' }">
+      <draggable v-model="assetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes">
         <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
             <div class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
