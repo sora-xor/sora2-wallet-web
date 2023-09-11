@@ -31,7 +31,7 @@ exports[`WalletAdarTxDetails.vue [SwapTransferBatch, finalized]: should be rende
         isformatted="true"
         label="Amount"
         labeltooltip=""
-        value="0.732178089913374904"
+        value="0.732178"
         valuecanbehidden="true"
         valuetooltip=""
       />
@@ -52,7 +52,7 @@ exports[`WalletAdarTxDetails.vue [SwapTransferBatch, finalized]: should be rende
         isformatted="true"
         label="Amount"
         labeltooltip=""
-        value="0.883650537081023890"
+        value="0.8836505"
         valuecanbehidden="true"
         valuetooltip=""
       />
