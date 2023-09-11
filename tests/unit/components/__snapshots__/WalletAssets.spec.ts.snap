@@ -16,7 +16,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
       class="wallet-assets__draggable"
       clone="[Function]"
       element="div"
-      options="[object Object]"
+      handle=".wallet-assets-dashes"
       value="[object Object],[object Object],[object Object]"
     >
       <div

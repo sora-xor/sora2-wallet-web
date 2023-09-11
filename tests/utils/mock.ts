@@ -146,6 +146,97 @@ export const MOCK_HISTORY: Array<History> = [
     from: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
     soraNetworkFee: '700000000000000',
   },
+  {
+    id: '6',
+    blockId: '0xf6792dc278d4f6251167e48c9fc1674c06df2cc27486ea63db48a989c90453d0',
+    status: TransactionStatus.Finalized,
+    type: Operation.SwapTransferBatch,
+    startTime: 1605048643745,
+    symbol: KnownSymbols.XOR,
+    from: 'dfsakljfdlkjfhfkjladshslfjafds',
+    soraNetworkFee: '140000000000000000',
+    assetAddress: '0x0200000000000000000000000000000000000000000000000000000000000000',
+    amount: '1.466564436348045197',
+    payload: {
+      adarFee: '0.003666411090870112',
+      networkFee: '0.140000000000000000',
+      blockNumber: 10502,
+      actualFee: '1.469126400000000000',
+      transfers: [
+        {
+          to: 'cnSmwADqUFSbXA5iGZYizXwCwNPHHt7dTG2ZApDQPkq92TFCT',
+          from: 'dfsakljfdlkjfhfkjladshslfjafds',
+          amount: '0.732178089913374904',
+          assetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
+        },
+        {
+          to: 'cnTQ1kbv7PBNNQrEb1tZpmK7f4sMKaWQF583on92JL48B9kjq',
+          from: 'dfsakljfdlkjfhfkjladshslfjafds',
+          amount: '0.732183187395366282',
+          assetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
+        },
+        {
+          to: 'cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse',
+          from: 'dfsakljfdlkjfhfkjladshslfjafds',
+          amount: '0.002203159039304011',
+          assetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
+        },
+        {
+          to: 'cnV2xJFCvXN9fx3DHt9FJWovPkVVBu1vtuzmhr2QnedmZqQ6J',
+          from: 'dfsakljfdlkjfhfkjladshslfjafds',
+          amount: '0.883650537081023890',
+          assetId: '0x0200040000000000000000000000000000000000000000000000000000000000',
+        },
+        {
+          to: 'cnV2xJFCvXN9fx3DHt9FJWovPkVVBu1vtuzmhr2QnedmZqQ6J',
+          from: 'dfsakljfdlkjfhfkjladshslfjafds',
+          amount: '0.883650537081023891',
+          assetId: '0x0200040000000000000000000000000000000000000000000000000000000000',
+        },
+        {
+          to: 'cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse',
+          from: 'dfsakljfdlkjfhfkjladshslfjafds',
+          amount: '0.003666411090870112',
+          assetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
+        },
+      ],
+      exchanges: [
+        {
+          dexId: '0',
+          feeAmount: '0.004406318078608022',
+          inputAmount: '0.734386346434670293',
+          inputAssetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
+          outputAmount: '0.883650537081023891',
+          outputAssetId: '0x0200040000000000000000000000000000000000000000000000000000000000',
+          senderAddress: 'dfsakljfdlkjfhfkjladshslfjafds',
+        },
+      ],
+      receivers: [
+        {
+          accountId: 'cnSmwADqUFSbXA5iGZYizXwCwNPHHt7dTG2ZApDQPkq92TFCT',
+          asset: {
+            name: 'SORA',
+            symbol: 'XOR',
+            decimals: 18,
+            address: '0x0200000000000000000000000000000000000000000000000000000000000000',
+          },
+          amount: '0.732178089913374904',
+          symbol: 'XOR',
+        },
+        {
+          accountId: 'cnV2xJFCvXN9fx3DHt9FJWovPkVVBu1vtuzmhr2QnedmZqQ6J',
+          asset: {
+            name: 'SORA Validator Token',
+            symbol: 'VAL',
+            decimals: 18,
+            address: '0x0200040000000000000000000000000000000000000000000000000000000000',
+          },
+          amount: '0.883650537081023890',
+          symbol: 'VAL',
+        },
+      ],
+    },
+  },
 ];
 
 export const MOCK_ACCOUNT_HISTORY = MOCK_HISTORY.reduce((result, item) => {

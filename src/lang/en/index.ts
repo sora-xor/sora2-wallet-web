@@ -43,9 +43,11 @@ export default {
   assetDeposit: 'Asset balance has been deposited',
   dragAndDropText: 'Drag & drop or choose {extension} file',
   ofText: '{first} of {second}',
+  multipleRecipients: 'multiple recipients',
   operations: {
     [Operation.Swap]: 'Swap',
     [Operation.SwapAndSend]: 'Swap and Send',
+    [Operation.SwapTransferBatch]: '{ADAR} transfer',
     [Operation.Transfer]: 'Transfer',
     [Operation.AddLiquidity]: 'Add Liquidity',
     [Operation.RemoveLiquidity]: 'Remove Liquidity',
@@ -67,6 +69,7 @@ export default {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
       [Operation.Swap]: 'Swapped {amount} {symbol} for {amount2} {symbol2}',
       [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
+      [Operation.SwapTransferBatch]: '{action} {amount} {symbol}',
       [Operation.AddLiquidity]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Removed {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Supplied {amount} {symbol} and {amount2} {symbol2}',
@@ -88,6 +91,7 @@ export default {
       [Operation.Swap]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2}',
       [Operation.SwapAndSend]:
         'Failed to swap {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
+      [Operation.SwapTransferBatch]: 'Failed to send {amount} {symbol}',
       [Operation.AddLiquidity]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
       [Operation.RemoveLiquidity]: 'Failed to remove {amount} {symbol} and {amount2} {symbol2}',
       [Operation.CreatePair]: 'Failed to supply {amount} {symbol} and {amount2} {symbol2}',
@@ -367,6 +371,7 @@ export default {
     referral: 'Referral',
     viewIn: 'View in {explorer}',
     copy: 'Copy {value}',
+    adarTxDetailsTitle: 'Transaction details',
     history: {
       created: 'Transaction for {amount} {symbol} has been created.',
       submitted: 'Transaction submitted with fee of {fee} {symbol}',
@@ -477,6 +482,7 @@ export default {
     },
     liquidityProxy: {
       ForbiddenFilter: 'Selected liquidity source is not allowed',
+      SlippageNotTolerated: 'The price impact has exceeded the selected value',
     },
     demeterFarmingPlatform: {
       InsufficientFunds: 'Insufficient funds',
