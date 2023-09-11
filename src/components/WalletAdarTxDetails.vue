@@ -1,5 +1,5 @@
 <template>
-  <div v-if="swapTransferBatchRecipients.length > 0" class="adar-tx-details">
+  <div v-if="numberOfRecipients > 0" class="adar-tx-details">
     <div class="adar-tx-details__title">
       {{ t('transaction.adarTxDetailsTitle') }}
     </div>
@@ -15,7 +15,7 @@
           is-formatted
           value-can-be-hidden
           :label="t('transaction.amount')"
-          :value="recipient.amount"
+          :value="formatStringValue(recipient.amount)"
           :asset-symbol="recipient.symbol"
         />
       </div>
@@ -25,7 +25,7 @@
       :layout="'prev, total, next'"
       :current-page.sync="currentPage"
       :page-size="pageAmount"
-      :total="swapTransferBatchRecipients.length"
+      :total="numberOfRecipients"
       @prev-click="handlePrevClick"
       @next-click="handleNextClick"
     />
@@ -70,19 +70,6 @@ export default class WalletAdarTxDetails extends Mixins(TranslationMixin, Number
     return this.transaction.type === Operation.SwapTransferBatch;
   }
 
-  get swapTransferBatchAmount(): string {
-    if (!this.isAdarOperation) return '0';
-    const isRecipient = this.account.address !== this.transaction.from;
-    if (isRecipient) {
-      const amount = this.transaction.payload.transfers.find(
-        (transfer: SwapTransferBatchTransferParam) => transfer.to === this.account.address
-      )?.amount;
-      return this.formatStringValue(amount);
-    } else {
-      return this.formatStringValue(this.transaction.amount || '0');
-    }
-  }
-
   get swapTransferBatchRecipients() {
     if (!this.isAdarOperation || this.account.address !== this.transaction.from) return [];
     return this.transaction.payload.receivers;
@@ -90,6 +77,10 @@ export default class WalletAdarTxDetails extends Mixins(TranslationMixin, Number
 
   get txsList() {
     return this.getPageItems(this.swapTransferBatchRecipients);
+  }
+
+  get numberOfRecipients() {
+    return this.swapTransferBatchRecipients?.length || 0;
   }
 
   formatAddress(address: string) {
