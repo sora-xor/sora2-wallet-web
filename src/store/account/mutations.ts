@@ -6,10 +6,10 @@ import { storage, settingsStorage } from '../../util/storage';
 
 import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
 
-import type { AccountState } from './types';
 import type { AppWallet } from '../../consts';
 import type { FiatPriceObject, ReferrerRewards } from '../../services/indexer/types';
 import type { Book, PolkadotJsAccount } from '../../types/common';
+import type { AccountState } from './types';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
 import type { Wallet } from '@sora-test/wallet-connect/types';
