@@ -89,6 +89,22 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
       params.role = this.t(linkedRole);
       params.address = formatAddress(linkedAddress, 10);
     }
+    if (value.type === Operation.SwapTransferBatch) {
+      const isRecipient = this.account.address !== value.from;
+      const address = isRecipient ? value.from : this.t('multipleRecipients');
+      const direction = isRecipient ? this.t('transaction.from') : this.t('transaction.to');
+      const action = isRecipient ? this.t('receivedText') : this.t('sentText');
+
+      params.address = isRecipient ? formatAddress(address as string, 10) : address;
+      params.direction = direction;
+      params.action = action;
+      if (isRecipient) {
+        const amount = value.payload?.transfers?.find((transfer) => transfer.to === this.account.address)?.amount;
+        params.amount = amount ? this.formatStringValue(amount, params.decimals) : '';
+      } else {
+        params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
+      }
+    }
     let status = value.status as TransactionStatus;
     if ([TransactionStatus.Invalid, TransactionStatus.Usurped].includes(status)) {
       status = TransactionStatus.Error;

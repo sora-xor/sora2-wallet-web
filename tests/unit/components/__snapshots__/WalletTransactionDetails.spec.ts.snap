@@ -96,6 +96,8 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
   </div>
    
   <!---->
+   
+  <!---->
 </div>
 `;
 
@@ -175,6 +177,8 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
      
     <!---->
   </div>
+   
+  <!---->
    
   <!---->
 </div>
@@ -265,6 +269,8 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
      
     <!---->
   </div>
+   
+  <!---->
    
   <!---->
 </div>
@@ -376,6 +382,100 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
   </div>
    
   <!---->
+   
+  <!---->
+</div>
+`;
+
+exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be rendered correctly 1`] = `
+<div
+  class="transaction-container"
+>
+  <div
+    class="transaction"
+  >
+    <!---->
+     
+    <transaction-hash-view-stub
+      block=""
+      hash=""
+      translation="transaction.blockId"
+      type="block"
+      value="0xf6792dc278d4f6251167e48c9fc1674c06df2cc27486ea63db48a989c90453d0"
+    />
+     
+    <div
+      class="info-line-container"
+    >
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label="Status"
+        labeltooltip=""
+        value=""
+        valuetooltip=""
+      >
+        <span
+          class="transaction-status"
+        >
+          Complete
+        </span>
+         
+        <s-icon-stub
+          name="basic-check-mark-24"
+          size="16px"
+        />
+      </info-line-stub>
+       
+      <!---->
+       
+      <info-line-stub
+        assetsymbol=""
+        fiatvalue=""
+        label="Date"
+        labeltooltip=""
+        value="Nov 27, 2020 11:59:59 PM"
+        valuetooltip=""
+      />
+       
+      <info-line-stub
+        assetsymbol="XOR"
+        fiatvalue=""
+        isformatted="true"
+        label="Amount"
+        labeltooltip=""
+        value="1.4665644"
+        valuecanbehidden="true"
+        valuetooltip=""
+      />
+       
+      <!---->
+       
+      <info-line-stub
+        assetsymbol="XOR"
+        fiatvalue=""
+        isformatted="true"
+        label="Transaction Fee"
+        labeltooltip=""
+        value="0.14"
+        valuetooltip=""
+      />
+    </div>
+     
+    <transaction-hash-view-stub
+      block=""
+      hash=""
+      translation="transaction.from"
+      type="account"
+      value="dfsakljfdlkjfhfkjladshslfjafds"
+    />
+  </div>
+   
+  <!---->
+   
+  <adar-tx-details-stub
+    transaction="[object Object]"
+  />
 </div>
 `;
 
@@ -470,6 +570,8 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
       value="cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse"
     />
   </div>
+   
+  <!---->
    
   <!---->
 </div>
