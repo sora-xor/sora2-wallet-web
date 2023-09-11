@@ -88,12 +88,13 @@
         />
       </div>
       <transaction-hash-view
-        v-if="transactionToAddress"
+        v-if="transactionToAddress && !isAdarOperation"
         translation="transaction.to"
         :value="transactionToAddress"
         :type="!isSoraTx ? HashType.Account : HashType.EthAccount"
       />
     </div>
+    <adar-tx-details v-if="isAdarOperation" :transaction="selectedTransaction" />
   </div>
 </template>
 
@@ -111,6 +112,7 @@ import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 import TransactionHashView from './TransactionHashView.vue';
+import AdarTxDetails from './WalletAdarTxDetails.vue';
 import WalletBase from './WalletBase.vue';
 
 import type { PolkadotJsAccount } from '../types/common';
@@ -122,6 +124,7 @@ import type { HistoryItem, BridgeHistory } from '@sora-substrate/util';
     InfoLine,
     FormattedAmount,
     TransactionHashView,
+    AdarTxDetails,
   },
 })
 export default class WalletTransactionDetails extends Mixins(
@@ -190,6 +193,7 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   get transactionAmount(): string {
+    if (this.isAdarOperation) return this.swapTransferBatchAmount;
     return this.formatStringValue(this.selectedTransaction.amount as string);
   }
 
@@ -279,6 +283,25 @@ export default class WalletTransactionDetails extends Mixins(
 
     return errMessage;
   }
+
+  // ____________________________________________________ADAR____________________________________________________________
+  get isAdarOperation(): boolean {
+    return this.selectedTransaction.type === Operation.SwapTransferBatch;
+  }
+
+  get swapTransferBatchAmount(): string {
+    if (!this.isAdarOperation) return '0';
+    const isRecipient = this.account.address !== this.selectedTransaction.from;
+    if (isRecipient) {
+      const amount = this.selectedTransaction.payload.transfers.find(
+        (transfer) => transfer.to === this.account.address
+      )?.amount;
+      return this.formatStringValue(amount);
+    } else {
+      return this.formatStringValue(this.selectedTransaction.amount || '0');
+    }
+  }
+  // ____________________________________________________________________________________________________________________
 
   // ETH BRIDGE transaction
   get isEthBridgeOperation(): boolean {

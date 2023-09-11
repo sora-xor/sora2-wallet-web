@@ -211,4 +211,5 @@ export const TranslationConsts = {
     Prod: 'SORA Mainnet',
   },
   JSON: 'JSON',
+  ADAR: 'ADAR',
 } as const;
