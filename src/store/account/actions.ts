@@ -16,6 +16,7 @@ import {
   getWalletSigner,
   getImportedAccounts,
   getWalletAccounts,
+  checkWallet,
   subscribeToWalletAccounts,
   WHITE_LIST_URL,
   NFT_BLACK_LIST_URL,
@@ -25,10 +26,9 @@ import {
 
 import { accountActionContext } from './../account';
 
+import type { CreateAccountArgs, RestoreAccountArgs } from './types';
 import type { FiatPriceObject } from '../../services/subquery/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
-import type { CreateAccountArgs, RestoreAccountArgs } from './types';
-import type { Signer } from '@polkadot/api/types';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { ActionContext } from 'vuex';
 
@@ -102,6 +102,19 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   }
 }
 
+async function checkSigner(context: ActionContext<any, any>): Promise<void> {
+  const { dispatch, getters, state } = accountActionContext(context);
+
+  if (getters.isLoggedIn && state.isExternal && state.source) {
+    try {
+      await updateApiSigner(state.source);
+    } catch (error) {
+      console.error(error);
+      await dispatch.logout();
+    }
+  }
+}
+
 async function updateApiSigner(source: AppWallet) {
   const signer = await getWalletSigner(source);
 
@@ -141,16 +154,20 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async checkSigner(context): Promise<void> {
+  async checkWalletAvailability(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
-    if (getters.isLoggedIn && state.isExternal && state.source) {
-      try {
+    if (!(getters.isLoggedIn && state.source)) return;
+
+    try {
+      if (state.isExternal) {
         await updateApiSigner(state.source);
-      } catch (error) {
-        console.error(error);
-        await dispatch.logout();
+      } else {
+        checkWallet(state.source);
       }
+    } catch (error) {
+      console.error(error);
+      await dispatch.logout();
     }
   },
 
@@ -223,12 +240,12 @@ const actions = defineActions({
   },
 
   async getImportedAccounts(context) {
-    const { commit, dispatch } = accountActionContext(context);
+    const { commit } = accountActionContext(context);
     const accounts = await getImportedAccounts();
 
     commit.setWalletAccounts(accounts);
 
-    await dispatch.checkSigner();
+    await checkSigner(context);
   },
 
   async subscribeToWalletAccounts(context): Promise<void> {
@@ -242,7 +259,7 @@ const actions = defineActions({
         commit.setWalletAccounts(accounts);
       }
 
-      dispatch.checkSigner();
+      checkSigner(context);
     };
 
     const subscription = await subscribeToWalletAccounts(wallet, callback);

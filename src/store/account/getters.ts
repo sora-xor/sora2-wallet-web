@@ -8,8 +8,8 @@ import { isInternalWallet } from '../../consts/wallets';
 
 import { accountGetterContext } from './../account';
 
-import type { AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
 import type { AccountState } from './types';
+import type { AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
 import type { Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 
