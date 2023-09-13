@@ -102,19 +102,6 @@ async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nul
   }
 }
 
-async function checkSigner(context: ActionContext<any, any>): Promise<void> {
-  const { dispatch, getters, state } = accountActionContext(context);
-
-  if (getters.isLoggedIn && state.isExternal && state.source) {
-    try {
-      await updateApiSigner(state.source);
-    } catch (error) {
-      console.error(error);
-      await dispatch.logout();
-    }
-  }
-}
-
 async function updateApiSigner(source: AppWallet) {
   const signer = await getWalletSigner(source);
 
@@ -244,12 +231,10 @@ const actions = defineActions({
     const accounts = await getImportedAccounts();
 
     commit.setWalletAccounts(accounts);
-
-    await checkSigner(context);
   },
 
   async subscribeToWalletAccounts(context): Promise<void> {
-    const { commit, dispatch, state } = accountActionContext(context);
+    const { commit, state } = accountActionContext(context);
     const wallet = state.selectedWallet;
 
     if (!wallet) return;
@@ -258,8 +243,6 @@ const actions = defineActions({
       if (wallet === state.selectedWallet) {
         commit.setWalletAccounts(accounts);
       }
-
-      checkSigner(context);
     };
 
     const subscription = await subscribeToWalletAccounts(wallet, callback);
