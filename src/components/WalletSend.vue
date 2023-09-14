@@ -9,7 +9,7 @@
   >
     <div class="wallet-send">
       <template v-if="step === 1">
-        <address-book-input v-model="address" exclude-connected class="wallet-send-address" />
+        <address-book-input class="wallet-send-address" exclude-connected v-model="address" :is-valid="validAddress" />
 
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
@@ -263,7 +263,16 @@ export default class WalletSend extends Mixins(
     if (this.emptyAddress) {
       return false;
     }
-    return api.validateAddress(this.address) && !this.isAccountAddress;
+    const valid = api.validateAddress(this.address) && !this.isAccountAddress;
+    if (!valid) {
+      return false;
+    }
+    try {
+      formatSoraAddress(this.address);
+      return true; // if it can be formatted -> it's correct
+    } catch {
+      return false; // EVM account address
+    }
   }
 
   get formattedSoraAddress(): string {
