@@ -67,8 +67,8 @@ export const getAccountIdentity = async (address: string, none = ''): Promise<st
 
 export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
-export const getImportedAccounts = async (): Promise<PolkadotJsAccount[]> => {
-  const accounts = await api.getAccounts();
+export const getImportedAccounts = (): PolkadotJsAccount[] => {
+  const accounts = api.getAccounts();
   const polkadotJsAccounts = accounts.map((account) => ({
     address: account.address,
     name: account.meta.name || '',
