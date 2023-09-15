@@ -74,11 +74,12 @@ import type { Book, PolkadotJsAccount } from '../../types/common';
 export default class AddressBookInput extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly excludeConnected!: boolean;
   @Prop({ default: '', type: String }) readonly value!: string;
+  @Prop({ default: false, type: Boolean }) readonly isValid!: boolean;
 
   @Watch('books')
-  @Watch('isValidAddress')
+  @Watch('isValid')
   private updateName(): void {
-    if (!this.isValidAddress) {
+    if (!this.isValid) {
       this.name = '';
     } else if (!this.name) {
       const key = formatSoraAddress(this.address);
@@ -100,8 +101,8 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   prefilledAddress = '';
 
   @state.account.address private connected!: string;
-  @state.account.book private addressBook!: Book;
   @state.account.source private source!: AppWallet;
+  @state.account.book addressBook!: Book;
 
   @mutation.account.setAddressToBook setAddressToBook!: (record: PolkadotJsAccount) => void;
   @mutation.account.removeAddressFromBook removeAddressFromBook!: (address: string) => void;
@@ -150,14 +151,10 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     return this.excludeConnected ? this.connected : '';
   }
 
-  get isValidAddress(): boolean {
-    return api.validateAddress(this.address);
-  }
-
   get record(): Nullable<PolkadotJsAccount> {
-    const { address, name, isValidAddress } = this;
+    const { address, name, isValid } = this;
 
-    return isValidAddress && name ? { address, name } : null;
+    return isValid && name ? { address, name } : null;
   }
 
   openAddressBook(): void {
