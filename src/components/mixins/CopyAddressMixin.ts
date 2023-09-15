@@ -9,7 +9,7 @@ export default class CopyAddressMixin extends Mixins(TranslationMixin) {
   targetElement: Nullable<EventTarget> = null;
   wasAddressCopied = false;
 
-  async handleCopyAddress(address: string, event?: PointerEvent): Promise<void> {
+  async handleCopyAddress(address: string, event?: PointerEvent | MouseEvent): Promise<void> {
     if (event) {
       event.stopImmediatePropagation();
       this.targetElement = event.target;
