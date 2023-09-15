@@ -358,6 +358,7 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
     <address-book-input-stub
       class="wallet-send-address"
       excludeconnected="true"
+      isvalid="true"
       value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
     />
      
