@@ -275,7 +275,7 @@ const actions = defineActions({
       await updateApiSigner(source);
     }
 
-    const accounts = state.isDesktop ? await getImportedAccounts() : await getWalletAccounts(source);
+    const accounts = state.isDesktop ? getImportedAccounts() : await getWalletAccounts(source);
 
     if (!accounts.find((acc) => acc.address === defaultAddress)) {
       throw new Error('polkadotjs.noAccount');
