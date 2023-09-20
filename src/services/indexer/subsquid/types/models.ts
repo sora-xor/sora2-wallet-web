@@ -110,6 +110,38 @@ export type SubsquidHistoryElementSwapTransfer = SubsquidHistoryElementSwap & {
   to: string;
 };
 
+export type SubsquidSwapTransferBatchTransferParam = {
+  from: string;
+  to: string;
+  amount: string;
+  assetId: string;
+};
+
+type SubsquidSwapTransferBatchExchangeParam = {
+  from: string;
+  to: string;
+  amount: string;
+  assetId: string;
+};
+
+export type SubsquidHistoryElementSwapTransferBatch = {
+  inputAssetId: string;
+  selectedMarket: string;
+  liquidityProviderFee: string;
+  maxInputAmount: string;
+  blockNumber: string;
+  from: string;
+
+  adarFee: string;
+  inputAmount: string;
+  networkFee: string;
+  actualFee: string;
+  receivers: any;
+
+  transfers: Array<SubsquidSwapTransferBatchTransferParam>;
+  exchanges: Array<SubsquidSwapTransferBatchExchangeParam>;
+};
+
 export type SubsquidHistoryElementTransfer = {
   amount: string;
   assetId: string;
@@ -209,6 +241,7 @@ export type SubsquidHistoryElement = {
     | SubsquidHistoryElementEthBridgeIncoming
     | SubsquidHistoryElementRewardsClaim
     | SubsquidHistoryElementDemeterFarming
+    | SubsquidHistoryElementSwapTransferBatch
   >;
   calls: SubsquidHistoryElementCalls;
 };

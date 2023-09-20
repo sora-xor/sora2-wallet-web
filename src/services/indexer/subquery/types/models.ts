@@ -121,6 +121,38 @@ export type SubqueryHistoryElementSwapTransfer = SubqueryHistoryElementSwap & {
   to: string;
 };
 
+export type SubquerySwapTransferBatchTransferParam = {
+  from: string;
+  to: string;
+  amount: string;
+  assetId: string;
+};
+
+type SubquerySwapTransferBatchExchangeParam = {
+  from: string;
+  to: string;
+  amount: string;
+  assetId: string;
+};
+
+export type SubqueryHistoryElementSwapTransferBatch = {
+  inputAssetId: string;
+  selectedMarket: string;
+  liquidityProviderFee: string;
+  maxInputAmount: string;
+  blockNumber: string;
+  from: string;
+
+  adarFee: string;
+  inputAmount: string;
+  networkFee: string;
+  actualFee: string;
+  receivers: any;
+
+  transfers: Array<SubquerySwapTransferBatchTransferParam>;
+  exchanges: Array<SubquerySwapTransferBatchExchangeParam>;
+};
+
 export type SubqueryHistoryElementTransfer = {
   amount: string;
   assetId: string;
@@ -224,5 +256,6 @@ export type SubqueryHistoryElement = {
     | SubqueryHistoryElementEthBridgeIncoming
     | SubqueryHistoryElementRewardsClaim
     | SubqueryHistoryElementDemeterFarming
+    | SubqueryHistoryElementSwapTransferBatch
   >;
 };

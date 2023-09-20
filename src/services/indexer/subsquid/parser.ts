@@ -27,6 +27,8 @@ import type {
   SubsquidReferrerReserve,
   SubsquidClaimedRewardItem,
   SubsquidExtrinsicEvent,
+  SubsquidHistoryElementSwapTransferBatch,
+  SubsquidSwapTransferBatchTransferParam,
 } from './types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
@@ -279,6 +281,60 @@ export default class SubsquidDataParser {
           payload.to = data.to;
         }
 
+        return payload;
+      }
+      case Operation.SwapTransferBatch: {
+        const data = transaction.data as SubsquidHistoryElementSwapTransferBatch;
+
+        const inputAssetId = data.inputAssetId;
+        const inputAsset = await getAssetByAddress(inputAssetId);
+        const transfers = data.transfers;
+        const exchanges = data.exchanges;
+
+        const outcomeAssetsIds = data.receivers.map((item) => item.outcomeAssetId?.code);
+        const resolveAssets = async (assetAddressesArray: Array<string>) => {
+          const result: Array<Nullable<Asset>> = [];
+          assetAddressesArray.forEach(async (address) => {
+            result.push(await getAssetByAddress(address));
+          });
+          return result;
+        };
+        const assetsList = await resolveAssets(outcomeAssetsIds);
+
+        payload.assetAddress = inputAssetId;
+        payload.liquiditySource = data.selectedMarket;
+        payload.amount = data.inputAmount;
+        payload.symbol = getAssetSymbol(inputAsset);
+
+        payload.payload = {};
+
+        payload.payload.adarFee = data.adarFee;
+        payload.payload.maxInputAmount = data.maxInputAmount;
+        payload.payload.networkFee = data.networkFee;
+        payload.payload.blockNumber = data.blockNumber;
+        payload.payload.actualFee = data.actualFee;
+        payload.payload.transfers = transfers;
+        payload.payload.exchanges = exchanges;
+        if (transfers.length > 0) {
+          payload.payload.receivers = data.receivers.reduce((acc, data) => {
+            const receiversData = data.receivers.map((receiver) => {
+              const transfer = transfers?.find(
+                (transfer) => transfer.to === receiver.accountId
+              ) as SubsquidSwapTransferBatchTransferParam;
+              const assetAddress = transfer?.assetId || data.outcomeAssetId?.code;
+              const asset = assetsList.find((asset) => asset?.address === assetAddress);
+              return {
+                accountId: receiver.accountId,
+                asset,
+                amount: transfer?.amount || '0',
+                symbol: getAssetSymbol(asset),
+              };
+            });
+            return [...acc, ...receiversData];
+          }, []);
+        } else {
+          payload.payload.receivers = [];
+        }
         return payload;
       }
       case Operation.AddLiquidity:
