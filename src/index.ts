@@ -141,7 +141,7 @@ const checkActiveAccount = async (): Promise<void> => {
 
   await api.restoreActiveAccount();
 
-  await store.dispatch.wallet.account.checkWalletAvailability();
+  await store.dispatch.wallet.account.checkSigner();
   await store.dispatch.wallet.router.checkCurrentRoute();
 };
 

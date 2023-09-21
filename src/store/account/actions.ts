@@ -16,7 +16,6 @@ import {
   getWalletSigner,
   getImportedAccounts,
   getWalletAccounts,
-  checkWallet,
   subscribeToWalletAccounts,
   WHITE_LIST_URL,
   NFT_BLACK_LIST_URL,
@@ -29,6 +28,7 @@ import { accountActionContext } from './../account';
 import type { CreateAccountArgs, RestoreAccountArgs } from './types';
 import type { FiatPriceObject } from '../../services/subquery/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
+import type { Signer } from '@polkadot/api/types';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { ActionContext } from 'vuex';
 
@@ -141,20 +141,16 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async checkWalletAvailability(context): Promise<void> {
+  async checkSigner(context): Promise<void> {
     const { dispatch, getters, state } = accountActionContext(context);
 
-    if (!(getters.isLoggedIn && state.source)) return;
-
-    try {
-      if (state.isExternal) {
+    if (getters.isLoggedIn && state.isExternal && state.source) {
+      try {
         await updateApiSigner(state.source);
-      } else {
-        checkWallet(state.source);
+      } catch (error) {
+        console.error(error);
+        await dispatch.logout();
       }
-    } catch (error) {
-      console.error(error);
-      await dispatch.logout();
     }
   },
 
@@ -227,14 +223,16 @@ const actions = defineActions({
   },
 
   async getImportedAccounts(context) {
-    const { commit } = accountActionContext(context);
+    const { commit, dispatch } = accountActionContext(context);
     const accounts = await getImportedAccounts();
 
     commit.setWalletAccounts(accounts);
+
+    await dispatch.checkSigner();
   },
 
   async subscribeToWalletAccounts(context): Promise<void> {
-    const { commit, state } = accountActionContext(context);
+    const { commit, dispatch, state } = accountActionContext(context);
     const wallet = state.selectedWallet;
 
     if (!wallet) return;
@@ -243,6 +241,8 @@ const actions = defineActions({
       if (wallet === state.selectedWallet) {
         commit.setWalletAccounts(accounts);
       }
+
+      dispatch.checkSigner();
     };
 
     const subscription = await subscribeToWalletAccounts(wallet, callback);
