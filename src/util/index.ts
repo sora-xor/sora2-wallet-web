@@ -141,13 +141,19 @@ const waitForWalletInject = async (wallet: Wallet): Promise<void> => {
   }
 };
 
-export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Wallet> => {
+export const checkWallet = (extension: AppWallet): Wallet => {
   const wallet = getWalletBySource(extension);
 
   if (!wallet) {
     // we haven't wallet data, so extension key used in translation
     throw new AppError({ key: 'polkadotjs.noExtension', payload: { extension } });
   }
+
+  return wallet;
+};
+
+export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Wallet> => {
+  const wallet = checkWallet(extension);
 
   await waitForDocumentReady();
   await waitForWalletInject(wallet);
