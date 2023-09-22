@@ -29,6 +29,7 @@ import type {
   ExtrinsicEvent,
   HistoryElementSwapTransferBatch,
   SwapTransferBatchTransferParam,
+  SubqueryUtilityBatchCall,
 } from './types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
@@ -109,7 +110,7 @@ const getTransactionId = (tx: SubqueryHistoryElement): string => tx.id;
 const isModuleMethod = (item: UtilityBatchCall, module: string, method: string) =>
   insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method);
 
-const getBatchCall = (calls: Array<UtilityBatchCall>, { module, method }): Nullable<UtilityBatchCall> =>
+const getBatchCall = (calls: Array<SubqueryUtilityBatchCall>, { module, method }): Nullable<UtilityBatchCall> =>
   calls.find((item) => isModuleMethod(item, module, method));
 
 const getTransactionOperationType = (tx: SubqueryHistoryElement): Nullable<Operation> => {

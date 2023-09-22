@@ -1,3 +1,6 @@
+import { SubqueryUtilityBatchCall } from '../subquery/types';
+import { SubsquidUtilityBatchCall } from '../subsquid/types';
+
 import type { CodecString } from '@sora-substrate/util';
 
 // Indexer Enums
@@ -183,15 +186,7 @@ export type ClaimedRewardItem = {
 
 export type HistoryElementRewardsClaim = Nullable<ClaimedRewardItem[]>;
 
-export type UtilityBatchCall = {
-  data: {
-    [key: string]: string | number;
-  };
-  hash: string;
-  callId: string;
-  module: string;
-  method: string;
-};
+export type UtilityBatchCall = SubqueryUtilityBatchCall | SubsquidUtilityBatchCall;
 
 export type ExtrinsicEvent = {
   method: string;
