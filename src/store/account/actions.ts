@@ -122,7 +122,8 @@ const actions = defineActions({
   async logout(context, forgetAddress?: string): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
-
+    console.info('logout(context, forgetAddress?: string)', forgetAddress);
+    console.info(state);
     // Don't forget account on Desktop, if forgetAddress is not passed
     if (!state.isDesktop || forgetAddress) {
       api.forgetAccount(forgetAddress);
@@ -265,7 +266,8 @@ const actions = defineActions({
     if (!state.isDesktop && api.address !== soraAddress) {
       api.forgetAccount();
     }
-
+    console.info('loginAccount(context, accountData)', accountData);
+    console.info(state);
     api.logout();
 
     if (isExternal) {
