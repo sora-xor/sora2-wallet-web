@@ -164,13 +164,13 @@ export const MOCK_HISTORY: Array<History> = [
       actualFee: '1.469126400000000000',
       transfers: [
         {
-          to: 'cnSmwADqUFSbXA5iGZYizXwCwNPHHt7dTG2ZApDQPkq92TFCT',
+          to: 'cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo',
           from: 'dfsakljfdlkjfhfkjladshslfjafds',
           amount: '0.732178089913374904',
           assetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
         },
         {
-          to: 'cnTQ1kbv7PBNNQrEb1tZpmK7f4sMKaWQF583on92JL48B9kjq',
+          to: 'cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo',
           from: 'dfsakljfdlkjfhfkjladshslfjafds',
           amount: '0.732183187395366282',
           assetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
@@ -213,7 +213,7 @@ export const MOCK_HISTORY: Array<History> = [
       ],
       receivers: [
         {
-          accountId: 'cnSmwADqUFSbXA5iGZYizXwCwNPHHt7dTG2ZApDQPkq92TFCT',
+          accountId: 'cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo',
           asset: {
             name: 'SORA',
             symbol: 'XOR',
