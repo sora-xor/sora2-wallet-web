@@ -9,8 +9,6 @@ import { ObjectInit } from '../../../consts';
 import store from '../../../store';
 import { ModuleNames, ModuleMethods } from '../types';
 
-import { SubstrateEvents } from './consts';
-
 import type {
   SubsquidHistoryElement,
   HistoryElementError,
@@ -157,23 +155,6 @@ const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
 
 const logOperationDataParsingError = (operation: Operation, transaction: SubsquidHistoryElement): void => {
   console.error(`Couldn't parse ${operation} data.`, transaction);
-};
-
-const getRewardsFromEvents = (events: ExtrinsicEvent[]): ClaimedRewardItem[] => {
-  return events.reduce<ClaimedRewardItem[]>((buffer, event) => {
-    if (
-      event.method === SubstrateEvents.CurrenciesTransferred.method &&
-      event.section === SubstrateEvents.CurrenciesTransferred.section
-    ) {
-      const [assetId, from, to, amount] = event.data;
-
-      buffer.push({
-        assetId,
-        amount,
-      });
-    }
-    return buffer;
-  }, []);
 };
 
 const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]> => {
