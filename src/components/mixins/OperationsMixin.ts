@@ -101,6 +101,9 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
       if (isRecipient) {
         const amount = value.payload?.transfers?.find((transfer) => transfer.to === this.account.address)?.amount;
         params.amount = amount ? this.formatStringValue(amount, params.decimals) : '';
+        params.symbol = value.payload?.receivers?.find(
+          (receiver) => receiver.accountId === this.account.address
+        )?.symbol;
       } else {
         params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
       }
