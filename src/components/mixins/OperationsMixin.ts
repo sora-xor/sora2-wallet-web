@@ -104,7 +104,6 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
         params.symbol = value.payload?.receivers?.find(
           (receiver) => receiver.accountId === this.account.address
         )?.symbol;
-        console.log(params.symbol);
       } else {
         params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
       }

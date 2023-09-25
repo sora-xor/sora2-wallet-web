@@ -306,9 +306,10 @@ export default class WalletTransactionDetails extends Mixins(
   get swapTransferBatchAmountSymbol(): string {
     const isRecipient = this.account.address !== this.selectedTransaction.from;
     if (isRecipient) {
-      return this.selectedTransaction.payload?.receivers?.find(
-        (receiver) => receiver.accountId === this.account.address
-      )?.symbol;
+      return (
+        this.selectedTransaction.payload?.receivers?.find((receiver) => receiver.accountId === this.account.address)
+          ?.symbol ?? ''
+      );
     } else {
       return this.selectedTransaction.symbol ?? '';
     }
