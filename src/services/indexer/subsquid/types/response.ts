@@ -1,6 +1,8 @@
 import { ConnectionQueryResponseData } from '../../types';
 
-import { SubsquidQueryResponseInfo } from './subsquid';
+export type SubsquidQueryResponseInfo = {
+  totalCount: number;
+};
 
 export type SubsquidQueryResponse<T> = {
   nodes: T[];

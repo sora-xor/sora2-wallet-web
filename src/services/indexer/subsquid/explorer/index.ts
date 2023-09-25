@@ -6,7 +6,6 @@ import { SubsquidPriceModule } from './modules/price';
 import type { TypedDocumentNode, AnyVariables } from '../client';
 import type {
   SubsquidConnectionQueryResponse,
-  SubsquidQueryResponseInfo,
   SubsquidQueryResponse,
   SubsquidSubscriptionResponse,
   QueryResponseData,
