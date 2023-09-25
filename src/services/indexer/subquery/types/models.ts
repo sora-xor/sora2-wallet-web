@@ -1,6 +1,5 @@
 import {
   AssetSnapshotBaseEntity,
-  ClaimedRewardItem,
   ConnectionQueryResponseData,
   HistoryElementAssetRegistration,
   HistoryElementDemeterFarming,
@@ -58,8 +57,6 @@ export type SubqueryPoolXYKEntity = SubqueryPoolXYKBaseEntity & {
   targetAsset: SubqueryAssetBaseEntity;
 };
 
-export type SubqueryHistoryElementRewardsClaim = Nullable<ClaimedRewardItem[]>;
-
 export type SubqueryUtilityBatchCall = {
   data: {
     args: {
@@ -75,6 +72,22 @@ export type SubqueryUtilityBatchCall = {
 
 export type SubqueryHistoryElementUtilityBatchAll = SubqueryUtilityBatchCall[];
 
+export type SubqueryHistoryElementData = Nullable<
+  | ReferralSetReferrer
+  | ReferrerReserve
+  | HistoryElementSwap
+  | HistoryElementSwapTransfer
+  | HistoryElementTransfer
+  | HistoryElementLiquidityOperation
+  | HistoryElementAssetRegistration
+  | HistoryElementEthBridgeOutgoing
+  | HistoryElementEthBridgeIncoming
+  | HistoryElementRewardsClaim
+  | HistoryElementDemeterFarming
+  | HistoryElementSwapTransferBatch
+  | SubqueryHistoryElementUtilityBatchAll
+>;
+
 export type SubqueryHistoryElement = {
   id: string;
   blockHash: string;
@@ -85,22 +98,9 @@ export type SubqueryHistoryElement = {
   networkFee: string;
   execution: HistoryElementExecution;
   timestamp: number;
-  data: Nullable<
-    | ReferralSetReferrer
-    | ReferrerReserve
-    | HistoryElementSwap
-    | HistoryElementSwapTransfer
-    | HistoryElementTransfer
-    | HistoryElementLiquidityOperation
-    | HistoryElementAssetRegistration
-    | HistoryElementEthBridgeOutgoing
-    | HistoryElementEthBridgeIncoming
-    | HistoryElementRewardsClaim
-    | HistoryElementDemeterFarming
-    | HistoryElementSwapTransferBatch
-    | SubqueryHistoryElementUtilityBatchAll
-  >;
+  data: SubqueryHistoryElementData;
 };
+
 export type SubqueryAccountEntity = {
   id: string;
   latest_history_element_id: string;

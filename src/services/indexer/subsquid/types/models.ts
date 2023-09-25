@@ -1,6 +1,5 @@
 import {
   AssetSnapshotBaseEntity,
-  ClaimedRewardItem,
   HistoryElementAssetRegistration,
   HistoryElementDemeterFarming,
   HistoryElementEthBridgeIncoming,
@@ -52,8 +51,6 @@ export type SubsquidPoolXYKEntity = SubsquidPoolXYKBaseEntity & {
   targetAsset: SubsquidAssetBaseEntity;
 };
 
-export type SubsquidHistoryElementRewardsClaim = Nullable<ClaimedRewardItem[]>;
-
 export type SubsquidUtilityBatchCall = {
   data: {
     [key: string]: string | number;
@@ -63,6 +60,21 @@ export type SubsquidUtilityBatchCall = {
   module: string;
   method: string;
 };
+
+export type SubsquidHistoryElementData = Nullable<
+  | ReferralSetReferrer
+  | ReferrerReserve
+  | HistoryElementSwap
+  | HistoryElementSwapTransfer
+  | HistoryElementTransfer
+  | HistoryElementLiquidityOperation
+  | HistoryElementAssetRegistration
+  | HistoryElementEthBridgeOutgoing
+  | HistoryElementEthBridgeIncoming
+  | HistoryElementRewardsClaim
+  | HistoryElementDemeterFarming
+  | HistoryElementSwapTransferBatch
+>;
 
 export type SubsquidHistoryElementCalls = SubsquidUtilityBatchCall[];
 
@@ -76,20 +88,7 @@ export type SubsquidHistoryElement = {
   networkFee: string;
   execution: HistoryElementExecution;
   timestamp: number;
-  data: Nullable<
-    | ReferralSetReferrer
-    | ReferrerReserve
-    | HistoryElementSwap
-    | HistoryElementSwapTransfer
-    | HistoryElementTransfer
-    | HistoryElementLiquidityOperation
-    | HistoryElementAssetRegistration
-    | HistoryElementEthBridgeOutgoing
-    | HistoryElementEthBridgeIncoming
-    | HistoryElementRewardsClaim
-    | HistoryElementDemeterFarming
-    | HistoryElementSwapTransferBatch
-  >;
+  data: SubsquidHistoryElementData;
   calls: SubsquidHistoryElementCalls;
 };
 
