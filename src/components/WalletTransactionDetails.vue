@@ -310,7 +310,7 @@ export default class WalletTransactionDetails extends Mixins(
         (receiver) => receiver.accountId === this.account.address
       )?.symbol;
     } else {
-      return this.selectedTransaction.symbol || '';
+      return this.selectedTransaction.symbol ?? '';
     }
   }
   // ____________________________________________________________________________________________________________________
