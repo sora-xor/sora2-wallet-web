@@ -26,9 +26,9 @@ import {
 
 import { accountActionContext } from './../account';
 
+import type { CreateAccountArgs, RestoreAccountArgs } from './types';
 import type { FiatPriceObject } from '../../services/indexer/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
-import type { CreateAccountArgs, RestoreAccountArgs } from './types';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { ActionContext } from 'vuex';
 
