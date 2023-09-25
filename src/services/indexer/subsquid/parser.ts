@@ -13,22 +13,22 @@ import { SubstrateEvents } from './consts';
 
 import type {
   SubsquidHistoryElement,
-  SubsquidHistoryElementError,
-  SubsquidHistoryElementSwap,
-  SubsquidHistoryElementSwapTransfer,
-  SubsquidHistoryElementLiquidityOperation,
-  SubsquidHistoryElementTransfer,
-  SubsquidHistoryElementAssetRegistration,
-  SubsquidHistoryElementRewardsClaim,
+  HistoryElementError,
+  HistoryElementSwap,
+  HistoryElementSwapTransfer,
+  HistoryElementLiquidityOperation,
+  HistoryElementTransfer,
+  HistoryElementAssetRegistration,
+  HistoryElementRewardsClaim,
   SubsquidHistoryElementCalls,
-  SubsquidHistoryElementDemeterFarming,
+  HistoryElementDemeterFarming,
   SubsquidUtilityBatchCall,
-  SubsquidReferralSetReferrer,
-  SubsquidReferrerReserve,
-  SubsquidClaimedRewardItem,
-  SubsquidExtrinsicEvent,
-  SubsquidHistoryElementSwapTransferBatch,
-  SubsquidSwapTransferBatchTransferParam,
+  ReferralSetReferrer,
+  ReferrerReserve,
+  ClaimedRewardItem,
+  ExtrinsicEvent,
+  HistoryElementSwapTransferBatch,
+  SwapTransferBatchTransferParam,
 } from './types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
@@ -91,10 +91,10 @@ const OperationsMap = {
     [ModuleMethods.VestedRewardsClaimCrowdloanRewards]: () => Operation.ClaimRewards,
   },
   [insensitive(ModuleNames.DemeterFarming)]: {
-    [ModuleMethods.DemeterFarmingDeposit]: (data: SubsquidHistoryElementDemeterFarming) => {
+    [ModuleMethods.DemeterFarmingDeposit]: (data: HistoryElementDemeterFarming) => {
       return data.isFarm ? Operation.DemeterFarmingDepositLiquidity : Operation.DemeterFarmingStakeToken;
     },
-    [ModuleMethods.DemeterFarmingWithdraw]: (data: SubsquidHistoryElementDemeterFarming) => {
+    [ModuleMethods.DemeterFarmingWithdraw]: (data: HistoryElementDemeterFarming) => {
       return data.isFarm ? Operation.DemeterFarmingWithdrawLiquidity : Operation.DemeterFarmingUnstakeToken;
     },
     [ModuleMethods.DemeterFarmingGetRewards]: () => Operation.DemeterFarmingGetRewards,
@@ -125,7 +125,7 @@ const getTransactionTimestamp = (tx: SubsquidHistoryElement): number => {
   return !Number.isNaN(timestamp) ? timestamp : Date.now();
 };
 
-const getErrorMessage = (historyElementError: SubsquidHistoryElementError): Record<string, string> => {
+const getErrorMessage = (historyElementError: HistoryElementError): Record<string, string> => {
   try {
     const [error, index] = [new BN(historyElementError.moduleErrorId), new BN(historyElementError.moduleErrorIndex)];
     const { name, section } = api.api.registry.findMetaError({ error, index });
@@ -159,8 +159,8 @@ const logOperationDataParsingError = (operation: Operation, transaction: Subsqui
   console.error(`Couldn't parse ${operation} data.`, transaction);
 };
 
-const getRewardsFromEvents = (events: SubsquidExtrinsicEvent[]): SubsquidClaimedRewardItem[] => {
-  return events.reduce<SubsquidClaimedRewardItem[]>((buffer, event) => {
+const getRewardsFromEvents = (events: ExtrinsicEvent[]): ClaimedRewardItem[] => {
+  return events.reduce<ClaimedRewardItem[]>((buffer, event) => {
     if (
       event.method === SubstrateEvents.CurrenciesTransferred.method &&
       event.section === SubstrateEvents.CurrenciesTransferred.section
@@ -176,7 +176,7 @@ const getRewardsFromEvents = (events: SubsquidExtrinsicEvent[]): SubsquidClaimed
   }, []);
 };
 
-const formatRewards = async (rewards: SubsquidClaimedRewardItem[]): Promise<RewardInfo[]> => {
+const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]> => {
   const formatted: RewardInfo[] = [];
 
   for (const { assetId, amount } of rewards) {
@@ -261,7 +261,7 @@ export default class SubsquidDataParser {
     switch (type) {
       case Operation.Swap:
       case Operation.SwapAndSend: {
-        const data = transaction.data as SubsquidHistoryElementSwap & SubsquidHistoryElementSwapTransfer;
+        const data = transaction.data as HistoryElementSwap & HistoryElementSwapTransfer;
 
         const assetAddress = data.baseAssetId;
         const asset2Address = data.targetAssetId;
@@ -284,7 +284,7 @@ export default class SubsquidDataParser {
         return payload;
       }
       case Operation.SwapTransferBatch: {
-        const data = transaction.data as SubsquidHistoryElementSwapTransferBatch;
+        const data = transaction.data as HistoryElementSwapTransferBatch;
 
         const inputAssetId = data.inputAssetId;
         const inputAsset = await getAssetByAddress(inputAssetId);
@@ -320,7 +320,7 @@ export default class SubsquidDataParser {
             const receiversData = data.receivers.map((receiver) => {
               const transfer = transfers?.find(
                 (transfer) => transfer.to === receiver.accountId
-              ) as SubsquidSwapTransferBatchTransferParam;
+              ) as SwapTransferBatchTransferParam;
               const assetAddress = transfer?.assetId || data.outcomeAssetId?.code;
               const asset = assetsList.find((asset) => asset?.address === assetAddress);
               return {
@@ -339,7 +339,7 @@ export default class SubsquidDataParser {
       }
       case Operation.AddLiquidity:
       case Operation.RemoveLiquidity: {
-        const data = transaction.data as SubsquidHistoryElementLiquidityOperation;
+        const data = transaction.data as HistoryElementLiquidityOperation;
 
         const assetAddress = data.baseAssetId;
         const asset2Address = data.targetAssetId;
@@ -387,7 +387,7 @@ export default class SubsquidDataParser {
         return payload;
       }
       case Operation.Transfer: {
-        const data = transaction.data as SubsquidHistoryElementTransfer;
+        const data = transaction.data as HistoryElementTransfer;
 
         const assetAddress = data.assetId;
         const asset = await getAssetByAddress(assetAddress);
@@ -400,7 +400,7 @@ export default class SubsquidDataParser {
         return payload;
       }
       case Operation.RegisterAsset: {
-        const data = transaction.data as SubsquidHistoryElementAssetRegistration;
+        const data = transaction.data as HistoryElementAssetRegistration;
 
         const assetAddress = data.assetId;
         const asset = await getAssetByAddress(assetAddress);
@@ -410,19 +410,19 @@ export default class SubsquidDataParser {
         return payload;
       }
       case Operation.ReferralSetInvitedUser: {
-        const data = transaction.data as SubsquidReferralSetReferrer;
+        const data = transaction.data as ReferralSetReferrer;
         payload.to = data.to;
         return payload;
       }
       case Operation.ReferralReserveXor:
       case Operation.ReferralUnreserveXor: {
-        const data = transaction.data as SubsquidReferrerReserve;
+        const data = transaction.data as ReferrerReserve;
         payload.amount = data.amount;
         return payload;
       }
       case Operation.ClaimRewards: {
         const rewardsData =
-          transaction.module === ModuleNames.Utility ? [] : (transaction.data as SubsquidHistoryElementRewardsClaim);
+          transaction.module === ModuleNames.Utility ? [] : (transaction.data as HistoryElementRewardsClaim);
 
         (payload as RewardClaimHistory).rewards = Array.isArray(rewardsData) ? await formatRewards(rewardsData) : [];
 
@@ -430,7 +430,7 @@ export default class SubsquidDataParser {
       }
       case Operation.DemeterFarmingDepositLiquidity:
       case Operation.DemeterFarmingWithdrawLiquidity: {
-        const data = transaction.data as SubsquidHistoryElementDemeterFarming;
+        const data = transaction.data as HistoryElementDemeterFarming;
 
         const assetAddress = data.baseAssetId as string;
         const asset2Address = data.assetId;
@@ -449,7 +449,7 @@ export default class SubsquidDataParser {
       case Operation.DemeterFarmingStakeToken:
       case Operation.DemeterFarmingUnstakeToken:
       case Operation.DemeterFarmingGetRewards: {
-        const data = transaction.data as SubsquidHistoryElementDemeterFarming;
+        const data = transaction.data as HistoryElementDemeterFarming;
 
         const assetAddress = data.assetId;
         const asset = await getAssetByAddress(assetAddress);
