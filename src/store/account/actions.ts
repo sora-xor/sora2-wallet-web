@@ -181,7 +181,8 @@ const actions = defineActions({
       if (state.selectedWallet && !state.selectedWalletLoading) {
         await getWallet(state.selectedWallet);
       }
-    } catch {
+    } catch (error) {
+      console.error(error);
       await dispatch.resetSelectedWallet();
       await dispatch.logout();
     }
@@ -376,8 +377,10 @@ const actions = defineActions({
     if (getters.isLoggedIn !== wasLoggedIn || state.address !== address) {
       if (getters.isLoggedIn) {
         const account = { address: state.address, name: state.name, source: state.source as AppWallet };
+        console.info('Login after localstorage sync', account);
         await dispatch.loginAccount(account);
       } else {
+        console.info('Logout after localstorage sync');
         await dispatch.logout();
       }
     }
