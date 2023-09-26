@@ -22,7 +22,7 @@ exports[`WalletAdarTxDetails.vue [SwapTransferBatch, finalized]: should be rende
         hash=""
         translation="transaction.to"
         type="account"
-        value="cnSmwADqUFSbXA5iGZYizXwCwNPHHt7dTG2ZApDQPkq92TFCT"
+        value="cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo"
       />
        
       <info-line-stub

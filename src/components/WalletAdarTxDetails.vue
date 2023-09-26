@@ -36,7 +36,6 @@
 import { Operation } from '@sora-substrate/util';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { SwapTransferBatchTransferParam } from '@/services/subquery/types';
 import { formatAddress } from '@/util';
 
 import { HashType } from '../consts';
@@ -72,7 +71,7 @@ export default class WalletAdarTxDetails extends Mixins(TranslationMixin, Number
 
   get swapTransferBatchRecipients() {
     if (!this.isAdarOperation || this.account.address !== this.transaction.from) return [];
-    return this.transaction.payload.receivers;
+    return this.transaction.payload?.receivers;
   }
 
   get txsList() {
