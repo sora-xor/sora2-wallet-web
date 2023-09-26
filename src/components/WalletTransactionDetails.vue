@@ -116,7 +116,8 @@ import AdarTxDetails from './WalletAdarTxDetails.vue';
 import WalletBase from './WalletBase.vue';
 
 import type { PolkadotJsAccount } from '../types/common';
-import type { HistoryItem, BridgeHistory } from '@sora-substrate/util';
+import type { HistoryItem } from '@sora-substrate/util';
+import type { EthHistory } from '@sora-substrate/util/build/bridgeProxy/eth/types';
 
 @Component({
   components: {
@@ -202,6 +203,7 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   get transactionSymbol(): string {
+    if (this.isAdarOperation) return this.swapTransferBatchAmountSymbol;
     const { type, symbol, symbol2 } = this.selectedTransaction;
 
     if ([Operation.DemeterFarmingDepositLiquidity, Operation.DemeterFarmingWithdrawLiquidity].includes(type)) {
@@ -301,6 +303,18 @@ export default class WalletTransactionDetails extends Mixins(
       return this.formatStringValue(this.selectedTransaction.amount || '0');
     }
   }
+
+  get swapTransferBatchAmountSymbol(): string {
+    const isRecipient = this.account.address !== this.selectedTransaction.from;
+    if (isRecipient) {
+      return (
+        this.selectedTransaction.payload?.receivers?.find((receiver) => receiver.accountId === this.account.address)
+          ?.symbol ?? ''
+      );
+    } else {
+      return this.selectedTransaction.symbol ?? '';
+    }
+  }
   // ____________________________________________________________________________________________________________________
 
   // ETH BRIDGE transaction
@@ -333,7 +347,7 @@ export default class WalletTransactionDetails extends Mixins(
   private getNetworkFee(isSoraTx = true): Nullable<string> {
     const fee = isSoraTx
       ? this.selectedTransaction.soraNetworkFee
-      : (this.selectedTransaction as BridgeHistory).externalNetworkFee;
+      : (this.selectedTransaction as EthHistory).externalNetworkFee;
 
     if (!fee) return null;
 
@@ -356,16 +370,16 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   private getTransactionHash(isSoraTx = true): Nullable<string> {
-    if (!isSoraTx) return (this.selectedTransaction as BridgeHistory).externalHash;
+    if (!isSoraTx) return (this.selectedTransaction as EthHistory).externalHash;
 
-    return this.isEthBridgeOperation ? (this.selectedTransaction as BridgeHistory).hash : this.selectedTransaction.txId;
+    return this.isEthBridgeOperation ? (this.selectedTransaction as EthHistory).hash : this.selectedTransaction.txId;
   }
 
   private getTransactionId(isSoraTx = true): { type: HashType; value: Nullable<string> } {
     if (!isSoraTx) {
       return {
         type: HashType.EthTransaction,
-        value: (this.selectedTransaction as BridgeHistory).externalHash,
+        value: (this.selectedTransaction as EthHistory).externalHash,
       };
     }
 

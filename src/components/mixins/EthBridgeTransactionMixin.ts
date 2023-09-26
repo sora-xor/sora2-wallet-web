@@ -3,7 +3,8 @@ import { Vue, Component } from 'vue-property-decorator';
 
 import { ETH_BRIDGE_STATES } from '../../consts';
 
-import type { HistoryItem, BridgeHistory } from '@sora-substrate/util';
+import type { HistoryItem } from '@sora-substrate/util';
+import type { EthHistory } from '@sora-substrate/util/build/bridgeProxy/eth/types';
 
 @Component
 export default class EthBridgeTransactionMixin extends Vue {
@@ -12,11 +13,11 @@ export default class EthBridgeTransactionMixin extends Vue {
   }
 
   getEthBridgeTxState(transaction: HistoryItem): string {
-    return (transaction as BridgeHistory).transactionState ?? ETH_BRIDGE_STATES.INITIAL;
+    return (transaction as EthHistory).transactionState ?? ETH_BRIDGE_STATES.INITIAL;
   }
 
   isSoraToEthTx(transaction: HistoryItem): boolean {
-    return (transaction as BridgeHistory).type === Operation.EthBridgeOutgoing;
+    return (transaction as EthHistory).type === Operation.EthBridgeOutgoing;
   }
 
   isEthBridgeTxStarted(transaction: HistoryItem): boolean {
