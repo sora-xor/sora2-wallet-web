@@ -15,7 +15,6 @@ import {
   getWallet,
   getWalletSigner,
   getImportedAccounts,
-  getWalletAccounts,
   checkWallet,
   subscribeToWalletAccounts,
   WHITE_LIST_URL,
@@ -135,8 +134,8 @@ const actions = defineActions({
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
 
-    if (state.isDesktop && forgetAddress) {
-      await dispatch.getImportedAccounts();
+    if (forgetAddress) {
+      dispatch.updateImportedAccounts();
     }
 
     await rootDispatch.wallet.router.checkCurrentRoute();
@@ -228,11 +227,13 @@ const actions = defineActions({
     commit.setWalletAvailabilitySubscription(timer);
   },
 
-  async getImportedAccounts(context) {
-    const { commit } = accountActionContext(context);
-    const accounts = await getImportedAccounts();
+  updateImportedAccounts(context): void {
+    const { commit, state } = accountActionContext(context);
 
-    commit.setWalletAccounts(accounts);
+    if (state.isDesktop) {
+      const accounts = getImportedAccounts();
+      commit.setWalletAccounts(accounts);
+    }
   },
 
   async subscribeToWalletAccounts(context): Promise<void> {
@@ -276,12 +277,6 @@ const actions = defineActions({
       await updateApiSigner(source);
     }
 
-    const accounts = state.isDesktop ? getImportedAccounts() : await getWalletAccounts(source);
-
-    if (!accounts.find((acc) => acc.address === defaultAddress)) {
-      throw new Error('polkadotjs.noAccount');
-    }
-
     await api.loginAccount(defaultAddress, accountData.name, source, isExternal);
 
     commit.syncWithStorage();
@@ -309,9 +304,7 @@ const actions = defineActions({
     if (saveAccount) {
       api.addAccountPair(pair, password);
       // update account list in state
-      if (state.isDesktop) {
-        await dispatch.getImportedAccounts();
-      }
+      dispatch.updateImportedAccounts();
     }
 
     return json;
@@ -322,9 +315,7 @@ const actions = defineActions({
     // restore from json file
     api.restoreAccountFromJson(json, password);
     // update account list in state
-    if (state.isDesktop) {
-      await dispatch.getImportedAccounts();
-    }
+    dispatch.updateImportedAccounts();
   },
 
   async renameAccount(context, { address, name }: { address: string; name: string }) {
@@ -334,9 +325,7 @@ const actions = defineActions({
     // update account data from storage
     commit.syncWithStorage();
     // update account list in state
-    if (state.isDesktop) {
-      await dispatch.getImportedAccounts();
-    }
+    dispatch.updateImportedAccounts();
   },
 
   /**
