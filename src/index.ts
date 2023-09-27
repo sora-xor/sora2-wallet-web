@@ -135,12 +135,8 @@ const waitForConnection = async (): Promise<void> => {
 };
 
 const checkActiveAccount = async (): Promise<void> => {
-  if (store.state.wallet.account.isDesktop) {
-    await store.dispatch.wallet.account.getImportedAccounts();
-  }
-
+  await store.dispatch.wallet.account.updateImportedAccounts();
   await api.restoreActiveAccount();
-
   await store.dispatch.wallet.account.checkWalletAvailability();
   await store.dispatch.wallet.router.checkCurrentRoute();
 };
