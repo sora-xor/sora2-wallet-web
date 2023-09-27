@@ -4,7 +4,7 @@ import cryptoRandomString from 'crypto-random-string';
 import { defineActions } from 'direct-vuex';
 
 import { api } from '../../api';
-import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
+import { AppWallet, BLOCK_PRODUCE_TIME, IndexerType } from '../../consts';
 import { isInternalSource } from '../../consts/wallets';
 import alertsApiService from '../../services/alerts';
 import { CeresApiService } from '../../services/ceres';
@@ -23,6 +23,7 @@ import {
   AppError,
   exportAccountJson,
 } from '../../util';
+import { settingsActionContext } from '../settings';
 
 import { accountActionContext } from './../account';
 
@@ -46,7 +47,7 @@ const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
   ]);
 };
 
-function subscribeOnFiatUsingIndexer(context: ActionContext<any, any>): void {
+function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): void {
   const { commit } = accountActionContext(context);
   const indexer = getCurrentIndexer();
   const subscription = indexer.services.explorer.price.createFiatPriceSubscription(
@@ -65,7 +66,7 @@ function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>, error?: 
   if (error) {
     console.warn(error);
   }
-  console.info(`${store.state.wallet.settings.indexerType} cannot set fiat subscription! CERES API will be used`);
+  console.info(`Neither Subsquid nor Subquery can set a fiat subscription. The CERES API will be used instead.`);
   const subscription = CeresApiService.createFiatPriceSubscription(
     commit.updateFiatPriceObject,
     commit.clearFiatPriceObject
@@ -74,9 +75,9 @@ function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>, error?: 
 }
 
 /**
- * Returns `true`, if subquery is stable and up.
+ * Returns `true`, if current indexer is stable and up.
  *
- * Returns `false`, if subquery is down but CERES api works fine.
+ * Returns `false`, if current indexer is down but CERES api works fine.
  *
  * Returns `null`, if both services are unavailable.
  */
@@ -483,13 +484,23 @@ const actions = defineActions({
     commit.setAlertSubject(alertSubject);
   },
   async subscribeOnFiatPrice(context): Promise<void> {
-    const isIndexerAvailable = await getFiatPriceObject(context);
+    const currentIndexer = getCurrentIndexer();
+    let isCurrentIndexerAvailable = await getFiatPriceObject(context);
     try {
-      if (isIndexerAvailable) {
-        subscribeOnFiatUsingIndexer(context);
+      if (isCurrentIndexerAvailable) {
+        subscribeOnFiatUsingCurrentIndexer(context);
       } else {
-        // Subscribe on CERES API anyway
-        subscribeOnFiatUsingCeresApi(context);
+        const { rootDispatch, rootCommit } = rootActionContext(context);
+        rootCommit.wallet.settings.setIndexerType(
+          currentIndexer.type === IndexerType.SUBSQUID ? IndexerType.SUBQUERY : IndexerType.SUBSQUID
+        );
+        isCurrentIndexerAvailable = await getFiatPriceObject(context);
+        if (isCurrentIndexerAvailable) {
+          subscribeOnFiatUsingCurrentIndexer(context);
+        } else {
+          // Subscribe on CERES API anyway
+          subscribeOnFiatUsingCeresApi(context);
+        }
       }
     } catch (error) {
       subscribeOnFiatUsingCeresApi(context, error as Error);

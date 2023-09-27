@@ -1,6 +1,8 @@
 import { createClient, defaultExchanges, subscriptionExchange } from '@urql/core';
 import { createClient as createWSClient } from 'graphql-ws';
 
+import { wsClientLazy, wsClientReconnect, wsClientRetryAttempts } from '@/consts/indexer';
+
 import type { Client } from '@urql/core';
 
 export type { Client, OperationResult, TypedDocumentNode, AnyVariables } from '@urql/core';
@@ -10,8 +12,9 @@ const createSubscriptionClient = (url: string) => {
 
   return createWSClient({
     url: wsUrl,
-    lazy: true,
-    retryAttempts: 25,
+    lazy: wsClientLazy,
+    retryAttempts: wsClientRetryAttempts,
+    shouldRetry: () => wsClientReconnect,
   });
 };
 

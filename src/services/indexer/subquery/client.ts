@@ -1,6 +1,8 @@
 import { createClient, fetchExchange, subscriptionExchange } from '@urql/core';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 
+import { wsClientLazy, wsClientReconnect, wsClientRetryAttempts } from '@/consts/indexer';
+
 import type { Client } from '@urql/core';
 
 export type { Client, OperationResult, TypedDocumentNode, AnyVariables } from '@urql/core';
@@ -11,9 +13,9 @@ const createSubscriptionClient = (url: string) => {
 
   return new SubscriptionClient(wsUrl, {
     minTimeout: 6000, // the minimum amount of time the client should wait for a connection to be made (default 1000 ms)
-    lazy: true, // connects only when first subscription created, and delay the socket initialization
-    reconnect: true, // automatic reconnect in case of connection error
-    reconnectionAttempts: 25,
+    lazy: wsClientLazy, // connects only when first subscription created, and delay the socket initialization
+    reconnect: wsClientReconnect, // automatic reconnect in case of connection error
+    reconnectionAttempts: wsClientRetryAttempts,
   });
 };
 
