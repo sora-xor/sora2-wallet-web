@@ -12,6 +12,12 @@ import type { Subscription } from 'rxjs';
 
 const mutations = defineMutations<SettingsState>()({
   setIndexerType(state, indexerType: IndexerType): void {
+    if (state.subqueryDisabled && indexerType === IndexerType.SUBQUERY) {
+      indexerType = IndexerType.SUBSQUID;
+    } else if (state.subsquidDisabled && indexerType === IndexerType.SUBSQUID) {
+      indexerType = IndexerType.SUBQUERY;
+    }
+
     state.indexerType = indexerType;
     storage.set('indexerType', indexerType);
   },
@@ -94,6 +100,12 @@ const mutations = defineMutations<SettingsState>()({
   },
   setSubsquidEndpoint(state, endpoint: string): void {
     state.subsquidEndpoint = endpoint;
+  },
+  setSubqueryDisabled(state, disabled: boolean): void {
+    state.subqueryDisabled = disabled;
+  },
+  setSubsquidDisabled(state, disabled: boolean): void {
+    state.subsquidDisabled = disabled;
   },
   setSubqueryStatus(state, status: ConnectionStatus): void {
     state.subqueryStatus = status;

@@ -50,6 +50,8 @@ export default class App extends Mixins(TransactionMixin) {
   @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
   @mutation.settings.setSubqueryEndpoint private setSubqueryEndpoint!: (endpoint: string) => void;
   @mutation.settings.setSubsquidEndpoint private setSubsquidEndpoint!: (endpoint: string) => void;
+  @mutation.settings.setSubqueryDisabled private setSubqueryDisabled!: (disabled: boolean) => void;
+  @mutation.settings.setSubsquidDisabled private setSubsquidDisabled!: (disabled: boolean) => void;
   @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncFnWithoutArgs;
@@ -61,6 +63,8 @@ export default class App extends Mixins(TransactionMixin) {
 
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);
+    this.setSubqueryDisabled(env.SUBQUERY_DISABLED ?? false);
+    this.setSubsquidDisabled(env.SUBSQUID_DISABLED ?? false);
     this.setSubqueryEndpoint(env.SUBQUERY_ENDPOINT);
     this.setSubsquidEndpoint(env.SUBSQUID_ENDPOINT);
     this.setSoraNetwork(SoraNetwork.Dev);

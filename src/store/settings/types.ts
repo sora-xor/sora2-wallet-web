@@ -14,6 +14,8 @@ export type SettingsState = {
   indexerType: IndexerType;
   subqueryEndpoint: Nullable<string>;
   subsquidEndpoint: Nullable<string>;
+  subqueryDisabled: boolean;
+  subsquidDisabled: boolean;
   subqueryStatus: ConnectionStatus;
   subsquidStatus: ConnectionStatus;
   permissions: WalletPermissions;
