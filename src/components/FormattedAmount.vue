@@ -10,7 +10,7 @@
   >
     <span class="formatted-amount__value" ref="child">
       <span v-if="!isHiddenValue && (isFiatValue || $slots.prefix)" class="formatted-amount__prefix">
-        <slot name="prefix">$</slot>
+        <slot name="prefix">{{ fiatSign }}</slot>
       </span>
       <span v-if="!isHiddenValue || (isHiddenValue && integerOnly)" class="formatted-amount__integer">{{
         isHiddenValue ? HiddenValue : formatted.integer
@@ -85,6 +85,10 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    * Added special class to left shifting for Fiat value if needed (the shift is the same in all screens).
    */
   @Prop({ default: false, type: Boolean }) readonly withLeftShift!: boolean;
+  /**
+   * Customises fiat sign for fiat balances
+   */
+  @Prop({ default: '$', type: String }) readonly fiatSign!: string;
 
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 

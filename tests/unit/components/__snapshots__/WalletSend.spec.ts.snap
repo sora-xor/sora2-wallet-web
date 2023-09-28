@@ -120,6 +120,7 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
       >
         <formatted-amount-stub
           assetsymbol=""
+          fiatsign="$"
           fontsizerate="normal"
           fontweightrate="normal"
           isfiatvalue="true"
@@ -280,6 +281,7 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
       >
         <formatted-amount-stub
           assetsymbol=""
+          fiatsign="$"
           fontsizerate="normal"
           fontweightrate="normal"
           isfiatvalue="true"
@@ -468,6 +470,7 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
       >
         <formatted-amount-stub
           assetsymbol=""
+          fiatsign="$"
           fontsizerate="normal"
           fontweightrate="normal"
           isfiatvalue="true"
@@ -632,6 +635,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
       >
         <formatted-amount-stub
           assetsymbol=""
+          fiatsign="$"
           fontsizerate="normal"
           fontweightrate="normal"
           isfiatvalue="true"
