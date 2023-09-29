@@ -63,8 +63,8 @@ export default class App extends Mixins(TransactionMixin) {
 
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);
-    this.setSubqueryDisabled(env.SUBQUERY_DISABLED ?? false);
-    this.setSubsquidDisabled(env.SUBSQUID_DISABLED ?? false);
+    this.setSubqueryDisabled(!env.SUBQUERY_ENDPOINT);
+    this.setSubsquidDisabled(!env.SUBSQUID_ENDPOINT);
     this.setSubqueryEndpoint(env.SUBQUERY_ENDPOINT);
     this.setSubsquidEndpoint(env.SUBSQUID_ENDPOINT);
     this.setSoraNetwork(SoraNetwork.Dev);
