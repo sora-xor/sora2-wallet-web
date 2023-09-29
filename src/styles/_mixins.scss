@@ -62,7 +62,6 @@
   font-size: var(--s-font-size-mini);
   font-weight: 300;
   line-height: $lineHeight;
-  letter-spacing: var(--s-letter-spacing-small);
 }
 
 @mixin switch-block($fontSize: var(--s-font-size-medium)) {

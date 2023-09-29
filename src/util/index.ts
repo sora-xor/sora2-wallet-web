@@ -350,6 +350,19 @@ export const getCssVariableValue = (name: string): string => {
     .trim();
 };
 
+export const getTextWidth = (text: string, font = '300 12px "Sora", sans-serif'): number => {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+
+  if (!context) return 0;
+
+  context.font = font;
+
+  const width = context.measureText(text).width.toFixed(1);
+
+  return Number(width);
+};
+
 export const getScrollbarWidth = (): number => {
   const outer = document.createElement('div');
   outer.className = 'el-scrollbar__wrap';

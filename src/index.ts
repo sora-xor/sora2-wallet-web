@@ -2,6 +2,7 @@ import { api, connection } from './api';
 // Components & Mixins
 import AccountCard from './components/Account/AccountCard.vue';
 import WalletAccount from './components/Account/WalletAccount.vue';
+import WalletAvatar from './components/Account/WalletAvatar.vue';
 import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
 import AddressBookInput from './components/AddressBook/Input.vue';
 import AssetList from './components/AssetList.vue';
@@ -32,7 +33,6 @@ import SimpleNotification from './components/SimpleNotification.vue';
 import TokenAddress from './components/TokenAddress.vue';
 import TokenLogo from './components/TokenLogo.vue';
 import TransactionHashView from './components/TransactionHashView.vue';
-import WalletAvatar from './components/WalletAvatar.vue';
 import WalletBase from './components/WalletBase.vue';
 // Other
 import * as WALLET_CONSTS from './consts';
