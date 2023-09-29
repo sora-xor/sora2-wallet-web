@@ -341,7 +341,7 @@ $padding: 5px;
       letter-spacing: var(--s-letter-spacing-mini);
       line-height: var(--s-line-height-reset);
       &-locked {
-        margin-left: $basic-spacing-extra-small;
+        margin-left: $basic-spacing-tiny;
       }
       .formatted-amount__decimal {
         font-weight: 600;

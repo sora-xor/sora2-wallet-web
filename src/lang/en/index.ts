@@ -503,4 +503,9 @@ export default {
     networkTitle: '{network} transaction',
     transactionHash: 'Transaction hash',
   },
+  explore: {
+    showOnly: 'Show only {entities}',
+    myPositions: 'my positions',
+    synthetics: 'synthetic tokens',
+  },
 };
