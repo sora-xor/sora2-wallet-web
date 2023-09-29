@@ -116,7 +116,8 @@ import AdarTxDetails from './WalletAdarTxDetails.vue';
 import WalletBase from './WalletBase.vue';
 
 import type { PolkadotJsAccount } from '../types/common';
-import type { HistoryItem, BridgeHistory } from '@sora-substrate/util';
+import type { HistoryItem } from '@sora-substrate/util';
+import type { EthHistory } from '@sora-substrate/util/build/bridgeProxy/eth/types';
 
 @Component({
   components: {
@@ -346,7 +347,7 @@ export default class WalletTransactionDetails extends Mixins(
   private getNetworkFee(isSoraTx = true): Nullable<string> {
     const fee = isSoraTx
       ? this.selectedTransaction.soraNetworkFee
-      : (this.selectedTransaction as BridgeHistory).externalNetworkFee;
+      : (this.selectedTransaction as EthHistory).externalNetworkFee;
 
     if (!fee) return null;
 
@@ -369,16 +370,16 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   private getTransactionHash(isSoraTx = true): Nullable<string> {
-    if (!isSoraTx) return (this.selectedTransaction as BridgeHistory).externalHash;
+    if (!isSoraTx) return (this.selectedTransaction as EthHistory).externalHash;
 
-    return this.isEthBridgeOperation ? (this.selectedTransaction as BridgeHistory).hash : this.selectedTransaction.txId;
+    return this.isEthBridgeOperation ? (this.selectedTransaction as EthHistory).hash : this.selectedTransaction.txId;
   }
 
   private getTransactionId(isSoraTx = true): { type: HashType; value: Nullable<string> } {
     if (!isSoraTx) {
       return {
         type: HashType.EthTransaction,
-        value: (this.selectedTransaction as BridgeHistory).externalHash,
+        value: (this.selectedTransaction as EthHistory).externalHash,
       };
     }
 
