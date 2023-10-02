@@ -1,7 +1,7 @@
 <template>
   <s-tooltip :content="copyTooltip(tooltipText)" tabindex="-1">
     <div class="formatted-address" @click="handleCopyAddress(value, $event)">
-      <span class="first" :style="{ width: firstPartWidth }">{{ value }}</span>
+      <span class="address" :style="{ width: firstPartWidth }">{{ value }}</span>
       ...
       <span>{{ secondPart }}</span>
     </div>
@@ -43,6 +43,7 @@ export default class FormattedAddress extends Mixins(CopyAddressMixin) {
   @include hint-text;
 
   display: inline-flex;
+  color: inherit;
   cursor: pointer;
   letter-spacing: normal;
 
@@ -50,7 +51,7 @@ export default class FormattedAddress extends Mixins(CopyAddressMixin) {
     text-decoration: underline;
   }
 
-  .first {
+  .address {
     white-space: nowrap;
     overflow: hidden;
   }
