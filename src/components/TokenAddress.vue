@@ -1,15 +1,9 @@
 <template>
   <div class="token-address">
     <span v-if="showName" class="token-address__name">{{ tokenName }}</span>
-    <span>(</span>
-    <formatted-address
-      class="token-address__value"
-      :value="tokenAddress"
-      :symbols="10"
-      :offset="2"
-      :tooltip-text="t('assets.assetId')"
-    />
-    <span>)</span>
+    <div class="token-address__value">
+      (<formatted-address :value="tokenAddress" :symbols="10" :tooltip-text="t('assets.assetId')" v-bind="$attrs" />)
+    </div>
   </div>
 </template>
 
@@ -45,6 +39,8 @@ export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMi
 
 <style lang="scss" scoped>
 .token-address {
+  display: flex;
+  align-items: baseline;
   @include hint-text;
 
   &__name {
@@ -52,7 +48,8 @@ export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMi
   }
 
   &__value {
-    color: var(--s-color-base-content-primary);
+    display: inline-flex;
+    align-items: baseline;
   }
 }
 </style>
