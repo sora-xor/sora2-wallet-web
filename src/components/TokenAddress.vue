@@ -39,8 +39,6 @@ export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMi
 
 <style lang="scss" scoped>
 .token-address {
-  display: flex;
-  align-items: baseline;
   @include hint-text;
 
   &__name {
