@@ -1,7 +1,7 @@
 <template>
   <div :class="computedClasses" v-loading="loading">
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @update-filter="updateFilter" />
-    <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
+    <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey" ref="scrollbar">
       <draggable v-model="assetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes">
         <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
@@ -81,7 +81,7 @@
 <script lang="ts">
 import { api, FPNumber } from '@sora-substrate/util';
 import isEmpty from 'lodash/fp/isEmpty';
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Ref, Watch } from 'vue-property-decorator';
 import draggable from 'vuedraggable';
 
 import { RouteNames, HiddenValue, WalletFilteringOptions } from '../consts';
@@ -98,6 +98,8 @@ import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
 import type { WalletAssetFilters, WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';
 import type { AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/types';
+import type SScrollbar from '@soramitsu/soramitsu-js-ui/lib/components/Scrollbar/SScrollbar.vue';
+import type ElScrollbar from 'element-ui/lib/scrollbar';
 
 @Component({
   components: {
@@ -118,6 +120,15 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.account.setAccountAssets private setAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
+
+  @Ref('scrollbar') readonly scrollbar!: SScrollbar;
+
+  @Watch('assetList')
+  private updateScrollbar(): void {
+    if (this.scrollbar) {
+      (this.scrollbar.$children[0] as ElScrollbar).update();
+    }
+  }
 
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
