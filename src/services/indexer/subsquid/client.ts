@@ -1,5 +1,5 @@
-import { createClient, defaultExchanges, subscriptionExchange } from '@urql/core';
-import { createClient as createWSClient } from 'graphql-ws';
+import { createClient, fetchExchange, subscriptionExchange } from '@urql/core';
+import { SubscribePayload, createClient as createWSClient } from 'graphql-ws';
 
 import { wsClientLazy, wsClientReconnect, wsClientRetryAttempts } from '@/consts/indexer';
 
@@ -23,7 +23,7 @@ const createSubscriptionExchange = (subscriptionClient: ReturnType<typeof create
     forwardSubscription: (operation) => {
       return {
         subscribe: (sink) => {
-          const dispose = subscriptionClient.subscribe(operation, sink);
+          const dispose = subscriptionClient.subscribe(operation as SubscribePayload, sink);
           return {
             unsubscribe: dispose,
           };
@@ -34,7 +34,7 @@ const createSubscriptionExchange = (subscriptionClient: ReturnType<typeof create
 };
 
 export const createExplorerClient = (url: string, subscriptions = false): Client => {
-  const exchanges = [...defaultExchanges];
+  const exchanges = [fetchExchange];
 
   if (subscriptions) {
     const subscriptionClient = createSubscriptionClient(url);

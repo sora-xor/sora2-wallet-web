@@ -89,7 +89,7 @@ export class SubsquidAccountModule extends BaseModule {
         const response = await this.getHistory(variables);
 
         if (response && Array.isArray(response.nodes) && response.nodes[0]) {
-          handler(response.nodes[0]);
+          handler(response.nodes[0] as SubsquidHistoryElement);
         }
       }
     });

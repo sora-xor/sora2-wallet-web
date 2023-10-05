@@ -2,9 +2,9 @@ import { gql } from '@urql/core';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-import type { SubsquidReferrerRewardEntity, SubsquidConnectionQueryResponse } from '../types';
+import type { ReferrerRewardEntity, SubsquidConnectionQueryResponse } from '../types';
 
-export const ReferrerRewardsQuery = gql<SubsquidConnectionQueryResponse<SubsquidReferrerRewardEntity>>`
+export const ReferrerRewardsQuery = gql<SubsquidConnectionQueryResponse<ReferrerRewardEntity>>`
   query SubsquidReferrerRewardsQuery($first: Int = 100, $filter: ReferrerRewardWhereInput, $after: String = null) {
     data: referrerRewards(first: $first, where: $filter, after: $after) {
       pageInfo {

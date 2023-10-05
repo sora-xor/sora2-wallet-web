@@ -24,6 +24,8 @@ function initialState(): SettingsState {
     indexerType: indexerType ? (indexerType as IndexerType) : IndexerType.SUBQUERY,
     subqueryEndpoint: null,
     subsquidEndpoint: null,
+    subqueryDisabled: false,
+    subsquidDisabled: false,
     subqueryStatus: ConnectionStatus.Available,
     subsquidStatus: ConnectionStatus.Available,
     isWalletLoaded: false, // wallet is loading
