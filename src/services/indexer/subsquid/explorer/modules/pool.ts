@@ -1,0 +1,35 @@
+import { formatStringNumber } from '../../../../../util';
+import { ApyQuery } from '../../queries/fiatPriceAndApy';
+import { PoolsApySubscription } from '../../subscriptions/fiatPriceAndApy';
+
+import { BaseModule } from './_base';
+
+import type { SubsquidPoolXYKEntity, PoolApyObject } from '../../types';
+
+function parseApy(entity: SubsquidPoolXYKEntity): PoolApyObject {
+  const acc = {};
+  const id = entity.id;
+  const strategicBonusApyFPNumber = formatStringNumber(entity.strategicBonusApy);
+  const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+  if (isStrategicBonusApyFinity) {
+    acc[id] = strategicBonusApyFPNumber.toCodecString();
+  }
+  return acc;
+}
+
+export class SubsquidPoolModule extends BaseModule {
+  /**
+   * Get strategic bonus APY for each pool
+   */
+  public async getPoolsApyObject(): Promise<Nullable<PoolApyObject>> {
+    const result = await this.root.fetchAllEntitiesConnection(ApyQuery, {}, parseApy);
+
+    if (!result) return null;
+
+    return result.reduce((acc, item) => ({ ...acc, ...item }), {});
+  }
+
+  public createPoolsApySubscription(handler: (entity: PoolApyObject) => void, errorHandler: () => void): VoidFunction {
+    return this.root.createEntitySubscription(PoolsApySubscription, {}, parseApy, handler, errorHandler);
+  }
+}

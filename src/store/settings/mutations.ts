@@ -2,15 +2,25 @@ import { defineMutations } from 'direct-vuex';
 import { NFTStorage } from 'nft.storage';
 
 import { api } from '../../api';
-import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions } from '../../consts';
+import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions, IndexerType } from '../../consts';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 
-import type { SettingsState } from './types';
 import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
+import type { SettingsState } from './types';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from 'rxjs';
 
 const mutations = defineMutations<SettingsState>()({
+  setIndexerType(state, indexerType: IndexerType): void {
+    if (state.subqueryDisabled && indexerType === IndexerType.SUBQUERY) {
+      indexerType = IndexerType.SUBSQUID;
+    } else if (state.subsquidDisabled && indexerType === IndexerType.SUBSQUID) {
+      indexerType = IndexerType.SUBQUERY;
+    }
+
+    state.indexerType = indexerType;
+    storage.set('indexerType', indexerType);
+  },
   setWalletLoaded(state, flag: boolean): void {
     state.isWalletLoaded = flag;
   },
@@ -88,8 +98,20 @@ const mutations = defineMutations<SettingsState>()({
   setSubqueryEndpoint(state, endpoint: string): void {
     state.subqueryEndpoint = endpoint;
   },
+  setSubsquidEndpoint(state, endpoint: string): void {
+    state.subsquidEndpoint = endpoint;
+  },
+  setSubqueryDisabled(state, disabled: boolean): void {
+    state.subqueryDisabled = disabled;
+  },
+  setSubsquidDisabled(state, disabled: boolean): void {
+    state.subsquidDisabled = disabled;
+  },
   setSubqueryStatus(state, status: ConnectionStatus): void {
     state.subqueryStatus = status;
+  },
+  setSubsquidStatus(state, status: ConnectionStatus): void {
+    state.subsquidStatus = status;
   },
   setDepositNotifications(state, allow: boolean): void {
     state.allowTopUpAlert = allow;

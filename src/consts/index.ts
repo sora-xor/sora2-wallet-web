@@ -5,6 +5,11 @@ export const HiddenValue = '******';
 export const BLOCK_PRODUCE_TIME = 6_000;
 export const MAX_ALERTS_NUMBER = 5;
 
+export enum IndexerType {
+  SUBQUERY = 'subquery',
+  SUBSQUID = 'subsquid',
+}
+
 export enum AppWallet {
   GoogleDrive = 'google-drive',
   FearlessWallet = 'fearless-wallet',

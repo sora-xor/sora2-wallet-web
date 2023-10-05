@@ -3,7 +3,7 @@ import { DAI } from '@sora-substrate/util/build/assets/consts';
 import isEmpty from 'lodash/fp/isEmpty';
 import { interval } from 'rxjs';
 
-import type { FiatPriceObject } from '../subquery/types';
+import type { FiatPriceObject } from '../indexer/types';
 
 const ceresUpdateInterval = interval(60_000);
 
