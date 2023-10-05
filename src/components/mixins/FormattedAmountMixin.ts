@@ -7,7 +7,7 @@ import { state } from '../../store/decorators';
 
 import NumberFormatterMixin from './NumberFormatterMixin';
 
-import type { FiatPriceObject } from '../../services/subquery/types';
+import type { FiatPriceObject } from '../../services/indexer/types';
 import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component

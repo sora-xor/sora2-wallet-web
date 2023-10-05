@@ -1,4 +1,4 @@
-import { WalletAssetFilters, WalletFilteringOptions } from '../../consts';
+import { WalletAssetFilters, WalletFilteringOptions, IndexerType } from '../../consts';
 import { Alert, ConnectionStatus } from '../../types/common';
 import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
 
@@ -11,6 +11,7 @@ function initialState(): SettingsState {
   const allowTopUpAlerts = settingsStorage.get('allowTopUpAlerts');
   const shouldBalanceBeHidden = storage.get('shouldBalanceBeHidden');
   const feeMultiplier = runtimeStorage.get('feeMultiplier');
+  const indexerType = storage.get('indexerType');
   const runtimeVersion = runtimeStorage.get('version');
   const allowFee = settingsStorage.get('allowFeePopup');
   const filters = storage.get('filters');
@@ -20,8 +21,13 @@ function initialState(): SettingsState {
     apiKeys: {},
     alerts: (alerts || []) as Array<Alert>,
     allowTopUpAlert: allowTopUpAlerts ? Boolean(JSON.parse(allowTopUpAlerts)) : false,
+    indexerType: indexerType ? (indexerType as IndexerType) : IndexerType.SUBQUERY,
     subqueryEndpoint: null,
-    subqueryStatus: ConnectionStatus.Unavailable,
+    subsquidEndpoint: null,
+    subqueryDisabled: false,
+    subsquidDisabled: false,
+    subqueryStatus: ConnectionStatus.Available,
+    subsquidStatus: ConnectionStatus.Available,
     isWalletLoaded: false, // wallet is loading
     permissions: {
       addAssets: true,

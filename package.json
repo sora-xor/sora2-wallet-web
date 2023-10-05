@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "1.22.2",
+  "version": "1.23.0",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
@@ -37,6 +37,7 @@
     "direct-vuex": "^0.12.1",
     "file-saver": "^2.0.5",
     "graphql": "^16.8.0",
+    "graphql-ws": "^5.13.1",
     "is-electron": "^2.2.2",
     "lodash": "^4.17.21",
     "maska": "^1.5.1",
