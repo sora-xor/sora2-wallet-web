@@ -2,8 +2,7 @@ import { Operation } from '@sora-substrate/util';
 import { defineActions } from 'direct-vuex';
 
 import { api } from '../../api';
-import { SubqueryExplorerService, SubqueryDataParserService } from '../../services/subquery';
-import { historyElementsFilter } from '../../services/subquery/queries/historyElements';
+import { getCurrentIndexer } from '../../services/indexer';
 import store, { rootActionContext } from '../../store';
 
 import { transactionsActionContext } from './../transactions';
@@ -54,10 +53,11 @@ const actions = defineActions({
     if (!isLoggedIn) return;
 
     try {
-      const subscription = SubqueryExplorerService.account.createHistorySubscription(
+      const indexer = getCurrentIndexer();
+      const subscription = indexer.services.explorer.account.createHistorySubscription(
         account.address,
         async (transaction) => {
-          const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
+          const historyItem = await indexer.services.dataParser.parseTransactionAsHistoryItem(transaction as any); // TODO: remove any type
 
           if (!historyItem) return;
           // Don't handle bridge operations
@@ -107,8 +107,9 @@ const actions = defineActions({
 
     if (pagination && ((next && !pagination.hasNextPage) || (!next && !pagination.hasPreviousPage))) return;
 
-    const operations = SubqueryDataParserService.supportedOperations;
-    const filter = historyElementsFilter({
+    const indexer = getCurrentIndexer();
+    const operations = indexer.services.dataParser.supportedOperations;
+    const filter = indexer.historyElementsFilter({
       address,
       assetAddress,
       operations,
@@ -117,16 +118,16 @@ const actions = defineActions({
 
     const variables = {
       filter,
-      first: pageAmount,
+      limit: pageAmount,
       offset: pageAmount * (page - 1),
     };
 
     try {
-      const response = await SubqueryExplorerService.account.getHistory(variables);
+      const response = await indexer.services.explorer.account.getHistory(variables);
 
       if (!response) return;
 
-      const { nodes, pageInfo, totalCount } = response;
+      const { nodes, totalCount } = response;
       const buffer = {};
       const removeHistoryIds: Array<string> = [];
 
@@ -135,7 +136,7 @@ const actions = defineActions({
           const { id } = transaction;
 
           if (!(id in externalHistory)) {
-            const historyItem = await SubqueryDataParserService.parseTransactionAsHistoryItem(transaction);
+            const historyItem = await indexer.services.dataParser.parseTransactionAsHistoryItem(transaction as any); // TODO: remove any type
 
             if (historyItem) {
               buffer[id] = historyItem;
@@ -154,7 +155,6 @@ const actions = defineActions({
 
       commit.setExternalHistory({ ...externalHistory, ...buffer });
       commit.setExternalHistoryTotal(totalCount);
-      commit.setExternalHistoryPagination(pageInfo);
     } catch (error) {
       console.error(error);
     }
