@@ -235,6 +235,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
 
   &:hover {
     cursor: pointer;
+    color: var(--s-color-base-background);
     background: var(--s-color-base-content-secondary);
   }
 }
