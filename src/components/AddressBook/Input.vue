@@ -2,7 +2,9 @@
   <div class="address-input">
     <wallet-account v-if="record" :polkadot-account="record">
       <s-icon class="book-icon-unlink" name="el-icon-close" size="20" @click.native="resetAddress" />
-      <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
+      <s-tooltip :content="t('addressBook.selectContact')" border-radius="mini" placement="top" tabindex="-1">
+        <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
+      </s-tooltip>
     </wallet-account>
 
     <s-input
