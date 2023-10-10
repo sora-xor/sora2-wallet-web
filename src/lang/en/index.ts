@@ -204,6 +204,8 @@ export default {
       present: 'Already present',
       saveChanges: 'Save changes',
     },
+    input: 'Input address or select contact',
+    selectContact: 'Select contact',
   },
   history: {
     clearHistory: 'Clear history',

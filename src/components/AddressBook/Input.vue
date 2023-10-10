@@ -10,14 +10,16 @@
       v-model="address"
       v-bind="{
         maxlength: 128,
-        placeholder: t('walletSend.address'),
+        placeholder: t('addressBook.input'),
         borderRadius: 'medium',
         ...$attrs,
       }"
     >
       <template #right>
         <s-icon v-if="address" class="book-icon-unlink" name="el-icon-close" size="20" @click.native="resetAddress" />
-        <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
+        <s-tooltip :content="t('addressBook.selectContact')" border-radius="mini" placement="top" tabindex="-1">
+          <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
+        </s-tooltip>
       </template>
     </s-input>
 
