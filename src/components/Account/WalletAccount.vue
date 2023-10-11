@@ -5,14 +5,7 @@
     </template>
     <template #name>{{ name }}</template>
     <template #description>
-      <!-- TODO: Add Copy address by Keyboard -->
-      <s-tooltip :content="copyTooltip(t('account.walletAddress'))" tabindex="-1">
-        <div class="account-credentials_address" @click="handleCopyAddress(address, $event)">
-          <p class="first">{{ address }}</p>
-          ...
-          <p>{{ secondPartOfAddress }}</p>
-        </div>
-      </s-tooltip>
+      <formatted-address :value="address" :symbols="24" :tooltip-text="t('account.walletAddress')" />
     </template>
     <template #default>
       <s-tooltip
@@ -34,25 +27,26 @@ import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import { ObjectInit } from '../../consts';
 import { getter } from '../../store/decorators';
-import { formatAddress, formatSoraAddress, getAccountIdentity } from '../../util';
-import CopyAddressMixin from '../mixins/CopyAddressMixin';
+import { formatSoraAddress, getAccountIdentity } from '../../util';
 import LoadingMixin from '../mixins/LoadingMixin';
-import WalletAvatar from '../WalletAvatar.vue';
+import TranslationMixin from '../mixins/TranslationMixin';
+import FormattedAddress from '../shared/FormattedAddress.vue';
 
 import AccountCard from './AccountCard.vue';
+import WalletAvatar from './WalletAvatar.vue';
 
 import type { PolkadotJsAccount } from '../../types/common';
 
-const ADDRESS_LENGTH = 24;
 const DEFAULT_NAME = '<unknown>';
 
 @Component({
   components: {
     AccountCard,
     WalletAvatar,
+    FormattedAddress,
   },
 })
-export default class WalletAccount extends Mixins(CopyAddressMixin, LoadingMixin) {
+export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @Prop({ default: ObjectInit, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
   @Prop({ default: false, type: Boolean }) readonly withIdentity!: boolean;
 
@@ -85,15 +79,6 @@ export default class WalletAccount extends Mixins(CopyAddressMixin, LoadingMixin
   get identity(): string {
     return this.account.identity || this.accountIdentity;
   }
-
-  get formattedAddress(): string {
-    return formatAddress(this.address, ADDRESS_LENGTH);
-  }
-
-  get secondPartOfAddress(): string {
-    // TODO: Remove this dirty hack. It's made just for browser search
-    return this.address.slice(-ADDRESS_LENGTH / 2);
-  }
 }
 </script>
 
@@ -109,19 +94,6 @@ export default class WalletAccount extends Mixins(CopyAddressMixin, LoadingMixin
 </style>
 
 <style scoped lang="scss">
-.account-credentials_address {
-  display: flex;
-  .first {
-    width: 100px;
-    white-space: nowrap;
-    overflow: hidden;
-  }
-  &:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
-}
-
 .account-on-chain-name {
   max-width: 167px;
   white-space: nowrap;

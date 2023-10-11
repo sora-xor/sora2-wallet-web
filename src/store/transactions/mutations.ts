@@ -2,9 +2,9 @@ import { defineMutations } from 'direct-vuex';
 
 import { api } from '../../api';
 
+import type { TransactionsState } from './types';
 import type { EthBridgeUpdateHistory } from '../../consts';
 import type { PageInfo } from '../../services/indexer/types';
-import type { TransactionsState } from './types';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 const mutations = defineMutations<TransactionsState>()({

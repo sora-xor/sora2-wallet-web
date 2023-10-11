@@ -27,9 +27,11 @@ export const ApyQuery = gql<SubqueryConnectionQueryResponse<SubqueryPoolXYKEntit
       pageInfo {
         ...PageInfoFragment
       }
-      nodes {
-        id
-        strategicBonusApy
+      edges {
+        node {
+          id
+          strategicBonusApy
+        }
       }
     }
   }

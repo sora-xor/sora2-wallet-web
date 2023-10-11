@@ -204,6 +204,8 @@ export default {
       present: 'Already present',
       saveChanges: 'Save changes',
     },
+    input: 'Input address or select contact',
+    selectContact: 'Select contact',
   },
   history: {
     clearHistory: 'Clear history',
@@ -502,5 +504,10 @@ export default {
     },
     networkTitle: '{network} transaction',
     transactionHash: 'Transaction hash',
+  },
+  explore: {
+    showOnly: 'Show only {entities}',
+    myPositions: 'my positions',
+    synthetics: 'synthetic tokens',
   },
 };

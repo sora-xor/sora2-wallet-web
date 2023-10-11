@@ -5,8 +5,8 @@ import { api } from '../../api';
 import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions, IndexerType } from '../../consts';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 
-import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
 import type { SettingsState } from './types';
+import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from 'rxjs';
 
