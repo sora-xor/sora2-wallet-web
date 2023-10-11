@@ -104,15 +104,4 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
   background-color: var(--s-color-utility-surface);
   color: var(--s-color-base-content-secondary);
 }
-
-.account-on-chain-name {
-  max-width: 167px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  border-radius: calc(var(--s-border-radius-mini) / 2);
-  padding: $inner-spacing-mini;
-  background-color: var(--s-color-utility-surface);
-  color: var(--s-color-base-content-secondary);
-}
 </style>
