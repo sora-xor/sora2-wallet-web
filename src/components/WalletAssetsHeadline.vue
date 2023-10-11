@@ -148,8 +148,8 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
     align-items: baseline;
     justify-content: space-between;
     flex-wrap: wrap;
-    padding-top: #{$basic-spacing-extra-small};
-    padding-bottom: #{$basic-spacing-extra-small};
+    padding-top: #{$basic-spacing-tiny};
+    padding-bottom: #{$basic-spacing-tiny};
     text-align: center;
     font-size: var(--s-font-size-mini);
 

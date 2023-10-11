@@ -1,5 +1,6 @@
 import AccountCard from '@/components/Account/AccountCard.vue';
 import WalletAccount from '@/components/Account/WalletAccount.vue';
+import FormattedAddress from '@/components/shared/FormattedAddress.vue';
 
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT, MOCK_ACCOUNT_POLKADOT, MOCK_ADDRESS } from '../../utils/WalletAccountMock';
@@ -39,6 +40,7 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
     store: createStore(),
     stubs: {
       AccountCard,
+      FormattedAddress,
     },
   };
 
@@ -72,7 +74,7 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
     });
 
     const divName = wrapper.find('.account-credentials_name');
-    const divAddressText = wrapper.find('.account-credentials_address').text();
+    const divAddressText = wrapper.find('.formatted-address .address').text();
     const startLine = divAddressText.substring(0, 12);
     const endLine = divAddressText.substring(15);
     const accountGetter = wrapper.vm.$store.getters['wallet/account/account'];

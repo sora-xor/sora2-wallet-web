@@ -35,6 +35,10 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
       </span>
     </div>
      
+    <synthetic-switcher-stub
+      class="add-asset-token__switch-btn"
+    />
+     
     <div
       class="asset-list asset-search-list"
     >
@@ -95,6 +99,10 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
       </span>
     </div>
      
+    <synthetic-switcher-stub
+      class="add-asset-token__switch-btn"
+    />
+     
     <div
       class="asset-list asset-search-list"
     >
@@ -154,6 +162,10 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
         Verified assets only
       </span>
     </div>
+     
+    <synthetic-switcher-stub
+      class="add-asset-token__switch-btn"
+    />
      
     <div
       class="asset-list asset-search-list"

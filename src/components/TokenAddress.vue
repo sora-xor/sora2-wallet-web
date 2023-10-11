@@ -1,23 +1,24 @@
 <template>
   <div class="token-address">
     <span v-if="showName" class="token-address__name">{{ tokenName }}</span>
-    <s-tooltip :content="copyTooltip(t('assets.assetId'))" tabindex="-1">
-      <span class="token-address__value" @click="handleCopyAddress(tokenAddress, $event)">
-        ({{ formattedAddress }})
-      </span>
-    </s-tooltip>
+    <div class="token-address__value">
+      (<formatted-address :value="tokenAddress" :symbols="10" :tooltip-text="t('assets.assetId')" v-bind="$attrs" />)
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { formatAddress } from '../util';
-
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import TranslationMixin from './mixins/TranslationMixin';
+import FormattedAddress from './shared/FormattedAddress.vue';
 
-@Component
+@Component({
+  components: {
+    FormattedAddress,
+  },
+})
 export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMixin) {
   @Prop({ default: '', type: String }) readonly name!: string;
   @Prop({ default: '', type: String }) readonly symbol!: string;
@@ -33,10 +34,6 @@ export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMi
   get tokenAddress(): string {
     return this.external ? this.externalAddress : this.address;
   }
-
-  get formattedAddress(): string {
-    return formatAddress(this.tokenAddress, 10);
-  }
 }
 </script>
 
@@ -49,11 +46,8 @@ export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMi
   }
 
   &__value {
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
+    display: inline-flex;
+    align-items: baseline;
   }
 }
 </style>

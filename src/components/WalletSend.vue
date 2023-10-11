@@ -454,7 +454,7 @@ $logo-size: var(--s-size-mini);
       background-color: var(--s-color-utility-surface);
       border-radius: var(--s-border-radius-mini);
       box-shadow: var(--s-shadow-element);
-      padding: $basic-spacing-mini #{$basic-spacing-extra-small};
+      padding: $basic-spacing-mini #{$basic-spacing-tiny};
       &__logo {
         @include asset-logo-styles;
         margin-right: var(--s-basic-spacing) !important;
