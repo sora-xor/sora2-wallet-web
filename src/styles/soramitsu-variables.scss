@@ -62,6 +62,17 @@ $s-transition-default: all 0.125s ease-in-out;
 $s-font-family-default-path: '~@soramitsu/soramitsu-js-ui/lib/assets/fonts/Sora-VariableFont_wght.ttf' !default;
 $s-font-family-mono-path: '~@soramitsu/soramitsu-js-ui/lib/assets/fonts/JetBrainsMono-Regular.woff' !default;
 $s-font-family-icons-path: '~@/assets/fonts/polkaswap_icons.ttf' !default;
+// Font Feature Settings
+$s-font-feature-settings-common: normal;
+$s-font-feature-settings-heading: normal;
+$s-font-feature-settings-caps-heading: normal;
+$s-font-feature-settings-caps: normal;
+$s-font-feature-settings-singleline: normal;
+$s-font-feature-settings-card-title: normal;
+$s-font-feature-settings-input: normal;
+$s-font-feature-settings-button: normal;
+// override dark theme on disabled
+$s-color-base-on-disabled--dark: #C29AB7;
 
 :root {
   --s-color-brand-day: #{$s-color-brand-day};

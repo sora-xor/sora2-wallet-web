@@ -10,9 +10,10 @@
         class="add-asset-token__search"
       />
       <div class="add-asset-token__switch-btn">
-        <s-switch v-model="showVerifiedAssetsOnly" :disabled="loading" />
+        <s-switch v-model="isVerifiedOnly" :disabled="loading" />
         <span>{{ t(`addAsset.${AddAssetTabs.Token}.switchBtn`) }}</span>
       </div>
+      <synthetic-switcher class="add-asset-token__switch-btn" v-model="isSynthsOnly" />
       <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset">
         <template #list-empty>
           {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
@@ -27,12 +28,13 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
-import { AddAssetTabs } from '../../consts';
+import { AddAssetTabs, syntheticAssetRegexp } from '../../consts';
 import { getter } from '../../store/decorators';
 import AssetList from '../AssetList.vue';
 import SearchInput from '../Input/SearchInput.vue';
 import AddAssetMixin from '../mixins/AddAssetMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
+import SyntheticSwitcher from '../shared/SyntheticSwitcher.vue';
 
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
@@ -43,6 +45,7 @@ import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
     AssetList,
     SearchInput,
     AddAssetDetailsCard,
+    SyntheticSwitcher,
   },
 })
 export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
@@ -50,7 +53,8 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
 
   @getter.account.whitelist private whitelist!: Whitelist;
   /** `true` by default cuz we have a lot of assets */
-  showVerifiedAssetsOnly = true;
+  isVerifiedOnly = true;
+  isSynthsOnly = false;
 
   private get notAddedAssets(): Array<Asset> {
     return this.assets.filter(
@@ -58,15 +62,18 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
     );
   }
 
-  get whiteListedNotAddedAssets(): Array<Asset> {
-    return this.notAddedAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist));
+  private get prefilteredAssets(): Array<Asset> {
+    return this.notAddedAssets.filter((asset) => {
+      if (this.isVerifiedOnly && !api.assets.isWhitelist(asset, this.whitelist)) return false;
+      if (this.isSynthsOnly && !syntheticAssetRegexp.test(asset.address)) return false;
+      return true;
+    });
   }
 
   get foundAssets(): Array<Asset> {
-    const assetsToSearch = this.showVerifiedAssetsOnly ? this.whiteListedNotAddedAssets : this.notAddedAssets;
-    if (!this.searchValue) return assetsToSearch;
+    if (!this.searchValue) return this.prefilteredAssets;
 
-    return this.getSoughtAssets(assetsToSearch);
+    return this.getSoughtAssets(this.prefilteredAssets);
   }
 
   get assetIsAlreadyAdded(): boolean {

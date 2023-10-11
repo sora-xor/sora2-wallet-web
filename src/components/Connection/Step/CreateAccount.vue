@@ -295,7 +295,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
 
   &__error {
     height: 20px;
-    margin-bottom: $basic-spacing-extra-small;
+    margin-bottom: $basic-spacing-tiny;
     &-text {
       color: var(--s-color-status-error);
     }
