@@ -85,33 +85,7 @@ export class SubqueryAccountModule extends SubqueryBaseModule {
   }
 
   public async getHistoryPaged(variables = {}): Promise<Nullable<ConnectionQueryResponseData<HistoryElement>>> {
-    const data = await this.root.fetchEntities(HistoryElementsQuery, variables);
-    if (data) {
-      return {
-        ...data,
-        edges: data.edges.map((edge) => {
-          let data: HistoryElementData = null;
-          let calls: HistoryElementCalls = [];
-          if (Array.isArray(edge.node.data)) {
-            calls = edge.node.data.map((call) => ({
-              ...call,
-              data: call.data.args,
-            }));
-          } else {
-            data = edge.node.data;
-          }
-          return {
-            ...edge,
-            node: {
-              ...edge.node,
-              data,
-              calls,
-            },
-          };
-        }),
-      };
-    }
-    return data;
+    return await this.root.fetchEntities(HistoryElementsQuery, variables);
   }
 
   public createHistorySubscription(accountAddress: string, handler: (entity: SubqueryHistoryElement) => void) {
