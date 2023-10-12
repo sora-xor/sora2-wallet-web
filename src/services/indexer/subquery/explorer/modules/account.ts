@@ -93,10 +93,16 @@ export class SubqueryAccountModule extends SubqueryBaseModule {
           let data: HistoryElementData = null;
           let calls: HistoryElementCalls = [];
           if (Array.isArray(edge.node.data)) {
-            calls = edge.node.data.map((call) => ({
-              ...call,
-              data: call.data.args,
-            }));
+            calls = edge.node.data.map((call) => {
+              if (call.data && call.data.args) {
+                return {
+                  ...call,
+                  data: call.data.args,
+                };
+              } else {
+                return call;
+              }
+            });
           } else {
             data = edge.node.data;
           }

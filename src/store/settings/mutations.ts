@@ -3,10 +3,10 @@ import { NFTStorage } from 'nft.storage';
 
 import { api } from '../../api';
 import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions, IndexerType } from '../../consts';
+import { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 
 import type { SettingsState } from './types';
-import type { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from 'rxjs';
 
@@ -97,15 +97,17 @@ const mutations = defineMutations<SettingsState>()({
   },
   setSubqueryEndpoint(state, endpoint: string): void {
     state.subqueryEndpoint = endpoint;
+    state.subqueryDisabled = !endpoint;
+    if (state.subqueryDisabled) {
+      state.subqueryStatus = ConnectionStatus.Unavailable;
+    }
   },
   setSubsquidEndpoint(state, endpoint: string): void {
     state.subsquidEndpoint = endpoint;
-  },
-  setSubqueryDisabled(state, disabled: boolean): void {
-    state.subqueryDisabled = disabled;
-  },
-  setSubsquidDisabled(state, disabled: boolean): void {
-    state.subsquidDisabled = disabled;
+    state.subsquidDisabled = !endpoint;
+    if (state.subsquidDisabled) {
+      state.subsquidStatus = ConnectionStatus.Unavailable;
+    }
   },
   setSubqueryStatus(state, status: ConnectionStatus): void {
     state.subqueryStatus = status;
