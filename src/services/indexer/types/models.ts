@@ -4,7 +4,6 @@ import {
   SubqueryAssetEntity,
   SubqueryAssetSnapshotEntity,
   SubqueryHistoryElement,
-  SubqueryHistoryElementData,
   SubqueryPoolXYKBaseEntity,
   SubqueryPoolXYKEntity,
   SubqueryUtilityBatchCall,
@@ -15,8 +14,6 @@ import {
   SubsquidAssetEntity,
   SubsquidAssetSnapshotEntity,
   SubsquidHistoryElement,
-  SubsquidHistoryElementCalls,
-  SubsquidHistoryElementData,
   SubsquidPoolXYKBaseEntity,
   SubsquidPoolXYKEntity,
   SubsquidUtilityBatchCall,
@@ -218,10 +215,6 @@ export type AssetEntity = SubqueryAssetEntity | SubsquidAssetEntity;
 export type PoolXYKEntity = SubqueryPoolXYKEntity | SubsquidPoolXYKEntity;
 
 export type UtilityBatchCall = SubqueryUtilityBatchCall | SubsquidUtilityBatchCall;
-
-export type HistoryElementData = SubqueryHistoryElementData | SubsquidHistoryElementData;
-
-export type HistoryElementCalls = SubsquidHistoryElementCalls;
 
 export type HistoryElement = SubqueryHistoryElement | SubsquidHistoryElement;
 

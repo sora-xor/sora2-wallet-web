@@ -10,8 +10,6 @@ import { SubqueryBaseModule } from './_base';
 import type {
   ConnectionQueryResponseData,
   HistoryElement,
-  HistoryElementCalls,
-  HistoryElementData,
   QueryResponseData,
   ReferrerRewards,
   SubqueryHistoryElement,
