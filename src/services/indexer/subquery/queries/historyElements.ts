@@ -15,7 +15,6 @@ export const HistoryElementsQuery = gql<SubqueryConnectionQueryResponse<Subquery
     $before: Cursor = ""
     $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC
     $filter: HistoryElementFilter
-    $idsOnly: Boolean! = false
   ) {
     data: historyElements(
       first: $first
@@ -30,20 +29,20 @@ export const HistoryElementsQuery = gql<SubqueryConnectionQueryResponse<Subquery
         node {
           id
           timestamp
-          blockHash @skip(if: $idsOnly)
-          blockHeight @skip(if: $idsOnly)
-          module @skip(if: $idsOnly)
-          method @skip(if: $idsOnly)
-          address @skip(if: $idsOnly)
-          networkFee @skip(if: $idsOnly)
-          execution @skip(if: $idsOnly)
-          data @skip(if: $idsOnly)
+          blockHash
+          blockHeight
+          module
+          method
+          address
+          networkFee
+          execution
+          data
         }
       }
-      pageInfo @skip(if: $idsOnly) {
+      pageInfo {
         ...PageInfoFragment
       }
-      totalCount @skip(if: $idsOnly)
+      totalCount
     }
   }
   ${PageInfoFragment}

@@ -9,7 +9,7 @@ import { isInternalSource } from '../../consts/wallets';
 import alertsApiService from '../../services/alerts';
 import { CeresApiService } from '../../services/ceres';
 import { getCurrentIndexer } from '../../services/indexer';
-import store, { rootActionContext } from '../../store';
+import { rootActionContext } from '../../store';
 import {
   getAppWallets,
   getWallet,
@@ -22,7 +22,6 @@ import {
   AppError,
   exportAccountJson,
 } from '../../util';
-import { settingsActionContext } from '../settings';
 
 import { accountActionContext } from './../account';
 
