@@ -13,7 +13,6 @@ export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryEle
     $offset: Int = null
     $orderBy: [HistoryElementOrderByInput!] = timestamp_DESC
     $filter: HistoryElementWhereInput
-    $idsOnly: Boolean! = false
   ) {
     info: historyElementsConnection(first: 0, orderBy: $orderBy, where: $filter) {
       totalCount
@@ -21,13 +20,13 @@ export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryEle
     nodes: historyElements(limit: $limit, offset: $offset, orderBy: $orderBy, where: $filter) {
       id
       timestamp
-      blockHash @skip(if: $idsOnly)
-      blockHeight @skip(if: $idsOnly)
-      module @skip(if: $idsOnly)
-      method @skip(if: $idsOnly)
-      address @skip(if: $idsOnly)
-      networkFee @skip(if: $idsOnly)
-      execution @skip(if: $idsOnly) {
+      blockHash
+      blockHeight
+      module
+      method
+      address
+      networkFee
+      execution {
         success
         error {
           moduleErrorId
@@ -35,7 +34,7 @@ export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryEle
           nonModuleErrorMessage
         }
       }
-      data @skip(if: $idsOnly)
+      data
     }
   }
 `;
@@ -46,7 +45,6 @@ export const HistoryElementsConnectionQuery = gql<SubsquidConnectionQueryRespons
     $after: String = null
     $orderBy: [HistoryElementOrderByInput!] = timestamp_DESC
     $filter: HistoryElementWhereInput
-    $idsOnly: Boolean! = false
   ) {
     data: historyElementsConnection(first: $first, after: $after, orderBy: $orderBy, where: $filter) {
       pageInfo {
@@ -56,13 +54,13 @@ export const HistoryElementsConnectionQuery = gql<SubsquidConnectionQueryRespons
         node {
           id
           timestamp
-          blockHash @skip(if: $idsOnly)
-          blockHeight @skip(if: $idsOnly)
-          module @skip(if: $idsOnly)
-          method @skip(if: $idsOnly)
-          address @skip(if: $idsOnly)
-          networkFee @skip(if: $idsOnly)
-          execution @skip(if: $idsOnly) {
+          blockHash
+          blockHeight
+          module
+          method
+          address
+          networkFee
+          execution {
             success
             error {
               moduleErrorId
@@ -70,7 +68,7 @@ export const HistoryElementsConnectionQuery = gql<SubsquidConnectionQueryRespons
               nonModuleErrorMessage
             }
           }
-          data @skip(if: $idsOnly)
+          data
         }
       }
     }
