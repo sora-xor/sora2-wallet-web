@@ -2,20 +2,9 @@ import {
   AssetBaseEntity,
   AssetSnapshotBaseEntity,
   ConnectionQueryResponseData,
-  HistoryElementAssetRegistration,
-  HistoryElementDemeterFarming,
-  HistoryElementEthBridgeIncoming,
-  HistoryElementEthBridgeOutgoing,
-  HistoryElementExecution,
-  HistoryElementLiquidityOperation,
-  HistoryElementRewardsClaim,
-  HistoryElementSwap,
-  HistoryElementSwapTransfer,
-  HistoryElementSwapTransferBatch,
-  HistoryElementTransfer,
+  HistoryElementBase,
+  HistoryElementDataBase,
   PoolXYKBaseEntity,
-  ReferralSetReferrer,
-  ReferrerReserve,
 } from '../../types';
 
 // Subquery Models
@@ -53,32 +42,9 @@ export type SubqueryUtilityBatchCall = {
 
 export type SubqueryHistoryElementUtilityBatchAll = SubqueryUtilityBatchCall[];
 
-export type SubqueryHistoryElementData = Nullable<
-  | ReferralSetReferrer
-  | ReferrerReserve
-  | HistoryElementSwap
-  | HistoryElementSwapTransfer
-  | HistoryElementTransfer
-  | HistoryElementLiquidityOperation
-  | HistoryElementAssetRegistration
-  | HistoryElementEthBridgeOutgoing
-  | HistoryElementEthBridgeIncoming
-  | HistoryElementRewardsClaim
-  | HistoryElementDemeterFarming
-  | HistoryElementSwapTransferBatch
-  | SubqueryHistoryElementUtilityBatchAll
->;
+export type SubqueryHistoryElementData = HistoryElementDataBase | SubqueryHistoryElementUtilityBatchAll;
 
-export type SubqueryHistoryElement = {
-  id: string;
-  blockHash: string;
-  blockHeight: string;
-  module: string;
-  method: string;
-  address: string;
-  networkFee: string;
-  execution: HistoryElementExecution;
-  timestamp: number;
+export type SubqueryHistoryElement = HistoryElementBase & {
   data: SubqueryHistoryElementData;
 };
 

@@ -11,7 +11,6 @@ import {
   SubsquidAssetEntity,
   SubsquidHistoryElement,
   SubsquidHistoryElementCalls,
-  SubsquidHistoryElementData,
   SubsquidPoolXYKEntity,
   SubsquidUtilityBatchCall,
 } from '../subsquid/types';
@@ -228,13 +227,40 @@ export type ReferrerReserve = {
   amount: string;
 };
 
+export type HistoryElementDataBase = Nullable<
+  | ReferralSetReferrer
+  | ReferrerReserve
+  | HistoryElementSwap
+  | HistoryElementSwapTransfer
+  | HistoryElementTransfer
+  | HistoryElementLiquidityOperation
+  | HistoryElementAssetRegistration
+  | HistoryElementEthBridgeOutgoing
+  | HistoryElementEthBridgeIncoming
+  | HistoryElementRewardsClaim
+  | HistoryElementDemeterFarming
+  | HistoryElementSwapTransferBatch
+>;
+
+export type HistoryElementBase = {
+  id: string;
+  blockHash: string;
+  blockHeight: string;
+  module: string;
+  method: string;
+  address: string;
+  networkFee: string;
+  execution: HistoryElementExecution;
+  timestamp: number;
+};
+
 export type AssetEntity = SubqueryAssetEntity | SubsquidAssetEntity;
 
 export type PoolXYKEntity = SubqueryPoolXYKEntity | SubsquidPoolXYKEntity;
 
 export type UtilityBatchCall = SubqueryUtilityBatchCall | SubsquidUtilityBatchCall;
 
-export type HistoryElementData = SubqueryHistoryElementData | SubsquidHistoryElementData;
+export type HistoryElementData = SubqueryHistoryElementData;
 
 export type HistoryElementCalls = SubsquidHistoryElementCalls;
 

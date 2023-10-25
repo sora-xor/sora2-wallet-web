@@ -1,20 +1,9 @@
 import {
   AssetBaseEntity,
   AssetSnapshotBaseEntity,
-  HistoryElementAssetRegistration,
-  HistoryElementDemeterFarming,
-  HistoryElementEthBridgeIncoming,
-  HistoryElementEthBridgeOutgoing,
-  HistoryElementExecution,
-  HistoryElementLiquidityOperation,
-  HistoryElementRewardsClaim,
-  HistoryElementSwap,
-  HistoryElementSwapTransfer,
-  HistoryElementSwapTransferBatch,
-  HistoryElementTransfer,
+  HistoryElementBase,
+  HistoryElementDataBase,
   PoolXYKBaseEntity,
-  ReferralSetReferrer,
-  ReferrerReserve,
 } from '../../types';
 
 // Subsquid Models
@@ -40,34 +29,10 @@ export type SubsquidUtilityBatchCall = {
   method: string;
 };
 
-export type SubsquidHistoryElementData = Nullable<
-  | ReferralSetReferrer
-  | ReferrerReserve
-  | HistoryElementSwap
-  | HistoryElementSwapTransfer
-  | HistoryElementTransfer
-  | HistoryElementLiquidityOperation
-  | HistoryElementAssetRegistration
-  | HistoryElementEthBridgeOutgoing
-  | HistoryElementEthBridgeIncoming
-  | HistoryElementRewardsClaim
-  | HistoryElementDemeterFarming
-  | HistoryElementSwapTransferBatch
->;
-
 export type SubsquidHistoryElementCalls = SubsquidUtilityBatchCall[];
 
-export type SubsquidHistoryElement = {
-  id: string;
-  blockHash: string;
-  blockHeight: string;
-  module: string;
-  method: string;
-  address: string;
-  networkFee: string;
-  execution: HistoryElementExecution;
-  timestamp: number;
-  data: SubsquidHistoryElementData;
+export type SubsquidHistoryElement = HistoryElementBase & {
+  data: HistoryElementDataBase;
   calls: SubsquidHistoryElementCalls;
 };
 
