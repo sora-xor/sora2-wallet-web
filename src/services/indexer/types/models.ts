@@ -167,6 +167,9 @@ export type HistoryElementTransfer = {
   assetId: string;
   from: string;
   to: string;
+  assetFee?: string; // only in xorless transfer
+  xorFee?: string; // only in xorless transfer
+  comment?: string; // only in xorless transfer
 };
 
 export type HistoryElementLiquidityOperation = {
