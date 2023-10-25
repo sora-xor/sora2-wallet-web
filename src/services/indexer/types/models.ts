@@ -1,23 +1,16 @@
 import {
-  SubqueryAccountEntity,
-  SubqueryAssetBaseEntity,
+  SubqueryAccountEntityMutation,
   SubqueryAssetEntity,
-  SubqueryAssetSnapshotEntity,
   SubqueryHistoryElement,
   SubqueryHistoryElementData,
-  SubqueryPoolXYKBaseEntity,
   SubqueryPoolXYKEntity,
   SubqueryUtilityBatchCall,
 } from '../subquery/types';
 import {
-  SubsquidAccountEntity,
-  SubsquidAssetBaseEntity,
+  SubsquidAccountEntityMutation,
   SubsquidAssetEntity,
-  SubsquidAssetSnapshotEntity,
   SubsquidHistoryElement,
   SubsquidHistoryElementCalls,
-  SubsquidHistoryElementData,
-  SubsquidPoolXYKBaseEntity,
   SubsquidPoolXYKEntity,
   SubsquidUtilityBatchCall,
 } from '../subsquid/types';
@@ -34,6 +27,19 @@ export enum SnapshotTypes {
 
 // Indexer Models
 /* eslint-disable camelcase */
+
+export type AssetBaseEntity = {
+  id: string;
+  liquidity: CodecString;
+  liquidityUSD?: number;
+  priceUSD: string;
+  priceChangeDay?: number;
+  priceChangeWeek?: number;
+  supply: CodecString;
+  volumeDayUSD?: number;
+  volumeWeekUSD?: number;
+  velocity?: number;
+};
 
 export type AssetSnapshotBaseEntity = {
   id: string;
@@ -54,6 +60,20 @@ export type AssetSnapshotBaseEntity = {
   supply: CodecString;
   mint: CodecString;
   burn: CodecString;
+};
+
+// with connection
+export type AssetSnapshotEntity = AssetSnapshotBaseEntity & {
+  asset: AssetBaseEntity;
+};
+
+export type PoolXYKBaseEntity = {
+  id: string;
+  baseAssetReserves: CodecString;
+  targetAssetReserves: CodecString;
+  multiplier: number;
+  priceUSD: Nullable<string>;
+  strategicBonusApy: Nullable<string>;
 };
 
 export type NetworkStatsEntity = {
@@ -147,6 +167,9 @@ export type HistoryElementTransfer = {
   assetId: string;
   from: string;
   to: string;
+  assetFee?: string; // only in xorless transfer
+  xorFee?: string; // only in xorless transfer
+  comment?: string; // only in xorless transfer
 };
 
 export type HistoryElementLiquidityOperation = {
@@ -207,11 +230,32 @@ export type ReferrerReserve = {
   amount: string;
 };
 
-export type AssetBaseEntity = SubqueryAssetBaseEntity | SubsquidAssetBaseEntity;
+export type HistoryElementDataBase = Nullable<
+  | ReferralSetReferrer
+  | ReferrerReserve
+  | HistoryElementSwap
+  | HistoryElementSwapTransfer
+  | HistoryElementTransfer
+  | HistoryElementLiquidityOperation
+  | HistoryElementAssetRegistration
+  | HistoryElementEthBridgeOutgoing
+  | HistoryElementEthBridgeIncoming
+  | HistoryElementRewardsClaim
+  | HistoryElementDemeterFarming
+  | HistoryElementSwapTransferBatch
+>;
 
-export type PoolXYKBaseEntity = SubqueryPoolXYKBaseEntity | SubsquidPoolXYKBaseEntity;
-
-export type AssetSnapshotEntity = SubqueryAssetSnapshotEntity | SubsquidAssetSnapshotEntity;
+export type HistoryElementBase = {
+  id: string;
+  blockHash: string;
+  blockHeight: string;
+  module: string;
+  method: string;
+  address: string;
+  networkFee: string;
+  execution: HistoryElementExecution;
+  timestamp: number;
+};
 
 export type AssetEntity = SubqueryAssetEntity | SubsquidAssetEntity;
 
@@ -219,10 +263,10 @@ export type PoolXYKEntity = SubqueryPoolXYKEntity | SubsquidPoolXYKEntity;
 
 export type UtilityBatchCall = SubqueryUtilityBatchCall | SubsquidUtilityBatchCall;
 
-export type HistoryElementData = SubqueryHistoryElementData | SubsquidHistoryElementData;
+export type HistoryElementData = SubqueryHistoryElementData;
 
 export type HistoryElementCalls = SubsquidHistoryElementCalls;
 
 export type HistoryElement = SubqueryHistoryElement | SubsquidHistoryElement;
 
-export type AccountEntity = SubqueryAccountEntity | SubsquidAccountEntity;
+export type AccountEntity = SubqueryAccountEntityMutation | SubsquidAccountEntityMutation;

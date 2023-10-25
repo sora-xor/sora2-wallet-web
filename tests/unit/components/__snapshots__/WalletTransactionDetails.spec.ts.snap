@@ -74,14 +74,19 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
       />
        
       <info-line-stub
-        assetsymbol="XOR"
+        assetsymbol=""
         fiatvalue=""
-        isformatted="true"
         label="Transaction Fee"
         labeltooltip=""
-        value="0.0007"
+        value=""
         valuetooltip=""
-      />
+      >
+        
+        0.0007 XOR
+      
+      </info-line-stub>
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -157,14 +162,19 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
       <!---->
        
       <info-line-stub
-        assetsymbol="XOR"
+        assetsymbol=""
         fiatvalue=""
-        isformatted="true"
         label="Transaction Fee"
         labeltooltip=""
-        value="0.0007"
+        value=""
         valuetooltip=""
-      />
+      >
+        
+        0.0007 XOR
+      
+      </info-line-stub>
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -249,14 +259,19 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
       <!---->
        
       <info-line-stub
-        assetsymbol="XOR"
+        assetsymbol=""
         fiatvalue=""
-        isformatted="true"
         label="Transaction Fee"
         labeltooltip=""
-        value="0.0007"
+        value=""
         valuetooltip=""
-      />
+      >
+        
+        0.0007 XOR
+      
+      </info-line-stub>
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -360,14 +375,19 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
       />
        
       <info-line-stub
-        assetsymbol="XOR"
+        assetsymbol=""
         fiatvalue=""
-        isformatted="true"
         label="Transaction Fee"
         labeltooltip=""
-        value="0.0007"
+        value=""
         valuetooltip=""
-      />
+      >
+        
+        0.0007 XOR
+      
+      </info-line-stub>
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -452,14 +472,19 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
       <!---->
        
       <info-line-stub
-        assetsymbol="XOR"
+        assetsymbol=""
         fiatvalue=""
-        isformatted="true"
         label="Transaction Fee"
         labeltooltip=""
-        value="0.14"
+        value=""
         valuetooltip=""
-      />
+      >
+        
+        0.14 XOR
+      
+      </info-line-stub>
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -546,14 +571,19 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
       <!---->
        
       <info-line-stub
-        assetsymbol="XOR"
+        assetsymbol=""
         fiatvalue=""
-        isformatted="true"
         label="Transaction Fee"
         labeltooltip=""
-        value="0.0007"
+        value=""
         valuetooltip=""
-      />
+      >
+        
+        0.0007 XOR
+      
+      </info-line-stub>
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub

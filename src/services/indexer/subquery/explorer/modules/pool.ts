@@ -4,12 +4,23 @@ import { PoolsApySubscription } from '../../subscriptions/fiatPriceAndApy';
 
 import { SubqueryBaseModule } from './_base';
 
-import type { SubqueryPoolXYKEntity, PoolApyObject } from '../../types';
+import type { SubqueryPoolXYKEntity, SubqueryPoolXYKEntityMutation, PoolApyObject } from '../../types';
 
 function parseApy(entity: SubqueryPoolXYKEntity): PoolApyObject {
   const acc = {};
   const id = entity.id;
-  const strategicBonusApyFPNumber = formatStringNumber(entity.strategicBonusApy || entity.strategic_bonus_apy);
+  const strategicBonusApyFPNumber = formatStringNumber(entity.strategicBonusApy);
+  const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+  if (isStrategicBonusApyFinity) {
+    acc[id] = strategicBonusApyFPNumber.toCodecString();
+  }
+  return acc;
+}
+
+function parseApyUpdate(entity: SubqueryPoolXYKEntityMutation): PoolApyObject {
+  const acc = {};
+  const id = entity.id;
+  const strategicBonusApyFPNumber = formatStringNumber(entity.strategic_bonus_apy);
   const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
   if (isStrategicBonusApyFinity) {
     acc[id] = strategicBonusApyFPNumber.toCodecString();
@@ -30,6 +41,6 @@ export class SubqueryPoolModule extends SubqueryBaseModule {
   }
 
   public createPoolsApySubscription(handler: (entity: PoolApyObject) => void, errorHandler: () => void): VoidFunction {
-    return this.root.createEntitySubscription(PoolsApySubscription, {}, parseApy, handler, errorHandler);
+    return this.root.createEntitySubscription(PoolsApySubscription, {}, parseApyUpdate, handler, errorHandler);
   }
 }
