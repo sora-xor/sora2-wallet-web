@@ -30,12 +30,12 @@ export enum SnapshotTypes {
 
 export type AssetBaseEntity = {
   id: string;
-  liquidity: string;
+  liquidity: CodecString;
   liquidityUSD?: number;
   priceUSD: string;
   priceChangeDay?: number;
   priceChangeWeek?: number;
-  supply: string;
+  supply: CodecString;
   volumeDayUSD?: number;
   volumeWeekUSD?: number;
   velocity?: number;
