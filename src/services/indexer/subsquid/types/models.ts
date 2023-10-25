@@ -1,4 +1,5 @@
 import {
+  AssetBaseEntity,
   AssetSnapshotBaseEntity,
   HistoryElementAssetRegistration,
   HistoryElementDemeterFarming,
@@ -11,44 +12,22 @@ import {
   HistoryElementSwapTransfer,
   HistoryElementSwapTransferBatch,
   HistoryElementTransfer,
+  PoolXYKBaseEntity,
   ReferralSetReferrer,
   ReferrerReserve,
 } from '../../types';
 
-import type { CodecString } from '@sora-substrate/util';
-
 // Subsquid Models
 
-export type SubsquidAssetBaseEntity = {
-  id: string;
-  priceUSD: string;
-  supply: string;
-  liquidity: string;
-};
-
-export type SubsquidPoolXYKBaseEntity = {
-  id: string;
-  baseAsset: SubsquidAssetBaseEntity;
-  targetAsset: SubsquidAssetBaseEntity;
-  baseAssetReserves: CodecString;
-  targetAssetReserves: CodecString;
-  multiplier: number;
-  priceUSD: Nullable<string>;
-  strategicBonusApy: Nullable<string>;
-};
-
-export type SubsquidAssetSnapshotEntity = AssetSnapshotBaseEntity & {
-  asset: SubsquidAssetBaseEntity;
-};
-
-export type SubsquidAssetEntity = SubsquidAssetBaseEntity & {
+// with connection
+export type SubsquidAssetEntity = AssetBaseEntity & {
   data: AssetSnapshotBaseEntity[];
-  poolXYK: SubsquidPoolXYKBaseEntity[];
+  poolXYK: PoolXYKBaseEntity[];
 };
-
-export type SubsquidPoolXYKEntity = SubsquidPoolXYKBaseEntity & {
-  baseAsset: SubsquidAssetBaseEntity;
-  targetAsset: SubsquidAssetBaseEntity;
+// with connection
+export type SubsquidPoolXYKEntity = PoolXYKBaseEntity & {
+  baseAsset: AssetBaseEntity;
+  targetAsset: AssetBaseEntity;
 };
 
 export type SubsquidUtilityBatchCall = {
@@ -92,7 +71,7 @@ export type SubsquidHistoryElement = {
   calls: SubsquidHistoryElementCalls;
 };
 
-export type SubsquidAccountEntity = {
+export type SubsquidAccountEntityMutation = {
   id: string;
   latestHistoryElement: SubsquidHistoryElement;
 };

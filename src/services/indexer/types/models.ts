@@ -1,23 +1,17 @@
 import {
-  SubqueryAccountEntity,
-  SubqueryAssetBaseEntity,
+  SubqueryAccountEntityMutation,
   SubqueryAssetEntity,
-  SubqueryAssetSnapshotEntity,
   SubqueryHistoryElement,
   SubqueryHistoryElementData,
-  SubqueryPoolXYKBaseEntity,
   SubqueryPoolXYKEntity,
   SubqueryUtilityBatchCall,
 } from '../subquery/types';
 import {
-  SubsquidAccountEntity,
-  SubsquidAssetBaseEntity,
+  SubsquidAccountEntityMutation,
   SubsquidAssetEntity,
-  SubsquidAssetSnapshotEntity,
   SubsquidHistoryElement,
   SubsquidHistoryElementCalls,
   SubsquidHistoryElementData,
-  SubsquidPoolXYKBaseEntity,
   SubsquidPoolXYKEntity,
   SubsquidUtilityBatchCall,
 } from '../subsquid/types';
@@ -34,6 +28,19 @@ export enum SnapshotTypes {
 
 // Indexer Models
 /* eslint-disable camelcase */
+
+export type AssetBaseEntity = {
+  id: string;
+  liquidity: string;
+  liquidityUSD?: number;
+  priceUSD: string;
+  priceChangeDay?: number;
+  priceChangeWeek?: number;
+  supply: string;
+  volumeDayUSD?: number;
+  volumeWeekUSD?: number;
+  velocity?: number;
+};
 
 export type AssetSnapshotBaseEntity = {
   id: string;
@@ -54,6 +61,20 @@ export type AssetSnapshotBaseEntity = {
   supply: CodecString;
   mint: CodecString;
   burn: CodecString;
+};
+
+// with connection
+export type AssetSnapshotEntity = AssetSnapshotBaseEntity & {
+  asset: AssetBaseEntity;
+};
+
+export type PoolXYKBaseEntity = {
+  id: string;
+  baseAssetReserves: CodecString;
+  targetAssetReserves: CodecString;
+  multiplier: number;
+  priceUSD: Nullable<string>;
+  strategicBonusApy: Nullable<string>;
 };
 
 export type NetworkStatsEntity = {
@@ -207,12 +228,6 @@ export type ReferrerReserve = {
   amount: string;
 };
 
-export type AssetBaseEntity = SubqueryAssetBaseEntity | SubsquidAssetBaseEntity;
-
-export type PoolXYKBaseEntity = SubqueryPoolXYKBaseEntity | SubsquidPoolXYKBaseEntity;
-
-export type AssetSnapshotEntity = SubqueryAssetSnapshotEntity | SubsquidAssetSnapshotEntity;
-
 export type AssetEntity = SubqueryAssetEntity | SubsquidAssetEntity;
 
 export type PoolXYKEntity = SubqueryPoolXYKEntity | SubsquidPoolXYKEntity;
@@ -225,4 +240,4 @@ export type HistoryElementCalls = SubsquidHistoryElementCalls;
 
 export type HistoryElement = SubqueryHistoryElement | SubsquidHistoryElement;
 
-export type AccountEntity = SubqueryAccountEntity | SubsquidAccountEntity;
+export type AccountEntity = SubqueryAccountEntityMutation | SubsquidAccountEntityMutation;

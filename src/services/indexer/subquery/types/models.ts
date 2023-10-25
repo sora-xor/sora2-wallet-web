@@ -1,4 +1,5 @@
 import {
+  AssetBaseEntity,
   AssetSnapshotBaseEntity,
   ConnectionQueryResponseData,
   HistoryElementAssetRegistration,
@@ -12,49 +13,29 @@ import {
   HistoryElementSwapTransfer,
   HistoryElementSwapTransferBatch,
   HistoryElementTransfer,
+  PoolXYKBaseEntity,
   ReferralSetReferrer,
   ReferrerReserve,
 } from '../../types';
 
-import type { CodecString } from '@sora-substrate/util';
-
 // Subquery Models
 /* eslint-disable camelcase */
-export type SubqueryAssetBaseEntity = {
-  id: string;
-  priceUSD: string;
-  supply: string;
-  liquidity: string;
-  // subscription payload fields
-  price_u_s_d?: Nullable<string>;
-};
-
-export type SubqueryPoolXYKBaseEntity = {
-  id: string;
+export type SubqueryPoolXYKBaseEntity = PoolXYKBaseEntity & {
+  // derived fields
   baseAssetId: string;
   targetAssetId: string;
-  baseAssetReserves: CodecString;
-  targetAssetReserves: CodecString;
-  multiplier: number;
-  priceUSD: Nullable<string>;
-  strategicBonusApy: Nullable<string>;
-  // subscription payload fields
-  price_u_s_d?: Nullable<string>;
-  strategic_bonus_apy?: Nullable<string>;
 };
 
-export type SubqueryAssetSnapshotEntity = AssetSnapshotBaseEntity & {
-  asset: SubqueryAssetBaseEntity;
+// with connection
+export type SubqueryPoolXYKEntity = SubqueryPoolXYKBaseEntity & {
+  baseAsset: AssetBaseEntity;
+  targetAsset: AssetBaseEntity;
 };
 
-export type SubqueryAssetEntity = SubqueryAssetBaseEntity & {
+// with connection
+export type SubqueryAssetEntity = AssetBaseEntity & {
   data: ConnectionQueryResponseData<AssetSnapshotBaseEntity>;
   poolXYK: ConnectionQueryResponseData<SubqueryPoolXYKBaseEntity>;
-};
-
-export type SubqueryPoolXYKEntity = SubqueryPoolXYKBaseEntity & {
-  baseAsset: SubqueryAssetBaseEntity;
-  targetAsset: SubqueryAssetBaseEntity;
 };
 
 export type SubqueryUtilityBatchCall = {
@@ -101,8 +82,21 @@ export type SubqueryHistoryElement = {
   data: SubqueryHistoryElementData;
 };
 
-export type SubqueryAccountEntity = {
+export type SubqueryAccountEntityMutation = {
+  // subscription payload fields what we need
   id: string;
   latest_history_element_id: string;
+};
+
+export type SubqueryAssetEntityMutation = {
+  // subscription payload fields what we need
+  id: string;
+  price_u_s_d?: Nullable<string>;
+};
+
+export type SubqueryPoolXYKEntityMutation = {
+  // subscription payload fields what we need
+  id: string;
+  strategic_bonus_apy?: Nullable<string>;
 };
 /* eslint-enable camelcase */

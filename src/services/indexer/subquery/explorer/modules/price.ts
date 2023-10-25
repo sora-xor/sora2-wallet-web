@@ -6,12 +6,23 @@ import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from 
 
 import { SubqueryBaseModule } from './_base';
 
-import type { SubqueryAssetEntity, FiatPriceObject } from '../../types';
+import type { SubqueryAssetEntity, SubqueryAssetEntityMutation, FiatPriceObject } from '../../types';
 
 function parseFiatPrice(entity: SubqueryAssetEntity): FiatPriceObject {
   const acc = {};
   const id = entity.id;
-  const priceFPNumber = formatStringNumber(entity.priceUSD || entity.price_u_s_d);
+  const priceFPNumber = formatStringNumber(entity.priceUSD);
+  const isPriceFinity = priceFPNumber.isFinity();
+  if (isPriceFinity) {
+    acc[id] = priceFPNumber.toCodecString();
+  }
+  return acc;
+}
+
+function parseFiatPriceUpdate(entity: SubqueryAssetEntityMutation): FiatPriceObject {
+  const acc = {};
+  const id = entity.id;
+  const priceFPNumber = formatStringNumber(entity.price_u_s_d);
   const isPriceFinity = priceFPNumber.isFinity();
   if (isPriceFinity) {
     acc[id] = priceFPNumber.toCodecString();
@@ -35,7 +46,7 @@ export class SubqueryPriceModule extends SubqueryBaseModule {
     handler: (entity: FiatPriceObject) => void,
     errorHandler: () => void
   ): VoidFunction {
-    return this.root.createEntitySubscription(FiatPriceSubscription, {}, parseFiatPrice, handler, errorHandler);
+    return this.root.createEntitySubscription(FiatPriceSubscription, {}, parseFiatPriceUpdate, handler, errorHandler);
   }
 
   /**
