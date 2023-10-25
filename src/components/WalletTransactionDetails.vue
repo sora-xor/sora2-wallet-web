@@ -34,13 +34,12 @@
           :value="transactionAmount2"
           :asset-symbol="transactionSymbol2"
         />
-        <info-line
-          v-if="transactionFromFee"
-          is-formatted
-          :label="t('transaction.fee')"
-          :value="transactionFromFee"
-          :asset-symbol="getNetworkFeeSymbol(isSoraTx)"
-        />
+        <info-line v-if="transactionFromFee" :label="t('transaction.fee')">
+          {{ transactionFromFee }}
+        </info-line>
+        <info-line v-if="transactionComment" :label="t('transaction.comment')">
+          {{ transactionComment }}
+        </info-line>
       </div>
       <transaction-hash-view
         v-if="transactionFromAddress"
@@ -99,7 +98,7 @@
 </template>
 
 <script lang="ts">
-import { TransactionStatus, Operation } from '@sora-substrate/util';
+import { TransactionStatus, Operation, FPNumber } from '@sora-substrate/util';
 import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
@@ -255,6 +254,10 @@ export default class WalletTransactionDetails extends Mixins(
     return this.getTransactionHashData(!this.isSoraTx);
   }
 
+  get transactionComment(): Nullable<string> {
+    return (this.selectedTransaction as any).comment || null;
+  }
+
   get isSetReferralOperation(): boolean {
     return this.selectedTransaction.type === Operation.ReferralSetInvitedUser;
   }
@@ -345,13 +348,36 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   private getNetworkFee(isSoraTx = true): Nullable<string> {
-    const fee = isSoraTx
+    // [TODO] update History in js-lib
+    const xorFee = (this.selectedTransaction as any).xorFee;
+    const assetFee = (this.selectedTransaction as any).assetFee;
+    const networkFee = isSoraTx
       ? this.selectedTransaction.soraNetworkFee
       : (this.selectedTransaction as EthHistory).externalNetworkFee;
 
-    if (!fee) return null;
+    if (!networkFee) return null;
 
-    return this.formatCodecNumber(fee);
+    const networkFeeFormatted = `${this.formatCodecNumber(networkFee)} ${this.getNetworkFeeSymbol(isSoraTx)}`;
+
+    if (isSoraTx && xorFee && assetFee) {
+      const aFee = this.getFPNumber(assetFee);
+      const xFee = this.getFPNumber(xorFee);
+
+      if (FPNumber.isEqualTo(aFee, FPNumber.ZERO)) return networkFeeFormatted;
+
+      const sign = FPNumber.isGreaterThan(xFee, FPNumber.ZERO) ? '+' : '';
+      const complex = [
+        { amount: aFee, symbol: this.transactionSymbol },
+        { amount: xFee, symbol: KnownSymbols.XOR },
+      ]
+        .filter((part) => !part.amount.isZero())
+        .map(({ amount, symbol }) => `${amount.toLocaleString()} ${symbol}`)
+        .join(sign);
+
+      return `${networkFeeFormatted} (${complex})`;
+    }
+
+    return networkFeeFormatted;
   }
 
   private getTransactionHashData(isSoraTx = true): {
