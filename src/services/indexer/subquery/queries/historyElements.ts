@@ -107,12 +107,24 @@ const OperationFilterMap = {
     },
   },
   [Operation.Transfer]: {
-    module: {
-      equalTo: ModuleNames.Assets,
-    },
-    method: {
-      equalTo: ModuleMethods.AssetsTransfer,
-    },
+    or: [
+      {
+        module: {
+          equalTo: ModuleNames.Assets,
+        },
+        method: {
+          equalTo: ModuleMethods.AssetsTransfer,
+        },
+      },
+      {
+        module: {
+          equalTo: ModuleNames.LiquidityProxy,
+        },
+        method: {
+          equalTo: ModuleMethods.LiquidityProxyXorlessTransfer,
+        },
+      },
+    ],
   },
   [Operation.RegisterAsset]: {
     module: {

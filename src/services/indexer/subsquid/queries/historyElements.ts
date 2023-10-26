@@ -117,8 +117,16 @@ const OperationFilterMap = {
     method_eq: ModuleMethods.LiquidityProxySwapTransfer,
   },
   [Operation.Transfer]: {
-    module_eq: ModuleNames.Assets,
-    method_eq: ModuleMethods.AssetsTransfer,
+    OR: [
+      {
+        module_eq: ModuleNames.Assets,
+        method_eq: ModuleMethods.AssetsTransfer,
+      },
+      {
+        module_eq: ModuleNames.LiquidityProxy,
+        method_eq: ModuleMethods.LiquidityProxyXorlessTransfer,
+      },
+    ],
   },
   [Operation.RegisterAsset]: {
     module_eq: ModuleNames.Assets,

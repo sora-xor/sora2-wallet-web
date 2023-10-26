@@ -1,54 +1,22 @@
 import {
+  AssetBaseEntity,
   AssetSnapshotBaseEntity,
-  HistoryElementAssetRegistration,
-  HistoryElementDemeterFarming,
-  HistoryElementEthBridgeIncoming,
-  HistoryElementEthBridgeOutgoing,
-  HistoryElementExecution,
-  HistoryElementLiquidityOperation,
-  HistoryElementRewardsClaim,
-  HistoryElementSwap,
-  HistoryElementSwapTransfer,
-  HistoryElementSwapTransferBatch,
-  HistoryElementTransfer,
-  ReferralSetReferrer,
-  ReferrerReserve,
+  HistoryElementBase,
+  HistoryElementDataBase,
+  PoolXYKBaseEntity,
 } from '../../types';
-
-import type { CodecString } from '@sora-substrate/util';
 
 // Subsquid Models
 
-export type SubsquidAssetBaseEntity = {
-  id: string;
-  priceUSD: string;
-  supply: string;
-  liquidity: string;
-};
-
-export type SubsquidPoolXYKBaseEntity = {
-  id: string;
-  baseAsset: SubsquidAssetBaseEntity;
-  targetAsset: SubsquidAssetBaseEntity;
-  baseAssetReserves: CodecString;
-  targetAssetReserves: CodecString;
-  multiplier: number;
-  priceUSD: Nullable<string>;
-  strategicBonusApy: Nullable<string>;
-};
-
-export type SubsquidAssetSnapshotEntity = AssetSnapshotBaseEntity & {
-  asset: SubsquidAssetBaseEntity;
-};
-
-export type SubsquidAssetEntity = SubsquidAssetBaseEntity & {
+// with connection
+export type SubsquidAssetEntity = AssetBaseEntity & {
   data: AssetSnapshotBaseEntity[];
-  poolXYK: SubsquidPoolXYKBaseEntity[];
+  poolXYK: PoolXYKBaseEntity[];
 };
-
-export type SubsquidPoolXYKEntity = SubsquidPoolXYKBaseEntity & {
-  baseAsset: SubsquidAssetBaseEntity;
-  targetAsset: SubsquidAssetBaseEntity;
+// with connection
+export type SubsquidPoolXYKEntity = PoolXYKBaseEntity & {
+  baseAsset: AssetBaseEntity;
+  targetAsset: AssetBaseEntity;
 };
 
 export type SubsquidUtilityBatchCall = {
@@ -61,38 +29,14 @@ export type SubsquidUtilityBatchCall = {
   method: string;
 };
 
-export type SubsquidHistoryElementData = Nullable<
-  | ReferralSetReferrer
-  | ReferrerReserve
-  | HistoryElementSwap
-  | HistoryElementSwapTransfer
-  | HistoryElementTransfer
-  | HistoryElementLiquidityOperation
-  | HistoryElementAssetRegistration
-  | HistoryElementEthBridgeOutgoing
-  | HistoryElementEthBridgeIncoming
-  | HistoryElementRewardsClaim
-  | HistoryElementDemeterFarming
-  | HistoryElementSwapTransferBatch
->;
-
 export type SubsquidHistoryElementCalls = SubsquidUtilityBatchCall[];
 
-export type SubsquidHistoryElement = {
-  id: string;
-  blockHash: string;
-  blockHeight: string;
-  module: string;
-  method: string;
-  address: string;
-  networkFee: string;
-  execution: HistoryElementExecution;
-  timestamp: number;
-  data: SubsquidHistoryElementData;
+export type SubsquidHistoryElement = HistoryElementBase & {
+  data: HistoryElementDataBase;
   calls: SubsquidHistoryElementCalls;
 };
 
-export type SubsquidAccountEntity = {
+export type SubsquidAccountEntityMutation = {
   id: string;
   latestHistoryElement: SubsquidHistoryElement;
 };
