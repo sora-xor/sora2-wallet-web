@@ -22,12 +22,16 @@ function initialState(): SettingsState {
     alerts: (alerts || []) as Array<Alert>,
     allowTopUpAlert: allowTopUpAlerts ? Boolean(JSON.parse(allowTopUpAlerts)) : false,
     indexerType: indexerType ? (indexerType as IndexerType) : IndexerType.SUBQUERY,
-    subqueryEndpoint: null,
-    subsquidEndpoint: null,
-    subqueryDisabled: false,
-    subsquidDisabled: false,
-    subqueryStatus: ConnectionStatus.Available,
-    subsquidStatus: ConnectionStatus.Available,
+    indexers: {
+      [IndexerType.SUBQUERY]: {
+        endpoint: '',
+        status: ConnectionStatus.Available,
+      },
+      [IndexerType.SUBSQUID]: {
+        endpoint: '',
+        status: ConnectionStatus.Available,
+      },
+    },
     isWalletLoaded: false, // wallet is loading
     permissions: {
       addAssets: true,

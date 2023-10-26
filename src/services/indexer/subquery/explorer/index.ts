@@ -1,4 +1,5 @@
-import BaseSubqueryExplorer from './base';
+import BaseExplorer from '../../explorer/base';
+
 import { SubqueryAccountModule } from './modules/account';
 import { SubqueryPoolModule } from './modules/pool';
 import { SubqueryPriceModule } from './modules/price';
@@ -6,7 +7,7 @@ import { SubqueryPriceModule } from './modules/price';
 import type { TypedDocumentNode, AnyVariables } from '../client';
 import type { SubqueryConnectionQueryResponse, SubquerySubscriptionPayload } from '../types';
 
-export default class SubqueryExplorer extends BaseSubqueryExplorer {
+export default class SubqueryExplorer extends BaseExplorer {
   public readonly account: SubqueryAccountModule = new SubqueryAccountModule(this);
   public readonly price: SubqueryPriceModule = new SubqueryPriceModule(this);
   public readonly pool: SubqueryPoolModule = new SubqueryPoolModule(this);

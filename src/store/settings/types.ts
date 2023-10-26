@@ -6,18 +6,18 @@ import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { NFTStorage } from 'nft.storage';
 import type { Subscription } from 'rxjs';
 
+export type IndexerState = {
+  endpoint: Nullable<string>;
+  status: ConnectionStatus;
+};
+
 export type SettingsState = {
   apiKeys: ApiKeysObject;
   alerts: Array<Alert>;
   allowTopUpAlert: boolean;
   isWalletLoaded: boolean;
   indexerType: IndexerType;
-  subqueryEndpoint: Nullable<string>;
-  subsquidEndpoint: Nullable<string>;
-  subqueryDisabled: boolean;
-  subsquidDisabled: boolean;
-  subqueryStatus: ConnectionStatus;
-  subsquidStatus: ConnectionStatus;
+  indexers: Record<IndexerType, IndexerState>;
   permissions: WalletPermissions;
   filters: WalletAssetFilters;
   allowFeePopup: boolean;

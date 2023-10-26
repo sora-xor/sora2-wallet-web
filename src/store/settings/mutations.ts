@@ -12,9 +12,9 @@ import type { Subscription } from 'rxjs';
 
 const mutations = defineMutations<SettingsState>()({
   setIndexerType(state, indexerType: IndexerType): void {
-    if (state.subqueryDisabled && indexerType === IndexerType.SUBQUERY) {
+    if (!state.indexers[IndexerType.SUBQUERY].endpoint && indexerType === IndexerType.SUBQUERY) {
       indexerType = IndexerType.SUBSQUID;
-    } else if (state.subsquidDisabled && indexerType === IndexerType.SUBSQUID) {
+    } else if (!state.indexers[IndexerType.SUBSQUID].endpoint && indexerType === IndexerType.SUBSQUID) {
       indexerType = IndexerType.SUBQUERY;
     }
 
@@ -95,25 +95,14 @@ const mutations = defineMutations<SettingsState>()({
 
     state.nftStorage = nftStorage;
   },
-  setSubqueryEndpoint(state, endpoint: string): void {
-    state.subqueryEndpoint = endpoint;
-    state.subqueryDisabled = !endpoint;
-    if (state.subqueryDisabled) {
-      state.subqueryStatus = ConnectionStatus.Unavailable;
+  setIndexerStatus(state, { indexer, status }: { indexer: IndexerType; status: ConnectionStatus }): void {
+    state.indexers[indexer].status = status;
+  },
+  setIndexerEndpoint(state, { indexer, endpoint }: { indexer: IndexerType; endpoint: string }): void {
+    state.indexers[indexer].endpoint = endpoint;
+    if (!endpoint) {
+      state.indexers[indexer].status = ConnectionStatus.Unavailable;
     }
-  },
-  setSubsquidEndpoint(state, endpoint: string): void {
-    state.subsquidEndpoint = endpoint;
-    state.subsquidDisabled = !endpoint;
-    if (state.subsquidDisabled) {
-      state.subsquidStatus = ConnectionStatus.Unavailable;
-    }
-  },
-  setSubqueryStatus(state, status: ConnectionStatus): void {
-    state.subqueryStatus = status;
-  },
-  setSubsquidStatus(state, status: ConnectionStatus): void {
-    state.subsquidStatus = status;
   },
   setDepositNotifications(state, allow: boolean): void {
     state.allowTopUpAlert = allow;

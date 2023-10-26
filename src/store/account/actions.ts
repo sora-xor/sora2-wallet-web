@@ -47,6 +47,7 @@ const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
 
 function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): void {
   const { commit } = accountActionContext(context);
+  commit.resetFiatPriceSubscription();
   const indexer = getCurrentIndexer();
   const subscription = indexer.services.explorer.price.createFiatPriceSubscription(
     (payload?: FiatPriceObject) => {
@@ -61,6 +62,7 @@ function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): v
 
 function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>, error?: Error): void {
   const { commit } = accountActionContext(context);
+  commit.resetFiatPriceSubscription();
   if (error) {
     console.warn(error);
   }
@@ -81,7 +83,6 @@ function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>, error?: 
  */
 async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nullable<boolean>> {
   const { commit } = accountActionContext(context);
-  commit.resetFiatPriceSubscription();
   try {
     const indexer = getCurrentIndexer();
     let data = await indexer.services.explorer.price.getFiatPriceObject();
@@ -479,7 +480,7 @@ const actions = defineActions({
       if (isCurrentIndexerAvailable) {
         subscribeOnFiatUsingCurrentIndexer(context);
       } else {
-        const { rootDispatch, rootCommit } = rootActionContext(context);
+        const { rootCommit } = rootActionContext(context);
         rootCommit.wallet.settings.setIndexerType(
           currentIndexer.type === IndexerType.SUBSQUID ? IndexerType.SUBQUERY : IndexerType.SUBSQUID
         );

@@ -48,8 +48,11 @@ export default class App extends Mixins(TransactionMixin) {
 
   @mutation.settings.setIndexerType private setIndexerType!: (IndexerType: IndexerType) => void;
   @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
-  @mutation.settings.setSubqueryEndpoint private setSubqueryEndpoint!: (endpoint: string) => void;
-  @mutation.settings.setSubsquidEndpoint private setSubsquidEndpoint!: (endpoint: string) => void;
+  @mutation.settings.setIndexerEndpoint private setIndexerEndpoint!: (options: {
+    indexer: IndexerType;
+    endpoint: string;
+  }) => void;
+
   @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncFnWithoutArgs;
@@ -61,8 +64,8 @@ export default class App extends Mixins(TransactionMixin) {
 
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);
-    this.setSubqueryEndpoint(env.SUBQUERY_ENDPOINT);
-    this.setSubsquidEndpoint(env.SUBSQUID_ENDPOINT);
+    this.setIndexerEndpoint({ indexer: IndexerType.SUBQUERY, endpoint: env.SUBQUERY_ENDPOINT });
+    this.setIndexerEndpoint({ indexer: IndexerType.SUBSQUID, endpoint: env.SUBSQUID_ENDPOINT });
     this.setSoraNetwork(SoraNetwork.Dev);
     await initWallet({ withoutStore: true, appName: 'APP NAME HERE' }); // We don't need storage for local development
     const localeLanguage = navigator.language;
