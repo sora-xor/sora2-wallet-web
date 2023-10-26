@@ -25,7 +25,6 @@ import type {
   ReferralSetReferrer,
   ReferrerReserve,
   ClaimedRewardItem,
-  ExtrinsicEvent,
   HistoryElementSwapTransferBatch,
   SwapTransferBatchTransferParam,
   SubqueryUtilityBatchCall,
@@ -49,6 +48,7 @@ const OperationsMap = {
     [ModuleMethods.LiquidityProxySwap]: () => Operation.Swap,
     [ModuleMethods.LiquidityProxySwapTransfer]: () => Operation.SwapAndSend,
     [ModuleMethods.LiquidityProxySwapTransferBatch]: () => Operation.SwapTransferBatch,
+    [ModuleMethods.LiquidityProxyXorlessTransfer]: () => Operation.Transfer,
   },
   [insensitive(ModuleNames.Utility)]: {
     [ModuleMethods.UtilityBatchAll]: (data: SubqueryHistoryElementUtilityBatchAll) => {
@@ -381,6 +381,10 @@ export default class SubqueryDataParser {
         payload.symbol = getAssetSymbol(asset);
         payload.to = data.to;
         payload.amount = data.amount;
+        // [TODO] update History in js-lib
+        (payload as any).assetFee = data.assetFee;
+        (payload as any).xorFee = data.xorFee;
+        (payload as any).comment = data.comment;
 
         return payload;
       }

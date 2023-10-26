@@ -374,6 +374,7 @@ export default {
     viewIn: 'View in {explorer}',
     copy: 'Copy {value}',
     adarTxDetailsTitle: 'Transaction details',
+    comment: 'Comment',
     history: {
       created: 'Transaction for {amount} {symbol} has been created.',
       submitted: 'Transaction submitted with fee of {fee} {symbol}',

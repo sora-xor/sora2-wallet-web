@@ -22,6 +22,7 @@ export enum ModuleMethods {
   LiquidityProxySwap = 'swap',
   LiquidityProxySwapTransfer = 'swapTransfer',
   LiquidityProxySwapTransferBatch = 'swapTransferBatch',
+  LiquidityProxyXorlessTransfer = 'xorlessTransfer',
   UtilityBatchAll = 'batchAll',
   ReferralsSetReferrer = 'setReferrer',
   ReferralsReserve = 'reserve',
