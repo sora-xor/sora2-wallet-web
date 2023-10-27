@@ -55,7 +55,7 @@ export default class App extends Mixins(TransactionMixin) {
   }) => void;
 
   @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
-  @action.account.selectCeresApiForFiatValues private selectCeresApiForFiatValues!: (flag: boolean) => void;
+  @action.account.useCeresApiForFiatValues private useCeresApiForFiatValues!: (flag: boolean) => void;
   @action.settings.selectIndexer private selectIndexer!: (IndexerType: IndexerType) => void;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncFnWithoutArgs;
@@ -103,7 +103,7 @@ export default class App extends Mixins(TransactionMixin) {
   }
 
   changeCeresFiatUsage() {
-    this.selectCeresApiForFiatValues(!this.ceresFiatValuesUsage);
+    this.useCeresApiForFiatValues(!this.ceresFiatValuesUsage);
   }
 }
 </script>

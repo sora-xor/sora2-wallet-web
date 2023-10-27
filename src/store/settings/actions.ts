@@ -32,13 +32,14 @@ async function switchCurrentIndexer(context: ActionContext<any, any>): Promise<v
     }
     return buffer;
   }, []);
+
   const next = availableIndexers[0];
 
   if (next) {
     await dispatch.selectIndexer(next);
   } else {
     // fallback for fiat values
-    await rootDispatch.wallet.account.selectCeresApiForFiatValues(true);
+    await rootDispatch.wallet.account.useCeresApiForFiatValues(true);
   }
 }
 

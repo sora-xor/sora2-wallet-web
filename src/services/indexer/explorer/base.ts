@@ -41,23 +41,17 @@ export default class BaseExplorer {
 
   private handlePayloadStatus<T>(payload: OperationResult<T, any>) {
     const status = payload.error || !payload.data ? ConnectionStatus.Unavailable : ConnectionStatus.Available;
-    this.updateConnectionStatus(status);
-  }
-
-  private updateConnectionStatus(status: ConnectionStatus) {
-    if (this.getStatus() !== status) {
-      this.setStatus(status);
-    }
+    this.setStatus(status);
   }
 
   public initClient() {
     if (this.client) return;
     const url = this.getEndpoint();
     if (!url) {
-      this.updateConnectionStatus(ConnectionStatus.Unavailable);
+      this.setStatus(ConnectionStatus.Unavailable);
       throw new Error(`${this.type} endpoint is not set`);
     }
-    this.updateConnectionStatus(ConnectionStatus.Loading);
+    this.setStatus(ConnectionStatus.Loading);
     this.client = this.createClient(url, true);
   }
 

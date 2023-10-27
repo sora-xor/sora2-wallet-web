@@ -485,7 +485,7 @@ const actions = defineActions({
     }
   },
 
-  async selectCeresApiForFiatValues(context, flag: boolean): Promise<void> {
+  async useCeresApiForFiatValues(context, flag: boolean): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
     commit.setCeresFiatValuesUsage(flag);
     await dispatch.subscribeOnFiatPrice();
