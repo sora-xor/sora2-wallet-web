@@ -117,7 +117,7 @@ const actions = defineActions({
   async selectIndexer(context, indexerType?: IndexerType): Promise<void> {
     const { commit, dispatch, state } = settingsActionContext(context);
     const { rootDispatch } = rootActionContext(context);
-    const indexer = indexerType || state.indexerType;
+    const indexer = indexerType ?? state.indexerType;
 
     try {
       await rootDispatch.wallet.subscriptions.resetIndexerSubscriptions();

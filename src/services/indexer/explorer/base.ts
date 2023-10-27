@@ -7,7 +7,7 @@ import type { Client, OperationResult, TypedDocumentNode, AnyVariables } from '@
 
 export type CreateExplorerClientFn = (url: string) => Client;
 export type GetStatusFn = () => ConnectionStatus;
-export type SetStatusFn = (status: ConnectionStatus) => void;
+export type SetStatusFn = (status: ConnectionStatus) => Promise<void>;
 export type GetEndpointFn = () => Nullable<string>;
 
 export default class BaseExplorer {
