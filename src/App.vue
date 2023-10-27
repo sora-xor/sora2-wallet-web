@@ -3,6 +3,7 @@
     <div class="buttons">
       <s-button class="theme-switch" @click="changeTheme">{{ libraryTheme }} theme</s-button>
       <s-button class="theme-switch" @click="changeIndexer">{{ indexerType }} indexer</s-button>
+      <s-button class="theme-switch" @click="changeCeresFiatUsage">CERES fiat:{{ ceresFiatValuesUsage }}</s-button>
       <s-button class="hide-balance-switch" @click="toggleHideBalance">
         {{ shouldBalanceBeHidden ? 'hidden' : 'visible' }} balances
       </s-button>
@@ -42,6 +43,7 @@ import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 export default class App extends Mixins(TransactionMixin) {
   @state.account.assetsToNotifyQueue assetsToNotifyQueue!: Array<WhitelistArrayItem>;
   @state.settings.indexerType indexerType!: IndexerType;
+  @state.account.ceresFiatValuesUsage ceresFiatValuesUsage!: boolean;
   @getter.transactions.firstReadyTx firstReadyTransaction!: Nullable<HistoryItem>;
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
   @getter.libraryTheme libraryTheme!: Theme;
@@ -53,6 +55,7 @@ export default class App extends Mixins(TransactionMixin) {
   }) => void;
 
   @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
+  @action.account.selectCeresApiForFiatValues private selectCeresApiForFiatValues!: (flag: boolean) => void;
   @action.settings.selectIndexer private selectIndexer!: (IndexerType: IndexerType) => void;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncFnWithoutArgs;
@@ -97,6 +100,10 @@ export default class App extends Mixins(TransactionMixin) {
 
   changeIndexer() {
     this.selectIndexer(this.indexerType === IndexerType.SUBSQUID ? IndexerType.SUBQUERY : IndexerType.SUBSQUID);
+  }
+
+  changeCeresFiatUsage() {
+    this.selectCeresApiForFiatValues(!this.ceresFiatValuesUsage);
   }
 }
 </script>
