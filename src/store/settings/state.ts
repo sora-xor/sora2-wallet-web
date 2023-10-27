@@ -5,6 +5,8 @@ import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
 import type { SettingsState } from './types';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 
+const INDEXERS = [IndexerType.SUBQUERY, IndexerType.SUBSQUID];
+
 function initialState(): SettingsState {
   const priceAlerts = settingsStorage.get('alerts');
   const alerts = priceAlerts && JSON.parse(priceAlerts);
@@ -21,7 +23,7 @@ function initialState(): SettingsState {
     apiKeys: {},
     alerts: (alerts || []) as Array<Alert>,
     allowTopUpAlert: allowTopUpAlerts ? Boolean(JSON.parse(allowTopUpAlerts)) : false,
-    indexerType: indexerType ? (indexerType as IndexerType) : IndexerType.SUBQUERY,
+    indexerType: indexerType ? (indexerType as IndexerType) : INDEXERS[0],
     indexers: {
       [IndexerType.SUBQUERY]: {
         endpoint: '',

@@ -9,7 +9,7 @@ export * from './queries/historyElements';
 
 export const SubqueryExplorerService = new SubqueryExplorer({
   type: IndexerType.SUBQUERY,
-  createClient: createExplorerClient,
+  createExplorerClient,
   setStatus: (status) => store.dispatch.wallet.settings.setIndexerStatus({ indexer: IndexerType.SUBQUERY, status }),
   getStatus: () => store.state.wallet.settings.indexers[IndexerType.SUBQUERY].status,
   getEndpoint: () => store.state.wallet.settings.indexers[IndexerType.SUBQUERY].endpoint,

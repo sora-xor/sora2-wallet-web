@@ -61,6 +61,11 @@ export enum ConnectionStatus {
   Available = 'available',
 }
 
+export type IndexerState = {
+  endpoint: Nullable<string>;
+  status: ConnectionStatus;
+};
+
 export type StorageKey =
   | 'indexerType'
   | 'address'

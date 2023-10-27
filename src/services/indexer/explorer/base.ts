@@ -5,7 +5,7 @@ import { ConnectionStatus } from '@/types/common';
 
 import type { Client, OperationResult, TypedDocumentNode, AnyVariables } from '@urql/core';
 
-export type CreateClientFn = (url: string, subscription: boolean) => Client;
+export type CreateExplorerClientFn = (url: string) => Client;
 export type GetStatusFn = () => ConnectionStatus;
 export type SetStatusFn = (status: ConnectionStatus) => void;
 export type GetEndpointFn = () => Nullable<string>;
@@ -14,26 +14,26 @@ export default class BaseExplorer {
   public client!: Client;
   public type!: IndexerType;
 
-  protected createClient!: CreateClientFn;
+  protected createExplorerClient!: CreateExplorerClientFn;
   protected getStatus!: GetStatusFn;
   protected setStatus!: SetStatusFn;
   protected getEndpoint!: GetEndpointFn;
 
   constructor({
     type,
-    createClient,
+    createExplorerClient,
     getStatus,
     setStatus,
     getEndpoint,
   }: {
     type: IndexerType;
-    createClient: CreateClientFn;
+    createExplorerClient: CreateExplorerClientFn;
     getStatus: GetStatusFn;
     setStatus: SetStatusFn;
     getEndpoint: GetEndpointFn;
   }) {
     this.type = type;
-    this.createClient = createClient;
+    this.createExplorerClient = createExplorerClient;
     this.getStatus = getStatus;
     this.setStatus = setStatus;
     this.getEndpoint = getEndpoint;
@@ -52,7 +52,7 @@ export default class BaseExplorer {
       throw new Error(`${this.type} endpoint is not set`);
     }
     this.setStatus(ConnectionStatus.Loading);
-    this.client = this.createClient(url, true);
+    this.client = this.createExplorerClient(url);
   }
 
   public async request<T>(query: TypedDocumentNode<T>, variables: AnyVariables = {}) {

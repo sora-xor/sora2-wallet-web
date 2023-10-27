@@ -9,7 +9,7 @@ export * from './queries/historyElements';
 
 export const SubsquidExplorerService = new SubsquidExplorer({
   type: IndexerType.SUBSQUID,
-  createClient: createExplorerClient,
+  createExplorerClient,
   setStatus: (status) => store.dispatch.wallet.settings.setIndexerStatus({ indexer: IndexerType.SUBSQUID, status }),
   getStatus: () => store.state.wallet.settings.indexers[IndexerType.SUBSQUID].status,
   getEndpoint: () => store.state.wallet.settings.indexers[IndexerType.SUBSQUID].endpoint,
