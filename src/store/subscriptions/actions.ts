@@ -11,7 +11,7 @@ const runParallel = async (context: ActionContext<any, any>, actionTypes: Array<
   const { rootDispatch } = rootActionContext(context);
   const actions = actionTypes.map((value) => value.split('/'));
 
-  await Promise.allSettled(actions.map(([module, fn]) => rootDispatch.wallet[module][fn]()));
+  await Promise.all(actions.map(([module, fn]) => rootDispatch.wallet[module][fn]()));
 };
 
 const actions = defineActions({
@@ -64,7 +64,6 @@ const actions = defineActions({
       'transactions/trackActiveTxs',
       'account/subscribeOnAlerts',
       'subscriptions/subscribeToStorageUpdates',
-      'subscriptions/activateIndexerSubscriptions',
     ];
 
     if (!onDesktop) {

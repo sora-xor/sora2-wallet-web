@@ -113,18 +113,20 @@ const actions = defineActions({
     commit.resetFeeMultiplierAndRuntimeSubscriptions();
   },
 
-  async selectIndexer(context, indexerType: IndexerType): Promise<void> {
-    const { commit, dispatch } = settingsActionContext(context);
+  async selectIndexer(context, indexerType?: IndexerType): Promise<void> {
+    const { commit, dispatch, state } = settingsActionContext(context);
     const { rootDispatch } = rootActionContext(context);
+    const indexer = indexerType || state.indexerType;
 
     try {
       await rootDispatch.wallet.subscriptions.resetIndexerSubscriptions();
 
-      commit.setIndexerType(indexerType);
+      commit.setIndexerType(indexer);
 
       await rootDispatch.wallet.subscriptions.activateIndexerSubscriptions();
-    } catch {
-      await dispatch.setIndexerStatus({ indexer: indexerType, status: ConnectionStatus.Unavailable });
+    } catch (error) {
+      console.error(error);
+      await dispatch.setIndexerStatus({ indexer, status: ConnectionStatus.Unavailable });
     }
   },
 

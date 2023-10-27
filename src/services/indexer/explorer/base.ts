@@ -52,16 +52,13 @@ export default class BaseExplorer {
 
   public initClient() {
     if (this.client) return;
-    try {
-      const url = this.getEndpoint();
-      if (!url) {
-        throw new Error(`${this.type} endpoint is not set`);
-      }
-      this.updateConnectionStatus(ConnectionStatus.Loading);
-      this.client = this.createClient(url, true);
-    } catch {
+    const url = this.getEndpoint();
+    if (!url) {
       this.updateConnectionStatus(ConnectionStatus.Unavailable);
+      throw new Error(`${this.type} endpoint is not set`);
     }
+    this.updateConnectionStatus(ConnectionStatus.Loading);
+    this.client = this.createClient(url, true);
   }
 
   public async request<T>(query: TypedDocumentNode<T>, variables: AnyVariables = {}) {

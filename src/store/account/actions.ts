@@ -102,6 +102,7 @@ function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>): void {
 async function useFiatValuesFromCeresApi(context: ActionContext<any, any>): Promise<void> {
   await getFiatPriceObjectUsingCeresApi(context);
   subscribeOnFiatUsingCeresApi(context);
+  console.info(`The CERES API is used for fiat values.`);
 }
 
 async function updateApiSigner(source: AppWallet) {
