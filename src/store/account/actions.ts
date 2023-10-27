@@ -48,15 +48,12 @@ const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
 // INDEXER
 async function getFiatPriceObjectUsingIndexer(context: ActionContext<any, any>): Promise<void> {
   const { commit } = accountActionContext(context);
-  try {
-    const indexer = getCurrentIndexer();
-    const data = await indexer.services.explorer.price.getFiatPriceObject();
-    if (data) {
-      commit.setFiatPriceObject(data);
-    } else {
-      commit.clearFiatPriceObject();
-    }
-  } catch (error) {
+  const indexer = getCurrentIndexer();
+  const data = await indexer.services.explorer.price.getFiatPriceObject();
+
+  if (data) {
+    commit.setFiatPriceObject(data);
+  } else {
     commit.clearFiatPriceObject();
   }
 }
@@ -74,7 +71,6 @@ function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): v
     }
   );
   commit.setFiatPriceSubscription(subscription);
-  commit.setCeresFiatValuesUsage(false);
 }
 
 async function useFiatValuesFromIndexer(context: ActionContext<any, any>): Promise<void> {
@@ -85,15 +81,10 @@ async function useFiatValuesFromIndexer(context: ActionContext<any, any>): Promi
 // CERES
 async function getFiatPriceObjectUsingCeresApi(context: ActionContext<any, any>): Promise<void> {
   const { commit } = accountActionContext(context);
-  try {
-    const data = await CeresApiService.getFiatPriceObject();
-    if (data) {
-      commit.setFiatPriceObject(data);
-    } else {
-      commit.clearFiatPriceObject();
-    }
-  } catch (error) {
-    console.error(error);
+  const data = await CeresApiService.getFiatPriceObject();
+  if (data) {
+    commit.setFiatPriceObject(data);
+  } else {
     commit.clearFiatPriceObject();
   }
 }
@@ -106,7 +97,6 @@ function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>): void {
     commit.clearFiatPriceObject
   );
   commit.setFiatPriceSubscription(subscription);
-  commit.setCeresFiatValuesUsage(true);
 }
 
 async function useFiatValuesFromCeresApi(context: ActionContext<any, any>): Promise<void> {
@@ -492,6 +482,12 @@ const actions = defineActions({
     } else {
       await useFiatValuesFromCeresApi(context);
     }
+  },
+
+  async selectCeresApiForFiatValues(context, flag: boolean): Promise<void> {
+    const { commit, dispatch } = accountActionContext(context);
+    commit.setCeresFiatValuesUsage(flag);
+    await dispatch.subscribeOnFiatPrice();
   },
 
   async getAccountReferralRewards(context): Promise<void> {

@@ -8,17 +8,38 @@ import { IndexerType, SoraNetwork } from '../../consts';
 import { GDriveStorage } from '../../services/google';
 import { addGDriveWalletLocally } from '../../services/google/wallet';
 import { rootActionContext } from '../../store';
+import { ApiKeysObject, ConnectionStatus } from '../../types/common';
 import { IpfsStorage } from '../../util/ipfsStorage';
 import { runtimeStorage } from '../../util/storage';
 
 import { settingsActionContext } from './../settings';
 
-import type { ApiKeysObject } from '../../types/common';
+import type { ActionContext } from 'vuex';
 
 function areKeysEqual(obj1: object, obj2: object): boolean {
   const obj1Keys = Object.keys(obj1).sort();
   const obj2Keys = Object.keys(obj2).sort();
   return isEqual(obj1Keys, obj2Keys);
+}
+
+async function switchCurrentIndexer(context: ActionContext<any, any>): Promise<void> {
+  const { dispatch, state } = settingsActionContext(context);
+  const { rootDispatch } = rootActionContext(context);
+
+  const availableIndexers = Object.entries(state.indexers).reduce<IndexerType[]>((buffer, [indexerType, data]) => {
+    if (data.status !== ConnectionStatus.Unavailable) {
+      buffer.push(indexerType as IndexerType);
+    }
+    return buffer;
+  }, []);
+  const next = availableIndexers[0];
+
+  if (next) {
+    await dispatch.selectIndexer(next);
+  } else {
+    // fallback for fiat values
+    await rootDispatch.wallet.account.selectCeresApiForFiatValues(true);
+  }
 }
 
 const actions = defineActions({
@@ -91,15 +112,33 @@ const actions = defineActions({
     const { commit } = settingsActionContext(context);
     commit.resetFeeMultiplierAndRuntimeSubscriptions();
   },
+
   async selectIndexer(context, indexerType: IndexerType): Promise<void> {
-    const { commit } = settingsActionContext(context);
+    const { commit, dispatch } = settingsActionContext(context);
     const { rootDispatch } = rootActionContext(context);
 
-    await rootDispatch.wallet.subscriptions.resetIndexerSubscriptions();
+    try {
+      await rootDispatch.wallet.subscriptions.resetIndexerSubscriptions();
 
-    commit.setIndexerType(indexerType);
+      commit.setIndexerType(indexerType);
 
-    await rootDispatch.wallet.subscriptions.activateIndexerSubscriptions();
+      await rootDispatch.wallet.subscriptions.activateIndexerSubscriptions();
+    } catch {
+      await dispatch.setIndexerStatus({ indexer: indexerType, status: ConnectionStatus.Unavailable });
+    }
+  },
+
+  async setIndexerStatus(
+    context,
+    { indexer, status }: { indexer: IndexerType; status: ConnectionStatus }
+  ): Promise<void> {
+    const { commit } = settingsActionContext(context);
+
+    commit.setIndexerStatus({ indexer, status });
+    // if current indexer is unavailable, try switch to next
+    if (status === ConnectionStatus.Unavailable) {
+      await switchCurrentIndexer(context);
+    }
   },
 });
 
