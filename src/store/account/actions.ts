@@ -45,6 +45,22 @@ const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
   ]);
 };
 
+// INDEXER
+async function getFiatPriceObjectUsingIndexer(context: ActionContext<any, any>): Promise<void> {
+  const { commit } = accountActionContext(context);
+  try {
+    const indexer = getCurrentIndexer();
+    const data = await indexer.services.explorer.price.getFiatPriceObject();
+    if (data) {
+      commit.setFiatPriceObject(data);
+    } else {
+      commit.clearFiatPriceObject();
+    }
+  } catch (error) {
+    commit.clearFiatPriceObject();
+  }
+}
+
 function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): void {
   const { commit } = accountActionContext(context);
   commit.resetFiatPriceSubscription();
@@ -58,50 +74,44 @@ function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): v
     }
   );
   commit.setFiatPriceSubscription(subscription);
+  commit.setCeresFiatValuesUsage(false);
 }
 
-function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>, error?: Error): void {
+async function useFiatValuesFromIndexer(context: ActionContext<any, any>): Promise<void> {
+  await getFiatPriceObjectUsingIndexer(context);
+  subscribeOnFiatUsingCurrentIndexer(context);
+}
+
+// CERES
+async function getFiatPriceObjectUsingCeresApi(context: ActionContext<any, any>): Promise<void> {
+  const { commit } = accountActionContext(context);
+  try {
+    const data = await CeresApiService.getFiatPriceObject();
+    if (data) {
+      commit.setFiatPriceObject(data);
+    } else {
+      commit.clearFiatPriceObject();
+    }
+  } catch (error) {
+    console.error(error);
+    commit.clearFiatPriceObject();
+  }
+}
+
+function subscribeOnFiatUsingCeresApi(context: ActionContext<any, any>): void {
   const { commit } = accountActionContext(context);
   commit.resetFiatPriceSubscription();
-  if (error) {
-    console.warn(error);
-  }
-  console.info(`Neither Subsquid nor Subquery can set a fiat subscription. The CERES API will be used instead.`);
   const subscription = CeresApiService.createFiatPriceSubscription(
     commit.updateFiatPriceObject,
     commit.clearFiatPriceObject
   );
   commit.setFiatPriceSubscription(subscription);
+  commit.setCeresFiatValuesUsage(true);
 }
 
-/**
- * Returns `true`, if current indexer is stable and up.
- *
- * Returns `false`, if current indexer is down but CERES api works fine.
- *
- * Returns `null`, if both services are unavailable.
- */
-async function getFiatPriceObject(context: ActionContext<any, any>): Promise<Nullable<boolean>> {
-  const { commit } = accountActionContext(context);
-  try {
-    const indexer = getCurrentIndexer();
-    let data = await indexer.services.explorer.price.getFiatPriceObject();
-    if (data) {
-      commit.setFiatPriceObject(data);
-      return true;
-    }
-    data = await CeresApiService.getFiatPriceObject();
-    if (data) {
-      commit.setFiatPriceObject(data);
-      return false;
-    }
-    // If data is empty
-    commit.clearFiatPriceObject();
-    return null;
-  } catch (error) {
-    commit.clearFiatPriceObject();
-    return null;
-  }
+async function useFiatValuesFromCeresApi(context: ActionContext<any, any>): Promise<void> {
+  await getFiatPriceObjectUsingCeresApi(context);
+  subscribeOnFiatUsingCeresApi(context);
 }
 
 async function updateApiSigner(source: AppWallet) {
@@ -473,27 +483,14 @@ const actions = defineActions({
     const alertSubject = alertsApiService.createPriceAlertSubscription();
     commit.setAlertSubject(alertSubject);
   },
+
   async subscribeOnFiatPrice(context): Promise<void> {
-    const currentIndexer = getCurrentIndexer();
-    let isCurrentIndexerAvailable = await getFiatPriceObject(context);
-    try {
-      if (isCurrentIndexerAvailable) {
-        subscribeOnFiatUsingCurrentIndexer(context);
-      } else {
-        const { rootCommit } = rootActionContext(context);
-        rootCommit.wallet.settings.setIndexerType(
-          currentIndexer.type === IndexerType.SUBSQUID ? IndexerType.SUBQUERY : IndexerType.SUBSQUID
-        );
-        isCurrentIndexerAvailable = await getFiatPriceObject(context);
-        if (isCurrentIndexerAvailable) {
-          subscribeOnFiatUsingCurrentIndexer(context);
-        } else {
-          // Subscribe on CERES API anyway
-          subscribeOnFiatUsingCeresApi(context);
-        }
-      }
-    } catch (error) {
-      subscribeOnFiatUsingCeresApi(context, error as Error);
+    const { state } = accountActionContext(context);
+
+    if (!state.ceresFiatValuesUsage) {
+      await useFiatValuesFromIndexer(context);
+    } else {
+      await useFiatValuesFromCeresApi(context);
     }
   },
 

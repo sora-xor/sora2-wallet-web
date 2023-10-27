@@ -53,6 +53,9 @@ const mutations = defineMutations<AccountState>()({
     }
     state.fiatPriceSubscription = null;
   },
+  setCeresFiatValuesUsage(state, flag): void {
+    state.ceresFiatValuesUsage = flag;
+  },
   resetAccount(state): void {
     const s = omit(
       [

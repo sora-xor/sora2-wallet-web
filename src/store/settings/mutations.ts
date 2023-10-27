@@ -12,14 +12,17 @@ import type { Subscription } from 'rxjs';
 
 const mutations = defineMutations<SettingsState>()({
   setIndexerType(state, indexerType: IndexerType): void {
-    if (!state.indexers[IndexerType.SUBQUERY].endpoint && indexerType === IndexerType.SUBQUERY) {
-      indexerType = IndexerType.SUBSQUID;
-    } else if (!state.indexers[IndexerType.SUBSQUID].endpoint && indexerType === IndexerType.SUBSQUID) {
-      indexerType = IndexerType.SUBQUERY;
-    }
-
     state.indexerType = indexerType;
     storage.set('indexerType', indexerType);
+  },
+  setIndexerStatus(state, { indexer, status }: { indexer: IndexerType; status: ConnectionStatus }): void {
+    state.indexers[indexer].status = status;
+  },
+  setIndexerEndpoint(state, { indexer, endpoint }: { indexer: IndexerType; endpoint: string }): void {
+    state.indexers[indexer].endpoint = endpoint;
+    if (!endpoint) {
+      state.indexers[indexer].status = ConnectionStatus.Unavailable;
+    }
   },
   setWalletLoaded(state, flag: boolean): void {
     state.isWalletLoaded = flag;
@@ -95,15 +98,6 @@ const mutations = defineMutations<SettingsState>()({
 
     state.nftStorage = nftStorage;
   },
-  setIndexerStatus(state, { indexer, status }: { indexer: IndexerType; status: ConnectionStatus }): void {
-    state.indexers[indexer].status = status;
-  },
-  setIndexerEndpoint(state, { indexer, endpoint }: { indexer: IndexerType; endpoint: string }): void {
-    state.indexers[indexer].endpoint = endpoint;
-    if (!endpoint) {
-      state.indexers[indexer].status = ConnectionStatus.Unavailable;
-    }
-  },
   setDepositNotifications(state, allow: boolean): void {
     state.allowTopUpAlert = allow;
     settingsStorage.set('allowTopUpAlerts', allow);
@@ -117,7 +111,6 @@ const mutations = defineMutations<SettingsState>()({
     state.alerts.splice(position, 1);
     settingsStorage.set('alerts', JSON.stringify(state.alerts));
   },
-
   editPriceAlert(state, { alert, position }): void {
     state.alerts[position] = alert;
     settingsStorage.set('alerts', JSON.stringify(state.alerts));

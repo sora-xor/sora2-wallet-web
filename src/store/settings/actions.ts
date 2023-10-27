@@ -4,9 +4,10 @@ import isEqual from 'lodash/fp/isEqual';
 import { combineLatest } from 'rxjs';
 
 import { api } from '../../api';
-import { SoraNetwork } from '../../consts';
+import { IndexerType, SoraNetwork } from '../../consts';
 import { GDriveStorage } from '../../services/google';
 import { addGDriveWalletLocally } from '../../services/google/wallet';
+import { rootActionContext } from '../../store';
 import { IpfsStorage } from '../../util/ipfsStorage';
 import { runtimeStorage } from '../../util/storage';
 
@@ -89,6 +90,16 @@ const actions = defineActions({
   async resetFeeMultiplierAndRuntimeSubscriptions(context): Promise<void> {
     const { commit } = settingsActionContext(context);
     commit.resetFeeMultiplierAndRuntimeSubscriptions();
+  },
+  async selectIndexer(context, indexerType: IndexerType): Promise<void> {
+    const { commit } = settingsActionContext(context);
+    const { rootDispatch } = rootActionContext(context);
+
+    await rootDispatch.wallet.subscriptions.resetIndexerSubscriptions();
+
+    commit.setIndexerType(indexerType);
+
+    await rootDispatch.wallet.subscriptions.activateIndexerSubscriptions();
   },
 });
 

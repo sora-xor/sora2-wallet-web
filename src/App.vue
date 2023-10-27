@@ -46,7 +46,6 @@ export default class App extends Mixins(TransactionMixin) {
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
   @getter.libraryTheme libraryTheme!: Theme;
 
-  @mutation.settings.setIndexerType private setIndexerType!: (IndexerType: IndexerType) => void;
   @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
   @mutation.settings.setIndexerEndpoint private setIndexerEndpoint!: (options: {
     indexer: IndexerType;
@@ -54,6 +53,7 @@ export default class App extends Mixins(TransactionMixin) {
   }) => void;
 
   @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
+  @action.settings.selectIndexer private selectIndexer!: (IndexerType: IndexerType) => void;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncFnWithoutArgs;
   @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncFnWithoutArgs;
@@ -96,7 +96,7 @@ export default class App extends Mixins(TransactionMixin) {
   }
 
   changeIndexer() {
-    this.setIndexerType(this.indexerType === IndexerType.SUBSQUID ? IndexerType.SUBQUERY : IndexerType.SUBSQUID);
+    this.selectIndexer(this.indexerType === IndexerType.SUBSQUID ? IndexerType.SUBQUERY : IndexerType.SUBSQUID);
   }
 }
 </script>
