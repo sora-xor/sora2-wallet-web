@@ -2,7 +2,12 @@
   <div class="token-address">
     <span v-if="showName" class="token-address__name">{{ tokenName }}</span>
     <div class="token-address__value">
-      (<formatted-address :value="tokenAddress" :symbols="10" :tooltip-text="t('assets.assetId')" v-bind="$attrs" />)
+      (<formatted-address
+        :value="tokenAddress"
+        :symbols="symbols"
+        :tooltip-text="t('assets.assetId')"
+        v-bind="$attrs"
+      />)
     </div>
   </div>
 </template>
@@ -26,6 +31,7 @@ export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMi
   @Prop({ default: '', type: String }) readonly externalAddress!: string;
   @Prop({ default: false, type: Boolean }) readonly external!: boolean;
   @Prop({ default: true, type: Boolean }) readonly showName!: boolean;
+  @Prop({ default: 10, type: Number }) readonly symbols!: number;
 
   get tokenName(): string {
     return this.name || this.symbol;
