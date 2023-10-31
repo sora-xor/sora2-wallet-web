@@ -78,7 +78,9 @@ export type StorageKey =
   | 'slippageTolerance'
   | 'marketAlgorithm'
   | 'сhartsEnabled'
-  | 'transactionDeadline';
+  | 'transactionDeadline'
+  | 'exploreAccountItems'
+  | 'exploreSyntheticTokens';
 
 export type RuntimeStorageKey = 'version' | 'networkFees' | 'feeMultiplier';
 export type SettingsStorageKey =
