@@ -30,6 +30,7 @@ import TranslationMixin from './components/mixins/TranslationMixin';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
 import ExternalLink from './components/shared/ExternalLink.vue';
+import FormattedAddress from './components/shared/FormattedAddress.vue';
 import SyntheticSwitcher from './components/shared/SyntheticSwitcher.vue';
 import SimpleNotification from './components/SimpleNotification.vue';
 import TokenAddress from './components/TokenAddress.vue';
@@ -186,6 +187,7 @@ const components = {
   ConnectionItems,
   SyntheticSwitcher,
   ExternalLink,
+  FormattedAddress,
 };
 
 const mixins = {
