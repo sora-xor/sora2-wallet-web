@@ -233,9 +233,9 @@ export default {
       [BalanceType.Transferable]: 'Transferable',
       [BalanceType.Total]: 'Total',
       [BalanceType.Locked]: 'Locked',
-      [BalanceType.Frozen]: ' - Frozen',
-      [BalanceType.Reserved]: ' - Reserved',
-      [BalanceType.Bonded]: ' - Bonded',
+      [BalanceType.Frozen]: 'Frozen',
+      [BalanceType.Reserved]: 'Reserved',
+      [BalanceType.Bonded]: 'Bonded',
     },
   },
   asset: {

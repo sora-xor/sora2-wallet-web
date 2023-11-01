@@ -68,33 +68,28 @@
           </div>
           <transition name="fadeHeight">
             <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
-              <div v-for="balanceType in balanceTypes" :key="balanceType" class="balance s-flex p4">
-                <div class="balance-label">{{ t(`assets.balance.${balanceType}`) }}</div>
-                <formatted-amount-with-fiat-value
-                  value-can-be-hidden
-                  value-class="balance-value"
-                  :value="formatBalance(asset.balance[balanceType])"
-                  :font-size-rate="FontSizeRate.MEDIUM"
-                  :font-weight-rate="FontWeightRate.SMALL"
-                  :asset-symbol="asset.symbol"
-                  :fiat-value="getFiatBalance(asset, balanceType)"
-                  fiat-format-as-value
-                  with-left-shift
-                />
-              </div>
-              <div class="balance s-flex p4">
-                <div class="balance-label balance-label--total">{{ t('assets.balance.total') }}</div>
-                <formatted-amount-with-fiat-value
-                  value-can-be-hidden
-                  value-class="balance-value"
-                  :value="totalBalance"
-                  :font-size-rate="FontSizeRate.MEDIUM"
-                  :font-weight-rate="FontWeightRate.SMALL"
-                  :asset-symbol="asset.symbol"
-                  :fiat-value="getFiatBalance(asset, BalanceType.Total)"
-                  fiat-format-as-value
-                  with-left-shift
-                />
+              <div v-for="(balanceGroup, index) in balanceTypes" :key="index">
+                <div
+                  v-for="balanceType in Array.isArray(balanceGroup) ? balanceGroup : [balanceGroup]"
+                  :key="balanceType"
+                  class="balance s-flex p4"
+                >
+                  <div :class="['balance-label', { 'balance-label--total': index === balanceTypes.length - 1 }]">
+                    <template v-if="Array.isArray(balanceGroup)"> - </template>
+                    {{ t(`assets.balance.${balanceType}`) }}
+                  </div>
+                  <formatted-amount-with-fiat-value
+                    value-can-be-hidden
+                    value-class="balance-value"
+                    :value="formatBalance(asset.balance[balanceType])"
+                    :font-size-rate="FontSizeRate.MEDIUM"
+                    :font-weight-rate="FontWeightRate.SMALL"
+                    :asset-symbol="asset.symbol"
+                    :fiat-value="getFiatBalance(asset, balanceType)"
+                    fiat-format-as-value
+                    with-left-shift
+                  />
+                </div>
               </div>
             </div>
           </transition>
@@ -176,12 +171,9 @@ export default class WalletAssetDetails extends Mixins(
   readonly balanceTypes = [
     BalanceType.Transferable,
     BalanceType.Locked,
-    BalanceType.Frozen,
-    BalanceType.Reserved,
-    BalanceType.Bonded,
+    [BalanceType.Frozen, BalanceType.Reserved, BalanceType.Bonded],
+    BalanceType.Total,
   ];
-
-  readonly BalanceType = BalanceType;
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset>;
   @state.settings.permissions private permissions!: WalletPermissions;
@@ -441,9 +433,9 @@ export default class WalletAssetDetails extends Mixins(
           margin-right: var(--s-basic-spacing);
           font-weight: 300;
           white-space: nowrap;
-        }
-        &-label--total {
-          font-weight: 600;
+          &--total {
+            font-weight: 600;
+          }
         }
       }
     }
