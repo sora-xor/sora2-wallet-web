@@ -68,7 +68,7 @@
           </div>
           <transition name="fadeHeight">
             <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
-              <div v-for="(balanceGroup, index) in balanceTypes" :key="index">
+              <template v-for="(balanceGroup, index) in balanceTypes">
                 <div
                   v-for="balanceType in Array.isArray(balanceGroup) ? balanceGroup : [balanceGroup]"
                   :key="balanceType"
@@ -90,7 +90,7 @@
                     with-left-shift
                   />
                 </div>
-              </div>
+              </template>
             </div>
           </transition>
         </div>
