@@ -366,7 +366,10 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
             <div
               class="balance-label"
             >
-              Transferable
+              <!---->
+              
+                  Transferable
+                
             </div>
              
             <formatted-amount-with-fiat-value-stub
@@ -390,7 +393,10 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
             <div
               class="balance-label"
             >
-              Frozen
+              <!---->
+              
+                  Locked
+                
             </div>
              
             <formatted-amount-with-fiat-value-stub
@@ -414,7 +420,9 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
             <div
               class="balance-label"
             >
-               - Locked
+               - 
+                  Frozen
+                
             </div>
              
             <formatted-amount-with-fiat-value-stub
@@ -438,7 +446,9 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
             <div
               class="balance-label"
             >
-               - Reserved
+               - 
+                  Reserved
+                
             </div>
              
             <formatted-amount-with-fiat-value-stub
@@ -462,7 +472,9 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
             <div
               class="balance-label"
             >
-              Bonded
+               - 
+                  Bonded
+                
             </div>
              
             <formatted-amount-with-fiat-value-stub
@@ -480,14 +492,16 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
               withleftshift="true"
             />
           </div>
-           
           <div
             class="balance s-flex p4"
           >
             <div
               class="balance-label balance-label--total"
             >
-              Total
+              <!---->
+              
+                  Total
+                
             </div>
              
             <formatted-amount-with-fiat-value-stub
