@@ -173,7 +173,14 @@ export default class WalletAssetDetails extends Mixins(
   CopyAddressMixin,
   QrCodeParserMixin
 ) {
-  readonly balanceTypes = Object.values(BalanceType).filter((type) => type !== BalanceType.Total);
+  readonly balanceTypes = [
+    BalanceType.Transferable,
+    BalanceType.Locked,
+    BalanceType.Frozen,
+    BalanceType.Reserved,
+    BalanceType.Bonded,
+  ];
+
   readonly BalanceType = BalanceType;
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset>;

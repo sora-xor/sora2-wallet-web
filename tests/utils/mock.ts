@@ -17,6 +17,7 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
     balance: {
       transferable: '123400000000000000000',
       total: '123400000000000000000',
+      free: '123400000000000000000',
       reserved: '0',
       frozen: '0',
       locked: '0',
@@ -31,6 +32,7 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
     balance: {
       transferable: '0',
       total: '0',
+      free: '0',
       reserved: '0',
       frozen: '0',
       locked: '0',
@@ -45,6 +47,7 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
     balance: {
       transferable: '1000000000000',
       total: '1000000000000',
+      free: '1000000000000',
       reserved: '0',
       frozen: '0',
       locked: '0',
@@ -59,6 +62,7 @@ export const MOCK_ACCOUNT_ASSETS_NFT = [
     balance: {
       transferable: '1000000000000',
       total: '1000000000000',
+      free: '1000000000000',
       reserved: '0',
       frozen: '0',
       locked: '0',

@@ -231,11 +231,11 @@ export default {
     copied: 'Copied!',
     balance: {
       [BalanceType.Transferable]: 'Transferable',
-      [BalanceType.Frozen]: 'Frozen',
-      [BalanceType.Locked]: ' - Locked',
-      [BalanceType.Reserved]: ' - Reserved',
       [BalanceType.Total]: 'Total',
-      [BalanceType.Bonded]: 'Bonded',
+      [BalanceType.Locked]: 'Locked',
+      [BalanceType.Frozen]: ' - Frozen',
+      [BalanceType.Reserved]: ' - Reserved',
+      [BalanceType.Bonded]: ' - Bonded',
     },
   },
   asset: {
