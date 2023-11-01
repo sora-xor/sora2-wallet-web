@@ -19,7 +19,7 @@
                   :fiat-font-size-rate="FontSizeRate.MEDIUM"
                   :fiat-font-weight-rate="FontWeightRate.MEDIUM"
                 >
-                  <div v-if="hasFrozenBalance(asset)" class="asset-value-locked p4">
+                  <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
                     <s-icon name="lock-16" size="12px" />
                     <span>{{ formatFrozenBalance(asset) }}</span>
                   </div>
@@ -187,15 +187,15 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return this.isCodecZero(asset.balance.transferable, asset.decimals);
   }
 
-  hasFrozenBalance(asset: AccountAsset): boolean {
-    return !this.isCodecZero(asset.balance.frozen, asset.decimals);
+  hasLockedBalance(asset: AccountAsset): boolean {
+    return !this.isCodecZero(asset.balance.locked, asset.decimals);
   }
 
   formatFrozenBalance(asset: AccountAsset): string {
     if (this.shouldBalanceBeHidden) {
       return HiddenValue;
     }
-    return this.formatCodecNumber(asset.balance.frozen, asset.decimals);
+    return this.formatCodecNumber(asset.balance.locked, asset.decimals);
   }
 
   updateFilter(): void {
