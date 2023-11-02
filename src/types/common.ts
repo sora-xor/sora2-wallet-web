@@ -61,6 +61,11 @@ export enum ConnectionStatus {
   Available = 'available',
 }
 
+export type IndexerState = {
+  endpoint: Nullable<string>;
+  status: ConnectionStatus;
+};
+
 export type StorageKey =
   | 'indexerType'
   | 'address'
@@ -73,7 +78,9 @@ export type StorageKey =
   | 'slippageTolerance'
   | 'marketAlgorithm'
   | 'сhartsEnabled'
-  | 'transactionDeadline';
+  | 'transactionDeadline'
+  | 'exploreAccountItems'
+  | 'exploreSyntheticTokens';
 
 export type RuntimeStorageKey = 'version' | 'networkFees' | 'feeMultiplier';
 export type SettingsStorageKey =
