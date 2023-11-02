@@ -43,6 +43,7 @@ export function initialState(): AccountState {
     /** fiat prices & subscription */
     fiatPriceObject: {},
     fiatPriceSubscription: null,
+    ceresFiatValuesUsage: false,
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
     selectedWallet: null,

@@ -1,4 +1,5 @@
-import BaseSubsquidExplorer from './base';
+import BaseExplorer from '../../explorer/base';
+
 import { SubsquidAccountModule } from './modules/account';
 import { SubsquidPoolModule } from './modules/pool';
 import { SubsquidPriceModule } from './modules/price';
@@ -12,7 +13,7 @@ import type {
   ConnectionQueryResponseData,
 } from '../types';
 
-export default class SubsquidExplorer extends BaseSubsquidExplorer {
+export default class SubsquidExplorer extends BaseExplorer {
   public readonly account: SubsquidAccountModule = new SubsquidAccountModule(this);
   public readonly price: SubsquidPriceModule = new SubsquidPriceModule(this);
   public readonly pool: SubsquidPoolModule = new SubsquidPoolModule(this);

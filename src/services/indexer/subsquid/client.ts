@@ -33,14 +33,11 @@ const createSubscriptionExchange = (subscriptionClient: ReturnType<typeof create
   });
 };
 
-export const createExplorerClient = (url: string, subscriptions = false): Client => {
+export const createExplorerClient = (url: string): Client => {
   const exchanges = [fetchExchange];
-
-  if (subscriptions) {
-    const subscriptionClient = createSubscriptionClient(url);
-    const subscriptionExchange = createSubscriptionExchange(subscriptionClient);
-    exchanges.push(subscriptionExchange);
-  }
+  const subscriptionClient = createSubscriptionClient(url);
+  const subscriptionExchange = createSubscriptionExchange(subscriptionClient);
+  exchanges.push(subscriptionExchange);
 
   const client = createClient({
     url,
