@@ -51,12 +51,17 @@ const actions = defineActions({
       'account/resetAccountAssetsSubscription',
     ]);
   },
+  // subscriptions on indexer data
+  async activateIndexerSubscriptions(context): Promise<void> {
+    await runParallel(context, ['account/subscribeOnFiatPrice', 'transactions/subscribeOnExternalHistory']);
+  },
+  async resetIndexerSubscriptions(context): Promise<void> {
+    await runParallel(context, ['account/resetFiatPriceSubscription', 'transactions/resetExternalHistorySubscription']);
+  },
   // Internal subscriptions & timers
   async activateInternalSubscriptions(context, onDesktop: boolean): Promise<void> {
     const subscriptions = [
       'transactions/trackActiveTxs',
-      'transactions/subscribeOnExternalHistory',
-      'account/subscribeOnFiatPrice',
       'account/subscribeOnAlerts',
       'subscriptions/subscribeToStorageUpdates',
     ];
@@ -70,8 +75,6 @@ const actions = defineActions({
   async resetInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'transactions/resetActiveTxs',
-      'transactions/resetExternalHistorySubscription',
-      'account/resetFiatPriceSubscription',
       'account/resetWalletAvailabilitySubscription',
       'account/resetAccountPassphraseTimer',
       'subscriptions/resetStorageUpdatesSubscription',
