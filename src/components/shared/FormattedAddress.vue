@@ -46,6 +46,7 @@ export default class FormattedAddress extends Mixins(CopyAddressMixin) {
   color: inherit;
   cursor: pointer;
   letter-spacing: normal;
+  white-space: nowrap;
 
   &:hover {
     text-decoration: underline;

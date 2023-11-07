@@ -86,21 +86,14 @@ const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAc
   return (accounts || []).map((account) => formatWalletAccount(account));
 };
 
-export const getWalletAccounts = async (wallet: AppWallet) => {
-  const appWallet = await getWallet(wallet);
-  const accounts = await appWallet.getAccounts();
-
-  return formatWalletAccounts(accounts);
-};
-
 export const subscribeToWalletAccounts = async (
   wallet: AppWallet,
   callback: (accounts: PolkadotJsAccount[]) => void
 ): Promise<Nullable<Unsubcall>> => {
   const appWallet = await getWallet(wallet);
-  const accounts = await getWalletAccounts(wallet);
+  const accounts = await appWallet.getAccounts();
 
-  callback(accounts);
+  callback(formatWalletAccounts(accounts));
 
   const unsubscribe = await appWallet.subscribeAccounts((injectedAccounts) => {
     callback(formatWalletAccounts(injectedAccounts));
@@ -130,17 +123,6 @@ export const getAppWallets = (): Wallet[] => {
   }
 };
 
-// [TODO]: find solution for case, then wallet disabled
-const waitForWalletInject = async (wallet: Wallet): Promise<void> => {
-  const injectedWindow = window as any;
-  const injected = injectedWindow.injectedWeb3[wallet.extensionName];
-
-  if (!injected) {
-    await delay(200);
-    await waitForWalletInject(wallet);
-  }
-};
-
 export const checkWallet = (extension: AppWallet): Wallet => {
   const wallet = getWalletBySource(extension);
 
@@ -156,7 +138,6 @@ export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Walle
   const wallet = checkWallet(extension);
 
   await waitForDocumentReady();
-  await waitForWalletInject(wallet);
   await wallet.enable();
 
   if (typeof wallet.signer !== 'object') {
