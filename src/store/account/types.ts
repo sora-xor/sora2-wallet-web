@@ -37,6 +37,7 @@ export type AccountState = {
   blacklistArray: Readonly<Blacklist>;
   fiatPriceObject: Readonly<FiatPriceObject>;
   fiatPriceSubscription: Nullable<VoidFunction>;
+  ceresFiatValuesUsage: boolean;
   referralRewards: ReferrerRewards;
   selectedWallet: Nullable<AppWallet>;
   selectedWalletLoading: boolean;

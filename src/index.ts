@@ -30,6 +30,7 @@ import TranslationMixin from './components/mixins/TranslationMixin';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
 import ExternalLink from './components/shared/ExternalLink.vue';
+import FormattedAddress from './components/shared/FormattedAddress.vue';
 import SyntheticSwitcher from './components/shared/SyntheticSwitcher.vue';
 import SimpleNotification from './components/SimpleNotification.vue';
 import TokenAddress from './components/TokenAddress.vue';
@@ -53,15 +54,7 @@ import * as VUEX_TYPES from './store/types';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
 import { WalletModules } from './store/wallet';
 import * as WALLET_TYPES from './types/common';
-import {
-  delay,
-  getExplorerLinks,
-  groupRewardsByAssetsList,
-  initAppWallets,
-  getWallet,
-  getWalletAccounts,
-  subscribeToWalletAccounts,
-} from './util';
+import { delay, getExplorerLinks, groupRewardsByAssetsList, initAppWallets } from './util';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
@@ -153,6 +146,7 @@ async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promis
 
   // don't wait for finalization of internal & external services subscriptions
   store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop);
+  store.dispatch.wallet.settings.selectIndexer();
   // wait for finalization of network subscriptions
   await Promise.all([api.initialize(false), store.dispatch.wallet.subscriptions.activateNetwokSubscriptions()]);
 
@@ -185,6 +179,7 @@ const components = {
   ConnectionItems,
   SyntheticSwitcher,
   ExternalLink,
+  FormattedAddress,
 };
 
 const mixins = {
@@ -221,9 +216,6 @@ export {
   settingsStorage,
   getExplorerLinks,
   groupRewardsByAssetsList,
-  getWallet,
-  getWalletAccounts,
-  subscribeToWalletAccounts,
   WALLET_CONSTS,
   WALLET_TYPES,
   components,

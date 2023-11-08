@@ -3,6 +3,7 @@
     <div class="buttons">
       <s-button class="theme-switch" @click="changeTheme">{{ libraryTheme }} theme</s-button>
       <s-button class="theme-switch" @click="changeIndexer">{{ indexerType }} indexer</s-button>
+      <s-button class="theme-switch" @click="changeCeresFiatUsage">CERES fiat:{{ ceresFiatValuesUsage }}</s-button>
       <s-button class="hide-balance-switch" @click="toggleHideBalance">
         {{ shouldBalanceBeHidden ? 'hidden' : 'visible' }} balances
       </s-button>
@@ -42,15 +43,20 @@ import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
 export default class App extends Mixins(TransactionMixin) {
   @state.account.assetsToNotifyQueue assetsToNotifyQueue!: Array<WhitelistArrayItem>;
   @state.settings.indexerType indexerType!: IndexerType;
+  @state.account.ceresFiatValuesUsage ceresFiatValuesUsage!: boolean;
   @getter.transactions.firstReadyTx firstReadyTransaction!: Nullable<HistoryItem>;
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
   @getter.libraryTheme libraryTheme!: Theme;
 
-  @mutation.settings.setIndexerType private setIndexerType!: (IndexerType: IndexerType) => void;
   @mutation.settings.setSoraNetwork private setSoraNetwork!: (network: SoraNetwork) => void;
-  @mutation.settings.setSubqueryEndpoint private setSubqueryEndpoint!: (endpoint: string) => void;
-  @mutation.settings.setSubsquidEndpoint private setSubsquidEndpoint!: (endpoint: string) => void;
+  @mutation.settings.setIndexerEndpoint private setIndexerEndpoint!: (options: {
+    indexer: IndexerType;
+    endpoint: string;
+  }) => void;
+
   @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
+  @action.account.useCeresApiForFiatValues private useCeresApiForFiatValues!: (flag: boolean) => void;
+  @action.settings.selectIndexer private selectIndexer!: (IndexerType: IndexerType) => void;
   @action.settings.setApiKeys private setApiKeys!: (apiKeys: ApiKeysObject) => Promise<void>;
   @action.subscriptions.resetNetworkSubscriptions private resetNetworkSubscriptions!: AsyncFnWithoutArgs;
   @action.subscriptions.resetInternalSubscriptions private resetInternalSubscriptions!: AsyncFnWithoutArgs;
@@ -61,8 +67,8 @@ export default class App extends Mixins(TransactionMixin) {
 
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);
-    this.setSubqueryEndpoint(env.SUBQUERY_ENDPOINT);
-    this.setSubsquidEndpoint(env.SUBSQUID_ENDPOINT);
+    this.setIndexerEndpoint({ indexer: IndexerType.SUBQUERY, endpoint: env.SUBQUERY_ENDPOINT });
+    this.setIndexerEndpoint({ indexer: IndexerType.SUBSQUID, endpoint: env.SUBSQUID_ENDPOINT });
     this.setSoraNetwork(SoraNetwork.Dev);
     await initWallet({ withoutStore: true, appName: 'APP NAME HERE' }); // We don't need storage for local development
     const localeLanguage = navigator.language;
@@ -93,7 +99,11 @@ export default class App extends Mixins(TransactionMixin) {
   }
 
   changeIndexer() {
-    this.setIndexerType(this.indexerType === IndexerType.SUBSQUID ? IndexerType.SUBQUERY : IndexerType.SUBSQUID);
+    this.selectIndexer(this.indexerType === IndexerType.SUBSQUID ? IndexerType.SUBQUERY : IndexerType.SUBSQUID);
+  }
+
+  changeCeresFiatUsage() {
+    this.useCeresApiForFiatValues(!this.ceresFiatValuesUsage);
   }
 }
 </script>
