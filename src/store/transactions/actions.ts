@@ -118,7 +118,7 @@ const actions = defineActions({
 
     const variables = {
       filter,
-      limit: pageAmount,
+      first: pageAmount,
       offset: pageAmount * (page - 1),
     };
 
