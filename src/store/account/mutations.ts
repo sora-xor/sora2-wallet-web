@@ -1,5 +1,6 @@
 import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
+import Vue from 'vue';
 
 import { api } from '../../api';
 import { storage, settingsStorage } from '../../util/storage';
@@ -215,7 +216,7 @@ const mutations = defineMutations<AccountState>()({
   },
   removeAddressFromBook(state, address: string): void {
     if (state.book) {
-      delete state.book[address];
+      Vue.delete(state.book, address); // to make it reactive
       settingsStorage.set('book', JSON.stringify(state.book));
     }
   },
