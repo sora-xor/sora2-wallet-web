@@ -51,9 +51,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, ModelSync, Prop, Watch } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
-import { api } from '../../api';
 import { mutation, state } from '../../store/decorators';
 import { formatSoraAddress, subscribeToWalletAccounts } from '../../util';
 import WalletAccount from '../Account/WalletAccount.vue';
