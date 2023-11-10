@@ -1,5 +1,4 @@
 import { TransactionStatus, Operation } from '@sora-substrate/util';
-import { XOR } from '@sora-substrate/util/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { HiddenValue } from '../../consts';
@@ -118,7 +117,7 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
     }
     if (orderBookOperations.includes(value.type)) {
       params.symbol = store.getters.wallet.account.whitelist[params.assetAddress];
-      params.symbol2 = XOR.symbol;
+      params.symbol2 = store.getters.wallet.account.whitelist[params.asset2Address];
     }
     let status = value.status as TransactionStatus;
     if ([TransactionStatus.Invalid, TransactionStatus.Usurped].includes(status)) {
