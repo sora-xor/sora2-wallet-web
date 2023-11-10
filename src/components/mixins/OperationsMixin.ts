@@ -1,7 +1,9 @@
 import { TransactionStatus, Operation } from '@sora-substrate/util';
+import { XOR } from '@sora-substrate/util/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { HiddenValue } from '../../consts';
+import store from '../../store';
 import { getter } from '../../store/decorators';
 import { formatAddress, groupRewardsByAssetsList } from '../../util';
 
@@ -31,6 +33,12 @@ const amountBasedOperations = [
   Operation.EthBridgeOutgoing,
   Operation.ReferralReserveXor,
   Operation.ReferralUnreserveXor,
+];
+
+const orderBookOperations = [
+  Operation.OrderBookPlaceLimitOrder,
+  Operation.OrderBookCancelLimitOrder,
+  Operation.OrderBookCancelLimitOrders,
 ];
 
 const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
@@ -107,6 +115,10 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
       } else {
         params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
       }
+    }
+    if (orderBookOperations.includes(value.type)) {
+      params.symbol = store.getters.wallet.account.whitelist[params.assetAddress];
+      params.symbol2 = XOR.symbol;
     }
     let status = value.status as TransactionStatus;
     if ([TransactionStatus.Invalid, TransactionStatus.Usurped].includes(status)) {
