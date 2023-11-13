@@ -103,9 +103,10 @@ export class SubqueryAccountModule extends SubqueryBaseModule {
                 return call;
               }
             });
-          } else {
-            data = edge.node.data;
           }
+
+          data = edge.node.data;
+
           return {
             ...edge,
             node: {

@@ -20,17 +20,20 @@ import type {
   HistoryElementAssetRegistration,
   HistoryElementRewardsClaim,
   HistoryElementDemeterFarming,
+  HistoryElementPlaceLimitOrder,
+  HistoryElementCancelLimitOrder,
+  HistoryElementSwapTransferBatch,
   SubqueryHistoryElementUtilityBatchAll,
   UtilityBatchCall,
   ReferralSetReferrer,
   ReferrerReserve,
   ClaimedRewardItem,
-  HistoryElementSwapTransferBatch,
   SwapTransferBatchTransferParam,
   SubqueryUtilityBatchCall,
 } from './types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
+import type { LimitOrderHistory } from '@sora-substrate/util/build/orderBook/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 
 const insensitive = (value: string) => value.toLowerCase();
@@ -99,6 +102,11 @@ const OperationsMap = {
       return data.isFarm ? Operation.DemeterFarmingWithdrawLiquidity : Operation.DemeterFarmingUnstakeToken;
     },
     [ModuleMethods.DemeterFarmingGetRewards]: () => Operation.DemeterFarmingGetRewards,
+  },
+  [insensitive(ModuleNames.OrderBook)]: {
+    [ModuleMethods.OrderBookPlaceLimitOrder]: () => Operation.OrderBookPlaceLimitOrder,
+    [ModuleMethods.OrderBookCancelLimitOrder]: () => Operation.OrderBookCancelLimitOrder,
+    [ModuleMethods.OrderBookCancelLimitOrders]: () => Operation.OrderBookCancelLimitOrders,
   },
 };
 
@@ -198,6 +206,9 @@ export default class SubqueryDataParser {
     Operation.DemeterFarmingStakeToken,
     Operation.DemeterFarmingUnstakeToken,
     Operation.DemeterFarmingGetRewards,
+    Operation.OrderBookPlaceLimitOrder,
+    Operation.OrderBookCancelLimitOrder,
+    Operation.OrderBookCancelLimitOrders,
   ];
 
   public get supportedOperations(): Array<Operation> {
@@ -230,7 +241,7 @@ export default class SubqueryDataParser {
       endTime: timestamp,
       startTime: timestamp,
       from: transaction.address,
-      soraNetworkFee: new FPNumber(transaction.networkFee).toCodecString(),
+      soraNetworkFee: new FPNumber(transaction.networkFee).toString(),
       status: getTransactionStatus(transaction),
     };
 
@@ -446,6 +457,32 @@ export default class SubqueryDataParser {
         payload.assetAddress = assetAddress;
         payload.symbol = getAssetSymbol(asset);
         payload.amount = data.amount;
+
+        return payload;
+      }
+      case Operation.OrderBookPlaceLimitOrder: {
+        const data = transaction.data as HistoryElementPlaceLimitOrder;
+
+        const _payload = payload as LimitOrderHistory;
+
+        _payload.assetAddress = data.baseAssetId;
+        _payload.asset2Address = data.quoteAssetId;
+        _payload.price = new FPNumber(data.price).toString();
+        _payload.amount = new FPNumber(data.amount).toString();
+        _payload.side = data.side;
+        _payload.limitOrderTimestamp = data.lifetime;
+
+        return payload;
+      }
+      case Operation.OrderBookCancelLimitOrder:
+      case Operation.OrderBookCancelLimitOrders: {
+        const data = transaction.data as HistoryElementCancelLimitOrder;
+
+        const _payload = payload as LimitOrderHistory;
+
+        _payload.assetAddress = data[0].baseAssetId;
+        _payload.asset2Address = data[0].quoteAssetId;
+        _payload.limitOrderIds = data.map((order) => order.orderId);
 
         return payload;
       }

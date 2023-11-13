@@ -15,6 +15,7 @@ import {
   SubsquidUtilityBatchCall,
 } from '../subsquid/types';
 
+import type { PriceVariant } from '@sora-substrate/liquidity-proxy';
 import type { CodecString } from '@sora-substrate/util';
 
 // Indexer Enums
@@ -23,6 +24,14 @@ export enum SnapshotTypes {
   HOUR = 'HOUR',
   DAY = 'DAY',
   MONTH = 'MONTH',
+}
+
+export enum OrderStatus {
+  Active = 'Active',
+  Aligned = 'Aligned',
+  Canceled = 'Canceled',
+  Expired = 'Expired',
+  Filled = 'Filled',
 }
 
 // Indexer Models
@@ -230,6 +239,24 @@ export type ReferrerReserve = {
   amount: string;
 };
 
+export type HistoryElementPlaceLimitOrder = {
+  dexId: number;
+  baseAssetId: string;
+  quoteAssetId: string;
+  orderId: number | undefined;
+  price: string;
+  amount: string;
+  side: PriceVariant;
+  lifetime: number | undefined;
+};
+
+export type HistoryElementCancelLimitOrder = Array<{
+  dexId: number;
+  baseAssetId: string;
+  quoteAssetId: string;
+  orderId: number;
+}>;
+
 export type HistoryElementDataBase = Nullable<
   | ReferralSetReferrer
   | ReferrerReserve
@@ -243,6 +270,8 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementRewardsClaim
   | HistoryElementDemeterFarming
   | HistoryElementSwapTransferBatch
+  | HistoryElementPlaceLimitOrder
+  | HistoryElementCancelLimitOrder
 >;
 
 export type HistoryElementBase = {
