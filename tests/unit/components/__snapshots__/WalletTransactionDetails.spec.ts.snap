@@ -62,6 +62,10 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         valuetooltip=""
       />
        
+      <!---->
+       
+      <!---->
+       
       <info-line-stub
         assetsymbol="PSWAP"
         fiatvalue=""
@@ -161,6 +165,10 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
        
       <!---->
        
+      <!---->
+       
+      <!---->
+       
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
@@ -255,6 +263,10 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
         valuecanbehidden="true"
         valuetooltip=""
       />
+       
+      <!---->
+       
+      <!---->
        
       <!---->
        
@@ -363,6 +375,10 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         valuetooltip=""
       />
        
+      <!---->
+       
+      <!---->
+       
       <info-line-stub
         assetsymbol="PSWAP"
         fiatvalue=""
@@ -468,6 +484,10 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
         valuecanbehidden="true"
         valuetooltip=""
       />
+       
+      <!---->
+       
+      <!---->
        
       <!---->
        
