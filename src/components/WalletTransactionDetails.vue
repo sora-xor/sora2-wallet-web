@@ -27,6 +27,19 @@
           :asset-symbol="transactionSymbol"
         />
         <info-line
+          v-if="selectedTransaction.price"
+          is-formatted
+          value-can-be-hidden
+          :label="t('transaction.price')"
+          :value="selectedTransaction.price"
+          :asset-symbol="transactionSymbol2"
+        />
+        <info-line
+          v-if="selectedTransaction.side"
+          :label="t('transaction.side')"
+          :value="selectedTransaction.side.toUpperCase()"
+        />
+        <info-line
           v-if="selectedTransaction.amount2"
           is-formatted
           value-can-be-hidden
@@ -101,6 +114,8 @@
 import { TransactionStatus, Operation, FPNumber } from '@sora-substrate/util';
 import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
+
+import store from '@/store';
 
 import { HashType, SoraNetwork } from '../consts';
 import { getter, state } from '../store/decorators';
@@ -209,10 +224,26 @@ export default class WalletTransactionDetails extends Mixins(
       return `${symbol}-${symbol2}`;
     }
 
+    if (Operation.OrderBookPlaceLimitOrder) {
+      const { assetAddress } = this.selectedTransaction;
+
+      if (assetAddress && store.getters.wallet.account.whitelist[assetAddress]) {
+        return store.getters.wallet.account.whitelist[assetAddress].symbol;
+      }
+    }
+
     return symbol || '';
   }
 
   get transactionSymbol2(): string {
+    if (Operation.OrderBookPlaceLimitOrder) {
+      const { asset2Address } = this.selectedTransaction;
+
+      if (asset2Address && store.getters.wallet.account.whitelist[asset2Address]) {
+        return store.getters.wallet.account.whitelist[asset2Address].symbol;
+      }
+    }
+
     return this.selectedTransaction.symbol2 || '';
   }
 
