@@ -64,6 +64,9 @@ export default {
     [Operation.DemeterFarmingGetRewards]: 'Claim Rewards',
     [Operation.EthBridgeIncoming]: '{Hashi} Bridge',
     [Operation.EthBridgeOutgoing]: '{Hashi} Bridge',
+    [Operation.OrderBookPlaceLimitOrder]: 'Place Order',
+    [Operation.OrderBookCancelLimitOrder]: 'Cancel Order',
+    [Operation.OrderBookCancelLimitOrders]: 'Cancel Orders',
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
@@ -85,6 +88,9 @@ export default {
       [Operation.DemeterFarmingGetRewards]: '{amount} {symbol} claimed successfully',
       [Operation.EthBridgeIncoming]: 'Transfered {amount} {symbol} from {Ethereum} to {Sora}',
       [Operation.EthBridgeOutgoing]: 'Transfered {amount} {symbol} from {Sora} to {Ethereum}',
+      [Operation.OrderBookPlaceLimitOrder]: '{side} {amount} {symbol} at {price} {symbol2} placed',
+      [Operation.OrderBookCancelLimitOrder]: 'Limit order cancelled',
+      [Operation.OrderBookCancelLimitOrders]: 'Limit orders cancelled',
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
@@ -109,6 +115,9 @@ export default {
       [Operation.DemeterFarmingGetRewards]: 'Failed to claim {symbol}',
       [Operation.EthBridgeIncoming]: 'Failed to transfer {amount} {symbol} from {Ethereum} to {Sora}',
       [Operation.EthBridgeOutgoing]: 'Failed to transfer {amount} {symbol} from {Sora} to {Ethereum}',
+      [Operation.OrderBookPlaceLimitOrder]: 'Failed to place {side} {amount} {symbol} at {price} {symbol}',
+      [Operation.OrderBookCancelLimitOrder]: 'Failed to cancel limit order',
+      [Operation.OrderBookCancelLimitOrders]: 'Failed to cancel limit orders',
     },
   },
   polkadotjs: {
@@ -365,6 +374,8 @@ export default {
     startTime: 'Date',
     amount: '@:amountText',
     amount2: '@:amountText 2',
+    price: 'Price',
+    side: 'Side',
     fee: 'Transaction Fee',
     total: 'Total',
     from: 'From',
