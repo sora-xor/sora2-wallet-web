@@ -9,7 +9,7 @@ import type { SubsquidHistoryElement, SubsquidQueryResponse, SubsquidConnectionQ
 
 export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryElement>>`
   query SubsquidHistoryElements(
-    $limit: Int
+    $first: Int
     $offset: Int = null
     $orderBy: [HistoryElementOrderByInput!] = timestamp_DESC
     $filter: HistoryElementWhereInput
@@ -17,7 +17,7 @@ export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryEle
     info: historyElementsConnection(first: 0, orderBy: $orderBy, where: $filter) {
       totalCount
     }
-    nodes: historyElements(limit: $limit, offset: $offset, orderBy: $orderBy, where: $filter) {
+    nodes: historyElements(limit: $first, offset: $offset, orderBy: $orderBy, where: $filter) {
       id
       timestamp
       blockHash
