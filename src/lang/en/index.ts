@@ -374,6 +374,8 @@ export default {
     startTime: 'Date',
     amount: '@:amountText',
     amount2: '@:amountText 2',
+    price: 'Price',
+    side: 'Side',
     fee: 'Transaction Fee',
     total: 'Total',
     from: 'From',
