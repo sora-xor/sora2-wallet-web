@@ -227,7 +227,9 @@ export default class WalletTransactionDetails extends Mixins(
     if (Operation.OrderBookPlaceLimitOrder) {
       const { assetAddress } = this.selectedTransaction;
 
-      if (assetAddress) return store.getters.wallet.account.whitelist[assetAddress].symbol;
+      if (assetAddress && store.getters.wallet.account.whitelist[assetAddress]) {
+        return store.getters.wallet.account.whitelist[assetAddress].symbol;
+      }
     }
 
     return symbol || '';
@@ -237,7 +239,9 @@ export default class WalletTransactionDetails extends Mixins(
     if (Operation.OrderBookPlaceLimitOrder) {
       const { asset2Address } = this.selectedTransaction;
 
-      if (asset2Address) return store.getters.wallet.account.whitelist[asset2Address].symbol;
+      if (asset2Address && store.getters.wallet.account.whitelist[asset2Address]) {
+        return store.getters.wallet.account.whitelist[asset2Address].symbol;
+      }
     }
 
     return this.selectedTransaction.symbol2 || '';

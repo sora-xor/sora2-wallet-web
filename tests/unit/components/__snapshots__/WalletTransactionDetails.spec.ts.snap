@@ -590,6 +590,10 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
        
       <!---->
        
+      <!---->
+       
+      <!---->
+       
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
