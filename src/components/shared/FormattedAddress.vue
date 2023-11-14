@@ -18,22 +18,26 @@ import CopyAddressMixin from '../mixins/CopyAddressMixin';
 export default class FormattedAddress extends Mixins(CopyAddressMixin) {
   @Prop({ default: '', type: String }) readonly value!: string;
   @Prop({ default: '', type: String }) readonly tooltipText!: string;
-  @Prop({ default: 12, type: Number }) readonly symbols!: number;
-  @Prop({ default: 0, type: Number }) readonly offset!: number;
+  /** Default visible address length, default: 12 */
+  @Prop({ default: 12, type: [Number, String] }) readonly symbols!: number | string;
+  /** Offset in px, default: 0 */
+  @Prop({ default: 0, type: [Number, String] }) readonly offset!: number | string;
+  /** Offset in symbols, default: 0 */
+  @Prop({ default: 0, type: [Number, String] }) readonly symbolsOffset!: number | string;
 
   get count(): number {
-    return this.symbols / 2;
+    return +this.symbols / 2;
   }
 
   get firstPartWidth(): string {
-    const text = this.value.slice(0, this.count);
-    const width = getTextWidth(text) - this.offset;
+    const text = this.value.slice(0, Math.round(this.count) + Number(this.symbolsOffset));
+    const width = getTextWidth(text) - Number(this.offset);
     return width + 'px';
   }
 
   get secondPart(): string {
     // TODO: Remove this dirty hack. It's made just for browser search
-    return this.value.slice(-this.count);
+    return this.value.slice(-Math.floor(this.count) + Number(this.symbolsOffset));
   }
 }
 </script>
