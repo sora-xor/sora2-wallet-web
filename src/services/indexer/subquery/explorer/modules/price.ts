@@ -20,7 +20,16 @@ function parseFiatPrice(entity: SubqueryAssetEntity): FiatPriceObject {
 }
 
 function parseStreamUpdate(entity: SubqueryStreamUpdate): FiatPriceObject {
-  return entity && entity.data ? JSON.parse(entity.data) : {};
+  const data = entity && entity.data ? JSON.parse(entity.data) : {};
+
+  return Object.entries(data).reduce((acc, [id, price]) => {
+    const priceFPNumber = formatStringNumber(price as string);
+    const isPriceFinity = priceFPNumber.isFinity();
+    if (isPriceFinity) {
+      acc[id] = priceFPNumber.toCodecString();
+    }
+    return acc;
+  }, {});
 }
 
 export class SubqueryPriceModule extends SubqueryBaseModule {

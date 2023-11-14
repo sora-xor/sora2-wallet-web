@@ -18,7 +18,16 @@ function parseApy(entity: SubqueryPoolXYKEntity): PoolApyObject {
 }
 
 function parseStreamUpdate(entity: SubqueryStreamUpdate): PoolApyObject {
-  return entity && entity.data ? JSON.parse(entity.data) : {};
+  const data = entity && entity.data ? JSON.parse(entity.data) : {};
+
+  return Object.entries(data).reduce((acc, [id, apy]) => {
+    const strategicBonusApyFPNumber = formatStringNumber(apy as string);
+    const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+    if (isStrategicBonusApyFinity) {
+      acc[id] = strategicBonusApyFPNumber.toCodecString();
+    }
+    return acc;
+  }, {});
 }
 
 export class SubqueryPoolModule extends SubqueryBaseModule {
