@@ -18,7 +18,7 @@ function parseApy(entity: SubqueryPoolXYKEntity): PoolApyObject {
 }
 
 function parseStreamUpdate(entity: SubqueryStreamUpdate): PoolApyObject {
-  const data = entity && entity.data ? JSON.parse(entity.data) : {};
+  const data = entity?.data ? JSON.parse(entity.data) : {};
 
   return Object.entries(data).reduce((acc, [id, apy]) => {
     const strategicBonusApyFPNumber = formatStringNumber(apy as string);

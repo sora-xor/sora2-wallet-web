@@ -20,7 +20,7 @@ function parseFiatPrice(entity: SubqueryAssetEntity): FiatPriceObject {
 }
 
 function parseStreamUpdate(entity: SubqueryStreamUpdate): FiatPriceObject {
-  const data = entity && entity.data ? JSON.parse(entity.data) : {};
+  const data = entity?.data ? JSON.parse(entity.data) : {};
 
   return Object.entries(data).reduce((acc, [id, price]) => {
     const priceFPNumber = formatStringNumber(price as string);
