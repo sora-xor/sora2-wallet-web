@@ -15,7 +15,7 @@ import {
   SubsquidUtilityBatchCall,
 } from '../subsquid/types';
 
-import type { PriceVariant } from '@sora-substrate/liquidity-proxy';
+import type { PriceVariant, OrderBookStatus } from '@sora-substrate/liquidity-proxy';
 import type { CodecString } from '@sora-substrate/util';
 
 // Indexer Enums
@@ -37,6 +37,13 @@ export enum OrderStatus {
 // Indexer Models
 /* eslint-disable camelcase */
 
+export type PriceSnapshot = {
+  low: string;
+  high: string;
+  open: string;
+  close: string;
+};
+
 export type AssetBaseEntity = {
   id: string;
   liquidity: CodecString;
@@ -53,12 +60,7 @@ export type AssetBaseEntity = {
 export type AssetSnapshotBaseEntity = {
   id: string;
   assetId: string;
-  priceUSD: {
-    low: string;
-    high: string;
-    open: string;
-    close: string;
-  };
+  priceUSD: PriceSnapshot;
   volume: {
     amount: string;
     amountUSD: string;
@@ -105,6 +107,78 @@ export type NetworkSnapshotEntity = {
   volumeUSD: string;
   bridgeIncomingTransactions: number;
   bridgeOutgoingTransactions: number;
+};
+
+export type OrderBookDeal = {
+  orderId: number;
+  timestamp: number;
+  isBuy: boolean;
+  amount: string;
+  price: string;
+};
+
+export type OrderBookMarketOrderBaseEntity = {
+  id: string;
+  orderBookId: string; // connection field
+  accountId: string; // connection field
+  createdAtBlock: number;
+  timestamp: number;
+  isBuy: boolean;
+  amount: string;
+  price: string;
+};
+
+export type OrderBookLimitOrderBaseEntity = OrderBookMarketOrderBaseEntity & {
+  orderId: number;
+  lifetime: number;
+  expiresAt: number;
+  amountFilled: string;
+  status: OrderStatus;
+  updatedAtBlock: number;
+};
+
+export type OrderBookBaseEntity = {
+  id: string;
+  dexId: number;
+  baseAssetId: string; // connection field
+  quoteAssetId: string; // connection field
+  status: OrderBookStatus;
+  price?: string;
+  priceChangeDay?: number;
+  volumeDayUSD?: string;
+  lastDeals?: string; // stringified JSON OrderBookDeal[]
+  updatedAtBlock: number;
+};
+
+export type OrderBookSnapshotBaseEntity = {
+  id: string;
+  orderBookId: string; // connection field
+  timestamp: number;
+  type: SnapshotTypes;
+  price: PriceSnapshot;
+  baseAssetVolume: string;
+  quoteAssetVolume: string;
+  volumeUSD: string;
+};
+
+// with connection
+export type OrderBookEntity = OrderBookBaseEntity & {
+  baseAsset: AssetBaseEntity;
+  quoteAsset: AssetBaseEntity;
+  limitOrders: OrderBookLimitOrderBaseEntity[];
+  marketOrders: OrderBookMarketOrderBaseEntity[];
+};
+// with connection
+export type OrderBookSnapshotEntity = OrderBookSnapshotBaseEntity & {
+  orderBook: OrderBookBaseEntity;
+};
+// with connection
+export type OrderBookMarketOrderEntity = OrderBookMarketOrderBaseEntity & {
+  orderBook: OrderBookBaseEntity;
+};
+// with connection
+export type OrderBookLimitOrderEntity = OrderBookLimitOrderBaseEntity & {
+  orderBook: OrderBookBaseEntity;
 };
 
 export type ReferrerRewardEntity = {
