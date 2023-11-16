@@ -68,7 +68,7 @@ export default class SubqueryExplorer extends BaseExplorer {
     variables: AnyVariables = {},
     parse: (entity: T) => R,
     handler: (entity: R) => void,
-    errorHandler: () => void
+    errorHandler?: (error: any) => void
   ): VoidFunction {
     const createSubscription = this.subscribe(subscription, variables);
 
@@ -81,7 +81,7 @@ export default class SubqueryExplorer extends BaseExplorer {
           throw new Error('Subscription payload data is undefined');
         }
       } catch (error) {
-        errorHandler();
+        errorHandler?.(error);
       }
     });
   }

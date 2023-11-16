@@ -42,7 +42,10 @@ export class SubqueryPoolModule extends SubqueryBaseModule {
     return result.reduce((acc, item) => ({ ...acc, ...item }), {});
   }
 
-  public createPoolsApySubscription(handler: (entity: PoolApyObject) => void, errorHandler: () => void): VoidFunction {
+  public createPoolsApySubscription(
+    handler: (entity: PoolApyObject) => void,
+    errorHandler: (error: any) => void
+  ): VoidFunction {
     return this.root.createEntitySubscription(PoolsApySubscription, {}, parseStreamUpdate, handler, errorHandler);
   }
 }

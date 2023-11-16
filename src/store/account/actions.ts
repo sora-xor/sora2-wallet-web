@@ -63,12 +63,8 @@ function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): v
   commit.resetFiatPriceSubscription();
   const indexer = getCurrentIndexer();
   const subscription = indexer.services.explorer.price.createFiatPriceSubscription(
-    (payload?: FiatPriceObject) => {
-      commit.updateFiatPriceObject(payload);
-    },
-    () => {
-      commit.clearFiatPriceObject();
-    }
+    commit.updateFiatPriceObject,
+    commit.clearFiatPriceObject
   );
   commit.setFiatPriceSubscription(subscription);
 }
