@@ -90,7 +90,7 @@ export default class SubsquidExplorer extends BaseExplorer {
     variables: AnyVariables = {},
     parse: (entity: T) => R,
     handler: (entity: R) => void,
-    errorHandler: () => void
+    errorHandler?: (error: any) => void
   ): VoidFunction {
     const createSubscription = this.subscribe(subscription, variables);
 
@@ -103,7 +103,7 @@ export default class SubsquidExplorer extends BaseExplorer {
           throw new Error('Subscription payload data is undefined');
         }
       } catch (error) {
-        errorHandler();
+        errorHandler?.(error);
       }
     });
   }

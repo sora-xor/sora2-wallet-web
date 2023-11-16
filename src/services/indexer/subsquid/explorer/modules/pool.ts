@@ -29,7 +29,10 @@ export class SubsquidPoolModule extends BaseModule {
     return result.reduce((acc, item) => ({ ...acc, ...item }), {});
   }
 
-  public createPoolsApySubscription(handler: (entity: PoolApyObject) => void, errorHandler: () => void): VoidFunction {
+  public createPoolsApySubscription(
+    handler: (entity: PoolApyObject) => void,
+    errorHandler: (error: any) => void
+  ): VoidFunction {
     return this.root.createEntitySubscription(PoolsApySubscription, {}, parseApy, handler, errorHandler);
   }
 }
