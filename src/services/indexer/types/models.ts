@@ -109,7 +109,7 @@ export type NetworkSnapshotEntity = {
   bridgeOutgoingTransactions: number;
 };
 
-export type OrderBookDeal = {
+export type OrderBookDealEntity = {
   orderId: number;
   timestamp: number;
   isBuy: boolean;
@@ -146,7 +146,7 @@ export type OrderBookBaseEntity = {
   price?: string;
   priceChangeDay?: number;
   volumeDayUSD?: string;
-  lastDeals?: string; // stringified JSON OrderBookDeal[]
+  lastDeals?: string; // stringified JSON OrderBookDealEntity[]
   updatedAtBlock: number;
 };
 
