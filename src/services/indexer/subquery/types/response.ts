@@ -12,6 +12,8 @@ export type SubquerySubscriptionPayload<T> = {
 };
 /* eslint-enable camelcase */
 
-export type SubqueryConnectionQueryResponse<T> = {
-  data: ConnectionQueryResponseData<T>;
+export type SubqueryQueryResponse<T> = {
+  data: T;
 };
+
+export type SubqueryConnectionQueryResponse<T> = SubqueryQueryResponse<ConnectionQueryResponseData<T>>;

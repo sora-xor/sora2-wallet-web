@@ -4,7 +4,7 @@ import { PoolsApySubscription } from '../../subscriptions/fiatPriceAndApy';
 
 import { SubqueryBaseModule } from './_base';
 
-import type { SubqueryPoolXYKEntity, SubqueryPoolXYKEntityMutation, PoolApyObject } from '../../types';
+import type { SubqueryPoolXYKEntity, SubqueryStreamUpdate, PoolApyObject } from '../../types';
 
 function parseApy(entity: SubqueryPoolXYKEntity): PoolApyObject {
   const acc = {};
@@ -17,15 +17,17 @@ function parseApy(entity: SubqueryPoolXYKEntity): PoolApyObject {
   return acc;
 }
 
-function parseApyUpdate(entity: SubqueryPoolXYKEntityMutation): PoolApyObject {
-  const acc = {};
-  const id = entity.id;
-  const strategicBonusApyFPNumber = formatStringNumber(entity.strategic_bonus_apy);
-  const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
-  if (isStrategicBonusApyFinity) {
-    acc[id] = strategicBonusApyFPNumber.toCodecString();
-  }
-  return acc;
+function parseStreamUpdate(entity: SubqueryStreamUpdate): PoolApyObject {
+  const data = entity?.data ? JSON.parse(entity.data) : {};
+
+  return Object.entries(data).reduce((acc, [id, apy]) => {
+    const strategicBonusApyFPNumber = formatStringNumber(apy as string);
+    const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+    if (isStrategicBonusApyFinity) {
+      acc[id] = strategicBonusApyFPNumber.toCodecString();
+    }
+    return acc;
+  }, {});
 }
 
 export class SubqueryPoolModule extends SubqueryBaseModule {
@@ -40,7 +42,10 @@ export class SubqueryPoolModule extends SubqueryBaseModule {
     return result.reduce((acc, item) => ({ ...acc, ...item }), {});
   }
 
-  public createPoolsApySubscription(handler: (entity: PoolApyObject) => void, errorHandler: () => void): VoidFunction {
-    return this.root.createEntitySubscription(PoolsApySubscription, {}, parseApyUpdate, handler, errorHandler);
+  public createPoolsApySubscription(
+    handler: (entity: PoolApyObject) => void,
+    errorHandler: (error: any) => void
+  ): VoidFunction {
+    return this.root.createEntitySubscription(PoolsApySubscription, {}, parseStreamUpdate, handler, errorHandler);
   }
 }

@@ -11,6 +11,7 @@ export enum ModuleNames {
   VestedRewards = 'vestedRewards',
   PswapDistribution = 'pswapDistribution',
   DemeterFarming = 'demeterFarmingPlatform',
+  OrderBook = 'orderBook',
 }
 
 export enum ModuleMethods {
@@ -36,4 +37,7 @@ export enum ModuleMethods {
   DemeterFarmingDeposit = 'deposit',
   DemeterFarmingWithdraw = 'withdraw',
   DemeterFarmingGetRewards = 'getRewards',
+  OrderBookPlaceLimitOrder = 'placeLimitOrder',
+  OrderBookCancelLimitOrder = 'cancelLimitOrder',
+  OrderBookCancelLimitOrders = 'cancelLimitOrdersBatch',
 }
