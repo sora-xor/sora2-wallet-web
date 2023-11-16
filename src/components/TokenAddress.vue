@@ -4,9 +4,8 @@
     <div class="token-address__value">
       (<formatted-address
         :value="tokenAddress"
-        :symbols="symbols"
         :tooltip-text="t('assets.assetId')"
-        v-bind="$attrs"
+        v-bind="{ ...$attrs, symbols, symbolsOffset }"
       />)
     </div>
   </div>
@@ -31,7 +30,10 @@ export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMi
   @Prop({ default: '', type: String }) readonly externalAddress!: string;
   @Prop({ default: false, type: Boolean }) readonly external!: boolean;
   @Prop({ default: true, type: Boolean }) readonly showName!: boolean;
-  @Prop({ default: 10, type: Number }) readonly symbols!: number;
+  /** Default visible token length, default: 11 */
+  @Prop({ default: 11, type: [Number, String] }) readonly symbols!: number | string;
+  /** Offset in symbols, default: 2 */
+  @Prop({ default: 2, type: [Number, String] }) readonly symbolsOffset!: number | string;
 
   get tokenName(): string {
     return this.name || this.symbol;

@@ -48,6 +48,7 @@ const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
 // INDEXER
 async function getFiatPriceObjectUsingIndexer(context: ActionContext<any, any>): Promise<void> {
   const { commit } = accountActionContext(context);
+  commit.resetFiatPriceSubscription();
   const indexer = getCurrentIndexer();
   const data = await indexer.services.explorer.price.getFiatPriceObject();
 
@@ -63,12 +64,8 @@ function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): v
   commit.resetFiatPriceSubscription();
   const indexer = getCurrentIndexer();
   const subscription = indexer.services.explorer.price.createFiatPriceSubscription(
-    (payload?: FiatPriceObject) => {
-      commit.updateFiatPriceObject(payload);
-    },
-    () => {
-      commit.clearFiatPriceObject();
-    }
+    commit.updateFiatPriceObject,
+    commit.clearFiatPriceObject
   );
   commit.setFiatPriceSubscription(subscription);
 }

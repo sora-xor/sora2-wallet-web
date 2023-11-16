@@ -253,6 +253,31 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.DemeterFarmingGetRewards,
     },
   },
+  // ORDER BOOK
+  [Operation.OrderBookPlaceLimitOrder]: {
+    module: {
+      equalTo: ModuleNames.OrderBook,
+    },
+    method: {
+      equalTo: ModuleMethods.OrderBookPlaceLimitOrder,
+    },
+  },
+  [Operation.OrderBookCancelLimitOrder]: {
+    module: {
+      equalTo: ModuleNames.OrderBook,
+    },
+    method: {
+      equalTo: ModuleMethods.OrderBookCancelLimitOrders,
+    },
+  },
+  [Operation.OrderBookCancelLimitOrders]: {
+    module: {
+      equalTo: ModuleNames.OrderBook,
+    },
+    method: {
+      equalTo: ModuleMethods.OrderBookCancelLimitOrders,
+    },
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
@@ -266,7 +291,7 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
 };
 
 const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
-  const attributes = ['assetId', 'baseAssetId', 'targetAssetId'];
+  const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
 
   const criterias = attributes.reduce((result: Array<DataCriteria>, attr) => {
     result.push({

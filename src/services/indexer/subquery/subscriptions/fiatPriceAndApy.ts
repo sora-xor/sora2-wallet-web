@@ -1,10 +1,10 @@
 import { gql } from '@urql/core';
 
-import type { SubquerySubscriptionPayload, SubqueryAssetEntity, SubqueryPoolXYKEntity } from '../types';
+import type { SubquerySubscriptionPayload, SubqueryStreamUpdate } from '../types';
 
-export const FiatPriceSubscription = gql<SubquerySubscriptionPayload<SubqueryAssetEntity>>`
+export const FiatPriceSubscription = gql<SubquerySubscriptionPayload<SubqueryStreamUpdate>>`
   subscription SubqueryFiatPriceSubscription {
-    payload: assets(mutation: [UPDATE, INSERT]) {
+    payload: updatesStreams(id: "price", mutation: [UPDATE, INSERT]) {
       id
       mutation_type
       _entity
@@ -12,9 +12,9 @@ export const FiatPriceSubscription = gql<SubquerySubscriptionPayload<SubqueryAss
   }
 `;
 
-export const PoolsApySubscription = gql<SubquerySubscriptionPayload<SubqueryPoolXYKEntity>>`
+export const PoolsApySubscription = gql<SubquerySubscriptionPayload<SubqueryStreamUpdate>>`
   subscription SubqueryPoolsApySubscription {
-    payload: poolXYKs(mutation: [UPDATE, INSERT]) {
+    payload: updatesStreams(id: "apy", mutation: [UPDATE, INSERT]) {
       id
       mutation_type
       _entity

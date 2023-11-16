@@ -48,6 +48,12 @@ export type SubqueryHistoryElement = HistoryElementBase & {
   data: SubqueryHistoryElementData;
 };
 
+export type SubqueryStreamUpdate = {
+  id: string;
+  block: number;
+  data: string; // stringified JSON
+};
+
 export type SubqueryAccountEntityMutation = {
   // subscription payload fields what we need
   id: string;
