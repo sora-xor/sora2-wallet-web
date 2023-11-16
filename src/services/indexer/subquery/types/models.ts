@@ -59,16 +59,4 @@ export type SubqueryAccountEntityMutation = {
   id: string;
   latest_history_element_id: string;
 };
-
-export type SubqueryAssetEntityMutation = {
-  // subscription payload fields what we need
-  id: string;
-  price_u_s_d?: Nullable<string>;
-};
-
-export type SubqueryPoolXYKEntityMutation = {
-  // subscription payload fields what we need
-  id: string;
-  strategic_bonus_apy?: Nullable<string>;
-};
 /* eslint-enable camelcase */

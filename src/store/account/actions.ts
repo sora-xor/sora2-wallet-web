@@ -48,7 +48,6 @@ const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
 // INDEXER
 async function getFiatPriceObjectUsingIndexer(context: ActionContext<any, any>): Promise<void> {
   const { commit } = accountActionContext(context);
-  commit.resetFiatPriceSubscription();
   const indexer = getCurrentIndexer();
   const data = await indexer.services.explorer.price.getFiatPriceObject();
 
