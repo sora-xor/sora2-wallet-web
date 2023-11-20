@@ -34,6 +34,11 @@ export enum OrderStatus {
   Filled = 'Filled',
 }
 
+export enum OrderType {
+  Limit = 'Limit',
+  Market = 'Market',
+}
+
 // Indexer Models
 /* eslint-disable camelcase */
 
@@ -117,8 +122,10 @@ export type OrderBookDealEntity = {
   price: string;
 };
 
-export type OrderBookMarketOrderBaseEntity = {
+export type OrderBookOrderBaseEntity = {
   id: string;
+  type: OrderType;
+  orderId: Nullable<number>;
   orderBookId: string; // connection field
   accountId: string; // connection field
   createdAtBlock: number;
@@ -126,10 +133,6 @@ export type OrderBookMarketOrderBaseEntity = {
   isBuy: boolean;
   amount: string;
   price: string;
-};
-
-export type OrderBookLimitOrderBaseEntity = OrderBookMarketOrderBaseEntity & {
-  orderId: number;
   lifetime: number;
   expiresAt: number;
   amountFilled: string;
@@ -165,19 +168,14 @@ export type OrderBookSnapshotBaseEntity = {
 export type OrderBookEntity = OrderBookBaseEntity & {
   baseAsset: AssetBaseEntity;
   quoteAsset: AssetBaseEntity;
-  limitOrders: OrderBookLimitOrderBaseEntity[];
-  marketOrders: OrderBookMarketOrderBaseEntity[];
+  orders: OrderBookOrderBaseEntity[];
 };
 // with connection
 export type OrderBookSnapshotEntity = OrderBookSnapshotBaseEntity & {
   orderBook: OrderBookBaseEntity;
 };
 // with connection
-export type OrderBookMarketOrderEntity = OrderBookMarketOrderBaseEntity & {
-  orderBook: OrderBookBaseEntity;
-};
-// with connection
-export type OrderBookLimitOrderEntity = OrderBookLimitOrderBaseEntity & {
+export type OrderBookOrderEntity = OrderBookOrderBaseEntity & {
   orderBook: OrderBookBaseEntity;
 };
 
