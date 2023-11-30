@@ -86,6 +86,15 @@ export const MOCK_ASSETS: Array<Asset> = [
   },
 ];
 
+export const MOCK_ASSETS_TABLE = {
+  '0x0200000000000000000000000000000000000000000000000000000000000000': {
+    address: '0x0200000000000000000000000000000000000000000000000000000000000000',
+    symbol: KnownSymbols.XOR,
+    name: 'SORA',
+    decimals: FPNumber.DEFAULT_PRECISION,
+  },
+};
+
 export const MOCK_HISTORY: Array<History> = [
   {
     id: '1',
