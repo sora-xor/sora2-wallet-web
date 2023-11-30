@@ -129,7 +129,7 @@ import TransactionHashView from './TransactionHashView.vue';
 import AdarTxDetails from './WalletAdarTxDetails.vue';
 import WalletBase from './WalletBase.vue';
 
-import type { PolkadotJsAccount } from '../types/common';
+import type { PolkadotJsAccount, AssetsTable } from '../types/common';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { EthHistory } from '@sora-substrate/util/build/bridgeProxy/eth/types';
 
@@ -151,6 +151,7 @@ export default class WalletTransactionDetails extends Mixins(
 
   @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
 
+  @getter.account.assetsDataTable private assetsDataTable!: AssetsTable;
   @getter.account.account private account!: PolkadotJsAccount;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem; // It shouldn't be empty
 
@@ -226,9 +227,10 @@ export default class WalletTransactionDetails extends Mixins(
 
     if (Operation.OrderBookPlaceLimitOrder) {
       const { assetAddress } = this.selectedTransaction;
+      const asset = assetAddress ? this.assetsDataTable[assetAddress] : null;
 
-      if (assetAddress && store.getters.wallet.account.whitelist[assetAddress]) {
-        return store.getters.wallet.account.whitelist[assetAddress].symbol;
+      if (asset) {
+        return asset.symbol;
       }
     }
 
@@ -238,9 +240,10 @@ export default class WalletTransactionDetails extends Mixins(
   get transactionSymbol2(): string {
     if (Operation.OrderBookPlaceLimitOrder) {
       const { asset2Address } = this.selectedTransaction;
+      const asset = asset2Address ? this.assetsDataTable[asset2Address] : null;
 
-      if (asset2Address && store.getters.wallet.account.whitelist[asset2Address]) {
-        return store.getters.wallet.account.whitelist[asset2Address].symbol;
+      if (asset) {
+        return asset.symbol;
       }
     }
 

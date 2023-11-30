@@ -116,8 +116,9 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
       }
     }
     if (orderBookOperations.includes(value.type)) {
-      params.symbol = store.getters.wallet.account.whitelist[params.assetAddress].symbol;
-      params.symbol2 = store.getters.wallet.account.whitelist[params.asset2Address].symbol;
+      const findAsset = (address: string) => store.getters.wallet.account.assetsDataTable[address];
+      params.symbol = findAsset(params.assetAddress)?.symbol ?? '';
+      params.symbol2 = findAsset(params.asset2Address)?.symbol ?? '';
       params.side = params.side?.toUpperCase();
     }
     let status = value.status as TransactionStatus;

@@ -1,7 +1,7 @@
 import WalletTransactionDetails from '@/components/WalletTransactionDetails.vue';
 
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
-import { MOCK_ACCOUNTS, MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock';
+import { MOCK_ACCOUNTS, MOCK_ASSETS_TABLE, MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } from '../../utils/mock';
 
 import type { HistoryItem } from '@sora-substrate/util';
 
@@ -21,6 +21,7 @@ const createStore = (tx: HistoryItem) =>
       }),
       getters: {
         account: () => MOCK_ACCOUNTS[0],
+        assetsDataTable: () => MOCK_ASSETS_TABLE,
       },
     },
     transactions: {

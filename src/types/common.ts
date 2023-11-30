@@ -1,5 +1,5 @@
 import type { AppWallet } from '../consts';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { Asset, AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 export type { KeyringPair$Json } from '@polkadot/keyring/types';
 
@@ -51,9 +51,9 @@ export type ApiKeysObject = {
   [key: string]: string;
 };
 
-export type AccountAssetsTable = {
-  [key: string]: AccountAsset;
-};
+export type AssetsTable = Record<string, Asset>;
+
+export type AccountAssetsTable = Record<string, AccountAsset>;
 
 export enum ConnectionStatus {
   Loading = 'loading',

@@ -153,11 +153,8 @@ const getTransactionStatus = (tx: SubqueryHistoryElement): string => {
 
 const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
   try {
-    if (address in store.getters.wallet.account.whitelist) {
-      const whitelistData = omit(['icon'], store.getters.wallet.account.whitelist[address]);
-      return { ...whitelistData, address };
-    }
-    return await api.assets.getAssetInfo(address);
+    const asset = store.getters.wallet.account.assetsDataTable[address];
+    return asset ?? (await api.assets.getAssetInfo(address));
   } catch (error) {
     console.error(error);
     return null;
