@@ -49,8 +49,11 @@ export class AlertsApiService {
       if (alert.type === 'drop') {
         if (FPNumber.lte(currentPrice, desiredPrice)) {
           const asset = store.getters.wallet.account.whitelist[tokenAddress];
-          this.pushNotification(asset as WhitelistArrayItem, `Token price dropped to $${desiredPrice}`);
-          alert.once ? this.removeAlert(position) : this.setAlertAsNotified(position, true);
+
+          if (asset) {
+            this.pushNotification(asset as WhitelistArrayItem, `Token price dropped to $${desiredPrice}`);
+            alert.once ? this.removeAlert(position) : this.setAlertAsNotified(position, true);
+          }
         }
 
         return;
@@ -59,8 +62,11 @@ export class AlertsApiService {
       if (alert.type === 'raise') {
         if (FPNumber.gte(currentPrice, desiredPrice)) {
           const asset = store.getters.wallet.account.whitelist[tokenAddress];
-          this.pushNotification(asset as WhitelistArrayItem, `Token price raised to $${desiredPrice}`);
-          alert.once ? this.removeAlert(position) : this.setAlertAsNotified(position, true);
+
+          if (asset) {
+            this.pushNotification(asset as WhitelistArrayItem, `Token price raised to $${desiredPrice}`);
+            alert.once ? this.removeAlert(position) : this.setAlertAsNotified(position, true);
+          }
         }
       }
     });

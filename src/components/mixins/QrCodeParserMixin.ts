@@ -2,12 +2,13 @@ import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { RouteNames } from '../../consts';
-import { state, mutation } from '../../store/decorators';
+import { getter, mutation } from '../../store/decorators';
 
 import NotificationMixin from './NotificationMixin';
 
 import type { Route } from '../../store/router/types';
-import type { Asset, AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AssetsTable } from '../../types/common';
+import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
 
 const reject = (message: string) => {
   throw new Error(`[QR Code]: ${message}`);
@@ -15,7 +16,7 @@ const reject = (message: string) => {
 
 @Component
 export default class QrCodeParserMixin extends Mixins(NotificationMixin) {
-  @state.account.assets assets!: Array<Asset>;
+  @getter.account.assetsDataTable assetsDataTable!: AssetsTable;
 
   @mutation.router.navigate navigate!: (options: Route) => Promise<void>;
 
@@ -23,14 +24,14 @@ export default class QrCodeParserMixin extends Mixins(NotificationMixin) {
     try {
       if (!value) reject('QR Code not provided');
 
-      const [chain, address, publicKey, accountName, assetId] = (value as string).split(':');
+      const [chain, address, publicKey, _accountName, assetId] = (value as string).split(':');
 
       if (chain !== 'substrate') reject(`Unsupported chain: ${chain}`);
       if (!address) reject(`Account address not provided: ${address}`);
       if (!publicKey) reject(`Account public key not provided: ${publicKey}`);
       if (!assetId) reject(`Asset ID not provided: ${assetId}`);
 
-      const asset = this.assets.find((asset) => asset.address === assetId);
+      const asset = this.assetsDataTable[assetId];
 
       if (!asset) reject(`Unsupported asset: ${assetId}`);
 
