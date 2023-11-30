@@ -9,11 +9,11 @@ import { isInternalWallet } from '../../consts/wallets';
 import { accountGetterContext } from './../account';
 
 import type { AccountState } from './types';
-import type { AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
-import type { Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { AssetsTable, AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
+import type { Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 
-const toHashTable = (list: Array<any>, key: string) => {
+const toHashTable = <T extends Asset>(list: Readonly<Array<T>>, key: string) => {
   return list.reduce((result, item) => {
     if (!(key in item)) return result;
 
@@ -59,6 +59,10 @@ const getters = defineGetters<AccountState>()({
     const wallet = state.availableWallets.find((wallet) => wallet.extensionName === state.selectedWallet);
 
     return wallet ? wallet.title : state.selectedWallet;
+  },
+  assetsDataTable(...args): AssetsTable {
+    const { state } = accountGetterContext(args);
+    return toHashTable(state.assets, 'address');
   },
   accountAssetsAddressTable(...args): AccountAssetsTable {
     const { state } = accountGetterContext(args);
