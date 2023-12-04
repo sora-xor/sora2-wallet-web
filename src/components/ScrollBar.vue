@@ -29,7 +29,7 @@ export default class Scrollbar extends Vue {
 
   cursorDown = false;
 
-  get style(): object {
+  get style() {
     return {
       transform: `translate${bar.axis}(${this.move}%)`,
       height: this.size < 100 ? this.size + '%' : '',
