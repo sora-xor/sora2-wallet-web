@@ -151,6 +151,17 @@ const getTransactionStatus = (tx: SubqueryHistoryElement): string => {
   return TransactionStatus.Error;
 };
 
+const getTransactionNetworkFee = (tx: SubqueryHistoryElement): string => {
+  const fromCodec = FPNumber.fromCodecValue(tx.networkFee);
+  const minFee = new FPNumber('0.0007');
+
+  if (FPNumber.isLessThan(fromCodec, minFee)) {
+    return new FPNumber(tx.networkFee).toCodecString();
+  } else {
+    return tx.networkFee;
+  }
+};
+
 const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
   try {
     const asset = store.getters.wallet.account.assetsDataTable[address];
@@ -238,7 +249,7 @@ export default class SubqueryDataParser {
       endTime: timestamp,
       startTime: timestamp,
       from: transaction.address,
-      soraNetworkFee: transaction.networkFee,
+      soraNetworkFee: getTransactionNetworkFee(transaction),
       status: getTransactionStatus(transaction),
     };
 

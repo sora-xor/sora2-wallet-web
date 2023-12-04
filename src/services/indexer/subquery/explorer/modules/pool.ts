@@ -1,15 +1,31 @@
 import { formatStringNumber } from '../../../../../util';
 import { ApyQuery } from '../../queries/fiatPriceAndApy';
-import { PoolsApySubscription } from '../../subscriptions/fiatPriceAndApy';
+import { PoolsXYKApySubscription, PoolsStreamApySubscription } from '../../subscriptions/fiatPriceAndApy';
 
 import { SubqueryBaseModule } from './_base';
 
-import type { SubqueryPoolXYKEntity, SubqueryStreamUpdate, PoolApyObject } from '../../types';
+import type {
+  SubqueryPoolXYKEntity,
+  SubqueryPoolXYKEntityMutation,
+  SubqueryStreamUpdate,
+  PoolApyObject,
+} from '../../types';
 
 function parseApy(entity: SubqueryPoolXYKEntity): PoolApyObject {
   const acc = {};
   const id = entity.id;
   const strategicBonusApyFPNumber = formatStringNumber(entity.strategicBonusApy);
+  const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+  if (isStrategicBonusApyFinity) {
+    acc[id] = strategicBonusApyFPNumber.toCodecString();
+  }
+  return acc;
+}
+
+function parseApyUpdate(entity: SubqueryPoolXYKEntityMutation): PoolApyObject {
+  const acc = {};
+  const id = entity.id;
+  const strategicBonusApyFPNumber = formatStringNumber(entity.strategic_bonus_apy);
   const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
   if (isStrategicBonusApyFinity) {
     acc[id] = strategicBonusApyFPNumber.toCodecString();
@@ -46,6 +62,24 @@ export class SubqueryPoolModule extends SubqueryBaseModule {
     handler: (entity: PoolApyObject) => void,
     errorHandler: (error: any) => void
   ): VoidFunction {
-    return this.root.createEntitySubscription(PoolsApySubscription, {}, parseStreamUpdate, handler, errorHandler);
+    let subscription!: VoidFunction;
+
+    subscription = this.root.createEntitySubscription(
+      PoolsStreamApySubscription,
+      {},
+      parseStreamUpdate,
+      handler,
+      () => {
+        subscription = this.root.createEntitySubscription(
+          PoolsXYKApySubscription,
+          {},
+          parseApyUpdate,
+          handler,
+          errorHandler
+        );
+      }
+    );
+
+    return subscription;
   }
 }
