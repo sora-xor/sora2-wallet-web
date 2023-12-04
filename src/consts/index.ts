@@ -7,7 +7,7 @@ export const syntheticAssetRegexp = new RegExp(`^0[xX]03[0-9a-fA-F]+|${XSTUSD.ad
 export const HiddenValue = '******';
 
 export const BLOCK_PRODUCE_TIME = 6_000;
-export const MAX_ALERTS_NUMBER = 5;
+export const MAX_ALERTS_NUMBER = 10;
 
 export enum IndexerType {
   SUBQUERY = 'subquery',
