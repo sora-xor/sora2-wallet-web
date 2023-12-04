@@ -7,8 +7,8 @@ import type {
   SubqueryPoolXYKEntityMutation,
 } from '../types';
 
-export const FiatPriceSubscription = gql<SubquerySubscriptionPayload<SubqueryAssetEntityMutation>>`
-  subscription SubqueryFiatPriceSubscription {
+export const FiatAssetsPriceSubscription = gql<SubquerySubscriptionPayload<SubqueryAssetEntityMutation>>`
+  subscription SubqueryFiatAssetsPriceSubscription {
     payload: assets(mutation: [UPDATE, INSERT]) {
       id
       mutation_type
@@ -17,8 +17,8 @@ export const FiatPriceSubscription = gql<SubquerySubscriptionPayload<SubqueryAss
   }
 `;
 
-export const PoolsApySubscription = gql<SubquerySubscriptionPayload<SubqueryPoolXYKEntityMutation>>`
-  subscription SubqueryPoolsApySubscription {
+export const PoolsXYKApySubscription = gql<SubquerySubscriptionPayload<SubqueryPoolXYKEntityMutation>>`
+  subscription SubqueryPoolsXYKApySubscription {
     payload: poolXYKs(mutation: [UPDATE, INSERT]) {
       id
       mutation_type
@@ -27,22 +27,22 @@ export const PoolsApySubscription = gql<SubquerySubscriptionPayload<SubqueryPool
   }
 `;
 
-// export const FiatPriceSubscription = gql<SubquerySubscriptionPayload<SubqueryStreamUpdate>>`
-//   subscription SubqueryFiatPriceSubscription {
-//     payload: updatesStreams(id: "price", mutation: [UPDATE, INSERT]) {
-//       id
-//       mutation_type
-//       _entity
-//     }
-//   }
-// `;
+export const FiatStreamPriceSubscription = gql<SubquerySubscriptionPayload<SubqueryStreamUpdate>>`
+  subscription SubqueryFiatStreamPriceSubscription {
+    payload: updatesStreams(id: "price", mutation: [UPDATE, INSERT]) {
+      id
+      mutation_type
+      _entity
+    }
+  }
+`;
 
-// export const PoolsApySubscription = gql<SubquerySubscriptionPayload<SubqueryStreamUpdate>>`
-//   subscription SubqueryPoolsApySubscription {
-//     payload: updatesStreams(id: "apy", mutation: [UPDATE, INSERT]) {
-//       id
-//       mutation_type
-//       _entity
-//     }
-//   }
-// `;
+export const PoolsStreamApySubscription = gql<SubquerySubscriptionPayload<SubqueryStreamUpdate>>`
+  subscription SubqueryPoolsApySubscription {
+    payload: updatesStreams(id: "apy", mutation: [UPDATE, INSERT]) {
+      id
+      mutation_type
+      _entity
+    }
+  }
+`;

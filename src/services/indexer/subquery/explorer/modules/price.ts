@@ -1,7 +1,7 @@
 import { formatStringNumber } from '../../../../../util';
 import { FiatPriceQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
-import { FiatPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
+import { FiatAssetsPriceSubscription, FiatStreamPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
 import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
 import { SubqueryBaseModule } from './_base';
@@ -35,19 +35,18 @@ function parseFiatPriceUpdate(entity: SubqueryAssetEntityMutation): FiatPriceObj
   return acc;
 }
 
-// [TODO] use it later
-// function parseStreamUpdate(entity: SubqueryStreamUpdate): FiatPriceObject {
-//   const data = entity?.data ? JSON.parse(entity.data) : {};
+function parseStreamUpdate(entity: SubqueryStreamUpdate): FiatPriceObject {
+  const data = entity?.data ? JSON.parse(entity.data) : {};
 
-//   return Object.entries(data).reduce((acc, [id, price]) => {
-//     const priceFPNumber = formatStringNumber(price as string);
-//     const isPriceFinity = priceFPNumber.isFinity();
-//     if (isPriceFinity) {
-//       acc[id] = priceFPNumber.toCodecString();
-//     }
-//     return acc;
-//   }, {});
-// }
+  return Object.entries(data).reduce((acc, [id, price]) => {
+    const priceFPNumber = formatStringNumber(price as string);
+    const isPriceFinity = priceFPNumber.isFinity();
+    if (isPriceFinity) {
+      acc[id] = priceFPNumber.toCodecString();
+    }
+    return acc;
+  }, {});
+}
 
 export class SubqueryPriceModule extends SubqueryBaseModule {
   /**
@@ -65,7 +64,25 @@ export class SubqueryPriceModule extends SubqueryBaseModule {
     handler: (entity: FiatPriceObject) => void,
     errorHandler: () => void
   ): VoidFunction {
-    return this.root.createEntitySubscription(FiatPriceSubscription, {}, parseFiatPriceUpdate, handler, errorHandler);
+    let subscription!: VoidFunction;
+
+    subscription = this.root.createEntitySubscription(
+      FiatStreamPriceSubscription,
+      {},
+      parseStreamUpdate,
+      handler,
+      () => {
+        subscription = this.root.createEntitySubscription(
+          FiatAssetsPriceSubscription,
+          {},
+          parseFiatPriceUpdate,
+          handler,
+          errorHandler
+        );
+      }
+    );
+
+    return subscription;
   }
 
   /**

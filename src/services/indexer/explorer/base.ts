@@ -73,7 +73,7 @@ export default class BaseExplorer {
       const { unsubscribe } = pipe(
         this.client.subscription(subscription, variables),
         subscribe((payload) => {
-          this.handlePayloadStatus(payload);
+          // this.handlePayloadStatus(payload);
           handler(payload);
         })
       );

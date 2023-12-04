@@ -1,6 +1,6 @@
 import { formatStringNumber } from '../../../../../util';
 import { ApyQuery } from '../../queries/fiatPriceAndApy';
-import { PoolsApySubscription } from '../../subscriptions/fiatPriceAndApy';
+import { PoolsXYKApySubscription, PoolsStreamApySubscription } from '../../subscriptions/fiatPriceAndApy';
 
 import { SubqueryBaseModule } from './_base';
 
@@ -33,18 +33,18 @@ function parseApyUpdate(entity: SubqueryPoolXYKEntityMutation): PoolApyObject {
   return acc;
 }
 
-// function parseStreamUpdate(entity: SubqueryStreamUpdate): PoolApyObject {
-//   const data = entity?.data ? JSON.parse(entity.data) : {};
+function parseStreamUpdate(entity: SubqueryStreamUpdate): PoolApyObject {
+  const data = entity?.data ? JSON.parse(entity.data) : {};
 
-//   return Object.entries(data).reduce((acc, [id, apy]) => {
-//     const strategicBonusApyFPNumber = formatStringNumber(apy as string);
-//     const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
-//     if (isStrategicBonusApyFinity) {
-//       acc[id] = strategicBonusApyFPNumber.toCodecString();
-//     }
-//     return acc;
-//   }, {});
-// }
+  return Object.entries(data).reduce((acc, [id, apy]) => {
+    const strategicBonusApyFPNumber = formatStringNumber(apy as string);
+    const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+    if (isStrategicBonusApyFinity) {
+      acc[id] = strategicBonusApyFPNumber.toCodecString();
+    }
+    return acc;
+  }, {});
+}
 
 export class SubqueryPoolModule extends SubqueryBaseModule {
   /**
@@ -62,6 +62,24 @@ export class SubqueryPoolModule extends SubqueryBaseModule {
     handler: (entity: PoolApyObject) => void,
     errorHandler: (error: any) => void
   ): VoidFunction {
-    return this.root.createEntitySubscription(PoolsApySubscription, {}, parseApyUpdate, handler, errorHandler);
+    let subscription!: VoidFunction;
+
+    subscription = this.root.createEntitySubscription(
+      PoolsStreamApySubscription,
+      {},
+      parseStreamUpdate,
+      handler,
+      () => {
+        subscription = this.root.createEntitySubscription(
+          PoolsXYKApySubscription,
+          {},
+          parseApyUpdate,
+          handler,
+          errorHandler
+        );
+      }
+    );
+
+    return subscription;
   }
 }
