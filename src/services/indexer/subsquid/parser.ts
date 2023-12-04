@@ -223,6 +223,7 @@ export default class SubsquidDataParser {
       endTime: timestamp,
       startTime: timestamp,
       from: transaction.address,
+      // soraNetworkFee: transaction.networkFee, // CodecString
       soraNetworkFee: new FPNumber(transaction.networkFee).toCodecString(),
       status: getTransactionStatus(transaction),
     };

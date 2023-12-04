@@ -238,7 +238,8 @@ export default class SubqueryDataParser {
       endTime: timestamp,
       startTime: timestamp,
       from: transaction.address,
-      soraNetworkFee: transaction.networkFee,
+      // soraNetworkFee: transaction.networkFee, // CodecString
+      soraNetworkFee: new FPNumber(transaction.networkFee).toCodecString(),
       status: getTransactionStatus(transaction),
     };
 
