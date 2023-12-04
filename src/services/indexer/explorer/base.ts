@@ -40,7 +40,8 @@ export default class BaseExplorer {
   }
 
   private handlePayloadStatus<T>(payload: OperationResult<T, any>) {
-    const status = payload.error || !payload.data ? ConnectionStatus.Unavailable : ConnectionStatus.Available;
+    const isNetworkError = !!payload.error?.networkError;
+    const status = isNetworkError ? ConnectionStatus.Unavailable : ConnectionStatus.Available;
     this.setStatus(status);
   }
 
@@ -73,7 +74,7 @@ export default class BaseExplorer {
       const { unsubscribe } = pipe(
         this.client.subscription(subscription, variables),
         subscribe((payload) => {
-          // this.handlePayloadStatus(payload);
+          this.handlePayloadStatus(payload);
           handler(payload);
         })
       );
