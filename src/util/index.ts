@@ -1,3 +1,4 @@
+import { base58Decode } from '@polkadot/util-crypto';
 import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 import { getWallets, getWalletBySource, initialize } from '@sora-test/wallet-connect/dotsama/wallets';
@@ -56,16 +57,31 @@ export function waitForDocumentReady() {
   });
 }
 
+export const validateAddress = (address: string): boolean => {
+  if (!address) return false;
+  try {
+    return !!base58Decode(address) && api.validateAddress(address);
+  } catch {
+    return false;
+  }
+};
+
+export const formatSoraAddress = (address: string) => {
+  try {
+    return validateAddress(address) ? api.formatAddress(address) : '';
+  } catch {
+    return '';
+  }
+};
+
 export const getAccountIdentity = async (address: string, none = ''): Promise<string> => {
-  if (!api.validateAddress(address)) return none;
+  if (!validateAddress(address)) return none;
 
   const entity = await api.getAccountOnChainIdentity(address);
   const identity = entity ? entity.legalName : none;
 
   return identity;
 };
-
-export const formatSoraAddress = (address: string) => api.formatAddress(address);
 
 export const getImportedAccounts = (): PolkadotJsAccount[] => {
   const accounts = api.getAccounts();

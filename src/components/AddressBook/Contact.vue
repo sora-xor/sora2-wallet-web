@@ -38,8 +38,7 @@
 import debounce from 'lodash/fp/debounce';
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
-import { api } from '../../api';
-import { formatSoraAddress, getAccountIdentity } from '../../util';
+import { validateAddress, formatSoraAddress, getAccountIdentity } from '../../util';
 import DialogBase from '../DialogBase.vue';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
@@ -85,7 +84,7 @@ export default class AddressBookContact extends Mixins(DialogMixin, TranslationM
   defineIdentity = debounce(500)(this.getIdentity);
 
   setContact(): void {
-    const record = { address: this.formattedSoraAddress, name: this.name };
+    const record = { address: this.formattedSoraAddress, name: this.formattedName };
     this.$emit('add', record);
     this.closeDialog();
   }
@@ -107,22 +106,16 @@ export default class AddressBookContact extends Mixins(DialogMixin, TranslationM
   }
 
   get btnText(): string {
-    if (!this.name) return this.t('addressBook.btn.enterName');
+    if (!this.formattedName) return this.t('addressBook.btn.enterName');
     if (!this.validAddress) {
       return this.t(`walletSend.${this.emptyAddress ? 'enterAddress' : 'badAddress'}`);
     }
-
-    if (this.isAddressAdded && !this.isEditMode) return this.t('addressBook.btn.present');
+    if (this.isAddressPresented) return this.t('addressBook.btn.present');
     return this.isEditMode ? this.t('addressBook.btn.saveChanges') : this.t('saveText');
   }
 
   get btnDisabled(): boolean {
-    if (!this.validAddress || !this.address || !this.name || this.isAddressAdded) {
-      if (this.isEditMode && this.name) return false;
-
-      return true;
-    }
-    return false;
+    return !this.validAddress || !this.formattedName || this.isAddressPresented;
   }
 
   get inputDisabled(): boolean {
@@ -138,26 +131,24 @@ export default class AddressBookContact extends Mixins(DialogMixin, TranslationM
     return !!this.book[this.address] || Boolean(found);
   }
 
+  get isAddressPresented(): boolean {
+    return this.isAddressAdded && !this.isEditMode;
+  }
+
   get emptyAddress(): boolean {
     return !this.address.trim();
   }
 
+  get formattedName(): string {
+    return this.name.trim();
+  }
+
   get formattedSoraAddress(): string {
-    if (this.emptyAddress) {
-      return '';
-    }
-    try {
-      return formatSoraAddress(this.address);
-    } catch {
-      return '';
-    }
+    return formatSoraAddress(this.address);
   }
 
   get validAddress(): boolean {
-    if (this.emptyAddress) {
-      return false;
-    }
-    return api.validateAddress(this.address);
+    return validateAddress(this.address);
   }
 }
 </script>

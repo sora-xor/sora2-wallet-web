@@ -127,7 +127,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { api } from '../api';
 import { RouteNames } from '../consts';
 import { state, mutation, action } from '../store/decorators';
-import { formatAddress, formatSoraAddress } from '../util';
+import { validateAddress, formatAddress, formatSoraAddress } from '../util';
 
 import AddressBookInput from './AddressBook/Input.vue';
 import FormattedAmount from './FormattedAmount.vue';
@@ -259,31 +259,12 @@ export default class WalletSend extends Mixins(
     return [this.address, this.formattedSoraAddress].includes(this.account.address);
   }
 
-  get validAddress(): boolean {
-    if (this.emptyAddress) {
-      return false;
-    }
-    const valid = api.validateAddress(this.address) && !this.isAccountAddress;
-    if (!valid) {
-      return false;
-    }
-    try {
-      formatSoraAddress(this.address);
-      return true; // if it can be formatted -> it's correct
-    } catch {
-      return false; // EVM account address
-    }
+  get formattedSoraAddress(): string {
+    return formatSoraAddress(this.address);
   }
 
-  get formattedSoraAddress(): string {
-    if (this.emptyAddress) {
-      return '';
-    }
-    try {
-      return formatSoraAddress(this.address);
-    } catch {
-      return '';
-    }
+  get validAddress(): boolean {
+    return validateAddress(this.address);
   }
 
   get isNotSoraAddress(): boolean {

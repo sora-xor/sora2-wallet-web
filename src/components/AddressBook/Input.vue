@@ -140,14 +140,13 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   get isNewAddress(): boolean {
     if (!this.address) return false;
 
-    try {
-      const formattedAddress = formatSoraAddress(this.address);
-      const found = this.accountsRecords.find((account) => formatSoraAddress(account.address) === formattedAddress);
+    const formattedAddress = formatSoraAddress(this.address);
 
-      return !this.addressBook[formattedAddress] && !found;
-    } catch {
-      return false;
-    }
+    if (!formattedAddress) return false;
+
+    const found = this.accountsRecords.find((account) => formatSoraAddress(account.address) === formattedAddress);
+
+    return !this.addressBook[formattedAddress] && !found;
   }
 
   get excludedAddress(): string {
