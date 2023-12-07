@@ -66,9 +66,9 @@ export const validateAddress = (address: string): boolean => {
   }
 };
 
-export const formatSoraAddress = (address: string) => {
+export const formatAccountAddress = (address: string, isSoraSS58 = true) => {
   try {
-    return validateAddress(address) ? api.formatAddress(address) : '';
+    return validateAddress(address) ? api.formatAddress(address, isSoraSS58) : '';
   } catch {
     return '';
   }

@@ -27,7 +27,7 @@ import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import { ObjectInit } from '../../consts';
 import { getter } from '../../store/decorators';
-import { formatSoraAddress, getAccountIdentity } from '../../util';
+import { formatAccountAddress, getAccountIdentity } from '../../util';
 import LoadingMixin from '../mixins/LoadingMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 import FormattedAddress from '../shared/FormattedAddress.vue';
@@ -69,7 +69,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get address(): string {
-    return formatSoraAddress(this.account.address);
+    return formatAccountAddress(this.account.address);
   }
 
   get name(): string {

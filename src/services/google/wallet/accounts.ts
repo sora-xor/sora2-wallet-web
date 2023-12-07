@@ -1,4 +1,4 @@
-import { api } from '../../../api';
+import { formatAccountAddress } from '../../../util';
 import { BackupAccountMapper } from '../backup/mapper';
 import { GDriveStorage } from '../index';
 
@@ -38,7 +38,7 @@ export default class Accounts implements InjectedAccounts {
   }
 
   private findAccountByAddress(address: string): Nullable<IAccountMetadata> {
-    const defaultAddress = api.formatAddress(address, false);
+    const defaultAddress = formatAccountAddress(address, false);
 
     return this.accountsList.find((acc) => acc.address === defaultAddress);
   }
@@ -90,7 +90,7 @@ export default class Accounts implements InjectedAccounts {
 
     this.accountsList = files
       ? files.map(({ id, name = '', description = '' }) => ({
-          address: api.formatAddress(name.replace(/\.json$/, ''), false), // formatted account address (extension like)
+          address: formatAccountAddress(name.replace(/\.json$/, ''), false), // formatted account address (extension like)
           name: description, // account name
           id: id as string,
         }))

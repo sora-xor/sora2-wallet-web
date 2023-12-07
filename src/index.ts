@@ -59,7 +59,7 @@ import {
   getExplorerLinks,
   groupRewardsByAssetsList,
   initAppWallets,
-  formatSoraAddress,
+  formatAccountAddress,
   validateAddress,
 } from './util';
 import { ScriptLoader } from './util/scriptLoader';
@@ -223,7 +223,7 @@ export {
   settingsStorage,
   getExplorerLinks,
   groupRewardsByAssetsList,
-  formatSoraAddress,
+  formatAccountAddress,
   validateAddress,
   WALLET_CONSTS,
   WALLET_TYPES,

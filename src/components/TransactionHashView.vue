@@ -49,7 +49,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { HashType, ExplorerType, SoraNetwork } from '../consts';
 import { state } from '../store/decorators';
-import { formatAddress, getExplorerLinks, formatSoraAddress } from '../util';
+import { formatAddress, getExplorerLinks, formatAccountAddress } from '../util';
 
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import TranslationMixin from './mixins/TranslationMixin';
@@ -77,7 +77,7 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
 
   get formattedValue(): string {
     if (this.type === HashType.Account) {
-      return formatSoraAddress(this.value);
+      return formatAccountAddress(this.value);
     }
     return this.value;
   }

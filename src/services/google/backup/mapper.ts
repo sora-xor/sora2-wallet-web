@@ -1,5 +1,5 @@
 import { api } from '../../../api';
-import { formatSoraAddress } from '../../../util';
+import { formatAccountAddress } from '../../../util';
 
 import { BackupAccountCrypto } from './account';
 import { generateSeed, prepareSeed } from './crypto';
@@ -39,7 +39,7 @@ export class BackupAccountMapper {
   ): EncryptedBackupAccount {
     const decryptedAccount: DecryptedBackupAccount = {
       name: (pairJson.meta?.name as string) || '',
-      address: formatSoraAddress(pairJson.address),
+      address: formatAccountAddress(pairJson.address),
       cryptoType: 'sr25519'.toUpperCase(),
       backupAccountType: [BackupAccountType.JSON],
       mnemonicPhrase,

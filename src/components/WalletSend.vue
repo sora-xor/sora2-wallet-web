@@ -127,7 +127,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { api } from '../api';
 import { RouteNames } from '../consts';
 import { state, mutation, action } from '../store/decorators';
-import { validateAddress, formatAddress, formatSoraAddress } from '../util';
+import { validateAddress, formatAddress, formatAccountAddress } from '../util';
 
 import AddressBookInput from './AddressBook/Input.vue';
 import FormattedAmount from './FormattedAmount.vue';
@@ -260,7 +260,7 @@ export default class WalletSend extends Mixins(
   }
 
   get formattedSoraAddress(): string {
-    return formatSoraAddress(this.address);
+    return formatAccountAddress(this.address);
   }
 
   get validAddress(): boolean {

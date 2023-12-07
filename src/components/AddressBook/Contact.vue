@@ -38,7 +38,7 @@
 import debounce from 'lodash/fp/debounce';
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
-import { validateAddress, formatSoraAddress, getAccountIdentity } from '../../util';
+import { validateAddress, formatAccountAddress, getAccountIdentity } from '../../util';
 import DialogBase from '../DialogBase.vue';
 import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
@@ -127,7 +127,7 @@ export default class AddressBookContact extends Mixins(DialogMixin, TranslationM
   }
 
   get isAddressAdded(): boolean {
-    const found = this.accounts.find((account) => formatSoraAddress(account.address) === this.formattedSoraAddress);
+    const found = this.accounts.find((account) => formatAccountAddress(account.address) === this.formattedSoraAddress);
     return !!this.book[this.address] || Boolean(found);
   }
 
@@ -144,7 +144,7 @@ export default class AddressBookContact extends Mixins(DialogMixin, TranslationM
   }
 
   get formattedSoraAddress(): string {
-    return formatSoraAddress(this.address);
+    return formatAccountAddress(this.address);
   }
 
   get validAddress(): boolean {
