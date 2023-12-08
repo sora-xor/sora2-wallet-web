@@ -199,6 +199,7 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
     <address-book-input-stub
       class="wallet-send-address"
       excludeconnected="true"
+      isvalid="true"
       value="12345"
     />
      
@@ -335,7 +336,7 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
       usedesignsystem="true"
     >
       
-        Incorrect address
+        Enter amount
       
     </s-button-stub>
      
