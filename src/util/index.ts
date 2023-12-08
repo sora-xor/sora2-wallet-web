@@ -1,4 +1,3 @@
-import { base58Decode } from '@polkadot/util-crypto';
 import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 import { getWallets, getWalletBySource, initialize } from '@sora-test/wallet-connect/dotsama/wallets';
@@ -58,12 +57,7 @@ export function waitForDocumentReady() {
 }
 
 export const validateAddress = (address: string): boolean => {
-  if (!address) return false;
-  try {
-    return !!base58Decode(address) && api.validateAddress(address);
-  } catch {
-    return false;
-  }
+  return !!address && api.validateAddress(address);
 };
 
 export const formatAccountAddress = (address: string, isSoraSS58 = true) => {
