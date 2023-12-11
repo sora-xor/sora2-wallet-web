@@ -14,11 +14,11 @@ export const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {
   invitedUserRewards: {},
 };
 
-const isExternal = storage.get('isExternal');
-
 export function initialState(): AccountState {
   const addressBook = settingsStorage.get('book');
+  const ceresFiatValues = settingsStorage.get('ceresFiatValues');
   const book = addressBook && JSON.parse(addressBook);
+  const isExternal = storage.get('isExternal');
 
   return {
     address: storage.get('address') || '',
@@ -43,7 +43,7 @@ export function initialState(): AccountState {
     /** fiat prices & subscription */
     fiatPriceObject: {},
     fiatPriceSubscription: null,
-    ceresFiatValuesUsage: false,
+    ceresFiatValuesUsage: ceresFiatValues ? JSON.parse(ceresFiatValues) : false,
     referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
     selectedWallet: null,

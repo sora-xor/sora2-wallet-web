@@ -45,6 +45,7 @@ const OperationsMap = {
   [insensitive(ModuleNames.LiquidityProxy)]: {
     [ModuleMethods.LiquidityProxySwap]: () => Operation.Swap,
     [ModuleMethods.LiquidityProxySwapTransfer]: () => Operation.SwapAndSend,
+    [ModuleMethods.LiquidityProxySwapTransferBatch]: () => Operation.SwapTransferBatch,
     [ModuleMethods.LiquidityProxyXorlessTransfer]: () => Operation.Transfer,
   },
   [insensitive(ModuleNames.Utility)]: {
@@ -189,6 +190,7 @@ export default class SubsquidDataParser {
     Operation.Transfer,
     Operation.Swap,
     Operation.SwapAndSend,
+    Operation.SwapTransferBatch,
     Operation.CreatePair,
     Operation.AddLiquidity,
     Operation.RemoveLiquidity,
@@ -280,7 +282,7 @@ export default class SubsquidDataParser {
         const transfers = data.transfers;
         const exchanges = data.exchanges;
 
-        const outcomeAssetsIds = data.receivers.map((item) => item.outcomeAssetId?.code);
+        const outcomeAssetsIds = data.transfers.map((item) => item.assetId);
         const resolveAssets = async (assetAddressesArray: Array<string>) => {
           const result: Array<Nullable<Asset>> = [];
           assetAddressesArray.forEach(async (address) => {
@@ -305,20 +307,20 @@ export default class SubsquidDataParser {
         payload.payload.transfers = transfers;
         payload.payload.exchanges = exchanges;
         if (transfers.length > 0) {
-          payload.payload.receivers = data.receivers.reduce((acc, data) => {
-            const receiversData = data.receivers.map((receiver) => {
-              const transfer = transfers?.find(
-                (transfer) => transfer.to === receiver.accountId
-              ) as SwapTransferBatchTransferParam;
-              const assetAddress = transfer?.assetId || data.outcomeAssetId?.code;
-              const asset = assetsList.find((asset) => asset?.address === assetAddress);
-              return {
+          payload.payload.receivers = data.receivers.reduce((acc, receiver) => {
+            const transfer = transfers?.find(
+              (transfer) => transfer.to === receiver.accountId
+            ) as SwapTransferBatchTransferParam;
+            const assetAddress = transfer?.assetId;
+            const asset = assetsList.find((asset) => asset?.address === assetAddress);
+            const receiversData = [
+              {
                 accountId: receiver.accountId,
                 asset,
-                amount: transfer?.amount || '0',
+                amount: transfer?.amount ?? '0',
                 symbol: getAssetSymbol(asset),
-              };
-            });
+              },
+            ];
             return [...acc, ...receiversData];
           }, []);
         } else {
