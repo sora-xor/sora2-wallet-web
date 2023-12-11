@@ -5,6 +5,7 @@ import isEqual from 'lodash/fp/isEqual';
 import { api } from '../../api';
 import { AppWallet } from '../../consts';
 import { isInternalWallet } from '../../consts/wallets';
+import { formatAccountAddress } from '../../util';
 
 import { accountGetterContext } from './../account';
 
@@ -100,7 +101,7 @@ const getters = defineGetters<AccountState>()({
 
     return (account: PolkadotJsAccount): boolean => {
       const { address, name, source } = state;
-      const formatted = { ...account, address: api.formatAddress(account.address) };
+      const formatted = { ...account, address: formatAccountAddress(account.address) };
       const accountData: PolkadotJsAccount = { address, name };
 
       if (source) accountData.source = source as AppWallet;

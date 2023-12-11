@@ -67,7 +67,6 @@ export type IndexerState = {
 };
 
 export type StorageKey =
-  | 'indexerType'
   | 'address'
   | 'name'
   | 'source'
@@ -95,6 +94,8 @@ export type SettingsStorageKey =
   | 'evmAddress'
   | 'evmNetwork'
   | 'bridgeType'
-  | 'book';
+  | 'book'
+  | 'indexerType'
+  | 'ceresFiatValues';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';
