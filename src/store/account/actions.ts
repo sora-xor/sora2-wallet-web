@@ -4,7 +4,7 @@ import cryptoRandomString from 'crypto-random-string';
 import { defineActions } from 'direct-vuex';
 
 import { api } from '../../api';
-import { AppWallet, BLOCK_PRODUCE_TIME, IndexerType } from '../../consts';
+import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
 import { isInternalSource } from '../../consts/wallets';
 import alertsApiService from '../../services/alerts';
 import { CeresApiService } from '../../services/ceres';
@@ -21,6 +21,7 @@ import {
   NFT_BLACK_LIST_URL,
   AppError,
   exportAccountJson,
+  formatAccountAddress,
 } from '../../util';
 
 import { accountActionContext } from './../account';
@@ -258,8 +259,8 @@ const actions = defineActions({
     // Desktop has not source
     const source = (accountData.source as AppWallet) || '';
     const isExternal = !isInternalSource(source);
-    const defaultAddress = api.formatAddress(accountData.address, false);
-    const soraAddress = api.formatAddress(defaultAddress);
+    const defaultAddress = formatAccountAddress(accountData.address, false);
+    const soraAddress = formatAccountAddress(defaultAddress);
 
     // Don't forget account:
     // 1) on Desktop;

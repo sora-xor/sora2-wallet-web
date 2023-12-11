@@ -55,7 +55,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { AccountActionTypes } from '../../consts';
-import { formatSoraAddress } from '../../util';
+import { formatAccountAddress } from '../../util';
 import AccountActionsMenu from '../Account/ActionsMenu.vue';
 import WalletAccount from '../Account/WalletAccount.vue';
 import DialogBase from '../DialogBase.vue';
@@ -114,7 +114,7 @@ export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixi
   }
 
   private formatAccount(account: PolkadotJsAccount, identities: Record<string, string>): PolkadotJsAccount {
-    const address = formatSoraAddress(account.address);
+    const address = formatAccountAddress(account.address);
     const identity = identities[address];
 
     return {

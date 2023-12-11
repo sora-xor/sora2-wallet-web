@@ -54,7 +54,7 @@
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import { mutation, state } from '../../store/decorators';
-import { formatSoraAddress, subscribeToWalletAccounts } from '../../util';
+import { formatAccountAddress, subscribeToWalletAccounts } from '../../util';
 import WalletAccount from '../Account/WalletAccount.vue';
 import SearchInput from '../Input/SearchInput.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
@@ -85,7 +85,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     if (!this.isValid) {
       this.name = '';
     } else if (!this.name) {
-      const key = formatSoraAddress(this.address);
+      const key = formatAccountAddress(this.address);
       this.name = this.books[key] || '';
     }
   }
@@ -120,7 +120,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
 
   get accountBook(): Book {
     return this.accountsRecords.reduce((book, { address, name }) => {
-      const key = formatSoraAddress(address);
+      const key = formatAccountAddress(address);
 
       return {
         ...book,
@@ -140,14 +140,13 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   get isNewAddress(): boolean {
     if (!this.address) return false;
 
-    try {
-      const formattedAddress = formatSoraAddress(this.address);
-      const found = this.accountsRecords.find((account) => formatSoraAddress(account.address) === formattedAddress);
+    const formattedAddress = formatAccountAddress(this.address);
 
-      return !this.addressBook[formattedAddress] && !found;
-    } catch {
-      return false;
-    }
+    if (!formattedAddress) return false;
+
+    const found = this.accountsRecords.find((account) => formatAccountAddress(account.address) === formattedAddress);
+
+    return !this.addressBook[formattedAddress] && !found;
   }
 
   get excludedAddress(): string {
@@ -171,7 +170,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
 
   openContact(address: Nullable<string>, isEditMode = false): void {
     this.isEditMode = isEditMode;
-    this.prefilledAddress = address ? formatSoraAddress(address) : '';
+    this.prefilledAddress = address ? formatAccountAddress(address) : '';
     this.showSetContactDialog = true;
   }
 

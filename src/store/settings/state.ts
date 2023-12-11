@@ -13,7 +13,7 @@ function initialState(): SettingsState {
   const allowTopUpAlerts = settingsStorage.get('allowTopUpAlerts');
   const shouldBalanceBeHidden = storage.get('shouldBalanceBeHidden');
   const feeMultiplier = runtimeStorage.get('feeMultiplier');
-  const indexerType = storage.get('indexerType');
+  const indexerType = settingsStorage.get('indexerType');
   const runtimeVersion = runtimeStorage.get('version');
   const allowFee = settingsStorage.get('allowFeePopup');
   const filters = storage.get('filters');

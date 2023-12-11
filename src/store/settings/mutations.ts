@@ -13,7 +13,16 @@ import type { Subscription } from 'rxjs';
 const mutations = defineMutations<SettingsState>()({
   setIndexerType(state, indexerType: IndexerType): void {
     state.indexerType = indexerType;
-    storage.set('indexerType', indexerType);
+    settingsStorage.set('indexerType', indexerType);
+  },
+  setIndexerStatus(state, { indexer, status }: { indexer: IndexerType; status: ConnectionStatus }): void {
+    state.indexers[indexer].status = status;
+  },
+  setIndexerEndpoint(state, { indexer, endpoint }: { indexer: IndexerType; endpoint: string }): void {
+    state.indexers[indexer].endpoint = endpoint;
+    if (!endpoint) {
+      state.indexers[indexer].status = ConnectionStatus.Unavailable;
+    }
   },
   setIndexerStatus(state, { indexer, status }: { indexer: IndexerType; status: ConnectionStatus }): void {
     state.indexers[indexer].status = status;

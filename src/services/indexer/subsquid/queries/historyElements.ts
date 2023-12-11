@@ -116,6 +116,10 @@ const OperationFilterMap = {
     module_eq: ModuleNames.LiquidityProxy,
     method_eq: ModuleMethods.LiquidityProxySwapTransfer,
   },
+  [Operation.SwapTransferBatch]: {
+    module_eq: ModuleNames.LiquidityProxy,
+    method_eq: ModuleMethods.LiquidityProxySwapTransferBatch,
+  },
   [Operation.Transfer]: {
     OR: [
       {
@@ -202,8 +206,37 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
   }, []);
 };
 
-const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
-  const attributes = ['assetId', 'baseAssetId', 'targetAssetId'];
+const createAdarSenderCriteria = (accountAddress: string, assetAddress: string) => {
+  return [
+    {
+      data_jsonContains: {
+        inputAssetId: assetAddress,
+        from: accountAddress,
+      },
+    },
+  ];
+};
+
+const createAdarReceiverCriteria = (accountAddress: string, assetAddress: string) => {
+  return [
+    {
+      data_jsonContains: {
+        transfers: [
+          {
+            to: accountAddress,
+            assetId: assetAddress,
+          },
+        ],
+      },
+    },
+  ];
+};
+
+const createAssetCriteria = (
+  assetAddress: string,
+  accountAddress?: string
+): Array<DataCriteria | CallsDataCriteria> => {
+  const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
 
   const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
     result.push({
@@ -214,15 +247,6 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDa
 
     return result;
   }, []);
-
-  // for rewards claim operation
-  criterias.push({
-    calls_some: {
-      data_jsonContains: {
-        assetId: assetAddress,
-      },
-    },
-  });
 
   // for create pair operation
   ['input_asset_a', 'input_asset_b'].forEach((attr) => {
@@ -235,6 +259,13 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDa
     });
   });
 
+  if (accountAddress) {
+    criterias.push(
+      ...createAdarSenderCriteria(accountAddress, assetAddress),
+      ...createAdarReceiverCriteria(accountAddress, assetAddress)
+    );
+  }
+
   return criterias;
 };
 
@@ -245,6 +276,16 @@ const createAccountAddressCriteria = (address: string) => {
     },
     {
       dataTo_eq: address,
+    },
+    // ADAR transfer (receiver)
+    {
+      data_jsonContains: {
+        receivers: [
+          {
+            accountId: address,
+          },
+        ],
+      },
     },
   ];
 };
@@ -291,7 +332,7 @@ export const historyElementsFilter = ({
 
   if (assetAddress) {
     filter.AND.push({
-      OR: createAssetCriteria(assetAddress),
+      OR: createAssetCriteria(assetAddress, address),
     });
   }
 
@@ -325,7 +366,7 @@ export const historyElementsFilter = ({
       });
       // asset address criteria
     } else if (isAssetAddress(search)) {
-      queryFilters.push(...createAssetCriteria(search));
+      queryFilters.push(...createAssetCriteria(search, address));
     }
   }
 
@@ -336,8 +377,8 @@ export const historyElementsFilter = ({
 
   // symbol criteria
   if (assetsAddresses.length) {
-    assetsAddresses.forEach((address) => {
-      queryFilters.push(...createAssetCriteria(address));
+    assetsAddresses.forEach((assetAddress) => {
+      queryFilters.push(...createAssetCriteria(assetAddress, address));
     });
   }
 

@@ -290,7 +290,43 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
   }, []);
 };
 
-const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
+const createAdarSenderCriteria = (accountAddress: string, assetAddress: string) => {
+  return [
+    {
+      data: {
+        contains: {
+          inputAssetId: assetAddress,
+          from: accountAddress,
+        },
+      },
+    },
+  ];
+};
+
+const createAdarReceiverCriteria = (accountAddress: string, assetAddress: string) => {
+  return [
+    {
+      data: {
+        contains: {
+          receivers: [
+            {
+              outcomeAssetId: {
+                code: assetAddress,
+              },
+              receivers: [
+                {
+                  accountId: accountAddress,
+                },
+              ],
+            },
+          ],
+        },
+      },
+    },
+  ];
+};
+
+const createAssetCriteria = (assetAddress: string, accountAddress?: string): Array<DataCriteria> => {
   const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
 
   const criterias = attributes.reduce((result: Array<DataCriteria>, attr) => {
@@ -304,17 +340,6 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
 
     return result;
   }, []);
-
-  // for rewards claim operation
-  criterias.push({
-    data: {
-      contains: [
-        {
-          assetId: assetAddress,
-        },
-      ],
-    },
-  });
 
   // for create pair operation
   ['input_asset_a', 'input_asset_b'].forEach((attr) => {
@@ -333,6 +358,13 @@ const createAssetCriteria = (assetAddress: string): Array<DataCriteria> => {
     });
   });
 
+  if (accountAddress) {
+    criterias.push(
+      ...createAdarSenderCriteria(accountAddress, assetAddress),
+      ...createAdarReceiverCriteria(accountAddress, assetAddress)
+    );
+  }
+
   return criterias;
 };
 
@@ -350,6 +382,7 @@ const createAccountAddressCriteria = (address: string) => {
         },
       },
     },
+    // ADAR transfer (receiver)
     {
       data: {
         contains: {
@@ -410,7 +443,7 @@ export const historyElementsFilter = ({
 
   if (assetAddress) {
     filter.and.push({
-      or: createAssetCriteria(assetAddress),
+      or: createAssetCriteria(assetAddress, address),
     });
   }
 
@@ -458,7 +491,7 @@ export const historyElementsFilter = ({
       });
       // asset address criteria
     } else if (isAssetAddress(search)) {
-      queryFilters.push(...createAssetCriteria(search));
+      queryFilters.push(...createAssetCriteria(search, address));
     }
   }
 
@@ -469,8 +502,8 @@ export const historyElementsFilter = ({
 
   // symbol criteria
   if (assetsAddresses.length) {
-    assetsAddresses.forEach((address) => {
-      queryFilters.push(...createAssetCriteria(address));
+    assetsAddresses.forEach((assetAddress) => {
+      queryFilters.push(...createAssetCriteria(assetAddress, address));
     });
   }
 

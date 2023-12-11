@@ -106,6 +106,7 @@
         :type="!isSoraTx ? HashType.Account : HashType.EthAccount"
       />
     </div>
+
     <adar-tx-details v-if="isAdarOperation" :transaction="selectedTransaction" />
   </div>
 </template>
@@ -250,7 +251,14 @@ export default class WalletTransactionDetails extends Mixins(
     return this.selectedTransaction.symbol2 || '';
   }
 
+  get isRecipient(): boolean {
+    return this.account.address !== this.selectedTransaction.from;
+  }
+
   get transactionFromFee(): Nullable<string> {
+    if (this.isRecipient) {
+      return null;
+    }
     return this.getNetworkFee(this.isSoraTx);
   }
 
@@ -330,8 +338,8 @@ export default class WalletTransactionDetails extends Mixins(
 
   get swapTransferBatchAmount(): string {
     if (!this.isAdarOperation) return '0';
-    const isRecipient = this.account.address !== this.selectedTransaction.from;
-    if (isRecipient) {
+
+    if (this.isRecipient) {
       const amount = this.selectedTransaction.payload.transfers.find(
         (transfer) => transfer.to === this.account.address
       )?.amount;
@@ -342,8 +350,7 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   get swapTransferBatchAmountSymbol(): string {
-    const isRecipient = this.account.address !== this.selectedTransaction.from;
-    if (isRecipient) {
+    if (this.isRecipient) {
       return (
         this.selectedTransaction.payload?.receivers?.find((receiver) => receiver.accountId === this.account.address)
           ?.symbol ?? ''
