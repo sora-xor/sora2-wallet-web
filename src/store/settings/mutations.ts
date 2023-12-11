@@ -24,15 +24,6 @@ const mutations = defineMutations<SettingsState>()({
       state.indexers[indexer].status = ConnectionStatus.Unavailable;
     }
   },
-  setIndexerStatus(state, { indexer, status }: { indexer: IndexerType; status: ConnectionStatus }): void {
-    state.indexers[indexer].status = status;
-  },
-  setIndexerEndpoint(state, { indexer, endpoint }: { indexer: IndexerType; endpoint: string }): void {
-    state.indexers[indexer].endpoint = endpoint;
-    if (!endpoint) {
-      state.indexers[indexer].status = ConnectionStatus.Unavailable;
-    }
-  },
   setWalletLoaded(state, flag: boolean): void {
     state.isWalletLoaded = flag;
   },

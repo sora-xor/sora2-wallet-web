@@ -116,8 +116,6 @@ import { TransactionStatus, Operation, FPNumber } from '@sora-substrate/util';
 import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
-import store from '@/store';
-
 import { HashType, SoraNetwork } from '../consts';
 import { getter, state } from '../store/decorators';
 
