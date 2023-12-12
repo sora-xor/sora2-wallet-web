@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@polkadot/vue-identicon": "2.12.1",
-    "@sora-substrate/util": "1.27.2",
+    "@sora-substrate/util": "1.27.2-beta.1",
     "@sora-test/wallet-connect": "^0.0.9",
     "@soramitsu/soramitsu-js-ui": "^1.0.46",
     "@urql/core": "^4.1.2",
@@ -38,6 +38,7 @@
     "file-saver": "^2.0.5",
     "graphql": "^16.8.0",
     "graphql-ws": "^5.13.1",
+    "idb": "^8.0.0",
     "is-electron": "^2.2.2",
     "lodash": "^4.17.21",
     "maska": "^1.5.1",

@@ -62,6 +62,7 @@ import {
   formatAccountAddress,
   validateAddress,
 } from './util';
+import { getMetadataStore } from './util/db';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
@@ -130,12 +131,20 @@ const waitForCore = async ({
 };
 
 const waitForConnection = async (): Promise<void> => {
+  const time1 = performance.now();
   if (connection.loading) {
     await delay(100);
     await waitForConnection();
   } else if (!connection.api) {
-    await connection.open();
+    const time2 = performance.now();
+    const { get, set } = await getMetadataStore();
+    console.log('bindings', performance.now() - time2);
+    await connection.open(connection.endpoint, {
+      getMetadata: get,
+      setMetadata: set,
+    });
     console.info('Connected to blockchain', connection.endpoint);
+    console.log(performance.now() - time1);
   }
 };
 
