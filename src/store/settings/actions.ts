@@ -98,7 +98,7 @@ const actions = defineActions({
       if (localMultiplier !== multiplier) {
         commit.setFeeMultiplier(multiplier);
       }
-      if (localRuntime !== runtime) {
+      if (runtime && localRuntime !== runtime) {
         commit.setRuntimeVersion(runtime);
       }
 
