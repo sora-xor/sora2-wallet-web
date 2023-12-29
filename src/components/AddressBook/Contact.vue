@@ -70,7 +70,7 @@ export default class AddressBookContact extends Mixins(DialogMixin, TranslationM
 
     if (this.prefilledAddress) {
       this.address = this.prefilledAddress;
-      this.name = this.book[this.prefilledAddress];
+      this.name = this.book[this.prefilledAddress] ?? '';
     }
 
     await this.$nextTick();
