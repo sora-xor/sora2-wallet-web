@@ -282,15 +282,17 @@ export default class WalletSend extends Mixins(
   }
 
   get isMaxButtonAvailable(): boolean {
+    if (this.shouldBalanceBeHidden) {
+      return true; // MAX button behavior discloses hidden balance so it should be displayed
+    }
+
     const decimals = this.asset.decimals;
     const balance = this.getFPNumberFromCodec(this.transferableBalance, decimals);
     const amount = this.getFPNumber(this.amount, decimals);
+
     if (this.isXorAccountAsset) {
       if (this.fee.isZero()) {
         return false;
-      }
-      if (this.shouldBalanceBeHidden) {
-        return true; // MAX button behavior discloses hidden balance so it should be displayed
       }
       return !FPNumber.eq(this.fee, balance.sub(amount)) && FPNumber.gt(balance, this.fee);
     }
