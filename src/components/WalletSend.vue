@@ -289,6 +289,9 @@ export default class WalletSend extends Mixins(
       if (this.fee.isZero()) {
         return false;
       }
+      if (this.shouldBalanceBeHidden) {
+        return true; // MAX button behavior discloses hidden balance so it should be displayed
+      }
       return !FPNumber.eq(this.fee, balance.sub(amount)) && FPNumber.gt(balance, this.fee);
     }
     return !FPNumber.eq(balance, amount);
