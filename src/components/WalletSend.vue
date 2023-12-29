@@ -283,7 +283,7 @@ export default class WalletSend extends Mixins(
 
   get isMaxButtonAvailable(): boolean {
     if (this.shouldBalanceBeHidden) {
-      return true; // MAX button behavior discloses hidden balance so it should be displayed
+      return false; // MAX button behavior discloses hidden balance so it should be hidden in ANY case
     }
 
     const decimals = this.asset.decimals;
