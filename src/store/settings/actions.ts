@@ -14,12 +14,27 @@ import { runtimeStorage } from '../../util/storage';
 
 import { settingsActionContext } from './../settings';
 
+import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { ActionContext } from 'vuex';
 
-function areKeysEqual(obj1: object, obj2: object): boolean {
-  const obj1Keys = Object.keys(obj1).sort();
-  const obj2Keys = Object.keys(obj2).sort();
-  return isEqual(obj1Keys, obj2Keys);
+function areLocalNetworkFeesOkay(localFees: NetworkFeesObject, apiFees: NetworkFeesObject): boolean {
+  if (isEmpty(localFees)) {
+    return false;
+  }
+  if (!+localFees.Swap) {
+    return false; // we're checking only SWAP TX and if it's zero we need to calculate fees again
+  }
+  const localFeesKeys = Object.keys(localFees);
+  const apiFeesKeys = Object.keys(localFees);
+  if (localFeesKeys.length !== apiFeesKeys.length) {
+    return false; // more / less fees than expected
+  }
+  const sortedLocalFeesKeys = localFeesKeys.sort();
+  const sortedApiFeesKeys = apiFeesKeys.sort();
+  if (!isEqual(sortedLocalFeesKeys, sortedApiFeesKeys)) {
+    return false; // if some keys were missed/added we need to calculate fees again
+  }
+  return true;
 }
 
 async function switchCurrentIndexer(context: ActionContext<any, any>): Promise<void> {
@@ -84,13 +99,12 @@ const actions = defineActions({
       const networkFeesObj = runtimeStorage.get('networkFees');
       const localMultiplier = feeMultiplier ? Number(JSON.parse(feeMultiplier)) : 0;
       const localRuntime = runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0;
-      const networkFees = networkFeesObj ? JSON.parse(networkFeesObj) : {};
+      const networkFees: NetworkFeesObject = networkFeesObj ? JSON.parse(networkFeesObj) : {};
 
       if (
         localRuntime === runtime &&
         localMultiplier === multiplier &&
-        !isEmpty(networkFees) &&
-        areKeysEqual(networkFees, api.NetworkFee)
+        areLocalNetworkFeesOkay(networkFees, api.NetworkFee)
       ) {
         commit.setNetworkFees(networkFees);
         return;
