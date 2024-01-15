@@ -75,8 +75,8 @@ export type AssetSnapshotBaseEntity = {
   supply: CodecString;
   mint: CodecString;
   burn: CodecString;
-  priceUSD?: PriceSnapshot;
-  volume?: AssetVolume;
+  priceUSD: PriceSnapshot;
+  volume: AssetVolume;
 };
 
 // with connection
