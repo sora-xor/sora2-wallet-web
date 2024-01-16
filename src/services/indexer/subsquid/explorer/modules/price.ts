@@ -31,6 +31,11 @@ export class SubsquidPriceModule extends BaseModule {
     return result.reduce((acc, item) => ({ ...acc, ...item }), {});
   }
 
+  public async getFiatPriceUpdates(): Promise<Nullable<FiatPriceObject>> {
+    // [TODO] FiatPriceStream
+    return await this.getFiatPriceObject();
+  }
+
   public createFiatPriceSubscription(
     handler: (entity: FiatPriceObject) => void,
     errorHandler: () => void

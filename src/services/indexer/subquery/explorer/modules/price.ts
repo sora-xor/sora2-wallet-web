@@ -1,5 +1,5 @@
 import { formatStringNumber } from '../../../../../util';
-import { FiatPriceQuery } from '../../queries/fiatPriceAndApy';
+import { FiatPriceQuery, FiatPriceStreamQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
 import { FiatAssetsPriceSubscription, FiatStreamPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
 import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
@@ -35,8 +35,10 @@ function parseFiatPriceUpdate(entity: SubqueryAssetEntityMutation): FiatPriceObj
   return acc;
 }
 
-function parseStreamUpdate(entity: SubqueryStreamUpdate): FiatPriceObject {
-  const data = entity?.data ? JSON.parse(entity.data) : {};
+function parseStreamUpdate(entity: SubqueryStreamUpdate): Nullable<FiatPriceObject> {
+  if (!entity?.data) return null;
+
+  const data = JSON.parse(entity.data);
 
   return Object.entries(data).reduce((acc, [id, price]) => {
     const priceFPNumber = formatStringNumber(price as string);
@@ -60,8 +62,18 @@ export class SubqueryPriceModule extends SubqueryBaseModule {
     return result.reduce((acc, item) => ({ ...acc, ...item }), {});
   }
 
+  public async getFiatPriceUpdates(): Promise<Nullable<FiatPriceObject>> {
+    const result = await this.root.request(FiatPriceStreamQuery);
+
+    if (!result) return null;
+
+    const updates = parseStreamUpdate(result.data);
+
+    return updates;
+  }
+
   public createFiatPriceSubscription(
-    handler: (entity: FiatPriceObject) => void,
+    handler: (entity: Nullable<FiatPriceObject>) => void,
     errorHandler: () => void
   ): VoidFunction {
     let subscription!: VoidFunction;
