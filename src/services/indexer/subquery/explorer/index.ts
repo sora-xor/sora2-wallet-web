@@ -81,7 +81,6 @@ export default class SubqueryExplorer extends BaseExplorer {
           throw new Error('Subscription payload data is undefined');
         }
       } catch (error) {
-        console.error(error);
         errorHandler?.(error);
       }
     });
