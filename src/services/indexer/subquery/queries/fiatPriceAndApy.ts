@@ -2,7 +2,13 @@ import { gql } from '@urql/core';
 
 import { PageInfoFragment } from '../fragments/pageInfo';
 
-import type { SubqueryAssetEntity, SubqueryPoolXYKEntity, SubqueryConnectionQueryResponse } from '../types';
+import type {
+  SubqueryAssetEntity,
+  SubqueryPoolXYKEntity,
+  SubqueryQueryResponse,
+  SubqueryConnectionQueryResponse,
+  SubqueryStreamUpdate,
+} from '../types';
 
 export const FiatPriceQuery = gql<SubqueryConnectionQueryResponse<SubqueryAssetEntity>>`
   query SubqueryFiatPriceQuery($after: Cursor = "", $first: Int = 100) {
@@ -19,6 +25,15 @@ export const FiatPriceQuery = gql<SubqueryConnectionQueryResponse<SubqueryAssetE
     }
   }
   ${PageInfoFragment}
+`;
+
+export const FiatPriceStreamQuery = gql<SubqueryQueryResponse<SubqueryStreamUpdate>>`
+  query SubqueryFiatPriceQuery {
+    data: updatesStream(id: "price") {
+      block
+      data
+    }
+  }
 `;
 
 export const ApyQuery = gql<SubqueryConnectionQueryResponse<SubqueryPoolXYKEntity>>`
