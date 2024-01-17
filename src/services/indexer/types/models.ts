@@ -93,20 +93,6 @@ export type PoolXYKBaseEntity = {
   strategicBonusApy: Nullable<string>;
 };
 
-// with connection
-export type AssetSnapshotEntity = AssetSnapshotBaseEntity & {
-  asset: AssetBaseEntity;
-};
-
-export type PoolXYKBaseEntity = {
-  id: string;
-  baseAssetReserves: CodecString;
-  targetAssetReserves: CodecString;
-  multiplier: number;
-  priceUSD: Nullable<string>;
-  strategicBonusApy: Nullable<string>;
-};
-
 export type NetworkStatsEntity = {
   id: string;
   totalFees: CodecString;
