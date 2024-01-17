@@ -49,14 +49,19 @@ export type PriceSnapshot = {
   close: string;
 };
 
+export type AssetVolume = {
+  amount: string;
+  amountUSD: string;
+};
+
 export type AssetBaseEntity = {
   id: string;
-  liquidity: CodecString;
-  liquidityUSD?: number;
   priceUSD: string;
+  supply: CodecString;
+  liquidity?: CodecString; // in pools
+  liquidityBooks?: CodecString; // in order books
   priceChangeDay?: number;
   priceChangeWeek?: number;
-  supply: CodecString;
   volumeDayUSD?: number;
   volumeWeekUSD?: number;
   velocity?: number;
@@ -65,17 +70,27 @@ export type AssetBaseEntity = {
 export type AssetSnapshotBaseEntity = {
   id: string;
   assetId: string;
-  priceUSD: PriceSnapshot;
-  volume: {
-    amount: string;
-    amountUSD: string;
-  };
   timestamp: number;
   type: SnapshotTypes;
-  liquidity: Nullable<CodecString>;
   supply: CodecString;
   mint: CodecString;
   burn: CodecString;
+  priceUSD: PriceSnapshot;
+  volume: AssetVolume;
+};
+
+// with connection
+export type AssetSnapshotEntity = AssetSnapshotBaseEntity & {
+  asset: AssetBaseEntity;
+};
+
+export type PoolXYKBaseEntity = {
+  id: string;
+  baseAssetReserves: CodecString;
+  targetAssetReserves: CodecString;
+  multiplier: number;
+  priceUSD: Nullable<string>;
+  strategicBonusApy: Nullable<string>;
 };
 
 // with connection
@@ -145,6 +160,8 @@ export type OrderBookBaseEntity = {
   dexId: number;
   baseAssetId: string; // connection field
   quoteAssetId: string; // connection field
+  baseAssetReserves: CodecString;
+  quoteAssetReserves: CodecString;
   status: OrderBookStatus;
   price?: string;
   priceChangeDay?: number;
@@ -162,6 +179,7 @@ export type OrderBookSnapshotBaseEntity = {
   baseAssetVolume: string;
   quoteAssetVolume: string;
   volumeUSD: string;
+  liquidityUSD: string;
 };
 
 // with connection
