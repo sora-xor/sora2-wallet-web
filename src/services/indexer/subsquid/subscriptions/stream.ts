@@ -19,3 +19,12 @@ export const ApyStreamSubscription = gql<SubscriptionPayload<UpdatesStream>>`
     }
   }
 `;
+
+export const AssetRegistrationStreamSubscription = gql<SubscriptionPayload<UpdatesStream>>`
+  subscription SubsquidAssetRegistrationStreamSubscription {
+    payload: updatesStreamById(id: "assetRegistration") {
+      block
+      data
+    }
+  }
+`;

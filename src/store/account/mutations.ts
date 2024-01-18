@@ -64,7 +64,6 @@ const mutations = defineMutations<AccountState>()({
         'fiatPriceObject',
         'fiatPriceSubscription',
         'assets',
-        'assetsIds',
         'assetsSubscription',
         'polkadotJsAccounts',
         'polkadotJsAccountsSubscription',
@@ -78,14 +77,12 @@ const mutations = defineMutations<AccountState>()({
       state[key] = s[key];
     });
   },
-  setAssetsSubscription(state, timer: NodeJS.Timer | number): void {
-    state.assetsSubscription = timer;
+  setAssetsSubscription(state, subscription: VoidFunction): void {
+    state.assetsSubscription = subscription;
   },
   resetAssetsSubscription(state): void {
-    if (state.assetsSubscription) {
-      clearInterval(state.assetsSubscription as number);
-      state.assetsSubscription = null;
-    }
+    state.assetsSubscription?.();
+    state.assetsSubscription = null;
   },
   setAccountAssetsSubscription(state, subscription: Subscription): void {
     state.accountAssetsSubscription = subscription;
@@ -104,9 +101,6 @@ const mutations = defineMutations<AccountState>()({
     state.name = storage.get('name');
     state.source = storage.get('source') as AppWallet;
     state.isExternal = isExternal ? JSON.parse(isExternal) : false;
-  },
-  setAssetsIds(state, ids: string[]) {
-    state.assetsIds = Object.freeze(ids);
   },
   setAssets(state, assets: Array<Asset>): void {
     state.assets = assets;

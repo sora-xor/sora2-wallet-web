@@ -1,7 +1,7 @@
 import { parseAssetFiatPrice, parsePriceStreamUpdate } from '../../../explorer/utils';
 import { FiatPriceQuery, FiatPriceStreamQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
-import { PriceStreamSubscription } from '../../subscriptions/fiatPriceAndApy';
+import { PriceStreamSubscription } from '../../subscriptions/stream';
 import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
 import { BaseModule } from './_base';

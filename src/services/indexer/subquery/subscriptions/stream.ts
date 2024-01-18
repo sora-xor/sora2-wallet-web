@@ -43,3 +43,13 @@ export const ApyStreamSubscription = gql<SubquerySubscriptionPayload<UpdatesStre
     }
   }
 `;
+
+export const AssetRegistrationStreamSubscription = gql<SubquerySubscriptionPayload<UpdatesStream>>`
+  subscription SubqueryAssetRegistrationStreamSubscription {
+    payload: updatesStreams(id: "assetRegistration", mutation: [UPDATE, INSERT]) {
+      id
+      mutation_type
+      _entity
+    }
+  }
+`;

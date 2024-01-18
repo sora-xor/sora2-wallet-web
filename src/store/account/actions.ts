@@ -27,7 +27,6 @@ import {
 import { accountActionContext } from './../account';
 
 import type { CreateAccountArgs, RestoreAccountArgs } from './types';
-import type { FiatPriceObject } from '../../services/indexer/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { ActionContext } from 'vuex';
@@ -394,10 +393,8 @@ const actions = defineActions({
     const { getters, commit } = accountActionContext(context);
     try {
       const allAssets = await withTimeout(api.assets.getAssets(true, getters.whitelist, getters.blacklist));
-      const allIds = allAssets.map((asset) => asset.address);
       const filtered = excludePoolXYKAssets(allAssets);
 
-      commit.setAssetsIds(allIds);
       commit.setAssets(filtered);
     } catch (error) {
       console.warn('Connection was lost during getAssets operation');
@@ -405,36 +402,22 @@ const actions = defineActions({
     }
   },
 
-  async getNewAssets(context): Promise<void> {
-    try {
-      const { state, getters, commit } = accountActionContext(context);
-
-      const savedIds = new Set(state.assetsIds);
-      const ids = await withTimeout(api.assets.getAssetsIds(getters.blacklist));
-      const newIds = ids.filter((id) => !savedIds.has(id));
-
-      if (newIds.length) {
-        const newAssets = await Promise.all(newIds.map((id) => withTimeout(api.assets.getAssetInfo(id))));
-        const newFilteredAssets = excludePoolXYKAssets(newAssets);
-
-        commit.setAssetsIds(ids);
-        commit.setAssets([...state.assets, ...newFilteredAssets]);
-      }
-    } catch (error) {
-      console.warn('Error while updating assets:', error);
-    }
-  },
-
   async subscribeOnAssets(context): Promise<void> {
-    const { commit, dispatch } = accountActionContext(context);
+    const { commit, dispatch, state } = accountActionContext(context);
+
+    commit.resetAssetsSubscription();
 
     await dispatch.getAssets();
 
-    const timer = setInterval(() => {
-      dispatch.getNewAssets();
-    }, UPDATE_ASSETS_INTERVAL);
+    const indexer = getCurrentIndexer();
 
-    commit.setAssetsSubscription(timer);
+    const subscription = indexer.services.explorer.asset.createNewAssetsSubscription((newAssets) => {
+      if (newAssets.length) {
+        commit.setAssets([...state.assets, ...newAssets]);
+      }
+    }, console.error);
+
+    commit.setAssetsSubscription(subscription);
   },
 
   async subscribeOnAccountAssets(context): Promise<void> {

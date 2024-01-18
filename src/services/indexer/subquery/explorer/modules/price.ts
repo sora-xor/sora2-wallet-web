@@ -2,7 +2,7 @@ import { formatStringNumber } from '../../../../../util';
 import { parseAssetFiatPrice, parsePriceStreamUpdate } from '../../../explorer/utils';
 import { FiatPriceQuery, FiatPriceStreamQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
-import { FiatAssetsPriceSubscription, PriceStreamSubscription } from '../../subscriptions/fiatPriceAndApy';
+import { FiatAssetsPriceSubscription, PriceStreamSubscription } from '../../subscriptions/stream';
 import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
 import { SubqueryBaseModule } from './_base';

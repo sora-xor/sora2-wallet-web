@@ -1,7 +1,7 @@
 import { formatStringNumber } from '../../../../../util';
 import { parseApyStreamUpdate } from '../../../explorer/utils';
 import { ApyQuery } from '../../queries/fiatPriceAndApy';
-import { PoolsXYKApySubscription, ApyStreamSubscription } from '../../subscriptions/fiatPriceAndApy';
+import { PoolsXYKApySubscription, ApyStreamSubscription } from '../../subscriptions/stream';
 
 import { SubqueryBaseModule } from './_base';
 
