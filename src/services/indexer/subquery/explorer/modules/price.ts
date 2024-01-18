@@ -1,29 +1,15 @@
 import { formatStringNumber } from '../../../../../util';
+import { parseAssetFiatPrice, parsePriceStreamUpdate } from '../../../explorer/utils';
 import { FiatPriceQuery, FiatPriceStreamQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
-import { FiatAssetsPriceSubscription, FiatStreamPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
+import { FiatAssetsPriceSubscription, PriceStreamSubscription } from '../../subscriptions/fiatPriceAndApy';
 import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
 import { SubqueryBaseModule } from './_base';
 
-import type {
-  SubqueryAssetEntity,
-  SubqueryAssetEntityMutation,
-  SubqueryStreamUpdate,
-  FiatPriceObject,
-} from '../../types';
+import type { SubqueryAssetEntityMutation, FiatPriceObject } from '../../types';
 
-function parseFiatPrice(entity: SubqueryAssetEntity): FiatPriceObject {
-  const acc = {};
-  const id = entity.id;
-  const priceFPNumber = formatStringNumber(entity.priceUSD);
-  const isPriceFinity = priceFPNumber.isFinity();
-  if (isPriceFinity) {
-    acc[id] = priceFPNumber.toCodecString();
-  }
-  return acc;
-}
-
+// [TODO] remove after prod-sub4 deprecation
 function parseFiatPriceUpdate(entity: SubqueryAssetEntityMutation): FiatPriceObject {
   const acc = {};
   const id = entity.id;
@@ -35,27 +21,12 @@ function parseFiatPriceUpdate(entity: SubqueryAssetEntityMutation): FiatPriceObj
   return acc;
 }
 
-function parseStreamUpdate(entity: SubqueryStreamUpdate): Nullable<FiatPriceObject> {
-  if (!entity?.data) return null;
-
-  const data = JSON.parse(entity.data);
-
-  return Object.entries(data).reduce((acc, [id, price]) => {
-    const priceFPNumber = formatStringNumber(price as string);
-    const isPriceFinity = priceFPNumber.isFinity();
-    if (isPriceFinity) {
-      acc[id] = priceFPNumber.toCodecString();
-    }
-    return acc;
-  }, {});
-}
-
 export class SubqueryPriceModule extends SubqueryBaseModule {
   /**
    * Get fiat price for each asset
    */
   public async getFiatPriceObject(): Promise<Nullable<FiatPriceObject>> {
-    const result = await this.root.fetchAllEntities(FiatPriceQuery, {}, parseFiatPrice);
+    const result = await this.root.fetchAllEntities(FiatPriceQuery, {}, parseAssetFiatPrice);
 
     if (!result) return null;
 
@@ -67,7 +38,7 @@ export class SubqueryPriceModule extends SubqueryBaseModule {
 
     if (!result) return null;
 
-    const updates = parseStreamUpdate(result.data);
+    const updates = parsePriceStreamUpdate(result.data);
 
     return updates;
   }
@@ -79,10 +50,11 @@ export class SubqueryPriceModule extends SubqueryBaseModule {
     let subscription!: VoidFunction;
 
     subscription = this.root.createEntitySubscription(
-      FiatStreamPriceSubscription,
+      PriceStreamSubscription,
       {},
-      parseStreamUpdate,
+      parsePriceStreamUpdate,
       handler,
+      // [TODO] remove after prod-sub4 deprecation
       () => {
         subscription = this.root.createEntitySubscription(
           FiatAssetsPriceSubscription,

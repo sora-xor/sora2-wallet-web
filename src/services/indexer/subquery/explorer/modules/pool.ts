@@ -1,15 +1,11 @@
 import { formatStringNumber } from '../../../../../util';
+import { parseApyStreamUpdate } from '../../../explorer/utils';
 import { ApyQuery } from '../../queries/fiatPriceAndApy';
-import { PoolsXYKApySubscription, PoolsStreamApySubscription } from '../../subscriptions/fiatPriceAndApy';
+import { PoolsXYKApySubscription, ApyStreamSubscription } from '../../subscriptions/fiatPriceAndApy';
 
 import { SubqueryBaseModule } from './_base';
 
-import type {
-  SubqueryPoolXYKEntity,
-  SubqueryPoolXYKEntityMutation,
-  SubqueryStreamUpdate,
-  PoolApyObject,
-} from '../../types';
+import type { SubqueryPoolXYKEntity, SubqueryPoolXYKEntityMutation, PoolApyObject } from '../../types';
 
 function parseApy(entity: SubqueryPoolXYKEntity): PoolApyObject {
   const acc = {};
@@ -22,6 +18,7 @@ function parseApy(entity: SubqueryPoolXYKEntity): PoolApyObject {
   return acc;
 }
 
+// [TODO] remove after prod-sub4 deprecation
 function parseApyUpdate(entity: SubqueryPoolXYKEntityMutation): PoolApyObject {
   const acc = {};
   const id = entity.id;
@@ -31,19 +28,6 @@ function parseApyUpdate(entity: SubqueryPoolXYKEntityMutation): PoolApyObject {
     acc[id] = strategicBonusApyFPNumber.toCodecString();
   }
   return acc;
-}
-
-function parseStreamUpdate(entity: SubqueryStreamUpdate): PoolApyObject {
-  const data = entity?.data ? JSON.parse(entity.data) : {};
-
-  return Object.entries(data).reduce((acc, [id, apy]) => {
-    const strategicBonusApyFPNumber = formatStringNumber(apy as string);
-    const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
-    if (isStrategicBonusApyFinity) {
-      acc[id] = strategicBonusApyFPNumber.toCodecString();
-    }
-    return acc;
-  }, {});
 }
 
 export class SubqueryPoolModule extends SubqueryBaseModule {
@@ -65,10 +49,11 @@ export class SubqueryPoolModule extends SubqueryBaseModule {
     let subscription!: VoidFunction;
 
     subscription = this.root.createEntitySubscription(
-      PoolsStreamApySubscription,
+      ApyStreamSubscription,
       {},
-      parseStreamUpdate,
+      parseApyStreamUpdate,
       handler,
+      // [TODO] remove after prod-sub4 deprecation
       () => {
         subscription = this.root.createEntitySubscription(
           PoolsXYKApySubscription,

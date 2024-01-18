@@ -3,9 +3,9 @@ import { gql } from '@urql/core';
 import { PageInfoFragment } from '../fragments/pageInfo';
 import { SnapshotTypes, AssetSnapshotEntity } from '../types';
 
-import type { SubsquidConnectionQueryResponse } from '../types';
+import type { ConnectionQueryResponse } from '../../types';
 
-export const HistoricalPriceQuery = gql<SubsquidConnectionQueryResponse<AssetSnapshotEntity>>`
+export const HistoricalPriceQuery = gql<ConnectionQueryResponse<AssetSnapshotEntity>>`
   query SubsquidHistoricalPriceQuery($after: String = null, $filter: AssetSnapshotWhereInput, $first: Int = null) {
     data: assetSnapshotsConnection(after: $after, first: $first, where: $filter, orderBy: [timestamp_DESC]) {
       pageInfo {

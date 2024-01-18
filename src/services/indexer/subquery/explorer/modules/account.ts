@@ -10,7 +10,7 @@ import { SubqueryBaseModule } from './_base';
 import type {
   ConnectionQueryResponseData,
   HistoryElement,
-  QueryResponseData,
+  QueryResponseNodes,
   ReferrerRewards,
   SubqueryHistoryElement,
 } from '../../types';
@@ -71,7 +71,7 @@ export class SubqueryAccountModule extends SubqueryBaseModule {
     }
   }
 
-  public async getHistory(variables = {}): Promise<Nullable<QueryResponseData<HistoryElement>>> {
+  public async getHistory(variables = {}): Promise<Nullable<QueryResponseNodes<HistoryElement>>> {
     const data = await this.getHistoryPaged(variables);
     if (data) {
       return {

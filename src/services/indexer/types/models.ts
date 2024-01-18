@@ -362,6 +362,12 @@ export type HistoryElementBase = {
   timestamp: number;
 };
 
+export type UpdatesStream = {
+  id: string;
+  block: number;
+  data: string; // stringified JSON
+};
+
 export type AssetEntity = SubqueryAssetEntity | SubsquidAssetEntity;
 
 export type PoolXYKEntity = SubqueryPoolXYKEntity | SubsquidPoolXYKEntity;

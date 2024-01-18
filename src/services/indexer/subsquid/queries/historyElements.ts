@@ -5,7 +5,8 @@ import { gql } from '@urql/core';
 import { PageInfoFragment } from '../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
-import type { SubsquidHistoryElement, SubsquidQueryResponse, SubsquidConnectionQueryResponse } from '../types';
+import type { ConnectionQueryResponse } from '../../types';
+import type { SubsquidHistoryElement, SubsquidQueryResponse } from '../types';
 
 export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryElement>>`
   query SubsquidHistoryElements(
@@ -39,7 +40,7 @@ export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryEle
   }
 `;
 
-export const HistoryElementsConnectionQuery = gql<SubsquidConnectionQueryResponse<SubsquidHistoryElement>>`
+export const HistoryElementsConnectionQuery = gql<ConnectionQueryResponse<SubsquidHistoryElement>>`
   query SubsquidHistoryElementsConnection(
     $first: Int
     $after: String = null

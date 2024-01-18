@@ -1,6 +1,7 @@
 import { formatStringNumber } from '../../../../../util';
+import { parseApyStreamUpdate } from '../../../explorer/utils';
 import { ApyQuery } from '../../queries/fiatPriceAndApy';
-import { PoolsApySubscription } from '../../subscriptions/fiatPriceAndApy';
+import { ApyStreamSubscription } from '../../subscriptions/fiatPriceAndApy';
 
 import { BaseModule } from './_base';
 
@@ -33,6 +34,6 @@ export class SubsquidPoolModule extends BaseModule {
     handler: (entity: PoolApyObject) => void,
     errorHandler: (error: any) => void
   ): VoidFunction {
-    return this.root.createEntitySubscription(PoolsApySubscription, {}, parseApy, handler, errorHandler);
+    return this.root.createEntitySubscription(ApyStreamSubscription, {}, parseApyStreamUpdate, handler, errorHandler);
   }
 }

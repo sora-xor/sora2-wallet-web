@@ -4,9 +4,10 @@ import { gql } from '@urql/core';
 import { PageInfoFragment } from '../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
-import type { SubqueryHistoryElement, SubqueryConnectionQueryResponse } from '../types';
+import type { ConnectionQueryResponse } from '../../types';
+import type { SubqueryHistoryElement } from '../types';
 
-export const HistoryElementsQuery = gql<SubqueryConnectionQueryResponse<SubqueryHistoryElement>>`
+export const HistoryElementsQuery = gql<ConnectionQueryResponse<SubqueryHistoryElement>>`
   query SubqueryHistoryElements(
     $first: Int = null
     $last: Int = null

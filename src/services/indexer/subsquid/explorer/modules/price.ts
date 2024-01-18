@@ -1,30 +1,19 @@
-import { formatStringNumber } from '../../../../../util';
-import { FiatPriceQuery } from '../../queries/fiatPriceAndApy';
+import { parseAssetFiatPrice, parsePriceStreamUpdate } from '../../../explorer/utils';
+import { FiatPriceQuery, FiatPriceStreamQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
-import { FiatPriceSubscription } from '../../subscriptions/fiatPriceAndApy';
+import { PriceStreamSubscription } from '../../subscriptions/fiatPriceAndApy';
 import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
 import { BaseModule } from './_base';
 
-import type { SubsquidAssetEntity, FiatPriceObject } from '../../types';
-
-function parseFiatPrice(entity: SubsquidAssetEntity): FiatPriceObject {
-  const acc = {};
-  const id = entity.id;
-  const priceFPNumber = formatStringNumber(entity.priceUSD);
-  const isPriceFinity = priceFPNumber.isFinity();
-  if (isPriceFinity) {
-    acc[id] = priceFPNumber.toCodecString();
-  }
-  return acc;
-}
+import type { FiatPriceObject } from '../../types';
 
 export class SubsquidPriceModule extends BaseModule {
   /**
    * Get fiat price for each asset
    */
   public async getFiatPriceObject(): Promise<Nullable<FiatPriceObject>> {
-    const result = await this.root.fetchAllEntitiesConnection(FiatPriceQuery, {}, parseFiatPrice);
+    const result = await this.root.fetchAllEntitiesConnection(FiatPriceQuery, {}, parseAssetFiatPrice);
 
     if (!result) return null;
 
@@ -32,15 +21,26 @@ export class SubsquidPriceModule extends BaseModule {
   }
 
   public async getFiatPriceUpdates(): Promise<Nullable<FiatPriceObject>> {
-    // [TODO] FiatPriceStream
-    return await this.getFiatPriceObject();
+    const result = await this.root.request(FiatPriceStreamQuery);
+
+    if (!result) return null;
+
+    const updates = parsePriceStreamUpdate(result.data);
+
+    return updates;
   }
 
   public createFiatPriceSubscription(
-    handler: (entity: FiatPriceObject) => void,
+    handler: (entity: Nullable<FiatPriceObject>) => void,
     errorHandler: () => void
   ): VoidFunction {
-    return this.root.createEntitySubscription(FiatPriceSubscription, {}, parseFiatPrice, handler, errorHandler);
+    return this.root.createEntitySubscription(
+      PriceStreamSubscription,
+      {},
+      parsePriceStreamUpdate,
+      handler,
+      errorHandler
+    );
   }
 
   /**

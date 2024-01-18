@@ -10,7 +10,7 @@ import { BaseModule } from './_base';
 import type {
   ConnectionQueryResponseData,
   HistoryElement,
-  QueryResponseData,
+  QueryResponseNodes,
   ReferrerRewards,
   SubsquidHistoryElement,
 } from '../../types';
@@ -70,7 +70,7 @@ export class SubsquidAccountModule extends BaseModule {
     }
   }
 
-  public async getHistory(variables = {}): Promise<Nullable<QueryResponseData<HistoryElement>>> {
+  public async getHistory(variables = {}): Promise<Nullable<QueryResponseNodes<HistoryElement>>> {
     return await this.root.fetchEntities(HistoryElementsQuery, variables);
   }
 
