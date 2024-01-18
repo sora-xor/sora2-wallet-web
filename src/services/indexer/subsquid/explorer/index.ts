@@ -6,12 +6,7 @@ import { SubsquidPriceModule } from './modules/price';
 
 import type { ConnectionQueryResponse, SubscriptionPayload } from '../../types';
 import type { TypedDocumentNode, AnyVariables } from '../client';
-import type {
-  SubsquidQueryResponse,
-  SubsquidSubscriptionResponse,
-  QueryResponseNodes,
-  ConnectionQueryResponseData,
-} from '../types';
+import type { SubsquidQueryResponse, QueryResponseNodes, ConnectionQueryResponseData } from '../types';
 
 export default class SubsquidExplorer extends BaseExplorer {
   public readonly account: SubsquidAccountModule = new SubsquidAccountModule(this);

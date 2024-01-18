@@ -49,9 +49,7 @@ const mutations = defineMutations<AccountState>()({
     state.fiatPriceSubscription = subscription;
   },
   resetFiatPriceSubscription(state): void {
-    if (state.fiatPriceSubscription) {
-      state.fiatPriceSubscription();
-    }
+    state.fiatPriceSubscription?.();
     state.fiatPriceSubscription = null;
   },
   setCeresFiatValuesUsage(state, flag): void {
