@@ -279,13 +279,7 @@ const createAccountAddressCriteria = (address: string) => {
     },
     // ADAR transfer (receiver)
     {
-      data_jsonContains: {
-        receivers: [
-          {
-            accountId: address,
-          },
-        ],
-      },
+      dataReceivers_containsAny: address,
     },
   ];
 };

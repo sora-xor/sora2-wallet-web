@@ -6,7 +6,7 @@ import { SnapshotTypes, AssetSnapshotEntity } from '../types';
 import type { SubsquidConnectionQueryResponse } from '../types';
 
 export const HistoricalPriceQuery = gql<SubsquidConnectionQueryResponse<AssetSnapshotEntity>>`
-  query SubsquidHistoricalPriceQuery($after: String = null, $filter: AssetSnapshotWhereInput, $first: Int = null) {
+  query SubsquidHistoricalPriceQuery($after: String = null, $filter: AssetSnapshotWhereInput, $first: Int = 1000) {
     data: assetSnapshotsConnection(after: $after, first: $first, where: $filter, orderBy: [timestamp_DESC]) {
       pageInfo {
         ...PageInfoFragment
