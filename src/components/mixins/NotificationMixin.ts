@@ -65,8 +65,7 @@ export default class NotificationMixin extends Mixins(TranslationMixin) {
   async withAppAlert(func: AsyncFnWithoutArgs, throwable = false): Promise<void> {
     try {
       await func();
-    } catch (error: any) {
-      console.error(error.key, error.payload);
+    } catch (error) {
       const message = this.getErrorMessage(error);
 
       this.$alert(message, {
