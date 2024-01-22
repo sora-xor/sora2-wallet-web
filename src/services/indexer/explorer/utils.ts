@@ -2,8 +2,8 @@ import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
 
 import { formatStringNumber } from '../../../util';
 
-import type { SubqueryAssetEntity } from '../subquery/types';
-import type { SubsquidAssetEntity } from '../subsquid/types';
+import type { SubqueryAssetEntity, SubqueryPoolXYKEntity } from '../subquery/types';
+import type { SubsquidAssetEntity, SubsquidPoolXYKEntity } from '../subsquid/types';
 import type { FiatPriceObject, UpdatesStream, PoolApyObject } from '../types';
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 
@@ -31,6 +31,17 @@ export function parsePriceStreamUpdate(entity: UpdatesStream): Nullable<FiatPric
     }
     return acc;
   }, {});
+}
+
+export function parseApy(entity: SubsquidPoolXYKEntity | SubqueryPoolXYKEntity): PoolApyObject {
+  const acc = {};
+  const id = entity.id;
+  const strategicBonusApyFPNumber = formatStringNumber(entity.strategicBonusApy);
+  const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
+  if (isStrategicBonusApyFinity) {
+    acc[id] = strategicBonusApyFPNumber.toCodecString();
+  }
+  return acc;
 }
 
 export function parseApyStreamUpdate(entity: UpdatesStream): PoolApyObject {

@@ -33,7 +33,7 @@ export const FiatPriceStreamQuery = gql<QueryData<UpdatesStream>>`
 
 export const ApyQuery = gql<ConnectionQueryResponse<SubqueryPoolXYKEntity>>`
   query SubqueryApyQuery($after: Cursor = "", $first: Int = 100) {
-    data: poolXYKs(first: $first, after: $after) {
+    data: poolXYKs(first: $first, after: $after, filter: { strategicBonusApy: { greaterThan: "0" } }) {
       pageInfo {
         ...PageInfoFragment
       }

@@ -21,22 +21,10 @@ export type SubqueryPoolXYKEntity = SubqueryPoolXYKBaseEntity & {
   targetAsset: AssetBaseEntity;
 };
 
-export type SubqueryPoolXYKEntityMutation = {
-  // subscription payload fields what we need
-  id: string;
-  strategic_bonus_apy?: Nullable<string>;
-};
-
 // with connection
 export type SubqueryAssetEntity = AssetBaseEntity & {
   data: ConnectionQueryResponseData<AssetSnapshotBaseEntity>;
   poolXYK: ConnectionQueryResponseData<SubqueryPoolXYKBaseEntity>;
-};
-
-export type SubqueryAssetEntityMutation = {
-  // subscription payload fields what we need
-  id: string;
-  price_u_s_d?: Nullable<string>;
 };
 
 export type SubqueryUtilityBatchCall = {

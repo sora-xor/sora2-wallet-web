@@ -2,27 +2,7 @@ import { gql } from '@urql/core';
 
 import { UpdatesStream } from '../../types';
 
-import type { SubquerySubscriptionPayload, SubqueryAssetEntityMutation, SubqueryPoolXYKEntityMutation } from '../types';
-// [TODO] remove after prod-sub4 deprecation
-export const FiatAssetsPriceSubscription = gql<SubquerySubscriptionPayload<SubqueryAssetEntityMutation>>`
-  subscription SubqueryFiatAssetsPriceSubscription {
-    payload: assets(mutation: [UPDATE, INSERT]) {
-      id
-      mutation_type
-      _entity
-    }
-  }
-`;
-// [TODO] remove after prod-sub4 deprecation
-export const PoolsXYKApySubscription = gql<SubquerySubscriptionPayload<SubqueryPoolXYKEntityMutation>>`
-  subscription SubqueryPoolsXYKApySubscription {
-    payload: poolXYKs(mutation: [UPDATE, INSERT]) {
-      id
-      mutation_type
-      _entity
-    }
-  }
-`;
+import type { SubquerySubscriptionPayload } from '../types';
 
 export const PriceStreamSubscription = gql<SubquerySubscriptionPayload<UpdatesStream>>`
   subscription SubqueryPriceStreamSubscription {

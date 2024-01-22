@@ -1,25 +1,12 @@
-import { formatStringNumber } from '../../../../../util';
 import { parseAssetFiatPrice, parsePriceStreamUpdate } from '../../../explorer/utils';
 import { FiatPriceQuery, FiatPriceStreamQuery } from '../../queries/fiatPriceAndApy';
 import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
-import { FiatAssetsPriceSubscription, PriceStreamSubscription } from '../../subscriptions/stream';
+import { PriceStreamSubscription } from '../../subscriptions/stream';
 import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
 import { SubqueryBaseModule } from './_base';
 
-import type { SubqueryAssetEntityMutation, FiatPriceObject } from '../../types';
-
-// [TODO] remove after prod-sub4 deprecation
-function parseFiatPriceUpdate(entity: SubqueryAssetEntityMutation): FiatPriceObject {
-  const acc = {};
-  const id = entity.id;
-  const priceFPNumber = formatStringNumber(entity.price_u_s_d);
-  const isPriceFinity = priceFPNumber.isFinity();
-  if (isPriceFinity) {
-    acc[id] = priceFPNumber.toCodecString();
-  }
-  return acc;
-}
+import type { FiatPriceObject } from '../../types';
 
 export class SubqueryPriceModule extends SubqueryBaseModule {
   /**
@@ -38,35 +25,20 @@ export class SubqueryPriceModule extends SubqueryBaseModule {
 
     if (!result) return null;
 
-    const updates = parsePriceStreamUpdate(result.data);
-
-    return updates;
+    return parsePriceStreamUpdate(result.data);
   }
 
   public createFiatPriceSubscription(
     handler: (entity: Nullable<FiatPriceObject>) => void,
     errorHandler: () => void
   ): VoidFunction {
-    let subscription!: VoidFunction;
-
-    subscription = this.root.createEntitySubscription(
+    return this.root.createEntitySubscription(
       PriceStreamSubscription,
       {},
       parsePriceStreamUpdate,
       handler,
-      // [TODO] remove after prod-sub4 deprecation
-      () => {
-        subscription = this.root.createEntitySubscription(
-          FiatAssetsPriceSubscription,
-          {},
-          parseFiatPriceUpdate,
-          handler,
-          errorHandler
-        );
-      }
+      errorHandler
     );
-
-    return subscription;
   }
 
   /**

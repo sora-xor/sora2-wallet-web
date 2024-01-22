@@ -25,9 +25,7 @@ export class SubsquidPriceModule extends BaseModule {
 
     if (!result) return null;
 
-    const updates = parsePriceStreamUpdate(result.data);
-
-    return updates;
+    return parsePriceStreamUpdate(result.data);
   }
 
   public createFiatPriceSubscription(
