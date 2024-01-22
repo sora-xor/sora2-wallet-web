@@ -65,9 +65,22 @@ export default class NotificationMixin extends Mixins(TranslationMixin) {
   async withAppAlert(func: AsyncFnWithoutArgs, throwable = false): Promise<void> {
     try {
       await func();
-    } catch (error) {
+    } catch (error: any) {
+      console.error(error.key, error.payload);
       const message = this.getErrorMessage(error);
-      this.showAppAlert(message, this.t('errorText'));
+
+      this.$alert(message, {
+        title: this.t('errorText'),
+        showCancelButton: true,
+        cancelButtonText: this.t('cancelText'),
+        confirmButtonText: this.t('provider.messages.reloadPage'),
+        callback: (action) => {
+          if (action === 'confirm') {
+            window.location.reload();
+          }
+        },
+      });
+
       if (throwable) throw error;
     }
   }
