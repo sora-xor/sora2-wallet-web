@@ -6,7 +6,7 @@ import type { ConnectionQueryResponse } from '../../types';
 import type { ReferrerRewardEntity } from '../types';
 
 export const ReferrerRewardsQuery = gql<ConnectionQueryResponse<ReferrerRewardEntity>>`
-  query SubsquidReferrerRewardsQuery($first: Int = 100, $filter: ReferrerRewardWhereInput, $after: String = null) {
+  query SubsquidReferrerRewardsQuery($first: Int = 1000, $filter: ReferrerRewardWhereInput, $after: String = null) {
     data: referrerRewards(first: $first, where: $filter, after: $after) {
       pageInfo {
         ...PageInfoFragment

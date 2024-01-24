@@ -6,7 +6,7 @@ import type { QueryData, ConnectionQueryResponse, UpdatesStream } from '../../ty
 import type { SubsquidAssetEntity, SubsquidPoolXYKEntity } from '../types';
 
 export const FiatPriceQuery = gql<ConnectionQueryResponse<SubsquidAssetEntity>>`
-  query SubsquidFiatPriceQuery($after: String = null, $first: Int = 100) {
+  query SubsquidFiatPriceQuery($after: String = null, $first: Int = 1000) {
     data: assetsConnection(orderBy: id_ASC, first: $first, after: $after, where: { priceUSD_gt: "0" }) {
       pageInfo {
         ...PageInfoFragment
@@ -32,7 +32,7 @@ export const FiatPriceStreamQuery = gql<QueryData<UpdatesStream>>`
 `;
 
 export const ApyQuery = gql<ConnectionQueryResponse<SubsquidPoolXYKEntity>>`
-  query SubsquidApyQuery($after: String = null, $first: Int = 100) {
+  query SubsquidApyQuery($after: String = null, $first: Int = 1000) {
     data: poolXyksConnection(orderBy: id_ASC, first: $first, after: $after, where: { strategicBonusApy_gt: "0" }) {
       pageInfo {
         ...PageInfoFragment
