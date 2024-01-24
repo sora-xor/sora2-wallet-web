@@ -108,6 +108,11 @@ const DemeterFarmingWithdraw = {
   method_eq: ModuleMethods.DemeterFarmingWithdraw,
 };
 
+const OrderBookCancelLimitOrders = {
+  module_eq: ModuleNames.OrderBook,
+  method_eq: ModuleMethods.OrderBookCancelLimitOrders,
+};
+
 const OperationFilterMap = {
   [Operation.Swap]: {
     module_eq: ModuleNames.LiquidityProxy,
@@ -195,6 +200,13 @@ const OperationFilterMap = {
     module_eq: ModuleNames.DemeterFarming,
     method_eq: ModuleMethods.DemeterFarmingGetRewards,
   },
+  // ORDER BOOK
+  [Operation.OrderBookPlaceLimitOrder]: {
+    module_eq: ModuleNames.OrderBook,
+    method_eq: ModuleMethods.OrderBookPlaceLimitOrder,
+  },
+  [Operation.OrderBookCancelLimitOrder]: OrderBookCancelLimitOrders,
+  [Operation.OrderBookCancelLimitOrders]: OrderBookCancelLimitOrders,
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {

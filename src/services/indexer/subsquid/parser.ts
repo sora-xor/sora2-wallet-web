@@ -2,7 +2,6 @@ import { BN } from '@polkadot/util';
 import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
 import { RewardType, RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
 import getOr from 'lodash/fp/getOr';
-import omit from 'lodash/fp/omit';
 
 import { api } from '../../../api';
 import { ObjectInit } from '../../../consts';
@@ -20,6 +19,8 @@ import type {
   HistoryElementRewardsClaim,
   SubsquidHistoryElementCalls,
   HistoryElementDemeterFarming,
+  HistoryElementPlaceLimitOrder,
+  HistoryElementCancelLimitOrder,
   SubsquidUtilityBatchCall,
   ReferralSetReferrer,
   ReferrerReserve,
@@ -29,6 +30,7 @@ import type {
 } from './types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
+import type { LimitOrderHistory } from '@sora-substrate/util/build/orderBook/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 
 const insensitive = (value: string) => value.toLowerCase();
@@ -97,6 +99,11 @@ const OperationsMap = {
       return data.isFarm ? Operation.DemeterFarmingWithdrawLiquidity : Operation.DemeterFarmingUnstakeToken;
     },
     [ModuleMethods.DemeterFarmingGetRewards]: () => Operation.DemeterFarmingGetRewards,
+  },
+  [insensitive(ModuleNames.OrderBook)]: {
+    [ModuleMethods.OrderBookPlaceLimitOrder]: () => Operation.OrderBookPlaceLimitOrder,
+    [ModuleMethods.OrderBookCancelLimitOrder]: () => Operation.OrderBookCancelLimitOrder,
+    [ModuleMethods.OrderBookCancelLimitOrders]: () => Operation.OrderBookCancelLimitOrders,
   },
 };
 
@@ -204,6 +211,9 @@ export default class SubsquidDataParser {
     Operation.DemeterFarmingStakeToken,
     Operation.DemeterFarmingUnstakeToken,
     Operation.DemeterFarmingGetRewards,
+    Operation.OrderBookPlaceLimitOrder,
+    Operation.OrderBookCancelLimitOrder,
+    Operation.OrderBookCancelLimitOrders,
   ];
 
   public get supportedOperations(): Array<Operation> {
@@ -465,6 +475,44 @@ export default class SubsquidDataParser {
         payload.assetAddress = assetAddress;
         payload.symbol = getAssetSymbol(asset);
         payload.amount = data.amount;
+
+        return payload;
+      }
+      case Operation.OrderBookPlaceLimitOrder: {
+        const data = transaction.data as HistoryElementPlaceLimitOrder;
+
+        const _payload = payload as LimitOrderHistory;
+        const baseAssetId = data.baseAssetId;
+        const quoteAssetId = data.quoteAssetId;
+        const baseAsset = await getAssetByAddress(baseAssetId);
+        const quoteAsset = await getAssetByAddress(quoteAssetId);
+
+        _payload.assetAddress = baseAssetId;
+        _payload.asset2Address = quoteAssetId;
+        _payload.symbol = getAssetSymbol(baseAsset);
+        _payload.symbol2 = getAssetSymbol(quoteAsset);
+        _payload.price = new FPNumber(data.price).toString();
+        _payload.amount = new FPNumber(data.amount).toString();
+        _payload.side = (data.side as any).__kind; // [TODO] fix subsquid
+        _payload.limitOrderTimestamp = data.lifetime;
+
+        return payload;
+      }
+      case Operation.OrderBookCancelLimitOrder:
+      case Operation.OrderBookCancelLimitOrders: {
+        const data = transaction.data as HistoryElementCancelLimitOrder;
+
+        const _payload = payload as LimitOrderHistory;
+        const baseAssetId = data[0].baseAssetId;
+        const quoteAssetId = data[0].quoteAssetId;
+        const baseAsset = await getAssetByAddress(baseAssetId);
+        const quoteAsset = await getAssetByAddress(quoteAssetId);
+
+        _payload.assetAddress = baseAssetId;
+        _payload.asset2Address = quoteAssetId;
+        _payload.symbol = getAssetSymbol(baseAsset);
+        _payload.symbol2 = getAssetSymbol(quoteAsset);
+        _payload.limitOrderIds = data.map((order) => order.orderId);
 
         return payload;
       }

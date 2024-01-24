@@ -2,7 +2,6 @@ import { TransactionStatus, Operation } from '@sora-substrate/util';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { HiddenValue } from '../../consts';
-import store from '../../store';
 import { getter } from '../../store/decorators';
 import { formatAddress, groupRewardsByAssetsList } from '../../util';
 
@@ -98,9 +97,6 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
       params.address = linkedAddress ? formatAddress(linkedAddress, 10) : '';
     }
     if (orderBookOperations.includes(value.type)) {
-      const findAsset = (address: string) => store.getters.wallet.account.assetsDataTable[address];
-      params.symbol = findAsset(params.assetAddress)?.symbol ?? '';
-      params.symbol2 = findAsset(params.asset2Address)?.symbol ?? '';
       params.side = params.side?.toUpperCase();
     }
     let status = value.status as TransactionStatus;

@@ -2,7 +2,6 @@ import { BN } from '@polkadot/util';
 import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
 import { RewardType, RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
 import getOr from 'lodash/fp/getOr';
-import omit from 'lodash/fp/omit';
 
 import { api } from '../../../api';
 import { ObjectInit } from '../../../consts';
@@ -486,9 +485,15 @@ export default class SubqueryDataParser {
         const data = transaction.data as HistoryElementPlaceLimitOrder;
 
         const _payload = payload as LimitOrderHistory;
+        const baseAssetId = data.baseAssetId;
+        const quoteAssetId = data.quoteAssetId;
+        const baseAsset = await getAssetByAddress(baseAssetId);
+        const quoteAsset = await getAssetByAddress(quoteAssetId);
 
-        _payload.assetAddress = data.baseAssetId;
-        _payload.asset2Address = data.quoteAssetId;
+        _payload.assetAddress = baseAssetId;
+        _payload.asset2Address = quoteAssetId;
+        _payload.symbol = getAssetSymbol(baseAsset);
+        _payload.symbol2 = getAssetSymbol(quoteAsset);
         _payload.price = new FPNumber(data.price).toString();
         _payload.amount = new FPNumber(data.amount).toString();
         _payload.side = data.side;
@@ -501,9 +506,15 @@ export default class SubqueryDataParser {
         const data = transaction.data as HistoryElementCancelLimitOrder;
 
         const _payload = payload as LimitOrderHistory;
+        const baseAssetId = data[0].baseAssetId;
+        const quoteAssetId = data[0].quoteAssetId;
+        const baseAsset = await getAssetByAddress(baseAssetId);
+        const quoteAsset = await getAssetByAddress(quoteAssetId);
 
-        _payload.assetAddress = data[0].baseAssetId;
-        _payload.asset2Address = data[0].quoteAssetId;
+        _payload.assetAddress = baseAssetId;
+        _payload.asset2Address = quoteAssetId;
+        _payload.symbol = getAssetSymbol(baseAsset);
+        _payload.symbol2 = getAssetSymbol(quoteAsset);
         _payload.limitOrderIds = data.map((order) => order.orderId);
 
         return payload;
