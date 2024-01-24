@@ -73,7 +73,7 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
       const direction = isRecipient ? this.t('transaction.from') : this.t('transaction.to');
       const action = isRecipient ? this.t('receivedText') : this.t('sentText');
 
-      params.address = formatAddress(address as string, 10);
+      params.address = address ? formatAddress(address, 10) : '';
       params.direction = direction;
       params.action = action;
     }
@@ -92,10 +92,10 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
     }
     if (value.type === Operation.ReferralSetInvitedUser) {
       const isInvitedUser = this.account.address === value.from;
-      const linkedAddress = (isInvitedUser ? value.to : value.from) as string;
+      const linkedAddress = isInvitedUser ? value.to : value.from;
       const linkedRole = isInvitedUser ? 'transaction.referrer' : 'transaction.referral';
       params.role = this.t(linkedRole);
-      params.address = formatAddress(linkedAddress, 10);
+      params.address = linkedAddress ? formatAddress(linkedAddress, 10) : '';
     }
     if (orderBookOperations.includes(value.type)) {
       const findAsset = (address: string) => store.getters.wallet.account.assetsDataTable[address];
