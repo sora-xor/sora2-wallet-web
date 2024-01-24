@@ -25,6 +25,7 @@ const twoAssetsBasedOperations = [
 const amountBasedOperations = [
   ...twoAssetsBasedOperations,
   Operation.Transfer,
+  Operation.SwapTransferBatch,
   Operation.DemeterFarmingGetRewards,
   Operation.DemeterFarmingStakeToken,
   Operation.DemeterFarmingUnstakeToken,
@@ -40,7 +41,7 @@ const orderBookOperations = [
   Operation.OrderBookCancelLimitOrders,
 ];
 
-const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
+const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer, Operation.SwapTransferBatch];
 
 @Component
 export default class OperationsMixin extends Mixins(NotificationMixin, NumberFormatterMixin) {
@@ -95,25 +96,6 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
       const linkedRole = isInvitedUser ? 'transaction.referrer' : 'transaction.referral';
       params.role = this.t(linkedRole);
       params.address = formatAddress(linkedAddress, 10);
-    }
-    if (value.type === Operation.SwapTransferBatch) {
-      const isRecipient = this.account.address !== value.from;
-      const address = isRecipient ? value.from : this.t('multipleRecipients');
-      const direction = isRecipient ? this.t('transaction.from') : this.t('transaction.to');
-      const action = isRecipient ? this.t('receivedText') : this.t('sentText');
-
-      params.address = isRecipient ? formatAddress(address as string, 10) : address;
-      params.direction = direction;
-      params.action = action;
-      if (isRecipient) {
-        const amount = value.payload?.transfers?.find((transfer) => transfer.to === this.account.address)?.amount;
-        params.amount = amount ? this.formatStringValue(amount, params.decimals) : '';
-        params.symbol = value.payload?.receivers?.find(
-          (receiver) => receiver.accountId === this.account.address
-        )?.symbol;
-      } else {
-        params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
-      }
     }
     if (orderBookOperations.includes(value.type)) {
       const findAsset = (address: string) => store.getters.wallet.account.assetsDataTable[address];
