@@ -290,6 +290,19 @@ export default class SubqueryDataParser {
       case Operation.SwapTransferBatch: {
         const data = transaction.data as HistoryElementSwapTransferBatch;
 
+        if (!data.receivers) {
+          const transfer = data as unknown as HistoryElementTransfer;
+          const assetAddress = transfer.assetId;
+          const asset = await getAssetByAddress(assetAddress);
+
+          payload.assetAddress = assetAddress;
+          payload.symbol = getAssetSymbol(asset);
+          payload.to = transfer.to;
+          payload.amount = transfer.amount;
+
+          return payload;
+        }
+
         const inputAssetId = data.inputAssetId;
         const inputAsset = await getAssetByAddress(inputAssetId);
         const transfers = data.transfers;
@@ -319,6 +332,7 @@ export default class SubqueryDataParser {
         payload.payload.actualFee = data.actualFee;
         payload.payload.transfers = transfers;
         payload.payload.exchanges = exchanges;
+
         if (transfers.length > 0) {
           payload.payload.receivers = data.receivers.reduce((acc, data) => {
             const receiversData = data.receivers.map((receiver) => {

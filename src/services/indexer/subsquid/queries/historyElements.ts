@@ -224,8 +224,8 @@ const createAdarReceiverCriteria = (accountAddress: string, assetAddress: string
       data_jsonContains: {
         transfers: [
           {
-            to: accountAddress,
             assetId: assetAddress,
+            to: accountAddress,
           },
         ],
       },
@@ -273,14 +273,23 @@ const createAssetCriteria = (
 const createAccountAddressCriteria = (address: string) => {
   return [
     {
-      address_eq: address,
+      AND: [
+        { address_eq: address },
+        {
+          OR: [
+            {
+              dataTo_isNull: true,
+            },
+            {
+              module_not_eq: ModuleNames.LiquidityProxy,
+              method_not_eq: ModuleMethods.LiquidityProxySwapTransferBatch,
+            },
+          ],
+        },
+      ],
     },
     {
       dataTo_eq: address,
-    },
-    // ADAR transfer (receiver)
-    {
-      dataReceivers_containsAny: address,
     },
   ];
 };

@@ -57,6 +57,18 @@ type DataCriteria = {
   };
 };
 
+type CallsDataCriteria = {
+  calls: {
+    some: {
+      data: {
+        contains: {
+          [key: string]: any;
+        };
+      };
+    };
+  };
+};
+
 const RewardsClaimExtrinsics = [
   [ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive],
   [ModuleNames.Rewards, ModuleMethods.RewardsClaim],
@@ -309,16 +321,10 @@ const createAdarReceiverCriteria = (accountAddress: string, assetAddress: string
     {
       data: {
         contains: {
-          receivers: [
+          transfers: [
             {
-              outcomeAssetId: {
-                code: assetAddress,
-              },
-              receivers: [
-                {
-                  accountId: accountAddress,
-                },
-              ],
+              assetId: assetAddress,
+              to: accountAddress,
             },
           ],
         },
@@ -327,10 +333,13 @@ const createAdarReceiverCriteria = (accountAddress: string, assetAddress: string
   ];
 };
 
-const createAssetCriteria = (assetAddress: string, accountAddress?: string): Array<DataCriteria> => {
+const createAssetCriteria = (
+  assetAddress: string,
+  accountAddress?: string
+): Array<DataCriteria | CallsDataCriteria> => {
   const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
 
-  const criterias = attributes.reduce((result: Array<DataCriteria>, attr) => {
+  const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
     result.push({
       data: {
         contains: {
@@ -345,16 +354,14 @@ const createAssetCriteria = (assetAddress: string, accountAddress?: string): Arr
   // for create pair operation
   ['input_asset_a', 'input_asset_b'].forEach((attr) => {
     criterias.push({
-      data: {
-        contains: [
-          {
-            data: {
-              args: {
-                [attr]: assetAddress,
-              },
+      calls: {
+        some: {
+          data: {
+            contains: {
+              [attr]: assetAddress,
             },
           },
-        ],
+        },
       },
     });
   });
@@ -371,32 +378,37 @@ const createAssetCriteria = (assetAddress: string, accountAddress?: string): Arr
 
 const createAccountAddressCriteria = (address: string) => {
   return [
+    // sender
     {
-      address: {
-        equalTo: address,
-      },
-    },
-    {
-      data: {
-        contains: {
-          to: address,
+      and: [
+        {
+          address: {
+            equalTo: address,
+          },
         },
-      },
-    },
-    // ADAR transfer (receiver)
-    {
-      data: {
-        contains: {
-          receivers: [
+        {
+          or: [
             {
-              receivers: [
-                {
-                  accountId: address,
-                },
-              ],
+              dataTo: {
+                isNull: true,
+              },
+            },
+            {
+              module: {
+                notEqualTo: ModuleNames.LiquidityProxy,
+              },
+              method: {
+                notEqualTo: ModuleMethods.LiquidityProxySwapTransferBatch,
+              },
             },
           ],
         },
+      ],
+    },
+    // recipient
+    {
+      dataTo: {
+        equalTo: address,
       },
     },
   ];
@@ -477,17 +489,13 @@ export const historyElementsFilter = ({
     // account address criteria
     if (isAccountAddress(search)) {
       queryFilters.push({
-        data: {
-          contains: {
-            from: search,
-          },
+        dataFrom: {
+          equalTo: search,
         },
       });
       queryFilters.push({
-        data: {
-          contains: {
-            to: search,
-          },
+        dataTo: {
+          equalTo: search,
         },
       });
       // asset address criteria
