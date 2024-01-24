@@ -8,7 +8,7 @@ def pipeline = new org.js.LibPipeline(
     secretScannerExclusion: '.*env.json',
     sonarSrcPath: 'src',
     sonarTestsPath: 'tests',
-    dojoProductType: 'sora'
+    dojoProductType: 'polkaswap'
 )
 
 pipeline.runPipeline()
