@@ -219,36 +219,7 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
   }, []);
 };
 
-const createAdarSenderCriteria = (accountAddress: string, assetAddress: string) => {
-  return [
-    {
-      data_jsonContains: {
-        inputAssetId: assetAddress,
-        from: accountAddress,
-      },
-    },
-  ];
-};
-
-const createAdarReceiverCriteria = (accountAddress: string, assetAddress: string) => {
-  return [
-    {
-      data_jsonContains: {
-        transfers: [
-          {
-            assetId: assetAddress,
-            to: accountAddress,
-          },
-        ],
-      },
-    },
-  ];
-};
-
-const createAssetCriteria = (
-  assetAddress: string,
-  accountAddress?: string
-): Array<DataCriteria | CallsDataCriteria> => {
+const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
   const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
 
   const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
@@ -272,33 +243,13 @@ const createAssetCriteria = (
     });
   });
 
-  if (accountAddress) {
-    criterias.push(
-      ...createAdarSenderCriteria(accountAddress, assetAddress),
-      ...createAdarReceiverCriteria(accountAddress, assetAddress)
-    );
-  }
-
   return criterias;
 };
 
 const createAccountAddressCriteria = (address: string) => {
   return [
     {
-      AND: [
-        { address_eq: address },
-        {
-          OR: [
-            {
-              dataTo_isNull: true,
-            },
-            {
-              module_not_eq: ModuleNames.LiquidityProxy,
-              method_not_eq: ModuleMethods.LiquidityProxySwapTransferBatch,
-            },
-          ],
-        },
-      ],
+      address_eq: address,
     },
     {
       dataTo_eq: address,
@@ -348,7 +299,7 @@ export const historyElementsFilter = ({
 
   if (assetAddress) {
     filter.AND.push({
-      OR: createAssetCriteria(assetAddress, address),
+      OR: createAssetCriteria(assetAddress),
     });
   }
 
@@ -382,7 +333,7 @@ export const historyElementsFilter = ({
       });
       // asset address criteria
     } else if (isAssetAddress(search)) {
-      queryFilters.push(...createAssetCriteria(search, address));
+      queryFilters.push(...createAssetCriteria(search));
     }
   }
 
@@ -394,7 +345,7 @@ export const historyElementsFilter = ({
   // symbol criteria
   if (assetsAddresses.length) {
     assetsAddresses.forEach((assetAddress) => {
-      queryFilters.push(...createAssetCriteria(assetAddress, address));
+      queryFilters.push(...createAssetCriteria(assetAddress));
     });
   }
 

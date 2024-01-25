@@ -298,40 +298,7 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
   }, []);
 };
 
-const createAdarSenderCriteria = (accountAddress: string, assetAddress: string) => {
-  return [
-    {
-      data: {
-        contains: {
-          inputAssetId: assetAddress,
-          from: accountAddress,
-        },
-      },
-    },
-  ];
-};
-
-const createAdarReceiverCriteria = (accountAddress: string, assetAddress: string) => {
-  return [
-    {
-      data: {
-        contains: {
-          transfers: [
-            {
-              assetId: assetAddress,
-              to: accountAddress,
-            },
-          ],
-        },
-      },
-    },
-  ];
-};
-
-const createAssetCriteria = (
-  assetAddress: string,
-  accountAddress?: string
-): Array<DataCriteria | CallsDataCriteria> => {
+const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
   const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
 
   const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
@@ -361,46 +328,16 @@ const createAssetCriteria = (
     });
   });
 
-  if (accountAddress) {
-    criterias.push(
-      ...createAdarSenderCriteria(accountAddress, assetAddress),
-      ...createAdarReceiverCriteria(accountAddress, assetAddress)
-    );
-  }
-
   return criterias;
 };
 
 const createAccountAddressCriteria = (address: string) => {
   return [
-    // sender
     {
-      and: [
-        {
-          address: {
-            equalTo: address,
-          },
-        },
-        {
-          or: [
-            {
-              dataTo: {
-                isNull: true,
-              },
-            },
-            {
-              module: {
-                notEqualTo: ModuleNames.LiquidityProxy,
-              },
-              method: {
-                notEqualTo: ModuleMethods.LiquidityProxySwapTransferBatch,
-              },
-            },
-          ],
-        },
-      ],
+      address: {
+        equalTo: address,
+      },
     },
-    // recipient
     {
       dataTo: {
         equalTo: address,
@@ -451,7 +388,7 @@ export const historyElementsFilter = ({
 
   if (assetAddress) {
     filter.and.push({
-      or: createAssetCriteria(assetAddress, address),
+      or: createAssetCriteria(assetAddress),
     });
   }
 
@@ -495,7 +432,7 @@ export const historyElementsFilter = ({
       });
       // asset address criteria
     } else if (isAssetAddress(search)) {
-      queryFilters.push(...createAssetCriteria(search, address));
+      queryFilters.push(...createAssetCriteria(search));
     }
   }
 
@@ -507,7 +444,7 @@ export const historyElementsFilter = ({
   // symbol criteria
   if (assetsAddresses.length) {
     assetsAddresses.forEach((assetAddress) => {
-      queryFilters.push(...createAssetCriteria(assetAddress, address));
+      queryFilters.push(...createAssetCriteria(assetAddress));
     });
   }
 
