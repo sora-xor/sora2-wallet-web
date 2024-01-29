@@ -1,16 +1,24 @@
 import {
+  SubqueryAccountEntity,
   SubqueryAccountEntityMutation,
   SubqueryAssetEntity,
   SubqueryHistoryElement,
   SubqueryHistoryElementData,
+  SubqueryOrderBookEntity,
+  SubqueryOrderBookSnapshotEntity,
+  SubqueryOrderBookOrderEntity,
   SubqueryPoolXYKEntity,
   SubqueryUtilityBatchCall,
 } from '../subquery/types';
 import {
+  SubsquidAccountEntity,
   SubsquidAccountEntityMutation,
   SubsquidAssetEntity,
   SubsquidHistoryElement,
   SubsquidHistoryElementCalls,
+  SubsquidOrderBookEntity,
+  SubsquidOrderBookSnapshotEntity,
+  SubsquidOrderBookOrderEntity,
   SubsquidPoolXYKEntity,
   SubsquidUtilityBatchCall,
 } from '../subsquid/types';
@@ -54,6 +62,10 @@ export type AssetVolume = {
   amountUSD: string;
 };
 
+export type AccountBaseEntity = {
+  id: string;
+};
+
 export type AssetBaseEntity = {
   id: string;
   priceUSD: string;
@@ -77,11 +89,6 @@ export type AssetSnapshotBaseEntity = {
   burn: CodecString;
   priceUSD: PriceSnapshot;
   volume: AssetVolume;
-};
-
-// with connection
-export type AssetSnapshotEntity = AssetSnapshotBaseEntity & {
-  asset: AssetBaseEntity;
 };
 
 export type PoolXYKBaseEntity = {
@@ -127,8 +134,6 @@ export type OrderBookOrderBaseEntity = {
   id: string;
   type: OrderType;
   orderId: Nullable<number>;
-  orderBookId: string; // connection field
-  accountId: string; // connection field
   createdAtBlock: number;
   timestamp: number;
   isBuy: boolean;
@@ -144,8 +149,6 @@ export type OrderBookOrderBaseEntity = {
 export type OrderBookBaseEntity = {
   id: string;
   dexId: number;
-  baseAssetId: string; // connection field
-  quoteAssetId: string; // connection field
   baseAssetReserves: CodecString;
   quoteAssetReserves: CodecString;
   status: OrderBookStatus;
@@ -158,7 +161,6 @@ export type OrderBookBaseEntity = {
 
 export type OrderBookSnapshotBaseEntity = {
   id: string;
-  orderBookId: string; // connection field
   timestamp: number;
   type: SnapshotTypes;
   price: PriceSnapshot;
@@ -166,21 +168,6 @@ export type OrderBookSnapshotBaseEntity = {
   quoteAssetVolume: string;
   volumeUSD: string;
   liquidityUSD: string;
-};
-
-// with connection
-export type OrderBookEntity = OrderBookBaseEntity & {
-  baseAsset: AssetBaseEntity;
-  quoteAsset: AssetBaseEntity;
-  orders: OrderBookOrderBaseEntity[];
-};
-// with connection
-export type OrderBookSnapshotEntity = OrderBookSnapshotBaseEntity & {
-  orderBook: OrderBookBaseEntity;
-};
-// with connection
-export type OrderBookOrderEntity = OrderBookOrderBaseEntity & {
-  orderBook: OrderBookBaseEntity;
 };
 
 export type ReferrerRewardEntity = {
@@ -215,6 +202,12 @@ export type HistoryElementSwapTransfer = HistoryElementSwap & {
   to: string;
 };
 
+export type SwapTransferReceiver = {
+  accountId: string;
+  amount: string;
+  assetId: string;
+};
+
 export type SwapTransferBatchTransferParam = {
   from: string;
   to: string;
@@ -222,29 +215,20 @@ export type SwapTransferBatchTransferParam = {
   assetId: string;
 };
 
-type SwapTransferBatchExchangeParam = {
-  from: string;
-  to: string;
-  amount: string;
-  assetId: string;
-};
-
 export type HistoryElementSwapTransferBatch = {
-  inputAssetId: string;
+  assetId: string;
   selectedMarket: string;
   liquidityProviderFee: string;
   maxInputAmount: string;
   blockNumber: string;
   from: string;
-
-  adarFee: string;
-  inputAmount: string;
-  networkFee: string;
-  actualFee: string;
-  receivers: any;
-
-  transfers: Array<SwapTransferBatchTransferParam>;
-  exchanges: Array<SwapTransferBatchExchangeParam>;
+  receivers: SwapTransferReceiver[];
+  adarFee?: string;
+  actualFee?: string;
+  inputAmount?: string;
+  // outdated
+  inputAssetId?: string;
+  transfers?: SwapTransferBatchTransferParam[];
 };
 
 export type HistoryElementTransfer = {
@@ -370,7 +354,17 @@ export type UpdatesStream = {
 
 export type AssetEntity = SubqueryAssetEntity | SubsquidAssetEntity;
 
+export type AssetSnapshotEntity = AssetSnapshotBaseEntity & {
+  asset: AssetBaseEntity;
+};
+
 export type PoolXYKEntity = SubqueryPoolXYKEntity | SubsquidPoolXYKEntity;
+
+export type OrderBookEntity = SubqueryOrderBookEntity | SubsquidOrderBookEntity;
+
+export type OrderBookSnapshotEntity = SubqueryOrderBookSnapshotEntity | SubsquidOrderBookSnapshotEntity;
+
+export type OrderBookOrderEntity = SubqueryOrderBookOrderEntity | SubsquidOrderBookOrderEntity;
 
 export type UtilityBatchCall = SubqueryUtilityBatchCall | SubsquidUtilityBatchCall;
 
@@ -380,4 +374,4 @@ export type HistoryElementCalls = SubsquidHistoryElementCalls;
 
 export type HistoryElement = SubqueryHistoryElement | SubsquidHistoryElement;
 
-export type AccountEntity = SubqueryAccountEntityMutation | SubsquidAccountEntityMutation;
+export type AccountEntity = SubqueryAccountEntity | SubsquidAccountEntity;

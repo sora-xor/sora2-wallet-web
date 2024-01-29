@@ -108,9 +108,10 @@ const OperationsMap = {
 };
 
 const resolveAssets = async (assetAddressesArray: Array<string>) => {
-  const result: Array<Nullable<Asset>> = [];
+  const result: Array<Asset> = [];
   assetAddressesArray.forEach(async (address) => {
-    result.push(await getAssetByAddress(address));
+    const asset = await getAssetByAddress(address);
+    if (asset) result.push(asset);
   });
   return result;
 };
@@ -308,7 +309,7 @@ export default class SubsquidDataParser {
           return payload;
         }
 
-        const inputAssetId = data.inputAssetId;
+        const inputAssetId = data.inputAssetId ?? data.assetId;
         const inputAsset = await getAssetByAddress(inputAssetId);
 
         payload.assetAddress = inputAssetId;
@@ -324,10 +325,10 @@ export default class SubsquidDataParser {
         const transfers = data.transfers;
 
         if (Array.isArray(transfers) && transfers.length > 0) {
-          const outcomeAssetsIds = data.transfers.map((item) => item.assetId);
+          const outcomeAssetsIds = transfers.map((item) => item.assetId);
           const assetsList = await resolveAssets(outcomeAssetsIds);
 
-          payload.payload.receivers = data.receivers.reduce((acc, receiver) => {
+          payload.payload.receivers = data.receivers.reduce<any[]>((acc, receiver) => {
             const transfer = transfers?.find(
               (transfer) => transfer.to === receiver.accountId
             ) as SwapTransferBatchTransferParam;

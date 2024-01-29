@@ -5,6 +5,7 @@ import type { SubscriptionPayload, UpdatesStream } from '../../types';
 export const PriceStreamSubscription = gql<SubscriptionPayload<UpdatesStream>>`
   subscription SubsquidPriceStreamSubscription {
     payload: updatesStreamById(id: "price") {
+      id
       block
       data
     }
@@ -14,6 +15,7 @@ export const PriceStreamSubscription = gql<SubscriptionPayload<UpdatesStream>>`
 export const ApyStreamSubscription = gql<SubscriptionPayload<UpdatesStream>>`
   subscription SubsquidApyStreamSubscription {
     payload: updatesStreamById(id: "apy") {
+      id
       block
       data
     }
@@ -23,6 +25,7 @@ export const ApyStreamSubscription = gql<SubscriptionPayload<UpdatesStream>>`
 export const AssetRegistrationStreamSubscription = gql<SubscriptionPayload<UpdatesStream>>`
   subscription SubsquidAssetRegistrationStreamSubscription {
     payload: updatesStreamById(id: "assetRegistration") {
+      id
       block
       data
     }

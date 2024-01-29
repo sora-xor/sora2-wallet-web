@@ -27,7 +27,6 @@ import type {
   ReferralSetReferrer,
   ReferrerReserve,
   ClaimedRewardItem,
-  SwapTransferBatchTransferParam,
   SubqueryUtilityBatchCall,
 } from './types';
 import type { HistoryItem } from '@sora-substrate/util';
@@ -302,7 +301,7 @@ export default class SubqueryDataParser {
           return payload;
         }
 
-        const inputAssetId = data.inputAssetId;
+        const inputAssetId = data.inputAssetId ?? data.assetId;
         const inputAsset = await getAssetByAddress(inputAssetId);
 
         payload.assetAddress = inputAssetId;
@@ -320,7 +319,8 @@ export default class SubqueryDataParser {
 
         // [TODO]: remove after full reindex
         if (Array.isArray(transfers) && transfers.length > 0) {
-          for (const batch of data.receivers) {
+          for (const receiver of data.receivers) {
+            const batch = receiver as any;
             const assetAddress = batch.outcomeAssetId?.code;
             const asset = await getAssetByAddress(assetAddress);
 
