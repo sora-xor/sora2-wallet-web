@@ -69,16 +69,20 @@ async function getFiatPriceUpdatesUsingIndexer(context: ActionContext<any, any>)
 }
 
 function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): void {
-  const { commit } = accountActionContext(context);
+  const { commit, dispatch } = accountActionContext(context);
   commit.resetFiatPriceSubscription();
   const indexer = getCurrentIndexer();
-  const subscription = indexer.services.explorer.price.createFiatPriceSubscription((priceObject) => {
-    if (priceObject) {
-      commit.updateFiatPriceObject(priceObject);
-    } else {
-      getFiatPriceUpdatesUsingIndexer(context);
-    }
-  }, commit.clearFiatPriceObject);
+  const subscription = indexer.services.explorer.price.createFiatPriceSubscription(
+    (priceObject) => {
+      if (priceObject) {
+        commit.updateFiatPriceObject(priceObject);
+      } else {
+        getFiatPriceUpdatesUsingIndexer(context);
+      }
+    },
+    () => dispatch.useCeresApiForFiatValues(true)
+  );
+
   commit.setFiatPriceSubscription(subscription);
 }
 

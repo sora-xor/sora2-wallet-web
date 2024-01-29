@@ -30,7 +30,7 @@ export class SubqueryPriceModule extends SubqueryBaseModule {
 
   public createFiatPriceSubscription(
     handler: (entity: Nullable<FiatPriceObject>) => void,
-    errorHandler: () => void
+    errorHandler: () => void | Promise<void>
   ): VoidFunction {
     return this.root.createEntitySubscription(
       PriceStreamSubscription,
