@@ -130,6 +130,11 @@ export default {
     connectionError:
       'An error occured while connecting the wallet. You can try to connect the wallet via {extension} again',
   },
+  provider: {
+    messages: {
+      reloadPage: 'Reload page',
+    },
+  },
   connection: {
     title: '{Sora} Network account',
     text: 'In order to manage assets and sign transactions on {Sora}, an account must be connected. {Sora} accounts can be created and connected using our integrated wallets or browser extensions.',
