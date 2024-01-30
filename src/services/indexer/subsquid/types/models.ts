@@ -43,7 +43,7 @@ export type SubsquidOrderBookSnapshotEntity = OrderBookSnapshotBaseEntity & {
 };
 
 // with connection
-export type SubsquidOrderBookOrderEntity = {
+export type SubsquidOrderBookOrderEntity = OrderBookOrderBaseEntity & {
   orderBook: OrderBookBaseEntity;
   account: AccountBaseEntity;
 };
