@@ -1,7 +1,9 @@
 import { Operation } from '@sora-substrate/util';
 import { defineActions } from 'direct-vuex';
+import omit from 'lodash/fp/omit';
 
 import { api } from '../../api';
+import { accountIdBasedOperations } from '../../consts';
 import { getCurrentIndexer } from '../../services/indexer';
 import store, { rootActionContext } from '../../store';
 
@@ -44,7 +46,7 @@ const actions = defineActions({
   },
 
   async subscribeOnExternalHistory(context): Promise<void> {
-    const { commit } = transactionsActionContext(context);
+    const { commit, state } = transactionsActionContext(context);
     const { rootState, rootGetters, rootCommit } = rootActionContext(context);
     const { isLoggedIn, account } = rootGetters.wallet.account;
 
@@ -54,34 +56,35 @@ const actions = defineActions({
 
     try {
       const indexer = getCurrentIndexer();
-      const subscription = indexer.services.explorer.account.createHistorySubscription(
-        account.address,
-        async (transaction) => {
-          const historyItem = await indexer.services.dataParser.parseTransactionAsHistoryItem(transaction as any); // TODO: remove any type
+      const address = account.address;
+      const subscription = indexer.services.explorer.account.createHistorySubscription(address, async (transaction) => {
+        const historyItem = await indexer.services.dataParser.parseTransactionAsHistoryItem(transaction as any); // TODO: remove any type
 
-          if (!historyItem) return;
-          // Don't handle bridge operations
-          if ([Operation.EthBridgeIncoming, Operation.EthBridgeOutgoing].includes(historyItem.type)) return;
+        if (!historyItem?.id) return;
+        // Don't handle bridge operations
+        if ([Operation.EthBridgeIncoming, Operation.EthBridgeOutgoing].includes(historyItem.type)) return;
 
-          // Save history item to local history
-          // This will update unsynced transactions and restore pending transactions too
-          api.saveHistory(historyItem);
-          // Update storage - this will show new element on history view
+        // remove history from local storage
+        if (historyItem.id in api.history) {
+          commit.removeHistoryByIds([historyItem.id]);
+          // Update local history - this will remove deleted element from ui
           commit.getHistory();
+        }
 
-          // Handle incoming Transfer or SwapAndSend
-          if (
-            [Operation.Transfer, Operation.SwapAndSend].includes(historyItem.type) &&
-            historyItem.to === account.address
-          ) {
-            const asset = rootGetters.wallet.account.whitelist[historyItem.assetAddress as string];
+        // add to external history updates
+        if (state.saveExternalHistoryUpdates) {
+          commit.setExternalHistoryUpdates({ ...state.externalHistoryUpdates, [historyItem.id]: historyItem });
+        }
 
-            if (asset && rootState.wallet.settings.allowTopUpAlert) {
-              rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
-            }
+        // Handle incoming Transfer operations
+        if (accountIdBasedOperations.includes(historyItem.type) && historyItem.to === address) {
+          const asset = rootGetters.wallet.account.whitelist[historyItem.assetAddress as string];
+
+          if (asset && rootState.wallet.settings.allowTopUpAlert) {
+            rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
           }
         }
-      );
+      });
       commit.setExternalHistorySubscription(subscription);
     } catch (error) {
       console.error(error);
@@ -94,7 +97,6 @@ const actions = defineActions({
   async getExternalHistory(
     context,
     {
-      next = true,
       address = '',
       assetAddress = '',
       pageAmount = 8,
@@ -103,9 +105,7 @@ const actions = defineActions({
     }: ExternalHistoryParams = {}
   ): Promise<void> {
     const { state, commit } = transactionsActionContext(context);
-    const { externalHistoryPagination: pagination, externalHistory } = state;
-
-    if (pagination && ((next && !pagination.hasNextPage) || (!next && !pagination.hasPreviousPage))) return;
+    const { externalHistory, externalHistoryUpdates } = state;
 
     const indexer = getCurrentIndexer();
     const operations = indexer.services.dataParser.supportedOperations;
@@ -129,7 +129,8 @@ const actions = defineActions({
 
       const { nodes, totalCount } = response;
       const buffer = {};
-      const removeHistoryIds: Array<string> = [];
+      const removeInternalIds: Array<string> = [];
+      const removeExternalUpdatesIds: Array<string> = [];
 
       if (nodes.length) {
         for (const transaction of nodes) {
@@ -142,15 +143,23 @@ const actions = defineActions({
               buffer[id] = historyItem;
 
               if (id in api.history) {
-                removeHistoryIds.push(id);
+                removeInternalIds.push(id);
+              }
+
+              if (id in externalHistoryUpdates) {
+                removeExternalUpdatesIds.push(id);
               }
             }
           }
         }
+      }
 
-        if (removeHistoryIds.length) {
-          commit.removeHistoryByIds(removeHistoryIds);
-        }
+      if (removeInternalIds.length) {
+        commit.removeHistoryByIds(removeInternalIds);
+      }
+
+      if (removeExternalUpdatesIds.length) {
+        commit.setExternalHistoryUpdates(omit(removeExternalUpdatesIds, externalHistoryUpdates));
       }
 
       commit.setExternalHistory({ ...externalHistory, ...buffer });
