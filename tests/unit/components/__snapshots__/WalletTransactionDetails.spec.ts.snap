@@ -468,7 +468,7 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
       hash=""
       translation="transaction.from"
       type="account"
-      value="dfsakljfdlkjfhfkjladshslfjafds"
+      value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
     />
      
     <!---->

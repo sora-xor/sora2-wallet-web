@@ -453,7 +453,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
         <div
           class="history-item-title p4"
         >
-          Received ****** XOR
+          Sent ****** XOR
         </div>
          
         <!---->
@@ -676,7 +676,7 @@ exports[`WalletHistory.vue should render spinner when transaction is pending 1`]
         <div
           class="history-item-title p4"
         >
-          Received ****** XOR
+          Sent ****** XOR
         </div>
          
         <!---->
