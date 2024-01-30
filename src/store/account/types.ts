@@ -25,8 +25,7 @@ export type AccountState = {
   source: AppWallet | '';
   isExternal: boolean;
   assets: Readonly<Asset[]>;
-  assetsIds: Readonly<string[]>;
-  assetsSubscription: Nullable<NodeJS.Timer | number>;
+  assetsSubscription: Nullable<VoidFunction>;
   accountAssets: Array<AccountAsset>;
   alertSubject: Nullable<Subject<FiatPriceObject>>;
   accountAssetsSubscription: Nullable<Subscription>;

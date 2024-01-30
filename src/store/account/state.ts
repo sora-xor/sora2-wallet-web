@@ -26,7 +26,6 @@ export function initialState(): AccountState {
     source: (storage.get('source') as AppWallet) || '',
     isExternal: isExternal ? JSON.parse(isExternal) : false,
     assets: [],
-    assetsIds: [],
     assetsToNotifyQueue: [],
     assetsSubscription: null,
     book: (book || {}) as Book,

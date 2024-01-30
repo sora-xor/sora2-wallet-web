@@ -1,21 +1,10 @@
-import { formatStringNumber } from '../../../../../util';
+import { parseApy, parseApyStreamUpdate } from '../../../explorer/utils';
 import { ApyQuery } from '../../queries/fiatPriceAndApy';
-import { PoolsApySubscription } from '../../subscriptions/fiatPriceAndApy';
+import { ApyStreamSubscription } from '../../subscriptions/stream';
 
 import { BaseModule } from './_base';
 
-import type { SubsquidPoolXYKEntity, PoolApyObject } from '../../types';
-
-function parseApy(entity: SubsquidPoolXYKEntity): PoolApyObject {
-  const acc = {};
-  const id = entity.id;
-  const strategicBonusApyFPNumber = formatStringNumber(entity.strategicBonusApy);
-  const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
-  if (isStrategicBonusApyFinity) {
-    acc[id] = strategicBonusApyFPNumber.toCodecString();
-  }
-  return acc;
-}
+import type { PoolApyObject } from '../../types';
 
 export class SubsquidPoolModule extends BaseModule {
   /**
@@ -33,6 +22,6 @@ export class SubsquidPoolModule extends BaseModule {
     handler: (entity: PoolApyObject) => void,
     errorHandler: (error: any) => void
   ): VoidFunction {
-    return this.root.createEntitySubscription(PoolsApySubscription, {}, parseApy, handler, errorHandler);
+    return this.root.createEntitySubscription(ApyStreamSubscription, {}, parseApyStreamUpdate, handler, errorHandler);
   }
 }

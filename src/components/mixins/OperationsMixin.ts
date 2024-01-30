@@ -2,7 +2,6 @@ import { TransactionStatus, Operation } from '@sora-substrate/util';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { HiddenValue } from '../../consts';
-import store from '../../store';
 import { getter } from '../../store/decorators';
 import { formatAddress, groupRewardsByAssetsList } from '../../util';
 
@@ -25,6 +24,7 @@ const twoAssetsBasedOperations = [
 const amountBasedOperations = [
   ...twoAssetsBasedOperations,
   Operation.Transfer,
+  Operation.SwapTransferBatch,
   Operation.DemeterFarmingGetRewards,
   Operation.DemeterFarmingStakeToken,
   Operation.DemeterFarmingUnstakeToken,
@@ -40,7 +40,7 @@ const orderBookOperations = [
   Operation.OrderBookCancelLimitOrders,
 ];
 
-const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer];
+const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer, Operation.SwapTransferBatch];
 
 @Component
 export default class OperationsMixin extends Mixins(NotificationMixin, NumberFormatterMixin) {
@@ -72,7 +72,7 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
       const direction = isRecipient ? this.t('transaction.from') : this.t('transaction.to');
       const action = isRecipient ? this.t('receivedText') : this.t('sentText');
 
-      params.address = formatAddress(address as string, 10);
+      params.address = address ? formatAddress(address, 10) : '';
       params.direction = direction;
       params.action = action;
     }
@@ -91,34 +91,12 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
     }
     if (value.type === Operation.ReferralSetInvitedUser) {
       const isInvitedUser = this.account.address === value.from;
-      const linkedAddress = (isInvitedUser ? value.to : value.from) as string;
+      const linkedAddress = isInvitedUser ? value.to : value.from;
       const linkedRole = isInvitedUser ? 'transaction.referrer' : 'transaction.referral';
       params.role = this.t(linkedRole);
-      params.address = formatAddress(linkedAddress, 10);
-    }
-    if (value.type === Operation.SwapTransferBatch) {
-      const isRecipient = this.account.address !== value.from;
-      const address = isRecipient ? value.from : this.t('multipleRecipients');
-      const direction = isRecipient ? this.t('transaction.from') : this.t('transaction.to');
-      const action = isRecipient ? this.t('receivedText') : this.t('sentText');
-
-      params.address = isRecipient ? formatAddress(address as string, 10) : address;
-      params.direction = direction;
-      params.action = action;
-      if (isRecipient) {
-        const amount = value.payload?.transfers?.find((transfer) => transfer.to === this.account.address)?.amount;
-        params.amount = amount ? this.formatStringValue(amount, params.decimals) : '';
-        params.symbol = value.payload?.receivers?.find(
-          (receiver) => receiver.accountId === this.account.address
-        )?.symbol;
-      } else {
-        params.amount = params.amount ? this.formatStringValue(params.amount, params.decimals) : '';
-      }
+      params.address = linkedAddress ? formatAddress(linkedAddress, 10) : '';
     }
     if (orderBookOperations.includes(value.type)) {
-      const findAsset = (address: string) => store.getters.wallet.account.assetsDataTable[address];
-      params.symbol = findAsset(params.assetAddress)?.symbol ?? '';
-      params.symbol2 = findAsset(params.asset2Address)?.symbol ?? '';
       params.side = params.side?.toUpperCase();
     }
     let status = value.status as TransactionStatus;
