@@ -10,7 +10,11 @@ export type Edge<T> = {
   node: T;
 };
 
-export type QueryResponseData<T> = {
+export type QueryData<T> = {
+  data: T;
+};
+
+export type QueryResponseNodes<T> = {
   nodes: T[];
   totalCount: number;
 };
@@ -19,4 +23,10 @@ export type ConnectionQueryResponseData<T> = {
   edges: Edge<T>[];
   pageInfo: PageInfo;
   totalCount: number;
+};
+
+export type ConnectionQueryResponse<T> = QueryData<ConnectionQueryResponseData<T>>;
+
+export type SubscriptionPayload<T> = {
+  payload: T;
 };

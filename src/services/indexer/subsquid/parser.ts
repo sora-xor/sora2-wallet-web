@@ -2,7 +2,6 @@ import { BN } from '@polkadot/util';
 import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
 import { RewardType, RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
 import getOr from 'lodash/fp/getOr';
-import omit from 'lodash/fp/omit';
 
 import { api } from '../../../api';
 import { ObjectInit } from '../../../consts';
@@ -20,6 +19,8 @@ import type {
   HistoryElementRewardsClaim,
   SubsquidHistoryElementCalls,
   HistoryElementDemeterFarming,
+  HistoryElementPlaceLimitOrder,
+  HistoryElementCancelLimitOrder,
   SubsquidUtilityBatchCall,
   ReferralSetReferrer,
   ReferrerReserve,
@@ -29,6 +30,7 @@ import type {
 } from './types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
+import type { LimitOrderHistory } from '@sora-substrate/util/build/orderBook/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 
 const insensitive = (value: string) => value.toLowerCase();
@@ -98,6 +100,20 @@ const OperationsMap = {
     },
     [ModuleMethods.DemeterFarmingGetRewards]: () => Operation.DemeterFarmingGetRewards,
   },
+  [insensitive(ModuleNames.OrderBook)]: {
+    [ModuleMethods.OrderBookPlaceLimitOrder]: () => Operation.OrderBookPlaceLimitOrder,
+    [ModuleMethods.OrderBookCancelLimitOrder]: () => Operation.OrderBookCancelLimitOrder,
+    [ModuleMethods.OrderBookCancelLimitOrders]: () => Operation.OrderBookCancelLimitOrders,
+  },
+};
+
+const resolveAssets = async (assetAddressesArray: Array<string>) => {
+  const result: Array<Asset> = [];
+  assetAddressesArray.forEach(async (address) => {
+    const asset = await getAssetByAddress(address);
+    if (asset) result.push(asset);
+  });
+  return result;
 };
 
 const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asset && asset.symbol ? asset.symbol : '');
@@ -204,6 +220,9 @@ export default class SubsquidDataParser {
     Operation.DemeterFarmingStakeToken,
     Operation.DemeterFarmingUnstakeToken,
     Operation.DemeterFarmingGetRewards,
+    Operation.OrderBookPlaceLimitOrder,
+    Operation.OrderBookCancelLimitOrder,
+    Operation.OrderBookCancelLimitOrders,
   ];
 
   public get supportedOperations(): Array<Operation> {
@@ -277,20 +296,21 @@ export default class SubsquidDataParser {
       case Operation.SwapTransferBatch: {
         const data = transaction.data as HistoryElementSwapTransferBatch;
 
-        const inputAssetId = data.inputAssetId;
-        const inputAsset = await getAssetByAddress(inputAssetId);
-        const transfers = data.transfers;
-        const exchanges = data.exchanges;
+        if (!data.receivers) {
+          const transfer = data as unknown as HistoryElementTransfer;
+          const assetAddress = transfer.assetId;
+          const asset = await getAssetByAddress(assetAddress);
 
-        const outcomeAssetsIds = data.transfers.map((item) => item.assetId);
-        const resolveAssets = async (assetAddressesArray: Array<string>) => {
-          const result: Array<Nullable<Asset>> = [];
-          assetAddressesArray.forEach(async (address) => {
-            result.push(await getAssetByAddress(address));
-          });
-          return result;
-        };
-        const assetsList = await resolveAssets(outcomeAssetsIds);
+          payload.assetAddress = assetAddress;
+          payload.symbol = getAssetSymbol(asset);
+          payload.to = transfer.to;
+          payload.amount = transfer.amount;
+
+          return payload;
+        }
+
+        const inputAssetId = data.inputAssetId ?? data.assetId;
+        const inputAsset = await getAssetByAddress(inputAssetId);
 
         payload.assetAddress = inputAssetId;
         payload.liquiditySource = data.selectedMarket;
@@ -298,16 +318,17 @@ export default class SubsquidDataParser {
         payload.symbol = getAssetSymbol(inputAsset);
 
         payload.payload = {};
-
         payload.payload.adarFee = data.adarFee;
-        payload.payload.maxInputAmount = data.maxInputAmount;
-        payload.payload.networkFee = data.networkFee;
-        payload.payload.blockNumber = data.blockNumber;
         payload.payload.actualFee = data.actualFee;
-        payload.payload.transfers = transfers;
-        payload.payload.exchanges = exchanges;
-        if (transfers.length > 0) {
-          payload.payload.receivers = data.receivers.reduce((acc, receiver) => {
+        payload.payload.maxInputAmount = data.maxInputAmount;
+
+        const transfers = data.transfers;
+
+        if (Array.isArray(transfers) && transfers.length > 0) {
+          const outcomeAssetsIds = transfers.map((item) => item.assetId);
+          const assetsList = await resolveAssets(outcomeAssetsIds);
+
+          payload.payload.receivers = data.receivers.reduce<any[]>((acc, receiver) => {
             const transfer = transfers?.find(
               (transfer) => transfer.to === receiver.accountId
             ) as SwapTransferBatchTransferParam;
@@ -326,6 +347,7 @@ export default class SubsquidDataParser {
         } else {
           payload.payload.receivers = [];
         }
+
         return payload;
       }
       case Operation.AddLiquidity:
@@ -452,6 +474,44 @@ export default class SubsquidDataParser {
         payload.assetAddress = assetAddress;
         payload.symbol = getAssetSymbol(asset);
         payload.amount = data.amount;
+
+        return payload;
+      }
+      case Operation.OrderBookPlaceLimitOrder: {
+        const data = transaction.data as HistoryElementPlaceLimitOrder;
+
+        const _payload = payload as LimitOrderHistory;
+        const baseAssetId = data.baseAssetId;
+        const quoteAssetId = data.quoteAssetId;
+        const baseAsset = await getAssetByAddress(baseAssetId);
+        const quoteAsset = await getAssetByAddress(quoteAssetId);
+
+        _payload.assetAddress = baseAssetId;
+        _payload.asset2Address = quoteAssetId;
+        _payload.symbol = getAssetSymbol(baseAsset);
+        _payload.symbol2 = getAssetSymbol(quoteAsset);
+        _payload.price = new FPNumber(data.price).toString();
+        _payload.amount = new FPNumber(data.amount).toString();
+        _payload.side = (data.side as any).__kind; // [TODO] fix subsquid
+        _payload.limitOrderTimestamp = data.lifetime;
+
+        return payload;
+      }
+      case Operation.OrderBookCancelLimitOrder:
+      case Operation.OrderBookCancelLimitOrders: {
+        const data = transaction.data as HistoryElementCancelLimitOrder;
+
+        const _payload = payload as LimitOrderHistory;
+        const baseAssetId = data[0].baseAssetId;
+        const quoteAssetId = data[0].quoteAssetId;
+        const baseAsset = await getAssetByAddress(baseAssetId);
+        const quoteAsset = await getAssetByAddress(quoteAssetId);
+
+        _payload.assetAddress = baseAssetId;
+        _payload.asset2Address = quoteAssetId;
+        _payload.symbol = getAssetSymbol(baseAsset);
+        _payload.symbol2 = getAssetSymbol(quoteAsset);
+        _payload.limitOrderIds = data.map((order) => order.orderId);
 
         return payload;
       }

@@ -1,12 +1,12 @@
 import type { EthBridgeUpdateHistory } from '../../consts';
-import type { PageInfo } from '../../services/indexer/subsquid/types';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 export type TransactionsState = {
   history: AccountHistory<HistoryItem>;
   externalHistory: AccountHistory<HistoryItem>;
+  externalHistoryUpdates: AccountHistory<HistoryItem>;
+  saveExternalHistoryUpdates: boolean;
   externalHistoryTotal: number;
-  externalHistoryPagination: Nullable<PageInfo>;
   externalHistorySubscription: Nullable<VoidFunction>;
   activeTxsIds: Array<string>;
   updateActiveTxsId: Nullable<NodeJS.Timeout | number>;

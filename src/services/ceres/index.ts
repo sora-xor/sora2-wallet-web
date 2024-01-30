@@ -26,7 +26,7 @@ export class CeresApiService {
       }
       return cerestokenApiObj;
     } catch (error) {
-      console.warn('CERES API not available!', error);
+      console.warn('[CERES API] not available!', error);
       return null;
     }
   }
@@ -35,7 +35,7 @@ export class CeresApiService {
     handler: (entity?: FiatPriceObject) => void,
     errorHandler: () => void
   ): VoidFunction {
-    const { unsubscribe } = ceresUpdateInterval.subscribe(async () => {
+    const subscription = ceresUpdateInterval.subscribe(async () => {
       const data = await CeresApiService.getFiatPriceObject();
       if (!data) {
         errorHandler();
@@ -44,6 +44,9 @@ export class CeresApiService {
       }
     });
 
-    return unsubscribe;
+    return () => {
+      console.info(`[CERES API] Fiat values unsubscribe.`);
+      subscription.unsubscribe();
+    };
   }
 }
