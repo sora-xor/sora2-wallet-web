@@ -4,7 +4,6 @@ import { api } from '../../api';
 
 import type { TransactionsState } from './types';
 import type { EthBridgeUpdateHistory } from '../../consts';
-import type { PageInfo } from '../../services/indexer/types';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
 
 const mutations = defineMutations<TransactionsState>()({
@@ -45,16 +44,19 @@ const mutations = defineMutations<TransactionsState>()({
   setExternalHistory(state, history: AccountHistory<HistoryItem>): void {
     state.externalHistory = Object.freeze(history);
   },
+  setExternalHistoryUpdates(state, history: AccountHistory<HistoryItem>): void {
+    state.externalHistoryUpdates = Object.freeze(history);
+  },
+  saveExternalHistoryUpdates(state, flag: boolean) {
+    state.saveExternalHistoryUpdates = flag;
+  },
   setExternalHistoryTotal(state, total = 0): void {
     state.externalHistoryTotal = total;
   },
-  setExternalHistoryPagination(state, pageInfo: Nullable<PageInfo>): void {
-    state.externalHistoryPagination = pageInfo;
-  },
   resetExternalHistory(state): void {
     state.externalHistory = {};
+    state.externalHistoryUpdates = {};
     state.externalHistoryTotal = 0;
-    state.externalHistoryPagination = null;
   },
   setExternalHistorySubscription(state, subscription: VoidFunction): void {
     state.externalHistorySubscription = subscription;

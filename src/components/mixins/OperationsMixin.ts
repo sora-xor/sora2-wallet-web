@@ -1,7 +1,7 @@
 import { TransactionStatus, Operation } from '@sora-substrate/util';
 import { Component, Mixins } from 'vue-property-decorator';
 
-import { HiddenValue } from '../../consts';
+import { HiddenValue, accountIdBasedOperations } from '../../consts';
 import { getter } from '../../store/decorators';
 import { formatAddress, groupRewardsByAssetsList } from '../../util';
 
@@ -39,8 +39,6 @@ const orderBookOperations = [
   Operation.OrderBookCancelLimitOrder,
   Operation.OrderBookCancelLimitOrders,
 ];
-
-const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer, Operation.SwapTransferBatch];
 
 @Component
 export default class OperationsMixin extends Mixins(NotificationMixin, NumberFormatterMixin) {
