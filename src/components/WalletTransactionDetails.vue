@@ -208,7 +208,6 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   get transactionAmount(): string {
-    if (this.isAdarOperation) return this.swapTransferBatchAmount;
     return this.formatStringValue(this.selectedTransaction.amount as string);
   }
 
@@ -217,7 +216,6 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   get transactionSymbol(): string {
-    if (this.isAdarOperation) return this.swapTransferBatchAmountSymbol;
     const { type, symbol, symbol2 } = this.selectedTransaction;
 
     if ([Operation.DemeterFarmingDepositLiquidity, Operation.DemeterFarmingWithdrawLiquidity].includes(type)) {
@@ -332,30 +330,6 @@ export default class WalletTransactionDetails extends Mixins(
   // ____________________________________________________ADAR____________________________________________________________
   get isAdarOperation(): boolean {
     return this.selectedTransaction.type === Operation.SwapTransferBatch;
-  }
-
-  get swapTransferBatchAmount(): string {
-    if (!this.isAdarOperation) return '0';
-
-    if (this.isRecipient) {
-      const amount = this.selectedTransaction.payload.transfers.find(
-        (transfer) => transfer.to === this.account.address
-      )?.amount;
-      return this.formatStringValue(amount);
-    } else {
-      return this.formatStringValue(this.selectedTransaction.amount || '0');
-    }
-  }
-
-  get swapTransferBatchAmountSymbol(): string {
-    if (this.isRecipient) {
-      return (
-        this.selectedTransaction.payload?.receivers?.find((receiver) => receiver.accountId === this.account.address)
-          ?.symbol ?? ''
-      );
-    } else {
-      return this.selectedTransaction.symbol ?? '';
-    }
   }
   // ____________________________________________________________________________________________________________________
 

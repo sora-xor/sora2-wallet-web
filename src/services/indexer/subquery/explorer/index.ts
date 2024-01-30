@@ -1,21 +1,24 @@
 import BaseExplorer from '../../explorer/base';
 
 import { SubqueryAccountModule } from './modules/account';
+import { SubqueryAssetModule } from './modules/asset';
 import { SubqueryPoolModule } from './modules/pool';
 import { SubqueryPriceModule } from './modules/price';
 
+import type { ConnectionQueryResponse } from '../../types';
 import type { TypedDocumentNode, AnyVariables } from '../client';
-import type { SubqueryConnectionQueryResponse, SubquerySubscriptionPayload } from '../types';
+import type { SubquerySubscriptionPayload } from '../types';
 
 export default class SubqueryExplorer extends BaseExplorer {
   public readonly account: SubqueryAccountModule = new SubqueryAccountModule(this);
-  public readonly price: SubqueryPriceModule = new SubqueryPriceModule(this);
+  public readonly asset: SubqueryAssetModule = new SubqueryAssetModule(this);
   public readonly pool: SubqueryPoolModule = new SubqueryPoolModule(this);
+  public readonly price: SubqueryPriceModule = new SubqueryPriceModule(this);
 
   public async fetchEntities<T>(
-    query: TypedDocumentNode<SubqueryConnectionQueryResponse<T>>,
+    query: TypedDocumentNode<ConnectionQueryResponse<T>>,
     variables?: AnyVariables
-  ): Promise<Nullable<SubqueryConnectionQueryResponse<T>['data']>> {
+  ): Promise<Nullable<ConnectionQueryResponse<T>['data']>> {
     try {
       const response = await this.request(query, variables);
 
@@ -29,7 +32,7 @@ export default class SubqueryExplorer extends BaseExplorer {
   }
 
   public async fetchAllEntities<T, R>(
-    query: TypedDocumentNode<SubqueryConnectionQueryResponse<T>>,
+    query: TypedDocumentNode<ConnectionQueryResponse<T>>,
     variables: AnyVariables = {},
     parse?: (entity: T) => R
   ): Promise<Nullable<R[]>> {
@@ -72,10 +75,10 @@ export default class SubqueryExplorer extends BaseExplorer {
   ): VoidFunction {
     const createSubscription = this.subscribe(subscription, variables);
 
-    return createSubscription((payload) => {
+    return createSubscription((result) => {
       try {
-        if (payload.data) {
-          const entity = parse(payload.data.payload._entity);
+        if (result.data) {
+          const entity = parse(result.data.payload._entity);
           handler(entity);
         } else {
           throw new Error('Subscription payload data is undefined');

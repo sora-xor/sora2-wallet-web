@@ -166,64 +166,14 @@ export const MOCK_HISTORY: Array<History> = [
     type: Operation.SwapTransferBatch,
     startTime: 1605048643745,
     symbol: KnownSymbols.XOR,
-    from: 'dfsakljfdlkjfhfkjladshslfjafds',
+    from: '5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL',
     soraNetworkFee: '140000000000000000',
     assetAddress: '0x0200000000000000000000000000000000000000000000000000000000000000',
     amount: '1.466564436348045197',
     payload: {
       adarFee: '0.003666411090870112',
-      networkFee: '0.140000000000000000',
       blockNumber: 10502,
       actualFee: '1.469126400000000000',
-      transfers: [
-        {
-          to: 'cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo',
-          from: 'dfsakljfdlkjfhfkjladshslfjafds',
-          amount: '0.732178089913374904',
-          assetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
-        },
-        {
-          to: 'cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo',
-          from: 'dfsakljfdlkjfhfkjladshslfjafds',
-          amount: '0.732183187395366282',
-          assetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
-        },
-        {
-          to: 'cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse',
-          from: 'dfsakljfdlkjfhfkjladshslfjafds',
-          amount: '0.002203159039304011',
-          assetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
-        },
-        {
-          to: 'cnV2xJFCvXN9fx3DHt9FJWovPkVVBu1vtuzmhr2QnedmZqQ6J',
-          from: 'dfsakljfdlkjfhfkjladshslfjafds',
-          amount: '0.883650537081023890',
-          assetId: '0x0200040000000000000000000000000000000000000000000000000000000000',
-        },
-        {
-          to: 'cnV2xJFCvXN9fx3DHt9FJWovPkVVBu1vtuzmhr2QnedmZqQ6J',
-          from: 'dfsakljfdlkjfhfkjladshslfjafds',
-          amount: '0.883650537081023891',
-          assetId: '0x0200040000000000000000000000000000000000000000000000000000000000',
-        },
-        {
-          to: 'cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse',
-          from: 'dfsakljfdlkjfhfkjladshslfjafds',
-          amount: '0.003666411090870112',
-          assetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
-        },
-      ],
-      exchanges: [
-        {
-          dexId: '0',
-          feeAmount: '0.004406318078608022',
-          inputAmount: '0.734386346434670293',
-          inputAssetId: '0x0200000000000000000000000000000000000000000000000000000000000000',
-          outputAmount: '0.883650537081023891',
-          outputAssetId: '0x0200040000000000000000000000000000000000000000000000000000000000',
-          senderAddress: 'dfsakljfdlkjfhfkjladshslfjafds',
-        },
-      ],
       receivers: [
         {
           accountId: 'cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo',
@@ -326,13 +276,13 @@ export const MOCK_EXTERNAL_HISTORY = {
 
 export const MOCK_ACCOUNTS: any = [
   {
-    address: 'dfsakljfdlkjfhfkjladshslfjafds',
-    name: 'Mock Account',
+    address: '5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL',
+    name: 'Not SORA Account',
     password: '123qwaszx',
   },
   {
-    address: '5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL',
-    name: 'Not SORA Account',
+    address: 'dfsakljfdlkjfhfkjladshslfjafds',
+    name: 'Mock Account',
     password: '123qwaszx',
   },
 ];

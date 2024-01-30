@@ -33,6 +33,8 @@ const createStore = ({ history = {}, externalHistory = {} } = {}) =>
         history,
         externalHistory,
         externalHistoryTotal: 4,
+        externalHistoryUpdates: {},
+        saveExternalHistoryUpdates: false,
       }),
       mutations: {
         getHistory: jest.fn(),

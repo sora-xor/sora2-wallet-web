@@ -2,7 +2,6 @@ import { BN } from '@polkadot/util';
 import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
 import { RewardType, RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
 import getOr from 'lodash/fp/getOr';
-import omit from 'lodash/fp/omit';
 
 import { api } from '../../../api';
 import { ObjectInit } from '../../../consts';
@@ -28,7 +27,6 @@ import type {
   ReferralSetReferrer,
   ReferrerReserve,
   ClaimedRewardItem,
-  SwapTransferBatchTransferParam,
   SubqueryUtilityBatchCall,
 } from './types';
 import type { HistoryItem } from '@sora-substrate/util';
@@ -290,20 +288,21 @@ export default class SubqueryDataParser {
       case Operation.SwapTransferBatch: {
         const data = transaction.data as HistoryElementSwapTransferBatch;
 
-        const inputAssetId = data.inputAssetId;
-        const inputAsset = await getAssetByAddress(inputAssetId);
-        const transfers = data.transfers;
-        const exchanges = data.exchanges;
+        if (!data.receivers) {
+          const transfer = data as unknown as HistoryElementTransfer;
+          const assetAddress = transfer.assetId;
+          const asset = await getAssetByAddress(assetAddress);
 
-        const outcomeAssetsIds = data.receivers.map((item) => item.outcomeAssetId?.code);
-        const resolveAssets = async (assetAddressesArray: Array<string>) => {
-          const result: Array<Nullable<Asset>> = [];
-          assetAddressesArray.forEach(async (address) => {
-            result.push(await getAssetByAddress(address));
-          });
-          return result;
-        };
-        const assetsList = await resolveAssets(outcomeAssetsIds);
+          payload.assetAddress = assetAddress;
+          payload.symbol = getAssetSymbol(asset);
+          payload.to = transfer.to;
+          payload.amount = transfer.amount;
+
+          return payload;
+        }
+
+        const inputAssetId = data.inputAssetId ?? data.assetId;
+        const inputAsset = await getAssetByAddress(inputAssetId);
 
         payload.assetAddress = inputAssetId;
         payload.liquiditySource = data.selectedMarket;
@@ -311,34 +310,42 @@ export default class SubqueryDataParser {
         payload.symbol = getAssetSymbol(inputAsset);
 
         payload.payload = {};
-
         payload.payload.adarFee = data.adarFee;
-        payload.payload.maxInputAmount = data.maxInputAmount;
-        payload.payload.networkFee = data.networkFee;
-        payload.payload.blockNumber = data.blockNumber;
         payload.payload.actualFee = data.actualFee;
-        payload.payload.transfers = transfers;
-        payload.payload.exchanges = exchanges;
-        if (transfers.length > 0) {
-          payload.payload.receivers = data.receivers.reduce((acc, data) => {
-            const receiversData = data.receivers.map((receiver) => {
-              const transfer = transfers?.find(
-                (transfer) => transfer.to === receiver.accountId
-              ) as SwapTransferBatchTransferParam;
-              const assetAddress = transfer?.assetId || data.outcomeAssetId?.code;
-              const asset = assetsList.find((asset) => asset?.address === assetAddress);
-              return {
+        payload.payload.maxInputAmount = data.maxInputAmount;
+        payload.payload.receivers = [];
+
+        const transfers = data.transfers;
+
+        // [TODO]: remove after full reindex
+        if (Array.isArray(transfers) && transfers.length > 0) {
+          for (const receiver of data.receivers) {
+            const batch = receiver as any;
+            const assetAddress = batch.outcomeAssetId?.code;
+            const asset = await getAssetByAddress(assetAddress);
+
+            for (const receiver of batch.receivers) {
+              payload.payload.receivers.push({
                 accountId: receiver.accountId,
                 asset,
-                amount: transfer?.amount || '0',
+                amount: FPNumber.fromCodecValue(receiver.targetAmount, asset?.decimals).toString(),
                 symbol: getAssetSymbol(asset),
-              };
-            });
-            return [...acc, ...receiversData];
-          }, []);
+              });
+            }
+          }
         } else {
-          payload.payload.receivers = [];
+          for (const receiver of data.receivers) {
+            const asset = await getAssetByAddress(receiver.assetId);
+
+            payload.payload.receivers.push({
+              accountId: receiver.accountId,
+              asset,
+              amount: receiver.amount,
+              symbol: getAssetSymbol(asset),
+            });
+          }
         }
+
         return payload;
       }
       case Operation.AddLiquidity:
@@ -472,9 +479,15 @@ export default class SubqueryDataParser {
         const data = transaction.data as HistoryElementPlaceLimitOrder;
 
         const _payload = payload as LimitOrderHistory;
+        const baseAssetId = data.baseAssetId;
+        const quoteAssetId = data.quoteAssetId;
+        const baseAsset = await getAssetByAddress(baseAssetId);
+        const quoteAsset = await getAssetByAddress(quoteAssetId);
 
-        _payload.assetAddress = data.baseAssetId;
-        _payload.asset2Address = data.quoteAssetId;
+        _payload.assetAddress = baseAssetId;
+        _payload.asset2Address = quoteAssetId;
+        _payload.symbol = getAssetSymbol(baseAsset);
+        _payload.symbol2 = getAssetSymbol(quoteAsset);
         _payload.price = new FPNumber(data.price).toString();
         _payload.amount = new FPNumber(data.amount).toString();
         _payload.side = data.side;
@@ -487,9 +500,15 @@ export default class SubqueryDataParser {
         const data = transaction.data as HistoryElementCancelLimitOrder;
 
         const _payload = payload as LimitOrderHistory;
+        const baseAssetId = data[0].baseAssetId;
+        const quoteAssetId = data[0].quoteAssetId;
+        const baseAsset = await getAssetByAddress(baseAssetId);
+        const quoteAsset = await getAssetByAddress(quoteAssetId);
 
-        _payload.assetAddress = data[0].baseAssetId;
-        _payload.asset2Address = data[0].quoteAssetId;
+        _payload.assetAddress = baseAssetId;
+        _payload.asset2Address = quoteAssetId;
+        _payload.symbol = getAssetSymbol(baseAsset);
+        _payload.symbol2 = getAssetSymbol(quoteAsset);
         _payload.limitOrderIds = data.map((order) => order.orderId);
 
         return payload;

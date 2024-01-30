@@ -5,7 +5,8 @@ import { gql } from '@urql/core';
 import { PageInfoFragment } from '../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
-import type { SubsquidHistoryElement, SubsquidQueryResponse, SubsquidConnectionQueryResponse } from '../types';
+import type { ConnectionQueryResponse } from '../../types';
+import type { SubsquidHistoryElement, SubsquidQueryResponse } from '../types';
 
 export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryElement>>`
   query SubsquidHistoryElements(
@@ -39,7 +40,7 @@ export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryEle
   }
 `;
 
-export const HistoryElementsConnectionQuery = gql<SubsquidConnectionQueryResponse<SubsquidHistoryElement>>`
+export const HistoryElementsConnectionQuery = gql<ConnectionQueryResponse<SubsquidHistoryElement>>`
   query SubsquidHistoryElementsConnection(
     $first: Int
     $after: String = null
@@ -105,6 +106,11 @@ const DemeterFarmingDeposit = {
 const DemeterFarmingWithdraw = {
   module_eq: ModuleNames.DemeterFarming,
   method_eq: ModuleMethods.DemeterFarmingWithdraw,
+};
+
+const OrderBookCancelLimitOrders = {
+  module_eq: ModuleNames.OrderBook,
+  method_eq: ModuleMethods.OrderBookCancelLimitOrders,
 };
 
 const OperationFilterMap = {
@@ -194,6 +200,13 @@ const OperationFilterMap = {
     module_eq: ModuleNames.DemeterFarming,
     method_eq: ModuleMethods.DemeterFarmingGetRewards,
   },
+  // ORDER BOOK
+  [Operation.OrderBookPlaceLimitOrder]: {
+    module_eq: ModuleNames.OrderBook,
+    method_eq: ModuleMethods.OrderBookPlaceLimitOrder,
+  },
+  [Operation.OrderBookCancelLimitOrder]: OrderBookCancelLimitOrders,
+  [Operation.OrderBookCancelLimitOrders]: OrderBookCancelLimitOrders,
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
@@ -206,36 +219,7 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
   }, []);
 };
 
-const createAdarSenderCriteria = (accountAddress: string, assetAddress: string) => {
-  return [
-    {
-      data_jsonContains: {
-        inputAssetId: assetAddress,
-        from: accountAddress,
-      },
-    },
-  ];
-};
-
-const createAdarReceiverCriteria = (accountAddress: string, assetAddress: string) => {
-  return [
-    {
-      data_jsonContains: {
-        transfers: [
-          {
-            to: accountAddress,
-            assetId: assetAddress,
-          },
-        ],
-      },
-    },
-  ];
-};
-
-const createAssetCriteria = (
-  assetAddress: string,
-  accountAddress?: string
-): Array<DataCriteria | CallsDataCriteria> => {
+const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
   const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
 
   const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
@@ -259,13 +243,6 @@ const createAssetCriteria = (
     });
   });
 
-  if (accountAddress) {
-    criterias.push(
-      ...createAdarSenderCriteria(accountAddress, assetAddress),
-      ...createAdarReceiverCriteria(accountAddress, assetAddress)
-    );
-  }
-
   return criterias;
 };
 
@@ -276,16 +253,6 @@ const createAccountAddressCriteria = (address: string) => {
     },
     {
       dataTo_eq: address,
-    },
-    // ADAR transfer (receiver)
-    {
-      data_jsonContains: {
-        receivers: [
-          {
-            accountId: address,
-          },
-        ],
-      },
     },
   ];
 };
@@ -332,7 +299,7 @@ export const historyElementsFilter = ({
 
   if (assetAddress) {
     filter.AND.push({
-      OR: createAssetCriteria(assetAddress, address),
+      OR: createAssetCriteria(assetAddress),
     });
   }
 
@@ -366,7 +333,7 @@ export const historyElementsFilter = ({
       });
       // asset address criteria
     } else if (isAssetAddress(search)) {
-      queryFilters.push(...createAssetCriteria(search, address));
+      queryFilters.push(...createAssetCriteria(search));
     }
   }
 
@@ -378,7 +345,7 @@ export const historyElementsFilter = ({
   // symbol criteria
   if (assetsAddresses.length) {
     assetsAddresses.forEach((assetAddress) => {
-      queryFilters.push(...createAssetCriteria(assetAddress, address));
+      queryFilters.push(...createAssetCriteria(assetAddress));
     });
   }
 

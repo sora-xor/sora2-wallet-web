@@ -5,8 +5,9 @@ function initialState(): TransactionsState {
     history: {}, // history items what not synced with subquery
     externalHistory: {},
     externalHistoryTotal: 0,
-    externalHistoryPagination: null,
     externalHistorySubscription: null,
+    externalHistoryUpdates: {}, // history items coming from subscription
+    saveExternalHistoryUpdates: false, // should we save them in state
     activeTxsIds: [],
     updateActiveTxsId: null,
     selectedTxId: null,
