@@ -81,11 +81,13 @@ export default class WalletHistory extends Mixins(
   @state.account.assets private assets!: Array<Asset>;
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistory private externalHistory!: AccountHistory<HistoryItem>;
+  @state.transactions.externalHistoryUpdates private externalHistoryUpdates!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistoryTotal private externalHistoryTotal!: number;
   @state.transactions.updateEthBridgeHistory private updateEthBridgeHistory!: Nullable<EthBridgeUpdateHistory>;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.transactions.resetExternalHistory private resetExternalHistory!: FnWithoutArgs;
+  @mutation.transactions.saveExternalHistoryUpdates private saveExternalHistoryUpdates!: (flag: boolean) => void;
   @mutation.transactions.getHistory private getHistory!: FnWithoutArgs;
   @mutation.transactions.setTxDetailsId private setTxDetailsId!: (id: string) => void;
   @action.transactions.getExternalHistory private getExternalHistory!: (args?: ExternalHistoryParams) => Promise<void>;
@@ -98,33 +100,48 @@ export default class WalletHistory extends Mixins(
   }
 
   readonly pageAmount = 8; // override PaginationSearchMixin
-  readonly updateCommonHistory = debounce(500)(() => this.updateHistory(true, 1, true));
+  readonly updateCommonHistory = debounce(500)(() => this.updateHistory(1, true));
 
   get assetAddress(): string {
     return (this.asset && this.asset.address) || '';
   }
 
-  get internalHistory(): Array<History> {
-    const historyList = Object.values(this.history);
-    const prefiltered = this.assetAddress
-      ? historyList.filter((item) => {
-          return [item.assetAddress, item.asset2Address].includes(this.assetAddress);
-        })
-      : historyList;
+  private getPrefilteredHistory(history: AccountHistory<HistoryItem>): HistoryItem[] {
+    const historyList = Object.values(history);
 
-    return prefiltered;
+    if (!this.assetAddress) return historyList;
+
+    return historyList.filter((item) => {
+      return [item.assetAddress, item.asset2Address].includes(this.assetAddress);
+    });
+  }
+
+  get internalHistoryPrefiltered() {
+    return this.getPrefilteredHistory(this.history);
+  }
+
+  get externalHistoryUpdatesPrefiltered() {
+    return this.getPrefilteredHistory(this.externalHistoryUpdates);
   }
 
   get filteredInternalHistory(): Array<History> {
-    return this.getFilteredHistory(this.internalHistory);
+    return this.getFilteredHistory(this.internalHistoryPrefiltered);
   }
 
   get filteredExternalHistory(): Array<History> {
     return Object.values(this.externalHistory);
   }
 
+  get filteredExternalHistoryUpdates(): Array<History> {
+    return this.getFilteredHistory(this.externalHistoryUpdatesPrefiltered);
+  }
+
   get transactions(): Array<History> {
-    const merged = [...this.filteredInternalHistory, ...this.filteredExternalHistory];
+    const merged = [
+      ...this.filteredInternalHistory,
+      ...this.filteredExternalHistory,
+      ...this.filteredExternalHistoryUpdates,
+    ];
     const sorted = this.sortTransactions(merged, this.isLtrDirection);
 
     const end = this.isLtrDirection
@@ -139,7 +156,7 @@ export default class WalletHistory extends Mixins(
   }
 
   get total(): number {
-    return this.externalHistoryTotal + this.internalHistory.length;
+    return this.externalHistoryTotal + this.filteredInternalHistory.length + this.filteredExternalHistoryUpdates.length;
   }
 
   get hasVisibleTransactions(): boolean {
@@ -171,10 +188,16 @@ export default class WalletHistory extends Mixins(
   }
 
   async mounted() {
+    this.saveExternalHistoryUpdates(true);
     if (this.updateEthBridgeHistory) {
       this.updateEthBridgeHistory(this.getHistory);
     }
-    this.updateHistory(true, 1, true);
+    this.updateHistory(1, true);
+  }
+
+  beforeDestroy(): void {
+    this.saveExternalHistoryUpdates(false);
+    this.reset();
   }
 
   reset(): void {
@@ -268,23 +291,20 @@ export default class WalletHistory extends Mixins(
         this.isLtrDirection = false;
     }
 
-    const isNext = current > this.currentPage;
-    await this.updateHistory(isNext, current);
+    await this.updateHistory(current);
     this.currentPage = current;
   }
 
   /**
    * Update external & internal history
-   * @param next - if true, fetch next page, else previous
    * @param withReset - reset current page number & clear external history
    */
-  private async updateHistory(next = true, page = 1, withReset = false): Promise<void> {
+  private async updateHistory(page = 1, withReset = false): Promise<void> {
     await this.withLoading(async () => {
       if (withReset) {
         this.reset();
       }
       await this.getExternalHistory({
-        next,
         page,
         address: this.account.address,
         assetAddress: this.assetAddress,

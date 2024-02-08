@@ -1,27 +1,24 @@
 import BaseExplorer from '../../explorer/base';
 
 import { SubsquidAccountModule } from './modules/account';
+import { SubsquidAssetModule } from './modules/asset';
 import { SubsquidPoolModule } from './modules/pool';
 import { SubsquidPriceModule } from './modules/price';
 
+import type { ConnectionQueryResponse, SubscriptionPayload } from '../../types';
 import type { TypedDocumentNode, AnyVariables } from '../client';
-import type {
-  SubsquidConnectionQueryResponse,
-  SubsquidQueryResponse,
-  SubsquidSubscriptionResponse,
-  QueryResponseData,
-  ConnectionQueryResponseData,
-} from '../types';
+import type { SubsquidQueryResponse, QueryResponseNodes, ConnectionQueryResponseData } from '../types';
 
 export default class SubsquidExplorer extends BaseExplorer {
   public readonly account: SubsquidAccountModule = new SubsquidAccountModule(this);
-  public readonly price: SubsquidPriceModule = new SubsquidPriceModule(this);
+  public readonly asset: SubsquidAssetModule = new SubsquidAssetModule(this);
   public readonly pool: SubsquidPoolModule = new SubsquidPoolModule(this);
+  public readonly price: SubsquidPriceModule = new SubsquidPriceModule(this);
 
   public async fetchEntities<T>(
     query: TypedDocumentNode<SubsquidQueryResponse<T>>,
     variables?: AnyVariables
-  ): Promise<Nullable<QueryResponseData<T>>> {
+  ): Promise<Nullable<QueryResponseNodes<T>>> {
     try {
       const response = await this.request(query, variables);
 
@@ -35,7 +32,7 @@ export default class SubsquidExplorer extends BaseExplorer {
   }
 
   public async fetchEntitiesConnection<T>(
-    query: TypedDocumentNode<SubsquidConnectionQueryResponse<T>>,
+    query: TypedDocumentNode<ConnectionQueryResponse<T>>,
     variables?: AnyVariables
   ): Promise<Nullable<ConnectionQueryResponseData<T>>> {
     try {
@@ -51,7 +48,7 @@ export default class SubsquidExplorer extends BaseExplorer {
   }
 
   public async fetchAllEntitiesConnection<T, R>(
-    query: TypedDocumentNode<SubsquidConnectionQueryResponse<T>>,
+    query: TypedDocumentNode<ConnectionQueryResponse<T>>,
     variables: AnyVariables = {},
     parse?: (entity: T) => R
   ): Promise<Nullable<R[]>> {
@@ -86,7 +83,7 @@ export default class SubsquidExplorer extends BaseExplorer {
   }
 
   public createEntitySubscription<T, R>(
-    subscription: TypedDocumentNode<SubsquidSubscriptionResponse<T>>,
+    subscription: TypedDocumentNode<SubscriptionPayload<T>>,
     variables: AnyVariables = {},
     parse: (entity: T) => R,
     handler: (entity: R) => void,
@@ -94,11 +91,11 @@ export default class SubsquidExplorer extends BaseExplorer {
   ): VoidFunction {
     const createSubscription = this.subscribe(subscription, variables);
 
-    return createSubscription((payload) => {
+    return createSubscription((result) => {
       try {
-        if (payload.data) {
-          const entities = payload.data.nodes.map((node) => parse(node));
-          entities.forEach((entity) => handler(entity));
+        if (result.data) {
+          const entity = parse(result.data.payload);
+          handler(entity);
         } else {
           throw new Error('Subscription payload data is undefined');
         }

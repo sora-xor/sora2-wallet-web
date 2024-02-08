@@ -4,9 +4,10 @@ import { gql } from '@urql/core';
 import { PageInfoFragment } from '../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
-import type { SubqueryHistoryElement, SubqueryConnectionQueryResponse } from '../types';
+import type { ConnectionQueryResponse } from '../../types';
+import type { SubqueryHistoryElement } from '../types';
 
-export const HistoryElementsQuery = gql<SubqueryConnectionQueryResponse<SubqueryHistoryElement>>`
+export const HistoryElementsQuery = gql<ConnectionQueryResponse<SubqueryHistoryElement>>`
   query SubqueryHistoryElements(
     $first: Int = null
     $last: Int = null
@@ -56,6 +57,18 @@ type DataCriteria = {
   };
 };
 
+type CallsDataCriteria = {
+  calls: {
+    some: {
+      data: {
+        contains: {
+          [key: string]: any;
+        };
+      };
+    };
+  };
+};
+
 const RewardsClaimExtrinsics = [
   [ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive],
   [ModuleNames.Rewards, ModuleMethods.RewardsClaim],
@@ -78,6 +91,15 @@ const DemeterFarmingWithdraw = {
   },
   method: {
     equalTo: ModuleMethods.DemeterFarmingWithdraw,
+  },
+};
+
+const OrderBookCancelLimitOrders = {
+  module: {
+    equalTo: ModuleNames.OrderBook,
+  },
+  method: {
+    equalTo: ModuleMethods.OrderBookCancelLimitOrders,
   },
 };
 
@@ -262,22 +284,8 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.OrderBookPlaceLimitOrder,
     },
   },
-  [Operation.OrderBookCancelLimitOrder]: {
-    module: {
-      equalTo: ModuleNames.OrderBook,
-    },
-    method: {
-      equalTo: ModuleMethods.OrderBookCancelLimitOrders,
-    },
-  },
-  [Operation.OrderBookCancelLimitOrders]: {
-    module: {
-      equalTo: ModuleNames.OrderBook,
-    },
-    method: {
-      equalTo: ModuleMethods.OrderBookCancelLimitOrders,
-    },
-  },
+  [Operation.OrderBookCancelLimitOrder]: OrderBookCancelLimitOrders,
+  [Operation.OrderBookCancelLimitOrders]: OrderBookCancelLimitOrders,
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
@@ -290,46 +298,10 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
   }, []);
 };
 
-const createAdarSenderCriteria = (accountAddress: string, assetAddress: string) => {
-  return [
-    {
-      data: {
-        contains: {
-          inputAssetId: assetAddress,
-          from: accountAddress,
-        },
-      },
-    },
-  ];
-};
-
-const createAdarReceiverCriteria = (accountAddress: string, assetAddress: string) => {
-  return [
-    {
-      data: {
-        contains: {
-          receivers: [
-            {
-              outcomeAssetId: {
-                code: assetAddress,
-              },
-              receivers: [
-                {
-                  accountId: accountAddress,
-                },
-              ],
-            },
-          ],
-        },
-      },
-    },
-  ];
-};
-
-const createAssetCriteria = (assetAddress: string, accountAddress?: string): Array<DataCriteria> => {
+const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
   const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
 
-  const criterias = attributes.reduce((result: Array<DataCriteria>, attr) => {
+  const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
     result.push({
       data: {
         contains: {
@@ -344,26 +316,17 @@ const createAssetCriteria = (assetAddress: string, accountAddress?: string): Arr
   // for create pair operation
   ['input_asset_a', 'input_asset_b'].forEach((attr) => {
     criterias.push({
-      data: {
-        contains: [
-          {
-            data: {
-              args: {
-                [attr]: assetAddress,
-              },
+      calls: {
+        some: {
+          data: {
+            contains: {
+              [attr]: assetAddress,
             },
           },
-        ],
+        },
       },
     });
   });
-
-  if (accountAddress) {
-    criterias.push(
-      ...createAdarSenderCriteria(accountAddress, assetAddress),
-      ...createAdarReceiverCriteria(accountAddress, assetAddress)
-    );
-  }
 
   return criterias;
 };
@@ -376,26 +339,8 @@ const createAccountAddressCriteria = (address: string) => {
       },
     },
     {
-      data: {
-        contains: {
-          to: address,
-        },
-      },
-    },
-    // ADAR transfer (receiver)
-    {
-      data: {
-        contains: {
-          receivers: [
-            {
-              receivers: [
-                {
-                  accountId: address,
-                },
-              ],
-            },
-          ],
-        },
+      dataTo: {
+        equalTo: address,
       },
     },
   ];
@@ -443,7 +388,7 @@ export const historyElementsFilter = ({
 
   if (assetAddress) {
     filter.and.push({
-      or: createAssetCriteria(assetAddress, address),
+      or: createAssetCriteria(assetAddress),
     });
   }
 
@@ -476,22 +421,18 @@ export const historyElementsFilter = ({
     // account address criteria
     if (isAccountAddress(search)) {
       queryFilters.push({
-        data: {
-          contains: {
-            from: search,
-          },
+        dataFrom: {
+          equalTo: search,
         },
       });
       queryFilters.push({
-        data: {
-          contains: {
-            to: search,
-          },
+        dataTo: {
+          equalTo: search,
         },
       });
       // asset address criteria
     } else if (isAssetAddress(search)) {
-      queryFilters.push(...createAssetCriteria(search, address));
+      queryFilters.push(...createAssetCriteria(search));
     }
   }
 
@@ -503,7 +444,7 @@ export const historyElementsFilter = ({
   // symbol criteria
   if (assetsAddresses.length) {
     assetsAddresses.forEach((assetAddress) => {
-      queryFilters.push(...createAssetCriteria(assetAddress, address));
+      queryFilters.push(...createAssetCriteria(assetAddress));
     });
   }
 
