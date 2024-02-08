@@ -115,7 +115,7 @@ export default {
       [Operation.DemeterFarmingGetRewards]: 'Failed to claim {symbol}',
       [Operation.EthBridgeIncoming]: 'Failed to transfer {amount} {symbol} from {Ethereum} to {Sora}',
       [Operation.EthBridgeOutgoing]: 'Failed to transfer {amount} {symbol} from {Sora} to {Ethereum}',
-      [Operation.OrderBookPlaceLimitOrder]: 'Failed to place {side} {amount} {symbol} at {price} {symbol}',
+      [Operation.OrderBookPlaceLimitOrder]: 'Failed to place {side} {amount} {symbol} at {price} {symbol2}',
       [Operation.OrderBookCancelLimitOrder]: 'Failed to cancel limit order',
       [Operation.OrderBookCancelLimitOrders]: 'Failed to cancel limit orders',
     },
