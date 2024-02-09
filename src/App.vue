@@ -19,7 +19,7 @@
 // This file is only for local usage
 
 import { FPNumber, HistoryItem } from '@sora-substrate/util';
-import { switchTheme } from '@soramitsu/soramitsu-js-ui/lib/utils';
+import { switchTheme } from '@soramitsu-ui/ui-vue2/lib/utils';
 import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import env from '../public/env.json';
@@ -34,8 +34,8 @@ import { initWallet } from './index';
 
 import type { ApiKeysObject } from './types/common';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
-import type DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
-import type Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
+import type DesignSystem from '@soramitsu-ui/ui-vue2/lib/types/DesignSystem';
+import type Theme from '@soramitsu-ui/ui-vue2/lib/types/Theme';
 
 @Component({
   components: { SoraWallet, ConfirmDialog },

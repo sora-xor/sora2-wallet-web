@@ -1,4 +1,4 @@
-import SoramitsuElements, { Message, MessageBox, Notification } from '@soramitsu/soramitsu-js-ui';
+import SoramitsuElements, { Message, MessageBox, Notification } from '@soramitsu-ui/ui-vue2';
 import { createLocalVue, shallowMount, mount } from '@vue/test-utils';
 import ElPopover from 'element-ui/lib/popover';
 import Vue, { VueConstructor } from 'vue';
