@@ -517,7 +517,7 @@ const actions = defineActions({
 
     const asset = rootState.wallet.router.currentRouteParams.asset as AccountAsset;
 
-    await api.assets.transfer(asset, to, amount);
+    await api.assets.simpleTransfer(asset, to, amount);
   },
   /** It's used **only** for subscriptions module */
   async resetAssetsSubscription(context): Promise<void> {
