@@ -29,7 +29,11 @@ const getters = defineGetters<TransactionsState>()({
     if (!state.selectedTxId) {
       return null;
     }
-    return state.history[state.selectedTxId] || state.externalHistory[state.selectedTxId];
+    return (
+      state.history[state.selectedTxId] ||
+      state.externalHistory[state.selectedTxId] ||
+      state.externalHistoryUpdates[state.selectedTxId]
+    );
   },
 });
 

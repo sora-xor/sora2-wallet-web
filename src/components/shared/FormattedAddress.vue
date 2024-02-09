@@ -1,9 +1,14 @@
 <template>
   <s-tooltip :content="copyTooltip(tooltipText)" tabindex="-1">
     <div class="formatted-address" @click="handleCopyAddress(value, $event)">
-      <span class="address" :style="{ width: firstPartWidth }">{{ value }}</span>
-      ...
-      <span>{{ secondPart }}</span>
+      <template v-if="sliced">
+        <span class="address" :style="{ width: firstPartWidth }">{{ value }}</span>
+        ...
+        <span>{{ secondPart }}</span>
+      </template>
+      <template v-else>
+        {{ value }}
+      </template>
     </div>
   </s-tooltip>
 </template>
@@ -24,6 +29,10 @@ export default class FormattedAddress extends Mixins(CopyAddressMixin) {
   @Prop({ default: 0, type: [Number, String] }) readonly offset!: number | string;
   /** Offset in symbols, default: 0 */
   @Prop({ default: 0, type: [Number, String] }) readonly symbolsOffset!: number | string;
+
+  get sliced(): boolean {
+    return this.value.length >= this.symbols;
+  }
 
   get count(): number {
     return +this.symbols / 2;

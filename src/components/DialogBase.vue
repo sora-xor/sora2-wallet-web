@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import SScrollbar from '@soramitsu/soramitsu-js-ui/lib/components/Scrollbar';
+import SScrollbar from '@soramitsu-ui/ui-vue2/lib/components/Scrollbar';
 import Vue from 'vue';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
