@@ -1,7 +1,7 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-import DesignSystem from '@soramitsu/soramitsu-js-ui/lib/types/DesignSystem';
-import Theme from '@soramitsu/soramitsu-js-ui/lib/types/Theme';
+import DesignSystem from '@soramitsu-ui/ui-vue2/lib/types/DesignSystem';
+import Theme from '@soramitsu-ui/ui-vue2/lib/types/Theme';
 
 describe('App.vue test', () => {
   it('Check theme switch', () => {
