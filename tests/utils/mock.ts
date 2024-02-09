@@ -14,6 +14,7 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
     symbol: KnownSymbols.XOR,
     name: 'SORA',
     decimals: FPNumber.DEFAULT_PRECISION,
+    isMintable: true,
     balance: {
       transferable: '123400000000000000000',
       total: '123400000000000000000',
@@ -29,6 +30,7 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
     symbol: KnownSymbols.VAL,
     name: 'SORA Validator Token',
     decimals: FPNumber.DEFAULT_PRECISION,
+    isMintable: true,
     balance: {
       transferable: '0',
       total: '0',
@@ -44,6 +46,7 @@ export const MOCK_ACCOUNT_ASSETS: Array<AccountAsset> = [
     symbol: KnownSymbols.PSWAP,
     name: 'Polkaswap',
     decimals: FPNumber.DEFAULT_PRECISION,
+    isMintable: true,
     balance: {
       transferable: '1000000000000',
       total: '1000000000000',
@@ -83,6 +86,7 @@ export const MOCK_ASSETS: Array<Asset> = [
     symbol: 'TEST',
     name: 'Test Asset',
     decimals: FPNumber.DEFAULT_PRECISION,
+    isMintable: true,
   },
 ];
 
@@ -92,6 +96,7 @@ export const MOCK_ASSETS_TABLE = {
     symbol: KnownSymbols.XOR,
     name: 'SORA',
     decimals: FPNumber.DEFAULT_PRECISION,
+    isMintable: true,
   },
 };
 

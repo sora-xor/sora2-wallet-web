@@ -84,7 +84,7 @@ import CameraPermissionMixin from '../mixins/CameraPermissionMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 import NotificationEnablingPage from '../NotificationEnablingPage.vue';
 
-import type SDropdown from '@soramitsu/soramitsu-js-ui/lib/components/Dropdown/SDropdown/SDropdown.vue';
+import type SDropdown from '@soramitsu-ui/ui-vue2/lib/components/Dropdown/SDropdown/SDropdown.vue';
 import type { IScannerControls } from '@zxing/browser';
 
 enum SCAN_TYPES {
