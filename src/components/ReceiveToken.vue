@@ -8,7 +8,7 @@
 
     <div class="receive-token">
       <qr-code ref="qrcode" :value="code" />
-      <wallet-account primary shadow="never" />
+      <wallet-account class="receive-token__account" primary shadow="never" />
     </div>
   </wallet-base>
 </template>
@@ -87,6 +87,10 @@ export default class ReceiveToken extends Mixins(NotificationMixin) {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+
+  &__account {
+    max-width: 100%;
+  }
 
   & > *:not(:last-child) {
     margin-bottom: $basic-spacing-medium;
