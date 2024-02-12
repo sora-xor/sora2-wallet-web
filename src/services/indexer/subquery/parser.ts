@@ -121,7 +121,7 @@ const getBatchCall = (calls: Array<SubqueryUtilityBatchCall>, { module, method }
 const getTransactionOperationType = (tx: SubqueryHistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
 
-  const operationGetter = getOr(ObjectInit, [insensitive(module), method], OperationsMap);
+  const operationGetter = getOr(ObjectInit, [insensitive(module), insensitive(method)], OperationsMap);
 
   return operationGetter(data);
 };
