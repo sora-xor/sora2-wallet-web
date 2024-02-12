@@ -130,7 +130,7 @@ const OperationFilterMap = {
     OR: [
       {
         module_eq: ModuleNames.Assets,
-        method_eq: ModuleMethods.AssetsTransfer,
+        method_containsInsensitiveeq: ModuleMethods.AssetsTransfer,
       },
       {
         module_eq: ModuleNames.LiquidityProxy,
