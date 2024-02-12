@@ -135,7 +135,7 @@ const OperationFilterMap = {
           equalTo: ModuleNames.Assets,
         },
         method: {
-          equalTo: ModuleMethods.AssetsTransfer,
+          equalToInsensitive: ModuleMethods.AssetsTransfer,
         },
       },
       {

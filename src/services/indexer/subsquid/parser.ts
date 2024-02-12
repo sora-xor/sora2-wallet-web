@@ -129,7 +129,7 @@ const getBatchCall = (calls: Array<SubsquidUtilityBatchCall>, { module, method }
 const getTransactionOperationType = (tx: SubsquidHistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
 
-  const operationGetter = getOr(ObjectInit, [insensitive(module), method], OperationsMap);
+  const operationGetter = getOr(ObjectInit, [insensitive(module), insensitive(method)], OperationsMap);
 
   return operationGetter(data);
 };
