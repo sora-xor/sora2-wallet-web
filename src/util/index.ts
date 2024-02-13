@@ -229,6 +229,8 @@ export const copyToClipboard = async (text: string) => {
 };
 
 export const formatAddress = (address: string, length = address.length / 2): string => {
+  if (address.length <= length) return address;
+
   return `${address.slice(0, length / 2)}...${address.slice(-length / 2)}`;
 };
 
