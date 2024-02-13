@@ -106,11 +106,6 @@ const OperationsMap = {
     [insensitive(ModuleMethods.OrderBookCancelLimitOrder)]: () => Operation.OrderBookCancelLimitOrder,
     [insensitive(ModuleMethods.OrderBookCancelLimitOrders)]: () => Operation.OrderBookCancelLimitOrders,
   },
-  [insensitive(ModuleNames.OrderBook)]: {
-    [ModuleMethods.OrderBookPlaceLimitOrder]: () => Operation.OrderBookPlaceLimitOrder,
-    [ModuleMethods.OrderBookCancelLimitOrder]: () => Operation.OrderBookCancelLimitOrder,
-    [ModuleMethods.OrderBookCancelLimitOrders]: () => Operation.OrderBookCancelLimitOrders,
-  },
 };
 
 const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asset && asset.symbol ? asset.symbol : '');
