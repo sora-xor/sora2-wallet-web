@@ -251,6 +251,9 @@ export default class SubqueryDataParser {
       status: getTransactionStatus(transaction),
     };
 
+    payload.from = transaction.dataFrom ?? transaction.address;
+    payload.to = transaction.dataTo;
+
     if (transaction.execution.error) {
       const { name, section } = getErrorMessage(transaction.execution.error);
 
@@ -279,10 +282,6 @@ export default class SubqueryDataParser {
         payload.liquiditySource = data.selectedMarket;
         payload.liquidityProviderFee = new FPNumber(data.liquidityProviderFee).toCodecString();
 
-        if (data.to) {
-          payload.to = data.to;
-        }
-
         return payload;
       }
       case Operation.SwapTransferBatch: {
@@ -296,7 +295,6 @@ export default class SubqueryDataParser {
 
           payload.assetAddress = assetAddress;
           payload.symbol = getAssetSymbol(asset);
-          payload.to = transfer.to;
           payload.amount = transfer.amount;
 
           return payload;
@@ -406,7 +404,6 @@ export default class SubqueryDataParser {
 
         payload.assetAddress = assetAddress;
         payload.symbol = getAssetSymbol(asset);
-        payload.to = data.to;
         payload.amount = data.amount;
         // [TODO] update History in js-lib
         (payload as any).assetFee = data.assetFee;
@@ -426,8 +423,6 @@ export default class SubqueryDataParser {
         return payload;
       }
       case Operation.ReferralSetInvitedUser: {
-        const data = transaction.data as ReferralSetReferrer;
-        payload.to = data.to;
         return payload;
       }
       case Operation.ReferralReserveXor:

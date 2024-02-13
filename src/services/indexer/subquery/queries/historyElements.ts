@@ -38,6 +38,8 @@ export const HistoryElementsQuery = gql<ConnectionQueryResponse<SubqueryHistoryE
           networkFee
           execution
           data
+          dataFrom
+          dataTo
         }
       }
       pageInfo {

@@ -70,6 +70,8 @@ export const HistoryElementsConnectionQuery = gql<ConnectionQueryResponse<Subsqu
             }
           }
           data
+          dataFrom
+          dataTo
         }
       }
     }
