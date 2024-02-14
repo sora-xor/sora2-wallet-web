@@ -344,6 +344,8 @@ export type HistoryElementBase = {
   networkFee: string;
   execution: HistoryElementExecution;
   timestamp: number;
+  dataFrom?: string;
+  dataTo?: string;
 };
 
 export type UpdatesStream = {
