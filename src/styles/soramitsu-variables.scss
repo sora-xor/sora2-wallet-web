@@ -59,8 +59,8 @@ $s-border-radius-big: $s-border-radius-base * 3 !default;
 // Transition
 $s-transition-default: all 0.125s ease-in-out;
 // Fonts paths
-$s-font-family-default-path: '~@soramitsu/soramitsu-js-ui/lib/assets/fonts/Sora-VariableFont_wght.ttf' !default;
-$s-font-family-mono-path: '~@soramitsu/soramitsu-js-ui/lib/assets/fonts/JetBrainsMono-Regular.woff' !default;
+$s-font-family-default-path: '~@soramitsu-ui/ui-vue2/lib/assets/fonts/Sora-VariableFont_wght.ttf' !default;
+$s-font-family-mono-path: '~@soramitsu-ui/ui-vue2/lib/assets/fonts/JetBrainsMono-Regular.woff' !default;
 $s-font-family-icons-path: '~@/assets/fonts/polkaswap_icons.ttf' !default;
 // Font Feature Settings
 $s-font-feature-settings-common: normal;
@@ -84,4 +84,4 @@ $s-color-base-on-disabled--dark: #C29AB7;
   --s-asset-item-height--fiat: #{$s-asset-item-height--fiat};
 }
 
-@import "../../node_modules/@soramitsu/soramitsu-js-ui/lib/styles/index";
+@import "../../node_modules/@soramitsu-ui/ui-vue2/lib/styles/index";

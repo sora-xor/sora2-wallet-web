@@ -38,6 +38,8 @@ export const HistoryElementsQuery = gql<ConnectionQueryResponse<SubqueryHistoryE
           networkFee
           execution
           data
+          dataFrom
+          dataTo
         }
       }
       pageInfo {
@@ -135,7 +137,7 @@ const OperationFilterMap = {
           equalTo: ModuleNames.Assets,
         },
         method: {
-          equalTo: ModuleMethods.AssetsTransfer,
+          equalToInsensitive: ModuleMethods.AssetsTransfer,
         },
       },
       {

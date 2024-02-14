@@ -98,7 +98,7 @@ import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
 import type { WalletAssetFilters, WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';
 import type { AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/types';
-import type SScrollbar from '@soramitsu/soramitsu-js-ui/lib/components/Scrollbar/SScrollbar.vue';
+import type SScrollbar from '@soramitsu-ui/ui-vue2/lib/components/Scrollbar/SScrollbar.vue';
 import type ElScrollbar from 'element-ui/lib/scrollbar';
 
 @Component({

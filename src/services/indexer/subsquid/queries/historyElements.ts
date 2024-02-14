@@ -70,6 +70,8 @@ export const HistoryElementsConnectionQuery = gql<ConnectionQueryResponse<Subsqu
             }
           }
           data
+          dataFrom
+          dataTo
         }
       }
     }
@@ -130,7 +132,7 @@ const OperationFilterMap = {
     OR: [
       {
         module_eq: ModuleNames.Assets,
-        method_eq: ModuleMethods.AssetsTransfer,
+        method_containsInsensitive: ModuleMethods.AssetsTransfer,
       },
       {
         module_eq: ModuleNames.LiquidityProxy,

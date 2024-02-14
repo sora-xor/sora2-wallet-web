@@ -25,7 +25,7 @@ function areLocalNetworkFeesOkay(localFees: NetworkFeesObject, apiFees: NetworkF
     return false; // we're checking only SWAP TX and if it's zero we need to calculate fees again
   }
   const localFeesKeys = Object.keys(localFees);
-  const apiFeesKeys = Object.keys(localFees);
+  const apiFeesKeys = Object.keys(apiFees);
   if (localFeesKeys.length !== apiFeesKeys.length) {
     return false; // more / less fees than expected
   }

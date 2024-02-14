@@ -37,21 +37,21 @@ const insensitive = (value: string) => value.toLowerCase();
 
 const OperationsMap = {
   [insensitive(ModuleNames.Assets)]: {
-    [ModuleMethods.AssetsRegister]: () => Operation.RegisterAsset,
-    [ModuleMethods.AssetsTransfer]: () => Operation.Transfer,
+    [insensitive(ModuleMethods.AssetsRegister)]: () => Operation.RegisterAsset,
+    [insensitive(ModuleMethods.AssetsTransfer)]: () => Operation.Transfer,
   },
   [insensitive(ModuleNames.PoolXYK)]: {
-    [ModuleMethods.PoolXYKDepositLiquidity]: () => Operation.AddLiquidity,
-    [ModuleMethods.PoolXYKWithdrawLiquidity]: () => Operation.RemoveLiquidity,
+    [insensitive(ModuleMethods.PoolXYKDepositLiquidity)]: () => Operation.AddLiquidity,
+    [insensitive(ModuleMethods.PoolXYKWithdrawLiquidity)]: () => Operation.RemoveLiquidity,
   },
   [insensitive(ModuleNames.LiquidityProxy)]: {
-    [ModuleMethods.LiquidityProxySwap]: () => Operation.Swap,
-    [ModuleMethods.LiquidityProxySwapTransfer]: () => Operation.SwapAndSend,
-    [ModuleMethods.LiquidityProxySwapTransferBatch]: () => Operation.SwapTransferBatch,
-    [ModuleMethods.LiquidityProxyXorlessTransfer]: () => Operation.Transfer,
+    [insensitive(ModuleMethods.LiquidityProxySwap)]: () => Operation.Swap,
+    [insensitive(ModuleMethods.LiquidityProxySwapTransfer)]: () => Operation.SwapAndSend,
+    [insensitive(ModuleMethods.LiquidityProxySwapTransferBatch)]: () => Operation.SwapTransferBatch,
+    [insensitive(ModuleMethods.LiquidityProxyXorlessTransfer)]: () => Operation.Transfer,
   },
   [insensitive(ModuleNames.Utility)]: {
-    [ModuleMethods.UtilityBatchAll]: (data: SubsquidHistoryElementCalls) => {
+    [insensitive(ModuleMethods.UtilityBatchAll)]: (data: SubsquidHistoryElementCalls) => {
       if (!Array.isArray(data)) return null;
 
       if (
@@ -77,33 +77,33 @@ const OperationsMap = {
     },
   },
   [insensitive(ModuleNames.Referrals)]: {
-    [ModuleMethods.ReferralsSetReferrer]: () => Operation.ReferralSetInvitedUser,
-    [ModuleMethods.ReferralsReserve]: () => Operation.ReferralReserveXor,
-    [ModuleMethods.ReferralsUnreserve]: () => Operation.ReferralUnreserveXor,
+    [insensitive(ModuleMethods.ReferralsSetReferrer)]: () => Operation.ReferralSetInvitedUser,
+    [insensitive(ModuleMethods.ReferralsReserve)]: () => Operation.ReferralReserveXor,
+    [insensitive(ModuleMethods.ReferralsUnreserve)]: () => Operation.ReferralUnreserveXor,
   },
   [insensitive(ModuleNames.PswapDistribution)]: {
-    [ModuleMethods.PswapDistributionClaimIncentive]: () => Operation.ClaimRewards,
+    [insensitive(ModuleMethods.PswapDistributionClaimIncentive)]: () => Operation.ClaimRewards,
   },
   [insensitive(ModuleNames.Rewards)]: {
-    [ModuleMethods.RewardsClaim]: () => Operation.ClaimRewards,
+    [insensitive(ModuleMethods.RewardsClaim)]: () => Operation.ClaimRewards,
   },
   [insensitive(ModuleNames.VestedRewards)]: {
-    [ModuleMethods.VestedRewardsClaimRewards]: () => Operation.ClaimRewards,
-    [ModuleMethods.VestedRewardsClaimCrowdloanRewards]: () => Operation.ClaimRewards,
+    [insensitive(ModuleMethods.VestedRewardsClaimRewards)]: () => Operation.ClaimRewards,
+    [insensitive(ModuleMethods.VestedRewardsClaimCrowdloanRewards)]: () => Operation.ClaimRewards,
   },
   [insensitive(ModuleNames.DemeterFarming)]: {
-    [ModuleMethods.DemeterFarmingDeposit]: (data: HistoryElementDemeterFarming) => {
+    [insensitive(ModuleMethods.DemeterFarmingDeposit)]: (data: HistoryElementDemeterFarming) => {
       return data.isFarm ? Operation.DemeterFarmingDepositLiquidity : Operation.DemeterFarmingStakeToken;
     },
-    [ModuleMethods.DemeterFarmingWithdraw]: (data: HistoryElementDemeterFarming) => {
+    [insensitive(ModuleMethods.DemeterFarmingWithdraw)]: (data: HistoryElementDemeterFarming) => {
       return data.isFarm ? Operation.DemeterFarmingWithdrawLiquidity : Operation.DemeterFarmingUnstakeToken;
     },
-    [ModuleMethods.DemeterFarmingGetRewards]: () => Operation.DemeterFarmingGetRewards,
+    [insensitive(ModuleMethods.DemeterFarmingGetRewards)]: () => Operation.DemeterFarmingGetRewards,
   },
   [insensitive(ModuleNames.OrderBook)]: {
-    [ModuleMethods.OrderBookPlaceLimitOrder]: () => Operation.OrderBookPlaceLimitOrder,
-    [ModuleMethods.OrderBookCancelLimitOrder]: () => Operation.OrderBookCancelLimitOrder,
-    [ModuleMethods.OrderBookCancelLimitOrders]: () => Operation.OrderBookCancelLimitOrders,
+    [insensitive(ModuleMethods.OrderBookPlaceLimitOrder)]: () => Operation.OrderBookPlaceLimitOrder,
+    [insensitive(ModuleMethods.OrderBookCancelLimitOrder)]: () => Operation.OrderBookCancelLimitOrder,
+    [insensitive(ModuleMethods.OrderBookCancelLimitOrders)]: () => Operation.OrderBookCancelLimitOrders,
   },
 };
 
@@ -129,9 +129,9 @@ const getBatchCall = (calls: Array<SubsquidUtilityBatchCall>, { module, method }
 const getTransactionOperationType = (tx: SubsquidHistoryElement): Nullable<Operation> => {
   const { module, method, data } = tx;
 
-  const operationGetter = getOr(ObjectInit, [insensitive(module), method], OperationsMap);
+  const operationGetter = getOr(ObjectInit, [insensitive(module), insensitive(method)], OperationsMap);
 
-  return operationGetter(data);
+  return operationGetter(data as any);
 };
 
 const getTransactionTimestamp = (tx: SubsquidHistoryElement): number => {
@@ -254,10 +254,12 @@ export default class SubsquidDataParser {
       blockHeight,
       endTime: timestamp,
       startTime: timestamp,
-      from: transaction.address,
       soraNetworkFee: getTransactionNetworkFee(transaction),
       status: getTransactionStatus(transaction),
     };
+
+    payload.from = transaction.dataFrom ?? transaction.address;
+    payload.to = transaction.dataTo;
 
     if (transaction.execution.error) {
       const { name, section } = getErrorMessage(transaction.execution.error);
@@ -287,15 +289,12 @@ export default class SubsquidDataParser {
         payload.liquiditySource = data.selectedMarket;
         payload.liquidityProviderFee = new FPNumber(data.liquidityProviderFee).toCodecString();
 
-        if (data.to) {
-          payload.to = data.to;
-        }
-
         return payload;
       }
       case Operation.SwapTransferBatch: {
         const data = transaction.data as HistoryElementSwapTransferBatch;
 
+        // [TODO]: remove after full reindex
         if (!data.receivers) {
           const transfer = data as unknown as HistoryElementTransfer;
           const assetAddress = transfer.assetId;
@@ -303,7 +302,6 @@ export default class SubsquidDataParser {
 
           payload.assetAddress = assetAddress;
           payload.symbol = getAssetSymbol(asset);
-          payload.to = transfer.to;
           payload.amount = transfer.amount;
 
           return payload;
@@ -324,6 +322,7 @@ export default class SubsquidDataParser {
 
         const transfers = data.transfers;
 
+        // [TODO]: remove after full reindex
         if (Array.isArray(transfers) && transfers.length > 0) {
           const outcomeAssetsIds = transfers.map((item) => item.assetId);
           const assetsList = await resolveAssets(outcomeAssetsIds);
@@ -407,7 +406,6 @@ export default class SubsquidDataParser {
 
         payload.assetAddress = assetAddress;
         payload.symbol = getAssetSymbol(asset);
-        payload.to = data.to;
         payload.amount = data.amount;
         // [TODO] update History in js-lib
         (payload as any).assetFee = data.assetFee;
@@ -427,8 +425,6 @@ export default class SubsquidDataParser {
         return payload;
       }
       case Operation.ReferralSetInvitedUser: {
-        const data = transaction.data as ReferralSetReferrer;
-        payload.to = data.to;
         return payload;
       }
       case Operation.ReferralReserveXor:
