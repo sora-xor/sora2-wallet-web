@@ -114,7 +114,10 @@ export default class TransactionHashView extends Mixins(TranslationMixin, CopyAd
             if (type === ExplorerType.Sorascan) {
               link.value = `${value}/transaction/${this.value}`;
             } else if (type === ExplorerType.Subscan) {
-              link.value = `${value}/extrinsic/${this.value}`;
+              // [TODO] add support for history type EVENT
+              if (this.value.startsWith('0x')) {
+                link.value = `${value}/extrinsic/${this.value}`;
+              }
             } else if (this.block) {
               // ExplorerType.Polkadot
               link.value = `${value}/${this.block}`;
