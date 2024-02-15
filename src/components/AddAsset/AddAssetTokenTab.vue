@@ -14,11 +14,26 @@
         <span>{{ t(`addAsset.${AddAssetTabs.Token}.switchBtn`) }}</span>
       </div>
       <synthetic-switcher class="add-asset-token__switch-btn" v-model="isSynthsOnly" />
-      <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset">
+      <asset-list
+        :assets="foundAssets"
+        class="asset-search-list"
+        @click="(asset) => handleSelectAsset(asset, isVerifiedOnly)"
+        :selectable="isVerifiedOnly"
+        :selected="selectedAssets"
+      >
         <template #list-empty>
           {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
         </template>
       </asset-list>
+      <s-button
+        v-if="showAddButton"
+        class="add-assets-button"
+        type="primary"
+        :loading="parentLoading || loading"
+        @click="handleAdd"
+      >
+        {{ t('addAsset.add') }}
+      </s-button>
     </div>
     <add-asset-details-card v-else :asset="selectedAsset" />
   </div>
@@ -86,6 +101,14 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
         name.toLowerCase() === this.searchValue
     );
   }
+
+  get showAddButton(): boolean {
+    return !!(this.isVerifiedOnly && this.selectedAssets.length);
+  }
+
+  handleAdd() {
+    this.selectedAssets.forEach((asset) => this.addAccountAsset(asset));
+  }
 }
 </script>
 
@@ -126,5 +149,9 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   &__search {
     margin-bottom: #{$basic-spacing-medium};
   }
+}
+
+.add-assets-button {
+  width: 100%;
 }
 </style>

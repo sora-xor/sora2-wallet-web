@@ -285,6 +285,7 @@ export default {
     unknown: 'Unknown source',
     scam: 'SCAM',
     next: 'Next',
+    add: 'Add',
   },
   createToken: {
     title: '@:createTokenText',

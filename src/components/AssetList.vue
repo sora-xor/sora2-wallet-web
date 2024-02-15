@@ -19,6 +19,8 @@
         <asset-list-item
           :asset="item"
           :with-clickable-logo="withClickableLogo"
+          :selectable="selectable"
+          :selected="isSelected(item)"
           :with-fiat="withFiat"
           :key="index"
           :with-tabindex="withTabindex"
@@ -65,6 +67,8 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: 5, type: Number }) readonly size!: number;
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
+  @Prop({ default: false, type: Array }) readonly selected!: Array<Asset>;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: true, type: Boolean }) readonly withTabindex!: boolean;
   @Ref('wrap') readonly wrap!: RecycleScroller;
@@ -143,6 +147,10 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
   scrollTo(value: number): void {
     this.el.scrollTop = value;
+  }
+
+  isSelected(asset: Asset): boolean {
+    return this.selected.some((selectedAsset) => selectedAsset.address === asset.address);
   }
 }
 </script>
