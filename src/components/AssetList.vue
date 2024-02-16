@@ -21,6 +21,8 @@
           :with-clickable-logo="withClickableLogo"
           :selectable="selectable"
           :selected="isSelected(item)"
+          :pinnable="pinnable"
+          :pinned="isPinned(item)"
           :with-fiat="withFiat"
           :key="index"
           :with-tabindex="withTabindex"
@@ -69,6 +71,8 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
   @Prop({ default: false, type: Array }) readonly selected!: Array<Asset>;
+  @Prop({ default: false, type: Boolean }) readonly pinnable!: boolean;
+  @Prop({ default: true, type: Array }) readonly pinned!: Array<Asset>;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: true, type: Boolean }) readonly withTabindex!: boolean;
   @Ref('wrap') readonly wrap!: RecycleScroller;
@@ -151,6 +155,10 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
   isSelected(asset: Asset): boolean {
     return this.selected.some((selectedAsset) => selectedAsset.address === asset.address);
+  }
+
+  isPinned(asset: Asset): boolean {
+    return this.pinned.some((pinnedAsset) => pinnedAsset.address === asset.address);
   }
 }
 </script>

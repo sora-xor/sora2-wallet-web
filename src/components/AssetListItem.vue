@@ -1,6 +1,12 @@
 <template>
   <div
-    :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }, { 'asset--selected': selected }]"
+    :class="[
+      's-flex',
+      'asset',
+      { 'asset--with-fiat': withFiat },
+      { 'asset--selected': selected },
+      { 'asset--pinned': pinned },
+    ]"
     v-bind="$attrs"
     v-button="withTabindex"
     :tabindex="withTabindex ? 0 : -1"
@@ -17,6 +23,9 @@
     <slot v-bind="asset" />
     <div v-if="selectable" class="check">
       <s-icon name="basic-check-mark-24" size="12px" />
+    </div>
+    <div v-if="pinnable || pinned" class="pin" @click="pin">
+      <s-icon name="paperclip-vertical-16" size="16px" />
     </div>
   </div>
 </template>
@@ -43,6 +52,8 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
   @Prop({ default: false, type: Boolean }) readonly selected!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly pinnable!: boolean;
+  @Prop({ default: true, type: Boolean }) readonly pinned!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withTabindex!: boolean;
 
@@ -54,6 +65,11 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
       event.stopImmediatePropagation();
     }
     this.$emit('show-details', this.asset);
+  }
+
+  pin(event: Event) {
+    event.stopPropagation();
+    this.$emit('pin', this.asset);
   }
 }
 </script>
@@ -119,6 +135,29 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
   &:not(:hover):not(&--selected) .check {
     opacity: 0;
+  }
+
+  .pin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    margin-left: 8px;
+    cursor: pointer;
+
+    i {
+      color: var(--s-color-base-content-tertiary);
+      transition: color 150ms;
+    }
+
+    &:hover i {
+      color: var(--s-color-base-content-secondary);
+    }
+  }
+
+  &--pinned .pin i {
+    color: var(--s-base-content-primary);
   }
 }
 </style>
