@@ -144,6 +144,14 @@ const OperationFilterMap = {
     module_eq: ModuleNames.Assets,
     method_eq: ModuleMethods.AssetsRegister,
   },
+  [Operation.Burn]: {
+    module_eq: ModuleNames.Assets,
+    method_eq: ModuleMethods.AssetsBurn,
+  },
+  [Operation.Mint]: {
+    module_eq: ModuleNames.Assets,
+    method_eq: ModuleMethods.AssetsMint,
+  },
   [Operation.CreatePair]: {
     module_eq: ModuleNames.Utility,
     method_eq: ModuleMethods.UtilityBatchAll,
