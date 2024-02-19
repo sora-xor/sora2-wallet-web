@@ -17,6 +17,8 @@ export enum ModuleNames {
 export enum ModuleMethods {
   AssetsRegister = 'register',
   AssetsTransfer = 'transfer',
+  AssetsBurn = 'burn',
+  AssetsMint = 'mint',
   PoolXYKInitializePool = 'initializePool',
   PoolXYKDepositLiquidity = 'depositLiquidity',
   PoolXYKWithdrawLiquidity = 'withdrawLiquidity',
