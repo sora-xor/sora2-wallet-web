@@ -23,6 +23,8 @@ const twoAssetsBasedOperations = [
 
 const amountBasedOperations = [
   ...twoAssetsBasedOperations,
+  Operation.Burn,
+  Operation.Mint,
   Operation.Transfer,
   Operation.SwapTransferBatch,
   Operation.DemeterFarmingGetRewards,

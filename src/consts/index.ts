@@ -3,7 +3,12 @@ import { XSTUSD } from '@sora-substrate/util/build/assets/consts';
 
 import type { FPNumber } from '@sora-substrate/util';
 
-export const accountIdBasedOperations = [Operation.SwapAndSend, Operation.Transfer, Operation.SwapTransferBatch];
+export const accountIdBasedOperations = [
+  Operation.SwapAndSend,
+  Operation.Transfer,
+  Operation.SwapTransferBatch,
+  Operation.Mint,
+];
 
 export const syntheticAssetRegexp = new RegExp(`^0[xX]03[0-9a-fA-F]+|${XSTUSD.address}$`);
 
