@@ -158,6 +158,22 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.AssetsRegister,
     },
   },
+  [Operation.Burn]: {
+    module: {
+      equalTo: ModuleNames.Assets,
+    },
+    method: {
+      equalTo: ModuleMethods.AssetsBurn,
+    },
+  },
+  [Operation.Mint]: {
+    module: {
+      equalTo: ModuleNames.Assets,
+    },
+    method: {
+      equalTo: ModuleMethods.AssetsMint,
+    },
+  },
   [Operation.CreatePair]: {
     module: {
       equalTo: ModuleNames.Utility,

@@ -253,6 +253,15 @@ export type HistoryElementAssetRegistration = {
   assetId: string;
 };
 
+export type HistoryElementAssetBurn = {
+  amount: string;
+  assetId: string;
+};
+
+export type HistoryElementAssetMint = HistoryElementAssetBurn & {
+  to: string;
+};
+
 export type HistoryElementDemeterFarming = {
   amount: string;
   assetId: string;
