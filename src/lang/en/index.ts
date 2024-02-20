@@ -45,6 +45,8 @@ export default {
   ofText: '{first} of {second}',
   multipleRecipients: 'multiple recipients',
   operations: {
+    [Operation.Burn]: 'Burn',
+    [Operation.Mint]: 'Mint',
     [Operation.Swap]: 'Swap',
     [Operation.SwapAndSend]: 'Swap and Send',
     [Operation.SwapTransferBatch]: '{ADAR} transfer',
@@ -69,6 +71,8 @@ export default {
     [Operation.OrderBookCancelLimitOrders]: 'Cancel Orders',
     andText: 'and',
     [TransactionStatus.Finalized]: {
+      [Operation.Burn]: 'Burned {amount} {symbol}',
+      [Operation.Mint]: 'Minted {amount} {symbol} to {address}',
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
       [Operation.Swap]: 'Swapped {amount} {symbol} for {amount2} {symbol2}',
       [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
@@ -93,6 +97,8 @@ export default {
       [Operation.OrderBookCancelLimitOrders]: 'Limit orders cancelled',
     },
     [TransactionStatus.Error]: {
+      [Operation.Burn]: 'Failed to burn {amount} {symbol}',
+      [Operation.Mint]: 'Failed to mint {amount} {symbol} to {address}',
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
       [Operation.Swap]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2}',
       [Operation.SwapAndSend]:

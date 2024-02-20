@@ -16,13 +16,13 @@ import type {
   HistoryElementLiquidityOperation,
   HistoryElementTransfer,
   HistoryElementAssetRegistration,
+  HistoryElementAssetBurn,
   HistoryElementRewardsClaim,
   SubsquidHistoryElementCalls,
   HistoryElementDemeterFarming,
   HistoryElementPlaceLimitOrder,
   HistoryElementCancelLimitOrder,
   SubsquidUtilityBatchCall,
-  ReferralSetReferrer,
   ReferrerReserve,
   ClaimedRewardItem,
   HistoryElementSwapTransferBatch,
@@ -39,6 +39,8 @@ const OperationsMap = {
   [insensitive(ModuleNames.Assets)]: {
     [insensitive(ModuleMethods.AssetsRegister)]: () => Operation.RegisterAsset,
     [insensitive(ModuleMethods.AssetsTransfer)]: () => Operation.Transfer,
+    [insensitive(ModuleMethods.AssetsBurn)]: () => Operation.Burn,
+    [insensitive(ModuleMethods.AssetsMint)]: () => Operation.Mint,
   },
   [insensitive(ModuleNames.PoolXYK)]: {
     [insensitive(ModuleMethods.PoolXYKDepositLiquidity)]: () => Operation.AddLiquidity,
@@ -203,6 +205,8 @@ const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]
 export default class SubsquidDataParser {
   // Operations visible in wallet
   public static SUPPORTED_OPERATIONS = [
+    Operation.Burn,
+    Operation.Mint,
     Operation.Transfer,
     Operation.Swap,
     Operation.SwapAndSend,
@@ -271,6 +275,19 @@ export default class SubsquidDataParser {
     }
 
     switch (type) {
+      case Operation.Burn:
+      case Operation.Mint: {
+        const data = transaction.data as HistoryElementAssetBurn;
+
+        const assetAddress = data.assetId;
+        const asset = await getAssetByAddress(assetAddress);
+
+        payload.amount = data.amount;
+        payload.symbol = getAssetSymbol(asset);
+
+        return payload;
+      }
+
       case Operation.Swap:
       case Operation.SwapAndSend: {
         const data = transaction.data as HistoryElementSwap & HistoryElementSwapTransfer;
