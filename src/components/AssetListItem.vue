@@ -53,7 +53,7 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
   @Prop({ default: false, type: Boolean }) readonly selected!: boolean;
   @Prop({ default: false, type: Boolean }) readonly pinnable!: boolean;
-  @Prop({ default: true, type: Boolean }) readonly pinned!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly pinned!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withTabindex!: boolean;
 
