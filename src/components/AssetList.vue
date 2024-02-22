@@ -70,9 +70,9 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
-  @Prop({ default: false, type: Array }) readonly selected!: Array<Asset>;
+  @Prop({ default: () => [], type: Array }) readonly selected!: Array<Asset>;
   @Prop({ default: false, type: Boolean }) readonly pinnable!: boolean;
-  @Prop({ default: true, type: Array }) readonly pinned!: Array<Asset>;
+  @Prop({ default: () => [], type: Array }) readonly pinned!: Array<Asset>;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: true, type: Boolean }) readonly withTabindex!: boolean;
   @Ref('wrap') readonly wrap!: RecycleScroller;
