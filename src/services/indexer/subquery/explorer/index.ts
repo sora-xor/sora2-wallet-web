@@ -2,7 +2,6 @@ import BaseExplorer from '../../explorer/base';
 
 import { SubqueryAccountModule } from './modules/account';
 import { SubqueryAssetModule } from './modules/asset';
-import { SubqueryPoolModule } from './modules/pool';
 import { SubqueryPriceModule } from './modules/price';
 
 import type { ConnectionQueryResponse } from '../../types';
@@ -12,7 +11,6 @@ import type { SubquerySubscriptionPayload } from '../types';
 export default class SubqueryExplorer extends BaseExplorer {
   public readonly account: SubqueryAccountModule = new SubqueryAccountModule(this);
   public readonly asset: SubqueryAssetModule = new SubqueryAssetModule(this);
-  public readonly pool: SubqueryPoolModule = new SubqueryPoolModule(this);
   public readonly price: SubqueryPriceModule = new SubqueryPriceModule(this);
 
   public async fetchEntities<T>(
