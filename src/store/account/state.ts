@@ -1,4 +1,3 @@
-import { FPNumber } from '@sora-substrate/util';
 import isElectron from 'is-electron';
 
 import type { Book } from '@/types/common';
@@ -7,12 +6,6 @@ import { storage, settingsStorage } from '../../util/storage';
 
 import type { AccountState } from './types';
 import type { AppWallet } from '../../consts';
-import type { ReferrerRewards } from '../../services/indexer/types';
-
-export const EMPTY_REFERRAL_REWARDS: ReferrerRewards = {
-  rewards: FPNumber.ZERO,
-  invitedUserRewards: {},
-};
 
 export function initialState(): AccountState {
   const addressBook = settingsStorage.get('book');
@@ -43,7 +36,6 @@ export function initialState(): AccountState {
     fiatPriceObject: {},
     fiatPriceSubscription: null,
     ceresFiatValuesUsage: ceresFiatValues ? JSON.parse(ceresFiatValues) : false,
-    referralRewards: EMPTY_REFERRAL_REWARDS,
     /** extension management */
     selectedWallet: null,
     selectedWalletLoading: false,

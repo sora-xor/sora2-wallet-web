@@ -1,8 +1,6 @@
 import { parseAssetFiatPrice, parsePriceStreamUpdate } from '../../../explorer/utils';
-import { FiatPriceQuery, FiatPriceStreamQuery } from '../../queries/fiatPriceAndApy';
-import { HistoricalPriceQuery, historicalPriceFilter } from '../../queries/historicalPrice';
+import { FiatPriceQuery, FiatPriceStreamQuery } from '../../queries/fiatPrice';
 import { PriceStreamSubscription } from '../../subscriptions/stream';
-import { AssetSnapshotEntity, ConnectionQueryResponseData, SnapshotTypes } from '../../types';
 
 import { SubqueryBaseModule } from './_base';
 
@@ -39,24 +37,5 @@ export class SubqueryPriceModule extends SubqueryBaseModule {
       handler,
       errorHandler
     );
-  }
-
-  /**
-   * Get historical data for selected asset
-   * @param assetId Asset ID
-   * @param type type of snapshots
-   * @param first number entities (all by default)
-   */
-  public async getHistoricalPriceForAsset(
-    assetId: string,
-    type = SnapshotTypes.DEFAULT,
-    first?: number,
-    after?: string
-  ): Promise<Nullable<ConnectionQueryResponseData<AssetSnapshotEntity>>> {
-    const filter = historicalPriceFilter(assetId, type);
-    const variables = { filter, first, after };
-    const data = await this.root.fetchEntities(HistoricalPriceQuery, variables);
-
-    return data;
   }
 }
