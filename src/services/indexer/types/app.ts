@@ -1,13 +1,4 @@
-import type { CodecString, FPNumber } from '@sora-substrate/util';
-
-export type ReferrerRewards = {
-  rewards: FPNumber;
-  invitedUserRewards: {
-    [key: string]: {
-      rewards: FPNumber;
-    };
-  };
-};
+import type { CodecString } from '@sora-substrate/util';
 
 export type FiatPriceObject = Record<string, CodecString>;
 

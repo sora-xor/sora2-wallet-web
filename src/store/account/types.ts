@@ -1,5 +1,5 @@
 import type { AppWallet } from '../../consts';
-import type { ReferrerRewards, FiatPriceObject } from '../../services/indexer/subsquid/types';
+import type { FiatPriceObject } from '../../services/indexer/subsquid/types';
 import type { Book, PolkadotJsAccount, AddressKeyMapping, KeyringPair$Json } from '../../types/common';
 import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { Wallet } from '@sora-test/wallet-connect/types';
@@ -37,7 +37,6 @@ export type AccountState = {
   fiatPriceObject: Readonly<FiatPriceObject>;
   fiatPriceSubscription: Nullable<VoidFunction>;
   ceresFiatValuesUsage: boolean;
-  referralRewards: ReferrerRewards;
   selectedWallet: Nullable<AppWallet>;
   selectedWalletLoading: boolean;
   availableWallets: Array<Wallet>;

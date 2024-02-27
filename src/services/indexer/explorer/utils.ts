@@ -2,9 +2,9 @@ import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
 
 import { formatStringNumber } from '../../../util';
 
-import type { SubqueryAssetEntity, SubqueryPoolXYKEntity } from '../subquery/types';
-import type { SubsquidAssetEntity, SubsquidPoolXYKEntity } from '../subsquid/types';
-import type { FiatPriceObject, UpdatesStream, PoolApyObject } from '../types';
+import type { SubqueryAssetEntity } from '../subquery/types';
+import type { SubsquidAssetEntity } from '../subsquid/types';
+import type { FiatPriceObject, UpdatesStream } from '../types';
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 export function parseAssetFiatPrice(entity: SubsquidAssetEntity | SubqueryAssetEntity): FiatPriceObject {
@@ -28,30 +28,6 @@ export function parsePriceStreamUpdate(entity: UpdatesStream): Nullable<FiatPric
     const isPriceFinity = priceFPNumber.isFinity();
     if (isPriceFinity) {
       acc[id] = priceFPNumber.toCodecString();
-    }
-    return acc;
-  }, {});
-}
-
-export function parseApy(entity: SubsquidPoolXYKEntity | SubqueryPoolXYKEntity): PoolApyObject {
-  const acc = {};
-  const id = entity.id;
-  const strategicBonusApyFPNumber = formatStringNumber(entity.strategicBonusApy);
-  const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
-  if (isStrategicBonusApyFinity) {
-    acc[id] = strategicBonusApyFPNumber.toCodecString();
-  }
-  return acc;
-}
-
-export function parseApyStreamUpdate(entity: UpdatesStream): PoolApyObject {
-  const data = entity?.data ? JSON.parse(entity.data) : {};
-
-  return Object.entries(data).reduce((acc, [id, apy]) => {
-    const strategicBonusApyFPNumber = formatStringNumber(apy as string);
-    const isStrategicBonusApyFinity = strategicBonusApyFPNumber.isFinity();
-    if (isStrategicBonusApyFinity) {
-      acc[id] = strategicBonusApyFPNumber.toCodecString();
     }
     return acc;
   }, {});
