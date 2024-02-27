@@ -1,5 +1,5 @@
 import { parseAssetFiatPrice, parsePriceStreamUpdate } from '../../../explorer/utils';
-import { FiatPriceQuery, FiatPriceStreamQuery } from '../../queries/fiatPriceAndApy';
+import { FiatPriceQuery, FiatPriceStreamQuery } from '../../queries/fiatPrice';
 import { PriceStreamSubscription } from '../../subscriptions/stream';
 
 import { SubqueryBaseModule } from './_base';

@@ -24,7 +24,6 @@ import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
 import NotificationMixin from './components/mixins/NotificationMixin';
 import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
 import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
-import ReferralRewardsMixin from './components/mixins/ReferralRewardsMixin';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
@@ -197,7 +196,6 @@ const mixins = {
   TranslationMixin,
   NotificationMixin,
   LoadingMixin,
-  ReferralRewardsMixin,
   PaginationSearchMixin,
   CopyAddressMixin,
   DialogMixin,

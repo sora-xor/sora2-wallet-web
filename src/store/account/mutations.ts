@@ -5,11 +5,11 @@ import Vue from 'vue';
 import { api } from '../../api';
 import { storage, settingsStorage } from '../../util/storage';
 
-import { EMPTY_REFERRAL_REWARDS, initialState } from './state';
+import { initialState } from './state';
 
 import type { AccountState } from './types';
 import type { AppWallet } from '../../consts';
-import type { FiatPriceObject, ReferrerRewards } from '../../services/indexer/types';
+import type { FiatPriceObject } from '../../services/indexer/types';
 import type { Book, PolkadotJsAccount } from '../../types/common';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
@@ -125,12 +125,6 @@ const mutations = defineMutations<AccountState>()({
   },
   clearBlacklist(state): void {
     state.blacklistArray = [];
-  },
-  setReferralRewards(state, referralRewards: ReferrerRewards): void {
-    state.referralRewards = referralRewards;
-  },
-  clearReferralRewards(state): void {
-    state.referralRewards = EMPTY_REFERRAL_REWARDS;
   },
   setWalletAccounts(state, polkadotJsAccounts: Array<PolkadotJsAccount> = []): void {
     state.polkadotJsAccounts = polkadotJsAccounts;
