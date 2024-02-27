@@ -10,7 +10,7 @@ import store from '../../../store';
 import { ModuleNames, ModuleMethods } from './types';
 
 import type {
-  SubqueryHistoryElement,
+  HistoryElement,
   HistoryElementError,
   HistoryElementSwap,
   HistoryElementSwapTransfer,
@@ -23,11 +23,9 @@ import type {
   HistoryElementPlaceLimitOrder,
   HistoryElementCancelLimitOrder,
   HistoryElementSwapTransferBatch,
-  SubqueryHistoryElementUtilityBatchAll,
-  UtilityBatchCall,
+  HistoryElementBatchCall,
   ReferrerReserve,
   ClaimedRewardItem,
-  SubqueryUtilityBatchCall,
 } from './types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
@@ -54,7 +52,7 @@ const OperationsMap = {
     [insensitive(ModuleMethods.LiquidityProxyXorlessTransfer)]: () => Operation.Transfer,
   },
   [insensitive(ModuleNames.Utility)]: {
-    [insensitive(ModuleMethods.UtilityBatchAll)]: (data: SubqueryHistoryElementUtilityBatchAll) => {
+    [insensitive(ModuleMethods.UtilityBatchAll)]: (data: HistoryElementBatchCall[]) => {
       if (!Array.isArray(data)) return null;
 
       if (
@@ -112,23 +110,29 @@ const OperationsMap = {
 
 const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asset && asset.symbol ? asset.symbol : '');
 
-const getTransactionId = (tx: SubqueryHistoryElement): string => tx.id;
+const getTransactionId = (tx: HistoryElement): string => tx.id;
 
-const isModuleMethod = (item: UtilityBatchCall, module: string, method: string) =>
-  insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method);
+const isModuleMethod = (item: HistoryElementBatchCall, module: string, method: string) => {
+  return insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method);
+};
 
-const getBatchCall = (calls: Array<SubqueryUtilityBatchCall>, { module, method }): Nullable<SubqueryUtilityBatchCall> =>
-  calls.find((item) => isModuleMethod(item, module, method));
+const getBatchCall = (calls: HistoryElementBatchCall[], { module, method }): Nullable<HistoryElementBatchCall> => {
+  return calls.find((item) => isModuleMethod(item, module, method));
+};
 
-const getTransactionOperationType = (tx: SubqueryHistoryElement): Nullable<Operation> => {
-  const { module, method, data } = tx;
+const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
+  const { module, method, data, calls } = tx;
 
   const operationGetter = getOr(ObjectInit, [insensitive(module), insensitive(method)], OperationsMap);
 
-  return operationGetter(data as any);
+  const type = operationGetter((data as any) || calls);
+
+  if (!type) console.info(tx);
+
+  return type;
 };
 
-const getTransactionTimestamp = (tx: SubqueryHistoryElement): number => {
+const getTransactionTimestamp = (tx: HistoryElement): number => {
   const timestamp = tx.timestamp * 1000;
 
   return !Number.isNaN(timestamp) ? timestamp : Date.now();
@@ -145,13 +149,13 @@ const getErrorMessage = (historyElementError: HistoryElementError): Record<strin
   }
 };
 
-const getTransactionStatus = (tx: SubqueryHistoryElement): string => {
+const getTransactionStatus = (tx: HistoryElement): string => {
   if (tx.execution.success) return TransactionStatus.Finalized;
 
   return TransactionStatus.Error;
 };
 
-const getTransactionNetworkFee = (tx: SubqueryHistoryElement): string => {
+const getTransactionNetworkFee = (tx: HistoryElement): string => {
   const fromCodec = FPNumber.fromCodecValue(tx.networkFee);
   const minFee = new FPNumber('0.0007');
 
@@ -172,7 +176,7 @@ const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
   }
 };
 
-const logOperationDataParsingError = (operation: Operation, transaction: SubqueryHistoryElement): void => {
+const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {
   console.error(`Couldn't parse ${operation} data.`, transaction);
 };
 
@@ -225,14 +229,10 @@ export default class SubqueryDataParser {
     return SubqueryDataParser.SUPPORTED_OPERATIONS;
   }
 
-  public async parseTransactionAsHistoryItem(transaction: SubqueryHistoryElement): Promise<Nullable<HistoryItem>> {
+  public async parseTransactionAsHistoryItem(transaction: HistoryElement): Promise<Nullable<HistoryItem>> {
     const type = getTransactionOperationType(transaction);
 
-    if (!type) return null;
-
-    // rewards transaction data could be nullable
-    if (!transaction.data && type !== Operation.ClaimRewards) {
-      logOperationDataParsingError(type, transaction);
+    if (!type) {
       return null;
     }
 
@@ -383,8 +383,8 @@ export default class SubqueryDataParser {
         return payload;
       }
       case Operation.CreatePair: {
-        const data = transaction.data as SubqueryHistoryElementUtilityBatchAll;
-        const call = getBatchCall(data, {
+        const calls = transaction.calls;
+        const call = getBatchCall(calls, {
           module: ModuleNames.PoolXYK,
           method: ModuleMethods.PoolXYKDepositLiquidity,
         });

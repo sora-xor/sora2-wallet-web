@@ -9,7 +9,7 @@ import store from '../../../store';
 import { ModuleNames, ModuleMethods } from '../types';
 
 import type {
-  SubsquidHistoryElement,
+  HistoryElement,
   HistoryElementError,
   HistoryElementSwap,
   HistoryElementSwapTransfer,
@@ -18,11 +18,10 @@ import type {
   HistoryElementAssetRegistration,
   HistoryElementAssetBurn,
   HistoryElementRewardsClaim,
-  SubsquidHistoryElementCalls,
   HistoryElementDemeterFarming,
   HistoryElementPlaceLimitOrder,
   HistoryElementCancelLimitOrder,
-  SubsquidUtilityBatchCall,
+  HistoryElementBatchCall,
   ReferrerReserve,
   ClaimedRewardItem,
   HistoryElementSwapTransferBatch,
@@ -53,7 +52,7 @@ const OperationsMap = {
     [insensitive(ModuleMethods.LiquidityProxyXorlessTransfer)]: () => Operation.Transfer,
   },
   [insensitive(ModuleNames.Utility)]: {
-    [insensitive(ModuleMethods.UtilityBatchAll)]: (data: SubsquidHistoryElementCalls) => {
+    [insensitive(ModuleMethods.UtilityBatchAll)]: (data: HistoryElementBatchCall[]) => {
       if (!Array.isArray(data)) return null;
 
       if (
@@ -120,23 +119,23 @@ const resolveAssets = async (assetAddressesArray: Array<string>) => {
 
 const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asset && asset.symbol ? asset.symbol : '');
 
-const getTransactionId = (tx: SubsquidHistoryElement): string => tx.id;
+const getTransactionId = (tx: HistoryElement): string => tx.id;
 
-const isModuleMethod = (item: SubsquidUtilityBatchCall, module: string, method: string) =>
+const isModuleMethod = (item: HistoryElementBatchCall, module: string, method: string) =>
   insensitive(item.module) === insensitive(module) && insensitive(item.method) === insensitive(method);
 
-const getBatchCall = (calls: Array<SubsquidUtilityBatchCall>, { module, method }): Nullable<SubsquidUtilityBatchCall> =>
+const getBatchCall = (calls: HistoryElementBatchCall[], { module, method }): Nullable<HistoryElementBatchCall> =>
   calls.find((item) => isModuleMethod(item, module, method));
 
-const getTransactionOperationType = (tx: SubsquidHistoryElement): Nullable<Operation> => {
-  const { module, method, data } = tx;
+const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
+  const { module, method, data, calls } = tx;
 
   const operationGetter = getOr(ObjectInit, [insensitive(module), insensitive(method)], OperationsMap);
 
-  return operationGetter(data as any);
+  return operationGetter((data as any) || calls);
 };
 
-const getTransactionTimestamp = (tx: SubsquidHistoryElement): number => {
+const getTransactionTimestamp = (tx: HistoryElement): number => {
   const timestamp = tx.timestamp * 1000;
 
   return !Number.isNaN(timestamp) ? timestamp : Date.now();
@@ -153,13 +152,13 @@ const getErrorMessage = (historyElementError: HistoryElementError): Record<strin
   }
 };
 
-const getTransactionStatus = (tx: SubsquidHistoryElement): string => {
+const getTransactionStatus = (tx: HistoryElement): string => {
   if (tx.execution.success) return TransactionStatus.Finalized;
 
   return TransactionStatus.Error;
 };
 
-const getTransactionNetworkFee = (tx: SubsquidHistoryElement): string => {
+const getTransactionNetworkFee = (tx: HistoryElement): string => {
   const fromCodec = FPNumber.fromCodecValue(tx.networkFee);
   const minFee = new FPNumber('0.0007');
 
@@ -180,7 +179,7 @@ const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
   }
 };
 
-const logOperationDataParsingError = (operation: Operation, transaction: SubsquidHistoryElement): void => {
+const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {
   console.error(`Couldn't parse ${operation} data.`, transaction);
 };
 
@@ -233,16 +232,10 @@ export default class SubsquidDataParser {
     return SubsquidDataParser.SUPPORTED_OPERATIONS;
   }
 
-  public async parseTransactionAsHistoryItem(transaction: SubsquidHistoryElement): Promise<Nullable<HistoryItem>> {
+  public async parseTransactionAsHistoryItem(transaction: HistoryElement): Promise<Nullable<HistoryItem>> {
     const type = getTransactionOperationType(transaction);
 
     if (!type) return null;
-
-    // rewards transaction data could be nullable
-    if (!transaction.data && type !== Operation.ClaimRewards) {
-      logOperationDataParsingError(type, transaction);
-      return null;
-    }
 
     const id = getTransactionId(transaction);
     const timestamp = getTransactionTimestamp(transaction);
@@ -385,7 +378,7 @@ export default class SubsquidDataParser {
         return payload;
       }
       case Operation.CreatePair: {
-        const calls = transaction.calls as SubsquidHistoryElementCalls;
+        const calls = transaction.calls as HistoryElementBatchCall[];
         const call = getBatchCall(calls, {
           module: ModuleNames.PoolXYK,
           method: ModuleMethods.PoolXYKDepositLiquidity,

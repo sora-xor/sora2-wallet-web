@@ -3,19 +3,19 @@ import { AccountHistorySubscription } from '../../subscriptions/account';
 
 import { SubqueryBaseModule } from './_base';
 
-import type {
-  ConnectionQueryResponseData,
-  HistoryElement,
-  QueryResponseNodes,
-  SubqueryHistoryElement,
-} from '../../types';
+import type { ConnectionQueryResponseData, HistoryElement, QueryResponseNodes } from '../../types';
 
 export class SubqueryAccountModule extends SubqueryBaseModule {
   public async getHistory(variables = {}): Promise<Nullable<QueryResponseNodes<HistoryElement>>> {
     const data = await this.getHistoryPaged(variables);
     if (data) {
       return {
-        nodes: data.edges.map((edge) => edge.node),
+        nodes: data.edges.map((edge) => {
+          return {
+            ...edge.node,
+            calls: (edge.node.calls as any)?.nodes ?? [],
+          };
+        }),
         totalCount: data.totalCount,
       };
     }
@@ -26,7 +26,7 @@ export class SubqueryAccountModule extends SubqueryBaseModule {
     return await this.root.fetchEntities(HistoryElementsQuery, variables);
   }
 
-  public createHistorySubscription(accountAddress: string, handler: (entity: SubqueryHistoryElement) => void) {
+  public createHistorySubscription(accountAddress: string, handler: (entity: HistoryElement) => void) {
     const variables = { id: [accountAddress] };
     const createSubscription = this.root.subscribe(AccountHistorySubscription, variables);
 

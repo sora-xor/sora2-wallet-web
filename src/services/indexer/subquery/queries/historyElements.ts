@@ -4,10 +4,9 @@ import { gql } from '@urql/core';
 import { PageInfoFragment } from '../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
-import type { ConnectionQueryResponse } from '../../types';
-import type { SubqueryHistoryElement } from '../types';
+import type { ConnectionQueryResponse, HistoryElement } from '../../types';
 
-export const HistoryElementsQuery = gql<ConnectionQueryResponse<SubqueryHistoryElement>>`
+export const HistoryElementsQuery = gql<ConnectionQueryResponse<HistoryElement>>`
   query SubqueryHistoryElements(
     $first: Int = null
     $last: Int = null
@@ -40,6 +39,13 @@ export const HistoryElementsQuery = gql<ConnectionQueryResponse<SubqueryHistoryE
           data
           dataFrom
           dataTo
+          calls {
+            nodes {
+              module
+              method
+              data
+            }
+          }
         }
       }
       pageInfo {
@@ -181,17 +187,15 @@ const OperationFilterMap = {
     method: {
       equalTo: ModuleMethods.UtilityBatchAll,
     },
-    data: {
-      contains: [
-        {
-          module: ModuleNames.PoolXYK,
-          method: ModuleMethods.PoolXYKInitializePool,
+    calls: {
+      some: {
+        module: {
+          equalTo: ModuleNames.PoolXYK,
         },
-        {
-          module: ModuleNames.PoolXYK,
-          method: ModuleMethods.PoolXYKDepositLiquidity,
+        method: {
+          equalTo: ModuleMethods.PoolXYKInitializePool,
         },
-      ],
+      },
     },
   },
   [Operation.AddLiquidity]: {
