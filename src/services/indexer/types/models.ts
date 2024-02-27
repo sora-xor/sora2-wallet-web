@@ -354,9 +354,7 @@ export type CallArgs = {
 };
 
 export type HistoryElementBatchCall = {
-  data: CallArgs & {
-    args: CallArgs;
-  };
+  data: CallArgs;
   hash: string;
   module: string;
   method: string;

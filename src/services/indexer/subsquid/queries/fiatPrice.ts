@@ -1,6 +1,6 @@
 import { gql } from '@urql/core';
 
-import { PageInfoFragment } from '../fragments/pageInfo';
+import { PageInfoFragment } from '../../fragments/pageInfo';
 
 import type { QueryData, ConnectionQueryResponse, UpdatesStream } from '../../types';
 import type { SubsquidAssetEntity } from '../types';

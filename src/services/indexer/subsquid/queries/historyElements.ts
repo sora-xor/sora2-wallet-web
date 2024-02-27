@@ -2,7 +2,7 @@
 import { Operation } from '@sora-substrate/util';
 import { gql } from '@urql/core';
 
-import { PageInfoFragment } from '../fragments/pageInfo';
+import { PageInfoFragment } from '../../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
 import type { ConnectionQueryResponse, HistoryElement } from '../../types';

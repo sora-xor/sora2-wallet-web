@@ -11,9 +11,16 @@ export class SubqueryAccountModule extends SubqueryBaseModule {
     if (data) {
       return {
         nodes: data.edges.map((edge) => {
+          const node = edge.node;
+
           return {
-            ...edge.node,
-            calls: (edge.node.calls as any)?.nodes ?? [],
+            ...node,
+            calls: ((node.calls as any)?.nodes ?? []).map((call) => {
+              return {
+                ...call,
+                data: call.data.args,
+              };
+            }),
           };
         }),
         totalCount: data.totalCount,

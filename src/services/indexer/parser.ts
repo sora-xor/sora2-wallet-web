@@ -3,10 +3,11 @@ import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
 import { RewardType, RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
 import getOr from 'lodash/fp/getOr';
 
-import { api } from '../../../api';
-import { ObjectInit } from '../../../consts';
-import store from '../../../store';
-import { ModuleNames, ModuleMethods } from '../types';
+import { api } from '../../api';
+import { ObjectInit } from '../../consts';
+import store from '../../store';
+
+import { ModuleNames, ModuleMethods } from './subquery/types';
 
 import type {
   HistoryElement,
@@ -21,12 +22,11 @@ import type {
   HistoryElementDemeterFarming,
   HistoryElementPlaceLimitOrder,
   HistoryElementCancelLimitOrder,
+  HistoryElementSwapTransferBatch,
   HistoryElementBatchCall,
   ReferrerReserve,
   ClaimedRewardItem,
-  HistoryElementSwapTransferBatch,
-  SwapTransferBatchTransferParam,
-} from './types';
+} from './subquery/types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
 import type { LimitOrderHistory } from '@sora-substrate/util/build/orderBook/types';
@@ -53,7 +53,7 @@ const OperationsMap = {
   },
   [insensitive(ModuleNames.Utility)]: {
     [insensitive(ModuleMethods.UtilityBatchAll)]: (data: HistoryElementBatchCall[]) => {
-      if (!Array.isArray(data)) return null;
+      if (!(Array.isArray(data) && !!data.length)) return null;
 
       if (
         !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKInitializePool }) &&
@@ -106,15 +106,6 @@ const OperationsMap = {
     [insensitive(ModuleMethods.OrderBookCancelLimitOrder)]: () => Operation.OrderBookCancelLimitOrder,
     [insensitive(ModuleMethods.OrderBookCancelLimitOrders)]: () => Operation.OrderBookCancelLimitOrders,
   },
-};
-
-const resolveAssets = async (assetAddressesArray: Array<string>) => {
-  const result: Array<Asset> = [];
-  assetAddressesArray.forEach(async (address) => {
-    const asset = await getAssetByAddress(address);
-    if (asset) result.push(asset);
-  });
-  return result;
 };
 
 const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asset && asset.symbol ? asset.symbol : '');
@@ -201,7 +192,7 @@ const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]
   return formatted;
 };
 
-export default class SubsquidDataParser {
+export default class IndexerDataParser {
   // Operations visible in wallet
   public static SUPPORTED_OPERATIONS = [
     Operation.Burn,
@@ -229,7 +220,7 @@ export default class SubsquidDataParser {
   ];
 
   public get supportedOperations(): Array<Operation> {
-    return SubsquidDataParser.SUPPORTED_OPERATIONS;
+    return IndexerDataParser.SUPPORTED_OPERATIONS;
   }
 
   public async parseTransactionAsHistoryItem(transaction: HistoryElement): Promise<Nullable<HistoryItem>> {
@@ -329,32 +320,37 @@ export default class SubsquidDataParser {
         payload.payload.adarFee = data.adarFee;
         payload.payload.actualFee = data.actualFee;
         payload.payload.maxInputAmount = data.maxInputAmount;
+        payload.payload.receivers = [];
 
         const transfers = data.transfers;
 
         // [TODO]: remove after full reindex
         if (Array.isArray(transfers) && transfers.length > 0) {
-          const outcomeAssetsIds = transfers.map((item) => item.assetId);
-          const assetsList = await resolveAssets(outcomeAssetsIds);
+          for (const receiver of data.receivers) {
+            const batch = receiver as any;
+            const assetAddress = batch.outcomeAssetId?.code;
+            const asset = await getAssetByAddress(assetAddress);
 
-          payload.payload.receivers = data.receivers.reduce<any[]>((acc, receiver) => {
-            const transfer = transfers?.find(
-              (transfer) => transfer.to === receiver.accountId
-            ) as SwapTransferBatchTransferParam;
-            const assetAddress = transfer?.assetId;
-            const asset = assetsList.find((asset) => asset?.address === assetAddress);
-            const receiversData = [
-              {
+            for (const receiver of batch.receivers) {
+              payload.payload.receivers.push({
                 accountId: receiver.accountId,
                 asset,
-                amount: transfer?.amount ?? '0',
+                amount: FPNumber.fromCodecValue(receiver.targetAmount, asset?.decimals).toString(),
                 symbol: getAssetSymbol(asset),
-              },
-            ];
-            return [...acc, ...receiversData];
-          }, []);
+              });
+            }
+          }
         } else {
-          payload.payload.receivers = [];
+          for (const receiver of data.receivers) {
+            const asset = await getAssetByAddress(receiver.assetId);
+
+            payload.payload.receivers.push({
+              accountId: receiver.accountId,
+              asset,
+              amount: receiver.amount,
+              symbol: getAssetSymbol(asset),
+            });
+          }
         }
 
         return payload;
@@ -378,7 +374,7 @@ export default class SubsquidDataParser {
         return payload;
       }
       case Operation.CreatePair: {
-        const calls = transaction.calls as HistoryElementBatchCall[];
+        const calls = transaction.calls;
         const call = getBatchCall(calls, {
           module: ModuleNames.PoolXYK,
           method: ModuleMethods.PoolXYKDepositLiquidity,
@@ -389,12 +385,10 @@ export default class SubsquidDataParser {
           return null;
         }
 
-        const {
-          inputAssetA: assetAddress,
-          inputAssetB: asset2Address,
-          inputADesired: amount,
-          inputBDesired: amount2,
-        } = call.data;
+        const assetAddress = call.data.inputAssetA ?? call.data.input_asset_a;
+        const asset2Address = call.data.inputAssetB ?? call.data.input_asset_b;
+        const amount = call.data.inputADesired ?? call.data.input_a_desired;
+        const amount2 = call.data.inputBDesired ?? call.data.input_b_desired;
 
         const asset = await getAssetByAddress(assetAddress as string);
         const asset2 = await getAssetByAddress(asset2Address as string);
@@ -498,7 +492,7 @@ export default class SubsquidDataParser {
         _payload.symbol2 = getAssetSymbol(quoteAsset);
         _payload.price = new FPNumber(data.price).toString();
         _payload.amount = new FPNumber(data.amount).toString();
-        _payload.side = (data.side as any).__kind; // [TODO] fix subsquid
+        _payload.side = data.side;
         _payload.limitOrderTimestamp = data.lifetime;
 
         return payload;
