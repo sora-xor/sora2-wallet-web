@@ -2,13 +2,13 @@
 import { Operation } from '@sora-substrate/util';
 import { gql } from '@urql/core';
 
-import { PageInfoFragment } from '../fragments/pageInfo';
+import { PageInfoFragment } from '../../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
-import type { ConnectionQueryResponse } from '../../types';
-import type { SubsquidHistoryElement, SubsquidQueryResponse } from '../types';
+import type { ConnectionQueryResponse, HistoryElement } from '../../types';
+import type { SubsquidQueryResponse } from '../types';
 
-export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryElement>>`
+export const HistoryElementsQuery = gql<SubsquidQueryResponse<HistoryElement>>`
   query SubsquidHistoryElements(
     $first: Int
     $offset: Int = null
@@ -36,11 +36,18 @@ export const HistoryElementsQuery = gql<SubsquidQueryResponse<SubsquidHistoryEle
         }
       }
       data
+      dataFrom
+      dataTo
+      calls {
+        module
+        method
+        data
+      }
     }
   }
 `;
 
-export const HistoryElementsConnectionQuery = gql<ConnectionQueryResponse<SubsquidHistoryElement>>`
+export const HistoryElementsConnectionQuery = gql<ConnectionQueryResponse<HistoryElement>>`
   query SubsquidHistoryElementsConnection(
     $first: Int
     $after: String = null

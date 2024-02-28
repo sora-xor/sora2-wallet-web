@@ -2,8 +2,8 @@ import {
   AccountBaseEntity,
   AssetBaseEntity,
   AssetSnapshotBaseEntity,
+  HistoryElement,
   HistoryElementBase,
-  HistoryElementDataBase,
   PoolXYKBaseEntity,
   OrderBookBaseEntity,
   OrderBookSnapshotBaseEntity,
@@ -48,24 +48,7 @@ export type SubsquidOrderBookOrderEntity = OrderBookOrderBaseEntity & {
   account: AccountBaseEntity;
 };
 
-export type SubsquidUtilityBatchCall = {
-  data: {
-    [key: string]: string | number;
-  };
-  hash: string;
-  callId: string;
-  module: string;
-  method: string;
-};
-
-export type SubsquidHistoryElementCalls = SubsquidUtilityBatchCall[];
-
-export type SubsquidHistoryElement = HistoryElementBase & {
-  data: HistoryElementDataBase;
-  calls: SubsquidHistoryElementCalls;
-};
-
 export type SubsquidAccountEntityMutation = {
   id: string;
-  latestHistoryElement: SubsquidHistoryElement;
+  latestHistoryElement: HistoryElement;
 };
