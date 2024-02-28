@@ -488,16 +488,6 @@ const actions = defineActions({
     await dispatch.subscribeOnFiatPrice();
   },
 
-  async getAccountReferralRewards(context): Promise<void> {
-    const { state, commit } = accountActionContext(context);
-    commit.clearReferralRewards();
-    const indexer = getCurrentIndexer();
-    const data = await indexer.services.explorer.account.getReferralRewards(state.address);
-    if (data) {
-      commit.setReferralRewards(data);
-    }
-  },
-
   async notifyOnDeposit(context, data): Promise<void> {
     const { commit } = accountActionContext(context);
     const { asset, message }: { asset: WhitelistArrayItem; message: string } = data;

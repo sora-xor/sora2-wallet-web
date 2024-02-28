@@ -4,7 +4,6 @@ import {
   AssetSnapshotBaseEntity,
   ConnectionQueryResponseData,
   HistoryElementBase,
-  HistoryElementDataBase,
   PoolXYKBaseEntity,
   OrderBookBaseEntity,
   OrderBookSnapshotBaseEntity,
@@ -81,27 +80,6 @@ export type SubqueryAssetSnapshotBaseEntity = AssetSnapshotBaseEntity & {
 // with connection
 export type SubqueryAssetSnapshotEntity = SubqueryAssetSnapshotBaseEntity & {
   asset: AssetBaseEntity;
-};
-
-export type SubqueryUtilityBatchCall = {
-  data: {
-    args: {
-      [key: string]: string | number;
-    };
-    callIndex: string;
-  };
-  hash: string;
-  callId: string;
-  module: string;
-  method: string;
-};
-
-export type SubqueryHistoryElementUtilityBatchAll = SubqueryUtilityBatchCall[];
-
-export type SubqueryHistoryElementData = HistoryElementDataBase | SubqueryHistoryElementUtilityBatchAll;
-
-export type SubqueryHistoryElement = HistoryElementBase & {
-  data: SubqueryHistoryElementData;
 };
 
 export type SubqueryAccountEntityMutation = {

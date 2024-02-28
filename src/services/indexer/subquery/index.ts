@@ -3,7 +3,6 @@ import store from '@/store';
 
 import { createExplorerClient } from './client';
 import SubqueryExplorer from './explorer';
-import SubqueryDataParser from './parser';
 
 export * from './queries/historyElements';
 
@@ -14,4 +13,3 @@ export const SubqueryExplorerService = new SubqueryExplorer({
   getStatus: () => store.state.wallet.settings.indexers[IndexerType.SUBQUERY].status,
   getEndpoint: () => store.state.wallet.settings.indexers[IndexerType.SUBQUERY].endpoint,
 });
-export const SubqueryDataParserService = new SubqueryDataParser();

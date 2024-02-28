@@ -1,26 +1,18 @@
 import {
   SubqueryAccountEntity,
-  SubqueryAccountEntityMutation,
   SubqueryAssetEntity,
-  SubqueryHistoryElement,
-  SubqueryHistoryElementData,
   SubqueryOrderBookEntity,
   SubqueryOrderBookSnapshotEntity,
   SubqueryOrderBookOrderEntity,
   SubqueryPoolXYKEntity,
-  SubqueryUtilityBatchCall,
 } from '../subquery/types';
 import {
   SubsquidAccountEntity,
-  SubsquidAccountEntityMutation,
   SubsquidAssetEntity,
-  SubsquidHistoryElement,
-  SubsquidHistoryElementCalls,
   SubsquidOrderBookEntity,
   SubsquidOrderBookSnapshotEntity,
   SubsquidOrderBookOrderEntity,
   SubsquidPoolXYKEntity,
-  SubsquidUtilityBatchCall,
 } from '../subsquid/types';
 
 import type { PriceVariant, OrderBookStatus } from '@sora-substrate/liquidity-proxy';
@@ -297,12 +289,12 @@ export type HistoryElementEthBridgeIncoming = {
   to: string;
 };
 
-export type ReferralSetReferrer = {
+export type HistoryElementReferralSetReferrer = {
   from: string; // referral
   to: string; // referrer
 };
 
-export type ReferrerReserve = {
+export type HistoryElementReferrerReserve = {
   from: string;
   to: string;
   amount: string;
@@ -327,10 +319,11 @@ export type HistoryElementCancelLimitOrder = Array<{
 }>;
 
 export type HistoryElementDataBase = Nullable<
-  | ReferralSetReferrer
-  | ReferrerReserve
+  | HistoryElementReferralSetReferrer
+  | HistoryElementReferrerReserve
   | HistoryElementSwap
   | HistoryElementSwapTransfer
+  | HistoryElementSwapTransferBatch
   | HistoryElementTransfer
   | HistoryElementLiquidityOperation
   | HistoryElementAssetRegistration
@@ -338,7 +331,6 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementEthBridgeIncoming
   | HistoryElementRewardsClaim
   | HistoryElementDemeterFarming
-  | HistoryElementSwapTransferBatch
   | HistoryElementPlaceLimitOrder
   | HistoryElementCancelLimitOrder
 >;
@@ -355,6 +347,22 @@ export type HistoryElementBase = {
   timestamp: number;
   dataFrom?: string;
   dataTo?: string;
+};
+
+export type CallArgs = {
+  [key: string]: string | number;
+};
+
+export type HistoryElementBatchCall = {
+  data: CallArgs;
+  hash: string;
+  module: string;
+  method: string;
+};
+
+export type HistoryElement = HistoryElementBase & {
+  data: HistoryElementDataBase;
+  calls: HistoryElementBatchCall[];
 };
 
 export type UpdatesStream = {
@@ -376,13 +384,5 @@ export type OrderBookEntity = SubqueryOrderBookEntity | SubsquidOrderBookEntity;
 export type OrderBookSnapshotEntity = SubqueryOrderBookSnapshotEntity | SubsquidOrderBookSnapshotEntity;
 
 export type OrderBookOrderEntity = SubqueryOrderBookOrderEntity | SubsquidOrderBookOrderEntity;
-
-export type UtilityBatchCall = SubqueryUtilityBatchCall | SubsquidUtilityBatchCall;
-
-export type HistoryElementData = SubqueryHistoryElementData;
-
-export type HistoryElementCalls = SubsquidHistoryElementCalls;
-
-export type HistoryElement = SubqueryHistoryElement | SubsquidHistoryElement;
 
 export type AccountEntity = SubqueryAccountEntity | SubsquidAccountEntity;

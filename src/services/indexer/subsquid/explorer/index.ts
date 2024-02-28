@@ -2,7 +2,6 @@ import BaseExplorer from '../../explorer/base';
 
 import { SubsquidAccountModule } from './modules/account';
 import { SubsquidAssetModule } from './modules/asset';
-import { SubsquidPoolModule } from './modules/pool';
 import { SubsquidPriceModule } from './modules/price';
 
 import type { ConnectionQueryResponse, SubscriptionPayload } from '../../types';
@@ -12,7 +11,6 @@ import type { SubsquidQueryResponse, QueryResponseNodes, ConnectionQueryResponse
 export default class SubsquidExplorer extends BaseExplorer {
   public readonly account: SubsquidAccountModule = new SubsquidAccountModule(this);
   public readonly asset: SubsquidAssetModule = new SubsquidAssetModule(this);
-  public readonly pool: SubsquidPoolModule = new SubsquidPoolModule(this);
   public readonly price: SubsquidPriceModule = new SubsquidPriceModule(this);
 
   public async fetchEntities<T>(
