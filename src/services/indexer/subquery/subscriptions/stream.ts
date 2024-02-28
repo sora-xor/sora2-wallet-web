@@ -14,16 +14,6 @@ export const PriceStreamSubscription = gql<SubquerySubscriptionPayload<UpdatesSt
   }
 `;
 
-export const ApyStreamSubscription = gql<SubquerySubscriptionPayload<UpdatesStream>>`
-  subscription SubqueryApyStreamSubscription {
-    payload: updatesStreams(id: "apy", mutation: [UPDATE, INSERT]) {
-      id
-      mutation_type
-      _entity
-    }
-  }
-`;
-
 export const AssetRegistrationStreamSubscription = gql<SubquerySubscriptionPayload<UpdatesStream>>`
   subscription SubqueryAssetRegistrationStreamSubscription {
     payload: updatesStreams(id: "assetRegistration", mutation: [UPDATE, INSERT]) {
