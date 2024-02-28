@@ -3,12 +3,7 @@ import { AccountHistorySubscription } from '../../subscriptions/account';
 
 import { BaseModule } from './_base';
 
-import type {
-  ConnectionQueryResponseData,
-  HistoryElement,
-  QueryResponseNodes,
-  SubsquidHistoryElement,
-} from '../../types';
+import type { ConnectionQueryResponseData, HistoryElement, QueryResponseNodes } from '../../types';
 
 export class SubsquidAccountModule extends BaseModule {
   public async getHistory(variables = {}): Promise<Nullable<QueryResponseNodes<HistoryElement>>> {
@@ -19,7 +14,7 @@ export class SubsquidAccountModule extends BaseModule {
     return await this.root.fetchEntitiesConnection(HistoryElementsConnectionQuery, variables);
   }
 
-  public createHistorySubscription(accountAddress: string, handler: (entity: SubsquidHistoryElement) => void) {
+  public createHistorySubscription(accountAddress: string, handler: (entity: HistoryElement) => void) {
     const variables = { id: accountAddress };
     const createSubscription = this.root.subscribe(AccountHistorySubscription, variables);
 
@@ -30,7 +25,7 @@ export class SubsquidAccountModule extends BaseModule {
         const response = await this.getHistory(variables);
 
         if (response && Array.isArray(response.nodes) && response.nodes[0]) {
-          handler(response.nodes[0] as SubsquidHistoryElement);
+          handler(response.nodes[0]);
         }
       }
     });

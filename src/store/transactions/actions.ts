@@ -9,10 +9,46 @@ import store, { rootActionContext } from '../../store';
 
 import { transactionsActionContext } from './../transactions';
 
+import type { HistoryElement } from '../../services/indexer/types';
 import type { ExternalHistoryParams } from '../../types/history';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { ActionContext } from 'vuex';
 
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2_000;
+
+async function parseHistoryUpdate(context: ActionContext<any, any>, transaction: HistoryElement): Promise<void> {
+  const { commit, state } = transactionsActionContext(context);
+  const { rootState, rootGetters, rootCommit } = rootActionContext(context);
+  const { account, whitelist } = rootGetters.wallet.account;
+
+  const indexer = getCurrentIndexer();
+  const historyItem = await indexer.services.dataParser.parseTransactionAsHistoryItem(transaction);
+
+  if (!historyItem?.id) return;
+  // Don't handle bridge operations
+  if ([Operation.EthBridgeIncoming, Operation.EthBridgeOutgoing].includes(historyItem.type)) return;
+
+  // remove history from local storage
+  if (historyItem.id in api.history) {
+    commit.removeHistoryByIds([historyItem.id]);
+    // Update local history - this will remove deleted element from ui
+    commit.getHistory();
+  }
+
+  // add to external history updates
+  if (state.saveExternalHistoryUpdates && !(historyItem.id in state.externalHistory)) {
+    commit.setExternalHistoryUpdates({ ...state.externalHistoryUpdates, [historyItem.id]: historyItem });
+  }
+
+  // Handle incoming Transfer operations
+  if (accountIdBasedOperations.includes(historyItem.type) && historyItem.to === account.address) {
+    const asset = whitelist[historyItem.assetAddress as string];
+
+    if (asset && rootState.wallet.settings.allowTopUpAlert) {
+      rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
+    }
+  }
+}
 
 /** Only for Desktop management */
 async function waitUntilConfirmTxDialogOpened(): Promise<void> {
@@ -46,8 +82,8 @@ const actions = defineActions({
   },
 
   async subscribeOnExternalHistory(context): Promise<void> {
-    const { commit, state } = transactionsActionContext(context);
-    const { rootState, rootGetters, rootCommit } = rootActionContext(context);
+    const { commit } = transactionsActionContext(context);
+    const { rootGetters } = rootActionContext(context);
     const { isLoggedIn, account } = rootGetters.wallet.account;
 
     commit.resetExternalHistorySubscription();
@@ -56,35 +92,12 @@ const actions = defineActions({
 
     try {
       const indexer = getCurrentIndexer();
-      const address = account.address;
-      const subscription = indexer.services.explorer.account.createHistorySubscription(address, async (transaction) => {
-        const historyItem = await indexer.services.dataParser.parseTransactionAsHistoryItem(transaction as any); // TODO: remove any type
-
-        if (!historyItem?.id) return;
-        // Don't handle bridge operations
-        if ([Operation.EthBridgeIncoming, Operation.EthBridgeOutgoing].includes(historyItem.type)) return;
-
-        // remove history from local storage
-        if (historyItem.id in api.history) {
-          commit.removeHistoryByIds([historyItem.id]);
-          // Update local history - this will remove deleted element from ui
-          commit.getHistory();
+      const subscription = indexer.services.explorer.account.createHistorySubscription(
+        account.address,
+        async (transaction) => {
+          await parseHistoryUpdate(context, transaction);
         }
-
-        // add to external history updates
-        if (state.saveExternalHistoryUpdates) {
-          commit.setExternalHistoryUpdates({ ...state.externalHistoryUpdates, [historyItem.id]: historyItem });
-        }
-
-        // Handle incoming Transfer operations
-        if (accountIdBasedOperations.includes(historyItem.type) && historyItem.to === address) {
-          const asset = rootGetters.wallet.account.whitelist[historyItem.assetAddress as string];
-
-          if (asset && rootState.wallet.settings.allowTopUpAlert) {
-            rootCommit.wallet.account.setAssetToNotify(asset as WhitelistArrayItem);
-          }
-        }
-      });
+      );
       commit.setExternalHistorySubscription(subscription);
     } catch (error) {
       console.error(error);

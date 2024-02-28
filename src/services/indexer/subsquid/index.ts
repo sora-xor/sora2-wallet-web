@@ -3,7 +3,6 @@ import store from '@/store';
 
 import { createExplorerClient } from './client';
 import SubsquidExplorer from './explorer';
-import SubsquidDataParser from './parser';
 
 export * from './queries/historyElements';
 
@@ -14,4 +13,3 @@ export const SubsquidExplorerService = new SubsquidExplorer({
   getStatus: () => store.state.wallet.settings.indexers[IndexerType.SUBSQUID].status,
   getEndpoint: () => store.state.wallet.settings.indexers[IndexerType.SUBSQUID].endpoint,
 });
-export const SubsquidDataParserService = new SubsquidDataParser();
