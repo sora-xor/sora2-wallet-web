@@ -224,6 +224,50 @@ const OperationFilterMap = {
   },
   [Operation.OrderBookCancelLimitOrder]: OrderBookCancelLimitOrders,
   [Operation.OrderBookCancelLimitOrders]: OrderBookCancelLimitOrders,
+  [Operation.StakingBond]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingBond,
+  },
+  [Operation.StakingBondExtra]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingBondExtra,
+  },
+  [Operation.StakingUnbond]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingUnbond,
+  },
+  [Operation.StakingWithdrawUnbonded]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingWithdrawUnbonded,
+  },
+  [Operation.StakingNominate]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingNominate,
+  },
+  [Operation.StakingChill]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingChill,
+  },
+  [Operation.StakingSetPayee]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingSetPayee,
+  },
+  [Operation.StakingSetController]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingSetController,
+  },
+  [Operation.StakingPayout]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingPayout,
+  },
+  [Operation.StakingRebond]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingRebond,
+  },
+  [Operation.StakingBondAndNominate]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingBondAndNominate,
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {

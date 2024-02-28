@@ -475,6 +475,17 @@ export default class IndexerDataParser {
     Operation.OrderBookPlaceLimitOrder,
     Operation.OrderBookCancelLimitOrder,
     Operation.OrderBookCancelLimitOrders,
+    Operation.StakingBond,
+    Operation.StakingBondAndNominate,
+    Operation.StakingBondExtra,
+    Operation.StakingRebond,
+    Operation.StakingUnbond,
+    Operation.StakingWithdrawUnbonded,
+    Operation.StakingNominate,
+    Operation.StakingChill,
+    Operation.StakingSetPayee,
+    Operation.StakingSetController,
+    Operation.StakingPayout,
   ];
 
   public get supportedOperations(): Array<Operation> {

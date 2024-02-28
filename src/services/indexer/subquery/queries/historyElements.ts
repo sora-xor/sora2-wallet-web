@@ -308,6 +308,95 @@ const OperationFilterMap = {
   },
   [Operation.OrderBookCancelLimitOrder]: OrderBookCancelLimitOrders,
   [Operation.OrderBookCancelLimitOrders]: OrderBookCancelLimitOrders,
+  // STAKING
+  [Operation.StakingBond]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingBond,
+    },
+  },
+  [Operation.StakingBondExtra]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingBondExtra,
+    },
+  },
+  [Operation.StakingUnbond]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingUnbond,
+    },
+  },
+  [Operation.StakingWithdrawUnbonded]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingWithdrawUnbonded,
+    },
+  },
+  [Operation.StakingNominate]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingNominate,
+    },
+  },
+  [Operation.StakingChill]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingChill,
+    },
+  },
+  [Operation.StakingSetPayee]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingSetPayee,
+    },
+  },
+  [Operation.StakingSetController]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingSetController,
+    },
+  },
+  [Operation.StakingPayout]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingPayout,
+    },
+  },
+  [Operation.StakingRebond]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingRebond,
+    },
+  },
+  [Operation.StakingBondAndNominate]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingBondAndNominate,
+    },
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
