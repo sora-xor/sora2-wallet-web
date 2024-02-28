@@ -28,7 +28,11 @@ import type {
   ClaimedRewardItem,
 } from './subquery/types';
 import type { HistoryItem } from '@sora-substrate/util';
-import type { Asset, WhitelistItem } from '@sora-substrate/util/build/assets/types';
+import type {
+  Asset,
+  WhitelistItem,
+  HistoryElementTransfer as HistoryXorlessTransfer,
+} from '@sora-substrate/util/build/assets/types';
 import type { LimitOrderHistory } from '@sora-substrate/util/build/orderBook/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 
@@ -108,7 +112,7 @@ const OperationsMap = {
   },
 };
 
-const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => (asset && asset.symbol ? asset.symbol : '');
+const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => asset?.symbol ?? '';
 
 const getTransactionId = (tx: HistoryElement): string => tx.id;
 
@@ -227,7 +231,7 @@ const parseSwapTransfer = async (transaction: HistoryElement, payload: HistoryIt
 const parseSwapTransferBatch = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementSwapTransferBatch;
 
-  // [TODO]: remove after full reindex
+  // [INDEXERS]: remove after full reindex
   if (!data.receivers) {
     const transfer = data as unknown as HistoryElementTransfer;
     const assetAddress = transfer.assetId;
@@ -256,7 +260,7 @@ const parseSwapTransferBatch = async (transaction: HistoryElement, payload: Hist
 
   const transfers = data.transfers;
 
-  // [TODO]: remove after full reindex
+  // [INDEXERS]: remove after full reindex
   if (Array.isArray(transfers) && transfers.length > 0) {
     for (const receiver of data.receivers) {
       const batch = receiver as any;
@@ -335,17 +339,17 @@ const parseCreatePair = async (transaction: HistoryElement, payload: HistoryItem
 
 const parseTransfer = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementTransfer;
+  const _payload = payload as HistoryXorlessTransfer;
 
   const assetAddress = data.assetId;
   const asset = await getAssetByAddress(assetAddress);
 
-  payload.assetAddress = assetAddress;
-  payload.symbol = getAssetSymbol(asset);
-  payload.amount = data.amount;
-  // [TODO] update History in js-lib
-  (payload as any).assetFee = data.assetFee;
-  (payload as any).xorFee = data.xorFee;
-  (payload as any).comment = data.comment;
+  _payload.assetAddress = assetAddress;
+  _payload.symbol = getAssetSymbol(asset);
+  _payload.amount = data.amount;
+  _payload.assetFee = data.assetFee;
+  _payload.xorFee = data.xorFee;
+  _payload.comment = data.comment;
 
   return payload;
 };
@@ -448,7 +452,7 @@ const parseOrderBookLimitOrderCancel = async (transaction: HistoryElement, paylo
 
 export default class IndexerDataParser {
   // Operations visible in wallet
-  public static SUPPORTED_OPERATIONS = [
+  public static readonly SUPPORTED_OPERATIONS = [
     Operation.Burn,
     Operation.Mint,
     Operation.Transfer,

@@ -72,7 +72,7 @@ const actions = defineActions({
         }
 
         // add to external history updates
-        if (state.saveExternalHistoryUpdates) {
+        if (state.saveExternalHistoryUpdates && !(historyItem.id in state.externalHistory)) {
           commit.setExternalHistoryUpdates({ ...state.externalHistoryUpdates, [historyItem.id]: historyItem });
         }
 
