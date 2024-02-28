@@ -24,7 +24,7 @@ import type {
   HistoryElementCancelLimitOrder,
   HistoryElementSwapTransferBatch,
   HistoryElementBatchCall,
-  ReferrerReserve,
+  HistoryElementReferrerReserve,
   ClaimedRewardItem,
 } from './subquery/types';
 import type { HistoryItem } from '@sora-substrate/util';
@@ -192,6 +192,260 @@ const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]
   return formatted;
 };
 
+const parseMintOrBurn = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementAssetBurn;
+
+  const assetAddress = data.assetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  payload.amount = data.amount;
+  payload.symbol = getAssetSymbol(asset);
+
+  return payload;
+};
+
+const parseSwapTransfer = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementSwap & HistoryElementSwapTransfer;
+
+  const assetAddress = data.baseAssetId;
+  const asset2Address = data.targetAssetId;
+  const asset = await getAssetByAddress(assetAddress);
+  const asset2 = await getAssetByAddress(asset2Address);
+
+  payload.assetAddress = assetAddress;
+  payload.asset2Address = asset2Address;
+  payload.amount = data.baseAssetAmount;
+  payload.amount2 = data.targetAssetAmount;
+  payload.symbol = getAssetSymbol(asset);
+  payload.symbol2 = getAssetSymbol(asset2);
+  payload.liquiditySource = data.selectedMarket;
+  payload.liquidityProviderFee = new FPNumber(data.liquidityProviderFee).toCodecString();
+
+  return payload;
+};
+
+const parseSwapTransferBatch = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementSwapTransferBatch;
+
+  // [TODO]: remove after full reindex
+  if (!data.receivers) {
+    const transfer = data as unknown as HistoryElementTransfer;
+    const assetAddress = transfer.assetId;
+    const asset = await getAssetByAddress(assetAddress);
+
+    payload.assetAddress = assetAddress;
+    payload.symbol = getAssetSymbol(asset);
+    payload.amount = transfer.amount;
+
+    return payload;
+  }
+
+  const inputAssetId = data.inputAssetId ?? data.assetId;
+  const inputAsset = await getAssetByAddress(inputAssetId);
+
+  payload.assetAddress = inputAssetId;
+  payload.liquiditySource = data.selectedMarket;
+  payload.amount = data.inputAmount;
+  payload.symbol = getAssetSymbol(inputAsset);
+
+  payload.payload = {};
+  payload.payload.adarFee = data.adarFee;
+  payload.payload.actualFee = data.actualFee;
+  payload.payload.maxInputAmount = data.maxInputAmount;
+  payload.payload.receivers = [];
+
+  const transfers = data.transfers;
+
+  // [TODO]: remove after full reindex
+  if (Array.isArray(transfers) && transfers.length > 0) {
+    for (const receiver of data.receivers) {
+      const batch = receiver as any;
+      const assetAddress = batch.outcomeAssetId?.code;
+      const asset = await getAssetByAddress(assetAddress);
+
+      for (const receiver of batch.receivers) {
+        payload.payload.receivers.push({
+          accountId: receiver.accountId,
+          asset,
+          amount: FPNumber.fromCodecValue(receiver.targetAmount, asset?.decimals).toString(),
+          symbol: getAssetSymbol(asset),
+        });
+      }
+    }
+  } else {
+    for (const receiver of data.receivers) {
+      const asset = await getAssetByAddress(receiver.assetId);
+
+      payload.payload.receivers.push({
+        accountId: receiver.accountId,
+        asset,
+        amount: receiver.amount,
+        symbol: getAssetSymbol(asset),
+      });
+    }
+  }
+
+  return payload;
+};
+
+const parseLiquidityDepositOrWithdrawal = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementLiquidityOperation;
+
+  const assetAddress = data.baseAssetId;
+  const asset2Address = data.targetAssetId;
+  const asset = await getAssetByAddress(assetAddress);
+  const asset2 = await getAssetByAddress(asset2Address);
+
+  payload.assetAddress = assetAddress;
+  payload.asset2Address = asset2Address;
+  payload.symbol = getAssetSymbol(asset);
+  payload.symbol2 = getAssetSymbol(asset2);
+  payload.amount = data.baseAssetAmount;
+  payload.amount2 = data.targetAssetAmount;
+
+  return payload;
+};
+
+const parseCreatePair = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const calls = transaction.calls;
+  const call = getBatchCall(calls, {
+    module: ModuleNames.PoolXYK,
+    method: ModuleMethods.PoolXYKDepositLiquidity,
+  });
+
+  if (!call) return null;
+
+  const assetAddress = call.data.inputAssetA ?? call.data.input_asset_a;
+  const asset2Address = call.data.inputAssetB ?? call.data.input_asset_b;
+  const amount = call.data.inputADesired ?? call.data.input_a_desired;
+  const amount2 = call.data.inputBDesired ?? call.data.input_b_desired;
+
+  const asset = await getAssetByAddress(assetAddress as string);
+  const asset2 = await getAssetByAddress(asset2Address as string);
+
+  payload.assetAddress = asset ? (assetAddress as string) : '';
+  payload.asset2Address = asset2 ? (asset2Address as string) : '';
+  payload.symbol = getAssetSymbol(asset);
+  payload.symbol2 = getAssetSymbol(asset2);
+  payload.amount = String(amount);
+  payload.amount2 = String(amount2);
+
+  return payload;
+};
+
+const parseTransfer = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementTransfer;
+
+  const assetAddress = data.assetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  payload.assetAddress = assetAddress;
+  payload.symbol = getAssetSymbol(asset);
+  payload.amount = data.amount;
+  // [TODO] update History in js-lib
+  (payload as any).assetFee = data.assetFee;
+  (payload as any).xorFee = data.xorFee;
+  (payload as any).comment = data.comment;
+
+  return payload;
+};
+
+const parseRegisterAsset = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementAssetRegistration;
+
+  const assetAddress = data.assetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  payload.symbol = getAssetSymbol(asset);
+
+  return payload;
+};
+
+const parseReferralReserve = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementReferrerReserve;
+  payload.amount = data.amount;
+  return payload;
+};
+
+const parseClaimRewards = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const rewardsData =
+    transaction.module === ModuleNames.Utility ? [] : (transaction.data as HistoryElementRewardsClaim);
+
+  (payload as RewardClaimHistory).rewards = Array.isArray(rewardsData) ? await formatRewards(rewardsData) : [];
+
+  return payload;
+};
+
+const parseDemeterLiquidity = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementDemeterFarming;
+
+  const assetAddress = data.baseAssetId as string;
+  const asset2Address = data.assetId;
+
+  const asset = await getAssetByAddress(assetAddress);
+  const asset2 = await getAssetByAddress(asset2Address);
+
+  payload.assetAddress = assetAddress;
+  payload.asset2Address = asset2Address;
+  payload.symbol = getAssetSymbol(asset);
+  payload.symbol2 = getAssetSymbol(asset2);
+  payload.amount = data.amount;
+
+  return payload;
+};
+
+const parseDemeterStakeOrRewards = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementDemeterFarming;
+
+  const assetAddress = data.assetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  payload.assetAddress = assetAddress;
+  payload.symbol = getAssetSymbol(asset);
+  payload.amount = data.amount;
+
+  return payload;
+};
+
+const parseOrderBookLimitOrderPlacement = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementPlaceLimitOrder;
+
+  const _payload = payload as LimitOrderHistory;
+  const baseAssetId = data.baseAssetId;
+  const quoteAssetId = data.quoteAssetId;
+  const baseAsset = await getAssetByAddress(baseAssetId);
+  const quoteAsset = await getAssetByAddress(quoteAssetId);
+
+  _payload.assetAddress = baseAssetId;
+  _payload.asset2Address = quoteAssetId;
+  _payload.symbol = getAssetSymbol(baseAsset);
+  _payload.symbol2 = getAssetSymbol(quoteAsset);
+  _payload.price = new FPNumber(data.price).toString();
+  _payload.amount = new FPNumber(data.amount).toString();
+  _payload.side = data.side;
+  _payload.limitOrderTimestamp = data.lifetime;
+
+  return payload;
+};
+
+const parseOrderBookLimitOrderCancel = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementCancelLimitOrder;
+
+  const _payload = payload as LimitOrderHistory;
+  const baseAssetId = data[0].baseAssetId;
+  const quoteAssetId = data[0].quoteAssetId;
+  const baseAsset = await getAssetByAddress(baseAssetId);
+  const quoteAsset = await getAssetByAddress(quoteAssetId);
+
+  _payload.assetAddress = baseAssetId;
+  _payload.asset2Address = quoteAssetId;
+  _payload.symbol = getAssetSymbol(baseAsset);
+  _payload.symbol2 = getAssetSymbol(quoteAsset);
+  _payload.limitOrderIds = data.map((order) => order.orderId);
+
+  return payload;
+};
+
 export default class IndexerDataParser {
   // Operations visible in wallet
   public static SUPPORTED_OPERATIONS = [
@@ -261,259 +515,53 @@ export default class IndexerDataParser {
     switch (type) {
       case Operation.Burn:
       case Operation.Mint: {
-        const data = transaction.data as HistoryElementAssetBurn;
-
-        const assetAddress = data.assetId;
-        const asset = await getAssetByAddress(assetAddress);
-
-        payload.amount = data.amount;
-        payload.symbol = getAssetSymbol(asset);
-
-        return payload;
+        return await parseMintOrBurn(transaction, payload);
       }
-
       case Operation.Swap:
       case Operation.SwapAndSend: {
-        const data = transaction.data as HistoryElementSwap & HistoryElementSwapTransfer;
-
-        const assetAddress = data.baseAssetId;
-        const asset2Address = data.targetAssetId;
-        const asset = await getAssetByAddress(assetAddress);
-        const asset2 = await getAssetByAddress(asset2Address);
-
-        payload.assetAddress = assetAddress;
-        payload.asset2Address = asset2Address;
-        payload.amount = data.baseAssetAmount;
-        payload.amount2 = data.targetAssetAmount;
-        payload.symbol = getAssetSymbol(asset);
-        payload.symbol2 = getAssetSymbol(asset2);
-        payload.liquiditySource = data.selectedMarket;
-        payload.liquidityProviderFee = new FPNumber(data.liquidityProviderFee).toCodecString();
-
-        return payload;
+        return await parseSwapTransfer(transaction, payload);
       }
       case Operation.SwapTransferBatch: {
-        const data = transaction.data as HistoryElementSwapTransferBatch;
-
-        // [TODO]: remove after full reindex
-        if (!data.receivers) {
-          const transfer = data as unknown as HistoryElementTransfer;
-          const assetAddress = transfer.assetId;
-          const asset = await getAssetByAddress(assetAddress);
-
-          payload.assetAddress = assetAddress;
-          payload.symbol = getAssetSymbol(asset);
-          payload.amount = transfer.amount;
-
-          return payload;
-        }
-
-        const inputAssetId = data.inputAssetId ?? data.assetId;
-        const inputAsset = await getAssetByAddress(inputAssetId);
-
-        payload.assetAddress = inputAssetId;
-        payload.liquiditySource = data.selectedMarket;
-        payload.amount = data.inputAmount;
-        payload.symbol = getAssetSymbol(inputAsset);
-
-        payload.payload = {};
-        payload.payload.adarFee = data.adarFee;
-        payload.payload.actualFee = data.actualFee;
-        payload.payload.maxInputAmount = data.maxInputAmount;
-        payload.payload.receivers = [];
-
-        const transfers = data.transfers;
-
-        // [TODO]: remove after full reindex
-        if (Array.isArray(transfers) && transfers.length > 0) {
-          for (const receiver of data.receivers) {
-            const batch = receiver as any;
-            const assetAddress = batch.outcomeAssetId?.code;
-            const asset = await getAssetByAddress(assetAddress);
-
-            for (const receiver of batch.receivers) {
-              payload.payload.receivers.push({
-                accountId: receiver.accountId,
-                asset,
-                amount: FPNumber.fromCodecValue(receiver.targetAmount, asset?.decimals).toString(),
-                symbol: getAssetSymbol(asset),
-              });
-            }
-          }
-        } else {
-          for (const receiver of data.receivers) {
-            const asset = await getAssetByAddress(receiver.assetId);
-
-            payload.payload.receivers.push({
-              accountId: receiver.accountId,
-              asset,
-              amount: receiver.amount,
-              symbol: getAssetSymbol(asset),
-            });
-          }
-        }
-
-        return payload;
+        return await parseSwapTransferBatch(transaction, payload);
       }
       case Operation.AddLiquidity:
       case Operation.RemoveLiquidity: {
-        const data = transaction.data as HistoryElementLiquidityOperation;
-
-        const assetAddress = data.baseAssetId;
-        const asset2Address = data.targetAssetId;
-        const asset = await getAssetByAddress(assetAddress);
-        const asset2 = await getAssetByAddress(asset2Address);
-
-        payload.assetAddress = assetAddress;
-        payload.asset2Address = asset2Address;
-        payload.symbol = getAssetSymbol(asset);
-        payload.symbol2 = getAssetSymbol(asset2);
-        payload.amount = data.baseAssetAmount;
-        payload.amount2 = data.targetAssetAmount;
-
-        return payload;
+        return await parseLiquidityDepositOrWithdrawal(transaction, payload);
       }
       case Operation.CreatePair: {
-        const calls = transaction.calls;
-        const call = getBatchCall(calls, {
-          module: ModuleNames.PoolXYK,
-          method: ModuleMethods.PoolXYKDepositLiquidity,
-        });
-
-        if (!call) {
-          logOperationDataParsingError(type, transaction);
-          return null;
-        }
-
-        const assetAddress = call.data.inputAssetA ?? call.data.input_asset_a;
-        const asset2Address = call.data.inputAssetB ?? call.data.input_asset_b;
-        const amount = call.data.inputADesired ?? call.data.input_a_desired;
-        const amount2 = call.data.inputBDesired ?? call.data.input_b_desired;
-
-        const asset = await getAssetByAddress(assetAddress as string);
-        const asset2 = await getAssetByAddress(asset2Address as string);
-
-        payload.assetAddress = asset ? (assetAddress as string) : '';
-        payload.asset2Address = asset2 ? (asset2Address as string) : '';
-        payload.symbol = getAssetSymbol(asset);
-        payload.symbol2 = getAssetSymbol(asset2);
-        payload.amount = String(amount);
-        payload.amount2 = String(amount2);
-
-        return payload;
+        return await parseCreatePair(transaction, payload);
       }
       case Operation.Transfer: {
-        const data = transaction.data as HistoryElementTransfer;
-
-        const assetAddress = data.assetId;
-        const asset = await getAssetByAddress(assetAddress);
-
-        payload.assetAddress = assetAddress;
-        payload.symbol = getAssetSymbol(asset);
-        payload.amount = data.amount;
-        // [TODO] update History in js-lib
-        (payload as any).assetFee = data.assetFee;
-        (payload as any).xorFee = data.xorFee;
-        (payload as any).comment = data.comment;
-
-        return payload;
+        return await parseTransfer(transaction, payload);
       }
       case Operation.RegisterAsset: {
-        const data = transaction.data as HistoryElementAssetRegistration;
-
-        const assetAddress = data.assetId;
-        const asset = await getAssetByAddress(assetAddress);
-
-        payload.symbol = getAssetSymbol(asset);
-
-        return payload;
+        return await parseRegisterAsset(transaction, payload);
       }
       case Operation.ReferralSetInvitedUser: {
         return payload;
       }
       case Operation.ReferralReserveXor:
       case Operation.ReferralUnreserveXor: {
-        const data = transaction.data as ReferrerReserve;
-        payload.amount = data.amount;
-        return payload;
+        return await parseReferralReserve(transaction, payload);
       }
       case Operation.ClaimRewards: {
-        const rewardsData =
-          transaction.module === ModuleNames.Utility ? [] : (transaction.data as HistoryElementRewardsClaim);
-
-        (payload as RewardClaimHistory).rewards = Array.isArray(rewardsData) ? await formatRewards(rewardsData) : [];
-
-        return payload;
+        return await parseClaimRewards(transaction, payload);
       }
       case Operation.DemeterFarmingDepositLiquidity:
       case Operation.DemeterFarmingWithdrawLiquidity: {
-        const data = transaction.data as HistoryElementDemeterFarming;
-
-        const assetAddress = data.baseAssetId as string;
-        const asset2Address = data.assetId;
-
-        const asset = await getAssetByAddress(assetAddress);
-        const asset2 = await getAssetByAddress(asset2Address);
-
-        payload.assetAddress = assetAddress;
-        payload.asset2Address = asset2Address;
-        payload.symbol = getAssetSymbol(asset);
-        payload.symbol2 = getAssetSymbol(asset2);
-        payload.amount = data.amount;
-
-        return payload;
+        return await parseDemeterLiquidity(transaction, payload);
       }
       case Operation.DemeterFarmingStakeToken:
       case Operation.DemeterFarmingUnstakeToken:
       case Operation.DemeterFarmingGetRewards: {
-        const data = transaction.data as HistoryElementDemeterFarming;
-
-        const assetAddress = data.assetId;
-        const asset = await getAssetByAddress(assetAddress);
-
-        payload.assetAddress = assetAddress;
-        payload.symbol = getAssetSymbol(asset);
-        payload.amount = data.amount;
-
-        return payload;
+        return await parseDemeterStakeOrRewards(transaction, payload);
       }
       case Operation.OrderBookPlaceLimitOrder: {
-        const data = transaction.data as HistoryElementPlaceLimitOrder;
-
-        const _payload = payload as LimitOrderHistory;
-        const baseAssetId = data.baseAssetId;
-        const quoteAssetId = data.quoteAssetId;
-        const baseAsset = await getAssetByAddress(baseAssetId);
-        const quoteAsset = await getAssetByAddress(quoteAssetId);
-
-        _payload.assetAddress = baseAssetId;
-        _payload.asset2Address = quoteAssetId;
-        _payload.symbol = getAssetSymbol(baseAsset);
-        _payload.symbol2 = getAssetSymbol(quoteAsset);
-        _payload.price = new FPNumber(data.price).toString();
-        _payload.amount = new FPNumber(data.amount).toString();
-        _payload.side = data.side;
-        _payload.limitOrderTimestamp = data.lifetime;
-
-        return payload;
+        return await parseOrderBookLimitOrderPlacement(transaction, payload);
       }
       case Operation.OrderBookCancelLimitOrder:
       case Operation.OrderBookCancelLimitOrders: {
-        const data = transaction.data as HistoryElementCancelLimitOrder;
-
-        const _payload = payload as LimitOrderHistory;
-        const baseAssetId = data[0].baseAssetId;
-        const quoteAssetId = data[0].quoteAssetId;
-        const baseAsset = await getAssetByAddress(baseAssetId);
-        const quoteAsset = await getAssetByAddress(quoteAssetId);
-
-        _payload.assetAddress = baseAssetId;
-        _payload.asset2Address = quoteAssetId;
-        _payload.symbol = getAssetSymbol(baseAsset);
-        _payload.symbol2 = getAssetSymbol(quoteAsset);
-        _payload.limitOrderIds = data.map((order) => order.orderId);
-
-        return payload;
+        return await parseOrderBookLimitOrderCancel(transaction, payload);
       }
       default:
         return null;

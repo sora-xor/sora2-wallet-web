@@ -289,12 +289,12 @@ export type HistoryElementEthBridgeIncoming = {
   to: string;
 };
 
-export type ReferralSetReferrer = {
+export type HistoryElementReferralSetReferrer = {
   from: string; // referral
   to: string; // referrer
 };
 
-export type ReferrerReserve = {
+export type HistoryElementReferrerReserve = {
   from: string;
   to: string;
   amount: string;
@@ -319,10 +319,11 @@ export type HistoryElementCancelLimitOrder = Array<{
 }>;
 
 export type HistoryElementDataBase = Nullable<
-  | ReferralSetReferrer
-  | ReferrerReserve
+  | HistoryElementReferralSetReferrer
+  | HistoryElementReferrerReserve
   | HistoryElementSwap
   | HistoryElementSwapTransfer
+  | HistoryElementSwapTransferBatch
   | HistoryElementTransfer
   | HistoryElementLiquidityOperation
   | HistoryElementAssetRegistration
@@ -330,7 +331,6 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementEthBridgeIncoming
   | HistoryElementRewardsClaim
   | HistoryElementDemeterFarming
-  | HistoryElementSwapTransferBatch
   | HistoryElementPlaceLimitOrder
   | HistoryElementCancelLimitOrder
 >;
