@@ -22,7 +22,6 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
-import NftTokenLogo from './NftTokenLogo.vue';
 import TokenAddress from './TokenAddress.vue';
 import TokenLogo from './TokenLogo.vue';
 
@@ -30,7 +29,6 @@ import type { Asset } from '@sora-substrate/util/build/assets/types';
 
 @Component({
   components: {
-    NftTokenLogo,
     TokenLogo,
     TokenAddress,
   },
