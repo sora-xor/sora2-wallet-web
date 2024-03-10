@@ -126,7 +126,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @Watch('assetList')
   private updateScrollbar(): void {
     if (this.scrollbar) {
-      (this.scrollbar.$children[0] as ElScrollbar).update();
+      this.scrollbarComponentKey += 1;
     }
   }
 
