@@ -101,7 +101,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
     if (decimal.length <= 2) {
       return decimal.length === 1 ? decimal + '0' : decimal;
     }
-    const isSmallNumber = (!integer || !+integer) && decimal.substring(0, 2) === '00';
+    const isSmallNumber = (!integer || !+integer) && decimal.startsWith('00');
     if (isSmallNumber && this.fiatDefaultRounding) {
       return decimal;
     }

@@ -1,5 +1,5 @@
 import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
-import CryptoJS from 'crypto-js';
+import { AES } from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
 import { defineActions } from 'direct-vuex';
 
@@ -119,7 +119,7 @@ async function useFiatValuesFromCeresApi(context: ActionContext<any, any>): Prom
 }
 
 async function updateApiSigner(source: AppWallet) {
-  const signer = await getWalletSigner(source);
+  const signer = await getWalletSigner(source, true);
 
   api.setSigner(signer);
 }
@@ -303,7 +303,7 @@ const actions = defineActions({
     context,
     { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
   ): Promise<KeyringPair$Json> {
-    const { dispatch, state } = accountActionContext(context);
+    const { dispatch } = accountActionContext(context);
 
     if (passwordConfirm && password !== passwordConfirm) {
       throw new AppError({ key: 'desktop.errorMessages.passwords' });
@@ -326,7 +326,7 @@ const actions = defineActions({
   },
 
   async restoreAccountFromJson(context, { json, password }: RestoreAccountArgs) {
-    const { dispatch, state } = accountActionContext(context);
+    const { dispatch } = accountActionContext(context);
     // restore from json file
     api.restoreAccountFromJson(json, password);
     // update account list in state
@@ -334,7 +334,7 @@ const actions = defineActions({
   },
 
   async renameAccount(context, { address, name }: { address: string; name: string }) {
-    const { commit, dispatch, state } = accountActionContext(context);
+    const { commit, dispatch } = accountActionContext(context);
     // change name in api & storage
     api.changeAccountName(address, name);
     // update account data from storage
@@ -357,7 +357,7 @@ const actions = defineActions({
    */
   async setAccountPassphrase(context, passphrase) {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
-    const passphraseEncoded = CryptoJS.AES.encrypt(passphrase, key).toString();
+    const passphraseEncoded = AES.encrypt(passphrase, key).toString();
 
     const { commit } = accountActionContext(context);
 
