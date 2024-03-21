@@ -268,7 +268,7 @@ export default class WalletSend extends Mixins(
   }
 
   get isNotSoraAddress(): boolean {
-    return !!this.formattedSoraAddress && this.address.slice(0, 2) !== 'cn';
+    return !!this.formattedSoraAddress && !this.address.startsWith('cn');
   }
 
   get emptyAmount(): boolean {

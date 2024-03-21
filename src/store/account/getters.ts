@@ -1,4 +1,4 @@
-import CryptoJS from 'crypto-js';
+import { AES, enc } from 'crypto-js';
 import { defineGetters } from 'direct-vuex';
 import isEqual from 'lodash/fp/isEqual';
 
@@ -87,7 +87,7 @@ const getters = defineGetters<AccountState>()({
     const sessionKey = state.addressKeyMapping[state.address];
 
     if (encryptedPassphrase && sessionKey) {
-      const decoded = CryptoJS.AES.decrypt(encryptedPassphrase, sessionKey).toString(CryptoJS.enc.Utf8);
+      const decoded = AES.decrypt(encryptedPassphrase, sessionKey).toString(enc.Utf8);
       return decoded;
     }
     return null;

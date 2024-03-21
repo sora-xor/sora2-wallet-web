@@ -1,9 +1,21 @@
 <template>
   <div class="address-input">
     <wallet-account v-if="record" :polkadot-account="record">
-      <s-icon class="book-icon-unlink" name="el-icon-close" size="20" @click.native="resetAddress" />
+      <s-icon
+        class="book-icon-unlink"
+        :class="{ disabled }"
+        name="el-icon-close"
+        size="20"
+        @click.native="resetAddress"
+      />
       <s-tooltip :content="t('addressBook.selectContact')" border-radius="mini" placement="top" tabindex="-1">
-        <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
+        <s-icon
+          class="book-icon-open"
+          :class="{ disabled }"
+          name="basic-user-24"
+          size="18"
+          @click.native="openAddressBook"
+        />
       </s-tooltip>
     </wallet-account>
 
@@ -12,6 +24,7 @@
       v-model="address"
       v-bind="{
         maxlength: 128,
+        disabled,
         placeholder: t('addressBook.input'),
         borderRadius: 'medium',
         ...$attrs,
@@ -20,7 +33,13 @@
       <template #right>
         <s-icon v-if="address" class="book-icon-unlink" name="el-icon-close" size="20" @click.native="resetAddress" />
         <s-tooltip :content="t('addressBook.selectContact')" border-radius="mini" placement="top" tabindex="-1">
-          <s-icon class="book-icon-open" name="basic-user-24" size="18" @click.native="openAddressBook" />
+          <s-icon
+            class="book-icon-open"
+            :class="{ disabled }"
+            name="basic-user-24"
+            size="18"
+            @click.native="openAddressBook"
+          />
         </s-tooltip>
       </template>
     </s-input>
@@ -78,6 +97,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly excludeConnected!: boolean;
   @Prop({ default: '', type: String }) readonly value!: string;
   @Prop({ default: false, type: Boolean }) readonly isValid!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly disabled!: boolean;
 
   @Watch('books')
   @Watch('isValid')
@@ -88,6 +108,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
       const key = formatAccountAddress(this.address);
       this.name = this.books[key] || '';
     }
+    this.$emit('update-name', this.name);
   }
 
   get address(): string {
@@ -166,6 +187,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   chooseRecord({ name, address }: PolkadotJsAccount): void {
     this.address = address;
     this.name = name;
+    this.$emit('update-name', name);
   }
 
   openContact(address: Nullable<string>, isEditMode = false): void {
@@ -236,6 +258,11 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     color: var(--s-color-base-background);
     background: var(--s-color-base-content-secondary);
   }
+
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+  }
 }
 
 .book-icon-unlink {
@@ -244,6 +271,10 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   &:hover {
     cursor: pointer;
     color: var(--s-color-base-content-secondary);
+  }
+  &.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
   }
 }
 </style>
