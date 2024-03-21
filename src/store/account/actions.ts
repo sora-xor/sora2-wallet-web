@@ -119,7 +119,7 @@ async function useFiatValuesFromCeresApi(context: ActionContext<any, any>): Prom
 }
 
 async function updateApiSigner(source: AppWallet) {
-  const signer = await getWalletSigner(source);
+  const signer = await getWalletSigner(source, true);
 
   api.setSigner(signer);
 }
