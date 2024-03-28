@@ -374,12 +374,43 @@ const OperationFilterMap = {
     },
   },
   [Operation.StakingPayout]: {
-    module: {
-      equalTo: ModuleNames.Staking,
-    },
-    method: {
-      equalTo: ModuleMethods.StakingPayout,
-    },
+    or: [
+      {
+        module: {
+          equalTo: ModuleNames.Staking,
+        },
+        method: {
+          equalTo: ModuleMethods.StakingPayout,
+        },
+      },
+      {
+        module: {
+          equalTo: ModuleNames.Utility,
+        },
+        method: {
+          equalTo: ModuleMethods.UtilityBatchAll,
+        },
+        calls: {
+          every: {
+            module: {
+              equalTo: ModuleNames.Staking,
+            },
+            or: [
+              {
+                method: {
+                  equalTo: ModuleMethods.StakingPayout,
+                },
+              },
+              {
+                method: {
+                  equalTo: ModuleMethods.StakingSetPayee,
+                },
+              },
+            ],
+          },
+        },
+      },
+    ],
   },
   [Operation.StakingRebond]: {
     module: {
@@ -391,10 +422,29 @@ const OperationFilterMap = {
   },
   [Operation.StakingBondAndNominate]: {
     module: {
-      equalTo: ModuleNames.Staking,
+      equalTo: ModuleNames.Utility,
     },
     method: {
-      equalTo: ModuleMethods.StakingBondAndNominate,
+      equalTo: ModuleMethods.UtilityBatchAll,
+    },
+    calls: {
+      every: {
+        module: {
+          equalTo: ModuleNames.Staking,
+        },
+        or: [
+          {
+            method: {
+              equalTo: ModuleMethods.StakingBond,
+            },
+          },
+          {
+            method: {
+              equalTo: ModuleMethods.StakingNominate,
+            },
+          },
+        ],
+      },
     },
   },
 };

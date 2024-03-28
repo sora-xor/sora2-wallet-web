@@ -44,7 +44,6 @@ export enum ModuleMethods {
   OrderBookCancelLimitOrder = 'cancelLimitOrder',
   OrderBookCancelLimitOrders = 'cancelLimitOrdersBatch',
   StakingBond = 'bond',
-  StakingBondAndNominate = 'bondAndNominate',
   StakingBondExtra = 'bondExtra',
   StakingRebond = 'rebond',
   StakingUnbond = 'unbond',
@@ -53,5 +52,5 @@ export enum ModuleMethods {
   StakingChill = 'chill',
   StakingSetPayee = 'setPayee',
   StakingSetController = 'setController',
-  StakingPayout = 'payout',
+  StakingPayout = 'payoutStakers',
 }

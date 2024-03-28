@@ -17,6 +17,7 @@ import {
 
 import type { PriceVariant, OrderBookStatus } from '@sora-substrate/liquidity-proxy';
 import type { CodecString } from '@sora-substrate/util';
+import type { StakingRewardsDestination } from '@sora-substrate/util/build/staking/types';
 
 // Indexer Enums
 export enum SnapshotTypes {
@@ -318,6 +319,51 @@ export type HistoryElementCancelLimitOrder = Array<{
   orderId: number;
 }>;
 
+export type HistoryElementStakingBondExtra = {
+  amount: string;
+};
+
+export type HistoryElementStakingBond = HistoryElementStakingBondExtra & {
+  controller: string;
+  payee: {
+    kind: StakingRewardsDestination;
+    value?: string;
+  };
+};
+
+export type HistoryElementStakingRebond = {
+  value: string;
+};
+
+export type HistoryElementStakingUnbond = {
+  amount: string;
+};
+
+export type HistoryElementStakingNominate = {
+  targets: string[];
+};
+
+export type HistoryElementStakingWithdrawUnbonded = {
+  amount?: string; // [TODO: Staking] this property is missing in indexer, but exists in js-lib
+  numSlashingSpans: number;
+};
+
+export type HistoryElementStakingChill = Record<string, never>; // "Staking.chill" call doesn't have any parameters
+
+export type HistoryElementStakingSetPayee = {
+  payeeType: StakingRewardsDestination;
+  payee: string;
+};
+
+export type HistoryElementStakingSetController = {
+  controller: string;
+};
+
+export type HistoryElementStakingPayout = {
+  validatorStash: string;
+  era: number;
+};
+
 export type HistoryElementDataBase = Nullable<
   | HistoryElementReferralSetReferrer
   | HistoryElementReferrerReserve
@@ -333,6 +379,16 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementDemeterFarming
   | HistoryElementPlaceLimitOrder
   | HistoryElementCancelLimitOrder
+  | HistoryElementStakingBond
+  | HistoryElementStakingBondExtra
+  | HistoryElementStakingRebond
+  | HistoryElementStakingUnbond
+  | HistoryElementStakingNominate
+  | HistoryElementStakingWithdrawUnbonded
+  | HistoryElementStakingChill
+  | HistoryElementStakingSetPayee
+  | HistoryElementStakingSetController
+  | HistoryElementStakingPayout
 >;
 
 export type HistoryElementBase = {

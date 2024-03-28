@@ -257,16 +257,32 @@ const OperationFilterMap = {
     method_eq: ModuleMethods.StakingSetController,
   },
   [Operation.StakingPayout]: {
-    module_eq: ModuleNames.Staking,
-    method_eq: ModuleMethods.StakingPayout,
+    OR: [
+      {
+        module_eq: ModuleNames.Staking,
+        method_eq: ModuleMethods.StakingPayout,
+      },
+      {
+        module_eq: ModuleNames.Utility,
+        method_eq: ModuleMethods.UtilityBatchAll,
+        callNames_containsAny: [
+          ModuleNames.Staking + '.' + ModuleMethods.StakingPayout,
+          ModuleNames.Staking + '.' + ModuleMethods.StakingSetPayee,
+        ],
+      },
+    ],
   },
   [Operation.StakingRebond]: {
     module_eq: ModuleNames.Staking,
     method_eq: ModuleMethods.StakingRebond,
   },
   [Operation.StakingBondAndNominate]: {
-    module_eq: ModuleNames.Staking,
-    method_eq: ModuleMethods.StakingBondAndNominate,
+    module_eq: ModuleNames.Utility,
+    method_eq: ModuleMethods.UtilityBatchAll,
+    callNames_containsAny: [
+      ModuleNames.Staking + '.' + ModuleMethods.StakingBond,
+      ModuleNames.Staking + '.' + ModuleMethods.StakingNominate,
+    ],
   },
 };
 
