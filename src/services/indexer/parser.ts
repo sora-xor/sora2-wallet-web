@@ -174,10 +174,6 @@ const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
   }
 };
 
-const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {
-  console.error(`Couldn't parse ${operation} data.`, transaction);
-};
-
 const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]> => {
   const formatted: RewardInfo[] = [];
 
@@ -495,7 +491,10 @@ export default class IndexerDataParser {
   public async parseTransactionAsHistoryItem(transaction: HistoryElement): Promise<Nullable<HistoryItem>> {
     const type = getTransactionOperationType(transaction);
 
-    if (!type) return null;
+    if (!type) {
+      console.warn('Unsupported transaction:', transaction);
+      return null;
+    }
 
     const id = getTransactionId(transaction);
     const timestamp = getTransactionTimestamp(transaction);
