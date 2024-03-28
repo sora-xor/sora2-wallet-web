@@ -36,6 +36,7 @@ import type {
   HistoryElementStakingSetController,
   HistoryElementStakingPayout,
   ClaimedRewardItem,
+  CallArgs,
 } from './subquery/types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type {
@@ -164,6 +165,16 @@ const isModuleMethod = (item: HistoryElementBatchCall, module: string, method: s
 
 const getBatchCall = (calls: HistoryElementBatchCall[], { module, method }): Nullable<HistoryElementBatchCall> =>
   calls.find((item) => isModuleMethod(item, module, method));
+
+const getCallDataArgs = (call: HistoryElementBatchCall): CallArgs => {
+  const data = call.data;
+
+  if (!('args' in data)) {
+    return data;
+  }
+
+  return data.args as CallArgs;
+};
 
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method, data, calls } = tx;
@@ -361,10 +372,11 @@ const parseCreatePair = async (transaction: HistoryElement, payload: HistoryItem
 
   if (!call) return null;
 
-  const assetAddress = call.data.inputAssetA ?? call.data.input_asset_a;
-  const asset2Address = call.data.inputAssetB ?? call.data.input_asset_b;
-  const amount = call.data.inputADesired ?? call.data.input_a_desired;
-  const amount2 = call.data.inputBDesired ?? call.data.input_b_desired;
+  const args = getCallDataArgs(call);
+  const assetAddress = args.inputAssetA ?? args.input_asset_a;
+  const asset2Address = args.inputAssetB ?? args.input_asset_b;
+  const amount = args.inputADesired ?? args.input_a_desired;
+  const amount2 = args.inputBDesired ?? args.input_b_desired;
 
   const asset = await getAssetByAddress(assetAddress as string);
   const asset2 = await getAssetByAddress(asset2Address as string);
@@ -536,7 +548,7 @@ const parseStakingWithdrawUnbonded = async (transaction: HistoryElement, payload
 
   payload.symbol = XOR.symbol;
   payload.assetAddress = XOR.address;
-  payload.amount = undefined; // [TODO: Staking] this property is missing in indexer, but exists in js-lib
+  payload.amount = _data.amount;
 
   return payload;
 };
@@ -573,9 +585,9 @@ const parseStakingPayout = async (transaction: HistoryElement, payload: HistoryI
 
     const payoutCalls = calls.filter((call) => isModuleMethod(call, ModuleNames.Staking, ModuleMethods.StakingPayout));
     const validatorsByEra: Record<string, string[]> = payoutCalls.reduce((acc, call) => {
-      const { validatorStash, era } = call.data;
-      const key = String(era);
-      const value = String(validatorStash);
+      const args = getCallDataArgs(call);
+      const key = String(args.era);
+      const value = String(args.validatorStash ?? args.validator_stash);
 
       acc[key] = acc[key] ?? [];
       acc[key].push(value);
@@ -614,12 +626,17 @@ const parseStakingBondAndNominate = async (transaction: HistoryElement, payload:
 
   if (!(bond && nominate)) return null;
 
+  const bondArgs = getCallDataArgs(bond);
+  const nominateArgs = getCallDataArgs(nominate);
+  const bondValue = bondArgs.value as string;
+  const nominateTargets = nominateArgs.targets as string[];
+
   const _payload = payload as StakingHistory;
 
   _payload.symbol = XOR.symbol;
   _payload.assetAddress = XOR.address;
-  _payload.amount = FPNumber.fromCodecValue(bond.data.value, XOR.decimals).toString();
-  _payload.validators = (nominate.data as any).targets.map((target) => String(target));
+  _payload.amount = FPNumber.fromCodecValue(bondValue, XOR.decimals).toString();
+  _payload.validators = nominateTargets;
 
   return payload;
 };

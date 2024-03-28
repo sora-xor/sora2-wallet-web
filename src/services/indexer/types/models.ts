@@ -405,12 +405,12 @@ export type HistoryElementBase = {
   dataTo?: string;
 };
 
-export type CallArgs = {
-  [key: string]: string | number;
-};
+type Arg = string | number;
+
+export type CallArgs = Omit<Record<string, Arg | Arg[]>, 'args'>;
 
 export type HistoryElementBatchCall = {
-  data: CallArgs;
+  data: CallArgs | { args: CallArgs };
   hash: string;
   module: string;
   method: string;

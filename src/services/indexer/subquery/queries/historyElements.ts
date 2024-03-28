@@ -67,13 +67,7 @@ type DataCriteria = {
 
 type CallsDataCriteria = {
   calls: {
-    some: {
-      data: {
-        contains: {
-          [key: string]: any;
-        };
-      };
-    };
+    some: DataCriteria;
   };
 };
 
@@ -187,15 +181,11 @@ const OperationFilterMap = {
     method: {
       equalTo: ModuleMethods.UtilityBatchAll,
     },
-    calls: {
-      some: {
-        module: {
-          equalTo: ModuleNames.PoolXYK,
-        },
-        method: {
-          equalTo: ModuleMethods.PoolXYKInitializePool,
-        },
-      },
+    callNames: {
+      contains: [
+        ModuleNames.PoolXYK + '.' + ModuleMethods.PoolXYKInitializePool,
+        ModuleNames.PoolXYK + '.' + ModuleMethods.PoolXYKDepositLiquidity,
+      ],
     },
   },
   [Operation.AddLiquidity]: {
@@ -272,13 +262,8 @@ const OperationFilterMap = {
           equalTo: ModuleMethods.UtilityBatchAll,
         },
         or: RewardsClaimExtrinsics.map(([module, method]) => ({
-          data: {
-            contains: [
-              {
-                module,
-                method,
-              },
-            ],
+          callNames: {
+            contains: module + '.' + method,
           },
         })),
       },
@@ -390,24 +375,11 @@ const OperationFilterMap = {
         method: {
           equalTo: ModuleMethods.UtilityBatchAll,
         },
-        calls: {
-          every: {
-            module: {
-              equalTo: ModuleNames.Staking,
-            },
-            or: [
-              {
-                method: {
-                  equalTo: ModuleMethods.StakingPayout,
-                },
-              },
-              {
-                method: {
-                  equalTo: ModuleMethods.StakingSetPayee,
-                },
-              },
-            ],
-          },
+        callNames: {
+          contains: [
+            ModuleNames.Staking + '.' + ModuleMethods.StakingPayout,
+            ModuleNames.Staking + '.' + ModuleMethods.StakingSetPayee,
+          ],
         },
       },
     ],
@@ -427,24 +399,11 @@ const OperationFilterMap = {
     method: {
       equalTo: ModuleMethods.UtilityBatchAll,
     },
-    calls: {
-      every: {
-        module: {
-          equalTo: ModuleNames.Staking,
-        },
-        or: [
-          {
-            method: {
-              equalTo: ModuleMethods.StakingBond,
-            },
-          },
-          {
-            method: {
-              equalTo: ModuleMethods.StakingNominate,
-            },
-          },
-        ],
-      },
+    callNames: {
+      contains: [
+        ModuleNames.Staking + '.' + ModuleMethods.StakingBond,
+        ModuleNames.Staking + '.' + ModuleMethods.StakingNominate,
+      ],
     },
   },
 };
@@ -508,7 +467,7 @@ const createAccountAddressCriteria = (address: string) => {
 };
 
 const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
-const isAssetAddress = (value: string) => value.startsWith('0x') && value.length === 66;
+const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
 
 type SubqueryHistoryElementsFilterOptions = {
   address?: string;
@@ -572,13 +531,6 @@ export const historyElementsFilter = ({
   const queryFilters: Array<any> = [];
 
   if (search) {
-    // search criteria
-    queryFilters.push({
-      blockHash: {
-        includesInsensitive: search,
-      },
-    });
-
     // account address criteria
     if (isAccountAddress(search)) {
       queryFilters.push({
@@ -592,8 +544,13 @@ export const historyElementsFilter = ({
         },
       });
       // asset address criteria
-    } else if (isAssetAddress(search)) {
+    } else if (isHexAddress(search)) {
       queryFilters.push(...createAssetCriteria(search));
+      queryFilters.push({
+        blockHash: {
+          includesInsensitive: search,
+        },
+      });
     }
   }
 

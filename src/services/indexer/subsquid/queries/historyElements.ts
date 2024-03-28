@@ -335,7 +335,7 @@ const createAccountAddressCriteria = (address: string) => {
 };
 
 const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
-const isAssetAddress = (value: string) => value.startsWith('0x') && value.length === 66;
+const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
 
 type SubsquidHistoryElementsFilterOptions = {
   address?: string;
@@ -395,11 +395,6 @@ export const historyElementsFilter = ({
   const queryFilters: Array<any> = [];
 
   if (search) {
-    // search criteria
-    queryFilters.push({
-      blockHash_containsInsensitive: search,
-    });
-
     // account address criteria
     if (isAccountAddress(search)) {
       queryFilters.push({
@@ -409,8 +404,11 @@ export const historyElementsFilter = ({
         dataTo_eq: search,
       });
       // asset address criteria
-    } else if (isAssetAddress(search)) {
+    } else if (isHexAddress(search)) {
       queryFilters.push(...createAssetCriteria(search));
+      queryFilters.push({
+        blockHash_containsInsensitive: search,
+      });
     }
   }
 
