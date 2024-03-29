@@ -13,7 +13,7 @@ export const HistoryElementsQuery = gql<ConnectionQueryResponse<HistoryElement>>
     $offset: Int = null
     $after: Cursor = ""
     $before: Cursor = ""
-    $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC
+    $orderBy: [HistoryElementsOrderBy!] = [TIMESTAMP_DESC, ID_DESC]
     $filter: HistoryElementFilter
   ) {
     data: historyElements(

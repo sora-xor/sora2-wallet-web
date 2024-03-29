@@ -344,11 +344,12 @@ export type HistoryElementStakingNominate = {
 };
 
 export type HistoryElementStakingWithdrawUnbonded = {
-  amount?: string; // [TODO: Staking] this property is missing in indexer, but exists in js-lib
+  amount: string;
   numSlashingSpans: number;
 };
 
-export type HistoryElementStakingChill = Record<string, never>; // "Staking.chill" call doesn't have any parameters
+// [Staking] "staking.chill" call doesn't have any parameters
+export type HistoryElementStakingChill = Record<string, never>;
 
 export type HistoryElementStakingSetPayee = {
   payeeType: StakingRewardsDestination;

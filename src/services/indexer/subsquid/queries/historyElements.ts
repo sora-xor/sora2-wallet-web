@@ -12,7 +12,7 @@ export const HistoryElementsQuery = gql<SubsquidQueryResponse<HistoryElement>>`
   query SubsquidHistoryElements(
     $first: Int
     $offset: Int = null
-    $orderBy: [HistoryElementOrderByInput!] = timestamp_DESC
+    $orderBy: [HistoryElementOrderByInput!] = [timestamp_DESC, id_DESC]
     $filter: HistoryElementWhereInput
   ) {
     info: historyElementsConnection(first: 0, orderBy: $orderBy, where: $filter) {
