@@ -1,5 +1,6 @@
 import { BN } from '@polkadot/util';
 import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
+import { XOR } from '@sora-substrate/util/build/assets/consts';
 import { RewardType, RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
 import getOr from 'lodash/fp/getOr';
 
@@ -25,7 +26,17 @@ import type {
   HistoryElementSwapTransferBatch,
   HistoryElementBatchCall,
   HistoryElementReferrerReserve,
+  HistoryElementStakingBond,
+  HistoryElementStakingUnbond,
+  HistoryElementStakingRebond,
+  HistoryElementStakingNominate,
+  HistoryElementStakingWithdrawUnbonded,
+  HistoryElementStakingChill,
+  HistoryElementStakingSetPayee,
+  HistoryElementStakingSetController,
+  HistoryElementStakingPayout,
   ClaimedRewardItem,
+  CallArgs,
 } from './subquery/types';
 import type { HistoryItem } from '@sora-substrate/util';
 import type {
@@ -35,6 +46,7 @@ import type {
 } from '@sora-substrate/util/build/assets/types';
 import type { LimitOrderHistory } from '@sora-substrate/util/build/orderBook/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
+import type { StakingHistory } from '@sora-substrate/util/build/staking/types';
 
 const insensitive = (value: string) => value.toLowerCase();
 
@@ -68,14 +80,34 @@ const OperationsMap = {
 
       if (
         data.every(
-          (item) =>
-            isModuleMethod(item, ModuleNames.Rewards, ModuleMethods.RewardsClaim) ||
-            isModuleMethod(item, ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive) ||
-            isModuleMethod(item, ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimRewards) ||
-            isModuleMethod(item, ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimCrowdloanRewards)
+          (call) =>
+            isModuleMethod(call, ModuleNames.Rewards, ModuleMethods.RewardsClaim) ||
+            isModuleMethod(call, ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive) ||
+            isModuleMethod(call, ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimRewards) ||
+            isModuleMethod(call, ModuleNames.VestedRewards, ModuleMethods.VestedRewardsClaimCrowdloanRewards)
         )
       ) {
         return Operation.ClaimRewards;
+      }
+
+      if (
+        data.every(
+          (call) =>
+            isModuleMethod(call, ModuleNames.Staking, ModuleMethods.StakingPayout) ||
+            isModuleMethod(call, ModuleNames.Staking, ModuleMethods.StakingSetPayee)
+        )
+      ) {
+        return Operation.StakingPayout;
+      }
+
+      if (
+        data.every(
+          (call) =>
+            isModuleMethod(call, ModuleNames.Staking, ModuleMethods.StakingBond) ||
+            isModuleMethod(call, ModuleNames.Staking, ModuleMethods.StakingNominate)
+        )
+      ) {
+        return Operation.StakingBondAndNominate;
       }
 
       return null;
@@ -110,6 +142,18 @@ const OperationsMap = {
     [insensitive(ModuleMethods.OrderBookCancelLimitOrder)]: () => Operation.OrderBookCancelLimitOrder,
     [insensitive(ModuleMethods.OrderBookCancelLimitOrders)]: () => Operation.OrderBookCancelLimitOrders,
   },
+  [insensitive(ModuleNames.Staking)]: {
+    [insensitive(ModuleMethods.StakingBond)]: () => Operation.StakingBond,
+    [insensitive(ModuleMethods.StakingBondExtra)]: () => Operation.StakingBondExtra,
+    [insensitive(ModuleMethods.StakingRebond)]: () => Operation.StakingRebond,
+    [insensitive(ModuleMethods.StakingUnbond)]: () => Operation.StakingUnbond,
+    [insensitive(ModuleMethods.StakingNominate)]: () => Operation.StakingNominate,
+    [insensitive(ModuleMethods.StakingWithdrawUnbonded)]: () => Operation.StakingWithdrawUnbonded,
+    [insensitive(ModuleMethods.StakingChill)]: () => Operation.StakingChill,
+    [insensitive(ModuleMethods.StakingSetPayee)]: () => Operation.StakingSetPayee,
+    [insensitive(ModuleMethods.StakingSetController)]: () => Operation.StakingSetController,
+    [insensitive(ModuleMethods.StakingPayout)]: () => Operation.StakingPayout,
+  },
 };
 
 const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => asset?.symbol ?? '';
@@ -121,6 +165,16 @@ const isModuleMethod = (item: HistoryElementBatchCall, module: string, method: s
 
 const getBatchCall = (calls: HistoryElementBatchCall[], { module, method }): Nullable<HistoryElementBatchCall> =>
   calls.find((item) => isModuleMethod(item, module, method));
+
+const getCallDataArgs = (call: HistoryElementBatchCall): CallArgs => {
+  const data = call.data;
+
+  if (!('args' in data)) {
+    return data;
+  }
+
+  return data.args as CallArgs;
+};
 
 const getTransactionOperationType = (tx: HistoryElement): Nullable<Operation> => {
   const { module, method, data, calls } = tx;
@@ -174,10 +228,6 @@ const getAssetByAddress = async (address: string): Promise<Nullable<Asset>> => {
   }
 };
 
-const logOperationDataParsingError = (operation: Operation, transaction: HistoryElement): void => {
-  console.error(`Couldn't parse ${operation} data.`, transaction);
-};
-
 const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]> => {
   const formatted: RewardInfo[] = [];
 
@@ -196,6 +246,8 @@ const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]
   return formatted;
 };
 
+const formatAmount = (amount: string): string => new FPNumber(amount).toString();
+
 const parseMintOrBurn = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementAssetBurn;
 
@@ -203,6 +255,7 @@ const parseMintOrBurn = async (transaction: HistoryElement, payload: HistoryItem
   const asset = await getAssetByAddress(assetAddress);
 
   payload.amount = data.amount;
+  payload.assetAddress = assetAddress;
   payload.symbol = getAssetSymbol(asset);
 
   return payload;
@@ -319,10 +372,11 @@ const parseCreatePair = async (transaction: HistoryElement, payload: HistoryItem
 
   if (!call) return null;
 
-  const assetAddress = call.data.inputAssetA ?? call.data.input_asset_a;
-  const asset2Address = call.data.inputAssetB ?? call.data.input_asset_b;
-  const amount = call.data.inputADesired ?? call.data.input_a_desired;
-  const amount2 = call.data.inputBDesired ?? call.data.input_b_desired;
+  const args = getCallDataArgs(call);
+  const assetAddress = args.inputAssetA ?? args.input_asset_a;
+  const asset2Address = args.inputAssetB ?? args.input_asset_b;
+  const amount = args.inputADesired ?? args.input_a_desired;
+  const amount2 = args.inputBDesired ?? args.input_b_desired;
 
   const asset = await getAssetByAddress(assetAddress as string);
   const asset2 = await getAssetByAddress(asset2Address as string);
@@ -424,8 +478,8 @@ const parseOrderBookLimitOrderPlacement = async (transaction: HistoryElement, pa
   _payload.asset2Address = quoteAssetId;
   _payload.symbol = getAssetSymbol(baseAsset);
   _payload.symbol2 = getAssetSymbol(quoteAsset);
-  _payload.price = new FPNumber(data.price).toString();
-  _payload.amount = new FPNumber(data.amount).toString();
+  _payload.price = formatAmount(data.price);
+  _payload.amount = formatAmount(data.amount);
   _payload.side = data.side;
   _payload.limitOrderTimestamp = data.lifetime;
 
@@ -446,6 +500,143 @@ const parseOrderBookLimitOrderCancel = async (transaction: HistoryElement, paylo
   _payload.symbol = getAssetSymbol(baseAsset);
   _payload.symbol2 = getAssetSymbol(quoteAsset);
   _payload.limitOrderIds = data.map((order) => order.orderId);
+
+  return payload;
+};
+
+const parseStakingBond = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementStakingBond;
+
+  payload.symbol = XOR.symbol;
+  payload.assetAddress = XOR.address;
+  payload.amount = formatAmount(data.amount);
+
+  return payload;
+};
+
+const parseStakingUnbond = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementStakingUnbond;
+
+  payload.symbol = XOR.symbol;
+  payload.assetAddress = XOR.address;
+  payload.amount = FPNumber.fromCodecValue(data.amount, XOR.decimals).toString();
+
+  return payload;
+};
+
+const parseStakingRebond = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementStakingRebond;
+
+  payload.symbol = XOR.symbol;
+  payload.assetAddress = XOR.address;
+  payload.amount = formatAmount(data.value);
+
+  return payload;
+};
+
+const parseStakingNominate = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementStakingNominate;
+
+  const _payload = payload as StakingHistory;
+  _payload.validators = data.targets;
+
+  return payload;
+};
+
+const parseStakingWithdrawUnbonded = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const _data = transaction.data as HistoryElementStakingWithdrawUnbonded;
+
+  payload.symbol = XOR.symbol;
+  payload.assetAddress = XOR.address;
+  payload.amount = _data.amount;
+
+  return payload;
+};
+
+const parseStakingChill = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const _data = transaction.data as HistoryElementStakingChill;
+  // "Staking.chill" call doesn't have any parameters
+  return payload;
+};
+
+const parseStakingSetPayee = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementStakingSetPayee;
+  const _payload = payload as StakingHistory;
+
+  _payload.payee = data.payee;
+
+  return payload;
+};
+
+const parseStakingSetController = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementStakingSetController;
+  const _payload = payload as StakingHistory;
+
+  _payload.controller = data.controller;
+
+  return payload;
+};
+
+const parseStakingPayout = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const calls = transaction.calls;
+
+  if (calls.length) {
+    const _payload = payload as StakingHistory;
+
+    const payoutCalls = calls.filter((call) => isModuleMethod(call, ModuleNames.Staking, ModuleMethods.StakingPayout));
+    const validatorsByEra: Record<string, string[]> = payoutCalls.reduce((acc, call) => {
+      const args = getCallDataArgs(call);
+      const key = String(args.era);
+      const value = String(args.validatorStash ?? args.validator_stash);
+
+      acc[key] = acc[key] ?? [];
+      acc[key].push(value);
+
+      return acc;
+    }, {});
+
+    _payload.payouts = Object.entries(validatorsByEra).map(([era, validators]) => ({ era, validators }));
+  } else {
+    const data = transaction.data as HistoryElementStakingPayout;
+    const _payload = payload as StakingHistory;
+
+    _payload.payouts = [
+      {
+        era: String(data.era),
+        validators: [data.validatorStash],
+      },
+    ];
+  }
+
+  return payload;
+};
+
+const parseStakingBondAndNominate = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const calls = transaction.calls;
+
+  const bond = getBatchCall(calls, {
+    module: ModuleNames.Staking,
+    method: ModuleMethods.StakingBond,
+  });
+
+  const nominate = getBatchCall(calls, {
+    module: ModuleNames.Staking,
+    method: ModuleMethods.StakingNominate,
+  });
+
+  if (!(bond && nominate)) return null;
+
+  const bondArgs = getCallDataArgs(bond);
+  const nominateArgs = getCallDataArgs(nominate);
+  const bondValue = bondArgs.value as string;
+  const nominateTargets = nominateArgs.targets as string[];
+
+  const _payload = payload as StakingHistory;
+
+  _payload.symbol = XOR.symbol;
+  _payload.assetAddress = XOR.address;
+  _payload.amount = FPNumber.fromCodecValue(bondValue, XOR.decimals).toString();
+  _payload.validators = nominateTargets;
 
   return payload;
 };
@@ -475,6 +666,17 @@ export default class IndexerDataParser {
     Operation.OrderBookPlaceLimitOrder,
     Operation.OrderBookCancelLimitOrder,
     Operation.OrderBookCancelLimitOrders,
+    Operation.StakingBond,
+    Operation.StakingBondExtra,
+    Operation.StakingRebond,
+    Operation.StakingUnbond,
+    Operation.StakingWithdrawUnbonded,
+    Operation.StakingNominate,
+    Operation.StakingChill,
+    Operation.StakingSetPayee,
+    Operation.StakingSetController,
+    Operation.StakingPayout,
+    Operation.StakingBondAndNominate,
   ];
 
   public get supportedOperations(): Array<Operation> {
@@ -484,7 +686,10 @@ export default class IndexerDataParser {
   public async parseTransactionAsHistoryItem(transaction: HistoryElement): Promise<Nullable<HistoryItem>> {
     const type = getTransactionOperationType(transaction);
 
-    if (!type) return null;
+    if (!type) {
+      console.warn('Unsupported transaction:', transaction);
+      return null;
+    }
 
     const id = getTransactionId(transaction);
     const timestamp = getTransactionTimestamp(transaction);
@@ -566,6 +771,37 @@ export default class IndexerDataParser {
       case Operation.OrderBookCancelLimitOrder:
       case Operation.OrderBookCancelLimitOrders: {
         return await parseOrderBookLimitOrderCancel(transaction, payload);
+      }
+      case Operation.StakingBond:
+      case Operation.StakingBondExtra: {
+        return await parseStakingBond(transaction, payload);
+      }
+      case Operation.StakingUnbond: {
+        return await parseStakingUnbond(transaction, payload);
+      }
+      case Operation.StakingRebond: {
+        return await parseStakingRebond(transaction, payload);
+      }
+      case Operation.StakingNominate: {
+        return await parseStakingNominate(transaction, payload);
+      }
+      case Operation.StakingWithdrawUnbonded: {
+        return await parseStakingWithdrawUnbonded(transaction, payload);
+      }
+      case Operation.StakingChill: {
+        return await parseStakingChill(transaction, payload);
+      }
+      case Operation.StakingSetPayee: {
+        return await parseStakingSetPayee(transaction, payload);
+      }
+      case Operation.StakingSetController: {
+        return await parseStakingSetController(transaction, payload);
+      }
+      case Operation.StakingPayout: {
+        return await parseStakingPayout(transaction, payload);
+      }
+      case Operation.StakingBondAndNominate: {
+        return await parseStakingBondAndNominate(transaction, payload);
       }
       default:
         return null;
