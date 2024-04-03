@@ -6,6 +6,9 @@
   "publishConfig": {
     "@soramitsu:registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/"
   },
+  "engines": {
+    "node": ">=20"
+  },
   "author": "Stefan Popov <popov@soramitsu.co.jp>",
   "main": "./lib/soraneo-wallet-web.umd.js",
   "module": "./lib/soraneo-wallet-web.esm.js",
