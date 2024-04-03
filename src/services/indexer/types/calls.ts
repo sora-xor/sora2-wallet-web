@@ -12,6 +12,7 @@ export enum ModuleNames {
   PswapDistribution = 'pswapDistribution',
   DemeterFarming = 'demeterFarmingPlatform',
   OrderBook = 'orderBook',
+  Staking = 'staking',
 }
 
 export enum ModuleMethods {
@@ -42,4 +43,14 @@ export enum ModuleMethods {
   OrderBookPlaceLimitOrder = 'placeLimitOrder',
   OrderBookCancelLimitOrder = 'cancelLimitOrder',
   OrderBookCancelLimitOrders = 'cancelLimitOrdersBatch',
+  StakingBond = 'bond',
+  StakingBondExtra = 'bondExtra',
+  StakingRebond = 'rebond',
+  StakingUnbond = 'unbond',
+  StakingWithdrawUnbonded = 'withdrawUnbonded',
+  StakingNominate = 'nominate',
+  StakingChill = 'chill',
+  StakingSetPayee = 'setPayee',
+  StakingSetController = 'setController',
+  StakingPayout = 'payoutStakers',
 }

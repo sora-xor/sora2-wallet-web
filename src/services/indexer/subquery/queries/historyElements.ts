@@ -13,7 +13,7 @@ export const HistoryElementsQuery = gql<ConnectionQueryResponse<HistoryElement>>
     $offset: Int = null
     $after: Cursor = ""
     $before: Cursor = ""
-    $orderBy: [HistoryElementsOrderBy!] = TIMESTAMP_DESC
+    $orderBy: [HistoryElementsOrderBy!] = [TIMESTAMP_DESC, ID_DESC]
     $filter: HistoryElementFilter
   ) {
     data: historyElements(
@@ -67,13 +67,7 @@ type DataCriteria = {
 
 type CallsDataCriteria = {
   calls: {
-    some: {
-      data: {
-        contains: {
-          [key: string]: any;
-        };
-      };
-    };
+    some: DataCriteria;
   };
 };
 
@@ -187,15 +181,11 @@ const OperationFilterMap = {
     method: {
       equalTo: ModuleMethods.UtilityBatchAll,
     },
-    calls: {
-      some: {
-        module: {
-          equalTo: ModuleNames.PoolXYK,
-        },
-        method: {
-          equalTo: ModuleMethods.PoolXYKInitializePool,
-        },
-      },
+    callNames: {
+      contains: [
+        ModuleNames.PoolXYK + '.' + ModuleMethods.PoolXYKInitializePool,
+        ModuleNames.PoolXYK + '.' + ModuleMethods.PoolXYKDepositLiquidity,
+      ],
     },
   },
   [Operation.AddLiquidity]: {
@@ -272,13 +262,8 @@ const OperationFilterMap = {
           equalTo: ModuleMethods.UtilityBatchAll,
         },
         or: RewardsClaimExtrinsics.map(([module, method]) => ({
-          data: {
-            contains: [
-              {
-                module,
-                method,
-              },
-            ],
+          callNames: {
+            contains: module + '.' + method,
           },
         })),
       },
@@ -308,6 +293,119 @@ const OperationFilterMap = {
   },
   [Operation.OrderBookCancelLimitOrder]: OrderBookCancelLimitOrders,
   [Operation.OrderBookCancelLimitOrders]: OrderBookCancelLimitOrders,
+  // STAKING
+  [Operation.StakingBond]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingBond,
+    },
+  },
+  [Operation.StakingBondExtra]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingBondExtra,
+    },
+  },
+  [Operation.StakingUnbond]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingUnbond,
+    },
+  },
+  [Operation.StakingWithdrawUnbonded]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingWithdrawUnbonded,
+    },
+  },
+  [Operation.StakingNominate]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingNominate,
+    },
+  },
+  [Operation.StakingChill]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingChill,
+    },
+  },
+  [Operation.StakingSetPayee]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingSetPayee,
+    },
+  },
+  [Operation.StakingSetController]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingSetController,
+    },
+  },
+  [Operation.StakingPayout]: {
+    or: [
+      {
+        module: {
+          equalTo: ModuleNames.Staking,
+        },
+        method: {
+          equalTo: ModuleMethods.StakingPayout,
+        },
+      },
+      {
+        module: {
+          equalTo: ModuleNames.Utility,
+        },
+        method: {
+          equalTo: ModuleMethods.UtilityBatchAll,
+        },
+        callNames: {
+          contains: [
+            ModuleNames.Staking + '.' + ModuleMethods.StakingPayout,
+            ModuleNames.Staking + '.' + ModuleMethods.StakingSetPayee,
+          ],
+        },
+      },
+    ],
+  },
+  [Operation.StakingRebond]: {
+    module: {
+      equalTo: ModuleNames.Staking,
+    },
+    method: {
+      equalTo: ModuleMethods.StakingRebond,
+    },
+  },
+  [Operation.StakingBondAndNominate]: {
+    module: {
+      equalTo: ModuleNames.Utility,
+    },
+    method: {
+      equalTo: ModuleMethods.UtilityBatchAll,
+    },
+    callNames: {
+      contains: [
+        ModuleNames.Staking + '.' + ModuleMethods.StakingBond,
+        ModuleNames.Staking + '.' + ModuleMethods.StakingNominate,
+      ],
+    },
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
@@ -369,7 +467,7 @@ const createAccountAddressCriteria = (address: string) => {
 };
 
 const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
-const isAssetAddress = (value: string) => value.startsWith('0x') && value.length === 66;
+const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
 
 type SubqueryHistoryElementsFilterOptions = {
   address?: string;
@@ -433,13 +531,6 @@ export const historyElementsFilter = ({
   const queryFilters: Array<any> = [];
 
   if (search) {
-    // search criteria
-    queryFilters.push({
-      blockHash: {
-        includesInsensitive: search,
-      },
-    });
-
     // account address criteria
     if (isAccountAddress(search)) {
       queryFilters.push({
@@ -453,8 +544,13 @@ export const historyElementsFilter = ({
         },
       });
       // asset address criteria
-    } else if (isAssetAddress(search)) {
+    } else if (isHexAddress(search)) {
       queryFilters.push(...createAssetCriteria(search));
+      queryFilters.push({
+        blockHash: {
+          includesInsensitive: search,
+        },
+      });
     }
   }
 
