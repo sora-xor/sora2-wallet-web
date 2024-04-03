@@ -12,7 +12,7 @@ export const HistoryElementsQuery = gql<SubsquidQueryResponse<HistoryElement>>`
   query SubsquidHistoryElements(
     $first: Int
     $offset: Int = null
-    $orderBy: [HistoryElementOrderByInput!] = timestamp_DESC
+    $orderBy: [HistoryElementOrderByInput!] = [timestamp_DESC, id_DESC]
     $filter: HistoryElementWhereInput
   ) {
     info: historyElementsConnection(first: 0, orderBy: $orderBy, where: $filter) {
@@ -224,6 +224,66 @@ const OperationFilterMap = {
   },
   [Operation.OrderBookCancelLimitOrder]: OrderBookCancelLimitOrders,
   [Operation.OrderBookCancelLimitOrders]: OrderBookCancelLimitOrders,
+  [Operation.StakingBond]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingBond,
+  },
+  [Operation.StakingBondExtra]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingBondExtra,
+  },
+  [Operation.StakingUnbond]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingUnbond,
+  },
+  [Operation.StakingWithdrawUnbonded]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingWithdrawUnbonded,
+  },
+  [Operation.StakingNominate]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingNominate,
+  },
+  [Operation.StakingChill]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingChill,
+  },
+  [Operation.StakingSetPayee]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingSetPayee,
+  },
+  [Operation.StakingSetController]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingSetController,
+  },
+  [Operation.StakingPayout]: {
+    OR: [
+      {
+        module_eq: ModuleNames.Staking,
+        method_eq: ModuleMethods.StakingPayout,
+      },
+      {
+        module_eq: ModuleNames.Utility,
+        method_eq: ModuleMethods.UtilityBatchAll,
+        callNames_containsAny: [
+          ModuleNames.Staking + '.' + ModuleMethods.StakingPayout,
+          ModuleNames.Staking + '.' + ModuleMethods.StakingSetPayee,
+        ],
+      },
+    ],
+  },
+  [Operation.StakingRebond]: {
+    module_eq: ModuleNames.Staking,
+    method_eq: ModuleMethods.StakingRebond,
+  },
+  [Operation.StakingBondAndNominate]: {
+    module_eq: ModuleNames.Utility,
+    method_eq: ModuleMethods.UtilityBatchAll,
+    callNames_containsAny: [
+      ModuleNames.Staking + '.' + ModuleMethods.StakingBond,
+      ModuleNames.Staking + '.' + ModuleMethods.StakingNominate,
+    ],
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
@@ -275,7 +335,7 @@ const createAccountAddressCriteria = (address: string) => {
 };
 
 const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
-const isAssetAddress = (value: string) => value.startsWith('0x') && value.length === 66;
+const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
 
 type SubsquidHistoryElementsFilterOptions = {
   address?: string;
@@ -335,11 +395,6 @@ export const historyElementsFilter = ({
   const queryFilters: Array<any> = [];
 
   if (search) {
-    // search criteria
-    queryFilters.push({
-      blockHash_containsInsensitive: search,
-    });
-
     // account address criteria
     if (isAccountAddress(search)) {
       queryFilters.push({
@@ -349,8 +404,11 @@ export const historyElementsFilter = ({
         dataTo_eq: search,
       });
       // asset address criteria
-    } else if (isAssetAddress(search)) {
+    } else if (isHexAddress(search)) {
       queryFilters.push(...createAssetCriteria(search));
+      queryFilters.push({
+        blockHash_containsInsensitive: search,
+      });
     }
   }
 

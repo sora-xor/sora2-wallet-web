@@ -31,7 +31,7 @@ export default class FormattedAddress extends Mixins(CopyAddressMixin) {
   @Prop({ default: 0, type: [Number, String] }) readonly symbolsOffset!: number | string;
 
   get sliced(): boolean {
-    return this.value.length >= this.symbols;
+    return this.value.length >= +this.symbols;
   }
 
   get count(): number {

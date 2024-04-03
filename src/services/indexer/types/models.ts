@@ -17,6 +17,7 @@ import {
 
 import type { PriceVariant, OrderBookStatus } from '@sora-substrate/liquidity-proxy';
 import type { CodecString } from '@sora-substrate/util';
+import type { StakingRewardsDestination } from '@sora-substrate/util/build/staking/types';
 
 // Indexer Enums
 export enum SnapshotTypes {
@@ -318,6 +319,52 @@ export type HistoryElementCancelLimitOrder = Array<{
   orderId: number;
 }>;
 
+export type HistoryElementStakingBondExtra = {
+  amount: string;
+};
+
+export type HistoryElementStakingBond = HistoryElementStakingBondExtra & {
+  controller: string;
+  payee: {
+    kind: StakingRewardsDestination;
+    value?: string;
+  };
+};
+
+export type HistoryElementStakingRebond = {
+  value: string;
+};
+
+export type HistoryElementStakingUnbond = {
+  amount: string;
+};
+
+export type HistoryElementStakingNominate = {
+  targets: string[];
+};
+
+export type HistoryElementStakingWithdrawUnbonded = {
+  amount: string;
+  numSlashingSpans: number;
+};
+
+// [Staking] "staking.chill" call doesn't have any parameters
+export type HistoryElementStakingChill = Record<string, never>;
+
+export type HistoryElementStakingSetPayee = {
+  payeeType: StakingRewardsDestination;
+  payee: string;
+};
+
+export type HistoryElementStakingSetController = {
+  controller: string;
+};
+
+export type HistoryElementStakingPayout = {
+  validatorStash: string;
+  era: number;
+};
+
 export type HistoryElementDataBase = Nullable<
   | HistoryElementReferralSetReferrer
   | HistoryElementReferrerReserve
@@ -333,6 +380,16 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementDemeterFarming
   | HistoryElementPlaceLimitOrder
   | HistoryElementCancelLimitOrder
+  | HistoryElementStakingBond
+  | HistoryElementStakingBondExtra
+  | HistoryElementStakingRebond
+  | HistoryElementStakingUnbond
+  | HistoryElementStakingNominate
+  | HistoryElementStakingWithdrawUnbonded
+  | HistoryElementStakingChill
+  | HistoryElementStakingSetPayee
+  | HistoryElementStakingSetController
+  | HistoryElementStakingPayout
 >;
 
 export type HistoryElementBase = {
@@ -349,12 +406,12 @@ export type HistoryElementBase = {
   dataTo?: string;
 };
 
-export type CallArgs = {
-  [key: string]: string | number;
-};
+type Arg = string | number;
+
+export type CallArgs = Omit<Record<string, Arg | Arg[]>, 'args'>;
 
 export type HistoryElementBatchCall = {
-  data: CallArgs;
+  data: CallArgs | { args: CallArgs };
   hash: string;
   module: string;
   method: string;
