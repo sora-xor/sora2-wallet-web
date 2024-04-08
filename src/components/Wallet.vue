@@ -1,6 +1,9 @@
 <template>
   <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
+      <s-button type="action" tooltip="Transaction Management" @click="handleAccountSignatureSettings">
+        <s-icon name="grid-block-align-left-24" size="28" />
+      </s-button>
       <s-button
         v-if="permissions.createAssets"
         type="action"
@@ -64,6 +67,7 @@
         :loading="loading"
         @confirm="handleAccountDelete"
       />
+      <account-signature-settings-dialog :visible.sync="accountSignatureSettingsVisibility" />
     </template>
   </wallet-base>
 </template>
@@ -78,6 +82,7 @@ import AccountActionsMenu from './Account/ActionsMenu.vue';
 import AccountExportDialog from './Account/ConfirmDialog.vue';
 import AccountDeleteDialog from './Account/DeleteDialog.vue';
 import AccountRenameDialog from './Account/RenameDialog.vue';
+import AccountSignatureSettingsDialog from './Account/SignatureSettingsDialog.vue';
 import WalletAccount from './Account/WalletAccount.vue';
 import AccountActionsMixin from './mixins/AccountActionsMixin';
 import OperationsMixin from './mixins/OperationsMixin';
@@ -103,6 +108,7 @@ import type { HistoryItem } from '@sora-substrate/util';
     AccountRenameDialog,
     AccountExportDialog,
     AccountDeleteDialog,
+    AccountSignatureSettingsDialog,
   },
 })
 export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin, QrCodeParserMixin) {
@@ -123,6 +129,8 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
 
   currentTab: WalletTabs = WalletTabs.Assets;
+
+  accountSignatureSettingsVisibility = false;
 
   get headerTitle(): string {
     if (!this.selectedTransaction) return this.t('wallet.title');
@@ -150,6 +158,10 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
 
   handleAccountActionType(actionType: string) {
     this.handleAccountAction(actionType, this.account);
+  }
+
+  handleAccountSignatureSettings(): void {
+    this.accountSignatureSettingsVisibility = !this.accountSignatureSettingsVisibility;
   }
 
   handleBack(): void {

@@ -20,7 +20,7 @@ export function initialState(): AccountState {
   const ceresFiatValues = settingsStorage.get('ceresFiatValues');
   const book = addressBook && JSON.parse(addressBook);
   const isExternal = storage.get('isExternal');
-  const passhraseTimeout = storage.get('passphareTimeout');
+  const passhraseTimeout = settingsStorage.get('passphareTimeout');
 
   return {
     address: storage.get('address') || '',
