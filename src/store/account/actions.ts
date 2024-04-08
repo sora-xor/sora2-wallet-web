@@ -355,7 +355,7 @@ const actions = defineActions({
   /**
    * Desktop
    */
-  async setAccountPassphrase(context, passphrase) {
+  async setAccountPassphrase(context, passphrase: string): Promise<void> {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
     const passphraseEncoded = AES.encrypt(passphrase, key).toString();
 
@@ -367,6 +367,10 @@ const actions = defineActions({
 
     const timer = setTimeout(commit.resetAccountPassphrase, PASSPHRASE_TIMEOUT);
     commit.setAccountPassphraseTimer(timer);
+  },
+
+  unlockAccountPair(context, passphrase: string): void {
+    api.unlockPair(passphrase);
   },
 
   async syncWithStorage(context): Promise<void> {

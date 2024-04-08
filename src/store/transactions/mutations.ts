@@ -79,12 +79,6 @@ const mutations = defineMutations<TransactionsState>()({
   setSignTxDialogVisibility(state, visibility: boolean): void {
     state.isSignTxDialogVisible = visibility;
   },
-  approveTxViaConfirmTxDialog(state): void {
-    state.isTxApprovedViaConfirmTxDialog = true;
-  },
-  resetTxApprovedViaConfirmTxDialog(state): void {
-    state.isTxApprovedViaConfirmTxDialog = false;
-  },
 });
 
 export default mutations;

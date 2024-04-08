@@ -34,12 +34,4 @@ export type TransactionsState = {
    * `true` when it's opened, `false` when it's closed
    */
   isSignTxDialogVisible: boolean;
-  /**
-   * Confirm Transaction Dialog approved TX state
-   *
-   * Uses **only** without polkadot js based extensions for signing transactions.
-   *
-   * `true` when TX is approved, `false` when it's cancelled
-   */
-  isTxApprovedViaConfirmTxDialog: boolean;
 };

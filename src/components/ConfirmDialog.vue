@@ -12,7 +12,6 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
-import { api } from '../api';
 import { getter, action, state, mutation } from '../store/decorators';
 import { delay } from '../util';
 
@@ -29,9 +28,8 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
   @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
   @mutation.transactions.setSignTxDialogVisibility private setSignTxDialogVisibility!: (flag: boolean) => void;
-  @mutation.transactions.approveTxViaConfirmTxDialog private approveTxViaConfirmTxDialog!: FnWithoutArgs;
-  @mutation.transactions.resetTxApprovedViaConfirmTxDialog private resetTxApprovedViaConfirmTxDialog!: FnWithoutArgs;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
+  @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
   @mutation.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
   @mutation.account.resetAccountPassphraseTimer private resetAccountPassphraseTimer!: FnWithoutArgs;
 
@@ -40,7 +38,6 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
   }
 
   set visibility(flag: boolean) {
-    this.setupFormState();
     this.setSignTxDialogVisibility(flag);
   }
 
@@ -51,7 +48,7 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
       await delay(250);
 
       await this.withAppNotification(async () => {
-        api.unlockPair(password);
+        this.unlockAccountPair(password);
 
         if (save) {
           this.setAccountPassphrase(password);
@@ -60,20 +57,9 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
           this.resetAccountPassphraseTimer();
         }
 
-        this.approveTxViaConfirmTxDialog();
         this.setSignTxDialogVisibility(false);
       });
     });
-  }
-
-  private setupFormState(): void {
-    if (this.visibility) {
-      this.resetTxApprovedViaConfirmTxDialog();
-    }
-  }
-
-  mounted(): void {
-    this.setupFormState();
   }
 }
 </script>

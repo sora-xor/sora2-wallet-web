@@ -68,15 +68,21 @@ async function waitUntilConfirmTxDialogOpened(): Promise<void> {
 const actions = defineActions({
   async beforeTransactionSign(context): Promise<void> {
     const { commit, state } = transactionsActionContext(context);
-    const { rootState } = rootActionContext(context);
+    const { rootGetters, rootDispatch, rootState } = rootActionContext(context);
 
     if (rootState.wallet.account.isExternal) return;
 
-    commit.setSignTxDialogVisibility(true);
+    const { passphrase } = rootGetters.wallet.account;
 
-    await waitUntilConfirmTxDialogOpened();
+    if (passphrase && !state.isSignTxDialogEnabled) {
+      rootDispatch.wallet.account.unlockAccountPair(passphrase);
+    } else {
+      commit.setSignTxDialogVisibility(true);
 
-    if (!state.isTxApprovedViaConfirmTxDialog) {
+      await waitUntilConfirmTxDialogOpened();
+    }
+
+    if (api.account?.pair.isLocked) {
       throw new Error('Cancelled');
     }
   },

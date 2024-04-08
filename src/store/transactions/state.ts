@@ -20,7 +20,6 @@ function initialState(): TransactionsState {
     isConfirmTxDialogEnabled: isConfirmTxDialogEnabled ? Boolean(JSON.parse(isConfirmTxDialogEnabled)) : true,
     isSignTxDialogEnabled: isSignTxDialogEnabled ? Boolean(JSON.parse(isSignTxDialogEnabled)) : true,
     isSignTxDialogVisible: false,
-    isTxApprovedViaConfirmTxDialog: false,
   };
 }
 
