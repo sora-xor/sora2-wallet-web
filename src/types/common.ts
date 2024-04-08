@@ -71,6 +71,7 @@ export type StorageKey =
   | 'name'
   | 'source'
   | 'isExternal'
+  | 'passphareTimeout'
   | 'filters'
   | 'shouldBalanceBeHidden'
   | 'storageReferral'

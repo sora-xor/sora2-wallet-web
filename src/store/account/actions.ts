@@ -33,7 +33,6 @@ import type { ActionContext } from 'vuex';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
-const PASSPHRASE_TIMEOUT = 15 * 60_000; // 15min
 
 // [TODO]: change WsProvider timeout instead on this
 const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
@@ -359,13 +358,13 @@ const actions = defineActions({
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
     const passphraseEncoded = AES.encrypt(passphrase, key).toString();
 
-    const { commit } = accountActionContext(context);
+    const { commit, state } = accountActionContext(context);
 
     commit.resetAccountPassphraseTimer();
     commit.updateAddressGeneratedKey(key);
     commit.setAccountPassphrase(passphraseEncoded);
 
-    const timer = setTimeout(commit.resetAccountPassphrase, PASSPHRASE_TIMEOUT);
+    const timer = setTimeout(commit.resetAccountPassphrase, state.passhraseTimeout);
     commit.setAccountPassphraseTimer(timer);
   },
 

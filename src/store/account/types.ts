@@ -43,6 +43,7 @@ export type AccountState = {
   walletAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
   addressKeyMapping: AddressKeyMapping;
   addressPassphraseMapping: AddressKeyMapping;
+  passhraseTimeout: number;
   assetsToNotifyQueue: Array<WhitelistArrayItem>;
   isDesktop: boolean;
   accountPassphraseTimer: Nullable<NodeJS.Timeout | number>;

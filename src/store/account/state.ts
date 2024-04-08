@@ -7,11 +7,20 @@ import { storage, settingsStorage } from '../../util/storage';
 import type { AccountState } from './types';
 import type { AppWallet } from '../../consts';
 
+export enum PassphraseTimeout {
+  FIFTEEN_MINUTES = 15 * 60 * 1000,
+  ONE_HOUR = 60 * 60 * 1000,
+  FOUR_HOURS = 4 * 60 * 60 * 1000,
+  ONE_DAY = 24 * 60 * 60 * 1000,
+  UNLIMITED = Infinity,
+}
+
 export function initialState(): AccountState {
   const addressBook = settingsStorage.get('book');
   const ceresFiatValues = settingsStorage.get('ceresFiatValues');
   const book = addressBook && JSON.parse(addressBook);
   const isExternal = storage.get('isExternal');
+  const passhraseTimeout = storage.get('passphareTimeout');
 
   return {
     address: storage.get('address') || '',
@@ -45,6 +54,7 @@ export function initialState(): AccountState {
     isDesktop: isElectron(), // NOTE: inverse flag here to debug desktop
     addressKeyMapping: {},
     addressPassphraseMapping: {},
+    passhraseTimeout: passhraseTimeout ? JSON.parse(passhraseTimeout) : PassphraseTimeout.FIFTEEN_MINUTES,
     accountPassphraseTimer: null,
   };
 }
