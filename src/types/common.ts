@@ -96,6 +96,8 @@ export type SettingsStorageKey =
   | 'bridgeType'
   | 'book'
   | 'indexerType'
-  | 'ceresFiatValues';
+  | 'ceresFiatValues'
+  | 'signTxDialogEnabled'
+  | 'confirmTxDialogEnabled';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';

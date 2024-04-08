@@ -26,9 +26,9 @@ import NotificationMixin from './mixins/NotificationMixin';
   },
 })
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
-  @state.transactions.isConfirmTxDialogVisible private isConfirmTxDialogVisible!: boolean;
+  @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
-  @mutation.transactions.setConfirmTxDialogVisibility private setConfirmTxDialogVisibility!: (flag: boolean) => void;
+  @mutation.transactions.setSignTxDialogVisibility private setSignTxDialogVisibility!: (flag: boolean) => void;
   @mutation.transactions.approveTxViaConfirmTxDialog private approveTxViaConfirmTxDialog!: FnWithoutArgs;
   @mutation.transactions.resetTxApprovedViaConfirmTxDialog private resetTxApprovedViaConfirmTxDialog!: FnWithoutArgs;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
@@ -36,12 +36,12 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
   @mutation.account.resetAccountPassphraseTimer private resetAccountPassphraseTimer!: FnWithoutArgs;
 
   get visibility(): boolean {
-    return this.isConfirmTxDialogVisible;
+    return this.isSignTxDialogVisible;
   }
 
   set visibility(flag: boolean) {
     this.setupFormState();
-    this.setConfirmTxDialogVisibility(flag);
+    this.setSignTxDialogVisibility(flag);
   }
 
   async handleConfirm({ password, save }: { password: string; save: boolean }): Promise<void> {
@@ -61,7 +61,7 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
         }
 
         this.approveTxViaConfirmTxDialog();
-        this.setConfirmTxDialogVisibility(false);
+        this.setSignTxDialogVisibility(false);
       });
     });
   }

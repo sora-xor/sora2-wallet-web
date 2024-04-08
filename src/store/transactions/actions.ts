@@ -54,7 +54,7 @@ async function parseHistoryUpdate(context: ActionContext<any, any>, transaction:
 async function waitUntilConfirmTxDialogOpened(): Promise<void> {
   return new Promise((resolve) => {
     const unsubscribe = store.original.watch(
-      (state) => state.wallet.transactions.isConfirmTxDialogVisible,
+      (state) => state.wallet.transactions.isSignTxDialogVisible,
       (value) => {
         if (!value) {
           unsubscribe();
@@ -72,7 +72,7 @@ const actions = defineActions({
 
     if (rootState.wallet.account.isExternal) return;
 
-    commit.setConfirmTxDialogVisibility(true);
+    commit.setSignTxDialogVisibility(true);
 
     await waitUntilConfirmTxDialogOpened();
 

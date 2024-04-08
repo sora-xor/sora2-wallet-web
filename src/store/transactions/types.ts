@@ -13,15 +13,29 @@ export type TransactionsState = {
   selectedTxId: Nullable<string>;
   updateEthBridgeHistory: Nullable<EthBridgeUpdateHistory>;
   /**
-   * Confirm Ttransaction Dialog visibility
+   * Transaction confirmation used (before signing)
+   *
+   * `true` when it's enabled, `false` when it's disabled
+   */
+  isConfirmTxDialogEnabled: boolean;
+  /**
+   * Transaction signing confirmation used
+   *
+   * Uses **only** without polkadot js based extensions for signing transactions.
+   *
+   * `true` when it's enabled, `false` when it's disabled
+   */
+  isSignTxDialogEnabled: boolean;
+  /**
+   * Sign Transaction Dialog visibility
    *
    * Uses **only** without polkadot js based extensions for signing transactions.
    *
    * `true` when it's opened, `false` when it's closed
    */
-  isConfirmTxDialogVisible: boolean;
+  isSignTxDialogVisible: boolean;
   /**
-   * Confirm Ttransaction Dialog approved TX state
+   * Confirm Transaction Dialog approved TX state
    *
    * Uses **only** without polkadot js based extensions for signing transactions.
    *
