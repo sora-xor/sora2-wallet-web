@@ -276,7 +276,6 @@ const parseSwapTransfer = async (transaction: HistoryElement, payload: HistoryIt
   payload.symbol = getAssetSymbol(asset);
   payload.symbol2 = getAssetSymbol(asset2);
   payload.liquiditySource = data.selectedMarket;
-  payload.liquidityProviderFee = new FPNumber(data.liquidityProviderFee).toCodecString();
 
   return payload;
 };
