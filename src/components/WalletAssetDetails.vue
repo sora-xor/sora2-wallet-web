@@ -11,11 +11,12 @@
           <nft-details
             v-if="isNft"
             is-asset-details
-            :content-link="nftContentLink"
+            :token-content="asset.content"
             :token-name="asset.name"
             :token-symbol="asset.symbol"
             :token-description="asset.description"
             @click-details="handleClickNftDetails"
+            @update-link="setNftContentLink"
           />
           <template v-else>
             <token-logo :token="asset" size="bigger" />
@@ -211,14 +212,11 @@ export default class WalletAssetDetails extends Mixins(
   }
 
   get displayedNftContentLink(): string {
-    const hostname = IpfsStorage.getStorageHostname(this.nftContentLink);
-    const path = IpfsStorage.getIpfsPath(this.nftContentLink);
-    return shortenValue(hostname + '/ipfs/' + path, 25);
+    return shortenValue(this.nftContentLink, 25);
   }
 
-  private async setNftMeta(): Promise<void> {
-    const ipfsPath = this.asset.content as string;
-    this.nftContentLink = IpfsStorage.constructFullIpfsUrl(ipfsPath);
+  setNftContentLink(link: string): void {
+    this.nftContentLink = link;
   }
 
   handleClickNftDetails(): void {
@@ -228,14 +226,8 @@ export default class WalletAssetDetails extends Mixins(
   async handleCopyNftLink(): Promise<void> {
     await copyToClipboard(this.nftContentLink);
     this.wasNftLinkCopied = true;
-    await delay(1000);
+    await delay(1_000);
     this.wasNftLinkCopied = false;
-  }
-
-  mounted(): void {
-    if (this.isNft) {
-      this.setNftMeta();
-    }
   }
   // __________________________________________________________
 
@@ -341,13 +333,10 @@ export default class WalletAssetDetails extends Mixins(
   }
 
   handleOperation(operation: Operations): void {
-    switch (operation) {
-      case Operations.Send:
-        this.navigate({ name: RouteNames.WalletSend, params: { asset: this.asset } });
-        break;
-      default:
-        this.$emit(operation, this.asset);
-        break;
+    if (operation === Operations.Send) {
+      this.navigate({ name: RouteNames.WalletSend, params: { asset: this.asset } });
+    } else {
+      this.$emit(operation, this.asset);
     }
   }
 

@@ -1,48 +1,28 @@
 <template>
-  <img
-    v-show="asset.content && showNftImage"
-    class="asset-logo nft-image"
-    :src="nftImageUrl"
-    ref="nftImage"
-    @load="handleNftImageLoad"
-    @error="hideNftImage"
-  />
+  <img v-show="src" class="asset-logo nft-image" :alt="nftAlt" :src="src" />
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Ref } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 
 import { IpfsStorage } from '../util/ipfsStorage';
 
-import type { Asset } from '@sora-substrate/util/build/assets/types';
-
 @Component
 export default class NftTokenLogo extends Vue {
-  @Prop({ default: () => {}, type: Object, required: true }) readonly asset!: Asset;
-  @Ref('nftImage') readonly nftImage!: HTMLImageElement;
+  @Prop({ default: '', type: String, required: true }) readonly link!: string;
 
-  showNftImage = false;
+  src = '';
 
-  get nftImageUrl(): string {
-    if (this.asset.content) {
-      return IpfsStorage.constructFullIpfsUrl(this.asset.content);
-    }
-    return '';
-  }
-
-  handleNftImageLoad(): void {
-    const imgElement = this.nftImage as HTMLImageElement;
-    if (imgElement) {
-      this.showNftImage = imgElement.complete && imgElement.naturalHeight !== 0;
-    } else {
-      this.showNftImage = false;
+  @Watch('link', { immediate: true })
+  private async handleLinkUpdate(link?: string): Promise<void> {
+    if (link) {
+      const obj = await IpfsStorage.requestImage(link);
+      this.src = (obj || {}).image || '';
     }
   }
 
-  hideNftImage(): void {
-    this.showNftImage = false;
+  get nftAlt(): string {
+    return `NFT icon: ${this.link}`;
   }
 }
 </script>
-
-<style></style>

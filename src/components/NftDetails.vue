@@ -38,6 +38,8 @@
 <script lang="ts">
 import { Prop, Component, Mixins } from 'vue-property-decorator';
 
+import { IpfsStorage } from '@/util/ipfsStorage';
+
 import TranslationMixin from './mixins/TranslationMixin';
 
 const UrlCreator = window.URL || window.webkitURL;
@@ -45,6 +47,7 @@ const UrlCreator = window.URL || window.webkitURL;
 @Component
 export default class NftDetails extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly contentLink!: string;
+  @Prop({ default: '', type: String }) readonly tokenContent!: string;
   @Prop({ default: '', type: String }) readonly tokenName!: string;
   @Prop({ default: '', type: String }) readonly tokenSymbol!: string;
   @Prop({ default: '', type: String }) readonly tokenDescription!: string;
@@ -68,11 +71,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     return [this.image];
   }
 
-  private async checkImageAvailability(): Promise<void> {
-    if (!this.contentLink) {
-      return;
-    }
-
+  private async parseExternalLink(): Promise<void> {
     try {
       const response = await fetch(this.contentLink);
       const buffer = await response.blob();
@@ -87,6 +86,28 @@ export default class NftDetails extends Mixins(TranslationMixin) {
       this.image = UrlCreator.createObjectURL(buffer);
     } catch {
       this.badLink = true;
+    }
+  }
+
+  private async parseIpfsLink(): Promise<void> {
+    const imageObj = await IpfsStorage.requestImage(this.tokenContent);
+    if (imageObj) {
+      this.image = imageObj.image;
+      this.$emit('update-link', imageObj.link);
+    } else {
+      this.badLink = true;
+    }
+    this.imageLoading = false;
+  }
+
+  private async checkImageAvailability(): Promise<void> {
+    if (!(this.contentLink || this.tokenContent)) {
+      return;
+    }
+    if (this.contentLink) {
+      await this.parseExternalLink();
+    } else {
+      await this.parseIpfsLink();
     }
   }
 

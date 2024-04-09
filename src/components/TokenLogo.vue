@@ -1,7 +1,7 @@
 <template>
   <div class="logo">
     <span :class="iconClasses" :style="iconStyles" />
-    <nft-token-logo v-if="isNft" class="asset-logo__nft-image" :class="iconClasses" :asset="token" />
+    <nft-token-logo v-if="isNft" class="asset-logo__nft-image" :class="iconClasses" :link="tokenObj.content" />
   </div>
 </template>
 
@@ -32,12 +32,16 @@ export default class TokenLogo extends Mixins(TranslationMixin) {
   @Prop({ type: String, default: LogoSize.MEDIUM, required: false }) readonly size!: LogoSize;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
 
+  get tokenObj(): Asset {
+    return this.token || ({} as Asset);
+  }
+
   get isNft(): boolean {
     return !!this.token && api.assets.isNft(this.token);
   }
 
   get assetAddress(): Nullable<string> {
-    return this.tokenSymbol ? this.whitelistIdsBySymbol[this.tokenSymbol] : (this.token || {}).address;
+    return this.tokenSymbol ? this.whitelistIdsBySymbol[this.tokenSymbol] : this.tokenObj.address;
   }
 
   get whitelistedItem(): Nullable<WhitelistItem> {
