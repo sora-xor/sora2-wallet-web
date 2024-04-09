@@ -185,7 +185,6 @@ export type HistoryElementExecution = {
 export type HistoryElementSwap = {
   baseAssetAmount: string;
   baseAssetId: string;
-  liquidityProviderFee: string;
   selectedMarket: string;
   targetAssetAmount: string;
   targetAssetId: string;
@@ -211,7 +210,6 @@ export type SwapTransferBatchTransferParam = {
 export type HistoryElementSwapTransferBatch = {
   assetId: string;
   selectedMarket: string;
-  liquidityProviderFee: string;
   maxInputAmount: string;
   blockNumber: string;
   from: string;
