@@ -1,3 +1,5 @@
+import { Currency } from '@/types/currency';
+
 import { WalletAssetFilters, WalletFilteringOptions, IndexerType } from '../../consts';
 import { Alert, ConnectionStatus } from '../../types/common';
 import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
@@ -8,14 +10,15 @@ import type { NetworkFeesObject } from '@sora-substrate/util';
 const INDEXERS = [IndexerType.SUBQUERY, IndexerType.SUBSQUID];
 
 function initialState(): SettingsState {
+  const shouldBalanceBeHidden = storage.get('shouldBalanceBeHidden');
+  const currency = settingsStorage.get('currency') as Currency;
+  const indexerType = settingsStorage.get('indexerType');
   const priceAlerts = settingsStorage.get('alerts');
   const alerts = priceAlerts && JSON.parse(priceAlerts);
-  const allowTopUpAlerts = settingsStorage.get('allowTopUpAlerts');
-  const shouldBalanceBeHidden = storage.get('shouldBalanceBeHidden');
   const feeMultiplier = runtimeStorage.get('feeMultiplier');
-  const indexerType = settingsStorage.get('indexerType');
   const runtimeVersion = runtimeStorage.get('version');
   const allowFee = settingsStorage.get('allowFeePopup');
+  const allowTopUpAlerts = settingsStorage.get('allowTopUpAlerts');
   const filters = storage.get('filters');
   const { option, verifiedOnly, zeroBalance } = filters && JSON.parse(filters);
 
@@ -57,6 +60,8 @@ function initialState(): SettingsState {
     feeMultiplierAndRuntimeSubscriptions: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
     shouldBalanceBeHidden: shouldBalanceBeHidden ? Boolean(JSON.parse(shouldBalanceBeHidden)) : false,
+    currency: currency || Currency.RUB,
+    fiatExchangeRateObject: { usd: 1, rub: 93, eur: 0.95 },
   };
 }
 

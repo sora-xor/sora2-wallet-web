@@ -7,6 +7,7 @@ import { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 
 import type { SettingsState } from './types';
+import type { Currency } from '../../types/currency';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from 'rxjs';
 
@@ -120,6 +121,13 @@ const mutations = defineMutations<SettingsState>()({
     alert.wasNotified = value;
     state.alerts[position] = alert;
     settingsStorage.set('alerts', JSON.stringify(state.alerts));
+  },
+  setFiatCurrency(state, currency: Currency): void {
+    state.currency = currency;
+    settingsStorage.set('currency', currency);
+  },
+  updateFiatExchangeRates(state, newRates) {
+    state.fiatExchangeRateObject = newRates;
   },
 });
 

@@ -10,7 +10,7 @@
   >
     <span class="formatted-amount__value" ref="child">
       <span v-if="!isHiddenValue && (isFiatValue || $slots.prefix)" class="formatted-amount__prefix">
-        <slot name="prefix">{{ fiatSign }}</slot>
+        <slot name="prefix">{{ symbol }}</slot>
       </span>
       <span v-if="!isHiddenValue || (isHiddenValue && integerOnly)" class="formatted-amount__integer">{{
         isHiddenValue ? HiddenValue : formatted.integer
@@ -29,8 +29,11 @@
 import { FPNumber } from '@sora-substrate/util';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
+import { Currency } from '@/types/currency';
+
 import { FontSizeRate, FontWeightRate, HiddenValue } from '../consts';
-import { state } from '../store/decorators';
+import { state, getter } from '../store/decorators';
+import { getCurrency } from '../util';
 
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 
@@ -86,13 +89,26 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
    */
   @Prop({ default: false, type: Boolean }) readonly withLeftShift!: boolean;
   /**
-   * Customises fiat sign for fiat balances
+   * Allows for getting proper exchange rate and symbol for provided currency
    */
-  @Prop({ default: '$', type: String }) readonly fiatSign!: string;
+  @Prop({ default: null, type: String }) readonly customizalbeCurrency!: Nullable<Currency>;
 
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
+  @state.settings.currency currency!: any;
+  @state.settings.fiatExchangeRateObject fiatExchangeRateObject!: any;
+
+  @getter.settings.currencySymbol private currencySymbol!: any;
+  @getter.settings.exchangeRate private exchangeRate!: any;
 
   isValueWider = false;
+
+  get symbol(): any {
+    // if provided by prop, use prop, otherwise, use commonly defined currency
+    if (this.customizalbeCurrency) {
+      return getCurrency(this.customizalbeCurrency)?.symbol;
+    }
+    return this.currencySymbol;
+  }
 
   private formatFiatDecimal(integer: Nullable<string>, decimal: Nullable<string>): string {
     if (!decimal || !+decimal) {
@@ -121,8 +137,18 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
     return false;
   }
 
+  get fiatValue(): string {
+    const coefficient = this.customizalbeCurrency
+      ? this.fiatExchangeRateObject[this.customizalbeCurrency]
+      : new FPNumber(this.exchangeRate);
+
+    return new FPNumber(this.value).mul(coefficient).toString();
+  }
+
   get formatted(): FormattedAmountValues {
-    let [integer, decimal] = this.value.split(FPNumber.DELIMITERS_CONFIG.decimal);
+    const value = this.isFiatValue ? this.fiatValue : this.value;
+
+    let [integer, decimal] = value.split(FPNumber.DELIMITERS_CONFIG.decimal);
 
     if (!this.integerOnly) {
       if (this.isFiatValue) {
