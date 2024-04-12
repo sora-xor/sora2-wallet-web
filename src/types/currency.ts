@@ -51,7 +51,4 @@ export enum Currency {
   ZAR = 'zar',
 }
 
-type currencyAbbr = string;
-type coefficient = number;
-
-export type FiatExchangeRateObject = Record<currencyAbbr, coefficient>;
+export type FiatExchangeRateObject = Record<string, number>;
