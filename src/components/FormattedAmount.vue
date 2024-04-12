@@ -29,7 +29,7 @@
 import { FPNumber } from '@sora-substrate/util';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { Currency } from '@/types/currency';
+import { Currency, FiatExchangeRateObject } from '@/types/currency';
 
 import { FontSizeRate, FontWeightRate, HiddenValue } from '../consts';
 import { state, getter } from '../store/decorators';
@@ -94,18 +94,18 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   @Prop({ default: null, type: String }) readonly customizalbeCurrency!: Nullable<Currency>;
 
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
-  @state.settings.currency currency!: any;
-  @state.settings.fiatExchangeRateObject fiatExchangeRateObject!: any;
+  @state.settings.currency currency!: Currency;
+  @state.settings.fiatExchangeRateObject fiatExchangeRateObject!: FiatExchangeRateObject;
 
-  @getter.settings.currencySymbol private currencySymbol!: any;
-  @getter.settings.exchangeRate private exchangeRate!: any;
+  @getter.settings.currencySymbol private currencySymbol!: string;
+  @getter.settings.exchangeRate private exchangeRate!: number;
 
   isValueWider = false;
 
-  get symbol(): any {
+  get symbol(): string {
     // if provided by prop, use prop, otherwise, use commonly defined currency
     if (this.customizalbeCurrency) {
-      return getCurrency(this.customizalbeCurrency)?.symbol;
+      return getCurrency(this.customizalbeCurrency)?.symbol ?? '$';
     }
     return this.currencySymbol;
   }

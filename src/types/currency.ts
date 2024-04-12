@@ -50,3 +50,8 @@ export enum Currency {
   SDR = 'sdr',
   ZAR = 'zar',
 }
+
+type currencyAbbr = string;
+type coefficient = number;
+
+export type FiatExchangeRateObject = Record<currencyAbbr, coefficient>;
