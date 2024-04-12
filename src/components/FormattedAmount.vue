@@ -140,9 +140,9 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   get fiatValue(): string {
     const coefficient = this.customizalbeCurrency
       ? this.fiatExchangeRateObject[this.customizalbeCurrency]
-      : new FPNumber(this.exchangeRate);
+      : this.exchangeRate ?? 1;
 
-    return new FPNumber(this.value).mul(coefficient).toString();
+    return new FPNumber(this.value).mul(coefficient).toLocaleString();
   }
 
   get formatted(): FormattedAmountValues {
