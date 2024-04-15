@@ -120,10 +120,8 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @mutation.account.setAccountAssets private setAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
 
   @Watch('assetList')
-  private updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): void {
-    if (oldAssets.length !== newAssets.length) {
-      this.scrollbarComponentKey += 1;
-    }
+  private updateScrollbar(): void {
+    this.scrollbarComponentKey += 1;
   }
 
   scrollbarComponentKey = 0;
@@ -196,7 +194,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   updateFilter(): void {
     this.assetsAreHidden = true;
-    this.scrollbarComponentKey += 1;
+    this.updateScrollbar();
   }
 
   handleAssetSwap(asset: AccountAsset): void {
