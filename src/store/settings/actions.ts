@@ -160,7 +160,7 @@ const actions = defineActions({
     }
   },
 
-  async subscribeOnFiatUsingCeresApi(context): Promise<void> {
+  async subscribeOnExchangeRatesApi(context): Promise<void> {
     const { commit } = settingsActionContext(context);
 
     commit.resetExchangeRateSubscription();

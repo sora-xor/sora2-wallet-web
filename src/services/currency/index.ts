@@ -1,10 +1,10 @@
-import { interval } from 'rxjs';
+import { timer } from 'rxjs';
 
 import { API_ENDPOINT } from '../../consts/currencies';
 import store from '../../store';
 import { Currency, type FiatExchangeRateObject } from '../../types/currency';
 
-const exchangeRateUpdateInterval = interval(60_000);
+const exchangeRateUpdateInterval = timer(0, 60_000);
 
 export class CurrencyExchangeRateService {
   public static readonly apiEndpoint = API_ENDPOINT;
