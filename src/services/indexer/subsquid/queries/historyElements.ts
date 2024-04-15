@@ -302,7 +302,7 @@ const OperationFilterMap = {
     module_eq: ModuleNames.Vault,
     method_eq: ModuleMethods.VaultDebtPayment,
   },
-  [Operation.RepayVaultDebt]: {
+  [Operation.BorrowVaultDebt]: {
     module_eq: ModuleNames.Vault,
     method_eq: ModuleMethods.VaultDebtBorrow,
   },

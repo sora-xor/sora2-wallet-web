@@ -49,6 +49,7 @@ import type {
   WhitelistItem,
   HistoryElementTransfer as HistoryXorlessTransfer,
 } from '@sora-substrate/util/build/assets/types';
+import type { VaultHistory } from '@sora-substrate/util/build/kensetsu/types';
 import type { LimitOrderHistory } from '@sora-substrate/util/build/orderBook/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 import type { StakingHistory } from '@sora-substrate/util/build/staking/types';
@@ -660,13 +661,15 @@ const parseVaultCreateOrClose = async (transaction: HistoryElement, payload: His
   const asset = await getAssetByAddress(assetAddress);
   const asset2 = await getAssetByAddress(asset2Address);
 
-  payload.vaultId = data.id;
-  payload.amount = formatAmount(data.collateralAmount);
-  payload.amount2 = formatAmount(data.debtAmount);
-  payload.assetAddress = assetAddress;
-  payload.symbol = getAssetSymbol(asset);
-  payload.asset2Address = asset2Address;
-  payload.symbol2 = getAssetSymbol(asset2);
+  const _payload = payload as VaultHistory;
+
+  _payload.vaultId = Number(data.id ?? 0);
+  _payload.amount = formatAmount(data.collateralAmount);
+  _payload.amount2 = formatAmount(data.debtAmount);
+  _payload.assetAddress = assetAddress;
+  _payload.symbol = getAssetSymbol(asset);
+  _payload.asset2Address = asset2Address;
+  _payload.symbol2 = getAssetSymbol(asset2);
 
   return payload;
 };
@@ -677,10 +680,12 @@ const parseVaultCollateralDeposit = async (transaction: HistoryElement, payload:
   const assetAddress = data.collateralAssetId;
   const asset = await getAssetByAddress(assetAddress);
 
-  payload.vaultId = data.id;
-  payload.amount = formatAmount(data.collateralAmount);
-  payload.assetAddress = assetAddress;
-  payload.symbol = getAssetSymbol(asset);
+  const _payload = payload as VaultHistory;
+
+  _payload.vaultId = Number(data.id);
+  _payload.amount = formatAmount(data.collateralAmount);
+  _payload.assetAddress = assetAddress;
+  _payload.symbol = getAssetSymbol(asset);
 
   return payload;
 };
@@ -691,10 +696,12 @@ const parseVaultDebtPaymentOrBorrow = async (transaction: HistoryElement, payloa
   const assetAddress = data.debtAssetId;
   const asset = await getAssetByAddress(assetAddress);
 
-  payload.vaultId = data.id;
-  payload.amount = formatAmount(data.debtAmount);
-  payload.assetAddress = assetAddress;
-  payload.symbol = getAssetSymbol(asset);
+  const _payload = payload as VaultHistory;
+
+  _payload.vaultId = Number(data.id);
+  _payload.amount = formatAmount(data.debtAmount);
+  _payload.assetAddress = assetAddress;
+  _payload.symbol = getAssetSymbol(asset);
 
   return payload;
 };
