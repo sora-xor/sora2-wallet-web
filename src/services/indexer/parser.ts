@@ -38,8 +38,7 @@ import type {
   HistoryElementVaultCreate,
   HistoryElementVaultClose,
   HistoryElementVaultDepositCollateral,
-  HistoryElementVaultDebtPayment,
-  HistoryElementVaultDebtBorrow,
+  HistoryElementVaultDebt,
   ClaimedRewardItem,
   CallArgs,
 } from './subquery/types';
@@ -267,7 +266,7 @@ const parseMintOrBurn = async (transaction: HistoryElement, payload: HistoryItem
   const assetAddress = data.assetId;
   const asset = await getAssetByAddress(assetAddress);
 
-  payload.amount = data.amount;
+  payload.amount = formatAmount(data.amount);
   payload.assetAddress = assetAddress;
   payload.symbol = getAssetSymbol(asset);
 
@@ -284,8 +283,8 @@ const parseSwapTransfer = async (transaction: HistoryElement, payload: HistoryIt
 
   payload.assetAddress = assetAddress;
   payload.asset2Address = asset2Address;
-  payload.amount = data.baseAssetAmount;
-  payload.amount2 = data.targetAssetAmount;
+  payload.amount = formatAmount(data.baseAssetAmount);
+  payload.amount2 = formatAmount(data.targetAssetAmount);
   payload.symbol = getAssetSymbol(asset);
   payload.symbol2 = getAssetSymbol(asset2);
   payload.liquiditySource = data.selectedMarket;
@@ -369,8 +368,8 @@ const parseLiquidityDepositOrWithdrawal = async (transaction: HistoryElement, pa
   payload.asset2Address = asset2Address;
   payload.symbol = getAssetSymbol(asset);
   payload.symbol2 = getAssetSymbol(asset2);
-  payload.amount = data.baseAssetAmount;
-  payload.amount2 = data.targetAssetAmount;
+  payload.amount = formatAmount(data.baseAssetAmount);
+  payload.amount2 = formatAmount(data.targetAssetAmount);
 
   return payload;
 };
@@ -412,7 +411,7 @@ const parseTransfer = async (transaction: HistoryElement, payload: HistoryItem) 
 
   _payload.assetAddress = assetAddress;
   _payload.symbol = getAssetSymbol(asset);
-  _payload.amount = data.amount;
+  _payload.amount = formatAmount(data.amount);
   _payload.assetFee = data.assetFee;
   _payload.xorFee = data.xorFee;
   _payload.comment = data.comment;
@@ -433,7 +432,7 @@ const parseRegisterAsset = async (transaction: HistoryElement, payload: HistoryI
 
 const parseReferralReserve = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementReferrerReserve;
-  payload.amount = data.amount;
+  payload.amount = formatAmount(data.amount);
   return payload;
 };
 
@@ -459,7 +458,7 @@ const parseDemeterLiquidity = async (transaction: HistoryElement, payload: Histo
   payload.asset2Address = asset2Address;
   payload.symbol = getAssetSymbol(asset);
   payload.symbol2 = getAssetSymbol(asset2);
-  payload.amount = data.amount;
+  payload.amount = formatAmount(data.amount);
 
   return payload;
 };
@@ -472,7 +471,7 @@ const parseDemeterStakeOrRewards = async (transaction: HistoryElement, payload: 
 
   payload.assetAddress = assetAddress;
   payload.symbol = getAssetSymbol(asset);
-  payload.amount = data.amount;
+  payload.amount = formatAmount(data.amount);
 
   return payload;
 };
@@ -560,7 +559,7 @@ const parseStakingWithdrawUnbonded = async (transaction: HistoryElement, payload
 
   payload.symbol = XOR.symbol;
   payload.assetAddress = XOR.address;
-  payload.amount = _data.amount;
+  payload.amount = formatAmount(_data.amount);
 
   return payload;
 };
@@ -691,7 +690,7 @@ const parseVaultCollateralDeposit = async (transaction: HistoryElement, payload:
 };
 
 const parseVaultDebtPaymentOrBorrow = async (transaction: HistoryElement, payload: HistoryItem) => {
-  const data = transaction.data as HistoryElementVaultDebtPayment | HistoryElementVaultDebtBorrow;
+  const data = transaction.data as HistoryElementVaultDebt;
 
   const assetAddress = data.debtAssetId;
   const asset = await getAssetByAddress(assetAddress);

@@ -377,13 +377,11 @@ export type HistoryElementVaultDepositCollateral = {
   collateralAmount: string;
 };
 
-export type HistoryElementVaultDebtPayment = {
+export type HistoryElementVaultDebt = {
   id: string;
   debtAssetId: string;
   debtAmount: string;
 };
-
-export type HistoryElementVaultDebtBorrow = HistoryElementVaultDebtPayment;
 
 export type HistoryElementVaultClose = Required<HistoryElementVaultCreate>;
 
@@ -414,8 +412,7 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementStakingPayout
   | HistoryElementVaultCreate
   | HistoryElementVaultDepositCollateral
-  | HistoryElementVaultDebtPayment
-  | HistoryElementVaultDebtBorrow
+  | HistoryElementVaultDebt
   | HistoryElementVaultClose
 >;
 

@@ -83,8 +83,8 @@ export default {
     [Operation.CreateVault]: 'Create Vault',
     [Operation.CloseVault]: 'Close Vault',
     [Operation.DepositCollateral]: 'Deposit Vault',
-    [Operation.RepayVaultDebt]: 'Repay Vault Debt',
-    [Operation.BorrowVaultDebt]: 'Borrow Vault Debt',
+    [Operation.RepayVaultDebt]: 'Repay Debt',
+    [Operation.BorrowVaultDebt]: 'Borrow Debt',
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Burn]: 'Burned {amount} {symbol}',
