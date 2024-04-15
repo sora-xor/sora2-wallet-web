@@ -105,7 +105,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   get symbol(): string {
     // if provided by prop, use prop, otherwise, use commonly defined currency
     if (this.customizalbeCurrency) {
-      return getCurrency(this.customizalbeCurrency)?.symbol ?? '$';
+      return getCurrency(this.customizalbeCurrency)?.symbol || '$';
     }
     return this.currencySymbol;
   }
@@ -140,7 +140,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   get fiatValue(): string {
     const coefficient = this.customizalbeCurrency
       ? this.fiatExchangeRateObject[this.customizalbeCurrency]
-      : this.exchangeRate ?? 1;
+      : this.exchangeRate || 1;
 
     return new FPNumber(this.value).mul(coefficient).toLocaleString();
   }

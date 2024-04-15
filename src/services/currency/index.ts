@@ -7,7 +7,7 @@ import { Currency, type FiatExchangeRateObject } from '../../types/currency';
 const exchangeRateUpdateInterval = interval(60_000);
 
 export class CurrencyExchangeRateService {
-  public static apiEndpoint = API_ENDPOINT;
+  public static readonly apiEndpoint = API_ENDPOINT;
 
   public static async getExchangeRateObject(): Promise<Nullable<FiatExchangeRateObject>> {
     try {
