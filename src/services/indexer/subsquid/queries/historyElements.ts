@@ -224,6 +224,7 @@ const OperationFilterMap = {
   },
   [Operation.OrderBookCancelLimitOrder]: OrderBookCancelLimitOrders,
   [Operation.OrderBookCancelLimitOrders]: OrderBookCancelLimitOrders,
+  // STAKING
   [Operation.StakingBond]: {
     module_eq: ModuleNames.Staking,
     method_eq: ModuleMethods.StakingBond,
@@ -283,6 +284,27 @@ const OperationFilterMap = {
       ModuleNames.Staking + '.' + ModuleMethods.StakingBond,
       ModuleNames.Staking + '.' + ModuleMethods.StakingNominate,
     ],
+  },
+  // KENSETSU
+  [Operation.CreateVault]: {
+    module_eq: ModuleNames.Vault,
+    method_eq: ModuleMethods.VaultCreate,
+  },
+  [Operation.CloseVault]: {
+    module_eq: ModuleNames.Vault,
+    method_eq: ModuleMethods.VaultClose,
+  },
+  [Operation.DepositCollateral]: {
+    module_eq: ModuleNames.Vault,
+    method_eq: ModuleMethods.VaultCollateralDeposit,
+  },
+  [Operation.RepayVaultDebt]: {
+    module_eq: ModuleNames.Vault,
+    method_eq: ModuleMethods.VaultDebtPayment,
+  },
+  [Operation.RepayVaultDebt]: {
+    module_eq: ModuleNames.Vault,
+    method_eq: ModuleMethods.VaultDebtBorrow,
   },
 };
 

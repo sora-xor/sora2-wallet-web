@@ -363,6 +363,30 @@ export type HistoryElementStakingPayout = {
   era: number;
 };
 
+export type HistoryElementVaultCreate = {
+  id?: string; // exists on success
+  collateralAssetId: string;
+  collateralAmount: string;
+  debtAssetId: string;
+  debtAmount: string;
+};
+
+export type HistoryElementVaultDepositCollateral = {
+  id: string;
+  collateralAssetId: string;
+  collateralAmount: string;
+};
+
+export type HistoryElementVaultDebtPayment = {
+  id: string;
+  debtAssetId: string;
+  debtAmount: string;
+};
+
+export type HistoryElementVaultDebtBorrow = HistoryElementVaultDebtPayment;
+
+export type HistoryElementVaultClose = Required<HistoryElementVaultCreate>;
+
 export type HistoryElementDataBase = Nullable<
   | HistoryElementReferralSetReferrer
   | HistoryElementReferrerReserve
@@ -388,6 +412,11 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementStakingSetPayee
   | HistoryElementStakingSetController
   | HistoryElementStakingPayout
+  | HistoryElementVaultCreate
+  | HistoryElementVaultDepositCollateral
+  | HistoryElementVaultDebtPayment
+  | HistoryElementVaultDebtBorrow
+  | HistoryElementVaultClose
 >;
 
 export type HistoryElementBase = {

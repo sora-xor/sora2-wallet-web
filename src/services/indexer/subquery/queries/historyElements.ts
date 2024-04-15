@@ -406,6 +406,47 @@ const OperationFilterMap = {
       ],
     },
   },
+  // KENSETSU
+  [Operation.CreateVault]: {
+    module: {
+      equalTo: ModuleNames.Vault,
+    },
+    method: {
+      equalTo: ModuleMethods.VaultCreate,
+    },
+  },
+  [Operation.CloseVault]: {
+    module: {
+      equalTo: ModuleNames.Vault,
+    },
+    method: {
+      equalTo: ModuleMethods.VaultCreate,
+    },
+  },
+  [Operation.DepositCollateral]: {
+    module: {
+      equalTo: ModuleNames.Vault,
+    },
+    method: {
+      equalTo: ModuleMethods.VaultCollateralDeposit,
+    },
+  },
+  [Operation.RepayVaultDebt]: {
+    module: {
+      equalTo: ModuleNames.Vault,
+    },
+    method: {
+      equalTo: ModuleMethods.VaultDebtPayment,
+    },
+  },
+  [Operation.BorrowVaultDebt]: {
+    module: {
+      equalTo: ModuleNames.Vault,
+    },
+    method: {
+      equalTo: ModuleMethods.VaultDebtBorrow,
+    },
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {

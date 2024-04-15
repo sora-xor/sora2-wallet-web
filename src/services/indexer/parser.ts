@@ -35,6 +35,11 @@ import type {
   HistoryElementStakingSetPayee,
   HistoryElementStakingSetController,
   HistoryElementStakingPayout,
+  HistoryElementVaultCreate,
+  HistoryElementVaultClose,
+  HistoryElementVaultDepositCollateral,
+  HistoryElementVaultDebtPayment,
+  HistoryElementVaultDebtBorrow,
   ClaimedRewardItem,
   CallArgs,
 } from './subquery/types';
@@ -153,6 +158,13 @@ const OperationsMap = {
     [insensitive(ModuleMethods.StakingSetPayee)]: () => Operation.StakingSetPayee,
     [insensitive(ModuleMethods.StakingSetController)]: () => Operation.StakingSetController,
     [insensitive(ModuleMethods.StakingPayout)]: () => Operation.StakingPayout,
+  },
+  [insensitive(ModuleNames.Vault)]: {
+    [insensitive(ModuleMethods.VaultCreate)]: () => Operation.CreateVault,
+    [insensitive(ModuleMethods.VaultClose)]: () => Operation.CloseVault,
+    [insensitive(ModuleMethods.VaultCollateralDeposit)]: () => Operation.DepositCollateral,
+    [insensitive(ModuleMethods.VaultDebtPayment)]: () => Operation.RepayVaultDebt,
+    [insensitive(ModuleMethods.VaultDebtBorrow)]: () => Operation.BorrowVaultDebt,
   },
 };
 
@@ -640,6 +652,53 @@ const parseStakingBondAndNominate = async (transaction: HistoryElement, payload:
   return payload;
 };
 
+const parseVaultCreateOrClose = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementVaultCreate | HistoryElementVaultClose;
+
+  const assetAddress = data.collateralAssetId;
+  const asset2Address = data.debtAssetId;
+  const asset = await getAssetByAddress(assetAddress);
+  const asset2 = await getAssetByAddress(asset2Address);
+
+  payload.vaultId = data.id;
+  payload.amount = formatAmount(data.collateralAmount);
+  payload.amount2 = formatAmount(data.debtAmount);
+  payload.assetAddress = assetAddress;
+  payload.symbol = getAssetSymbol(asset);
+  payload.asset2Address = asset2Address;
+  payload.symbol2 = getAssetSymbol(asset2);
+
+  return payload;
+};
+
+const parseVaultCollateralDeposit = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementVaultDepositCollateral;
+
+  const assetAddress = data.collateralAssetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  payload.vaultId = data.id;
+  payload.amount = formatAmount(data.collateralAmount);
+  payload.assetAddress = assetAddress;
+  payload.symbol = getAssetSymbol(asset);
+
+  return payload;
+};
+
+const parseVaultDebtPaymentOrBorrow = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementVaultDebtPayment | HistoryElementVaultDebtBorrow;
+
+  const assetAddress = data.debtAssetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  payload.vaultId = data.id;
+  payload.amount = formatAmount(data.debtAmount);
+  payload.assetAddress = assetAddress;
+  payload.symbol = getAssetSymbol(asset);
+
+  return payload;
+};
+
 export default class IndexerDataParser {
   // Operations visible in wallet
   public static readonly SUPPORTED_OPERATIONS = [
@@ -676,6 +735,11 @@ export default class IndexerDataParser {
     Operation.StakingSetController,
     Operation.StakingPayout,
     Operation.StakingBondAndNominate,
+    Operation.CreateVault,
+    Operation.CloseVault,
+    Operation.DepositCollateral,
+    Operation.RepayVaultDebt,
+    Operation.BorrowVaultDebt,
   ];
 
   public get supportedOperations(): Array<Operation> {
@@ -801,6 +865,17 @@ export default class IndexerDataParser {
       }
       case Operation.StakingBondAndNominate: {
         return await parseStakingBondAndNominate(transaction, payload);
+      }
+      case Operation.CreateVault:
+      case Operation.CloseVault: {
+        return await parseVaultCreateOrClose(transaction, payload);
+      }
+      case Operation.DepositCollateral: {
+        return await parseVaultCollateralDeposit(transaction, payload);
+      }
+      case Operation.RepayVaultDebt:
+      case Operation.BorrowVaultDebt: {
+        return await parseVaultDebtPaymentOrBorrow(transaction, payload);
       }
       default:
         return null;
