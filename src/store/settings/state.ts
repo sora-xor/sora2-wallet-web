@@ -62,6 +62,7 @@ function initialState(): SettingsState {
     shouldBalanceBeHidden: shouldBalanceBeHidden ? Boolean(JSON.parse(shouldBalanceBeHidden)) : false,
     currency: currency || Currency.USD,
     fiatExchangeRateObject: { [Currency.USD]: 1 },
+    exchangeRateSubscription: null,
   };
 }
 

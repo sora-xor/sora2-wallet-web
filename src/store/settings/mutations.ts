@@ -129,6 +129,13 @@ const mutations = defineMutations<SettingsState>()({
   updateFiatExchangeRates(state, newRates) {
     state.fiatExchangeRateObject = newRates;
   },
+  setExchangeRateSubscription(state, subscription: VoidFunction): void {
+    state.exchangeRateSubscription = subscription;
+  },
+  resetExchangeRateSubscription(state): void {
+    state.exchangeRateSubscription?.();
+    state.exchangeRateSubscription = null;
+  },
 });
 
 export default mutations;

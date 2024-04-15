@@ -6,29 +6,42 @@ import { Currency, type FiatExchangeRateObject } from '../../types/currency';
 
 const exchangeRateUpdateInterval = interval(60_000);
 
-export class CurrencyExchangeRate {
+export class CurrencyExchangeRateService {
   public static apiEndpoint = API_ENDPOINT;
-  private fiatExchangeRateObject: FiatExchangeRateObject = {};
 
   public static async getExchangeRateObject(): Promise<Nullable<FiatExchangeRateObject>> {
     try {
-      const exchangeRatesApi = await fetch(CurrencyExchangeRate.apiEndpoint, { cache: 'no-store' });
+      const exchangeRatesApi = await fetch(CurrencyExchangeRateService.apiEndpoint, { cache: 'no-store' });
       return exchangeRatesApi.json();
     } catch (error) {
-      console.warn('[Exchange rate API] not available. Now using default option', error);
-      store.commit.wallet.settings.updateFiatExchangeRates({ [Currency.USD]: 1 });
-      store.commit.wallet.settings.setFiatCurrency(Currency.USD);
+      this.resetData(error as Error);
       return null;
     }
   }
 
-  public static createExchangeRatesSubscription(): void {
+  public static createExchangeRatesSubscription(
+    handler: (entity?: FiatExchangeRateObject) => void,
+    errorHandler: () => void
+  ): VoidFunction {
     const subscription = exchangeRateUpdateInterval.subscribe(async () => {
-      const data = await CurrencyExchangeRate.getExchangeRateObject();
+      const data = await CurrencyExchangeRateService.getExchangeRateObject();
+      if (!data) {
+        this.resetData();
+        errorHandler();
+      } else {
+        handler(data);
+      }
     });
+
+    return () => {
+      console.info(`[Exchange rate API] Currency rates unsubscribe.`);
+      subscription.unsubscribe();
+    };
   }
 
-  static updateData(newRates: FiatExchangeRateObject): void {
-    store.commit.wallet.settings.updateFiatExchangeRates(newRates);
+  static resetData(error?: Error): void {
+    console.warn('[Exchange rate API] not available. Now using default option', error);
+    store.commit.wallet.settings.updateFiatExchangeRates({ [Currency.USD]: 1 });
+    store.commit.wallet.settings.setFiatCurrency(Currency.USD);
   }
 }

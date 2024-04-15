@@ -3,6 +3,8 @@ import isEmpty from 'lodash/fp/isEmpty';
 import isEqual from 'lodash/fp/isEqual';
 import { combineLatest } from 'rxjs';
 
+import { CurrencyExchangeRateService } from '@/services/currency';
+
 import { api } from '../../api';
 import { IndexerType, SoraNetwork } from '../../consts';
 import { GDriveStorage } from '../../services/google';
@@ -156,6 +158,18 @@ const actions = defineActions({
     if (status === ConnectionStatus.Unavailable) {
       await switchCurrentIndexer(context);
     }
+  },
+
+  async subscribeOnFiatUsingCeresApi(context): Promise<void> {
+    const { commit } = settingsActionContext(context);
+
+    commit.resetExchangeRateSubscription();
+
+    const subscription = CurrencyExchangeRateService.createExchangeRatesSubscription(
+      commit.updateFiatExchangeRates,
+      () => {}
+    );
+    commit.setExchangeRateSubscription(subscription);
   },
 });
 

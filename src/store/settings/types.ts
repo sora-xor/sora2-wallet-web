@@ -26,4 +26,5 @@ export type SettingsState = {
   nftStorage: Nullable<NFTStorage>;
   currency: Currency;
   fiatExchangeRateObject: FiatExchangeRateObject;
+  exchangeRateSubscription: Nullable<VoidFunction>;
 };
