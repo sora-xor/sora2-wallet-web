@@ -1,3 +1,4 @@
+import { Notification } from '@soramitsu-ui/ui-vue2/lib/plugins/elementUI';
 import { timer } from 'rxjs';
 
 import { API_ENDPOINT } from '../../consts/currencies';
@@ -42,6 +43,12 @@ export class CurrencyExchangeRateService {
 
   static resetData(error?: Error): void {
     console.warn('[Exchange rate API] not available. Now using default option', error);
+    Notification({
+      message: 'Switched to USD fiat pricing.',
+      type: 'error',
+      duration: 4500,
+      customClass: 'sora s-flex',
+    });
     store.commit.wallet.settings.updateFiatExchangeRates({ [Currency.USD]: 1 });
     store.commit.wallet.settings.setFiatCurrency(Currency.USD);
   }
