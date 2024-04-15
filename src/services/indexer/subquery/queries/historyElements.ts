@@ -460,7 +460,7 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
 };
 
 const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
-  const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
+  const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId', 'collateralAssetId', 'debtAssetId'];
 
   const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
     result.push({
