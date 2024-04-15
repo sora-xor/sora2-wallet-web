@@ -12,7 +12,8 @@ export class CurrencyExchangeRateService {
   public static async getExchangeRateObject(): Promise<Nullable<FiatExchangeRateObject>> {
     try {
       const exchangeRatesApi = await fetch(CurrencyExchangeRateService.apiEndpoint, { cache: 'no-store' });
-      return exchangeRatesApi.json();
+      const data = await exchangeRatesApi.json();
+      return data?.dai;
     } catch (error) {
       this.resetData(error as Error);
       return null;
