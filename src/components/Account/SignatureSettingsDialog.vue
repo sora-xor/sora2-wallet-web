@@ -4,26 +4,38 @@
       <div class="account-signature-option">
         <label class="account-signature-option-label">
           <s-switch v-model="confirmModel" />
-          <span>Confirm transaction dialog</span>
+          <span>Transaction confirmation dialog</span>
         </label>
-        <span class="account-signature-option-description">Confirm transaction dialog description</span>
+        <span class="account-signature-option-description">
+          Show a dialog with transaction details before it is confirmation
+        </span>
       </div>
 
       <div v-if="!isExternal" class="account-signature-option">
         <label class="account-signature-option-label">
           <s-switch v-model="signatureModel" />
-          <span>Sign transaction dialog</span>
+          <span>Transaction signature dialog</span>
         </label>
-        <span class="account-signature-option-description">Sign transaction dialog description</span>
+        <span class="account-signature-option-description"> Show transaction signature dialog using password </span>
       </div>
 
       <div v-if="!isExternal" class="account-signature-option">
         <s-tabs v-model="passhraseTimeoutModel" type="rounded" class="passphrase-timeouts">
           <s-tab v-for="name in PassphraseTimeout" :key="name" :label="name" :name="name" />
         </s-tabs>
-        <span v-if="isUnlimitedTimeout" class="account-signature-option-description warning">Is unlimited selected</span>
-        <span class="account-signature-option-description">Passphrase timeout description</span>
+        <span class="account-signature-option-description">
+          Once the transaction is signed, your account passphrase will be stored for that period.<br />
+          The account passphrase will be reset once the period is changed.
+        </span>
+        <span v-if="isUnlimitedTimeout" class="account-signature-option-description warning">
+          Your account passphrase will be saved for unlimited period. Make sure that unauthorized persons do not have
+          access to your device
+        </span>
       </div>
+
+      <s-button v-if="isSavedAccountPassphrase" type="secondary" @click="resetAccountPassphrase">
+        Reset passphrase
+      </s-button>
     </div>
   </dialog-base>
 </template>
@@ -32,7 +44,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { PassphraseTimeout, PassphraseTimeoutDuration, DefaultPassphraseTimeout } from '../../consts';
-import { state, mutation } from '../../store/decorators';
+import { action, getter, state, mutation } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
@@ -43,14 +55,18 @@ import TranslationMixin from '../mixins/TranslationMixin';
   },
 })
 export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, TranslationMixin) {
+  @getter.account.passphrase private passhprase!: Nullable<string>;
+  @getter.account.passphraseTimeoutKey private passphraseTimeoutKey!: PassphraseTimeout;
+
   @state.transactions.isConfirmTxDialogEnabled private isConfirmTxDialogEnabled!: boolean;
   @state.transactions.isSignTxDialogEnabled private isSignTxDialogEnabled!: boolean;
-  @state.account.passphraseTimeout private passphraseTimeout!: number;
   @state.account.isExternal isExternal!: boolean;
 
   @mutation.transactions.setConfirmTxDialogEnabled private setConfirmTxDialogEnabled!: (flag: boolean) => void;
   @mutation.transactions.setSignTxDialogEnabled private setSignTxDialogEnabled!: (flag: boolean) => void;
   @mutation.account.setPassphraseTimeout private setPassphraseTimeout!: (timeout: number) => void;
+
+  @action.account.resetAccountPassphrase resetAccountPassphrase!: FnWithoutArgs;
 
   readonly PassphraseTimeout = PassphraseTimeout;
 
@@ -71,22 +87,21 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
   }
 
   get passhraseTimeoutModel(): PassphraseTimeout {
-    const key = Object.keys(PassphraseTimeoutDuration).find(
-      (key) => PassphraseTimeoutDuration[key] === this.passphraseTimeout
-    );
-
-    if (!key) return PassphraseTimeout.FIFTEEN_MINUTES;
-
-    return key as PassphraseTimeout;
+    return this.passphraseTimeoutKey;
   }
 
   set passhraseTimeoutModel(name: PassphraseTimeout) {
     const duration = PassphraseTimeoutDuration[name] ?? DefaultPassphraseTimeout;
+    this.resetAccountPassphrase();
     this.setPassphraseTimeout(duration);
   }
 
   get isUnlimitedTimeout(): boolean {
     return this.passhraseTimeoutModel === PassphraseTimeout.UNLIMITED;
+  }
+
+  get isSavedAccountPassphrase(): boolean {
+    return !!this.passhprase;
   }
 }
 </script>
@@ -99,6 +114,7 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
 
   &.s-tabs.s-rounded .el-tabs__nav-wrap .el-tabs__item {
     text-transform: initial;
+    padding: 0 $basic-spacing-big;
   }
 }
 </style>
@@ -107,7 +123,7 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
 .account-signature-settings {
   display: flex;
   flex-flow: column nowrap;
-  gap: $basic-spacing-medium;
+  gap: $basic-spacing-big;
 
   &__button {
     width: 100%;

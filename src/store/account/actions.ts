@@ -370,6 +370,12 @@ const actions = defineActions({
     }
   },
 
+  resetAccountPassphrase(context): void {
+    const { commit } = accountActionContext(context);
+    commit.resetAccountPassphraseTimer();
+    commit.resetAccountPassphrase();
+  },
+
   unlockAccountPair(context, passphrase: string): void {
     api.unlockPair(passphrase);
   },

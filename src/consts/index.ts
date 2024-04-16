@@ -202,7 +202,7 @@ export enum PassphraseTimeout {
   ONE_HOUR = '1h',
   FOUR_HOURS = '4h',
   ONE_DAY = '1D',
-  UNLIMITED = 'UNLIM.',
+  UNLIMITED = 'unlimited',
 }
 
 export const PassphraseTimeoutDuration: Record<PassphraseTimeout, number> = {

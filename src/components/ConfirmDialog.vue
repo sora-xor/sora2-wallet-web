@@ -4,6 +4,7 @@
     :visible.sync="visibility"
     :loading="loading"
     :passphrase="passphrase"
+    :passphrase-timeout="passphraseTimeoutKey"
     :confirm-button-text="t('desktop.dialog.confirmButton')"
     @confirm="handleConfirm"
   />
@@ -19,6 +20,8 @@ import AccountConfirmDialog from './Account/ConfirmDialog.vue';
 import LoadingMixin from './mixins/LoadingMixin';
 import NotificationMixin from './mixins/NotificationMixin';
 
+import type { PassphraseTimeout } from '../consts';
+
 @Component({
   components: {
     AccountConfirmDialog,
@@ -27,11 +30,11 @@ import NotificationMixin from './mixins/NotificationMixin';
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
   @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
+  @getter.account.passphraseTimeoutKey passphraseTimeoutKey!: PassphraseTimeout;
   @mutation.transactions.setSignTxDialogVisibility private setSignTxDialogVisibility!: (flag: boolean) => void;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
+  @action.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
   @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
-  @mutation.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
-  @mutation.account.resetAccountPassphraseTimer private resetAccountPassphraseTimer!: FnWithoutArgs;
 
   get visibility(): boolean {
     return this.isSignTxDialogVisible;
@@ -54,7 +57,6 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
           this.setAccountPassphrase(password);
         } else {
           this.resetAccountPassphrase();
-          this.resetAccountPassphraseTimer();
         }
 
         this.setSignTxDialogVisibility(false);

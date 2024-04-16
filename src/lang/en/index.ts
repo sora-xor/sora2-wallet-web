@@ -494,8 +494,8 @@ export default {
     dialog: {
       confirmTitle: 'Confirm with password',
       confirmButton: 'Sign Transaction',
-      savePasswordText: 'Remember my password for next 15 minutes',
-      extendPasswordText: 'Extend period without password by 15 minutes',
+      savePasswordText: 'Remember my password for {duration} period',
+      extendPasswordText: 'Extend period without password by {duration}',
     },
     errorMessages: {
       password: 'Password did not match',

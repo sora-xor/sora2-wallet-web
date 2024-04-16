@@ -3,7 +3,7 @@ import { defineGetters } from 'direct-vuex';
 import isEqual from 'lodash/fp/isEqual';
 
 import { api } from '../../api';
-import { AppWallet } from '../../consts';
+import { AppWallet, PassphraseTimeout, PassphraseTimeoutDuration } from '../../consts';
 import { isInternalWallet } from '../../consts/wallets';
 import { formatAccountAddress } from '../../util';
 
@@ -91,6 +91,17 @@ const getters = defineGetters<AccountState>()({
       return decoded;
     }
     return null;
+  },
+  passphraseTimeoutKey(...args): PassphraseTimeout {
+    const { state } = accountGetterContext(args);
+
+    const key = Object.keys(PassphraseTimeoutDuration).find(
+      (key) => PassphraseTimeoutDuration[key] === state.passphraseTimeout
+    );
+
+    if (!key) return PassphraseTimeout.FIFTEEN_MINUTES;
+
+    return key as PassphraseTimeout;
   },
   blacklist(...args): any {
     const { state } = accountGetterContext(args);

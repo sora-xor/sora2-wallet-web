@@ -5,8 +5,10 @@
       <password-input v-if="!passphrase" ref="passwordInput" v-model="password" :disabled="loading" autofocus />
       <div v-if="savePassphrase" class="confirm-dialog__save-password">
         <s-switch v-model="savePassword" />
-        <span v-if="!passphrase">{{ t('desktop.dialog.savePasswordText') }}</span>
-        <span v-else>{{ t('desktop.dialog.extendPasswordText') }}</span>
+        <span v-if="!passphrase">{{ t('desktop.dialog.savePasswordText', { duration: passphraseTimeout }) }}</span>
+        <span v-else-if="isLimitedPassphraseDuration">{{
+          t('desktop.dialog.extendPasswordText', { duration: passphraseTimeout })
+        }}</span>
       </div>
       <s-button
         type="primary"
@@ -24,7 +26,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Watch, Ref } from 'vue-property-decorator';
 
-import { ObjectInit } from '../../consts';
+import { ObjectInit, PassphraseTimeout } from '../../consts';
 import DialogBase from '../DialogBase.vue';
 import PasswordInput from '../Input/Password.vue';
 import DialogMixin from '../mixins/DialogMixin';
@@ -46,6 +48,7 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
   @Prop({ default: false, type: Boolean }) readonly savePassphrase!: boolean;
   @Prop({ default: '', type: String }) readonly passphrase!: string;
+  @Prop({ default: '', type: String }) readonly passphraseTimeout!: PassphraseTimeout;
   @Prop({ default: '', type: String }) readonly confirmButtonText!: string;
 
   @Ref('passwordInput') readonly passwordInput!: any;
@@ -71,6 +74,10 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
 
   set password(value: string) {
     this.model = value;
+  }
+
+  get isLimitedPassphraseDuration(): boolean {
+    return this.passphraseTimeout !== PassphraseTimeout.UNLIMITED;
   }
 
   get confirmText(): string {
