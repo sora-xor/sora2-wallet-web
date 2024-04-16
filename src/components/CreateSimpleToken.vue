@@ -77,7 +77,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { RouteNames, Step } from '../consts';
-import { mutation } from '../store/decorators';
+import { mutation, state } from '../store/decorators';
 
 import InfoLine from './InfoLine.vue';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
@@ -109,6 +109,7 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
+  @state.transactions.isConfirmTxDialogEnabled private isConfirmTxEnabled!: boolean;
 
   tokenSymbol = '';
   tokenName = '';
@@ -161,8 +162,12 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
       return;
     }
 
-    this.showFee = true;
-    this.$emit('stepChange', Step.ConfirmSimpleToken);
+    if (this.isConfirmTxEnabled) {
+      this.showFee = true;
+      this.$emit('stepChange', Step.ConfirmSimpleToken);
+    } else {
+      await this.onConfirm();
+    }
   }
 
   async onConfirm(): Promise<void> {

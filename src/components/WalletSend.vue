@@ -80,6 +80,7 @@
           class="wallet-send-action s-typography-button--large"
           type="primary"
           :disabled="sendButtonDisabled"
+          :loading="loading"
           @click="handleSend"
         >
           {{ sendButtonDisabledText || t('walletSend.title') }}
@@ -169,6 +170,7 @@ export default class WalletSend extends Mixins(
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.transactions.isConfirmTxDialogEnabled private isConfirmTxEnabled!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;
@@ -369,7 +371,11 @@ export default class WalletSend extends Mixins(
       return;
     }
 
-    this.step = 3;
+    if (this.isConfirmTxEnabled) {
+      this.step = 3;
+    } else {
+      await this.handleConfirm();
+    }
   }
 
   async handleConfirm(): Promise<void> {
