@@ -364,8 +364,10 @@ const actions = defineActions({
     commit.updateAddressGeneratedKey(key);
     commit.setAccountPassphrase(passphraseEncoded);
 
-    const timer = setTimeout(commit.resetAccountPassphrase, state.passhraseTimeout);
-    commit.setAccountPassphraseTimer(timer);
+    if (state.passphraseTimeout) {
+      const timer = setTimeout(commit.resetAccountPassphrase, state.passphraseTimeout);
+      commit.setAccountPassphraseTimer(timer);
+    }
   },
 
   unlockAccountPair(context, passphrase: string): void {

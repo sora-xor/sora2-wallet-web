@@ -51,6 +51,8 @@
 
     <wallet-transaction-details v-if="selectedTransaction" />
 
+    <account-signature-settings-dialog :visible.sync="accountSignatureSettingsVisibility" />
+
     <template v-if="!isExternal">
       <account-rename-dialog
         :visible.sync="accountRenameVisibility"
@@ -67,7 +69,6 @@
         :loading="loading"
         @confirm="handleAccountDelete"
       />
-      <account-signature-settings-dialog :visible.sync="accountSignatureSettingsVisibility" />
     </template>
   </wallet-base>
 </template>
