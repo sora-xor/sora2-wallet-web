@@ -4,38 +4,55 @@
       <div class="account-signature-option">
         <label class="account-signature-option-label">
           <s-switch v-model="confirmModel" />
-          <span>Transaction confirmation dialog</span>
+          <span>Confirmation dialog</span>
         </label>
         <span class="account-signature-option-description">
-          Show a dialog with transaction details before it is confirmation
+          Show a confirmation dialog with transaction details before transaction signing
+        </span>
+        <span v-if="confirmModel" class="account-signature-option-description info">
+          You can disable this option to speed up the transaction signing process
         </span>
       </div>
 
-      <div v-if="!isExternal" class="account-signature-option">
-        <label class="account-signature-option-label">
-          <s-switch v-model="signatureModel" />
-          <span>Transaction signature dialog</span>
-        </label>
-        <span class="account-signature-option-description"> Show transaction signature dialog using password </span>
-      </div>
+      <template v-if="!isExternal">
+        <div class="account-signature-option">
+          <label class="account-signature-option-label">
+            <s-switch v-model="signatureModel" />
+            <span>Signature dialog</span>
+          </label>
+          <span class="account-signature-option-description">Show transaction signature dialog using password</span>
+          <span v-if="signatureModel" class="account-signature-option-description info">
+            You can disable this option to speed up the transaction signing process
+          </span>
+        </div>
 
-      <div v-if="!isExternal" class="account-signature-option">
-        <s-tabs v-model="passhraseTimeoutModel" type="rounded" class="passphrase-timeouts">
-          <s-tab v-for="name in PassphraseTimeout" :key="name" :label="name" :name="name" />
-        </s-tabs>
-        <span class="account-signature-option-description">
-          Once the transaction is signed, your account passphrase will be stored for that period.<br />
-          The account passphrase will be reset once the period is changed.
-        </span>
-        <span v-if="isUnlimitedTimeout" class="account-signature-option-description warning">
-          Your account passphrase will be saved for unlimited period. Make sure that unauthorized persons do not have
-          access to your device
-        </span>
-      </div>
+        <div class="account-signature-option">
+          <s-tabs v-model="passhraseTimeoutModel" type="rounded" class="passphrase-timeouts">
+            <s-tab v-for="name in PassphraseTimeout" :key="name" :label="name" :name="name" />
+          </s-tabs>
+          <span :class="['account-signature-option-description', { warning: isUnlimitedTimeout }]">
+            Your account passphrase will be stored for {{ passhraseTimeoutModel }} period. <br />
+          </span>
+          <span v-if="isUnlimitedTimeout" class="account-signature-option-description warning">
+            Make sure that unauthorized persons do not have access to your device
+          </span>
+          <span v-if="isSavedAccountPassphrase" class="account-signature-option-description info">
+            Your account passphrase will be reset once the period is changed.
+          </span>
+        </div>
 
-      <s-button v-if="isSavedAccountPassphrase" type="secondary" @click="resetAccountPassphrase">
-        Reset passphrase
-      </s-button>
+        <div class="account-signature-option">
+          <s-button v-if="isSavedAccountPassphrase" type="secondary" @click="resetAccountPassphrase">
+            Reset passphrase
+          </s-button>
+          <template v-else>
+            <s-button type="primary"> Enter passphrase </s-button>
+            <span class="account-signature-option-description">
+              You can enter your account passphrase in advance so you don't have to enter it when signing a transaction.
+            </span>
+          </template>
+        </div>
+      </template>
     </div>
   </dialog-base>
 </template>
@@ -146,6 +163,9 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
   &-description {
     font-size: var(--s-font-size-extra-small);
 
+    &.info {
+      color: var(--s-color-status-info);
+    }
     &.warning {
       color: var(--s-color-status-warning);
     }
