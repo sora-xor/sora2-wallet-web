@@ -1,6 +1,6 @@
 <template>
   <dialog-base
-    title="Transaction settings"
+    :title="t('signatureSettings.title')"
     :visible.sync="isVisible"
     class="account-signature-settings-dialog"
     append-to-body
@@ -9,13 +9,13 @@
       <div class="account-signature-option">
         <label class="account-signature-option-label">
           <s-switch v-model="confirmModel" />
-          <span>Confirmation dialog</span>
+          <span>{{ t('signatureSettings.option.confirmation.title') }}</span>
         </label>
         <span class="account-signature-option-description">
-          Show a confirmation dialog with transaction details before transaction signing
+          {{ t('signatureSettings.option.confirmation.description') }}
         </span>
         <span v-if="confirmModel" class="account-signature-option-description info">
-          You can disable this option to speed up the transaction signing process
+          {{ t('signatureSettings.speedUpHint') }}
         </span>
       </div>
 
@@ -23,37 +23,42 @@
         <div class="account-signature-option">
           <label class="account-signature-option-label">
             <s-switch v-model="signatureModel" />
-            <span>Signature dialog</span>
+            <span>{{ t('signatureSettings.option.signature.title') }}</span>
           </label>
-          <span class="account-signature-option-description">Show transaction signature dialog using password</span>
+          <span class="account-signature-option-description">
+            {{ t('signatureSettings.option.signature.description') }}
+          </span>
           <span v-if="signatureModel" class="account-signature-option-description info">
-            You can disable this option to speed up the transaction signing process
+            {{ t('signatureSettings.speedUpHint') }}
           </span>
         </div>
 
         <div class="account-signature-option">
+          <span class="account-signature-option-label">{{ t('signatureSettings.option.passphrase.title') }}</span>
           <s-tabs v-model="passhraseTimeoutModel" type="rounded" class="passphrase-timeouts">
             <s-tab v-for="name in PassphraseTimeout" :key="name" :label="name" :name="name" />
           </s-tabs>
-          <span :class="['account-signature-option-description', { warning: isUnlimitedTimeout }]">
-            Your account passphrase will be stored for {{ passhraseTimeoutModel }} period. <br />
+          <span class="account-signature-option-description">
+            {{ t('signatureSettings.option.passphrase.description') }}
           </span>
           <span v-if="isUnlimitedTimeout" class="account-signature-option-description warning">
-            Make sure that unauthorized persons do not have access to your device
+            {{ t('signatureSettings.option.passphrase.security') }}
           </span>
           <span v-if="isSavedAccountPassphrase" class="account-signature-option-description info">
-            Your account passphrase will be reset once the period is changed.
+            {{ t('signatureSettings.option.passphrase.reset') }}
           </span>
         </div>
 
         <div class="account-signature-option">
           <s-button v-if="isSavedAccountPassphrase" type="secondary" @click="resetAccountPassphrase">
-            Reset passphrase
+            {{ t('signatureSettings.passphrase.reset') }}
           </s-button>
           <template v-else>
-            <s-button type="primary" @click="openConfirmDialog"> Enter passphrase </s-button>
-            <span class="account-signature-option-description">
-              You can enter your account passphrase in advance so you don't have to enter it when signing a transaction.
+            <s-button type="primary" @click="openConfirmDialog">
+              {{ t('signatureSettings.passphrase.enter') }}
+            </s-button>
+            <span class="account-signature-option-description info">
+              {{ t('signatureSettings.passphrase.enterHint') }}
             </span>
           </template>
         </div>

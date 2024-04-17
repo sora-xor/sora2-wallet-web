@@ -566,4 +566,31 @@ export default {
     myPositions: 'my positions',
     synthetics: 'synthetic tokens',
   },
+  signatureSettings: {
+    title: 'Transaction signature settings',
+    speedUpHint: 'You can disable this option to speed up the transaction signing process.',
+    passphrase: {
+      reset: 'Reset passphrase',
+      enter: 'Enter passphrase',
+      enterHint:
+        'You can enter your account passphrase in advance so you do not have to enter it when signing a transaction.',
+    },
+    option: {
+      confirmation: {
+        title: 'Confirmation dialog',
+        description: 'Shows a confirmation dialog with transaction details before transaction signing.',
+      },
+      signature: {
+        title: 'Signature dialog',
+        description:
+          'Shows transaction signature dialog using password. If you do not have a saved account passphrase, this dialog will be shown anyway.',
+      },
+      passphrase: {
+        title: 'Passphrase retention period',
+        description: "Retention period for your account's passphrase while the application is running.",
+        security: 'Make sure that no one else has access to your device while you are using the application.',
+        reset: 'Your account passphrase will be reset once the period is changed.',
+      },
+    },
+  },
 };
