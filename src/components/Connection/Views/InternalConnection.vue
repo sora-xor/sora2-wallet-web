@@ -28,9 +28,11 @@
     />
 
     <account-confirm-dialog
+      save-passphrase
       :visible.sync="accountLoginVisibility"
       :account="accountLoginData"
       :loading="loading"
+      :passphrase-timeout="passphraseTimeoutKey"
       @confirm="handleAccountLogin"
     />
   </wallet-base>
@@ -51,6 +53,7 @@ import AccountListStep from '../Step/AccountList.vue';
 import CreateAccountStep from '../Step/CreateAccount.vue';
 import ImportAccountStep from '../Step/ImportAccount.vue';
 
+import type { PassphraseTimeout } from '../../../consts';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 import type { Route } from '../../../store/router/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
@@ -72,9 +75,11 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
   @action.account.restoreAccountFromJson private restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
   @action.account.resetSelectedWallet private resetSelectedWallet!: FnWithoutArgs;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
 
   @getter.account.isLoggedIn private isLoggedIn!: boolean;
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
+  @getter.account.passphraseTimeoutKey passphraseTimeoutKey!: PassphraseTimeout;
 
   @state.account.selectedWallet private selectedWallet!: AppWallet;
 
@@ -202,7 +207,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     return json;
   }
 
-  async handleAccountLogin({ password }: { password: string }) {
+  async handleAccountLogin({ password, save }: { password: string; save: boolean }) {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
@@ -216,6 +221,10 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
           name: (meta.name as string) || '',
           source: this.selectedWallet,
         });
+
+        if (save) {
+          this.setAccountPassphrase(password);
+        }
 
         this.accountLoginVisibility = false;
         this.accountLoginData = null;

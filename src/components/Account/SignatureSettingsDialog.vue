@@ -104,7 +104,7 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
   @mutation.account.setPassphraseTimeout private setPassphraseTimeout!: (timeout: number) => void;
 
   @action.account.resetAccountPassphrase resetAccountPassphrase!: FnWithoutArgs;
-  @action.account.setAccountPassphrase setAccountPassphrase!: (passphrase: string) => Promise<void>;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
   @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
   @action.account.lockAccountPair private lockAccountPair!: FnWithoutArgs;
 
