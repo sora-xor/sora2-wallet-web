@@ -1,5 +1,10 @@
 <template>
-  <dialog-base title="Transaction settings" :visible.sync="isVisible" class="account-signature-settings-dialog">
+  <dialog-base
+    title="Transaction settings"
+    :visible.sync="isVisible"
+    class="account-signature-settings-dialog"
+    append-to-body
+  >
     <div class="account-signature-settings">
       <div class="account-signature-option">
         <label class="account-signature-option-label">
@@ -46,7 +51,7 @@
             Reset passphrase
           </s-button>
           <template v-else>
-            <s-button type="primary"> Enter passphrase </s-button>
+            <s-button type="primary" @click="openConfirmDialog"> Enter passphrase </s-button>
             <span class="account-signature-option-description">
               You can enter your account passphrase in advance so you don't have to enter it when signing a transaction.
             </span>
@@ -54,6 +59,13 @@
         </div>
       </template>
     </div>
+
+    <account-confirm-dialog
+      :visible.sync="accountConfirmVisibility"
+      :account="account"
+      :loading="loading"
+      @confirm="saveAccountPassphrase"
+    />
   </dialog-base>
 </template>
 
@@ -62,16 +74,24 @@ import { Component, Mixins } from 'vue-property-decorator';
 
 import { PassphraseTimeout, PassphraseTimeoutDuration, DefaultPassphraseTimeout } from '../../consts';
 import { action, getter, state, mutation } from '../../store/decorators';
+import { delay } from '../../util';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
+import LoadingMixin from '../mixins/LoadingMixin';
+import NotificationMixin from '../mixins/NotificationMixin';
+
+import AccountConfirmDialog from './ConfirmDialog.vue';
+
+import type { PolkadotJsAccount } from '../../types/common';
 
 @Component({
   components: {
     DialogBase,
+    AccountConfirmDialog,
   },
 })
-export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, TranslationMixin) {
+export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, LoadingMixin, NotificationMixin) {
+  @getter.account.account account!: PolkadotJsAccount;
   @getter.account.passphrase private passhprase!: Nullable<string>;
   @getter.account.passphraseTimeoutKey private passphraseTimeoutKey!: PassphraseTimeout;
 
@@ -84,8 +104,13 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
   @mutation.account.setPassphraseTimeout private setPassphraseTimeout!: (timeout: number) => void;
 
   @action.account.resetAccountPassphrase resetAccountPassphrase!: FnWithoutArgs;
+  @action.account.setAccountPassphrase setAccountPassphrase!: (passphrase: string) => Promise<void>;
+  @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
+  @action.account.lockAccountPair private lockAccountPair!: FnWithoutArgs;
 
   readonly PassphraseTimeout = PassphraseTimeout;
+
+  accountConfirmVisibility = false;
 
   get confirmModel(): boolean {
     return this.isConfirmTxDialogEnabled;
@@ -119,6 +144,26 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
 
   get isSavedAccountPassphrase(): boolean {
     return !!this.passhprase;
+  }
+
+  openConfirmDialog(): void {
+    this.accountConfirmVisibility = true;
+  }
+
+  async saveAccountPassphrase({ password }: { password: string }): Promise<void> {
+    await this.withLoading(async () => {
+      // hack: to render loading state before sync code execution, 250 - button transition
+      await this.$nextTick();
+      await delay(250);
+      // unlock pair to check password
+      await this.withAppNotification(async () => {
+        this.unlockAccountPair(password);
+        this.setAccountPassphrase(password);
+        this.accountConfirmVisibility = false;
+      });
+      // lock pair after check
+      this.lockAccountPair();
+    });
   }
 }
 </script>

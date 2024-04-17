@@ -376,6 +376,10 @@ const actions = defineActions({
     commit.resetAccountPassphrase();
   },
 
+  lockAccountPair(context): void {
+    api.lockPair();
+  },
+
   unlockAccountPair(context, passphrase: string): void {
     api.unlockPair(passphrase);
   },

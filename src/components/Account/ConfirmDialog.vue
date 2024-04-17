@@ -1,14 +1,20 @@
 <template>
-  <dialog-base :title="t('desktop.dialog.confirmTitle')" :visible.sync="isVisible" class="confirm-dialog">
+  <dialog-base
+    :title="t('desktop.dialog.confirmTitle')"
+    :visible.sync="isVisible"
+    class="confirm-dialog"
+    append-to-body
+  >
     <s-form class="confirm-dialog__form" @submit.native.prevent="handleConfirm">
       <wallet-account :polkadot-account="account" />
       <password-input v-if="!passphrase" ref="passwordInput" v-model="password" :disabled="loading" autofocus />
-      <div v-if="savePassphrase" class="confirm-dialog__save-password">
+      <div
+        v-if="savePassphrase && !(passphrase && isUnlimitedPassphraseDuration)"
+        class="confirm-dialog__save-password"
+      >
         <s-switch v-model="savePassword" />
         <span v-if="!passphrase">{{ t('desktop.dialog.savePasswordText', { duration: passphraseTimeout }) }}</span>
-        <span v-else-if="isLimitedPassphraseDuration">{{
-          t('desktop.dialog.extendPasswordText', { duration: passphraseTimeout })
-        }}</span>
+        <span v-else>{{ t('desktop.dialog.extendPasswordText', { duration: passphraseTimeout }) }}</span>
       </div>
       <s-button
         type="primary"
@@ -76,8 +82,8 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
     this.model = value;
   }
 
-  get isLimitedPassphraseDuration(): boolean {
-    return this.passphraseTimeout !== PassphraseTimeout.UNLIMITED;
+  get isUnlimitedPassphraseDuration(): boolean {
+    return this.passphraseTimeout === PassphraseTimeout.UNLIMITED;
   }
 
   get confirmText(): string {
