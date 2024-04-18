@@ -584,11 +584,11 @@ export default {
   signatureSettings: {
     title: 'Transaction signature settings',
     speedUpHint: 'You can disable this option to speed up the transaction signing process.',
-    passphrase: {
-      reset: 'Reset passphrase',
-      enter: 'Enter passphrase',
+    password: {
+      reset: 'Reset password',
+      enter: 'Enter password',
       enterHint:
-        'You can enter your account passphrase in advance so you do not have to enter it when signing a transaction.',
+        'You can enter your account password in advance so you do not have to enter it when signing a transaction.',
     },
     option: {
       confirmation: {
@@ -598,13 +598,13 @@ export default {
       signature: {
         title: 'Signature dialog',
         description:
-          'Shows transaction signature dialog using password. If you do not have a saved account passphrase, this dialog will be shown anyway.',
+          'Shows transaction signature dialog using password. If you do not have a saved account password, this dialog will be shown anyway.',
       },
-      passphrase: {
-        title: 'Passphrase retention period',
-        description: "Retention period for your account's passphrase while the application is running.",
+      password: {
+        title: 'Password retention period',
+        description: "Retention period for your account's password while the application is running.",
         security: 'Make sure that no one else has access to your device while you are using the application.',
-        reset: 'Your account passphrase will be reset once the period is changed.',
+        reset: 'Your account password will be reset once the period is changed.',
       },
     },
   },

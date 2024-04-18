@@ -34,31 +34,31 @@
         </div>
 
         <div class="account-signature-option">
-          <span class="account-signature-option-label">{{ t('signatureSettings.option.passphrase.title') }}</span>
-          <s-tabs v-model="passhraseTimeoutModel" type="rounded" class="passphrase-timeouts">
+          <span class="account-signature-option-label">{{ t('signatureSettings.option.password.title') }}</span>
+          <s-tabs v-model="passhraseTimeoutModel" type="rounded" class="password-timeouts">
             <s-tab v-for="name in PassphraseTimeout" :key="name" :label="name" :name="name" />
           </s-tabs>
           <span class="account-signature-option-description">
-            {{ t('signatureSettings.option.passphrase.description') }}
+            {{ t('signatureSettings.option.password.description') }}
           </span>
           <span v-if="isUnlimitedTimeout" class="account-signature-option-description warning">
-            {{ t('signatureSettings.option.passphrase.security') }}
+            {{ t('signatureSettings.option.password.security') }}
           </span>
           <span v-if="isSavedAccountPassphrase" class="account-signature-option-description info">
-            {{ t('signatureSettings.option.passphrase.reset') }}
+            {{ t('signatureSettings.option.password.reset') }}
           </span>
         </div>
 
         <div class="account-signature-option">
           <s-button v-if="isSavedAccountPassphrase" type="secondary" @click="resetAccountPassphrase">
-            {{ t('signatureSettings.passphrase.reset') }}
+            {{ t('signatureSettings.password.reset') }}
           </s-button>
           <template v-else>
             <s-button type="primary" @click="openConfirmDialog">
-              {{ t('signatureSettings.passphrase.enter') }}
+              {{ t('signatureSettings.password.enter') }}
             </s-button>
             <span class="account-signature-option-description info">
-              {{ t('signatureSettings.passphrase.enterHint') }}
+              {{ t('signatureSettings.password.enterHint') }}
             </span>
           </template>
         </div>
@@ -174,7 +174,7 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
 </script>
 
 <style lang="scss">
-.passphrase-timeouts {
+.password-timeouts {
   .el-tabs__header {
     margin-bottom: 0;
   }
