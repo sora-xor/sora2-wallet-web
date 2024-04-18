@@ -406,6 +406,47 @@ const OperationFilterMap = {
       ],
     },
   },
+  // KENSETSU
+  [Operation.CreateVault]: {
+    module: {
+      equalTo: ModuleNames.Vault,
+    },
+    method: {
+      equalTo: ModuleMethods.VaultCreate,
+    },
+  },
+  [Operation.CloseVault]: {
+    module: {
+      equalTo: ModuleNames.Vault,
+    },
+    method: {
+      equalTo: ModuleMethods.VaultCreate,
+    },
+  },
+  [Operation.DepositCollateral]: {
+    module: {
+      equalTo: ModuleNames.Vault,
+    },
+    method: {
+      equalTo: ModuleMethods.VaultCollateralDeposit,
+    },
+  },
+  [Operation.RepayVaultDebt]: {
+    module: {
+      equalTo: ModuleNames.Vault,
+    },
+    method: {
+      equalTo: ModuleMethods.VaultDebtPayment,
+    },
+  },
+  [Operation.BorrowVaultDebt]: {
+    module: {
+      equalTo: ModuleNames.Vault,
+    },
+    method: {
+      equalTo: ModuleMethods.VaultDebtBorrow,
+    },
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
@@ -419,7 +460,7 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
 };
 
 const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
-  const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
+  const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId', 'collateralAssetId', 'debtAssetId'];
 
   const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
     result.push({

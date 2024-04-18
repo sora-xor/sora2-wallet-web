@@ -13,6 +13,7 @@ export enum ModuleNames {
   DemeterFarming = 'demeterFarmingPlatform',
   OrderBook = 'orderBook',
   Staking = 'staking',
+  Vault = 'kensetsu',
 }
 
 export enum ModuleMethods {
@@ -53,4 +54,9 @@ export enum ModuleMethods {
   StakingSetPayee = 'setPayee',
   StakingSetController = 'setController',
   StakingPayout = 'payoutStakers',
+  VaultCreate = 'createCdp',
+  VaultClose = 'closeCdp',
+  VaultCollateralDeposit = 'depositCollateral',
+  VaultDebtPayment = 'repayDebt',
+  VaultDebtBorrow = 'borrow',
 }
