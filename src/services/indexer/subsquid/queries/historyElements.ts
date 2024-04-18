@@ -224,6 +224,7 @@ const OperationFilterMap = {
   },
   [Operation.OrderBookCancelLimitOrder]: OrderBookCancelLimitOrders,
   [Operation.OrderBookCancelLimitOrders]: OrderBookCancelLimitOrders,
+  // STAKING
   [Operation.StakingBond]: {
     module_eq: ModuleNames.Staking,
     method_eq: ModuleMethods.StakingBond,
@@ -284,6 +285,27 @@ const OperationFilterMap = {
       ModuleNames.Staking + '.' + ModuleMethods.StakingNominate,
     ],
   },
+  // KENSETSU
+  [Operation.CreateVault]: {
+    module_eq: ModuleNames.Vault,
+    method_eq: ModuleMethods.VaultCreate,
+  },
+  [Operation.CloseVault]: {
+    module_eq: ModuleNames.Vault,
+    method_eq: ModuleMethods.VaultClose,
+  },
+  [Operation.DepositCollateral]: {
+    module_eq: ModuleNames.Vault,
+    method_eq: ModuleMethods.VaultCollateralDeposit,
+  },
+  [Operation.RepayVaultDebt]: {
+    module_eq: ModuleNames.Vault,
+    method_eq: ModuleMethods.VaultDebtPayment,
+  },
+  [Operation.BorrowVaultDebt]: {
+    module_eq: ModuleNames.Vault,
+    method_eq: ModuleMethods.VaultDebtBorrow,
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
@@ -297,7 +319,7 @@ const createOperationsCriteria = (operations: Array<Operation>) => {
 };
 
 const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
-  const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId'];
+  const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId', 'collateralAssetId', 'debtAssetId'];
 
   const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
     result.push({

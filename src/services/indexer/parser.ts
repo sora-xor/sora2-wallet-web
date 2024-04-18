@@ -35,6 +35,10 @@ import type {
   HistoryElementStakingSetPayee,
   HistoryElementStakingSetController,
   HistoryElementStakingPayout,
+  HistoryElementVaultCreate,
+  HistoryElementVaultClose,
+  HistoryElementVaultDepositCollateral,
+  HistoryElementVaultDebt,
   ClaimedRewardItem,
   CallArgs,
 } from './subquery/types';
@@ -44,6 +48,7 @@ import type {
   WhitelistItem,
   HistoryElementTransfer as HistoryXorlessTransfer,
 } from '@sora-substrate/util/build/assets/types';
+import type { VaultHistory } from '@sora-substrate/util/build/kensetsu/types';
 import type { LimitOrderHistory } from '@sora-substrate/util/build/orderBook/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
 import type { StakingHistory } from '@sora-substrate/util/build/staking/types';
@@ -154,6 +159,13 @@ const OperationsMap = {
     [insensitive(ModuleMethods.StakingSetController)]: () => Operation.StakingSetController,
     [insensitive(ModuleMethods.StakingPayout)]: () => Operation.StakingPayout,
   },
+  [insensitive(ModuleNames.Vault)]: {
+    [insensitive(ModuleMethods.VaultCreate)]: () => Operation.CreateVault,
+    [insensitive(ModuleMethods.VaultClose)]: () => Operation.CloseVault,
+    [insensitive(ModuleMethods.VaultCollateralDeposit)]: () => Operation.DepositCollateral,
+    [insensitive(ModuleMethods.VaultDebtPayment)]: () => Operation.RepayVaultDebt,
+    [insensitive(ModuleMethods.VaultDebtBorrow)]: () => Operation.BorrowVaultDebt,
+  },
 };
 
 const getAssetSymbol = (asset: Nullable<Asset | WhitelistItem>): string => asset?.symbol ?? '';
@@ -254,7 +266,7 @@ const parseMintOrBurn = async (transaction: HistoryElement, payload: HistoryItem
   const assetAddress = data.assetId;
   const asset = await getAssetByAddress(assetAddress);
 
-  payload.amount = data.amount;
+  payload.amount = formatAmount(data.amount);
   payload.assetAddress = assetAddress;
   payload.symbol = getAssetSymbol(asset);
 
@@ -271,8 +283,8 @@ const parseSwapTransfer = async (transaction: HistoryElement, payload: HistoryIt
 
   payload.assetAddress = assetAddress;
   payload.asset2Address = asset2Address;
-  payload.amount = data.baseAssetAmount;
-  payload.amount2 = data.targetAssetAmount;
+  payload.amount = formatAmount(data.baseAssetAmount);
+  payload.amount2 = formatAmount(data.targetAssetAmount);
   payload.symbol = getAssetSymbol(asset);
   payload.symbol2 = getAssetSymbol(asset2);
   payload.liquiditySource = data.selectedMarket;
@@ -356,8 +368,8 @@ const parseLiquidityDepositOrWithdrawal = async (transaction: HistoryElement, pa
   payload.asset2Address = asset2Address;
   payload.symbol = getAssetSymbol(asset);
   payload.symbol2 = getAssetSymbol(asset2);
-  payload.amount = data.baseAssetAmount;
-  payload.amount2 = data.targetAssetAmount;
+  payload.amount = formatAmount(data.baseAssetAmount);
+  payload.amount2 = formatAmount(data.targetAssetAmount);
 
   return payload;
 };
@@ -399,7 +411,7 @@ const parseTransfer = async (transaction: HistoryElement, payload: HistoryItem) 
 
   _payload.assetAddress = assetAddress;
   _payload.symbol = getAssetSymbol(asset);
-  _payload.amount = data.amount;
+  _payload.amount = formatAmount(data.amount);
   _payload.assetFee = data.assetFee;
   _payload.xorFee = data.xorFee;
   _payload.comment = data.comment;
@@ -420,7 +432,7 @@ const parseRegisterAsset = async (transaction: HistoryElement, payload: HistoryI
 
 const parseReferralReserve = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementReferrerReserve;
-  payload.amount = data.amount;
+  payload.amount = formatAmount(data.amount);
   return payload;
 };
 
@@ -446,7 +458,7 @@ const parseDemeterLiquidity = async (transaction: HistoryElement, payload: Histo
   payload.asset2Address = asset2Address;
   payload.symbol = getAssetSymbol(asset);
   payload.symbol2 = getAssetSymbol(asset2);
-  payload.amount = data.amount;
+  payload.amount = formatAmount(data.amount);
 
   return payload;
 };
@@ -459,7 +471,7 @@ const parseDemeterStakeOrRewards = async (transaction: HistoryElement, payload: 
 
   payload.assetAddress = assetAddress;
   payload.symbol = getAssetSymbol(asset);
-  payload.amount = data.amount;
+  payload.amount = formatAmount(data.amount);
 
   return payload;
 };
@@ -547,7 +559,7 @@ const parseStakingWithdrawUnbonded = async (transaction: HistoryElement, payload
 
   payload.symbol = XOR.symbol;
   payload.assetAddress = XOR.address;
-  payload.amount = _data.amount;
+  payload.amount = formatAmount(_data.amount);
 
   return payload;
 };
@@ -640,6 +652,59 @@ const parseStakingBondAndNominate = async (transaction: HistoryElement, payload:
   return payload;
 };
 
+const parseVaultCreateOrClose = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementVaultCreate | HistoryElementVaultClose;
+
+  const assetAddress = data.collateralAssetId;
+  const asset2Address = data.debtAssetId;
+  const asset = await getAssetByAddress(assetAddress);
+  const asset2 = await getAssetByAddress(asset2Address);
+
+  const _payload = payload as VaultHistory;
+
+  _payload.vaultId = Number(data.id ?? 0);
+  _payload.amount = formatAmount(data.collateralAmount);
+  _payload.amount2 = formatAmount(data.debtAmount);
+  _payload.assetAddress = assetAddress;
+  _payload.symbol = getAssetSymbol(asset);
+  _payload.asset2Address = asset2Address;
+  _payload.symbol2 = getAssetSymbol(asset2);
+
+  return payload;
+};
+
+const parseVaultCollateralDeposit = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementVaultDepositCollateral;
+
+  const assetAddress = data.collateralAssetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  const _payload = payload as VaultHistory;
+
+  _payload.vaultId = Number(data.id);
+  _payload.amount = formatAmount(data.collateralAmount);
+  _payload.assetAddress = assetAddress;
+  _payload.symbol = getAssetSymbol(asset);
+
+  return payload;
+};
+
+const parseVaultDebtPaymentOrBorrow = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementVaultDebt;
+
+  const assetAddress = data.debtAssetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  const _payload = payload as VaultHistory;
+
+  _payload.vaultId = Number(data.id);
+  _payload.amount = formatAmount(data.debtAmount);
+  _payload.assetAddress = assetAddress;
+  _payload.symbol = getAssetSymbol(asset);
+
+  return payload;
+};
+
 export default class IndexerDataParser {
   // Operations visible in wallet
   public static readonly SUPPORTED_OPERATIONS = [
@@ -676,6 +741,11 @@ export default class IndexerDataParser {
     Operation.StakingSetController,
     Operation.StakingPayout,
     Operation.StakingBondAndNominate,
+    Operation.CreateVault,
+    Operation.CloseVault,
+    Operation.DepositCollateral,
+    Operation.RepayVaultDebt,
+    Operation.BorrowVaultDebt,
   ];
 
   public get supportedOperations(): Array<Operation> {
@@ -801,6 +871,17 @@ export default class IndexerDataParser {
       }
       case Operation.StakingBondAndNominate: {
         return await parseStakingBondAndNominate(transaction, payload);
+      }
+      case Operation.CreateVault:
+      case Operation.CloseVault: {
+        return await parseVaultCreateOrClose(transaction, payload);
+      }
+      case Operation.DepositCollateral: {
+        return await parseVaultCollateralDeposit(transaction, payload);
+      }
+      case Operation.RepayVaultDebt:
+      case Operation.BorrowVaultDebt: {
+        return await parseVaultDebtPaymentOrBorrow(transaction, payload);
       }
       default:
         return null;
