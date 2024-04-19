@@ -143,7 +143,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
       ? this.fiatExchangeRateObject[this.customizableCurrency] ?? 1
       : this.exchangeRate;
 
-    return new FPNumber(this.value).mul(coefficient).toLocaleString();
+    return new FPNumber(this.unformatted).mul(coefficient).toLocaleString();
   }
 
   get formatted(): FormattedAmountValues {

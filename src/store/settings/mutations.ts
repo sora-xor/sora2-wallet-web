@@ -4,10 +4,10 @@ import { NFTStorage } from 'nft.storage';
 import { api } from '../../api';
 import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions, IndexerType } from '../../consts';
 import { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
+import { Currency } from '../../types/currency';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 
 import type { SettingsState } from './types';
-import type { Currency } from '../../types/currency';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { Subscription } from 'rxjs';
 
@@ -122,12 +122,15 @@ const mutations = defineMutations<SettingsState>()({
     state.alerts[position] = alert;
     settingsStorage.set('alerts', JSON.stringify(state.alerts));
   },
-  setFiatCurrency(state, currency: Currency): void {
-    state.currency = currency;
-    settingsStorage.set('currency', currency);
+  setFiatCurrency(state, currency?: Currency): void {
+    state.currency = currency ?? Currency.DAI;
+    settingsStorage.set('currency', state.currency);
   },
-  updateFiatExchangeRates(state, newRates) {
-    state.fiatExchangeRateObject = newRates;
+  updateFiatExchangeRates(state, newRates?: Partial<Record<Currency, number>>) {
+    state.fiatExchangeRateObject = {
+      [Currency.DAI]: 1,
+      ...(newRates ?? {}),
+    };
   },
   setExchangeRateSubscription(state, subscription: VoidFunction): void {
     state.exchangeRateSubscription = subscription;
