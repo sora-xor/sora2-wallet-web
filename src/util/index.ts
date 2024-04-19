@@ -3,6 +3,8 @@ import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 import { getWallets, getWalletBySource, initialize } from '@sora-test/wallet-connect/dotsama/wallets';
 import { saveAs } from 'file-saver';
 
+import { Currencies } from '@/consts/currencies';
+
 import { api, connection } from '../api';
 import {
   ExplorerLink,
@@ -18,6 +20,7 @@ import {
 import { isInternalWallet } from '../consts/wallets';
 
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
+import type { Currency } from '../types/currency';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
@@ -233,6 +236,10 @@ export const copyToClipboard = async (text: string) => {
   } catch (err) {
     console.error('Could not copy text: ', err);
   }
+};
+
+export const getCurrency = (currencyName: Currency, currencies = Currencies) => {
+  return currencies.find((currency) => currency.key === currencyName);
 };
 
 export const formatAddress = (address: string, length = address.length / 2): string => {
