@@ -32,6 +32,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 import { Currency, FiatExchangeRateObject } from '@/types/currency';
 
 import { FontSizeRate, FontWeightRate, HiddenValue } from '../consts';
+import { DaiCurrency } from '../consts/currencies';
 import { state, getter } from '../store/decorators';
 import { getCurrency } from '../util';
 
@@ -91,7 +92,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   /**
    * Allows for getting proper exchange rate and symbol for provided currency
    */
-  @Prop({ default: null, type: String }) readonly customizalbeCurrency!: Nullable<Currency>;
+  @Prop({ default: null, type: String }) readonly customizableCurrency!: Nullable<Currency>;
 
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
   @state.settings.currency currency!: Currency;
@@ -104,8 +105,8 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
 
   get symbol(): string {
     // if provided by prop, use prop, otherwise, use commonly defined currency
-    if (this.customizalbeCurrency) {
-      return getCurrency(this.customizalbeCurrency)?.symbol || '$';
+    if (this.customizableCurrency) {
+      return getCurrency(this.customizableCurrency)?.symbol ?? DaiCurrency.symbol;
     }
     return this.currencySymbol;
   }
@@ -138,9 +139,9 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   }
 
   get fiatValue(): string {
-    const coefficient = this.customizalbeCurrency
-      ? this.fiatExchangeRateObject[this.customizalbeCurrency]
-      : this.exchangeRate || 1;
+    const coefficient = this.customizableCurrency
+      ? this.fiatExchangeRateObject[this.customizableCurrency] ?? 1
+      : this.exchangeRate;
 
     return new FPNumber(this.value).mul(coefficient).toLocaleString();
   }

@@ -2,7 +2,7 @@ import { defineGetters } from 'direct-vuex';
 
 import { getCurrency } from '@/util';
 
-import { Currencies } from '../../consts/currencies';
+import { DaiCurrency } from '../../consts/currencies';
 
 import { settingsGetterContext } from './../settings';
 
@@ -12,13 +12,13 @@ const getters = defineGetters<SettingsState>()({
   currencySymbol(...args): string {
     const { state } = settingsGetterContext(args);
 
-    return getCurrency(state.currency, Currencies)?.symbol ?? '$';
+    return getCurrency(state.currency)?.symbol ?? DaiCurrency.symbol;
   },
 
   exchangeRate(...args): number {
     const { state } = settingsGetterContext(args);
 
-    return state.fiatExchangeRateObject[state.currency] || 1;
+    return state.fiatExchangeRateObject[state.currency] ?? 1;
   },
 });
 
