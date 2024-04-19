@@ -60,8 +60,8 @@ function initialState(): SettingsState {
     feeMultiplierAndRuntimeSubscriptions: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
     shouldBalanceBeHidden: shouldBalanceBeHidden ? Boolean(JSON.parse(shouldBalanceBeHidden)) : false,
-    currency: currency || Currency.USD,
-    fiatExchangeRateObject: { [Currency.USD]: 1 },
+    currency: currency || Currency.DAI,
+    fiatExchangeRateObject: { [Currency.DAI]: 1 },
     exchangeRateSubscription: null,
   };
 }
