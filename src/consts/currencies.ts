@@ -1,7 +1,9 @@
 import { Currency } from '@/types/currency';
 
+export const DaiCurrency = { key: Currency.DAI, name: 'Dai', symbol: '$' };
+
 export const Currencies = [
-  { key: Currency.DAI, name: 'Dai', symbol: '$' },
+  DaiCurrency,
   { key: Currency.USD, name: 'US Dollar', symbol: '$' },
   { key: Currency.AED, name: 'United Arab Emirates Dirham', symbol: 'د.إ' },
   { key: Currency.ARS, name: 'Argentine Peso', symbol: 'ARS$' },
