@@ -35,7 +35,6 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
       >
         <formatted-amount-stub
           assetsymbol="XOR"
-          fiatsign="$"
           fontsizerate="small"
           fontweightrate="normal"
           symbolasdecimal="true"
@@ -51,7 +50,6 @@ exports[`WalletAssetDetails.vue should be rendered correctly 1`] = `
        
       <formatted-amount-stub
         assetsymbol=""
-        fiatsign="$"
         fontsizerate="medium"
         fontweightrate="normal"
         isfiatvalue="true"
@@ -220,7 +218,6 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
       >
         <formatted-amount-stub
           assetsymbol="XOR"
-          fiatsign="$"
           fontsizerate="small"
           fontweightrate="normal"
           symbolasdecimal="true"
@@ -236,7 +233,6 @@ exports[`WalletAssetDetails.vue should show detailed balance info when button cl
        
       <formatted-amount-stub
         assetsymbol=""
-        fiatsign="$"
         fontsizerate="medium"
         fontweightrate="normal"
         isfiatvalue="true"
