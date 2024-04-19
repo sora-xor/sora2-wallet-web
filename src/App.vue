@@ -7,6 +7,10 @@
       <s-button class="hide-balance-switch" @click="toggleHideBalance">
         {{ shouldBalanceBeHidden ? 'hidden' : 'visible' }} balances
       </s-button>
+
+      <select v-model="appCurrency">
+        <option v-for="(rate, key) in fiatExchangeRateObject" :key="key" :value="key">{{ key }}</option>
+      </select>
     </div>
     <div class="wallet-wrapper s-flex">
       <sora-wallet />
@@ -33,6 +37,7 @@ import { state, mutation, getter, action } from './store/decorators';
 import { initWallet } from './index';
 
 import type { ApiKeysObject } from './types/common';
+import type { Currency } from './types/currency';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type DesignSystem from '@soramitsu-ui/ui-vue2/lib/types/DesignSystem';
 import type Theme from '@soramitsu-ui/ui-vue2/lib/types/Theme';
@@ -65,12 +70,18 @@ export default class App extends Mixins(TransactionMixin) {
     message: string;
   }) => Promise<void>;
 
+  @state.settings.currency currency!: Currency;
+  @state.settings.fiatExchangeRateObject fiatExchangeRateObject!: Record<Currency, number>;
+  @mutation.settings.setFiatCurrency setFiatCurrency!: (currency: Currency) => void;
+  @action.settings.subscribeOnExchangeRatesApi private subscribeOnExchangeRatesApi!: AsyncFnWithoutArgs;
+
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);
     this.setIndexerEndpoint({ indexer: IndexerType.SUBQUERY, endpoint: env.SUBQUERY_ENDPOINT });
     this.setIndexerEndpoint({ indexer: IndexerType.SUBSQUID, endpoint: env.SUBSQUID_ENDPOINT });
     this.setSoraNetwork(SoraNetwork.Dev);
     await initWallet({ withoutStore: true, appName: 'APP NAME HERE' }); // We don't need storage for local development
+    await this.subscribeOnExchangeRatesApi();
     const localeLanguage = navigator.language;
     FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2);
     FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2);
@@ -104,6 +115,14 @@ export default class App extends Mixins(TransactionMixin) {
 
   changeCeresFiatUsage() {
     this.useCeresApiForFiatValues(!this.ceresFiatValuesUsage);
+  }
+
+  get appCurrency() {
+    return this.currency;
+  }
+
+  set appCurrency(value) {
+    this.setFiatCurrency(value);
   }
 }
 </script>
