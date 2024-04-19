@@ -1,8 +1,9 @@
 import WalletAssetsHeadline from '@/components/WalletAssetsHeadline.vue';
+import { DaiCurrency } from '@/consts/currencies';
 
 import { useDescribe, useShallowMount, useMount, useVuex } from '../../utils';
 
-const createStore = () =>
+const createStore = (currency = DaiCurrency, exchangeRate = 1) =>
   useVuex({
     settings: {
       state: () => ({
@@ -11,7 +12,13 @@ const createStore = () =>
           verifiedOnly: false,
           zeroBalance: false,
         },
+        currency: currency.key,
+        fiatExchangeRateObject: { [currency.key]: exchangeRate },
       }),
+      getters: {
+        currencySymbol: () => currency.symbol,
+        exchangeRate: () => exchangeRate,
+      },
       mutations: {
         setFilterOptions: jest.fn(),
       },

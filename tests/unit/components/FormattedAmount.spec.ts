@@ -1,16 +1,23 @@
 import omit from 'lodash/fp/omit';
 
 import FormattedAmount from '@/components/FormattedAmount.vue';
+import { DaiCurrency } from '@/consts/currencies';
 
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_FORMATTED_AMOUNT } from '../../utils/FormattedAmountMock';
 
-const createStore = (shouldBalanceBeHidden = false) =>
+const createStore = (shouldBalanceBeHidden = false, currency = DaiCurrency, exchangeRate = 1) =>
   useVuex({
     settings: {
       state: () => ({
         shouldBalanceBeHidden,
+        currency: currency.key,
+        fiatExchangeRateObject: { [currency.key]: exchangeRate },
       }),
+      getters: {
+        currencySymbol: () => currency.symbol,
+        exchangeRate: () => exchangeRate,
+      },
     },
   });
 

@@ -807,7 +807,7 @@ exports[`FormattedAmount.vue [Is Fiat Value With One Decimal Symbol, value can b
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -844,7 +844,7 @@ exports[`FormattedAmount.vue [Is Fiat Value With One Decimal Symbol; hide balanc
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -881,7 +881,7 @@ exports[`FormattedAmount.vue [Is Fiat Value With One Decimal Symbol]: should be 
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -918,7 +918,7 @@ exports[`FormattedAmount.vue [Is Fiat Value With Two Decimal Symbols (default ro
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -955,7 +955,7 @@ exports[`FormattedAmount.vue [Is Fiat Value With Two Decimal Symbols (default ro
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -1021,7 +1021,7 @@ exports[`FormattedAmount.vue [Is Fiat Value Without Decimals, value can be hidde
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -1058,7 +1058,7 @@ exports[`FormattedAmount.vue [Is Fiat Value Without Decimals; hide balances butt
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -1095,7 +1095,7 @@ exports[`FormattedAmount.vue [Is Fiat Value Without Decimals]: should be rendere
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -1161,7 +1161,7 @@ exports[`FormattedAmount.vue [Is Fiat Value, value can be hidden]: should be ren
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -1198,7 +1198,7 @@ exports[`FormattedAmount.vue [Is Fiat Value; hide balances button was clicked]: 
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -1235,7 +1235,7 @@ exports[`FormattedAmount.vue [Is Fiat Value]: should be rendered correctly 1`] =
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -1272,7 +1272,7 @@ exports[`FormattedAmount.vue [Is Small Fiat Value With Two Decimal Symbols (defa
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
@@ -1309,7 +1309,7 @@ exports[`FormattedAmount.vue [Is Small Fiat Value With Two Decimal Symbols (defa
     <span
       class="formatted-amount__prefix"
     >
-      
+      $
     </span>
      
     <span
