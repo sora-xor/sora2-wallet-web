@@ -164,6 +164,7 @@ const actions = defineActions({
     const { commit } = settingsActionContext(context);
 
     commit.resetExchangeRateSubscription();
+    console.info(`[Exchange Rate API] Fiat rates subscribe.`);
 
     const subscription = CurrencyExchangeRateService.createExchangeRatesSubscription(
       commit.updateFiatExchangeRates,
