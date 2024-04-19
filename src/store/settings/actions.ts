@@ -170,6 +170,7 @@ const actions = defineActions({
       () => {}
     );
     commit.setExchangeRateSubscription(subscription);
+    console.info(`[Exchange Rate API] Fiat rates subscribe.`);
   },
 });
 

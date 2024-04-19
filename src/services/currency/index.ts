@@ -49,7 +49,7 @@ export class CurrencyExchangeRateService {
       duration: 4500,
       customClass: 'sora s-flex',
     });
-    store.commit.wallet.settings.updateFiatExchangeRates({ [Currency.DAI]: 1 });
-    store.commit.wallet.settings.setFiatCurrency(Currency.DAI);
+    store.commit.wallet.settings.updateFiatExchangeRates();
+    store.commit.wallet.settings.setFiatCurrency();
   }
 }
