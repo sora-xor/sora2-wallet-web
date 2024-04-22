@@ -7,6 +7,7 @@ import { CurrencyExchangeRateService } from '@/services/currency';
 
 import { api } from '../../api';
 import { IndexerType, SoraNetwork } from '../../consts';
+import { getCurrenciesState } from '../../consts/currencies';
 import { GDriveStorage } from '../../services/google';
 import { addGDriveWalletLocally } from '../../services/google/wallet';
 import { rootActionContext } from '../../store';
@@ -16,6 +17,7 @@ import { runtimeStorage } from '../../util/storage';
 
 import { settingsActionContext } from './../settings';
 
+import type { FiatExchangeRateObject } from '../../types/currency';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { ActionContext } from 'vuex';
 
@@ -58,6 +60,24 @@ async function switchCurrentIndexer(context: ActionContext<any, any>): Promise<v
     // fallback for fiat values
     await rootDispatch.wallet.account.useCeresApiForFiatValues(true);
   }
+}
+
+function exchangeRatesSuccessHandler(context: ActionContext<any, any>, newRates: FiatExchangeRateObject): void {
+  const { commit } = settingsActionContext(context);
+
+  const currencies = getCurrenciesState(true);
+
+  commit.setCurrencies(currencies);
+  commit.updateFiatExchangeRates(newRates);
+}
+
+function exchangeRatesErrorHandler(context: ActionContext<any, any>): void {
+  const { commit } = settingsActionContext(context);
+
+  const currencies = getCurrenciesState(false);
+
+  commit.setCurrencies(currencies);
+  commit.updateFiatExchangeRates({});
 }
 
 const actions = defineActions({
@@ -166,8 +186,8 @@ const actions = defineActions({
     commit.resetExchangeRateSubscription();
 
     const subscription = CurrencyExchangeRateService.createExchangeRatesSubscription(
-      commit.updateFiatExchangeRates,
-      () => {}
+      (newRates: FiatExchangeRateObject) => exchangeRatesSuccessHandler(context, newRates),
+      () => exchangeRatesErrorHandler(context)
     );
     commit.setExchangeRateSubscription(subscription);
     console.info(`[Exchange Rate API] Fiat rates subscribe.`);
