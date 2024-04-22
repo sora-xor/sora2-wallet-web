@@ -3,35 +3,32 @@ import { timer } from 'rxjs';
 
 import { API_ENDPOINT } from '../../consts/currencies';
 import store from '../../store';
-import { Currency, type FiatExchangeRateObject } from '../../types/currency';
 
-const exchangeRateUpdateInterval = timer(0, 60_000);
+import type { FiatExchangeRateObject } from '../../types/currency';
+
+const exchangeRateUpdateInterval = timer(0, 15 * 60_000); // 15min
 
 export class CurrencyExchangeRateService {
   public static readonly apiEndpoint = API_ENDPOINT;
 
-  public static async getExchangeRateObject(): Promise<Nullable<FiatExchangeRateObject>> {
-    try {
-      const exchangeRatesApi = await fetch(CurrencyExchangeRateService.apiEndpoint, { cache: 'no-store' });
-      const data = await exchangeRatesApi.json();
-      return data?.dai;
-    } catch (error) {
-      this.resetData(error as Error);
-      return null;
-    }
-  }
-
   public static createExchangeRatesSubscription(
-    handler: (entity?: FiatExchangeRateObject) => void,
+    handler: (newRates: FiatExchangeRateObject) => void,
     errorHandler: () => void
   ): VoidFunction {
     const subscription = exchangeRateUpdateInterval.subscribe(async () => {
-      const data = await CurrencyExchangeRateService.getExchangeRateObject();
-      if (!data) {
-        this.resetData();
+      try {
+        const exchangeRatesApi = await fetch(CurrencyExchangeRateService.apiEndpoint, { cache: 'no-store' });
+        const data = (await exchangeRatesApi.json())?.dai;
+
+        if (!data) {
+          this.resetData('No data arrived.');
+          errorHandler();
+        } else {
+          handler(data);
+        }
+      } catch (error) {
+        this.resetData(error as Error);
         errorHandler();
-      } else {
-        handler(data);
       }
     });
 
@@ -41,8 +38,8 @@ export class CurrencyExchangeRateService {
     };
   }
 
-  static resetData(error?: Error): void {
-    console.warn('[Exchange rate API] not available. Now using default option', error);
+  static resetData(error?: Error | string): void {
+    console.warn('[Exchange rate API] not available. Now using default option.', error);
     Notification({
       message: 'Switched to DAI fiat pricing.',
       type: 'error',

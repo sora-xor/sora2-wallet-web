@@ -43,7 +43,7 @@ export enum Currency {
   THB = 'thb',
   TWD = 'twd',
   UAH = 'uah',
-  VEB = 'veb',
+  VEF = 'vef',
   VND = 'vnd',
   XAG = 'xag',
   XAU = 'xau',
@@ -52,3 +52,10 @@ export enum Currency {
 }
 
 export type FiatExchangeRateObject = Record<string, number>;
+
+export interface CurrencyFields {
+  key: Currency;
+  name: string;
+  symbol: string;
+  disabled?: boolean;
+}
