@@ -24,8 +24,11 @@
     <div v-if="selectable" class="check">
       <s-icon name="basic-check-mark-24" size="12px" />
     </div>
-    <div v-if="pinnable || pinned" class="pin" @click="pin">
-      <s-icon name="paperclip-vertical-16" size="16px" />
+    <div v-if="pinned" class="pin" @click="pin">
+      <s-icon name="maps-pin-24" size="24px" />
+    </div>
+    <div v-if="pinnable && !pinned" class="pin" @click="pin">
+      <s-icon name="maps-pin-add-24" size="24px" />
     </div>
   </div>
 </template>
@@ -52,7 +55,7 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
   @Prop({ default: false, type: Boolean }) readonly selected!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly pinnable!: boolean;
+  @Prop({ default: true, type: Boolean }) readonly pinnable!: boolean;
   @Prop({ default: false, type: Boolean }) readonly pinned!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withTabindex!: boolean;
