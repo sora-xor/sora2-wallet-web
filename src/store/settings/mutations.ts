@@ -4,7 +4,7 @@ import { NFTStorage } from 'nft.storage';
 import { api } from '../../api';
 import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions, IndexerType } from '../../consts';
 import { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
-import { Currency } from '../../types/currency';
+import { Currency, type CurrencyFields, type FiatExchangeRateObject } from '../../types/currency';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 
 import type { SettingsState } from './types';
@@ -126,7 +126,10 @@ const mutations = defineMutations<SettingsState>()({
     state.currency = currency ?? Currency.DAI;
     settingsStorage.set('currency', state.currency);
   },
-  updateFiatExchangeRates(state, newRates?: Partial<Record<Currency, number>>) {
+  setCurrencies(state, currencies: CurrencyFields[]): void {
+    state.currencies = currencies;
+  },
+  updateFiatExchangeRates(state, newRates?: FiatExchangeRateObject) {
     state.fiatExchangeRateObject = {
       [Currency.DAI]: 1,
       ...(newRates ?? {}),

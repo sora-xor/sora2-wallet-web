@@ -2,7 +2,7 @@ import { IndexerType } from '@/consts';
 
 import type { SoraNetwork, WalletPermissions, WalletAssetFilters } from '../../consts';
 import type { Alert, ApiKeysObject, IndexerState } from '../../types/common';
-import type { Currency, FiatExchangeRateObject } from '../../types/currency';
+import type { Currency, CurrencyFields, FiatExchangeRateObject } from '../../types/currency';
 import type { NetworkFeesObject } from '@sora-substrate/util';
 import type { NFTStorage } from 'nft.storage';
 import type { Subscription } from 'rxjs';
@@ -25,6 +25,7 @@ export type SettingsState = {
   feeMultiplierAndRuntimeSubscriptions: Nullable<Subscription>;
   nftStorage: Nullable<NFTStorage>;
   currency: Currency;
+  currencies: Array<CurrencyFields>;
   fiatExchangeRateObject: FiatExchangeRateObject;
   exchangeRateSubscription: Nullable<VoidFunction>;
 };

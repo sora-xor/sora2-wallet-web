@@ -1,4 +1,4 @@
-import { Currency } from '@/types/currency';
+import { Currency, type CurrencyFields } from '@/types/currency';
 
 export const DaiCurrency = { key: Currency.DAI, name: 'Dai', symbol: '$' };
 
@@ -47,13 +47,22 @@ export const Currencies = [
   { key: Currency.THB, name: 'Thai Baht', symbol: '฿' },
   { key: Currency.TWD, name: 'New Taiwan Dollar', symbol: 'NT$' },
   { key: Currency.UAH, name: 'Ukrainian hryvnia', symbol: '₴' },
-  { key: Currency.VEB, name: 'Venezuelan bolivar fuerte', symbol: 'Bs.F.' },
+  { key: Currency.VEF, name: 'Venezuelan bolivar fuente', symbol: 'Bs.F.' },
   { key: Currency.VND, name: 'Vietnamese dong', symbol: '₫' },
   { key: Currency.XAG, name: 'Silver', symbol: 'XAG' },
   { key: Currency.XAU, name: 'Gold', symbol: 'XAU' },
-  { key: Currency.SDR, name: 'IMF Special Drawing Rights', symbol: 'SDR' },
   { key: Currency.ZAR, name: 'South African Rand', symbol: 'R' },
-];
+] as Array<CurrencyFields>;
+
+export function getCurrenciesState(isServiceUp: boolean): Array<CurrencyFields> {
+  const disabled = !isServiceUp;
+
+  return Currencies.map((currency: CurrencyFields) => {
+    if (currency.key === DaiCurrency.key) return { ...currency, disabled: false };
+
+    return { ...currency, disabled };
+  });
+}
 
 export const API_ENDPOINT =
-  'https://api.coingecko.com/api/v3/simple/price?ids=dai&vs_currencies=btc%2Ceth%2Cusd%2Caed%2Cars%2Caud%2Cbdt%2Cbhd%2Cbmd%2Cbrl%2Ccad%2Cchf%2Cclp%2Ccny%2Cczk%2Cdkk%2Ceur%2Cgbp%2Cgel%2Chkd%2Chuf%2Cidr%2Cils%2Cinr%2Cjpy%2Ckrw%2Ckwd%2Clkr%2Cmmk%2Cmxn%2Cmyr%2Cngn%2Cnok%2Cnzd%2Cphp%2Cpkr%2Cpln%2Crub%2Csar%2Csek%2Csgd%2Cthb%2Ctry%2Ctwd%2Cuah%2Cvef%2Cvnd%2Czar%2Cxdr%2Cxag%2Cxau%2Cveb';
+  'https://api.coingecko.com/api/v3/simple/price?ids=dai&vs_currencies=btc%2Ceth%2Cusd%2Caed%2Cars%2Caud%2Cbdt%2Cbhd%2Cbmd%2Cbrl%2Ccad%2Cchf%2Cclp%2Ccny%2Cczk%2Cdkk%2Ceur%2Cgbp%2Cgel%2Chkd%2Chuf%2Cidr%2Cils%2Cinr%2Cjpy%2Ckrw%2Ckwd%2Clkr%2Cmmk%2Cmxn%2Cmyr%2Cngn%2Cnok%2Cnzd%2Cphp%2Cpkr%2Cpln%2Crub%2Csar%2Csek%2Csgd%2Cthb%2Ctry%2Ctwd%2Cuah%2Cvef%2Cvnd%2Czar%2Cxdr%2Cxag%2Cxau';
