@@ -76,7 +76,7 @@ const actions = defineActions({
     await runParallel(context, [
       'transactions/resetActiveTxs',
       'account/resetWalletAvailabilitySubscription',
-      'account/resetAccountPassphraseTimer',
+      'account/resetAccountPassphrase',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);
   },

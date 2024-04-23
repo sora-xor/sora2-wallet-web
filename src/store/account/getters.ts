@@ -92,11 +92,11 @@ const getters = defineGetters<AccountState>()({
     }
     return null;
   },
-  passphraseTimeoutKey(...args): PassphraseTimeout {
+  passwordTimeoutKey(...args): PassphraseTimeout {
     const { state } = accountGetterContext(args);
 
     const key = Object.keys(PassphraseTimeoutDuration).find(
-      (key) => PassphraseTimeoutDuration[key] === state.passphraseTimeout
+      (key) => PassphraseTimeoutDuration[key] === state.passwordTimeout
     );
 
     if (!key) return PassphraseTimeout.FIFTEEN_MINUTES;

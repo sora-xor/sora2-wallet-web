@@ -183,18 +183,25 @@ const mutations = defineMutations<AccountState>()({
       [state.address]: null,
     };
   },
-  setPassphraseTimeout(state, timeout: number): void {
-    state.passphraseTimeout = timeout;
-    settingsStorage.set('passphraseTimeout', JSON.stringify(timeout));
+  setPasswordTimeout(state, timeout: number): void {
+    state.passwordTimeout = timeout;
+    settingsStorage.set('passwordTimeout', JSON.stringify(timeout));
+  },
+  setPasswordSave(state, flag: boolean): void {
+    state.savePassword = flag;
+    settingsStorage.set('savePassword', JSON.stringify(flag));
   },
   setAccountPassphraseTimer(state, timer: NodeJS.Timeout): void {
-    state.accountPassphraseTimer = timer;
+    state.accountPasswordTimer = timer;
+  },
+  setAccountPasswordTimestamp(state, timestamp?: number) {
+    state.accountPasswordTimestamp = timestamp ?? null;
   },
   resetAccountPassphraseTimer(state): void {
-    if (state.accountPassphraseTimer) {
-      clearTimeout(state.accountPassphraseTimer);
-      state.accountPassphraseTimer = null;
+    if (state.accountPasswordTimer) {
+      clearTimeout(state.accountPasswordTimer);
     }
+    state.accountPasswordTimer = null;
   },
   /** JUST FOR TESTING PURPOSES */
   setIsDesktop(state, value: boolean): void {

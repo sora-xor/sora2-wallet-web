@@ -6,69 +6,55 @@
     append-to-body
   >
     <div class="account-signature-settings">
-      <div class="account-signature-option">
-        <label class="account-signature-option-label">
-          <s-switch v-model="confirmModel" />
-          <span>{{ t('signatureSettings.option.confirmation.title') }}</span>
-        </label>
-        <span class="account-signature-option-description">
-          {{ t('signatureSettings.option.confirmation.description') }}
-        </span>
-        <span v-if="confirmModel" class="account-signature-option-description info">
-          {{ t('signatureSettings.speedUpHint') }}
-        </span>
-      </div>
-
-      <template v-if="!isExternal">
+      <s-card shadow="always" size="medium" border-radius="mini" pressed>
         <div class="account-signature-option">
-          <label class="account-signature-option-label">
+          <label class="account-signature-option-title">
+            <s-switch v-model="confirmModel" />
+            <span>{{ t('signatureSettings.option.confirmation.title') }}</span>
+          </label>
+          <span class="account-signature-option-description">
+            {{ t('signatureSettings.option.confirmation.description') }}
+          </span>
+        </div>
+      </s-card>
+
+      <s-card shadow="always" size="medium" border-radius="mini" pressed>
+        <div class="account-signature-option">
+          <label class="account-signature-option-title">
             <s-switch v-model="signatureModel" />
             <span>{{ t('signatureSettings.option.signature.title') }}</span>
           </label>
           <span class="account-signature-option-description">
             {{ t('signatureSettings.option.signature.description') }}
           </span>
-          <span v-if="signatureModel" class="account-signature-option-description info">
-            {{ t('signatureSettings.speedUpHint') }}
-          </span>
         </div>
+      </s-card>
 
+      <s-card shadow="always" size="medium" border-radius="mini" pressed>
         <div class="account-signature-option">
-          <span class="account-signature-option-label">{{ t('signatureSettings.option.password.title') }}</span>
-          <s-tabs v-model="passhraseTimeoutModel" type="rounded" class="password-timeouts">
-            <s-tab v-for="name in PassphraseTimeout" :key="name" :label="name" :name="name" />
-          </s-tabs>
+          <account-password-timeout />
+
           <span class="account-signature-option-description">
             {{ t('signatureSettings.option.password.description') }}
           </span>
-          <span v-if="isUnlimitedTimeout" class="account-signature-option-description warning">
-            {{ t('signatureSettings.option.password.security') }}
-          </span>
-          <span v-if="isSavedAccountPassphrase" class="account-signature-option-description info">
-            {{ t('signatureSettings.option.password.reset') }}
-          </span>
-        </div>
 
-        <div class="account-signature-option">
-          <s-button v-if="isSavedAccountPassphrase" type="secondary" @click="resetAccountPassphrase">
-            {{ t('signatureSettings.password.reset') }}
+          <s-button
+            v-if="!passphrase && savePassword"
+            type="primary"
+            class="account-signature-settings-button"
+            @click="openConfirmDialog"
+          >
+            {{ t('signatureSettings.option.password.save') }}
           </s-button>
-          <template v-else>
-            <s-button type="primary" @click="openConfirmDialog">
-              {{ t('signatureSettings.password.enter') }}
-            </s-button>
-            <span class="account-signature-option-description info">
-              {{ t('signatureSettings.password.enterHint') }}
-            </span>
-          </template>
         </div>
-      </template>
+      </s-card>
     </div>
 
     <account-confirm-dialog
       :visible.sync="accountConfirmVisibility"
       :account="account"
       :loading="loading"
+      :passphrase="passphrase"
       @confirm="saveAccountPassphrase"
     />
   </dialog-base>
@@ -77,7 +63,6 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
-import { PassphraseTimeout, PassphraseTimeoutDuration, DefaultPassphraseTimeout } from '../../consts';
 import { action, getter, state, mutation } from '../../store/decorators';
 import { delay } from '../../util';
 import DialogBase from '../DialogBase.vue';
@@ -86,6 +71,7 @@ import LoadingMixin from '../mixins/LoadingMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
 
 import AccountConfirmDialog from './ConfirmDialog.vue';
+import AccountPasswordTimeout from './PasswordTimeout.vue';
 
 import type { PolkadotJsAccount } from '../../types/common';
 
@@ -93,27 +79,24 @@ import type { PolkadotJsAccount } from '../../types/common';
   components: {
     DialogBase,
     AccountConfirmDialog,
+    AccountPasswordTimeout,
   },
 })
 export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, LoadingMixin, NotificationMixin) {
   @getter.account.account account!: PolkadotJsAccount;
-  @getter.account.passphrase private passhprase!: Nullable<string>;
-  @getter.account.passphraseTimeoutKey private passphraseTimeoutKey!: PassphraseTimeout;
+  @getter.account.passphrase passphrase!: Nullable<string>;
 
   @state.transactions.isConfirmTxDialogEnabled private isConfirmTxDialogEnabled!: boolean;
   @state.transactions.isSignTxDialogEnabled private isSignTxDialogEnabled!: boolean;
   @state.account.isExternal isExternal!: boolean;
+  @state.account.savePassword savePassword!: boolean;
 
   @mutation.transactions.setConfirmTxDialogEnabled private setConfirmTxDialogEnabled!: (flag: boolean) => void;
   @mutation.transactions.setSignTxDialogEnabled private setSignTxDialogEnabled!: (flag: boolean) => void;
-  @mutation.account.setPassphraseTimeout private setPassphraseTimeout!: (timeout: number) => void;
 
-  @action.account.resetAccountPassphrase resetAccountPassphrase!: FnWithoutArgs;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
   @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
   @action.account.lockAccountPair private lockAccountPair!: FnWithoutArgs;
-
-  readonly PassphraseTimeout = PassphraseTimeout;
 
   accountConfirmVisibility = false;
 
@@ -131,24 +114,6 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
 
   set signatureModel(value: boolean) {
     this.setSignTxDialogEnabled(value);
-  }
-
-  get passhraseTimeoutModel(): PassphraseTimeout {
-    return this.passphraseTimeoutKey;
-  }
-
-  set passhraseTimeoutModel(name: PassphraseTimeout) {
-    const duration = PassphraseTimeoutDuration[name] ?? DefaultPassphraseTimeout;
-    this.resetAccountPassphrase();
-    this.setPassphraseTimeout(duration);
-  }
-
-  get isUnlimitedTimeout(): boolean {
-    return this.passhraseTimeoutModel === PassphraseTimeout.UNLIMITED;
-  }
-
-  get isSavedAccountPassphrase(): boolean {
-    return !!this.passhprase;
   }
 
   openConfirmDialog(): void {
@@ -173,52 +138,32 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
 }
 </script>
 
-<style lang="scss">
-.password-timeouts {
-  .el-tabs__header {
-    margin-bottom: 0;
-  }
-
-  &.s-tabs.s-rounded .el-tabs__nav-wrap .el-tabs__item {
-    text-transform: initial;
-    padding: 0 $basic-spacing-big;
-  }
-}
-</style>
-
 <style lang="scss" scoped>
 .account-signature-settings {
   display: flex;
   flex-flow: column nowrap;
   gap: $basic-spacing-big;
 
-  &__button {
+  &-button {
     width: 100%;
+    margin-top: $basic-spacing;
   }
 }
 .account-signature-option {
   display: flex;
   flex-flow: column nowrap;
   gap: $basic-spacing;
-
   font-weight: 300;
 
-  &-label {
+  &-title {
     display: flex;
     gap: $basic-spacing-small;
-    cursor: pointer;
     font-size: var(--s-font-size-medium);
+    cursor: pointer;
   }
 
   &-description {
     font-size: var(--s-font-size-extra-small);
-
-    &.info {
-      color: var(--s-color-status-info);
-    }
-    &.warning {
-      color: var(--s-color-status-warning);
-    }
   }
 }
 </style>

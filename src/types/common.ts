@@ -97,9 +97,10 @@ export type SettingsStorageKey =
   | 'book'
   | 'indexerType'
   | 'ceresFiatValues'
+  | 'currency'
   | 'signTxDialogEnabled'
   | 'confirmTxDialogEnabled'
-  | 'passphraseTimeout'
-  | 'currency';
+  | 'passwordTimeout'
+  | 'savePassword';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';

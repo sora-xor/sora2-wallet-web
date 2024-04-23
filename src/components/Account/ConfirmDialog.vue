@@ -8,14 +8,7 @@
     <s-form class="confirm-dialog__form" @submit.native.prevent="handleConfirm">
       <wallet-account :polkadot-account="account" />
       <password-input v-if="!passphrase" ref="passwordInput" v-model="password" :disabled="loading" autofocus />
-      <div
-        v-if="savePassphrase && !(passphrase && isUnlimitedPassphraseDuration)"
-        class="confirm-dialog__save-password"
-      >
-        <s-switch v-model="savePassword" />
-        <span v-if="!passphrase">{{ t('desktop.dialog.savePasswordText', { duration: passphraseTimeout }) }}</span>
-        <span v-else>{{ t('desktop.dialog.extendPasswordText', { duration: passphraseTimeout }) }}</span>
-      </div>
+      <account-password-timeout v-if="savePassphrase" />
       <s-button
         type="primary"
         native-type="submit"
@@ -32,12 +25,13 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Watch, Ref } from 'vue-property-decorator';
 
-import { ObjectInit, PassphraseTimeout } from '../../consts';
+import { ObjectInit } from '../../consts';
 import DialogBase from '../DialogBase.vue';
 import PasswordInput from '../Input/Password.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 
+import AccountPasswordTimeout from './PasswordTimeout.vue';
 import WalletAccount from './WalletAccount.vue';
 
 import type { PolkadotJsAccount } from '../../types/common';
@@ -47,6 +41,7 @@ import type { PolkadotJsAccount } from '../../types/common';
     DialogBase,
     WalletAccount,
     PasswordInput,
+    AccountPasswordTimeout,
   },
 })
 export default class AccountConfirmDialog extends Mixins(DialogMixin, TranslationMixin) {
@@ -54,7 +49,6 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
   @Prop({ default: false, type: Boolean }) readonly savePassphrase!: boolean;
   @Prop({ default: '', type: String }) readonly passphrase!: string;
-  @Prop({ default: '', type: String }) readonly passphraseTimeout!: PassphraseTimeout;
   @Prop({ default: '', type: String }) readonly confirmButtonText!: string;
 
   @Ref('passwordInput') readonly passwordInput!: any;
@@ -82,10 +76,6 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
     this.model = value;
   }
 
-  get isUnlimitedPassphraseDuration(): boolean {
-    return this.passphraseTimeout === PassphraseTimeout.UNLIMITED;
-  }
-
   get confirmText(): string {
     return this.confirmButtonText || this.t('confirmText');
   }
@@ -109,11 +99,6 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
     display: flex;
     flex-flow: column nowrap;
     gap: $basic-spacing-medium;
-  }
-
-  &__save-password {
-    @include switch-block;
-    padding: 0 #{$basic-spacing-small};
   }
 
   &__button {

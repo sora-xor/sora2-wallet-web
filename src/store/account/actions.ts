@@ -357,23 +357,34 @@ const actions = defineActions({
   async setAccountPassphrase(context, passphrase: string): Promise<void> {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
     const passphraseEncoded = AES.encrypt(passphrase, key).toString();
+    const passwordTimestamp = Date.now();
 
-    const { commit, state } = accountActionContext(context);
+    const { commit, dispatch, state } = accountActionContext(context);
 
-    commit.resetAccountPassphraseTimer();
+    dispatch.resetAccountPassphrase();
+
     commit.updateAddressGeneratedKey(key);
     commit.setAccountPassphrase(passphraseEncoded);
 
-    if (state.passphraseTimeout) {
-      const timer = setTimeout(commit.resetAccountPassphrase, state.passphraseTimeout);
-      commit.setAccountPassphraseTimer(timer);
-    }
+    const timer = setTimeout(dispatch.resetAccountPassphrase, state.passwordTimeout);
+    commit.setAccountPassphraseTimer(timer);
+    commit.setAccountPasswordTimestamp(passwordTimestamp);
   },
 
   resetAccountPassphrase(context): void {
     const { commit } = accountActionContext(context);
     commit.resetAccountPassphraseTimer();
     commit.resetAccountPassphrase();
+    commit.setAccountPasswordTimestamp();
+  },
+
+  setAccountPasswordSave(context, flag: boolean): void {
+    const { commit, dispatch } = accountActionContext(context);
+    commit.setPasswordSave(flag);
+
+    if (!flag) {
+      dispatch.resetAccountPassphrase();
+    }
   },
 
   lockAccountPair(context): void {
@@ -543,11 +554,6 @@ const actions = defineActions({
   async resetWalletAvailabilitySubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
     commit.resetWalletAvailabilitySubscription();
-  },
-  /** It's used **only** for subscriptions module */
-  async resetAccountPassphraseTimer(context): Promise<void> {
-    const { commit } = accountActionContext(context);
-    commit.resetAccountPassphraseTimer();
   },
 });
 

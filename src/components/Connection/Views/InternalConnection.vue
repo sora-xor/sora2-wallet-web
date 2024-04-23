@@ -32,7 +32,6 @@
       :visible.sync="accountLoginVisibility"
       :account="accountLoginData"
       :loading="loading"
-      :passphrase-timeout="passphraseTimeoutKey"
       @confirm="handleAccountLogin"
     />
   </wallet-base>
@@ -79,7 +78,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
   @getter.account.isLoggedIn private isLoggedIn!: boolean;
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
-  @getter.account.passphraseTimeoutKey passphraseTimeoutKey!: PassphraseTimeout;
+  @getter.account.passwordTimeoutKey passwordTimeoutKey!: PassphraseTimeout;
 
   @state.account.selectedWallet private selectedWallet!: AppWallet;
 

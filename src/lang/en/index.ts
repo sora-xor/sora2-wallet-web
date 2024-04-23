@@ -509,8 +509,8 @@ export default {
     dialog: {
       confirmTitle: 'Confirm with password',
       confirmButton: 'Sign Transaction',
-      savePasswordText: 'Remember my password for {duration} period',
-      extendPasswordText: 'Extend period without password by {duration}',
+      savePasswordText: 'Remember my password',
+      extendPasswordText: 'Extend period without password',
     },
     errorMessages: {
       password: 'Password did not match',
@@ -581,30 +581,22 @@ export default {
     myPositions: 'my positions',
     synthetics: 'synthetic tokens',
   },
+  disableText: 'Disable',
   signatureSettings: {
     title: 'Transaction signature settings',
-    speedUpHint: 'You can disable this option to speed up the transaction signing process.',
-    password: {
-      reset: 'Reset password',
-      enter: 'Enter password',
-      enterHint:
-        'You can enter your account password in advance so you do not have to enter it when signing a transaction.',
-    },
     option: {
       confirmation: {
-        title: 'Confirmation dialog',
-        description: 'Shows a confirmation dialog with transaction details before transaction signing.',
+        title: 'Transaction details popup',
+        description: 'A popup screen which displays details about the transactions before the signing.',
       },
       signature: {
-        title: 'Signature dialog',
-        description:
-          'Shows transaction signature dialog using password. If you do not have a saved account password, this dialog will be shown anyway.',
+        title: 'Signature confirmation popup',
+        description: 'A popup screen which prompts you to sign the transaction.',
       },
       password: {
         title: 'Password retention period',
         description: "Retention period for your account's password while the application is running.",
-        security: 'Make sure that no one else has access to your device while you are using the application.',
-        reset: 'Your account password will be reset once the period is changed.',
+        save: 'Save password',
       },
     },
   },

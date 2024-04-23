@@ -2,7 +2,7 @@
   <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
       <s-button type="action" :tooltip="t('signatureSettings.title')" @click="handleAccountSignatureSettings">
-        <s-icon name="grid-block-align-left-24" size="28" />
+        <s-icon name="basic-settings-24" size="28" />
       </s-button>
       <s-button
         v-if="permissions.createAssets"
