@@ -357,7 +357,6 @@ const actions = defineActions({
   async setAccountPassphrase(context, passphrase: string): Promise<void> {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
     const passphraseEncoded = AES.encrypt(passphrase, key).toString();
-    const passwordTimestamp = Date.now();
 
     const { commit, dispatch, state } = accountActionContext(context);
 
@@ -368,14 +367,12 @@ const actions = defineActions({
 
     const timer = setTimeout(dispatch.resetAccountPassphrase, state.passwordTimeout);
     commit.setAccountPassphraseTimer(timer);
-    commit.setAccountPasswordTimestamp(passwordTimestamp);
   },
 
   resetAccountPassphrase(context): void {
     const { commit } = accountActionContext(context);
     commit.resetAccountPassphraseTimer();
     commit.resetAccountPassphrase();
-    commit.setAccountPasswordTimestamp();
   },
 
   setAccountPasswordSave(context, flag: boolean): void {

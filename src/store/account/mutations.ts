@@ -194,9 +194,6 @@ const mutations = defineMutations<AccountState>()({
   setAccountPassphraseTimer(state, timer: NodeJS.Timeout): void {
     state.accountPasswordTimer = timer;
   },
-  setAccountPasswordTimestamp(state, timestamp?: number) {
-    state.accountPasswordTimestamp = timestamp ?? null;
-  },
   resetAccountPassphraseTimer(state): void {
     if (state.accountPasswordTimer) {
       clearTimeout(state.accountPasswordTimer);

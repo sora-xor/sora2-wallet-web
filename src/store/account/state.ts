@@ -50,7 +50,6 @@ export function initialState(): AccountState {
     addressPassphraseMapping: {},
     passwordTimeout: passwordTimeout ? JSON.parse(passwordTimeout) : DefaultPassphraseTimeout,
     accountPasswordTimer: null,
-    accountPasswordTimestamp: null,
     savePassword: savePassword ? JSON.parse(savePassword) : true,
   };
 }

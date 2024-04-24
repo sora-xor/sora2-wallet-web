@@ -2,75 +2,42 @@
   <div class="save-password">
     <label class="save-password-option">
       <s-switch v-model="savePasswordModel" />
-      <span>{{ t('desktop.dialog.savePasswordText') }} ({{ left }} left)</span>
+      <div :class="['save-password-option-description', { hint }]">
+        <span class="save-password-option-title">{{ t('signatureSettings.signature.title') }}</span>
+        <span v-if="hint" class="save-password-option-hint">{{ t('signatureSettings.hint') }}</span>
+      </div>
     </label>
-    <s-tabs v-model="passwordTimeoutModel" type="rounded" class="save-password-duration">
-      <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
-    </s-tabs>
+    <slot />
+    <div v-if="savePasswordModel" class="save-password-duration">
+      <span class="save-password-duration-title">{{ t('signatureSettings.disable') }}:</span>
+      <s-tabs v-model="passwordTimeoutModel" type="rounded" class="save-password-durations">
+        <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
+      </s-tabs>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { PassphraseTimeout, PassphraseTimeoutDuration, DefaultPassphraseTimeout } from '../../consts';
 import { action, getter, mutation, state } from '../../store/decorators';
 import TranslationMixin from '../mixins/TranslationMixin';
 
-dayjs.extend(duration);
-dayjs.extend(relativeTime);
-
 @Component
 export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
+  @Prop({ default: false, type: Boolean }) readonly hint!: boolean;
+
+  @state.transactions.isSignTxDialogEnabled private isSignTxDialogEnabled!: boolean;
+  @mutation.transactions.setSignTxDialogEnabled private setSignTxDialogEnabled!: (flag: boolean) => void;
+
   @state.account.savePassword private savePassword!: boolean;
-  @state.account.passwordTimeout private passwordTimeout!: number;
-  @state.account.accountPasswordTimestamp private accountPasswordTimestamp!: Nullable<number>;
   @action.account.setAccountPasswordSave private setAccountPasswordSave!: (flag: boolean) => void;
 
   @getter.account.passwordTimeoutKey private passwordTimeoutKey!: PassphraseTimeout;
   @mutation.account.setPasswordTimeout private setPasswordTimeout!: (timeout: number) => void;
 
   readonly durations = PassphraseTimeout;
-
-  private timer: Nullable<NodeJS.Timer> = null;
-  private time: Nullable<number> = null;
-
-  created(): void {
-    this.createTimer();
-  }
-
-  private createTimer(): void {
-    this.clearTimer();
-    this.timer = setInterval(() => {
-      this.time = Date.now();
-    }, 1000);
-  }
-
-  private clearTimer(): void {
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
-    this.timer = null;
-    this.time = null;
-  }
-
-  get passwordSecondsLeft(): number {
-    if (!(this.time && this.accountPasswordTimestamp)) return 0;
-
-    const end = this.passwordTimeout + this.accountPasswordTimestamp;
-    const left = Math.floor((end - this.time) / 1000);
-
-    return Math.max(left, 0);
-  }
-
-  get left(): string {
-    if (!this.passwordSecondsLeft) return '';
-
-    return dayjs.duration(this.passwordSecondsLeft, 'seconds').humanize();
-  }
 
   get savePasswordModel(): boolean {
     return this.savePassword;
@@ -92,14 +59,13 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss">
-.password-timeouts {
+.save-password-durations {
   .el-tabs__header {
     margin-bottom: 0;
   }
 
   &.s-tabs.s-rounded .el-tabs__nav-wrap .el-tabs__item {
     text-transform: initial;
-    padding: 0 $basic-spacing-big;
   }
 }
 </style>
@@ -108,11 +74,45 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
 .save-password {
   display: flex;
   flex-flow: column nowrap;
-  gap: $basic-spacing;
+  gap: $basic-spacing-medium;
+}
 
-  &-option {
-    @include switch-block;
-    padding: 0;
+.save-password-option {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: $basic-spacing-medium;
+  cursor: pointer;
+
+  &-description {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: flex-start;
+    font-size: var(--s-font-size-medium);
+    font-weight: 300;
+
+    &.hint {
+      font-size: var(--s-font-size-small);
+    }
+  }
+  &-title {
+    color: var(--s-color-base-content-primary);
+  }
+  &-hint {
+    color: var(--s-color-base-content-secondary);
+    font-size: var(--s-font-size-extra-small);
+  }
+}
+
+.save-password-duration {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: $basic-spacing-small;
+
+  &-title {
+    font-size: var(--s-font-size-extra-small);
+    font-weight: 700;
+    text-transform: uppercase;
   }
 }
 </style>

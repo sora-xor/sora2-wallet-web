@@ -584,20 +584,17 @@ export default {
   disableText: 'Disable',
   signatureSettings: {
     title: 'Transaction signature settings',
-    option: {
-      confirmation: {
-        title: 'Transaction details popup',
-        description: 'A popup screen which displays details about the transactions before the signing.',
-      },
-      signature: {
-        title: 'Signature confirmation popup',
-        description: 'A popup screen which prompts you to sign the transaction.',
-      },
-      password: {
-        title: 'Password retention period',
-        description: "Retention period for your account's password while the application is running.",
-        save: 'Save password',
-      },
+    hint: 'You can enable this back in account settings',
+    disable: 'Disable on',
+    disabled: 'Disabled for',
+    confirmation: {
+      title: 'Transaction details popup',
+      description: 'A popup screen which displays details about the transactions before the signing.',
     },
+    signature: {
+      title: 'Disable password confirmation step',
+      description: 'Enable or disable the need to enter your password during the signature popup in transactions.',
+    },
+    enterPassword: 'Enter password',
   },
 };

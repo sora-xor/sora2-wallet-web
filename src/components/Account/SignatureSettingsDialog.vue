@@ -10,33 +10,21 @@
         <div class="account-signature-option">
           <label class="account-signature-option-title">
             <s-switch v-model="confirmModel" />
-            <span>{{ t('signatureSettings.option.confirmation.title') }}</span>
+            <span>{{ t('signatureSettings.confirmation.title') }}</span>
           </label>
           <span class="account-signature-option-description">
-            {{ t('signatureSettings.option.confirmation.description') }}
+            {{ t('signatureSettings.confirmation.description') }}
           </span>
         </div>
       </s-card>
 
       <s-card shadow="always" size="medium" border-radius="mini" pressed>
         <div class="account-signature-option">
-          <label class="account-signature-option-title">
-            <s-switch v-model="signatureModel" />
-            <span>{{ t('signatureSettings.option.signature.title') }}</span>
-          </label>
-          <span class="account-signature-option-description">
-            {{ t('signatureSettings.option.signature.description') }}
-          </span>
-        </div>
-      </s-card>
-
-      <s-card shadow="always" size="medium" border-radius="mini" pressed>
-        <div class="account-signature-option">
-          <account-password-timeout />
-
-          <span class="account-signature-option-description">
-            {{ t('signatureSettings.option.password.description') }}
-          </span>
+          <account-password-timeout>
+            <span class="account-signature-option-description">
+              {{ t('signatureSettings.signature.description') }}
+            </span>
+          </account-password-timeout>
 
           <s-button
             v-if="!passphrase && savePassword"
@@ -44,7 +32,7 @@
             class="account-signature-settings-button"
             @click="openConfirmDialog"
           >
-            {{ t('signatureSettings.option.password.save') }}
+            {{ t('signatureSettings.enterPassword') }}
           </s-button>
         </div>
       </s-card>
@@ -86,13 +74,11 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
   @getter.account.account account!: PolkadotJsAccount;
   @getter.account.passphrase passphrase!: Nullable<string>;
 
-  @state.transactions.isConfirmTxDialogEnabled private isConfirmTxDialogEnabled!: boolean;
-  @state.transactions.isSignTxDialogEnabled private isSignTxDialogEnabled!: boolean;
   @state.account.isExternal isExternal!: boolean;
   @state.account.savePassword savePassword!: boolean;
 
+  @state.transactions.isConfirmTxDialogEnabled private isConfirmTxDialogEnabled!: boolean;
   @mutation.transactions.setConfirmTxDialogEnabled private setConfirmTxDialogEnabled!: (flag: boolean) => void;
-  @mutation.transactions.setSignTxDialogEnabled private setSignTxDialogEnabled!: (flag: boolean) => void;
 
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
   @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
@@ -106,14 +92,6 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
 
   set confirmModel(value: boolean) {
     this.setConfirmTxDialogEnabled(value);
-  }
-
-  get signatureModel(): boolean {
-    return this.isSignTxDialogEnabled;
-  }
-
-  set signatureModel(value: boolean) {
-    this.setSignTxDialogEnabled(value);
   }
 
   openConfirmDialog(): void {
