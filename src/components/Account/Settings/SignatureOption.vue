@@ -1,12 +1,11 @@
 <template>
-  <div :class="['save-password', { disabled }]">
-    <label :class="['save-password-option', { disabled }]">
-      <s-switch v-model="model" :disabled="disabled" />
-      <div :class="['save-password-option-description', { hint }]">
-        <span class="save-password-option-title">{{ t('accountSettings.signature.title') }}</span>
-        <span v-if="hint" class="save-password-option-hint">{{ t('accountSettings.hint') }}</span>
-      </div>
-    </label>
+  <account-settings-option
+    :disabled="disabled"
+    :title="t('accountSettings.signature.title')"
+    :hint="t('accountSettings.hint')"
+    :with-hint="withHint"
+    v-model="model"
+  >
     <slot />
     <div v-if="disabled || model" class="save-password-duration">
       <template v-if="passwordResetDate">
@@ -28,19 +27,25 @@
         </s-tabs>
       </template>
     </div>
-  </div>
+  </account-settings-option>
 </template>
 
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { PassphraseTimeout, PassphraseTimeoutDuration, DefaultPassphraseTimeout } from '../../consts';
-import { action, getter, mutation, state } from '../../store/decorators';
-import TranslationMixin from '../mixins/TranslationMixin';
+import { PassphraseTimeout, PassphraseTimeoutDuration, DefaultPassphraseTimeout } from '../../../consts';
+import { action, getter, mutation, state } from '../../../store/decorators';
+import TranslationMixin from '../../mixins/TranslationMixin';
 
-@Component
-export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
-  @Prop({ default: false, type: Boolean }) readonly hint!: boolean;
+import AccountSettingsOption from './Option.vue';
+
+@Component({
+  components: {
+    AccountSettingsOption,
+  },
+})
+export default class AccountSignatureOption extends Mixins(TranslationMixin) {
+  @Prop({ default: false, type: Boolean }) readonly withHint!: boolean;
   @Prop({ default: false, type: Boolean }) readonly disabled!: boolean;
 
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
@@ -103,46 +108,6 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
 </style>
 
 <style lang="scss" scoped>
-.save-password {
-  display: flex;
-  flex-flow: column nowrap;
-  gap: $basic-spacing-medium;
-
-  &.disabled {
-    opacity: 0.6;
-  }
-}
-
-.save-password-option {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: center;
-  gap: $basic-spacing-medium;
-
-  &:not(.disabled) {
-    cursor: pointer;
-  }
-
-  &-description {
-    display: flex;
-    flex-flow: column nowrap;
-    align-items: flex-start;
-    font-size: var(--s-font-size-medium);
-    font-weight: 300;
-
-    &.hint {
-      font-size: var(--s-font-size-small);
-    }
-  }
-  &-title {
-    color: var(--s-color-base-content-primary);
-  }
-  &-hint {
-    color: var(--s-color-base-content-secondary);
-    font-size: var(--s-font-size-extra-small);
-  }
-}
-
 .save-password-duration {
   display: flex;
   flex-flow: column nowrap;

@@ -25,11 +25,11 @@
             <span>{{ t('accountSettings.googleOnly') }}</span>
           </div>
 
-          <account-password-timeout :disabled="isExternal">
+          <account-signature-option :disabled="isExternal">
             <span class="account-signature-option-description">
               {{ t('accountSettings.signature.description') }}
             </span>
-          </account-password-timeout>
+          </account-signature-option>
 
           <s-button
             v-if="!isExternal && !passphrase && isSignTxDialogDisabled"
@@ -64,13 +64,13 @@ import LoadingMixin from '../mixins/LoadingMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
 
 import AccountConfirmDialog from './ConfirmDialog.vue';
-import AccountPasswordTimeout from './PasswordTimeout.vue';
+import AccountSignatureOption from './Settings/SignatureOption.vue';
 
 @Component({
   components: {
     DialogBase,
     AccountConfirmDialog,
-    AccountPasswordTimeout,
+    AccountSignatureOption,
   },
 })
 export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMixin, NotificationMixin) {

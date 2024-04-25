@@ -8,7 +8,7 @@
     <s-form class="confirm-dialog__form" @submit.native.prevent="handleConfirm">
       <wallet-account :polkadot-account="account" />
       <password-input v-if="!passphrase" ref="passwordInput" v-model="password" :disabled="loading" autofocus />
-      <account-password-timeout v-if="withTimeout" />
+      <account-signature-option v-if="withTimeout" with-hint />
       <s-button
         type="primary"
         native-type="submit"
@@ -31,7 +31,7 @@ import PasswordInput from '../Input/Password.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 
-import AccountPasswordTimeout from './PasswordTimeout.vue';
+import AccountSignatureOption from './Settings/SignatureOption.vue';
 import WalletAccount from './WalletAccount.vue';
 
 import type { PolkadotJsAccount } from '../../types/common';
@@ -41,7 +41,7 @@ import type { PolkadotJsAccount } from '../../types/common';
     DialogBase,
     WalletAccount,
     PasswordInput,
-    AccountPasswordTimeout,
+    AccountSignatureOption,
   },
 })
 export default class AccountConfirmDialog extends Mixins(DialogMixin, TranslationMixin) {
