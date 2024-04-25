@@ -588,11 +588,11 @@ export default {
     disable: 'Disable on',
     disabled: 'Disabled until',
     confirmation: {
-      title: 'Transaction details popup',
+      title: 'Show transaction details',
       description: 'A popup screen which displays details about the transactions before the signing.',
     },
     signature: {
-      title: 'Disable password confirmation step',
+      title: 'Disable password confirmation',
       description: 'Enable or disable the need to enter your password during the signature popup in transactions.',
     },
     enterPassword: 'Enter password',

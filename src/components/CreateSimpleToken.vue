@@ -55,6 +55,7 @@
       <info-line :label="t('createToken.tokenName.placeholder')" :value="tokenName.trim()" />
       <info-line :label="t('createToken.tokenSupply.placeholder')" :value="formattedTokenSupply" />
       <info-line :label="t('createToken.extensibleSupply.placeholder')" :value="extensibleSupply ? 'Yes' : 'No'" />
+      <account-confirmation-option with-hint class="wallet-settings-create-token_action" />
       <s-button
         class="wallet-settings-create-token_action s-typography-button--large"
         type="primary"
@@ -79,6 +80,7 @@ import { api } from '../api';
 import { RouteNames, Step } from '../consts';
 import { mutation, state } from '../store/decorators';
 
+import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
 import InfoLine from './InfoLine.vue';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
@@ -95,6 +97,7 @@ import type { Route } from '../store/router/types';
     InfoLine,
     WalletFee,
     NetworkFeeWarningDialog,
+    AccountConfirmationOption,
   },
 })
 export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFormatterMixin, NetworkFeeWarningMixin) {

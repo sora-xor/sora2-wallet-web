@@ -126,6 +126,7 @@
         <info-line :label="t('createToken.nft.source.label')" :value="contentSource"></info-line>
         <info-line :label="t('createToken.nft.supply.quantity')" :value="tokenSupply"></info-line>
       </div>
+      <account-confirmation-option with-hint class="wallet-settings-create-token_action" />
       <s-button
         class="wallet-settings-create-token_action s-typography-button--large"
         type="primary"
@@ -157,6 +158,7 @@ import { state, mutation, action } from '../store/decorators';
 import { IMAGE_MIME_TYPES } from '../util/image';
 import { IpfsStorage } from '../util/ipfsStorage';
 
+import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
 import FileUploader from './FileUploader.vue';
 import InfoLine from './InfoLine.vue';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
@@ -175,6 +177,7 @@ import type { NFTStorage } from 'nft.storage';
     NftDetails,
     NetworkFeeWarningDialog,
     FileUploader,
+    AccountConfirmationOption,
   },
 })
 export default class CreateNftToken extends Mixins(

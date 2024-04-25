@@ -2,31 +2,29 @@
   <dialog-base
     :title="t('accountSettings.title')"
     :visible.sync="isVisible"
-    class="account-signature-settings-dialog"
+    class="account-settings-dialog"
     append-to-body
   >
-    <div class="account-signature-settings">
+    <div class="account-settings">
       <s-card shadow="always" size="medium" border-radius="mini" pressed>
-        <div class="account-signature-option">
-          <label class="account-signature-option-title">
-            <s-switch v-model="confirmModel" />
-            <span>{{ t('accountSettings.confirmation.title') }}</span>
-          </label>
-          <span class="account-signature-option-description">
-            {{ t('accountSettings.confirmation.description') }}
-          </span>
+        <div class="account-settings-option">
+          <account-confirmation-option>
+            <span class="account-settings-option-description">
+              {{ t('accountSettings.confirmation.description') }}
+            </span>
+          </account-confirmation-option>
         </div>
       </s-card>
 
       <s-card shadow="always" size="medium" border-radius="mini" pressed>
-        <div class="account-signature-option">
+        <div class="account-settings-option">
           <div v-if="isExternal" class="google-badge">
             <img :src="GoogleLogo" alt="google logo" />
             <span>{{ t('accountSettings.googleOnly') }}</span>
           </div>
 
           <account-signature-option :disabled="isExternal">
-            <span class="account-signature-option-description">
+            <span class="account-settings-option-description">
               {{ t('accountSettings.signature.description') }}
             </span>
           </account-signature-option>
@@ -34,7 +32,7 @@
           <s-button
             v-if="!isExternal && !passphrase && isSignTxDialogDisabled"
             type="primary"
-            class="account-signature-settings-button"
+            class="account-settings-button"
             @click="openConfirmDialog"
           >
             {{ t('accountSettings.enterPassword') }}
@@ -56,7 +54,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
 import GoogleLogo from '../../assets/img/GoogleLogo.svg';
-import { action, getter, state, mutation } from '../../store/decorators';
+import { action, getter, state } from '../../store/decorators';
 import { delay } from '../../util';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
@@ -64,12 +62,14 @@ import LoadingMixin from '../mixins/LoadingMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
 
 import AccountConfirmDialog from './ConfirmDialog.vue';
+import AccountConfirmationOption from './Settings/ConfirmationOption.vue';
 import AccountSignatureOption from './Settings/SignatureOption.vue';
 
 @Component({
   components: {
     DialogBase,
     AccountConfirmDialog,
+    AccountConfirmationOption,
     AccountSignatureOption,
   },
 })
@@ -79,9 +79,6 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
   @state.account.isExternal isExternal!: boolean;
   @state.transactions.isSignTxDialogDisabled isSignTxDialogDisabled!: boolean;
 
-  @state.transactions.isConfirmTxDialogEnabled private isConfirmTxDialogEnabled!: boolean;
-  @mutation.transactions.setConfirmTxDialogEnabled private setConfirmTxDialogEnabled!: (flag: boolean) => void;
-
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
   @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
   @action.account.lockAccountPair private lockAccountPair!: FnWithoutArgs;
@@ -89,14 +86,6 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
   readonly GoogleLogo = GoogleLogo;
 
   accountConfirmVisibility = false;
-
-  get confirmModel(): boolean {
-    return this.isConfirmTxDialogEnabled;
-  }
-
-  set confirmModel(value: boolean) {
-    this.setConfirmTxDialogEnabled(value);
-  }
 
   openConfirmDialog(): void {
     this.accountConfirmVisibility = true;
@@ -121,7 +110,7 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
 </script>
 
 <style lang="scss" scoped>
-.account-signature-settings {
+.account-settings {
   display: flex;
   flex-flow: column nowrap;
   gap: $basic-spacing-big;
@@ -132,22 +121,15 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
   }
 }
 
-.account-signature-option {
+.account-settings-option {
   display: flex;
   flex-flow: column nowrap;
   align-items: flex-start;
   gap: $basic-spacing;
-  font-weight: 300;
-
-  &-title {
-    display: flex;
-    gap: $basic-spacing-small;
-    font-size: var(--s-font-size-medium);
-    cursor: pointer;
-  }
 
   &-description {
     font-size: var(--s-font-size-extra-small);
+    font-weight: 300;
   }
 }
 

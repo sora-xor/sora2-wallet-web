@@ -100,10 +100,16 @@
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
-          <div class="confirm-from">{{ account.address }}</div>
-          <s-icon name="arrows-arrow-bottom-24" />
-          <div class="confirm-to">{{ formattedSoraAddress }}</div>
+
+          <div class="confirm-address">
+            <span>{{ account.address }}</span>
+            <s-icon name="arrows-arrow-bottom-24" />
+            <span>{{ formattedSoraAddress }}</span>
+          </div>
+
+          <account-confirmation-option with-hint />
         </div>
+
         <s-button
           class="wallet-send-action s-typography-button--large"
           type="primary"
@@ -130,6 +136,7 @@ import { RouteNames } from '../consts';
 import { state, mutation, action } from '../store/decorators';
 import { validateAddress, formatAddress, formatAccountAddress } from '../util';
 
+import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
 import AddressBookInput from './AddressBook/Input.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
@@ -156,6 +163,7 @@ import type { Subscription } from 'rxjs';
     WalletFee,
     TokenLogo,
     AddressBookInput,
+    AccountConfirmationOption,
   },
 })
 export default class WalletSend extends Mixins(
@@ -587,8 +595,11 @@ $logo-size: var(--s-size-mini);
     width: 100%;
   }
   .confirm {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: $basic-spacing-medium;
+
     &-asset {
-      margin-bottom: #{$basic-spacing-medium};
       font-size: var(--s-heading2-font-size);
       line-height: var(--s-line-height-small);
       font-weight: 800;
@@ -617,18 +628,16 @@ $logo-size: var(--s-size-mini);
         margin-right: calc(var(--s-basic-spacing) * 2);
       }
     }
-    &-from {
-      margin-bottom: var(--s-basic-spacing);
-    }
-    &-to {
-      margin-top: var(--s-basic-spacing);
-      overflow-wrap: break-word;
-    }
-    &-from,
-    &-to {
-      // It's set to small size cuz we need to show full address
+
+    &-address {
+      display: flex;
+      flex-flow: column nowrap;
+      align-items: flex-start;
+      gap: var(--s-basic-spacing);
+
       font-size: var(--s-font-size-mini);
       font-weight: 600;
+      overflow-wrap: break-word;
     }
   }
 }
