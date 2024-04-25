@@ -202,7 +202,7 @@ export enum PassphraseTimeout {
   ONE_HOUR = '1h',
   FOUR_HOURS = '4h',
   ONE_DAY = '1D',
-  ONE_MONTH = '1M',
+  ONE_WEEK = '1W',
 }
 
 export const PassphraseTimeoutDuration: Record<PassphraseTimeout, number> = {
@@ -210,7 +210,7 @@ export const PassphraseTimeoutDuration: Record<PassphraseTimeout, number> = {
   [PassphraseTimeout.ONE_HOUR]: 60 * 60 * 1000,
   [PassphraseTimeout.FOUR_HOURS]: 4 * 60 * 60 * 1000,
   [PassphraseTimeout.ONE_DAY]: 24 * 60 * 60 * 1000,
-  [PassphraseTimeout.ONE_MONTH]: 30 * 24 * 60 * 60 * 1000,
+  [PassphraseTimeout.ONE_WEEK]: 7 * 24 * 60 * 60 * 1000,
 };
 
 export const DefaultPassphraseTimeout = PassphraseTimeoutDuration[PassphraseTimeout.FIFTEEN_MINUTES];

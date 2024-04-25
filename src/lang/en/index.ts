@@ -596,5 +596,6 @@ export default {
       description: 'Enable or disable the need to enter your password during the signature popup in transactions.',
     },
     enterPassword: 'Enter password',
+    googleOnly: 'Google accounts only',
   },
 };

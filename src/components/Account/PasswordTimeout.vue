@@ -1,14 +1,14 @@
 <template>
-  <div class="save-password">
-    <label class="save-password-option">
-      <s-switch v-model="model" />
+  <div :class="['save-password', { disabled }]">
+    <label :class="['save-password-option', { disabled }]">
+      <s-switch v-model="model" :disabled="disabled" />
       <div :class="['save-password-option-description', { hint }]">
         <span class="save-password-option-title">{{ t('accountSettings.signature.title') }}</span>
         <span v-if="hint" class="save-password-option-hint">{{ t('accountSettings.hint') }}</span>
       </div>
     </label>
     <slot />
-    <div v-if="model" class="save-password-duration">
+    <div v-if="disabled || model" class="save-password-duration">
       <template v-if="passwordResetDate">
         <div class="save-password-duration-saved">
           <span class="save-password-duration-title">{{ t('accountSettings.disabled') }}:</span>
@@ -18,7 +18,13 @@
       <template v-else>
         <span class="save-password-duration-title">{{ t('accountSettings.disable') }}:</span>
         <s-tabs v-model="passwordTimeoutModel" type="rounded" class="save-password-durations">
-          <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
+          <s-tab
+            v-for="duration in durations"
+            :key="duration"
+            :label="duration"
+            :name="duration"
+            :disabled="disabled"
+          />
         </s-tabs>
       </template>
     </div>
@@ -35,6 +41,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
 @Component
 export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly hint!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly disabled!: boolean;
 
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
   @mutation.transactions.setSignTxDialogDisabled private setSignTxDialogDisabled!: (flag: boolean) => void;
@@ -87,6 +94,10 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
 
   &.s-tabs.s-rounded .el-tabs__nav-wrap .el-tabs__item {
     text-transform: initial;
+
+    &.is-disabled {
+      cursor: not-allowed;
+    }
   }
 }
 </style>
@@ -96,6 +107,10 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
   display: flex;
   flex-flow: column nowrap;
   gap: $basic-spacing-medium;
+
+  &.disabled {
+    opacity: 0.6;
+  }
 }
 
 .save-password-option {
@@ -103,7 +118,10 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
   flex-flow: row nowrap;
   align-items: center;
   gap: $basic-spacing-medium;
-  cursor: pointer;
+
+  &:not(.disabled) {
+    cursor: pointer;
+  }
 
   &-description {
     display: flex;

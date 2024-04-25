@@ -1,7 +1,7 @@
 <template>
   <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
-      <s-button type="action" :tooltip="t('accountSettings.title')" @click="handleAccountSignatureSettings">
+      <s-button type="action" :tooltip="t('accountSettings.title')" @click="handleAccountSettings">
         <s-icon name="basic-settings-24" size="28" />
       </s-button>
       <s-button
@@ -51,7 +51,7 @@
 
     <wallet-transaction-details v-if="selectedTransaction" />
 
-    <account-signature-settings-dialog :visible.sync="accountSignatureSettingsVisibility" />
+    <account-settings-dialog :visible.sync="accountSettingsVisibility" />
 
     <template v-if="!isExternal">
       <account-rename-dialog
@@ -83,7 +83,7 @@ import AccountActionsMenu from './Account/ActionsMenu.vue';
 import AccountExportDialog from './Account/ConfirmDialog.vue';
 import AccountDeleteDialog from './Account/DeleteDialog.vue';
 import AccountRenameDialog from './Account/RenameDialog.vue';
-import AccountSignatureSettingsDialog from './Account/SignatureSettingsDialog.vue';
+import AccountSettingsDialog from './Account/SettingsDialog.vue';
 import WalletAccount from './Account/WalletAccount.vue';
 import AccountActionsMixin from './mixins/AccountActionsMixin';
 import OperationsMixin from './mixins/OperationsMixin';
@@ -109,7 +109,7 @@ import type { HistoryItem } from '@sora-substrate/util';
     AccountRenameDialog,
     AccountExportDialog,
     AccountDeleteDialog,
-    AccountSignatureSettingsDialog,
+    AccountSettingsDialog,
   },
 })
 export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin, QrCodeParserMixin) {
@@ -131,7 +131,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
 
   currentTab: WalletTabs = WalletTabs.Assets;
 
-  accountSignatureSettingsVisibility = false;
+  accountSettingsVisibility = false;
 
   get headerTitle(): string {
     if (!this.selectedTransaction) return this.t('wallet.title');
@@ -161,8 +161,8 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
     this.handleAccountAction(actionType, this.account);
   }
 
-  handleAccountSignatureSettings(): void {
-    this.accountSignatureSettingsVisibility = !this.accountSignatureSettingsVisibility;
+  handleAccountSettings(): void {
+    this.accountSettingsVisibility = !this.accountSettingsVisibility;
   }
 
   handleBack(): void {
