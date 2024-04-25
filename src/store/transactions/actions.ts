@@ -74,7 +74,7 @@ const actions = defineActions({
 
     const { passphrase } = rootGetters.wallet.account;
 
-    if (passphrase && !state.isSignTxDialogEnabled) {
+    if (passphrase && state.isSignTxDialogDisabled) {
       rootDispatch.wallet.account.unlockAccountPair(passphrase);
     } else {
       commit.setSignTxDialogVisibility(true);

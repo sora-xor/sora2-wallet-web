@@ -582,8 +582,8 @@ export default {
     synthetics: 'synthetic tokens',
   },
   disableText: 'Disable',
-  signatureSettings: {
-    title: 'Transaction signature settings',
+  accountSettings: {
+    title: 'Account settings',
     hint: 'You can enable this back in account settings',
     disable: 'Disable on',
     disabled: 'Disabled until',

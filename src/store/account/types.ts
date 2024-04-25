@@ -43,9 +43,9 @@ export type AccountState = {
   walletAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
   addressKeyMapping: AddressKeyMapping;
   addressPassphraseMapping: AddressKeyMapping;
-  passwordTimeout: number;
   assetsToNotifyQueue: Array<WhitelistArrayItem>;
   isDesktop: boolean;
   accountPasswordTimer: Nullable<NodeJS.Timeout | number>;
   accountPasswordTimestamp: Nullable<number>;
+  accountPasswordTimeout: number;
 };

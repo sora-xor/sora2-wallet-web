@@ -81,7 +81,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   @getter.account.passwordTimeoutKey passwordTimeoutKey!: PassphraseTimeout;
 
   @state.account.selectedWallet private selectedWallet!: AppWallet;
-  @state.transactions.isSignTxDialogEnabled private isSignTxDialogEnabled!: boolean;
+  @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
 
   step: LoginStep = LoginStep.AccountList;
   accountLoginVisibility = false;
@@ -222,7 +222,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
           source: this.selectedWallet,
         });
 
-        if (!this.isSignTxDialogEnabled) {
+        if (this.isSignTxDialogDisabled) {
           this.setAccountPassphrase(password);
         }
 

@@ -3,20 +3,20 @@
     <label class="save-password-option">
       <s-switch v-model="model" />
       <div :class="['save-password-option-description', { hint }]">
-        <span class="save-password-option-title">{{ t('signatureSettings.signature.title') }}</span>
-        <span v-if="hint" class="save-password-option-hint">{{ t('signatureSettings.hint') }}</span>
+        <span class="save-password-option-title">{{ t('accountSettings.signature.title') }}</span>
+        <span v-if="hint" class="save-password-option-hint">{{ t('accountSettings.hint') }}</span>
       </div>
     </label>
     <slot />
     <div v-if="model" class="save-password-duration">
       <template v-if="passwordResetDate">
         <div class="save-password-duration-saved">
-          <span class="save-password-duration-title">{{ t('signatureSettings.disabled') }}:</span>
+          <span class="save-password-duration-title">{{ t('accountSettings.disabled') }}:</span>
           <span> {{ passwordResetDate }}</span>
         </div>
       </template>
       <template v-else>
-        <span class="save-password-duration-title">{{ t('signatureSettings.disable') }}:</span>
+        <span class="save-password-duration-title">{{ t('accountSettings.disable') }}:</span>
         <s-tabs v-model="passwordTimeoutModel" type="rounded" class="save-password-durations">
           <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
         </s-tabs>
@@ -36,24 +36,24 @@ import TranslationMixin from '../mixins/TranslationMixin';
 export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly hint!: boolean;
 
-  @state.transactions.isSignTxDialogEnabled private isSignTxDialogEnabled!: boolean;
-  @mutation.transactions.setSignTxDialogEnabled private setSignTxDialogEnabled!: (flag: boolean) => void;
+  @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
+  @mutation.transactions.setSignTxDialogDisabled private setSignTxDialogDisabled!: (flag: boolean) => void;
 
   @getter.account.passwordTimeoutKey private passwordTimeoutKey!: PassphraseTimeout;
   @mutation.account.setPasswordTimeout private setPasswordTimeout!: (timeout: number) => void;
 
-  @state.account.passwordTimeout private passwordTimeout!: number;
+  @state.account.accountPasswordTimeout private accountPasswordTimeout!: number;
   @state.account.accountPasswordTimestamp private accountPasswordTimestamp!: Nullable<number>;
   @action.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
 
   readonly durations = PassphraseTimeout;
 
   get model(): boolean {
-    return !this.isSignTxDialogEnabled;
+    return this.isSignTxDialogDisabled;
   }
 
   set model(value: boolean) {
-    this.setSignTxDialogEnabled(!value);
+    this.setSignTxDialogDisabled(value);
 
     if (!value) {
       this.resetAccountPassphrase();
@@ -72,7 +72,7 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
   get passwordResetDate(): Nullable<string> {
     if (!this.accountPasswordTimestamp) return null;
 
-    const timestamp = this.accountPasswordTimestamp + this.passwordTimeout;
+    const timestamp = this.accountPasswordTimestamp + this.accountPasswordTimeout;
 
     return this.formatDate(timestamp);
   }

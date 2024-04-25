@@ -25,7 +25,7 @@ export type TransactionsState = {
    *
    * `true` when it's enabled, `false` when it's disabled
    */
-  isSignTxDialogEnabled: boolean;
+  isSignTxDialogDisabled: boolean;
   /**
    * Sign Transaction Dialog visibility
    *

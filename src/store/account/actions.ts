@@ -365,7 +365,7 @@ const actions = defineActions({
     commit.updateAddressGeneratedKey(key);
     commit.setAccountPassphrase(passphraseEncoded);
 
-    const timer = setTimeout(dispatch.resetAccountPassphrase, state.passwordTimeout);
+    const timer = setTimeout(dispatch.resetAccountPassphrase, state.accountPasswordTimeout);
     commit.setAccountPassphraseTimer(timer);
   },
 

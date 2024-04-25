@@ -27,7 +27,7 @@ import type { PassphraseTimeout } from '../consts';
   },
 })
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
-  @state.transactions.isSignTxDialogEnabled private isSignTxDialogEnabled!: boolean;
+  @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
   @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
   @getter.account.passwordTimeoutKey passwordTimeoutKey!: PassphraseTimeout;
@@ -53,7 +53,7 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
       await this.withAppNotification(async () => {
         this.unlockAccountPair(password);
 
-        if (!this.isSignTxDialogEnabled) {
+        if (this.isSignTxDialogDisabled) {
           this.setAccountPassphrase(password);
         } else {
           this.resetAccountPassphrase();

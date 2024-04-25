@@ -72,9 +72,9 @@ const mutations = defineMutations<TransactionsState>()({
     state.isConfirmTxDialogEnabled = flag;
     settingsStorage.set('confirmTxDialogEnabled', flag);
   },
-  setSignTxDialogEnabled(state, flag: boolean): void {
-    state.isSignTxDialogEnabled = flag;
-    settingsStorage.set('signTxDialogEnabled', flag);
+  setSignTxDialogDisabled(state, flag: boolean): void {
+    state.isSignTxDialogDisabled = flag;
+    settingsStorage.set('signTxDialogDisabled', flag);
   },
   setSignTxDialogVisibility(state, visibility: boolean): void {
     state.isSignTxDialogVisible = visibility;

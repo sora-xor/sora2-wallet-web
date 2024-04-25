@@ -1,6 +1,6 @@
 <template>
   <dialog-base
-    :title="t('signatureSettings.title')"
+    :title="t('accountSettings.title')"
     :visible.sync="isVisible"
     class="account-signature-settings-dialog"
     append-to-body
@@ -10,10 +10,10 @@
         <div class="account-signature-option">
           <label class="account-signature-option-title">
             <s-switch v-model="confirmModel" />
-            <span>{{ t('signatureSettings.confirmation.title') }}</span>
+            <span>{{ t('accountSettings.confirmation.title') }}</span>
           </label>
           <span class="account-signature-option-description">
-            {{ t('signatureSettings.confirmation.description') }}
+            {{ t('accountSettings.confirmation.description') }}
           </span>
         </div>
       </s-card>
@@ -22,17 +22,17 @@
         <div class="account-signature-option">
           <account-password-timeout>
             <span class="account-signature-option-description">
-              {{ t('signatureSettings.signature.description') }}
+              {{ t('accountSettings.signature.description') }}
             </span>
           </account-password-timeout>
 
           <s-button
-            v-if="!passphrase && !isSignTxDialogEnabled"
+            v-if="!passphrase && isSignTxDialogDisabled"
             type="primary"
             class="account-signature-settings-button"
             @click="openConfirmDialog"
           >
-            {{ t('signatureSettings.enterPassword') }}
+            {{ t('accountSettings.enterPassword') }}
           </s-button>
         </div>
       </s-card>
@@ -75,7 +75,7 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
   @getter.account.passphrase passphrase!: Nullable<string>;
 
   @state.account.isExternal isExternal!: boolean;
-  @state.transactions.isSignTxDialogEnabled isSignTxDialogEnabled!: boolean;
+  @state.transactions.isSignTxDialogDisabled isSignTxDialogDisabled!: boolean;
 
   @state.transactions.isConfirmTxDialogEnabled private isConfirmTxDialogEnabled!: boolean;
   @mutation.transactions.setConfirmTxDialogEnabled private setConfirmTxDialogEnabled!: (flag: boolean) => void;

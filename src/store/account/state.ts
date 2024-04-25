@@ -13,7 +13,7 @@ export function initialState(): AccountState {
   const ceresFiatValues = settingsStorage.get('ceresFiatValues');
   const book = addressBook && JSON.parse(addressBook);
   const isExternal = storage.get('isExternal');
-  const passwordTimeout = settingsStorage.get('passwordTimeout');
+  const accountPasswordTimeout = settingsStorage.get('accountPasswordTimeout');
 
   return {
     address: storage.get('address') || '',
@@ -47,9 +47,10 @@ export function initialState(): AccountState {
     isDesktop: isElectron(), // NOTE: inverse flag here to debug desktop
     addressKeyMapping: {},
     addressPassphraseMapping: {},
-    passwordTimeout: passwordTimeout ? JSON.parse(passwordTimeout) : DefaultPassphraseTimeout,
+    /** account password timings  */
     accountPasswordTimer: null,
     accountPasswordTimestamp: null,
+    accountPasswordTimeout: accountPasswordTimeout ? JSON.parse(accountPasswordTimeout) : DefaultPassphraseTimeout,
   };
 }
 
