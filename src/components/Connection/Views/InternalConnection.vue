@@ -28,7 +28,7 @@
     />
 
     <account-confirm-dialog
-      save-passphrase
+      with-timeout
       :visible.sync="accountLoginVisibility"
       :account="accountLoginData"
       :loading="loading"
@@ -81,6 +81,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   @getter.account.passwordTimeoutKey passwordTimeoutKey!: PassphraseTimeout;
 
   @state.account.selectedWallet private selectedWallet!: AppWallet;
+  @state.transactions.isSignTxDialogEnabled private isSignTxDialogEnabled!: boolean;
 
   step: LoginStep = LoginStep.AccountList;
   accountLoginVisibility = false;
@@ -206,7 +207,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     return json;
   }
 
-  async handleAccountLogin({ password, save }: { password: string; save: boolean }) {
+  async handleAccountLogin(password: string) {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
@@ -221,7 +222,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
           source: this.selectedWallet,
         });
 
-        if (save) {
+        if (!this.isSignTxDialogEnabled) {
           this.setAccountPassphrase(password);
         }
 

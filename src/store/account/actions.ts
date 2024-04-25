@@ -375,15 +375,6 @@ const actions = defineActions({
     commit.resetAccountPassphrase();
   },
 
-  setAccountPasswordSave(context, flag: boolean): void {
-    const { commit, dispatch } = accountActionContext(context);
-    commit.setPasswordSave(flag);
-
-    if (!flag) {
-      dispatch.resetAccountPassphrase();
-    }
-  },
-
   lockAccountPair(context): void {
     api.lockPair();
   },

@@ -47,5 +47,4 @@ export type AccountState = {
   assetsToNotifyQueue: Array<WhitelistArrayItem>;
   isDesktop: boolean;
   accountPasswordTimer: Nullable<NodeJS.Timeout | number>;
-  savePassword: boolean;
 };

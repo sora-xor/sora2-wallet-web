@@ -8,7 +8,7 @@
     <s-form class="confirm-dialog__form" @submit.native.prevent="handleConfirm">
       <wallet-account :polkadot-account="account" />
       <password-input v-if="!passphrase" ref="passwordInput" v-model="password" :disabled="loading" autofocus />
-      <account-password-timeout v-if="savePassphrase" />
+      <account-password-timeout v-if="withTimeout" />
       <s-button
         type="primary"
         native-type="submit"
@@ -47,7 +47,7 @@ import type { PolkadotJsAccount } from '../../types/common';
 export default class AccountConfirmDialog extends Mixins(DialogMixin, TranslationMixin) {
   @Prop({ default: ObjectInit, type: Object }) readonly account!: PolkadotJsAccount;
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly savePassphrase!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly withTimeout!: boolean;
   @Prop({ default: '', type: String }) readonly passphrase!: string;
   @Prop({ default: '', type: String }) readonly confirmButtonText!: string;
 
@@ -66,7 +66,6 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
   }
 
   model = '';
-  savePassword = true;
 
   get password(): string {
     return this.passphrase || this.model;
@@ -85,10 +84,7 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
   }
 
   handleConfirm(): void {
-    this.$emit('confirm', {
-      password: this.password,
-      save: this.savePassphrase && this.savePassword,
-    });
+    this.$emit('confirm', this.password);
   }
 }
 </script>

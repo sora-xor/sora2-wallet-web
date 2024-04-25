@@ -14,7 +14,6 @@ export function initialState(): AccountState {
   const book = addressBook && JSON.parse(addressBook);
   const isExternal = storage.get('isExternal');
   const passwordTimeout = settingsStorage.get('passwordTimeout');
-  const savePassword = settingsStorage.get('savePassword');
 
   return {
     address: storage.get('address') || '',
@@ -50,7 +49,6 @@ export function initialState(): AccountState {
     addressPassphraseMapping: {},
     passwordTimeout: passwordTimeout ? JSON.parse(passwordTimeout) : DefaultPassphraseTimeout,
     accountPasswordTimer: null,
-    savePassword: savePassword ? JSON.parse(savePassword) : true,
   };
 }
 

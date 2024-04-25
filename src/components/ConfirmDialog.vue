@@ -1,6 +1,6 @@
 <template>
   <account-confirm-dialog
-    save-passphrase
+    with-timeout
     :visible.sync="visibility"
     :loading="loading"
     :passphrase="passphrase"
@@ -27,6 +27,7 @@ import type { PassphraseTimeout } from '../consts';
   },
 })
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
+  @state.transactions.isSignTxDialogEnabled private isSignTxDialogEnabled!: boolean;
   @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
   @getter.account.passwordTimeoutKey passwordTimeoutKey!: PassphraseTimeout;
@@ -43,7 +44,7 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
     this.setSignTxDialogVisibility(flag);
   }
 
-  async handleConfirm({ password, save }: { password: string; save: boolean }): Promise<void> {
+  async handleConfirm(password: string): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
@@ -52,7 +53,7 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
       await this.withAppNotification(async () => {
         this.unlockAccountPair(password);
 
-        if (save) {
+        if (!this.isSignTxDialogEnabled) {
           this.setAccountPassphrase(password);
         } else {
           this.resetAccountPassphrase();

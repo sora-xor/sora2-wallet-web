@@ -27,7 +27,7 @@
           </account-password-timeout>
 
           <s-button
-            v-if="!passphrase && savePassword"
+            v-if="!passphrase && !isSignTxDialogEnabled"
             type="primary"
             class="account-signature-settings-button"
             @click="openConfirmDialog"
@@ -75,7 +75,7 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
   @getter.account.passphrase passphrase!: Nullable<string>;
 
   @state.account.isExternal isExternal!: boolean;
-  @state.account.savePassword savePassword!: boolean;
+  @state.transactions.isSignTxDialogEnabled isSignTxDialogEnabled!: boolean;
 
   @state.transactions.isConfirmTxDialogEnabled private isConfirmTxDialogEnabled!: boolean;
   @mutation.transactions.setConfirmTxDialogEnabled private setConfirmTxDialogEnabled!: (flag: boolean) => void;
@@ -98,7 +98,7 @@ export default class AccountSignatureSettingsDialog extends Mixins(DialogMixin, 
     this.accountConfirmVisibility = true;
   }
 
-  async saveAccountPassphrase({ password }: { password: string }): Promise<void> {
+  async saveAccountPassphrase(password: string): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();

@@ -100,7 +100,6 @@ export type SettingsStorageKey =
   | 'currency'
   | 'signTxDialogEnabled'
   | 'confirmTxDialogEnabled'
-  | 'passwordTimeout'
-  | 'savePassword';
+  | 'passwordTimeout';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';

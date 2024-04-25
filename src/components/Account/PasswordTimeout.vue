@@ -1,14 +1,14 @@
 <template>
   <div class="save-password">
     <label class="save-password-option">
-      <s-switch v-model="savePasswordModel" />
+      <s-switch v-model="model" />
       <div :class="['save-password-option-description', { hint }]">
         <span class="save-password-option-title">{{ t('signatureSettings.signature.title') }}</span>
         <span v-if="hint" class="save-password-option-hint">{{ t('signatureSettings.hint') }}</span>
       </div>
     </label>
     <slot />
-    <div v-if="savePasswordModel" class="save-password-duration">
+    <div v-if="model" class="save-password-duration">
       <span class="save-password-duration-title">{{ t('signatureSettings.disable') }}:</span>
       <s-tabs v-model="passwordTimeoutModel" type="rounded" class="save-password-durations">
         <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
@@ -31,20 +31,17 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
   @state.transactions.isSignTxDialogEnabled private isSignTxDialogEnabled!: boolean;
   @mutation.transactions.setSignTxDialogEnabled private setSignTxDialogEnabled!: (flag: boolean) => void;
 
-  @state.account.savePassword private savePassword!: boolean;
-  @action.account.setAccountPasswordSave private setAccountPasswordSave!: (flag: boolean) => void;
-
   @getter.account.passwordTimeoutKey private passwordTimeoutKey!: PassphraseTimeout;
   @mutation.account.setPasswordTimeout private setPasswordTimeout!: (timeout: number) => void;
 
   readonly durations = PassphraseTimeout;
 
-  get savePasswordModel(): boolean {
-    return this.savePassword;
+  get model(): boolean {
+    return !this.isSignTxDialogEnabled;
   }
 
-  set savePasswordModel(flag: boolean) {
-    this.setAccountPasswordSave(flag);
+  set model(value: boolean) {
+    this.setSignTxDialogEnabled(!value);
   }
 
   get passwordTimeoutModel(): PassphraseTimeout {
