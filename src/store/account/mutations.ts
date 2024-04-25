@@ -189,12 +189,14 @@ const mutations = defineMutations<AccountState>()({
   },
   setAccountPassphraseTimer(state, timer: NodeJS.Timeout): void {
     state.accountPasswordTimer = timer;
+    state.accountPasswordTimestamp = Date.now();
   },
   resetAccountPassphraseTimer(state): void {
     if (state.accountPasswordTimer) {
       clearTimeout(state.accountPasswordTimer);
     }
     state.accountPasswordTimer = null;
+    state.accountPasswordTimestamp = null;
   },
   /** JUST FOR TESTING PURPOSES */
   setIsDesktop(state, value: boolean): void {

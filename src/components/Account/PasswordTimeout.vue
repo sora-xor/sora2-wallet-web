@@ -9,10 +9,18 @@
     </label>
     <slot />
     <div v-if="model" class="save-password-duration">
-      <span class="save-password-duration-title">{{ t('signatureSettings.disable') }}:</span>
-      <s-tabs v-model="passwordTimeoutModel" type="rounded" class="save-password-durations">
-        <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
-      </s-tabs>
+      <template v-if="passwordResetDate">
+        <div class="save-password-duration-saved">
+          <span class="save-password-duration-title">{{ t('signatureSettings.disabled') }}:</span>
+          <span> {{ passwordResetDate }}</span>
+        </div>
+      </template>
+      <template v-else>
+        <span class="save-password-duration-title">{{ t('signatureSettings.disable') }}:</span>
+        <s-tabs v-model="passwordTimeoutModel" type="rounded" class="save-password-durations">
+          <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
+        </s-tabs>
+      </template>
     </div>
   </div>
 </template>
@@ -34,6 +42,10 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
   @getter.account.passwordTimeoutKey private passwordTimeoutKey!: PassphraseTimeout;
   @mutation.account.setPasswordTimeout private setPasswordTimeout!: (timeout: number) => void;
 
+  @state.account.passwordTimeout private passwordTimeout!: number;
+  @state.account.accountPasswordTimestamp private accountPasswordTimestamp!: Nullable<number>;
+  @action.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
+
   readonly durations = PassphraseTimeout;
 
   get model(): boolean {
@@ -42,6 +54,10 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
 
   set model(value: boolean) {
     this.setSignTxDialogEnabled(!value);
+
+    if (!value) {
+      this.resetAccountPassphrase();
+    }
   }
 
   get passwordTimeoutModel(): PassphraseTimeout {
@@ -51,6 +67,14 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
   set passwordTimeoutModel(name: PassphraseTimeout) {
     const duration = PassphraseTimeoutDuration[name] ?? DefaultPassphraseTimeout;
     this.setPasswordTimeout(duration);
+  }
+
+  get passwordResetDate(): Nullable<string> {
+    if (!this.accountPasswordTimestamp) return null;
+
+    const timestamp = this.accountPasswordTimestamp + this.passwordTimeout;
+
+    return this.formatDate(timestamp);
   }
 }
 </script>
@@ -110,6 +134,13 @@ export default class AccountPasswordTimeout extends Mixins(TranslationMixin) {
     font-size: var(--s-font-size-extra-small);
     font-weight: 700;
     text-transform: uppercase;
+  }
+
+  &-saved {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    gap: $basic-spacing;
   }
 }
 </style>

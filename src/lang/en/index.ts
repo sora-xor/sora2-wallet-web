@@ -586,7 +586,7 @@ export default {
     title: 'Transaction signature settings',
     hint: 'You can enable this back in account settings',
     disable: 'Disable on',
-    disabled: 'Disabled for',
+    disabled: 'Disabled until',
     confirmation: {
       title: 'Transaction details popup',
       description: 'A popup screen which displays details about the transactions before the signing.',
