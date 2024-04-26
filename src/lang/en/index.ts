@@ -509,8 +509,6 @@ export default {
     dialog: {
       confirmTitle: 'Confirm with password',
       confirmButton: 'Sign Transaction',
-      savePasswordText: 'Remember my password',
-      extendPasswordText: 'Extend period without password',
     },
     errorMessages: {
       password: 'Password did not match',
@@ -581,7 +579,6 @@ export default {
     myPositions: 'my positions',
     synthetics: 'synthetic tokens',
   },
-  disableText: 'Disable',
   accountSettings: {
     title: 'Account settings',
     hint: 'You can enable this back in account settings',

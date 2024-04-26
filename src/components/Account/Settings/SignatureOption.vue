@@ -51,7 +51,6 @@ export default class AccountSignatureOption extends Mixins(TranslationMixin) {
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
   @mutation.transactions.setSignTxDialogDisabled private setSignTxDialogDisabled!: (flag: boolean) => void;
 
-  @getter.account.passwordTimeoutKey private passwordTimeoutKey!: PassphraseTimeout;
   @mutation.account.setPasswordTimeout private setPasswordTimeout!: (timeout: number) => void;
 
   @state.account.accountPasswordTimeout private accountPasswordTimeout!: number;
@@ -73,7 +72,13 @@ export default class AccountSignatureOption extends Mixins(TranslationMixin) {
   }
 
   get passwordTimeoutModel(): PassphraseTimeout {
-    return this.passwordTimeoutKey;
+    const key = Object.keys(PassphraseTimeoutDuration).find(
+      (key) => PassphraseTimeoutDuration[key] === this.accountPasswordTimeout
+    );
+
+    if (!key) return PassphraseTimeout.FIFTEEN_MINUTES;
+
+    return key as PassphraseTimeout;
   }
 
   set passwordTimeoutModel(name: PassphraseTimeout) {

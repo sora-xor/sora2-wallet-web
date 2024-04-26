@@ -78,7 +78,6 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
   @getter.account.isLoggedIn private isLoggedIn!: boolean;
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
-  @getter.account.passwordTimeoutKey passwordTimeoutKey!: PassphraseTimeout;
 
   @state.account.selectedWallet private selectedWallet!: AppWallet;
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;

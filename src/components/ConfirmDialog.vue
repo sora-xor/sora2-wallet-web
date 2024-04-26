@@ -30,7 +30,6 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
   @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
-  @getter.account.passwordTimeoutKey passwordTimeoutKey!: PassphraseTimeout;
   @mutation.transactions.setSignTxDialogVisibility private setSignTxDialogVisibility!: (flag: boolean) => void;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
   @action.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
