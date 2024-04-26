@@ -66,6 +66,7 @@ const globals = {
   'direct-vuex': 'directVuex',
   'element-ui/lib/popover': 'ElPopover',
   'file-saver': 'fileSaver',
+  'graphql-ws': 'graphqlWs',
   'is-electron': 'isElectron',
   'lodash/fp/debounce': 'debounce',
   'lodash/fp/findLast': 'findLast',
