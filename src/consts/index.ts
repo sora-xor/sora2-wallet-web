@@ -247,4 +247,5 @@ export const TranslationConsts = {
   },
   JSON: 'JSON',
   ADAR: 'ADAR',
+  Google: 'Google',
 } as const;

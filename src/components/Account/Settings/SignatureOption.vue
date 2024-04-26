@@ -31,13 +31,19 @@
 </template>
 
 <script lang="ts">
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { PassphraseTimeout, PassphraseTimeoutDuration, DefaultPassphraseTimeout } from '../../../consts';
-import { action, getter, mutation, state } from '../../../store/decorators';
+import { action, mutation, state } from '../../../store/decorators';
 import TranslationMixin from '../../mixins/TranslationMixin';
 
 import AccountSettingsOption from './Option.vue';
+
+dayjs.extend(duration);
+dayjs.extend(relativeTime);
 
 @Component({
   components: {
@@ -86,12 +92,38 @@ export default class AccountSignatureOption extends Mixins(TranslationMixin) {
     this.setPasswordTimeout(duration);
   }
 
+  private timestamp: Nullable<number> = null;
+  private timer: Nullable<NodeJS.Timeout> = null;
+
+  created(): void {
+    this.createTimer();
+  }
+
+  destroyed(): void {
+    this.resetTimer();
+  }
+
+  private createTimer(): void {
+    this.resetTimer();
+    this.timer = setInterval(() => {
+      this.timestamp = Date.now();
+    }, 1000);
+  }
+
+  private resetTimer(): void {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
+    this.timer = null;
+    this.timestamp = null;
+  }
+
   get passwordResetDate(): Nullable<string> {
-    if (!this.accountPasswordTimestamp) return null;
+    if (!(this.accountPasswordTimestamp && this.timestamp)) return null;
 
-    const timestamp = this.accountPasswordTimestamp + this.accountPasswordTimeout;
+    const diff = this.accountPasswordTimestamp + this.accountPasswordTimeout - this.timestamp;
 
-    return this.formatDate(timestamp);
+    return dayjs.duration(diff).locale(this.dayjsLocale).humanize();
   }
 }
 </script>
@@ -127,7 +159,7 @@ export default class AccountSignatureOption extends Mixins(TranslationMixin) {
   &-saved {
     display: flex;
     flex-flow: row wrap;
-    align-items: center;
+    align-items: baseline;
     gap: $basic-spacing;
   }
 }

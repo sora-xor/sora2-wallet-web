@@ -583,7 +583,7 @@ export default {
     title: 'Account settings',
     hint: 'You can enable this back in account settings',
     disable: 'Disable on',
-    disabled: 'Disabled until',
+    disabled: 'Disabled for',
     confirmation: {
       title: 'Disable transaction confirmation',
       description: 'A popup screen which displays details about the transactions before the signing.',
@@ -593,6 +593,6 @@ export default {
       description: 'Enable or disable the need to enter your password during the signature popup in transactions.',
     },
     enterPassword: 'Enter password',
-    googleOnly: 'Google accounts only',
+    googleOnly: '{Google} accounts only',
   },
 };
