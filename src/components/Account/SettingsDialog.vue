@@ -79,7 +79,7 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
   @state.account.isExternal isExternal!: boolean;
   @state.transactions.isSignTxDialogDisabled isSignTxDialogDisabled!: boolean;
 
-  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
   @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
   @action.account.lockAccountPair private lockAccountPair!: FnWithoutArgs;
 

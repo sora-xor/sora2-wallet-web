@@ -3,7 +3,7 @@ import { defineGetters } from 'direct-vuex';
 import isEqual from 'lodash/fp/isEqual';
 
 import { api } from '../../api';
-import { AppWallet, PassphraseTimeout, PassphraseTimeoutDuration } from '../../consts';
+import { AppWallet } from '../../consts';
 import { isInternalWallet } from '../../consts/wallets';
 import { formatAccountAddress } from '../../util';
 

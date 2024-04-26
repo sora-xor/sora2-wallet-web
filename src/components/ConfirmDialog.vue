@@ -19,8 +19,6 @@ import AccountConfirmDialog from './Account/ConfirmDialog.vue';
 import LoadingMixin from './mixins/LoadingMixin';
 import NotificationMixin from './mixins/NotificationMixin';
 
-import type { PassphraseTimeout } from '../consts';
-
 @Component({
   components: {
     AccountConfirmDialog,
@@ -31,7 +29,7 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
   @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
   @mutation.transactions.setSignTxDialogVisibility private setSignTxDialogVisibility!: (flag: boolean) => void;
-  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
   @action.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
   @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
 

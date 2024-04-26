@@ -354,7 +354,7 @@ const actions = defineActions({
   /**
    * Desktop
    */
-  async setAccountPassphrase(context, passphrase: string): Promise<void> {
+  setAccountPassphrase(context, passphrase: string): void {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
     const passphraseEncoded = AES.encrypt(passphrase, key).toString();
 
