@@ -81,7 +81,7 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
    
   <!---->
    
-  <account-signature-settings-dialog-stub />
+  <account-settings-dialog-stub />
    
   <!---->
 </wallet-base-stub>
@@ -168,7 +168,7 @@ exports[`Wallet.vue [WalletTabs.WalletHistory]: should be rendered correctly 1`]
    
   <!---->
    
-  <account-signature-settings-dialog-stub />
+  <account-settings-dialog-stub />
    
   <!---->
 </wallet-base-stub>
