@@ -198,7 +198,7 @@ export default class CreateNftToken extends Mixins(
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
   @state.settings.nftStorage private nftStorage!: NFTStorage;
-  @state.transactions.isConfirmTxDialogEnabled private isConfirmTxEnabled!: boolean;
+  @state.transactions.isConfirmTxDialogDisabled private isConfirmTxDisabled!: boolean;
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.settings.createNftStorageInstance private createNftStorageInstance!: AsyncFnWithoutArgs;
 
@@ -396,11 +396,11 @@ export default class CreateNftToken extends Mixins(
       return;
     }
 
-    if (this.isConfirmTxEnabled) {
+    if (this.isConfirmTxDisabled) {
+      await this.onConfirm();
+    } else {
       this.showFee = true;
       this.$emit('stepChange', Step.ConfirmNftToken);
-    } else {
-      await this.onConfirm();
     }
   }
 

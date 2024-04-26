@@ -68,9 +68,9 @@ const mutations = defineMutations<TransactionsState>()({
     }
     state.externalHistorySubscription = null;
   },
-  setConfirmTxDialogEnabled(state, flag: boolean): void {
-    state.isConfirmTxDialogEnabled = flag;
-    settingsStorage.set('confirmTxDialogEnabled', flag);
+  setConfirmTxDialogDisabled(state, flag: boolean): void {
+    state.isConfirmTxDialogDisabled = flag;
+    settingsStorage.set('confirmTxDialogDisabled', flag);
   },
   setSignTxDialogDisabled(state, flag: boolean): void {
     state.isSignTxDialogDisabled = flag;

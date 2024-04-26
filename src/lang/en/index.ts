@@ -585,7 +585,7 @@ export default {
     disable: 'Disable on',
     disabled: 'Disabled until',
     confirmation: {
-      title: 'Show transaction details',
+      title: 'Disable transaction confirmation',
       description: 'A popup screen which displays details about the transactions before the signing.',
     },
     signature: {

@@ -17,7 +17,7 @@ export type TransactionsState = {
    *
    * `true` when it's enabled, `false` when it's disabled
    */
-  isConfirmTxDialogEnabled: boolean;
+  isConfirmTxDialogDisabled: boolean;
   /**
    * Transaction signing confirmation used
    *

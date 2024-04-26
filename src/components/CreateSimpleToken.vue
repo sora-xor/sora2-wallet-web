@@ -112,7 +112,7 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
-  @state.transactions.isConfirmTxDialogEnabled private isConfirmTxEnabled!: boolean;
+  @state.transactions.isConfirmTxDialogDisabled private isConfirmTxDisabled!: boolean;
 
   tokenSymbol = '';
   tokenName = '';
@@ -165,11 +165,11 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
       return;
     }
 
-    if (this.isConfirmTxEnabled) {
+    if (this.isConfirmTxDisabled) {
+      await this.onConfirm();
+    } else {
       this.showFee = true;
       this.$emit('stepChange', Step.ConfirmSimpleToken);
-    } else {
-      await this.onConfirm();
     }
   }
 

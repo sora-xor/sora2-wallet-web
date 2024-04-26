@@ -99,7 +99,7 @@ export type SettingsStorageKey =
   | 'ceresFiatValues'
   | 'currency'
   | 'signTxDialogDisabled'
-  | 'confirmTxDialogEnabled'
+  | 'confirmTxDialogDisabled'
   | 'accountPasswordTimeout';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';

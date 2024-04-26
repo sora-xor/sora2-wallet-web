@@ -3,7 +3,7 @@ import { settingsStorage } from '../../util/storage';
 import type { TransactionsState } from './types';
 
 function initialState(): TransactionsState {
-  const isConfirmTxDialogEnabled = settingsStorage.get('confirmTxDialogEnabled');
+  const isConfirmTxDialogDisabled = settingsStorage.get('confirmTxDialogDisabled');
   const isSignTxDialogDisabled = settingsStorage.get('signTxDialogDisabled');
 
   return {
@@ -17,7 +17,7 @@ function initialState(): TransactionsState {
     updateActiveTxsId: null,
     selectedTxId: null,
     updateEthBridgeHistory: null,
-    isConfirmTxDialogEnabled: isConfirmTxDialogEnabled ? Boolean(JSON.parse(isConfirmTxDialogEnabled)) : true,
+    isConfirmTxDialogDisabled: isConfirmTxDialogDisabled ? Boolean(JSON.parse(isConfirmTxDialogDisabled)) : false,
     isSignTxDialogDisabled: isSignTxDialogDisabled ? Boolean(JSON.parse(isSignTxDialogDisabled)) : false,
     isSignTxDialogVisible: false,
   };

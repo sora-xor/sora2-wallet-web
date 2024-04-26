@@ -156,7 +156,7 @@ $logo-size: 12px;
   }
 }
 
-.google-badge + .save-password {
+.google-badge + .settings-option {
   margin-top: $basic-spacing;
 }
 </style>

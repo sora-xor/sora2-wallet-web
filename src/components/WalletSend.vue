@@ -178,7 +178,7 @@ export default class WalletSend extends Mixins(
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
-  @state.transactions.isConfirmTxDialogEnabled private isConfirmTxEnabled!: boolean;
+  @state.transactions.isConfirmTxDialogDisabled private isConfirmTxDisabled!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;
@@ -379,10 +379,10 @@ export default class WalletSend extends Mixins(
       return;
     }
 
-    if (this.isConfirmTxEnabled) {
-      this.step = 3;
-    } else {
+    if (this.isConfirmTxDisabled) {
       await this.handleConfirm();
+    } else {
+      this.step = 3;
     }
   }
 

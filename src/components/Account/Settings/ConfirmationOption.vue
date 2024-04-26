@@ -25,15 +25,15 @@ import AccountSettingsOption from './Option.vue';
 export default class AccountConfirmationOption extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withHint!: boolean;
 
-  @state.transactions.isConfirmTxDialogEnabled private isConfirmTxDialogEnabled!: boolean;
-  @mutation.transactions.setConfirmTxDialogEnabled private setConfirmTxDialogEnabled!: (flag: boolean) => void;
+  @state.transactions.isConfirmTxDialogDisabled private isConfirmTxDialogDisabled!: boolean;
+  @mutation.transactions.setConfirmTxDialogDisabled private setConfirmTxDialogDisabled!: (flag: boolean) => void;
 
   get model(): boolean {
-    return this.isConfirmTxDialogEnabled;
+    return this.isConfirmTxDialogDisabled;
   }
 
   set model(value: boolean) {
-    this.setConfirmTxDialogEnabled(value);
+    this.setConfirmTxDialogDisabled(value);
   }
 }
 </script>
