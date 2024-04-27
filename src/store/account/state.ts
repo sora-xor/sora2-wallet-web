@@ -2,6 +2,7 @@ import isElectron from 'is-electron';
 
 import type { Book } from '@/types/common';
 
+import { DefaultPassphraseTimeout } from '../../consts';
 import { storage, settingsStorage } from '../../util/storage';
 
 import type { AccountState } from './types';
@@ -12,6 +13,7 @@ export function initialState(): AccountState {
   const ceresFiatValues = settingsStorage.get('ceresFiatValues');
   const book = addressBook && JSON.parse(addressBook);
   const isExternal = storage.get('isExternal');
+  const accountPasswordTimeout = settingsStorage.get('accountPasswordTimeout');
 
   return {
     address: storage.get('address') || '',
@@ -45,7 +47,10 @@ export function initialState(): AccountState {
     isDesktop: isElectron(), // NOTE: inverse flag here to debug desktop
     addressKeyMapping: {},
     addressPassphraseMapping: {},
-    accountPassphraseTimer: null,
+    /** account password timings  */
+    accountPasswordTimer: null,
+    accountPasswordTimestamp: null,
+    accountPasswordTimeout: accountPasswordTimeout ? JSON.parse(accountPasswordTimeout) : DefaultPassphraseTimeout,
   };
 }
 

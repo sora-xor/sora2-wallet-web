@@ -80,6 +80,7 @@
           class="wallet-send-action s-typography-button--large"
           type="primary"
           :disabled="sendButtonDisabled"
+          :loading="loading"
           @click="handleSend"
         >
           {{ sendButtonDisabledText || t('walletSend.title') }}
@@ -99,10 +100,16 @@
               <span class="asset-name">{{ asset.symbol }}</span>
             </div>
           </div>
-          <div class="confirm-from">{{ account.address }}</div>
-          <s-icon name="arrows-arrow-bottom-24" />
-          <div class="confirm-to">{{ formattedSoraAddress }}</div>
+
+          <div class="confirm-address">
+            <span>{{ account.address }}</span>
+            <s-icon name="arrows-arrow-bottom-24" />
+            <span>{{ formattedSoraAddress }}</span>
+          </div>
+
+          <account-confirmation-option with-hint />
         </div>
+
         <s-button
           class="wallet-send-action s-typography-button--large"
           type="primary"
@@ -129,6 +136,7 @@ import { RouteNames } from '../consts';
 import { state, mutation, action } from '../store/decorators';
 import { validateAddress, formatAddress, formatAccountAddress } from '../util';
 
+import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
 import AddressBookInput from './AddressBook/Input.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
@@ -155,6 +163,7 @@ import type { Subscription } from 'rxjs';
     WalletFee,
     TokenLogo,
     AddressBookInput,
+    AccountConfirmationOption,
   },
 })
 export default class WalletSend extends Mixins(
@@ -169,6 +178,7 @@ export default class WalletSend extends Mixins(
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.transactions.isConfirmTxDialogDisabled private isConfirmTxDisabled!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;
@@ -369,7 +379,11 @@ export default class WalletSend extends Mixins(
       return;
     }
 
-    this.step = 3;
+    if (this.isConfirmTxDisabled) {
+      await this.handleConfirm();
+    } else {
+      this.step = 3;
+    }
   }
 
   async handleConfirm(): Promise<void> {
@@ -581,8 +595,11 @@ $logo-size: var(--s-size-mini);
     width: 100%;
   }
   .confirm {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: $basic-spacing-medium;
+
     &-asset {
-      margin-bottom: #{$basic-spacing-medium};
       font-size: var(--s-heading2-font-size);
       line-height: var(--s-line-height-small);
       font-weight: 800;
@@ -611,18 +628,16 @@ $logo-size: var(--s-size-mini);
         margin-right: calc(var(--s-basic-spacing) * 2);
       }
     }
-    &-from {
-      margin-bottom: var(--s-basic-spacing);
-    }
-    &-to {
-      margin-top: var(--s-basic-spacing);
-      overflow-wrap: break-word;
-    }
-    &-from,
-    &-to {
-      // It's set to small size cuz we need to show full address
+
+    &-address {
+      display: flex;
+      flex-flow: column nowrap;
+      align-items: flex-start;
+      gap: var(--s-basic-spacing);
+
       font-size: var(--s-font-size-mini);
       font-weight: 600;
+      overflow-wrap: break-word;
     }
   }
 }

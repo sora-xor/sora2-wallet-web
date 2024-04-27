@@ -1,6 +1,6 @@
 <template>
   <account-confirm-dialog
-    save-passphrase
+    with-timeout
     :visible.sync="visibility"
     :loading="loading"
     :passphrase="passphrase"
@@ -12,7 +12,6 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
-import { api } from '../api';
 import { getter, action, state, mutation } from '../store/decorators';
 import { delay } from '../util';
 
@@ -26,54 +25,40 @@ import NotificationMixin from './mixins/NotificationMixin';
   },
 })
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
-  @state.transactions.isConfirmTxDialogVisible private isConfirmTxDialogVisible!: boolean;
+  @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
+  @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
-  @mutation.transactions.setConfirmTxDialogVisibility private setConfirmTxDialogVisibility!: (flag: boolean) => void;
-  @mutation.transactions.approveTxViaConfirmTxDialog private approveTxViaConfirmTxDialog!: FnWithoutArgs;
-  @mutation.transactions.resetTxApprovedViaConfirmTxDialog private resetTxApprovedViaConfirmTxDialog!: FnWithoutArgs;
-  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => Promise<void>;
-  @mutation.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
-  @mutation.account.resetAccountPassphraseTimer private resetAccountPassphraseTimer!: FnWithoutArgs;
+  @mutation.transactions.setSignTxDialogVisibility private setSignTxDialogVisibility!: (flag: boolean) => void;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
+  @action.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
+  @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
 
   get visibility(): boolean {
-    return this.isConfirmTxDialogVisible;
+    return this.isSignTxDialogVisible;
   }
 
   set visibility(flag: boolean) {
-    this.setupFormState();
-    this.setConfirmTxDialogVisibility(flag);
+    this.setSignTxDialogVisibility(flag);
   }
 
-  async handleConfirm({ password, save }: { password: string; save: boolean }): Promise<void> {
+  async handleConfirm(password: string): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
       await delay(250);
 
       await this.withAppNotification(async () => {
-        api.unlockPair(password);
+        this.unlockAccountPair(password);
 
-        if (save) {
+        if (this.isSignTxDialogDisabled) {
           this.setAccountPassphrase(password);
         } else {
           this.resetAccountPassphrase();
-          this.resetAccountPassphraseTimer();
         }
 
-        this.approveTxViaConfirmTxDialog();
-        this.setConfirmTxDialogVisibility(false);
+        this.setSignTxDialogVisibility(false);
       });
     });
-  }
-
-  private setupFormState(): void {
-    if (this.visibility) {
-      this.resetTxApprovedViaConfirmTxDialog();
-    }
-  }
-
-  mounted(): void {
-    this.setupFormState();
   }
 }
 </script>

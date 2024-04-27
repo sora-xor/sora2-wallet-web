@@ -28,6 +28,7 @@
     />
 
     <account-confirm-dialog
+      with-timeout
       :visible.sync="accountLoginVisibility"
       :account="accountLoginData"
       :loading="loading"
@@ -72,11 +73,13 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
   @action.account.restoreAccountFromJson private restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
   @action.account.resetSelectedWallet private resetSelectedWallet!: FnWithoutArgs;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
 
   @getter.account.isLoggedIn private isLoggedIn!: boolean;
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
 
   @state.account.selectedWallet private selectedWallet!: AppWallet;
+  @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
 
   step: LoginStep = LoginStep.AccountList;
   accountLoginVisibility = false;
@@ -202,7 +205,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     return json;
   }
 
-  async handleAccountLogin({ password }: { password: string }) {
+  async handleAccountLogin(password: string) {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
@@ -216,6 +219,10 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
           name: (meta.name as string) || '',
           source: this.selectedWallet,
         });
+
+        if (this.isSignTxDialogDisabled) {
+          this.setAccountPassphrase(password);
+        }
 
         this.accountLoginVisibility = false;
         this.accountLoginData = null;

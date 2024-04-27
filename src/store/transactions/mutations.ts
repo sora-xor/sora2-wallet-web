@@ -1,6 +1,7 @@
 import { defineMutations } from 'direct-vuex';
 
 import { api } from '../../api';
+import { settingsStorage } from '../../util/storage';
 
 import type { TransactionsState } from './types';
 import type { EthBridgeUpdateHistory } from '../../consts';
@@ -67,14 +68,16 @@ const mutations = defineMutations<TransactionsState>()({
     }
     state.externalHistorySubscription = null;
   },
-  setConfirmTxDialogVisibility(state, visibility: boolean): void {
-    state.isConfirmTxDialogVisible = visibility;
+  setConfirmTxDialogDisabled(state, flag: boolean): void {
+    state.isConfirmTxDialogDisabled = flag;
+    settingsStorage.set('confirmTxDialogDisabled', flag);
   },
-  approveTxViaConfirmTxDialog(state): void {
-    state.isTxApprovedViaConfirmTxDialog = true;
+  setSignTxDialogDisabled(state, flag: boolean): void {
+    state.isSignTxDialogDisabled = flag;
+    settingsStorage.set('signTxDialogDisabled', flag);
   },
-  resetTxApprovedViaConfirmTxDialog(state): void {
-    state.isTxApprovedViaConfirmTxDialog = false;
+  setSignTxDialogVisibility(state, visibility: boolean): void {
+    state.isSignTxDialogVisible = visibility;
   },
 });
 

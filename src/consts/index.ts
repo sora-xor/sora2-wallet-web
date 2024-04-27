@@ -197,6 +197,24 @@ export enum ETH_BRIDGE_STATES {
   EVM_COMMITED = 'EVM_COMMITED',
 }
 
+export enum PassphraseTimeout {
+  FIFTEEN_MINUTES = '15m',
+  ONE_HOUR = '1h',
+  FOUR_HOURS = '4h',
+  ONE_DAY = '1D',
+  ONE_WEEK = '1W',
+}
+
+export const PassphraseTimeoutDuration: Record<PassphraseTimeout, number> = {
+  [PassphraseTimeout.FIFTEEN_MINUTES]: 15 * 60 * 1000,
+  [PassphraseTimeout.ONE_HOUR]: 60 * 60 * 1000,
+  [PassphraseTimeout.FOUR_HOURS]: 4 * 60 * 60 * 1000,
+  [PassphraseTimeout.ONE_DAY]: 24 * 60 * 60 * 1000,
+  [PassphraseTimeout.ONE_WEEK]: 7 * 24 * 60 * 60 * 1000,
+};
+
+export const DefaultPassphraseTimeout = PassphraseTimeoutDuration[PassphraseTimeout.FIFTEEN_MINUTES];
+
 export const ObjectInit = () => null;
 
 /**
@@ -229,4 +247,5 @@ export const TranslationConsts = {
   },
   JSON: 'JSON',
   ADAR: 'ADAR',
+  Google: 'Google',
 } as const;

@@ -509,8 +509,6 @@ export default {
     dialog: {
       confirmTitle: 'Confirm with password',
       confirmButton: 'Sign Transaction',
-      savePasswordText: 'Remember my password for next 15 minutes',
-      extendPasswordText: 'Extend period without password by 15 minutes',
     },
     errorMessages: {
       password: 'Password did not match',
@@ -580,5 +578,21 @@ export default {
     showOnly: 'Show only {entities}',
     myPositions: 'my positions',
     synthetics: 'synthetic tokens',
+  },
+  accountSettings: {
+    title: 'Account settings',
+    hint: 'You can enable this back in account settings',
+    disable: 'Disable on',
+    disabled: 'Disabled for',
+    confirmation: {
+      title: 'Disable transaction confirmation',
+      description: 'A popup screen which displays details about the transactions before the signing.',
+    },
+    signature: {
+      title: 'Disable password confirmation',
+      description: 'Enable or disable the need to enter your password during the signature popup in transactions.',
+    },
+    enterPassword: 'Enter password',
+    googleOnly: '{Google} accounts only',
   },
 };

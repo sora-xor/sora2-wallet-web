@@ -69,6 +69,7 @@
   align-items: center;
   justify-content: flex-start;
   padding: #{$basic-spacing-medium};
+  cursor: pointer;
 
   & > span {
     margin-left: #{$basic-spacing-small};

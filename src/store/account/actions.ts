@@ -33,7 +33,6 @@ import type { ActionContext } from 'vuex';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
-const PASSPHRASE_TIMEOUT = 15 * 60_000; // 15min
 
 // [TODO]: change WsProvider timeout instead on this
 const withTimeout = <T>(func: Promise<T>, timeout = UPDATE_ASSETS_INTERVAL) => {
@@ -355,18 +354,33 @@ const actions = defineActions({
   /**
    * Desktop
    */
-  async setAccountPassphrase(context, passphrase) {
+  setAccountPassphrase(context, passphrase: string): void {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
     const passphraseEncoded = AES.encrypt(passphrase, key).toString();
 
-    const { commit } = accountActionContext(context);
+    const { commit, dispatch, state } = accountActionContext(context);
 
-    commit.resetAccountPassphraseTimer();
+    dispatch.resetAccountPassphrase();
+
     commit.updateAddressGeneratedKey(key);
     commit.setAccountPassphrase(passphraseEncoded);
 
-    const timer = setTimeout(commit.resetAccountPassphrase, PASSPHRASE_TIMEOUT);
+    const timer = setTimeout(dispatch.resetAccountPassphrase, state.accountPasswordTimeout);
     commit.setAccountPassphraseTimer(timer);
+  },
+
+  resetAccountPassphrase(context): void {
+    const { commit } = accountActionContext(context);
+    commit.resetAccountPassphraseTimer();
+    commit.resetAccountPassphrase();
+  },
+
+  lockAccountPair(context): void {
+    api.lockPair();
+  },
+
+  unlockAccountPair(context, passphrase: string): void {
+    api.unlockPair(passphrase);
   },
 
   async syncWithStorage(context): Promise<void> {
@@ -528,11 +542,6 @@ const actions = defineActions({
   async resetWalletAvailabilitySubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
     commit.resetWalletAvailabilitySubscription();
-  },
-  /** It's used **only** for subscriptions module */
-  async resetAccountPassphraseTimer(context): Promise<void> {
-    const { commit } = accountActionContext(context);
-    commit.resetAccountPassphraseTimer();
   },
 });
 

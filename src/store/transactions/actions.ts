@@ -54,7 +54,7 @@ async function parseHistoryUpdate(context: ActionContext<any, any>, transaction:
 async function waitUntilConfirmTxDialogOpened(): Promise<void> {
   return new Promise((resolve) => {
     const unsubscribe = store.original.watch(
-      (state) => state.wallet.transactions.isConfirmTxDialogVisible,
+      (state) => state.wallet.transactions.isSignTxDialogVisible,
       (value) => {
         if (!value) {
           unsubscribe();
@@ -68,15 +68,21 @@ async function waitUntilConfirmTxDialogOpened(): Promise<void> {
 const actions = defineActions({
   async beforeTransactionSign(context): Promise<void> {
     const { commit, state } = transactionsActionContext(context);
-    const { rootState } = rootActionContext(context);
+    const { rootGetters, rootDispatch, rootState } = rootActionContext(context);
 
     if (rootState.wallet.account.isExternal) return;
 
-    commit.setConfirmTxDialogVisibility(true);
+    const { passphrase } = rootGetters.wallet.account;
 
-    await waitUntilConfirmTxDialogOpened();
+    if (passphrase && state.isSignTxDialogDisabled) {
+      rootDispatch.wallet.account.unlockAccountPair(passphrase);
+    } else {
+      commit.setSignTxDialogVisibility(true);
 
-    if (!state.isTxApprovedViaConfirmTxDialog) {
+      await waitUntilConfirmTxDialogOpened();
+    }
+
+    if (api.account?.pair.isLocked) {
       throw new Error('Cancelled');
     }
   },

@@ -126,6 +126,7 @@
         <info-line :label="t('createToken.nft.source.label')" :value="contentSource"></info-line>
         <info-line :label="t('createToken.nft.supply.quantity')" :value="tokenSupply"></info-line>
       </div>
+      <account-confirmation-option with-hint class="wallet-settings-create-token_action" />
       <s-button
         class="wallet-settings-create-token_action s-typography-button--large"
         type="primary"
@@ -157,6 +158,7 @@ import { state, mutation, action } from '../store/decorators';
 import { IMAGE_MIME_TYPES } from '../util/image';
 import { IpfsStorage } from '../util/ipfsStorage';
 
+import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
 import FileUploader from './FileUploader.vue';
 import InfoLine from './InfoLine.vue';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
@@ -175,6 +177,7 @@ import type { NFTStorage } from 'nft.storage';
     NftDetails,
     NetworkFeeWarningDialog,
     FileUploader,
+    AccountConfirmationOption,
   },
 })
 export default class CreateNftToken extends Mixins(
@@ -195,6 +198,7 @@ export default class CreateNftToken extends Mixins(
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
   @state.settings.nftStorage private nftStorage!: NFTStorage;
+  @state.transactions.isConfirmTxDialogDisabled private isConfirmTxDisabled!: boolean;
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.settings.createNftStorageInstance private createNftStorageInstance!: AsyncFnWithoutArgs;
 
@@ -370,7 +374,7 @@ export default class CreateNftToken extends Mixins(
     );
   }
 
-  onCreate(): void {
+  async onCreate(): Promise<void> {
     if (
       !this.tokenSymbol.length ||
       !this.tokenSupply.length ||
@@ -392,8 +396,12 @@ export default class CreateNftToken extends Mixins(
       return;
     }
 
-    this.showFee = true;
-    this.$emit('stepChange', Step.ConfirmNftToken);
+    if (this.isConfirmTxDisabled) {
+      await this.onConfirm();
+    } else {
+      this.showFee = true;
+      this.$emit('stepChange', Step.ConfirmNftToken);
+    }
   }
 
   async onConfirm(): Promise<void> {

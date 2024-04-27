@@ -28,15 +28,19 @@ export default class TranslationMixin extends Vue {
     return this.$root.$te(key);
   }
 
-  formatDate(date: Nullable<number>, format = 'll LTS'): string {
-    let locale = this.$i18n.locale.toLowerCase();
+  get dayjsLocale(): string {
+    const locale = this.$i18n.locale.toLowerCase();
     // We have only dialect of hy lang
     switch (locale) {
       case 'hy':
-        locale = 'hy-am';
-        break;
+        return 'hy-am';
+      default:
+        return locale;
     }
-    return dayjs(date).locale(locale).format(format);
+  }
+
+  formatDate(date: Nullable<number>, format = 'll LTS'): string {
+    return dayjs(date).locale(this.dayjsLocale).format(format);
   }
 
   private getValues(values?: any): object {

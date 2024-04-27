@@ -1,6 +1,11 @@
+import { settingsStorage } from '../../util/storage';
+
 import type { TransactionsState } from './types';
 
 function initialState(): TransactionsState {
+  const isConfirmTxDialogDisabled = settingsStorage.get('confirmTxDialogDisabled');
+  const isSignTxDialogDisabled = settingsStorage.get('signTxDialogDisabled');
+
   return {
     history: {}, // history items what not synced with subquery
     externalHistory: {},
@@ -12,8 +17,9 @@ function initialState(): TransactionsState {
     updateActiveTxsId: null,
     selectedTxId: null,
     updateEthBridgeHistory: null,
-    isConfirmTxDialogVisible: false,
-    isTxApprovedViaConfirmTxDialog: false,
+    isConfirmTxDialogDisabled: isConfirmTxDialogDisabled ? Boolean(JSON.parse(isConfirmTxDialogDisabled)) : false,
+    isSignTxDialogDisabled: isSignTxDialogDisabled ? Boolean(JSON.parse(isSignTxDialogDisabled)) : false,
+    isSignTxDialogVisible: false,
   };
 }
 

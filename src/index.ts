@@ -1,6 +1,7 @@
 import { api, connection } from './api';
 // Components & Mixins
 import AccountCard from './components/Account/AccountCard.vue';
+import AccountConfirmationOption from './components/Account/Settings/ConfirmationOption.vue';
 import WalletAccount from './components/Account/WalletAccount.vue';
 import WalletAvatar from './components/Account/WalletAvatar.vue';
 import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
@@ -165,6 +166,7 @@ const components = {
   WalletAvatar,
   WalletBase,
   AccountCard,
+  AccountConfirmationOption,
   AddressBookInput,
   AssetList,
   AssetListItem,

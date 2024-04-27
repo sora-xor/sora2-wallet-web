@@ -1,13 +1,14 @@
 <template>
-  <dialog-base :title="t('desktop.dialog.confirmTitle')" :visible.sync="isVisible" class="confirm-dialog">
+  <dialog-base
+    :title="t('desktop.dialog.confirmTitle')"
+    :visible.sync="isVisible"
+    class="confirm-dialog"
+    append-to-body
+  >
     <s-form class="confirm-dialog__form" @submit.native.prevent="handleConfirm">
       <wallet-account :polkadot-account="account" />
       <password-input v-if="!passphrase" ref="passwordInput" v-model="password" :disabled="loading" autofocus />
-      <div v-if="savePassphrase" class="confirm-dialog__save-password">
-        <s-switch v-model="savePassword" />
-        <span v-if="!passphrase">{{ t('desktop.dialog.savePasswordText') }}</span>
-        <span v-else>{{ t('desktop.dialog.extendPasswordText') }}</span>
-      </div>
+      <account-signature-option v-if="withTimeout" with-hint />
       <s-button
         type="primary"
         native-type="submit"
@@ -30,6 +31,7 @@ import PasswordInput from '../Input/Password.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 
+import AccountSignatureOption from './Settings/SignatureOption.vue';
 import WalletAccount from './WalletAccount.vue';
 
 import type { PolkadotJsAccount } from '../../types/common';
@@ -39,12 +41,13 @@ import type { PolkadotJsAccount } from '../../types/common';
     DialogBase,
     WalletAccount,
     PasswordInput,
+    AccountSignatureOption,
   },
 })
 export default class AccountConfirmDialog extends Mixins(DialogMixin, TranslationMixin) {
   @Prop({ default: ObjectInit, type: Object }) readonly account!: PolkadotJsAccount;
   @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly savePassphrase!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly withTimeout!: boolean;
   @Prop({ default: '', type: String }) readonly passphrase!: string;
   @Prop({ default: '', type: String }) readonly confirmButtonText!: string;
 
@@ -63,7 +66,6 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
   }
 
   model = '';
-  savePassword = true;
 
   get password(): string {
     return this.passphrase || this.model;
@@ -82,10 +84,7 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
   }
 
   handleConfirm(): void {
-    this.$emit('confirm', {
-      password: this.password,
-      save: this.savePassphrase && this.savePassword,
-    });
+    this.$emit('confirm', this.password);
   }
 }
 </script>
@@ -96,11 +95,6 @@ export default class AccountConfirmDialog extends Mixins(DialogMixin, Translatio
     display: flex;
     flex-flow: column nowrap;
     gap: $basic-spacing-medium;
-  }
-
-  &__save-password {
-    @include switch-block;
-    padding: 0 #{$basic-spacing-small};
   }
 
   &__button {

@@ -55,6 +55,7 @@
       <info-line :label="t('createToken.tokenName.placeholder')" :value="tokenName.trim()" />
       <info-line :label="t('createToken.tokenSupply.placeholder')" :value="formattedTokenSupply" />
       <info-line :label="t('createToken.extensibleSupply.placeholder')" :value="extensibleSupply ? 'Yes' : 'No'" />
+      <account-confirmation-option with-hint class="wallet-settings-create-token_action" />
       <s-button
         class="wallet-settings-create-token_action s-typography-button--large"
         type="primary"
@@ -77,8 +78,9 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { RouteNames, Step } from '../consts';
-import { mutation } from '../store/decorators';
+import { mutation, state } from '../store/decorators';
 
+import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
 import InfoLine from './InfoLine.vue';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
@@ -95,6 +97,7 @@ import type { Route } from '../store/router/types';
     InfoLine,
     WalletFee,
     NetworkFeeWarningDialog,
+    AccountConfirmationOption,
   },
 })
 export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFormatterMixin, NetworkFeeWarningMixin) {
@@ -109,6 +112,7 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
   @Prop({ default: Step.CreateSimpleToken, type: String }) readonly step!: Step;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
+  @state.transactions.isConfirmTxDialogDisabled private isConfirmTxDisabled!: boolean;
 
   tokenSymbol = '';
   tokenName = '';
@@ -161,8 +165,12 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
       return;
     }
 
-    this.showFee = true;
-    this.$emit('stepChange', Step.ConfirmSimpleToken);
+    if (this.isConfirmTxDisabled) {
+      await this.onConfirm();
+    } else {
+      this.showFee = true;
+      this.$emit('stepChange', Step.ConfirmSimpleToken);
+    }
   }
 
   async onConfirm(): Promise<void> {
