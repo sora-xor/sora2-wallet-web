@@ -230,7 +230,12 @@ $formatted-amount-class: '.formatted-amount';
   overflow-wrap: anywhere;
   word-break: break-all;
   // Trick to fix horizontal spacings bug between elements
-  &__value,
+  &__value {
+    word-spacing: -3px;
+    // NOTE: use left-to-right texting direction including arabic langs; remove it if support is needed.
+    unicode-bidi: bidi-override;
+    direction: ltr;
+  }
   &__decimal {
     word-spacing: -3px;
   }
