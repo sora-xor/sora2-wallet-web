@@ -142,7 +142,7 @@ $logo-size: 12px;
   padding: $basic-spacing-tiny $basic-spacing;
   background: var(--s-color-base-on-accent);
   border-radius: var(--s-border-radius-mini);
-  box-shadow: var(--s-shadow-tooltip);
+  box-shadow: var(--s-shadow-element);
 
   & > img {
     width: $logo-size;

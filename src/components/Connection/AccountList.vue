@@ -28,6 +28,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
 
 import ConnectionItems from './ConnectionItems.vue';
 
+import type { AppWallet } from '../../consts';
 import type { PolkadotJsAccount } from '../../types/common';
 
 @Component({
@@ -37,14 +38,20 @@ import type { PolkadotJsAccount } from '../../types/common';
   },
 })
 export default class AccountList extends Mixins(TranslationMixin) {
-  @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @getter.account.isConnectedAccount isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
+  @state.account.polkadotJsAccounts private polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.account.selectedWallet private selectedWallet!: AppWallet;
+  @getter.account.isConnectedAccount private isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
 
   get accountList() {
-    return this.polkadotJsAccounts.map((account) => ({
-      account,
-      isConnected: this.isConnectedAccount(account),
-    }));
+    return this.polkadotJsAccounts.map((account) => {
+      const source = this.selectedWallet ?? ('' as AppWallet);
+      const accountData = { ...account, source };
+
+      return {
+        account,
+        isConnected: this.isConnectedAccount(accountData),
+      };
+    });
   }
 
   handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {

@@ -103,11 +103,14 @@ export default class AccountSignatureOption extends Mixins(TranslationMixin) {
     this.resetTimer();
   }
 
+  private updateTimestamp(): void {
+    this.timestamp = Date.now();
+  }
+
   private createTimer(): void {
     this.resetTimer();
-    this.timer = setInterval(() => {
-      this.timestamp = Date.now();
-    }, 1000);
+    this.updateTimestamp();
+    this.timer = setInterval(this.updateTimestamp, 1000);
   }
 
   private resetTimer(): void {

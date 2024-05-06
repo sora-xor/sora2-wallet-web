@@ -99,10 +99,17 @@ const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAc
   return (accounts || []).map((account) => formatWalletAccount(account));
 };
 
-export const subscribeToWalletAccounts = async (
-  wallet: AppWallet,
-  callback: (accounts: PolkadotJsAccount[]) => void
-): Promise<Nullable<Unsubcall>> => {
+const subscribeToInternalAccounts = (callback: (accounts: PolkadotJsAccount[]) => void) => {
+  callback(getImportedAccounts());
+
+  const subscription = setInterval(() => {
+    callback(getImportedAccounts());
+  }, 5_000);
+
+  return () => clearInterval(subscription);
+};
+
+const subscribeToExternalAccounts = async (wallet: AppWallet, callback: (accounts: PolkadotJsAccount[]) => void) => {
   const appWallet = await getWallet(wallet);
   const accounts = await appWallet.getAccounts();
 
@@ -114,6 +121,13 @@ export const subscribeToWalletAccounts = async (
 
   // [TODO]: Wait for Polkadot.js extension release, because unsubscribe not works now
   return unsubscribe;
+};
+
+export const subscribeToWalletAccounts = async (
+  wallet: AppWallet,
+  callback: (accounts: PolkadotJsAccount[]) => void
+): Promise<Nullable<Unsubcall>> => {
+  return wallet ? await subscribeToExternalAccounts(wallet, callback) : subscribeToInternalAccounts(callback);
 };
 
 export const initAppWallets = (appName?: string) => initialize(appName ?? TranslationConsts.Polkaswap);
