@@ -388,6 +388,7 @@ const actions = defineActions({
     api.unlockPair(passphrase);
   },
 
+  // [NOTE]: Desktop is not syncing, because it runs in one flow
   async syncWithStorage(context): Promise<void> {
     const { state, getters, commit, dispatch } = accountActionContext(context);
     // previous state
