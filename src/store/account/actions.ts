@@ -123,6 +123,16 @@ async function updateApiSigner(source: AppWallet) {
   api.setSigner(signer);
 }
 
+function logoutApi(context: ActionContext<any, any>, forget = false): void {
+  const { state } = accountActionContext(context);
+
+  if (!state.isDesktop && forget) {
+    api.forgetAccount();
+  }
+
+  api.logout();
+}
+
 const actions = defineActions({
   async afterLogin(context): Promise<void> {
     const { dispatch } = accountActionContext(context);
@@ -134,24 +144,15 @@ const actions = defineActions({
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
-  async logout(context, forgetAddress?: string): Promise<void> {
-    const { commit, dispatch, state } = accountActionContext(context);
+  async logout(context): Promise<void> {
+    const { commit } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    // Don't forget account on Desktop, if forgetAddress is not passed
-    if (!state.isDesktop || forgetAddress) {
-      api.forgetAccount(forgetAddress);
-    }
-
-    api.logout();
+    logoutApi(context, true);
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
     commit.resetAccount();
-
-    if (forgetAddress) {
-      dispatch.updateImportedAccounts();
-    }
 
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
@@ -269,7 +270,7 @@ const actions = defineActions({
   },
 
   async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
-    const { commit, dispatch, state } = accountActionContext(context);
+    const { commit, dispatch } = accountActionContext(context);
 
     // Desktop has not source
     const source = (accountData.source as AppWallet) || '';
@@ -277,14 +278,7 @@ const actions = defineActions({
     const defaultAddress = formatAccountAddress(accountData.address, false);
     const soraAddress = formatAccountAddress(defaultAddress);
 
-    // Don't forget account:
-    // 1) on Desktop;
-    // 2) When the login and api addresses are the same;
-    if (!state.isDesktop && api.address !== soraAddress) {
-      api.forgetAccount();
-    }
-
-    api.logout();
+    logoutApi(context, api.address !== soraAddress);
 
     if (isExternal) {
       // we should update signer
@@ -338,6 +332,17 @@ const actions = defineActions({
     api.changeAccountName(address, name);
     // update account data from storage
     commit.syncWithStorage();
+    // update account list in state
+    dispatch.updateImportedAccounts();
+  },
+
+  /**
+   * Desktop
+   */
+  deleteAccount(context, address?: string): void {
+    const { dispatch } = accountActionContext(context);
+    // delete account pair
+    api.forgetAccount(address);
     // update account list in state
     dispatch.updateImportedAccounts();
   },
