@@ -98,6 +98,7 @@ export type SettingsStorageKey =
   | 'indexerType'
   | 'ceresFiatValues'
   | 'currency'
+  | 'fiatExchangeRates'
   | 'signTxDialogDisabled'
   | 'confirmTxDialogDisabled'
   | 'accountPasswordTimeout';

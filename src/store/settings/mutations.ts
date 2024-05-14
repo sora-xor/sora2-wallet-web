@@ -130,10 +130,15 @@ const mutations = defineMutations<SettingsState>()({
     state.currencies = currencies;
   },
   updateFiatExchangeRates(state, newRates?: FiatExchangeRateObject) {
-    state.fiatExchangeRateObject = {
+    const updatedRates = {
       [Currency.DAI]: 1,
       ...(newRates ?? {}),
     };
+
+    console.log('setting to localStore', newRates);
+
+    settingsStorage.set('fiatExchangeRates', JSON.stringify(updatedRates));
+    state.fiatExchangeRateObject = updatedRates;
   },
   setExchangeRateSubscription(state, subscription: VoidFunction): void {
     state.exchangeRateSubscription = subscription;
