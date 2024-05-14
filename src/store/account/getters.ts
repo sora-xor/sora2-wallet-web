@@ -103,8 +103,7 @@ const getters = defineGetters<AccountState>()({
       const { address, name, source } = state;
       const formatted = { ...account, address: formatAccountAddress(account.address) };
       const accountData: PolkadotJsAccount = { address, name };
-
-      if (source) accountData.source = source as AppWallet;
+      accountData.source = source as AppWallet;
 
       return isEqual(formatted)(accountData);
     };
