@@ -8,7 +8,7 @@ import store from '../../store';
 
 import type { FiatExchangeRateObject } from '../../types/currency';
 
-const INTERVAL = 1;
+const INTERVAL = 15;
 const ONE_MINUTE = 60_000; // 1 min in milliseconds
 const exchangeRateUpdateInterval = timer(0, INTERVAL * ONE_MINUTE); // 15min
 
