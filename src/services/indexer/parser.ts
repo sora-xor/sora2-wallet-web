@@ -39,6 +39,8 @@ import type {
   HistoryElementVaultClose,
   HistoryElementVaultDepositCollateral,
   HistoryElementVaultDebt,
+  HistoryElementEthBridgeIncoming,
+  HistoryElementEthBridgeOutgoing,
   ClaimedRewardItem,
   CallArgs,
 } from './subquery/types';
@@ -48,6 +50,7 @@ import type {
   WhitelistItem,
   HistoryElementTransfer as HistoryXorlessTransfer,
 } from '@sora-substrate/util/build/assets/types';
+import type { EthHistory } from '@sora-substrate/util/build/bridgeProxy/eth/types';
 import type { VaultHistory } from '@sora-substrate/util/build/kensetsu/types';
 import type { LimitOrderHistory } from '@sora-substrate/util/build/orderBook/types';
 import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
@@ -165,6 +168,12 @@ const OperationsMap = {
     [insensitive(ModuleMethods.VaultCollateralDeposit)]: () => Operation.DepositCollateral,
     [insensitive(ModuleMethods.VaultDebtPayment)]: () => Operation.RepayVaultDebt,
     [insensitive(ModuleMethods.VaultDebtBorrow)]: () => Operation.BorrowVaultDebt,
+  },
+  [insensitive(ModuleNames.BridgeMultisig)]: {
+    [insensitive(ModuleMethods.BridgeMultisigAsMulti)]: () => Operation.EthBridgeIncoming,
+  },
+  [insensitive(ModuleNames.EthBridge)]: {
+    [insensitive(ModuleMethods.EthBridgeTransferToSidechain)]: () => Operation.EthBridgeOutgoing,
   },
 };
 
@@ -705,6 +714,40 @@ const parseVaultDebtPaymentOrBorrow = async (transaction: HistoryElement, payloa
   return payload;
 };
 
+const parseEthBridgeIncoming = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementEthBridgeIncoming;
+
+  const assetAddress = data.assetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  const _payload = payload as EthHistory;
+
+  _payload.amount = formatAmount(data.amount);
+  _payload.assetAddress = assetAddress;
+  _payload.symbol = getAssetSymbol(asset);
+  _payload.to = data.to;
+  _payload.hash = data.requestHash;
+
+  return payload;
+};
+
+const parseEthBridgeOutgoing = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementEthBridgeOutgoing;
+
+  const assetAddress = data.assetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  const _payload = payload as EthHistory;
+
+  _payload.amount = formatAmount(data.amount);
+  _payload.assetAddress = assetAddress;
+  _payload.symbol = getAssetSymbol(asset);
+  _payload.to = data.sidechainAddress;
+  _payload.hash = data.requestHash;
+
+  return payload;
+};
+
 export default class IndexerDataParser {
   // Operations visible in wallet
   public static readonly SUPPORTED_OPERATIONS = [
@@ -746,6 +789,9 @@ export default class IndexerDataParser {
     Operation.DepositCollateral,
     Operation.RepayVaultDebt,
     Operation.BorrowVaultDebt,
+    /** Don't show bridge tx in wallet */
+    // Operation.EthBridgeIncoming,
+    // Operation.EthBridgeOutgoing,
   ];
 
   public get supportedOperations(): Array<Operation> {
@@ -882,6 +928,12 @@ export default class IndexerDataParser {
       case Operation.RepayVaultDebt:
       case Operation.BorrowVaultDebt: {
         return await parseVaultDebtPaymentOrBorrow(transaction, payload);
+      }
+      case Operation.EthBridgeIncoming: {
+        return await parseEthBridgeIncoming(transaction, payload);
+      }
+      case Operation.EthBridgeOutgoing: {
+        return await parseEthBridgeOutgoing(transaction, payload);
       }
       default:
         return null;
