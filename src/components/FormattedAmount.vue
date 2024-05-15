@@ -9,7 +9,10 @@
     ref="parent"
   >
     <span class="formatted-amount__value" ref="child">
-      <span v-if="!isHiddenValue && (isFiatValue || $slots.prefix)" class="formatted-amount__prefix">
+      <span
+        v-if="!isHiddenValue && (isFiatValue || $slots.prefix || customizableCurrency)"
+        class="formatted-amount__prefix"
+      >
         <slot name="prefix">{{ symbol }}</slot>
       </span>
       <span v-if="!isHiddenValue || (isHiddenValue && integerOnly)" class="formatted-amount__integer">{{
