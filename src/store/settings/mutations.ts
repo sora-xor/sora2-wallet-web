@@ -135,8 +135,6 @@ const mutations = defineMutations<SettingsState>()({
       ...(newRates ?? {}),
     };
 
-    console.log('setting to localStore', newRates);
-
     settingsStorage.set('fiatExchangeRates', JSON.stringify(updatedRates));
     state.fiatExchangeRateObject = updatedRates;
   },

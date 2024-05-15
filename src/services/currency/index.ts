@@ -30,12 +30,7 @@ export class CurrencyExchangeRateService {
 
       const deltaTime = Math.floor((newTimestamp.getTime() - oldTimestamp.getTime()) / ONE_MINUTE);
 
-      console.log('deltaTime', deltaTime);
-      console.log('INTERVAL', INTERVAL);
-
       if (deltaTime < INTERVAL) {
-        console.log('taking from localStorage');
-
         return fiatExchangeRates;
       }
     }
@@ -43,7 +38,6 @@ export class CurrencyExchangeRateService {
     try {
       const exchangeRatesApi = await fetch(CurrencyExchangeRateService.apiEndpoint, { cache: 'no-store' });
       const data = (await exchangeRatesApi.json())?.dai;
-      console.log('making new api call');
 
       return { ...data, timestamp: Date.now() };
     } catch (error) {
