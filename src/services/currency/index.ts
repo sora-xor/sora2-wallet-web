@@ -8,9 +8,9 @@ import store from '../../store';
 
 import type { FiatExchangeRateObject } from '../../types/currency';
 
-const INTERVAL = 15;
+const INTERVAL = 15; // 15min between requests
 const ONE_MINUTE = 60_000; // 1 min in milliseconds
-const exchangeRateUpdateInterval = timer(0, INTERVAL * ONE_MINUTE); // 15min
+const exchangeRateUpdateInterval = timer(0, ONE_MINUTE * 0.25); // 15sec interval checks for data consistency
 
 export class CurrencyExchangeRateService {
   public static readonly apiEndpoint = API_ENDPOINT;
@@ -34,6 +34,9 @@ export class CurrencyExchangeRateService {
         return fiatExchangeRates;
       }
     }
+
+    // to lock other tabs if they opened simultaneously
+    store.commit.wallet.settings.updateFiatExchangeRates({ timestamp: Date.now() });
 
     try {
       const exchangeRatesApi = await fetch(CurrencyExchangeRateService.apiEndpoint, { cache: 'no-store' });
