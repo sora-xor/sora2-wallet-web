@@ -95,7 +95,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   /**
    * Allows for getting proper exchange rate and symbol for provided currency
    */
-  @Prop({ default: null, type: String }) readonly customizableCurrency!: Nullable<Currency>;
+  @Prop({ default: '', type: String }) readonly customizableCurrency!: Currency | '';
 
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
   @state.settings.currency currency!: Currency;
@@ -130,7 +130,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
 
   get unformatted(): string {
     return this.value
-      .replace(new RegExp(FPNumber.DELIMITERS_CONFIG.thousand, 'g'), '')
+      .replaceAll(FPNumber.DELIMITERS_CONFIG.thousand, '')
       .replace(FPNumber.DELIMITERS_CONFIG.decimal, '.');
   }
 
@@ -141,16 +141,15 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
     return false;
   }
 
-  get fiatValue(): string {
-    const coefficient = this.customizableCurrency
-      ? this.fiatExchangeRateObject[this.customizableCurrency] ?? 1
-      : this.exchangeRate;
-
-    return new FPNumber(this.unformatted).mul(coefficient).toLocaleString();
-  }
-
   get formatted(): FormattedAmountValues {
-    const value = this.isFiatValue ? this.fiatValue : this.value;
+    let value = this.value;
+
+    if (this.isFiatValue) {
+      const coefficient = this.customizableCurrency
+        ? this.fiatExchangeRateObject[this.customizableCurrency] ?? 1
+        : this.exchangeRate;
+      value = new FPNumber(this.unformatted).mul(coefficient).toLocaleString();
+    }
 
     let [integer, decimal] = value.split(FPNumber.DELIMITERS_CONFIG.decimal);
 
@@ -238,6 +237,9 @@ $formatted-amount-class: '.formatted-amount';
     // NOTE: use left-to-right texting direction including arabic langs; remove it if support is needed.
     unicode-bidi: bidi-override;
     direction: ltr;
+  }
+  &__integer {
+    word-spacing: normal;
   }
   &__decimal {
     word-spacing: -3px;
