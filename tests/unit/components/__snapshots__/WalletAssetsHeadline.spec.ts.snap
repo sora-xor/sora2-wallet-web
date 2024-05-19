@@ -18,6 +18,7 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
        
       <formatted-amount-stub
         assetsymbol=""
+        customizablecurrency=""
         fontsizerate="normal"
         fontweightrate="normal"
         integeronly="true"
