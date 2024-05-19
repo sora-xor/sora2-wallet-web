@@ -27,5 +27,5 @@ export type SettingsState = {
   currency: Currency;
   currencies: Array<CurrencyFields>;
   fiatExchangeRateObject: FiatExchangeRateObject;
-  exchangeRateSubscription: Nullable<VoidFunction>;
+  exchangeRateUnsubFn: Nullable<VoidFunction>;
 };

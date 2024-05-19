@@ -185,11 +185,11 @@ const actions = defineActions({
 
     commit.resetExchangeRateSubscription();
 
-    const subscription = CurrencyExchangeRateService.createExchangeRatesSubscription(
+    const unsubFn = CurrencyExchangeRateService.createExchangeRatesSubscription(
       (newRates: FiatExchangeRateObject) => exchangeRatesSuccessHandler(context, newRates),
       () => exchangeRatesErrorHandler(context)
     );
-    commit.setExchangeRateSubscription(subscription);
+    commit.setExchangeRateUnsubFn(unsubFn);
     console.info(`[Exchange Rate API] Fiat rates subscribe.`);
   },
 });
