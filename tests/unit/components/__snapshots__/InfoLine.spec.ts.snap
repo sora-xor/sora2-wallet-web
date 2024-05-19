@@ -232,6 +232,7 @@ exports[`InfoLine.vue [With Fiat Value]: should be rendered correctly 1`] = `
      
     <formatted-amount-stub
       assetsymbol=""
+      customizablecurrency=""
       fontweightrate="normal"
       isfiatvalue="true"
       value="1,234,567.890123"
@@ -262,6 +263,7 @@ exports[`InfoLine.vue [With Formatted & Hidden value; hide balances button was c
     <formatted-amount-stub
       assetsymbol=""
       class="info-line-value"
+      customizablecurrency=""
       fontsizerate="medium"
       fontweightrate="small"
       value="1,234,567.890123456789"
@@ -294,6 +296,7 @@ exports[`InfoLine.vue [With Formatted Value]: should be rendered correctly 1`] =
     <formatted-amount-stub
       assetsymbol=""
       class="info-line-value"
+      customizablecurrency=""
       fontsizerate="medium"
       fontweightrate="small"
       value="1,234,567.890123456789"
