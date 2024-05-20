@@ -129,7 +129,7 @@ const mutations = defineMutations<SettingsState>()({
   setCurrencies(state, currencies: CurrencyFields[]): void {
     state.currencies = currencies;
   },
-  updateFiatExchangeRates(state, newRates?: FiatExchangeRateObject) {
+  updateFiatExchangeRates(state, newRates?: FiatExchangeRateObject): void {
     const updatedRates = {
       [Currency.DAI]: 1,
       ...(newRates ?? {}),
@@ -138,12 +138,12 @@ const mutations = defineMutations<SettingsState>()({
     settingsStorage.set('fiatExchangeRates', JSON.stringify(updatedRates));
     state.fiatExchangeRateObject = updatedRates;
   },
-  setExchangeRateSubscription(state, subscription: VoidFunction): void {
-    state.exchangeRateSubscription = subscription;
+  setExchangeRateUnsubFn(state, unsubFn: VoidFunction): void {
+    state.exchangeRateUnsubFn = unsubFn;
   },
   resetExchangeRateSubscription(state): void {
-    state.exchangeRateSubscription?.();
-    state.exchangeRateSubscription = null;
+    state.exchangeRateUnsubFn?.();
+    state.exchangeRateUnsubFn = null;
   },
 });
 

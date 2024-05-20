@@ -63,7 +63,7 @@ function initialState(): SettingsState {
     currency: currency || Currency.DAI,
     currencies: [],
     fiatExchangeRateObject: { [Currency.DAI]: 1 },
-    exchangeRateSubscription: null,
+    exchangeRateUnsubFn: null,
   };
 }
 

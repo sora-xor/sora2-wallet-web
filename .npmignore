@@ -13,3 +13,5 @@ jest.config.js
 cypress.json
 .jest
 coverage
+trivy
+results-trivy-fs.json

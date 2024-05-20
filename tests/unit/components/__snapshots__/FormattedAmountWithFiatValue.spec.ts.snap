@@ -7,6 +7,7 @@ exports[`FormattedAmountWithFiatValue.vue [Fiat FontSizeRate Medium]: should be 
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -14,6 +15,7 @@ exports[`FormattedAmountWithFiatValue.vue [Fiat FontSizeRate Medium]: should be 
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="medium"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -29,6 +31,7 @@ exports[`FormattedAmountWithFiatValue.vue [Fiat FontWeightRate Medium]: should b
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -36,6 +39,7 @@ exports[`FormattedAmountWithFiatValue.vue [Fiat FontWeightRate Medium]: should b
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="medium"
     isfiatvalue="true"
@@ -51,6 +55,7 @@ exports[`FormattedAmountWithFiatValue.vue [Fiat Format as Value Format Medium]: 
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="medium"
     fontweightrate="medium"
     value="1,234,567.890123"
@@ -58,6 +63,7 @@ exports[`FormattedAmountWithFiatValue.vue [Fiat Format as Value Format Medium]: 
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="medium"
     fontweightrate="medium"
     isfiatvalue="true"
@@ -73,6 +79,7 @@ exports[`FormattedAmountWithFiatValue.vue [FontSizeRate Small]: should be render
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="small"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -80,6 +87,7 @@ exports[`FormattedAmountWithFiatValue.vue [FontSizeRate Small]: should be render
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -95,6 +103,7 @@ exports[`FormattedAmountWithFiatValue.vue [FontWeightRate Small]: should be rend
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="small"
     value="1,234,567.890123"
@@ -102,6 +111,7 @@ exports[`FormattedAmountWithFiatValue.vue [FontWeightRate Small]: should be rend
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -117,6 +127,7 @@ exports[`FormattedAmountWithFiatValue.vue [Has not Fiat Value]: should be render
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -133,6 +144,7 @@ exports[`FormattedAmountWithFiatValue.vue [Symbol In Decimal Container]: should 
   <formatted-amount-stub
     assetsymbol="XOR"
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     symbolasdecimal="true"
@@ -141,6 +153,7 @@ exports[`FormattedAmountWithFiatValue.vue [Symbol In Decimal Container]: should 
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -156,6 +169,7 @@ exports[`FormattedAmountWithFiatValue.vue [Value and Fiat value only, can be hid
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -164,6 +178,7 @@ exports[`FormattedAmountWithFiatValue.vue [Value and Fiat value only, can be hid
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -180,6 +195,7 @@ exports[`FormattedAmountWithFiatValue.vue [Value and Fiat value only]: should be
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -187,6 +203,7 @@ exports[`FormattedAmountWithFiatValue.vue [Value and Fiat value only]: should be
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -202,6 +219,7 @@ exports[`FormattedAmountWithFiatValue.vue [Value only, can be hidden]: should be
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -210,6 +228,7 @@ exports[`FormattedAmountWithFiatValue.vue [Value only, can be hidden]: should be
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -226,6 +245,7 @@ exports[`FormattedAmountWithFiatValue.vue [Value only]: should be rendered corre
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -233,6 +253,7 @@ exports[`FormattedAmountWithFiatValue.vue [Value only]: should be rendered corre
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -248,6 +269,7 @@ exports[`FormattedAmountWithFiatValue.vue [With Empty Value]: should be rendered
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value=""
@@ -255,6 +277,7 @@ exports[`FormattedAmountWithFiatValue.vue [With Empty Value]: should be rendered
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -270,6 +293,7 @@ exports[`FormattedAmountWithFiatValue.vue [With Left Shift for Fiat]: should be 
   <formatted-amount-stub
     assetsymbol=""
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -277,6 +301,7 @@ exports[`FormattedAmountWithFiatValue.vue [With Left Shift for Fiat]: should be 
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -293,6 +318,7 @@ exports[`FormattedAmountWithFiatValue.vue [With asset symbol]: should be rendere
   <formatted-amount-stub
     assetsymbol="XOR"
     class=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -300,6 +326,7 @@ exports[`FormattedAmountWithFiatValue.vue [With asset symbol]: should be rendere
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
@@ -315,6 +342,7 @@ exports[`FormattedAmountWithFiatValue.vue [With value class]: should be rendered
   <formatted-amount-stub
     assetsymbol=""
     class="formatted-amount--test"
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     value="1,234,567.890123"
@@ -322,6 +350,7 @@ exports[`FormattedAmountWithFiatValue.vue [With value class]: should be rendered
    
   <formatted-amount-stub
     assetsymbol=""
+    customizablecurrency=""
     fontsizerate="normal"
     fontweightrate="normal"
     isfiatvalue="true"
