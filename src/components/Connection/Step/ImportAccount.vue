@@ -107,7 +107,8 @@ import SubWalletLogo from '@sora-test/wallet-connect/dotsama/predefinedWallet/Su
 import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
 
 import { LoginStep } from '../../../consts';
-import { AppError, parseJson } from '../../../util';
+import { AppError } from '../../../util';
+import { parseAccountJson } from '../../../util/account';
 import WalletAccount from '../../Account/WalletAccount.vue';
 import FileUploader from '../../FileUploader.vue';
 import PasswordInput from '../../Input/Password.vue';
@@ -213,7 +214,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     this.withAppNotification(async () => {
       if (!jsonFile) return;
 
-      const parsedJson = await parseJson(jsonFile);
+      const parsedJson = await parseAccountJson(jsonFile);
       const { address, encoded, encoding, meta = {} } = parsedJson;
 
       if (!(address && encoded && encoding)) {

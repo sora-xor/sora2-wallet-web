@@ -3,7 +3,8 @@ import { Component, Mixins } from 'vue-property-decorator';
 import { AppWallet, AccountActionTypes } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
 import { action, getter } from '../../store/decorators';
-import { delay, verifyAccountJson, exportAccountJson } from '../../util';
+import { delay } from '../../util';
+import { verifyAccountJson, exportAccountJson } from '../../util/account';
 import { settingsStorage } from '../../util/storage';
 
 import LoadingMixin from './LoadingMixin';

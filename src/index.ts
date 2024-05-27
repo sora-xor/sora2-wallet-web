@@ -54,14 +54,8 @@ import * as VUEX_TYPES from './store/types';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
 import { WalletModules } from './store/wallet';
 import * as WALLET_TYPES from './types/common';
-import {
-  delay,
-  getExplorerLinks,
-  groupRewardsByAssetsList,
-  initAppWallets,
-  formatAccountAddress,
-  validateAddress,
-} from './util';
+import { delay, getExplorerLinks, groupRewardsByAssetsList, formatAccountAddress, validateAddress } from './util';
+import { initAppWallets } from './util/account';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
