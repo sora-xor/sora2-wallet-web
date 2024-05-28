@@ -55,7 +55,7 @@ import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/
 import { WalletModules } from './store/wallet';
 import * as WALLET_TYPES from './types/common';
 import { delay, getExplorerLinks, groupRewardsByAssetsList, formatAccountAddress, validateAddress } from './util';
-import { initAppWallets } from './util/account';
+import * as accountUtils from './util/account';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
@@ -107,7 +107,7 @@ const waitForCore = async ({
   if (!walletCoreLoaded) {
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
-    initAppWallets(appName);
+    accountUtils.initAppWallets(appName);
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);
@@ -223,6 +223,7 @@ export {
   WALLET_TYPES,
   components,
   mixins,
+  accountUtils,
   ScriptLoader,
   historyElementsFilter,
   AlertsApiService,

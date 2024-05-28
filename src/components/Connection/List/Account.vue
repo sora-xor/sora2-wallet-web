@@ -38,7 +38,7 @@ import type { PolkadotJsAccount } from '../../../types/common';
 })
 export default class AccountConnectionList extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) private accounts!: Array<PolkadotJsAccount>;
-  @Prop({ default: () => null, type: Object }) private wallet!: AppWallet;
+  @Prop({ default: '', type: String }) private wallet!: AppWallet;
   @Prop({ default: () => false, type: Function }) private isConnected!: (account: PolkadotJsAccount) => boolean;
 
   get accountList() {
