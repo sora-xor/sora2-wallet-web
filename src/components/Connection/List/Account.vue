@@ -4,7 +4,7 @@
       v-button
       v-for="{ account, isConnected } in accountList"
       :key="account.address"
-      :polkadotAccount="account"
+      :polkadot-account="account"
       tabindex="0"
       @click.native="handleSelectAccount(account, isConnected)"
     >
@@ -20,16 +20,15 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component } from 'vue-property-decorator';
+import { Mixins, Component, Prop } from 'vue-property-decorator';
 
-import { state, getter } from '../../store/decorators';
-import WalletAccount from '../Account/WalletAccount.vue';
-import TranslationMixin from '../mixins/TranslationMixin';
+import WalletAccount from '../../Account/WalletAccount.vue';
+import TranslationMixin from '../../mixins/TranslationMixin';
 
 import ConnectionItems from './ConnectionItems.vue';
 
-import type { AppWallet } from '../../consts';
-import type { PolkadotJsAccount } from '../../types/common';
+import type { AppWallet } from '../../../consts';
+import type { PolkadotJsAccount } from '../../../types/common';
 
 @Component({
   components: {
@@ -37,19 +36,19 @@ import type { PolkadotJsAccount } from '../../types/common';
     WalletAccount,
   },
 })
-export default class AccountList extends Mixins(TranslationMixin) {
-  @state.account.polkadotJsAccounts private polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @state.account.selectedWallet private selectedWallet!: AppWallet;
-  @getter.account.isConnectedAccount private isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
+export default class AccountConnectionList extends Mixins(TranslationMixin) {
+  @Prop({ default: () => [], type: Array }) private accounts!: Array<PolkadotJsAccount>;
+  @Prop({ default: () => null, type: Object }) private wallet!: AppWallet;
+  @Prop({ default: () => false, type: Function }) private isConnected!: (account: PolkadotJsAccount) => boolean;
 
   get accountList() {
-    return this.polkadotJsAccounts.map((account) => {
-      const source = this.selectedWallet ?? ('' as AppWallet);
+    return this.accounts.map((account) => {
+      const source = this.wallet ?? ('' as AppWallet);
       const accountData = { ...account, source };
 
       return {
         account,
-        isConnected: this.isConnectedAccount(accountData),
+        isConnected: this.isConnected(accountData),
       };
     });
   }

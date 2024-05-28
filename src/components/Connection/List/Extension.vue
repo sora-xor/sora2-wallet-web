@@ -37,9 +37,9 @@
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
-import { state } from '../../store/decorators';
-import AccountCard from '../Account/AccountCard.vue';
-import TranslationMixin from '../mixins/TranslationMixin';
+import { state } from '../../../store/decorators';
+import AccountCard from '../../Account/AccountCard.vue';
+import TranslationMixin from '../../mixins/TranslationMixin';
 
 import ConnectionItems from './ConnectionItems.vue';
 
@@ -51,7 +51,7 @@ import type { Wallet } from '@sora-test/wallet-connect/types';
     AccountCard,
   },
 })
-export default class ExtensionList extends Mixins(TranslationMixin) {
+export default class ExtensionConnectionList extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly wallets!: Wallet[];
 
   @state.account.source source!: string;

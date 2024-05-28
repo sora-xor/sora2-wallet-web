@@ -2,7 +2,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 
 import { AppWallet, AccountActionTypes } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
-import { action, getter } from '../../store/decorators';
+import { action, getter, state } from '../../store/decorators';
 import { delay } from '../../util';
 import { verifyAccountJson, exportAccountJson } from '../../util/account';
 import { settingsStorage } from '../../util/storage';
@@ -20,7 +20,10 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
 
   @action.account.logout private logout!: (forgetAddress?: string) => Promise<void>;
 
-  @getter.account.isConnectedAccount private isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
+  @getter.account.isConnectedAccount public isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
+
+  @state.account.polkadotJsAccounts public polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.account.selectedWallet public selectedWallet!: AppWallet;
 
   accountRenameVisibility = false;
   accountExportVisibility = false;

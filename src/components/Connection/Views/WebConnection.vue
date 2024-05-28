@@ -20,11 +20,11 @@
         <template v-if="isExtensionsView">
           <div v-if="wallets.internal.length" class="wallet-connection-list">
             <p class="wallet-connection-title">{{ t('connection.list.integrated') }}</p>
-            <extension-list :wallets="wallets.internal" @select="handleSelectWallet" />
+            <extension-connection-list :wallets="wallets.internal" @select="handleSelectWallet" />
           </div>
           <div v-if="wallets.external.length" class="wallet-connection-list">
             <p class="wallet-connection-title">{{ t('connection.list.extensions') }}</p>
-            <extension-list :wallets="wallets.external" @select="handleSelectWallet" />
+            <extension-connection-list :wallets="wallets.external" @select="handleSelectWallet" />
           </div>
 
           <s-button
@@ -49,7 +49,13 @@
             {{ t('connection.action.refresh') }}
           </s-button>
 
-          <account-list v-else @select="handleSelectAccount" />
+          <account-connection-list
+            v-else
+            :accounts="polkadotJsAccounts"
+            :wallet="selectedWallet"
+            :is-connected="isConnectedAccount"
+            @select="handleSelectAccount"
+          />
         </template>
       </template>
     </div>
@@ -65,8 +71,8 @@ import { state, action, getter, mutation } from '../../../store/decorators';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
 import WalletBase from '../../WalletBase.vue';
-import AccountList from '../AccountList.vue';
-import ExtensionList from '../ExtensionList.vue';
+import AccountConnectionList from '../List/Account.vue';
+import ExtensionConnectionList from '../List/Extension.vue';
 
 import type { Route } from '../../../store/router/types';
 import type { PolkadotJsAccount } from '../../../types/common';
@@ -78,12 +84,15 @@ enum Step {
 }
 
 @Component({
-  components: { WalletBase, AccountList, ExtensionList },
+  components: { WalletBase, AccountConnectionList, ExtensionConnectionList },
 })
 export default class WebConnection extends Mixins(NotificationMixin, LoadingMixin) {
   step = Step.First;
 
-  @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @getter.account.isConnectedAccount public isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
+
+  @state.account.polkadotJsAccounts public polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.account.selectedWallet public selectedWallet!: AppWallet;
 
   @getter.account.wallets wallets!: { internal: Wallet[]; external: Wallet[] };
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;

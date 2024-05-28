@@ -9,7 +9,7 @@ import AddressBookInput from './components/AddressBook/Input.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
 import ConfirmDialog from './components/ConfirmDialog.vue';
-import ConnectionItems from './components/Connection/ConnectionItems.vue';
+import ConnectionItems from './components/Connection/List/ConnectionItems.vue';
 import DialogBase from './components/DialogBase.vue';
 import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';

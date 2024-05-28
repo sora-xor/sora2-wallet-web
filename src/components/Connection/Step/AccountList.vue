@@ -5,11 +5,17 @@
         {{ text }}
       </p>
 
-      <account-list @select="handleSelectAccount" class="connection__accounts">
+      <account-connection-list
+        :accounts="polkadotJsAccounts"
+        :wallet="selectedWallet"
+        :is-connected="isConnectedAccount"
+        @select="handleSelectAccount"
+        class="connection__accounts"
+      >
         <template #menu="account">
           <account-actions-menu :actions="accountActions" @select="handleAccountAction($event, account)" />
         </template>
-      </account-list>
+      </account-connection-list>
 
       <connection-items>
         <account-card class="connection__button" v-button tabindex="0" @click.native="handleCreateAccount">
@@ -53,14 +59,14 @@ import AccountExportDialog from '../../Account/ConfirmDialog.vue';
 import AccountDeleteDialog from '../../Account/DeleteDialog.vue';
 import AccountRenameDialog from '../../Account/RenameDialog.vue';
 import AccountActionsMixin from '../../mixins/AccountActionsMixin';
-import AccountList from '../AccountList.vue';
-import ConnectionItems from '../ConnectionItems.vue';
+import AccountConnectionList from '../List/Account.vue';
+import ConnectionItems from '../List/ConnectionItems.vue';
 
 import type { PolkadotJsAccount } from '../../../types/common';
 
 @Component({
   components: {
-    AccountList,
+    AccountConnectionList,
     AccountCard,
     AccountActionsMenu,
     AccountRenameDialog,
