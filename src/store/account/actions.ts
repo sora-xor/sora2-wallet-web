@@ -5,24 +5,21 @@ import { defineActions } from 'direct-vuex';
 
 import { api } from '../../api';
 import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
-import { isInternalSource } from '../../consts/wallets';
 import alertsApiService from '../../services/alerts';
 import { CeresApiService } from '../../services/ceres';
 import { getCurrentIndexer } from '../../services/indexer';
 import { rootActionContext } from '../../store';
+import { WHITE_LIST_URL, NFT_BLACK_LIST_URL, AppError, formatAccountAddress } from '../../util';
 import {
   getAppWallets,
   getWallet,
-  getWalletSigner,
+  updateApiSigner,
   getImportedAccounts,
   checkWallet,
   subscribeToWalletAccounts,
-  WHITE_LIST_URL,
-  NFT_BLACK_LIST_URL,
-  AppError,
   exportAccountJson,
-  formatAccountAddress,
-} from '../../util';
+  isInternalSource,
+} from '../../util/account';
 
 import { accountActionContext } from './../account';
 
@@ -117,12 +114,6 @@ async function useFiatValuesFromCeresApi(context: ActionContext<any, any>): Prom
   console.info(`[CERES API] Fiat values subscribe.`);
 }
 
-async function updateApiSigner(source: AppWallet) {
-  const signer = await getWalletSigner(source, true);
-
-  api.setSigner(signer);
-}
-
 function logoutApi(context: ActionContext<any, any>, forget = false): void {
   const { state } = accountActionContext(context);
 
@@ -164,7 +155,7 @@ const actions = defineActions({
 
     try {
       if (state.isExternal) {
-        await updateApiSigner(state.source);
+        await updateApiSigner(api, state.source);
       } else {
         checkWallet(state.source);
       }
@@ -247,7 +238,7 @@ const actions = defineActions({
     const { commit, state } = accountActionContext(context);
 
     if (state.isDesktop) {
-      const accounts = getImportedAccounts();
+      const accounts = getImportedAccounts(api);
       commit.setWalletAccounts(accounts);
     }
   },
@@ -264,7 +255,7 @@ const actions = defineActions({
       }
     };
 
-    const subscription = await subscribeToWalletAccounts(wallet, callback);
+    const subscription = await subscribeToWalletAccounts(api, wallet, callback);
 
     commit.setWalletAccountsSubscription(subscription);
   },
@@ -282,7 +273,7 @@ const actions = defineActions({
 
     if (isExternal) {
       // we should update signer
-      await updateApiSigner(source);
+      await updateApiSigner(api, source);
     }
 
     await api.loginAccount(defaultAddress, accountData.name, source, isExternal);

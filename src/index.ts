@@ -9,7 +9,9 @@ import AddressBookInput from './components/AddressBook/Input.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
 import ConfirmDialog from './components/ConfirmDialog.vue';
-import ConnectionItems from './components/Connection/ConnectionItems.vue';
+import AccountConnectionList from './components/Connection/List/Account.vue';
+import ConnectionItems from './components/Connection/List/ConnectionItems.vue';
+import ExtensionConnectionList from './components/Connection/List/Extension.vue';
 import DialogBase from './components/DialogBase.vue';
 import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';
@@ -54,14 +56,8 @@ import * as VUEX_TYPES from './store/types';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
 import { WalletModules } from './store/wallet';
 import * as WALLET_TYPES from './types/common';
-import {
-  delay,
-  getExplorerLinks,
-  groupRewardsByAssetsList,
-  initAppWallets,
-  formatAccountAddress,
-  validateAddress,
-} from './util';
+import { delay, getExplorerLinks, groupRewardsByAssetsList, formatAccountAddress, validateAddress } from './util';
+import * as accountUtils from './util/account';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
@@ -113,7 +109,7 @@ const waitForCore = async ({
   if (!walletCoreLoaded) {
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
-    initAppWallets(appName);
+    accountUtils.initAppWallets(appName);
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);
@@ -188,6 +184,8 @@ const components = {
   SyntheticSwitcher,
   ExternalLink,
   FormattedAddress,
+  AccountConnectionList,
+  ExtensionConnectionList,
 };
 
 const mixins = {
@@ -229,6 +227,7 @@ export {
   WALLET_TYPES,
   components,
   mixins,
+  accountUtils,
   ScriptLoader,
   historyElementsFilter,
   AlertsApiService,

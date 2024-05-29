@@ -72,8 +72,10 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
+import { api } from '../../api';
 import { mutation, state } from '../../store/decorators';
-import { formatAccountAddress, subscribeToWalletAccounts } from '../../util';
+import { formatAccountAddress } from '../../util';
+import { subscribeToWalletAccounts } from '../../util/account';
 import WalletAccount from '../Account/WalletAccount.vue';
 import SearchInput from '../Input/SearchInput.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
@@ -201,7 +203,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   }
 
   async mounted(): Promise<void> {
-    this.accountsSubscription = await subscribeToWalletAccounts(this.source, (accounts) => {
+    this.accountsSubscription = await subscribeToWalletAccounts(api, this.source, (accounts) => {
       this.accountsRecords = accounts;
     });
   }

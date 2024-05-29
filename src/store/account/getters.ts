@@ -4,8 +4,8 @@ import isEqual from 'lodash/fp/isEqual';
 
 import { api } from '../../api';
 import { AppWallet } from '../../consts';
-import { isInternalWallet } from '../../consts/wallets';
 import { formatAccountAddress } from '../../util';
+import { isInternalWallet } from '../../util/account';
 
 import { accountGetterContext } from './../account';
 
