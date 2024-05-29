@@ -20,11 +20,23 @@
         <template v-if="isExtensionsView">
           <div v-if="wallets.internal.length" class="wallet-connection-list">
             <p class="wallet-connection-title">{{ t('connection.list.integrated') }}</p>
-            <extension-connection-list :wallets="wallets.internal" @select="handleSelectWallet" />
+            <extension-connection-list
+              :wallets="wallets.internal"
+              :connected-wallet="source"
+              :selected-wallet="selectedWallet"
+              :selected-wallet-loading="selectedWalletLoading"
+              @select="handleSelectWallet"
+            />
           </div>
           <div v-if="wallets.external.length" class="wallet-connection-list">
             <p class="wallet-connection-title">{{ t('connection.list.extensions') }}</p>
-            <extension-connection-list :wallets="wallets.external" @select="handleSelectWallet" />
+            <extension-connection-list
+              :wallets="wallets.external"
+              :connected-wallet="source"
+              :selected-wallet="selectedWallet"
+              :selected-wallet-loading="selectedWalletLoading"
+              @select="handleSelectWallet"
+            />
           </div>
 
           <s-button
@@ -66,8 +78,8 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { RouteNames, AppWallet } from '../../../consts';
-import { isInternalWallet } from '../../../consts/wallets';
 import { state, action, getter, mutation } from '../../../store/decorators';
+import { isInternalWallet } from '../../../util/account';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
 import WalletBase from '../../WalletBase.vue';
@@ -91,8 +103,10 @@ export default class WebConnection extends Mixins(NotificationMixin, LoadingMixi
 
   @getter.account.isConnectedAccount public isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
 
+  @state.account.source public source!: string;
   @state.account.polkadotJsAccounts public polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.selectedWallet public selectedWallet!: AppWallet;
+  @state.account.selectedWalletLoading public selectedWalletLoading!: boolean;
 
   @getter.account.wallets wallets!: { internal: Wallet[]; external: Wallet[] };
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;

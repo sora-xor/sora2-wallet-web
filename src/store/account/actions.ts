@@ -5,7 +5,6 @@ import { defineActions } from 'direct-vuex';
 
 import { api } from '../../api';
 import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
-import { isInternalSource } from '../../consts/wallets';
 import alertsApiService from '../../services/alerts';
 import { CeresApiService } from '../../services/ceres';
 import { getCurrentIndexer } from '../../services/indexer';
@@ -19,6 +18,7 @@ import {
   checkWallet,
   subscribeToWalletAccounts,
   exportAccountJson,
+  isInternalSource,
 } from '../../util/account';
 
 import { accountActionContext } from './../account';

@@ -3,7 +3,7 @@ import { saveAs } from 'file-saver';
 
 import { api } from '../api';
 import { AppWallet, TranslationConsts } from '../consts';
-import { isInternalWallet } from '../consts/wallets';
+import { InternalWallets } from '../consts/wallets';
 import { AppError, waitForDocumentReady } from '../util';
 
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
@@ -27,6 +27,10 @@ export const logoutApi = (api: ApiAccount, forget = false): void => {
 
   api.logout();
 };
+
+export const isInternalSource = (source?: AppWallet) => !source || InternalWallets.includes(source);
+
+export const isInternalWallet = (wallet: Wallet) => isInternalSource(wallet.extensionName as AppWallet);
 
 export const initAppWallets = (appName?: string) => initialize(appName ?? TranslationConsts.Polkaswap);
 
