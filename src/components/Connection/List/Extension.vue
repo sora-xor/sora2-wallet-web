@@ -21,10 +21,10 @@
         >
           <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
         </a>
-        <s-button v-else-if="connectedWallet === wallet.extensionName" size="small" disabled>
+        <s-button v-else-if="isConnectedWallet(wallet)" size="small" disabled>
           {{ t('connection.wallet.connected') }}
         </s-button>
-        <span class="connection-loading" v-else-if="isSelectedWalletLoading(wallet.extensionName)">
+        <span class="connection-loading" v-else-if="isSelectedWalletLoading(wallet)">
           <s-icon name="el-icon-loading" size="16" class="connection-loading-icon" />
         </span>
       </template>
@@ -58,6 +58,10 @@ export default class ExtensionConnectionList extends Mixins(TranslationMixin) {
 
   isSelectedWalletLoading(wallet: Wallet): boolean {
     return wallet.extensionName === this.selectedWallet && this.selectedWalletLoading;
+  }
+
+  isConnectedWallet(wallet: Wallet): boolean {
+    return wallet.extensionName === this.connectedWallet;
   }
 
   handleSelect(wallet: Wallet): void {
