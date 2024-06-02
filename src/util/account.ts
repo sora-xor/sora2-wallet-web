@@ -20,6 +20,24 @@ export const unlockAccountPair = (api: ApiAccount, password: string): void => {
   api.unlockPair(password);
 };
 
+export const loginApi = async (api: ApiAccount, accountData: PolkadotJsAccount, isDesktop = false) => {
+  // Desktop has not source
+  const source = (accountData.source as AppWallet) || '';
+  const isExternal = !isInternalSource(source);
+  const defaultAddress = api.formatAddress(accountData.address, false);
+  const apiAddress = api.formatAddress(defaultAddress);
+  const forget = !isDesktop && api.address !== apiAddress;
+
+  logoutApi(api, forget);
+
+  if (isExternal) {
+    // we should update signer
+    await updateApiSigner(api, source);
+  }
+
+  await api.loginAccount(defaultAddress, accountData.name, source, isExternal);
+};
+
 export const logoutApi = (api: ApiAccount, forget = false): void => {
   if (forget) {
     api.forgetAccount();

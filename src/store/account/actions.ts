@@ -9,7 +9,7 @@ import alertsApiService from '../../services/alerts';
 import { CeresApiService } from '../../services/ceres';
 import { getCurrentIndexer } from '../../services/indexer';
 import { rootActionContext } from '../../store';
-import { WHITE_LIST_URL, NFT_BLACK_LIST_URL, AppError, formatAccountAddress } from '../../util';
+import { WHITE_LIST_URL, NFT_BLACK_LIST_URL, AppError } from '../../util';
 import {
   getAppWallets,
   getWallet,
@@ -18,7 +18,8 @@ import {
   checkWallet,
   subscribeToWalletAccounts,
   exportAccountJson,
-  isInternalSource,
+  loginApi,
+  logoutApi,
 } from '../../util/account';
 
 import { accountActionContext } from './../account';
@@ -114,16 +115,6 @@ async function useFiatValuesFromCeresApi(context: ActionContext<any, any>): Prom
   console.info(`[CERES API] Fiat values subscribe.`);
 }
 
-function logoutApi(context: ActionContext<any, any>, forget = false): void {
-  const { state } = accountActionContext(context);
-
-  if (!state.isDesktop && forget) {
-    api.forgetAccount();
-  }
-
-  api.logout();
-}
-
 const actions = defineActions({
   async afterLogin(context): Promise<void> {
     const { dispatch } = accountActionContext(context);
@@ -136,10 +127,10 @@ const actions = defineActions({
   },
 
   async logout(context): Promise<void> {
-    const { commit } = accountActionContext(context);
+    const { commit, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    logoutApi(context, true);
+    logoutApi(api, !state.isDesktop);
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
@@ -263,20 +254,7 @@ const actions = defineActions({
   async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
 
-    // Desktop has not source
-    const source = (accountData.source as AppWallet) || '';
-    const isExternal = !isInternalSource(source);
-    const defaultAddress = formatAccountAddress(accountData.address, false);
-    const soraAddress = formatAccountAddress(defaultAddress);
-
-    logoutApi(context, api.address !== soraAddress);
-
-    if (isExternal) {
-      // we should update signer
-      await updateApiSigner(api, source);
-    }
-
-    await api.loginAccount(defaultAddress, accountData.name, source, isExternal);
+    await loginApi(api, accountData);
 
     commit.syncWithStorage();
 
