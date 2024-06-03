@@ -8,7 +8,7 @@
 
     <account-list-step
       v-if="isAccountList"
-      :text="text"
+      :text="accountListText"
       @select="handleSelectAccount"
       @create="navigateToCreateAccount"
       @import="navigateToImportAccount"
@@ -23,8 +23,9 @@
       v-else-if="isImportFlow"
       :step.sync="step"
       :loading="loading"
+      :create-account="handleCreateAccount"
       :restore-account="handleAccountImport"
-      json-only
+      :json-only="!isDesktop"
     />
 
     <account-confirm-dialog
@@ -79,6 +80,8 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   @getter.account.isLoggedIn private isLoggedIn!: boolean;
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
 
+  @state.account.isDesktop private isDesktop!: boolean;
+  @state.account.polkadotJsAccounts private polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.selectedWallet private selectedWallet!: AppWallet;
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
 
@@ -88,7 +91,8 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
   get title(): string {
     if (this.isAccountList) {
-      return this.t('connection.internalTitle', { wallet: this.selectedWalletTitle });
+      if (this.selectedWalletTitle) return this.t('connection.internalTitle', { wallet: this.selectedWalletTitle });
+      return this.t('connection.title');
     } else if (this.isCreateFlow) {
       switch (this.step) {
         case LoginStep.SeedPhrase:
@@ -114,8 +118,10 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     }
   }
 
-  get text(): string {
-    return this.t('connection.internalText', { wallet: this.selectedWalletTitle });
+  get accountListText(): string {
+    if (this.selectedWalletTitle) return this.t('connection.internalText', { wallet: this.selectedWalletTitle });
+
+    return this.polkadotJsAccounts.length ? this.t('connection.selectAccount') : this.t('desktop.welcome.text');
   }
 
   get logoutButtonVisibility(): boolean {
@@ -158,6 +164,8 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.add(verified, password);
+        } else if (this.isDesktop) {
+          await this.restoreAccount(data);
         }
 
         this.navigateToAccountList();
@@ -172,7 +180,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
       await delay(250);
 
       await this.withAppNotification(async () => {
-        const accountJson = await this.createAccount(data);
+        const accountJson = await this.createAccount({ ...data, saveAccount: this.isDesktop });
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.add(accountJson, data.password, data.seed);
@@ -183,9 +191,18 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     });
   }
 
-  handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {
+  async handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
     if (isConnected) {
-      this.navigate({ name: RouteNames.Wallet });
+      return this.navigate({ name: RouteNames.Wallet });
+    }
+    if (this.isDesktop) {
+      await this.withLoading(async () => {
+        try {
+          await this.loginAccount(account);
+        } catch (error) {
+          this.showAppAlert(this.t('enterAccountError'));
+        }
+      });
     } else {
       this.accountLoginData = account;
       this.accountLoginVisibility = true;
