@@ -2,8 +2,13 @@
   <connection-view
     :accounts="polkadotJsAccounts"
     :login-account="loginAccount"
+    :logout-account="logoutAccount"
     :create-account="createAccount"
     :restore-account="restoreAccount"
+    :close-view="navigateToAccount"
+    :selected-wallet="selectedWallet"
+    :selected-wallet-title="selectedWalletTitle"
+    :selected-wallet-loading="selectedWalletLoading"
     v-bind="$attrs"
     v-on="$listeners"
   >
@@ -24,13 +29,15 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
-import { action, getter, state } from '../store/decorators';
+import { RouteNames } from '../consts';
+import { action, getter, mutation, state } from '../store/decorators';
 
 import ConnectionView from './Connection/ConnectionView.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 
 import type { AppWallet } from '../consts';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../store/account/types';
+import type { Route } from '../store/router/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../types/common';
 
 @Component({
@@ -40,9 +47,10 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
   @state.account.isDesktop isDesktop!: boolean;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.selectedWallet public selectedWallet!: AppWallet;
+  @state.account.selectedWalletLoading public selectedWalletLoading!: boolean;
 
   @action.account.loginAccount public loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
-  @action.account.logout public logout!: (forgetAddress?: string) => Promise<void>;
+  @action.account.logout public logoutAccount!: (forgetAddress?: string) => Promise<void>;
 
   @action.account.createAccount public createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
   @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
@@ -51,9 +59,16 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
   @action.account.restoreAccountFromJson public restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
   @getter.account.isConnectedAccount public isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
+  @getter.account.selectedWalletTitle public selectedWalletTitle!: string;
 
   handleLearnMore(): void {
     this.$emit('learn-more');
+  }
+
+  @mutation.router.navigate private navigate!: (options: Route) => void;
+
+  navigateToAccount(): void {
+    this.navigate({ name: RouteNames.Wallet });
   }
 }
 </script>

@@ -21,6 +21,7 @@
       v-else-if="isAccountList"
       :text="accountListText"
       :is-internal="isInternal"
+      :accounts="accounts"
       @select="handleSelectAccount"
       @create="navigateToCreateAccount"
       @import="navigateToImportAccount"
@@ -52,11 +53,11 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component } from 'vue-property-decorator';
+import { Mixins, Component, Prop } from 'vue-property-decorator';
 
-import { AppWallet, RouteNames, LoginStep } from '../../consts';
+import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
-import { action, mutation, getter, state } from '../../store/decorators';
+import { action, getter, state } from '../../store/decorators';
 import { delay } from '../../util';
 import { verifyAccountJson, isInternalSource } from '../../util/account';
 import AccountConfirmDialog from '../Account/ConfirmDialog.vue';
@@ -70,7 +71,6 @@ import ExtensionListStep from './Step/ExtensionList.vue';
 import ImportAccountStep from './Step/ImportAccount.vue';
 
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../store/account/types';
-import type { Route } from '../../store/router/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 
@@ -105,25 +105,36 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
   },
 })
 export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
-  @mutation.router.navigate private navigate!: (options: Route) => void;
+  @Prop({ default: () => {}, type: Function }) private readonly closeView!: () => void;
 
-  @action.account.loginAccount private loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
-  @action.account.logout private logout!: AsyncFnWithoutArgs;
-  @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
-  @action.account.restoreAccountFromJson private restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
+  @Prop({ default: () => [], type: Array }) public readonly accounts!: Array<PolkadotJsAccount>;
+
+  @Prop({ default: () => {}, type: Function }) private readonly loginAccount!: (
+    account: PolkadotJsAccount
+  ) => Promise<void>;
+
+  @Prop({ default: () => {}, type: Function }) private readonly logoutAccount!: () => Promise<void>;
+  @Prop({ default: () => {}, type: Function }) private readonly createAccount!: (
+    data: CreateAccountArgs
+  ) => Promise<KeyringPair$Json>;
+
+  @Prop({ default: () => {}, type: Function }) private readonly restoreAccount!: (
+    data: RestoreAccountArgs
+  ) => Promise<void>;
+
+  @Prop({ default: '', type: String }) public readonly selectedWallet!: AppWallet;
+  @Prop({ default: '', type: String }) public readonly selectedWalletTitle!: string;
+  @Prop({ default: false, type: Boolean }) public readonly selectedWalletLoading!: boolean;
+
   @action.account.selectWallet private selectWallet!: (wallet: AppWallet) => Promise<void>;
   @action.account.resetSelectedWallet private resetSelectedWallet!: FnWithoutArgs;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
 
   @getter.account.isLoggedIn private isLoggedIn!: boolean;
   @getter.account.wallets public wallets!: { internal: Wallet[]; external: Wallet[] };
-  @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
 
   @state.account.source public source!: string;
   @state.account.isDesktop private isDesktop!: boolean;
-  @state.account.polkadotJsAccounts private polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @state.account.selectedWallet private selectedWallet!: AppWallet;
-  @state.account.selectedWalletLoading public selectedWalletLoading!: boolean;
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
 
   step: LoginStep = LoginStep.AccountList;
@@ -168,7 +179,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   get hasAccounts(): boolean {
-    return !!this.polkadotJsAccounts.length;
+    return !!this.accounts.length;
   }
 
   get accountListText(): string {
@@ -221,10 +232,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     this.step = LoginStep.AccountList;
   }
 
-  private navigateToAccount(): void {
-    this.navigate({ name: RouteNames.Wallet });
-  }
-
   public async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
@@ -266,7 +273,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   public async handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
     if (isConnected) {
-      this.navigateToAccount();
+      this.closeView();
     } else if (this.isInternal && !this.isDesktop) {
       this.accountLoginData = account;
       this.accountLoginVisibility = true;
@@ -330,7 +337,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   public handleBack(): void {
     if (this.step === this.prevStep) {
-      this.navigateToAccount();
+      this.closeView();
     } else {
       this.step = this.prevStep;
     }
@@ -338,7 +345,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   public handleLogout(): void {
     this.resetStep();
-    this.logout();
+    this.logoutAccount();
   }
 
   private resetStep(): void {
