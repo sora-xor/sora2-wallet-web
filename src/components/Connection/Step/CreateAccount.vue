@@ -105,7 +105,6 @@ import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
 import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
-import { getter } from '../../../store/decorators';
 import { copyToClipboard } from '../../../util';
 import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
@@ -123,10 +122,9 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   readonly PhraseLength = 12;
 
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
+  @Prop({ type: String, default: '' }) readonly selectedWalletTitle!: string;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
-
-  @getter.account.selectedWalletTitle selectedWalletTitle!: string;
 
   @Watch('step')
   private resetSeedPhraseToCompareIdx(value: LoginStep) {

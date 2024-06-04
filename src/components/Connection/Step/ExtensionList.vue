@@ -23,15 +23,7 @@
       />
     </div>
 
-    <s-button
-      class="wallet-connection-action s-typography-button--large learn-more-btn"
-      type="tertiary"
-      icon="question-circle-16"
-      icon-position="right"
-      @click="handleLearnMoreClick"
-    >
-      {{ t('connection.action.learnMore') }}
-    </s-button>
+    <slot />
   </div>
 </template>
 
@@ -59,10 +51,6 @@ export default class ExtensionListStep extends Mixins(TranslationMixin) {
   handleSelectWallet(wallet: Wallet) {
     this.$emit('select', wallet);
   }
-
-  handleLearnMoreClick(): void {
-    this.$emit('learn-more');
-  }
 }
 </script>
 
@@ -86,14 +74,6 @@ export default class ExtensionListStep extends Mixins(TranslationMixin) {
     font-weight: 600;
     line-height: var(--s-line-height-small);
     text-transform: uppercase;
-  }
-
-  &-action {
-    width: 100%;
-
-    & + & {
-      margin-left: 0;
-    }
   }
 
   &-list {

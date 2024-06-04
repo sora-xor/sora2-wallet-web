@@ -1,31 +1,42 @@
 <template>
-  <component
-    :is="component"
+  <connection-view
     :accounts="polkadotJsAccounts"
     :login-account="loginAccount"
     :create-account="createAccount"
     :restore-account="restoreAccount"
     v-bind="$attrs"
     v-on="$listeners"
-  />
+  >
+    <template #extension>
+      <s-button
+        class="s-typography-button--large learn-more-btn"
+        type="tertiary"
+        icon="question-circle-16"
+        icon-position="right"
+        @click="handleLearnMore"
+      >
+        {{ t('connection.action.learnMore') }}
+      </s-button>
+    </template>
+  </connection-view>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Mixins } from 'vue-property-decorator';
 
 import { action, getter, state } from '../store/decorators';
 
-import InternalConnection from './Connection/Views/InternalConnection.vue';
-import WebConnection from './Connection/Views/WebConnection.vue';
+import ConnectionView from './Connection/ConnectionView.vue';
+import TranslationMixin from './mixins/TranslationMixin';
 
 import type { AppWallet } from '../consts';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../store/account/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../types/common';
 
 @Component({
-  components: { WebConnection, InternalConnection },
+  components: { ConnectionView },
 })
-export default class WalletConnection extends Vue {
+export default class WalletConnection extends Mixins(TranslationMixin) {
   @state.account.isDesktop isDesktop!: boolean;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.selectedWallet public selectedWallet!: AppWallet;
@@ -41,8 +52,14 @@ export default class WalletConnection extends Vue {
 
   @getter.account.isConnectedAccount public isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
 
-  get component(): string {
-    return this.isDesktop ? 'InternalConnection' : 'WebConnection';
+  handleLearnMore(): void {
+    this.$emit('learn-more');
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.learn-more-btn {
+  width: 100%;
+}
+</style>

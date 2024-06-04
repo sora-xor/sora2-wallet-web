@@ -14,7 +14,6 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
 import AddAsset from './components/AddAsset/AddAsset.vue';
-import InternalConnection from './components/Connection/Views/InternalConnection.vue';
 import CreateToken from './components/CreateToken.vue';
 import LoadingMixin from './components/mixins/LoadingMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
@@ -42,7 +41,6 @@ import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
     WalletConnection,
     WalletSend,
     WalletTransactionDetails,
-    InternalConnection,
   },
 })
 export default class SoraWallet extends Mixins(LoadingMixin, TranslationMixin) {

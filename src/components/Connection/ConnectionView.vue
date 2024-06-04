@@ -6,10 +6,21 @@
       </s-button>
     </template>
 
+    <extension-list-step
+      v-if="isExtensionsList"
+      :connected-wallet="source"
+      :selected-wallet="selectedWallet"
+      :selected-wallet-loading="selectedWalletLoading"
+      :internal-wallets="wallets.internal"
+      :external-wallets="wallets.external"
+      @select="handleSelectWallet"
+    >
+      <slot name="extension" />
+    </extension-list-step>
     <account-list-step
-      v-if="isAccountList"
+      v-else-if="isAccountList"
       :text="accountListText"
-      :is-internal="true"
+      :is-internal="isInternal"
       @select="handleSelectAccount"
       @create="navigateToCreateAccount"
       @import="navigateToImportAccount"
@@ -17,6 +28,7 @@
     <create-account-step
       v-else-if="isCreateFlow"
       :step.sync="step"
+      :selected-wallet-title="selectedWalletTitle"
       :loading="loading"
       :create-account="handleAccountCreate"
     />
@@ -42,24 +54,31 @@
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
 
-import { AppWallet, RouteNames, LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
-import { GDriveWallet } from '../../../services/google/wallet';
-import { action, mutation, getter, state } from '../../../store/decorators';
-import { delay } from '../../../util';
-import { verifyAccountJson } from '../../../util/account';
-import AccountConfirmDialog from '../../Account/ConfirmDialog.vue';
-import LoadingMixin from '../../mixins/LoadingMixin';
-import NotificationMixin from '../../mixins/NotificationMixin';
-import WalletBase from '../../WalletBase.vue';
-import AccountListStep from '../Step/AccountList.vue';
-import CreateAccountStep from '../Step/CreateAccount.vue';
-import ImportAccountStep from '../Step/ImportAccount.vue';
+import { AppWallet, RouteNames, LoginStep } from '../../consts';
+import { GDriveWallet } from '../../services/google/wallet';
+import { action, mutation, getter, state } from '../../store/decorators';
+import { delay } from '../../util';
+import { verifyAccountJson, isInternalSource } from '../../util/account';
+import AccountConfirmDialog from '../Account/ConfirmDialog.vue';
+import LoadingMixin from '../mixins/LoadingMixin';
+import NotificationMixin from '../mixins/NotificationMixin';
+import WalletBase from '../WalletBase.vue';
 
-import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
-import type { Route } from '../../../store/router/types';
-import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
+import AccountListStep from './Step/AccountList.vue';
+import CreateAccountStep from './Step/CreateAccount.vue';
+import ExtensionListStep from './Step/ExtensionList.vue';
+import ImportAccountStep from './Step/ImportAccount.vue';
 
-const getPreviousLoginStep = (currentStep: LoginStep, isExternal = false): LoginStep => {
+import type { CreateAccountArgs, RestoreAccountArgs } from '../../store/account/types';
+import type { Route } from '../../store/router/types';
+import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
+import type { Wallet } from '@sora-test/wallet-connect/types';
+
+const SelectAccountFlow = [LoginStep.ExtensionList, LoginStep.AccountList];
+const AccountCreateFlow = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
+const AccountImportFlow = [LoginStep.Import, LoginStep.ImportCredentials];
+
+const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): LoginStep => {
   for (const flow of [AccountCreateFlow, AccountImportFlow]) {
     const currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
 
@@ -68,44 +87,61 @@ const getPreviousLoginStep = (currentStep: LoginStep, isExternal = false): Login
     }
   }
 
-  return currentStep === LoginStep.AccountList && isExternal ? LoginStep.ExtensionList : LoginStep.AccountList;
+  if (isDesktop) {
+    return LoginStep.AccountList;
+  } else {
+    return SelectAccountFlow.includes(currentStep) ? LoginStep.ExtensionList : LoginStep.AccountList;
+  }
 };
 
 @Component({
   components: {
     WalletBase,
-    CreateAccountStep,
-    ImportAccountStep,
-    AccountListStep,
     AccountConfirmDialog,
+    AccountListStep,
+    CreateAccountStep,
+    ExtensionListStep,
+    ImportAccountStep,
   },
 })
-export default class InternalConnection extends Mixins(NotificationMixin, LoadingMixin) {
+export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
   @action.account.loginAccount private loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.logout private logout!: AsyncFnWithoutArgs;
   @action.account.createAccount private createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
   @action.account.restoreAccountFromJson private restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
+  @action.account.selectWallet private selectWallet!: (wallet: AppWallet) => Promise<void>;
   @action.account.resetSelectedWallet private resetSelectedWallet!: FnWithoutArgs;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
 
   @getter.account.isLoggedIn private isLoggedIn!: boolean;
+  @getter.account.wallets public wallets!: { internal: Wallet[]; external: Wallet[] };
   @getter.account.selectedWalletTitle private selectedWalletTitle!: string;
 
+  @state.account.source public source!: string;
   @state.account.isDesktop private isDesktop!: boolean;
   @state.account.polkadotJsAccounts private polkadotJsAccounts!: Array<PolkadotJsAccount>;
   @state.account.selectedWallet private selectedWallet!: AppWallet;
+  @state.account.selectedWalletLoading public selectedWalletLoading!: boolean;
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
 
   step: LoginStep = LoginStep.AccountList;
   accountLoginVisibility = false;
   accountLoginData: Nullable<PolkadotJsAccount> = null;
 
+  created(): void {
+    this.resetStep();
+  }
+
+  /** Google or Desktop */
+  get isInternal(): boolean {
+    return isInternalSource(this.selectedWallet);
+  }
+
   get title(): string {
-    if (this.isAccountList) {
-      if (this.selectedWalletTitle) return this.t('connection.internalTitle', { wallet: this.selectedWalletTitle });
-      return this.t('connection.title');
+    if (this.isAccountList && this.selectedWalletTitle) {
+      return this.t('connection.internalTitle', { wallet: this.selectedWalletTitle });
     } else if (this.isCreateFlow) {
       switch (this.step) {
         case LoginStep.SeedPhrase:
@@ -127,14 +163,18 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
           return '';
       }
     } else {
-      return '';
+      return this.t('connection.title');
     }
   }
 
-  get accountListText(): string {
-    if (this.selectedWalletTitle) return this.t('connection.internalText', { wallet: this.selectedWalletTitle });
+  get hasAccounts(): boolean {
+    return !!this.polkadotJsAccounts.length;
+  }
 
-    return this.polkadotJsAccounts.length ? this.t('connection.selectAccount') : this.t('desktop.welcome.text');
+  get accountListText(): string {
+    if (this.isInternal) return this.t('connection.internalText', { wallet: this.selectedWalletTitle });
+
+    return this.hasAccounts ? this.t('connection.selectAccount') : this.t('desktop.welcome.text');
   }
 
   get logoutButtonVisibility(): boolean {
@@ -153,12 +193,15 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     return this.step === LoginStep.AccountList;
   }
 
+  get isExtensionsList(): boolean {
+    return this.step === LoginStep.ExtensionList;
+  }
+
   get prevStep(): LoginStep {
-    return getPreviousLoginStep(this.step);
+    return getPreviousLoginStep(this.step, this.isDesktop);
   }
 
   get hasPrevStep(): boolean {
-    if (!this.isDesktop) return true;
     return this.step !== this.prevStep;
   }
 
@@ -166,23 +209,23 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     return this.hasPrevStep || (this.isLoggedIn && !this.isDesktop);
   }
 
-  navigateToCreateAccount(): void {
+  public navigateToCreateAccount(): void {
     this.step = LoginStep.SeedPhrase;
   }
 
-  navigateToImportAccount(): void {
+  public navigateToImportAccount(): void {
     this.step = LoginStep.Import;
   }
 
-  navigateToAccountList(): void {
+  private navigateToAccountList(): void {
     this.step = LoginStep.AccountList;
   }
 
-  navigateToExtensionsList(): void {
-    this.step = LoginStep.ExtensionList;
+  private navigateToAccount(): void {
+    this.navigate({ name: RouteNames.Wallet });
   }
 
-  async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
+  public async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
@@ -203,7 +246,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     });
   }
 
-  async handleAccountCreate(data: CreateAccountArgs): Promise<void> {
+  public async handleAccountCreate(data: CreateAccountArgs): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
@@ -221,19 +264,29 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     });
   }
 
-  async handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
+  public async handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
     if (isConnected) {
-      this.navigate({ name: RouteNames.Wallet });
-    } else if (this.isDesktop) {
+      this.navigateToAccount();
+    } else if (this.isInternal && !this.isDesktop) {
+      this.accountLoginData = account;
+      this.accountLoginVisibility = true;
+    } else {
       await this.withLoading(async () => {
         await this.withAppAlert(async () => {
           await this.loginAccount(account);
         });
       });
-    } else {
-      this.accountLoginData = account;
-      this.accountLoginVisibility = true;
     }
+  }
+
+  public async handleSelectWallet(wallet: Wallet): Promise<void> {
+    if (!wallet.installed) return;
+
+    await this.withAppAlert(async () => {
+      await this.selectWallet(wallet.extensionName as AppWallet);
+
+      this.navigateToAccountList();
+    });
   }
 
   private async loadAccountJson(password: string): Promise<KeyringPair$Json> {
@@ -250,7 +303,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     return json;
   }
 
-  async handleAccountLogin(password: string) {
+  public async handleAccountLogin(password: string) {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
@@ -275,17 +328,21 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     });
   }
 
-  handleBack(): void {
+  public handleBack(): void {
     if (this.step === this.prevStep) {
-      this.navigate({ name: RouteNames.WalletConnection });
+      this.navigateToAccount();
     } else {
       this.step = this.prevStep;
     }
   }
 
-  handleLogout(): void {
-    this.navigate({ name: RouteNames.WalletConnection });
+  public handleLogout(): void {
+    this.resetStep();
     this.logout();
+  }
+
+  private resetStep(): void {
+    this.step = this.isDesktop ? LoginStep.AccountList : LoginStep.ExtensionList;
   }
 
   beforeDestroy(): void {

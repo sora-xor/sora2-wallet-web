@@ -2,7 +2,7 @@ import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 
 import { api, connection } from '../api';
-import { ExplorerLink, SoraNetwork, ExplorerType, LoginStep, AccountImportFlow, AccountCreateFlow } from '../consts';
+import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
 import { Currencies } from '../consts/currencies';
 
 import type { Currency } from '../types/currency';

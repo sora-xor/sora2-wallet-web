@@ -43,7 +43,6 @@ export enum AccountActionTypes {
 }
 
 export enum RouteNames {
-  InternalConnection = 'InternalConnection',
   WalletConnection = 'WalletConnection',
   WalletSend = 'WalletSend',
   Wallet = 'Wallet',
@@ -118,9 +117,6 @@ export enum LoginStep {
   AccountList = 'AccountList',
   ExtensionList = 'ExtensionList',
 }
-
-export const AccountImportFlow = [LoginStep.Import, LoginStep.ImportCredentials];
-export const AccountCreateFlow = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
 
 export interface WalletPermissions {
   addAssets?: boolean;
