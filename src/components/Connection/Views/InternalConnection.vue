@@ -1,5 +1,5 @@
 <template>
-  <wallet-base show-header show-back :title="title" @back="handleBack">
+  <wallet-base show-header :show-back="hasBackBtn" :title="title" @back="handleBack">
     <template v-if="logoutButtonVisibility" #actions>
       <s-button type="action" :tooltip="t('logoutText')" @click="handleLogout">
         <s-icon name="basic-eye-24" size="28" />
@@ -23,7 +23,7 @@
       v-else-if="isImportFlow"
       :step.sync="step"
       :loading="loading"
-      :create-account="handleCreateAccount"
+      :create-account="handleAccountCreate"
       :restore-account="handleAccountImport"
       :json-only="!isDesktop"
     />
@@ -41,7 +41,7 @@
 <script lang="ts">
 import { Mixins, Component } from 'vue-property-decorator';
 
-import { AppWallet, RouteNames, LoginStep, AccountImportInternalFlow, AccountCreateFlow } from '../../../consts';
+import { AppWallet, RouteNames, LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
 import { GDriveWallet } from '../../../services/google/wallet';
 import { action, mutation, getter, state } from '../../../store/decorators';
 import { delay, getPreviousLoginStep } from '../../../util';
@@ -133,11 +133,24 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   }
 
   get isImportFlow(): boolean {
-    return AccountImportInternalFlow.includes(this.step);
+    return AccountImportFlow.includes(this.step);
   }
 
   get isAccountList(): boolean {
     return this.step === LoginStep.AccountList;
+  }
+
+  get prevStep(): LoginStep {
+    return getPreviousLoginStep(this.step);
+  }
+
+  get hasPrevStep(): boolean {
+    if (!this.isDesktop) return true;
+    return this.step !== this.prevStep;
+  }
+
+  get hasBackBtn(): boolean {
+    return this.hasPrevStep || (this.isLoggedIn && !this.isDesktop);
   }
 
   navigateToCreateAccount(): void {
@@ -192,6 +205,7 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   }
 
   async handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
+    console.log(isConnected);
     if (isConnected) {
       return this.navigate({ name: RouteNames.Wallet });
     }
@@ -249,12 +263,10 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   }
 
   handleBack(): void {
-    const step = getPreviousLoginStep(this.step);
-
-    if (step === this.step) {
+    if (this.step === this.prevStep) {
       this.navigate({ name: RouteNames.WalletConnection });
     } else {
-      this.step = step;
+      this.step = this.prevStep;
     }
   }
 

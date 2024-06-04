@@ -2,15 +2,7 @@ import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 
 import { api, connection } from '../api';
-import {
-  ExplorerLink,
-  SoraNetwork,
-  ExplorerType,
-  LoginStep,
-  AccountImportInternalFlow,
-  AccountImportExternalFlow,
-  AccountCreateFlow,
-} from '../consts';
+import { ExplorerLink, SoraNetwork, ExplorerType, LoginStep, AccountImportFlow, AccountCreateFlow } from '../consts';
 import { Currencies } from '../consts/currencies';
 
 import type { Currency } from '../types/currency';
@@ -204,7 +196,7 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
 };
 
 export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
-  for (const flow of [AccountCreateFlow, AccountImportInternalFlow, AccountImportExternalFlow]) {
+  for (const flow of [AccountCreateFlow, AccountImportFlow]) {
     const currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
 
     if (currentStepIndex > 0) {
