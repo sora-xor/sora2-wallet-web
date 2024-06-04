@@ -116,6 +116,7 @@ export enum LoginStep {
   ConfirmSeedPhrase = 'Create/ConfirmSeedPhrase',
   CreateCredentials = 'Create/Credentials',
   AccountList = 'AccountList',
+  ExtensionList = 'ExtensionList',
 }
 
 export const AccountImportFlow = [LoginStep.Import, LoginStep.ImportCredentials];

@@ -195,18 +195,6 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
   }, []);
 };
 
-export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
-  for (const flow of [AccountCreateFlow, AccountImportFlow]) {
-    const currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
-
-    if (currentStepIndex > 0) {
-      return flow[currentStepIndex - 1];
-    }
-  }
-
-  return LoginStep.AccountList;
-};
-
 export const getCssVariableValue = (name: string): string => {
   return getComputedStyle(document.documentElement as any)
     .getPropertyValue(name)

@@ -13,64 +13,18 @@
       </s-button>
     </template>
 
-    <div class="wallet-connection">
-      <template v-if="!loading">
-        <p class="wallet-connection-text">{{ connectionText }}</p>
+    <extension-list-step
+      v-if="isExtensionsView"
+      :connected-wallet="source"
+      :selected-wallet="selectedWallet"
+      :selected-wallet-loading="selectedWalletLoading"
+      :internal-wallets="wallets.internal"
+      :external-wallets="wallets.external"
+      @select="handleSelectWallet"
+      @learn-more="handleLearnMore"
+    />
 
-        <template v-if="isExtensionsView">
-          <div v-if="wallets.internal.length" class="wallet-connection-list">
-            <p class="wallet-connection-title">{{ t('connection.list.integrated') }}</p>
-            <extension-connection-list
-              :wallets="wallets.internal"
-              :connected-wallet="source"
-              :selected-wallet="selectedWallet"
-              :selected-wallet-loading="selectedWalletLoading"
-              @select="handleSelectWallet"
-            />
-          </div>
-          <div v-if="wallets.external.length" class="wallet-connection-list">
-            <p class="wallet-connection-title">{{ t('connection.list.extensions') }}</p>
-            <extension-connection-list
-              :wallets="wallets.external"
-              :connected-wallet="source"
-              :selected-wallet="selectedWallet"
-              :selected-wallet-loading="selectedWalletLoading"
-              @select="handleSelectWallet"
-            />
-          </div>
-
-          <s-button
-            class="wallet-connection-action s-typography-button--large learn-more-btn"
-            type="tertiary"
-            icon="question-circle-16"
-            icon-position="right"
-            @click="handleLearnMoreClick"
-          >
-            {{ t('connection.action.learnMore') }}
-          </s-button>
-        </template>
-
-        <template v-else>
-          <s-button
-            v-if="noAccounts"
-            class="wallet-connection-action s-typography-button--large action-btn"
-            type="primary"
-            :loading="loading"
-            @click="handleRefreshClick"
-          >
-            {{ t('connection.action.refresh') }}
-          </s-button>
-
-          <account-connection-list
-            v-else
-            :accounts="polkadotJsAccounts"
-            :wallet="selectedWallet"
-            :is-connected="isConnectedAccount"
-            @select="handleSelectAccount"
-          />
-        </template>
-      </template>
-    </div>
+    <account-list-step v-else :text="connectionText" @select="handleSelectAccount" />
   </wallet-base>
 </template>
 
@@ -83,8 +37,8 @@ import { isInternalWallet } from '../../../util/account';
 import LoadingMixin from '../../mixins/LoadingMixin';
 import NotificationMixin from '../../mixins/NotificationMixin';
 import WalletBase from '../../WalletBase.vue';
-import AccountConnectionList from '../List/Account.vue';
-import ExtensionConnectionList from '../List/Extension.vue';
+import AccountListStep from '../Step/AccountList.vue';
+import ExtensionListStep from '../Step/ExtensionList.vue';
 
 import type { Route } from '../../../store/router/types';
 import type { PolkadotJsAccount } from '../../../types/common';
@@ -96,7 +50,11 @@ enum Step {
 }
 
 @Component({
-  components: { WalletBase, AccountConnectionList, ExtensionConnectionList },
+  components: {
+    WalletBase,
+    AccountListStep,
+    ExtensionListStep,
+  },
 })
 export default class WebConnection extends Mixins(NotificationMixin, LoadingMixin) {
   step = Step.First;
@@ -131,19 +89,11 @@ export default class WebConnection extends Mixins(NotificationMixin, LoadingMixi
   }
 
   get connectionText(): string {
-    if (this.isExtensionsView) {
-      return this.t('connection.text');
-    }
-
     if (this.noAccounts) {
       return this.t('connection.noAccounts', { extension: this.selectedWalletTitle });
     }
 
     return this.t('connection.selectAccount');
-  }
-
-  async handleRefreshClick(): Promise<void> {
-    window.history.go();
   }
 
   async handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
@@ -180,7 +130,7 @@ export default class WebConnection extends Mixins(NotificationMixin, LoadingMixi
     this.step = Step.Second;
   }
 
-  handleLearnMoreClick(): void {
+  handleLearnMore(): void {
     this.$emit('learn-more');
   }
 

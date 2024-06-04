@@ -12,12 +12,12 @@
         @select="handleSelectAccount"
         class="connection__accounts"
       >
-        <template #menu="account">
+        <template v-if="isInternal" #menu="account">
           <account-actions-menu :actions="accountActions" @select="handleAccountAction($event, account)" />
         </template>
       </account-connection-list>
 
-      <connection-items>
+      <connection-items v-if="isInternal">
         <account-card class="connection__button" v-button tabindex="0" @click.native="handleCreateAccount">
           <template #avatar>
             <s-icon name="basic-circle-plus-24" size="28" class="connection__button-icon" />
@@ -31,21 +31,37 @@
           <template #name>{{ t('desktop.button.importAccount') }}</template>
         </account-card>
       </connection-items>
+
+      <s-button
+        v-else-if="noAccounts"
+        class="connection__button s-typography-button--large"
+        type="primary"
+        :loading="loading"
+        @click="handleRefreshClick"
+      >
+        {{ t('connection.action.refresh') }}
+      </s-button>
     </div>
 
-    <account-rename-dialog
-      :account="selectedAccount"
-      :visible.sync="accountRenameVisibility"
-      :loading="loading"
-      @confirm="handleAccountRename"
-    />
-    <account-export-dialog
-      :account="selectedAccount"
-      :visible.sync="accountExportVisibility"
-      :loading="loading"
-      @confirm="handleAccountExport"
-    />
-    <account-delete-dialog :visible.sync="accountDeleteVisibility" :loading="loading" @confirm="handleAccountDelete" />
+    <template v-if="isInternal">
+      <account-rename-dialog
+        :account="selectedAccount"
+        :visible.sync="accountRenameVisibility"
+        :loading="loading"
+        @confirm="handleAccountRename"
+      />
+      <account-export-dialog
+        :account="selectedAccount"
+        :visible.sync="accountExportVisibility"
+        :loading="loading"
+        @confirm="handleAccountExport"
+      />
+      <account-delete-dialog
+        :visible.sync="accountDeleteVisibility"
+        :loading="loading"
+        @confirm="handleAccountDelete"
+      />
+    </template>
   </div>
 </template>
 
@@ -77,8 +93,17 @@ import type { PolkadotJsAccount } from '../../../types/common';
 })
 export default class AccountListStep extends Mixins(AccountActionsMixin) {
   @Prop({ default: '', type: String }) readonly text!: string;
+  @Prop({ default: false, type: Boolean }) readonly isInternal!: boolean;
 
   readonly accountActions = [AccountActionTypes.Rename, AccountActionTypes.Export, AccountActionTypes.Delete];
+
+  get noAccounts(): boolean {
+    return !this.polkadotJsAccounts.length;
+  }
+
+  handleRefreshClick(): void {
+    window.history.go();
+  }
 
   handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): void {
     this.$emit('select', account, isConnected);

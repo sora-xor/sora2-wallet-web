@@ -1,5 +1,5 @@
 <template>
-  <wallet-base show-header :show-back="hasBackBtn" :title="title" @back="handleBack">
+  <wallet-base show-header :show-back="hasBackBtn" :title="title" @back="handleBack" v-loading="loading" title-center>
     <template v-if="logoutButtonVisibility" #actions>
       <s-button type="action" :tooltip="t('logoutText')" @click="handleLogout">
         <s-icon name="basic-eye-24" size="28" />
@@ -9,6 +9,7 @@
     <account-list-step
       v-if="isAccountList"
       :text="accountListText"
+      :is-internal="true"
       @select="handleSelectAccount"
       @create="navigateToCreateAccount"
       @import="navigateToImportAccount"
@@ -44,7 +45,7 @@ import { Mixins, Component } from 'vue-property-decorator';
 import { AppWallet, RouteNames, LoginStep, AccountImportFlow, AccountCreateFlow } from '../../../consts';
 import { GDriveWallet } from '../../../services/google/wallet';
 import { action, mutation, getter, state } from '../../../store/decorators';
-import { delay, getPreviousLoginStep } from '../../../util';
+import { delay } from '../../../util';
 import { verifyAccountJson } from '../../../util/account';
 import AccountConfirmDialog from '../../Account/ConfirmDialog.vue';
 import LoadingMixin from '../../mixins/LoadingMixin';
@@ -57,6 +58,18 @@ import ImportAccountStep from '../Step/ImportAccount.vue';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 import type { Route } from '../../../store/router/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../../types/common';
+
+const getPreviousLoginStep = (currentStep: LoginStep, isExternal = false): LoginStep => {
+  for (const flow of [AccountCreateFlow, AccountImportFlow]) {
+    const currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
+
+    if (currentStepIndex > 0) {
+      return flow[currentStepIndex - 1];
+    }
+  }
+
+  return currentStep === LoginStep.AccountList && isExternal ? LoginStep.ExtensionList : LoginStep.AccountList;
+};
 
 @Component({
   components: {
@@ -165,6 +178,10 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
     this.step = LoginStep.AccountList;
   }
 
+  navigateToExtensionsList(): void {
+    this.step = LoginStep.ExtensionList;
+  }
+
   async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
@@ -205,17 +222,13 @@ export default class InternalConnection extends Mixins(NotificationMixin, Loadin
   }
 
   async handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
-    console.log(isConnected);
     if (isConnected) {
-      return this.navigate({ name: RouteNames.Wallet });
-    }
-    if (this.isDesktop) {
+      this.navigate({ name: RouteNames.Wallet });
+    } else if (this.isDesktop) {
       await this.withLoading(async () => {
-        try {
+        await this.withAppAlert(async () => {
           await this.loginAccount(account);
-        } catch (error) {
-          this.showAppAlert(this.t('enterAccountError'));
-        }
+        });
       });
     } else {
       this.accountLoginData = account;
