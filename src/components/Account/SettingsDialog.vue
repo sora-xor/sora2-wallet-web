@@ -53,9 +53,11 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
+import { api } from '../../api';
 import GoogleLogo from '../../assets/img/GoogleLogo.svg';
 import { action, getter, state } from '../../store/decorators';
 import { delay } from '../../util';
+import { lockAccountPair, unlockAccountPair } from '../../util/account';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
@@ -85,9 +87,6 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
     password: string;
   }) => void;
 
-  @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
-  @action.account.lockAccountPair private lockAccountPair!: FnWithoutArgs;
-
   readonly GoogleLogo = GoogleLogo;
 
   accountConfirmVisibility = false;
@@ -101,14 +100,15 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
       await delay(250);
-      // unlock pair to check password
       await this.withAppNotification(async () => {
-        this.unlockAccountPair(password);
+        // unlock pair to check password
+        unlockAccountPair(api, password);
+        api.unlockPair(password);
         this.setAccountPassphrase({ address: this.connected, password });
         this.accountConfirmVisibility = false;
       });
       // lock pair after check
-      this.lockAccountPair();
+      lockAccountPair(api);
     });
   }
 }

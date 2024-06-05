@@ -201,11 +201,6 @@ const actions = defineActions({
     return json;
   },
 
-  async restoreAccountFromJson(context, { json, password }: RestoreAccountArgs) {
-    // restore from json file
-    api.restoreAccountFromJson(json, password);
-  },
-
   async renameAccount(context, { address, name }: { address: string; name: string }) {
     const { commit } = accountActionContext(context);
     // change name in api & storage
@@ -253,14 +248,6 @@ const actions = defineActions({
     const { commit } = accountActionContext(context);
     commit.resetAccountPassphraseTimer(address);
     commit.resetAccountPassphrase(address);
-  },
-
-  lockAccountPair(context): void {
-    api.lockPair();
-  },
-
-  unlockAccountPair(context, passphrase: string): void {
-    api.unlockPair(passphrase);
   },
 
   // [NOTE]: Desktop is not syncing, because it runs in one flow

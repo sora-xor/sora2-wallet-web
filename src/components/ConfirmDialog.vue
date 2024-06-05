@@ -12,8 +12,10 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
+import { api } from '../api';
 import { getter, action, state, mutation } from '../store/decorators';
 import { delay } from '../util';
+import { unlockAccountPair } from '../util/account';
 
 import AccountConfirmDialog from './Account/ConfirmDialog.vue';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -38,7 +40,6 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
   }) => void;
 
   @action.account.resetAccountPassphrase private resetAccountPassphrase!: (address: string) => void;
-  @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
 
   get visibility(): boolean {
     return this.isSignTxDialogVisible;
@@ -55,7 +56,7 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
       await delay(250);
 
       await this.withAppNotification(async () => {
-        this.unlockAccountPair(password);
+        unlockAccountPair(api, password);
 
         if (this.isSignTxDialogDisabled) {
           this.setAccountPassphrase({ address: this.connected, password });

@@ -3,7 +3,6 @@
     :login-account="loginAccount"
     :logout-account="logoutAccount"
     :create-account="createAccount"
-    :restore-account="restoreAccount"
     :close-view="navigateToAccount"
     :connected-wallet="connectedWallet"
     :is-logged-in="isLoggedIn"
@@ -52,7 +51,6 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
   @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
   @action.account.exportAccount public exportAccount!: (data: { address: string; password: string }) => Promise<void>;
   @action.account.deleteAccount public deleteAccount!: (address: string) => Promise<void>;
-  @action.account.restoreAccountFromJson public restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
   @getter.account.isLoggedIn public isLoggedIn!: boolean;
   @getter.account.isConnectedAccount public isConnectedAccount!: (account: PolkadotJsAccount) => boolean;

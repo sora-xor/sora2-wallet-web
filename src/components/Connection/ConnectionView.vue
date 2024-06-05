@@ -74,7 +74,6 @@ import ImportAccountStep from './Step/ImportAccount.vue';
 
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../store/account/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
-import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
@@ -121,10 +120,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     data: CreateAccountArgs
   ) => Promise<KeyringPair$Json>;
 
-  @Prop({ default: () => {}, type: Function }) private readonly restoreAccount!: (
-    data: RestoreAccountArgs
-  ) => Promise<void>;
-
   @Prop({ default: '', type: String }) public readonly connectedWallet!: AppWallet;
 
   @Prop({ default: false, type: Boolean }) public readonly isLoggedIn!: boolean;
@@ -148,10 +143,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   accounts: Array<PolkadotJsAccount> = [];
   accountsSubscription: Nullable<VoidFunction> = null;
-
-  setWalletAccountsSubscription(subscription: Nullable<Unsubcall>): void {
-    this.accountsSubscription = subscription;
-  }
 
   resetWalletAccountsSubscription(): void {
     this.accountsSubscription?.();
@@ -257,6 +248,11 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     this.step = LoginStep.AccountList;
   }
 
+  private restoreAccount({ json, password }: RestoreAccountArgs) {
+    // restore from json file
+    api.restoreAccountFromJson(json, password);
+  }
+
   public async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
@@ -270,7 +266,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
         if (this.selectedWallet === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.add(verified, password);
         } else if (this.isDesktop) {
-          await this.restoreAccount(data);
+          this.restoreAccount(data);
         }
 
         this.navigateToAccountList();
@@ -398,7 +394,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
     if (!json) throw new Error('polkadotjs.noAccount');
 
-    await this.restoreAccount({ json, password });
+    this.restoreAccount({ json, password });
 
     return json;
   }
