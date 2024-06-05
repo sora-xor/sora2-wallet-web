@@ -132,6 +132,8 @@ export default class AccountSignatureOption extends Mixins(TranslationMixin) {
 </script>
 
 <style lang="scss">
+$telegram-web-app-width: 500px;
+
 .save-password-durations {
   .el-tabs__header {
     margin-bottom: 0;
@@ -142,6 +144,28 @@ export default class AccountSignatureOption extends Mixins(TranslationMixin) {
 
     &.is-disabled {
       cursor: not-allowed;
+    }
+  }
+
+  // override s-tabs arrows
+  .el-icon-arrow-left,
+  .el-icon-arrow-right {
+    display: block;
+    margin-top: 10px;
+  }
+
+  &.s-tabs.s-rounded .el-tabs__header {
+    @media screen and (max-width: $telegram-web-app-width) {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: auto;
+    }
+  }
+
+  .el-tabs__nav-scroll {
+    @media screen and (max-width: $telegram-web-app-width) {
+      width: 260px;
     }
   }
 }

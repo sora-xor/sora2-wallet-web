@@ -240,6 +240,7 @@ export default {
     errorAddress: 'Invalid address. Please check it and try again.',
   },
   account: {
+    accountTitle: 'Account',
     walletAddress: 'Wallet address',
     copy: 'Copy address',
     switch: 'Switch account',

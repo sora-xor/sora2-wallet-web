@@ -59,6 +59,7 @@ export default class App extends Mixins(TransactionMixin) {
     endpoint: string;
   }) => void;
 
+  @mutation.account.setIsDesktop setIsDesktop!: (flag: boolean) => void;
   @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
   @action.account.useCeresApiForFiatValues private useCeresApiForFiatValues!: (flag: boolean) => void;
   @action.settings.selectIndexer private selectIndexer!: (IndexerType: IndexerType) => void;

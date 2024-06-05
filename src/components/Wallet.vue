@@ -134,7 +134,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   accountSettingsVisibility = false;
 
   get headerTitle(): string {
-    if (!this.selectedTransaction) return this.t('wallet.title');
+    if (!this.selectedTransaction) return this.t('account.accountTitle');
 
     return this.getTitle(this.selectedTransaction);
   }

@@ -31,6 +31,7 @@ export default class AccountSettingsOption extends Vue {
   display: flex;
   flex-flow: column nowrap;
   gap: $basic-spacing-medium;
+  width: 100%;
 
   &.disabled {
     opacity: 0.6;
