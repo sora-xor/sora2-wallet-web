@@ -330,6 +330,7 @@ const parseSwapTransferBatch = async (transaction: HistoryElement, payload: Hist
   payload.payload.actualFee = data.actualFee;
   payload.payload.maxInputAmount = data.maxInputAmount;
   payload.payload.receivers = [];
+  payload.payload.comment = data.comment ? JSON.parse(data.comment) : null;
 
   const transfers = data.transfers;
 
