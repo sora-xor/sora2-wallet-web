@@ -57,11 +57,12 @@ export default class AccountSignatureOption extends Mixins(TranslationMixin) {
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
   @mutation.transactions.setSignTxDialogDisabled private setSignTxDialogDisabled!: (flag: boolean) => void;
 
+  @state.account.accountPasswordTimeout private accountPasswordTimeout!: number;
   @mutation.account.setPasswordTimeout private setPasswordTimeout!: (timeout: number) => void;
 
-  @state.account.accountPasswordTimeout private accountPasswordTimeout!: number;
-  @state.account.accountPasswordTimestamp private accountPasswordTimestamp!: Nullable<number>;
-  @action.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
+  @state.account.address private connected!: string;
+  @state.account.accountPasswordTimestamp private accountPasswordTimestamp!: Record<string, Nullable<number>>;
+  @action.account.resetAccountPassphrase private resetAccountPassphrase!: (address: string) => void;
 
   readonly durations = PassphraseTimeout;
 
@@ -73,7 +74,7 @@ export default class AccountSignatureOption extends Mixins(TranslationMixin) {
     this.setSignTxDialogDisabled(value);
 
     if (!value) {
-      this.resetAccountPassphrase();
+      this.resetAccountPassphrase(this.connected);
     }
   }
 
@@ -122,9 +123,11 @@ export default class AccountSignatureOption extends Mixins(TranslationMixin) {
   }
 
   get passwordResetDate(): Nullable<string> {
-    if (!(this.accountPasswordTimestamp && this.timestamp)) return null;
+    const accountPasswordTimestamp = this.accountPasswordTimestamp[this.connected];
 
-    const diff = this.accountPasswordTimestamp + this.accountPasswordTimeout - this.timestamp;
+    if (!(accountPasswordTimestamp && this.timestamp)) return null;
+
+    const diff = accountPasswordTimestamp + this.accountPasswordTimeout - this.timestamp;
 
     return dayjs.duration(diff).locale(this.dayjsLocale).humanize();
   }

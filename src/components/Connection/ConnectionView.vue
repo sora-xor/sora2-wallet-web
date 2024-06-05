@@ -8,7 +8,7 @@
 
     <extension-list-step
       v-if="isExtensionsList"
-      :connected-wallet="source"
+      :connected-wallet="connectedWallet"
       :selected-wallet="selectedWallet"
       :selected-wallet-loading="selectedWalletLoading"
       :internal-wallets="wallets.internal"
@@ -122,20 +122,22 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     data: RestoreAccountArgs
   ) => Promise<void>;
 
+  @Prop({ default: '', type: String }) public readonly connectedWallet!: AppWallet;
   @Prop({ default: '', type: String }) public readonly selectedWallet!: AppWallet;
   @Prop({ default: '', type: String }) public readonly selectedWalletTitle!: string;
   @Prop({ default: false, type: Boolean }) public readonly selectedWalletLoading!: boolean;
+  @Prop({ default: () => {}, type: Function }) private readonly selectWallet!: (wallet: AppWallet) => Promise<void>;
+  @Prop({ default: () => {}, type: Function }) private readonly resetSelectedWallet!: () => void;
 
-  @action.account.selectWallet private selectWallet!: (wallet: AppWallet) => Promise<void>;
-  @action.account.resetSelectedWallet private resetSelectedWallet!: FnWithoutArgs;
-  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
+  @Prop({ default: false, type: Boolean }) public readonly isLoggedIn!: boolean;
 
-  @getter.account.isLoggedIn private isLoggedIn!: boolean;
-  @getter.account.wallets public wallets!: { internal: Wallet[]; external: Wallet[] };
-
-  @state.account.source public source!: string;
   @state.account.isDesktop private isDesktop!: boolean;
+  @getter.account.wallets public wallets!: { internal: Wallet[]; external: Wallet[] };
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
+    address: string;
+    password: string;
+  }) => void;
 
   step: LoginStep = LoginStep.AccountList;
   accountLoginVisibility = false;
@@ -326,7 +328,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
         });
 
         if (this.isSignTxDialogDisabled) {
-          this.setAccountPassphrase(password);
+          this.setAccountPassphrase({ address, password });
         }
 
         this.accountLoginVisibility = false;

@@ -328,25 +328,25 @@ const actions = defineActions({
   /**
    * Desktop
    */
-  setAccountPassphrase(context, passphrase: string): void {
+  setAccountPassphrase(context, { address, password }: { address: string; password: string }): void {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
-    const passphraseEncoded = AES.encrypt(passphrase, key).toString();
+    const passphrase = AES.encrypt(password, key).toString();
 
     const { commit, dispatch, state } = accountActionContext(context);
 
-    dispatch.resetAccountPassphrase();
+    dispatch.resetAccountPassphrase(address);
 
-    commit.updateAddressGeneratedKey(key);
-    commit.setAccountPassphrase(passphraseEncoded);
+    commit.updateAddressGeneratedKey({ address, key });
+    commit.setAccountPassphrase({ address, passphrase });
 
-    const timer = setTimeout(dispatch.resetAccountPassphrase, state.accountPasswordTimeout);
-    commit.setAccountPassphraseTimer(timer);
+    const timer = setTimeout(() => dispatch.resetAccountPassphrase(address), state.accountPasswordTimeout);
+    commit.setAccountPassphraseTimer({ address, timer });
   },
 
-  resetAccountPassphrase(context): void {
+  resetAccountPassphrase(context, address: string): void {
     const { commit } = accountActionContext(context);
-    commit.resetAccountPassphraseTimer();
-    commit.resetAccountPassphrase();
+    commit.resetAccountPassphraseTimer(address);
+    commit.resetAccountPassphrase(address);
   },
 
   lockAccountPair(context): void {

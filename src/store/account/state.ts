@@ -48,8 +48,8 @@ export function initialState(): AccountState {
     addressKeyMapping: {},
     addressPassphraseMapping: {},
     /** account password timings  */
-    accountPasswordTimer: null,
-    accountPasswordTimestamp: null,
+    accountPasswordTimer: {},
+    accountPasswordTimestamp: {},
     accountPasswordTimeout: accountPasswordTimeout ? JSON.parse(accountPasswordTimeout) : DefaultPassphraseTimeout,
   };
 }

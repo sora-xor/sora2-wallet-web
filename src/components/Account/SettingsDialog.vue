@@ -76,10 +76,15 @@ import AccountSignatureOption from './Settings/SignatureOption.vue';
 export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMixin, NotificationMixin) {
   @getter.account.passphrase passphrase!: Nullable<string>;
 
+  @state.account.address private connected!: string;
   @state.account.isExternal isExternal!: boolean;
   @state.transactions.isSignTxDialogDisabled isSignTxDialogDisabled!: boolean;
 
-  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
+    address: string;
+    password: string;
+  }) => void;
+
   @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
   @action.account.lockAccountPair private lockAccountPair!: FnWithoutArgs;
 
@@ -99,7 +104,7 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
       // unlock pair to check password
       await this.withAppNotification(async () => {
         this.unlockAccountPair(password);
-        this.setAccountPassphrase(password);
+        this.setAccountPassphrase({ address: this.connected, password });
         this.accountConfirmVisibility = false;
       });
       // lock pair after check

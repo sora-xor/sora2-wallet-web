@@ -25,12 +25,19 @@ import NotificationMixin from './mixins/NotificationMixin';
   },
 })
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
+  @state.account.address private connected!: string;
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
   @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
   @getter.account.passphrase passphrase!: Nullable<string>;
+
   @mutation.transactions.setSignTxDialogVisibility private setSignTxDialogVisibility!: (flag: boolean) => void;
-  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
-  @action.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
+
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
+    address: string;
+    password: string;
+  }) => void;
+
+  @action.account.resetAccountPassphrase private resetAccountPassphrase!: (address: string) => void;
   @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
 
   get visibility(): boolean {
@@ -51,9 +58,9 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
         this.unlockAccountPair(password);
 
         if (this.isSignTxDialogDisabled) {
-          this.setAccountPassphrase(password);
+          this.setAccountPassphrase({ address: this.connected, password });
         } else {
-          this.resetAccountPassphrase();
+          this.resetAccountPassphrase(this.connected);
         }
 
         this.setSignTxDialogVisibility(false);

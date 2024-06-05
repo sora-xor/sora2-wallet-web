@@ -45,7 +45,7 @@ export type AccountState = {
   addressPassphraseMapping: AddressKeyMapping;
   assetsToNotifyQueue: Array<WhitelistArrayItem>;
   isDesktop: boolean;
-  accountPasswordTimer: Nullable<NodeJS.Timeout | number>;
-  accountPasswordTimestamp: Nullable<number>;
+  accountPasswordTimer: Record<string, Nullable<NodeJS.Timeout>>;
+  accountPasswordTimestamp: Record<string, Nullable<number>>;
   accountPasswordTimeout: number;
 };

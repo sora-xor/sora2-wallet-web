@@ -6,9 +6,13 @@
     :create-account="createAccount"
     :restore-account="restoreAccount"
     :close-view="navigateToAccount"
+    :connected-wallet="connectedWallet"
     :selected-wallet="selectedWallet"
     :selected-wallet-title="selectedWalletTitle"
     :selected-wallet-loading="selectedWalletLoading"
+    :select-wallet="selectWallet"
+    :reset-selected-wallet="resetSelectedWallet"
+    :is-logged-in="isLoggedIn"
     v-bind="$attrs"
     v-on="$listeners"
   >
@@ -46,6 +50,7 @@ import type { PolkadotJsAccount, KeyringPair$Json } from '../types/common';
 export default class WalletConnection extends Mixins(TranslationMixin) {
   @state.account.isDesktop isDesktop!: boolean;
   @state.account.polkadotJsAccounts polkadotJsAccounts!: Array<PolkadotJsAccount>;
+  @state.account.source public connectedWallet!: string;
   @state.account.selectedWallet public selectedWallet!: AppWallet;
   @state.account.selectedWalletLoading public selectedWalletLoading!: boolean;
 
@@ -58,6 +63,10 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
   @action.account.deleteAccount public deleteAccount!: (address: string) => Promise<void>;
   @action.account.restoreAccountFromJson public restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
 
+  @action.account.selectWallet public selectWallet!: (wallet: AppWallet) => Promise<void>;
+  @action.account.resetSelectedWallet public resetSelectedWallet!: FnWithoutArgs;
+
+  @getter.account.isLoggedIn public isLoggedIn!: boolean;
   @getter.account.isConnectedAccount public isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
   @getter.account.selectedWalletTitle public selectedWalletTitle!: string;
 

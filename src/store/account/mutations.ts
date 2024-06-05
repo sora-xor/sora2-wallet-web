@@ -161,42 +161,50 @@ const mutations = defineMutations<AccountState>()({
     }
     state.polkadotJsAccountsSubscription = null;
   },
-  setAccountPassphrase(state, passphraseEncoded): void {
+  setAccountPassphrase(state, { address, passphrase }: { address: string; passphrase: string }): void {
     state.addressPassphraseMapping = {
       ...state.addressPassphraseMapping,
-      [state.address]: passphraseEncoded,
+      [address]: passphrase,
     };
   },
-  updateAddressGeneratedKey(state, key): void {
+  updateAddressGeneratedKey(state, { address, key }: { address: string; key: string }): void {
     state.addressKeyMapping = {
       ...state.addressKeyMapping,
-      [state.address]: key,
+      [address]: key,
     };
   },
-  resetAccountPassphrase(state): void {
+  resetAccountPassphrase(state, address: string): void {
     state.addressKeyMapping = {
       ...state.addressKeyMapping,
-      [state.address]: null,
+      [address]: null,
     };
     state.addressPassphraseMapping = {
       ...state.addressPassphraseMapping,
-      [state.address]: null,
+      [address]: null,
     };
   },
   setPasswordTimeout(state, timeout: number): void {
     state.accountPasswordTimeout = timeout;
     settingsStorage.set('accountPasswordTimeout', JSON.stringify(timeout));
   },
-  setAccountPassphraseTimer(state, timer: NodeJS.Timeout): void {
-    state.accountPasswordTimer = timer;
-    state.accountPasswordTimestamp = Date.now();
+  setAccountPassphraseTimer(state, { address, timer }: { address: string; timer: NodeJS.Timeout }): void {
+    state.accountPasswordTimer = {
+      ...state.accountPasswordTimer,
+      [address]: timer,
+    };
+    state.accountPasswordTimestamp = {
+      ...state.accountPasswordTimestamp,
+      [address]: Date.now(),
+    };
   },
-  resetAccountPassphraseTimer(state): void {
-    if (state.accountPasswordTimer) {
-      clearTimeout(state.accountPasswordTimer);
+  resetAccountPassphraseTimer(state, address: string): void {
+    const timer = state.accountPasswordTimer[address];
+
+    if (timer) {
+      clearTimeout(timer);
     }
-    state.accountPasswordTimer = null;
-    state.accountPasswordTimestamp = null;
+    state.accountPasswordTimer[address] = null;
+    state.accountPasswordTimestamp[address] = null;
   },
   /** JUST FOR TESTING PURPOSES */
   setIsDesktop(state, value: boolean): void {
