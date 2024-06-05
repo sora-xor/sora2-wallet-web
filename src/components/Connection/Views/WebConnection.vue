@@ -1,6 +1,6 @@
 <template>
   <wallet-base
-    :title="t('connection.title')"
+    :title="t('account.accountTitle')"
     :show-back="isLoggedIn || isAccountListView"
     :reset-focus="`${isExtensionsView}${step}`"
     @back="handleBackClick"

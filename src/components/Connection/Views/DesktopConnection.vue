@@ -1,7 +1,7 @@
 <template>
   <wallet-base
     v-loading="loading"
-    :title="t('connection.title')"
+    :title="t('account.accountTitle')"
     :show-header="showHeader"
     :show-back="showBackBtn"
     @back="handleBack"
