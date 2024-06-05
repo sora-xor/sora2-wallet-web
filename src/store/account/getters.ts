@@ -52,15 +52,6 @@ const getters = defineGetters<AccountState>()({
       return buffer;
     }, wallets);
   },
-  selectedWalletTitle(...args): string {
-    const { state } = accountGetterContext(args);
-
-    if (!state.selectedWallet) return '';
-
-    const wallet = state.availableWallets.find((wallet) => wallet.extensionName === state.selectedWallet);
-
-    return wallet ? wallet.title : state.selectedWallet;
-  },
   assetsDataTable(...args): AssetsTable {
     const { state } = accountGetterContext(args);
     return toHashTable(state.assets, 'address');

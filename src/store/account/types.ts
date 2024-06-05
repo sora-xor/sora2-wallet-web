@@ -30,17 +30,12 @@ export type AccountState = {
   alertSubject: Nullable<Subject<FiatPriceObject>>;
   accountAssetsSubscription: Nullable<Subscription>;
   book: Nullable<Book>;
-  polkadotJsAccounts: Array<PolkadotJsAccount>;
-  polkadotJsAccountsSubscription: Nullable<VoidFunction>;
   whitelistArray: Readonly<WhitelistArrayItem[]>;
   blacklistArray: Readonly<Blacklist>;
   fiatPriceObject: Readonly<FiatPriceObject>;
   fiatPriceSubscription: Nullable<VoidFunction>;
   ceresFiatValuesUsage: boolean;
-  selectedWallet: Nullable<AppWallet>;
-  selectedWalletLoading: boolean;
   availableWallets: Array<Wallet>;
-  walletAvailabilityTimer: Nullable<NodeJS.Timeout | number>;
   addressKeyMapping: AddressKeyMapping;
   addressPassphraseMapping: AddressKeyMapping;
   assetsToNotifyQueue: Array<WhitelistArrayItem>;

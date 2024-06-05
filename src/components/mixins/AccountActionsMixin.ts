@@ -22,9 +22,6 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
 
   @getter.account.isConnectedAccount public isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
 
-  @state.account.polkadotJsAccounts public polkadotJsAccounts!: Array<PolkadotJsAccount>;
-  @state.account.selectedWallet public selectedWallet!: AppWallet;
-
   accountRenameVisibility = false;
   accountExportVisibility = false;
   accountDeleteVisibility = false;

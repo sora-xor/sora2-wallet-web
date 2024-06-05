@@ -12,11 +12,8 @@ import { rootActionContext } from '../../store';
 import { WHITE_LIST_URL, NFT_BLACK_LIST_URL, AppError } from '../../util';
 import {
   getAppWallets,
-  getWallet,
   updateApiSigner,
-  getImportedAccounts,
   checkWallet,
-  subscribeToWalletAccounts,
   exportAccountJson,
   loginApi,
   logoutApi,
@@ -29,7 +26,6 @@ import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { ActionContext } from 'vuex';
 
-const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
 
 // [TODO]: change WsProvider timeout instead on this
@@ -122,7 +118,6 @@ const actions = defineActions({
 
     await dispatch.subscribeOnAccountAssets();
     await rootDispatch.wallet.transactions.subscribeOnExternalHistory();
-    await dispatch.resetSelectedWallet();
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
@@ -172,85 +167,6 @@ const actions = defineActions({
     }
   },
 
-  async checkSelectedWallet(context): Promise<void> {
-    const { dispatch, state } = accountActionContext(context);
-    try {
-      if (state.selectedWallet && !state.selectedWalletLoading) {
-        await getWallet(state.selectedWallet);
-      }
-    } catch (error) {
-      console.error(error);
-      await dispatch.resetSelectedWallet();
-      await dispatch.logout();
-    }
-  },
-
-  async selectWallet(context, extension: AppWallet): Promise<void> {
-    const { commit, dispatch } = accountActionContext(context);
-
-    try {
-      commit.resetWalletAccountsSubscription();
-      commit.setSelectedWallet(extension);
-      commit.setSelectedWalletLoading(true);
-
-      await getWallet(extension);
-
-      commit.setSelectedWalletLoading(false);
-
-      await dispatch.subscribeToWalletAccounts();
-    } catch (error) {
-      dispatch.resetSelectedWallet();
-      throw error;
-    }
-  },
-
-  resetSelectedWallet(context): void {
-    const { commit } = accountActionContext(context);
-
-    commit.resetWalletAccountsSubscription();
-    commit.setSelectedWallet();
-    commit.setSelectedWalletLoading(false);
-  },
-
-  async subscribeOnWalletAvailability(context): Promise<void> {
-    const { commit, dispatch } = accountActionContext(context);
-
-    const runChecks = async () =>
-      await Promise.all([dispatch.updateAvailableWallets(), dispatch.checkSelectedWallet()]);
-
-    await runChecks();
-
-    const timer = setInterval(runChecks, CHECK_EXTENSION_INTERVAL);
-
-    commit.setWalletAvailabilitySubscription(timer);
-  },
-
-  updateImportedAccounts(context): void {
-    const { commit, state } = accountActionContext(context);
-
-    if (state.isDesktop) {
-      const accounts = getImportedAccounts(api);
-      commit.setWalletAccounts(accounts);
-    }
-  },
-
-  async subscribeToWalletAccounts(context): Promise<void> {
-    const { commit, state } = accountActionContext(context);
-    const wallet = state.selectedWallet;
-
-    if (!wallet) return;
-
-    const callback = (accounts: PolkadotJsAccount[]) => {
-      if (wallet === state.selectedWallet) {
-        commit.setWalletAccounts(accounts);
-      }
-    };
-
-    const subscription = await subscribeToWalletAccounts(api, wallet, callback);
-
-    commit.setWalletAccountsSubscription(subscription);
-  },
-
   async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
     const { commit, dispatch } = accountActionContext(context);
 
@@ -280,40 +196,30 @@ const actions = defineActions({
 
     if (saveAccount) {
       api.addAccountPair(pair, password);
-      // update account list in state
-      dispatch.updateImportedAccounts();
     }
 
     return json;
   },
 
   async restoreAccountFromJson(context, { json, password }: RestoreAccountArgs) {
-    const { dispatch } = accountActionContext(context);
     // restore from json file
     api.restoreAccountFromJson(json, password);
-    // update account list in state
-    dispatch.updateImportedAccounts();
   },
 
   async renameAccount(context, { address, name }: { address: string; name: string }) {
-    const { commit, dispatch } = accountActionContext(context);
+    const { commit } = accountActionContext(context);
     // change name in api & storage
     api.changeAccountName(address, name);
     // update account data from storage
     commit.syncWithStorage();
-    // update account list in state
-    dispatch.updateImportedAccounts();
   },
 
   /**
    * Desktop
    */
   deleteAccount(context, address?: string): void {
-    const { dispatch } = accountActionContext(context);
     // delete account pair
     api.forgetAccount(address);
-    // update account list in state
-    dispatch.updateImportedAccounts();
   },
 
   /**
@@ -512,11 +418,6 @@ const actions = defineActions({
   async resetFiatPriceSubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
     commit.resetFiatPriceSubscription();
-  },
-  /** It's used **only** for subscriptions module */
-  async resetWalletAvailabilitySubscription(context): Promise<void> {
-    const { commit } = accountActionContext(context);
-    commit.resetWalletAvailabilitySubscription();
   },
 });
 

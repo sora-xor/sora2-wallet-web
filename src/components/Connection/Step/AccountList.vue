@@ -94,6 +94,7 @@ import type { PolkadotJsAccount } from '../../../types/common';
 export default class AccountListStep extends Mixins(AccountActionsMixin) {
   @Prop({ default: '', type: String }) readonly text!: string;
   @Prop({ default: false, type: Boolean }) readonly isInternal!: boolean;
+  @Prop({ default: '', type: String }) readonly selectedWallet!: string;
   @Prop({ default: () => [], type: Array }) readonly accounts!: Array<PolkadotJsAccount>;
 
   readonly accountActions = [AccountActionTypes.Rename, AccountActionTypes.Export, AccountActionTypes.Delete];

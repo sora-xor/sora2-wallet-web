@@ -60,22 +60,15 @@ const actions = defineActions({
   },
   // Internal subscriptions & timers
   async activateInternalSubscriptions(context, onDesktop: boolean): Promise<void> {
-    const subscriptions = [
+    await runParallel(context, [
       'transactions/trackActiveTxs',
       'account/subscribeOnAlerts',
       'subscriptions/subscribeToStorageUpdates',
-    ];
-
-    if (!onDesktop) {
-      subscriptions.push('account/subscribeOnWalletAvailability');
-    }
-
-    await runParallel(context, subscriptions);
+    ]);
   },
   async resetInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'transactions/resetActiveTxs',
-      'account/resetWalletAvailabilitySubscription',
       'account/resetAccountPassphrase',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);

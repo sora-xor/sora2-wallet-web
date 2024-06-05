@@ -21,6 +21,7 @@
       v-else-if="isAccountList"
       :text="accountListText"
       :is-internal="isInternal"
+      :selected-wallet="selectedWallet"
       :accounts="accounts"
       @select="handleSelectAccount"
       @create="navigateToCreateAccount"
@@ -55,11 +56,12 @@
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
+import { api } from '../../api';
 import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
 import { action, getter, state } from '../../store/decorators';
 import { delay } from '../../util';
-import { verifyAccountJson, isInternalSource } from '../../util/account';
+import { verifyAccountJson, isInternalSource, getWallet, subscribeToWalletAccounts } from '../../util/account';
 import AccountConfirmDialog from '../Account/ConfirmDialog.vue';
 import LoadingMixin from '../mixins/LoadingMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
@@ -72,7 +74,10 @@ import ImportAccountStep from './Step/ImportAccount.vue';
 
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../store/account/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
+import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Wallet } from '@sora-test/wallet-connect/types';
+
+const CHECK_EXTENSION_INTERVAL = 5_000;
 
 const SelectAccountFlow = [LoginStep.ExtensionList, LoginStep.AccountList];
 const AccountCreateFlow = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
@@ -107,8 +112,6 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
 export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
   @Prop({ default: () => {}, type: Function }) private readonly closeView!: () => void;
 
-  @Prop({ default: () => [], type: Array }) public readonly accounts!: Array<PolkadotJsAccount>;
-
   @Prop({ default: () => {}, type: Function }) private readonly loginAccount!: (
     account: PolkadotJsAccount
   ) => Promise<void>;
@@ -123,15 +126,11 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   ) => Promise<void>;
 
   @Prop({ default: '', type: String }) public readonly connectedWallet!: AppWallet;
-  @Prop({ default: '', type: String }) public readonly selectedWallet!: AppWallet;
-  @Prop({ default: '', type: String }) public readonly selectedWalletTitle!: string;
-  @Prop({ default: false, type: Boolean }) public readonly selectedWalletLoading!: boolean;
-  @Prop({ default: () => {}, type: Function }) private readonly selectWallet!: (wallet: AppWallet) => Promise<void>;
-  @Prop({ default: () => {}, type: Function }) private readonly resetSelectedWallet!: () => void;
 
   @Prop({ default: false, type: Boolean }) public readonly isLoggedIn!: boolean;
 
   @state.account.isDesktop private isDesktop!: boolean;
+  @state.account.availableWallets private availableWallets!: Array<Wallet>;
   @getter.account.wallets public wallets!: { internal: Wallet[]; external: Wallet[] };
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
@@ -143,13 +142,37 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   accountLoginVisibility = false;
   accountLoginData: Nullable<PolkadotJsAccount> = null;
 
+  selectedWallet: Nullable<AppWallet> = null;
+  selectedWalletLoading = false;
+  walletAvailabilityTimer: Nullable<NodeJS.Timeout> = null;
+
+  accounts: Array<PolkadotJsAccount> = [];
+  accountsSubscription: Nullable<VoidFunction> = null;
+
+  setWalletAccountsSubscription(subscription: Nullable<Unsubcall>): void {
+    this.accountsSubscription = subscription;
+  }
+
+  resetWalletAccountsSubscription(): void {
+    this.accountsSubscription?.();
+    this.accountsSubscription = null;
+  }
+
   created(): void {
     this.resetStep();
   }
 
   /** Google or Desktop */
   get isInternal(): boolean {
-    return isInternalSource(this.selectedWallet);
+    return this.selectedWallet !== null && isInternalSource(this.selectedWallet);
+  }
+
+  get selectedWalletTitle(): string {
+    if (!this.selectedWallet) return '';
+
+    const wallet = this.availableWallets.find((wallet) => wallet.extensionName === this.selectedWallet);
+
+    return wallet ? wallet.title : this.selectedWallet;
   }
 
   get title(): string {
@@ -298,6 +321,74 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     });
   }
 
+  private setSelectedWallet(wallet: Nullable<AppWallet> = null): void {
+    this.selectedWallet = wallet;
+  }
+
+  private setSelectedWalletLoading(flag: boolean): void {
+    this.selectedWalletLoading = flag;
+  }
+
+  private async subscribeToWalletAccounts(): Promise<void> {
+    if (!this.selectedWallet) return;
+
+    this.accountsSubscription = await subscribeToWalletAccounts(api, this.selectedWallet, (accounts) => {
+      this.accounts = accounts;
+    });
+  }
+
+  private resetWalletAvailabilitySubscription(): void {
+    if (this.walletAvailabilityTimer) {
+      clearInterval(this.walletAvailabilityTimer);
+      this.walletAvailabilityTimer = null;
+    }
+    this.accounts = [];
+  }
+
+  private async subscribeOnWalletAvailability(): Promise<void> {
+    const check = async () => await this.checkSelectedWallet();
+
+    await check();
+
+    this.walletAvailabilityTimer = setInterval(check, CHECK_EXTENSION_INTERVAL);
+  }
+
+  private async checkSelectedWallet(): Promise<void> {
+    try {
+      if (this.selectedWallet) {
+        await getWallet(this.selectedWallet);
+      }
+    } catch (error) {
+      console.error(error);
+      this.resetSelectedWallet();
+      await this.logoutAccount();
+    }
+  }
+
+  private async selectWallet(wallet: AppWallet): Promise<void> {
+    try {
+      this.resetWalletAccountsSubscription();
+      this.setSelectedWallet(wallet);
+      this.setSelectedWalletLoading(true);
+
+      await this.subscribeOnWalletAvailability();
+
+      this.setSelectedWalletLoading(false);
+
+      await this.subscribeToWalletAccounts();
+    } catch (error) {
+      this.resetSelectedWallet();
+      throw error;
+    }
+  }
+
+  private resetSelectedWallet(): void {
+    this.resetWalletAvailabilitySubscription();
+    this.resetWalletAccountsSubscription();
+    this.setSelectedWallet();
+    this.setSelectedWalletLoading(false);
+  }
+
   private async loadAccountJson(password: string): Promise<KeyringPair$Json> {
     if (!this.accountLoginData || this.selectedWallet !== AppWallet.GoogleDrive) {
       throw new Error('polkadotjs.noAccount');
@@ -324,7 +415,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
         await this.loginAccount({
           address,
           name: (meta.name as string) || '',
-          source: this.selectedWallet,
+          source: this.selectedWallet as AppWallet,
         });
 
         if (this.isSignTxDialogDisabled) {

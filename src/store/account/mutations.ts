@@ -11,7 +11,6 @@ import type { AccountState } from './types';
 import type { AppWallet } from '../../consts';
 import type { FiatPriceObject } from '../../services/indexer/types';
 import type { Book, PolkadotJsAccount } from '../../types/common';
-import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 import type { Subscription, Subject } from 'rxjs';
@@ -65,11 +64,7 @@ const mutations = defineMutations<AccountState>()({
         'fiatPriceSubscription',
         'assets',
         'assetsSubscription',
-        'polkadotJsAccounts',
-        'polkadotJsAccountsSubscription',
-        'selectedWallet',
         'availableWallets',
-        'walletAvailabilityTimer',
       ],
       initialState()
     );
@@ -126,41 +121,11 @@ const mutations = defineMutations<AccountState>()({
   clearBlacklist(state): void {
     state.blacklistArray = [];
   },
-  setWalletAccounts(state, polkadotJsAccounts: Array<PolkadotJsAccount> = []): void {
-    state.polkadotJsAccounts = polkadotJsAccounts;
-  },
-  setWalletAccountsSubscription(state, subscription: Nullable<Unsubcall>): void {
-    state.polkadotJsAccountsSubscription = subscription;
-  },
-  resetWalletAccountsSubscription(state): void {
-    if (typeof state.polkadotJsAccountsSubscription === 'function') {
-      state.polkadotJsAccountsSubscription();
-    }
-    state.polkadotJsAccountsSubscription = null;
-  },
+
   setAvailableWallets(state, wallets: Wallet[]) {
     state.availableWallets = wallets;
   },
-  setSelectedWallet(state, extension: Nullable<AppWallet> = null) {
-    state.selectedWallet = extension;
-  },
-  setSelectedWalletLoading(state, flag: boolean) {
-    state.selectedWalletLoading = flag;
-  },
-  setWalletAvailabilitySubscription(state, timeout: NodeJS.Timeout | number): void {
-    state.walletAvailabilityTimer = timeout;
-  },
-  resetWalletAvailabilitySubscription(state): void {
-    if (state.walletAvailabilityTimer) {
-      clearInterval(state.walletAvailabilityTimer as number);
-      state.walletAvailabilityTimer = null;
-    }
-    state.polkadotJsAccounts = [];
-    if (typeof state.polkadotJsAccountsSubscription === 'function') {
-      state.polkadotJsAccountsSubscription();
-    }
-    state.polkadotJsAccountsSubscription = null;
-  },
+
   setAccountPassphrase(state, { address, passphrase }: { address: string; passphrase: string }): void {
     state.addressPassphraseMapping = {
       ...state.addressPassphraseMapping,

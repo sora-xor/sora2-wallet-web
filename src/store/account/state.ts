@@ -28,9 +28,6 @@ export function initialState(): AccountState {
     /** account assets & subscription */
     accountAssets: [],
     accountAssetsSubscription: null,
-    /** polkadot js accounts & subscription */
-    polkadotJsAccounts: [],
-    polkadotJsAccountsSubscription: null,
     /** whitelist & blacklist */
     whitelistArray: [],
     blacklistArray: [],
@@ -39,10 +36,7 @@ export function initialState(): AccountState {
     fiatPriceSubscription: null,
     ceresFiatValuesUsage: ceresFiatValues ? JSON.parse(ceresFiatValues) : false,
     /** extension management */
-    selectedWallet: null,
-    selectedWalletLoading: false,
     availableWallets: [],
-    walletAvailabilityTimer: null,
     /** desktop key management */
     isDesktop: isElectron(), // NOTE: inverse flag here to debug desktop
     addressKeyMapping: {},

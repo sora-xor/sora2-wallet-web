@@ -126,11 +126,11 @@ export const updateApiSigner = async (api: ApiAccount, source: AppWallet): Promi
 
 export const getImportedAccounts = (api: ApiAccount): PolkadotJsAccount[] => {
   const accounts = api.getAccounts();
-  const polkadotJsAccounts = accounts.map((account) => ({
+  const formattedAccounts = accounts.map((account) => ({
     address: account.address,
     name: account.meta.name || '',
   }));
-  return polkadotJsAccounts;
+  return formattedAccounts;
 };
 
 const formatWalletAccount = (account: WalletAccount): PolkadotJsAccount => ({
