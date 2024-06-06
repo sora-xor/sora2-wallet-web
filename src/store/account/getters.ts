@@ -53,17 +53,21 @@ const getters = defineGetters<AccountState>()({
       ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray as WhitelistArrayItem[])
       : {};
   },
-  passphrase(...args): Nullable<string> {
+  getPassword(...args): (address: string) => Nullable<string> {
     const { state } = accountGetterContext(args);
-    const address = api.formatAddress(state.address, false);
-    const encryptedPassphrase = state.addressPassphraseMapping[address];
-    const sessionKey = state.addressKeyMapping[address];
 
-    if (encryptedPassphrase && sessionKey) {
+    return (accountAddress: string) => {
+      if (!accountAddress) return null;
+
+      const address = api.formatAddress(accountAddress, false);
+      const encryptedPassphrase = state.addressPassphraseMapping[address];
+      const sessionKey = state.addressKeyMapping[address];
+
+      if (!(encryptedPassphrase && sessionKey)) return null;
+
       const decoded = AES.decrypt(encryptedPassphrase, sessionKey).toString(enc.Utf8);
       return decoded;
-    }
-    return null;
+    };
   },
   blacklist(...args): any {
     const { state } = accountGetterContext(args);

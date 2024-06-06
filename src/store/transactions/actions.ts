@@ -11,6 +11,7 @@ import { transactionsActionContext } from './../transactions';
 
 import type { HistoryElement } from '../../services/indexer/types';
 import type { ExternalHistoryParams } from '../../types/history';
+import type { ApiAccount } from '@sora-substrate/util';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { ActionContext } from 'vuex';
 
@@ -66,23 +67,26 @@ async function waitUntilConfirmTxDialogOpened(): Promise<void> {
 }
 
 const actions = defineActions({
-  async beforeTransactionSign(context): Promise<void> {
+  async beforeTransactionSign(context, signerApi: ApiAccount = api): Promise<void> {
     const { commit, state } = transactionsActionContext(context);
-    const { rootGetters, rootDispatch, rootState } = rootActionContext(context);
+    const { rootGetters } = rootActionContext(context);
+    const { getPassword } = rootGetters.wallet.account;
 
-    if (rootState.wallet.account.isExternal) return;
+    const { address, signer } = signerApi;
 
-    const { passphrase } = rootGetters.wallet.account;
+    if (!address || signer) return;
 
-    if (passphrase && state.isSignTxDialogDisabled) {
-      api.unlockPair(passphrase);
+    const password = getPassword(address);
+
+    if (password && state.isSignTxDialogDisabled) {
+      signerApi.unlockPair(password);
     } else {
       commit.setSignTxDialogVisibility(true);
 
       await waitUntilConfirmTxDialogOpened();
     }
 
-    if (api.account?.pair.isLocked) {
+    if (signerApi.accountPair?.isLocked) {
       throw new Error('Cancelled');
     }
   },

@@ -10,7 +10,7 @@ import LoadingMixin from './LoadingMixin';
 import OperationsMixin from './OperationsMixin';
 
 import type { AccountAssetsTable } from '../../types/common';
-import type { HistoryItem } from '@sora-substrate/util';
+import type { HistoryItem, ApiAccount } from '@sora-substrate/util';
 
 @Component
 export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMixin) {
@@ -23,7 +23,7 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
 
   @action.account.addAsset private addAsset!: (address?: string) => Promise<void>;
 
-  @action.transactions.beforeTransactionSign private beforeTransactionSign!: AsyncFnWithoutArgs;
+  @action.transactions.beforeTransactionSign private beforeTransactionSign!: (api?: ApiAccount) => Promise<void>;
 
   private async getLastTransaction(time: number): Promise<HistoryItem> {
     const tx = findLast((item) => Number(item.startTime) > time, api.historyList);

@@ -15,7 +15,7 @@
     <div class="wallet-wrapper s-flex">
       <sora-wallet />
     </div>
-    <confirm-dialog />
+    <confirm-dialog :connected="connected" :get-api="getApi" />
   </s-design-system-provider>
 </template>
 
@@ -28,6 +28,7 @@ import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import env from '../public/env.json';
 
+import { api } from './api';
 import ConfirmDialog from './components/ConfirmDialog.vue';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import { SoraNetwork, IndexerType } from './consts';
@@ -46,6 +47,7 @@ import type Theme from '@soramitsu-ui/ui-vue2/lib/types/Theme';
   components: { SoraWallet, ConfirmDialog },
 })
 export default class App extends Mixins(TransactionMixin) {
+  @state.account.address connected!: string;
   @state.account.assetsToNotifyQueue assetsToNotifyQueue!: Array<WhitelistArrayItem>;
   @state.settings.indexerType indexerType!: IndexerType;
   @state.account.ceresFiatValuesUsage ceresFiatValuesUsage!: boolean;
@@ -103,6 +105,10 @@ export default class App extends Mixins(TransactionMixin) {
   beforeDestroy(): void {
     this.resetNetworkSubscriptions();
     this.resetInternalSubscriptions();
+  }
+
+  getApi() {
+    return api;
   }
 
   changeTheme(): void {

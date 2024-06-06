@@ -76,7 +76,7 @@ import AccountSignatureOption from './Settings/SignatureOption.vue';
   },
 })
 export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMixin, NotificationMixin) {
-  @getter.account.passphrase passphrase!: Nullable<string>;
+  @getter.account.getPassword getPassword!: (accountAddress: string) => Nullable<string>;
 
   @state.account.address private connected!: string;
   @state.account.isExternal isExternal!: boolean;
@@ -90,6 +90,10 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
   readonly GoogleLogo = GoogleLogo;
 
   accountConfirmVisibility = false;
+
+  get passphrase(): Nullable<string> {
+    return this.getPassword(this.connected);
+  }
 
   openConfirmDialog(): void {
     this.accountConfirmVisibility = true;
