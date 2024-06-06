@@ -17,7 +17,7 @@ import type { PolkadotJsAccount } from '../../types/common';
 export default class AccountActionsMixin extends Mixins(LoadingMixin, NotificationMixin) {
   @action.account.renameAccount private renameAccount!: (data: { address: string; name: string }) => Promise<void>;
 
-  @action.account.logout private logout!: (forgetAddress?: string) => Promise<void>;
+  @action.account.logout private logoutAccount!: (forgetAddress?: string) => Promise<void>;
 
   @getter.account.isConnectedAccount public isConnectedAccount!: (account: PolkadotJsAccount) => boolean;
 
@@ -40,7 +40,7 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
         break;
       }
       case AccountActionTypes.Logout: {
-        this.logout();
+        this.logoutAccount();
         break;
       }
       case AccountActionTypes.Delete: {
@@ -115,7 +115,7 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
         }
 
         if (this.isConnectedAccount(this.selectedAccount)) {
-          await this.logout();
+          await this.logoutAccount();
         }
 
         if (this.selectedAccount.source === AppWallet.GoogleDrive) {

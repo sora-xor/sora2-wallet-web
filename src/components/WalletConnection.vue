@@ -44,7 +44,6 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
 
   @action.account.loginAccount public loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.logout public logoutAccount!: (forgetAddress?: string) => Promise<void>;
-
   @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
 
   getApi() {

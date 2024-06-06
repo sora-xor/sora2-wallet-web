@@ -8,7 +8,7 @@
     title-center
   >
     <template v-if="logoutButtonVisibility" #actions>
-      <s-button type="action" :tooltip="t('logoutText')" @click="handleLogout">
+      <s-button type="action" :tooltip="t('logoutText')" @click="handleAccountLogout">
         <s-icon name="basic-eye-24" size="28" />
       </s-button>
     </template>
@@ -20,7 +20,7 @@
       :selected-wallet-loading="selectedWalletLoading"
       :internal-wallets="wallets.internal"
       :external-wallets="wallets.external"
-      @select="handleSelectWallet"
+      @select="handleWalletSelect"
     >
       <slot name="extension" />
     </extension-list-step>
@@ -33,8 +33,8 @@
       :rename-account="renameAccount"
       :export-account="handleAccountExport"
       :delete-account="handleAccountDelete"
-      :logout-account="logoutAccount"
-      @select="handleSelectAccount"
+      :logout-account="handleAccountLogout"
+      @select="handleAccountSelect"
       @create="navigateToCreateAccount"
       @import="navigateToImportAccount"
     />
@@ -337,7 +337,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     });
   }
 
-  public async handleSelectAccount(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
+  public async handleAccountSelect(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
     if (isConnected) {
       this.closeView();
     } else if (this.isInternal && !this.isDesktop) {
@@ -352,7 +352,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     }
   }
 
-  public async handleSelectWallet(wallet: Wallet): Promise<void> {
+  public async handleWalletSelect(wallet: Wallet): Promise<void> {
     if (!wallet.installed) return;
 
     await this.withAppAlert(async () => {
@@ -402,7 +402,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     } catch (error) {
       console.error(error);
       this.resetSelectedWallet();
-      await this.logoutAccount();
+      this.handleAccountLogout();
     }
   }
 
@@ -489,7 +489,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     }
   }
 
-  public handleLogout(): void {
+  public handleAccountLogout(): void {
     this.resetStep();
     this.logoutAccount();
   }
