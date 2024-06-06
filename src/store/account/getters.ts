@@ -74,8 +74,9 @@ const getters = defineGetters<AccountState>()({
   },
   passphrase(...args): Nullable<string> {
     const { state } = accountGetterContext(args);
-    const encryptedPassphrase = state.addressPassphraseMapping[state.address];
-    const sessionKey = state.addressKeyMapping[state.address];
+    const address = api.formatAddress(state.address, false);
+    const encryptedPassphrase = state.addressPassphraseMapping[address];
+    const sessionKey = state.addressKeyMapping[address];
 
     if (encryptedPassphrase && sessionKey) {
       const decoded = AES.decrypt(encryptedPassphrase, sessionKey).toString(enc.Utf8);

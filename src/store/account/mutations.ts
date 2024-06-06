@@ -127,25 +127,28 @@ const mutations = defineMutations<AccountState>()({
   },
 
   setAccountPassphrase(state, { address, passphrase }: { address: string; passphrase: string }): void {
+    const defaultAddress = api.formatAddress(address, false);
     state.addressPassphraseMapping = {
       ...state.addressPassphraseMapping,
-      [address]: passphrase,
+      [defaultAddress]: passphrase,
     };
   },
   updateAddressGeneratedKey(state, { address, key }: { address: string; key: string }): void {
+    const defaultAddress = api.formatAddress(address, false);
     state.addressKeyMapping = {
       ...state.addressKeyMapping,
-      [address]: key,
+      [defaultAddress]: key,
     };
   },
   resetAccountPassphrase(state, address: string): void {
+    const defaultAddress = api.formatAddress(address, false);
     state.addressKeyMapping = {
       ...state.addressKeyMapping,
-      [address]: null,
+      [defaultAddress]: null,
     };
     state.addressPassphraseMapping = {
       ...state.addressPassphraseMapping,
-      [address]: null,
+      [defaultAddress]: null,
     };
   },
   setPasswordTimeout(state, timeout: number): void {
@@ -153,23 +156,25 @@ const mutations = defineMutations<AccountState>()({
     settingsStorage.set('accountPasswordTimeout', JSON.stringify(timeout));
   },
   setAccountPassphraseTimer(state, { address, timer }: { address: string; timer: NodeJS.Timeout }): void {
+    const defaultAddress = api.formatAddress(address, false);
     state.accountPasswordTimer = {
       ...state.accountPasswordTimer,
-      [address]: timer,
+      [defaultAddress]: timer,
     };
     state.accountPasswordTimestamp = {
       ...state.accountPasswordTimestamp,
-      [address]: Date.now(),
+      [defaultAddress]: Date.now(),
     };
   },
   resetAccountPassphraseTimer(state, address: string): void {
+    const defaultAddress = api.formatAddress(address, false);
     const timer = state.accountPasswordTimer[address];
 
     if (timer) {
       clearTimeout(timer);
     }
-    state.accountPasswordTimer[address] = null;
-    state.accountPasswordTimestamp[address] = null;
+    state.accountPasswordTimer[defaultAddress] = null;
+    state.accountPasswordTimestamp[defaultAddress] = null;
   },
   /** JUST FOR TESTING PURPOSES */
   setIsDesktop(state, value: boolean): void {
