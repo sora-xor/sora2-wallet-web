@@ -169,7 +169,7 @@ const subscribeToExternalAccounts = async (wallet: AppWallet, callback: (account
 
 export const subscribeToWalletAccounts = async (
   api: ApiAccount,
-  wallet: AppWallet,
+  wallet: Nullable<AppWallet>,
   callback: (accounts: PolkadotJsAccount[]) => void
 ): Promise<Nullable<Unsubcall>> => {
   return wallet ? await subscribeToExternalAccounts(wallet, callback) : subscribeToInternalAccounts(api, callback);

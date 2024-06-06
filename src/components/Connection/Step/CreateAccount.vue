@@ -121,17 +121,12 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   readonly LoginStep = LoginStep;
   readonly PhraseLength = 12;
 
+  @Prop({ required: true, type: Function }) readonly getApi!: () => ApiAccount;
+
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: String, default: '' }) readonly selectedWalletTitle!: string;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
-  @Prop({
-    default: () => {
-      return null;
-    },
-    type: Function,
-  })
-  public readonly getApi!: () => ApiAccount;
 
   @Watch('step')
   private resetSeedPhraseToCompareIdx(value: LoginStep) {

@@ -41,6 +41,7 @@
     <create-account-step
       v-else-if="isCreateFlow"
       :step.sync="step"
+      :get-api="getApi"
       :selected-wallet-title="selectedWalletTitle"
       :loading="loading"
       :create-account="handleAccountCreate"
@@ -173,6 +174,16 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   created(): void {
     this.resetStep();
+
+    if (this.isDesktop) {
+      this.withApi(() => {
+        this.subscribeToWalletAccounts();
+      });
+    }
+  }
+
+  beforeDestroy(): void {
+    this.resetSelectedWallet();
   }
 
   get connectedAccount(): string {
@@ -185,7 +196,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   /** Google or Desktop */
   get isInternal(): boolean {
-    return this.selectedWallet !== null && isInternalSource(this.selectedWallet);
+    return this.isDesktop || (!!this.selectedWallet && isInternalSource(this.selectedWallet));
   }
 
   get wallets() {
@@ -371,8 +382,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   private async subscribeToWalletAccounts(): Promise<void> {
-    if (!this.selectedWallet) return;
-
     this.accountsSubscription = await subscribeToWalletAccounts(this.getApi(), this.selectedWallet, (accounts) => {
       this.accounts = accounts;
     });
@@ -496,10 +505,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   private resetStep(): void {
     this.step = this.isDesktop ? LoginStep.AccountList : LoginStep.ExtensionList;
-  }
-
-  beforeDestroy(): void {
-    this.resetSelectedWallet();
   }
 }
 </script>
