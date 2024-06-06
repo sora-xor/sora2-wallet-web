@@ -5,14 +5,12 @@ import isEqual from 'lodash/fp/isEqual';
 import { api } from '../../api';
 import { AppWallet } from '../../consts';
 import { formatAccountAddress } from '../../util';
-import { isInternalWallet } from '../../util/account';
 
 import { accountGetterContext } from './../account';
 
 import type { AccountState } from './types';
 import type { AssetsTable, AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
 import type { Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
-import type { Wallet } from '@sora-test/wallet-connect/types';
 
 const toHashTable = <T extends Asset>(list: Readonly<Array<T>>, key: string) => {
   return list.reduce((result, item) => {
@@ -34,23 +32,6 @@ const getters = defineGetters<AccountState>()({
       name: state.name,
       source: state.source as AppWallet,
     };
-  },
-  wallets(...args): { internal: Wallet[]; external: Wallet[] } {
-    const { state } = accountGetterContext(args);
-
-    const wallets: { internal: Wallet[]; external: Wallet[] } = {
-      internal: [], // api integrations, app signing
-      external: [], // extensions
-    };
-
-    return state.availableWallets.reduce((buffer, wallet) => {
-      if (isInternalWallet(wallet)) {
-        buffer.internal.push(wallet);
-      } else {
-        buffer.external.push(wallet);
-      }
-      return buffer;
-    }, wallets);
   },
   assetsDataTable(...args): AssetsTable {
     const { state } = accountGetterContext(args);

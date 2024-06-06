@@ -10,14 +10,7 @@ import { CeresApiService } from '../../services/ceres';
 import { getCurrentIndexer } from '../../services/indexer';
 import { rootActionContext } from '../../store';
 import { WHITE_LIST_URL, NFT_BLACK_LIST_URL, AppError } from '../../util';
-import {
-  getAppWallets,
-  updateApiSigner,
-  checkWallet,
-  exportAccountJson,
-  loginApi,
-  logoutApi,
-} from '../../util/account';
+import { getAppWallets, updateApiSigner, checkWallet, loginApi, logoutApi } from '../../util/account';
 
 import { accountActionContext } from './../account';
 
@@ -177,56 +170,14 @@ const actions = defineActions({
     await dispatch.afterLogin();
   },
 
-  async createAccount(
-    context,
-    { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
-  ): Promise<KeyringPair$Json> {
-    if (passwordConfirm && password !== passwordConfirm) {
-      throw new AppError({ key: 'desktop.errorMessages.passwords' });
-    }
-
-    const pair = api.createAccountPair(seed, name);
-    const json = pair.toJson(password);
-
-    if (exportAccount) {
-      exportAccountJson(json);
-    }
-
-    if (saveAccount) {
-      api.addAccountPair(pair, password);
-    }
-
-    return json;
-  },
-
   async renameAccount(context, { address, name }: { address: string; name: string }) {
-    const { commit, state } = accountActionContext(context);
+    const { commit } = accountActionContext(context);
     // change name in api & storage
     api.changeAccountName(address, name);
     // update account data from storage
     commit.syncWithStorage();
   },
 
-  /**
-   * Desktop
-   */
-  deleteAccount(context, address?: string): void {
-    // delete account pair
-    api.forgetAccount(address);
-  },
-
-  /**
-   * Desktop
-   */
-  exportAccount(_, { address, password }: { address: string; password: string }): void {
-    const pair = api.getAccountPair(address);
-    const accountJson = pair.toJson(password);
-    exportAccountJson(accountJson);
-  },
-
-  /**
-   * Desktop
-   */
   setAccountPassphrase(context, { address, password }: { address: string; password: string }): void {
     const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
     const passphrase = AES.encrypt(password, key).toString();

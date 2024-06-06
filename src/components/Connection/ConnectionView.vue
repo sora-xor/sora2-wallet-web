@@ -1,5 +1,12 @@
 <template>
-  <wallet-base show-header :show-back="hasBackBtn" :title="title" @back="handleBack" v-loading="loading" title-center>
+  <wallet-base
+    show-header
+    :show-back="hasBackBtn"
+    :title="viewTitle"
+    @back="handleBack"
+    v-loading="loading"
+    title-center
+  >
     <template v-if="logoutButtonVisibility" #actions>
       <s-button type="action" :tooltip="t('logoutText')" @click="handleLogout">
         <s-icon name="basic-eye-24" size="28" />
@@ -24,8 +31,8 @@
       :selected-wallet="selectedWallet"
       :accounts="accounts"
       :rename-account="renameAccount"
-      :export-account="exportAccount"
-      :delete-account="deleteAccount"
+      :export-account="handleAccountExport"
+      :delete-account="handleAccountDelete"
       :logout-account="logoutAccount"
       @select="handleSelectAccount"
       @create="navigateToCreateAccount"
@@ -60,12 +67,21 @@
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
-import { api } from '../../api';
 import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
-import { action, getter, state } from '../../store/decorators';
+import { action, state } from '../../store/decorators';
 import { delay } from '../../util';
-import { verifyAccountJson, isInternalSource, getWallet, subscribeToWalletAccounts } from '../../util/account';
+import {
+  verifyAccountJson,
+  isInternalSource,
+  getWallet,
+  isInternalWallet,
+  subscribeToWalletAccounts,
+  exportAccount,
+  deleteAccount,
+  createAccount,
+  restoreAccount,
+} from '../../util/account';
 import AccountConfirmDialog from '../Account/ConfirmDialog.vue';
 import LoadingMixin from '../mixins/LoadingMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
@@ -78,6 +94,7 @@ import ImportAccountStep from './Step/ImportAccount.vue';
 
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../store/account/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
+import type { ApiAccount } from '@sora-substrate/util';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
@@ -113,35 +130,25 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
   },
 })
 export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
-  @Prop({ default: () => {}, type: Function }) private readonly closeView!: () => void;
+  @Prop({ required: true, type: Function }) public readonly getApi!: () => ApiAccount;
+
+  @Prop({ default: () => null, type: Object }) private readonly account!: Nullable<PolkadotJsAccount>;
 
   @Prop({ default: () => {}, type: Function }) private readonly loginAccount!: (
     account: PolkadotJsAccount
   ) => Promise<void>;
 
   @Prop({ default: () => {}, type: Function }) public readonly logoutAccount!: () => Promise<void>;
-  @Prop({ default: () => {}, type: Function }) private readonly createAccount!: (
-    data: CreateAccountArgs
-  ) => Promise<KeyringPair$Json>;
 
   @Prop({ default: () => {}, type: Function }) public readonly renameAccount!: (data: {
     address: string;
     name: string;
   }) => Promise<void>;
 
-  @Prop({ default: () => {}, type: Function }) public readonly exportAccount!: (data: {
-    address: string;
-    password: string;
-  }) => Promise<void>;
-
-  @Prop({ default: () => {}, type: Function }) public readonly deleteAccount!: (address: string) => Promise<void>;
-
-  @Prop({ default: '', type: String }) public readonly connectedWallet!: AppWallet;
-  @Prop({ default: '', type: String }) public readonly connectedAccount!: string;
+  @Prop({ default: () => {}, type: Function }) private readonly closeView!: () => void;
 
   @state.account.isDesktop private isDesktop!: boolean;
-  @state.account.availableWallets private availableWallets!: Array<Wallet>;
-  @getter.account.wallets public wallets!: { internal: Wallet[]; external: Wallet[] };
+  @state.account.availableWallets private availableWallets!: Wallet[];
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
     address: string;
@@ -168,9 +175,33 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     this.resetStep();
   }
 
+  get connectedAccount(): string {
+    return this.account?.address ?? '';
+  }
+
+  get connectedWallet(): AppWallet {
+    return (this.account?.source ?? '') as AppWallet;
+  }
+
   /** Google or Desktop */
   get isInternal(): boolean {
     return this.selectedWallet !== null && isInternalSource(this.selectedWallet);
+  }
+
+  get wallets() {
+    const wallets: { internal: Wallet[]; external: Wallet[] } = {
+      internal: [], // integrations, app signing
+      external: [], // extensions
+    };
+
+    return this.availableWallets.reduce((buffer, wallet) => {
+      if (isInternalWallet(wallet)) {
+        buffer.internal.push(wallet);
+      } else {
+        buffer.external.push(wallet);
+      }
+      return buffer;
+    }, wallets);
   }
 
   get selectedWalletTitle(): string {
@@ -181,7 +212,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     return wallet ? wallet.title : this.selectedWallet;
   }
 
-  get title(): string {
+  get viewTitle(): string {
     if (this.isAccountList && this.selectedWalletTitle) {
       return this.t('connection.internalTitle', { wallet: this.selectedWalletTitle });
     } else if (this.isCreateFlow) {
@@ -267,11 +298,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     this.step = LoginStep.AccountList;
   }
 
-  private restoreAccount({ json, password }: RestoreAccountArgs) {
-    // restore from json file
-    api.restoreAccountFromJson(json, password);
-  }
-
   public async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
@@ -285,7 +311,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
         if (this.selectedWallet === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.add(verified, password);
         } else if (this.isDesktop) {
-          this.restoreAccount(data);
+          this.handleAccountRestore(data);
         }
 
         this.navigateToAccountList();
@@ -300,7 +326,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       await delay(250);
 
       await this.withAppNotification(async () => {
-        const accountJson = await this.createAccount({ ...data, saveAccount: this.isDesktop });
+        const accountJson = createAccount(this.getApi(), { ...data, saveAccount: this.isDesktop });
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.add(accountJson, data.password, data.seed);
@@ -347,7 +373,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   private async subscribeToWalletAccounts(): Promise<void> {
     if (!this.selectedWallet) return;
 
-    this.accountsSubscription = await subscribeToWalletAccounts(api, this.selectedWallet, (accounts) => {
+    this.accountsSubscription = await subscribeToWalletAccounts(this.getApi(), this.selectedWallet, (accounts) => {
       this.accounts = accounts;
     });
   }
@@ -413,7 +439,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
     if (!json) throw new Error('polkadotjs.noAccount');
 
-    this.restoreAccount({ json, password });
+    this.handleAccountRestore({ json, password });
 
     return json;
   }
@@ -441,6 +467,18 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
         this.accountLoginData = null;
       });
     });
+  }
+
+  public handleAccountExport(data: { address: string; password: string }): void {
+    exportAccount(this.getApi(), data);
+  }
+
+  public handleAccountDelete(address: string): void {
+    deleteAccount(this.getApi(), address);
+  }
+
+  public handleAccountRestore(data: RestoreAccountArgs): void {
+    restoreAccount(this.getApi(), data);
   }
 
   public handleBack(): void {

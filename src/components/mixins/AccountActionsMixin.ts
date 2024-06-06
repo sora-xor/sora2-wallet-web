@@ -1,10 +1,11 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
+import { api } from '../../api';
 import { AppWallet, AccountActionTypes } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
 import { action, getter } from '../../store/decorators';
 import { delay } from '../../util';
-import { verifyAccountJson, exportAccountJson } from '../../util/account';
+import { verifyAccountJson, exportAccountJson, exportAccount, deleteAccount } from '../../util/account';
 import { settingsStorage } from '../../util/storage';
 
 import LoadingMixin from './LoadingMixin';
@@ -15,8 +16,6 @@ import type { PolkadotJsAccount } from '../../types/common';
 @Component
 export default class AccountActionsMixin extends Mixins(LoadingMixin, NotificationMixin) {
   @action.account.renameAccount private renameAccount!: (data: { address: string; name: string }) => Promise<void>;
-  @action.account.exportAccount private exportAccount!: (data: { address: string; password: string }) => Promise<void>;
-  @action.account.deleteAccount private deleteAccount!: (address: string) => Promise<void>;
 
   @action.account.logout private logout!: (forgetAddress?: string) => Promise<void>;
 
@@ -98,7 +97,7 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
 
           exportAccountJson(verified);
         } else {
-          await this.exportAccount({ address, password });
+          exportAccount(api, { address, password });
         }
 
         this.accountExportVisibility = false;
@@ -122,7 +121,7 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
         if (this.selectedAccount.source === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.delete(this.selectedAccount.address);
         } else {
-          await this.deleteAccount(this.selectedAccount.address);
+          deleteAccount(api, this.selectedAccount.address);
         }
 
         this.accountDeleteVisibility = false;

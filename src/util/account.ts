@@ -200,3 +200,53 @@ export const verifyAccountJson = (pairJson: KeyringPair$Json, password: string):
 
   return accountJson;
 };
+
+export type CreateAccountArgs = {
+  seed: string;
+  name: string;
+  password: string;
+  passwordConfirm?: string;
+  saveAccount?: boolean;
+  exportAccount?: boolean;
+};
+
+export const createAccount = (
+  api: ApiAccount,
+  { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
+): KeyringPair$Json => {
+  if (passwordConfirm && password !== passwordConfirm) {
+    throw new AppError({ key: 'desktop.errorMessages.passwords' });
+  }
+
+  const pair = api.createAccountPair(seed, name);
+  const json = pair.toJson(password);
+
+  if (exportAccount) {
+    exportAccountJson(json);
+  }
+
+  if (saveAccount) {
+    api.addAccountPair(pair, password);
+  }
+
+  return json;
+};
+
+export const exportAccount = (api: ApiAccount, { address, password }: { address: string; password: string }): void => {
+  const pair = api.getAccountPair(address);
+  const accountJson = pair.toJson(password);
+  exportAccountJson(accountJson);
+};
+
+export const restoreAccount = (
+  api: ApiAccount,
+  { json, password }: { json: KeyringPair$Json; password: string }
+): void => {
+  // restore from json file
+  api.restoreAccountFromJson(json, password);
+};
+
+export const deleteAccount = (api: ApiAccount, address?: string): void => {
+  // delete account pair
+  api.forgetAccount(address);
+};

@@ -1,13 +1,10 @@
 <template>
   <connection-view
-    :connected-account="connectedAccount"
-    :connected-wallet="connectedWallet"
+    :get-api="getApi"
+    :account="account"
     :login-account="loginAccount"
     :logout-account="logoutAccount"
-    :create-account="createAccount"
     :rename-account="renameAccount"
-    :export-account="exportAccount"
-    :delete-account="deleteAccount"
     :close-view="navigateToAccount"
     v-bind="$attrs"
     v-on="$listeners"
@@ -29,31 +26,30 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
+import { api } from '../api';
 import { RouteNames } from '../consts';
-import { action, mutation, state } from '../store/decorators';
+import { action, getter, mutation } from '../store/decorators';
 
 import ConnectionView from './Connection/ConnectionView.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 
-import type { CreateAccountArgs } from '../store/account/types';
 import type { Route } from '../store/router/types';
-import type { PolkadotJsAccount, KeyringPair$Json } from '../types/common';
+import type { PolkadotJsAccount } from '../types/common';
 
 @Component({
   components: { ConnectionView },
 })
 export default class WalletConnection extends Mixins(TranslationMixin) {
-  @state.account.isDesktop public isDesktop!: boolean;
-  @state.account.source public connectedWallet!: string;
-  @state.account.address public connectedAccount!: string;
+  @getter.account.account public account!: Nullable<PolkadotJsAccount>;
 
   @action.account.loginAccount public loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.logout public logoutAccount!: (forgetAddress?: string) => Promise<void>;
 
-  @action.account.createAccount public createAccount!: (data: CreateAccountArgs) => Promise<KeyringPair$Json>;
   @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
-  @action.account.exportAccount public exportAccount!: (data: { address: string; password: string }) => Promise<void>;
-  @action.account.deleteAccount public deleteAccount!: (address: string) => Promise<void>;
+
+  getApi() {
+    return api;
+  }
 
   handleLearnMore(): void {
     this.$emit('learn-more');
