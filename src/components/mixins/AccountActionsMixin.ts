@@ -2,7 +2,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 
 import { AppWallet, AccountActionTypes } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
-import { action, getter, state } from '../../store/decorators';
+import { action, getter } from '../../store/decorators';
 import { delay } from '../../util';
 import { verifyAccountJson, exportAccountJson } from '../../util/account';
 import { settingsStorage } from '../../util/storage';
@@ -78,7 +78,7 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
     });
   }
 
-  async handleAccountExport({ password }: { password: string }): Promise<void> {
+  async handleAccountExport(password: string): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();

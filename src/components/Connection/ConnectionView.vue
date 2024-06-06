@@ -23,6 +23,10 @@
       :is-internal="isInternal"
       :selected-wallet="selectedWallet"
       :accounts="accounts"
+      :rename-account="renameAccount"
+      :export-account="exportAccount"
+      :delete-account="deleteAccount"
+      :logout-account="logoutAccount"
       @select="handleSelectAccount"
       @create="navigateToCreateAccount"
       @import="navigateToImportAccount"
@@ -115,14 +119,25 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     account: PolkadotJsAccount
   ) => Promise<void>;
 
-  @Prop({ default: () => {}, type: Function }) private readonly logoutAccount!: () => Promise<void>;
+  @Prop({ default: () => {}, type: Function }) public readonly logoutAccount!: () => Promise<void>;
   @Prop({ default: () => {}, type: Function }) private readonly createAccount!: (
     data: CreateAccountArgs
   ) => Promise<KeyringPair$Json>;
 
-  @Prop({ default: '', type: String }) public readonly connectedWallet!: AppWallet;
+  @Prop({ default: () => {}, type: Function }) public readonly renameAccount!: (data: {
+    address: string;
+    name: string;
+  }) => Promise<void>;
 
-  @Prop({ default: false, type: Boolean }) public readonly isLoggedIn!: boolean;
+  @Prop({ default: () => {}, type: Function }) public readonly exportAccount!: (data: {
+    address: string;
+    password: string;
+  }) => Promise<void>;
+
+  @Prop({ default: () => {}, type: Function }) public readonly deleteAccount!: (address: string) => Promise<void>;
+
+  @Prop({ default: '', type: String }) public readonly connectedWallet!: AppWallet;
+  @Prop({ default: '', type: String }) public readonly connectedAccount!: string;
 
   @state.account.isDesktop private isDesktop!: boolean;
   @state.account.availableWallets private availableWallets!: Array<Wallet>;
@@ -202,6 +217,10 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     if (this.isInternal) return this.t('connection.internalText', { wallet: this.selectedWalletTitle });
 
     return this.hasAccounts ? this.t('connection.selectAccount') : this.t('desktop.welcome.text');
+  }
+
+  get isLoggedIn(): boolean {
+    return !!this.connectedAccount;
   }
 
   get logoutButtonVisibility(): boolean {

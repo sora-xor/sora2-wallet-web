@@ -103,7 +103,6 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
       await this.withAppNotification(async () => {
         // unlock pair to check password
         unlockAccountPair(api, password);
-        api.unlockPair(password);
         this.setAccountPassphrase({ address: this.connected, password });
         this.accountConfirmVisibility = false;
       });

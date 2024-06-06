@@ -181,8 +181,6 @@ const actions = defineActions({
     context,
     { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
   ): Promise<KeyringPair$Json> {
-    const { dispatch } = accountActionContext(context);
-
     if (passwordConfirm && password !== passwordConfirm) {
       throw new AppError({ key: 'desktop.errorMessages.passwords' });
     }
@@ -202,7 +200,7 @@ const actions = defineActions({
   },
 
   async renameAccount(context, { address, name }: { address: string; name: string }) {
-    const { commit } = accountActionContext(context);
+    const { commit, state } = accountActionContext(context);
     // change name in api & storage
     api.changeAccountName(address, name);
     // update account data from storage
