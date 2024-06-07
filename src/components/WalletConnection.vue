@@ -6,8 +6,6 @@
     :logout-account="logoutAccount"
     :rename-account="renameAccount"
     :close-view="navigateToAccount"
-    v-bind="$attrs"
-    v-on="$listeners"
   >
     <template #extension>
       <s-button

@@ -9,13 +9,12 @@ import alertsApiService from '../../services/alerts';
 import { CeresApiService } from '../../services/ceres';
 import { getCurrentIndexer } from '../../services/indexer';
 import { rootActionContext } from '../../store';
-import { WHITE_LIST_URL, NFT_BLACK_LIST_URL, AppError } from '../../util';
+import { WHITE_LIST_URL, NFT_BLACK_LIST_URL } from '../../util';
 import { getAppWallets, updateApiSigner, checkWallet, loginApi, logoutApi } from '../../util/account';
 
 import { accountActionContext } from './../account';
 
-import type { CreateAccountArgs, RestoreAccountArgs } from './types';
-import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
+import type { PolkadotJsAccount } from '../../types/common';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { ActionContext } from 'vuex';
 

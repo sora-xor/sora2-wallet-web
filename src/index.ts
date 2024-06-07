@@ -9,6 +9,7 @@ import AddressBookInput from './components/AddressBook/Input.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
 import ConfirmDialog from './components/ConfirmDialog.vue';
+import ConnectionView from './components/Connection/ConnectionView.vue';
 import AccountConnectionList from './components/Connection/List/Account.vue';
 import ConnectionItems from './components/Connection/List/ConnectionItems.vue';
 import ExtensionConnectionList from './components/Connection/List/Extension.vue';
@@ -186,6 +187,7 @@ const components = {
   FormattedAddress,
   AccountConnectionList,
   ExtensionConnectionList,
+  ConnectionView,
 };
 
 const mixins = {

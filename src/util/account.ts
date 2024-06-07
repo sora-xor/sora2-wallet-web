@@ -9,6 +9,7 @@ import { AppError, waitForDocumentReady } from '../util';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
+import type { KeyringAddress } from '@polkadot/ui-keyring/types';
 import type { ApiAccount } from '@sora-substrate/util';
 import type { Wallet, WalletAccount } from '@sora-test/wallet-connect/types';
 
@@ -124,13 +125,16 @@ export const updateApiSigner = async (api: ApiAccount, source: AppWallet): Promi
   api.setSigner(signer);
 };
 
-export const getImportedAccounts = (api: ApiAccount): PolkadotJsAccount[] => {
-  const accounts = api.getAccounts();
-  const formattedAccounts = accounts.map((account) => ({
+const formatImportedAccounts = (accounts: KeyringAddress[]): PolkadotJsAccount[] => {
+  return accounts.map((account) => ({
     address: account.address,
     name: account.meta.name || '',
   }));
-  return formattedAccounts;
+};
+
+export const getImportedAccounts = (api: ApiAccount): PolkadotJsAccount[] => {
+  const accounts = api.getAccounts();
+  return formatImportedAccounts(accounts);
 };
 
 const formatWalletAccount = (account: WalletAccount): PolkadotJsAccount => ({
@@ -146,11 +150,11 @@ const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAc
 const subscribeToInternalAccounts = (api: ApiAccount, callback: (accounts: PolkadotJsAccount[]) => void) => {
   callback(getImportedAccounts(api));
 
-  const subscription = setInterval(() => {
-    callback(getImportedAccounts(api));
-  }, 5_000);
+  const subscription = api.accountsObservable.subscribe((accounts) => {
+    callback(formatImportedAccounts(accounts));
+  });
 
-  return () => clearInterval(subscription);
+  return () => subscription.unsubscribe();
 };
 
 const subscribeToExternalAccounts = async (wallet: AppWallet, callback: (accounts: PolkadotJsAccount[]) => void) => {

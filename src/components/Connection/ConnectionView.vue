@@ -1,11 +1,12 @@
 <template>
   <wallet-base
     show-header
+    title-center
     :show-back="hasBackBtn"
     :title="viewTitle"
+    v-bind="$attrs"
     @back="handleBack"
-    v-loading="loading"
-    title-center
+    @close="closeView"
   >
     <template v-if="logoutButtonVisibility" #actions>
       <s-button type="action" :tooltip="t('logoutText')" @click="handleAccountLogout">
