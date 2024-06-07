@@ -217,6 +217,7 @@ export type HistoryElementSwapTransferBatch = {
   adarFee?: string;
   actualFee?: string;
   inputAmount?: string;
+  comment?: string; // stringified JSON
   // outdated
   inputAssetId?: string;
   transfers?: SwapTransferBatchTransferParam[];
