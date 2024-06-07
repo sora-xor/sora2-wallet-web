@@ -7,7 +7,9 @@ import { Currencies } from '../consts/currencies';
 
 import type { Currency } from '../types/currency';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
+import type { WithKeyring } from '@sora-substrate/util';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
+import type { Store } from 'vuex';
 
 export class AppError extends Error {
   public key: string;
@@ -236,3 +238,31 @@ export const getScrollbarWidth = (): number => {
 
   return scrollBarWidth;
 };
+
+export async function beforeTransactionSign(
+  store: Store<any>,
+  signerApi: WithKeyring,
+  mutationType = 'wallet/transactions/setSignTxDialogVisibility'
+): Promise<void> {
+  const { address, signer } = signerApi;
+
+  if (!address || signer) return;
+
+  const password = store.getters['wallet/account/getPassword'](address);
+  const confirmDisabled = store.state.wallet.transactions.isSignTxDialogDisabled;
+
+  if (password && confirmDisabled) {
+    signerApi.unlockPair(password);
+  } else {
+    store.commit(mutationType, true);
+
+    await new Promise<void>((resolve) => {
+      const unsubscribe = store.subscribe((mutation) => {
+        if (mutationType === mutation.type && mutation.payload === false) {
+          unsubscribe();
+          resolve();
+        }
+      });
+    });
+  }
+}

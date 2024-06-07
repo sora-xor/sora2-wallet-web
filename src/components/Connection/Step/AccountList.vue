@@ -84,6 +84,7 @@ import AccountConnectionList from '../List/Account.vue';
 import ConnectionItems from '../List/ConnectionItems.vue';
 
 import type { PolkadotJsAccount } from '../../../types/common';
+import type { WithKeyring } from '@sora-substrate/util';
 
 @Component({
   components: {
@@ -97,6 +98,8 @@ import type { PolkadotJsAccount } from '../../../types/common';
   },
 })
 export default class AccountListStep extends Mixins(LoadingMixin, NotificationMixin) {
+  @Prop({ required: true, type: Function }) public readonly getApi!: () => WithKeyring;
+
   @Prop({ default: '', type: String }) readonly text!: string;
   @Prop({ default: false, type: Boolean }) readonly isInternal!: boolean;
   @Prop({ default: '', type: String }) readonly selectedWallet!: string;
@@ -212,7 +215,7 @@ export default class AccountListStep extends Mixins(LoadingMixin, NotificationMi
 
           if (!json) throw new Error('polkadotjs.noAccount');
 
-          const verified = verifyAccountJson(json, password);
+          const verified = verifyAccountJson(this.getApi(), json, password);
 
           exportAccountJson(verified);
         } else {

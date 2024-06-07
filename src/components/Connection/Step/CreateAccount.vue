@@ -109,7 +109,7 @@ import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
 
 import type { CreateAccountArgs } from '../../../store/account/types';
-import type { ApiAccount } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/util';
 
 @Component({
   components: {
@@ -121,7 +121,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   readonly LoginStep = LoginStep;
   readonly PhraseLength = 12;
 
-  @Prop({ required: true, type: Function }) readonly getApi!: () => ApiAccount;
+  @Prop({ required: true, type: Function }) readonly getApi!: () => WithKeyring;
 
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: String, default: '' }) readonly selectedWalletTitle!: string;

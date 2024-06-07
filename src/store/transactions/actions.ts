@@ -5,13 +5,12 @@ import omit from 'lodash/fp/omit';
 import { api } from '../../api';
 import { accountIdBasedOperations } from '../../consts';
 import { getCurrentIndexer } from '../../services/indexer';
-import store, { rootActionContext } from '../../store';
+import { rootActionContext } from '../../store';
 
 import { transactionsActionContext } from './../transactions';
 
 import type { HistoryElement } from '../../services/indexer/types';
 import type { ExternalHistoryParams } from '../../types/history';
-import type { ApiAccount } from '@sora-substrate/util';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { ActionContext } from 'vuex';
 
@@ -51,52 +50,7 @@ async function parseHistoryUpdate(context: ActionContext<any, any>, transaction:
   }
 }
 
-/**
- * Open confirmation dialog and wait until it is opened
- * @param mutaionType mutation type to switch confirmation dialog visibility state
- */
-async function openAndWaitConfirmTxDialog(
-  mutaionType = 'wallet/transactions/setSignTxDialogVisibility'
-): Promise<void> {
-  // open confirm dialog
-  store.original.commit(mutaionType, true);
-  // wait until it's opened
-  await new Promise<void>((resolve) => {
-    const unsubscribe = store.original.subscribe((mutation) => {
-      if (mutaionType === mutation.type && mutation.payload === false) {
-        unsubscribe();
-        resolve();
-      }
-    });
-  });
-}
-
 const actions = defineActions({
-  async beforeTransactionSign(
-    context,
-    { signerApi = api, mutationType = 'wallet/transactions/setSignTxDialogVisibility' } = {}
-  ): Promise<void> {
-    const { state } = transactionsActionContext(context);
-    const { rootGetters } = rootActionContext(context);
-    const { getPassword } = rootGetters.wallet.account;
-
-    const { address, signer } = signerApi;
-
-    if (!address || signer) return;
-
-    const password = getPassword(address);
-
-    if (password && state.isSignTxDialogDisabled) {
-      signerApi.unlockPair(password);
-    } else {
-      await openAndWaitConfirmTxDialog(mutationType);
-    }
-
-    if (signerApi.accountPair?.isLocked) {
-      throw new Error('Cancelled');
-    }
-  },
-
   async subscribeOnExternalHistory(context): Promise<void> {
     const { commit } = transactionsActionContext(context);
     const { rootGetters } = rootActionContext(context);

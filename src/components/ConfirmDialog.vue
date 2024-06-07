@@ -20,7 +20,7 @@ import AccountConfirmDialog from './Account/ConfirmDialog.vue';
 import LoadingMixin from './mixins/LoadingMixin';
 import NotificationMixin from './mixins/NotificationMixin';
 
-import type { ApiAccount } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/util';
 
 @Component({
   components: {
@@ -29,7 +29,7 @@ import type { ApiAccount } from '@sora-substrate/util';
 })
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
   @Prop({ required: true, type: String }) private connected!: string;
-  @Prop({ required: true, type: Function }) private getApi!: () => ApiAccount;
+  @Prop({ required: true, type: Function }) private getApi!: () => WithKeyring;
   @Prop({ required: true, type: Boolean }) private visibility!: boolean;
   @Prop({ required: true, type: Function }) private setVisibility!: (flag: boolean) => void;
 

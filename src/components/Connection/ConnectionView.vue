@@ -27,6 +27,7 @@
     </extension-list-step>
     <account-list-step
       v-else-if="isAccountList"
+      :get-api="getApi"
       :text="accountListText"
       :is-internal="isInternal"
       :selected-wallet="selectedWallet"
@@ -96,7 +97,7 @@ import ImportAccountStep from './Step/ImportAccount.vue';
 
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../store/account/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
-import type { ApiAccount } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/util';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 
 const CHECK_EXTENSION_INTERVAL = 5_000;
@@ -132,7 +133,7 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
   },
 })
 export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
-  @Prop({ required: true, type: Function }) public readonly getApi!: () => ApiAccount;
+  @Prop({ required: true, type: Function }) public readonly getApi!: () => WithKeyring;
 
   @Prop({ default: () => null, type: Object }) private readonly account!: Nullable<PolkadotJsAccount>;
 
@@ -318,7 +319,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
       await this.withAppNotification(async () => {
         const { json, password } = data;
-        const verified = verifyAccountJson(json, password);
+        const verified = verifyAccountJson(this.getApi(), json, password);
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.add(verified, password);

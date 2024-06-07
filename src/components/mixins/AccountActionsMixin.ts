@@ -93,7 +93,7 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
 
           if (!json) throw new Error('polkadotjs.noAccount');
 
-          const verified = verifyAccountJson(json, password);
+          const verified = verifyAccountJson(api, json, password);
 
           exportAccountJson(verified);
         } else {

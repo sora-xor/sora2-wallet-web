@@ -160,9 +160,9 @@ const actions = defineActions({
   },
 
   async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
-    const { commit, dispatch } = accountActionContext(context);
+    const { commit, dispatch, state } = accountActionContext(context);
 
-    await loginApi(api, accountData);
+    await loginApi(api, accountData, state.isDesktop);
 
     commit.syncWithStorage();
 

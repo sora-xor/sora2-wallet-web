@@ -4,13 +4,13 @@ import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { getter, mutation, action, state } from '../../store/decorators';
-import { delay } from '../../util';
+import { delay, beforeTransactionSign } from '../../util';
 
 import LoadingMixin from './LoadingMixin';
 import OperationsMixin from './OperationsMixin';
 
 import type { AccountAssetsTable } from '../../types/common';
-import type { HistoryItem, ApiAccount } from '@sora-substrate/util';
+import type { HistoryItem } from '@sora-substrate/util';
 
 @Component
 export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMixin) {
@@ -22,8 +22,6 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
   @mutation.transactions.removeActiveTxs removeActiveTxs!: (ids: string[]) => void;
 
   @action.account.addAsset private addAsset!: (address?: string) => Promise<void>;
-
-  @action.transactions.beforeTransactionSign private beforeTransactionSign!: (api?: ApiAccount) => Promise<void>;
 
   private async getLastTransaction(time: number): Promise<HistoryItem> {
     const tx = findLast((item) => Number(item.startTime) > time, api.historyList);
@@ -74,7 +72,7 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
   async withNotifications(func: AsyncFnWithoutArgs): Promise<void> {
     await this.withLoading(async () => {
       await this.withAppNotification(async () => {
-        await this.beforeTransactionSign();
+        await beforeTransactionSign(this.$store, api);
         const time = Date.now();
         await func();
         const tx = await this.getLastTransaction(time);
