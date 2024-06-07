@@ -77,6 +77,7 @@ export default class App extends Mixins(TransactionMixin) {
   @action.settings.subscribeOnExchangeRatesApi private subscribeOnExchangeRatesApi!: AsyncFnWithoutArgs;
 
   async created(): Promise<void> {
+    // this.setIsDesktop(true);
     await this.setApiKeys(env.API_KEYS);
     this.setIndexerEndpoint({ indexer: IndexerType.SUBQUERY, endpoint: env.SUBQUERY_ENDPOINT });
     this.setIndexerEndpoint({ indexer: IndexerType.SUBSQUID, endpoint: env.SUBSQUID_ENDPOINT });
