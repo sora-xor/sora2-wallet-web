@@ -51,24 +51,32 @@ async function parseHistoryUpdate(context: ActionContext<any, any>, transaction:
   }
 }
 
-/** Only for Desktop management */
-async function waitUntilConfirmTxDialogOpened(): Promise<void> {
-  return new Promise((resolve) => {
-    const unsubscribe = store.original.watch(
-      (state) => state.wallet.transactions.isSignTxDialogVisible,
-      (value) => {
-        if (!value) {
-          unsubscribe();
-          resolve();
-        }
+/**
+ * Open confirmation dialog and wait until it is opened
+ * @param mutaionType mutation type to switch confirmation dialog visibility state
+ */
+async function openAndWaitConfirmTxDialog(
+  mutaionType = 'wallet/transactions/setSignTxDialogVisibility'
+): Promise<void> {
+  // open confirm dialog
+  store.original.commit(mutaionType, true);
+  // wait until it's opened
+  await new Promise<void>((resolve) => {
+    const unsubscribe = store.original.subscribe((mutation) => {
+      if (mutaionType === mutation.type && mutation.payload === false) {
+        unsubscribe();
+        resolve();
       }
-    );
+    });
   });
 }
 
 const actions = defineActions({
-  async beforeTransactionSign(context, signerApi: ApiAccount = api): Promise<void> {
-    const { commit, state } = transactionsActionContext(context);
+  async beforeTransactionSign(
+    context,
+    { signerApi = api, mutationType = 'wallet/transactions/setSignTxDialogVisibility' } = {}
+  ): Promise<void> {
+    const { state } = transactionsActionContext(context);
     const { rootGetters } = rootActionContext(context);
     const { getPassword } = rootGetters.wallet.account;
 
@@ -81,9 +89,7 @@ const actions = defineActions({
     if (password && state.isSignTxDialogDisabled) {
       signerApi.unlockPair(password);
     } else {
-      commit.setSignTxDialogVisibility(true);
-
-      await waitUntilConfirmTxDialogOpened();
+      await openAndWaitConfirmTxDialog(mutationType);
     }
 
     if (signerApi.accountPair?.isLocked) {

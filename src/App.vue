@@ -15,7 +15,12 @@
     <div class="wallet-wrapper s-flex">
       <sora-wallet />
     </div>
-    <confirm-dialog :connected="connected" :get-api="getApi" />
+    <confirm-dialog
+      :connected="connected"
+      :get-api="getApi"
+      :visibility="isSignTxDialogVisible"
+      :set-visibility="setSignTxDialogVisibility"
+    />
   </s-design-system-provider>
 </template>
 
@@ -76,6 +81,9 @@ export default class App extends Mixins(TransactionMixin) {
   @state.settings.fiatExchangeRateObject fiatExchangeRateObject!: Record<Currency, number>;
   @mutation.settings.setFiatCurrency setFiatCurrency!: (currency: Currency) => void;
   @action.settings.subscribeOnExchangeRatesApi private subscribeOnExchangeRatesApi!: AsyncFnWithoutArgs;
+
+  @state.transactions.isSignTxDialogVisible public isSignTxDialogVisible!: boolean;
+  @mutation.transactions.setSignTxDialogVisibility public setSignTxDialogVisibility!: (flag: boolean) => void;
 
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);

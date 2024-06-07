@@ -1,7 +1,7 @@
 <template>
   <account-confirm-dialog
     with-timeout
-    :visible.sync="visibility"
+    :visible.sync="visible"
     :loading="loading"
     :passphrase="passphrase"
     :confirm-button-text="t('desktop.dialog.confirmButton')"
@@ -12,8 +12,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { api } from '../api';
-import { getter, action, state, mutation } from '../store/decorators';
+import { getter, action, state } from '../store/decorators';
 import { delay } from '../util';
 import { unlockAccountPair } from '../util/account';
 
@@ -31,10 +30,10 @@ import type { ApiAccount } from '@sora-substrate/util';
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
   @Prop({ required: true, type: String }) private connected!: string;
   @Prop({ required: true, type: Function }) private getApi!: () => ApiAccount;
+  @Prop({ required: true, type: Boolean }) private visibility!: boolean;
+  @Prop({ required: true, type: Function }) private setVisibility!: (flag: boolean) => void;
 
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
-  @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
-  @mutation.transactions.setSignTxDialogVisibility private setSignTxDialogVisibility!: (flag: boolean) => void;
 
   @getter.account.getPassword private getPassword!: (accountAddress: string) => Nullable<string>;
 
@@ -45,12 +44,12 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
 
   @action.account.resetAccountPassphrase private resetAccountPassphrase!: (address: string) => void;
 
-  get visibility(): boolean {
-    return this.isSignTxDialogVisible;
+  get visible(): boolean {
+    return this.visibility;
   }
 
-  set visibility(flag: boolean) {
-    this.setSignTxDialogVisibility(flag);
+  set visible(flag: boolean) {
+    this.setVisibility(flag);
   }
 
   get passphrase(): Nullable<string> {
@@ -72,7 +71,7 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
           this.resetAccountPassphrase(this.connected);
         }
 
-        this.setSignTxDialogVisibility(false);
+        this.setVisibility(false);
       });
     });
   }
