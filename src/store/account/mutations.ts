@@ -198,7 +198,6 @@ const mutations = defineMutations<AccountState>()({
     state.accountPasswordTimer = null;
     state.accountPasswordTimestamp = null;
   },
-  /** JUST FOR TESTING PURPOSES */
   setIsDesktop(state, value: boolean): void {
     state.isDesktop = value;
   },
