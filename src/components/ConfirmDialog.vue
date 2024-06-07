@@ -2,6 +2,7 @@
   <account-confirm-dialog
     with-timeout
     :visible.sync="visible"
+    :account="account"
     :loading="loading"
     :passphrase="passphrase"
     :confirm-button-text="t('desktop.dialog.confirmButton')"
@@ -20,6 +21,7 @@ import AccountConfirmDialog from './Account/ConfirmDialog.vue';
 import LoadingMixin from './mixins/LoadingMixin';
 import NotificationMixin from './mixins/NotificationMixin';
 
+import type { PolkadotJsAccount } from '../types/common';
 import type { WithKeyring } from '@sora-substrate/util';
 
 @Component({
@@ -28,7 +30,7 @@ import type { WithKeyring } from '@sora-substrate/util';
   },
 })
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
-  @Prop({ required: true, type: String }) private connected!: string;
+  @Prop({ required: true, type: Object }) private account!: PolkadotJsAccount;
   @Prop({ required: true, type: Function }) private getApi!: () => WithKeyring;
   @Prop({ required: true, type: Boolean }) private visibility!: boolean;
   @Prop({ required: true, type: Function }) private setVisibility!: (flag: boolean) => void;
@@ -53,7 +55,7 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
   }
 
   get passphrase(): Nullable<string> {
-    return this.getPassword(this.connected);
+    return this.getPassword(this.account.address);
   }
 
   async handleConfirm(password: string): Promise<void> {
@@ -66,9 +68,9 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
         unlockAccountPair(this.getApi(), password);
 
         if (this.isSignTxDialogDisabled) {
-          this.setAccountPassphrase({ address: this.connected, password });
+          this.setAccountPassphrase({ address: this.account.address, password });
         } else {
-          this.resetAccountPassphrase(this.connected);
+          this.resetAccountPassphrase(this.account.address);
         }
 
         this.setVisibility(false);

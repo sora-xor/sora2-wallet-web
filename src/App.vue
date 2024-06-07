@@ -16,7 +16,7 @@
       <sora-wallet />
     </div>
     <confirm-dialog
-      :connected="connected"
+      :account="account"
       :get-api="getApi"
       :visibility="isSignTxDialogVisible"
       :set-visibility="setSignTxDialogVisibility"
@@ -42,7 +42,7 @@ import { state, mutation, getter, action } from './store/decorators';
 
 import { initWallet } from './index';
 
-import type { ApiKeysObject } from './types/common';
+import type { ApiKeysObject, PolkadotJsAccount } from './types/common';
 import type { Currency } from './types/currency';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type DesignSystem from '@soramitsu-ui/ui-vue2/lib/types/DesignSystem';
@@ -52,10 +52,10 @@ import type Theme from '@soramitsu-ui/ui-vue2/lib/types/Theme';
   components: { SoraWallet, ConfirmDialog },
 })
 export default class App extends Mixins(TransactionMixin) {
-  @state.account.address connected!: string;
   @state.account.assetsToNotifyQueue assetsToNotifyQueue!: Array<WhitelistArrayItem>;
   @state.settings.indexerType indexerType!: IndexerType;
   @state.account.ceresFiatValuesUsage ceresFiatValuesUsage!: boolean;
+  @getter.account.account account!: PolkadotJsAccount;
   @getter.transactions.firstReadyTx firstReadyTransaction!: Nullable<HistoryItem>;
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
   @getter.libraryTheme libraryTheme!: Theme;

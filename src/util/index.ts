@@ -265,4 +265,8 @@ export async function beforeTransactionSign(
       });
     });
   }
+
+  if (signerApi.accountPair?.isLocked) {
+    throw new Error('Cancelled');
+  }
 }
