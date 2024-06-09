@@ -55,7 +55,6 @@ export default class App extends Mixins(TransactionMixin) {
   @state.account.assetsToNotifyQueue assetsToNotifyQueue!: Array<WhitelistArrayItem>;
   @state.settings.indexerType indexerType!: IndexerType;
   @state.account.ceresFiatValuesUsage ceresFiatValuesUsage!: boolean;
-  @getter.account.account account!: PolkadotJsAccount;
   @getter.transactions.firstReadyTx firstReadyTransaction!: Nullable<HistoryItem>;
   @getter.libraryDesignSystem libraryDesignSystem!: DesignSystem;
   @getter.libraryTheme libraryTheme!: Theme;

@@ -30,6 +30,8 @@
       :get-api="getApi"
       :text="accountListText"
       :is-internal="isInternal"
+      :connected-wallet="connectedWallet"
+      :connected-account="connectedAccount"
       :selected-wallet="selectedWallet"
       :accounts="accounts"
       :rename-account="renameAccount"
@@ -398,11 +400,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   private async subscribeOnWalletAvailability(): Promise<void> {
-    const check = async () => await this.checkSelectedWallet();
-
-    await check();
-
-    this.walletAvailabilityTimer = setInterval(check, CHECK_EXTENSION_INTERVAL);
+    this.walletAvailabilityTimer = setInterval(() => this.checkSelectedWallet(), CHECK_EXTENSION_INTERVAL);
   }
 
   private async checkSelectedWallet(): Promise<void> {
@@ -423,12 +421,14 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       this.setSelectedWallet(wallet);
       this.setSelectedWalletLoading(true);
 
+      await getWallet(wallet);
       await this.subscribeOnWalletAvailability();
 
       this.setSelectedWalletLoading(false);
 
       await this.subscribeToWalletAccounts();
     } catch (error) {
+      console.error(error);
       this.resetSelectedWallet();
       throw error;
     }

@@ -134,7 +134,10 @@ export default class AccountListStep extends Mixins(LoadingMixin, NotificationMi
   }
 
   isConnectedAccount(account: PolkadotJsAccount): boolean {
-    return this.connectedWallet === account.source && this.connectedAccount === account.address;
+    const api = this.getApi();
+    return (
+      this.connectedWallet === account.source && api.formatAddress(this.connectedAccount, false) === account.address
+    );
   }
 
   handleAccountAction(actionType: string, account: PolkadotJsAccount): void {
