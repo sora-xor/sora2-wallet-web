@@ -160,6 +160,10 @@ $telegram-web-app-width: 500px;
       justify-content: center;
       align-items: center;
       width: auto;
+
+      .el-tabs__nav-wrap .el-tabs__item.is-active {
+        box-shadow: 0 0 2px 1px var(--s-shadow-color-dark);
+      }
     }
   }
 
