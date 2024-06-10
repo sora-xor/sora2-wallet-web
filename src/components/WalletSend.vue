@@ -427,6 +427,7 @@ export default class WalletSend extends Mixins(
 
 <style scoped lang="scss">
 $logo-size: var(--s-size-mini);
+$telegram-web-app-width: 500px;
 // TODO: fix typography issues here
 
 .wallet-send {
@@ -638,6 +639,12 @@ $logo-size: var(--s-size-mini);
       font-size: var(--s-font-size-mini);
       font-weight: 600;
       overflow-wrap: break-word;
+
+      span {
+        @media screen and (max-width: $telegram-web-app-width) {
+          font-size: 9.65px;
+        }
+      }
     }
   }
 }
