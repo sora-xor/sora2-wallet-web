@@ -8,7 +8,9 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
   tooltip=""
 >
    
-  <wallet-account-stub>
+  <wallet-account-stub
+    getapi="[Function]"
+  >
     <qr-code-scan-button-stub
       alternative=""
     />
@@ -95,7 +97,9 @@ exports[`Wallet.vue [WalletTabs.WalletHistory]: should be rendered correctly 1`]
   tooltip=""
 >
    
-  <wallet-account-stub>
+  <wallet-account-stub
+    getapi="[Function]"
+  >
     <qr-code-scan-button-stub
       alternative=""
     />
