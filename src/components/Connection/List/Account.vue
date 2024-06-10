@@ -5,6 +5,7 @@
       v-for="{ account, isConnected } in accountList"
       :key="account.address"
       :polkadot-account="account"
+      :get-api="getApi"
       tabindex="0"
       @click.native="handleSelectAccount(account, isConnected)"
     >
@@ -22,6 +23,7 @@
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
+import { api } from '../../../api';
 import WalletAccount from '../../Account/WalletAccount.vue';
 import TranslationMixin from '../../mixins/TranslationMixin';
 
@@ -29,6 +31,7 @@ import ConnectionItems from './ConnectionItems.vue';
 
 import type { AppWallet } from '../../../consts';
 import type { PolkadotJsAccount } from '../../../types/common';
+import type { WithConnectionApi } from '@sora-substrate/util';
 
 @Component({
   components: {
@@ -40,6 +43,7 @@ export default class AccountConnectionList extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) private accounts!: Array<PolkadotJsAccount>;
   @Prop({ default: '', type: String }) private wallet!: AppWallet;
   @Prop({ default: () => false, type: Function }) private isConnected!: (account: PolkadotJsAccount) => boolean;
+  @Prop({ default: () => api, type: Function }) readonly getApi!: () => WithConnectionApi;
 
   get accountList() {
     return this.accounts.map((account) => {

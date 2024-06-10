@@ -9,6 +9,7 @@
         :accounts="accounts"
         :wallet="selectedWallet"
         :is-connected="isConnectedAccount"
+        :get-api="getApi"
         @select="handleSelectAccount"
         class="connection__accounts"
       >

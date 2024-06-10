@@ -7,7 +7,7 @@ import { Currencies } from '../consts/currencies';
 
 import type { Currency } from '../types/currency';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
-import type { WithKeyring } from '@sora-substrate/util';
+import type { WithKeyring, WithConnectionApi } from '@sora-substrate/util';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
 import type { Store } from 'vuex';
 
@@ -47,18 +47,22 @@ export const validateAddress = (address: string): boolean => {
   return !!address && api.validateAddress(address);
 };
 
-export const formatAccountAddress = (address: string, isSoraSS58 = true) => {
+export const formatAccountAddress = (address: string, withPrefix = true, chainApi: WithConnectionApi = api) => {
   try {
-    return validateAddress(address) ? api.formatAddress(address, isSoraSS58) : '';
+    return validateAddress(address) ? chainApi.formatAddress(address, withPrefix) : '';
   } catch {
     return '';
   }
 };
 
-export const getAccountIdentity = async (address: string, none = ''): Promise<string> => {
+export const getAccountIdentity = async (
+  address: string,
+  none = '',
+  chainApi: WithConnectionApi = api
+): Promise<string> => {
   if (!validateAddress(address)) return none;
 
-  const entity = await api.getAccountOnChainIdentity(address);
+  const entity = await chainApi.getAccountOnChainIdentity(address);
   const identity = entity ? entity.legalName : none;
 
   return identity;
