@@ -42,7 +42,7 @@ import { state, mutation, getter, action } from './store/decorators';
 
 import { initWallet } from './index';
 
-import type { ApiKeysObject, PolkadotJsAccount } from './types/common';
+import type { ApiKeysObject } from './types/common';
 import type { Currency } from './types/currency';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type DesignSystem from '@soramitsu-ui/ui-vue2/lib/types/DesignSystem';
