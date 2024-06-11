@@ -59,7 +59,7 @@ const actions = defineActions({
     await runParallel(context, ['account/resetFiatPriceSubscription', 'transactions/resetExternalHistorySubscription']);
   },
   // Internal subscriptions & timers
-  async activateInternalSubscriptions(context, onDesktop: boolean): Promise<void> {
+  async activateInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'transactions/trackActiveTxs',
       'account/subscribeOnAlerts',
@@ -69,7 +69,7 @@ const actions = defineActions({
   async resetInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'transactions/resetActiveTxs',
-      'account/resetAccountPassphrase',
+      'account/resetAlertsSubscription',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);
   },

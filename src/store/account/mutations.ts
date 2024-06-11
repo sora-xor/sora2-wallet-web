@@ -1,3 +1,5 @@
+import { AES } from 'crypto-js';
+import cryptoRandomString from 'crypto-random-string';
 import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
 import Vue from 'vue';
@@ -126,20 +128,21 @@ const mutations = defineMutations<AccountState>()({
     state.availableWallets = wallets;
   },
 
-  setAccountPassphrase(state, { address, passphrase }: { address: string; passphrase: string }): void {
+  setAccountPassphrase(state, { address, password }: { address: string; password: string }): void {
+    const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
+    const passphrase = AES.encrypt(password, key).toString();
     const defaultAddress = api.formatAddress(address, false);
+
     state.addressPassphraseMapping = {
       ...state.addressPassphraseMapping,
       [defaultAddress]: passphrase,
     };
-  },
-  updateAddressGeneratedKey(state, { address, key }: { address: string; key: string }): void {
-    const defaultAddress = api.formatAddress(address, false);
     state.addressKeyMapping = {
       ...state.addressKeyMapping,
       [defaultAddress]: key,
     };
   },
+
   resetAccountPassphrase(state, address: string): void {
     const defaultAddress = api.formatAddress(address, false);
     state.addressKeyMapping = {

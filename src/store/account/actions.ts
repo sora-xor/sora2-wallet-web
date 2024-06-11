@@ -1,6 +1,4 @@
 import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
-import { AES } from 'crypto-js';
-import cryptoRandomString from 'crypto-random-string';
 import { defineActions } from 'direct-vuex';
 
 import { api } from '../../api';
@@ -178,15 +176,10 @@ const actions = defineActions({
   },
 
   setAccountPassphrase(context, { address, password }: { address: string; password: string }): void {
-    const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
-    const passphrase = AES.encrypt(password, key).toString();
-
     const { commit, dispatch, state } = accountActionContext(context);
 
     dispatch.resetAccountPassphrase(address);
-
-    commit.updateAddressGeneratedKey({ address, key });
-    commit.setAccountPassphrase({ address, passphrase });
+    commit.setAccountPassphrase({ address, password });
 
     const timer = setTimeout(() => dispatch.resetAccountPassphrase(address), state.accountPasswordTimeout);
     commit.setAccountPassphraseTimer({ address, timer });
@@ -353,6 +346,11 @@ const actions = defineActions({
   async resetFiatPriceSubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
     commit.resetFiatPriceSubscription();
+  },
+  /** It's used **only** for subscriptions module */
+  async resetAlertsSubscription(context): Promise<void> {
+    const { commit } = accountActionContext(context);
+    commit.resetAlertSubscription();
   },
 });
 
