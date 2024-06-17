@@ -53,9 +53,11 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
+import { api } from '../../api';
 import GoogleLogo from '../../assets/img/GoogleLogo.svg';
 import { action, getter, state } from '../../store/decorators';
 import { delay } from '../../util';
+import { lockAccountPair, unlockAccountPair } from '../../util/account';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
@@ -74,18 +76,24 @@ import AccountSignatureOption from './Settings/SignatureOption.vue';
   },
 })
 export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMixin, NotificationMixin) {
-  @getter.account.passphrase passphrase!: Nullable<string>;
+  @getter.account.getPassword getPassword!: (accountAddress: string) => Nullable<string>;
 
+  @state.account.address private connected!: string;
   @state.account.isExternal isExternal!: boolean;
   @state.transactions.isSignTxDialogDisabled isSignTxDialogDisabled!: boolean;
 
-  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
-  @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
-  @action.account.lockAccountPair private lockAccountPair!: FnWithoutArgs;
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
+    address: string;
+    password: string;
+  }) => void;
 
   readonly GoogleLogo = GoogleLogo;
 
   accountConfirmVisibility = false;
+
+  get passphrase(): Nullable<string> {
+    return this.getPassword(this.connected);
+  }
 
   openConfirmDialog(): void {
     this.accountConfirmVisibility = true;
@@ -96,14 +104,14 @@ export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMi
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
       await delay(250);
-      // unlock pair to check password
       await this.withAppNotification(async () => {
-        this.unlockAccountPair(password);
-        this.setAccountPassphrase(password);
+        // unlock pair to check password
+        unlockAccountPair(api, password);
+        this.setAccountPassphrase({ address: this.connected, password });
         this.accountConfirmVisibility = false;
       });
       // lock pair after check
-      this.lockAccountPair();
+      lockAccountPair(api);
     });
   }
 }

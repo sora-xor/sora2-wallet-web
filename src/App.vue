@@ -15,7 +15,12 @@
     <div class="wallet-wrapper s-flex">
       <sora-wallet />
     </div>
-    <confirm-dialog />
+    <confirm-dialog
+      :account="account"
+      :get-api="getApi"
+      :visibility="isSignTxDialogVisible"
+      :set-visibility="setSignTxDialogVisibility"
+    />
   </s-design-system-provider>
 </template>
 
@@ -28,6 +33,7 @@ import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import env from '../public/env.json';
 
+import { api } from './api';
 import ConfirmDialog from './components/ConfirmDialog.vue';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import { SoraNetwork, IndexerType } from './consts';
@@ -75,6 +81,9 @@ export default class App extends Mixins(TransactionMixin) {
   @mutation.settings.setFiatCurrency setFiatCurrency!: (currency: Currency) => void;
   @action.settings.subscribeOnExchangeRatesApi private subscribeOnExchangeRatesApi!: AsyncFnWithoutArgs;
 
+  @state.transactions.isSignTxDialogVisible public isSignTxDialogVisible!: boolean;
+  @mutation.transactions.setSignTxDialogVisibility public setSignTxDialogVisibility!: (flag: boolean) => void;
+
   async created(): Promise<void> {
     await this.setApiKeys(env.API_KEYS);
     this.setIndexerEndpoint({ indexer: IndexerType.SUBQUERY, endpoint: env.SUBQUERY_ENDPOINT });
@@ -103,6 +112,10 @@ export default class App extends Mixins(TransactionMixin) {
   beforeDestroy(): void {
     this.resetNetworkSubscriptions();
     this.resetInternalSubscriptions();
+  }
+
+  getApi() {
+    return api;
   }
 
   changeTheme(): void {

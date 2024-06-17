@@ -1,7 +1,8 @@
 <template>
   <account-confirm-dialog
     with-timeout
-    :visible.sync="visibility"
+    :visible.sync="visible"
+    :account="account"
     :loading="loading"
     :passphrase="passphrase"
     :confirm-button-text="t('desktop.dialog.confirmButton')"
@@ -10,14 +11,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { getter, action, state, mutation } from '../store/decorators';
+import { getter, action, state } from '../store/decorators';
 import { delay } from '../util';
+import { unlockAccountPair } from '../util/account';
 
 import AccountConfirmDialog from './Account/ConfirmDialog.vue';
 import LoadingMixin from './mixins/LoadingMixin';
 import NotificationMixin from './mixins/NotificationMixin';
+
+import type { PolkadotJsAccount } from '../types/common';
+import type { WithKeyring } from '@sora-substrate/util';
 
 @Component({
   components: {
@@ -25,20 +30,32 @@ import NotificationMixin from './mixins/NotificationMixin';
   },
 })
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
-  @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
-  @state.transactions.isSignTxDialogVisible private isSignTxDialogVisible!: boolean;
-  @getter.account.passphrase passphrase!: Nullable<string>;
-  @mutation.transactions.setSignTxDialogVisibility private setSignTxDialogVisibility!: (flag: boolean) => void;
-  @action.account.setAccountPassphrase private setAccountPassphrase!: (passphrase: string) => void;
-  @action.account.resetAccountPassphrase private resetAccountPassphrase!: FnWithoutArgs;
-  @action.account.unlockAccountPair private unlockAccountPair!: (passphrase: string) => void;
+  @Prop({ required: true, type: Object }) private account!: PolkadotJsAccount;
+  @Prop({ required: true, type: Function }) private getApi!: () => WithKeyring;
+  @Prop({ required: true, type: Boolean }) private visibility!: boolean;
+  @Prop({ required: true, type: Function }) private setVisibility!: (flag: boolean) => void;
 
-  get visibility(): boolean {
-    return this.isSignTxDialogVisible;
+  @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
+
+  @getter.account.getPassword private getPassword!: (accountAddress: string) => Nullable<string>;
+
+  @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
+    address: string;
+    password: string;
+  }) => void;
+
+  @action.account.resetAccountPassphrase private resetAccountPassphrase!: (address: string) => void;
+
+  get visible(): boolean {
+    return this.visibility;
   }
 
-  set visibility(flag: boolean) {
-    this.setSignTxDialogVisibility(flag);
+  set visible(flag: boolean) {
+    this.setVisibility(flag);
+  }
+
+  get passphrase(): Nullable<string> {
+    return this.getPassword(this.account.address);
   }
 
   async handleConfirm(password: string): Promise<void> {
@@ -48,15 +65,15 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
       await delay(250);
 
       await this.withAppNotification(async () => {
-        this.unlockAccountPair(password);
+        unlockAccountPair(this.getApi(), password);
 
         if (this.isSignTxDialogDisabled) {
-          this.setAccountPassphrase(password);
+          this.setAccountPassphrase({ address: this.account.address, password });
         } else {
-          this.resetAccountPassphrase();
+          this.resetAccountPassphrase(this.account.address);
         }
 
-        this.setSignTxDialogVisibility(false);
+        this.setVisibility(false);
       });
     });
   }

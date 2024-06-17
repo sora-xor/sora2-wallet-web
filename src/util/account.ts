@@ -1,7 +1,6 @@
 import { getWallets, getWalletBySource, initialize } from '@sora-test/wallet-connect/dotsama/wallets';
 import { saveAs } from 'file-saver';
 
-import { api } from '../api';
 import { AppWallet, TranslationConsts } from '../consts';
 import { InternalWallets } from '../consts/wallets';
 import { AppError, waitForDocumentReady } from '../util';
@@ -9,18 +8,37 @@ import { AppError, waitForDocumentReady } from '../util';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
-import type { ApiAccount } from '@sora-substrate/util';
+import type { KeyringAddress } from '@polkadot/ui-keyring/types';
+import type { WithKeyring } from '@sora-substrate/util';
 import type { Wallet, WalletAccount } from '@sora-test/wallet-connect/types';
 
-export const lockAccountPair = (api: ApiAccount): void => {
+export const lockAccountPair = (api: WithKeyring): void => {
   api.lockPair();
 };
 
-export const unlockAccountPair = (api: ApiAccount, password: string): void => {
+export const unlockAccountPair = (api: WithKeyring, password: string): void => {
   api.unlockPair(password);
 };
 
-export const logoutApi = (api: ApiAccount, forget = false): void => {
+export const loginApi = async (api: WithKeyring, accountData: PolkadotJsAccount, isDesktop = false) => {
+  // Desktop has not source
+  const source = (accountData.source as AppWallet) || '';
+  const isExternal = !isInternalSource(source);
+  const defaultAddress = api.formatAddress(accountData.address, false);
+  const apiAddress = api.formatAddress(defaultAddress);
+  const forget = !isDesktop && api.address !== apiAddress;
+
+  logoutApi(api, forget);
+
+  if (isExternal) {
+    // we should update signer
+    await updateApiSigner(api, source);
+  }
+
+  await api.loginAccount(defaultAddress, accountData.name, source, isExternal);
+};
+
+export const logoutApi = (api: WithKeyring, forget = false): void => {
   if (forget) {
     api.forgetAccount();
   }
@@ -100,19 +118,22 @@ export const getWalletSigner = async (appWallet: AppWallet, autoreload = false) 
   return wallet.signer as Signer;
 };
 
-export const updateApiSigner = async (api: ApiAccount, source: AppWallet): Promise<void> => {
+export const updateApiSigner = async (api: WithKeyring, source: AppWallet): Promise<void> => {
   const signer = await getWalletSigner(source, true);
 
   api.setSigner(signer);
 };
 
-export const getImportedAccounts = (api: ApiAccount): PolkadotJsAccount[] => {
-  const accounts = api.getAccounts();
-  const polkadotJsAccounts = accounts.map((account) => ({
+const formatImportedAccounts = (accounts: KeyringAddress[]): PolkadotJsAccount[] => {
+  return accounts.map((account) => ({
     address: account.address,
     name: account.meta.name || '',
   }));
-  return polkadotJsAccounts;
+};
+
+export const getImportedAccounts = (api: WithKeyring): PolkadotJsAccount[] => {
+  const accounts = api.getAccounts();
+  return formatImportedAccounts(accounts);
 };
 
 const formatWalletAccount = (account: WalletAccount): PolkadotJsAccount => ({
@@ -125,14 +146,14 @@ const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAc
   return (accounts || []).map((account) => formatWalletAccount(account));
 };
 
-const subscribeToInternalAccounts = (api: ApiAccount, callback: (accounts: PolkadotJsAccount[]) => void) => {
+const subscribeToInternalAccounts = (api: WithKeyring, callback: (accounts: PolkadotJsAccount[]) => void) => {
   callback(getImportedAccounts(api));
 
-  const subscription = setInterval(() => {
-    callback(getImportedAccounts(api));
-  }, 5_000);
+  const subscription = api.accountsObservable.subscribe((accounts) => {
+    callback(formatImportedAccounts(accounts));
+  });
 
-  return () => clearInterval(subscription);
+  return () => subscription.unsubscribe();
 };
 
 const subscribeToExternalAccounts = async (wallet: AppWallet, callback: (accounts: PolkadotJsAccount[]) => void) => {
@@ -150,8 +171,8 @@ const subscribeToExternalAccounts = async (wallet: AppWallet, callback: (account
 };
 
 export const subscribeToWalletAccounts = async (
-  api: ApiAccount,
-  wallet: AppWallet,
+  api: WithKeyring,
+  wallet: Nullable<AppWallet>,
   callback: (accounts: PolkadotJsAccount[]) => void
 ): Promise<Nullable<Unsubcall>> => {
   return wallet ? await subscribeToExternalAccounts(wallet, callback) : subscribeToInternalAccounts(api, callback);
@@ -176,9 +197,59 @@ export const exportAccountJson = (pairJson: KeyringPair$Json): void => {
   saveAs(blob, filename);
 };
 
-export const verifyAccountJson = (pairJson: KeyringPair$Json, password: string): KeyringPair$Json => {
+export const verifyAccountJson = (api: WithKeyring, pairJson: KeyringPair$Json, password: string): KeyringPair$Json => {
   const pair = api.createAccountPairFromJson(pairJson);
   const accountJson = pair.toJson(password);
 
   return accountJson;
+};
+
+export type CreateAccountArgs = {
+  seed: string;
+  name: string;
+  password: string;
+  passwordConfirm?: string;
+  saveAccount?: boolean;
+  exportAccount?: boolean;
+};
+
+export const createAccount = (
+  api: WithKeyring,
+  { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
+): KeyringPair$Json => {
+  if (passwordConfirm && password !== passwordConfirm) {
+    throw new AppError({ key: 'desktop.errorMessages.passwords' });
+  }
+
+  const pair = api.createAccountPair(seed, name);
+  const json = pair.toJson(password);
+
+  if (exportAccount) {
+    exportAccountJson(json);
+  }
+
+  if (saveAccount) {
+    api.addAccountPair(pair, password);
+  }
+
+  return json;
+};
+
+export const exportAccount = (api: WithKeyring, { address, password }: { address: string; password: string }): void => {
+  const pair = api.getAccountPair(address);
+  const accountJson = pair.toJson(password);
+  exportAccountJson(accountJson);
+};
+
+export const restoreAccount = (
+  api: WithKeyring,
+  { json, password }: { json: KeyringPair$Json; password: string }
+): void => {
+  // restore from json file
+  api.restoreAccountFromJson(json, password);
+};
+
+export const deleteAccount = (api: WithKeyring, address?: string): void => {
+  // delete account pair
+  api.forgetAccount(address);
 };

@@ -25,6 +25,7 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
+import { api } from '../../api';
 import { ObjectInit } from '../../consts';
 import { getter } from '../../store/decorators';
 import { formatAccountAddress, getAccountIdentity } from '../../util';
@@ -36,6 +37,7 @@ import AccountCard from './AccountCard.vue';
 import WalletAvatar from './WalletAvatar.vue';
 
 import type { PolkadotJsAccount } from '../../types/common';
+import type { WithConnectionApi } from '@sora-substrate/util';
 
 const DEFAULT_NAME = '<unknown>';
 
@@ -49,6 +51,7 @@ const DEFAULT_NAME = '<unknown>';
 export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @Prop({ default: ObjectInit, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
   @Prop({ default: false, type: Boolean }) readonly withIdentity!: boolean;
+  @Prop({ default: () => api, type: Function }) readonly getApi!: () => WithConnectionApi;
 
   @getter.account.account private connected!: PolkadotJsAccount;
 
@@ -59,7 +62,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
     if (!this.withIdentity || this.identity || value === oldValue) return;
 
     await this.withApi(async () => {
-      this.accountIdentity = await getAccountIdentity(value);
+      this.accountIdentity = await getAccountIdentity(value, '', this.getApi());
       this.$emit('identity', this.accountIdentity);
     });
   }
@@ -69,7 +72,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get address(): string {
-    return formatAccountAddress(this.account.address);
+    return formatAccountAddress(this.account.address, true, this.getApi());
   }
 
   get name(): string {

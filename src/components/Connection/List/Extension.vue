@@ -21,10 +21,10 @@
         >
           <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
         </a>
-        <s-button v-else-if="connectedWallet === wallet.extensionName" size="small" disabled>
+        <s-button v-else-if="isConnectedWallet(wallet)" size="small" disabled>
           {{ t('connection.wallet.connected') }}
         </s-button>
-        <span class="connection-loading" v-else-if="isSelectedWalletLoading(selectedWallet)">
+        <span class="connection-loading" v-else-if="isSelectedWalletLoading(wallet)">
           <s-icon name="el-icon-loading" size="16" class="connection-loading-icon" />
         </span>
       </template>
@@ -37,7 +37,6 @@
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
-import { state } from '../../../store/decorators';
 import AccountCard from '../../Account/AccountCard.vue';
 import TranslationMixin from '../../mixins/TranslationMixin';
 
@@ -57,12 +56,16 @@ export default class ExtensionConnectionList extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly selectedWallet!: string;
   @Prop({ default: false, type: Boolean }) readonly selectedWalletLoading!: boolean;
 
-  isSelectedWalletLoading(walletName: string): boolean {
-    return walletName === this.selectedWallet && this.selectedWalletLoading;
+  isSelectedWalletLoading(wallet: Wallet): boolean {
+    return wallet.extensionName === this.selectedWallet && this.selectedWalletLoading;
+  }
+
+  isConnectedWallet(wallet: Wallet): boolean {
+    return wallet.extensionName === this.connectedWallet;
   }
 
   handleSelect(wallet: Wallet): void {
-    if (!this.isSelectedWalletLoading(wallet.extensionName)) {
+    if (!this.isSelectedWalletLoading(wallet)) {
       this.$emit('select', wallet);
     }
   }
