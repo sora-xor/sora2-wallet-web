@@ -21,13 +21,15 @@ const actions = defineActions({
     const { rootGetters } = rootActionContext(context);
     const { currentRoute } = state;
     const { isLoggedIn } = rootGetters.wallet.account;
-    const connectionRoutes = [RouteNames.WalletConnection, RouteNames.InternalConnection];
-    const isConnectionRoute = connectionRoutes.includes(currentRoute);
+
+    const accountRoute = RouteNames.Wallet;
+    const connectionRoute = RouteNames.WalletConnection;
+    const isConnectionRoute = currentRoute === connectionRoute;
 
     if (isLoggedIn && isConnectionRoute) {
-      commit.navigate({ name: RouteNames.Wallet });
-    } else if (!isLoggedIn && currentRoute !== RouteNames.WalletConnection) {
-      commit.navigate({ name: RouteNames.WalletConnection });
+      commit.navigate({ name: accountRoute });
+    } else if (!isLoggedIn && currentRoute !== connectionRoute) {
+      commit.navigate({ name: connectionRoute });
     }
   },
 });

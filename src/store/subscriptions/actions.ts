@@ -59,24 +59,17 @@ const actions = defineActions({
     await runParallel(context, ['account/resetFiatPriceSubscription', 'transactions/resetExternalHistorySubscription']);
   },
   // Internal subscriptions & timers
-  async activateInternalSubscriptions(context, onDesktop: boolean): Promise<void> {
-    const subscriptions = [
+  async activateInternalSubscriptions(context): Promise<void> {
+    await runParallel(context, [
       'transactions/trackActiveTxs',
       'account/subscribeOnAlerts',
       'subscriptions/subscribeToStorageUpdates',
-    ];
-
-    if (!onDesktop) {
-      subscriptions.push('account/subscribeOnWalletAvailability');
-    }
-
-    await runParallel(context, subscriptions);
+    ]);
   },
   async resetInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'transactions/resetActiveTxs',
-      'account/resetWalletAvailabilitySubscription',
-      'account/resetAccountPassphrase',
+      'account/resetAlertsSubscription',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);
   },

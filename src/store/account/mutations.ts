@@ -1,3 +1,5 @@
+import { AES } from 'crypto-js';
+import cryptoRandomString from 'crypto-random-string';
 import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
 import Vue from 'vue';
@@ -11,7 +13,6 @@ import type { AccountState } from './types';
 import type { AppWallet } from '../../consts';
 import type { FiatPriceObject } from '../../services/indexer/types';
 import type { Book, PolkadotJsAccount } from '../../types/common';
-import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 import type { Subscription, Subject } from 'rxjs';
@@ -65,11 +66,7 @@ const mutations = defineMutations<AccountState>()({
         'fiatPriceSubscription',
         'assets',
         'assetsSubscription',
-        'polkadotJsAccounts',
-        'polkadotJsAccountsSubscription',
-        'selectedWallet',
         'availableWallets',
-        'walletAvailabilityTimer',
       ],
       initialState()
     );
@@ -126,77 +123,61 @@ const mutations = defineMutations<AccountState>()({
   clearBlacklist(state): void {
     state.blacklistArray = [];
   },
-  setWalletAccounts(state, polkadotJsAccounts: Array<PolkadotJsAccount> = []): void {
-    state.polkadotJsAccounts = polkadotJsAccounts;
-  },
-  setWalletAccountsSubscription(state, subscription: Nullable<Unsubcall>): void {
-    state.polkadotJsAccountsSubscription = subscription;
-  },
-  resetWalletAccountsSubscription(state): void {
-    if (typeof state.polkadotJsAccountsSubscription === 'function') {
-      state.polkadotJsAccountsSubscription();
-    }
-    state.polkadotJsAccountsSubscription = null;
-  },
+
   setAvailableWallets(state, wallets: Wallet[]) {
     state.availableWallets = wallets;
   },
-  setSelectedWallet(state, extension: Nullable<AppWallet> = null) {
-    state.selectedWallet = extension;
-  },
-  setSelectedWalletLoading(state, flag: boolean) {
-    state.selectedWalletLoading = flag;
-  },
-  setWalletAvailabilitySubscription(state, timeout: NodeJS.Timeout | number): void {
-    state.walletAvailabilityTimer = timeout;
-  },
-  resetWalletAvailabilitySubscription(state): void {
-    if (state.walletAvailabilityTimer) {
-      clearInterval(state.walletAvailabilityTimer as number);
-      state.walletAvailabilityTimer = null;
-    }
-    state.polkadotJsAccounts = [];
-    if (typeof state.polkadotJsAccountsSubscription === 'function') {
-      state.polkadotJsAccountsSubscription();
-    }
-    state.polkadotJsAccountsSubscription = null;
-  },
-  setAccountPassphrase(state, passphraseEncoded): void {
+
+  setAccountPassphrase(state, { address, password }: { address: string; password: string }): void {
+    const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
+    const passphrase = AES.encrypt(password, key).toString();
+    const defaultAddress = api.formatAddress(address, false);
+
     state.addressPassphraseMapping = {
       ...state.addressPassphraseMapping,
-      [state.address]: passphraseEncoded,
+      [defaultAddress]: passphrase,
     };
-  },
-  updateAddressGeneratedKey(state, key): void {
     state.addressKeyMapping = {
       ...state.addressKeyMapping,
-      [state.address]: key,
+      [defaultAddress]: key,
     };
   },
-  resetAccountPassphrase(state): void {
+
+  resetAccountPassphrase(state, address: string): void {
+    const defaultAddress = api.formatAddress(address, false);
     state.addressKeyMapping = {
       ...state.addressKeyMapping,
-      [state.address]: null,
+      [defaultAddress]: null,
     };
     state.addressPassphraseMapping = {
       ...state.addressPassphraseMapping,
-      [state.address]: null,
+      [defaultAddress]: null,
     };
   },
   setPasswordTimeout(state, timeout: number): void {
     state.accountPasswordTimeout = timeout;
     settingsStorage.set('accountPasswordTimeout', JSON.stringify(timeout));
   },
-  setAccountPassphraseTimer(state, timer: NodeJS.Timeout): void {
-    state.accountPasswordTimer = timer;
-    state.accountPasswordTimestamp = Date.now();
+  setAccountPassphraseTimer(state, { address, timer }: { address: string; timer: NodeJS.Timeout }): void {
+    const defaultAddress = api.formatAddress(address, false);
+    state.accountPasswordTimer = {
+      ...state.accountPasswordTimer,
+      [defaultAddress]: timer,
+    };
+    state.accountPasswordTimestamp = {
+      ...state.accountPasswordTimestamp,
+      [defaultAddress]: Date.now(),
+    };
   },
-  resetAccountPassphraseTimer(state): void {
-    if (state.accountPasswordTimer) {
-      clearTimeout(state.accountPasswordTimer);
+  resetAccountPassphraseTimer(state, address: string): void {
+    const defaultAddress = api.formatAddress(address, false);
+    const timer = state.accountPasswordTimer[address];
+
+    if (timer) {
+      clearTimeout(timer);
     }
-    state.accountPasswordTimer = null;
-    state.accountPasswordTimestamp = null;
+    state.accountPasswordTimer[defaultAddress] = null;
+    state.accountPasswordTimestamp[defaultAddress] = null;
   },
   setIsDesktop(state, value: boolean): void {
     state.isDesktop = value;

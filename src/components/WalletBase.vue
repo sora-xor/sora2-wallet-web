@@ -1,5 +1,14 @@
 <template>
-  <s-card primary class="base" border-radius="medium" shadow="always" size="big">
+  <s-card
+    v-bind="{
+      primary: true,
+      borderRadius: 'medium',
+      shadow: 'always',
+      size: 'big',
+      ...$attrs,
+    }"
+    class="base"
+  >
     <template #header>
       <div :class="headerClasses" ref="headerBase" :tabindex="hasFocusReset ? 0 : -1">
         <div v-if="showBack" :class="backButtonClass">
@@ -32,7 +41,6 @@
           class="base-title_close"
           type="action"
           rounded
-          icon="basic-close-24"
           :tooltip="t('closeText')"
           @click="handleCloseClick"
         >

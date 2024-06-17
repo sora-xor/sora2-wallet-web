@@ -5,7 +5,7 @@ import omit from 'lodash/fp/omit';
 import { api } from '../../api';
 import { accountIdBasedOperations } from '../../consts';
 import { getCurrentIndexer } from '../../services/indexer';
-import store, { rootActionContext } from '../../store';
+import { rootActionContext } from '../../store';
 
 import { transactionsActionContext } from './../transactions';
 
@@ -50,43 +50,7 @@ async function parseHistoryUpdate(context: ActionContext<any, any>, transaction:
   }
 }
 
-/** Only for Desktop management */
-async function waitUntilConfirmTxDialogOpened(): Promise<void> {
-  return new Promise((resolve) => {
-    const unsubscribe = store.original.watch(
-      (state) => state.wallet.transactions.isSignTxDialogVisible,
-      (value) => {
-        if (!value) {
-          unsubscribe();
-          resolve();
-        }
-      }
-    );
-  });
-}
-
 const actions = defineActions({
-  async beforeTransactionSign(context): Promise<void> {
-    const { commit, state } = transactionsActionContext(context);
-    const { rootGetters, rootDispatch, rootState } = rootActionContext(context);
-
-    if (rootState.wallet.account.isExternal) return;
-
-    const { passphrase } = rootGetters.wallet.account;
-
-    if (passphrase && state.isSignTxDialogDisabled) {
-      rootDispatch.wallet.account.unlockAccountPair(passphrase);
-    } else {
-      commit.setSignTxDialogVisibility(true);
-
-      await waitUntilConfirmTxDialogOpened();
-    }
-
-    if (api.account?.pair.isLocked) {
-      throw new Error('Cancelled');
-    }
-  },
-
   async subscribeOnExternalHistory(context): Promise<void> {
     const { commit } = transactionsActionContext(context);
     const { rootGetters } = rootActionContext(context);

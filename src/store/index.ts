@@ -12,12 +12,12 @@ const modules = {
   wallet,
 };
 
-export type WalletStore = Store<typeof modules>;
-
 const { store, rootActionContext, rootGetterContext } = createDirectStore({
   modules,
   strict: false,
 });
+
+export type WalletStore = typeof store.original;
 
 /**
  * This method is used only for submodules in wallet

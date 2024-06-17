@@ -1,5 +1,5 @@
 <template>
-  <dialog-base :title="t('account.rename')" :visible.sync="isVisible" class="account-rename-dialog">
+  <dialog-base :title="t('account.rename')" :visible.sync="isVisible" append-to-body class="account-rename-dialog">
     <s-form class="account-rename-dialog__form" @submit.native.prevent="handleConfirm">
       <wallet-account :polkadot-account="account" />
       <s-input

@@ -103,14 +103,13 @@
 import isEqual from 'lodash/fp/isEqual';
 import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
-import { api } from '../../../api';
 import { LoginStep } from '../../../consts';
-import { getter } from '../../../store/decorators';
 import { copyToClipboard } from '../../../util';
 import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
 
 import type { CreateAccountArgs } from '../../../store/account/types';
+import type { WithKeyring } from '@sora-substrate/util';
 
 @Component({
   components: {
@@ -122,11 +121,12 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   readonly LoginStep = LoginStep;
   readonly PhraseLength = 12;
 
+  @Prop({ required: true, type: Function }) readonly getApi!: () => WithKeyring;
+
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
+  @Prop({ type: String, default: '' }) readonly selectedWalletTitle!: string;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
-
-  @getter.account.selectedWalletTitle selectedWalletTitle!: string;
 
   @Watch('step')
   private resetSeedPhraseToCompareIdx(value: LoginStep) {
@@ -182,7 +182,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   get seedPhrase(): string {
-    const { seed } = api.createSeed();
+    const { seed } = this.getApi().createSeed();
     return seed;
   }
 

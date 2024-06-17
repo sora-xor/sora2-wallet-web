@@ -129,7 +129,7 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
   @Prop({ type: Boolean, default: false }) readonly jsonOnly!: boolean;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;
   @Prop({ type: Function, default: () => {} }) readonly createAccount!: (data: CreateAccountArgs) => Promise<void>;
-  @Prop({ type: Function, default: () => {} }) readonly restoreAccount!: (data: RestoreAccountArgs) => Promise<void>;
+  @Prop({ type: Function, default: () => {} }) readonly restoreAccount!: (data: RestoreAccountArgs) => void;
 
   @Ref('uploader') readonly uploader!: HTMLFormElement;
 

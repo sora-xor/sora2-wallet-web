@@ -1,6 +1,4 @@
 import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
-import { AES } from 'crypto-js';
-import cryptoRandomString from 'crypto-random-string';
 import { defineActions } from 'direct-vuex';
 
 import { api } from '../../api';
@@ -9,26 +7,15 @@ import alertsApiService from '../../services/alerts';
 import { CeresApiService } from '../../services/ceres';
 import { getCurrentIndexer } from '../../services/indexer';
 import { rootActionContext } from '../../store';
-import { WHITE_LIST_URL, NFT_BLACK_LIST_URL, AppError, formatAccountAddress } from '../../util';
-import {
-  getAppWallets,
-  getWallet,
-  updateApiSigner,
-  getImportedAccounts,
-  checkWallet,
-  subscribeToWalletAccounts,
-  exportAccountJson,
-  isInternalSource,
-} from '../../util/account';
+import { WHITE_LIST_URL, NFT_BLACK_LIST_URL } from '../../util';
+import { getAppWallets, updateApiSigner, checkWallet, loginApi, logoutApi } from '../../util/account';
 
 import { accountActionContext } from './../account';
 
-import type { CreateAccountArgs, RestoreAccountArgs } from './types';
-import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
+import type { PolkadotJsAccount } from '../../types/common';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type { ActionContext } from 'vuex';
 
-const CHECK_EXTENSION_INTERVAL = 5_000;
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;
 
 // [TODO]: change WsProvider timeout instead on this
@@ -114,16 +101,6 @@ async function useFiatValuesFromCeresApi(context: ActionContext<any, any>): Prom
   console.info(`[CERES API] Fiat values subscribe.`);
 }
 
-function logoutApi(context: ActionContext<any, any>, forget = false): void {
-  const { state } = accountActionContext(context);
-
-  if (!state.isDesktop && forget) {
-    api.forgetAccount();
-  }
-
-  api.logout();
-}
-
 const actions = defineActions({
   async afterLogin(context): Promise<void> {
     const { dispatch } = accountActionContext(context);
@@ -131,15 +108,14 @@ const actions = defineActions({
 
     await dispatch.subscribeOnAccountAssets();
     await rootDispatch.wallet.transactions.subscribeOnExternalHistory();
-    await dispatch.resetSelectedWallet();
     await rootDispatch.wallet.router.checkCurrentRoute();
   },
 
   async logout(context): Promise<void> {
-    const { commit } = accountActionContext(context);
+    const { commit, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    logoutApi(context, true);
+    logoutApi(api, !state.isDesktop);
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
@@ -181,202 +157,38 @@ const actions = defineActions({
     }
   },
 
-  async checkSelectedWallet(context): Promise<void> {
-    const { dispatch, state } = accountActionContext(context);
-    try {
-      if (state.selectedWallet && !state.selectedWalletLoading) {
-        await getWallet(state.selectedWallet);
-      }
-    } catch (error) {
-      console.error(error);
-      await dispatch.resetSelectedWallet();
-      await dispatch.logout();
-    }
-  },
-
-  async selectWallet(context, extension: AppWallet): Promise<void> {
-    const { commit, dispatch } = accountActionContext(context);
-
-    try {
-      commit.resetWalletAccountsSubscription();
-      commit.setSelectedWallet(extension);
-      commit.setSelectedWalletLoading(true);
-
-      await getWallet(extension);
-
-      commit.setSelectedWalletLoading(false);
-
-      await dispatch.subscribeToWalletAccounts();
-    } catch (error) {
-      dispatch.resetSelectedWallet();
-      throw error;
-    }
-  },
-
-  resetSelectedWallet(context): void {
-    const { commit } = accountActionContext(context);
-
-    commit.resetWalletAccountsSubscription();
-    commit.setSelectedWallet();
-    commit.setSelectedWalletLoading(false);
-  },
-
-  async subscribeOnWalletAvailability(context): Promise<void> {
-    const { commit, dispatch } = accountActionContext(context);
-
-    const runChecks = async () =>
-      await Promise.all([dispatch.updateAvailableWallets(), dispatch.checkSelectedWallet()]);
-
-    await runChecks();
-
-    const timer = setInterval(runChecks, CHECK_EXTENSION_INTERVAL);
-
-    commit.setWalletAvailabilitySubscription(timer);
-  },
-
-  updateImportedAccounts(context): void {
-    const { commit, state } = accountActionContext(context);
-
-    if (state.isDesktop) {
-      const accounts = getImportedAccounts(api);
-      commit.setWalletAccounts(accounts);
-    }
-  },
-
-  async subscribeToWalletAccounts(context): Promise<void> {
-    const { commit, state } = accountActionContext(context);
-    const wallet = state.selectedWallet;
-
-    if (!wallet) return;
-
-    const callback = (accounts: PolkadotJsAccount[]) => {
-      if (wallet === state.selectedWallet) {
-        commit.setWalletAccounts(accounts);
-      }
-    };
-
-    const subscription = await subscribeToWalletAccounts(api, wallet, callback);
-
-    commit.setWalletAccountsSubscription(subscription);
-  },
-
   async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
-    const { commit, dispatch } = accountActionContext(context);
+    const { commit, dispatch, state } = accountActionContext(context);
 
-    // Desktop has not source
-    const source = (accountData.source as AppWallet) || '';
-    const isExternal = !isInternalSource(source);
-    const defaultAddress = formatAccountAddress(accountData.address, false);
-    const soraAddress = formatAccountAddress(defaultAddress);
-
-    logoutApi(context, api.address !== soraAddress);
-
-    if (isExternal) {
-      // we should update signer
-      await updateApiSigner(api, source);
-    }
-
-    await api.loginAccount(defaultAddress, accountData.name, source, isExternal);
+    await loginApi(api, accountData, state.isDesktop);
 
     commit.syncWithStorage();
 
     await dispatch.afterLogin();
   },
 
-  async createAccount(
-    context,
-    { seed, name, password, passwordConfirm, saveAccount, exportAccount }: CreateAccountArgs
-  ): Promise<KeyringPair$Json> {
-    const { dispatch } = accountActionContext(context);
-
-    if (passwordConfirm && password !== passwordConfirm) {
-      throw new AppError({ key: 'desktop.errorMessages.passwords' });
-    }
-
-    const pair = api.createAccountPair(seed, name);
-    const json = pair.toJson(password);
-
-    if (exportAccount) {
-      exportAccountJson(json);
-    }
-
-    if (saveAccount) {
-      api.addAccountPair(pair, password);
-      // update account list in state
-      dispatch.updateImportedAccounts();
-    }
-
-    return json;
-  },
-
-  async restoreAccountFromJson(context, { json, password }: RestoreAccountArgs) {
-    const { dispatch } = accountActionContext(context);
-    // restore from json file
-    api.restoreAccountFromJson(json, password);
-    // update account list in state
-    dispatch.updateImportedAccounts();
-  },
-
   async renameAccount(context, { address, name }: { address: string; name: string }) {
-    const { commit, dispatch } = accountActionContext(context);
+    const { commit } = accountActionContext(context);
     // change name in api & storage
     api.changeAccountName(address, name);
     // update account data from storage
     commit.syncWithStorage();
-    // update account list in state
-    dispatch.updateImportedAccounts();
   },
 
-  /**
-   * Desktop
-   */
-  deleteAccount(context, address?: string): void {
-    const { dispatch } = accountActionContext(context);
-    // delete account pair
-    api.forgetAccount(address);
-    // update account list in state
-    dispatch.updateImportedAccounts();
-  },
-
-  /**
-   * Desktop
-   */
-  exportAccount(_, { address, password }: { address: string; password: string }): void {
-    const pair = api.getAccountPair(address);
-    const accountJson = pair.toJson(password);
-    exportAccountJson(accountJson);
-  },
-
-  /**
-   * Desktop
-   */
-  setAccountPassphrase(context, passphrase: string): void {
-    const key = cryptoRandomString({ length: 10, type: 'ascii-printable' });
-    const passphraseEncoded = AES.encrypt(passphrase, key).toString();
-
+  setAccountPassphrase(context, { address, password }: { address: string; password: string }): void {
     const { commit, dispatch, state } = accountActionContext(context);
 
-    dispatch.resetAccountPassphrase();
+    dispatch.resetAccountPassphrase(address);
+    commit.setAccountPassphrase({ address, password });
 
-    commit.updateAddressGeneratedKey(key);
-    commit.setAccountPassphrase(passphraseEncoded);
-
-    const timer = setTimeout(dispatch.resetAccountPassphrase, state.accountPasswordTimeout);
-    commit.setAccountPassphraseTimer(timer);
+    const timer = setTimeout(() => dispatch.resetAccountPassphrase(address), state.accountPasswordTimeout);
+    commit.setAccountPassphraseTimer({ address, timer });
   },
 
-  resetAccountPassphrase(context): void {
+  resetAccountPassphrase(context, address: string): void {
     const { commit } = accountActionContext(context);
-    commit.resetAccountPassphraseTimer();
-    commit.resetAccountPassphrase();
-  },
-
-  lockAccountPair(context): void {
-    api.lockPair();
-  },
-
-  unlockAccountPair(context, passphrase: string): void {
-    api.unlockPair(passphrase);
+    commit.resetAccountPassphraseTimer(address);
+    commit.resetAccountPassphrase(address);
   },
 
   // [NOTE]: Desktop is not syncing, because it runs in one flow
@@ -536,9 +348,9 @@ const actions = defineActions({
     commit.resetFiatPriceSubscription();
   },
   /** It's used **only** for subscriptions module */
-  async resetWalletAvailabilitySubscription(context): Promise<void> {
+  async resetAlertsSubscription(context): Promise<void> {
     const { commit } = accountActionContext(context);
-    commit.resetWalletAvailabilitySubscription();
+    commit.resetAlertSubscription();
   },
 });
 

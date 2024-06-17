@@ -5,14 +5,12 @@ import isEqual from 'lodash/fp/isEqual';
 import { api } from '../../api';
 import { AppWallet } from '../../consts';
 import { formatAccountAddress } from '../../util';
-import { isInternalWallet } from '../../util/account';
 
 import { accountGetterContext } from './../account';
 
 import type { AccountState } from './types';
 import type { AssetsTable, AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
 import type { Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
-import type { Wallet } from '@sora-test/wallet-connect/types';
 
 const toHashTable = <T extends Asset>(list: Readonly<Array<T>>, key: string) => {
   return list.reduce((result, item) => {
@@ -35,32 +33,6 @@ const getters = defineGetters<AccountState>()({
       source: state.source as AppWallet,
     };
   },
-  wallets(...args): { internal: Wallet[]; external: Wallet[] } {
-    const { state } = accountGetterContext(args);
-
-    const wallets: { internal: Wallet[]; external: Wallet[] } = {
-      internal: [], // api integrations, app signing
-      external: [], // extensions
-    };
-
-    return state.availableWallets.reduce((buffer, wallet) => {
-      if (isInternalWallet(wallet)) {
-        buffer.internal.push(wallet);
-      } else {
-        buffer.external.push(wallet);
-      }
-      return buffer;
-    }, wallets);
-  },
-  selectedWalletTitle(...args): string {
-    const { state } = accountGetterContext(args);
-
-    if (!state.selectedWallet) return '';
-
-    const wallet = state.availableWallets.find((wallet) => wallet.extensionName === state.selectedWallet);
-
-    return wallet ? wallet.title : state.selectedWallet;
-  },
   assetsDataTable(...args): AssetsTable {
     const { state } = accountGetterContext(args);
     return toHashTable(state.assets, 'address');
@@ -81,16 +53,21 @@ const getters = defineGetters<AccountState>()({
       ? api.assets.getWhitelistIdsBySymbol(state.whitelistArray as WhitelistArrayItem[])
       : {};
   },
-  passphrase(...args): Nullable<string> {
+  getPassword(...args): (address: string) => Nullable<string> {
     const { state } = accountGetterContext(args);
-    const encryptedPassphrase = state.addressPassphraseMapping[state.address];
-    const sessionKey = state.addressKeyMapping[state.address];
 
-    if (encryptedPassphrase && sessionKey) {
+    return (accountAddress: string) => {
+      if (!accountAddress) return null;
+
+      const address = api.formatAddress(accountAddress, false);
+      const encryptedPassphrase = state.addressPassphraseMapping[address];
+      const sessionKey = state.addressKeyMapping[address];
+
+      if (!(encryptedPassphrase && sessionKey)) return null;
+
       const decoded = AES.decrypt(encryptedPassphrase, sessionKey).toString(enc.Utf8);
       return decoded;
-    }
-    return null;
+    };
   },
   blacklist(...args): any {
     const { state } = accountGetterContext(args);

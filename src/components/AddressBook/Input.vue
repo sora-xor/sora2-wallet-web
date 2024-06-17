@@ -103,14 +103,15 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
 
   @Watch('books')
   @Watch('isValid')
-  private updateName(): void {
+  private updateContactName(): void {
     if (!this.isValid) {
       this.name = '';
     } else if (!this.name) {
       const key = formatAccountAddress(this.address);
       this.name = this.books[key] || '';
     }
-    this.$emit('update-name', this.name);
+
+    this.updateName();
   }
 
   get address(): string {
@@ -189,7 +190,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   chooseRecord({ name, address }: PolkadotJsAccount): void {
     this.address = address;
     this.name = name;
-    this.$emit('update-name', name);
+    this.updateName();
   }
 
   openContact(address: Nullable<string>, isEditMode = false): void {
@@ -200,6 +201,10 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
 
   resetAddress(): void {
     this.address = '';
+  }
+
+  updateName(): void {
+    this.$emit('update:name', this.name);
   }
 
   async mounted(): Promise<void> {

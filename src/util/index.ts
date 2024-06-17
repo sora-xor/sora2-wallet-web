@@ -2,20 +2,14 @@ import { FPNumber } from '@sora-substrate/util';
 import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
 
 import { api, connection } from '../api';
-import {
-  ExplorerLink,
-  SoraNetwork,
-  ExplorerType,
-  LoginStep,
-  AccountImportInternalFlow,
-  AccountImportExternalFlow,
-  AccountCreateFlow,
-} from '../consts';
+import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
 import { Currencies } from '../consts/currencies';
 
 import type { Currency } from '../types/currency';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
+import type { WithKeyring, WithConnectionApi } from '@sora-substrate/util';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
+import type { Store } from 'vuex';
 
 export class AppError extends Error {
   public key: string;
@@ -53,18 +47,22 @@ export const validateAddress = (address: string): boolean => {
   return !!address && api.validateAddress(address);
 };
 
-export const formatAccountAddress = (address: string, isSoraSS58 = true) => {
+export const formatAccountAddress = (address: string, withPrefix = true, chainApi: WithConnectionApi = api) => {
   try {
-    return validateAddress(address) ? api.formatAddress(address, isSoraSS58) : '';
+    return validateAddress(address) ? chainApi.formatAddress(address, withPrefix) : '';
   } catch {
     return '';
   }
 };
 
-export const getAccountIdentity = async (address: string, none = ''): Promise<string> => {
+export const getAccountIdentity = async (
+  address: string,
+  none = '',
+  chainApi: WithConnectionApi = api
+): Promise<string> => {
   if (!validateAddress(address)) return none;
 
-  const entity = await api.getAccountOnChainIdentity(address);
+  const entity = await chainApi.getAccountOnChainIdentity(address);
   const identity = entity ? entity.legalName : none;
 
   return identity;
@@ -203,18 +201,6 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
   }, []);
 };
 
-export const getPreviousLoginStep = (currentStep: LoginStep): LoginStep => {
-  for (const flow of [AccountCreateFlow, AccountImportInternalFlow, AccountImportExternalFlow]) {
-    const currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
-
-    if (currentStepIndex > 0) {
-      return flow[currentStepIndex - 1];
-    }
-  }
-
-  return LoginStep.AccountList;
-};
-
 export const getCssVariableValue = (name: string): string => {
   return getComputedStyle(document.documentElement as any)
     .getPropertyValue(name)
@@ -256,3 +242,35 @@ export const getScrollbarWidth = (): number => {
 
   return scrollBarWidth;
 };
+
+export async function beforeTransactionSign(
+  store: Store<any>,
+  signerApi: WithKeyring,
+  mutationType = 'wallet/transactions/setSignTxDialogVisibility'
+): Promise<void> {
+  const { address, signer } = signerApi;
+
+  if (!address || signer) return;
+
+  const password = store.getters['wallet/account/getPassword'](address);
+  const confirmDisabled = store.state.wallet.transactions.isSignTxDialogDisabled;
+
+  if (password && confirmDisabled) {
+    signerApi.unlockPair(password);
+  } else {
+    store.commit(mutationType, true);
+
+    await new Promise<void>((resolve) => {
+      const unsubscribe = store.subscribe((mutation) => {
+        if (mutationType === mutation.type && mutation.payload === false) {
+          unsubscribe();
+          resolve();
+        }
+      });
+    });
+  }
+
+  if (signerApi.accountPair?.isLocked) {
+    throw new Error('Cancelled');
+  }
+}

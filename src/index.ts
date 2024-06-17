@@ -9,6 +9,7 @@ import AddressBookInput from './components/AddressBook/Input.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
 import ConfirmDialog from './components/ConfirmDialog.vue';
+import ConnectionView from './components/Connection/ConnectionView.vue';
 import AccountConnectionList from './components/Connection/List/Account.vue';
 import ConnectionItems from './components/Connection/List/ConnectionItems.vue';
 import ExtensionConnectionList from './components/Connection/List/Extension.vue';
@@ -56,7 +57,14 @@ import * as VUEX_TYPES from './store/types';
 import { attachDecorator, createDecoratorsObject, VuexOperation } from './store/util';
 import { WalletModules } from './store/wallet';
 import * as WALLET_TYPES from './types/common';
-import { delay, getExplorerLinks, groupRewardsByAssetsList, formatAccountAddress, validateAddress } from './util';
+import {
+  delay,
+  getExplorerLinks,
+  groupRewardsByAssetsList,
+  formatAccountAddress,
+  validateAddress,
+  beforeTransactionSign,
+} from './util';
 import * as accountUtils from './util/account';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
@@ -136,7 +144,6 @@ const waitForConnection = async (): Promise<void> => {
 };
 
 const checkActiveAccount = async (): Promise<void> => {
-  await store.dispatch.wallet.account.updateImportedAccounts();
   await api.restoreActiveAccount();
   await store.dispatch.wallet.account.checkWalletAvailability();
   await store.dispatch.wallet.router.checkCurrentRoute();
@@ -148,7 +155,8 @@ async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promis
   await checkActiveAccount();
 
   // don't wait for finalization of internal & external services subscriptions
-  store.dispatch.wallet.subscriptions.activateInternalSubscriptions(store.state.wallet.account.isDesktop);
+  store.dispatch.wallet.account.updateAvailableWallets();
+  store.dispatch.wallet.subscriptions.activateInternalSubscriptions();
   store.dispatch.wallet.settings.selectIndexer();
   // wait for finalization of network subscriptions
   await Promise.all([api.initialize(false), store.dispatch.wallet.subscriptions.activateNetwokSubscriptions()]);
@@ -186,6 +194,7 @@ const components = {
   FormattedAddress,
   AccountConnectionList,
   ExtensionConnectionList,
+  ConnectionView,
 };
 
 const mixins = {
@@ -223,6 +232,7 @@ export {
   groupRewardsByAssetsList,
   formatAccountAddress,
   validateAddress,
+  beforeTransactionSign,
   WALLET_CONSTS,
   WALLET_TYPES,
   components,
