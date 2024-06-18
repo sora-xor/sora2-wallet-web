@@ -233,12 +233,11 @@ $formatted-amount-class: '.formatted-amount';
   word-break: break-all;
   // Trick to fix horizontal spacings bug between elements
   &__value {
+    display: flex;
+    align-items: baseline;
     // NOTE: use left-to-right texting direction including arabic langs; remove it if support is needed.
     unicode-bidi: bidi-override;
     direction: ltr;
-  }
-  &__decimal {
-    margin-left: -3px;
   }
   &--fiat-value {
     color: var(--s-color-fiat-value);
@@ -249,7 +248,7 @@ $formatted-amount-class: '.formatted-amount';
   }
   &--symbol-as-decimal {
     #{$formatted-amount-class}__symbol {
-      margin-left: 2px;
+      margin-left: $basic-spacing-mini;
     }
   }
   #{$formatted-amount-class}__decimal:not(:last-child) {
@@ -299,7 +298,6 @@ $formatted-amount-class: '.formatted-amount';
   &__prefix {
     opacity: 0.6;
     padding-right: #{$basic-spacing-extra-mini};
-    margin-right: -3px;
   }
 }
 </style>
