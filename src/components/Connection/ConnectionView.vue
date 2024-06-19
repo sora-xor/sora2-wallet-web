@@ -24,6 +24,7 @@
       @select="handleWalletSelect"
     >
       <slot name="extension" />
+      <s-button @click="initWC">WC</s-button>
     </extension-list-step>
     <account-list-step
       v-else-if="isAccountList"
@@ -74,6 +75,7 @@ import { Mixins, Component, Prop } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
+import { wcSubProvider } from '../../services/walletconnect';
 import { action, state } from '../../store/decorators';
 import { delay } from '../../util';
 import {
@@ -507,6 +509,13 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   private resetStep(): void {
     this.step = this.isDesktop ? LoginStep.AccountList : LoginStep.ExtensionList;
+  }
+
+  async initWC() {
+    await wcSubProvider.init();
+    await wcSubProvider.connect(this.getApi());
+    console.log(wcSubProvider);
+    console.log(wcSubProvider.getAccounts());
   }
 }
 </script>

@@ -23,6 +23,7 @@ export enum IndexerType {
 }
 
 export enum AppWallet {
+  WalletConnect = 'walletconnect',
   GoogleDrive = 'google-drive',
   FearlessWallet = 'fearless-wallet',
   PolkadotJS = 'polkadot-js',

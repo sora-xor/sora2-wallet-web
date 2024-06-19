@@ -30,6 +30,8 @@
     "@sora-test/wallet-connect": "^0.0.9",
     "@soramitsu-ui/ui-vue2": "^1.1.1",
     "@urql/core": "^5.0.3",
+    "@walletconnect/modal": "^2.6.2",
+    "@walletconnect/universal-provider": "^2.13.3",
     "@zxing/browser": "^0.1.4",
     "@zxing/library": "^0.21.0",
     "base-64": "^1.0.0",

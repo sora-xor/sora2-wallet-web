@@ -1,4 +1,5 @@
 import GoogleLogo from '../assets/img/GoogleLogo.svg';
+import WalletConnectLogo from '../assets/img/WalletConnect.svg';
 
 import { AppWallet } from './index';
 
@@ -12,6 +13,17 @@ export const GDriveWalletInfo: WalletInfo = {
   logo: {
     src: GoogleLogo as string,
     alt: 'Google',
+  },
+};
+
+export const WalletConnectInfo: WalletInfo = {
+  extensionName: AppWallet.WalletConnect,
+  title: 'WalletConnect',
+  chromeUrl: '',
+  mozillaUrl: '',
+  logo: {
+    src: WalletConnectLogo as string,
+    alt: 'WalletConnect',
   },
 };
 
