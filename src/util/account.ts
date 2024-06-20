@@ -1,4 +1,4 @@
-import { getWallets, getWalletBySource, initialize } from '@sora-test/wallet-connect/dotsama/wallets';
+import { addWallet, getWallets, getWalletBySource, initialize } from '@sora-test/wallet-connect/dotsama/wallets';
 import { saveAs } from 'file-saver';
 
 import { AppWallet, TranslationConsts } from '../consts';
@@ -6,11 +6,11 @@ import { InternalWallets } from '../consts/wallets';
 import { AppError, waitForDocumentReady } from '../util';
 
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
-import type { Unsubcall } from '@polkadot/extension-inject/types';
+import type { Unsubcall, InjectedWindowProvider } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 import type { KeyringAddress } from '@polkadot/ui-keyring/types';
 import type { WithKeyring } from '@sora-substrate/util';
-import type { Wallet, WalletAccount } from '@sora-test/wallet-connect/types';
+import type { Wallet, WalletAccount, WalletInfo } from '@sora-test/wallet-connect/types';
 
 export const lockAccountPair = (api: WithKeyring): void => {
   api.lockPair();
@@ -46,7 +46,8 @@ export const logoutApi = (api: WithKeyring, forget = false): void => {
   api.logout();
 };
 
-export const isInternalSource = (source?: AppWallet) => !source || InternalWallets.includes(source);
+export const isInternalSource = (source?: AppWallet) =>
+  !source || InternalWallets.some((walletName) => source.startsWith(walletName));
 
 export const isInternalWallet = (wallet: Wallet) => isInternalSource(wallet.extensionName as AppWallet);
 
@@ -67,6 +68,23 @@ export const getAppWallets = (): Wallet[] => {
     return wallets;
   } catch (error) {
     throw new AppError({ key: 'polkadotjs.noExtensions' });
+  }
+};
+
+export const addWalletLocally = (
+  wallet: InjectedWindowProvider,
+  walletInfo: WalletInfo,
+  nameOverride?: string
+): void => {
+  const extensionName = nameOverride ?? walletInfo.extensionName;
+
+  const injectedWindow = window as any;
+
+  injectedWindow.injectedWeb3 = injectedWindow.injectedWeb3 || {};
+  injectedWindow.injectedWeb3[extensionName] = wallet;
+
+  if (!getWalletBySource(extensionName)) {
+    addWallet({ ...walletInfo, extensionName }, TranslationConsts.Polkaswap);
   }
 };
 

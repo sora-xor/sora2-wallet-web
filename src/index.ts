@@ -155,7 +155,6 @@ async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promis
   await checkActiveAccount();
 
   // don't wait for finalization of internal & external services subscriptions
-  store.dispatch.wallet.account.updateAvailableWallets();
   store.dispatch.wallet.subscriptions.activateInternalSubscriptions();
   store.dispatch.wallet.settings.selectIndexer();
   // wait for finalization of network subscriptions

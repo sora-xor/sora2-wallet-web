@@ -24,7 +24,6 @@
       @select="handleWalletSelect"
     >
       <slot name="extension" />
-      <s-button @click="initWC">WC</s-button>
     </extension-list-step>
     <account-list-step
       v-else-if="isAccountList"
@@ -75,7 +74,7 @@ import { Mixins, Component, Prop } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
-import { wcSubProvider } from '../../services/walletconnect';
+import { addWcWalletLocally } from '../../services/walletconnect/wallet';
 import { action, state } from '../../store/decorators';
 import { delay } from '../../util';
 import {
@@ -157,6 +156,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   @state.account.isDesktop private isDesktop!: boolean;
   @state.account.availableWallets private availableWallets!: Wallet[];
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
+  @action.account.updateAvailableWallets private updateAvailableWallets!: () => void;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
     address: string;
     password: string;
@@ -179,6 +179,8 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   created(): void {
+    this.createWcWallet();
+
     this.resetStep();
 
     if (this.isDesktop) {
@@ -186,6 +188,17 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
         this.subscribeToWalletAccounts();
       });
     }
+  }
+
+  private createWcWallet(): void {
+    this.withApi(() => {
+      const api = this.getApi();
+      const chainId = api.api.genesisHash.toString();
+
+      addWcWalletLocally(chainId);
+
+      this.updateAvailableWallets();
+    });
   }
 
   beforeDestroy(): void {
@@ -374,7 +387,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
     await this.withAppAlert(async () => {
       await this.selectWallet(wallet.extensionName as AppWallet);
-
       this.navigateToAccountList();
     });
   }
@@ -509,13 +521,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   private resetStep(): void {
     this.step = this.isDesktop ? LoginStep.AccountList : LoginStep.ExtensionList;
-  }
-
-  async initWC() {
-    await wcSubProvider.init();
-    await wcSubProvider.connect(this.getApi());
-    console.log(wcSubProvider);
-    console.log(wcSubProvider.getAccounts());
   }
 }
 </script>
