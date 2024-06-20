@@ -419,6 +419,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   private async checkSelectedWallet(): Promise<void> {
     try {
+      console.log('checkSelectedWallet', this.selectedWallet);
       if (this.selectedWallet) {
         await getWallet(this.selectedWallet);
       }
@@ -511,6 +512,10 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       this.closeView();
     } else {
       this.step = this.prevStep;
+
+      if (this.isExtensionsList) {
+        this.resetSelectedWallet();
+      }
     }
   }
 

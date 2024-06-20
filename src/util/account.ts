@@ -112,6 +112,8 @@ export const getWallet = async (extension = AppWallet.PolkadotJS, autoreload = f
   const hasExtension = !!wallet.extension;
   const hasSigner = typeof wallet.signer === 'object';
 
+  console.log(wallet);
+
   if (hasExtension && hasSigner) return wallet;
 
   if (autoreload) {
@@ -139,7 +141,11 @@ export const getWalletSigner = async (appWallet: AppWallet, autoreload = false) 
 export const updateApiSigner = async (api: WithKeyring, source: AppWallet): Promise<void> => {
   const signer = await getWalletSigner(source, true);
 
+  console.log(signer);
+
   api.setSigner(signer);
+
+  console.log(api.signer);
 };
 
 const formatImportedAccounts = (accounts: KeyringAddress[]): PolkadotJsAccount[] => {

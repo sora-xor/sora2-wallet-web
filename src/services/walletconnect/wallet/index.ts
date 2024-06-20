@@ -2,7 +2,8 @@ import { WalletConnectInfo } from '../../../consts/wallets';
 import { addWalletLocally, checkWallet } from '../../../util/account';
 import { WcSubstrateProvider } from '../provider';
 
-import Accounts from './accounts';
+import WcAccounts from './accounts';
+import WcSigner from './signer';
 
 import type { InjectedWindowProvider, Injected } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
@@ -10,29 +11,18 @@ import type { Signer } from '@polkadot/types/types';
 export class WcSubstrateWallet implements InjectedWindowProvider {
   public static readonly version = '0.0.1';
 
-  private access!: boolean;
   private wcProvider!: WcSubstrateProvider;
 
-  public readonly accounts!: Accounts;
+  public readonly accounts!: WcAccounts;
+  public readonly signer!: WcSigner;
 
   constructor(wcProvider: WcSubstrateProvider) {
     this.wcProvider = wcProvider;
-    this.accounts = new Accounts(this.wcProvider);
-    this.access = false;
-  }
-
-  private get signer(): Signer {
-    return (this.access ? null : undefined) as unknown as Signer;
+    this.accounts = new WcAccounts(this.wcProvider);
   }
 
   async enable(): Promise<Injected> {
-    try {
-      await this.wcProvider.enable();
-      this.access = true;
-    } catch (error) {
-      this.access = false;
-      throw error;
-    }
+    await this.wcProvider.enable();
 
     return {
       accounts: this.accounts,

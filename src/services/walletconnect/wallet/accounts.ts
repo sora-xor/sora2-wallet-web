@@ -5,7 +5,7 @@ import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/ext
 
 const ACCOUNTS_UPDATE_INTERVAL = 60_000;
 
-export default class Accounts implements InjectedAccounts {
+export default class WcAccounts implements InjectedAccounts {
   private wcProvider!: WcSubstrateProvider;
 
   private _list: InjectedAccount[] = [];

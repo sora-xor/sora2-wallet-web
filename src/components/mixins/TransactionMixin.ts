@@ -72,6 +72,7 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
   async withNotifications(func: AsyncFnWithoutArgs): Promise<void> {
     await this.withLoading(async () => {
       await this.withAppNotification(async () => {
+        console.log(api.signer);
         await beforeTransactionSign(this.$store, api);
         const time = Date.now();
         await func();

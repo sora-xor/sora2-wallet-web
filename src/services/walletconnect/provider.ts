@@ -28,7 +28,7 @@ export class WcSubstrateProvider {
     this.chainId = chainId;
   }
 
-  async init(): Promise<void> {
+  public async init(): Promise<void> {
     if (this.ready) return;
 
     if (!WcSubstrateProvider.projectId) throw new Error(`[${this.constructor.name}]: projectId is required`);
@@ -51,7 +51,7 @@ export class WcSubstrateProvider {
    * On user action (e.g. user clicks connect for WalletConnect),
    * call the connect method on the providers sign client passing in preferred params.
    */
-  async connect(): Promise<void> {
+  public async connect(): Promise<void> {
     try {
       // already connected
       if (this.session) return;
@@ -84,7 +84,7 @@ export class WcSubstrateProvider {
       });
 
       // Subscribe to session delete
-      this.provider.on('session_delete', this.disconnect);
+      this.provider.on('session_delete', this.disconnect.bind(this));
     } catch (error) {
       console.error(error);
       this.disconnect();
@@ -94,17 +94,19 @@ export class WcSubstrateProvider {
     }
   }
 
-  disconnect(): void {
+  public disconnect(): void {
     if (this.session) {
       const topic = this.session.topic;
 
-      this.provider.client.disconnect({
-        topic,
-        reason: {
-          code: 0,
-          message: 'Disconnected by dApp',
-        },
-      });
+      try {
+        this.provider.client.disconnect({
+          topic,
+          reason: {
+            code: 0,
+            message: 'Disconnected by dApp',
+          },
+        });
+      } catch {}
     }
 
     this.resetSession();
@@ -114,7 +116,7 @@ export class WcSubstrateProvider {
     this.session = undefined;
   }
 
-  async enable(): Promise<void> {
+  public async enable(): Promise<void> {
     await this.init();
     await this.connect();
   }
