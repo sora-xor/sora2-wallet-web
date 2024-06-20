@@ -66,14 +66,6 @@
           </div>
           <div class="asset-info" slot="bottom">
             <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
-            <div class="asset-highlight">
-              {{ asset.name || asset.symbol }}
-              <s-tooltip :content="copyValueAssetId" tabindex="-1">
-                <span class="asset-id" @click="handleCopyAddress(asset.address, $event)">
-                  ({{ getFormattedAddress(asset) }})
-                </span>
-              </s-tooltip>
-            </div>
           </div>
         </s-float-input>
         <s-button
@@ -427,6 +419,7 @@ export default class WalletSend extends Mixins(
 
 <style scoped lang="scss">
 $logo-size: var(--s-size-mini);
+$telegram-web-app-width: 500px;
 // TODO: fix typography issues here
 
 .wallet-send {
@@ -638,6 +631,12 @@ $logo-size: var(--s-size-mini);
       font-size: var(--s-font-size-mini);
       font-weight: 600;
       overflow-wrap: break-word;
+
+      span {
+        @media screen and (max-width: $telegram-web-app-width) {
+          font-size: 9.65px;
+        }
+      }
     }
   }
 }

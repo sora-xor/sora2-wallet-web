@@ -2,9 +2,9 @@
 
 exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  resetfocus="SORA Network account"
+  resetfocus="Account"
   showheader="true"
-  title="SORA Network account"
+  title="Account"
   tooltip=""
 >
    
@@ -91,9 +91,9 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
 
 exports[`Wallet.vue [WalletTabs.WalletHistory]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  resetfocus="SORA Network account"
+  resetfocus="Account"
   showheader="true"
-  title="SORA Network account"
+  title="Account"
   tooltip=""
 >
    
