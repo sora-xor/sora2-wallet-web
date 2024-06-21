@@ -3,16 +3,7 @@ import UniversalProvider from '@walletconnect/universal-provider';
 
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
-import type { SessionTypes, EngineTypes } from '@walletconnect/types';
-
-// await signClient.emit({
-//   topic,
-//   event: {
-//     name: 'accountsChanged',
-//     data: ['AZBEwbZhYeiofodZnM2iAoshP3pXRPNSJEKFqEPDmvv1mY7']
-//   },
-//   chainId: 'polkadot:91b171bb158e2d3848fa23a9f1c25182'
-// })
+import type { EngineTypes, SessionTypes, PairingTypes } from '@walletconnect/types';
 
 export class WcSubstrateProvider {
   /** WalletConnect app projectId */
@@ -20,14 +11,17 @@ export class WcSubstrateProvider {
   /** Chain genesis hash: `api.genesisHash.toString()` */
   protected chainId!: string;
 
-  private ready = false;
-
   public provider!: UniversalProvider;
   public modal!: WalletConnectModal;
   public session!: SessionTypes.Struct | undefined;
 
-  constructor(chainId: string) {
+  // SORA mainnet chainId by default
+  constructor(chainId = '0x7e4e32d0feafd4f9c9414b0be86373f9a1efa904809b683453a9af6856d38ad5') {
     this.chainId = chainId;
+  }
+
+  get ready(): boolean {
+    return !!this.provider && !!this.modal;
   }
 
   public async init(): Promise<void> {
@@ -45,8 +39,6 @@ export class WcSubstrateProvider {
     this.modal = new WalletConnectModal({
       projectId: WcSubstrateProvider.projectId,
     });
-
-    this.ready = true;
   }
 
   /**
@@ -59,6 +51,9 @@ export class WcSubstrateProvider {
       if (this.session) return;
 
       if (!this.chainId) throw new Error(`[${this.constructor.name}] chainId is not defined`);
+
+      // cleanup sessions (because session restoration is complicated)
+      this.cleanupSessions();
 
       const params = this.getChainParams(this.chainId);
 
@@ -75,20 +70,24 @@ export class WcSubstrateProvider {
           if (!state.open) {
             unsub();
             if (!this.session) {
-              reject(new Error('Cancelled by user'));
+              reject(new Error('Cancelled'));
             }
           }
         });
-        // await session approval from the wallet app
-        this.session = await approval();
 
-        resolve();
+        try {
+          // await session approval from the wallet app
+          this.session = await approval();
+          resolve();
+        } catch (error) {
+          reject(error);
+        }
       });
 
       // Subscribe to session delete
       this.provider.on('session_delete', this.disconnect.bind(this));
     } catch (error) {
-      console.error(error);
+      this.provider.abortPairingAttempt();
       this.disconnect();
       throw error;
     } finally {
@@ -97,25 +96,60 @@ export class WcSubstrateProvider {
   }
 
   public disconnect(): void {
-    if (this.session) {
-      const topic = this.session.topic;
-
-      try {
-        this.provider.client.disconnect({
-          topic,
-          reason: {
-            code: 0,
-            message: 'Disconnected by dApp',
-          },
-        });
-      } catch {}
-    }
-
-    this.resetSession();
+    this.disconnectSession(this.session);
+    this.session = undefined;
   }
 
-  protected resetSession(): void {
-    this.session = undefined;
+  protected getCurrentSession(): SessionTypes.Struct {
+    if (!this.session) {
+      throw new Error(`[${this.constructor.name}] Session is not estabilished`);
+    }
+    return this.session;
+  }
+
+  protected getActivePairings(): PairingTypes.Struct[] {
+    const pairings = this.provider.client.core.pairing.getPairings();
+
+    const activePairings = pairings.filter((pairing) => pairing.active);
+
+    return activePairings;
+  }
+
+  /** Restore active session with connected wallet  */
+  protected async restoreSession(): Promise<void> {
+    try {
+      const activePairing = this.getActivePairings();
+
+      if (activePairing[0]) {
+        this.session = await this.provider.pair(activePairing[0].topic);
+      }
+    } catch {
+      this.disconnect();
+    }
+  }
+
+  /** Delete pending & active sessions */
+  protected async cleanupSessions(): Promise<void> {
+    await this.provider.cleanupPendingPairings({ deletePairings: true });
+
+    this.getActivePairings().forEach((activePairing) => {
+      this.disconnectSession(activePairing);
+    });
+  }
+
+  /** Delete session from dApp and connected wallet */
+  protected disconnectSession(session?: PairingTypes.Struct | SessionTypes.Struct): void {
+    if (!session) return;
+
+    try {
+      this.provider.client.disconnect({
+        topic: session.topic,
+        reason: {
+          code: 0,
+          message: 'Disconnected by dApp',
+        },
+      });
+    } catch {}
   }
 
   public async enable(): Promise<void> {
@@ -124,7 +158,6 @@ export class WcSubstrateProvider {
   }
 
   protected getChainParams(chainId: string): EngineTypes.ConnectParams {
-    // https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-13.md
     const chainCaip13 = this.getChainCaip13(chainId);
 
     const params: EngineTypes.ConnectParams = {
@@ -141,18 +174,12 @@ export class WcSubstrateProvider {
   }
 
   protected getChainCaip13(chainId: string): string {
+    // https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-13.md
     return `polkadot:${chainId.slice(2, 34)}`;
   }
 
-  protected getSession(): SessionTypes.Struct {
-    if (!this.session) {
-      throw new Error(`[${this.constructor.name}] Session is not estabilished`);
-    }
-    return this.session;
-  }
-
   public getAccounts(): string[] {
-    const session = this.getSession();
+    const session = this.getCurrentSession();
 
     // Get the accounts from the session for use in constructing transactions.
     const walletConnectAccount = Object.values(session.namespaces)
@@ -167,22 +194,27 @@ export class WcSubstrateProvider {
     return accounts;
   }
 
-  public async signTransactionRequest(payload: SignerPayloadJSON): Promise<HexString> {
-    const session = this.getSession();
-    const chainId = this.getChainCaip13(this.chainId);
+  public async signTransactionPayload(payload: SignerPayloadJSON): Promise<HexString> {
+    try {
+      const session = this.getCurrentSession();
+      const chainId = this.getChainCaip13(this.chainId);
 
-    const result = (await this.provider.client.request({
-      chainId,
-      topic: session.topic,
-      request: {
-        method: 'polkadot_signTransaction',
-        params: {
-          address: payload.address,
-          transactionPayload: payload,
+      const result = (await this.provider.client.request({
+        chainId,
+        topic: session.topic,
+        request: {
+          method: 'polkadot_signTransaction',
+          params: {
+            address: payload.address,
+            transactionPayload: payload,
+          },
         },
-      },
-    })) as any;
+      })) as any;
 
-    return result.signature as HexString;
+      return result.signature as HexString;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
 }

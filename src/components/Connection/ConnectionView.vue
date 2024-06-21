@@ -74,7 +74,7 @@ import { Mixins, Component, Prop } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
-import { addWcWalletLocally } from '../../services/walletconnect/wallet';
+import { addWcWalletLocally } from '../../services/walletconnect';
 import { action, state } from '../../store/decorators';
 import { delay } from '../../util';
 import {
@@ -138,6 +138,9 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
 export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
   @Prop({ required: true, type: Function }) public readonly getApi!: () => WithKeyring;
 
+  /** Should be created separate `walletconnect` connection for chain, used in `api` (getApi()) */
+  @Prop({ default: false, type: Boolean }) public readonly separateWc!: boolean;
+
   @Prop({ default: () => null, type: Object }) private readonly account!: Nullable<PolkadotJsAccount>;
 
   @Prop({ default: () => {}, type: Function }) private readonly loginAccount!: (
@@ -192,8 +195,11 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   private createWcWallet(): void {
     this.withApi(() => {
-      const api = this.getApi();
-      const chainId = api.api.genesisHash.toString();
+      let chainId!: string;
+
+      if (this.separateWc) {
+        chainId = this.getApi().api.genesisHash.toString();
+      }
 
       addWcWalletLocally(chainId);
 

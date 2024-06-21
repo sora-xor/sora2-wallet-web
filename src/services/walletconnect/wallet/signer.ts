@@ -12,7 +12,7 @@ export default class WcSigner implements Signer {
 
   /** Signs an extrinsic payload from a serialized form */
   async signPayload(payload: SignerPayloadJSON): Promise<SignerResult> {
-    const signature = await this.wcProvider.signTransactionRequest(payload);
+    const signature = await this.wcProvider.signTransactionPayload(payload);
 
     return {
       id: this.txId++,

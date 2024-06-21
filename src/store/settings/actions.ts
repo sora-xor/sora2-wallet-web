@@ -10,7 +10,7 @@ import { IndexerType, SoraNetwork } from '../../consts';
 import { getCurrenciesState } from '../../consts/currencies';
 import { GDriveStorage } from '../../services/google';
 import { addGDriveWalletLocally } from '../../services/google/wallet';
-import { WcSubstrateProvider } from '../../services/walletconnect/provider';
+import { WcSubstrateProvider } from '../../services/walletconnect';
 import { rootActionContext } from '../../store';
 import { ApiKeysObject, ConnectionStatus } from '../../types/common';
 import { IpfsStorage } from '../../util/ipfsStorage';

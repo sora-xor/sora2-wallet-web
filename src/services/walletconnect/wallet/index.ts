@@ -1,10 +1,7 @@
-import { WalletConnectInfo } from '../../../consts/wallets';
-import { addWalletLocally, checkWallet } from '../../../util/account';
-import { WcSubstrateProvider } from '../provider';
-
 import WcAccounts from './accounts';
 import WcSigner from './signer';
 
+import type { WcSubstrateProvider } from '../provider';
 import type { InjectedWindowProvider, Injected } from '@polkadot/extension-inject/types';
 
 export class WcSubstrateWallet implements InjectedWindowProvider {
@@ -32,16 +29,3 @@ export class WcSubstrateWallet implements InjectedWindowProvider {
     };
   }
 }
-
-export const addWcWalletLocally = (chainId: string): void => {
-  const name = `${WalletConnectInfo.extensionName}:${chainId}`;
-
-  try {
-    checkWallet(name as any);
-  } catch {
-    const provider = new WcSubstrateProvider(chainId);
-    const wallet = new WcSubstrateWallet(provider);
-
-    addWalletLocally(wallet, WalletConnectInfo, name);
-  }
-};
