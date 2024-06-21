@@ -47,13 +47,17 @@ export class WcSubstrateProvider {
    */
   public async connect(): Promise<void> {
     try {
+      // Not works for now
+      // await this.restoreSession();
+
       // already connected
-      if (this.session) return;
+      if (this.session) {
+        return;
+      } else {
+        this.cleanupSessions();
+      }
 
       if (!this.chainId) throw new Error(`[${this.constructor.name}] chainId is not defined`);
-
-      // cleanup sessions (because session restoration is complicated)
-      this.cleanupSessions();
 
       const params = this.getChainParams(this.chainId);
 
@@ -118,10 +122,15 @@ export class WcSubstrateProvider {
   /** Restore active session with connected wallet  */
   protected async restoreSession(): Promise<void> {
     try {
-      const activePairing = this.getActivePairings();
+      const activePairings = this.getActivePairings();
+      const activePairing = activePairings[0];
 
-      if (activePairing[0]) {
-        this.session = await this.provider.pair(activePairing[0].topic);
+      if (activePairing) {
+        const pairingTopic = activePairing.topic;
+        console.info(`[${this.constructor.name}]: active pairing topic found: "${pairingTopic}"`);
+        this.session = await this.provider.connect({
+          pairingTopic,
+        });
       }
     } catch {
       this.disconnect();
