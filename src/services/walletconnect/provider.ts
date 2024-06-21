@@ -1,6 +1,8 @@
 import { WalletConnectModal } from '@walletconnect/modal';
 import UniversalProvider from '@walletconnect/universal-provider';
 
+import type { SignerPayloadJSON } from '@polkadot/types/types';
+import type { HexString } from '@polkadot/util/types';
 import type { SessionTypes, EngineTypes } from '@walletconnect/types';
 
 // await signClient.emit({
@@ -58,7 +60,7 @@ export class WcSubstrateProvider {
 
       if (!this.chainId) throw new Error(`[${this.constructor.name}] chainId is not defined`);
 
-      const params = WcSubstrateProvider.getChainParams(this.chainId);
+      const params = this.getChainParams(this.chainId);
 
       const { uri, approval } = await this.provider.client.connect(params);
 
@@ -121,9 +123,9 @@ export class WcSubstrateProvider {
     await this.connect();
   }
 
-  public static getChainParams(chainId: string): EngineTypes.ConnectParams {
+  protected getChainParams(chainId: string): EngineTypes.ConnectParams {
     // https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-13.md
-    const chainCaip13 = `polkadot:${chainId.slice(2, 34)}`;
+    const chainCaip13 = this.getChainCaip13(chainId);
 
     const params: EngineTypes.ConnectParams = {
       requiredNamespaces: {
@@ -138,14 +140,22 @@ export class WcSubstrateProvider {
     return params;
   }
 
-  public getAccounts(): string[] {
+  protected getChainCaip13(chainId: string): string {
+    return `polkadot:${chainId.slice(2, 34)}`;
+  }
+
+  protected getSession(): SessionTypes.Struct {
     if (!this.session) {
-      console.info(`[${this.constructor.name}] Session is not estabilished`);
-      return [];
+      throw new Error(`[${this.constructor.name}] Session is not estabilished`);
     }
+    return this.session;
+  }
+
+  public getAccounts(): string[] {
+    const session = this.getSession();
 
     // Get the accounts from the session for use in constructing transactions.
-    const walletConnectAccount = Object.values(this.session.namespaces)
+    const walletConnectAccount = Object.values(session.namespaces)
       .map((namespace) => namespace.accounts)
       .flat();
 
@@ -155,5 +165,24 @@ export class WcSubstrateProvider {
     });
 
     return accounts;
+  }
+
+  public async signTransactionRequest(payload: SignerPayloadJSON): Promise<HexString> {
+    const session = this.getSession();
+    const chainId = this.getChainCaip13(this.chainId);
+
+    const result = (await this.provider.client.request({
+      chainId,
+      topic: session.topic,
+      request: {
+        method: 'polkadot_signTransaction',
+        params: {
+          address: payload.address,
+          transactionPayload: payload,
+        },
+      },
+    })) as any;
+
+    return result.signature as HexString;
   }
 }

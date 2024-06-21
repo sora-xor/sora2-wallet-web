@@ -1,8 +1,10 @@
 import type { WcSubstrateProvider } from '../provider';
-import type { Signer, SignerPayloadJSON, SignerPayloadRaw, SignerResult } from '@polkadot/types/types';
+import type { Signer, SignerPayloadJSON, SignerResult } from '@polkadot/types/types';
 
 export default class WcSigner implements Signer {
   private wcProvider!: WcSubstrateProvider;
+  /** need by WC spec */
+  private txId = 0;
 
   constructor(wcProvider: WcSubstrateProvider) {
     this.wcProvider = wcProvider;
@@ -10,25 +12,11 @@ export default class WcSigner implements Signer {
 
   /** Signs an extrinsic payload from a serialized form */
   async signPayload(payload: SignerPayloadJSON): Promise<SignerResult> {
-    console.log('signPayload', payload);
+    const signature = await this.wcProvider.signTransactionRequest(payload);
 
-    throw new Error('signPayload is not implemented');
-
-    // return {
-    //   id: 0,
-    //   signature: '0x',
-    // }
-  }
-
-  /** Signs a raw payload, only the bytes data as supplied */
-  async signRaw(raw: SignerPayloadRaw): Promise<SignerResult> {
-    console.log('signRaw', raw);
-
-    throw new Error('signRaw is not implemented');
-
-    // return {
-    //   id: 0,
-    //   signature: '0x',
-    // }
+    return {
+      id: this.txId++,
+      signature,
+    };
   }
 }
