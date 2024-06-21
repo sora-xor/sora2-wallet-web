@@ -10,14 +10,19 @@ export class WcSubstrateProvider {
   public static projectId = '';
   /** Chain genesis hash: `api.genesisHash.toString()` */
   protected chainId!: string;
+  protected optionalChainIds!: string[];
 
   public provider!: UniversalProvider;
   public modal!: WalletConnectModal;
   public session!: SessionTypes.Struct | undefined;
 
   // SORA mainnet chainId by default
-  constructor(chainId = '0x7e4e32d0feafd4f9c9414b0be86373f9a1efa904809b683453a9af6856d38ad5') {
+  constructor(
+    chainId = '0x7e4e32d0feafd4f9c9414b0be86373f9a1efa904809b683453a9af6856d38ad5',
+    optionalChainIds: string[] = []
+  ) {
     this.chainId = chainId;
+    this.optionalChainIds = optionalChainIds;
   }
 
   get ready(): boolean {
@@ -166,18 +171,31 @@ export class WcSubstrateProvider {
     await this.connect();
   }
 
-  protected getChainParams(chainId: string): EngineTypes.ConnectParams {
-    const chainCaip13 = this.getChainCaip13(chainId);
+  protected getChainParams(chainId: string, optionalChainIds: string[]): EngineTypes.ConnectParams {
+    const methods = ['polkadot_signTransaction'];
+    const events = ['accountsChanged'];
 
     const params: EngineTypes.ConnectParams = {
       requiredNamespaces: {
         polkadot: {
-          methods: ['polkadot_signTransaction'],
-          chains: [chainCaip13],
-          events: ['accountsChanged'],
+          methods,
+          chains: [this.getChainCaip13(chainId)],
+          events,
         },
       },
     };
+
+    if (optionalChainIds.length) {
+      Object.assign(params, {
+        optionalNamespaces: {
+          polkadot: {
+            methods,
+            chains: optionalChainIds.map((chainId) => this.getChainCaip13(chainId)),
+            events,
+          },
+        },
+      });
+    }
 
     return params;
   }
