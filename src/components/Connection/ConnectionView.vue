@@ -27,7 +27,7 @@
     </extension-list-step>
     <account-list-step
       v-else-if="isAccountList"
-      :get-api="getApi"
+      :chain-api="chainApi"
       :text="accountListText"
       :is-internal="isInternal"
       :connected-wallet="connectedWallet"
@@ -45,7 +45,7 @@
     <create-account-step
       v-else-if="isCreateFlow"
       :step.sync="step"
-      :get-api="getApi"
+      :chain-api="chainApi"
       :selected-wallet-title="selectedWalletTitle"
       :loading="loading"
       :create-account="handleAccountCreate"
@@ -136,7 +136,7 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
   },
 })
 export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
-  @Prop({ required: true, type: Function }) public readonly getApi!: () => WithKeyring;
+  @Prop({ required: true, type: Object }) public readonly chainApi!: WithKeyring;
 
   @Prop({ default: 'sora', type: String }) public readonly wcNamespace!: string;
 
@@ -194,9 +194,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   private createWcWallet(): void {
     this.withApi(() => {
-      const chainId = this.getApi().api.genesisHash.toString();
-
-      addWcWalletLocally();
+      addWcWalletLocally(this.chainGenesisHash);
 
       this.updateAvailableWallets();
     });
@@ -204,6 +202,10 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   beforeDestroy(): void {
     this.resetSelectedWallet();
+  }
+
+  get chainGenesisHash(): string {
+    return this.chainApi.api.genesisHash.toString();
   }
 
   get connectedAccount(): string {
@@ -337,7 +339,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
       await this.withAppNotification(async () => {
         const { json, password } = data;
-        const verified = verifyAccountJson(this.getApi(), json, password);
+        const verified = verifyAccountJson(this.chainApi, json, password);
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.add(verified, password);
@@ -357,7 +359,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       await delay(250);
 
       await this.withAppNotification(async () => {
-        const accountJson = createAccount(this.getApi(), { ...data, saveAccount: this.isDesktop });
+        const accountJson = createAccount(this.chainApi, { ...data, saveAccount: this.isDesktop });
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.add(accountJson, data.password, data.seed);
@@ -401,7 +403,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   private async subscribeToWalletAccounts(): Promise<void> {
-    this.accountsSubscription = await subscribeToWalletAccounts(this.getApi(), this.selectedWallet, (accounts) => {
+    this.accountsSubscription = await subscribeToWalletAccounts(this.chainApi, this.selectedWallet, (accounts) => {
       this.accounts = accounts;
     });
   }
@@ -496,15 +498,15 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   public handleAccountExport(data: { address: string; password: string }): void {
-    exportAccount(this.getApi(), data);
+    exportAccount(this.chainApi, data);
   }
 
   public handleAccountDelete(address: string): void {
-    deleteAccount(this.getApi(), address);
+    deleteAccount(this.chainApi, address);
   }
 
   public handleAccountRestore(data: RestoreAccountArgs): void {
-    restoreAccount(this.getApi(), data);
+    restoreAccount(this.chainApi, data);
   }
 
   public handleBack(): void {

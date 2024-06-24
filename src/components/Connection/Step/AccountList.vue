@@ -9,7 +9,7 @@
         :accounts="accounts"
         :wallet="selectedWallet"
         :is-connected="isConnectedAccount"
-        :get-api="getApi"
+        :chain-api="chainApi"
         @select="handleSelectAccount"
         class="connection__accounts"
       >
@@ -99,7 +99,7 @@ import type { WithKeyring } from '@sora-substrate/util';
   },
 })
 export default class AccountListStep extends Mixins(LoadingMixin, NotificationMixin) {
-  @Prop({ required: true, type: Function }) public readonly getApi!: () => WithKeyring;
+  @Prop({ required: true, type: Object }) public readonly chainApi!: WithKeyring;
 
   @Prop({ default: '', type: String }) readonly text!: string;
   @Prop({ default: false, type: Boolean }) readonly isInternal!: boolean;
@@ -135,9 +135,9 @@ export default class AccountListStep extends Mixins(LoadingMixin, NotificationMi
   }
 
   isConnectedAccount(account: PolkadotJsAccount): boolean {
-    const api = this.getApi();
     return (
-      this.connectedWallet === account.source && api.formatAddress(this.connectedAccount, false) === account.address
+      this.connectedWallet === account.source &&
+      this.chainApi.formatAddress(this.connectedAccount, false) === account.address
     );
   }
 
@@ -219,7 +219,7 @@ export default class AccountListStep extends Mixins(LoadingMixin, NotificationMi
 
           if (!json) throw new Error('polkadotjs.noAccount');
 
-          const verified = verifyAccountJson(this.getApi(), json, password);
+          const verified = verifyAccountJson(this.chainApi, json, password);
 
           exportAccountJson(verified);
         } else {

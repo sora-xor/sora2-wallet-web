@@ -28,7 +28,7 @@ export class WcSubstrateProvider {
   public modal!: WalletConnectModal;
   public session!: SessionTypes.Struct | undefined;
 
-  constructor(chainId = ChainId, optionalChainIds = OptionalChains) {
+  constructor(chainId: string, optionalChainIds = []) {
     this.chainId = chainId;
     this.optionalChainIds = optionalChainIds;
   }
@@ -72,7 +72,7 @@ export class WcSubstrateProvider {
 
       if (!this.chainId) throw new Error(`[${this.constructor.name}] chainId is not defined`);
 
-      const params = this.getConnectParams(this.chainId, this.optionalChainIds);
+      const params = this.getConnectParams([this.chainId], this.optionalChainIds);
 
       const { uri, approval } = await this.provider.client.connect(params);
 
@@ -141,9 +141,7 @@ export class WcSubstrateProvider {
       if (activePairing) {
         const pairingTopic = activePairing.topic;
         console.info(`[${this.constructor.name}]: active pairing topic found: "${pairingTopic}"`);
-        this.session = await this.provider.connect({
-          pairingTopic,
-        });
+        this.session = await this.provider.pair(pairingTopic);
       }
     } catch {
       this.disconnect();
@@ -179,19 +177,23 @@ export class WcSubstrateProvider {
     await this.connect();
   }
 
-  protected getConnectParams(chainId: string, optionalChainIds: string[]): EngineTypes.ConnectParams {
+  protected getConnectParams(requiredChainIds: string[], optionalChainIds: string[]): EngineTypes.ConnectParams {
     const methods = ['polkadot_signTransaction'];
     const events = ['accountsChanged'];
 
-    const params: EngineTypes.ConnectParams = {
-      requiredNamespaces: {
-        polkadot: {
-          methods,
-          chains: [this.getChainCaip13(chainId)],
-          events,
+    const params: EngineTypes.ConnectParams = {};
+
+    if (requiredChainIds.length) {
+      Object.assign(params, {
+        requiredNamespaces: {
+          polkadot: {
+            methods,
+            chains: requiredChainIds.map((chainId) => this.getChainCaip13(chainId)),
+            events,
+          },
         },
-      },
-    };
+      });
+    }
 
     if (optionalChainIds.length) {
       Object.assign(params, {
@@ -208,9 +210,9 @@ export class WcSubstrateProvider {
     return params;
   }
 
-  protected getChainCaip13(chainId: string): string {
+  protected getChainCaip13(chainId: string, namespace = 'polkadot'): string {
     // https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-13.md
-    return `polkadot:${chainId.slice(2, 34)}`;
+    return `${namespace}:${chainId.slice(2, 34)}`;
   }
 
   public getAccounts(): string[] {
@@ -234,6 +236,7 @@ export class WcSubstrateProvider {
   }
 
   public async signTransactionPayload(payload: SignerPayloadJSON): Promise<HexString> {
+    console.log(payload);
     try {
       const session = this.getCurrentSession();
       const chainId = this.getChainCaip13(this.chainId);

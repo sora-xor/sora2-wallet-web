@@ -6,7 +6,7 @@ import { WcSubstrateWallet } from './wallet';
 
 export { WcSubstrateProvider, WcSubstrateWallet };
 
-export const addWcWalletLocally = (chainId?: string): void => {
+export const addWcWalletLocally = (chainId: string): void => {
   const name = chainId ? `${WalletConnectInfo.extensionName}:${chainId}` : WalletConnectInfo.extensionName;
 
   try {

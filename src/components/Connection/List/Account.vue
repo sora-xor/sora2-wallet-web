@@ -5,7 +5,7 @@
       v-for="{ account, isConnected } in accountList"
       :key="account.address"
       :polkadot-account="account"
-      :get-api="getApi"
+      :chain-api="chainApi"
       tabindex="0"
       @click.native="handleSelectAccount(account, isConnected)"
     >
@@ -43,7 +43,7 @@ export default class AccountConnectionList extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) private accounts!: Array<PolkadotJsAccount>;
   @Prop({ default: '', type: String }) private wallet!: AppWallet;
   @Prop({ default: () => false, type: Function }) private isConnected!: (account: PolkadotJsAccount) => boolean;
-  @Prop({ default: () => api, type: Function }) readonly getApi!: () => WithConnectionApi;
+  @Prop({ default: () => api, type: Object }) readonly chainApi!: WithConnectionApi;
 
   get accountList() {
     return this.accounts.map((account) => {
