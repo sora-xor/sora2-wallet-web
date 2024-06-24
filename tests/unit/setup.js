@@ -1,4 +1,11 @@
-import jest from 'jest';
+import { TextEncoder, TextDecoder } from 'util';
+
+import { jest } from '@jest/globals';
+
+jest.mock('@walletconnect/modal');
+jest.mock('@walletconnect/universal-provider');
+
+Object.assign(global, { TextDecoder, TextEncoder });
 
 const constantDate = new Date(2020, 10, 27, 23, 59, 59);
 global.Date = class extends Date {

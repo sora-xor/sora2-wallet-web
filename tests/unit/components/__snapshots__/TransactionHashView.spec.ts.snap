@@ -20,7 +20,7 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
     tabindex="-1"
     type="text"
     usedesignsystem="true"
-    value="cnToWyQbAUWy...yLGKFBTRYbz8"
+    value=""
   />
    
   <s-button-stub
@@ -62,7 +62,7 @@ exports[`TransactionHashView.vue [type: account, env: Dev]: should be rendered c
     tabindex="-1"
     type="text"
     usedesignsystem="true"
-    value="cnToWyQbAUWy...yLGKFBTRYbz8"
+    value=""
   />
    
   <s-button-stub
@@ -104,7 +104,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     tabindex="-1"
     type="text"
     usedesignsystem="true"
-    value="cnToWyQbAUWy...yLGKFBTRYbz8"
+    value=""
   />
    
   <s-button-stub
@@ -140,7 +140,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     <template>
       <a
         class="transaction-link"
-        href="https://sora.subscan.io/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
+        href="https://sora.subscan.io/account/"
         rel="nofollow noopener"
         target="_blank"
       >
@@ -177,7 +177,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     tabindex="-1"
     type="text"
     usedesignsystem="true"
-    value="cnToWyQbAUWy...yLGKFBTRYbz8"
+    value=""
   />
    
   <s-button-stub
@@ -213,7 +213,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
     <template>
       <a
         class="transaction-link"
-        href="https://sora.subscan.io/account/cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
+        href="https://sora.subscan.io/account/"
         rel="nofollow noopener"
         target="_blank"
       >

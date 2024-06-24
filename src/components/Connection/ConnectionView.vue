@@ -173,6 +173,8 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   accounts: Array<PolkadotJsAccount> = [];
   accountsSubscription: Nullable<VoidFunction> = null;
 
+  wcName = '';
+
   resetWalletAccountsSubscription(): void {
     this.accountsSubscription?.();
     this.accountsSubscription = null;
@@ -192,8 +194,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   private createWcWallet(): void {
     this.withApi(() => {
-      addWcWalletLocally(this.chainGenesisHash);
-
+      this.wcName = addWcWalletLocally(this.chainGenesisHash);
       this.updateAvailableWallets();
     });
   }
@@ -224,8 +225,16 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       internal: [], // integrations, app signing
       external: [], // extensions
     };
+    const wcPrefix = this.wcName.split(':')[0];
 
     return this.availableWallets.reduce((buffer, wallet) => {
+      const name = wallet.extensionName;
+
+      // show walletconnect only for this connection
+      if (wcPrefix && name.startsWith(wcPrefix) && name !== this.wcName) {
+        return buffer;
+      }
+
       if (isInternalWallet(wallet)) {
         buffer.internal.push(wallet);
       } else {
