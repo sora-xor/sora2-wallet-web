@@ -9,7 +9,7 @@
       </s-button>
 
       <select v-model="appCurrency">
-        <option v-for="(rate, key) in fiatExchangeRateObject" :key="key" :value="key">{{ key }}</option>
+        <option v-for="{ key } in currencies" :key="key" :value="key">{{ key }}</option>
       </select>
     </div>
     <div class="wallet-wrapper s-flex">
@@ -43,7 +43,7 @@ import { state, mutation, getter, action } from './store/decorators';
 import { initWallet } from './index';
 
 import type { ApiKeysObject } from './types/common';
-import type { Currency } from './types/currency';
+import type { Currency, CurrencyFields } from './types/currency';
 import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
 import type DesignSystem from '@soramitsu-ui/ui-vue2/lib/types/DesignSystem';
 import type Theme from '@soramitsu-ui/ui-vue2/lib/types/Theme';
@@ -78,7 +78,7 @@ export default class App extends Mixins(TransactionMixin) {
   }) => Promise<void>;
 
   @state.settings.currency currency!: Currency;
-  @state.settings.fiatExchangeRateObject fiatExchangeRateObject!: Record<Currency, number>;
+  @state.settings.currencies currencies!: CurrencyFields[];
   @mutation.settings.setFiatCurrency setFiatCurrency!: (currency: Currency) => void;
   @action.settings.subscribeOnExchangeRatesApi private subscribeOnExchangeRatesApi!: AsyncFnWithoutArgs;
 

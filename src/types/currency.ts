@@ -1,6 +1,7 @@
 export enum Currency {
   DAI = 'dai',
   USD = 'usd',
+  XOR = 'xor',
   AED = 'aed',
   ARS = 'ars',
   AUD = 'aud',
