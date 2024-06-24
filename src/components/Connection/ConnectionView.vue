@@ -138,8 +138,6 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
 export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
   @Prop({ required: true, type: Object }) public readonly chainApi!: WithKeyring;
 
-  @Prop({ default: 'sora', type: String }) public readonly wcNamespace!: string;
-
   @Prop({ default: () => null, type: Object }) private readonly account!: Nullable<PolkadotJsAccount>;
 
   @Prop({ default: () => {}, type: Function }) private readonly loginAccount!: (
