@@ -190,7 +190,6 @@ export default {
     },
   },
   connection: {
-    title: '{Sora} Network account',
     text: 'In order to manage assets and sign transactions on {Sora}, an account must be connected. {Sora} accounts can be created and connected using our integrated wallets or browser extensions.',
     internalTitle: 'Connect with {wallet}',
     internalText:
@@ -214,7 +213,6 @@ export default {
     },
   },
   wallet: {
-    title: '{Sora} Network account',
     [WalletTabs.Assets]: 'Assets',
     [WalletTabs.History]: 'Activity',
     createToken: '@:createTokenText',
@@ -240,6 +238,7 @@ export default {
     errorAddress: 'Invalid address. Please check it and try again.',
   },
   account: {
+    accountTitle: 'Account',
     walletAddress: 'Wallet address',
     copy: 'Copy address',
     switch: 'Switch account',

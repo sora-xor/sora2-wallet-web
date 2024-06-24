@@ -33,6 +33,7 @@ export default class SearchInput extends Mixins(InputFocusMixin) {
 <style lang="scss">
 .search-input {
   position: relative;
+  margin-top: 2px; // to deal with outline
 
   .s-button--clear {
     width: 18px;

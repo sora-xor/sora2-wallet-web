@@ -229,7 +229,7 @@ $formatted-amount-class: '.formatted-amount';
 
 #{$formatted-amount-class} {
   display: block;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
   word-break: break-all;
   // Trick to fix horizontal spacings bug between elements
   &__value {
@@ -244,7 +244,6 @@ $formatted-amount-class: '.formatted-amount';
   &__decimal {
     word-spacing: -3px;
   }
-
   &--fiat-value {
     color: var(--s-color-fiat-value);
     font-family: var(--s-font-family-default);

@@ -65,6 +65,7 @@ export default class App extends Mixins(TransactionMixin) {
     endpoint: string;
   }) => void;
 
+  @mutation.account.setIsDesktop setIsDesktop!: (flag: boolean) => void;
   @mutation.settings.toggleHideBalance toggleHideBalance!: FnWithoutArgs;
   @action.account.useCeresApiForFiatValues private useCeresApiForFiatValues!: (flag: boolean) => void;
   @action.settings.selectIndexer private selectIndexer!: (IndexerType: IndexerType) => void;
@@ -85,6 +86,7 @@ export default class App extends Mixins(TransactionMixin) {
   @mutation.transactions.setSignTxDialogVisibility public setSignTxDialogVisibility!: (flag: boolean) => void;
 
   async created(): Promise<void> {
+    // this.setIsDesktop(true);
     await this.setApiKeys(env.API_KEYS);
     this.setIndexerEndpoint({ indexer: IndexerType.SUBQUERY, endpoint: env.SUBQUERY_ENDPOINT });
     this.setIndexerEndpoint({ indexer: IndexerType.SUBSQUID, endpoint: env.SUBSQUID_ENDPOINT });

@@ -267,7 +267,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
           return '';
       }
     } else {
-      return this.t('connection.title');
+      return this.t('account.accountTitle');
     }
   }
 
