@@ -1,9 +1,21 @@
 import { WalletConnectModal } from '@walletconnect/modal';
 import UniversalProvider from '@walletconnect/universal-provider';
 
+import { formatAccountAddress } from '../../util';
+
 import type { SignerPayloadJSON } from '@polkadot/types/types';
 import type { HexString } from '@polkadot/util/types';
 import type { EngineTypes, SessionTypes, PairingTypes } from '@walletconnect/types';
+
+// SORA mainnet chainId by default
+const ChainId = '0x7e4e32d0feafd4f9c9414b0be86373f9a1efa904809b683453a9af6856d38ad5';
+const OptionalChains = [
+  '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3', // Polkadot
+  '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c', // Acala
+  '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6', // Astar
+  '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe', // Kusama
+  '0x6bd89e052d67a45bb60a9a23e8581053d5e0d619f15cb9865946937e690c42d6', // Liberland
+];
 
 export class WcSubstrateProvider {
   /** WalletConnect app projectId */
@@ -16,11 +28,7 @@ export class WcSubstrateProvider {
   public modal!: WalletConnectModal;
   public session!: SessionTypes.Struct | undefined;
 
-  // SORA mainnet chainId by default
-  constructor(
-    chainId = '0x7e4e32d0feafd4f9c9414b0be86373f9a1efa904809b683453a9af6856d38ad5',
-    optionalChainIds: string[] = []
-  ) {
+  constructor(chainId = ChainId, optionalChainIds = OptionalChains) {
     this.chainId = chainId;
     this.optionalChainIds = optionalChainIds;
   }
@@ -64,7 +72,7 @@ export class WcSubstrateProvider {
 
       if (!this.chainId) throw new Error(`[${this.constructor.name}] chainId is not defined`);
 
-      const params = this.getChainParams(this.chainId);
+      const params = this.getConnectParams(this.chainId, this.optionalChainIds);
 
       const { uri, approval } = await this.provider.client.connect(params);
 
@@ -171,7 +179,7 @@ export class WcSubstrateProvider {
     await this.connect();
   }
 
-  protected getChainParams(chainId: string, optionalChainIds: string[]): EngineTypes.ConnectParams {
+  protected getConnectParams(chainId: string, optionalChainIds: string[]): EngineTypes.ConnectParams {
     const methods = ['polkadot_signTransaction'];
     const events = ['accountsChanged'];
 
@@ -215,10 +223,14 @@ export class WcSubstrateProvider {
 
     // grab account addresses from CAIP account formatted accounts
     const accounts = walletConnectAccount.map((wcAccount) => {
-      return wcAccount.split(':')[2];
+      const address = wcAccount.split(':')[2];
+
+      return formatAccountAddress(address, false);
     });
 
-    return accounts;
+    const uniqueAccounts = [...new Set(accounts)];
+
+    return uniqueAccounts;
   }
 
   public async signTransactionPayload(payload: SignerPayloadJSON): Promise<HexString> {

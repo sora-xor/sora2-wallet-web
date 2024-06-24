@@ -138,8 +138,7 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
 export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
   @Prop({ required: true, type: Function }) public readonly getApi!: () => WithKeyring;
 
-  /** Should be created separate `walletconnect` connection for chain, used in `api` (getApi()) */
-  @Prop({ default: false, type: Boolean }) public readonly separateWc!: boolean;
+  @Prop({ default: 'sora', type: String }) public readonly wcNamespace!: string;
 
   @Prop({ default: () => null, type: Object }) private readonly account!: Nullable<PolkadotJsAccount>;
 
@@ -195,13 +194,9 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   private createWcWallet(): void {
     this.withApi(() => {
-      let chainId!: string;
+      const chainId = this.getApi().api.genesisHash.toString();
 
-      if (this.separateWc) {
-        chainId = this.getApi().api.genesisHash.toString();
-      }
-
-      addWcWalletLocally(chainId);
+      addWcWalletLocally();
 
       this.updateAvailableWallets();
     });
