@@ -107,6 +107,7 @@ export const getWallet = async (extension = AppWallet.PolkadotJS, autoreload = f
   }
 
   await waitForDocumentReady();
+
   await wallet.enable();
 
   const hasExtension = !!wallet.extension;

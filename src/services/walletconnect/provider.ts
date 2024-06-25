@@ -28,6 +28,8 @@ export class WcSubstrateProvider {
   public modal!: WalletConnectModal;
   public session!: SessionTypes.Struct | undefined;
 
+  protected connecting = false;
+
   constructor(chainId: string, optionalChainIds = []) {
     this.chainId = chainId;
     this.optionalChainIds = optionalChainIds;
@@ -40,17 +42,21 @@ export class WcSubstrateProvider {
   public async init(): Promise<void> {
     if (this.ready) return;
 
-    if (!WcSubstrateProvider.projectId) throw new Error(`[${this.constructor.name}]: projectId is required`);
+    const projectId = WcSubstrateProvider.projectId;
+
+    if (!projectId) throw new Error(`[${this.constructor.name}]: projectId is required`);
+    if (!this.chainId) throw new Error(`[${this.constructor.name}] chainId is not defined`);
 
     // Instantiate a universal provider using the projectId created for your app.
     this.provider = await UniversalProvider.init({
-      projectId: WcSubstrateProvider.projectId,
+      projectId,
       relayUrl: 'wss://relay.walletconnect.com',
+      name: this.chainId,
     });
 
     // Create a standalone modal using your dapps WalletConnect projectId.
     this.modal = new WalletConnectModal({
-      projectId: WcSubstrateProvider.projectId,
+      projectId,
     });
   }
 
@@ -64,30 +70,29 @@ export class WcSubstrateProvider {
       // await this.restoreSession();
 
       // already connected
-      if (this.session) {
+      if (this.session || this.connecting) {
         return;
-      } else {
-        this.cleanupSessions();
       }
 
-      if (!this.chainId) throw new Error(`[${this.constructor.name}] chainId is not defined`);
-
       const params = this.getConnectParams([this.chainId], this.optionalChainIds);
+
+      this.connecting = true;
 
       const { uri, approval } = await this.provider.client.connect(params);
 
       // Open the modal prompting the user to scan the QR code with their wallet app.
       // if there is a URI from the client connect step open the modal
       if (uri) {
-        this.modal.openModal({ uri });
+        await this.modal.openModal({ uri });
       }
+
       // eslint-disable-next-line
       await new Promise<void>(async (resolve, reject) => {
         const unsub = this.modal.subscribeModal((state) => {
           if (!state.open) {
             unsub();
             if (!this.session) {
-              reject(new Error('Cancelled'));
+              reject(new Error('Modal closed by user'));
             }
           }
         });
@@ -101,14 +106,21 @@ export class WcSubstrateProvider {
         }
       });
 
+      const disconnectCb = ({ topic }) => {
+        if (this.session?.topic === topic) {
+          this.session = undefined;
+        }
+      };
+
       // Subscribe to session delete
-      this.provider.on('session_delete', this.disconnect.bind(this));
-    } catch (error) {
-      this.provider.abortPairingAttempt();
-      this.disconnect();
-      throw error;
+      this.provider.on('session_delete', ({ topic }) => {
+        disconnectCb({ topic });
+        this.provider.off('session_delete', disconnectCb);
+      });
     } finally {
       this.modal.closeModal();
+      this.provider.cleanupPendingPairings({ deletePairings: true });
+      this.connecting = false;
     }
   }
 
@@ -165,7 +177,7 @@ export class WcSubstrateProvider {
       this.provider.client.disconnect({
         topic: session.topic,
         reason: {
-          code: 0,
+          code: 6000, // https://specs.walletconnect.com/2.0/specs/clients/sign/error-codes#reason
           message: 'Disconnected by dApp',
         },
       });
@@ -236,7 +248,6 @@ export class WcSubstrateProvider {
   }
 
   public async signTransactionPayload(payload: SignerPayloadJSON): Promise<HexString> {
-    console.log(payload);
     try {
       const session = this.getCurrentSession();
       const chainId = this.getChainCaip13(this.chainId);
