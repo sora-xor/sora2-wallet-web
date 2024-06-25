@@ -5,6 +5,7 @@ export const DaiCurrency = { key: Currency.DAI, name: 'Dai', symbol: '$' };
 export const Currencies = [
   DaiCurrency,
   { key: Currency.USD, name: 'US Dollar', symbol: '$' },
+  { key: Currency.XOR, name: 'SORA', symbol: 'XOR' },
   { key: Currency.AED, name: 'United Arab Emirates Dirham', symbol: 'د.إ' },
   { key: Currency.ARS, name: 'Argentine Peso', symbol: 'ARS$' },
   { key: Currency.AUD, name: 'Australian Dollar', symbol: 'AU$' },
@@ -58,8 +59,9 @@ export function getCurrenciesState(isServiceUp: boolean): Array<CurrencyFields> 
   const disabled = !isServiceUp;
 
   return Currencies.map((currency: CurrencyFields) => {
-    if (currency.key === DaiCurrency.key) return { ...currency, disabled: false };
-
+    if ([DaiCurrency.key, Currency.XOR].includes(currency.key)) {
+      return { ...currency, disabled: false };
+    }
     return { ...currency, disabled };
   });
 }
