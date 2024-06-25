@@ -4,7 +4,13 @@ import { addWalletLocally, checkWallet } from '../../util/account';
 import { WcSubstrateProvider } from './provider';
 import { WcSubstrateWallet } from './wallet';
 
+import type { Wallet } from '@sora-test/wallet-connect/types';
+
 export { WcSubstrateProvider, WcSubstrateWallet };
+
+export const isWcWallet = (wallet: Wallet): boolean => {
+  return wallet.extensionName.startsWith(WalletConnectInfo.extensionName);
+};
 
 export const addWcWalletLocally = (chainId: string): string => {
   const name = chainId ? `${WalletConnectInfo.extensionName}:${chainId}` : WalletConnectInfo.extensionName;

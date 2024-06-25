@@ -74,7 +74,7 @@ import { Mixins, Component, Prop } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
-import { addWcWalletLocally } from '../../services/walletconnect';
+import { addWcWalletLocally, isWcWallet } from '../../services/walletconnect';
 import { action, state } from '../../store/decorators';
 import { delay } from '../../util';
 import {
@@ -102,8 +102,6 @@ import type { CreateAccountArgs, RestoreAccountArgs } from '../../store/account/
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { WithKeyring } from '@sora-substrate/util';
 import type { Wallet } from '@sora-test/wallet-connect/types';
-
-const CHECK_EXTENSION_INTERVAL = 5_000;
 
 const SelectAccountFlow = [LoginStep.ExtensionList, LoginStep.AccountList];
 const AccountCreateFlow = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
@@ -168,27 +166,26 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   selectedWallet: Nullable<AppWallet> = null;
   selectedWalletLoading = false;
-  walletAvailabilityTimer: Nullable<NodeJS.Timeout> = null;
 
   accounts: Array<PolkadotJsAccount> = [];
   accountsSubscription: Nullable<VoidFunction> = null;
 
   wcName = '';
 
-  resetWalletAccountsSubscription(): void {
+  private resetWalletAccountsSubscription(): void {
     this.accountsSubscription?.();
     this.accountsSubscription = null;
   }
 
   created(): void {
-    this.createWcWallet();
-
     this.resetStep();
 
     if (this.isDesktop) {
       this.withApi(() => {
         this.subscribeToWalletAccounts();
       });
+    } else {
+      this.createWcWallet();
     }
   }
 
@@ -221,17 +218,15 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   get wallets() {
+    const wcPrefix = this.wcName.split(':')[0];
     const wallets: { internal: Wallet[]; external: Wallet[] } = {
       internal: [], // integrations, app signing
       external: [], // extensions
     };
-    const wcPrefix = this.wcName.split(':')[0];
 
     return this.availableWallets.reduce((buffer, wallet) => {
-      const name = wallet.extensionName;
-
       // show walletconnect only for this connection
-      if (wcPrefix && name.startsWith(wcPrefix) && name !== this.wcName) {
+      if (isWcWallet(wallet) && wallet.extensionName !== this.wcName) {
         return buffer;
       }
 
@@ -387,6 +382,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       await this.withLoading(async () => {
         await this.withAppAlert(async () => {
           await this.loginAccount(account);
+          this.resetStep();
         });
       });
     }
@@ -415,30 +411,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     });
   }
 
-  private resetWalletAvailabilitySubscription(): void {
-    if (this.walletAvailabilityTimer) {
-      clearInterval(this.walletAvailabilityTimer);
-      this.walletAvailabilityTimer = null;
-    }
-    this.accounts = [];
-  }
-
-  private async subscribeOnWalletAvailability(): Promise<void> {
-    this.walletAvailabilityTimer = setInterval(() => this.checkSelectedWallet(), CHECK_EXTENSION_INTERVAL);
-  }
-
-  private async checkSelectedWallet(): Promise<void> {
-    try {
-      if (this.selectedWallet) {
-        await getWallet(this.selectedWallet);
-      }
-    } catch (error) {
-      console.error(error);
-      this.resetSelectedWallet();
-      this.handleAccountLogout();
-    }
-  }
-
   private async selectWallet(wallet: AppWallet): Promise<void> {
     try {
       this.resetWalletAccountsSubscription();
@@ -446,7 +418,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       this.setSelectedWalletLoading(true);
 
       await getWallet(wallet);
-      await this.subscribeOnWalletAvailability();
 
       this.setSelectedWalletLoading(false);
 
@@ -459,7 +430,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   private resetSelectedWallet(): void {
-    this.resetWalletAvailabilitySubscription();
     this.resetWalletAccountsSubscription();
     this.setSelectedWallet();
     this.setSelectedWalletLoading(false);
@@ -479,7 +449,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     return json;
   }
 
-  public async handleAccountLogin(password: string) {
+  public async handleAccountLogin(password: string): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
@@ -493,6 +463,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
           name: (meta.name as string) || '',
           source: this.selectedWallet as AppWallet,
         });
+        this.resetStep();
 
         if (this.isSignTxDialogDisabled) {
           this.setAccountPassphrase({ address, password });

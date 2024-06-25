@@ -119,7 +119,6 @@ export const getWallet = async (extension = AppWallet.PolkadotJS, autoreload = f
     window.location.reload();
   } else {
     const key = hasExtension && !isInternalWallet(wallet) ? 'polkadotjs.noSigner' : 'polkadotjs.connectionError';
-
     throw new AppError({ key, payload: { extension: wallet.title } });
   }
 
