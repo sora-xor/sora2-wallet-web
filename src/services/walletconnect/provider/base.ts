@@ -5,6 +5,11 @@ import type { EngineTypes, SessionTypes, PairingTypes } from '@walletconnect/typ
 
 export type ChainId = string | number;
 
+export type RequestArguments = {
+  method: string;
+  params: any;
+};
+
 export class WcProvider {
   /** WalletConnect app projectId */
   public static projectId = '';
@@ -17,11 +22,17 @@ export class WcProvider {
   public session!: SessionTypes.Struct | undefined;
 
   protected connecting = false;
+
+  protected database = 'wc2';
   protected table = 'keyvaluestorage';
 
   constructor(chains: ChainId[], optionalChains: ChainId[] = []) {
     this.chains = chains;
     this.optionalChains = optionalChains;
+  }
+
+  get chainId(): ChainId {
+    return this.chains[0];
   }
 
   get ready(): boolean {
@@ -41,7 +52,8 @@ export class WcProvider {
       projectId,
       relayUrl: 'wss://relay.walletconnect.com',
       storageOptions: {
-        database: this.table,
+        database: this.database,
+        table: this.table,
       },
     });
 
@@ -184,6 +196,11 @@ export class WcProvider {
     return {};
   }
 
+  protected formatChainId(chainId: ChainId): string {
+    console.info(`[${this.constructor.name}] "formatChainId" is not implemented`);
+    return '';
+  }
+
   public getAccounts(): string[] {
     const session = this.getCurrentSession();
 
@@ -200,8 +217,27 @@ export class WcProvider {
     });
   }
 
-  public async signTransactionPayload(payload: any): Promise<any> {
-    console.info(`[${this.constructor.name}] "signTransactionPayload" is not implemented`);
+  public async request<T = unknown>(request: RequestArguments, expiry?: number): Promise<T> {
+    const session = this.getCurrentSession();
+    const chainId = this.formatChainId(this.chainId);
+
+    const params: EngineTypes.RequestParams = {
+      chainId,
+      topic: session.topic,
+      request,
+      expiry,
+    };
+
+    try {
+      return await this.provider.client.request(params);
+    } catch (error) {
+      this.provider.logger.error(error);
+      throw error;
+    }
+  }
+
+  public async signTransaction(payload: any): Promise<any> {
+    console.info(`[${this.constructor.name}] "signTransaction" is not implemented`);
     return '';
   }
 }

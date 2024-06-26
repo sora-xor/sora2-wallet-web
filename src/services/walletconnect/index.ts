@@ -33,6 +33,6 @@ export const addWcSubWalletLocally = (chainId: string): string => {
   return addWcWalletLocally(chainId, WcSubProvider);
 };
 
-export const addWcEvmWalletLocally = (chainId: string): string => {
+export const addWcEvmWalletLocally = (chainId: number): string => {
   return addWcWalletLocally(chainId, WcEvmProvider);
 };

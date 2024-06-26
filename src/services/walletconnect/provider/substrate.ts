@@ -47,7 +47,7 @@ export class WcSubProvider extends WcProvider {
     return params;
   }
 
-  protected formatChainId(chainId: ChainId): string {
+  protected override formatChainId(chainId: ChainId): string {
     // https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-13.md
     return `${namespace}:${String(chainId).slice(2, 34)}`;
   }
@@ -59,24 +59,19 @@ export class WcSubProvider extends WcProvider {
     return uniqueAccounts;
   }
 
-  public override async signTransactionPayload(payload: SignerPayloadJSON): Promise<HexString> {
+  public override async signTransaction(payload: SignerPayloadJSON): Promise<HexString> {
     try {
-      const session = this.getCurrentSession();
-      const chainId = this.formatChainId(this.chains[0]);
-
-      const result = (await this.provider.client.request({
-        chainId,
-        topic: session.topic,
-        request: {
-          method: 'polkadot_signTransaction',
-          params: {
-            address: payload.address,
-            transactionPayload: payload,
-          },
+      const params = {
+        method: 'polkadot_signTransaction',
+        params: {
+          address: payload.address,
+          transactionPayload: payload,
         },
-      })) as any;
+      };
 
-      return result.signature as HexString;
+      const result = await this.request<{ signature: HexString }>(params);
+
+      return result.signature;
     } catch (error) {
       console.error(error);
       throw error;

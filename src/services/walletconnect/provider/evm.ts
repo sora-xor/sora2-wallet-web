@@ -56,7 +56,7 @@ export class WcEvmProvider extends WcProvider {
     return params;
   }
 
-  protected formatChainId(chainId: ChainId): string {
+  protected override formatChainId(chainId: ChainId): string {
     // https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-13.md
     return `${namespace}:${chainId}`;
   }
