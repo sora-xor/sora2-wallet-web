@@ -103,6 +103,7 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
 
   @getter.settings.currencySymbol private currencySymbol!: string;
   @getter.settings.exchangeRate private exchangeRate!: number;
+  @getter.settings.xorRate private xorRate!: number;
 
   isValueWider = false;
 
@@ -145,9 +146,15 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
     let value = this.value;
 
     if (this.isFiatValue) {
-      const coefficient = this.customizableCurrency
-        ? this.fiatExchangeRateObject[this.customizableCurrency] ?? 1
-        : this.exchangeRate;
+      let coefficient = this.exchangeRate;
+
+      if (this.customizableCurrency) {
+        coefficient =
+          this.customizableCurrency === Currency.XOR
+            ? this.xorRate
+            : this.fiatExchangeRateObject[this.customizableCurrency] ?? 1;
+      }
+
       value = new FPNumber(this.unformatted).mul(coefficient).toLocaleString();
     }
 
