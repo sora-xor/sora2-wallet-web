@@ -19,23 +19,18 @@ const getters = defineGetters<SettingsState>()({
     return getCurrency(state.currency)?.symbol ?? DaiCurrency.symbol;
   },
 
-  xorRate(...args): number {
-    const [, , rsArgs, rgArgs] = args;
-    const { rootState } = rootGetterContext([rsArgs, rgArgs]);
-    const xorPriceCodec = rootState.wallet.account.fiatPriceObject[XOR.address];
-    const xorPrice = FPNumber.fromCodecValue(xorPriceCodec);
-    if (xorPrice.isGtZero()) {
-      return FPNumber.ONE.div(xorPrice).toNumber();
-    }
-    return 1;
-  },
-
   exchangeRate(...args): number {
-    const { state, getters } = settingsGetterContext(args);
+    const { state } = settingsGetterContext(args);
 
     if (state.currency === Currency.XOR) {
-      const { xorRate } = getters;
-      return xorRate;
+      const [, , rsArgs, rgArgs] = args;
+      const { rootState } = rootGetterContext([rsArgs, rgArgs]);
+      const xorPriceCodec = rootState.wallet.account.fiatPriceObject[XOR.address];
+      const xorPrice = FPNumber.fromCodecValue(xorPriceCodec);
+      if (xorPrice.isGtZero()) {
+        return FPNumber.ONE.div(xorPrice).toNumber();
+      }
+      return 1;
     }
 
     return state.fiatExchangeRateObject[state.currency] ?? 1;

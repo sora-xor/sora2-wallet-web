@@ -30,6 +30,7 @@
 
 <script lang="ts">
 import { FPNumber } from '@sora-substrate/util';
+import { XOR } from '@sora-substrate/util/build/assets/consts';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { Currency, FiatExchangeRateObject } from '@/types/currency';
@@ -98,12 +99,11 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
   @Prop({ default: '', type: String }) readonly customizableCurrency!: Currency | '';
 
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
-  @state.settings.currency currency!: Currency;
-  @state.settings.fiatExchangeRateObject fiatExchangeRateObject!: FiatExchangeRateObject;
+  @state.settings.fiatExchangeRateObject private fiatExchangeRateObject!: FiatExchangeRateObject;
+  @state.account.fiatPriceObject private fiatPriceObject!: FiatExchangeRateObject;
 
   @getter.settings.currencySymbol private currencySymbol!: string;
   @getter.settings.exchangeRate private exchangeRate!: number;
-  @getter.settings.xorRate private xorRate!: number;
 
   isValueWider = false;
 
@@ -149,10 +149,13 @@ export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
       let coefficient = this.exchangeRate;
 
       if (this.customizableCurrency) {
-        coefficient =
-          this.customizableCurrency === Currency.XOR
-            ? this.xorRate
-            : this.fiatExchangeRateObject[this.customizableCurrency] ?? 1;
+        if (this.customizableCurrency !== Currency.XOR) {
+          coefficient = this.fiatExchangeRateObject[this.customizableCurrency] ?? 1;
+        } else {
+          const xorPriceCodec = this.fiatPriceObject[XOR.address];
+          const xorPrice = FPNumber.fromCodecValue(xorPriceCodec);
+          coefficient = xorPrice.isGtZero() ? FPNumber.ONE.div(xorPrice).toNumber() : 1;
+        }
       }
 
       value = new FPNumber(this.unformatted).mul(coefficient).toLocaleString();
