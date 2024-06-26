@@ -17,6 +17,7 @@ const createStore = (shouldBalanceBeHidden = false, currency = DaiCurrency, exch
       getters: {
         currencySymbol: () => currency.symbol,
         exchangeRate: () => exchangeRate,
+        xorRate: () => 1,
       },
     },
   });
