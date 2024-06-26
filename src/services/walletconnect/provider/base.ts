@@ -1,28 +1,16 @@
 import { WalletConnectModal } from '@walletconnect/modal';
 import UniversalProvider from '@walletconnect/universal-provider';
 
-import { formatAccountAddress } from '../../util';
-
-import type { SignerPayloadJSON } from '@polkadot/types/types';
-import type { HexString } from '@polkadot/util/types';
 import type { EngineTypes, SessionTypes, PairingTypes } from '@walletconnect/types';
 
-// SORA mainnet chainId by default
-const ChainId = '0x7e4e32d0feafd4f9c9414b0be86373f9a1efa904809b683453a9af6856d38ad5';
-const OptionalChains = [
-  '0x91b171bb158e2d3848fa23a9f1c25182fb8e20313b2c1eb49219da7a70ce90c3', // Polkadot
-  '0xfc41b9bd8ef8fe53d58c7ea67c794c7ec9a73daf05e6d54b14ff6342c99ba64c', // Acala
-  '0x9eb76c5184c4ab8679d2d5d819fdf90b9c001403e9e17da2e14b6d8aec4029c6', // Astar
-  '0xb0a8d493285c2df73290dfb7e61f870f17b41801197a149ca93654499ea3dafe', // Kusama
-  '0x6bd89e052d67a45bb60a9a23e8581053d5e0d619f15cb9865946937e690c42d6', // Liberland
-];
+export type ChainId = string | number;
 
-export class WcSubstrateProvider {
+export class WcProvider {
   /** WalletConnect app projectId */
   public static projectId = '';
-  /** Chain genesis hash: `api.genesisHash.toString()` */
-  protected chainId!: string;
-  protected optionalChainIds!: string[];
+  /** Chains genesis hashes: `api.genesisHash.toString()` */
+  protected chains!: ChainId[];
+  protected optionalChains!: ChainId[];
 
   public provider!: UniversalProvider;
   public modal!: WalletConnectModal;
@@ -30,9 +18,9 @@ export class WcSubstrateProvider {
 
   protected connecting = false;
 
-  constructor(chainId: string, optionalChainIds = []) {
-    this.chainId = chainId;
-    this.optionalChainIds = optionalChainIds;
+  constructor(chains: ChainId[], optionalChains = []) {
+    this.chains = chains;
+    this.optionalChains = optionalChains;
   }
 
   get ready(): boolean {
@@ -42,16 +30,14 @@ export class WcSubstrateProvider {
   public async init(): Promise<void> {
     if (this.ready) return;
 
-    const projectId = WcSubstrateProvider.projectId;
+    const projectId = WcProvider.projectId;
 
     if (!projectId) throw new Error(`[${this.constructor.name}]: projectId is required`);
-    if (!this.chainId) throw new Error(`[${this.constructor.name}] chainId is not defined`);
 
     // Instantiate a universal provider using the projectId created for your app.
     this.provider = await UniversalProvider.init({
       projectId,
       relayUrl: 'wss://relay.walletconnect.com',
-      name: this.chainId,
     });
 
     // Create a standalone modal using your dapps WalletConnect projectId.
@@ -74,7 +60,7 @@ export class WcSubstrateProvider {
         return;
       }
 
-      const params = this.getConnectParams([this.chainId], this.optionalChainIds);
+      const params = this.getConnectParams(this.chains, this.optionalChains);
 
       this.connecting = true;
 
@@ -109,14 +95,12 @@ export class WcSubstrateProvider {
       const disconnectCb = ({ topic }) => {
         if (this.session?.topic === topic) {
           this.session = undefined;
+          this.provider.off('session_delete', disconnectCb);
         }
       };
 
       // Subscribe to session delete
-      this.provider.on('session_delete', ({ topic }) => {
-        disconnectCb({ topic });
-        this.provider.off('session_delete', disconnectCb);
-      });
+      this.provider.on('session_delete', ({ topic }) => disconnectCb({ topic }));
     } finally {
       this.modal.closeModal();
       this.provider.cleanupPendingPairings({ deletePairings: true });
@@ -189,85 +173,8 @@ export class WcSubstrateProvider {
     await this.connect();
   }
 
-  protected getConnectParams(requiredChainIds: string[], optionalChainIds: string[]): EngineTypes.ConnectParams {
-    const methods = ['polkadot_signTransaction'];
-    const events = ['accountsChanged'];
-
-    const params: EngineTypes.ConnectParams = {};
-
-    if (requiredChainIds.length) {
-      Object.assign(params, {
-        requiredNamespaces: {
-          polkadot: {
-            methods,
-            chains: requiredChainIds.map((chainId) => this.getChainCaip13(chainId)),
-            events,
-          },
-        },
-      });
-    }
-
-    if (optionalChainIds.length) {
-      Object.assign(params, {
-        optionalNamespaces: {
-          polkadot: {
-            methods,
-            chains: optionalChainIds.map((chainId) => this.getChainCaip13(chainId)),
-            events,
-          },
-        },
-      });
-    }
-
-    return params;
-  }
-
-  protected getChainCaip13(chainId: string, namespace = 'polkadot'): string {
-    // https://github.com/ChainAgnostic/CAIPs/blob/main/CAIPs/caip-13.md
-    return `${namespace}:${chainId.slice(2, 34)}`;
-  }
-
-  public getAccounts(): string[] {
-    const session = this.getCurrentSession();
-
-    // Get the accounts from the session for use in constructing transactions.
-    const walletConnectAccount = Object.values(session.namespaces)
-      .map((namespace) => namespace.accounts)
-      .flat();
-
-    // grab account addresses from CAIP account formatted accounts
-    const accounts = walletConnectAccount.map((wcAccount) => {
-      const address = wcAccount.split(':')[2];
-
-      return formatAccountAddress(address, false);
-    });
-
-    const uniqueAccounts = [...new Set(accounts)];
-
-    return uniqueAccounts;
-  }
-
-  public async signTransactionPayload(payload: SignerPayloadJSON): Promise<HexString> {
-    try {
-      const session = this.getCurrentSession();
-      const chainId = this.getChainCaip13(this.chainId);
-
-      const result = (await this.provider.client.request({
-        chainId,
-        topic: session.topic,
-        request: {
-          method: 'polkadot_signTransaction',
-          params: {
-            address: payload.address,
-            transactionPayload: payload,
-          },
-        },
-      })) as any;
-
-      return result.signature as HexString;
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
+  protected getConnectParams(chains: ChainId[], optionalChains: ChainId[]): EngineTypes.ConnectParams {
+    console.info(`[${this.constructor.name}] "getConnectParams" is not implemented`);
+    return {};
   }
 }

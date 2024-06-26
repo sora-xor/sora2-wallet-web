@@ -1,4 +1,4 @@
-import type { WcSubstrateProvider } from '../provider';
+import type { WcSubstrateProvider } from '../provider/substrate';
 import type { Signer, SignerPayloadJSON, SignerResult } from '@polkadot/types/types';
 
 export default class WcSigner implements Signer {

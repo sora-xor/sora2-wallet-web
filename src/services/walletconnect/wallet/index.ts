@@ -1,7 +1,7 @@
 import WcAccounts from './accounts';
 import WcSigner from './signer';
 
-import type { WcSubstrateProvider } from '../provider';
+import type { WcSubstrateProvider } from '../provider/substrate';
 import type { InjectedWindowProvider, Injected } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 

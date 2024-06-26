@@ -51,6 +51,7 @@ import * as SUBQUERY_TYPES from './services/indexer/subquery/types';
 import { historyElementsFilter } from './services/indexer/subsquid/queries/historyElements';
 import * as SUBSQUID_TYPES from './services/indexer/subsquid/types';
 import * as INDEXER_TYPES from './services/indexer/types';
+import * as WC from './services/walletconnect';
 import SoraWallet from './SoraWallet.vue';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import * as VUEX_TYPES from './store/types';
@@ -245,6 +246,7 @@ export {
   SUBSQUID_TYPES,
   INDEXER_TYPES,
   VUEX_TYPES,
+  WC,
   vuex,
 };
 

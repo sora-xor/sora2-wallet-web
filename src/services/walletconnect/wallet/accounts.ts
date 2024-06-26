@@ -1,6 +1,6 @@
 import { formatAccountAddress } from '../../../util';
 
-import type { WcSubstrateProvider } from '../provider';
+import type { WcSubstrateProvider } from '../provider/substrate';
 import type { InjectedAccount, InjectedAccounts, Unsubcall } from '@polkadot/extension-inject/types';
 
 const ACCOUNTS_UPDATE_INTERVAL = 60_000;

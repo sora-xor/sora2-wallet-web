@@ -218,7 +218,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   get wallets() {
-    const wcPrefix = this.wcName.split(':')[0];
     const wallets: { internal: Wallet[]; external: Wallet[] } = {
       internal: [], // integrations, app signing
       external: [], // extensions
