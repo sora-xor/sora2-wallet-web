@@ -19,7 +19,7 @@ const getters = defineGetters<SettingsState>()({
     return getCurrency(state.currency)?.symbol ?? DaiCurrency.symbol;
   },
 
-  xorRate(...args): Nullable<number> {
+  xorRate(...args): number {
     const [, , rsArgs, rgArgs] = args;
     const { rootState } = rootGetterContext([rsArgs, rgArgs]);
     const xorPriceCodec = rootState.wallet.account.fiatPriceObject[XOR.address];
@@ -27,7 +27,7 @@ const getters = defineGetters<SettingsState>()({
     if (xorPrice.isGtZero()) {
       return FPNumber.ONE.div(xorPrice).toNumber();
     }
-    return null;
+    return 1;
   },
 
   exchangeRate(...args): number {
@@ -35,7 +35,7 @@ const getters = defineGetters<SettingsState>()({
 
     if (state.currency === Currency.XOR) {
       const { xorRate } = getters;
-      return xorRate ?? 1;
+      return xorRate;
     }
 
     return state.fiatExchangeRateObject[state.currency] ?? 1;
