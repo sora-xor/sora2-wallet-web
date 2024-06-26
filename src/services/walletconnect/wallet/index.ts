@@ -1,20 +1,20 @@
 import WcAccounts from './accounts';
 import WcSigner from './signer';
 
-import type { WcSubstrateProvider } from '../provider/substrate';
+import type { WcProvider } from '../provider/base';
 import type { InjectedWindowProvider, Injected } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 
-export class WcSubstrateWallet implements InjectedWindowProvider {
+export class WcWallet implements InjectedWindowProvider {
   public static readonly version = '0.0.1';
 
   private access = false;
-  private wcProvider!: WcSubstrateProvider;
+  private wcProvider!: WcProvider;
 
   public readonly wcAccounts!: WcAccounts;
   public readonly wcSigner!: WcSigner;
 
-  constructor(wcProvider: WcSubstrateProvider) {
+  constructor(wcProvider: WcProvider) {
     this.wcProvider = wcProvider;
     this.wcAccounts = new WcAccounts(this.wcProvider);
     this.wcSigner = new WcSigner(this.wcProvider);

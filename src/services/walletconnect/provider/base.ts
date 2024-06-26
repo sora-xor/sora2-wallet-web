@@ -12,13 +12,14 @@ export class WcProvider {
   protected chains!: ChainId[];
   protected optionalChains!: ChainId[];
 
-  public provider!: UniversalProvider;
+  public provider!: InstanceType<typeof UniversalProvider>;
   public modal!: WalletConnectModal;
   public session!: SessionTypes.Struct | undefined;
 
   protected connecting = false;
+  protected table = 'keyvaluestorage';
 
-  constructor(chains: ChainId[], optionalChains = []) {
+  constructor(chains: ChainId[], optionalChains: ChainId[] = []) {
     this.chains = chains;
     this.optionalChains = optionalChains;
   }
@@ -35,9 +36,13 @@ export class WcProvider {
     if (!projectId) throw new Error(`[${this.constructor.name}]: projectId is required`);
 
     // Instantiate a universal provider using the projectId created for your app.
+    console.log(this.table);
     this.provider = await UniversalProvider.init({
       projectId,
       relayUrl: 'wss://relay.walletconnect.com',
+      storageOptions: {
+        database: this.table,
+      },
     });
 
     // Create a standalone modal using your dapps WalletConnect projectId.
@@ -75,11 +80,10 @@ export class WcProvider {
       // eslint-disable-next-line
       await new Promise<void>(async (resolve, reject) => {
         const unsub = this.modal.subscribeModal((state) => {
-          if (!state.open) {
+          if (!state.open && !this.session) {
             unsub();
-            if (!this.session) {
-              reject(new Error('Modal closed by user'));
-            }
+            this.provider.abortPairingAttempt();
+            reject(new Error('Connection request reset. Please try again.'));
           }
         });
 
@@ -100,10 +104,12 @@ export class WcProvider {
       };
 
       // Subscribe to session delete
-      this.provider.on('session_delete', ({ topic }) => disconnectCb({ topic }));
+      this.provider.on('session_delete', disconnectCb);
+    } catch (error) {
+      this.provider.logger.error(error);
+      throw error;
     } finally {
       this.modal.closeModal();
-      this.provider.cleanupPendingPairings({ deletePairings: true });
       this.connecting = false;
     }
   }
@@ -176,5 +182,26 @@ export class WcProvider {
   protected getConnectParams(chains: ChainId[], optionalChains: ChainId[]): EngineTypes.ConnectParams {
     console.info(`[${this.constructor.name}] "getConnectParams" is not implemented`);
     return {};
+  }
+
+  public getAccounts(): string[] {
+    const session = this.getCurrentSession();
+
+    // Get the accounts from the session for use in constructing transactions.
+    const walletConnectAccount = Object.values(session.namespaces)
+      .map((namespace) => namespace.accounts)
+      .flat();
+
+    // grab account addresses from CAIP account formatted accounts
+    return walletConnectAccount.map((wcAccount) => {
+      const address = wcAccount.split(':')[2];
+
+      return address;
+    });
+  }
+
+  public async signTransactionPayload(payload: any): Promise<any> {
+    console.info(`[${this.constructor.name}] "signTransactionPayload" is not implemented`);
+    return '';
   }
 }

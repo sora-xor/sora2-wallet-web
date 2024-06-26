@@ -1,12 +1,10 @@
-import type { WcSubstrateProvider } from '../provider/substrate';
+import type { WcProvider } from '../provider/base';
 import type { Signer, SignerPayloadJSON, SignerResult } from '@polkadot/types/types';
 
 export default class WcSigner implements Signer {
-  private wcProvider!: WcSubstrateProvider;
-  /** need by WC spec */
-  private txId = 0;
+  private wcProvider!: WcProvider;
 
-  constructor(wcProvider: WcSubstrateProvider) {
+  constructor(wcProvider: WcProvider) {
     this.wcProvider = wcProvider;
   }
 
@@ -15,7 +13,7 @@ export default class WcSigner implements Signer {
     const signature = await this.wcProvider.signTransactionPayload(payload);
 
     return {
-      id: this.txId++,
+      id: parseInt(payload.nonce, 16),
       signature,
     };
   }
