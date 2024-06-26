@@ -26,7 +26,6 @@ const getters = defineGetters<SettingsState>()({
       const [, , rsArgs, rgArgs] = args;
       const { rootState } = rootGetterContext([rsArgs, rgArgs]);
       const xorPriceCodec = rootState.wallet.account.fiatPriceObject[XOR.address];
-      console.log('xorPriceCodec', xorPriceCodec);
       const xorPrice = FPNumber.fromCodecValue(xorPriceCodec);
       if (xorPrice.isGtZero()) {
         return FPNumber.ONE.div(xorPrice).toNumber();
