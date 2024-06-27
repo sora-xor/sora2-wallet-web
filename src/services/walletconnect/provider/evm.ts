@@ -5,19 +5,35 @@ import type { EngineTypes } from '@walletconnect/types';
 const namespace = 'eip155';
 
 const methods = [
-  'eth_sendTransaction',
-  'eth_signTransaction',
-  'eth_sign',
   'personal_sign',
-  'eth_signTypedData',
+  'eth_sendTransaction',
   'eth_accounts',
   'eth_requestAccounts',
+  'eth_call',
+  'eth_getBalance',
+  'eth_sendRawTransaction',
+  'eth_sign',
+  'eth_signTransaction',
+  'eth_signTypedData',
+  'eth_signTypedData_v3',
+  'eth_signTypedData_v4',
   'wallet_switchEthereumChain',
   'wallet_addEthereumChain',
+  'wallet_getPermissions',
+  'wallet_requestPermissions',
+  'wallet_registerOnboarding',
   'wallet_watchAsset',
+  'wallet_scanQRCode',
+  'wallet_sendCalls',
+  'wallet_getCapabilities',
+  'wallet_getCallsStatus',
+  'wallet_showCallsStatus',
+  'eth_chainId',
+  'eth_blockNumber',
+  'eth_gasPrice',
 ];
 
-const events = ['chainChanged', 'accountsChanged', 'disconnect', 'connect'];
+const events = ['accountsChanged', 'chainChanged', 'message', 'disconnect', 'connect'];
 
 export class WcEvmProvider extends WcProvider {
   protected override table = namespace;

@@ -1,7 +1,7 @@
 import { WalletConnectModal } from '@walletconnect/modal';
 import UniversalProvider from '@walletconnect/universal-provider';
 
-import type { EngineTypes, SessionTypes, PairingTypes } from '@walletconnect/types';
+import type { EngineTypes, SessionTypes, SignClientTypes, PairingTypes } from '@walletconnect/types';
 
 export type ChainId = string | number;
 
@@ -21,8 +21,6 @@ export class WcProvider {
   public modal!: WalletConnectModal;
   public session!: SessionTypes.Struct | undefined;
 
-  protected connecting = false;
-
   protected database = 'wc2';
   protected table = 'keyvaluestorage';
 
@@ -39,6 +37,10 @@ export class WcProvider {
     return !!this.provider && !!this.modal;
   }
 
+  get signer() {
+    return this.provider.client;
+  }
+
   public async init(): Promise<void> {
     if (this.ready) return;
 
@@ -47,7 +49,6 @@ export class WcProvider {
     if (!projectId) throw new Error(`[${this.constructor.name}]: projectId is required`);
 
     // Instantiate a universal provider using the projectId created for your app.
-    console.log(this.table);
     this.provider = await UniversalProvider.init({
       projectId,
       relayUrl: 'wss://relay.walletconnect.com',
@@ -71,17 +72,16 @@ export class WcProvider {
     try {
       // Not works for now
       // await this.restoreSession();
-
       // already connected
-      if (this.session || this.connecting) {
+      if (this.session) {
         return;
       }
 
+      await this.provider.cleanupPendingPairings();
+
       const params = this.getConnectParams(this.chains, this.optionalChains);
 
-      this.connecting = true;
-
-      const { uri, approval } = await this.provider.client.connect(params);
+      const { uri, approval } = await this.signer.connect(params);
 
       // Open the modal prompting the user to scan the QR code with their wallet app.
       // if there is a URI from the client connect step open the modal
@@ -109,20 +109,20 @@ export class WcProvider {
       });
 
       const disconnectCb = ({ topic }) => {
-        if (this.session?.topic === topic) {
+        if (this.session && this.session.topic === topic) {
+          console.info(`[${this.constructor.name}] Session disconnect. Topic: "${this.session.topic}"`);
+          this.signer.off('session_delete', disconnectCb);
           this.session = undefined;
-          this.provider.off('session_delete', disconnectCb);
         }
       };
 
       // Subscribe to session delete
-      this.provider.on('session_delete', disconnectCb);
+      this.signer.on('session_delete', disconnectCb);
     } catch (error) {
       this.provider.logger.error(error);
       throw error;
     } finally {
-      this.modal.closeModal();
-      this.connecting = false;
+      if (this.modal) this.modal.closeModal();
     }
   }
 
@@ -139,7 +139,7 @@ export class WcProvider {
   }
 
   protected getActivePairings(): PairingTypes.Struct[] {
-    const pairings = this.provider.client.core.pairing.getPairings();
+    const pairings = this.signer.core.pairing.getPairings();
 
     const activePairings = pairings.filter((pairing) => pairing.active);
 
@@ -162,21 +162,12 @@ export class WcProvider {
     }
   }
 
-  /** Delete pending & active sessions */
-  protected async cleanupSessions(): Promise<void> {
-    await this.provider.cleanupPendingPairings({ deletePairings: true });
-
-    this.getActivePairings().forEach((activePairing) => {
-      this.disconnectSession(activePairing);
-    });
-  }
-
   /** Delete session from dApp and connected wallet */
   protected disconnectSession(session?: PairingTypes.Struct | SessionTypes.Struct): void {
     if (!session) return;
 
     try {
-      this.provider.client.disconnect({
+      this.signer.disconnect({
         topic: session.topic,
         reason: {
           code: 6000, // https://specs.walletconnect.com/2.0/specs/clients/sign/error-codes#reason
@@ -218,18 +209,18 @@ export class WcProvider {
   }
 
   public async request<T = unknown>(request: RequestArguments, expiry?: number): Promise<T> {
-    const session = this.getCurrentSession();
-    const chainId = this.formatChainId(this.chainId);
-
-    const params: EngineTypes.RequestParams = {
-      chainId,
-      topic: session.topic,
-      request,
-      expiry,
-    };
-
     try {
-      return await this.provider.client.request(params);
+      const session = this.getCurrentSession();
+      const chainId = this.formatChainId(this.chainId);
+
+      const params: EngineTypes.RequestParams = {
+        chainId,
+        topic: session.topic,
+        request,
+        expiry,
+      };
+
+      return await this.signer.request(params);
     } catch (error) {
       this.provider.logger.error(error);
       throw error;
@@ -239,5 +230,21 @@ export class WcProvider {
   public async signTransaction(payload: any): Promise<any> {
     console.info(`[${this.constructor.name}] "signTransaction" is not implemented`);
     return '';
+  }
+
+  public on(event: string, listener: any): void {
+    this.provider.on(event, listener);
+  }
+
+  public once(event: string, listener: any) {
+    this.provider.once(event, listener);
+  }
+
+  public removeListener(event: string, listener: any) {
+    this.provider.removeListener(event, listener);
+  }
+
+  public off(event: string, listener: any) {
+    this.provider.off(event, listener);
   }
 }
