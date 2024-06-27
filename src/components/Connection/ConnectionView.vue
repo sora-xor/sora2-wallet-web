@@ -74,7 +74,7 @@ import { Mixins, Component, Prop } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
-import { addWcSubWalletLocally, addWcEvmWalletLocally, isWcWallet } from '../../services/walletconnect';
+import { addWcSubWalletLocally, isWcWallet } from '../../services/walletconnect';
 import { action, state } from '../../store/decorators';
 import { delay } from '../../util';
 import {
@@ -191,8 +191,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   private createWcWallet(): void {
     this.withApi(() => {
-      // addWcSubWalletLocally('0x7e4e32d0feafd4f9c9414b0be86373f9a1efa904809b683453a9af6856d38ad5');
-      // addWcEvmWalletLocally(1);
       this.wcName = addWcSubWalletLocally(this.chainGenesisHash);
       this.updateAvailableWallets();
     });

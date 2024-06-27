@@ -1,7 +1,7 @@
 import { WalletConnectModal } from '@walletconnect/modal';
 import UniversalProvider from '@walletconnect/universal-provider';
 
-import type { EngineTypes, SessionTypes, SignClientTypes, PairingTypes } from '@walletconnect/types';
+import type { EngineTypes, SessionTypes, PairingTypes } from '@walletconnect/types';
 
 export type ChainId = string | number;
 
@@ -20,9 +20,6 @@ export class WcProvider {
   public provider!: InstanceType<typeof UniversalProvider>;
   public modal!: WalletConnectModal;
   public session!: SessionTypes.Struct | undefined;
-
-  protected database = 'wc2';
-  protected table = 'keyvaluestorage';
 
   constructor(chains: ChainId[], optionalChains: ChainId[] = []) {
     this.chains = chains;
@@ -52,10 +49,6 @@ export class WcProvider {
     this.provider = await UniversalProvider.init({
       projectId,
       relayUrl: 'wss://relay.walletconnect.com',
-      storageOptions: {
-        database: this.database,
-        table: this.table,
-      },
     });
 
     // Create a standalone modal using your dapps WalletConnect projectId.
