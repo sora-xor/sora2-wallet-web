@@ -56,7 +56,7 @@
       :loading="loading"
       :create-account="handleAccountCreate"
       :restore-account="handleAccountImport"
-      :json-only="!isDesktop"
+      :json-only="isAppStored"
     />
 
     <account-confirm-dialog
@@ -82,6 +82,7 @@ import {
   isInternalSource,
   getWallet,
   isInternalWallet,
+  isAppStorageSource,
   subscribeToWalletAccounts,
   exportAccount,
   deleteAccount,
@@ -108,7 +109,9 @@ const SelectAccountFlow = [LoginStep.ExtensionList, LoginStep.AccountList];
 const AccountCreateFlow = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
 const AccountImportFlow = [LoginStep.Import, LoginStep.ImportCredentials];
 
-const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): LoginStep => {
+const getPreviousLoginStep = (currentStep?: LoginStep): LoginStep => {
+  if (!currentStep) return LoginStep.ExtensionList;
+
   for (const flow of [AccountCreateFlow, AccountImportFlow]) {
     const currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
 
@@ -117,11 +120,7 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
     }
   }
 
-  // if (isDesktop) {
-  //   return LoginStep.AccountList;
-  // } else {
   return SelectAccountFlow.includes(currentStep) ? LoginStep.ExtensionList : LoginStep.AccountList;
-  // }
 };
 
 @Component({
@@ -152,7 +151,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   @Prop({ default: () => {}, type: Function }) private readonly closeView!: () => void;
 
-  @state.account.isDesktop private isDesktop!: boolean;
   @state.account.availableWallets private availableWallets!: Wallet[];
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
   @action.account.updateAvailableWallets private updateAvailableWallets!: () => void;
@@ -181,9 +179,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   created(): void {
     this.resetStep();
     this.withApi(() => {
-      if (this.isDesktop) {
-        this.subscribeToWalletAccounts();
-      }
       this.wcName = addWcSubWalletLocally(this.chainGenesisHash);
       this.updateAvailableWallets();
     });
@@ -205,9 +200,12 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     return (this.account?.source ?? '') as AppWallet;
   }
 
-  /** Google or Desktop */
   get isInternal(): boolean {
-    return this.isDesktop || (!!this.selectedWallet && isInternalSource(this.selectedWallet));
+    return !!this.selectedWallet && isInternalSource(this.selectedWallet);
+  }
+
+  get isAppStored(): boolean {
+    return !!this.selectedWallet && isAppStorageSource(this.selectedWallet);
   }
 
   get wallets() {
@@ -302,7 +300,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   get prevStep(): LoginStep {
-    return getPreviousLoginStep(this.step, this.isDesktop);
+    return getPreviousLoginStep(this.step);
   }
 
   get hasPrevStep(): boolean {
@@ -310,7 +308,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   get hasBackBtn(): boolean {
-    return this.hasPrevStep || (this.isLoggedIn && !this.isDesktop);
+    return this.hasPrevStep || this.isLoggedIn;
   }
 
   public navigateToCreateAccount(): void {
@@ -337,7 +335,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.add(verified, password);
-        } else if (this.isDesktop) {
+        } else if (this.selectedWallet === AppWallet.Sora) {
           this.handleAccountRestore(data);
         }
 
@@ -353,10 +351,11 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       await delay(250);
 
       await this.withAppNotification(async () => {
-        const accountJson = createAccount(this.chainApi, { ...data, saveAccount: this.isDesktop });
-
         if (this.selectedWallet === AppWallet.GoogleDrive) {
+          const accountJson = createAccount(this.chainApi, { ...data });
           await GDriveWallet.accounts.add(accountJson, data.password, data.seed);
+        } else if (this.selectedWallet === AppWallet.Sora) {
+          createAccount(this.chainApi, { ...data, saveAccount: true });
         }
 
         this.navigateToAccountList();
@@ -367,7 +366,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   public async handleAccountSelect(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
     if (isConnected) {
       this.closeView();
-    } else if (this.isInternal && !this.isDesktop) {
+    } else if (this.isInternal && !isAppStorageSource(account.source)) {
       this.accountLoginData = account;
       this.accountLoginVisibility = true;
     } else {
@@ -399,6 +398,8 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   private async subscribeToWalletAccounts(): Promise<void> {
+    if (!this.selectedWallet) return;
+
     this.accountsSubscription = await subscribeToWalletAccounts(this.chainApi, this.selectedWallet, (accounts) => {
       this.accounts = accounts;
     });
@@ -498,7 +499,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   private resetStep(): void {
-    this.step = LoginStep.ExtensionList;
+    this.step = getPreviousLoginStep();
   }
 }
 </script>

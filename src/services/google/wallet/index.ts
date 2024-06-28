@@ -12,12 +12,11 @@ import type { Signer } from '@polkadot/types/types';
 class GoogleDriveWallet implements InjectedWindowProvider {
   public static readonly version = '0.0.1';
 
-  private access!: boolean;
+  private access = false;
   public readonly accounts!: Accounts;
 
   constructor() {
     this.accounts = new Accounts();
-    this.access = false;
   }
 
   private get signer(): Signer {

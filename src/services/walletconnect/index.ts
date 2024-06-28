@@ -7,7 +7,7 @@ import { WcWallet } from './wallet';
 
 import type { Wallet } from '@sora-test/wallet-connect/types';
 
-export { WcProvider, WcSubProvider, WcWallet };
+export { WcProvider };
 
 export const isWcWallet = (wallet: Wallet): boolean => {
   return wallet.extensionName.startsWith(WalletConnectInfo.extensionName);

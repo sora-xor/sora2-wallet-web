@@ -118,7 +118,7 @@ const waitForCore = async ({
   if (!walletCoreLoaded) {
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
-    accountUtils.initAppWallets(appName);
+    accountUtils.initAppWallets(api, store.state.wallet.account.isDesktop, appName);
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);

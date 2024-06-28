@@ -1,4 +1,5 @@
 import GoogleLogo from '../assets/img/GoogleLogo.svg';
+import SoraWalletLogo from '../assets/img/Sora.svg';
 import WalletConnectLogo from '../assets/img/WalletConnect.svg';
 
 import { AppWallet } from './index';
@@ -27,6 +28,20 @@ export const WalletConnectInfo: WalletInfo = {
   },
 };
 
-export const InternalWallets = [AppWallet.Sora, AppWallet.GoogleDrive];
+export const SoraWalletInfo: WalletInfo = {
+  extensionName: AppWallet.Sora,
+  title: 'Sora Wallet',
+  chromeUrl: '',
+  mozillaUrl: '',
+  logo: {
+    src: SoraWalletLogo as string,
+    alt: 'Sora Wallet',
+  },
+};
 
+/** Wallets with saved accounts in App */
+export const AppStorageWallets = [AppWallet.Sora];
+/** Wallets with App signature */
+export const InternalWallets = [AppWallet.Sora, AppWallet.GoogleDrive];
+/** Wallets for Desktop mode */
 export const DesktopWallets = [AppWallet.Sora, AppWallet.WalletConnect];

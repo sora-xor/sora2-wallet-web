@@ -8,7 +8,14 @@ import { CeresApiService } from '../../services/ceres';
 import { getCurrentIndexer } from '../../services/indexer';
 import { rootActionContext } from '../../store';
 import { WHITE_LIST_URL, NFT_BLACK_LIST_URL } from '../../util';
-import { getAppWallets, updateApiSigner, checkWallet, loginApi, logoutApi } from '../../util/account';
+import {
+  getAppWallets,
+  updateApiSigner,
+  checkWallet,
+  loginApi,
+  logoutApi,
+  isAppStorageSource,
+} from '../../util/account';
 
 import { accountActionContext } from './../account';
 
@@ -115,7 +122,7 @@ const actions = defineActions({
     const { commit, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
 
-    logoutApi(api, !state.isDesktop);
+    logoutApi(api, !isAppStorageSource(state.source));
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
@@ -160,7 +167,7 @@ const actions = defineActions({
   async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
 
-    await loginApi(api, accountData, state.isDesktop);
+    await loginApi(api, accountData, isAppStorageSource(state.source));
 
     commit.syncWithStorage();
 
