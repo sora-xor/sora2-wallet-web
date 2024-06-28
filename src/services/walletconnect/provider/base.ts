@@ -54,6 +54,9 @@ export class WcProvider {
     // Create a standalone modal using your dapps WalletConnect projectId.
     this.modal = new WalletConnectModal({
       projectId,
+      themeVariables: {
+        '--wcm-z-index': '2100',
+      },
     });
   }
 

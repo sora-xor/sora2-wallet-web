@@ -87,6 +87,7 @@ import {
   deleteAccount,
   createAccount,
   restoreAccount,
+  checkExternalAccount,
 } from '../../util/account';
 import AccountConfirmDialog from '../Account/ConfirmDialog.vue';
 import LoadingMixin from '../mixins/LoadingMixin';
@@ -380,6 +381,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     } else {
       await this.withLoading(async () => {
         await this.withAppAlert(async () => {
+          await checkExternalAccount(account);
           await this.loginAccount(account);
           this.resetStep();
         });

@@ -3,7 +3,7 @@ import { saveAs } from 'file-saver';
 
 import { AppWallet, TranslationConsts } from '../consts';
 import { InternalWallets } from '../consts/wallets';
-import { AppError, waitForDocumentReady } from '../util';
+import { AppError, formatAccountAddress, waitForDocumentReady } from '../util';
 
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 import type { Unsubcall, InjectedWindowProvider } from '@polkadot/extension-inject/types';
@@ -186,6 +186,21 @@ const subscribeToExternalAccounts = async (wallet: AppWallet, callback: (account
 
   // [TODO]: Wait for Polkadot.js extension release, because unsubscribe not works now
   return unsubscribe;
+};
+
+export const checkExternalAccount = async (account: PolkadotJsAccount): Promise<void> => {
+  if (!account.source) throw new Error('Account has not source');
+
+  const wallet = checkWallet(account.source);
+  const accounts = await wallet.getAccounts();
+
+  if (!accounts) throw new Error('No accounts');
+
+  const search = formatAccountAddress(account.address, false);
+
+  const exists = accounts.some((account) => formatAccountAddress(account.address, false) === search);
+
+  if (!exists) throw new Error(`Account not found: ${account.address}`);
 };
 
 export const subscribeToWalletAccounts = async (
