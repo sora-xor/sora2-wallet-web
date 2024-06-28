@@ -48,7 +48,7 @@ export const logoutApi = (api: WithKeyring, forget = false): void => {
 export const isWalletsSource = (source: AppWallet, wallets: AppWallet[]) =>
   !!wallets.find((walletName) => source.startsWith(walletName));
 
-export const isAppStorageSource = (source: AppWallet) => isWalletsSource(source, DesktopWallets);
+export const isAppStorageSource = (source: AppWallet) => isWalletsSource(source, AppStorageWallets);
 
 export const isDesktopSource = (source: AppWallet) => isWalletsSource(source, DesktopWallets);
 

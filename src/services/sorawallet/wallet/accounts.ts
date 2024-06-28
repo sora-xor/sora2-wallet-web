@@ -9,39 +9,32 @@ const formatAccounts = (accounts: KeyringAddress[]): InjectedAccount[] => {
   }));
 };
 
+const prepareAccounts = (accounts: KeyringAddress[]): InjectedAccount[] => {
+  const filtered = accounts.filter((account) => !account.meta.isExternal);
+  const formatted = formatAccounts(filtered);
+
+  return formatted;
+};
+
 export default class Accounts implements InjectedAccounts {
   private api!: WithKeyring;
-
-  private _list: InjectedAccount[] = [];
-  private accountsCallback: Nullable<(accounts: InjectedAccount[]) => unknown> = null;
+  private accountsList: InjectedAccount[] = [];
 
   constructor(api: WithKeyring) {
     this.api = api;
   }
 
-  private get accountsList(): InjectedAccount[] {
-    return this._list;
-  }
-
-  private set accountsList(accounts: InjectedAccount[]) {
-    this._list = accounts;
-
-    if (typeof this.accountsCallback === 'function') {
-      this.accountsCallback(this._list);
-    }
-  }
-
   public async get(): Promise<InjectedAccount[]> {
     const accounts = this.api.getAccounts();
 
-    this.accountsList = formatAccounts(accounts);
+    this.accountsList = prepareAccounts(accounts);
 
     return this.accountsList;
   }
 
   public subscribe(accountsCallback: (accounts: InjectedAccount[]) => unknown): Unsubcall {
     const subscription = this.api.accountsObservable.subscribe((accounts) => {
-      this.accountsList = formatAccounts(accounts);
+      this.accountsList = prepareAccounts(accounts);
       accountsCallback(this.accountsList);
     });
 

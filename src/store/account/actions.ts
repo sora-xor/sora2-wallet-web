@@ -121,8 +121,9 @@ const actions = defineActions({
   async logout(context): Promise<void> {
     const { commit, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
+    const forgetCurrentAccount = !isAppStorageSource(state.source);
 
-    logoutApi(api, !isAppStorageSource(state.source));
+    logoutApi(api, forgetCurrentAccount);
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
