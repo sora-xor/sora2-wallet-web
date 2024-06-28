@@ -38,7 +38,7 @@ export function initialState(): AccountState {
     /** extension management */
     availableWallets: [],
     /** desktop key management */
-    isDesktop: isElectron(), // NOTE: inverse flag here to debug desktop
+    isDesktop: !isElectron(), // NOTE: inverse flag here to debug desktop
     addressKeyMapping: {},
     addressPassphraseMapping: {},
     /** account password timings  */

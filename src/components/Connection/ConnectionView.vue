@@ -117,11 +117,11 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
     }
   }
 
-  if (isDesktop) {
-    return LoginStep.AccountList;
-  } else {
-    return SelectAccountFlow.includes(currentStep) ? LoginStep.ExtensionList : LoginStep.AccountList;
-  }
+  // if (isDesktop) {
+  //   return LoginStep.AccountList;
+  // } else {
+  return SelectAccountFlow.includes(currentStep) ? LoginStep.ExtensionList : LoginStep.AccountList;
+  // }
 };
 
 @Component({
@@ -180,18 +180,10 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   created(): void {
     this.resetStep();
-
-    if (this.isDesktop) {
-      this.withApi(() => {
-        this.subscribeToWalletAccounts();
-      });
-    } else {
-      this.createWcWallet();
-    }
-  }
-
-  private createWcWallet(): void {
     this.withApi(() => {
+      if (this.isDesktop) {
+        this.subscribeToWalletAccounts();
+      }
       this.wcName = addWcSubWalletLocally(this.chainGenesisHash);
       this.updateAvailableWallets();
     });
@@ -506,7 +498,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   private resetStep(): void {
-    this.step = this.isDesktop ? LoginStep.AccountList : LoginStep.ExtensionList;
+    this.step = LoginStep.ExtensionList;
   }
 }
 </script>

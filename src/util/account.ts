@@ -2,7 +2,7 @@ import { addWallet, getWallets, getWalletBySource, initialize } from '@sora-test
 import { saveAs } from 'file-saver';
 
 import { AppWallet, TranslationConsts } from '../consts';
-import { InternalWallets } from '../consts/wallets';
+import { DesktopWallets, InternalWallets } from '../consts/wallets';
 import { AppError, formatAccountAddress, waitForDocumentReady } from '../util';
 
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
@@ -21,8 +21,7 @@ export const unlockAccountPair = (api: WithKeyring, password: string): void => {
 };
 
 export const loginApi = async (api: WithKeyring, accountData: PolkadotJsAccount, isDesktop = false) => {
-  // Desktop has not source
-  const source = (accountData.source as AppWallet) || '';
+  const source = accountData.source;
   const isExternal = !isInternalSource(source);
   const defaultAddress = api.formatAddress(accountData.address, false);
   const apiAddress = api.formatAddress(defaultAddress);
@@ -46,16 +45,24 @@ export const logoutApi = (api: WithKeyring, forget = false): void => {
   api.logout();
 };
 
-export const isInternalSource = (source?: AppWallet) =>
-  !source || InternalWallets.some((walletName) => source.startsWith(walletName));
+export const isWalletsSource = (source: AppWallet, wallets: AppWallet[]) =>
+  !!wallets.find((walletName) => source.startsWith(walletName));
+
+export const isDesktopSource = (source: AppWallet) => isWalletsSource(source, DesktopWallets);
+
+export const isDesktopWallet = (wallet: Wallet) => isDesktopSource(wallet.extensionName as AppWallet);
+
+export const isInternalSource = (source: AppWallet) => isWalletsSource(source, InternalWallets);
 
 export const isInternalWallet = (wallet: Wallet) => isInternalSource(wallet.extensionName as AppWallet);
 
 export const initAppWallets = (appName?: string) => initialize(appName ?? TranslationConsts.Polkaswap);
 
-export const getAppWallets = (): Wallet[] => {
+export const getAppWallets = (isDesktop = false): Wallet[] => {
   try {
-    const wallets = getWallets().sort((a, b) => {
+    const wallets = getWallets();
+    const filtered = isDesktop ? wallets.filter((wallet) => isDesktopWallet(wallet)) : wallets;
+    const sorted = filtered.sort((a, b) => {
       if (a.extensionName === AppWallet.FearlessWallet) {
         return -1;
       }
@@ -65,7 +72,7 @@ export const getAppWallets = (): Wallet[] => {
       return 0;
     });
 
-    return wallets;
+    return sorted;
   } catch (error) {
     throw new AppError({ key: 'polkadotjs.noExtensions' });
   }
@@ -146,6 +153,7 @@ const formatImportedAccounts = (accounts: KeyringAddress[]): PolkadotJsAccount[]
   return accounts.map((account) => ({
     address: account.address,
     name: account.meta.name || '',
+    source: AppWallet.Sora,
   }));
 };
 
@@ -189,8 +197,6 @@ const subscribeToExternalAccounts = async (wallet: AppWallet, callback: (account
 };
 
 export const checkExternalAccount = async (account: PolkadotJsAccount): Promise<void> => {
-  if (!account.source) throw new Error('Account has not source');
-
   const wallet = checkWallet(account.source);
   const accounts = await wallet.getAccounts();
 

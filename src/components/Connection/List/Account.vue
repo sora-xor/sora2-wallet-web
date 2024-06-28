@@ -47,7 +47,7 @@ export default class AccountConnectionList extends Mixins(TranslationMixin) {
 
   get accountList() {
     return this.accounts.map((account) => {
-      const source = this.wallet ?? ('' as AppWallet);
+      const source = this.wallet;
       const accountData = { ...account, source };
 
       return {

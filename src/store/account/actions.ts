@@ -145,10 +145,10 @@ const actions = defineActions({
    * Update the list of installed extensions & internal wallets
    */
   async updateAvailableWallets(context): Promise<void> {
-    const { commit } = accountActionContext(context);
+    const { commit, state } = accountActionContext(context);
 
     try {
-      const wallets = getAppWallets();
+      const wallets = getAppWallets(state.isDesktop);
 
       commit.setAvailableWallets(wallets);
     } catch (error) {

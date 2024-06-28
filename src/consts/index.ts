@@ -23,6 +23,7 @@ export enum IndexerType {
 }
 
 export enum AppWallet {
+  Sora = 'sora',
   WalletConnect = 'walletconnect',
   GoogleDrive = 'google-drive',
   FearlessWallet = 'fearless-wallet',

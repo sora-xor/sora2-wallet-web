@@ -27,4 +27,6 @@ export const WalletConnectInfo: WalletInfo = {
   },
 };
 
-export const InternalWallets = [AppWallet.GoogleDrive];
+export const InternalWallets = [AppWallet.Sora, AppWallet.GoogleDrive];
+
+export const DesktopWallets = [AppWallet.Sora, AppWallet.WalletConnect];
