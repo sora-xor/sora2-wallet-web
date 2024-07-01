@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
@@ -178,9 +178,28 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   created(): void {
     this.resetStep();
-    this.withApi(() => {
-      this.wcName = addWcSubWalletLocally(this.chainGenesisHash);
-      this.updateAvailableWallets();
+    this.updateWcWallet();
+  }
+
+  @Watch('chainGenesisHash')
+  private onChainUpdate(curr: string, prev: string) {
+    if (curr !== prev) {
+      this.updateWcWallet();
+    }
+  }
+
+  private updateWcWallet(): void {
+    this.withChainApi(this.chainApi, async () => {
+      if (this.wcName && this.account && this.account.source === this.wcName) {
+        this.logoutAccount();
+      }
+
+      this.wcName = '';
+
+      if (this.chainGenesisHash) {
+        this.wcName = addWcSubWalletLocally(this.chainApi.api.genesisHash.toString());
+        this.updateAvailableWallets();
+      }
     });
   }
 
@@ -189,7 +208,11 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   get chainGenesisHash(): string {
-    return this.chainApi.api.genesisHash.toString();
+    try {
+      return this.chainApi.api.genesisHash.toString();
+    } catch {
+      return '';
+    }
   }
 
   get connectedAccount(): string {

@@ -3,6 +3,8 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { state } from '../../store/decorators';
 import { delay } from '../../util';
 
+import type { WithConnectionApi } from '@sora-substrate/util';
+
 @Component
 export default class LoadingMixin extends Vue {
   @Prop({ type: Boolean, default: false }) readonly parentLoading!: boolean;
@@ -35,6 +37,21 @@ export default class LoadingMixin extends Vue {
       await delay();
       return await this.withApi(func);
     } else {
+      return await this.withLoading(func);
+    }
+  }
+
+  async withChainApi<T = void>(
+    chainApi: WithConnectionApi,
+    func: FnWithoutArgs<T> | AsyncFnWithoutArgs<T>
+  ): Promise<T> {
+    this.loading = true;
+
+    if (!chainApi.api) {
+      await delay();
+      return await this.withApi(func);
+    } else {
+      await chainApi.api.isReady;
       return await this.withLoading(func);
     }
   }
