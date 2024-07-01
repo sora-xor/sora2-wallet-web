@@ -5,7 +5,7 @@ import type { WithKeyring } from '@sora-substrate/util';
 const formatAccounts = (accounts: KeyringAddress[]): InjectedAccount[] => {
   return accounts.map((account) => ({
     address: account.address,
-    name: account.meta.name || '',
+    name: account.meta.name ?? '',
   }));
 };
 

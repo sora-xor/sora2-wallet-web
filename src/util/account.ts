@@ -70,7 +70,7 @@ export const getAppWallets = (isDesktop = false): Wallet[] => {
   try {
     const wallets = getWallets();
     const filtered = isDesktop ? wallets.filter((wallet) => isDesktopWallet(wallet)) : wallets;
-    const sorted = filtered.sort((a, b) => {
+    const sorted = [...filtered].sort((a, b) => {
       if (a.extensionName === AppWallet.FearlessWallet) {
         return -1;
       }

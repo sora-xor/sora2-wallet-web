@@ -158,6 +158,8 @@ const actions = defineActions({
     try {
       const wallets = getAppWallets(state.isDesktop);
 
+      console.log(wallets);
+
       commit.setAvailableWallets(wallets);
     } catch (error) {
       console.error(error);

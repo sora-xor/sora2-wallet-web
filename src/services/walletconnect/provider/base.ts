@@ -159,11 +159,11 @@ export class WcProvider {
   }
 
   /** Delete session from dApp and connected wallet */
-  protected disconnectSession(session?: PairingTypes.Struct | SessionTypes.Struct): void {
+  protected async disconnectSession(session?: PairingTypes.Struct | SessionTypes.Struct): Promise<void> {
     if (!session) return;
 
     try {
-      this.signer.disconnect({
+      await this.signer.disconnect({
         topic: session.topic,
         reason: {
           code: 6000, // https://specs.walletconnect.com/2.0/specs/clients/sign/error-codes#reason

@@ -178,18 +178,23 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   created(): void {
     this.resetStep();
-    this.updateWcWallet();
+    this.updateWallets();
   }
 
   @Watch('chainGenesisHash')
-  private onChainUpdate(curr: string, prev: string) {
+  private async onChainUpdate(curr: string, prev: string): Promise<void> {
     if (curr !== prev) {
-      this.updateWcWallet();
+      this.updateWallets();
     }
   }
 
-  private updateWcWallet(): void {
-    this.withChainApi(this.chainApi, async () => {
+  private async updateWallets(): Promise<void> {
+    await this.updateWcWallet();
+    this.updateAvailableWallets();
+  }
+
+  private async updateWcWallet(): Promise<void> {
+    await this.withChainApi(this.chainApi, async () => {
       if (this.wcName && this.account && this.account.source === this.wcName) {
         this.logoutAccount();
       }
@@ -198,7 +203,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
       if (this.chainGenesisHash) {
         this.wcName = addWcSubWalletLocally(this.chainApi.api.genesisHash.toString());
-        this.updateAvailableWallets();
       }
     });
   }
