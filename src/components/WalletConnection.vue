@@ -1,6 +1,6 @@
 <template>
   <connection-view
-    :get-api="getApi"
+    :chain-api="chainApi"
     :account="account"
     :login-account="loginAccount"
     :logout-account="logoutAccount"
@@ -44,7 +44,7 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
   @action.account.logout public logoutAccount!: (forgetAddress?: string) => Promise<void>;
   @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
 
-  getApi() {
+  get chainApi() {
     return api;
   }
 

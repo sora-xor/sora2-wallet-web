@@ -135,7 +135,7 @@ exports[`WalletAvatar.vue [With Empty Address]: should be rendered correctly 1`]
 exports[`WalletAvatar.vue [With Size 10]: should be rendered correctly 1`] = `
 <svg
   height="10"
-  key="cnWRzNrVQpnMoq4GNDyUjTp1ZTWxTaXNguoRTTqg45j4g23yq"
+  key=""
   viewBox="0 0 64 64"
   width="10"
 >
@@ -148,115 +148,115 @@ exports[`WalletAvatar.vue [With Size 10]: should be rendered correctly 1`] = `
   <circle
     cx="32"
     cy="8"
-    fill="hsl(95, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="32"
     cy="20"
-    fill="hsl(112, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="21.607695154586736"
     cy="14"
-    fill="hsl(22, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="11.215390309173472"
     cy="20"
-    fill="hsl(67, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="21.607695154586736"
     cy="26"
-    fill="hsl(320, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="11.215390309173472"
     cy="32"
-    fill="hsl(45, 80%, 75%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="11.215390309173472"
     cy="44"
-    fill="hsl(50, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="21.607695154586736"
     cy="38"
-    fill="hsl(0, 80%, 75%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="21.607695154586736"
     cy="50"
-    fill="hsl(45, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="32"
     cy="56"
-    fill="hsl(50, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="32"
     cy="44"
-    fill="hsl(0, 80%, 75%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="42.392304845413264"
     cy="50"
-    fill="hsl(45, 80%, 75%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="52.78460969082653"
     cy="44"
-    fill="hsl(67, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="42.392304845413264"
     cy="38"
-    fill="hsl(320, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="52.78460969082653"
     cy="32"
-    fill="hsl(22, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="52.78460969082653"
     cy="20"
-    fill="hsl(95, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="42.392304845413264"
     cy="26"
-    fill="hsl(112, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="42.392304845413264"
     cy="14"
-    fill="hsl(163, 80%, 75%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="32"
     cy="32"
-    fill="hsl(337, 80%, 15%)"
+    fill="#ddd"
     r="5"
   />
 </svg>
@@ -264,8 +264,8 @@ exports[`WalletAvatar.vue [With Size 10]: should be rendered correctly 1`] = `
 
 exports[`WalletAvatar.vue [With Substrate Theme]: should be rendered correctly 1`] = `
 <substrate
-  address="cnWRzNrVQpnMoq4GNDyUjTp1ZTWxTaXNguoRTTqg45j4g23yq"
-  key="cnWRzNrVQpnMoq4GNDyUjTp1ZTWxTaXNguoRTTqg45j4g23yq"
+  address=""
+  key=""
   size="32"
 />
 `;
@@ -273,7 +273,7 @@ exports[`WalletAvatar.vue [With Substrate Theme]: should be rendered correctly 1
 exports[`WalletAvatar.vue [With default Theme (Polkadot) and Size]: should be rendered correctly 1`] = `
 <svg
   height="32"
-  key="cnWRzNrVQpnMoq4GNDyUjTp1ZTWxTaXNguoRTTqg45j4g23yq"
+  key=""
   viewBox="0 0 64 64"
   width="32"
 >
@@ -286,115 +286,115 @@ exports[`WalletAvatar.vue [With default Theme (Polkadot) and Size]: should be re
   <circle
     cx="32"
     cy="8"
-    fill="hsl(95, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="32"
     cy="20"
-    fill="hsl(112, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="21.607695154586736"
     cy="14"
-    fill="hsl(22, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="11.215390309173472"
     cy="20"
-    fill="hsl(67, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="21.607695154586736"
     cy="26"
-    fill="hsl(320, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="11.215390309173472"
     cy="32"
-    fill="hsl(45, 80%, 75%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="11.215390309173472"
     cy="44"
-    fill="hsl(50, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="21.607695154586736"
     cy="38"
-    fill="hsl(0, 80%, 75%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="21.607695154586736"
     cy="50"
-    fill="hsl(45, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="32"
     cy="56"
-    fill="hsl(50, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="32"
     cy="44"
-    fill="hsl(0, 80%, 75%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="42.392304845413264"
     cy="50"
-    fill="hsl(45, 80%, 75%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="52.78460969082653"
     cy="44"
-    fill="hsl(67, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="42.392304845413264"
     cy="38"
-    fill="hsl(320, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="52.78460969082653"
     cy="32"
-    fill="hsl(22, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="52.78460969082653"
     cy="20"
-    fill="hsl(95, 80%, 53%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="42.392304845413264"
     cy="26"
-    fill="hsl(112, 80%, 35%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="42.392304845413264"
     cy="14"
-    fill="hsl(163, 80%, 75%)"
+    fill="#ddd"
     r="5"
   />
   <circle
     cx="32"
     cy="32"
-    fill="hsl(337, 80%, 15%)"
+    fill="#ddd"
     r="5"
   />
 </svg>

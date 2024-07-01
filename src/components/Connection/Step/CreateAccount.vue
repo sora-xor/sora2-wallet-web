@@ -121,7 +121,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   readonly LoginStep = LoginStep;
   readonly PhraseLength = 12;
 
-  @Prop({ required: true, type: Function }) readonly getApi!: () => WithKeyring;
+  @Prop({ required: true, type: Object }) readonly chainApi!: WithKeyring;
 
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: String, default: '' }) readonly selectedWalletTitle!: string;
@@ -182,7 +182,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   }
 
   get seedPhrase(): string {
-    const { seed } = this.getApi().createSeed();
+    const { seed } = this.chainApi.createSeed();
     return seed;
   }
 

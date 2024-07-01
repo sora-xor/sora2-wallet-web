@@ -51,7 +51,7 @@ const DEFAULT_NAME = '<unknown>';
 export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin) {
   @Prop({ default: ObjectInit, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
   @Prop({ default: false, type: Boolean }) readonly withIdentity!: boolean;
-  @Prop({ default: () => api, type: Function }) readonly getApi!: () => WithConnectionApi;
+  @Prop({ default: () => api, type: Object }) readonly chainApi!: WithConnectionApi;
 
   @getter.account.account private connected!: PolkadotJsAccount;
 
@@ -62,7 +62,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
     if (!this.withIdentity || this.identity || value === oldValue) return;
 
     await this.withApi(async () => {
-      this.accountIdentity = await getAccountIdentity(value, '', this.getApi());
+      this.accountIdentity = await getAccountIdentity(value, '', this.chainApi);
       this.$emit('identity', this.accountIdentity);
     });
   }
@@ -72,7 +72,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get address(): string {
-    return formatAccountAddress(this.account.address, true, this.getApi());
+    return formatAccountAddress(this.account.address, true, this.chainApi);
   }
 
   get name(): string {

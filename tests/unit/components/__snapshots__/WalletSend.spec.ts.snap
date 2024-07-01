@@ -431,38 +431,10 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
     <address-book-input-stub
       class="wallet-send-address"
       excludeconnected="true"
-      isvalid="true"
       value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
     />
      
-    <p
-      class="wallet-send-address-warning"
-    >
-      Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:
-    </p>
-     
-    <s-tooltip-stub
-      animation="el-fade-in-linear"
-      borderradius="small"
-      closedelay="0"
-      content="Copy Asset ID"
-      hideafter="0"
-      offset="0"
-      opendelay="500"
-      placement="top"
-      showarrow="true"
-      tabindex="0"
-      theme="auto"
-      usedesignsystem="true"
-    >
-      <p
-        class="wallet-send-address-formatted"
-      >
-        
-            cnV1qZzFyBzkXS4xfmEnXue4SPhAbFNqcvULKSdzkfPEEZsBe
-          
-      </p>
-    </s-tooltip-stub>
+    <!---->
      
     <p
       class="wallet-send-address-error"
@@ -569,7 +541,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
       usedesignsystem="true"
     >
       
-        Enter amount
+        Incorrect address
       
     </s-button-stub>
      

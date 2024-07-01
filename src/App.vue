@@ -17,7 +17,7 @@
     </div>
     <confirm-dialog
       :account="account"
-      :get-api="getApi"
+      :chain-api="chainApi"
       :visibility="isSignTxDialogVisible"
       :set-visibility="setSignTxDialogVisibility"
     />
@@ -116,7 +116,7 @@ export default class App extends Mixins(TransactionMixin) {
     this.resetInternalSubscriptions();
   }
 
-  getApi() {
+  get chainApi() {
     return api;
   }
 

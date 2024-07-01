@@ -8,7 +8,14 @@ import { CeresApiService } from '../../services/ceres';
 import { getCurrentIndexer } from '../../services/indexer';
 import { rootActionContext } from '../../store';
 import { WHITE_LIST_URL, NFT_BLACK_LIST_URL } from '../../util';
-import { getAppWallets, updateApiSigner, checkWallet, loginApi, logoutApi } from '../../util/account';
+import {
+  getAppWallets,
+  updateApiSigner,
+  checkWallet,
+  loginApi,
+  logoutApi,
+  isAppStorageSource,
+} from '../../util/account';
 
 import { accountActionContext } from './../account';
 
@@ -114,8 +121,9 @@ const actions = defineActions({
   async logout(context): Promise<void> {
     const { commit, state } = accountActionContext(context);
     const { rootDispatch, rootCommit } = rootActionContext(context);
+    const forgetCurrentAccount = !isAppStorageSource(state.source);
 
-    logoutApi(api, !state.isDesktop);
+    logoutApi(api, forgetCurrentAccount);
 
     commit.resetAccountAssetsSubscription();
     rootCommit.wallet.transactions.resetExternalHistorySubscription();
@@ -145,10 +153,10 @@ const actions = defineActions({
    * Update the list of installed extensions & internal wallets
    */
   async updateAvailableWallets(context): Promise<void> {
-    const { commit } = accountActionContext(context);
+    const { commit, state } = accountActionContext(context);
 
     try {
-      const wallets = getAppWallets();
+      const wallets = getAppWallets(state.isDesktop);
 
       commit.setAvailableWallets(wallets);
     } catch (error) {
@@ -160,7 +168,7 @@ const actions = defineActions({
   async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
     const { commit, dispatch, state } = accountActionContext(context);
 
-    await loginApi(api, accountData, state.isDesktop);
+    await loginApi(api, accountData, isAppStorageSource(state.source));
 
     commit.syncWithStorage();
 

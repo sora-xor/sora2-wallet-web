@@ -2,8 +2,8 @@
 
 exports[`WalletConnection.vue [Extension available]: Accounts should be rendered 1`] = `
 <connection-view-stub
+  chainapi="[object Object]"
   closeview="[Function]"
-  getapi="[Function]"
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"
@@ -30,8 +30,8 @@ exports[`WalletConnection.vue [Extension available]: Accounts should be rendered
 
 exports[`WalletConnection.vue [Extension available]: Connect account screen should be rendered 1`] = `
 <connection-view-stub
+  chainapi="[object Object]"
   closeview="[Function]"
-  getapi="[Function]"
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"
@@ -58,8 +58,8 @@ exports[`WalletConnection.vue [Extension available]: Connect account screen shou
 
 exports[`WalletConnection.vue [Extension available]: Extensions should be rendered 1`] = `
 <connection-view-stub
+  chainapi="[object Object]"
   closeview="[Function]"
-  getapi="[Function]"
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"
@@ -86,8 +86,8 @@ exports[`WalletConnection.vue [Extension available]: Extensions should be render
 
 exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen should be rendered 1`] = `
 <connection-view-stub
+  chainapi="[object Object]"
   closeview="[Function]"
-  getapi="[Function]"
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"

@@ -68,7 +68,7 @@ export default class AccountActionsMixin extends Mixins(LoadingMixin, Notificati
           await GDriveWallet.accounts.changeName(address, name);
         }
 
-        if (this.isConnectedAccount(this.selectedAccount) || !source) {
+        if (this.isConnectedAccount(this.selectedAccount)) {
           await this.renameAccount({ address, name });
         }
 

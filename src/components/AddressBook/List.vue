@@ -120,6 +120,7 @@ export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixi
     return {
       address,
       name: account.name,
+      source: account.source,
       identity,
     };
   }
@@ -164,10 +165,10 @@ export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixi
     this.identities = { ...this.identities, [address]: identity };
   }
 
-  handleContactAction(actionType: string, { address, name }: PolkadotJsAccount): void {
+  handleContactAction(actionType: string, { address, name, source }: PolkadotJsAccount): void {
     switch (actionType) {
       case AccountActionTypes.BookSend: {
-        this.selectRecord({ address, name });
+        this.selectRecord({ address, name, source });
         break;
       }
       case AccountActionTypes.BookEdit: {
