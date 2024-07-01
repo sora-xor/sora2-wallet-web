@@ -11,8 +11,8 @@ const createStore = (shouldBalanceBeHidden = false, currency = DaiCurrency, exch
     settings: {
       state: () => ({
         shouldBalanceBeHidden,
-        currency: currency.key,
         fiatExchangeRateObject: { [currency.key]: exchangeRate },
+        fiatPriceObject: {},
       }),
       getters: {
         currencySymbol: () => currency.symbol,
