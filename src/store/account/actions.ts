@@ -230,7 +230,7 @@ const actions = defineActions({
   },
 
   async subscribeOnAssets(context): Promise<void> {
-    const { commit, dispatch, state } = accountActionContext(context);
+    const { commit, dispatch, getters, state } = accountActionContext(context);
 
     commit.resetAssetsSubscription();
 
@@ -239,9 +239,13 @@ const actions = defineActions({
     const indexer = getCurrentIndexer();
 
     const subscription = indexer.services.explorer.asset.createNewAssetsSubscription((newAssets) => {
-      if (newAssets.length) {
-        commit.setAssets([...state.assets, ...newAssets]);
-      }
+      if (!newAssets.length) return;
+
+      const assetsToAdd = newAssets.filter((asset) => {
+        return !(asset.address in getters.assetsDataTable);
+      });
+
+      commit.setAssets([...state.assets, ...assetsToAdd]);
     }, console.error);
 
     commit.setAssetsSubscription(subscription);
