@@ -270,6 +270,8 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
 </script>
 
 <style lang="scss" scoped>
+$telegram-web-app-width: 460px;
+
 @include login-view;
 
 .login {
@@ -354,6 +356,10 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
   &__word {
     margin: 10px 20px;
     text-transform: uppercase;
+
+    @media screen and (max-width: $telegram-web-app-width) {
+      margin: 10px 16px;
+    }
 
     &-number {
       margin-right: $basic-spacing;
