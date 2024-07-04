@@ -72,6 +72,7 @@ export enum WalletFilteringOptions {
   All = 'All',
   Currencies = 'Currencies',
   NFT = 'NFT',
+  SBT = 'SBT',
 }
 
 export enum SoraNetwork {
@@ -226,6 +227,7 @@ export const TranslationConsts = {
   TBC: 'TBC',
   XYK: 'XYK',
   NFT: 'NFT',
+  SBT: 'SBT',
   CEX: 'CEX',
   Polkadot: 'Polkadot',
   SORAScan: 'SORAScan',

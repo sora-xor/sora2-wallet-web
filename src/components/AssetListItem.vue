@@ -11,6 +11,7 @@
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
       </slot>
+      <span v-if="asset.isSBT" class="asset-sbt-expiration">Expires 12AM 10 Jan, 2024</span>
       <token-address :name="asset.name" :symbol="asset.symbol" :address="asset.address" class="asset-info" />
       <slot name="append" v-bind="asset" />
     </div>
@@ -21,10 +22,10 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
+import NftTokenLogo from './AssetLogos/NftTokenLogo.vue';
+import TokenLogo from './AssetLogos/TokenLogo.vue';
 import TranslationMixin from './mixins/TranslationMixin';
-import NftTokenLogo from './NftTokenLogo.vue';
 import TokenAddress from './TokenAddress.vue';
-import TokenLogo from './TokenLogo.vue';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 
@@ -40,6 +41,11 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withTabindex!: boolean;
+
+  get isSBT(): boolean {
+    // @ts-expect-error typing
+    return this.asset.isSBT;
+  }
 
   handleIconClick(event: Event): void {
     if (!this.withClickableLogo) {
@@ -86,6 +92,14 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     font-weight: 600;
     letter-spacing: var(--s-letter-spacing-small);
     line-height: var(--s-line-height-extra-small);
+  }
+
+  &-sbt-expiration {
+    display: block;
+    margin-bottom: -10px !important;
+    font-size: 11px;
+    font-weight: 300;
+    margin: 0;
   }
 }
 </style>

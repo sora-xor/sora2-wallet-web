@@ -248,16 +248,34 @@ const actions = defineActions({
   },
 
   async subscribeOnAccountAssets(context): Promise<void> {
-    const { commit, getters } = accountActionContext(context);
+    const { state, commit, getters } = accountActionContext(context);
     commit.resetAccountAssetsSubscription();
 
     if (getters.isLoggedIn) {
+      const whitelistAddresses = state.whitelistArray.map((asset) => asset.address);
+
       try {
         const subscription = api.assets.balanceUpdated.subscribe(() => {
           const filtered = api.assets.accountAssets.filter(
             (asset) => !api.assets.isNftBlacklisted(asset, getters.blacklist)
           );
-          commit.setAccountAssets(filtered);
+
+          // to know if asset is SBT or not upfront
+          const assetsWithMetaInfo = filtered.map((asset) => {
+            if (whitelistAddresses.includes(asset.address)) {
+              return {
+                ...asset,
+                isSBT: false,
+              };
+            }
+
+            return {
+              ...asset,
+              isSBT: true, // call api.regulatedAssets.isRegulatedAsset();
+            };
+          });
+
+          commit.setAccountAssets(assetsWithMetaInfo);
         });
         commit.setAccountAssetsSubscription(subscription);
         await api.assets.updateAccountAssets();

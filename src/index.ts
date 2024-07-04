@@ -8,6 +8,7 @@ import AddAssetDetailsCard from './components/AddAsset/AddAssetDetailsCard.vue';
 import AddressBookInput from './components/AddressBook/Input.vue';
 import AssetList from './components/AssetList.vue';
 import AssetListItem from './components/AssetListItem.vue';
+import TokenLogo from './components/AssetLogos/TokenLogo.vue';
 import ConfirmDialog from './components/ConfirmDialog.vue';
 import ConnectionView from './components/Connection/ConnectionView.vue';
 import AccountConnectionList from './components/Connection/List/Account.vue';
@@ -37,7 +38,6 @@ import FormattedAddress from './components/shared/FormattedAddress.vue';
 import SyntheticSwitcher from './components/shared/SyntheticSwitcher.vue';
 import SimpleNotification from './components/SimpleNotification.vue';
 import TokenAddress from './components/TokenAddress.vue';
-import TokenLogo from './components/TokenLogo.vue';
 import TransactionHashView from './components/TransactionHashView.vue';
 import WalletBase from './components/WalletBase.vue';
 // Shared Components

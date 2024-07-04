@@ -1,90 +1,51 @@
 <template>
-  <div class="logo">
-    <span :class="iconClasses" :style="iconStyles" />
-    <nft-token-logo v-if="isNft" class="asset-logo__nft-image" :class="iconClasses" :asset="token" />
-  </div>
+  <img
+    v-show="asset.content && showSbtImage"
+    class="asset-logo sbt-image"
+    :src="sbtImageUrl"
+    ref="nftImage"
+    @load="handleSbtImageLoad"
+    @error="hideSbtImage"
+  />
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue, Ref } from 'vue-property-decorator';
 
-import { api } from '../api';
-import { LogoSize, ObjectInit } from '../consts';
-import { getter } from '../store/decorators';
+import { IpfsStorage } from '../../util/ipfsStorage';
 
-import TranslationMixin from './mixins/TranslationMixin';
-import NftTokenLogo from './NftTokenLogo.vue';
+import type { Asset } from '@sora-substrate/util/build/assets/types';
 
-import type { WhitelistIdsBySymbol } from '../types/common';
-import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/util/build/assets/types';
+@Component
+export default class SbtTokenLogo extends Vue {
+  @Prop({ default: () => {}, type: Object, required: true }) readonly asset!: Asset;
+  @Ref('sbtImage') readonly nftImage!: HTMLImageElement;
 
-@Component({
-  components: {
-    NftTokenLogo,
-  },
-})
-export default class TokenLogo extends Mixins(TranslationMixin) {
-  @getter.account.whitelist private whitelist!: Whitelist;
-  @getter.account.whitelistIdsBySymbol private whitelistIdsBySymbol!: WhitelistIdsBySymbol;
+  showSbtImage = false;
 
-  @Prop({ type: String, default: '' }) readonly tokenSymbol!: string;
-  @Prop({ type: Object, default: ObjectInit }) readonly token!: Nullable<AccountAsset | Asset>;
-  @Prop({ type: String, default: LogoSize.MEDIUM, required: false }) readonly size!: LogoSize;
-  @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
-
-  get isNft(): boolean {
-    return !!this.token && api.assets.isNft(this.token);
+  get sbtImageUrl(): string {
+    if (this.asset.content) {
+      return IpfsStorage.constructFullIpfsUrl(this.asset.content);
+    }
+    return '';
   }
 
-  get assetAddress(): Nullable<string> {
-    return this.tokenSymbol ? this.whitelistIdsBySymbol[this.tokenSymbol] : (this.token || {}).address;
+  handleSbtImageLoad(): void {
+    const imgElement = this.nftImage as HTMLImageElement;
+    if (imgElement) {
+      this.showSbtImage = imgElement.complete && imgElement.naturalHeight !== 0;
+    } else {
+      this.showSbtImage = false;
+    }
   }
 
-  get whitelistedItem(): Nullable<WhitelistItem> {
-    if (!(this.token || this.tokenSymbol)) {
-      return null;
-    }
-    const address = this.assetAddress;
-    if (!address) {
-      return null;
-    }
-    return this.whitelist[address];
-  }
-
-  get iconStyles(): object {
-    const asset = this.whitelistedItem;
-    if (!asset) {
-      return {};
-    }
-    return {
-      'background-size': '100%',
-      'background-image': `url("${asset.icon}")`,
-    };
-  }
-
-  get iconClasses(): Array<string> {
-    const questionMark = 's-icon-notifications-info-24';
-    const tokenLogoClass = 'asset-logo';
-    const classes = [tokenLogoClass];
-
-    if (!this.assetAddress) {
-      classes.push(questionMark);
-    } else if (!this.whitelistedItem) {
-      classes.push(this.isNft ? 'asset-logo-nft' : questionMark);
-    }
-
-    classes.push(`${tokenLogoClass}--${this.size.toLowerCase()}`);
-
-    if (this.withClickableLogo) {
-      classes.push('asset-logo--clickable');
-    }
-
-    return classes;
+  hideSbtImage(): void {
+    this.showSbtImage = false;
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 $token-background-color: var(--s-color-base-on-accent);
 $token-color: var(--s-color-base-content-tertiary);
 
@@ -92,7 +53,7 @@ $token-color: var(--s-color-base-content-tertiary);
   position: relative;
 }
 .asset-logo {
-  &__nft-image {
+  &__sbt-image {
     border-radius: 50%;
     object-fit: cover;
     position: absolute !important;
@@ -117,7 +78,7 @@ $token-color: var(--s-color-base-content-tertiary);
       font-size: 12px;
       color: var(--s-color-base-content-tertiary);
       &.#{$className}-nft::before {
-        content: 'NFT';
+        content: 'SBT';
         font-size: 6px;
       }
     }
@@ -130,7 +91,7 @@ $token-color: var(--s-color-base-content-tertiary);
       line-height: $size-px;
       font-size: 18px;
       &.#{$className}-nft::before {
-        content: 'NFT';
+        content: 'SBT';
         font-size: 8px;
         font-weight: 800;
       }
@@ -144,7 +105,7 @@ $token-color: var(--s-color-base-content-tertiary);
       line-height: $size-px;
       font-size: 24px;
       &.#{$className}-nft::before {
-        content: 'NFT';
+        content: 'SBT';
         font-size: 12px;
         font-weight: 800;
       }
@@ -158,7 +119,7 @@ $token-color: var(--s-color-base-content-tertiary);
       line-height: $size-px;
       font-size: 32px;
       &.#{$className}-nft::before {
-        content: 'NFT';
+        content: 'SBT';
         font-size: 14px;
         font-weight: 800;
       }
@@ -172,7 +133,7 @@ $token-color: var(--s-color-base-content-tertiary);
       line-height: $size-px;
       font-size: 32px;
       &.#{$className}-nft::before {
-        content: 'NFT';
+        content: 'SBT';
         font-size: 14px;
         font-weight: 800;
       }
@@ -186,7 +147,7 @@ $token-color: var(--s-color-base-content-tertiary);
       line-height: $size-px;
       font-size: 64px;
       &.#{$className}-nft::before {
-        content: 'NFT';
+        content: 'SBT';
         font-size: 28px;
         font-weight: 800;
       }

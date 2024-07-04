@@ -114,7 +114,7 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   }
 
   get filterOptionsText(): Array<string> {
-    return [this.t('filter.all'), this.t('filter.token'), this.TranslationConsts.NFT];
+    return [this.t('filter.all'), this.t('filter.token'), this.TranslationConsts.NFT, this.TranslationConsts.SBT];
   }
 
   get verifiedOnlySwitchDisabled(): boolean {
@@ -130,6 +130,9 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
         break;
       case WalletFilteringOptions.NFT:
         text = this.TranslationConsts.NFT;
+        break;
+      case WalletFilteringOptions.SBT:
+        text = this.TranslationConsts.SBT;
         break;
     }
     return text.toUpperCase();

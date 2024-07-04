@@ -9,6 +9,7 @@
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
                 <formatted-amount-with-fiat-value
+                  v-if="!asset.isSBT"
                   value-can-be-hidden
                   value-class="asset-value"
                   :value="getBalance(asset)"
@@ -24,6 +25,7 @@
                     <span>{{ formatFrozenBalance(asset) }}</span>
                   </div>
                 </formatted-amount-with-fiat-value>
+                <div v-else class="asset-sbt-name">KYC {{ `(by ${asset.symbol})` }}</div>
               </template>
               <template #default="asset">
                 <s-button
@@ -129,6 +131,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
 
+  isSBT(asset): boolean {
+    return !asset.isSBT;
+  }
+
   get assetList(): Array<AccountAsset> {
     return this.accountAssets;
   }
@@ -216,6 +222,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   showAsset(asset: AccountAsset) {
+    console.log('asset', asset);
     // filter
     const tokenType = this.filters.option;
     const showWhitelistedOnly = this.filters.verifiedOnly;
@@ -235,6 +242,8 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     if (tokenType === WalletFilteringOptions.NFT && !isNft) {
       return false;
     }
+
+    // TODO: add SBT
 
     if (!isWhitelisted && showWhitelistedOnly) {
       return false;
@@ -361,6 +370,10 @@ $padding: 5px;
       margin-top: $basic-spacing-mini;
       color: var(--s-color-base-content-primary);
       line-height: var(--s-line-height-reset);
+    }
+
+    &-sbt-name {
+      font-weight: 500;
     }
   }
 
