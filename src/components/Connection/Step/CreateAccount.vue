@@ -270,7 +270,7 @@ export default class CreateAccountStep extends Mixins(NotificationMixin) {
 </script>
 
 <style lang="scss" scoped>
-$telegram-web-app-width: 460px;
+$telegram-web-app-width: 500px;
 
 @include login-view;
 
