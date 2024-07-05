@@ -201,8 +201,10 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
       this.wcName = '';
 
-      if (this.chainGenesisHash) {
-        this.wcName = addWcSubWalletLocally(this.chainApi.api.genesisHash.toString());
+      const chainGenesisHash = this.chainApi.api?.genesisHash.toString();
+
+      if (chainGenesisHash) {
+        this.wcName = addWcSubWalletLocally(chainGenesisHash);
       }
     });
   }

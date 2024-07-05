@@ -49,7 +49,7 @@ export default class LoadingMixin extends Vue {
 
     if (!chainApi.api) {
       await delay();
-      return await this.withApi(func);
+      return await this.withChainApi(chainApi, func);
     } else {
       await chainApi.api.isReady;
       return await this.withLoading(func);
