@@ -359,6 +359,7 @@ $telegram-web-app-width: 500px;
 
     @media screen and (max-width: $telegram-web-app-width) {
       margin: 10px 16px;
+      font-size: var(--s-font-size-extra-small);
     }
 
     &-number {
