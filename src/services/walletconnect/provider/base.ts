@@ -34,6 +34,10 @@ export class WcProvider {
     return !!this.provider && !!this.modal;
   }
 
+  get isConnected(): boolean {
+    return !!this.session;
+  }
+
   get signer() {
     return this.provider.client;
   }
@@ -66,6 +70,7 @@ export class WcProvider {
    */
   public async connect(): Promise<void> {
     try {
+      await this.init();
       // Not works for now
       // await this.restoreSession();
       // already connected
@@ -171,11 +176,6 @@ export class WcProvider {
         },
       });
     } catch {}
-  }
-
-  public async enable(): Promise<void> {
-    await this.init();
-    await this.connect();
   }
 
   protected getConnectParams(chains: ChainId[], optionalChains: ChainId[]): EngineTypes.ConnectParams {

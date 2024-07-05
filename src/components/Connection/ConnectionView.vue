@@ -22,6 +22,7 @@
       :internal-wallets="wallets.internal"
       :external-wallets="wallets.external"
       @select="handleWalletSelect"
+      @disconnect="handleWalletDisconnect"
     >
       <slot name="extension" />
     </extension-list-step>
@@ -193,11 +194,15 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     this.updateAvailableWallets();
   }
 
+  private checkConnectedAccountSource(source: string): void {
+    if (source && this.account && this.account.source === source) {
+      this.logoutAccount();
+    }
+  }
+
   private async updateWcWallet(): Promise<void> {
     await this.withChainApi(this.chainApi, async () => {
-      if (this.wcName && this.account && this.account.source === this.wcName) {
-        this.logoutAccount();
-      }
+      this.checkConnectedAccountSource(this.wcName);
 
       this.wcName = '';
 
@@ -416,6 +421,16 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       await this.selectWallet(wallet.extensionName as AppWallet);
       this.navigateToAccountList();
     });
+  }
+
+  public async handleWalletDisconnect(wallet: Wallet): Promise<void> {
+    if (!wallet.provider) return;
+
+    await wallet.provider.disconnect();
+
+    this.checkConnectedAccountSource(wallet.extensionName);
+    // to rerender wc wallet state
+    this.updateAvailableWallets();
   }
 
   private setSelectedWallet(wallet: Nullable<AppWallet> = null): void {

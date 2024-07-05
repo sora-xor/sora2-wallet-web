@@ -9,13 +9,13 @@ export class WcWallet implements InjectedWindowProvider {
   public static readonly version = '0.0.1';
 
   private access = false;
-  private wcProvider!: WcProvider;
 
+  public readonly wcProvider!: WcProvider;
   public readonly wcAccounts!: WcAccounts;
   public readonly wcSigner!: WcSigner;
 
-  constructor(wcProvider: WcProvider) {
-    this.wcProvider = wcProvider;
+  constructor(provider: WcProvider) {
+    this.wcProvider = provider;
     this.wcAccounts = new WcAccounts(this.wcProvider);
     this.wcSigner = new WcSigner(this.wcProvider);
   }
@@ -26,7 +26,7 @@ export class WcWallet implements InjectedWindowProvider {
 
   async enable(): Promise<Injected> {
     try {
-      await this.wcProvider.enable();
+      await this.wcProvider.connect();
       this.access = true;
     } catch {
       this.access = false;
@@ -35,7 +35,7 @@ export class WcWallet implements InjectedWindowProvider {
     return {
       accounts: this.wcAccounts,
       metadata: undefined,
-      provider: undefined,
+      provider: this.wcProvider as any,
       signer: this.signer,
     };
   }
