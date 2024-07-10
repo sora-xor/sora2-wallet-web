@@ -260,18 +260,13 @@ const actions = defineActions({
             (asset) => !api.assets.isNftBlacklisted(asset, getters.blacklist)
           );
 
+          const sbtAssetsList = ['0x003958e97b3053835992946d797d5d5392f73005ad62ba3ce93233a519275d41'];
+
           // to know if asset is SBT or not upfront
           const assetsWithMetaInfo = filtered.map((asset) => {
-            if (whitelistAddresses.includes(asset.address)) {
-              return {
-                ...asset,
-                isSBT: false,
-              };
-            }
-
             return {
               ...asset,
-              isSBT: true, // call api.regulatedAssets.isRegulatedAsset();
+              isSBT: !!sbtAssetsList.includes(asset.address),
             };
           });
 
