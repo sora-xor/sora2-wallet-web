@@ -10,6 +10,7 @@ import { IndexerType, SoraNetwork } from '../../consts';
 import { getCurrenciesState } from '../../consts/currencies';
 import { GDriveStorage } from '../../services/google';
 import { addGDriveWalletLocally } from '../../services/google/wallet';
+import { WcProvider } from '../../services/walletconnect';
 import { rootActionContext } from '../../store';
 import { ApiKeysObject, ConnectionStatus } from '../../types/common';
 import { IpfsStorage } from '../../util/ipfsStorage';
@@ -87,12 +88,16 @@ const actions = defineActions({
     commit.setApiKeys(keys);
 
     const {
-      apiKeys: { googleApi, googleClientId },
+      apiKeys: { googleApi, googleClientId, walletconnect },
     } = state;
 
     if (googleApi && googleClientId) {
       addGDriveWalletLocally();
       GDriveStorage.setOptions(googleApi, googleClientId);
+    }
+
+    if (walletconnect) {
+      WcProvider.projectId = walletconnect;
     }
   },
   async createNftStorageInstance(context) {

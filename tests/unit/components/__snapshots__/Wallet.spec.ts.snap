@@ -9,7 +9,7 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
 >
    
   <wallet-account-stub
-    getapi="[Function]"
+    chainapi="[object Object]"
   >
     <qr-code-scan-button-stub
       alternative=""
@@ -98,7 +98,7 @@ exports[`Wallet.vue [WalletTabs.WalletHistory]: should be rendered correctly 1`]
 >
    
   <wallet-account-stub
-    getapi="[Function]"
+    chainapi="[object Object]"
   >
     <qr-code-scan-button-stub
       alternative=""

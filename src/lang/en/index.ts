@@ -15,6 +15,7 @@ export default {
   createTokenText: 'Create',
   createTokenTextNFT: 'Create NFT',
   comingSoonText: 'Coming soon',
+  disconnectWalletText: 'Disconnect',
   successText: 'Success',
   warningText: 'Warning',
   swapText: 'Swap',

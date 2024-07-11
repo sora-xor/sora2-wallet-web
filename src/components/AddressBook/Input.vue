@@ -158,7 +158,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   }
 
   get bookRecords(): PolkadotJsAccount[] {
-    return Object.entries(this.addressBook).map(([address, name]) => ({ address, name }));
+    return Object.entries(this.addressBook).map(([address, name]) => ({ address, name, source: this.source }));
   }
 
   get isNewAddress(): boolean {
@@ -178,9 +178,9 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   }
 
   get record(): Nullable<PolkadotJsAccount> {
-    const { address, name, isValid } = this;
+    const { address, name, source, isValid } = this;
 
-    return isValid && name ? { address, name } : null;
+    return isValid && name ? { address, name, source } : null;
   }
 
   openAddressBook(): void {

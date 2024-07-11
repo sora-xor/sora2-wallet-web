@@ -31,7 +31,7 @@ import type { WithKeyring } from '@sora-substrate/util';
 })
 export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
   @Prop({ required: true, type: Object }) private account!: PolkadotJsAccount;
-  @Prop({ required: true, type: Function }) private getApi!: () => WithKeyring;
+  @Prop({ required: true, type: Object }) private chainApi!: WithKeyring;
   @Prop({ required: true, type: Boolean }) private visibility!: boolean;
   @Prop({ required: true, type: Function }) private setVisibility!: (flag: boolean) => void;
 
@@ -65,7 +65,7 @@ export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixi
       await delay(250);
 
       await this.withAppNotification(async () => {
-        unlockAccountPair(this.getApi(), password);
+        unlockAccountPair(this.chainApi, password);
 
         if (this.isSignTxDialogDisabled) {
           this.setAccountPassphrase({ address: this.account.address, password });

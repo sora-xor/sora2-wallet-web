@@ -28,8 +28,8 @@ export type Book = Record<string, string>;
 export type PolkadotJsAccount = {
   address: string;
   name: string;
+  source: AppWallet;
   identity?: string;
-  source?: AppWallet;
 };
 
 export interface Alert {
