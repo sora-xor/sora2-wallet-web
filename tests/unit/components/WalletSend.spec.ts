@@ -43,6 +43,15 @@ const createStore = () =>
     },
   });
 
+jest.mock('../../../src/util', () => {
+  const originalModule = jest.requireActual('../../../src/util');
+
+  return {
+    ...originalModule,
+    formatAccountAddress: (value) => value,
+  };
+});
+
 useDescribe('WalletSend.vue', WalletSend, () => {
   const store = createStore();
 

@@ -43,7 +43,6 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
       const txInputValue = wrapper.find('.s-input-container s-input-stub').props().value as string;
       expect(wrapper.element).toMatchSnapshot();
       expect(txLinks.length).toBe(expectedLinksCount);
-      // [TODO]: fix
       expect(txInputValue.length).toBe(totalLength);
     })
   );
@@ -66,7 +65,6 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
       const txInputValue = wrapper.find('.s-input-container s-input-stub').props().value as string;
       expect(wrapper.element).toMatchSnapshot();
       expect(txLinks.length).toBe(expectedLinksCount);
-      // [TODO]: fix
       expect(txInputValue.length).toBe(totalLength);
     })
   );
