@@ -13,6 +13,15 @@ const createStore = (env: SoraNetwork) =>
     },
   });
 
+jest.mock('../../../src/util', () => {
+  const originalModule = jest.requireActual('../../../src/util');
+
+  return {
+    ...originalModule,
+    formatAccountAddress: (value) => value,
+  };
+});
+
 useDescribe('TransactionHashView.vue', TransactionHashView, () => {
   const formattedAddressLength = 24;
   const ellipsisLength = 3;
@@ -35,7 +44,7 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
       expect(wrapper.element).toMatchSnapshot();
       expect(txLinks.length).toBe(expectedLinksCount);
       // [TODO]: fix
-      // expect(txInputValue.length).toBe(totalLength);
+      expect(txInputValue.length).toBe(totalLength);
     })
   );
 
@@ -58,7 +67,7 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
       expect(wrapper.element).toMatchSnapshot();
       expect(txLinks.length).toBe(expectedLinksCount);
       // [TODO]: fix
-      // expect(txInputValue.length).toBe(totalLength);
+      expect(txInputValue.length).toBe(totalLength);
     })
   );
 });
