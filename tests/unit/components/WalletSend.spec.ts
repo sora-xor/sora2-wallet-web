@@ -48,7 +48,7 @@ jest.mock('../../../src/util', () => {
 
   return {
     ...originalModule,
-    validateAddress: (value) => true,
+    validateAddress: (value) => !!value && value.length === 48,
     formatAccountAddress: (value) => value,
   };
 });
