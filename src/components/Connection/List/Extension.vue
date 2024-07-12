@@ -21,12 +21,16 @@
         >
           <s-button size="small" tabindex="-1">{{ t('connection.wallet.install') }}</s-button>
         </a>
+        <span v-else-if="isSelectedWalletLoading(wallet)" class="connection-loading">
+          <s-icon name="el-icon-loading" size="16" class="connection-loading-icon" />
+        </span>
+
+        <s-button v-if="hasDisconnectAction(wallet)" size="small" @click.native.stop="handleDisconnect(wallet)">
+          {{ t('disconnectWalletText') }}
+        </s-button>
         <s-button v-else-if="isConnectedWallet(wallet)" size="small" disabled>
           {{ t('connection.wallet.connected') }}
         </s-button>
-        <span class="connection-loading" v-else-if="isSelectedWalletLoading(wallet)">
-          <s-icon name="el-icon-loading" size="16" class="connection-loading-icon" />
-        </span>
       </template>
     </account-card>
 
@@ -64,10 +68,20 @@ export default class ExtensionConnectionList extends Mixins(TranslationMixin) {
     return wallet.extensionName === this.connectedWallet;
   }
 
+  hasDisconnectAction(wallet: Wallet): boolean {
+    if (!wallet.provider) return false;
+
+    return wallet.provider.isConnected;
+  }
+
   handleSelect(wallet: Wallet): void {
     if (!this.isSelectedWalletLoading(wallet)) {
       this.$emit('select', wallet);
     }
+  }
+
+  handleDisconnect(wallet: Wallet): void {
+    this.$emit('disconnect', wallet);
   }
 }
 </script>

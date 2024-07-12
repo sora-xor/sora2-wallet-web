@@ -25,7 +25,7 @@ export const MOCK_TRANSACTION_HASH_VIEW: Array<TxHashViewData> = [
     type: HashType.Block,
   },
   {
-    value: '5ENwMXVzdA28AdGRkMhQVT8tGCuhh1KWvZ58yCLMuSTbZmur',
+    value: 'cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8',
     translation: 'transaction.from',
     type: HashType.Account,
   },

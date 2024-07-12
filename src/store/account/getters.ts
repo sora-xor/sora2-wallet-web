@@ -23,7 +23,7 @@ const toHashTable = <T extends Asset>(list: Readonly<Array<T>>, key: string) => 
 const getters = defineGetters<AccountState>()({
   isLoggedIn(...args): boolean {
     const { state } = accountGetterContext(args);
-    return !!state.address && (state.isDesktop || !!state.source);
+    return !!state.address && !!state.source;
   },
   account(...args): PolkadotJsAccount {
     const { state } = accountGetterContext(args);
@@ -79,8 +79,7 @@ const getters = defineGetters<AccountState>()({
     return (account: PolkadotJsAccount): boolean => {
       const { address, name, source } = state;
       const formatted = { ...account, address: formatAccountAddress(account.address) };
-      const accountData: PolkadotJsAccount = { address, name };
-      accountData.source = source as AppWallet;
+      const accountData: PolkadotJsAccount = { address, name, source };
 
       return isEqual(formatted)(accountData);
     };

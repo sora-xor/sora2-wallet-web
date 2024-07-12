@@ -51,6 +51,7 @@ import * as SUBQUERY_TYPES from './services/indexer/subquery/types';
 import { historyElementsFilter } from './services/indexer/subsquid/queries/historyElements';
 import * as SUBSQUID_TYPES from './services/indexer/subsquid/types';
 import * as INDEXER_TYPES from './services/indexer/types';
+import * as WC from './services/walletconnect';
 import SoraWallet from './SoraWallet.vue';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import * as VUEX_TYPES from './store/types';
@@ -117,7 +118,7 @@ const waitForCore = async ({
   if (!walletCoreLoaded) {
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
-    accountUtils.initAppWallets(appName);
+    accountUtils.initAppWallets(api, store.state.wallet.account.isDesktop, appName);
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);
@@ -155,7 +156,6 @@ async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promis
   await checkActiveAccount();
 
   // don't wait for finalization of internal & external services subscriptions
-  store.dispatch.wallet.account.updateAvailableWallets();
   store.dispatch.wallet.subscriptions.activateInternalSubscriptions();
   store.dispatch.wallet.settings.selectIndexer();
   // wait for finalization of network subscriptions
@@ -246,6 +246,7 @@ export {
   SUBSQUID_TYPES,
   INDEXER_TYPES,
   VUEX_TYPES,
+  WC,
   vuex,
 };
 

@@ -26,7 +26,7 @@ jest.mock('../../../src/util', () => {
 
   return {
     ...originalModule,
-    formatSoraAddress: () => mockFormattedSoraAddress(),
+    formatAccountAddress: () => mockFormattedSoraAddress(),
   };
 });
 

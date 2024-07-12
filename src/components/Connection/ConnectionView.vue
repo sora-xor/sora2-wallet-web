@@ -22,12 +22,13 @@
       :internal-wallets="wallets.internal"
       :external-wallets="wallets.external"
       @select="handleWalletSelect"
+      @disconnect="handleWalletDisconnect"
     >
       <slot name="extension" />
     </extension-list-step>
     <account-list-step
       v-else-if="isAccountList"
-      :get-api="getApi"
+      :chain-api="chainApi"
       :text="accountListText"
       :is-internal="isInternal"
       :connected-wallet="connectedWallet"
@@ -45,7 +46,7 @@
     <create-account-step
       v-else-if="isCreateFlow"
       :step.sync="step"
-      :get-api="getApi"
+      :chain-api="chainApi"
       :selected-wallet-title="selectedWalletTitle"
       :loading="loading"
       :create-account="handleAccountCreate"
@@ -56,7 +57,7 @@
       :loading="loading"
       :create-account="handleAccountCreate"
       :restore-account="handleAccountImport"
-      :json-only="!isDesktop"
+      :json-only="isAppStored"
     />
 
     <account-confirm-dialog
@@ -70,10 +71,11 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
+import { addWcSubWalletLocally, isWcWallet } from '../../services/walletconnect';
 import { action, state } from '../../store/decorators';
 import { delay } from '../../util';
 import {
@@ -81,11 +83,13 @@ import {
   isInternalSource,
   getWallet,
   isInternalWallet,
+  isAppStorageSource,
   subscribeToWalletAccounts,
   exportAccount,
   deleteAccount,
   createAccount,
   restoreAccount,
+  checkExternalAccount,
 } from '../../util/account';
 import AccountConfirmDialog from '../Account/ConfirmDialog.vue';
 import LoadingMixin from '../mixins/LoadingMixin';
@@ -102,13 +106,13 @@ import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { WithKeyring } from '@sora-substrate/util';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 
-const CHECK_EXTENSION_INTERVAL = 5_000;
-
 const SelectAccountFlow = [LoginStep.ExtensionList, LoginStep.AccountList];
 const AccountCreateFlow = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
 const AccountImportFlow = [LoginStep.Import, LoginStep.ImportCredentials];
 
-const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): LoginStep => {
+const getPreviousLoginStep = (currentStep?: LoginStep): LoginStep => {
+  if (!currentStep) return LoginStep.ExtensionList;
+
   for (const flow of [AccountCreateFlow, AccountImportFlow]) {
     const currentStepIndex = flow.findIndex((stepValue) => stepValue === currentStep);
 
@@ -117,11 +121,7 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
     }
   }
 
-  if (isDesktop) {
-    return LoginStep.AccountList;
-  } else {
-    return SelectAccountFlow.includes(currentStep) ? LoginStep.ExtensionList : LoginStep.AccountList;
-  }
+  return SelectAccountFlow.includes(currentStep) ? LoginStep.ExtensionList : LoginStep.AccountList;
 };
 
 @Component({
@@ -135,7 +135,7 @@ const getPreviousLoginStep = (currentStep: LoginStep, isDesktop: boolean): Login
   },
 })
 export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
-  @Prop({ required: true, type: Function }) public readonly getApi!: () => WithKeyring;
+  @Prop({ required: true, type: Object }) public readonly chainApi!: WithKeyring;
 
   @Prop({ default: () => null, type: Object }) private readonly account!: Nullable<PolkadotJsAccount>;
 
@@ -152,9 +152,9 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   @Prop({ default: () => {}, type: Function }) private readonly closeView!: () => void;
 
-  @state.account.isDesktop private isDesktop!: boolean;
   @state.account.availableWallets private availableWallets!: Wallet[];
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
+  @action.account.updateAvailableWallets private updateAvailableWallets!: () => void;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
     address: string;
     password: string;
@@ -166,28 +166,64 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   selectedWallet: Nullable<AppWallet> = null;
   selectedWalletLoading = false;
-  walletAvailabilityTimer: Nullable<NodeJS.Timeout> = null;
 
   accounts: Array<PolkadotJsAccount> = [];
   accountsSubscription: Nullable<VoidFunction> = null;
 
-  resetWalletAccountsSubscription(): void {
+  wcName = '';
+
+  private resetWalletAccountsSubscription(): void {
     this.accountsSubscription?.();
     this.accountsSubscription = null;
   }
 
   created(): void {
     this.resetStep();
+    this.updateWallets();
+  }
 
-    if (this.isDesktop) {
-      this.withApi(() => {
-        this.subscribeToWalletAccounts();
-      });
+  @Watch('chainGenesisHash')
+  private async onChainUpdate(curr: string, prev: string): Promise<void> {
+    if (curr !== prev) {
+      this.updateWallets();
     }
+  }
+
+  private async updateWallets(): Promise<void> {
+    await this.updateWcWallet();
+    this.updateAvailableWallets();
+  }
+
+  private checkConnectedAccountSource(source: string): void {
+    if (source && this.account && this.account.source === source) {
+      this.logoutAccount();
+    }
+  }
+
+  private async updateWcWallet(): Promise<void> {
+    await this.withChainApi(this.chainApi, async () => {
+      this.checkConnectedAccountSource(this.wcName);
+
+      this.wcName = '';
+
+      const chainGenesisHash = this.chainApi.api?.genesisHash.toString();
+
+      if (chainGenesisHash) {
+        this.wcName = addWcSubWalletLocally(chainGenesisHash);
+      }
+    });
   }
 
   beforeDestroy(): void {
     this.resetSelectedWallet();
+  }
+
+  get chainGenesisHash(): string {
+    try {
+      return this.chainApi.api.genesisHash.toString();
+    } catch {
+      return '';
+    }
   }
 
   get connectedAccount(): string {
@@ -198,9 +234,12 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     return (this.account?.source ?? '') as AppWallet;
   }
 
-  /** Google or Desktop */
   get isInternal(): boolean {
-    return this.isDesktop || (!!this.selectedWallet && isInternalSource(this.selectedWallet));
+    return !!this.selectedWallet && isInternalSource(this.selectedWallet);
+  }
+
+  get isAppStored(): boolean {
+    return !!this.selectedWallet && isAppStorageSource(this.selectedWallet);
   }
 
   get wallets() {
@@ -210,6 +249,11 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     };
 
     return this.availableWallets.reduce((buffer, wallet) => {
+      // show walletconnect only for this connection
+      if (this.wcName && isWcWallet(wallet) && wallet.extensionName !== this.wcName) {
+        return buffer;
+      }
+
       if (isInternalWallet(wallet)) {
         buffer.internal.push(wallet);
       } else {
@@ -290,7 +334,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   get prevStep(): LoginStep {
-    return getPreviousLoginStep(this.step, this.isDesktop);
+    return getPreviousLoginStep(this.step);
   }
 
   get hasPrevStep(): boolean {
@@ -298,7 +342,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   get hasBackBtn(): boolean {
-    return this.hasPrevStep || (this.isLoggedIn && !this.isDesktop);
+    return this.hasPrevStep || this.isLoggedIn;
   }
 
   public navigateToCreateAccount(): void {
@@ -321,11 +365,11 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
       await this.withAppNotification(async () => {
         const { json, password } = data;
-        const verified = verifyAccountJson(this.getApi(), json, password);
+        const verified = verifyAccountJson(this.chainApi, json, password);
 
         if (this.selectedWallet === AppWallet.GoogleDrive) {
           await GDriveWallet.accounts.add(verified, password);
-        } else if (this.isDesktop) {
+        } else if (this.selectedWallet === AppWallet.Sora) {
           this.handleAccountRestore(data);
         }
 
@@ -341,10 +385,11 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       await delay(250);
 
       await this.withAppNotification(async () => {
-        const accountJson = createAccount(this.getApi(), { ...data, saveAccount: this.isDesktop });
-
         if (this.selectedWallet === AppWallet.GoogleDrive) {
+          const accountJson = createAccount(this.chainApi, { ...data });
           await GDriveWallet.accounts.add(accountJson, data.password, data.seed);
+        } else if (this.selectedWallet === AppWallet.Sora) {
+          createAccount(this.chainApi, { ...data, saveAccount: true });
         }
 
         this.navigateToAccountList();
@@ -355,13 +400,15 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   public async handleAccountSelect(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
     if (isConnected) {
       this.closeView();
-    } else if (this.isInternal && !this.isDesktop) {
+    } else if (this.isInternal && !isAppStorageSource(account.source)) {
       this.accountLoginData = account;
       this.accountLoginVisibility = true;
     } else {
       await this.withLoading(async () => {
         await this.withAppAlert(async () => {
+          await checkExternalAccount(account);
           await this.loginAccount(account);
+          this.resetStep();
         });
       });
     }
@@ -372,9 +419,18 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
     await this.withAppAlert(async () => {
       await this.selectWallet(wallet.extensionName as AppWallet);
-
       this.navigateToAccountList();
     });
+  }
+
+  public async handleWalletDisconnect(wallet: Wallet): Promise<void> {
+    if (!wallet.provider) return;
+
+    await wallet.provider.disconnect();
+
+    this.checkConnectedAccountSource(wallet.extensionName);
+    // to rerender wc wallet state
+    this.updateAvailableWallets();
   }
 
   private setSelectedWallet(wallet: Nullable<AppWallet> = null): void {
@@ -386,33 +442,11 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   private async subscribeToWalletAccounts(): Promise<void> {
-    this.accountsSubscription = await subscribeToWalletAccounts(this.getApi(), this.selectedWallet, (accounts) => {
+    if (!this.selectedWallet) return;
+
+    this.accountsSubscription = await subscribeToWalletAccounts(this.chainApi, this.selectedWallet, (accounts) => {
       this.accounts = accounts;
     });
-  }
-
-  private resetWalletAvailabilitySubscription(): void {
-    if (this.walletAvailabilityTimer) {
-      clearInterval(this.walletAvailabilityTimer);
-      this.walletAvailabilityTimer = null;
-    }
-    this.accounts = [];
-  }
-
-  private async subscribeOnWalletAvailability(): Promise<void> {
-    this.walletAvailabilityTimer = setInterval(() => this.checkSelectedWallet(), CHECK_EXTENSION_INTERVAL);
-  }
-
-  private async checkSelectedWallet(): Promise<void> {
-    try {
-      if (this.selectedWallet) {
-        await getWallet(this.selectedWallet);
-      }
-    } catch (error) {
-      console.error(error);
-      this.resetSelectedWallet();
-      this.handleAccountLogout();
-    }
   }
 
   private async selectWallet(wallet: AppWallet): Promise<void> {
@@ -422,7 +456,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       this.setSelectedWalletLoading(true);
 
       await getWallet(wallet);
-      await this.subscribeOnWalletAvailability();
 
       this.setSelectedWalletLoading(false);
 
@@ -435,7 +468,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   private resetSelectedWallet(): void {
-    this.resetWalletAvailabilitySubscription();
     this.resetWalletAccountsSubscription();
     this.setSelectedWallet();
     this.setSelectedWalletLoading(false);
@@ -455,7 +487,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     return json;
   }
 
-  public async handleAccountLogin(password: string) {
+  public async handleAccountLogin(password: string): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
       await this.$nextTick();
@@ -469,6 +501,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
           name: (meta.name as string) || '',
           source: this.selectedWallet as AppWallet,
         });
+        this.resetStep();
 
         if (this.isSignTxDialogDisabled) {
           this.setAccountPassphrase({ address, password });
@@ -481,15 +514,15 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   public handleAccountExport(data: { address: string; password: string }): void {
-    exportAccount(this.getApi(), data);
+    exportAccount(this.chainApi, data);
   }
 
   public handleAccountDelete(address: string): void {
-    deleteAccount(this.getApi(), address);
+    deleteAccount(this.chainApi, address);
   }
 
   public handleAccountRestore(data: RestoreAccountArgs): void {
-    restoreAccount(this.getApi(), data);
+    restoreAccount(this.chainApi, data);
   }
 
   public handleBack(): void {
@@ -497,6 +530,10 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       this.closeView();
     } else {
       this.step = this.prevStep;
+
+      if (this.isExtensionsList) {
+        this.resetSelectedWallet();
+      }
     }
   }
 
@@ -506,7 +543,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   private resetStep(): void {
-    this.step = this.isDesktop ? LoginStep.AccountList : LoginStep.ExtensionList;
+    this.step = getPreviousLoginStep();
   }
 }
 </script>

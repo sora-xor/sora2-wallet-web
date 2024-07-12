@@ -459,7 +459,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
         class="wallet-send-address-formatted"
       >
         
-            cnV1qZzFyBzkXS4xfmEnXue4SPhAbFNqcvULKSdzkfPEEZsBe
+            5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL
           
       </p>
     </s-tooltip-stub>

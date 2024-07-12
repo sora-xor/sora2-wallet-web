@@ -10,6 +10,7 @@
         :selected-wallet="selectedWallet"
         :selected-wallet-loading="selectedWalletLoading"
         @select="handleSelectWallet"
+        @disconnect="handleDisconnectWallet"
       />
     </div>
     <div v-if="externalWallets.length" class="wallet-connection-list">
@@ -20,6 +21,7 @@
         :selected-wallet="selectedWallet"
         :selected-wallet-loading="selectedWalletLoading"
         @select="handleSelectWallet"
+        @disconnect="handleDisconnectWallet"
       />
     </div>
 
@@ -48,8 +50,12 @@ export default class ExtensionListStep extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly internalWallets!: Wallet[];
   @Prop({ default: () => [], type: Array }) readonly externalWallets!: Wallet[];
 
-  handleSelectWallet(wallet: Wallet) {
+  handleSelectWallet(wallet: Wallet): void {
     this.$emit('select', wallet);
+  }
+
+  handleDisconnectWallet(wallet: Wallet): void {
+    this.$emit('disconnect', wallet);
   }
 }
 </script>
