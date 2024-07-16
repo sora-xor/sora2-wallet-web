@@ -1,3 +1,4 @@
+import { FPNumber } from '@sora-substrate/util';
 import { AES, enc } from 'crypto-js';
 import { defineGetters } from 'direct-vuex';
 import isEqual from 'lodash/fp/isEqual';
@@ -84,6 +85,18 @@ const getters = defineGetters<AccountState>()({
 
       return isEqual(formatted)(accountData);
     };
+  },
+  hasSomeSbt(...args): boolean {
+    const { state } = accountGetterContext(args);
+
+    return state.accountAssets.some((asset) => {
+      // @ts-expect-error error
+      if (asset.isSBT) {
+        return !FPNumber.fromCodecValue(asset.balance.total, asset.decimals).isZero();
+      }
+
+      return false;
+    });
   },
 });
 
