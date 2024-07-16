@@ -180,6 +180,7 @@ export default class AssetDetailsTransferable extends Mixins(
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
   @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
+  @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
 
   wasBalanceDetailsClicked = false;
 
@@ -327,7 +328,11 @@ export default class AssetDetailsTransferable extends Mixins(
     if (this.selectedTransaction) {
       this.resetTxDetailsId();
     } else {
-      // this.navigate({ name: RouteNames.WalletAssetDetails });
+      if (this.previousRouteParams.asset) {
+        this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.previousRouteParams.asset } });
+        return;
+      }
+
       this.navigate({ name: RouteNames.Wallet });
     }
   }
