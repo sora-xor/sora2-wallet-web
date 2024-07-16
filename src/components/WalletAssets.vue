@@ -29,7 +29,7 @@
               </template>
               <template #default="asset">
                 <s-button
-                  v-if="permissions.sendAssets && !isZeroBalance(asset)"
+                  v-if="permissions.sendAssets && !isZeroBalance(asset) && !asset.isSBT"
                   class="wallet-assets__button send"
                   type="action"
                   size="small"
@@ -40,7 +40,7 @@
                   <s-icon name="finance-send-24" size="24" />
                 </s-button>
                 <s-button
-                  v-if="permissions.swapAssets && asset.decimals"
+                  v-if="permissions.swapAssets && asset.decimals && !asset.isSBT"
                   class="wallet-assets__button swap"
                   type="action"
                   size="small"
@@ -222,7 +222,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   showAsset(asset: AccountAsset) {
-    console.log('asset', asset);
     // filter
     const tokenType = this.filters.option;
     const showWhitelistedOnly = this.filters.verifiedOnly;
@@ -230,20 +229,28 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
     // asset
     const isNft = api.assets.isNft(asset);
+    // @ts-expect-error error
+    const isSbt = asset.isSBT;
     const isWhitelisted = api.assets.isWhitelist(asset, this.whitelist);
     const hasZeroBalance = !asset.decimals
       ? asset.balance.total === '0' // for non-divisible tokens
       : asset.balance.total[8] === undefined; // for 0.00000009 and less
 
-    if (tokenType === WalletFilteringOptions.Currencies && isNft) {
+    if (tokenType === WalletFilteringOptions.SBT && !isSbt) {
+      return false;
+    }
+
+    if (tokenType === WalletFilteringOptions.Currencies && isNft && isSbt) {
+      return false;
+    }
+
+    if (tokenType === WalletFilteringOptions.NFT && isSbt) {
       return false;
     }
 
     if (tokenType === WalletFilteringOptions.NFT && !isNft) {
       return false;
     }
-
-    // TODO: add SBT
 
     if (!isWhitelisted && showWhitelistedOnly) {
       return false;

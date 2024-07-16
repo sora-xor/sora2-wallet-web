@@ -88,8 +88,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
   }
 
   get regulatedAssets(): any {
-    return [this.accountAssets[0], this.accountAssets[1]];
-    // return [];
+    return [this.accountAssets[1], this.accountAssets[2]];
   }
 
   handleOpenAssetDetails(asset: AccountAsset): void {
