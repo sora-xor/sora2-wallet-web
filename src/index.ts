@@ -170,7 +170,7 @@ const components = {
   WalletAccount,
   WalletAvatar,
   WalletBase,
-
+  WalletFee,
   AccountCard,
   AccountConfirmationOption,
   AddressBookInput,
