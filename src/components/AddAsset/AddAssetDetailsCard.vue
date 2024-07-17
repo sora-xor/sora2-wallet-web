@@ -108,8 +108,11 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
 
   &_confirm {
     @include switch-block;
-    padding-top: 0;
-    padding-bottom: 0;
+
+    & {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
   }
   &_action {
     width: 100%;

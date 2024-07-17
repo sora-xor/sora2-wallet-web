@@ -436,11 +436,8 @@ $history-item-top-border-height: 1px;
       margin-left: auto;
     }
     .info-status--loading {
-      @include svg-icon;
+      @include svg-icon($status-pending-svg, var(--s-font-size-mini));
       @include loading;
-      background-image: $status-pending-svg;
-      height: var(--s-font-size-mini);
-      width: var(--s-font-size-mini);
     }
   }
   &-empty {

@@ -151,10 +151,11 @@ $button-size: var(--s-size-medium);
       }
     }
     &--actions {
+      padding-right: calc(#{$button-size} * 2 + #{$basic-spacing-medium});
+
       &.base-title--center {
         padding-left: calc(#{$button-size} * 2 + #{$basic-spacing-medium});
       }
-      padding-right: calc(#{$button-size} * 2 + #{$basic-spacing-medium});
     }
     &_text {
       flex: 1;

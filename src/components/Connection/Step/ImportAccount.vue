@@ -348,9 +348,6 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
     gap: $basic-spacing-small;
 
     &-item {
-      @include focus-outline($withOffset: true);
-      @include columns(3, $basic-spacing-mini);
-
       border-width: 1px;
       border-style: solid;
       border-color: transparent;
@@ -360,6 +357,9 @@ export default class ImportAccountStep extends Mixins(NotificationMixin) {
       &:hover {
         border-color: var(--s-color-base-content-secondary);
       }
+
+      @include focus-outline($withOffset: true);
+      @include columns(3, $basic-spacing-mini);
     }
   }
 }
