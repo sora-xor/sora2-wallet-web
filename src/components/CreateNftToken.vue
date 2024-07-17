@@ -461,7 +461,9 @@ export default class CreateNftToken extends Mixins(
   &_supply-block,
   &_divisible-block {
     @include switch-block;
-    padding: 0 #{$basic-spacing-small};
+    & {
+      padding: 0 #{$basic-spacing-small};
+    }
   }
 }
 

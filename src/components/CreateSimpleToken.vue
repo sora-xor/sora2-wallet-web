@@ -202,7 +202,9 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
   }
   &_supply-block {
     @include switch-block;
-    padding: 0 #{$basic-spacing-small};
+    & {
+      padding: 0 #{$basic-spacing-small};
+    }
   }
   &_action {
     margin-top: #{$basic-spacing-medium};

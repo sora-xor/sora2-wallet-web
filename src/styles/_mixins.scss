@@ -85,7 +85,7 @@
   width: $width;
   height: $height;
   @if $url != '' {
-    background-image: url($url);
+    background-image: $url;
   }
   background-position: center;
   background-repeat: no-repeat;
@@ -194,10 +194,12 @@
   $border-width: 1px;
   $border-radius: 8px;
 
-  position: relative;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  & {
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
   &.formatted-amount--value-wider {
     &:active,

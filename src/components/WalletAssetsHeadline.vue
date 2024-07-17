@@ -203,7 +203,9 @@ $size-px: 16px;
 
   &__switch {
     @include switch-block(var(--s-font-size-small));
-    padding-top: 0;
+    & {
+      padding-top: 0;
+    }
     .s-switch.neumorphic .el-switch__input:disabled + .el-switch__core {
       background-color: var(--s-color-base-border-secondary);
     }

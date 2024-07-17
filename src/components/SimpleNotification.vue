@@ -96,7 +96,10 @@ export default class SimpleNotification extends Mixins(TranslationMixin) {
 
   &__switch {
     @include switch-block;
-    padding: 0;
+
+    & {
+      padding: 0;
+    }
   }
 
   &__button {

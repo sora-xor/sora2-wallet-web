@@ -384,8 +384,10 @@ $telegram-web-app-width: 500px;
 
   &_export {
     @include switch-block;
-    align-self: start;
-    padding: 0 $basic-spacing-small;
+    & {
+      align-self: start;
+      padding: 0 $basic-spacing-small;
+    }
   }
 }
 

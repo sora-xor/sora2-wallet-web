@@ -40,8 +40,9 @@ $item-height: 60px;
     flex-flow: column nowrap;
 
     & > .account-card {
-      @include focus-outline($withOffset: true);
       height: $item-height;
+
+      @include focus-outline($withOffset: true);
 
       &.s-card.neumorphic {
         border-width: 1px;
