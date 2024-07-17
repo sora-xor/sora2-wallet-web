@@ -40,6 +40,7 @@ import SimpleNotification from './components/SimpleNotification.vue';
 import TokenAddress from './components/TokenAddress.vue';
 import TransactionHashView from './components/TransactionHashView.vue';
 import WalletBase from './components/WalletBase.vue';
+import WalletFee from './components/WalletFee.vue';
 // Shared Components
 // Other
 import * as WALLET_CONSTS from './consts';
@@ -169,6 +170,7 @@ const components = {
   WalletAccount,
   WalletAvatar,
   WalletBase,
+  WalletFee,
   AccountCard,
   AccountConfirmationOption,
   AddressBookInput,
