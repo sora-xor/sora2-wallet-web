@@ -9,6 +9,7 @@
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
                 <formatted-amount-with-fiat-value
+                  v-if="!asset.isSBT"
                   value-can-be-hidden
                   value-class="asset-value"
                   :value="getBalance(asset)"
@@ -24,10 +25,11 @@
                     <span>{{ formatFrozenBalance(asset) }}</span>
                   </div>
                 </formatted-amount-with-fiat-value>
+                <div v-else class="asset-sbt-name">KYC {{ `(by ${asset.symbol})` }}</div>
               </template>
               <template #default="asset">
                 <s-button
-                  v-if="permissions.sendAssets && !isZeroBalance(asset)"
+                  v-if="permissions.sendAssets && !isZeroBalance(asset) && !asset.isSBT"
                   class="wallet-assets__button send"
                   type="action"
                   size="small"
@@ -38,7 +40,7 @@
                   <s-icon name="finance-send-24" size="24" />
                 </s-button>
                 <s-button
-                  v-if="permissions.swapAssets && asset.decimals"
+                  v-if="permissions.swapAssets && asset.decimals && !asset.isSBT"
                   class="wallet-assets__button swap"
                   type="action"
                   size="small"
@@ -128,6 +130,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
+
+  isSBT(asset): boolean {
+    return !asset.isSBT;
+  }
 
   get assetList(): Array<AccountAsset> {
     return this.accountAssets;
@@ -223,12 +229,22 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
     // asset
     const isNft = api.assets.isNft(asset);
+    // @ts-expect-error error
+    const isSbt = asset.isSBT;
     const isWhitelisted = api.assets.isWhitelist(asset, this.whitelist);
     const hasZeroBalance = !asset.decimals
       ? asset.balance.total === '0' // for non-divisible tokens
       : asset.balance.total[8] === undefined; // for 0.00000009 and less
 
-    if (tokenType === WalletFilteringOptions.Currencies && isNft) {
+    if (tokenType === WalletFilteringOptions.SBT && !isSbt) {
+      return false;
+    }
+
+    if (tokenType === WalletFilteringOptions.Currencies && isNft && isSbt) {
+      return false;
+    }
+
+    if (tokenType === WalletFilteringOptions.NFT && isSbt) {
       return false;
     }
 
@@ -361,6 +377,10 @@ $padding: 5px;
       margin-top: $basic-spacing-mini;
       color: var(--s-color-base-content-primary);
       line-height: var(--s-line-height-reset);
+    }
+
+    &-sbt-name {
+      font-weight: 500;
     }
   }
 

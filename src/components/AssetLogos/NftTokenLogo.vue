@@ -12,7 +12,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Ref } from 'vue-property-decorator';
 
-import { IpfsStorage } from '../util/ipfsStorage';
+import { IpfsStorage } from '../../util/ipfsStorage';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 

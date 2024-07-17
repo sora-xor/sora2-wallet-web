@@ -130,6 +130,7 @@ import { validateAddress, formatAddress, formatAccountAddress } from '../util';
 
 import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
 import AddressBookInput from './AddressBook/Input.vue';
+import TokenLogo from './AssetLogos/TokenLogo.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
@@ -137,7 +138,6 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
-import TokenLogo from './TokenLogo.vue';
 import WalletBase from './WalletBase.vue';
 import WalletFee from './WalletFee.vue';
 
