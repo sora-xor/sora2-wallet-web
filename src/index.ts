@@ -14,6 +14,7 @@ import AccountConnectionList from './components/Connection/List/Account.vue';
 import ConnectionItems from './components/Connection/List/ConnectionItems.vue';
 import ExtensionConnectionList from './components/Connection/List/Extension.vue';
 import DialogBase from './components/DialogBase.vue';
+import FileUploader from './components/FileUploader.vue';
 import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';
 import HistoryPagination from './components/HistoryPagination.vue';
@@ -31,6 +32,7 @@ import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
+import NftDetails from './components/NftDetails.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
 import ExternalLink from './components/shared/ExternalLink.vue';
 import FormattedAddress from './components/shared/FormattedAddress.vue';
@@ -40,6 +42,7 @@ import TokenAddress from './components/TokenAddress.vue';
 import TokenLogo from './components/TokenLogo.vue';
 import TransactionHashView from './components/TransactionHashView.vue';
 import WalletBase from './components/WalletBase.vue';
+import WalletFee from './components/WalletFee.vue';
 // Shared Components
 // Other
 import * as WALLET_CONSTS from './consts';
@@ -169,6 +172,7 @@ const components = {
   WalletAccount,
   WalletAvatar,
   WalletBase,
+  WalletFee,
   AccountCard,
   AccountConfirmationOption,
   AddressBookInput,
@@ -181,9 +185,11 @@ const components = {
   InfoLine,
   FormattedAmount,
   FormattedAmountWithFiatValue,
+  FileUploader,
   TransactionHashView,
   NetworkFeeWarning,
   TokenLogo,
+  NftDetails,
   HistoryPagination,
   DialogBase,
   NotificationEnablingPage,
