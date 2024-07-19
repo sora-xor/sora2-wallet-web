@@ -209,7 +209,10 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
       const chainGenesisHash = this.chainApi.api?.genesisHash.toString();
 
       if (chainGenesisHash) {
-        this.wcName = addWcSubWalletLocally(chainGenesisHash, () => this.checkConnectedAccountSource(this.wcName));
+        this.wcName = addWcSubWalletLocally(chainGenesisHash, () => {
+          this.checkConnectedAccountSource(this.wcName);
+          this.updateAvailableWallets();
+        });
       }
     });
   }
@@ -427,9 +430,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     if (!wallet.provider) return;
 
     await wallet.provider.disconnect();
-
-    // to rerender wc wallet state
-    this.updateAvailableWallets();
   }
 
   private setSelectedWallet(wallet: Nullable<AppWallet> = null): void {

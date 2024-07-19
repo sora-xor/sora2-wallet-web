@@ -72,7 +72,7 @@ export class WcProvider {
       projectId,
       enableExplorer: false,
       themeVariables: {
-        '--wcm-z-index': '2100',
+        '--wcm-z-index': '9999',
       },
     });
 
@@ -156,10 +156,17 @@ export class WcProvider {
   protected async restoreSession(): Promise<void> {
     if (this.session) return;
 
+    const chainId = this.formatChainId(this.chainId);
     const sessions = this.signer.session.values;
 
     for (const session of sessions) {
-      if (!(this.namespace in session.namespaces)) continue;
+      const sessionData = session.namespaces[this.namespace];
+
+      if (!sessionData) continue;
+
+      const sessionChains = sessionData.chains;
+
+      if (!(Array.isArray(sessionChains) && sessionChains.includes(chainId))) continue;
 
       const pairingTopic = session.pairingTopic;
       try {
