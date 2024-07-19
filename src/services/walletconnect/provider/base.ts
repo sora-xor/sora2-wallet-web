@@ -16,15 +16,26 @@ export class WcProvider {
   /** Chains genesis hashes: `api.genesisHash.toString()` */
   protected chains!: ChainId[];
   protected optionalChains!: ChainId[];
+  protected onDisconnect?: VoidFunction;
+
   protected namespace!: string;
 
   public provider!: InstanceType<typeof UniversalProvider>;
   public modal!: WalletConnectModal;
   public session!: SessionTypes.Struct | undefined;
 
-  constructor(chains: ChainId[], optionalChains: ChainId[] = []) {
+  constructor({
+    chains,
+    optionalChains = [],
+    onDisconnect,
+  }: {
+    chains: ChainId[];
+    optionalChains?: ChainId[];
+    onDisconnect?: VoidFunction;
+  }) {
     this.chains = chains;
     this.optionalChains = optionalChains;
+    this.onDisconnect = onDisconnect;
   }
 
   get chainId(): ChainId {
@@ -64,6 +75,9 @@ export class WcProvider {
         '--wcm-z-index': '2100',
       },
     });
+
+    // Subscribe to session delete
+    this.signer.on('session_delete', this.onSessionDisconnect.bind(this));
   }
 
   /**
@@ -106,14 +120,11 @@ export class WcProvider {
         try {
           // await session approval from the wallet app
           this.session = await approval();
-          console.log(this.session);
           resolve();
         } catch (error) {
           reject(error);
         }
       });
-
-      this.subscribeOnSession();
     } catch (error) {
       this.provider.logger.error(error);
       throw error;
@@ -134,17 +145,12 @@ export class WcProvider {
     return this.session;
   }
 
-  protected subscribeOnSession(): void {
-    const disconnectCb = ({ topic }) => {
-      if (this.session && this.session.topic === topic) {
-        console.info(`[${this.constructor.name}] Session disconnect. Topic: "${this.session.topic}"`);
-        this.signer.off('session_delete', disconnectCb);
-        this.session = undefined;
-      }
-    };
-
-    // Subscribe to session delete
-    this.signer.on('session_delete', disconnectCb);
+  protected onSessionDisconnect({ topic }): void {
+    if (this.session && this.session.topic === topic) {
+      console.info(`[${this.constructor.name}] Session disconnect. Topic: "${this.session.topic}"`);
+      this.session = undefined;
+      this.onDisconnect?.();
+    }
   }
 
   /** Restore active session with connected wallet  */
