@@ -2,7 +2,13 @@ import { addWallet, getWallets, getWalletBySource, initialize } from '@sora-test
 import { saveAs } from 'file-saver';
 
 import { AppWallet, TranslationConsts } from '../consts';
-import { AppStorageWallets, DesktopWallets, InternalWallets, SoraWalletInfo } from '../consts/wallets';
+import {
+  AppStorageWallets,
+  DesktopWallets,
+  InternalWallets,
+  ExtensionWallets,
+  SoraWalletInfo,
+} from '../consts/wallets';
 import { SoraWallet } from '../services/sorawallet';
 import { AppError, formatAccountAddress, waitForDocumentReady } from '../util';
 
@@ -57,6 +63,8 @@ export const isDesktopWallet = (wallet: Wallet) => isDesktopSource(wallet.extens
 export const isInternalSource = (source: AppWallet) => isWalletsSource(source, InternalWallets);
 
 export const isInternalWallet = (wallet: Wallet) => isInternalSource(wallet.extensionName as AppWallet);
+
+export const isExtensionSource = (source: AppWallet) => isWalletsSource(source, ExtensionWallets);
 
 export const initAppWallets = (api: WithKeyring, isDesktop = false, appName?: string) => {
   const name = appName ?? TranslationConsts.Polkaswap;
@@ -154,21 +162,10 @@ export const getWallet = async (extension = AppWallet.PolkadotJS, autoreload = f
   return wallet;
 };
 
-/**
- * Retrieves a provider for a specific wallet
- * @param appWallet
- * @returns
- */
-export const getWalletSigner = async (appWallet: AppWallet, autoreload = false) => {
-  const wallet = await getWallet(appWallet, autoreload);
-
-  return wallet.signer as Signer;
-};
-
 export const updateApiSigner = async (api: WithKeyring, source: AppWallet): Promise<void> => {
-  const signer = await getWalletSigner(source, true);
+  const wallet = await getWallet(source, isExtensionSource(source));
 
-  api.setSigner(signer);
+  api.setSigner(wallet.signer as Signer);
 };
 
 const formatWalletAccounts = (accounts: Nullable<WalletAccount[]>): PolkadotJsAccount[] => {

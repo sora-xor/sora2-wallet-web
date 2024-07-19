@@ -13,6 +13,8 @@ const methods = ['polkadot_signTransaction'];
 const events = ['accountsChanged'];
 
 export class WcSubProvider extends WcProvider {
+  protected namespace = namespace;
+
   protected override getConnectParams(requiredChains: ChainId[], optionalChains: ChainId[]): EngineTypes.ConnectParams {
     const params: EngineTypes.ConnectParams = {};
 
