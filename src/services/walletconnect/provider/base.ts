@@ -16,6 +16,7 @@ export class WcProvider {
   /** Chains genesis hashes: `api.genesisHash.toString()` */
   protected chains!: ChainId[];
   protected optionalChains!: ChainId[];
+  protected namespace!: string;
 
   public provider!: InstanceType<typeof UniversalProvider>;
   public modal!: WalletConnectModal;
@@ -72,8 +73,9 @@ export class WcProvider {
   public async connect(): Promise<void> {
     try {
       await this.init();
-      // Not works for now
-      // await this.restoreSession();
+
+      await this.restoreSession();
+
       // already connected
       if (this.session) {
         return;
@@ -104,22 +106,14 @@ export class WcProvider {
         try {
           // await session approval from the wallet app
           this.session = await approval();
+          console.log(this.session);
           resolve();
         } catch (error) {
           reject(error);
         }
       });
 
-      const disconnectCb = ({ topic }) => {
-        if (this.session && this.session.topic === topic) {
-          console.info(`[${this.constructor.name}] Session disconnect. Topic: "${this.session.topic}"`);
-          this.signer.off('session_delete', disconnectCb);
-          this.session = undefined;
-        }
-      };
-
-      // Subscribe to session delete
-      this.signer.on('session_delete', disconnectCb);
+      this.subscribeOnSession();
     } catch (error) {
       this.provider.logger.error(error);
       throw error;
@@ -140,27 +134,41 @@ export class WcProvider {
     return this.session;
   }
 
-  protected getActivePairings(): PairingTypes.Struct[] {
-    const pairings = this.signer.core.pairing.getPairings();
+  protected subscribeOnSession(): void {
+    const disconnectCb = ({ topic }) => {
+      if (this.session && this.session.topic === topic) {
+        console.info(`[${this.constructor.name}] Session disconnect. Topic: "${this.session.topic}"`);
+        this.signer.off('session_delete', disconnectCb);
+        this.session = undefined;
+      }
+    };
 
-    const activePairings = pairings.filter((pairing) => pairing.active);
-
-    return activePairings;
+    // Subscribe to session delete
+    this.signer.on('session_delete', disconnectCb);
   }
 
   /** Restore active session with connected wallet  */
   protected async restoreSession(): Promise<void> {
-    try {
-      const activePairings = this.getActivePairings();
-      const activePairing = activePairings[0];
+    if (this.session) return;
 
-      if (activePairing) {
-        const pairingTopic = activePairing.topic;
-        console.info(`[${this.constructor.name}]: active pairing topic found: "${pairingTopic}"`);
-        this.session = await this.provider.pair(pairingTopic);
+    const sessions = this.signer.session.values;
+
+    for (const session of sessions) {
+      if (!(this.namespace in session.namespaces)) continue;
+
+      const pairingTopic = session.pairingTopic;
+      try {
+        console.info(`[${this.constructor.name}]: active pairing found: "${pairingTopic}"`);
+        await this.signer.core.pairing.activate({ topic: pairingTopic });
+        console.info(`[${this.constructor.name}]: pairing activated: "${pairingTopic}"`);
+        this.session = session;
+        return;
+      } catch {
+        console.info(
+          `[${this.constructor.name}]: pairing not active: "${pairingTopic}". Session "${session.topic}" deleted.`
+        );
+        this.disconnectSession(session);
       }
-    } catch {
-      this.disconnect();
     }
   }
 
