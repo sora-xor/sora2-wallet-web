@@ -428,7 +428,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
     await wallet.provider.disconnect();
 
-    this.checkConnectedAccountSource(wallet.extensionName);
     // to rerender wc wallet state
     this.updateAvailableWallets();
   }

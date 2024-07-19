@@ -135,7 +135,6 @@ export class WcProvider {
 
   public disconnect(): void {
     this.disconnectSession(this.session);
-    this.session = undefined;
   }
 
   protected getCurrentSession(): SessionTypes.Struct {
@@ -190,6 +189,7 @@ export class WcProvider {
           message: 'Disconnected by dApp',
         },
       });
+      this.onSessionDisconnect(session);
     } catch {}
   }
 
