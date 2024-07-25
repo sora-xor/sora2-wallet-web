@@ -13,13 +13,20 @@ export const isWcWallet = (wallet: Wallet): boolean => {
   return wallet.extensionName.startsWith(WalletConnectInfo.extensionName);
 };
 
-const addWcWalletLocally = (chainId: string | number, Provider: typeof WcProvider): string => {
+const addWcWalletLocally = (
+  chainId: string | number,
+  onDisconnect: VoidFunction,
+  Provider: typeof WcProvider
+): string => {
   const name = chainId ? `${WalletConnectInfo.extensionName}:${chainId}` : WalletConnectInfo.extensionName;
 
   try {
     checkWallet(name as any);
   } catch {
-    const provider = new Provider([chainId]);
+    const provider = new Provider({
+      chains: [chainId],
+      onDisconnect,
+    });
     const wallet = new WcWallet(provider);
 
     addWalletLocally(wallet, WalletConnectInfo, name);
@@ -28,6 +35,6 @@ const addWcWalletLocally = (chainId: string | number, Provider: typeof WcProvide
   return name;
 };
 
-export const addWcSubWalletLocally = (chainId: string): string => {
-  return addWcWalletLocally(chainId, WcSubProvider);
+export const addWcSubWalletLocally = (chainId: string, onDisconnect: VoidFunction): string => {
+  return addWcWalletLocally(chainId, onDisconnect, WcSubProvider);
 };

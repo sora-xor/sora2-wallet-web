@@ -16,14 +16,26 @@ export class WcProvider {
   /** Chains genesis hashes: `api.genesisHash.toString()` */
   protected chains!: ChainId[];
   protected optionalChains!: ChainId[];
+  protected onDisconnect?: VoidFunction;
+
+  protected namespace!: string;
 
   public provider!: InstanceType<typeof UniversalProvider>;
   public modal!: WalletConnectModal;
   public session!: SessionTypes.Struct | undefined;
 
-  constructor(chains: ChainId[], optionalChains: ChainId[] = []) {
+  constructor({
+    chains,
+    optionalChains = [],
+    onDisconnect,
+  }: {
+    chains: ChainId[];
+    optionalChains?: ChainId[];
+    onDisconnect?: VoidFunction;
+  }) {
     this.chains = chains;
     this.optionalChains = optionalChains;
+    this.onDisconnect = onDisconnect;
   }
 
   get chainId(): ChainId {
@@ -60,9 +72,12 @@ export class WcProvider {
       projectId,
       enableExplorer: false,
       themeVariables: {
-        '--wcm-z-index': '2100',
+        '--wcm-z-index': '9999',
       },
     });
+
+    // Subscribe to session delete
+    this.signer.on('session_delete', this.onSessionDisconnect.bind(this));
   }
 
   /**
@@ -72,8 +87,9 @@ export class WcProvider {
   public async connect(): Promise<void> {
     try {
       await this.init();
-      // Not works for now
-      // await this.restoreSession();
+
+      await this.restoreSession();
+
       // already connected
       if (this.session) {
         return;
@@ -109,17 +125,6 @@ export class WcProvider {
           reject(error);
         }
       });
-
-      const disconnectCb = ({ topic }) => {
-        if (this.session && this.session.topic === topic) {
-          console.info(`[${this.constructor.name}] Session disconnect. Topic: "${this.session.topic}"`);
-          this.signer.off('session_delete', disconnectCb);
-          this.session = undefined;
-        }
-      };
-
-      // Subscribe to session delete
-      this.signer.on('session_delete', disconnectCb);
     } catch (error) {
       this.provider.logger.error(error);
       throw error;
@@ -130,7 +135,6 @@ export class WcProvider {
 
   public disconnect(): void {
     this.disconnectSession(this.session);
-    this.session = undefined;
   }
 
   protected getCurrentSession(): SessionTypes.Struct {
@@ -140,27 +144,43 @@ export class WcProvider {
     return this.session;
   }
 
-  protected getActivePairings(): PairingTypes.Struct[] {
-    const pairings = this.signer.core.pairing.getPairings();
-
-    const activePairings = pairings.filter((pairing) => pairing.active);
-
-    return activePairings;
+  protected onSessionDisconnect({ topic }): void {
+    if (this.session && this.session.topic === topic) {
+      console.info(`[${this.constructor.name}] Session disconnect. Topic: "${this.session.topic}"`);
+      this.session = undefined;
+      this.onDisconnect?.();
+    }
   }
 
   /** Restore active session with connected wallet  */
   protected async restoreSession(): Promise<void> {
-    try {
-      const activePairings = this.getActivePairings();
-      const activePairing = activePairings[0];
+    if (this.session) return;
 
-      if (activePairing) {
-        const pairingTopic = activePairing.topic;
-        console.info(`[${this.constructor.name}]: active pairing topic found: "${pairingTopic}"`);
-        this.session = await this.provider.pair(pairingTopic);
+    const chainId = this.formatChainId(this.chainId);
+    const sessions = this.signer.session.values;
+
+    for (const session of sessions) {
+      const sessionData = session.namespaces[this.namespace];
+
+      if (!sessionData) continue;
+
+      const sessionChains = sessionData.chains;
+
+      if (!(Array.isArray(sessionChains) && sessionChains.includes(chainId))) continue;
+
+      const pairingTopic = session.pairingTopic;
+      try {
+        console.info(`[${this.constructor.name}]: active pairing found: "${pairingTopic}"`);
+        await this.signer.core.pairing.activate({ topic: pairingTopic });
+        console.info(`[${this.constructor.name}]: pairing activated: "${pairingTopic}"`);
+        this.session = session;
+        return;
+      } catch {
+        console.info(
+          `[${this.constructor.name}]: pairing not active: "${pairingTopic}". Session "${session.topic}" deleted.`
+        );
+        this.disconnectSession(session);
       }
-    } catch {
-      this.disconnect();
     }
   }
 
@@ -176,6 +196,7 @@ export class WcProvider {
           message: 'Disconnected by dApp',
         },
       });
+      this.onSessionDisconnect(session);
     } catch {}
   }
 

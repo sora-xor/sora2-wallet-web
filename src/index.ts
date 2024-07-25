@@ -15,6 +15,7 @@ import AccountConnectionList from './components/Connection/List/Account.vue';
 import ConnectionItems from './components/Connection/List/ConnectionItems.vue';
 import ExtensionConnectionList from './components/Connection/List/Extension.vue';
 import DialogBase from './components/DialogBase.vue';
+import FileUploader from './components/FileUploader.vue';
 import FormattedAmount from './components/FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './components/FormattedAmountWithFiatValue.vue';
 import HistoryPagination from './components/HistoryPagination.vue';
@@ -32,6 +33,7 @@ import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
+import NftDetails from './components/NftDetails.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
 import ExternalLink from './components/shared/ExternalLink.vue';
 import FormattedAddress from './components/shared/FormattedAddress.vue';
@@ -183,9 +185,11 @@ const components = {
   InfoLine,
   FormattedAmount,
   FormattedAmountWithFiatValue,
+  FileUploader,
   TransactionHashView,
   NetworkFeeWarning,
   TokenLogo,
+  NftDetails,
   HistoryPagination,
   DialogBase,
   NotificationEnablingPage,
