@@ -14,6 +14,10 @@ export class GoogleApi {
     return this._ready;
   }
 
+  get hasKey(): boolean {
+    return !!this.options?.apiKey;
+  }
+
   public setOptions(options: GoogleApiOptions): void {
     this.options = { ...options };
   }

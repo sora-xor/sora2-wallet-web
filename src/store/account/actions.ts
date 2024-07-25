@@ -149,6 +149,14 @@ const actions = defineActions({
     }
   },
 
+  async checkConnectedAccountSource(context, source: string): Promise<void> {
+    const { dispatch, getters } = accountActionContext(context);
+
+    if (source && getters.account && getters.account.source === source) {
+      await dispatch.logout();
+    }
+  },
+
   /**
    * Update the list of installed extensions & internal wallets
    */

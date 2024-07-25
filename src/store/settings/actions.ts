@@ -9,7 +9,6 @@ import { api } from '../../api';
 import { IndexerType, SoraNetwork } from '../../consts';
 import { getCurrenciesState } from '../../consts/currencies';
 import { GDriveStorage } from '../../services/google';
-import { addGDriveWalletLocally } from '../../services/google/wallet';
 import { WcProvider } from '../../services/walletconnect';
 import { rootActionContext } from '../../store';
 import { ApiKeysObject, ConnectionStatus } from '../../types/common';
@@ -92,7 +91,6 @@ const actions = defineActions({
     } = state;
 
     if (googleApi && googleClientId) {
-      addGDriveWalletLocally();
       GDriveStorage.setOptions(googleApi, googleClientId);
     }
 
