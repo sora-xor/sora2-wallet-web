@@ -52,6 +52,7 @@
 import { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
+import { api } from '../../api';
 import { RouteNames } from '../../consts';
 import { mutation, state } from '../../store/decorators';
 import { Route } from '../../store/router/types';
@@ -81,14 +82,12 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
 
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
 
+  regulatedAssets: Array<Asset | undefined> = [];
+
   get expiryDate(): Nullable<string> {
     const now = new Date();
     const oneMonthAhead = now.setMonth(now.getMonth() + 1);
     return this.formatDate(oneMonthAhead, 'LL');
-  }
-
-  get regulatedAssets(): any {
-    return [this.accountAssets[1], this.accountAssets[2]];
   }
 
   handleOpenAssetDetails(asset: AccountAsset): void {
@@ -97,6 +96,17 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
 
   handleBack(): void {
     this.navigate({ name: RouteNames.Wallet });
+  }
+
+  async mounted(): Promise<void> {
+    const { regulatedAssets } = await api.extendedAssets.getSbtMetaInfo(this.asset.address);
+    const infos = regulatedAssets.map((address) => api.assets.getAssetInfo(address));
+
+    const regulatedAssetsInfos = (await Promise.allSettled(infos))
+      .map((result) => (result.status === 'fulfilled' ? result.value : undefined))
+      .filter(Boolean);
+
+    this.regulatedAssets = regulatedAssetsInfos;
   }
 }
 </script>

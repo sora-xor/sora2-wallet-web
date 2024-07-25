@@ -264,7 +264,7 @@ const actions = defineActions({
     commit.resetAccountAssetsSubscription();
 
     if (getters.isLoggedIn) {
-      const whitelistAddresses = state.whitelistArray.map((asset) => asset.address);
+      const sbtAssetsList = await api.extendedAssets.getAllSbtIds();
 
       try {
         const subscription = api.assets.balanceUpdated.subscribe(() => {
@@ -273,8 +273,6 @@ const actions = defineActions({
           );
 
           // TODO: when moved to upgraded assetInfos storage, rely on AssetType
-          const sbtAssetsList = ['0x004c65faf131ed7bc700eb5166982dcfd558b6d152d4f5c910317ae1c0c7cd28'];
-
           // to know if asset is SBT or not upfront
           const assetsWithMetaInfo = filtered.map((asset) => {
             return {

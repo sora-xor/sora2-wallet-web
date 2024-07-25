@@ -183,6 +183,7 @@ export default class AssetDetailsTransferable extends Mixins(
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
 
   wasBalanceDetailsClicked = false;
+  asset = {} as AccountAsset;
 
   // ____________________NFT Token Details_____________________________
   private wasNftLinkCopied = false;
@@ -232,7 +233,19 @@ export default class AssetDetailsTransferable extends Mixins(
     this.wasNftLinkCopied = false;
   }
 
-  mounted(): void {
+  async created(): Promise<void> {
+    const asset =
+      this.accountAssets.find(({ address }) => address === this.currentRouteParams.asset.address) ||
+      this.currentRouteParams.asset;
+
+    // asset wasn't added to accountAssets (SBT regulated asset case)
+    if (!asset.balance) {
+      const nonAddedAsset = await api.assets.getAccountAsset(this.currentRouteParams.asset.address);
+      this.asset = nonAddedAsset;
+    } else {
+      this.asset = asset;
+    }
+
     if (this.isNft) {
       this.setNftMeta();
     }
@@ -267,16 +280,8 @@ export default class AssetDetailsTransferable extends Mixins(
     return this.getAssetFiatPrice(this.asset);
   }
 
-  get asset(): AccountAsset {
-    // currentRouteParams.asset was added here to avoid a case when the asset is not found
-    return (
-      this.accountAssets.find(({ address }) => address === this.currentRouteParams.asset.address) ||
-      this.currentRouteParams.asset
-    );
-  }
-
   get balance(): string {
-    return this.formatCodecNumber(this.asset.balance.transferable, this.asset.decimals);
+    return this.formatCodecNumber(this.asset.balance?.transferable, this.asset.decimals);
   }
 
   get totalBalance(): string {
@@ -284,7 +289,7 @@ export default class AssetDetailsTransferable extends Mixins(
   }
 
   get isEmptyBalance(): boolean {
-    return this.isCodecZero(this.asset.balance.transferable, this.asset.decimals);
+    return this.isCodecZero(this.asset.balance?.transferable, this.asset.decimals);
   }
 
   get balanceStyles(): object {
