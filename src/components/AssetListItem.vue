@@ -11,7 +11,7 @@
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
       </slot>
-      <span v-if="asset.isSBT" class="asset-sbt-expiration">Expires 12AM 10 Jan, 2024</span>
+      <span v-if="asset.isSBT && showExpiry" class="asset-sbt-expiration">Expires 12AM 10 Jan, 2024</span>
       <token-address :name="asset.name" :symbol="asset.symbol" :address="asset.address" class="asset-info" />
       <slot name="append" v-bind="asset" />
     </div>
@@ -41,6 +41,7 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withTabindex!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly showExpiry!: boolean;
 
   get isSBT(): boolean {
     // @ts-expect-error typing
