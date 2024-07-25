@@ -45,3 +45,10 @@ export const AppStorageWallets = [AppWallet.Sora];
 export const InternalWallets = [AppWallet.Sora, AppWallet.GoogleDrive];
 /** Wallets for Desktop mode */
 export const DesktopWallets = [AppWallet.Sora, AppWallet.WalletConnect];
+/** Wallets as browser extensions */
+export const ExtensionWallets = [
+  AppWallet.FearlessWallet,
+  AppWallet.PolkadotJS,
+  AppWallet.SubwalletJS,
+  AppWallet.TalismanJS,
+];
