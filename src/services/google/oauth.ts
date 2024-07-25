@@ -24,6 +24,10 @@ export class GoogleOauth {
     return !!this.client;
   }
 
+  get hasKey(): boolean {
+    return !!this.options?.clientId;
+  }
+
   public setOptions(options: GoogleOauthOptions): void {
     this.options = { ...options };
   }

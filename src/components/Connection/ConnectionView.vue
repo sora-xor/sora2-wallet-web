@@ -139,6 +139,10 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   @Prop({ default: () => null, type: Object }) private readonly account!: Nullable<PolkadotJsAccount>;
 
+  @Prop({ default: () => {}, type: Function }) private readonly checkConnectedAccountSource!: (
+    source: string
+  ) => Promise<void>;
+
   @Prop({ default: () => {}, type: Function }) private readonly loginAccount!: (
     account: PolkadotJsAccount
   ) => Promise<void>;
@@ -194,26 +198,14 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     this.updateAvailableWallets();
   }
 
-  private checkConnectedAccountSource(source: string): void {
-    if (source && this.account && this.account.source === source) {
-      this.logoutAccount();
-    }
-  }
-
   private async updateWcWallet(): Promise<void> {
     await this.withChainApi(this.chainApi, async () => {
       this.checkConnectedAccountSource(this.wcName);
 
-      this.wcName = '';
-
-      const chainGenesisHash = this.chainApi.api?.genesisHash.toString();
-
-      if (chainGenesisHash) {
-        this.wcName = addWcSubWalletLocally(chainGenesisHash, () => {
-          this.checkConnectedAccountSource(this.wcName);
-          this.updateAvailableWallets();
-        });
-      }
+      this.wcName = addWcSubWalletLocally(this.chainApi, (source) => {
+        this.checkConnectedAccountSource(source);
+        this.updateAvailableWallets();
+      });
     });
   }
 

@@ -5,6 +5,7 @@
     :login-account="loginAccount"
     :logout-account="logoutAccount"
     :rename-account="renameAccount"
+    :check-connected-account-source="checkConnectedAccountSource"
     :close-view="navigateToAccount"
   >
     <template #extension>
@@ -43,6 +44,7 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
   @action.account.loginAccount public loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
   @action.account.logout public logoutAccount!: (forgetAddress?: string) => Promise<void>;
   @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
+  @action.account.checkConnectedAccountSource public checkConnectedAccountSource!: (source: string) => Promise<void>;
 
   get chainApi() {
     return api;
