@@ -1,3 +1,5 @@
+import { initialize } from '@sora-test/wallet-connect/dotsama/wallets';
+
 import { api, connection } from './api';
 // Components & Mixins
 import AccountCard from './components/Account/AccountCard.vue';
@@ -49,12 +51,15 @@ import * as WALLET_CONSTS from './consts';
 import en from './lang/en';
 import installWalletPlugins from './plugins';
 import AlertsApiService from './services/alerts';
+import { addGDriveWalletLocally } from './services/google/wallet';
 import { getCurrentIndexer } from './services/indexer';
 import * as SUBQUERY_TYPES from './services/indexer/subquery/types';
 import { historyElementsFilter } from './services/indexer/subsquid/queries/historyElements';
 import * as SUBSQUID_TYPES from './services/indexer/subsquid/types';
 import * as INDEXER_TYPES from './services/indexer/types';
+import { addSoraWalletLocally } from './services/sorawallet';
 import * as WC from './services/walletconnect';
+import { addWcSubWalletLocally } from './services/walletconnect';
 import SoraWallet from './SoraWallet.vue';
 import internalStore, { modules } from './store'; // `internalStore` is required for local usage
 import * as VUEX_TYPES from './store/types';
@@ -73,6 +78,7 @@ import * as accountUtils from './util/account';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
+import type { WithKeyring } from '@sora-substrate/util';
 import type { PluginObject } from 'vue';
 import type Vue from 'vue';
 
@@ -99,6 +105,25 @@ if (typeof window !== 'undefined' && window.Vue) {
   window.Vue.use(SoraWalletElements, {});
 }
 
+const initAppWallets = (api: WithKeyring, isDesktop = false, appName?: string) => {
+  const name = appName ?? WALLET_CONSTS.TranslationConsts.Polkaswap;
+
+  if (isDesktop) {
+    addSoraWalletLocally(api);
+  } else {
+    addGDriveWalletLocally();
+  }
+
+  addWcSubWalletLocally(api, (source) => {
+    store.dispatch.wallet.account.checkConnectedAccountSource(source);
+    store.dispatch.wallet.account.updateAvailableWallets();
+  });
+
+  initialize(name);
+
+  store.dispatch.wallet.account.updateAvailableWallets();
+};
+
 const waitForStore = async (withoutStore = false): Promise<void> => {
   if (!store) {
     if (withoutStore) {
@@ -120,8 +145,6 @@ const waitForCore = async ({
 }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> => {
   if (!walletCoreLoaded) {
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
-
-    accountUtils.initAppWallets(api, store.state.wallet.account.isDesktop, appName);
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);
@@ -155,6 +178,8 @@ const checkActiveAccount = async (): Promise<void> => {
 
 async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
   await Promise.all([waitForCore(options), waitForConnection()]);
+
+  initAppWallets(api, store.state.wallet.account.isDesktop, options.appName);
 
   await checkActiveAccount();
 

@@ -1,15 +1,8 @@
-import { addWallet, getWallets, getWalletBySource, initialize } from '@sora-test/wallet-connect/dotsama/wallets';
+import { addWallet, getWallets, getWalletBySource } from '@sora-test/wallet-connect/dotsama/wallets';
 import { saveAs } from 'file-saver';
 
 import { AppWallet, TranslationConsts } from '../consts';
-import {
-  AppStorageWallets,
-  DesktopWallets,
-  InternalWallets,
-  ExtensionWallets,
-  SoraWalletInfo,
-} from '../consts/wallets';
-import { SoraWallet } from '../services/sorawallet';
+import { AppStorageWallets, DesktopWallets, InternalWallets, ExtensionWallets } from '../consts/wallets';
 import { AppError, formatAccountAddress, waitForDocumentReady } from '../util';
 
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
@@ -66,14 +59,6 @@ export const isInternalWallet = (wallet: Wallet) => isInternalSource(wallet.exte
 
 export const isExtensionSource = (source: AppWallet) => isWalletsSource(source, ExtensionWallets);
 
-export const initAppWallets = (api: WithKeyring, isDesktop = false, appName?: string) => {
-  const name = appName ?? TranslationConsts.Polkaswap;
-  if (isDesktop) {
-    addSoraWalletLocally(api);
-  }
-  initialize(name);
-};
-
 export const getAppWallets = (isDesktop = false): Wallet[] => {
   try {
     const wallets = getWallets();
@@ -99,6 +84,7 @@ export const addWalletLocally = (
   walletInfo: WalletInfo,
   nameOverride?: string
 ): void => {
+  const dappName = TranslationConsts.Polkaswap;
   const extensionName = nameOverride ?? walletInfo.extensionName;
 
   const injectedWindow = window as any;
@@ -107,22 +93,9 @@ export const addWalletLocally = (
   injectedWindow.injectedWeb3[extensionName] = wallet;
 
   if (!getWalletBySource(extensionName)) {
-    addWallet({ ...walletInfo, extensionName }, TranslationConsts.Polkaswap);
+    addWallet({ ...walletInfo, extensionName }, dappName);
+    console.info(`[${dappName}] Wallet added: "${extensionName}"`);
   }
-};
-
-export const addSoraWalletLocally = (api: WithKeyring): string => {
-  const name = SoraWalletInfo.extensionName;
-
-  try {
-    checkWallet(name as any);
-  } catch {
-    const wallet = new SoraWallet(api);
-
-    addWalletLocally(wallet, SoraWalletInfo, name);
-  }
-
-  return name;
 };
 
 export const checkWallet = (extension: AppWallet): Wallet => {

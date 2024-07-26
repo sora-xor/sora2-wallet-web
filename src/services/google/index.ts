@@ -20,6 +20,10 @@ class GoogleDriveStorage {
     this.oauth = oauth;
   }
 
+  get hasKey(): boolean {
+    return this.api.hasKey && this.oauth.hasKey;
+  }
+
   setOptions(apiKey: string, clientId: string) {
     this.api.setOptions({ apiKey, discoveryDocs: [DRIVE_DISCOVERY_DOC] });
     this.oauth.setOptions({ clientId, scope: DRIVE_APPDATA_SCOPE });

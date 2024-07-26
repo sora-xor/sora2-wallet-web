@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "1.39.6",
+  "version": "1.39.9",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
@@ -26,19 +26,19 @@
   },
   "dependencies": {
     "@polkadot/vue-identicon": "2.12.1",
-    "@sora-substrate/util": "1.39.5",
+    "@sora-substrate/util": "1.39.7",
     "@sora-test/wallet-connect": "^0.0.9",
     "@soramitsu-ui/ui-vue2": "^1.1.1",
     "@urql/core": "^5.0.4",
     "@walletconnect/modal": "^2.6.2",
-    "@walletconnect/universal-provider": "^2.13.3",
+    "@walletconnect/universal-provider": "^2.14.0",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.2",
     "base-64": "^1.0.0",
     "core-js": "^3.37.1",
     "crypto-js": "^4.2.0",
     "crypto-random-string": "^5.0.0",
-    "dayjs": "^1.11.11",
+    "dayjs": "^1.11.12",
     "direct-vuex": "^0.12.1",
     "file-saver": "^2.0.5",
     "graphql": "^16.9.0",
@@ -72,7 +72,7 @@
     "@types/google.accounts": "^0.0.14",
     "@types/jest": "^29.5.12",
     "@types/lodash": "^4.17.7",
-    "@types/node": "^20.14.11",
+    "@types/node": "^20.14.12",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "@vue/cli-plugin-babel": "5.0.8",
@@ -110,7 +110,7 @@
     "sass": "^1.77.8",
     "sass-loader": "^14.2.1",
     "ts-jest": "^27.1.5",
-    "typescript": "~5.5.3",
+    "typescript": "~5.5.4",
     "vue-template-compiler": "2.7.14"
   },
   "resolutions": {
