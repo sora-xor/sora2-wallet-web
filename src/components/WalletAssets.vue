@@ -6,7 +6,13 @@
         <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
             <div class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
-            <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
+            <asset-list-item
+              :asset="asset"
+              with-fiat
+              show-expiry
+              with-clickable-logo
+              @show-details="handleOpenAssetDetails"
+            >
               <template #value="asset">
                 <formatted-amount-with-fiat-value
                   v-if="!asset.isSBT"
@@ -25,7 +31,15 @@
                     <span>{{ formatFrozenBalance(asset) }}</span>
                   </div>
                 </formatted-amount-with-fiat-value>
-                <div v-else class="asset-sbt-name">KYC {{ `(by ${asset.symbol})` }}</div>
+                <div v-else class="asset-sbt-meta">
+                  <div class="title">
+                    KYC <span class="counter">{{ `#${index}` }}</span>
+                    <s-icon name="el-icon-success" size="16" />
+                  </div>
+                  <div class="permissions">
+                    <span class="counter">{{ 2 }}</span> Permissions
+                  </div>
+                </div>
               </template>
               <template #default="asset">
                 <s-button
@@ -379,8 +393,32 @@ $padding: 5px;
       line-height: var(--s-line-height-reset);
     }
 
-    &-sbt-name {
-      font-weight: 500;
+    &-sbt-meta {
+      .title {
+        font-weight: 600;
+
+        .counter {
+          font-size: 12px;
+          font-weight: 450;
+        }
+      }
+
+      .permissions {
+        color: var(--s-color-fiat-value);
+        margin-top: -7px;
+        margin-bottom: -4px;
+        font-size: 11.5px;
+
+        .counter {
+          font-size: 13px;
+          font-weight: 600;
+        }
+      }
+
+      .el-icon-success {
+        color: var(--s-color-fiat-value);
+        margin-left: 4px;
+      }
     }
   }
 

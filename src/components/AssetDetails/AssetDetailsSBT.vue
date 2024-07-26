@@ -12,14 +12,16 @@
           <template #avatar>
             <wallet-avatar slot="avatar" class="account-gravatar" :address="asset.address" :size="28" />
           </template>
-          <template #name>{{ 'KYC provider' }}</template>
+          <template #name>{{ 'KYC provider' }} <s-icon name="el-icon-success" size="16" /></template>
           <template #description>
             <div class="asset-details-instition-mark">Regulated Insitution</div>
             <formatted-address :value="asset.address" :symbols="24" :tooltip-text="t('account.walletAddress')" />
           </template>
         </account-card>
-        <info-line :label="'Expiry date'" :label-tooltip="'Expiry date'" :value="expiryDate" />
-        <info-line :label="'Expires in'" :label-tooltip="'Expires in'" :value="expiryDate" />
+        <template v-if="showExpiryDate">
+          <info-line :label="'Expiry date'" :label-tooltip="'Expiry date'" :value="expiryDate" />
+          <info-line :label="'Expires in'" :label-tooltip="'Expires in'" :value="expiresIn" />
+        </template>
         <div v-if="regulatedAssets.length" class="asset-details-regulated-section">
           <div class="asset-details-subtitle">Access permitted</div>
           <div class="asset-details-regulated-assets">
@@ -77,18 +79,16 @@ import WalletBase from '../WalletBase.vue';
   },
 })
 export default class WalletAssetDetails extends Mixins(TranslationMixin) {
-  @mutation.router.navigate navigate!: (options: Route) => Promise<void>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.account.address private connected!: string;
+  @mutation.router.navigate navigate!: (options: Route) => Promise<void>;
 
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
 
   regulatedAssets: Array<Asset | undefined> = [];
-
-  get expiryDate(): Nullable<string> {
-    const now = new Date();
-    const oneMonthAhead = now.setMonth(now.getMonth() + 1);
-    return this.formatDate(oneMonthAhead, 'LL');
-  }
+  showExpiryDate = true;
+  expiryDate = '';
+  expiresIn = '';
 
   handleOpenAssetDetails(asset: AccountAsset): void {
     this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } });
@@ -98,7 +98,22 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
     this.navigate({ name: RouteNames.Wallet });
   }
 
+  async checkExpirationDate(): Promise<void> {
+    const ownedAssets = await api.assets.getOwnedAssetIds(this.connected);
+    if (ownedAssets.includes(this.asset.address)) {
+      this.showExpiryDate = false;
+      return;
+    }
+
+    const expiryDate = await api.extendedAssets.getSbtExpiration(this.connected, this.asset.address);
+
+    this.expiryDate = this.formatDate(Number(expiryDate), 'lll');
+    this.expiresIn = this.getRelativeTime(Number(expiryDate));
+  }
+
   async mounted(): Promise<void> {
+    this.checkExpirationDate();
+
     const { regulatedAssets } = await api.extendedAssets.getSbtMetaInfo(this.asset.address);
     const infos = regulatedAssets.map((address) => api.assets.getAssetInfo(address));
 
@@ -132,6 +147,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
       font-weight: 300;
       color: var(--s-color-base-content-secondary);
       text-align: center;
+      width: 80%;
     }
 
     &-regulated-section {
@@ -165,8 +181,18 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
     width: 100%;
   }
 
+  // overwrite card
+  .el-card.asset-details {
+    padding: 0 !important;
+  }
+
   .el-divider {
     margin: 0;
+  }
+
+  .el-icon-success {
+    color: var(--s-color-fiat-value);
+    margin-left: 4px;
   }
 }
 </style>

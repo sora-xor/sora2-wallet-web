@@ -595,4 +595,14 @@ export default {
     enterPassword: 'Enter password',
     googleOnly: '{Google} accounts only',
   },
+  sbtDetails: {
+    description: 'This SBT provides access to multiple tokens & pools and is attached to your account',
+    issuedBy: '{SBT} issued by',
+    accessPermitted: 'Access permitted',
+    noPermission: 'No additional permissions',
+    regulatedInsitution: 'Regulated Insitution',
+    expiryDate: 'Expiry date',
+    expiresIn: 'Expires in',
+    infiniteExp: 'open-ended',
+  },
 };
