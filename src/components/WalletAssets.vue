@@ -33,11 +33,12 @@
                 </formatted-amount-with-fiat-value>
                 <div v-else class="asset-sbt-meta">
                   <div class="title">
-                    KYC <span class="counter">{{ `#${index}` }}</span>
+                    {{ TranslationConsts.KYC }} <span class="counter">{{ `#${index}` }}</span>
                     <s-icon name="el-icon-success" size="16" />
                   </div>
                   <div class="permissions">
-                    <span class="counter">{{ sbtPermissions[asset.address] }}</span> Permissions
+                    <span class="counter">{{ sbtPermissions[asset.address] }}</span>
+                    {{ getTranslation(sbtPermissions[asset.address]) }}
                   </div>
                 </div>
               </template>
@@ -196,6 +197,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
         : sum;
     }, new FPNumber(0));
     return fiatAmount ? fiatAmount.toLocaleString() : null;
+  }
+
+  getTranslation(number: number): string {
+    return number > 1 ? this.t('sbtDetails.permissions') : this.t('sbtDetails.permission');
   }
 
   getBalance(asset: AccountAsset): string {

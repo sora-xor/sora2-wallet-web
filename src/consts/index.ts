@@ -231,6 +231,7 @@ export const TranslationConsts = {
   NFT: 'NFT',
   SBT: 'SBT',
   CEX: 'CEX',
+  KYC: 'KYC',
   Polkadot: 'Polkadot',
   SORAScan: 'SORAScan',
   Subscan: 'Subscan',

@@ -1,26 +1,37 @@
 <template>
-  <wallet-base :title="'SBT'" show-back @back="handleBack" class="sbt-permissions-info">
+  <wallet-base :title="TranslationConsts.SBT" show-back @back="handleBack" class="sbt-permissions-info">
     <s-card class="asset-details" primary>
       <div class="asset-details-container s-flex">
         <token-logo :token="asset" size="large" />
-        <div class="asset-details-title">KYC Verification</div>
+        <div class="asset-details-title">{{ t('sbtDetails.kycVerification', { KYC: TranslationConsts.KYC }) }}</div>
         <div class="asset-details-desc">
-          This SBT provides access to multiple tokens & pools and is attached to your account
+          {{ t('sbtDetails.description') }}
         </div>
-        <div class="asset-details-subtitle">SBT issued by</div>
+        <div class="asset-details-subtitle">{{ t('sbtDetails.issuedBy', { SBT: TranslationConsts.SBT }) }}</div>
         <account-card class="asset-details-issuer">
           <template #avatar>
             <wallet-avatar slot="avatar" class="account-gravatar" :address="asset.address" :size="28" />
           </template>
-          <template #name>{{ 'KYC provider' }} <s-icon name="el-icon-success" size="16" /></template>
+          <template #name>
+            {{ t('sbtDetails.kycProvider', { KYC: TranslationConsts.KYC }) }}
+            <s-icon name="el-icon-success" size="16" />
+          </template>
           <template #description>
-            <div class="asset-details-instition-mark">Regulated Insitution</div>
+            <div class="asset-details-instition-mark">{{ t('sbtDetails.regulatedInsitution') }}</div>
             <formatted-address :value="asset.address" :symbols="24" :tooltip-text="t('account.walletAddress')" />
           </template>
         </account-card>
         <template v-if="showExpiryDate">
-          <info-line :label="'Expiry date'" :label-tooltip="'Expiry date'" :value="expiryDate" />
-          <info-line :label="'Expires in'" :label-tooltip="'Expires in'" :value="expiresIn" />
+          <info-line
+            :label="t('sbtDetails.expiryDate')"
+            :label-tooltip="t('sbtDetails.expiryDateTooltip')"
+            :value="expiryDate"
+          />
+          <info-line
+            :label="t('sbtDetails.expiresIn')"
+            :label-tooltip="t('sbtDetails.expiresInTooltip')"
+            :value="expiresIn"
+          />
         </template>
         <div v-if="regulatedAssets.length" class="asset-details-regulated-section">
           <div class="asset-details-subtitle">{{ regulatedAssetsTitle }}</div>
@@ -44,7 +55,9 @@
             </div>
           </div>
         </div>
-        <div v-else class="asset-details-subtitle asset-details-subtitle--no-permission">No additional permissions</div>
+        <div v-else class="asset-details-subtitle asset-details-subtitle--no-permission">
+          {{ t('sbtDetails.noPermissions') }}
+        </div>
       </div>
     </s-card>
   </wallet-base>
@@ -92,7 +105,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
   isOwnerOpenedPage = false;
 
   get regulatedAssetsTitle(): string {
-    return this.isOwnerOpenedPage ? 'Regulated assets operable' : 'Access permitted';
+    return this.isOwnerOpenedPage ? this.t('sbtDetails.listOperable') : this.t('sbtDetails.accessPermitted');
   }
 
   handleOpenAssetDetails(asset: AccountAsset): void {

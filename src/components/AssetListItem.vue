@@ -58,7 +58,7 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   async getSbtExpiryDate() {
     const sbtExpiryDate = await api.extendedAssets.getSbtExpiration(this.connected, this.asset.address);
     if (Number(sbtExpiryDate) === Infinity) {
-      this.sbtExpiryDate = 'open-ended';
+      this.sbtExpiryDate = this.t('sbtDetails.indefiniteExp');
       return;
     }
     this.sbtExpiryDate = this.formatDate(Number(sbtExpiryDate), 'll');
