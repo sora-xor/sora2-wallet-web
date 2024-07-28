@@ -37,7 +37,7 @@
                     <s-icon name="el-icon-success" size="16" />
                   </div>
                   <div class="permissions">
-                    <span class="counter">{{ 2 }}</span> Permissions
+                    <span class="counter">{{ sbtPermissions[asset.address] }}</span> Permissions
                   </div>
                 </div>
               </template>
@@ -136,14 +136,17 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @mutation.account.setAccountAssets private setAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
 
   @Watch('assetList')
-  private updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): void {
+  private async updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): Promise<void> {
     if (oldAssets.length !== newAssets.length) {
       this.scrollbarComponentKey += 1;
     }
+
+    this.checkSbtPermissions();
   }
 
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
+  sbtPermissions = {};
 
   isSBT(asset): boolean {
     return !asset.isSBT;
@@ -197,6 +200,25 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
+  }
+
+  async checkSbtPermissions(): Promise<void> {
+    if (!this.accountAssets.length) return;
+
+    // @ts-expect-error missing
+    const sbts = this.accountAssets.filter((asset) => !!asset.isSBT);
+
+    const sbtsInfo = sbts.map(async (asset) => {
+      const { regulatedAssets } = await api.extendedAssets.getSbtMetaInfo(asset.address);
+
+      return {
+        [asset.address]: regulatedAssets.length,
+      };
+    });
+
+    for await (const sbt of sbtsInfo) {
+      this.sbtPermissions = { ...sbt };
+    }
   }
 
   isZeroBalance(asset: AccountAsset): boolean {
@@ -278,6 +300,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     this.assetsAreHidden = false;
 
     return true;
+  }
+
+  mounted(): void {
+    this.checkSbtPermissions();
   }
 }
 </script>

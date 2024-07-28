@@ -603,6 +603,6 @@ export default {
     regulatedInsitution: 'Regulated Insitution',
     expiryDate: 'Expiry date',
     expiresIn: 'Expires in',
-    infiniteExp: 'open-ended',
+    indefiniteExp: 'open-ended',
   },
 };

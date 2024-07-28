@@ -23,7 +23,7 @@
           <info-line :label="'Expires in'" :label-tooltip="'Expires in'" :value="expiresIn" />
         </template>
         <div v-if="regulatedAssets.length" class="asset-details-regulated-section">
-          <div class="asset-details-subtitle">Access permitted</div>
+          <div class="asset-details-subtitle">{{ regulatedAssetsTitle }}</div>
           <div class="asset-details-regulated-assets">
             <div v-for="(asset, index) in regulatedAssets" :key="index">
               <asset-list-item :asset="asset" with-clickable-logo @show-details="handleOpenAssetDetails">
@@ -86,9 +86,14 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
 
   regulatedAssets: Array<Asset | undefined> = [];
-  showExpiryDate = true;
+  showExpiryDate = false;
   expiryDate = '';
   expiresIn = '';
+  isOwnerOpenedPage = false;
+
+  get regulatedAssetsTitle(): string {
+    return this.isOwnerOpenedPage ? 'Regulated assets operable' : 'Access permitted';
+  }
 
   handleOpenAssetDetails(asset: AccountAsset): void {
     this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } });
@@ -102,8 +107,11 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
     const ownedAssets = await api.assets.getOwnedAssetIds(this.connected);
     if (ownedAssets.includes(this.asset.address)) {
       this.showExpiryDate = false;
+      this.isOwnerOpenedPage = true;
       return;
     }
+
+    this.showExpiryDate = true;
 
     const expiryDate = await api.extendedAssets.getSbtExpiration(this.connected, this.asset.address);
 
@@ -112,8 +120,6 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
   }
 
   async mounted(): Promise<void> {
-    this.checkExpirationDate();
-
     const { regulatedAssets } = await api.extendedAssets.getSbtMetaInfo(this.asset.address);
     const infos = regulatedAssets.map((address) => api.assets.getAssetInfo(address));
 
@@ -122,6 +128,8 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
       .filter(Boolean);
 
     this.regulatedAssets = regulatedAssetsInfos;
+
+    this.checkExpirationDate();
   }
 }
 </script>
