@@ -85,6 +85,10 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   .formatted-amount__container {
     width: 100%;
   }
+
+  .asset-sbt-expiration {
+    margin-bottom: calc($inner-spacing-mini * -1);
+  }
 }
 </style>
 
@@ -110,17 +114,15 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
   &-symbol {
     font-size: var(--s-font-size-big);
-    font-weight: 600;
     letter-spacing: var(--s-letter-spacing-small);
     line-height: var(--s-line-height-extra-small);
+    font-weight: 600;
   }
 
   &-sbt-expiration {
+    font-size: var(--s-font-size-extra-mini);
     display: block;
-    margin-bottom: -8px !important;
-    font-size: 11px;
     font-weight: 300;
-    margin: 0;
   }
 }
 </style>

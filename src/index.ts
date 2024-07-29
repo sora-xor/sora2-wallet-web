@@ -75,6 +75,7 @@ import {
   beforeTransactionSign,
 } from './util';
 import * as accountUtils from './util/account';
+import { IpfsStorage } from './util/ipfsStorage';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
@@ -259,6 +260,7 @@ export {
   storage,
   runtimeStorage,
   settingsStorage,
+  IpfsStorage,
   getExplorerLinks,
   groupRewardsByAssetsList,
   formatAccountAddress,

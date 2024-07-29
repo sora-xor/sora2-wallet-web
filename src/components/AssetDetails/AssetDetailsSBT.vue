@@ -158,16 +158,16 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
     }
 
     &-title {
-      margin-top: 16px;
+      margin-top: $basic-spacing;
+      font-size: var(--s-icon-font-size-big);
       font-weight: 500;
-      font-size: 24px;
     }
 
     &-desc {
-      margin-top: 8px;
-      font-weight: 300;
+      margin-top: $inner-spacing-mini;
       color: var(--s-color-base-content-secondary);
       text-align: center;
+      font-weight: 300;
       width: 80%;
     }
 
@@ -176,16 +176,16 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
     }
 
     &-issuer {
-      margin-top: 8px;
-      margin-bottom: 16px;
+      margin-bottom: $basic-spacing;
+      margin-top: $inner-spacing-mini;
     }
 
     &-subtitle {
-      margin-top: 24px;
+      color: var(--s-color-base-content-secondary);
+      margin-top: $inner-spacing-big;
       text-transform: uppercase;
       align-self: flex-start;
       font-weight: 600;
-      color: var(--s-color-base-content-secondary);
 
       &--no-permission {
         align-self: center;
@@ -193,7 +193,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
     }
 
     &-instition-mark {
-      font-size: 12px;
+      font-size: var(--s-font-size-mini);
       color: var(--s-color-status-info);
     }
   }
