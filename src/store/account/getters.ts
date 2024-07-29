@@ -89,7 +89,7 @@ const getters = defineGetters<AccountState>()({
     const { state } = accountGetterContext(args);
 
     return state.accountAssets.some((asset) => {
-      // @ts-expect-error error
+      // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
       if (asset.isSBT) {
         return !FPNumber.fromCodecValue(asset.balance.total, asset.decimals).isZero();
       }

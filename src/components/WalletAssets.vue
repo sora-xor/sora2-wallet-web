@@ -210,7 +210,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   async checkSbtPermissions(): Promise<void> {
     if (!this.accountAssets.length) return;
 
-    // @ts-expect-error missing
+    // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
     const sbts = this.accountAssets.filter((asset) => !!asset.isSBT);
 
     const sbtsInfo = sbts.map(async (asset) => {
@@ -429,19 +429,19 @@ $padding: 5px;
         font-weight: 600;
 
         .counter {
-          font-size: 12px;
+          font-size: var(--s-font-size-mini);
           font-weight: 450;
         }
       }
 
       .permissions {
         color: var(--s-color-fiat-value);
+        font-size: 11.5px;
         margin-top: -7px;
         margin-bottom: -4px;
-        font-size: 11.5px;
 
         .counter {
-          font-size: 13px;
+          font-size: var(--s-font-size-extra-small);
           font-weight: 600;
         }
       }

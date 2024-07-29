@@ -51,7 +51,7 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   sbtExpiryDate = '';
 
   get isSBT(): boolean {
-    // @ts-expect-error typing
+    // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
     return this.asset.isSBT;
   }
 
