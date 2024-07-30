@@ -602,7 +602,7 @@ export default {
     kycProvider: '{KYC} Provider',
     accessPermitted: 'Access permitted',
     listOperable: 'Regulated assets operable',
-    noPermission: 'No additional permissions',
+    noPermissions: 'No additional permissions',
     regulatedInsitution: 'Regulated Institution',
     expiryDate: 'Expiry date',
     expiryDateTooltip: "The 'Expiry Date' is the deadline for your access to regulated assets of SBT",
