@@ -76,6 +76,7 @@ import WalletAvatar from '../Account/WalletAvatar.vue';
 import AssetListItem from '../AssetListItem.vue';
 import TokenLogo from '../AssetLogos/TokenLogo.vue';
 import InfoLine from '../InfoLine.vue';
+import NumberFormatterMixin from '../mixins/NumberFormatterMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 import FormattedAddress from '../shared/FormattedAddress.vue';
 import WalletBase from '../WalletBase.vue';
@@ -91,7 +92,7 @@ import WalletBase from '../WalletBase.vue';
     WalletBase,
   },
 })
-export default class WalletAssetDetails extends Mixins(TranslationMixin) {
+export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberFormatterMixin) {
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.account.address private connected!: string;
   @mutation.router.navigate navigate!: (options: Route) => Promise<void>;
@@ -116,11 +117,21 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin) {
     this.navigate({ name: RouteNames.Wallet });
   }
 
+  isZeroBalance(asset: AccountAsset): boolean {
+    return this.isCodecZero(asset.balance.transferable, asset.decimals);
+  }
+
   async checkExpirationDate(): Promise<void> {
     const ownedAssets = await api.assets.getOwnedAssetIds(this.connected);
+
     if (ownedAssets.includes(this.asset.address)) {
       this.showExpiryDate = false;
       this.isOwnerOpenedPage = true;
+      return;
+    }
+
+    if (this.isZeroBalance(this.asset as AccountAsset)) {
+      this.showExpiryDate = false;
       return;
     }
 
