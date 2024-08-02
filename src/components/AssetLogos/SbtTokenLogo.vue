@@ -2,8 +2,9 @@
   <img
     v-show="asset.content && showSbtImage"
     class="asset-logo sbt-image"
-    :src="sbtImageUrl"
     ref="nftImage"
+    alt="SBT"
+    :src="sbtImageUrl"
     @load="handleSbtImageLoad"
     @error="hideSbtImage"
   />

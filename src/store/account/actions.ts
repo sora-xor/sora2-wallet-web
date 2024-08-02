@@ -268,7 +268,7 @@ const actions = defineActions({
   },
 
   async subscribeOnAccountAssets(context): Promise<void> {
-    const { state, commit, getters } = accountActionContext(context);
+    const { commit, getters } = accountActionContext(context);
     commit.resetAccountAssetsSubscription();
 
     if (getters.isLoggedIn) {

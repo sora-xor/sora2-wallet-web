@@ -21,7 +21,6 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { api } from '../api';
 import { state } from '../store/decorators';
 
 import NftTokenLogo from './AssetLogos/NftTokenLogo.vue';

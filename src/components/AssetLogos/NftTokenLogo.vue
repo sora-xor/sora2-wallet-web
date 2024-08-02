@@ -2,8 +2,9 @@
   <img
     v-show="asset.content && showNftImage"
     class="asset-logo nft-image"
-    :src="nftImageUrl"
     ref="nftImage"
+    alt="NFT"
+    :src="nftImageUrl"
     @load="handleNftImageLoad"
     @error="hideNftImage"
   />

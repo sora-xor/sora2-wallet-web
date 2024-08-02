@@ -228,7 +228,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
     const sbts = this.accountAssets.filter((asset) => !!asset.isSBT);
 
-    const sbtsDates = sbts.map(async (asset) => {
+    sbts.map(async (asset) => {
       const sbtExpiryDate = await api.extendedAssets.getSbtExpiration(this.connected, asset.address);
       let expDate = '';
 
