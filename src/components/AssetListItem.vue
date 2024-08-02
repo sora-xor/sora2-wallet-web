@@ -11,7 +11,6 @@
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
       </slot>
-      <span v-if="asset.isSBT && showExpiry" class="asset-sbt-expiration">{{ sbtExpiryDate }}</span>
       <token-address :name="asset.name" :symbol="asset.symbol" :address="asset.address" class="asset-info" />
       <slot name="append" v-bind="asset" />
     </div>
@@ -44,25 +43,10 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withTabindex!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly showExpiry!: boolean;
 
   @state.account.address private connected!: string;
 
   sbtExpiryDate = '';
-
-  get isSBT(): boolean {
-    // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
-    return this.asset.isSBT;
-  }
-
-  async getSbtExpiryDate() {
-    const sbtExpiryDate = await api.extendedAssets.getSbtExpiration(this.connected, this.asset.address);
-    if (Number(sbtExpiryDate) === Infinity) {
-      this.sbtExpiryDate = this.t('sbtDetails.indefiniteExp');
-      return;
-    }
-    this.sbtExpiryDate = this.formatDate(Number(sbtExpiryDate), 'll');
-  }
 
   handleIconClick(event: Event): void {
     if (!this.withClickableLogo) {
@@ -72,10 +56,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
       event.stopImmediatePropagation();
     }
     this.$emit('show-details', this.asset);
-  }
-
-  async created(): Promise<void> {
-    if (this.isSBT) await this.getSbtExpiryDate();
   }
 }
 </script>

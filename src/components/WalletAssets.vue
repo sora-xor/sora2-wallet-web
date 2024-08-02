@@ -40,6 +40,7 @@
                     <span class="counter">{{ sbtPermissions[asset.address] }}</span>
                     {{ getTranslation(sbtPermissions[asset.address]) }}
                   </div>
+                  <span v-if="asset.isSBT" class="asset-sbt-expiration">{{ sbtExpDates[asset.address] }}</span>
                 </div>
               </template>
               <template #default="asset">
@@ -127,6 +128,7 @@ import type { AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/
 })
 export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, TranslationMixin) {
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.account.address private connected!: string;
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
   @state.settings.permissions permissions!: WalletPermissions;
   @state.settings.filters private filters!: WalletAssetFilters;
@@ -143,11 +145,13 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     }
 
     this.checkSbtPermissions();
+    this.checkSbtExpirationDates();
   }
 
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
   sbtPermissions = {};
+  sbtExpDates = {};
 
   isSBT(asset): boolean {
     return !asset.isSBT;
@@ -224,6 +228,23 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     for await (const sbt of sbtsInfo) {
       this.sbtPermissions = { ...sbt };
     }
+  }
+
+  async checkSbtExpirationDates(): Promise<void> {
+    // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
+    const sbts = this.accountAssets.filter((asset) => !!asset.isSBT);
+
+    const sbtsDates = sbts.map(async (asset) => {
+      const sbtExpiryDate = await api.extendedAssets.getSbtExpiration(this.connected, asset.address);
+      let expDate = '';
+
+      if (Number(sbtExpiryDate) === Infinity) {
+        expDate = this.t('sbtDetails.indefiniteExp');
+      }
+      expDate = this.formatDate(Number(sbtExpiryDate), 'll');
+
+      this.sbtExpDates = { ...this.sbtExpDates, [asset.address]: expDate };
+    });
   }
 
   isZeroBalance(asset: AccountAsset): boolean {
@@ -309,6 +330,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   mounted(): void {
     this.checkSbtPermissions();
+    this.checkSbtExpirationDates();
   }
 }
 </script>
