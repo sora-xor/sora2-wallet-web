@@ -35,7 +35,6 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
            
           <asset-list-item-stub
             asset="[object Object]"
-            showexpiry="true"
             withclickablelogo="true"
             withfiat="true"
           />
@@ -64,7 +63,6 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
            
           <asset-list-item-stub
             asset="[object Object]"
-            showexpiry="true"
             withclickablelogo="true"
             withfiat="true"
           />
@@ -93,7 +91,6 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
            
           <asset-list-item-stub
             asset="[object Object]"
-            showexpiry="true"
             withclickablelogo="true"
             withfiat="true"
           />
