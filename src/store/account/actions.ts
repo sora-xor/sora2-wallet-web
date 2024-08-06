@@ -272,12 +272,24 @@ const actions = defineActions({
     commit.resetAccountAssetsSubscription();
 
     if (getters.isLoggedIn) {
+      const sbtAssetsList = await api.extendedAssets.getAllSbtIds();
+
       try {
         const subscription = api.assets.balanceUpdated.subscribe(() => {
           const filtered = api.assets.accountAssets.filter(
             (asset) => !api.assets.isNftBlacklisted(asset, getters.blacklist)
           );
-          commit.setAccountAssets(filtered);
+
+          // TODO: when moved to upgraded assetInfos storage, rely on AssetType
+          // to know if asset is SBT or not upfront
+          const assetsWithMetaInfo = filtered.map((asset) => {
+            return {
+              ...asset,
+              isSBT: !!sbtAssetsList.includes(asset.address),
+            };
+          });
+
+          commit.setAccountAssets(assetsWithMetaInfo);
         });
         commit.setAccountAssetsSubscription(subscription);
         await api.assets.updateAccountAssets();

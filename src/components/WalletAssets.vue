@@ -9,6 +9,7 @@
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
                 <formatted-amount-with-fiat-value
+                  v-if="!asset.isSBT"
                   value-can-be-hidden
                   value-class="asset-value"
                   :value="getBalance(asset)"
@@ -24,10 +25,21 @@
                     <span>{{ formatFrozenBalance(asset) }}</span>
                   </div>
                 </formatted-amount-with-fiat-value>
+                <div v-else class="asset-sbt-meta">
+                  <div class="title">
+                    {{ TranslationConsts.KYC }} <span class="counter">{{ `#${index}` }}</span>
+                    <s-icon name="el-icon-success" size="16" />
+                  </div>
+                  <div class="permissions">
+                    <span class="counter">{{ sbtPermissions[asset.address] }}</span>
+                    {{ getTranslation(sbtPermissions[asset.address]) }}
+                  </div>
+                  <span v-if="asset.isSBT" class="asset-sbt-expiration">{{ sbtExpDates[asset.address] }}</span>
+                </div>
               </template>
               <template #default="asset">
                 <s-button
-                  v-if="permissions.sendAssets && !isZeroBalance(asset)"
+                  v-if="permissions.sendAssets && !isZeroBalance(asset) && !asset.isSBT"
                   class="wallet-assets__button send"
                   type="action"
                   size="small"
@@ -38,7 +50,7 @@
                   <s-icon name="finance-send-24" size="24" />
                 </s-button>
                 <s-button
-                  v-if="permissions.swapAssets && asset.decimals"
+                  v-if="permissions.swapAssets && asset.decimals && !asset.isSBT"
                   class="wallet-assets__button swap"
                   type="action"
                   size="small"
@@ -110,6 +122,7 @@ import type { AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/
 })
 export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, TranslationMixin) {
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.account.address private connected!: string;
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
   @state.settings.permissions permissions!: WalletPermissions;
   @state.settings.filters private filters!: WalletAssetFilters;
@@ -120,14 +133,23 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @mutation.account.setAccountAssets private setAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
 
   @Watch('assetList')
-  private updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): void {
+  private async updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): Promise<void> {
     if (oldAssets.length !== newAssets.length) {
       this.scrollbarComponentKey += 1;
     }
+
+    this.checkSbtPermissions();
+    this.checkSbtExpirationDates();
   }
 
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
+  sbtPermissions = {};
+  sbtExpDates = {};
+
+  isSBT(asset): boolean {
+    return !asset.isSBT;
+  }
 
   get assetList(): Array<AccountAsset> {
     return this.accountAssets;
@@ -175,8 +197,48 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
+  getTranslation(number: number): string {
+    return number > 1 ? this.t('sbtDetails.permissions') : this.t('sbtDetails.permission');
+  }
+
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
+  }
+
+  async checkSbtPermissions(): Promise<void> {
+    if (!this.accountAssets.length) return;
+
+    // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
+    const sbts = this.accountAssets.filter((asset) => !!asset.isSBT);
+
+    const sbtsInfo = sbts.map(async (asset) => {
+      const { regulatedAssets } = await api.extendedAssets.getSbtMetaInfo(asset.address);
+
+      return {
+        [asset.address]: regulatedAssets.length,
+      };
+    });
+
+    for await (const sbt of sbtsInfo) {
+      this.sbtPermissions = { ...sbt };
+    }
+  }
+
+  async checkSbtExpirationDates(): Promise<void> {
+    // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
+    const sbts = this.accountAssets.filter((asset) => !!asset.isSBT);
+
+    sbts.map(async (asset) => {
+      const sbtExpiryDate = await api.extendedAssets.getSbtExpiration(this.connected, asset.address);
+      let expDate = '';
+
+      if (Number(sbtExpiryDate) === Infinity) {
+        expDate = this.t('sbtDetails.indefiniteExp');
+      }
+      expDate = this.formatDate(Number(sbtExpiryDate), 'll');
+
+      this.sbtExpDates = { ...this.sbtExpDates, [asset.address]: expDate };
+    });
   }
 
   isZeroBalance(asset: AccountAsset): boolean {
@@ -223,12 +285,22 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
     // asset
     const isNft = api.assets.isNft(asset);
+    // @ts-expect-error error
+    const isSbt = asset.isSBT;
     const isWhitelisted = api.assets.isWhitelist(asset, this.whitelist);
     const hasZeroBalance = !asset.decimals
       ? asset.balance.total === '0' // for non-divisible tokens
       : asset.balance.total[8] === undefined; // for 0.00000009 and less
 
-    if (tokenType === WalletFilteringOptions.Currencies && isNft) {
+    if (tokenType === WalletFilteringOptions.SBT && !isSbt) {
+      return false;
+    }
+
+    if (tokenType === WalletFilteringOptions.Currencies && isNft && isSbt) {
+      return false;
+    }
+
+    if (tokenType === WalletFilteringOptions.NFT && isSbt) {
       return false;
     }
 
@@ -248,6 +320,11 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     this.assetsAreHidden = false;
 
     return true;
+  }
+
+  mounted(): void {
+    this.checkSbtPermissions();
+    this.checkSbtExpirationDates();
   }
 }
 </script>
@@ -361,6 +438,34 @@ $padding: 5px;
       margin-top: $basic-spacing-mini;
       color: var(--s-color-base-content-primary);
       line-height: var(--s-line-height-reset);
+    }
+
+    &-sbt-meta {
+      .title {
+        font-weight: 600;
+
+        .counter {
+          font-size: var(--s-font-size-mini);
+          font-weight: 450;
+        }
+      }
+
+      .permissions {
+        color: var(--s-color-fiat-value);
+        font-size: 11.5px;
+        margin-top: -7px;
+        margin-bottom: -4px;
+
+        .counter {
+          font-size: var(--s-font-size-extra-small);
+          font-weight: 600;
+        }
+      }
+
+      .el-icon-success {
+        color: var(--s-color-fiat-value);
+        margin-left: 4px;
+      }
     }
   }
 

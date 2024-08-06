@@ -21,10 +21,12 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
+import { state } from '../store/decorators';
+
+import NftTokenLogo from './AssetLogos/NftTokenLogo.vue';
+import TokenLogo from './AssetLogos/TokenLogo.vue';
 import TranslationMixin from './mixins/TranslationMixin';
-import NftTokenLogo from './NftTokenLogo.vue';
 import TokenAddress from './TokenAddress.vue';
-import TokenLogo from './TokenLogo.vue';
 
 import type { Asset } from '@sora-substrate/util/build/assets/types';
 
@@ -40,6 +42,10 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withTabindex!: boolean;
+
+  @state.account.address private connected!: string;
+
+  sbtExpiryDate = '';
 
   handleIconClick(event: Event): void {
     if (!this.withClickableLogo) {
@@ -57,6 +63,10 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 .asset-description {
   .formatted-amount__container {
     width: 100%;
+  }
+
+  .asset-sbt-expiration {
+    margin-bottom: calc($inner-spacing-mini * -1);
   }
 }
 </style>
@@ -83,9 +93,15 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
   &-symbol {
     font-size: var(--s-font-size-big);
-    font-weight: 600;
     letter-spacing: var(--s-letter-spacing-small);
     line-height: var(--s-line-height-extra-small);
+    font-weight: 600;
+  }
+
+  &-sbt-expiration {
+    font-size: var(--s-font-size-extra-mini);
+    display: block;
+    font-weight: 300;
   }
 }
 </style>

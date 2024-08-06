@@ -1,11 +1,13 @@
 import dayjs from 'dayjs';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import { Vue, Component } from 'vue-property-decorator';
 
 import { TranslationConsts } from '../../consts';
 
 // enable dayjs plugin
 dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
 
 @Component
 export default class TranslationMixin extends Vue {
@@ -37,6 +39,23 @@ export default class TranslationMixin extends Vue {
       default:
         return locale;
     }
+  }
+
+  getRelativeTime(date: number): string {
+    let startTime, endTime;
+    const currentTime = Date.now();
+
+    if (date < currentTime) {
+      startTime = date;
+      endTime = currentTime;
+    } else {
+      startTime = currentTime;
+      endTime = date;
+    }
+
+    return startTime < endTime
+      ? dayjs().to(dayjs(date).locale(this.dayjsLocale))
+      : dayjs().from(dayjs(date).locale(this.dayjsLocale));
   }
 
   formatDate(date: Nullable<number>, format = 'll LTS'): string {
