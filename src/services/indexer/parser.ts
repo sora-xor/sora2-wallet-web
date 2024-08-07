@@ -797,6 +797,11 @@ export default class IndexerDataParser {
     Operation.DepositCollateral,
     Operation.RepayVaultDebt,
     Operation.BorrowVaultDebt,
+    Operation.SetAccessExpiration,
+    Operation.RegulateAsset,
+    Operation.RegisterAndRegulateAsset,
+    Operation.BindRegulatedAsset,
+    Operation.IssueSoulBoundToken,
     /** Don't show bridge tx in wallet */
     // Operation.EthBridgeIncoming,
     // Operation.EthBridgeOutgoing,
