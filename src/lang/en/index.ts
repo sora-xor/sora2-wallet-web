@@ -86,6 +86,11 @@ export default {
     [Operation.DepositCollateral]: 'Deposit Vault',
     [Operation.RepayVaultDebt]: 'Repay Debt',
     [Operation.BorrowVaultDebt]: 'Borrow Debt',
+    [Operation.SetAccessExpiration]: 'Set Expiration',
+    [Operation.RegulateAsset]: 'Regulate Asset',
+    [Operation.RegisterAndRegulateAsset]: 'Register And Regulate Asset',
+    [Operation.BindRegulatedAsset]: 'Bind Asset',
+    [Operation.IssueSoulBoundToken]: 'Issue SBT',
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Burn]: 'Burned {amount} {symbol}',
@@ -128,6 +133,12 @@ export default {
       [Operation.DepositCollateral]: 'Deposited {amount} {symbol}',
       [Operation.RepayVaultDebt]: 'Repaid {amount} {symbol}',
       [Operation.BorrowVaultDebt]: 'Borrowed {amount} {symbol}',
+      // TODO update text
+      [Operation.SetAccessExpiration]: 'Set Expiration',
+      [Operation.RegulateAsset]: 'Regulate Asset',
+      [Operation.RegisterAndRegulateAsset]: 'Register And Regulate Asset',
+      [Operation.BindRegulatedAsset]: 'Bind Asset',
+      [Operation.IssueSoulBoundToken]: 'Issue SBT',
     },
     [TransactionStatus.Error]: {
       [Operation.Burn]: 'Failed to burn {amount} {symbol}',
@@ -173,6 +184,12 @@ export default {
       [Operation.DepositCollateral]: 'Failed to deposit {amount} {symbol}',
       [Operation.RepayVaultDebt]: 'Failed to repaid {amount} {symbol}',
       [Operation.BorrowVaultDebt]: 'Failed to borrow {amount} {symbol}',
+      // TODO update text
+      [Operation.SetAccessExpiration]: 'Set Expiration',
+      [Operation.RegulateAsset]: 'Regulate Asset',
+      [Operation.RegisterAndRegulateAsset]: 'Register And Regulate Asset',
+      [Operation.BindRegulatedAsset]: 'Bind Asset',
+      [Operation.IssueSoulBoundToken]: 'Issue SBT',
     },
   },
   polkadotjs: {

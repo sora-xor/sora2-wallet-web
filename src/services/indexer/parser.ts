@@ -169,6 +169,13 @@ const OperationsMap = {
     [insensitive(ModuleMethods.VaultDebtPayment)]: () => Operation.RepayVaultDebt,
     [insensitive(ModuleMethods.VaultDebtBorrow)]: () => Operation.BorrowVaultDebt,
   },
+  [insensitive(ModuleNames.Sbt)]: {
+    [insensitive(ModuleMethods.SbtSetAccessExpiration)]: () => Operation.SetAccessExpiration,
+    [insensitive(ModuleMethods.SbtRegulateAsset)]: () => Operation.RegulateAsset,
+    [insensitive(ModuleMethods.SbtRegisterAndRegulateAsset)]: () => Operation.RegisterAndRegulateAsset,
+    [insensitive(ModuleMethods.SbtBindRegulatedAsset)]: () => Operation.BindRegulatedAsset,
+    [insensitive(ModuleMethods.SbtIssueSoulBoundToken)]: () => Operation.IssueSoulBoundToken,
+  },
   [insensitive(ModuleNames.BridgeMultisig)]: {
     [insensitive(ModuleMethods.BridgeMultisigAsMulti)]: () => Operation.EthBridgeIncoming,
   },
