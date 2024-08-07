@@ -14,7 +14,7 @@ export enum ModuleNames {
   OrderBook = 'orderBook',
   Staking = 'staking',
   Vault = 'kensetsu',
-  Sbt = 'defiR',
+  DefiR = 'defiR',
 }
 
 export enum ModuleMethods {
@@ -60,9 +60,9 @@ export enum ModuleMethods {
   VaultCollateralDeposit = 'depositCollateral',
   VaultDebtPayment = 'repayDebt',
   VaultDebtBorrow = 'borrow',
-  SbtSetAccessExpiration = 'expiration',
-  SbtRegulateAsset = 'regulate',
-  SbtRegisterAndRegulateAsset = 'regulateAndRegister',
-  SbtBindRegulatedAsset = 'bind',
-  SbtIssueSoulBoundToken = 'issueSBT',
+  DefiRSetAccessExpiration = 'expiration',
+  DefiRRegulateAsset = 'regulate',
+  DefiRRegisterAndRegulateAsset = 'regulateAndRegister',
+  DefiRBindRegulatedAsset = 'bind',
+  DefiRIssueSoulBoundToken = 'issueSBT',
 }

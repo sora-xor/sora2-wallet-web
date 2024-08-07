@@ -169,12 +169,12 @@ const OperationsMap = {
     [insensitive(ModuleMethods.VaultDebtPayment)]: () => Operation.RepayVaultDebt,
     [insensitive(ModuleMethods.VaultDebtBorrow)]: () => Operation.BorrowVaultDebt,
   },
-  [insensitive(ModuleNames.Sbt)]: {
-    [insensitive(ModuleMethods.SbtSetAccessExpiration)]: () => Operation.SetAccessExpiration,
-    [insensitive(ModuleMethods.SbtRegulateAsset)]: () => Operation.RegulateAsset,
-    [insensitive(ModuleMethods.SbtRegisterAndRegulateAsset)]: () => Operation.RegisterAndRegulateAsset,
-    [insensitive(ModuleMethods.SbtBindRegulatedAsset)]: () => Operation.BindRegulatedAsset,
-    [insensitive(ModuleMethods.SbtIssueSoulBoundToken)]: () => Operation.IssueSoulBoundToken,
+  [insensitive(ModuleNames.DefiR)]: {
+    [insensitive(ModuleMethods.DefiRSetAccessExpiration)]: () => Operation.SetAccessExpiration,
+    [insensitive(ModuleMethods.DefiRRegulateAsset)]: () => Operation.RegulateAsset,
+    [insensitive(ModuleMethods.DefiRRegisterAndRegulateAsset)]: () => Operation.RegisterAndRegulateAsset,
+    [insensitive(ModuleMethods.DefiRBindRegulatedAsset)]: () => Operation.BindRegulatedAsset,
+    [insensitive(ModuleMethods.DefiRIssueSoulBoundToken)]: () => Operation.IssueSoulBoundToken,
   },
   [insensitive(ModuleNames.BridgeMultisig)]: {
     [insensitive(ModuleMethods.BridgeMultisigAsMulti)]: () => Operation.EthBridgeIncoming,
