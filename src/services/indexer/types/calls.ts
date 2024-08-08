@@ -60,9 +60,9 @@ export enum ModuleMethods {
   VaultCollateralDeposit = 'depositCollateral',
   VaultDebtPayment = 'repayDebt',
   VaultDebtBorrow = 'borrow',
-  DefiRSetAccessExpiration = 'expiration',
-  DefiRRegulateAsset = 'regulate',
-  DefiRRegisterAndRegulateAsset = 'regulateAndRegister',
+  DefiRSetAccessExpiration = 'setSbtExpiration',
+  DefiRRegulateAsset = 'regulateAsset',
+  DefiRRegisterAndRegulateAsset = 'registerRegulatedAsset',
   DefiRBindRegulatedAsset = 'bindRegulatedAssetToSbt',
   DefiRIssueSoulBoundToken = 'issueSbt',
 }
