@@ -480,12 +480,19 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.DefiRBindRegulatedAsset,
     },
   },
+
   [Operation.IssueSoulBoundToken]: {
     module: {
-      equalTo: ModuleNames.DefiR,
+      equalTo: ModuleNames.Utility,
     },
     method: {
-      equalTo: ModuleMethods.DefiRIssueSoulBoundToken,
+      equalTo: ModuleMethods.UtilityBatchAll,
+    },
+    callNames: {
+      contains: [
+        ModuleNames.DefiR + '.' + ModuleMethods.DefiRBindRegulatedAsset,
+        ModuleNames.DefiR + '.' + ModuleMethods.DefiRIssueSoulBoundToken,
+      ],
     },
   },
 };
