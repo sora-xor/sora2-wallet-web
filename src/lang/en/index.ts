@@ -138,7 +138,7 @@ export default {
       [Operation.RegulateAsset]: 'Regulate Asset',
       [Operation.RegisterAndRegulateAsset]: 'Register And Regulate Asset',
       [Operation.BindRegulatedAsset]: 'Bind Asset',
-      [Operation.IssueSoulBoundToken]: 'Issue SBT',
+      [Operation.IssueSoulBoundToken]: 'Issue SBT Token {symbol}',
     },
     [TransactionStatus.Error]: {
       [Operation.Burn]: 'Failed to burn {amount} {symbol}',
@@ -189,7 +189,7 @@ export default {
       [Operation.RegulateAsset]: 'Regulate Asset',
       [Operation.RegisterAndRegulateAsset]: 'Register And Regulate Asset',
       [Operation.BindRegulatedAsset]: 'Bind Asset',
-      [Operation.IssueSoulBoundToken]: 'Issue SBT',
+      [Operation.IssueSoulBoundToken]: 'Failed to issue SBT token {symbol}',
     },
   },
   polkadotjs: {

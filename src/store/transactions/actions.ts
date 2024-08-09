@@ -22,6 +22,8 @@ async function parseHistoryUpdate(context: ActionContext<any, any>, transaction:
   const { account, whitelist } = rootGetters.wallet.account;
 
   const indexer = getCurrentIndexer();
+  console.info('we are in parseHistoryUpdate here is trx');
+  console.info(transaction);
   const historyItem = await indexer.services.dataParser.parseTransactionAsHistoryItem(transaction);
 
   if (!historyItem?.id) return;
@@ -65,6 +67,8 @@ const actions = defineActions({
       const subscription = indexer.services.explorer.account.createHistorySubscription(
         account.address,
         async (transaction) => {
+          console.info('the trx in indexer');
+          console.info(transaction);
           await parseHistoryUpdate(context, transaction);
         }
       );
@@ -88,8 +92,8 @@ const actions = defineActions({
     }: ExternalHistoryParams = {}
   ): Promise<void> {
     const { state, commit } = transactionsActionContext(context);
-    const { externalHistory, externalHistoryUpdates } = state;
 
+    const { externalHistory, externalHistoryUpdates } = state;
     const indexer = getCurrentIndexer();
     const operations = indexer.services.dataParser.supportedOperations;
     const filter = indexer.historyElementsFilter({
@@ -107,7 +111,8 @@ const actions = defineActions({
 
     try {
       const response = await indexer.services.explorer.account.getHistory(variables);
-
+      console.info('here is response');
+      console.info(response);
       if (!response) return;
 
       const { nodes, totalCount } = response;
@@ -117,6 +122,14 @@ const actions = defineActions({
 
       if (nodes.length) {
         for (const transaction of nodes) {
+          // if (transaction.calls && transaction.calls.length > 0) {
+          //   console.info('transaction in const transaction of nodes with calls > 0');
+          //   console.info(transaction);
+          //   const { id } = transaction;
+          //   // Additional processing here
+          // }
+          console.info('transaction in const transaction of nodes)');
+          console.info(transaction);
           const { id } = transaction;
 
           if (!(id in externalHistory)) {
