@@ -5,7 +5,7 @@
       <draggable v-model="assetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes">
         <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
-            <div class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
+            <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
             <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
               <template #value="asset">
                 <formatted-amount-with-fiat-value

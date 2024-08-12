@@ -27,6 +27,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
         >
           <div
             class="wallet-assets-dashes"
+            role="button"
           >
             <div
               class="wallet-assets-three-dash"
@@ -55,6 +56,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
         >
           <div
             class="wallet-assets-dashes"
+            role="button"
           >
             <div
               class="wallet-assets-three-dash"
@@ -83,6 +85,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
         >
           <div
             class="wallet-assets-dashes"
+            role="button"
           >
             <div
               class="wallet-assets-three-dash"

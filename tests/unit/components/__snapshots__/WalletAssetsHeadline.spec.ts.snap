@@ -133,6 +133,7 @@ exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
        
       <div
         class="wallet-assets-filter__button"
+        role="button"
       >
         
         SHOW:

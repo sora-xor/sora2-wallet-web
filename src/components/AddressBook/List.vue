@@ -16,12 +16,13 @@
           </span>
           <wallet-account
             v-for="(record, index) in accountBookFiltered"
-            :key="index"
+            v-button
+            class="address-book__list-item"
             with-identity
+            :key="index"
             :polkadot-account="record"
             @click.native="selectRecord(record)"
             @identity="updateIdentity($event, record.address)"
-            class="address-book__list-item"
           >
             <account-actions-menu :actions="accountActions" @select="handleContactAction($event, record)" />
           </wallet-account>
@@ -30,11 +31,12 @@
           <span class="address-book__sections">{{ t('addressBook.myBook') }}</span>
           <wallet-account
             v-for="(record, index) in addressBookFiltered"
-            :key="index"
+            v-button
+            class="address-book__list-item"
             with-identity
+            :key="index"
             :polkadot-account="record"
             @click.native="selectRecord(record)"
-            class="address-book__list-item"
           >
             <account-actions-menu :actions="contactActions" @select="handleContactAction($event, record)" />
           </wallet-account>
