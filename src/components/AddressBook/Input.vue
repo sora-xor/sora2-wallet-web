@@ -2,6 +2,7 @@
   <div class="address-input">
     <wallet-account v-if="record" :polkadot-account="record">
       <s-icon
+        v-button
         class="book-icon-unlink"
         :class="{ disabled }"
         name="el-icon-close"
@@ -10,6 +11,7 @@
       />
       <s-tooltip :content="t('addressBook.selectContact')" border-radius="mini" placement="top" tabindex="-1">
         <s-icon
+          v-button
           class="book-icon-open"
           :class="{ disabled }"
           name="basic-user-24"
@@ -34,6 +36,7 @@
         <s-icon v-if="address" class="book-icon-unlink" name="el-icon-close" size="20" @click.native="resetAddress" />
         <s-tooltip :content="t('addressBook.selectContact')" border-radius="mini" placement="top" tabindex="-1">
           <s-icon
+            v-button
             class="book-icon-open"
             :class="{ disabled }"
             name="basic-user-24"

@@ -21,7 +21,7 @@
           <s-switch v-model="zeroBalanceAssets" :disabled="zeroBalanceSwitch" />
           <span>{{ t('filter.zeroBalance') }}</span>
         </div>
-        <div class="wallet-assets-filter__button" slot="reference">
+        <div v-button class="wallet-assets-filter__button" slot="reference">
           {{ showText }}:
           <span class="wallet-assets-filter__button-option">{{ chosenOptionText }}</span>
           <s-icon class="wallet-assets-filter__button-icon" name="basic-settings-24" size="14px" />

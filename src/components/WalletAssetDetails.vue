@@ -100,6 +100,7 @@
           <div v-if="wasNftDetailsClicked" class="info-line-container">
             <info-line :label="t('createToken.nft.supply.quantity')" :value="balance" />
             <info-line
+              v-button
               class="external-link"
               :label="t('createToken.nft.source.label')"
               :value="displayedNftContentLink"
@@ -287,7 +288,7 @@ export default class WalletAssetDetails extends Mixins(
     return this.isCodecZero(this.asset.balance.transferable, this.asset.decimals);
   }
 
-  get balanceStyles(): object {
+  get balanceStyles() {
     const balanceLength = this.balance.length;
     // We've decided to calcutate font size values manually
     let fontSize = 30;
