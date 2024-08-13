@@ -194,7 +194,7 @@ export default class AccountListStep extends Mixins(LoadingMixin, NotificationMi
           await GDriveWallet.accounts.changeName(address, name);
         }
 
-        if (this.isConnectedAccount(this.selectedAccount)) {
+        if (this.isConnectedAccount(this.selectedAccount) || source === AppWallet.Sora) {
           await this.renameAccount({ address, name });
         }
 
