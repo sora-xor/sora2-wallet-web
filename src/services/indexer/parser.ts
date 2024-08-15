@@ -40,6 +40,9 @@ import type {
   HistoryElementVaultDepositCollateral,
   HistoryElementVaultDebt,
   HistoryElementDefiRIssueSBT,
+  HistoryElementDefiRSetSBTExpiration,
+  HistoryElementDefiRRegulateAsset,
+  HistoryElementDefiRBindRegulatedAssetToSbt,
   HistoryElementEthBridgeIncoming,
   HistoryElementEthBridgeOutgoing,
   ClaimedRewardItem,
@@ -122,9 +125,6 @@ const OperationsMap = {
       if (
         data.every(
           (call) =>
-            isModuleMethod(call, ModuleNames.DefiR, ModuleMethods.DefiRSetAccessExpiration) ||
-            isModuleMethod(call, ModuleNames.DefiR, ModuleMethods.DefiRRegulateAsset) ||
-            isModuleMethod(call, ModuleNames.DefiR, ModuleMethods.DefiRRegisterAndRegulateAsset) ||
             isModuleMethod(call, ModuleNames.DefiR, ModuleMethods.DefiRBindRegulatedAsset) ||
             isModuleMethod(call, ModuleNames.DefiR, ModuleMethods.DefiRIssueSoulBoundToken)
         )
@@ -737,31 +737,34 @@ const parseVaultDebtPaymentOrBorrow = async (transaction: HistoryElement, payloa
   return payload;
 };
 
-// const parseDemeterLiquidity = async (transaction: HistoryElement, payload: HistoryItem) => {
-//   const data = transaction.data as HistoryElementDemeterFarming;
-
-//   const assetAddress = data.baseAssetId as string;
-//   const asset2Address = data.assetId;
-
-//   const asset = await getAssetByAddress(assetAddress);
-//   const asset2 = await getAssetByAddress(asset2Address);
-
-//   payload.assetAddress = assetAddress;
-//   payload.asset2Address = asset2Address;
-//   payload.symbol = getAssetSymbol(asset);
-//   payload.symbol2 = getAssetSymbol(asset2);
-//   payload.amount = formatAmount(data.amount);
-
-//   return payload;
-// };
-
-// TODO обновить функцию чтобы получать норма данные
 const parseDefiRIssueSBT = async (transaction: HistoryElement, payload: HistoryItem) => {
-  // data is empty
   const data = transaction.calls[0].data as HistoryElementDefiRIssueSBT;
-  console.info('here is the call data from parseDefiRIssueSBT');
-  console.info(data);
   payload.symbol = Buffer.from(data.symbol.slice(2), 'hex').toString();
+  return payload;
+};
+
+const parseDefiRSetSBTExpiration = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementDefiRSetSBTExpiration;
+  const sbtAsset = await getAssetByAddress(data.sbtAssetId);
+  payload.symbol = getAssetSymbol(sbtAsset);
+  const date = new Date(parseInt(data.newExpiresAtTime, 10));
+  payload.to = date.toLocaleString('en-US');
+  return payload;
+};
+
+const parseDefiRRegulateAsset = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementDefiRRegulateAsset;
+  const regulateAsset = await getAssetByAddress(data.assetId);
+  payload.symbol = getAssetSymbol(regulateAsset);
+  return payload;
+};
+
+const parseBindRegulatedAssetToSbt = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementDefiRBindRegulatedAssetToSbt;
+  const regulateAsset = await getAssetByAddress(data.assetId);
+  payload.symbol = getAssetSymbol(regulateAsset);
+  const sbtAsset = await getAssetByAddress(data.sbtAssetId);
+  payload.symbol2 = getAssetSymbol(sbtAsset);
   return payload;
 };
 
@@ -987,27 +990,19 @@ export default class IndexerDataParser {
       case Operation.BorrowVaultDebt: {
         return await parseVaultDebtPaymentOrBorrow(transaction, payload);
       }
-      // TODO обновить для остальных
-      case Operation.SetAccessExpiration:
-      case Operation.RegulateAsset:
       case Operation.RegisterAndRegulateAsset:
-      case Operation.BindRegulatedAsset:
       case Operation.IssueSoulBoundToken: {
-        console.info('we are in defir case');
         return await parseDefiRIssueSBT(transaction, payload);
       }
-      // case Operation.RegulateAsset: {
-      //   return await ...
-      // }
-      // case Operation.RegisterAndRegulateAsset: {
-      //   return await ...
-      // }
-      // case Operation.BindRegulatedAsset: {
-      //   return await ...
-      // }
-      // case Operation.IssueSoulBoundToken: {
-      //   return await ...
-      // }
+      case Operation.SetAccessExpiration: {
+        return await parseDefiRSetSBTExpiration(transaction, payload);
+      }
+      case Operation.RegulateAsset: {
+        return await parseDefiRRegulateAsset(transaction, payload);
+      }
+      case Operation.BindRegulatedAsset: {
+        return await parseBindRegulatedAssetToSbt(transaction, payload);
+      }
       case Operation.EthBridgeIncoming: {
         return await parseEthBridgeIncoming(transaction, payload);
       }

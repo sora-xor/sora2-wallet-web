@@ -394,27 +394,20 @@ export type HistoryElementDefiRIssueSBT = {
   symbol: string;
 };
 
-// export type HistoryElementDefiRExpiration = {
-//   accountId: string;
-//   sbtAssetId: string;
-// };
+export type HistoryElementDefiRSetSBTExpiration = {
+  accountId: string;
+  newExpiresAtTime: string;
+  sbtAssetId: string;
+};
 
-// export type HistoryElementDefiRRegulateAsset = Required<HistoryElementDefiRExpiration>;
+export type HistoryElementDefiRRegulateAsset = {
+  assetId: string;
+};
 
-// export type HistoryElementDefiRRegisterRegulatedAsset = {
-//   symbol: string;
-//   name: string;
-//   initialSupply: number;
-//   isMintable: boolean;
-//   isIndivisible: boolean;
-//   content: string;
-//   description: string;
-// };
-
-// export type HistoryElementDefiRBindRegulatedAsset = {
-//   sbtAssetId: string;
-//   regulatedAssetIds: Array<string>;
-// };
+export type HistoryElementDefiRBindRegulatedAssetToSbt = {
+  assetId: string;
+  sbtAssetId: string;
+};
 
 export type HistoryElementDataBase = Nullable<
   | HistoryElementReferralSetReferrer
@@ -445,11 +438,10 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementVaultDepositCollateral
   | HistoryElementVaultDebt
   | HistoryElementVaultClose
-  // | HistoryElementDefiRExpiration
-  // | HistoryElementDefiRRegulateAsset
-  // | HistoryElementDefiRRegisterRegulatedAsset
-  // | HistoryElementDefiRBindRegulatedAsset
   | HistoryElementDefiRIssueSBT
+  | HistoryElementDefiRSetSBTExpiration
+  | HistoryElementDefiRRegulateAsset
+  | HistoryElementDefiRBindRegulatedAssetToSbt
 >;
 
 export type HistoryElementBase = {

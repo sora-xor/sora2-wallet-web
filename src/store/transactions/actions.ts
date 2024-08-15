@@ -95,6 +95,8 @@ const actions = defineActions({
 
     const { externalHistory, externalHistoryUpdates } = state;
     const indexer = getCurrentIndexer();
+    console.info('here is indexer');
+    console.info(indexer);
     const operations = indexer.services.dataParser.supportedOperations;
     const filter = indexer.historyElementsFilter({
       address,

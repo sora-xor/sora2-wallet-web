@@ -86,10 +86,10 @@ export default {
     [Operation.DepositCollateral]: 'Deposit Vault',
     [Operation.RepayVaultDebt]: 'Repay Debt',
     [Operation.BorrowVaultDebt]: 'Borrow Debt',
-    [Operation.SetAccessExpiration]: 'Set Expiration',
+    [Operation.SetAccessExpiration]: 'Set SBT Expiration',
     [Operation.RegulateAsset]: 'Regulate Asset',
     [Operation.RegisterAndRegulateAsset]: 'Register And Regulate Asset',
-    [Operation.BindRegulatedAsset]: 'Bind Asset',
+    [Operation.BindRegulatedAsset]: 'Bind Regulated Asset',
     [Operation.IssueSoulBoundToken]: 'Issue SBT',
     andText: 'and',
     [TransactionStatus.Finalized]: {
@@ -133,11 +133,11 @@ export default {
       [Operation.DepositCollateral]: 'Deposited {amount} {symbol}',
       [Operation.RepayVaultDebt]: 'Repaid {amount} {symbol}',
       [Operation.BorrowVaultDebt]: 'Borrowed {amount} {symbol}',
-      // TODO update text
-      [Operation.SetAccessExpiration]: 'Set Expiration',
-      [Operation.RegulateAsset]: 'Regulate Asset',
+      // TODO update text for RegisterAndRegulateAsset
+      [Operation.SetAccessExpiration]: 'SBT Token {symbol} Updated expiration to {to}',
+      [Operation.RegulateAsset]: 'Regulate Asset {symbol}',
       [Operation.RegisterAndRegulateAsset]: 'Register And Regulate Asset',
-      [Operation.BindRegulatedAsset]: 'Bind Asset',
+      [Operation.BindRegulatedAsset]: 'Bind Asset {symbol} to SBT {symbol2}',
       [Operation.IssueSoulBoundToken]: 'Issue SBT Token {symbol}',
     },
     [TransactionStatus.Error]: {
@@ -184,11 +184,11 @@ export default {
       [Operation.DepositCollateral]: 'Failed to deposit {amount} {symbol}',
       [Operation.RepayVaultDebt]: 'Failed to repaid {amount} {symbol}',
       [Operation.BorrowVaultDebt]: 'Failed to borrow {amount} {symbol}',
-      // TODO update text
-      [Operation.SetAccessExpiration]: 'Set Expiration',
-      [Operation.RegulateAsset]: 'Regulate Asset',
+      // TODO update text for RegisterAndRegulateAsset
+      [Operation.SetAccessExpiration]: 'Failed to update expiration to {to} for {symbol}',
+      [Operation.RegulateAsset]: 'Failed To Regulate Asset {symbol}',
       [Operation.RegisterAndRegulateAsset]: 'Register And Regulate Asset',
-      [Operation.BindRegulatedAsset]: 'Bind Asset',
+      [Operation.BindRegulatedAsset]: 'Failed To Bind Asset {symbol} to SBT {symbol2}',
       [Operation.IssueSoulBoundToken]: 'Failed to issue SBT token {symbol}',
     },
   },
