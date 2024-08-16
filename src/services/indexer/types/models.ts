@@ -409,6 +409,13 @@ export type HistoryElementDefiRBindRegulatedAssetToSbt = {
   sbtAssetId: string;
 };
 
+export type HistoryElementDefiRRegisterRegulatedAsset = {
+  name: string;
+  supply: string;
+  symbol: string;
+  mintable: boolean;
+};
+
 export type HistoryElementDataBase = Nullable<
   | HistoryElementReferralSetReferrer
   | HistoryElementReferrerReserve
@@ -442,6 +449,7 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementDefiRSetSBTExpiration
   | HistoryElementDefiRRegulateAsset
   | HistoryElementDefiRBindRegulatedAssetToSbt
+  | HistoryElementDefiRRegisterRegulatedAsset
 >;
 
 export type HistoryElementBase = {

@@ -472,8 +472,14 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.DefiRBindRegulatedAsset,
     },
   },
-
-  // TODO update for DefiRRegisterAndRegulateAsset
+  [Operation.RegisterAndRegulateAsset]: {
+    module: {
+      equalTo: ModuleNames.DefiR,
+    },
+    method: {
+      equalTo: ModuleMethods.DefiRRegisterAndRegulateAsset,
+    },
+  },
   [Operation.IssueSoulBoundToken]: {
     module: {
       equalTo: ModuleNames.Utility,

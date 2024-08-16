@@ -133,10 +133,9 @@ export default {
       [Operation.DepositCollateral]: 'Deposited {amount} {symbol}',
       [Operation.RepayVaultDebt]: 'Repaid {amount} {symbol}',
       [Operation.BorrowVaultDebt]: 'Borrowed {amount} {symbol}',
-      // TODO update text for RegisterAndRegulateAsset
       [Operation.SetAccessExpiration]: 'SBT Token {symbol} Updated expiration to {to}',
       [Operation.RegulateAsset]: 'Regulate Asset {symbol}',
-      [Operation.RegisterAndRegulateAsset]: 'Register And Regulate Asset',
+      [Operation.RegisterAndRegulateAsset]: 'Register And Regulate {symbol}',
       [Operation.BindRegulatedAsset]: 'Bind Asset {symbol} to SBT {symbol2}',
       [Operation.IssueSoulBoundToken]: 'Issue SBT Token {symbol}',
     },
@@ -187,7 +186,7 @@ export default {
       // TODO update text for RegisterAndRegulateAsset
       [Operation.SetAccessExpiration]: 'Failed to update expiration to {to} for {symbol}',
       [Operation.RegulateAsset]: 'Failed To Regulate Asset {symbol}',
-      [Operation.RegisterAndRegulateAsset]: 'Register And Regulate Asset',
+      [Operation.RegisterAndRegulateAsset]: 'Failed To Register And Regulate {symbol}',
       [Operation.BindRegulatedAsset]: 'Failed To Bind Asset {symbol} to SBT {symbol2}',
       [Operation.IssueSoulBoundToken]: 'Failed to issue SBT token {symbol}',
     },

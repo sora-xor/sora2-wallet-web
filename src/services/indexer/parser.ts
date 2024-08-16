@@ -43,6 +43,7 @@ import type {
   HistoryElementDefiRSetSBTExpiration,
   HistoryElementDefiRRegulateAsset,
   HistoryElementDefiRBindRegulatedAssetToSbt,
+  HistoryElementDefiRRegisterRegulatedAsset,
   HistoryElementEthBridgeIncoming,
   HistoryElementEthBridgeOutgoing,
   ClaimedRewardItem,
@@ -743,6 +744,12 @@ const parseDefiRIssueSBT = async (transaction: HistoryElement, payload: HistoryI
   return payload;
 };
 
+const parseDefiRRegisterAndRegulatedAsset = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementDefiRRegisterRegulatedAsset;
+  payload.symbol = Buffer.from(data.symbol.slice(2), 'hex').toString();
+  return payload;
+};
+
 const parseDefiRSetSBTExpiration = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementDefiRSetSBTExpiration;
   const sbtAsset = await getAssetByAddress(data.sbtAssetId);
@@ -990,7 +997,9 @@ export default class IndexerDataParser {
       case Operation.BorrowVaultDebt: {
         return await parseVaultDebtPaymentOrBorrow(transaction, payload);
       }
-      case Operation.RegisterAndRegulateAsset:
+      case Operation.RegisterAndRegulateAsset: {
+        return await parseDefiRRegisterAndRegulatedAsset(transaction, payload);
+      }
       case Operation.IssueSoulBoundToken: {
         return await parseDefiRIssueSBT(transaction, payload);
       }
