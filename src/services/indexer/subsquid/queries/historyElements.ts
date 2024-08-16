@@ -315,13 +315,13 @@ const OperationFilterMap = {
     module_eq: ModuleNames.DefiR,
     method_eq: ModuleMethods.DefiRRegulateAsset,
   },
-  [Operation.RegisterAndRegulateAsset]: {
-    module_eq: ModuleNames.DefiR,
-    method_eq: ModuleMethods.DefiRRegisterAndRegulateAsset,
-  },
   [Operation.BindRegulatedAsset]: {
     module_eq: ModuleNames.DefiR,
     method_eq: ModuleMethods.DefiRBindRegulatedAsset,
+  },
+  [Operation.RegisterAndRegulateAsset]: {
+    module_eq: ModuleNames.DefiR,
+    method_eq: ModuleMethods.DefiRRegisterAndRegulateAsset,
   },
   [Operation.IssueSoulBoundToken]: {
     module_eq: ModuleNames.Utility,

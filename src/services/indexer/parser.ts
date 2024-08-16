@@ -122,7 +122,6 @@ const OperationsMap = {
         return Operation.StakingBondAndNominate;
       }
 
-      console.info('we will check now if defiR');
       if (
         data.every(
           (call) =>
@@ -130,7 +129,6 @@ const OperationsMap = {
             isModuleMethod(call, ModuleNames.DefiR, ModuleMethods.DefiRIssueSoulBoundToken)
         )
       ) {
-        console.info('we are in operation.IssueSoulBoundToken for every call');
         return Operation.IssueSoulBoundToken;
       }
 
@@ -867,8 +865,6 @@ export default class IndexerDataParser {
   public async parseTransactionAsHistoryItem(transaction: HistoryElement): Promise<Nullable<HistoryItem>> {
     const type = getTransactionOperationType(transaction);
 
-    console.info('here is the type');
-    console.info(type);
     if (!type) {
       console.warn('Unsupported transaction:', transaction);
       return null;
