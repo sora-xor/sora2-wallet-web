@@ -183,7 +183,6 @@ export default {
       [Operation.DepositCollateral]: 'Failed to deposit {amount} {symbol}',
       [Operation.RepayVaultDebt]: 'Failed to repaid {amount} {symbol}',
       [Operation.BorrowVaultDebt]: 'Failed to borrow {amount} {symbol}',
-      // TODO update text for RegisterAndRegulateAsset
       [Operation.SetAccessExpiration]: 'Failed to update expiration to {to} for {symbol}',
       [Operation.RegulateAsset]: 'Failed To Regulate Asset {symbol}',
       [Operation.RegisterAndRegulateAsset]: 'Failed To Register And Regulate {symbol}',
