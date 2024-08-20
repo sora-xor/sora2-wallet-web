@@ -30,12 +30,12 @@ export const WalletConnectInfo: WalletInfo = {
 
 export const SoraWalletInfo: WalletInfo = {
   extensionName: AppWallet.Sora,
-  title: 'Sora Wallet',
+  title: 'SORA Wallet',
   chromeUrl: '',
   mozillaUrl: '',
   logo: {
     src: SoraWalletLogo as string,
-    alt: 'Sora Wallet',
+    alt: 'SORA Wallet',
   },
 };
 

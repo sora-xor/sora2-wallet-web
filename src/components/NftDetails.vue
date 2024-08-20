@@ -5,6 +5,7 @@
       <div v-else-if="badLink" class="placeholder">
         <s-icon
           v-if="isAssetDetails && !isNotImage"
+          v-button
           class="preview-image-confirm-nft__icon-refresh"
           name="refresh-16"
           size="64px"

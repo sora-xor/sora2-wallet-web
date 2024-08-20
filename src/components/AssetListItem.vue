@@ -6,7 +6,13 @@
     :tabindex="withTabindex ? 0 : -1"
     v-on="$listeners"
   >
-    <token-logo size="big" :token="asset" :with-clickable-logo="withClickableLogo" @click.native="handleIconClick" />
+    <token-logo
+      v-button
+      size="big"
+      :token="asset"
+      :with-clickable-logo="withClickableLogo"
+      @click.native="handleIconClick"
+    />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
         <div class="asset-symbol">{{ asset.symbol }}</div>
