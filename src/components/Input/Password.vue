@@ -7,7 +7,7 @@
     v-bind="$attrs"
     v-on="$listeners"
   >
-    <s-icon :name="icon" class="eye-icon" size="18" slot="suffix" @click.native="togglePasswordVisibility" />
+    <s-icon v-button :name="icon" class="eye-icon" size="18" slot="suffix" @click.native="togglePasswordVisibility" />
   </s-input>
 </template>
 

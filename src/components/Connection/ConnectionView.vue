@@ -57,7 +57,7 @@
       :loading="loading"
       :create-account="handleAccountCreate"
       :restore-account="handleAccountImport"
-      :json-only="isAppStored"
+      :json-only="!isAppStored"
     />
 
     <account-confirm-dialog
