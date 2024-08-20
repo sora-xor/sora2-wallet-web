@@ -234,8 +234,9 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
       if (Number(sbtExpiryDate) === Infinity) {
         expDate = this.t('sbtDetails.indefiniteExp');
+      } else {
+        expDate = this.formatDate(Number(sbtExpiryDate), 'll');
       }
-      expDate = this.formatDate(Number(sbtExpiryDate), 'll');
 
       this.sbtExpDates = { ...this.sbtExpDates, [asset.address]: expDate };
     });

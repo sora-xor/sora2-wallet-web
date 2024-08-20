@@ -45,8 +45,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
   @state.account.address private connected!: string;
 
-  sbtExpiryDate = '';
-
   handleIconClick(event: Event): void {
     if (!this.withClickableLogo) {
       return;
