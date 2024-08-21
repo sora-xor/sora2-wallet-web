@@ -386,6 +386,36 @@ export type HistoryElementVaultDebt = {
 
 export type HistoryElementVaultClose = Required<HistoryElementVaultCreate>;
 
+export type HistoryElementDefiRIssueSBT = {
+  description: string;
+  externalurl: string;
+  image: string;
+  name: string;
+  symbol: string;
+};
+
+export type HistoryElementDefiRSetSBTExpiration = {
+  accountId: string;
+  newExpiresAtTime: string;
+  sbtAssetId: string;
+};
+
+export type HistoryElementDefiRRegulateAsset = {
+  assetId: string;
+};
+
+export type HistoryElementDefiRBindRegulatedAssetToSbt = {
+  assetId: string;
+  sbtAssetId: string;
+};
+
+export type HistoryElementDefiRRegisterRegulatedAsset = {
+  name: string;
+  supply: string;
+  symbol: string;
+  mintable: boolean;
+};
+
 export type HistoryElementDataBase = Nullable<
   | HistoryElementReferralSetReferrer
   | HistoryElementReferrerReserve
@@ -415,6 +445,11 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementVaultDepositCollateral
   | HistoryElementVaultDebt
   | HistoryElementVaultClose
+  | HistoryElementDefiRIssueSBT
+  | HistoryElementDefiRSetSBTExpiration
+  | HistoryElementDefiRRegulateAsset
+  | HistoryElementDefiRBindRegulatedAssetToSbt
+  | HistoryElementDefiRRegisterRegulatedAsset
 >;
 
 export type HistoryElementBase = {

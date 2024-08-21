@@ -88,8 +88,8 @@ const actions = defineActions({
     }: ExternalHistoryParams = {}
   ): Promise<void> {
     const { state, commit } = transactionsActionContext(context);
-    const { externalHistory, externalHistoryUpdates } = state;
 
+    const { externalHistory, externalHistoryUpdates } = state;
     const indexer = getCurrentIndexer();
     const operations = indexer.services.dataParser.supportedOperations;
     const filter = indexer.historyElementsFilter({
@@ -107,7 +107,6 @@ const actions = defineActions({
 
     try {
       const response = await indexer.services.explorer.account.getHistory(variables);
-
       if (!response) return;
 
       const { nodes, totalCount } = response;
