@@ -2481,10 +2481,10 @@
     "@polkadot/types" "9.14.2"
     "@polkadot/util" "10.4.2"
 
-"@soramitsu-ui/ui-vue2@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@soramitsu-ui/ui-vue2/-/ui-vue2-1.1.1.tgz#c410869e09617bd3772d2663e6a40e193eecc5ec"
-  integrity sha512-BDSdDFPGKue3EKaCgFf5iycDlCqWA1zL2uMCC36hZR1uNXvBQADjbHPP6gcxbeCwB/ZRVDIksNviBclXenDBFg==
+"@soramitsu-ui/ui-vue2@1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@soramitsu-ui/ui-vue2/-/ui-vue2-1.1.2.tgz#6e39ada512e13e6ab7c8ba2bcdef0e4237ed2daa"
+  integrity sha512-ueKODSOGcma28M8mvFl/SpvMHO08VhlOP+wdqMRLOoDjEJL21+TxNAF3NI2/9gs/phFhpZmfDx45HH56V8bXyg==
   dependencies:
     core-js "^3.26.1"
     element-resize-detector "^1.2.4"
