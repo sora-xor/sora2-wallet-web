@@ -105,6 +105,9 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
     } else if (status !== TransactionStatus.Error) {
       status = TransactionStatus.Finalized;
     }
+    if (value.type === Operation.SetAccessExpiration) {
+      params.endTime = new Date(params?.endTime).toLocaleDateString();
+    }
     if (hideAmountValues) {
       params.amount = HiddenValue;
       params.amount2 = HiddenValue;

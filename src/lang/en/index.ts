@@ -133,7 +133,7 @@ export default {
       [Operation.DepositCollateral]: 'Deposited {amount} {symbol}',
       [Operation.RepayVaultDebt]: 'Repaid {amount} {symbol}',
       [Operation.BorrowVaultDebt]: 'Borrowed {amount} {symbol}',
-      [Operation.SetAccessExpiration]: 'SBT Token {symbol} Updated expiration to {endTime}',
+      [Operation.SetAccessExpiration]: 'SB token {symbol} Updated expiration to {endTime}',
       [Operation.RegulateAsset]: 'Regulate Asset {symbol}',
       [Operation.RegisterAndRegulateAsset]: 'Register And Regulate {symbol} asset',
       [Operation.BindRegulatedAsset]: 'Bind Asset {symbol2} to SBT',
