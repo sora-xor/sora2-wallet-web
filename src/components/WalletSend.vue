@@ -188,7 +188,7 @@ export default class WalletSend extends Mixins(
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
   @Watch('address')
-  async getIsNotSbtOwnerReceiver(): Promise<any> {
+  async getIsNotSbtOwnerReceiver(): Promise<void> {
     if (this.validAddress && this.asset.address) {
       const assetInfo = (await api.api.query.assets.assetInfosV2(this.asset.address)).toHuman();
       if (assetInfo.assetType === 'Regulated') {

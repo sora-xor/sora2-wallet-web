@@ -45,6 +45,8 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
      
     <!---->
      
+    <!---->
+     
     <s-float-input-stub
       class="wallet-send-input"
       decimals="18"
@@ -176,6 +178,8 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
      
     <!---->
      
+    <!---->
+     
     <s-float-input-stub
       class="wallet-send-input"
       decimals="18"
@@ -302,6 +306,8 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
       excludeconnected="true"
       value="dfsakljfdlkjfhfkjladshslfjafds"
     />
+     
+    <!---->
      
     <!---->
      
@@ -469,6 +475,8 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
     >
       You cannot send tokens to the same acount that you are currently connected to.
     </p>
+     
+    <!---->
      
     <s-float-input-stub
       class="wallet-send-input"
