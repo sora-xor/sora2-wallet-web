@@ -112,8 +112,8 @@
 </template>
 
 <script lang="ts">
-import { TransactionStatus, Operation, FPNumber } from '@sora-substrate/util';
-import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
+import { TransactionStatus, Operation, FPNumber } from '@sora-substrate/sdk';
+import { KnownSymbols } from '@sora-substrate/sdk/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { HashType, SoraNetwork } from '../consts';
@@ -129,8 +129,8 @@ import AdarTxDetails from './WalletAdarTxDetails.vue';
 import WalletBase from './WalletBase.vue';
 
 import type { PolkadotJsAccount, AssetsTable } from '../types/common';
-import type { HistoryItem } from '@sora-substrate/util';
-import type { EthHistory } from '@sora-substrate/util/build/bridgeProxy/eth/types';
+import type { HistoryItem } from '@sora-substrate/sdk';
+import type { EthHistory } from '@sora-substrate/sdk/build/bridgeProxy/eth/types';
 
 @Component({
   components: {

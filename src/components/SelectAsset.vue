@@ -27,7 +27,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 import WalletBase from './WalletBase.vue';
 
 import type { Route } from '../store/router/types';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {

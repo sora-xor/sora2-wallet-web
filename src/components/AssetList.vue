@@ -51,7 +51,7 @@ import AssetListItem from './AssetListItem.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 import Scrollbar from './ScrollBar.vue';
 
-import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 import type { RecycleScroller } from 'vue-virtual-scroller';
 
 @Component({

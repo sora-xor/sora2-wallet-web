@@ -95,7 +95,7 @@ import WalletHistory from './WalletHistory.vue';
 import WalletTransactionDetails from './WalletTransactionDetails.vue';
 
 import type { WalletPermissions } from '../consts';
-import type { HistoryItem } from '@sora-substrate/util';
+import type { HistoryItem } from '@sora-substrate/sdk';
 
 @Component({
   components: {

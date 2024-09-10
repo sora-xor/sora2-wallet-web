@@ -5,7 +5,7 @@ import { Alert, ConnectionStatus } from '../../types/common';
 import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
 
 import type { SettingsState } from './types';
-import type { NetworkFeesObject } from '@sora-substrate/util';
+import type { NetworkFeesObject } from '@sora-substrate/sdk';
 
 const INDEXERS = [IndexerType.SUBQUERY, IndexerType.SUBSQUID];
 

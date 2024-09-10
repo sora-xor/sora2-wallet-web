@@ -144,8 +144,8 @@
 </template>
 
 <script lang="ts">
-import { FPNumber, Operation } from '@sora-substrate/util';
-import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
+import { FPNumber, Operation } from '@sora-substrate/sdk';
+import { MaxTotalSupply, XOR } from '@sora-substrate/sdk/build/assets/consts';
 import { File as ImageNFT } from 'nft.storage';
 import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
 

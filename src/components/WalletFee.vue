@@ -13,8 +13,8 @@
 </template>
 
 <script lang="ts">
-import { FPNumber } from '@sora-substrate/util';
-import { XOR } from '@sora-substrate/util/build/assets/consts';
+import { FPNumber } from '@sora-substrate/sdk';
+import { XOR } from '@sora-substrate/sdk/build/assets/consts';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import InfoLine from './InfoLine.vue';

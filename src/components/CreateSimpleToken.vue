@@ -72,8 +72,8 @@
 </template>
 
 <script lang="ts">
-import { FPNumber, Operation } from '@sora-substrate/util';
-import { MaxTotalSupply, XOR } from '@sora-substrate/util/build/assets/consts';
+import { FPNumber, Operation } from '@sora-substrate/sdk';
+import { MaxTotalSupply, XOR } from '@sora-substrate/sdk/build/assets/consts';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { api } from '../api';

@@ -1,11 +1,11 @@
-import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
+import { excludePoolXYKAssets } from '@sora-substrate/sdk/build/assets';
 
 import { formatStringNumber } from '../../../util';
 
 import type { SubqueryAssetEntity } from '../subquery/types';
 import type { SubsquidAssetEntity } from '../subsquid/types';
 import type { FiatPriceObject, UpdatesStream } from '../types';
-import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 
 export function parseAssetFiatPrice(entity: SubsquidAssetEntity | SubqueryAssetEntity): FiatPriceObject {
   const acc = {};

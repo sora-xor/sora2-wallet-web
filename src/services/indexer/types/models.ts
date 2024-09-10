@@ -16,8 +16,8 @@ import {
 } from '../subsquid/types';
 
 import type { PriceVariant, OrderBookStatus } from '@sora-substrate/liquidity-proxy';
-import type { CodecString } from '@sora-substrate/util';
-import type { StakingRewardsDestination } from '@sora-substrate/util/build/staking/types';
+import type { CodecString } from '@sora-substrate/sdk';
+import type { StakingRewardsDestination } from '@sora-substrate/sdk/build/staking/types';
 
 // Indexer Enums
 export enum SnapshotTypes {

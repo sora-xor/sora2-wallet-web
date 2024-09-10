@@ -27,7 +27,7 @@
 <script lang="ts">
 // This file is only for local usage
 
-import { FPNumber, HistoryItem } from '@sora-substrate/util';
+import { FPNumber, HistoryItem } from '@sora-substrate/sdk';
 import { switchTheme } from '@soramitsu-ui/ui-vue2/lib/utils';
 import { Component, Mixins, Watch } from 'vue-property-decorator';
 
@@ -44,7 +44,7 @@ import { initWallet } from './index';
 
 import type { ApiKeysObject } from './types/common';
 import type { Currency, CurrencyFields } from './types/currency';
-import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
 import type DesignSystem from '@soramitsu-ui/ui-vue2/lib/types/DesignSystem';
 import type Theme from '@soramitsu-ui/ui-vue2/lib/types/Theme';
 

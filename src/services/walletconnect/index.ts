@@ -6,7 +6,7 @@ import { WcProvider } from './provider/base';
 import { WcSubProvider } from './provider/substrate';
 import { WcWallet } from './wallet';
 
-import type { WithKeyring } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/sdk';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 
 export { WcProvider };

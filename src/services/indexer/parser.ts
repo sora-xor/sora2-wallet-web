@@ -1,7 +1,7 @@
 import { BN } from '@polkadot/util';
-import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/util';
-import { XOR } from '@sora-substrate/util/build/assets/consts';
-import { RewardType, RewardingEvents } from '@sora-substrate/util/build/rewards/consts';
+import { FPNumber, Operation, TransactionStatus } from '@sora-substrate/sdk';
+import { XOR } from '@sora-substrate/sdk/build/assets/consts';
+import { RewardType, RewardingEvents } from '@sora-substrate/sdk/build/rewards/consts';
 import getOr from 'lodash/fp/getOr';
 
 import { api } from '../../api';
@@ -44,17 +44,17 @@ import type {
   ClaimedRewardItem,
   CallArgs,
 } from './subquery/types';
-import type { HistoryItem } from '@sora-substrate/util';
+import type { HistoryItem } from '@sora-substrate/sdk';
 import type {
   Asset,
   WhitelistItem,
   HistoryElementTransfer as HistoryXorlessTransfer,
-} from '@sora-substrate/util/build/assets/types';
-import type { EthHistory } from '@sora-substrate/util/build/bridgeProxy/eth/types';
-import type { VaultHistory } from '@sora-substrate/util/build/kensetsu/types';
-import type { LimitOrderHistory } from '@sora-substrate/util/build/orderBook/types';
-import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/util/build/rewards/types';
-import type { StakingHistory } from '@sora-substrate/util/build/staking/types';
+} from '@sora-substrate/sdk/build/assets/types';
+import type { EthHistory } from '@sora-substrate/sdk/build/bridgeProxy/eth/types';
+import type { VaultHistory } from '@sora-substrate/sdk/build/kensetsu/types';
+import type { LimitOrderHistory } from '@sora-substrate/sdk/build/orderBook/types';
+import type { RewardClaimHistory, RewardInfo } from '@sora-substrate/sdk/build/rewards/types';
+import type { StakingHistory } from '@sora-substrate/sdk/build/staking/types';
 
 const insensitive = (value: string) => value.toLowerCase();
 

@@ -1,5 +1,5 @@
 import { FPNumber } from '@sora-substrate/math';
-import { XOR } from '@sora-substrate/util/build/assets/consts';
+import { XOR } from '@sora-substrate/sdk/build/assets/consts';
 import { defineGetters } from 'direct-vuex';
 
 import { Currency } from '@/types/currency';

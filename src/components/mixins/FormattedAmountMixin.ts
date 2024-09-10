@@ -1,5 +1,5 @@
-import { FPNumber, CodecString } from '@sora-substrate/util';
-import { BalanceType, XOR } from '@sora-substrate/util/build/assets/consts';
+import { FPNumber, CodecString } from '@sora-substrate/sdk';
+import { BalanceType, XOR } from '@sora-substrate/sdk/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { FontSizeRate, FontWeightRate } from '../../consts';
@@ -8,7 +8,7 @@ import { state } from '../../store/decorators';
 import NumberFormatterMixin from './NumberFormatterMixin';
 
 import type { FiatPriceObject } from '../../services/indexer/types';
-import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, Asset } from '@sora-substrate/sdk/build/assets/types';
 
 @Component
 export default class FormattedAmountMixin extends Mixins(NumberFormatterMixin) {

@@ -103,7 +103,7 @@ import ImportAccountStep from './Step/ImportAccount.vue';
 
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../store/account/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
-import type { WithKeyring } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/sdk';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 
 const SelectAccountFlow = [LoginStep.ExtensionList, LoginStep.AccountList];

@@ -3,7 +3,7 @@ import { AssetRegistrationStreamSubscription } from '../../subscriptions/stream'
 
 import { SubqueryBaseModule } from './_base';
 
-import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 
 export class SubqueryAssetModule extends SubqueryBaseModule {
   public createNewAssetsSubscription(

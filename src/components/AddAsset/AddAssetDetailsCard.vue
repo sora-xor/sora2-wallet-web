@@ -41,7 +41,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
 import WalletBase from '../WalletBase.vue';
 
 import type { WhitelistIdsBySymbol } from '../../types/common';
-import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
+import type { Asset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {

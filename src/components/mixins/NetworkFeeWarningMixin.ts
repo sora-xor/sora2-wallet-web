@@ -1,5 +1,5 @@
-import { FPNumber, Operation } from '@sora-substrate/util';
-import { XOR } from '@sora-substrate/util/build/assets/consts';
+import { FPNumber, Operation } from '@sora-substrate/sdk';
+import { XOR } from '@sora-substrate/sdk/build/assets/consts';
 import { Mixins, Component } from 'vue-property-decorator';
 
 import { NetworkFeeWarningOptions } from '../../consts';
@@ -8,7 +8,7 @@ import { state, getter } from '../../store/decorators';
 import NumberFormatterMixin from './NumberFormatterMixin';
 
 import type { AccountAssetsTable } from '../../types/common';
-import type { NetworkFeesObject } from '@sora-substrate/util';
+import type { NetworkFeesObject } from '@sora-substrate/sdk';
 
 const PredefinedOperations = [
   Operation.Transfer,

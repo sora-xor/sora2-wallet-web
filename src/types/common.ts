@@ -1,5 +1,5 @@
 import type { AppWallet } from '../consts';
-import type { Asset, AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { Asset, AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 
 export type { KeyringPair$Json } from '@polkadot/keyring/types';
 

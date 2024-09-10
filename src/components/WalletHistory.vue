@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts">
-import { TransactionStatus } from '@sora-substrate/util';
+import { TransactionStatus } from '@sora-substrate/sdk';
 import debounce from 'lodash/fp/debounce';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
@@ -60,8 +60,8 @@ import TransactionMixin from './mixins/TransactionMixin';
 import type { EthBridgeUpdateHistory } from '../consts';
 import type { Route } from '../store/router/types';
 import type { ExternalHistoryParams } from '../types/history';
-import type { History, AccountHistory, HistoryItem, Operation } from '@sora-substrate/util';
-import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
+import type { History, AccountHistory, HistoryItem, Operation } from '@sora-substrate/sdk';
+import type { AccountAsset, Asset } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {

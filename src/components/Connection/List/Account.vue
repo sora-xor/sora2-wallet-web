@@ -31,7 +31,7 @@ import ConnectionItems from './ConnectionItems.vue';
 
 import type { AppWallet } from '../../../consts';
 import type { PolkadotJsAccount } from '../../../types/common';
-import type { WithConnectionApi } from '@sora-substrate/util';
+import type { WithConnectionApi } from '@sora-substrate/sdk';
 
 @Component({
   components: {

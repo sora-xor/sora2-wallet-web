@@ -1,4 +1,4 @@
-import { excludePoolXYKAssets } from '@sora-substrate/util/build/assets';
+import { excludePoolXYKAssets } from '@sora-substrate/sdk/build/assets';
 import { defineActions } from 'direct-vuex';
 
 import { api } from '../../api';
@@ -20,7 +20,7 @@ import {
 import { accountActionContext } from './../account';
 
 import type { PolkadotJsAccount } from '../../types/common';
-import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
 import type { ActionContext } from 'vuex';
 
 const UPDATE_ASSETS_INTERVAL = BLOCK_PRODUCE_TIME * 3;

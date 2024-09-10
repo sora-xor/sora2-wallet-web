@@ -5,7 +5,7 @@ import { settingsStorage } from '../../util/storage';
 
 import type { TransactionsState } from './types';
 import type { EthBridgeUpdateHistory } from '../../consts';
-import type { AccountHistory, HistoryItem } from '@sora-substrate/util';
+import type { AccountHistory, HistoryItem } from '@sora-substrate/sdk';
 
 const mutations = defineMutations<TransactionsState>()({
   setActiveTxsSubscription(state, subscription: NodeJS.Timeout | number): void {

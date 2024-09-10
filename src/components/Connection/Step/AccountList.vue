@@ -85,7 +85,7 @@ import AccountConnectionList from '../List/Account.vue';
 import ConnectionItems from '../List/ConnectionItems.vue';
 
 import type { PolkadotJsAccount } from '../../../types/common';
-import type { WithKeyring } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/sdk';
 
 @Component({
   components: {
