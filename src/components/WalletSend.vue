@@ -20,6 +20,9 @@
           </s-tooltip>
         </template>
         <p v-if="isAccountAddress" class="wallet-send-address-error">{{ t('walletSend.addressError') }}</p>
+        <p v-if="showIsNotSbtOwnerReceiver" class="wallet-send-address-error">
+          {{ t('sbtDetails.noReceiverAccess') }}
+        </p>
 
         <s-float-input
           v-model="amount"
@@ -121,7 +124,8 @@
 <script lang="ts">
 import { FPNumber, Operation } from '@sora-substrate/util';
 import { XOR } from '@sora-substrate/util/build/assets/consts';
-import { Component, Mixins } from 'vue-property-decorator';
+import { getAssetBalance } from '@sora-substrate/util/build/assets/index';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { RouteNames } from '../consts';
@@ -179,8 +183,27 @@ export default class WalletSend extends Mixins(
   address = '';
   amount = '';
   showAdditionalInfo = true;
+  showIsNotSbtOwnerReceiver = false;
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
+
+  @Watch('address')
+  async getIsNotSbtOwnerReceiver(): Promise<any> {
+    if (this.validAddress && this.asset.address) {
+      const assetInfo = (await api.api.query.assets.assetInfosV2(this.asset.address)).toHuman();
+      if (assetInfo.assetType === 'Regulated') {
+        const balance = await getAssetBalance(api.api, this.address, this.asset.address);
+
+        if (this.getFPNumberFromCodec(balance.total).lte(FPNumber.ZERO)) {
+          this.showIsNotSbtOwnerReceiver = true;
+        }
+      } else {
+        this.showIsNotSbtOwnerReceiver = false;
+      }
+    } else {
+      this.showIsNotSbtOwnerReceiver = false;
+    }
+  }
 
   created(): void {
     if (!this.currentRouteParams.asset) {
@@ -306,7 +329,14 @@ export default class WalletSend extends Mixins(
   }
 
   get sendButtonDisabled(): boolean {
-    return this.loading || !this.validAddress || !this.validAmount || !this.hasEnoughXor;
+    return (
+      this.loading ||
+      !this.validAddress ||
+      !this.validAmount ||
+      !this.hasEnoughXor ||
+      this.isAccountAddress ||
+      this.showIsNotSbtOwnerReceiver
+    );
   }
 
   get sendButtonDisabledText(): string {

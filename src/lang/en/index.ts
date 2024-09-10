@@ -626,5 +626,6 @@ export default {
     indefiniteExp: 'open-ended',
     permission: 'permission',
     permissions: 'permissions',
+    noReceiverAccess: "You're trying to send regulated token to the user with no SBT access",
   },
 };
