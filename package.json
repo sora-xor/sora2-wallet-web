@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
-    "@soramitsu:registry": "https://nexus.iroha.tech/repository/npm-soramitsu-private/"
+    "access": "public"
   },
   "engines": {
     "node": ">=20"
