@@ -1,4 +1,4 @@
-import { FPNumber } from '@sora-substrate/util';
+import { FPNumber } from '@sora-substrate/sdk';
 import { Subject } from 'rxjs';
 
 import { Singleton } from '../../decorators';
@@ -7,7 +7,7 @@ import { getBase64Icon } from '../../util/image';
 
 import type { Alert } from '../../types/common';
 import type { FiatPriceObject } from '../indexer/subsquid/types';
-import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
 
 @Singleton
 export class AlertsApiService {

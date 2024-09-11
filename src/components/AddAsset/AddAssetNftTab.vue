@@ -29,7 +29,7 @@ import AddAssetMixin from '../mixins/AddAssetMixin';
 
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
-import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {

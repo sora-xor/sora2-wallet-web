@@ -8,7 +8,7 @@ import NotificationMixin from './NotificationMixin';
 
 import type { Route } from '../../store/router/types';
 import type { AccountAssetsTable } from '../../types/common';
-import type { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, Asset } from '@sora-substrate/sdk/build/assets/types';
 
 @Component
 export default class AddAssetMixin extends Mixins(NotificationMixin, LoadingMixin) {

@@ -109,7 +109,7 @@ import PasswordInput from '../../Input/Password.vue';
 import NotificationMixin from '../../mixins/NotificationMixin';
 
 import type { CreateAccountArgs } from '../../../store/account/types';
-import type { WithKeyring } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/sdk';
 
 @Component({
   components: {

@@ -18,7 +18,7 @@ import { runtimeStorage } from '../../util/storage';
 import { settingsActionContext } from './../settings';
 
 import type { FiatExchangeRateObject } from '../../types/currency';
-import type { NetworkFeesObject } from '@sora-substrate/util';
+import type { NetworkFeesObject } from '@sora-substrate/sdk';
 import type { ActionContext } from 'vuex';
 
 function areLocalNetworkFeesOkay(localFees: NetworkFeesObject, apiFees: NetworkFeesObject): boolean {

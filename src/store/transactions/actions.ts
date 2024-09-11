@@ -1,4 +1,4 @@
-import { Operation } from '@sora-substrate/util';
+import { Operation } from '@sora-substrate/sdk';
 import { defineActions } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
 
@@ -11,7 +11,7 @@ import { transactionsActionContext } from './../transactions';
 
 import type { HistoryElement } from '../../services/indexer/types';
 import type { ExternalHistoryParams } from '../../types/history';
-import type { WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
 import type { ActionContext } from 'vuex';
 
 const UPDATE_ACTIVE_TRANSACTIONS_INTERVAL = 2_000;

@@ -3,7 +3,7 @@ import { addWalletLocally, checkWallet } from '../../util/account';
 
 import { SoraWallet } from './wallet';
 
-import type { WithKeyring } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/sdk';
 
 export const addSoraWalletLocally = (api: WithKeyring): string => {
   const name = SoraWalletInfo.extensionName;

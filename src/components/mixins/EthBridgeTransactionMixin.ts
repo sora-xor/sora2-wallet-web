@@ -1,10 +1,10 @@
-import { Operation } from '@sora-substrate/util';
+import { Operation } from '@sora-substrate/sdk';
 import { Vue, Component } from 'vue-property-decorator';
 
 import { ETH_BRIDGE_STATES } from '../../consts';
 
-import type { HistoryItem } from '@sora-substrate/util';
-import type { EthHistory } from '@sora-substrate/util/build/bridgeProxy/eth/types';
+import type { HistoryItem } from '@sora-substrate/sdk';
+import type { EthHistory } from '@sora-substrate/sdk/build/bridgeProxy/eth/types';
 
 @Component
 export default class EthBridgeTransactionMixin extends Vue {

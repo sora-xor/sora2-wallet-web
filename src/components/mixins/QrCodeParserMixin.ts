@@ -8,7 +8,7 @@ import NotificationMixin from './NotificationMixin';
 
 import type { Route } from '../../store/router/types';
 import type { AssetsTable } from '../../types/common';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 
 const reject = (message: string) => {
   throw new Error(`[QR Code]: ${message}`);

@@ -3,7 +3,7 @@ import { IndexerType } from '@/consts';
 import type { SoraNetwork, WalletPermissions, WalletAssetFilters } from '../../consts';
 import type { Alert, ApiKeysObject, IndexerState } from '../../types/common';
 import type { Currency, CurrencyFields, FiatExchangeRateObject } from '../../types/currency';
-import type { NetworkFeesObject } from '@sora-substrate/util';
+import type { NetworkFeesObject } from '@sora-substrate/sdk';
 import type { NFTStorage } from 'nft.storage';
 import type { Subscription } from 'rxjs';
 

@@ -3,7 +3,7 @@ import { Vue, Component, Prop } from 'vue-property-decorator';
 import { state } from '../../store/decorators';
 import { delay } from '../../util';
 
-import type { WithConnectionApi } from '@sora-substrate/util';
+import type { WithConnectionApi } from '@sora-substrate/sdk';
 
 @Component
 export default class LoadingMixin extends Vue {

@@ -117,7 +117,7 @@
 </template>
 
 <script lang="ts">
-import { XOR, BalanceType } from '@sora-substrate/util/build/assets/consts';
+import { XOR, BalanceType } from '@sora-substrate/sdk/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../api';
@@ -142,8 +142,8 @@ import WalletHistory from './WalletHistory.vue';
 import WalletTransactionDetails from './WalletTransactionDetails.vue';
 
 import type { WalletPermissions } from '../consts';
-import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/util';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { CodecString, AccountHistory, HistoryItem } from '@sora-substrate/sdk';
+import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 
 interface Operation {
   type: Operations;

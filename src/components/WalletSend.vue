@@ -119,8 +119,8 @@
 </template>
 
 <script lang="ts">
-import { FPNumber, Operation } from '@sora-substrate/util';
-import { XOR } from '@sora-substrate/util/build/assets/consts';
+import { FPNumber, Operation } from '@sora-substrate/sdk';
+import { XOR } from '@sora-substrate/sdk/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../api';
@@ -142,8 +142,8 @@ import WalletBase from './WalletBase.vue';
 import WalletFee from './WalletFee.vue';
 
 import type { Route } from '../store/router/types';
-import type { CodecString } from '@sora-substrate/util';
-import type { AccountAsset, AccountBalance } from '@sora-substrate/util/build/assets/types';
+import type { CodecString } from '@sora-substrate/sdk';
+import type { AccountAsset, AccountBalance } from '@sora-substrate/sdk/build/assets/types';
 import type { Subscription } from 'rxjs';
 
 @Component({

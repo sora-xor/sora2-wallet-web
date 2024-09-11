@@ -28,7 +28,7 @@ import WalletBase from './WalletBase.vue';
 import type { RouteNames } from '../consts';
 import type { Route } from '../store/router/types';
 import type { PolkadotJsAccount } from '../types/common';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {

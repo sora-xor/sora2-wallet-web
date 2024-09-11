@@ -78,7 +78,7 @@ import * as accountUtils from './util/account';
 import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
-import type { WithKeyring } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/sdk';
 import type { PluginObject } from 'vue';
 import type Vue from 'vue';
 

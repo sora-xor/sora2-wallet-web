@@ -1,4 +1,4 @@
-import { TransactionStatus, HistoryItem } from '@sora-substrate/util';
+import { TransactionStatus, HistoryItem } from '@sora-substrate/sdk';
 
 import WalletHistory from '@/components/WalletHistory.vue';
 

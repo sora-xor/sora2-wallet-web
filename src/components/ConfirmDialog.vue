@@ -22,7 +22,7 @@ import LoadingMixin from './mixins/LoadingMixin';
 import NotificationMixin from './mixins/NotificationMixin';
 
 import type { PolkadotJsAccount } from '../types/common';
-import type { WithKeyring } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/sdk';
 
 @Component({
   components: {
