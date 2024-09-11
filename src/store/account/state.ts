@@ -27,6 +27,7 @@ export function initialState(): AccountState {
     alertSubject: null,
     /** account assets & subscription */
     accountAssets: [],
+    pinnedAssets: [],
     accountAssetsSubscription: null,
     /** whitelist & blacklist */
     whitelistArray: [],

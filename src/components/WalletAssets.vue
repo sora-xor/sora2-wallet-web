@@ -11,6 +11,7 @@
               with-fiat
               with-clickable-logo
               @show-details="handleOpenAssetDetails"
+              :pinned="isPinned(asset)"
               @pin="handlePin"
             >
               <template #value="asset">
@@ -121,9 +122,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @state.settings.filters private filters!: WalletAssetFilters;
 
   @getter.account.whitelist private whitelist!: Whitelist;
+  @getter.account.pinnedAssets private pinnedAssets!: Array<AccountAsset>;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.account.setAccountAssets private setAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
+  @mutation.account.setPinnedAsset private setPinnedAsset!: (pinnedAccountAssets: AccountAsset) => void;
+  @mutation.account.removePinnedAsset private removePinnedAsset!: (pinnedAccountAssets: AccountAsset) => void;
 
   @Watch('assetList')
   private updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): void {
@@ -222,7 +226,24 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   handlePin(asset: AccountAsset): void {
-    console.info('we handled pin in wallet assets');
+    console.info('Handling pin in wallet assets for:', asset);
+
+    const isAlreadyPinned = this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address);
+
+    if (isAlreadyPinned) {
+      console.info('Asset is already pinned. Removing:', asset);
+      this.removePinnedAsset(asset);
+    } else {
+      console.info('Asset is not pinned. Adding:', asset);
+      this.setPinnedAsset(asset);
+    }
+
+    console.info('Updated pinned assets:', this.pinnedAssets);
+  }
+
+  isPinned(asset: AccountAsset): boolean {
+    // Check if the asset is in the pinnedAssets array from Vuex store
+    return this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address);
   }
 
   showAsset(asset: AccountAsset) {

@@ -10,7 +10,7 @@ import { accountGetterContext } from './../account';
 
 import type { AccountState } from './types';
 import type { AssetsTable, AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
-import type { Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
+import type { Asset, Whitelist, AccountAsset, WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
 
 const toHashTable = <T extends Asset>(list: Readonly<Array<T>>, key: string) => {
   return list.reduce((result, item) => {
@@ -46,6 +46,10 @@ const getters = defineGetters<AccountState>()({
     return state.whitelistArray && state.whitelistArray.length
       ? api.assets.getWhitelist(state.whitelistArray as WhitelistArrayItem[])
       : {};
+  },
+  pinnedAssets(...args): Array<AccountAsset> {
+    const { state } = accountGetterContext(args);
+    return state.pinnedAssets;
   },
   whitelistIdsBySymbol(...args): any {
     const { state } = accountGetterContext(args);
