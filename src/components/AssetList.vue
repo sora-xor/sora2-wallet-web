@@ -21,8 +21,6 @@
           :with-clickable-logo="withClickableLogo"
           selectable="selectable"
           :selected="isSelected(item)"
-          :pinnable="pinnable"
-          :pinned="isPinned(item)"
           :with-fiat="withFiat"
           :key="index"
           :with-tabindex="withTabindex"
@@ -49,13 +47,15 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
+import { getter } from '@/store/decorators';
+
 import { delay, getCssVariableValue, getScrollbarWidth } from '../util';
 
 import AssetListItem from './AssetListItem.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 import Scrollbar from './ScrollBar.vue';
 
-import type { Asset } from '@sora-substrate/sdk/build/assets/types';
+import type { AccountAsset, Asset } from '@sora-substrate/sdk/build/assets/types';
 import type { RecycleScroller } from 'vue-virtual-scroller';
 
 @Component({
@@ -65,6 +65,8 @@ import type { RecycleScroller } from 'vue-virtual-scroller';
   },
 })
 export default class AssetList extends Mixins(TranslationMixin) {
+  @getter.account.pinnedAssets private pinnedAssets!: Array<AccountAsset>;
+
   @Prop({ default: () => [], type: Array }) readonly assets!: Array<Asset>;
   @Prop({ default: 5, type: Number }) readonly size!: number;
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
@@ -155,12 +157,6 @@ export default class AssetList extends Mixins(TranslationMixin) {
 
   isSelected(asset: Asset): boolean {
     return this.selected.some((selectedAsset) => selectedAsset.address === asset.address);
-  }
-
-  isPinned(asset: Asset): boolean {
-    console.info('the asset', asset);
-    console.info('is pinned');
-    return this.pinned.some((pinnedAsset) => pinnedAsset.address === asset.address);
   }
 }
 </script>

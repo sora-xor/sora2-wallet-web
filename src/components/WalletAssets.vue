@@ -2,8 +2,8 @@
   <div :class="computedClasses" v-loading="loading">
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @update-filter="updateFilter" />
     <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
-      <draggable v-model="assetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes">
-        <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
+      <draggable v-model="sortedAssetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes">
+        <div v-for="(asset, index) in sortedAssetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
             <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
             <asset-list-item
@@ -185,6 +185,13 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
+  get sortedAssetList(): Array<AccountAsset> {
+    return [...this.assetList].sort((a) => {
+      const isPinnedA = this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === a.address);
+      return isPinnedA ? -1 : 1;
+    });
+  }
+
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
   }
@@ -242,7 +249,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   isPinned(asset: AccountAsset): boolean {
-    // Check if the asset is in the pinnedAssets array from Vuex store
     return this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address);
   }
 
