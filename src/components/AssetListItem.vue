@@ -1,6 +1,12 @@
 <template>
   <div
-    :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]"
+    :class="[
+      's-flex',
+      'asset',
+      { 'asset--with-fiat': withFiat },
+      { 'asset--selected': selected },
+      { 'asset--pinned': pinned },
+    ]"
     v-bind="$attrs"
     v-button="withTabindex"
     :tabindex="withTabindex ? 0 : -1"
@@ -21,6 +27,15 @@
       <slot name="append" v-bind="asset" />
     </div>
     <slot v-bind="asset" />
+    <div v-if="selectable" class="check">
+      <s-icon name="basic-check-mark-24" size="12px" />
+    </div>
+    <div v-if="pinned" class="pin" @click="pin">
+      <s-icon name="maps-pin-24" size="24px" />
+    </div>
+    <div v-if="pinnable && !pinned" class="pin" @click="pin">
+      <s-icon name="maps-pin-add-24" size="24px" />
+    </div>
   </div>
 </template>
 
@@ -44,6 +59,10 @@ import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly selected!: boolean;
+  @Prop({ default: true, type: Boolean }) readonly pinnable!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly pinned!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withTabindex!: boolean;
 
@@ -55,6 +74,12 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
       event.stopImmediatePropagation();
     }
     this.$emit('show-details', this.asset);
+  }
+
+  pin(event: Event) {
+    console.info('pin was called');
+    event.stopPropagation();
+    this.$emit('pin', this.asset);
   }
 }
 </script>
@@ -92,6 +117,48 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     font-weight: 600;
     letter-spacing: var(--s-letter-spacing-small);
     line-height: var(--s-line-height-extra-small);
+  }
+  .check {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--s-color-base-content-secondary);
+    border-radius: 50%;
+    transition: opacity 150ms, border-color 150ms, background-color 150ms;
+    i {
+      color: white;
+    }
+  }
+  &--selected .check {
+    background: var(--s-color-theme-accent);
+    border: 1px solid transparent;
+  }
+  &:not(&--selected) .check i {
+    opacity: 0;
+  }
+  &:not(:hover):not(&--selected) .check {
+    opacity: 0;
+  }
+  .pin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    margin-left: 8px;
+    cursor: pointer;
+    i {
+      color: var(--s-color-base-content-tertiary);
+      transition: color 150ms;
+    }
+    &:hover i {
+      color: var(--s-color-base-content-secondary);
+    }
+  }
+  &--pinned .pin i {
+    color: var(--s-base-content-primary);
   }
 }
 </style>

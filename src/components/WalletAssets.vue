@@ -6,7 +6,13 @@
         <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
             <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
-            <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
+            <asset-list-item
+              :asset="asset"
+              with-fiat
+              with-clickable-logo
+              @show-details="handleOpenAssetDetails"
+              @pin="handlePin"
+            >
               <template #value="asset">
                 <formatted-amount-with-fiat-value
                   value-can-be-hidden
@@ -213,6 +219,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   handleOpenAddAsset(): void {
     this.navigate({ name: RouteNames.AddAsset });
+  }
+
+  handlePin(asset: AccountAsset): void {
+    console.info('we handled pin in wallet assets');
   }
 
   showAsset(asset: AccountAsset) {

@@ -24,7 +24,7 @@ export default class AddAssetMixin extends Mixins(NotificationMixin, LoadingMixi
   @Prop({ default: false, type: Boolean }) tokenDetailsPageOpened!: boolean;
 
   selectedAsset: Nullable<Asset> = null;
-
+  selectedAssets: Array<Asset> = [];
   search = '';
 
   get searchValue(): string {
@@ -51,10 +51,19 @@ export default class AddAssetMixin extends Mixins(NotificationMixin, LoadingMixi
     this.showAppNotification(this.t('addAsset.success', { symbol: asset.symbol || '' }), 'success');
   }
 
-  handleSelectAsset(asset: Asset): void {
+  handleSelectAsset(asset: Asset, selectable: boolean): void {
     if (asset) {
-      this.selectedAsset = asset;
-      this.$emit('change-visibility');
+      if (selectable) {
+        const assetIndex = this.selectedAssets.findIndex((a) => a.address === asset.address);
+        if (assetIndex >= 0) {
+          this.selectedAssets.splice(assetIndex, 1);
+        } else {
+          this.selectedAssets.push(asset);
+        }
+      } else {
+        this.selectedAsset = asset;
+        this.$emit('change-visibility');
+      }
     }
   }
 }
