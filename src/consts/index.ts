@@ -1,7 +1,7 @@
-import { Operation } from '@sora-substrate/util';
-import { XSTUSD } from '@sora-substrate/util/build/assets/consts';
+import { Operation } from '@sora-substrate/sdk';
+import { XSTUSD } from '@sora-substrate/sdk/build/assets/consts';
 
-import type { FPNumber } from '@sora-substrate/util';
+import type { FPNumber } from '@sora-substrate/sdk';
 
 export const accountIdBasedOperations = [
   Operation.SwapAndSend,

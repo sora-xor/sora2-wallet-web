@@ -37,7 +37,7 @@ import AccountCard from './AccountCard.vue';
 import WalletAvatar from './WalletAvatar.vue';
 
 import type { PolkadotJsAccount } from '../../types/common';
-import type { WithConnectionApi } from '@sora-substrate/util';
+import type { WithConnectionApi } from '@sora-substrate/sdk';
 
 const DEFAULT_NAME = '<unknown>';
 

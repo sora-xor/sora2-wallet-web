@@ -1,4 +1,4 @@
-import { Operation, HistoryItem } from '@sora-substrate/util';
+import { Operation, HistoryItem } from '@sora-substrate/sdk';
 
 import WalletAdarTxDetails from '@/components/WalletAdarTxDetails.vue';
 

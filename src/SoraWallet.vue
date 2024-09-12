@@ -27,7 +27,7 @@ import { state } from './store/decorators';
 import { Operations } from './types/common';
 
 import type { RouteNames } from './consts';
-import type { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {

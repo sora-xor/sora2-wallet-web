@@ -32,12 +32,8 @@
     &#{$tabs-class} {
       #{$tabs-class}__header {
         width: 100%;
-      }
-      #{$tabs-class} {
-        &__header {
-          #{$tabs-class}__item {
-            font-weight: 600;
-          }
+        #{$tabs-class}__item {
+          font-weight: 600;
         }
       }
     }
@@ -256,7 +252,9 @@
       }
     } @else {
       @if $withOffset == true {
-        outline-offset: -1px;
+        & {
+          outline-offset: -1px;
+        }
       }
       &:focus:not(:active) {
         outline: $outline;
@@ -360,5 +358,7 @@
 }
 
 @mixin columns($columns, $gap) {
-  width: calc((100% / $columns) - ((#{$gap} * (#{$columns} - 1)) / $columns));
+  & {
+    width: calc((100% / $columns) - ((#{$gap} * (#{$columns} - 1)) / $columns));
+  }
 }

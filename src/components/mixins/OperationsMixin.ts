@@ -1,4 +1,4 @@
-import { TransactionStatus, Operation } from '@sora-substrate/util';
+import { TransactionStatus, Operation } from '@sora-substrate/sdk';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { HiddenValue, accountIdBasedOperations } from '../../consts';
@@ -9,7 +9,7 @@ import NotificationMixin from './NotificationMixin';
 import NumberFormatterMixin from './NumberFormatterMixin';
 
 import type { PolkadotJsAccount } from '../../types/common';
-import type { History } from '@sora-substrate/util';
+import type { History } from '@sora-substrate/sdk';
 
 const twoAssetsBasedOperations = [
   Operation.AddLiquidity,

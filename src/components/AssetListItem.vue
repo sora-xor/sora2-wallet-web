@@ -34,7 +34,7 @@ import TokenLogo from './AssetLogos/TokenLogo.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 import TokenAddress from './TokenAddress.vue';
 
-import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {

@@ -1,5 +1,5 @@
-import { FPNumber } from '@sora-substrate/util';
-import { DAI } from '@sora-substrate/util/build/assets/consts';
+import { FPNumber } from '@sora-substrate/sdk';
+import { DAI } from '@sora-substrate/sdk/build/assets/consts';
 import isEmpty from 'lodash/fp/isEmpty';
 import { interval } from 'rxjs';
 

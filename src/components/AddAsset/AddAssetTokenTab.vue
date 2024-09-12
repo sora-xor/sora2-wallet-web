@@ -38,7 +38,7 @@ import SyntheticSwitcher from '../shared/SyntheticSwitcher.vue';
 
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
-import type { Asset, Whitelist } from '@sora-substrate/util/build/assets/types';
+import type { Asset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {

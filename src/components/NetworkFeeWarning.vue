@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { KnownSymbols } from '@sora-substrate/util/build/assets/consts';
+import { KnownSymbols } from '@sora-substrate/sdk/build/assets/consts';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { mutation } from '../store/decorators';

@@ -17,8 +17,8 @@ import TranslationMixin from '../mixins/TranslationMixin';
 import NftTokenLogo from './NftTokenLogo.vue';
 import SbtTokenLogo from './SbtTokenLogo.vue';
 
-import type { WhitelistIdsBySymbol } from '../../types/common';
-import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/util/build/assets/types';
+import type { WhitelistIdsBySymbol } from '../types/common';
+import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {

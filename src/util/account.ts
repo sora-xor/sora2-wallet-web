@@ -8,7 +8,7 @@ import { AppError, formatAccountAddress, waitForDocumentReady } from '../util';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 import type { Unsubcall, InjectedWindowProvider } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
-import type { WithKeyring } from '@sora-substrate/util';
+import type { WithKeyring } from '@sora-substrate/sdk';
 import type { Wallet, WalletAccount, WalletInfo } from '@sora-test/wallet-connect/types';
 
 export const lockAccountPair = (api: WithKeyring): void => {

@@ -13,7 +13,7 @@ import type { AccountState } from './types';
 import type { AppWallet } from '../../consts';
 import type { FiatPriceObject } from '../../services/indexer/types';
 import type { Book, PolkadotJsAccount } from '../../types/common';
-import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/util/build/assets/types';
+import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/sdk/build/assets/types';
 import type { Wallet } from '@sora-test/wallet-connect/types';
 import type { Subscription, Subject } from 'rxjs';
 

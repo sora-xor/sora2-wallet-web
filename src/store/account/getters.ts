@@ -11,7 +11,7 @@ import { accountGetterContext } from './../account';
 
 import type { AccountState } from './types';
 import type { AssetsTable, AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
-import type { Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/util/build/assets/types';
+import type { Asset, Whitelist, WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
 
 const toHashTable = <T extends Asset>(list: Readonly<Array<T>>, key: string) => {
   return list.reduce((result, item) => {

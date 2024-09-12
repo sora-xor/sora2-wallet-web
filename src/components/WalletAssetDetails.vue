@@ -4,7 +4,7 @@
 </template>
 
 <script lang="ts">
-import { AccountAsset } from '@sora-substrate/util/build/assets/types';
+import { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { state } from '@/store/decorators';

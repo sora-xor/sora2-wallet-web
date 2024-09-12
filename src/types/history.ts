@@ -1,4 +1,4 @@
-import type { Operation } from '@sora-substrate/util';
+import type { Operation } from '@sora-substrate/sdk';
 
 export type ExternalHistoryParams = {
   next?: boolean;

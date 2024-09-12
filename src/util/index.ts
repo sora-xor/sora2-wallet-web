@@ -1,5 +1,5 @@
-import { FPNumber } from '@sora-substrate/util';
-import { KnownAssets } from '@sora-substrate/util/build/assets/consts';
+import { FPNumber } from '@sora-substrate/sdk';
+import { KnownAssets } from '@sora-substrate/sdk/build/assets/consts';
 
 import { api, connection } from '../api';
 import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
@@ -7,8 +7,8 @@ import { Currencies } from '../consts/currencies';
 
 import type { Currency } from '../types/currency';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
-import type { WithKeyring, WithConnectionApi } from '@sora-substrate/util';
-import type { RewardInfo, RewardsInfo } from '@sora-substrate/util/build/rewards/types';
+import type { WithKeyring, WithConnectionApi } from '@sora-substrate/sdk';
+import type { RewardInfo, RewardsInfo } from '@sora-substrate/sdk/build/rewards/types';
 import type { Store } from 'vuex';
 
 export class AppError extends Error {

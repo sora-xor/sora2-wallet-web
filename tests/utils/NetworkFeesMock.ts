@@ -1,4 +1,4 @@
-import { Operation } from '@sora-substrate/util';
+import { Operation } from '@sora-substrate/sdk';
 
 export const MOCK_NETWORK_FEES = {
   [Operation.AddLiquidity]: '7000000000000000',

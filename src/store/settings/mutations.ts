@@ -8,7 +8,7 @@ import { Currency, type CurrencyFields, type FiatExchangeRateObject } from '../.
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 
 import type { SettingsState } from './types';
-import type { NetworkFeesObject } from '@sora-substrate/util';
+import type { NetworkFeesObject } from '@sora-substrate/sdk';
 import type { Subscription } from 'rxjs';
 
 const mutations = defineMutations<SettingsState>()({

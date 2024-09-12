@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { Operation } from '@sora-substrate/util';
+import { Operation } from '@sora-substrate/sdk';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { formatAddress } from '@/util';
@@ -48,7 +48,7 @@ import TranslationMixin from './mixins/TranslationMixin';
 import TransactionHashView from './TransactionHashView.vue';
 
 import type { PolkadotJsAccount } from '../types/common';
-import type { HistoryItem } from '@sora-substrate/util';
+import type { HistoryItem } from '@sora-substrate/sdk';
 
 @Component({
   components: {

@@ -91,7 +91,7 @@
 </template>
 
 <script lang="ts">
-import { api, FPNumber } from '@sora-substrate/util';
+import { api, FPNumber } from '@sora-substrate/sdk';
 import isEmpty from 'lodash/fp/isEmpty';
 import { Component, Mixins, Watch } from 'vue-property-decorator';
 import draggable from 'vuedraggable';
@@ -109,7 +109,7 @@ import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
 
 import type { WalletAssetFilters, WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';
-import type { AccountAsset, Whitelist } from '@sora-substrate/util/build/assets/types';
+import type { AccountAsset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {
