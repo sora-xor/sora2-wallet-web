@@ -53,16 +53,11 @@ export default class AddAssetMixin extends Mixins(NotificationMixin, LoadingMixi
 
   handleSelectAsset(asset: Asset, selectable: boolean): void {
     if (asset) {
-      if (selectable) {
-        const assetIndex = this.selectedAssets.findIndex((a) => a.address === asset.address);
-        if (assetIndex >= 0) {
-          this.selectedAssets.splice(assetIndex, 1);
-        } else {
-          this.selectedAssets.push(asset);
-        }
+      const assetIndex = this.selectedAssets.findIndex((a) => a.address === asset.address);
+      if (assetIndex >= 0) {
+        this.selectedAssets.splice(assetIndex, 1);
       } else {
-        this.selectedAsset = asset;
-        this.$emit('change-visibility');
+        this.selectedAssets.push(asset);
       }
     }
   }

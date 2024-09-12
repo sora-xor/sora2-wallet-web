@@ -103,7 +103,7 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   }
 
   get showAddButton(): boolean {
-    return !!(this.isVerifiedOnly && this.selectedAssets.length);
+    return this.selectedAssets.length > 0;
   }
 
   handleAdd() {
