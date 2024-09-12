@@ -15,7 +15,7 @@ import { Component, Prop, Vue, Ref } from 'vue-property-decorator';
 
 import { IpfsStorage } from '../../util/ipfsStorage';
 
-import type { Asset } from '@sora-substrate/util/build/assets/types';
+import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 
 @Component
 export default class SbtTokenLogo extends Vue {

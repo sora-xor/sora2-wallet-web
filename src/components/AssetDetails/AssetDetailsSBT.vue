@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-import { AccountAsset, Asset } from '@sora-substrate/util/build/assets/types';
+import { AccountAsset, Asset } from '@sora-substrate/sdk/build/assets/types';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { api } from '../../api';

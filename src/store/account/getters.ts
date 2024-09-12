@@ -1,4 +1,4 @@
-import { FPNumber } from '@sora-substrate/util';
+import { FPNumber } from '@sora-substrate/sdk';
 import { AES, enc } from 'crypto-js';
 import { defineGetters } from 'direct-vuex';
 import isEqual from 'lodash/fp/isEqual';
