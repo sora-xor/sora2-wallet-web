@@ -1,30 +1,33 @@
 <template>
   <div class="add-asset-details">
-    <div v-for="(asset, index) in selectAssets" :key="asset.address">
-      <s-card shadow="always" size="small" border-radius="mini" pressed>
-        <asset-list-item :asset="asset">
-          <template #append>
-            <s-card size="mini" :status="assetCardStatus(asset)" primary>
-              <div class="asset-nature">{{ assetNatureText(asset) }}</div>
-            </s-card>
-          </template>
-        </asset-list-item>
-      </s-card>
-      <s-card
-        v-if="index === selectAssets.length - 1"
-        status="warning"
-        :primary="isCardPrimary"
-        shadow="always"
-        class="add-asset-details_text"
-      >
-        <div class="p2">{{ t('addAsset.warningTitle') }}</div>
-        <div class="warning-text p4">{{ t('addAsset.warningMessage') }}</div>
-      </s-card>
+    <div class="asset-list-container">
+      <div v-for="asset in selectAssets" :key="asset.address">
+        <s-card shadow="always" size="small" border-radius="mini" pressed>
+          <asset-list-item :asset="asset" :pinnable="false">
+            <template #append>
+              <s-card size="mini" :status="assetCardStatus(asset)" primary>
+                <div class="asset-nature">{{ assetNatureText(asset) }}</div>
+              </s-card>
+            </template>
+          </asset-list-item>
+        </s-card>
+      </div>
     </div>
+    <s-card status="warning" :primary="isCardPrimary" shadow="always" class="add-asset-details_text">
+      <div class="p2">{{ t('addAsset.warningTitle') }}</div>
+      <div class="warning-text p4">
+        {{
+          $tc('addAsset.warningMessageText', selectAssets.length, {
+            token: $tc('addAsset.warningMessage', selectAssets.length),
+          })
+        }}
+      </div>
+    </s-card>
     <div class="add-asset-details_confirm">
       <s-switch v-model="isConfirmed" :disabled="loading" />
       <span>{{ t('addAsset.understand') }}</span>
     </div>
+
     <s-button
       class="add-asset-details_action s-typography-button--large"
       type="primary"
@@ -129,6 +132,10 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
   }
   &_text {
     color: var(--s-color-status-warning);
+  }
+  .asset-list-container {
+    max-height: 350px;
+    overflow-y: auto;
   }
 }
 </style>

@@ -334,8 +334,9 @@ export default {
     alreadyAttached: 'Token was already attached',
     understand: 'I understand',
     warningTitle: 'Trade at your own risk!',
-    warningMessage:
-      'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects.\nIf you purchase this token, you may not be able to sell it back.',
+    warningMessage: 'this token | these tokens',
+    warningMessageText:
+      'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects.\nIf you purchase {token}, you may not be able to sell {token} back.',
     approved: 'Asset approved by community',
     unknown: 'Unknown source',
     scam: 'SCAM',
