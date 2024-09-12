@@ -1,18 +1,20 @@
 <template>
   <div class="add-asset-details">
-    <s-card shadow="always" size="small" border-radius="mini" pressed>
-      <asset-list-item :asset="asset">
-        <template #append>
-          <s-card size="mini" :status="assetCardStatus" primary>
-            <div class="asset-nature">{{ assetNatureText }}</div>
-          </s-card>
-        </template>
-      </asset-list-item>
-    </s-card>
-    <s-card status="warning" :primary="isCardPrimary" shadow="always" class="add-asset-details_text">
-      <div class="p2">{{ t('addAsset.warningTitle') }}</div>
-      <div class="warning-text p4">{{ t('addAsset.warningMessage') }}</div>
-    </s-card>
+    <div v-for="asset in selectAssets" :key="asset.address">
+      <s-card shadow="always" size="small" border-radius="mini" pressed>
+        <asset-list-item :asset="asset">
+          <template #append>
+            <s-card size="mini" :status="assetCardStatus(asset)" primary>
+              <div class="asset-nature">{{ assetNatureText(asset) }}</div>
+            </s-card>
+          </template>
+        </asset-list-item>
+      </s-card>
+      <s-card status="warning" :primary="isCardPrimary" shadow="always" class="add-asset-details_text">
+        <div class="p2">{{ t('addAsset.warningTitle') }}</div>
+        <div class="warning-text p4">{{ t('addAsset.warningMessage') }}</div>
+      </s-card>
+    </div>
     <div class="add-asset-details_confirm">
       <s-switch v-model="isConfirmed" :disabled="loading" />
       <span>{{ t('addAsset.understand') }}</span>
@@ -20,8 +22,8 @@
     <s-button
       class="add-asset-details_action s-typography-button--large"
       type="primary"
-      :disabled="!asset || !isConfirmed || loading"
-      @click="handleAddAsset"
+      :disabled="!selectAssets.length || !isConfirmed || loading"
+      @click="handleAddAssets"
     >
       {{ t('addAssetText') }}
     </s-button>
@@ -53,7 +55,7 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
   @getter.account.whitelist whitelist!: Whitelist;
   @getter.account.whitelistIdsBySymbol whitelistIdsBySymbol!: WhitelistIdsBySymbol;
 
-  @Prop({ required: true, type: Object }) readonly asset!: Asset;
+  @Prop({ required: true, type: Array }) readonly selectAssets!: Array<Asset>;
   @Prop({ default: Theme.LIGHT, type: String }) readonly theme!: Theme;
 
   isConfirmed = false;
@@ -62,21 +64,21 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
     return this.theme !== Theme.DARK;
   }
 
-  get isWhitelist(): boolean {
-    return api.assets.isWhitelist(this.asset, this.whitelist);
+  isWhitelist(asset: Asset): boolean {
+    return api.assets.isWhitelist(asset, this.whitelist);
   }
 
-  get isBlacklist(): boolean {
-    return api.assets.isBlacklist(this.asset, this.whitelistIdsBySymbol);
+  isBlacklist(asset: Asset): boolean {
+    return api.assets.isBlacklist(asset, this.whitelistIdsBySymbol);
   }
 
-  get assetCardStatus(): string {
-    return this.isWhitelist ? 'success' : 'error';
+  assetCardStatus(asset: Asset): string {
+    return this.isWhitelist(asset) ? 'success' : 'error';
   }
 
-  get assetNatureText(): string {
-    const isWhitelist = this.isWhitelist;
-    const isBlacklist = this.isBlacklist;
+  assetNatureText(asset: Asset): string {
+    const isWhitelist = this.isWhitelist(asset);
+    const isBlacklist = this.isBlacklist(asset);
     if (isWhitelist) {
       return this.t('addAsset.approved');
     }
@@ -86,9 +88,11 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
     return this.t('addAsset.unknown');
   }
 
-  async handleAddAsset(): Promise<void> {
+  async handleAddAssets(): Promise<void> {
     this.$emit('add');
-    this.addAccountAsset(this.asset);
+    this.selectAssets.forEach((asset) => {
+      this.addAccountAsset(asset);
+    });
   }
 }
 </script>

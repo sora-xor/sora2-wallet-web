@@ -35,7 +35,7 @@
         {{ t('addAsset.add') }}
       </s-button>
     </div>
-    <add-asset-details-card v-else :asset="selectedAsset" />
+    <add-asset-details-card v-else :select-assets="selectedAssets" />
   </div>
 </template>
 
@@ -107,7 +107,9 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   }
 
   handleAdd() {
-    this.selectedAssets.forEach((asset) => this.addAccountAsset(asset));
+    console.info('handle add was called');
+    this.$emit('change-visibility');
+    // this.selectedAssets.forEach((asset) => this.addAccountAsset(asset));
   }
 }
 </script>

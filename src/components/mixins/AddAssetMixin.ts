@@ -52,7 +52,12 @@ export default class AddAssetMixin extends Mixins(NotificationMixin, LoadingMixi
   }
 
   handleSelectAsset(asset: Asset, selectable: boolean): void {
+    console.info('handle select asset was called');
     if (asset) {
+      // if (selectable) {
+      //   this.selectedAsset = asset;
+      //   this.$emit('change-visibility');
+      // }
       const assetIndex = this.selectedAssets.findIndex((a) => a.address === asset.address);
       if (assetIndex >= 0) {
         this.selectedAssets.splice(assetIndex, 1);
