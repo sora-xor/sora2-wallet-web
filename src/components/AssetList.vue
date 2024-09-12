@@ -21,6 +21,7 @@
           :with-clickable-logo="withClickableLogo"
           selectable="selectable"
           :selected="isSelected(item)"
+          :pinnable="pinnable"
           :with-fiat="withFiat"
           :key="index"
           :with-tabindex="withTabindex"
