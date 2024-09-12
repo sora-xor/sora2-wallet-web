@@ -12,6 +12,7 @@ export default {
   importText: 'Import',
   settingsText: 'Settings',
   addAssetText: 'Add asset',
+  addAssetsText: 'Add asset | Add assets',
   createTokenText: 'Create',
   createTokenTextNFT: 'Create NFT',
   comingSoonText: 'Coming soon',

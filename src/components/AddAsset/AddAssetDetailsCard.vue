@@ -1,6 +1,6 @@
 <template>
   <div class="add-asset-details">
-    <div v-for="asset in selectAssets" :key="asset.address">
+    <div v-for="(asset, index) in selectAssets" :key="asset.address">
       <s-card shadow="always" size="small" border-radius="mini" pressed>
         <asset-list-item :asset="asset">
           <template #append>
@@ -10,7 +10,13 @@
           </template>
         </asset-list-item>
       </s-card>
-      <s-card status="warning" :primary="isCardPrimary" shadow="always" class="add-asset-details_text">
+      <s-card
+        v-if="index === selectAssets.length - 1"
+        status="warning"
+        :primary="isCardPrimary"
+        shadow="always"
+        class="add-asset-details_text"
+      >
         <div class="p2">{{ t('addAsset.warningTitle') }}</div>
         <div class="warning-text p4">{{ t('addAsset.warningMessage') }}</div>
       </s-card>
@@ -25,7 +31,7 @@
       :disabled="!selectAssets.length || !isConfirmed || loading"
       @click="handleAddAssets"
     >
-      {{ t('addAssetText') }}
+      {{ $tc('addAssetsText', selectAssets.length) }}
     </s-button>
   </div>
 </template>
