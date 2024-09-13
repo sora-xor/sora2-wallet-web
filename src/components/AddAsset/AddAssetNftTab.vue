@@ -81,7 +81,6 @@ export default class AddAssetNFT extends Mixins(AddAssetMixin) {
   }
 
   handleAdd() {
-    console.info('handle add was called');
     this.$emit('change-visibility');
   }
 }

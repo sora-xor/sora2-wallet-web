@@ -233,19 +233,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   handlePin(asset: AccountAsset): void {
-    console.info('Handling pin in wallet assets for:', asset);
-
     const isAlreadyPinned = this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address);
-
     if (isAlreadyPinned) {
-      console.info('Asset is already pinned. Removing:', asset);
       this.removePinnedAsset(asset);
     } else {
-      console.info('Asset is not pinned. Adding:', asset);
       this.setPinnedAsset(asset);
     }
-
-    console.info('Updated pinned assets:', this.pinnedAssets);
   }
 
   isPinned(asset: AccountAsset): boolean {

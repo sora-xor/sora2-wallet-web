@@ -107,9 +107,7 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   }
 
   handleAdd() {
-    console.info('handle add was called');
     this.$emit('change-visibility');
-    // this.selectedAssets.forEach((asset) => this.addAccountAsset(asset));
   }
 }
 </script>
