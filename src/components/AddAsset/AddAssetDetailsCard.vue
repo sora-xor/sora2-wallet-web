@@ -16,18 +16,7 @@
     <s-card status="warning" :primary="isCardPrimary" shadow="always" class="add-asset-details_text">
       <div class="p2">{{ t('addAsset.warningTitle') }}</div>
       <div class="warning-text p4">
-        {{
-          $tc('addAsset.warningMessageText', selectAssets.length, {
-            assetType: $tc(`addAsset.assetType.${assetTypeKey}`, 1),
-            assetTypePlural: $tc(`addAsset.assetType.${assetTypeKey}`, 2),
-            purchaseAssetType:
-              selectAssets.length === 1
-                ? $tc('addAsset.warningMessage', 1, { assetType: $tc(`addAsset.assetType.${assetTypeKey}`, 1) })
-                : $tc('addAsset.warningMessage', selectAssets.length, {
-                    assetTypePlural: $tc(`addAsset.assetType.${assetTypeKey}`, selectAssets.length),
-                }),
-          })
-        }}
+        {{ warningMessage }}
       </div>
     </s-card>
     <div class="add-asset-details_confirm">
@@ -109,6 +98,21 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
     this.$emit('add');
     this.selectAssets.forEach((asset) => {
       this.addAccountAsset(asset);
+    });
+  }
+
+  get warningMessage(): string {
+    const assetType = this.$tc(`addAsset.assetType.${this.assetTypeKey}`, 1);
+    const assetTypePlural = this.$tc(`addAsset.assetType.${this.assetTypeKey}`, this.selectAssets.length);
+    const purchaseAssetType =
+      this.selectAssets.length === 1
+        ? this.$tc('addAsset.warningMessage', 1, { assetType })
+        : this.$tc('addAsset.warningMessage', this.selectAssets.length, { assetTypePlural });
+
+    return this.$tc('addAsset.warningMessageText', this.selectAssets.length, {
+      assetType,
+      assetTypePlural,
+      purchaseAssetType,
     });
   }
 }
