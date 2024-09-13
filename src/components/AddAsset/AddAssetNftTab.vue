@@ -29,7 +29,7 @@
         {{ t('addAsset.add') }}
       </s-button>
     </div>
-    <add-asset-details-card v-else :select-assets="selectedAssets" />
+    <add-asset-details-card v-else :select-assets="selectedAssets" assetTypeKey="nft" />
   </div>
 </template>
 

@@ -18,7 +18,14 @@
       <div class="warning-text p4">
         {{
           $tc('addAsset.warningMessageText', selectAssets.length, {
-            token: $tc('addAsset.warningMessage', selectAssets.length),
+            assetType: $tc(`addAsset.assetType.${assetTypeKey}`, 1),
+            assetTypePlural: $tc(`addAsset.assetType.${assetTypeKey}`, 2),
+            purchaseAssetType:
+              selectAssets.length === 1
+                ? $tc('addAsset.warningMessage', 1, { assetType: $tc(`addAsset.assetType.${assetTypeKey}`, 1) })
+                : $tc('addAsset.warningMessage', selectAssets.length, {
+                    assetTypePlural: $tc(`addAsset.assetType.${assetTypeKey}`, selectAssets.length),
+                }),
           })
         }}
       </div>
@@ -66,6 +73,7 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
 
   @Prop({ required: true, type: Array }) readonly selectAssets!: Array<Asset>;
   @Prop({ default: Theme.LIGHT, type: String }) readonly theme!: Theme;
+  @Prop({ required: true, type: String }) readonly assetTypeKey!: string;
 
   isConfirmed = false;
 
