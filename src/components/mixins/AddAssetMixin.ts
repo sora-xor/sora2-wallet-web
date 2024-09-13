@@ -51,17 +51,16 @@ export default class AddAssetMixin extends Mixins(NotificationMixin, LoadingMixi
     this.showAppNotification(this.t('addAsset.success', { symbol: asset.symbol || '' }), 'success');
   }
 
-  handleSelectAsset(asset: Asset, selectable: boolean): void {
+  handleSelectAsset(asset: Asset): void {
     console.info('handle select asset was called');
+    console.info(asset);
     if (asset) {
-      // if (selectable) {
-      //   this.selectedAsset = asset;
-      //   this.$emit('change-visibility');
-      // }
       const assetIndex = this.selectedAssets.findIndex((a) => a.address === asset.address);
       if (assetIndex >= 0) {
+        console.info('we spliced');
         this.selectedAssets.splice(assetIndex, 1);
       } else {
+        console.info('we pushed');
         this.selectedAssets.push(asset);
       }
     }

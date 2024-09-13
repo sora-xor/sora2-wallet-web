@@ -17,7 +17,7 @@
       <asset-list
         :assets="foundAssets"
         class="asset-search-list"
-        @click="(asset) => handleSelectAsset(asset, isVerifiedOnly)"
+        @click="(asset) => handleSelectAsset(asset)"
         :selectable="isVerifiedOnly"
         :selected="selectedAssets"
       >
