@@ -6,6 +6,7 @@
         v-model="draggedAssetList"
         class="wallet-assets__draggable"
         handle=".wallet-assets-dashes"
+        :move="onMove"
         @end="onEndDraggableAsset"
       >
         <div v-for="(asset, index) in draggedAssetList" :key="asset.address" class="wallet-assets-item__wrapper">
@@ -208,6 +209,26 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       (asset) => !this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address)
     );
     return [...pinnedAssets, ...unpinnedAssets];
+  }
+
+  onMove(event) {
+    const draggedItem = event.draggedContext.element;
+    const targetIndex = event.relatedContext.index;
+    const targetItem = event.relatedContext.list[targetIndex];
+
+    const draggedIsPinned = this.isPinned(draggedItem);
+    const targetIsPinned = this.isPinned(targetItem);
+
+    if (draggedIsPinned && targetIsPinned) {
+      return true;
+    }
+    if (draggedIsPinned && !targetIsPinned) {
+      return false;
+    }
+    if (!draggedIsPinned && targetIsPinned) {
+      return false;
+    }
+    return true;
   }
 
   onEndDraggableAsset() {
