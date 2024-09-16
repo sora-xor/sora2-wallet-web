@@ -1,18 +1,22 @@
 <template>
   <div class="add-asset-details">
-    <div class="asset-list-container">
-      <div v-for="asset in selectAssets" :key="asset.address">
-        <s-card shadow="always" size="small" border-radius="mini" pressed>
-          <asset-list-item :asset="asset" :pinnable="false">
-            <template #append>
-              <s-card size="mini" :status="assetCardStatus(asset)" primary>
-                <div class="asset-nature">{{ assetNatureText(asset) }}</div>
-              </s-card>
-            </template>
-          </asset-list-item>
-        </s-card>
+    <!-- Wrap the asset-list-container with s-scrollbar -->
+    <s-scrollbar class="asset-list-scrollbar">
+      <div class="asset-list-container">
+        <div v-for="asset in selectAssets" :key="asset.address">
+          <s-card shadow="always" size="small" border-radius="mini" pressed>
+            <asset-list-item :asset="asset" :pinnable="false">
+              <template #append>
+                <s-card size="mini" :status="assetCardStatus(asset)" primary>
+                  <div class="asset-nature">{{ assetNatureText(asset) }}</div>
+                </s-card>
+              </template>
+            </asset-list-item>
+          </s-card>
+        </div>
       </div>
-    </div>
+    </s-scrollbar>
+    <!-- Other elements remain unchanged -->
     <s-card status="warning" :primary="isCardPrimary" shadow="always" class="add-asset-details_text">
       <div class="p2">{{ t('addAsset.warningTitle') }}</div>
       <div class="warning-text p4">
@@ -23,7 +27,6 @@
       <s-switch v-model="isConfirmed" :disabled="loading" />
       <span>{{ t('addAsset.understand') }}</span>
     </div>
-
     <s-button
       class="add-asset-details_action s-typography-button--large"
       type="primary"
@@ -118,6 +121,16 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
 }
 </script>
 
+<style lang="scss">
+.asset-list-scrollbar {
+  @include scrollbar($basic-spacing-big);
+  height: 400px;
+  .el-scrollbar__wrap {
+    overflow-x: unset;
+  }
+}
+</style>
+
 <style scoped lang="scss">
 .add-asset-details {
   & > *:not(:last-child) {
@@ -144,10 +157,6 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
   }
   &_text {
     color: var(--s-color-status-warning);
-  }
-  .asset-list-container {
-    max-height: 350px;
-    overflow-y: auto;
   }
 }
 </style>
