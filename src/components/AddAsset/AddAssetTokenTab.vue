@@ -131,6 +131,9 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
     &-symbol {
       font-size: var(--s-font-size-default);
     }
+    &:focus:not(:active) {
+      outline: unset;
+    }
   }
 }
 </style>
