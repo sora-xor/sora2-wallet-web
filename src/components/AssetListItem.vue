@@ -146,7 +146,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     align-items: center;
     width: 24px;
     height: 24px;
-    margin-left: 8px;
     cursor: pointer;
     i {
       color: var(--s-color-base-content-tertiary);
