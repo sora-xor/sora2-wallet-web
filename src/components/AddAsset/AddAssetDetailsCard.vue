@@ -123,7 +123,6 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
 <style lang="scss">
 .asset-list-scrollbar {
   @include scrollbar($basic-spacing-big);
-  height: 400px;
   .el-scrollbar__wrap {
     overflow-x: unset;
   }
@@ -168,6 +167,9 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
     & > div:last-child {
       margin-bottom: 14px;
     }
+  }
+  .asset-list-scrollbar {
+    height: 400px;
   }
 }
 </style>
