@@ -9,12 +9,7 @@
         @clear="resetSearch"
         class="add-asset-nft__input"
       />
-      <asset-list
-        :assets="foundAssets"
-        class="asset-search-list"
-        :selected="selectedAssets"
-        @click="(asset) => handleSelectAsset(asset)"
-      >
+      <asset-list :assets="foundAssets" class="asset-search-list" :selected="selectedAssets" @click="handleSelectAsset">
         <template #list-empty>
           {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
         </template>

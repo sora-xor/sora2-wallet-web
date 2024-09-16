@@ -19,7 +19,7 @@
         <asset-list-item
           :asset="item"
           :with-clickable-logo="withClickableLogo"
-          selectable="selectable"
+          :selectable="selectable"
           :selected="isSelected(item)"
           :pinnable="pinnable"
           :with-fiat="withFiat"
@@ -48,15 +48,13 @@
 <script lang="ts">
 import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
-import { getter } from '@/store/decorators';
-
 import { delay, getCssVariableValue, getScrollbarWidth } from '../util';
 
 import AssetListItem from './AssetListItem.vue';
 import TranslationMixin from './mixins/TranslationMixin';
 import Scrollbar from './ScrollBar.vue';
 
-import type { AccountAsset, Asset } from '@sora-substrate/sdk/build/assets/types';
+import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 import type { RecycleScroller } from 'vue-virtual-scroller';
 
 @Component({
@@ -66,8 +64,6 @@ import type { RecycleScroller } from 'vue-virtual-scroller';
   },
 })
 export default class AssetList extends Mixins(TranslationMixin) {
-  @getter.account.pinnedAssets private pinnedAssets!: Array<AccountAsset>;
-
   @Prop({ default: () => [], type: Array }) readonly assets!: Array<Asset>;
   @Prop({ default: 5, type: Number }) readonly size!: number;
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
