@@ -201,10 +201,13 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   get sortedAssetList(): Array<AccountAsset> {
-    return [...this.assetList].sort((a) => {
-      const isPinnedA = this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === a.address);
-      return isPinnedA ? -1 : 1;
-    });
+    const pinnedAssets = this.assetList.filter((asset) =>
+      this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address)
+    );
+    const unpinnedAssets = this.assetList.filter(
+      (asset) => !this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address)
+    );
+    return [...pinnedAssets, ...unpinnedAssets];
   }
 
   onEndDraggableAsset() {
