@@ -1,6 +1,5 @@
 <template>
   <div class="add-asset-details">
-    <!-- Wrap the asset-list-container with s-scrollbar -->
     <s-scrollbar class="asset-list-scrollbar">
       <div class="asset-list-container">
         <div v-for="asset in selectAssets" :key="asset.address">
@@ -157,6 +156,18 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
   }
   &_text {
     color: var(--s-color-status-warning);
+  }
+
+  .asset-list-container {
+    & > div {
+      margin-bottom: 14px;
+    }
+    & > div:first-child {
+      margin-top: 14px;
+    }
+    & > div:last-child {
+      margin-bottom: 14px;
+    }
   }
 }
 </style>
