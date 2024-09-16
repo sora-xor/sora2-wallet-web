@@ -123,8 +123,8 @@
 
 <script lang="ts">
 import { FPNumber, Operation } from '@sora-substrate/sdk';
+import { getAssetBalance } from '@sora-substrate/sdk/build/assets';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
-import { getAssetBalance } from '@sora-substrate/sdk/build/assets/index';
 import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { api } from '../api';
