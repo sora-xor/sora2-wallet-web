@@ -2,8 +2,13 @@
   <div :class="computedClasses" v-loading="loading">
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @update-filter="updateFilter" />
     <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
-      <draggable v-model="sortedAssetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes">
-        <div v-for="(asset, index) in sortedAssetList" :key="asset.address" class="wallet-assets-item__wrapper">
+      <draggable
+        v-model="draggedAssetList"
+        class="wallet-assets__draggable"
+        handle=".wallet-assets-dashes"
+        @end="onEndDraggableAsset"
+      >
+        <div v-for="(asset, index) in draggedAssetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
             <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
             <asset-list-item
@@ -136,8 +141,18 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     }
   }
 
+  @Watch('accountAssets')
+  onAccountAssetsChange() {
+    this.draggedAssetList = [...this.sortedAssetList];
+  }
+
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
+  draggedAssetList: Array<AccountAsset> = [];
+
+  mounted() {
+    this.draggedAssetList = [...this.sortedAssetList];
+  }
 
   get assetList(): Array<AccountAsset> {
     return this.accountAssets;
@@ -192,6 +207,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     });
   }
 
+  onEndDraggableAsset() {
+    this.setAccountAssets(this.draggedAssetList);
+  }
+
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
   }
@@ -239,6 +258,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     } else {
       this.setPinnedAsset(asset);
     }
+    this.draggedAssetList = [...this.sortedAssetList];
   }
 
   isPinned(asset: AccountAsset): boolean {
