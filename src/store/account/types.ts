@@ -43,5 +43,5 @@ export type AccountState = {
   accountPasswordTimer: Record<string, Nullable<NodeJS.Timeout>>;
   accountPasswordTimestamp: Record<string, Nullable<number>>;
   accountPasswordTimeout: number;
-  pinnedAssets: Array<AccountAsset>;
+  pinnedAssets: string[];
 };

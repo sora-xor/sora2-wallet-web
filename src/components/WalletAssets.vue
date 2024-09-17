@@ -134,6 +134,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @mutation.account.setAccountAssets private setAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
   @mutation.account.setPinnedAsset private setPinnedAsset!: (pinnedAccountAssets: AccountAsset) => void;
   @mutation.account.removePinnedAsset private removePinnedAsset!: (pinnedAccountAssets: AccountAsset) => void;
+  @mutation.account.setMultiplePinnedAssets private setMultiplePinnedAssets!: (pinnedAssetsAddresses: string[]) => void;
 
   @Watch('assetList')
   private updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): void {
@@ -202,13 +203,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   get sortedAssetList(): Array<AccountAsset> {
-    const pinnedAssets = this.assetList.filter((asset) =>
-      this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address)
-    );
     const unpinnedAssets = this.assetList.filter(
       (asset) => !this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address)
     );
-    return [...pinnedAssets, ...unpinnedAssets];
+    return [...this.pinnedAssets, ...unpinnedAssets];
   }
 
   onMove(event) {
@@ -233,6 +231,9 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   onEndDraggableAsset() {
     this.setAccountAssets(this.draggedAssetList);
+    const pinnedAssets = this.draggedAssetList.filter((asset) => this.isPinned(asset));
+    const pinnedAssetAddresses = pinnedAssets.map((asset) => asset.address);
+    this.setMultiplePinnedAssets(pinnedAssetAddresses);
   }
 
   getBalance(asset: AccountAsset): string {

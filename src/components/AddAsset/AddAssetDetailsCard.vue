@@ -169,9 +169,7 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
     }
   }
   .asset-list-scrollbar {
-    max-height: 400px;
-    display: flex;
-    flex-direction: column;
+    height: calc(var(--s-asset-item-height--fiat) * 2 + 32px);
   }
 }
 </style>

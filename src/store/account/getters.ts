@@ -49,8 +49,11 @@ const getters = defineGetters<AccountState>()({
   },
   pinnedAssets(...args): Array<AccountAsset> {
     const { state } = accountGetterContext(args);
-    return state.pinnedAssets;
+    return state.pinnedAssets
+      .map((pinnedAddress) => state.accountAssets.find((asset) => asset.address === pinnedAddress))
+      .filter((asset) => asset !== undefined) as Array<AccountAsset>;
   },
+
   whitelistIdsBySymbol(...args): any {
     const { state } = accountGetterContext(args);
     return state.whitelistArray && state.whitelistArray.length
