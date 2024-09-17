@@ -152,11 +152,8 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
       transition: color 150ms;
     }
     &:hover i {
-      color: var(--s-color-base-content-secondary);
+      color: var(--s-color-theme-accent-hover);
     }
-  }
-  &--pinned .pin i {
-    color: var(--s-base-content-primary);
   }
 }
 </style>

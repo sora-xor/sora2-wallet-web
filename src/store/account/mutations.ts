@@ -108,7 +108,7 @@ const mutations = defineMutations<AccountState>()({
   setPinnedAsset(state, pinnedAccountAsset: AccountAsset): void {
     const assetAddress = pinnedAccountAsset.address;
     state.pinnedAssets.push(assetAddress);
-    storage.set('pinnedAssets', JSON.stringify(state.pinnedAssets));
+    settingsStorage.set('pinnedAssets', JSON.stringify(state.pinnedAssets));
   },
   setMultiplePinnedAssets(state, pinnedAssetAddresses: string[]) {
     const currentPinnedAssetAddresses = state.pinnedAssets;
@@ -117,12 +117,12 @@ const mutations = defineMutations<AccountState>()({
       currentPinnedAssetAddresses.some((address, index) => address !== pinnedAssetAddresses[index]);
     if (hasChanges) {
       state.pinnedAssets = pinnedAssetAddresses;
-      storage.set('pinnedAssets', JSON.stringify(state.pinnedAssets));
+      settingsStorage.set('pinnedAssets', JSON.stringify(state.pinnedAssets));
     }
   },
   removePinnedAsset(state, pinnedAccountAsset: AccountAsset): void {
     state.pinnedAssets = state.pinnedAssets.filter((address) => address !== pinnedAccountAsset.address);
-    storage.set('pinnedAssets', JSON.stringify(state.pinnedAssets));
+    settingsStorage.set('pinnedAssets', JSON.stringify(state.pinnedAssets));
   },
 
   setAssetToNotify(state, asset: WhitelistArrayItem): void {

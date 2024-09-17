@@ -79,8 +79,7 @@ export type StorageKey =
   | 'сhartsEnabled'
   | 'transactionDeadline'
   | 'exploreAccountItems'
-  | 'exploreSyntheticTokens'
-  | 'pinnedAssets';
+  | 'exploreSyntheticTokens';
 
 export type RuntimeStorageKey = 'version' | 'networkFees' | 'feeMultiplier';
 export type SettingsStorageKey =
@@ -102,6 +101,7 @@ export type SettingsStorageKey =
   | 'fiatExchangeRates'
   | 'signTxDialogDisabled'
   | 'confirmTxDialogDisabled'
-  | 'accountPasswordTimeout';
+  | 'accountPasswordTimeout'
+  | 'pinnedAssets';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';
