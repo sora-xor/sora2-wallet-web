@@ -9,13 +9,22 @@
         @clear="resetSearch"
         class="add-asset-nft__input"
       />
-      <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset">
+      <asset-list :assets="foundAssets" class="asset-search-list" :selected="selectedAssets" @click="handleSelectAsset">
         <template #list-empty>
           {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
         </template>
       </asset-list>
+      <s-button
+        v-if="showAddButton"
+        class="add-nfts-button"
+        type="primary"
+        :loading="parentLoading || loading"
+        @click="handleAdd"
+      >
+        {{ t('addAsset.add') }}
+      </s-button>
     </div>
-    <add-asset-details-card v-else :asset="selectedAsset" />
+    <add-asset-details-card v-else :select-assets="selectedAssets" assetTypeKey="nft" />
   </div>
 </template>
 
@@ -61,6 +70,14 @@ export default class AddAssetNFT extends Mixins(AddAssetMixin) {
           name.toLowerCase() === this.searchValue
       );
   }
+
+  get showAddButton(): boolean {
+    return this.selectedAssets.length > 0;
+  }
+
+  handleAdd() {
+    this.$emit('change-visibility');
+  }
 }
 </script>
 
@@ -70,5 +87,20 @@ export default class AddAssetNFT extends Mixins(AddAssetMixin) {
     margin-top: #{$basic-spacing-medium};
     margin-bottom: #{$basic-spacing-medium};
   }
+  .asset {
+    &:hover,
+    &.selected {
+      background-color: var(--s-color-base-background-hover);
+      cursor: pointer;
+    }
+
+    &-symbol {
+      font-size: var(--s-font-size-default);
+    }
+  }
+}
+
+.add-nfts-button {
+  width: 100%;
 }
 </style>

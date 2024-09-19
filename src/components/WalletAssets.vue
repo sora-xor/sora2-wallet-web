@@ -2,11 +2,18 @@
   <div :class="computedClasses" v-loading="loading">
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @update-filter="updateFilter" />
     <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
-      <draggable v-model="assetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes">
+      <draggable v-model="assetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes" :move="onMove">
         <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
             <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
-            <asset-list-item :asset="asset" with-fiat with-clickable-logo @show-details="handleOpenAssetDetails">
+            <asset-list-item
+              :asset="asset"
+              with-fiat
+              with-clickable-logo
+              @show-details="handleOpenAssetDetails"
+              :pinned="isPinned(asset)"
+              @pin="handlePin"
+            >
               <template #value="asset">
                 <formatted-amount-with-fiat-value
                   value-can-be-hidden
@@ -115,9 +122,13 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @state.settings.filters private filters!: WalletAssetFilters;
 
   @getter.account.whitelist private whitelist!: Whitelist;
+  @getter.account.pinnedAssets private pinnedAssets!: Array<AccountAsset>;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.account.setAccountAssets private setAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
+  @mutation.account.setPinnedAsset private setPinnedAsset!: (pinnedAccountAssets: AccountAsset) => void;
+  @mutation.account.removePinnedAsset private removePinnedAsset!: (pinnedAccountAssets: AccountAsset) => void;
+  @mutation.account.setMultiplePinnedAssets private setMultiplePinnedAssets!: (pinnedAssetsAddresses: string[]) => void;
 
   @Watch('assetList')
   private updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): void {
@@ -130,11 +141,22 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   assetsAreHidden = true;
 
   get assetList(): Array<AccountAsset> {
-    return this.accountAssets;
+    return this.accountAssets.sort((a, b) => {
+      const aPinned = Number(this.isPinned(a));
+      const bPinned = Number(this.isPinned(b));
+
+      return bPinned - aPinned;
+    });
   }
 
   set assetList(accountAssets: Array<AccountAsset>) {
     if (!accountAssets.length) return;
+
+    const pinnedAssetAddresses = accountAssets.reduce<string[]>((acc, asset) => {
+      if (this.isPinned(asset)) acc.push(asset.address);
+      return acc;
+    }, []);
+    this.setMultiplePinnedAssets(pinnedAssetAddresses);
 
     const assetsAddresses = accountAssets.map((asset) => asset.address);
     api.assets.accountAssetsAddresses = assetsAddresses;
@@ -175,6 +197,23 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
+  onMove(event) {
+    const draggedItem = event.draggedContext.element;
+    const targetIndex = event.relatedContext.index;
+    const targetItem = event.relatedContext.list[targetIndex];
+
+    const draggedIsPinned = this.isPinned(draggedItem);
+    const targetIsPinned = this.isPinned(targetItem);
+
+    if (draggedIsPinned && !targetIsPinned) {
+      return false;
+    }
+    if (!draggedIsPinned && targetIsPinned) {
+      return false;
+    }
+    return true;
+  }
+
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
   }
@@ -213,6 +252,20 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   handleOpenAddAsset(): void {
     this.navigate({ name: RouteNames.AddAsset });
+  }
+
+  handlePin(asset: AccountAsset): void {
+    const isAlreadyPinned = this.isPinned(asset);
+
+    if (isAlreadyPinned) {
+      this.removePinnedAsset(asset);
+    } else {
+      this.setPinnedAsset(asset);
+    }
+  }
+
+  isPinned(asset: AccountAsset): boolean {
+    return this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address);
   }
 
   showAsset(asset: AccountAsset) {

@@ -1,17 +1,26 @@
 <template>
   <div class="add-asset-details">
-    <s-card shadow="always" size="small" border-radius="mini" pressed>
-      <asset-list-item :asset="asset">
-        <template #append>
-          <s-card size="mini" :status="assetCardStatus" primary>
-            <div class="asset-nature">{{ assetNatureText }}</div>
+    <s-scrollbar class="asset-list-scrollbar">
+      <div class="asset-list-container">
+        <div v-for="asset in selectAssets" :key="asset.address">
+          <s-card shadow="always" size="small" border-radius="mini" pressed>
+            <asset-list-item :asset="asset" :pinnable="false">
+              <template #append>
+                <s-card size="mini" :status="assetCardStatus(asset)" primary>
+                  <div class="asset-nature">{{ assetNatureText(asset) }}</div>
+                </s-card>
+              </template>
+            </asset-list-item>
           </s-card>
-        </template>
-      </asset-list-item>
-    </s-card>
+        </div>
+      </div>
+    </s-scrollbar>
+    <!-- Other elements remain unchanged -->
     <s-card status="warning" :primary="isCardPrimary" shadow="always" class="add-asset-details_text">
       <div class="p2">{{ t('addAsset.warningTitle') }}</div>
-      <div class="warning-text p4">{{ t('addAsset.warningMessage') }}</div>
+      <div class="warning-text p4">
+        {{ warningMessage }}
+      </div>
     </s-card>
     <div class="add-asset-details_confirm">
       <s-switch v-model="isConfirmed" :disabled="loading" />
@@ -20,10 +29,10 @@
     <s-button
       class="add-asset-details_action s-typography-button--large"
       type="primary"
-      :disabled="!asset || !isConfirmed || loading"
-      @click="handleAddAsset"
+      :disabled="!selectAssets.length || !isConfirmed || loading"
+      @click="handleAddAssets"
     >
-      {{ t('addAssetText') }}
+      {{ $tc('addAssetsText', selectAssets.length) }}
     </s-button>
   </div>
 </template>
@@ -53,8 +62,9 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
   @getter.account.whitelist whitelist!: Whitelist;
   @getter.account.whitelistIdsBySymbol whitelistIdsBySymbol!: WhitelistIdsBySymbol;
 
-  @Prop({ required: true, type: Object }) readonly asset!: Asset;
+  @Prop({ required: true, type: Array }) readonly selectAssets!: Array<Asset>;
   @Prop({ default: Theme.LIGHT, type: String }) readonly theme!: Theme;
+  @Prop({ required: true, type: String }) readonly assetTypeKey!: string;
 
   isConfirmed = false;
 
@@ -62,21 +72,21 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
     return this.theme !== Theme.DARK;
   }
 
-  get isWhitelist(): boolean {
-    return api.assets.isWhitelist(this.asset, this.whitelist);
+  isWhitelist(asset: Asset): boolean {
+    return api.assets.isWhitelist(asset, this.whitelist);
   }
 
-  get isBlacklist(): boolean {
-    return api.assets.isBlacklist(this.asset, this.whitelistIdsBySymbol);
+  isBlacklist(asset: Asset): boolean {
+    return api.assets.isBlacklist(asset, this.whitelistIdsBySymbol);
   }
 
-  get assetCardStatus(): string {
-    return this.isWhitelist ? 'success' : 'error';
+  assetCardStatus(asset: Asset): string {
+    return this.isWhitelist(asset) ? 'success' : 'error';
   }
 
-  get assetNatureText(): string {
-    const isWhitelist = this.isWhitelist;
-    const isBlacklist = this.isBlacklist;
+  assetNatureText(asset: Asset): string {
+    const isWhitelist = this.isWhitelist(asset);
+    const isBlacklist = this.isBlacklist(asset);
     if (isWhitelist) {
       return this.t('addAsset.approved');
     }
@@ -86,12 +96,38 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
     return this.t('addAsset.unknown');
   }
 
-  async handleAddAsset(): Promise<void> {
+  async handleAddAssets(): Promise<void> {
     this.$emit('add');
-    this.addAccountAsset(this.asset);
+    this.selectAssets.forEach((asset) => {
+      this.addAccountAsset(asset);
+    });
+  }
+
+  get warningMessage(): string {
+    const assetType = this.$tc(`addAsset.assetType.${this.assetTypeKey}`, 1);
+    const assetTypePlural = this.$tc(`addAsset.assetType.${this.assetTypeKey}`, this.selectAssets.length);
+    const purchaseAssetType =
+      this.selectAssets.length === 1
+        ? this.$tc('addAsset.warningMessage', 1, { assetType })
+        : this.$tc('addAsset.warningMessage', this.selectAssets.length, { assetTypePlural });
+
+    return this.$tc('addAsset.warningMessageText', this.selectAssets.length, {
+      assetType,
+      assetTypePlural,
+      purchaseAssetType,
+    });
   }
 }
 </script>
+
+<style lang="scss">
+.asset-list-scrollbar {
+  @include scrollbar($basic-spacing-big);
+  .el-scrollbar__wrap {
+    overflow-x: unset;
+  }
+}
+</style>
 
 <style scoped lang="scss">
 .add-asset-details {
@@ -119,6 +155,21 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
   }
   &_text {
     color: var(--s-color-status-warning);
+  }
+
+  .asset-list-container {
+    & > div {
+      margin-bottom: 14px;
+    }
+    & > div:first-child {
+      margin-top: 14px;
+    }
+    & > div:last-child {
+      margin-bottom: 14px;
+    }
+  }
+  .asset-list-scrollbar {
+    height: calc(var(--s-asset-item-height--fiat) * 2 + 32px);
   }
 }
 </style>

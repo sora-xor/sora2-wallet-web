@@ -14,13 +14,28 @@
         <span>{{ t(`addAsset.${AddAssetTabs.Token}.switchBtn`) }}</span>
       </div>
       <synthetic-switcher class="add-asset-token__switch-btn" v-model="isSynthsOnly" />
-      <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset">
+      <asset-list
+        :assets="foundAssets"
+        class="asset-search-list"
+        @click="handleSelectAsset"
+        :selectable="isSelectable"
+        :selected="selectedAssets"
+      >
         <template #list-empty>
           {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
         </template>
       </asset-list>
+      <s-button
+        v-if="showAddButton"
+        class="add-assets-button"
+        type="primary"
+        :loading="parentLoading || loading"
+        @click="handleAdd"
+      >
+        {{ t('addAsset.add') }}
+      </s-button>
     </div>
-    <add-asset-details-card v-else :asset="selectedAsset" />
+    <add-asset-details-card v-else :select-assets="selectedAssets" assetTypeKey="token" />
   </div>
 </template>
 
@@ -53,6 +68,7 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
 
   @getter.account.whitelist private whitelist!: Whitelist;
   /** `true` by default cuz we have a lot of assets */
+  isSelectable = true;
   isVerifiedOnly = true;
   isSynthsOnly = false;
 
@@ -72,7 +88,6 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
 
   get foundAssets(): Array<Asset> {
     if (!this.searchValue) return this.prefilteredAssets;
-
     return this.getSoughtAssets(this.prefilteredAssets);
   }
 
@@ -85,6 +100,14 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
         symbol.toLowerCase() === this.searchValue ||
         name.toLowerCase() === this.searchValue
     );
+  }
+
+  get showAddButton(): boolean {
+    return this.selectedAssets.length > 0;
+  }
+
+  handleAdd() {
+    this.$emit('change-visibility');
   }
 }
 </script>
@@ -108,6 +131,9 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
     &-symbol {
       font-size: var(--s-font-size-default);
     }
+    &:focus:not(:active) {
+      outline: unset;
+    }
   }
 }
 </style>
@@ -127,5 +153,8 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   &__search {
     margin-bottom: #{$basic-spacing-medium};
   }
+}
+.add-assets-button {
+  width: 100%;
 }
 </style>

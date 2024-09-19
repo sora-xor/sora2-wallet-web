@@ -101,6 +101,7 @@ export type SettingsStorageKey =
   | 'fiatExchangeRates'
   | 'signTxDialogDisabled'
   | 'confirmTxDialogDisabled'
-  | 'accountPasswordTimeout';
+  | 'accountPasswordTimeout'
+  | 'pinnedAssets';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';

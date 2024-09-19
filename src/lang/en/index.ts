@@ -12,6 +12,7 @@ export default {
   importText: 'Import',
   settingsText: 'Settings',
   addAssetText: 'Add asset',
+  addAssetsText: 'Add asset | Add assets',
   createTokenText: 'Create',
   createTokenTextNFT: 'Create NFT',
   comingSoonText: 'Coming soon',
@@ -333,12 +334,18 @@ export default {
     alreadyAttached: 'Token was already attached',
     understand: 'I understand',
     warningTitle: 'Trade at your own risk!',
-    warningMessage:
-      'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects.\nIf you purchase this token, you may not be able to sell it back.',
+    warningMessage: 'this {assetType} | these {assetTypePlural}',
+    warningMessageText:
+      'Anyone can create a {assetType}, including creating fake versions of existing {assetTypePlural} that claim to represent projects.\nIf you purchase {purchaseAssetType}, you may not be able to sell it back.',
+    assetType: {
+      token: 'token | tokens',
+      nft: 'NFT | NFTs',
+    },
     approved: 'Asset approved by community',
     unknown: 'Unknown source',
     scam: 'SCAM',
     next: 'Next',
+    add: 'Add',
   },
   createToken: {
     title: '@:createTokenText',

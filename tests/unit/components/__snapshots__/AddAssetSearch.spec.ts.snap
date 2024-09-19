@@ -60,6 +60,8 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
         />
       </div>
     </div>
+     
+    <!---->
   </div>
 </div>
 `;
@@ -124,6 +126,8 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
         />
       </div>
     </div>
+     
+    <!---->
   </div>
 </div>
 `;
@@ -188,6 +192,8 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
         />
       </div>
     </div>
+     
+    <!---->
   </div>
 </div>
 `;
