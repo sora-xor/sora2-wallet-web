@@ -140,10 +140,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
 
-  get accountAssetsAddresses(): string[] {
-    return this.accountAssets.map((asset) => asset.address);
-  }
-
   get assetList(): Array<AccountAsset> {
     return this.accountAssets.sort((a, b) => {
       const aPinned = Number(this.isPinned(a));
