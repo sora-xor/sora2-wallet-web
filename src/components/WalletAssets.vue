@@ -2,14 +2,8 @@
   <div :class="computedClasses" v-loading="loading">
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @update-filter="updateFilter" />
     <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
-      <draggable
-        v-model="draggedAssetList"
-        class="wallet-assets__draggable"
-        handle=".wallet-assets-dashes"
-        :move="onMove"
-        @end="onEndDraggableAsset"
-      >
-        <div v-for="(asset, index) in draggedAssetList" :key="asset.address" class="wallet-assets-item__wrapper">
+      <draggable v-model="assetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes" :move="onMove">
+        <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
           <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
             <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
             <asset-list-item
@@ -143,25 +137,30 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     }
   }
 
-  @Watch('accountAssets')
-  onAccountAssetsChange() {
-    this.draggedAssetList = [...this.sortedAssetList];
-  }
-
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
-  draggedAssetList: Array<AccountAsset> = [];
 
-  mounted() {
-    this.draggedAssetList = [...this.sortedAssetList];
+  get accountAssetsAddresses(): string[] {
+    return this.accountAssets.map((asset) => asset.address);
   }
 
   get assetList(): Array<AccountAsset> {
-    return this.accountAssets;
+    return this.accountAssets.sort((a, b) => {
+      const aPinned = Number(this.isPinned(a));
+      const bPinned = Number(this.isPinned(b));
+
+      return bPinned - aPinned;
+    });
   }
 
   set assetList(accountAssets: Array<AccountAsset>) {
     if (!accountAssets.length) return;
+
+    const pinnedAssetAddresses = accountAssets.reduce<string[]>((acc, asset) => {
+      if (this.isPinned(asset)) acc.push(asset.address);
+      return acc;
+    }, []);
+    this.setMultiplePinnedAssets(pinnedAssetAddresses);
 
     const assetsAddresses = accountAssets.map((asset) => asset.address);
     api.assets.accountAssetsAddresses = assetsAddresses;
@@ -202,13 +201,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
-  get sortedAssetList(): Array<AccountAsset> {
-    const unpinnedAssets = this.assetList.filter(
-      (asset) => !this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address)
-    );
-    return [...this.pinnedAssets, ...unpinnedAssets];
-  }
-
   onMove(event) {
     const draggedItem = event.draggedContext.element;
     const targetIndex = event.relatedContext.index;
@@ -217,9 +209,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     const draggedIsPinned = this.isPinned(draggedItem);
     const targetIsPinned = this.isPinned(targetItem);
 
-    if (draggedIsPinned && targetIsPinned) {
-      return true;
-    }
     if (draggedIsPinned && !targetIsPinned) {
       return false;
     }
@@ -227,13 +216,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       return false;
     }
     return true;
-  }
-
-  onEndDraggableAsset() {
-    this.setAccountAssets(this.draggedAssetList);
-    const pinnedAssets = this.draggedAssetList.filter((asset) => this.isPinned(asset));
-    const pinnedAssetAddresses = pinnedAssets.map((asset) => asset.address);
-    this.setMultiplePinnedAssets(pinnedAssetAddresses);
   }
 
   getBalance(asset: AccountAsset): string {
@@ -277,13 +259,13 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   handlePin(asset: AccountAsset): void {
-    const isAlreadyPinned = this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address);
+    const isAlreadyPinned = this.isPinned(asset);
+
     if (isAlreadyPinned) {
       this.removePinnedAsset(asset);
     } else {
       this.setPinnedAsset(asset);
     }
-    this.draggedAssetList = [...this.sortedAssetList];
   }
 
   isPinned(asset: AccountAsset): boolean {
