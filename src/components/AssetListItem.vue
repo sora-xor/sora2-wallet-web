@@ -27,7 +27,7 @@
       <slot name="append" v-bind="asset" />
     </div>
     <slot v-bind="asset" />
-    <div v-if="selectable" class="check">
+    <div class="check">
       <s-icon name="basic-check-mark-24" size="12px" />
     </div>
     <div v-if="pinned" class="pin" @click="pin">
@@ -59,7 +59,6 @@ import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
   @Prop({ default: false, type: Boolean }) readonly selected!: boolean;
   @Prop({ default: true, type: Boolean }) readonly pinnable!: boolean;
   @Prop({ default: false, type: Boolean }) readonly pinned!: boolean;

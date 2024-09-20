@@ -19,7 +19,6 @@
         <asset-list-item
           :asset="item"
           :with-clickable-logo="withClickableLogo"
-          :selectable="selectable"
           :selected="isSelected(item)"
           :pinnable="pinnable"
           :with-fiat="withFiat"
@@ -68,7 +67,6 @@ export default class AssetList extends Mixins(TranslationMixin) {
   @Prop({ default: 5, type: Number }) readonly size!: number;
   @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
   @Prop({ default: () => [], type: Array }) readonly selected!: Array<Asset>;
   @Prop({ default: false, type: Boolean }) readonly pinnable!: boolean;
   @Prop({ default: () => [], type: Array }) readonly pinned!: Array<Asset>;

@@ -14,13 +14,7 @@
         <span>{{ t(`addAsset.${AddAssetTabs.Token}.switchBtn`) }}</span>
       </div>
       <synthetic-switcher class="add-asset-token__switch-btn" v-model="isSynthsOnly" />
-      <asset-list
-        :assets="foundAssets"
-        class="asset-search-list"
-        @click="handleSelectAsset"
-        :selectable="isSelectable"
-        :selected="selectedAssets"
-      >
+      <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset" :selected="selectedAssets">
         <template #list-empty>
           {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
         </template>
@@ -68,7 +62,6 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
 
   @getter.account.whitelist private whitelist!: Whitelist;
   /** `true` by default cuz we have a lot of assets */
-  isSelectable = true;
   isVerifiedOnly = true;
   isSynthsOnly = false;
 
