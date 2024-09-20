@@ -9,7 +9,13 @@
         @clear="resetSearch"
         class="add-asset-nft__input"
       />
-      <asset-list :assets="foundAssets" class="asset-search-list" :selected="selectedAssets" @click="handleSelectAsset">
+      <asset-list
+        :assets="foundAssets"
+        class="asset-search-list"
+        :selected="selectedAssets"
+        :selectable="isSelectable"
+        @click="handleSelectAsset"
+      >
         <template #list-empty>
           {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
         </template>
@@ -48,6 +54,8 @@ import type { Asset } from '@sora-substrate/sdk/build/assets/types';
   },
 })
 export default class AddAssetNFT extends Mixins(AddAssetMixin) {
+  isSelectable = true;
+
   private get notAddedNftAssets(): Array<Asset> {
     return this.assets.filter((asset) => !(asset.address in this.accountAssetsAddressTable) && api.assets.isNft(asset));
   }
