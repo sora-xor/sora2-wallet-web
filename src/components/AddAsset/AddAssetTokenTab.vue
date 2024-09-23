@@ -14,7 +14,13 @@
         <span>{{ t(`addAsset.${AddAssetTabs.Token}.switchBtn`) }}</span>
       </div>
       <synthetic-switcher class="add-asset-token__switch-btn" v-model="isSynthsOnly" />
-      <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset" :selected="selectedAssets">
+      <asset-list
+        :assets="foundAssets"
+        class="asset-search-list"
+        @click="handleSelectAsset"
+        selectable
+        :selected="selectedAssets"
+      >
         <template #list-empty>
           {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
         </template>

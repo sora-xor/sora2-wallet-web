@@ -19,6 +19,7 @@
         <asset-list-item
           :asset="item"
           :with-clickable-logo="withClickableLogo"
+          selectable
           :selected="isSelected(item)"
           :pinnable="pinnable"
           :with-fiat="withFiat"
