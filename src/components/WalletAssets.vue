@@ -141,20 +141,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
 
-  mounted() {
-    const newPinnedAssets = this.pinnedAssetsFromStorage;
-    this.setMultiplePinnedAssets(newPinnedAssets);
-  }
-
-  get pinnedAssetsFromStorage(): string[] {
-    const storedAssets = settingsStorage.get('pinnedAssets');
-    try {
-      return storedAssets ? JSON.parse(storedAssets) : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
   get assetList(): Array<AccountAsset> {
     return this.accountAssets.sort((a, b) => {
       const aPinned = Number(this.isPinned(a));
