@@ -41,6 +41,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
      
     <div
       class="asset-list asset-search-list"
+      selectable=""
     >
       <recycle-scroller
         buffer="NaN"
@@ -107,6 +108,7 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
      
     <div
       class="asset-list asset-search-list"
+      selectable=""
     >
       <recycle-scroller
         buffer="NaN"
@@ -173,6 +175,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
      
     <div
       class="asset-list asset-search-list"
+      selectable=""
     >
       <recycle-scroller
         buffer="NaN"
