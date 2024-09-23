@@ -146,13 +146,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     this.setMultiplePinnedAssets(newPinnedAssets);
   }
 
-  handleStorageChange(event: StorageEvent) {
-    if (event.key === 'dexSettings.pinnedAssets') {
-      const newPinnedAssets = this.pinnedAssetsFromStorage;
-      this.setMultiplePinnedAssets(newPinnedAssets);
-    }
-  }
-
   get pinnedAssetsFromStorage(): string[] {
     const storedAssets = settingsStorage.get('pinnedAssets');
     try {
