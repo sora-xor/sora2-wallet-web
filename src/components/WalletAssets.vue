@@ -93,7 +93,6 @@ import draggable from 'vuedraggable';
 
 import { RouteNames, HiddenValue, WalletFilteringOptions } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
-import { settingsStorage } from '../util/storage';
 
 import AssetList from './AssetList.vue';
 import AssetListItem from './AssetListItem.vue';
