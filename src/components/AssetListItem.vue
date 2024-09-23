@@ -59,8 +59,8 @@ import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
   @Prop({ default: false, type: Boolean }) readonly selected!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
   @Prop({ default: true, type: Boolean }) readonly pinnable!: boolean;
   @Prop({ default: false, type: Boolean }) readonly pinned!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;

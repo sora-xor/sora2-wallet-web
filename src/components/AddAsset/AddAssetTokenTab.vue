@@ -18,7 +18,7 @@
         :assets="foundAssets"
         class="asset-search-list"
         @click="handleSelectAsset"
-        :selectable="isSelectable"
+        selectable
         :selected="selectedAssets"
       >
         <template #list-empty>
@@ -68,7 +68,6 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
 
   @getter.account.whitelist private whitelist!: Whitelist;
   /** `true` by default cuz we have a lot of assets */
-  isSelectable = true;
   isVerifiedOnly = true;
   isSynthsOnly = false;
 
