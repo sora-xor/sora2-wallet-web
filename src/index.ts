@@ -36,6 +36,7 @@ import TranslationMixin from './components/mixins/TranslationMixin';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import NftDetails from './components/NftDetails.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
+import PinIcon from './components/PinIcon.vue';
 import ExternalLink from './components/shared/ExternalLink.vue';
 import FormattedAddress from './components/shared/FormattedAddress.vue';
 import SyntheticSwitcher from './components/shared/SyntheticSwitcher.vue';
@@ -226,6 +227,7 @@ const components = {
   AccountConnectionList,
   ExtensionConnectionList,
   ConnectionView,
+  PinIcon,
 };
 
 const mixins = {
