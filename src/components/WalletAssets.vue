@@ -11,7 +11,7 @@
               with-fiat
               with-clickable-logo
               @show-details="handleOpenAssetDetails"
-              :pinned="isPinned(asset)"
+              :pinned="isAssetPinned(asset)"
               @pin="handlePin"
             >
               <template #value="asset">
@@ -122,7 +122,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @state.settings.filters private filters!: WalletAssetFilters;
 
   @getter.account.whitelist private whitelist!: Whitelist;
-  @getter.account.isAssetPinned isPinned!: (asset: AccountAsset) => boolean;
+  @getter.account.isAssetPinned isAssetPinned!: (asset: AccountAsset) => boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.account.setAccountAssets private setAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
@@ -142,8 +142,8 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   get assetList(): Array<AccountAsset> {
     return this.accountAssets.sort((a, b) => {
-      const aPinned = Number(this.isPinned(a));
-      const bPinned = Number(this.isPinned(b));
+      const aPinned = Number(this.isAssetPinned(a));
+      const bPinned = Number(this.isAssetPinned(b));
 
       return bPinned - aPinned;
     });
@@ -153,7 +153,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     if (!accountAssets.length) return;
 
     const pinnedAssetAddresses = accountAssets.reduce<string[]>((acc, asset) => {
-      if (this.isPinned(asset)) acc.push(asset.address);
+      if (this.isAssetPinned(asset)) acc.push(asset.address);
       return acc;
     }, []);
     this.setMultiplePinnedAssets(pinnedAssetAddresses);
@@ -202,8 +202,8 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     const targetIndex = event.relatedContext.index;
     const targetItem = event.relatedContext.list[targetIndex];
 
-    const draggedIsPinned = this.isPinned(draggedItem);
-    const targetIsPinned = this.isPinned(targetItem);
+    const draggedIsPinned = this.isAssetPinned(draggedItem);
+    const targetIsPinned = this.isAssetPinned(targetItem);
 
     if (draggedIsPinned && !targetIsPinned) {
       return false;
@@ -255,7 +255,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   handlePin(asset: AccountAsset): void {
-    const isAlreadyPinned = this.isPinned(asset);
+    const isAlreadyPinned = this.isAssetPinned(asset);
 
     if (isAlreadyPinned) {
       this.removePinnedAsset(asset);
