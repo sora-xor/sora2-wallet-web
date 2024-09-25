@@ -122,7 +122,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @state.settings.filters private filters!: WalletAssetFilters;
 
   @getter.account.whitelist private whitelist!: Whitelist;
-  @getter.account.pinnedAssets private pinnedAssets!: Array<AccountAsset>;
+  @getter.account.isAssetPinned isPinned!: (asset: AccountAsset) => boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.account.setAccountAssets private setAccountAssets!: (accountAssets: Array<AccountAsset>) => void;
@@ -262,10 +262,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     } else {
       this.setPinnedAsset(asset);
     }
-  }
-
-  isPinned(asset: AccountAsset): boolean {
-    return this.pinnedAssets.some((pinnedAsset) => pinnedAsset.address === asset.address);
   }
 
   showAsset(asset: AccountAsset) {
