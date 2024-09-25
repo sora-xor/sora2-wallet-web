@@ -76,7 +76,6 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   }
 
   pin(event: Event) {
-    console.info('we are in pin');
     event.stopPropagation();
     this.$emit('pin', this.asset);
   }
