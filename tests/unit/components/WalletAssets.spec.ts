@@ -34,7 +34,7 @@ const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, w
       }),
       getters: {
         whitelist: () => MOCK_WHITE_LIST,
-        pinnedAssets: () => [],
+        isAssetPinned: () => () => false,
       },
     },
     router: {

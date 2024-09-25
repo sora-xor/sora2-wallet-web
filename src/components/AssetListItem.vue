@@ -30,11 +30,8 @@
     <div v-if="selectable" class="check">
       <s-icon name="basic-check-mark-24" size="12px" />
     </div>
-    <div v-if="pinned" class="pin" @click="pin">
-      <s-icon name="maps-pin-24" size="24px" />
-    </div>
-    <div v-if="pinnable && !pinned" class="pin" @click="pin">
-      <s-icon name="maps-pin-add-24" size="24px" />
+    <div v-if="pinnable" @click="pin" class="pin">
+      <pin-icon :isPinned="pinned" />
     </div>
   </div>
 </template>
@@ -44,6 +41,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
 import NftTokenLogo from './NftTokenLogo.vue';
+import PinIcon from './PinIcon.vue';
 import TokenAddress from './TokenAddress.vue';
 import TokenLogo from './TokenLogo.vue';
 
@@ -54,6 +52,7 @@ import type { Asset } from '@sora-substrate/sdk/build/assets/types';
     NftTokenLogo,
     TokenLogo,
     TokenAddress,
+    PinIcon,
   },
 })
 export default class AssetListItem extends Mixins(TranslationMixin) {
@@ -144,15 +143,9 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    i {
-      color: var(--s-color-base-content-tertiary);
-      transition: color 150ms;
-    }
-    &:hover i {
-      color: var(--s-color-theme-accent-hover);
+    svg {
+      width: 24px;
+      height: 24px;
     }
   }
 }
