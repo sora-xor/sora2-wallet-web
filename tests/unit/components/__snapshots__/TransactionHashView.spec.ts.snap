@@ -123,6 +123,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
@@ -196,6 +197,7 @@ exports[`TransactionHashView.vue [type: account, env: Prod]: should be rendered 
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
@@ -269,6 +271,7 @@ exports[`TransactionHashView.vue [type: block, env: Dev]: should be rendered cor
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
@@ -342,6 +345,7 @@ exports[`TransactionHashView.vue [type: block, env: Prod]: should be rendered co
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
@@ -429,6 +433,7 @@ exports[`TransactionHashView.vue [type: ethAccount, env: Dev]: should be rendere
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
@@ -502,6 +507,7 @@ exports[`TransactionHashView.vue [type: ethAccount, env: Prod]: should be render
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
@@ -575,6 +581,7 @@ exports[`TransactionHashView.vue [type: ethTransaction, env: Dev]: should be ren
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
@@ -648,6 +655,7 @@ exports[`TransactionHashView.vue [type: ethTransaction, env: Prod]: should be re
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
@@ -763,6 +771,7 @@ exports[`TransactionHashView.vue [type: id, env: Dev]: should be rendered correc
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
@@ -836,6 +845,7 @@ exports[`TransactionHashView.vue [type: id, env: Prod]: should be rendered corre
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
@@ -909,6 +919,7 @@ exports[`TransactionHashView.vue [type: id, env: Prod]: should be rendered corre
   />
    
   <s-dropdown-stub
+    appendtobody="true"
     borderradius="mini"
     buttontype="secondary"
     class="s-dropdown-menu"
