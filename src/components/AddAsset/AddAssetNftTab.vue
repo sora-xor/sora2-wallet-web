@@ -107,6 +107,7 @@ export default class AddAssetNFT extends Mixins(AddAssetMixin) {
 }
 
 .add-nfts-button {
+  margin-top: #{$basic-spacing};
   width: 100%;
 }
 </style>
