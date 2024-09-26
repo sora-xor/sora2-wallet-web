@@ -3,11 +3,12 @@ import {
   AssetBaseEntity,
   AssetSnapshotBaseEntity,
   HistoryElement,
-  HistoryElementBase,
   PoolXYKBaseEntity,
   OrderBookBaseEntity,
   OrderBookSnapshotBaseEntity,
   OrderBookOrderBaseEntity,
+  VaultBaseEntity,
+  VaultEventBaseEntity,
 } from '../../types';
 
 // Subsquid Models
@@ -46,6 +47,19 @@ export type SubsquidOrderBookSnapshotEntity = OrderBookSnapshotBaseEntity & {
 export type SubsquidOrderBookOrderEntity = OrderBookOrderBaseEntity & {
   orderBook: OrderBookBaseEntity;
   account: AccountBaseEntity;
+};
+
+// with connection
+export type SubsquidVaultEntity = VaultBaseEntity & {
+  owner: AccountBaseEntity;
+  collateralAsset: AssetBaseEntity;
+  debtAsset: AssetBaseEntity;
+  events: VaultEventBaseEntity[];
+};
+
+// with connection
+export type SubsquidVaultEventEntity = VaultEventBaseEntity & {
+  vault: VaultBaseEntity;
 };
 
 export type SubsquidAccountEntityMutation = {
