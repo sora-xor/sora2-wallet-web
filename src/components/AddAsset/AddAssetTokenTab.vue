@@ -154,7 +154,7 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   }
 }
 .add-assets-button {
-  margin-top: 8px;
+  margin-top: #{$basic-spacing};
   width: 100%;
 }
 </style>
