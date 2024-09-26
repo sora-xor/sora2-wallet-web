@@ -139,8 +139,6 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
 
 <style scoped lang="scss">
 .add-asset-token {
-  margin-top: #{$basic-spacing-medium};
-
   &__switch-btn {
     display: flex;
     margin-bottom: 10px;
