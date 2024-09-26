@@ -162,7 +162,7 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
       margin-bottom: 14px;
     }
     & > div:first-child {
-      margin-top: 14px;
+      margin-top: var(--s-basic-spacing);
     }
     & > div:last-child {
       margin-bottom: 14px;
