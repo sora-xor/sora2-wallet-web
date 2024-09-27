@@ -1,7 +1,7 @@
 <template>
   <wallet-base :title="t('addAssetText')" show-back :reset-focus="currentScreen" @back="handleBack">
     <div class="add-asset">
-      <s-tabs v-if="showTabs" v-model="currentTab" type="rounded">
+      <s-tabs v-if="showTabs" v-model="currentTab" type="rounded" class="add-asset-tabs">
         <s-tab v-for="tab in AddAssetTabs" :key="tab" :label="getTabName(tab)" :name="tab" />
       </s-tabs>
       <keep-alive>
@@ -76,5 +76,9 @@ export default class AddAsset extends Mixins(TranslationMixin) {
 <style lang="scss">
 .add-asset {
   @include custom-tabs;
+
+  &-tabs {
+    margin-bottom: $basic-spacing-medium;
+  }
 }
 </style>
