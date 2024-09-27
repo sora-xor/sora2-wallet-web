@@ -13,6 +13,7 @@ exports[`AddAsset.vue [Custom Asset Tab]: should be rendered correctly 1`] = `
   >
     <s-tabs-stub
       borderradius="small"
+      class="add-asset-tabs"
       position="top"
       type="rounded"
       usedesignsystem="true"
@@ -48,6 +49,7 @@ exports[`AddAsset.vue [Search Tab]: should be rendered correctly 1`] = `
   >
     <s-tabs-stub
       borderradius="small"
+      class="add-asset-tabs"
       position="top"
       type="rounded"
       usedesignsystem="true"
