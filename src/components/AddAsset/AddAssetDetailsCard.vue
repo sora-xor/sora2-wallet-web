@@ -1,9 +1,9 @@
 <template>
   <div class="add-asset-details">
-    <s-scrollbar class="asset-list-scrollbar">
+    <s-scrollbar class="asset-list-scrollbar" :style="{ height }">
       <div class="asset-list-container">
         <div v-for="asset in selectAssets" :key="asset.address">
-          <s-card shadow="always" size="small" border-radius="mini" pressed>
+          <s-card shadow="always" size="small" border-radius="mini">
             <asset-list-item :asset="asset" :pinnable="false">
               <template #append>
                 <s-card size="mini" :status="assetCardStatus(asset)" primary>
@@ -43,6 +43,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { getter } from '../../store/decorators';
+import { getCssVariableValue } from '../../util';
 import AssetListItem from '../AssetListItem.vue';
 import AddAssetMixin from '../mixins/AddAssetMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
@@ -70,6 +71,18 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
 
   get isCardPrimary(): boolean {
     return this.theme !== Theme.DARK;
+  }
+
+  get height(): string {
+    const itemHeight = parseFloat(getCssVariableValue('--s-asset-item-height--fiat'));
+    const itemHeightFixed = itemHeight + 1; // card is bigger on 1px
+    const gutter = 16;
+    const count = this.selectAssets.length;
+    const size = Math.min(count, 2);
+    const preview = Number(size < count) * (gutter + itemHeight / 2);
+    const height = itemHeightFixed * size + gutter * (size - 1) + preview;
+
+    return `${height}px`;
   }
 
   isWhitelist(asset: Asset): boolean {
@@ -131,9 +144,9 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
 
 <style scoped lang="scss">
 .add-asset-details {
-  & > *:not(:last-child) {
-    margin-bottom: #{$basic-spacing-medium};
-  }
+  display: flex;
+  flex-flow: column nowrap;
+  gap: $basic-spacing-medium;
 
   .asset-nature {
     font-size: var(--s-font-size-mini);
@@ -158,18 +171,9 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
   }
 
   .asset-list-container {
-    & > div {
-      margin-bottom: 14px;
-    }
-    & > div:first-child {
-      margin-top: var(--s-basic-spacing);
-    }
-    & > div:last-child {
-      margin-bottom: 14px;
-    }
-  }
-  .asset-list-scrollbar {
-    height: calc(var(--s-asset-item-height--fiat) * 2 + #{$basic-spacing-medium} * 4);
+    display: flex;
+    flex-flow: column nowrap;
+    gap: $basic-spacing-medium;
   }
 }
 </style>
