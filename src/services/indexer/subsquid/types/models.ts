@@ -2,7 +2,7 @@ import {
   AccountBaseEntity,
   AssetBaseEntity,
   AssetSnapshotBaseEntity,
-  HistoryElement,
+  HistoryElementBase,
   PoolXYKBaseEntity,
   OrderBookBaseEntity,
   OrderBookSnapshotBaseEntity,
@@ -64,5 +64,5 @@ export type SubsquidVaultEventEntity = VaultEventBaseEntity & {
 
 export type SubsquidAccountEntityMutation = {
   id: string;
-  latestHistoryElement: HistoryElement;
+  latestHistoryElement: HistoryElementBase;
 };
