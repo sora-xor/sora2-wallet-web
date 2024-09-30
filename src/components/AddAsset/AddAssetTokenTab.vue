@@ -9,11 +9,7 @@
         @clear="resetSearch"
         class="add-asset-token__search"
       />
-      <div class="add-asset-token__switch-btn">
-        <s-switch v-model="isVerifiedOnly" :disabled="loading" />
-        <span>{{ t(`addAsset.${AddAssetTabs.Token}.switchBtn`) }}</span>
-      </div>
-      <synthetic-switcher class="add-asset-token__switch-btn" v-model="isSynthsOnly" />
+      <assets-filter v-model="isVerifiedOnly" show-only-verified-switch class="add-asset-token__filter" />
       <asset-list
         :assets="foundAssets"
         class="asset-search-list"
@@ -40,16 +36,19 @@
 </template>
 
 <script lang="ts">
+import { NativeAssets } from '@sora-substrate/sdk/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
+import { FilterOptions } from '@/types/common';
+
 import { api } from '../../api';
-import { AddAssetTabs, syntheticAssetRegexp } from '../../consts';
-import { getter } from '../../store/decorators';
+import { AddAssetTabs, syntheticAssetRegexp, kensetsuAssetRegexp, CeresAddresses } from '../../consts';
+import { state, getter } from '../../store/decorators';
 import AssetList from '../AssetList.vue';
 import SearchInput from '../Input/SearchInput.vue';
 import AddAssetMixin from '../mixins/AddAssetMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
-import SyntheticSwitcher from '../shared/SyntheticSwitcher.vue';
+import AssetsFilter from '../shared/AssetsFilter.vue';
 
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
@@ -58,18 +57,18 @@ import type { Asset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
 @Component({
   components: {
     AssetList,
+    AssetsFilter,
     SearchInput,
     AddAssetDetailsCard,
-    SyntheticSwitcher,
   },
 })
 export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
+  @state.settings.assetsFilter assetsFilter!: FilterOptions;
   @getter.account.whitelist private whitelist!: Whitelist;
   /** `true` by default cuz we have a lot of assets */
   isVerifiedOnly = true;
-  isSynthsOnly = false;
 
   private get notAddedAssets(): Array<Asset> {
     return this.assets.filter(
@@ -78,11 +77,38 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   }
 
   private get prefilteredAssets(): Array<Asset> {
-    return this.notAddedAssets.filter((asset) => {
-      if (this.isVerifiedOnly && !api.assets.isWhitelist(asset, this.whitelist)) return false;
-      if (this.isSynthsOnly && !syntheticAssetRegexp.test(asset.address)) return false;
-      return true;
-    });
+    switch (this.assetsFilter) {
+      case FilterOptions.All: {
+        return this.isVerifiedOnly
+          ? this.notAddedAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
+          : this.notAddedAssets;
+      }
+      case FilterOptions.Native: {
+        const nativeAssetsAddresses = NativeAssets.map((nativeAsset) => nativeAsset.address);
+        return this.notAddedAssets.filter((asset) => nativeAssetsAddresses.includes(asset.address));
+      }
+      case FilterOptions.Kensetsu: {
+        const kensetsuAssets = this.notAddedAssets.filter((asset) => kensetsuAssetRegexp.test(asset.address));
+
+        return this.isVerifiedOnly
+          ? kensetsuAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
+          : kensetsuAssets;
+      }
+      case FilterOptions.Synthetics: {
+        const syntheticsAssets = this.notAddedAssets.filter((asset) => syntheticAssetRegexp.test(asset.address));
+
+        return this.isVerifiedOnly
+          ? syntheticsAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
+          : syntheticsAssets;
+      }
+      case FilterOptions.Ceres: {
+        const ceresAssetsAddresses = CeresAddresses;
+        return this.notAddedAssets.filter((asset) => ceresAssetsAddresses.includes(asset.address));
+      }
+      default: {
+        return this.notAddedAssets;
+      }
+    }
   }
 
   get foundAssets(): Array<Asset> {
@@ -139,12 +165,8 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
 
 <style scoped lang="scss">
 .add-asset-token {
-  &__switch-btn {
-    display: flex;
-    margin-bottom: 10px;
-    .s-switch {
-      margin-right: 12px;
-    }
+  &__filter {
+    margin-bottom: 8px;
   }
 
   &__search {

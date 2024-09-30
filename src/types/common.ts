@@ -61,6 +61,14 @@ export enum ConnectionStatus {
   Available = 'available',
 }
 
+export enum FilterOptions {
+  All = 'All',
+  Native = 'Native',
+  Kensetsu = 'Kensetsu',
+  Synthetics = 'Synthetics',
+  Ceres = 'Ceres',
+}
+
 export type IndexerState = {
   endpoint: Nullable<string>;
   status: ConnectionStatus;

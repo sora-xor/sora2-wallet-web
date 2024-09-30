@@ -1,5 +1,5 @@
 import { Operation } from '@sora-substrate/sdk';
-import { XSTUSD } from '@sora-substrate/sdk/build/assets/consts';
+import { XSTUSD, KUSD, KGOLD, KEN, KXOR } from '@sora-substrate/sdk/build/assets/consts';
 
 import type { FPNumber } from '@sora-substrate/sdk';
 
@@ -11,6 +11,9 @@ export const accountIdBasedOperations = [
 ];
 
 export const syntheticAssetRegexp = new RegExp(`^0[xX]03[0-9a-fA-F]+|${XSTUSD.address}$`);
+export const kensetsuAssetRegexp = new RegExp(
+  `^0[xX]05[0-9a-fA-F]+|${KUSD.address}|${KGOLD.address}|${KXOR.address}|${KEN.address}$`
+);
 
 export const HiddenValue = '******';
 
@@ -245,4 +248,13 @@ export const TranslationConsts = {
   JSON: 'JSON',
   ADAR: 'ADAR',
   Google: 'Google',
+  Kensetsu: 'Kensetsu',
+  Ceres: 'Ceres',
 } as const;
+
+export const CeresAddresses = [
+  '0x002d4e9e03f192cc33b128319a049f353db98fbf4d98f717fd0b7f66a0462142',
+  '0x00efe45135018136733be626b380a87ae663ccf6784a25fe9d9d2be64acecb9d',
+  '0x00f2f4fda40a4bf1fc3769d156fa695532eec31e265d75068524462c0b80f674',
+  '0x008bcfd2387d3fc453333557eecb0efe59fcba128769b2feefdd306e98e66440',
+];
