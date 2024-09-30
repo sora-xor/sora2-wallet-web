@@ -16,6 +16,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
     />
      
     <assets-filter-stub
+      class="add-asset-token__filter"
       showonlyverifiedswitch="true"
       value="true"
     />
@@ -63,6 +64,7 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
     />
      
     <assets-filter-stub
+      class="add-asset-token__filter"
       showonlyverifiedswitch="true"
       value="true"
     />
@@ -110,6 +112,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
     />
      
     <assets-filter-stub
+      class="add-asset-token__filter"
       showonlyverifiedswitch="true"
       value="true"
     />
