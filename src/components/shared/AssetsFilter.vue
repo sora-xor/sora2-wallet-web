@@ -77,9 +77,9 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   get filterOptionsText(): Array<string> {
     const basicOptions = [
       this.t('filter.all'),
-      'Native',
+      this.t('filter.native'),
       this.TranslationConsts.Kensetsu,
-      'Synthetics',
+      this.t('filter.synthetics'),
       this.TranslationConsts.Ceres,
     ];
 
