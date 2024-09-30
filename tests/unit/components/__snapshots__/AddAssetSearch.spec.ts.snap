@@ -15,28 +15,9 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
       value=""
     />
      
-    <div
-      class="add-asset-token__switch-btn"
-    >
-      <s-switch-stub
-        activeiconСlass=""
-        activetext=""
-        activevalue="true"
-        inactiveiconСlass=""
-        inactivetext=""
-        name=""
-        usedesignsystem="true"
-        value="true"
-        width="40"
-      />
-       
-      <span>
-        Verified assets only
-      </span>
-    </div>
-     
-    <synthetic-switcher-stub
-      class="add-asset-token__switch-btn"
+    <assets-filter-stub
+      showonlyverifiedswitch="true"
+      value="true"
     />
      
     <div
@@ -46,7 +27,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
         buffer="NaN"
         class="asset-list-inner hidden-scrollbar"
         item-size="NaN"
-        items=""
+        items="[object Object]"
         key-field="address"
         style="margin-right: 0px;"
       />
@@ -81,28 +62,9 @@ exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] 
       value="123456"
     />
      
-    <div
-      class="add-asset-token__switch-btn"
-    >
-      <s-switch-stub
-        activeiconСlass=""
-        activetext=""
-        activevalue="true"
-        inactiveiconСlass=""
-        inactivetext=""
-        name=""
-        usedesignsystem="true"
-        value="true"
-        width="40"
-      />
-       
-      <span>
-        Verified assets only
-      </span>
-    </div>
-     
-    <synthetic-switcher-stub
-      class="add-asset-token__switch-btn"
+    <assets-filter-stub
+      showonlyverifiedswitch="true"
+      value="true"
     />
      
     <div
@@ -147,28 +109,9 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
       value="TEST"
     />
      
-    <div
-      class="add-asset-token__switch-btn"
-    >
-      <s-switch-stub
-        activeiconСlass=""
-        activetext=""
-        activevalue="true"
-        inactiveiconСlass=""
-        inactivetext=""
-        name=""
-        usedesignsystem="true"
-        value="true"
-        width="40"
-      />
-       
-      <span>
-        Verified assets only
-      </span>
-    </div>
-     
-    <synthetic-switcher-stub
-      class="add-asset-token__switch-btn"
+    <assets-filter-stub
+      showonlyverifiedswitch="true"
+      value="true"
     />
      
     <div
@@ -178,7 +121,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
         buffer="NaN"
         class="asset-list-inner hidden-scrollbar"
         item-size="NaN"
-        items=""
+        items="[object Object]"
         key-field="address"
         style="margin-right: 0px;"
       />
