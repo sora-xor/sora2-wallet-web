@@ -3,7 +3,7 @@ import { NFTStorage } from 'nft.storage';
 
 import { api } from '../../api';
 import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions, IndexerType } from '../../consts';
-import { Alert, ApiKeysObject, ConnectionStatus } from '../../types/common';
+import { Alert, ApiKeysObject, ConnectionStatus, type FilterOptions } from '../../types/common';
 import { Currency, type CurrencyFields, type FiatExchangeRateObject } from '../../types/currency';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
 
@@ -144,6 +144,9 @@ const mutations = defineMutations<SettingsState>()({
   resetExchangeRateSubscription(state): void {
     state.exchangeRateUnsubFn?.();
     state.exchangeRateUnsubFn = null;
+  },
+  setAssetsFilter(state, filter: FilterOptions): void {
+    state.assetsFilter = filter;
   },
 });
 

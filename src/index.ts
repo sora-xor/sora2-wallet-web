@@ -37,6 +37,7 @@ import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import NftDetails from './components/NftDetails.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
 import PinIcon from './components/PinIcon.vue';
+import AssetsFilter from './components/shared/AssetsFilter.vue';
 import ExternalLink from './components/shared/ExternalLink.vue';
 import FormattedAddress from './components/shared/FormattedAddress.vue';
 import SyntheticSwitcher from './components/shared/SyntheticSwitcher.vue';
@@ -202,6 +203,7 @@ const components = {
   AccountCard,
   AccountConfirmationOption,
   AddressBookInput,
+  AssetsFilter,
   AssetList,
   AssetListItem,
   AddAssetDetailsCard,

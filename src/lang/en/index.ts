@@ -421,10 +421,13 @@ export default {
   filter: {
     all: 'All',
     token: 'Currencies',
+    native: 'Native',
+    synthetics: 'Synthetics',
     verifiedOnly: 'Show verified assets only',
     zeroBalance: 'Hide 0 balance assets',
     showAssets: 'Show assets',
     show: 'Show',
+    reset: 'Reset',
   },
   transaction: {
     title: 'Transaction details',
