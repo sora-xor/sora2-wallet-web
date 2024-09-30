@@ -1,5 +1,5 @@
 <template>
-  <s-tooltip :content="copyTooltip(tooltipText)" tabindex="-1">
+  <s-tooltip :content="copyTooltip(tooltipText)" tabindex="-1" append-to-body>
     <div class="formatted-address" @click="handleCopyAddress(value, $event)">
       <template v-if="sliced">
         <span class="address" :style="{ width: firstPartWidth }">{{ value }}</span>

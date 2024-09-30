@@ -9,7 +9,7 @@
         @clear="resetSearch"
         class="add-asset-token__search"
       />
-      <assets-filter v-model="isVerifiedOnly" show-only-verified-switch />
+      <assets-filter v-model="isVerifiedOnly" show-only-verified-switch class="add-asset-token__filter" />
       <asset-list
         :assets="foundAssets"
         class="asset-search-list"
@@ -79,30 +79,27 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   private get prefilteredAssets(): Array<Asset> {
     switch (this.assetsFilter) {
       case FilterOptions.All: {
-        if (this.isVerifiedOnly) {
-          return this.notAddedAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist));
-        }
-        return this.notAddedAssets;
+        return this.isVerifiedOnly
+          ? this.notAddedAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
+          : this.notAddedAssets;
       }
       case FilterOptions.Native: {
         const nativeAssetsAddresses = NativeAssets.map((nativeAsset) => nativeAsset.address);
         return this.notAddedAssets.filter((asset) => nativeAssetsAddresses.includes(asset.address));
       }
       case FilterOptions.Kensetsu: {
-        if (this.isVerifiedOnly) {
-          return this.notAddedAssets.filter(
-            (asset) => kensetsuAssetRegexp.test(asset.address) && api.assets.isWhitelist(asset, this.whitelist)
-          );
-        }
-        return this.notAddedAssets.filter((asset) => kensetsuAssetRegexp.test(asset.address));
+        const kensetsuAssets = this.notAddedAssets.filter((asset) => kensetsuAssetRegexp.test(asset.address));
+
+        return this.isVerifiedOnly
+          ? kensetsuAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
+          : kensetsuAssets;
       }
       case FilterOptions.Synthetics: {
-        if (this.isVerifiedOnly) {
-          return this.notAddedAssets.filter(
-            (asset) => syntheticAssetRegexp.test(asset.address) && api.assets.isWhitelist(asset, this.whitelist)
-          );
-        }
-        return this.notAddedAssets.filter((asset) => syntheticAssetRegexp.test(asset.address));
+        const syntheticsAssets = this.notAddedAssets.filter((asset) => syntheticAssetRegexp.test(asset.address));
+
+        return this.isVerifiedOnly
+          ? syntheticsAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
+          : syntheticsAssets;
       }
       case FilterOptions.Ceres: {
         const ceresAssetsAddresses = CeresAddresses;
@@ -168,12 +165,8 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
 
 <style scoped lang="scss">
 .add-asset-token {
-  &__switch-btn {
-    display: flex;
-    margin-bottom: 10px;
-    .s-switch {
-      margin-right: 12px;
-    }
+  &__filter {
+    margin-bottom: 8px;
   }
 
   &__search {
