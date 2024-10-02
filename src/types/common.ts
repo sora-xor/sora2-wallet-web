@@ -110,6 +110,8 @@ export type SettingsStorageKey =
   | 'signTxDialogDisabled'
   | 'confirmTxDialogDisabled'
   | 'accountPasswordTimeout'
-  | 'pinnedAssets';
+  | 'pinnedAssets'
+  | 'isTBankFeatureEnabled'
+  | 'isAccessRotationListener';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';
