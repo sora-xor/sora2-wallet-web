@@ -73,6 +73,7 @@ import {
   formatAccountAddress,
   validateAddress,
   beforeTransactionSign,
+  getAssetsSubset,
 } from './util';
 import * as accountUtils from './util/account';
 import { ScriptLoader } from './util/scriptLoader';
@@ -266,6 +267,7 @@ export {
   formatAccountAddress,
   validateAddress,
   beforeTransactionSign,
+  getAssetsSubset,
   WALLET_CONSTS,
   WALLET_TYPES,
   components,
