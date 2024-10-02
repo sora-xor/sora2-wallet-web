@@ -25,7 +25,7 @@ const addWcWalletLocally = (
   const walletName = !isSingletone && chainId ? `${AppWallet.WalletConnect}:${chainId}` : AppWallet.WalletConnect;
 
   try {
-    checkWallet(walletName as any);
+    checkWallet(walletName);
   } catch {
     const provider = new Provider({
       chains: [chainId],

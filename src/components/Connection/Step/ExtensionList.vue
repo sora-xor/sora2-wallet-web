@@ -37,7 +37,7 @@
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
-import { AppWallet } from '../../../consts';
+import { AppWallet, Links } from '../../../consts';
 import TranslationMixin from '../../mixins/TranslationMixin';
 import ExternalLink from '../../shared/ExternalLink.vue';
 import ExtensionConnectionList from '../List/Extension.vue';
@@ -58,7 +58,7 @@ export default class ExtensionListStep extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly externalWallets!: Wallet[];
   @Prop({ default: () => [], type: Array }) readonly recommendedWallets!: string[];
 
-  readonly wikiLink = 'https://wiki.sora.org/polkaswap-connect-wallet.html';
+  readonly wikiLink = Links.connection.wiki;
 
   handleSelectWallet(wallet: Wallet): void {
     this.$emit('select', wallet);

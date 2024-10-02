@@ -16,7 +16,7 @@ import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
 import type { Unsubcall, InjectedWindowProvider } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 import type { WithKeyring } from '@sora-substrate/sdk';
-import type { Wallet, WalletAccount, WalletInfo } from '@sora-test/wallet-connect/types';
+import type { Wallet, WalletAccount } from '@sora-test/wallet-connect/types';
 
 export const lockAccountPair = (api: WithKeyring): void => {
   api.lockPair();
@@ -73,8 +73,7 @@ export const initializePredefinedWallets = (dAppName: string): void => {
 };
 
 export const initializeInjectedWallets = (dAppName: string): void => {
-  const injectedWindow = window as any;
-  const keys = Object.keys(injectedWindow.injectedWeb3);
+  const keys = Object.keys(window.injectedWeb3);
 
   for (const extensionName of keys) {
     try {
@@ -120,10 +119,8 @@ export const addWalletLocally = (
   const walletInfo = getWalletInfo(walletKey);
   const extensionName = walletNameOverride ?? walletInfo.extensionName;
 
-  const injectedWindow = window as any;
-
-  injectedWindow.injectedWeb3 = injectedWindow.injectedWeb3 || {};
-  injectedWindow.injectedWeb3[extensionName] = wallet;
+  window.injectedWeb3 = window.injectedWeb3 || {};
+  window.injectedWeb3[extensionName] = wallet;
 
   if (!getWalletBySource(extensionName)) {
     addWallet({ ...walletInfo, extensionName }, dAppName);
@@ -131,7 +128,7 @@ export const addWalletLocally = (
   }
 };
 
-export const checkWallet = (extension: AppWallet): Wallet => {
+export const checkWallet = (extension: AppWallet | string): Wallet => {
   const wallet = getWalletBySource(extension);
 
   if (!wallet) {

@@ -211,9 +211,7 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
 };
 
 export const getCssVariableValue = (name: string): string => {
-  return getComputedStyle(document.documentElement as any)
-    .getPropertyValue(name)
-    .trim();
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 };
 
 export const getTextWidth = (text: string, font = '300 12px "Sora", sans-serif'): number => {

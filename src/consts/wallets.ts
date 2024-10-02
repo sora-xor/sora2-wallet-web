@@ -118,6 +118,7 @@ export const getWalletInfo = (extensionName: string): WalletInfo => {
 };
 
 export const PredefinedWallets = [FearlessWalletInfo, PolkadotJsInfo];
+export const RecommendedWallets = [AppWallet.FearlessWallet];
 
 /** Wallets with saved accounts in App */
 export const AppStorageWallets = [AppWallet.Sora];

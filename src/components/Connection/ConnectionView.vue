@@ -73,6 +73,7 @@
 import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
+import { RecommendedWallets } from '../../consts/wallets';
 import { GDriveWallet } from '../../services/google/wallet';
 import { addWcSubWalletLocally, isWcWallet } from '../../services/walletconnect';
 import { action, state } from '../../store/decorators';
@@ -174,7 +175,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   accountsSubscription: Nullable<VoidFunction> = null;
 
   wcName = '';
-  recommendedWallets = [AppWallet.FearlessWallet];
+  recommendedWallets = RecommendedWallets;
 
   private resetWalletAccountsSubscription(): void {
     this.accountsSubscription?.();
