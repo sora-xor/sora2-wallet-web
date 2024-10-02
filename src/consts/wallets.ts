@@ -111,7 +111,7 @@ export const getWalletInfo = (extensionName: string): WalletInfo => {
     chromeUrl: '',
     mozillaUrl: '',
     logo: {
-      src: SoraWalletLogo as string,
+      src: '',
       alt: extensionName,
     },
   };

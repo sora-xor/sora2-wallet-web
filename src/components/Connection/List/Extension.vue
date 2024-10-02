@@ -8,7 +8,8 @@
       @click.native="handleSelect(wallet)"
     >
       <template #avatar>
-        <img :src="wallet.logo.src" :alt="wallet.logo.alt" />
+        <img v-if="wallet.logo.src" :src="wallet.logo.src" :alt="wallet.logo.alt" />
+        <s-icon v-else name="finance-wallet-24" size="32" class="unknown-wallet-icon" />
       </template>
       <template #name>{{ wallet.title }}</template>
       <template #default>
@@ -93,5 +94,9 @@ export default class ExtensionConnectionList extends Mixins(TranslationMixin) {
   justify-content: center;
   width: var(--s-size-small);
   height: var(--s-size-small);
+}
+
+.unknown-wallet-icon {
+  color: var(--s-color-base-content-secondary);
 }
 </style>
