@@ -113,10 +113,11 @@ export const getAppWallets = (isDesktop = false): Wallet[] => {
 
 export const addWalletLocally = (
   wallet: InjectedWindowProvider,
-  walletInfo: WalletInfo,
+  walletKey: string,
   dAppName: string,
   walletNameOverride?: string
 ): void => {
+  const walletInfo = getWalletInfo(walletKey);
   const extensionName = walletNameOverride ?? walletInfo.extensionName;
 
   const injectedWindow = window as any;

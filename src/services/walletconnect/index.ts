@@ -1,6 +1,5 @@
 import { api } from '../../api';
-import { TranslationConsts } from '../../consts';
-import { WalletConnectInfo } from '../../consts/wallets';
+import { AppWallet, TranslationConsts } from '../../consts';
 import { addWalletLocally, checkWallet } from '../../util/account';
 
 import { WcProvider } from './provider/base';
@@ -13,7 +12,7 @@ import type { Wallet } from '@sora-test/wallet-connect/types';
 export { WcProvider };
 
 export const isWcWallet = (wallet: Wallet): boolean => {
-  return wallet.extensionName.startsWith(WalletConnectInfo.extensionName);
+  return wallet.extensionName.startsWith(AppWallet.WalletConnect);
 };
 
 const addWcWalletLocally = (
@@ -23,8 +22,7 @@ const addWcWalletLocally = (
   isSingletone = false
 ): string => {
   const dAppName = TranslationConsts.Polkaswap;
-  const walletName =
-    !isSingletone && chainId ? `${WalletConnectInfo.extensionName}:${chainId}` : WalletConnectInfo.extensionName;
+  const walletName = !isSingletone && chainId ? `${AppWallet.WalletConnect}:${chainId}` : AppWallet.WalletConnect;
 
   try {
     checkWallet(walletName as any);
@@ -35,7 +33,7 @@ const addWcWalletLocally = (
     });
     const wallet = new WcWallet(provider);
 
-    addWalletLocally(wallet, WalletConnectInfo, dAppName, walletName);
+    addWalletLocally(wallet, AppWallet.WalletConnect, dAppName, walletName);
   }
 
   return walletName;

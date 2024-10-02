@@ -10,7 +10,7 @@ import { AppWallet } from './index';
 
 import type { WalletInfo } from '@sora-test/wallet-connect/types';
 
-export const GDriveWalletInfo: WalletInfo = {
+const GDriveWalletInfo: WalletInfo = {
   extensionName: AppWallet.GoogleDrive,
   title: 'Google',
   chromeUrl: '',
@@ -21,7 +21,7 @@ export const GDriveWalletInfo: WalletInfo = {
   },
 };
 
-export const WalletConnectInfo: WalletInfo = {
+const WalletConnectInfo: WalletInfo = {
   extensionName: AppWallet.WalletConnect,
   title: 'WalletConnect',
   chromeUrl: '',
@@ -32,7 +32,7 @@ export const WalletConnectInfo: WalletInfo = {
   },
 };
 
-export const FearlessWalletInfo: WalletInfo = {
+const FearlessWalletInfo: WalletInfo = {
   extensionName: 'fearless-wallet',
   title: 'Fearless Wallet',
   chromeUrl: 'https://chrome.google.com/webstore/detail/fearless-wallet/nhlnehondigmgckngjomcpcefcdplmgc',
@@ -43,7 +43,7 @@ export const FearlessWalletInfo: WalletInfo = {
   },
 };
 
-export const PolkadotJsInfo: WalletInfo = {
+const PolkadotJsInfo: WalletInfo = {
   extensionName: 'polkadot-js',
   title: 'Polkadot{.js}',
   chromeUrl: 'https://chrome.google.com/webstore/detail/polkadot%7Bjs%7D-extension/mopnmbcafieddcagagdcbnhejhlodfdd',
@@ -54,7 +54,7 @@ export const PolkadotJsInfo: WalletInfo = {
   },
 };
 
-export const SubWalletInfo: WalletInfo = {
+const SubWalletInfo: WalletInfo = {
   extensionName: 'subwallet-js',
   title: 'SubWallet',
   chromeUrl: 'https://chrome.google.com/webstore/detail/subwallet/onhogfjeacnfoofkfgppdlbmlmnplgbn',
@@ -65,7 +65,7 @@ export const SubWalletInfo: WalletInfo = {
   },
 };
 
-export const TalismanInfo: WalletInfo = {
+const TalismanInfo: WalletInfo = {
   extensionName: 'talisman',
   title: 'Talisman',
   chromeUrl: 'https://chrome.google.com/webstore/detail/talisman-wallet/fijngjgcjhjmmpcmkeiomlglpeiijkld',
@@ -76,7 +76,7 @@ export const TalismanInfo: WalletInfo = {
   },
 };
 
-export const SoraWalletInfo: WalletInfo = {
+const SoraWalletInfo: WalletInfo = {
   extensionName: AppWallet.Sora,
   title: 'SORA Wallet',
   chromeUrl: '',
@@ -100,12 +100,14 @@ const KnownWallets = {
 export const getWalletInfo = (extensionName: string): WalletInfo => {
   if (extensionName in KnownWallets) return KnownWallets[extensionName];
 
+  const title = extensionName
+    .split('-')
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(' ');
+
   return {
     extensionName,
-    title: extensionName
-      .split('-')
-      .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-      .join(' '),
+    title,
     chromeUrl: '',
     mozillaUrl: '',
     logo: {

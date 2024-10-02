@@ -1,4 +1,4 @@
-import { GDriveWalletInfo } from '../../../consts/wallets';
+import { AppWallet } from '../../../consts';
 import { Singleton } from '../../../decorators';
 import { addWalletLocally } from '../../../util/account';
 import { GDriveStorage } from '../index';
@@ -45,5 +45,5 @@ export const GDriveWallet = new GoogleDriveWallet();
 export const addGDriveWalletLocally = (dAppName: string) => {
   if (!GDriveStorage.hasKey) return;
 
-  addWalletLocally(GDriveWallet, GDriveWalletInfo, dAppName);
+  addWalletLocally(GDriveWallet, AppWallet.GoogleDrive, dAppName);
 };
