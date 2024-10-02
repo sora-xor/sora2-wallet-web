@@ -28,7 +28,7 @@ exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1
         buffer="NaN"
         class="asset-list-inner hidden-scrollbar"
         item-size="NaN"
-        items="[object Object]"
+        items=""
         key-field="address"
         style="margin-right: 0px;"
       />
@@ -124,7 +124,7 @@ exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] =
         buffer="NaN"
         class="asset-list-inner hidden-scrollbar"
         item-size="NaN"
-        items="[object Object]"
+        items=""
         key-field="address"
         style="margin-right: 0px;"
       />
