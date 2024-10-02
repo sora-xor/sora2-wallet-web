@@ -5,7 +5,7 @@ import { SoraWallet } from './wallet';
 
 import type { WithKeyring } from '@sora-substrate/sdk';
 
-export const addSoraWalletLocally = (api: WithKeyring): string => {
+export const addSoraWalletLocally = (api: WithKeyring, dAppName: string): string => {
   const name = SoraWalletInfo.extensionName;
 
   try {
@@ -13,7 +13,7 @@ export const addSoraWalletLocally = (api: WithKeyring): string => {
   } catch {
     const wallet = new SoraWallet(api);
 
-    addWalletLocally(wallet, SoraWalletInfo, name);
+    addWalletLocally(wallet, SoraWalletInfo, dAppName);
   }
 
   return name;

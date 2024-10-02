@@ -1,5 +1,3 @@
-import { initialize } from '@sora-test/wallet-connect/dotsama/wallets';
-
 import { api, connection } from './api';
 // Components & Mixins
 import AccountCard from './components/Account/AccountCard.vue';
@@ -108,12 +106,12 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 const initAppWallets = (api: WithKeyring, isDesktop = false, appName?: string) => {
-  const name = appName ?? WALLET_CONSTS.TranslationConsts.Polkaswap;
+  const dAppName = appName ?? WALLET_CONSTS.TranslationConsts.Polkaswap;
 
   if (isDesktop) {
-    addSoraWalletLocally(api);
+    addSoraWalletLocally(api, dAppName);
   } else {
-    addGDriveWalletLocally();
+    addGDriveWalletLocally(dAppName);
   }
 
   addWcSubWalletLocally(api, (source) => {
@@ -121,7 +119,8 @@ const initAppWallets = (api: WithKeyring, isDesktop = false, appName?: string) =
     store.dispatch.wallet.account.updateAvailableWallets();
   });
 
-  initialize(name);
+  accountUtils.initializePredefinedWallets(dAppName);
+  accountUtils.initializeInjectedWallets(dAppName);
 
   store.dispatch.wallet.account.updateAvailableWallets();
 };
@@ -141,7 +140,6 @@ let walletCoreLoaded = false;
 
 const waitForCore = async ({
   withoutStore = false,
-  appName,
   permissions,
   updateEthBridgeHistory,
 }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> => {

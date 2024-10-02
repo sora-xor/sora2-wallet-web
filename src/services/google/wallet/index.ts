@@ -42,8 +42,8 @@ class GoogleDriveWallet implements InjectedWindowProvider {
 
 export const GDriveWallet = new GoogleDriveWallet();
 
-export const addGDriveWalletLocally = () => {
+export const addGDriveWalletLocally = (dAppName: string) => {
   if (!GDriveStorage.hasKey) return;
 
-  addWalletLocally(GDriveWallet, GDriveWalletInfo);
+  addWalletLocally(GDriveWallet, GDriveWalletInfo, dAppName);
 };

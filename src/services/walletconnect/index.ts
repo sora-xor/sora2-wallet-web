@@ -1,4 +1,5 @@
 import { api } from '../../api';
+import { TranslationConsts } from '../../consts';
 import { WalletConnectInfo } from '../../consts/wallets';
 import { addWalletLocally, checkWallet } from '../../util/account';
 
@@ -21,22 +22,23 @@ const addWcWalletLocally = (
   Provider: typeof WcProvider,
   isSingletone = false
 ): string => {
-  const name =
+  const dAppName = TranslationConsts.Polkaswap;
+  const walletName =
     !isSingletone && chainId ? `${WalletConnectInfo.extensionName}:${chainId}` : WalletConnectInfo.extensionName;
 
   try {
-    checkWallet(name as any);
+    checkWallet(walletName as any);
   } catch {
     const provider = new Provider({
       chains: [chainId],
-      onDisconnect: () => onDisconnect(name),
+      onDisconnect: () => onDisconnect(walletName),
     });
     const wallet = new WcWallet(provider);
 
-    addWalletLocally(wallet, WalletConnectInfo, name);
+    addWalletLocally(wallet, WalletConnectInfo, dAppName, walletName);
   }
 
-  return name;
+  return walletName;
 };
 
 export const addWcSubWalletLocally = (chainApi: WithKeyring, onDisconnect: (source: string) => void): string => {
