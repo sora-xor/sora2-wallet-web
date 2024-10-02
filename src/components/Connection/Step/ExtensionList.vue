@@ -1,6 +1,8 @@
 <template>
   <div class="wallet-connection">
-    <p class="wallet-connection-text">{{ t('connection.text') }}</p>
+    <p class="wallet-connection-text">
+      <external-link default-class="p3" :href="wikiLink" :title="t('connection.action.learnMore')" />
+    </p>
 
     <div v-if="internalWallets.length" class="wallet-connection-list">
       <p class="wallet-connection-title">{{ t('connection.list.integrated') }}</p>
@@ -17,6 +19,7 @@
     <div v-if="externalWallets.length" class="wallet-connection-list">
       <p class="wallet-connection-title">{{ t('connection.list.extensions') }}</p>
       <extension-connection-list
+        show-disclaimer
         :wallets="externalWallets"
         :recommended-wallets="recommendedWallets"
         :connected-wallet="connectedWallet"
@@ -36,6 +39,7 @@ import { Mixins, Component, Prop } from 'vue-property-decorator';
 
 import { AppWallet } from '../../../consts';
 import TranslationMixin from '../../mixins/TranslationMixin';
+import ExternalLink from '../../shared/ExternalLink.vue';
 import ExtensionConnectionList from '../List/Extension.vue';
 
 import type { Wallet } from '@sora-test/wallet-connect/types';
@@ -43,6 +47,7 @@ import type { Wallet } from '@sora-test/wallet-connect/types';
 @Component({
   components: {
     ExtensionConnectionList,
+    ExternalLink,
   },
 })
 export default class ExtensionListStep extends Mixins(TranslationMixin) {
@@ -52,6 +57,8 @@ export default class ExtensionListStep extends Mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly internalWallets!: Wallet[];
   @Prop({ default: () => [], type: Array }) readonly externalWallets!: Wallet[];
   @Prop({ default: () => [], type: Array }) readonly recommendedWallets!: string[];
+
+  readonly wikiLink = 'https://wiki.sora.org/polkaswap-connect-wallet.html';
 
   handleSelectWallet(wallet: Wallet): void {
     this.$emit('select', wallet);

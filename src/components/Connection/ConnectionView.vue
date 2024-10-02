@@ -24,9 +24,7 @@
       :recommended-wallets="recommendedWallets"
       @select="handleWalletSelect"
       @disconnect="handleWalletDisconnect"
-    >
-      <slot name="extension" />
-    </extension-list-step>
+    />
     <account-list-step
       v-else-if="isAccountList"
       :chain-api="chainApi"

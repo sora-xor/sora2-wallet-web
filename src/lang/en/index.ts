@@ -198,13 +198,14 @@ export default {
       'You can create or import an existing {Sora} account to connect with your {wallet} account. All data that is stored by {wallet} is encrypted using built-in advanced encryption.',
     noAccounts: 'No account found in your {extension} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
+    disclaimer: 'Please note that certain wallets may not be fully supported.',
     list: {
       integrated: 'Integrated',
       extensions: 'Extensions',
     },
     action: {
       install: 'Install extension',
-      learnMore: 'Learn more',
+      learnMore: 'Learn more about wallet connection',
       connect: 'Connect account',
       refresh: 'Refresh',
     },
@@ -212,6 +213,7 @@ export default {
       connected: 'Connected',
       notConnected: 'Not connected',
       install: 'Install',
+      recommended: 'Recommended',
     },
   },
   wallet: {
@@ -470,7 +472,7 @@ export default {
   },
   desktop: {
     welcome: {
-      header: 'Welcome to Polkaswap!',
+      header: 'Welcome to {Polkaswap}!',
       headline: 'Let’s set up your account',
       text: 'Create your {Sora} Network account or log into the old ones using mnemonic phrase or .json import. This allows you to securely sign transactions and manage assets in {Sora} Network.',
       createAccount: 'Create an account',
