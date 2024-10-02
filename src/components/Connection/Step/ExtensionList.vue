@@ -6,6 +6,7 @@
       <p class="wallet-connection-title">{{ t('connection.list.integrated') }}</p>
       <extension-connection-list
         :wallets="internalWallets"
+        :recommended-wallets="recommendedWallets"
         :connected-wallet="connectedWallet"
         :selected-wallet="selectedWallet"
         :selected-wallet-loading="selectedWalletLoading"
@@ -17,6 +18,7 @@
       <p class="wallet-connection-title">{{ t('connection.list.extensions') }}</p>
       <extension-connection-list
         :wallets="externalWallets"
+        :recommended-wallets="recommendedWallets"
         :connected-wallet="connectedWallet"
         :selected-wallet="selectedWallet"
         :selected-wallet-loading="selectedWalletLoading"
@@ -49,6 +51,7 @@ export default class ExtensionListStep extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly selectedWalletLoading!: boolean;
   @Prop({ default: () => [], type: Array }) readonly internalWallets!: Wallet[];
   @Prop({ default: () => [], type: Array }) readonly externalWallets!: Wallet[];
+  @Prop({ default: () => [], type: Array }) readonly recommendedWallets!: string[];
 
   handleSelectWallet(wallet: Wallet): void {
     this.$emit('select', wallet);

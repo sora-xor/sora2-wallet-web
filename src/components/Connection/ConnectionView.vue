@@ -21,6 +21,7 @@
       :selected-wallet-loading="selectedWalletLoading"
       :internal-wallets="wallets.internal"
       :external-wallets="wallets.external"
+      :recommended-wallets="recommendedWallets"
       @select="handleWalletSelect"
       @disconnect="handleWalletDisconnect"
     >
@@ -175,6 +176,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   accountsSubscription: Nullable<VoidFunction> = null;
 
   wcName = '';
+  recommendedWallets = [AppWallet.FearlessWallet];
 
   private resetWalletAccountsSubscription(): void {
     this.accountsSubscription?.();
