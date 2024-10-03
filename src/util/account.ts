@@ -13,10 +13,15 @@ import {
 import { AppError, formatAccountAddress, waitForDocumentReady } from '../util';
 
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
-import type { Unsubcall, InjectedWindowProvider } from '@polkadot/extension-inject/types';
+import type { Unsubcall, InjectedWindow, InjectedWindowProvider } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 import type { WithKeyring } from '@sora-substrate/sdk';
 import type { Wallet, WalletAccount } from '@sora-test/wallet-connect/types';
+
+declare global {
+  /* eslint-disable @typescript-eslint/no-empty-interface */
+  interface Window extends InjectedWindow {}
+}
 
 export const lockAccountPair = (api: WithKeyring): void => {
   api.lockPair();
