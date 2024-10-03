@@ -29,12 +29,10 @@ export class BaseDotSamaWallet implements Wallet {
     this.title = title;
     this.chromeUrl = chromeUrl;
     this.mozillaUrl = mozillaUrl;
-    this.installUrl = navigator.userAgent.match(/firefox|fxios/i) ? mozillaUrl : chromeUrl; // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    this.installUrl = /firefox|fxios/i.test(navigator.userAgent) ? mozillaUrl : chromeUrl; // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.logo = logo;
 
     this.dAppName = dAppName;
-
-    return this;
   }
 
   // API docs: https://polkadot.js.org/docs/extension/
@@ -76,7 +74,7 @@ export class BaseDotSamaWallet implements Wallet {
     try {
       const injectedExtension = this.rawExtension;
 
-      if (!injectedExtension || !injectedExtension.enable) {
+      if (!injectedExtension?.enable) {
         return;
       }
 
@@ -90,7 +88,7 @@ export class BaseDotSamaWallet implements Wallet {
         ...rawExtension,
         // Manually add `InjectedExtensionInfo` so as to have a consistent response.
         name: this.extensionName,
-        version: injectedExtension.version || 'unknown',
+        version: injectedExtension.version ?? 'unknown',
       };
 
       this._extension = extension;
