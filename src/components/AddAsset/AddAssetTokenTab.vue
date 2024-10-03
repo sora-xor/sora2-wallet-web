@@ -9,32 +9,46 @@
         @clear="resetSearch"
         class="add-asset-token__search"
       />
-      <div class="add-asset-token__switch-btn">
-        <s-switch v-model="isVerifiedOnly" :disabled="loading" />
-        <span>{{ t(`addAsset.${AddAssetTabs.Token}.switchBtn`) }}</span>
-      </div>
-      <synthetic-switcher class="add-asset-token__switch-btn" v-model="isSynthsOnly" />
-      <asset-list :assets="foundAssets" class="asset-search-list" @click="handleSelectAsset">
+      <assets-filter v-model="isVerifiedOnly" show-only-verified-switch class="add-asset-token__filter" />
+      <asset-list
+        :assets="foundAssets"
+        class="asset-search-list"
+        @click="handleSelectAsset"
+        selectable
+        :selected="selectedAssets"
+      >
         <template #list-empty>
           {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
         </template>
       </asset-list>
+      <s-button
+        v-if="showAddButton"
+        class="add-assets-button"
+        type="primary"
+        :loading="parentLoading || loading"
+        @click="handleAdd"
+      >
+        {{ t('addAsset.add') }}
+      </s-button>
     </div>
-    <add-asset-details-card v-else :asset="selectedAsset" />
+    <add-asset-details-card v-else :select-assets="selectedAssets" assetTypeKey="token" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
+import { FilterOptions } from '@/types/common';
+
 import { api } from '../../api';
-import { AddAssetTabs, syntheticAssetRegexp } from '../../consts';
-import { getter } from '../../store/decorators';
+import { AddAssetTabs } from '../../consts';
+import { state, getter } from '../../store/decorators';
+import { getAssetsSubset } from '../../util';
 import AssetList from '../AssetList.vue';
 import SearchInput from '../Input/SearchInput.vue';
 import AddAssetMixin from '../mixins/AddAssetMixin';
 import LoadingMixin from '../mixins/LoadingMixin';
-import SyntheticSwitcher from '../shared/SyntheticSwitcher.vue';
+import AssetsFilter from '../shared/AssetsFilter.vue';
 
 import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
@@ -43,18 +57,18 @@ import type { Asset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
 @Component({
   components: {
     AssetList,
+    AssetsFilter,
     SearchInput,
     AddAssetDetailsCard,
-    SyntheticSwitcher,
   },
 })
 export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
+  @state.settings.assetsFilter assetsFilter!: FilterOptions;
   @getter.account.whitelist private whitelist!: Whitelist;
   /** `true` by default cuz we have a lot of assets */
   isVerifiedOnly = true;
-  isSynthsOnly = false;
 
   private get notAddedAssets(): Array<Asset> {
     return this.assets.filter(
@@ -63,16 +77,15 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   }
 
   private get prefilteredAssets(): Array<Asset> {
-    return this.notAddedAssets.filter((asset) => {
-      if (this.isVerifiedOnly && !api.assets.isWhitelist(asset, this.whitelist)) return false;
-      if (this.isSynthsOnly && !syntheticAssetRegexp.test(asset.address)) return false;
-      return true;
-    });
+    const prefiltered = getAssetsSubset(this.notAddedAssets, this.assetsFilter);
+
+    return this.isVerifiedOnly
+      ? prefiltered.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
+      : prefiltered;
   }
 
   get foundAssets(): Array<Asset> {
     if (!this.searchValue) return this.prefilteredAssets;
-
     return this.getSoughtAssets(this.prefilteredAssets);
   }
 
@@ -85,6 +98,14 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
         symbol.toLowerCase() === this.searchValue ||
         name.toLowerCase() === this.searchValue
     );
+  }
+
+  get showAddButton(): boolean {
+    return this.selectedAssets.length > 0;
+  }
+
+  handleAdd() {
+    this.$emit('change-visibility');
   }
 }
 </script>
@@ -108,24 +129,25 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
     &-symbol {
       font-size: var(--s-font-size-default);
     }
+    &:focus:not(:active) {
+      outline: unset;
+    }
   }
 }
 </style>
 
 <style scoped lang="scss">
 .add-asset-token {
-  margin-top: #{$basic-spacing-medium};
-
-  &__switch-btn {
-    display: flex;
-    margin-bottom: 10px;
-    .s-switch {
-      margin-right: 12px;
-    }
+  &__filter {
+    margin-bottom: 8px;
   }
 
   &__search {
     margin-bottom: #{$basic-spacing-medium};
   }
+}
+.add-assets-button {
+  margin-top: #{$basic-spacing};
+  width: 100%;
 }
 </style>

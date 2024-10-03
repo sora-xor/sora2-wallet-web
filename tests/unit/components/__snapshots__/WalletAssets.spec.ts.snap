@@ -17,6 +17,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
       clone="[Function]"
       element="div"
       handle=".wallet-assets-dashes"
+      move="[Function]"
       value="[object Object],[object Object],[object Object]"
     >
       <div
@@ -36,6 +37,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
            
           <asset-list-item-stub
             asset="[object Object]"
+            pinnable="true"
             withclickablelogo="true"
             withfiat="true"
           />
@@ -65,6 +67,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
            
           <asset-list-item-stub
             asset="[object Object]"
+            pinnable="true"
             withclickablelogo="true"
             withfiat="true"
           />
@@ -94,6 +97,7 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
            
           <asset-list-item-stub
             asset="[object Object]"
+            pinnable="true"
             withclickablelogo="true"
             withfiat="true"
           />

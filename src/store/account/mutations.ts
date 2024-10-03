@@ -105,6 +105,20 @@ const mutations = defineMutations<AccountState>()({
   setAccountAssets(state, accountAssets: Array<AccountAsset>): void {
     state.accountAssets = accountAssets;
   },
+  setPinnedAsset(state, pinnedAccountAsset: AccountAsset): void {
+    const assetAddress = pinnedAccountAsset.address;
+    state.pinnedAssets.push(assetAddress);
+    settingsStorage.set('pinnedAssets', JSON.stringify(state.pinnedAssets));
+  },
+  setMultiplePinnedAssets(state, pinnedAssetAddresses: string[]) {
+    state.pinnedAssets = pinnedAssetAddresses;
+    settingsStorage.set('pinnedAssets', JSON.stringify(state.pinnedAssets));
+  },
+  removePinnedAsset(state, pinnedAccountAsset: AccountAsset): void {
+    state.pinnedAssets = state.pinnedAssets.filter((address) => address !== pinnedAccountAsset.address);
+    settingsStorage.set('pinnedAssets', JSON.stringify(state.pinnedAssets));
+  },
+
   setAssetToNotify(state, asset: WhitelistArrayItem): void {
     state.assetsToNotifyQueue.push(asset);
   },

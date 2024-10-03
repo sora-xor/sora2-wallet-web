@@ -1,13 +1,22 @@
 import { FPNumber } from '@sora-substrate/sdk';
-import { KnownAssets } from '@sora-substrate/sdk/build/assets/consts';
+import { KnownAssets, NativeAssets } from '@sora-substrate/sdk/build/assets/consts';
 
 import { api, connection } from '../api';
-import { ExplorerLink, SoraNetwork, ExplorerType } from '../consts';
+import {
+  ExplorerLink,
+  SoraNetwork,
+  ExplorerType,
+  syntheticAssetRegexp,
+  kensetsuAssetRegexp,
+  CeresAddresses,
+} from '../consts';
 import { Currencies } from '../consts/currencies';
+import { FilterOptions } from '../types/common';
 
 import type { Currency } from '../types/currency';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { WithKeyring, WithConnectionApi } from '@sora-substrate/sdk';
+import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 import type { RewardInfo, RewardsInfo } from '@sora-substrate/sdk/build/rewards/types';
 import type { Store } from 'vuex';
 
@@ -202,9 +211,7 @@ export const groupRewardsByAssetsList = (rewards: Array<RewardInfo | RewardsInfo
 };
 
 export const getCssVariableValue = (name: string): string => {
-  return getComputedStyle(document.documentElement as any)
-    .getPropertyValue(name)
-    .trim();
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 };
 
 export const getTextWidth = (text: string, font = '300 12px "Sora", sans-serif'): number => {
@@ -272,5 +279,27 @@ export async function beforeTransactionSign(
 
   if (signerApi.accountPair?.isLocked) {
     throw new Error('Cancelled');
+  }
+}
+
+export function getAssetsSubset<T extends Asset>(tokensList: T[], assetsFilter: FilterOptions): T[] {
+  switch (assetsFilter) {
+    case FilterOptions.Native: {
+      const nativeAssetsAddresses = NativeAssets.map((nativeAsset) => nativeAsset.address);
+      return tokensList.filter((asset) => nativeAssetsAddresses.includes(asset.address));
+    }
+    case FilterOptions.Kensetsu: {
+      return tokensList.filter((asset) => kensetsuAssetRegexp.test(asset.address));
+    }
+    case FilterOptions.Synthetics: {
+      return tokensList.filter((asset) => syntheticAssetRegexp.test(asset.address));
+    }
+    case FilterOptions.Ceres: {
+      const ceresAssetsAddresses = CeresAddresses;
+      return tokensList.filter((asset) => ceresAssetsAddresses.includes(asset.address));
+    }
+    default: {
+      return tokensList;
+    }
   }
 }

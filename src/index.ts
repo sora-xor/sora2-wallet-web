@@ -1,5 +1,3 @@
-import { initialize } from '@sora-test/wallet-connect/dotsama/wallets';
-
 import { api, connection } from './api';
 // Components & Mixins
 import AccountCard from './components/Account/AccountCard.vue';
@@ -37,6 +35,8 @@ import TranslationMixin from './components/mixins/TranslationMixin';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import NftDetails from './components/NftDetails.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
+import PinIcon from './components/PinIcon.vue';
+import AssetsFilter from './components/shared/AssetsFilter.vue';
 import ExternalLink from './components/shared/ExternalLink.vue';
 import FormattedAddress from './components/shared/FormattedAddress.vue';
 import SyntheticSwitcher from './components/shared/SyntheticSwitcher.vue';
@@ -73,6 +73,7 @@ import {
   formatAccountAddress,
   validateAddress,
   beforeTransactionSign,
+  getAssetsSubset,
 } from './util';
 import * as accountUtils from './util/account';
 import { IpfsStorage } from './util/ipfsStorage';
@@ -107,12 +108,12 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 const initAppWallets = (api: WithKeyring, isDesktop = false, appName?: string) => {
-  const name = appName ?? WALLET_CONSTS.TranslationConsts.Polkaswap;
+  const dAppName = appName ?? WALLET_CONSTS.TranslationConsts.Polkaswap;
 
   if (isDesktop) {
-    addSoraWalletLocally(api);
+    addSoraWalletLocally(api, dAppName);
   } else {
-    addGDriveWalletLocally();
+    addGDriveWalletLocally(dAppName);
   }
 
   addWcSubWalletLocally(api, (source) => {
@@ -120,7 +121,8 @@ const initAppWallets = (api: WithKeyring, isDesktop = false, appName?: string) =
     store.dispatch.wallet.account.updateAvailableWallets();
   });
 
-  initialize(name);
+  accountUtils.initializePredefinedWallets(dAppName);
+  accountUtils.initializeInjectedWallets(dAppName);
 
   store.dispatch.wallet.account.updateAvailableWallets();
 };
@@ -140,7 +142,6 @@ let walletCoreLoaded = false;
 
 const waitForCore = async ({
   withoutStore = false,
-  appName,
   permissions,
   updateEthBridgeHistory,
 }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> => {
@@ -202,6 +203,7 @@ const components = {
   AccountCard,
   AccountConfirmationOption,
   AddressBookInput,
+  AssetsFilter,
   AssetList,
   AssetListItem,
   AddAssetDetailsCard,
@@ -227,6 +229,7 @@ const components = {
   AccountConnectionList,
   ExtensionConnectionList,
   ConnectionView,
+  PinIcon,
 };
 
 const mixins = {
@@ -266,6 +269,7 @@ export {
   formatAccountAddress,
   validateAddress,
   beforeTransactionSign,
+  getAssetsSubset,
   WALLET_CONSTS,
   WALLET_TYPES,
   components,

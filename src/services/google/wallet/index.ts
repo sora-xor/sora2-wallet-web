@@ -1,4 +1,4 @@
-import { GDriveWalletInfo } from '../../../consts/wallets';
+import { AppWallet } from '../../../consts';
 import { Singleton } from '../../../decorators';
 import { addWalletLocally } from '../../../util/account';
 import { GDriveStorage } from '../index';
@@ -42,8 +42,8 @@ class GoogleDriveWallet implements InjectedWindowProvider {
 
 export const GDriveWallet = new GoogleDriveWallet();
 
-export const addGDriveWalletLocally = () => {
+export const addGDriveWalletLocally = (dAppName: string) => {
   if (!GDriveStorage.hasKey) return;
 
-  addWalletLocally(GDriveWallet, GDriveWalletInfo);
+  addWalletLocally(GDriveWallet, AppWallet.GoogleDrive, dAppName);
 };

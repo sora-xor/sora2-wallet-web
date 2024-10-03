@@ -13,6 +13,8 @@ export function initialState(): AccountState {
   const ceresFiatValues = settingsStorage.get('ceresFiatValues');
   const book = addressBook && JSON.parse(addressBook);
   const isExternal = storage.get('isExternal');
+  const pinnedAssetsString = settingsStorage.get('pinnedAssets');
+  const pinnedAssets = pinnedAssetsString ? JSON.parse(pinnedAssetsString) : [];
   const accountPasswordTimeout = settingsStorage.get('accountPasswordTimeout');
 
   return {
@@ -27,6 +29,7 @@ export function initialState(): AccountState {
     alertSubject: null,
     /** account assets & subscription */
     accountAssets: [],
+    pinnedAssets: pinnedAssets || [],
     accountAssetsSubscription: null,
     /** whitelist & blacklist */
     whitelistArray: [],

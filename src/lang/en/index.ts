@@ -12,6 +12,7 @@ export default {
   importText: 'Import',
   settingsText: 'Settings',
   addAssetText: 'Add asset',
+  addAssetsText: 'Add asset | Add assets',
   createTokenText: 'Create',
   createTokenTextNFT: 'Create NFT',
   comingSoonText: 'Coming soon',
@@ -212,13 +213,14 @@ export default {
       'You can create or import an existing {Sora} account to connect with your {wallet} account. All data that is stored by {wallet} is encrypted using built-in advanced encryption.',
     noAccounts: 'No account found in your {extension} browser extension. Please add an account and try again.',
     selectAccount: 'Select account to work with',
+    disclaimer: 'Please note that certain wallets may not be fully supported.',
     list: {
       integrated: 'Integrated',
       extensions: 'Extensions',
     },
     action: {
       install: 'Install extension',
-      learnMore: 'Learn more',
+      learnMore: 'Learn more about wallet connection',
       connect: 'Connect account',
       refresh: 'Refresh',
     },
@@ -226,6 +228,7 @@ export default {
       connected: 'Connected',
       notConnected: 'Not connected',
       install: 'Install',
+      recommended: 'Recommended',
     },
   },
   wallet: {
@@ -348,12 +351,18 @@ export default {
     alreadyAttached: 'Token was already attached',
     understand: 'I understand',
     warningTitle: 'Trade at your own risk!',
-    warningMessage:
-      'Anyone can create a token, including creating fake versions of existing tokens that claim to represent projects.\nIf you purchase this token, you may not be able to sell it back.',
+    warningMessage: 'this {assetType} | these {assetTypePlural}',
+    warningMessageText:
+      'Anyone can create a {assetType}, including creating fake versions of existing {assetTypePlural} that claim to represent projects.\nIf you purchase {purchaseAssetType}, you may not be able to sell it back.',
+    assetType: {
+      token: 'token | tokens',
+      nft: 'NFT | NFTs',
+    },
     approved: 'Asset approved by community',
     unknown: 'Unknown source',
     scam: 'SCAM',
     next: 'Next',
+    add: 'Add',
   },
   createToken: {
     title: '@:createTokenText',
@@ -429,10 +438,13 @@ export default {
   filter: {
     all: 'All',
     token: 'Currencies',
+    native: 'Native',
+    synthetics: 'Synthetics',
     verifiedOnly: 'Show verified assets only',
     zeroBalance: 'Hide 0 balance assets',
     showAssets: 'Show assets',
     show: 'Show',
+    reset: 'Reset',
   },
   transaction: {
     title: 'Transaction details',
@@ -475,7 +487,7 @@ export default {
   },
   desktop: {
     welcome: {
-      header: 'Welcome to Polkaswap!',
+      header: 'Welcome to {Polkaswap}!',
       headline: 'Let’s set up your account',
       text: 'Create your {Sora} Network account or log into the old ones using mnemonic phrase or .json import. This allows you to securely sign transactions and manage assets in {Sora} Network.',
       createAccount: 'Create an account',

@@ -1,5 +1,5 @@
 import { api } from '../../api';
-import { WalletConnectInfo } from '../../consts/wallets';
+import { AppWallet, TranslationConsts } from '../../consts';
 import { addWalletLocally, checkWallet } from '../../util/account';
 
 import { WcProvider } from './provider/base';
@@ -12,7 +12,7 @@ import type { Wallet } from '@sora-test/wallet-connect/types';
 export { WcProvider };
 
 export const isWcWallet = (wallet: Wallet): boolean => {
-  return wallet.extensionName.startsWith(WalletConnectInfo.extensionName);
+  return wallet.extensionName.startsWith(AppWallet.WalletConnect);
 };
 
 const addWcWalletLocally = (
@@ -21,22 +21,22 @@ const addWcWalletLocally = (
   Provider: typeof WcProvider,
   isSingletone = false
 ): string => {
-  const name =
-    !isSingletone && chainId ? `${WalletConnectInfo.extensionName}:${chainId}` : WalletConnectInfo.extensionName;
+  const dAppName = TranslationConsts.Polkaswap;
+  const walletName = !isSingletone && chainId ? `${AppWallet.WalletConnect}:${chainId}` : AppWallet.WalletConnect;
 
   try {
-    checkWallet(name as any);
+    checkWallet(walletName);
   } catch {
     const provider = new Provider({
       chains: [chainId],
-      onDisconnect: () => onDisconnect(name),
+      onDisconnect: () => onDisconnect(walletName),
     });
     const wallet = new WcWallet(provider);
 
-    addWalletLocally(wallet, WalletConnectInfo, name);
+    addWalletLocally(wallet, AppWallet.WalletConnect, dAppName, walletName);
   }
 
-  return name;
+  return walletName;
 };
 
 export const addWcSubWalletLocally = (chainApi: WithKeyring, onDisconnect: (source: string) => void): string => {

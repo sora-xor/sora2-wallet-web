@@ -1,6 +1,12 @@
 <template>
   <div
-    :class="['s-flex', 'asset', { 'asset--with-fiat': withFiat }]"
+    :class="[
+      's-flex',
+      'asset',
+      { 'asset--with-fiat': withFiat },
+      { 'asset--selected': selected },
+      { 'asset--pinned': pinned },
+    ]"
     v-bind="$attrs"
     v-button="withTabindex"
     :tabindex="withTabindex ? 0 : -1"
@@ -21,6 +27,12 @@
       <slot name="append" v-bind="asset" />
     </div>
     <slot v-bind="asset" />
+    <div v-if="selectable" class="check">
+      <s-icon name="basic-check-mark-24" size="12px" />
+    </div>
+    <div v-if="pinnable" @click="pin" class="pin">
+      <pin-icon :isPinned="pinned" />
+    </div>
   </div>
 </template>
 
@@ -32,6 +44,7 @@ import { state } from '../store/decorators';
 import NftTokenLogo from './AssetLogos/NftTokenLogo.vue';
 import TokenLogo from './AssetLogos/TokenLogo.vue';
 import TranslationMixin from './mixins/TranslationMixin';
+import PinIcon from './PinIcon.vue';
 import TokenAddress from './TokenAddress.vue';
 
 import type { Asset } from '@sora-substrate/sdk/build/assets/types';
@@ -41,15 +54,18 @@ import type { Asset } from '@sora-substrate/sdk/build/assets/types';
     NftTokenLogo,
     TokenLogo,
     TokenAddress,
+    PinIcon,
   },
 })
 export default class AssetListItem extends Mixins(TranslationMixin) {
   @Prop({ required: true, type: Object }) readonly asset!: Asset;
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly selected!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
+  @Prop({ default: true, type: Boolean }) readonly pinnable!: boolean;
+  @Prop({ default: false, type: Boolean }) readonly pinned!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withTabindex!: boolean;
-
-  @state.account.address private connected!: string;
 
   handleIconClick(event: Event): void {
     if (!this.withClickableLogo) {
@@ -59,6 +75,11 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
       event.stopImmediatePropagation();
     }
     this.$emit('show-details', this.asset);
+  }
+
+  pin(event: Event) {
+    event.stopPropagation();
+    this.$emit('pin', this.asset);
   }
 }
 </script>
@@ -106,6 +127,38 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     font-size: var(--s-font-size-extra-mini);
     display: block;
     font-weight: 300;
+  }
+  .check {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--s-color-base-content-secondary);
+    border-radius: 50%;
+    transition: opacity 150ms, border-color 150ms, background-color 150ms;
+    i {
+      color: white;
+    }
+  }
+  &--selected .check {
+    background: var(--s-color-theme-accent);
+    border: 1px solid transparent;
+  }
+  &:not(&--selected) .check i {
+    opacity: 0;
+  }
+  &:not(:hover):not(&--selected) .check {
+    opacity: 0;
+  }
+  .pin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    svg {
+      width: 24px;
+      height: 24px;
+    }
   }
 }
 </style>

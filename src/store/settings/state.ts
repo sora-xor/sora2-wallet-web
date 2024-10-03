@@ -1,7 +1,7 @@
 import { Currency } from '@/types/currency';
 
 import { WalletAssetFilters, WalletFilteringOptions, IndexerType } from '../../consts';
-import { Alert, ConnectionStatus } from '../../types/common';
+import { Alert, ConnectionStatus, FilterOptions } from '../../types/common';
 import { storage, runtimeStorage, settingsStorage } from '../../util/storage';
 
 import type { SettingsState } from './types';
@@ -64,6 +64,7 @@ function initialState(): SettingsState {
     currencies: [],
     fiatExchangeRateObject: { [Currency.DAI]: 1 },
     exchangeRateUnsubFn: null,
+    assetsFilter: FilterOptions.All,
   };
 }
 

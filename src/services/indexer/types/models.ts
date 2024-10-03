@@ -5,6 +5,11 @@ import {
   SubqueryOrderBookSnapshotEntity,
   SubqueryOrderBookOrderEntity,
   SubqueryPoolXYKEntity,
+  SubqueryVaultEntity,
+  SubqueryVaultEventEntity,
+  SubqueryAccountLiquidityEntity,
+  SubqueryAccountLiquiditySnapshotEntity,
+  SubqueryPoolSnapshotEntity,
 } from '../subquery/types';
 import {
   SubsquidAccountEntity,
@@ -13,6 +18,8 @@ import {
   SubsquidOrderBookSnapshotEntity,
   SubsquidOrderBookOrderEntity,
   SubsquidPoolXYKEntity,
+  SubsquidVaultEntity,
+  SubsquidVaultEventEntity,
 } from '../subsquid/types';
 
 import type { PriceVariant, OrderBookStatus } from '@sora-substrate/liquidity-proxy';
@@ -25,6 +32,20 @@ export enum SnapshotTypes {
   HOUR = 'HOUR',
   DAY = 'DAY',
   MONTH = 'MONTH',
+  BLOCK = 'BLOCK',
+}
+
+export enum HistoryElementType {
+  CALL = 'CALL',
+  EVENT = 'EVENT',
+}
+
+export enum PayeeType {
+  STAKED = 'STAKED',
+  STASH = 'STASH',
+  CONTROLLER = 'CONTROLLER',
+  ACCOUNT = 'ACCOUNT',
+  NONE = 'NONE',
 }
 
 export enum OrderStatus {
@@ -40,6 +61,26 @@ export enum OrderType {
   Market = 'Market',
 }
 
+export enum VaultType {
+  Type1 = 'Type1',
+  Type2 = 'Type2',
+}
+
+export enum VaultStatus {
+  Opened = 'Opened',
+  Closed = 'Closed',
+  Liquidated = 'Liquidated',
+}
+
+export enum VaultEventType {
+  Created = 'Created',
+  Closed = 'Closed',
+  CollateralDeposit = 'CollateralDeposit',
+  DebtIncreased = 'DebtIncreased',
+  DebtPayment = 'DebtPayment',
+  Liquidated = 'Liquidated',
+}
+
 // Indexer Models
 /* eslint-disable camelcase */
 
@@ -53,6 +94,23 @@ export type PriceSnapshot = {
 export type AssetVolume = {
   amount: string;
   amountUSD: string;
+};
+
+export type AccountMetaEventCounter = {
+  created: number;
+  closed: number;
+  amountUSD: string;
+};
+
+export type AccountMetaGovernance = {
+  votes: number;
+  amount: string;
+  amountUSD: string;
+};
+
+export type AccountMetaDeposit = {
+  incomingUSD: string;
+  outgoingUSD: string;
 };
 
 export type AccountBaseEntity = {
@@ -88,9 +146,45 @@ export type PoolXYKBaseEntity = {
   id: string;
   baseAssetReserves: CodecString;
   targetAssetReserves: CodecString;
+  chameleonAssetReserves: Nullable<CodecString>;
   multiplier: number;
   priceUSD: Nullable<string>;
   strategicBonusApy: Nullable<string>;
+  poolTokenSupply: CodecString;
+  poolTokenPriceUSD: string;
+  liquidityUSD: string;
+};
+
+export type PoolSnapshotBaseEntity = {
+  id: string;
+  poolId: string;
+  timestamp: number;
+  type: SnapshotTypes;
+  priceUSD: PriceSnapshot;
+  baseAssetReserves: CodecString;
+  targetAssetReserves: CodecString;
+  chameleonAssetReserves: CodecString;
+  baseAssetVolume: string;
+  targetAssetVolume: string;
+  chameleonAssetVolume: string;
+  poolTokenSupply: CodecString;
+  poolTokenPriceUSD: string;
+  liquidityUSD: string;
+  volumeUSD: string;
+};
+
+export type AccountLiquidityBaseEntity = {
+  id: string;
+  poolTokens: CodecString;
+  liquidityUSD: string;
+};
+
+export type AccountLiquiditySnapshotBaseEntity = {
+  id: string;
+  timestamp: number;
+  type: SnapshotTypes;
+  poolTokens: CodecString;
+  liquidityUSD: string;
 };
 
 export type NetworkStatsEntity = {
@@ -161,6 +255,23 @@ export type OrderBookSnapshotBaseEntity = {
   quoteAssetVolume: string;
   volumeUSD: string;
   liquidityUSD: string;
+};
+
+export type VaultBaseEntity = {
+  id: string;
+  type: VaultType;
+  status: VaultStatus;
+  collateralAmountReturned: Nullable<string>;
+  createdAtBlock: number;
+  updatedAtBlock: number;
+};
+
+export type VaultEventBaseEntity = {
+  id: string;
+  type: VaultEventType;
+  timestamp: number;
+  block: number;
+  amount: string;
 };
 
 export type ReferrerRewardEntity = {
@@ -488,6 +599,7 @@ export type UpdatesStream = {
   data: string; // stringified JSON
 };
 
+// export unions
 export type AssetEntity = SubqueryAssetEntity | SubsquidAssetEntity;
 
 export type AssetSnapshotEntity = AssetSnapshotBaseEntity & {
@@ -496,10 +608,32 @@ export type AssetSnapshotEntity = AssetSnapshotBaseEntity & {
 
 export type PoolXYKEntity = SubqueryPoolXYKEntity | SubsquidPoolXYKEntity;
 
+export type PoolSnapshotEntity = SubqueryPoolSnapshotEntity;
+
 export type OrderBookEntity = SubqueryOrderBookEntity | SubsquidOrderBookEntity;
 
 export type OrderBookSnapshotEntity = SubqueryOrderBookSnapshotEntity | SubsquidOrderBookSnapshotEntity;
 
 export type OrderBookOrderEntity = SubqueryOrderBookOrderEntity | SubsquidOrderBookOrderEntity;
 
+export type VaultEntity = SubqueryVaultEntity | SubsquidVaultEntity;
+
+export type VaultEventEntity = SubqueryVaultEventEntity | SubsquidVaultEventEntity;
+
 export type AccountEntity = SubqueryAccountEntity | SubsquidAccountEntity;
+
+export type AccountLiquidityEntity = SubqueryAccountLiquidityEntity;
+
+export type AccountLiquiditySnapshotEntity = SubqueryAccountLiquiditySnapshotEntity;
+
+export type AccountMetaEntity = {
+  id: string; // account id
+  createdAtBlock: number;
+  xorFees: AssetVolume;
+  xorBurned: AssetVolume;
+  xorStakingValRewards: AssetVolume;
+  orderBook: AccountMetaEventCounter;
+  vault: AccountMetaEventCounter;
+  governance: AccountMetaGovernance;
+  deposit: AccountMetaDeposit;
+};

@@ -8,25 +8,7 @@ exports[`WalletConnection.vue [Extension available]: Accounts should be rendered
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"
->
-  <s-button-stub
-    borderradius="small"
-    class="s-typography-button--large learn-more-btn"
-    icon="question-circle-16"
-    iconposition="right"
-    nativetype="button"
-    size="medium"
-    tabindex="0"
-    tooltip=""
-    tooltipplacement="top"
-    type="tertiary"
-    usedesignsystem="true"
-  >
-    
-      Learn more
-    
-  </s-button-stub>
-</connection-view-stub>
+/>
 `;
 
 exports[`WalletConnection.vue [Extension available]: Connect account screen should be rendered 1`] = `
@@ -37,25 +19,7 @@ exports[`WalletConnection.vue [Extension available]: Connect account screen shou
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"
->
-  <s-button-stub
-    borderradius="small"
-    class="s-typography-button--large learn-more-btn"
-    icon="question-circle-16"
-    iconposition="right"
-    nativetype="button"
-    size="medium"
-    tabindex="0"
-    tooltip=""
-    tooltipplacement="top"
-    type="tertiary"
-    usedesignsystem="true"
-  >
-    
-      Learn more
-    
-  </s-button-stub>
-</connection-view-stub>
+/>
 `;
 
 exports[`WalletConnection.vue [Extension available]: Extensions should be rendered 1`] = `
@@ -66,25 +30,7 @@ exports[`WalletConnection.vue [Extension available]: Extensions should be render
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"
->
-  <s-button-stub
-    borderradius="small"
-    class="s-typography-button--large learn-more-btn"
-    icon="question-circle-16"
-    iconposition="right"
-    nativetype="button"
-    size="medium"
-    tabindex="0"
-    tooltip=""
-    tooltipplacement="top"
-    type="tertiary"
-    usedesignsystem="true"
-  >
-    
-      Learn more
-    
-  </s-button-stub>
-</connection-view-stub>
+/>
 `;
 
 exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen should be rendered 1`] = `
@@ -95,23 +41,5 @@ exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"
->
-  <s-button-stub
-    borderradius="small"
-    class="s-typography-button--large learn-more-btn"
-    icon="question-circle-16"
-    iconposition="right"
-    nativetype="button"
-    size="medium"
-    tabindex="0"
-    tooltip=""
-    tooltipplacement="top"
-    type="tertiary"
-    usedesignsystem="true"
-  >
-    
-      Learn more
-    
-  </s-button-stub>
-</connection-view-stub>
+/>
 `;

@@ -86,6 +86,8 @@ const globals = {
   'vue-virtual-scroller': 'vueVirtualScroller',
   vuedraggable: 'draggable',
   vuex: 'Vuex',
+  '@walletconnect/modal': 'modal',
+  '@walletconnect/universal-provider': 'UniversalProvider',
   wonka: 'wonka',
 };
 

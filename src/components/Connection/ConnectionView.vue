@@ -21,11 +21,10 @@
       :selected-wallet-loading="selectedWalletLoading"
       :internal-wallets="wallets.internal"
       :external-wallets="wallets.external"
+      :recommended-wallets="recommendedWallets"
       @select="handleWalletSelect"
       @disconnect="handleWalletDisconnect"
-    >
-      <slot name="extension" />
-    </extension-list-step>
+    />
     <account-list-step
       v-else-if="isAccountList"
       :chain-api="chainApi"
@@ -74,6 +73,7 @@
 import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
+import { RecommendedWallets } from '../../consts/wallets';
 import { GDriveWallet } from '../../services/google/wallet';
 import { addWcSubWalletLocally, isWcWallet } from '../../services/walletconnect';
 import { action, state } from '../../store/decorators';
@@ -175,6 +175,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   accountsSubscription: Nullable<VoidFunction> = null;
 
   wcName = '';
+  recommendedWallets = RecommendedWallets;
 
   private resetWalletAccountsSubscription(): void {
     this.accountsSubscription?.();

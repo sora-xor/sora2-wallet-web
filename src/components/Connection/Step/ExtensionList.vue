@@ -1,11 +1,14 @@
 <template>
   <div class="wallet-connection">
-    <p class="wallet-connection-text">{{ t('connection.text') }}</p>
+    <p class="wallet-connection-text">
+      <external-link default-class="p3" :href="wikiLink" :title="t('connection.action.learnMore')" />
+    </p>
 
     <div v-if="internalWallets.length" class="wallet-connection-list">
       <p class="wallet-connection-title">{{ t('connection.list.integrated') }}</p>
       <extension-connection-list
         :wallets="internalWallets"
+        :recommended-wallets="recommendedWallets"
         :connected-wallet="connectedWallet"
         :selected-wallet="selectedWallet"
         :selected-wallet-loading="selectedWalletLoading"
@@ -16,7 +19,9 @@
     <div v-if="externalWallets.length" class="wallet-connection-list">
       <p class="wallet-connection-title">{{ t('connection.list.extensions') }}</p>
       <extension-connection-list
+        show-disclaimer
         :wallets="externalWallets"
+        :recommended-wallets="recommendedWallets"
         :connected-wallet="connectedWallet"
         :selected-wallet="selectedWallet"
         :selected-wallet-loading="selectedWalletLoading"
@@ -32,8 +37,9 @@
 <script lang="ts">
 import { Mixins, Component, Prop } from 'vue-property-decorator';
 
-import { AppWallet } from '../../../consts';
+import { AppWallet, Links } from '../../../consts';
 import TranslationMixin from '../../mixins/TranslationMixin';
+import ExternalLink from '../../shared/ExternalLink.vue';
 import ExtensionConnectionList from '../List/Extension.vue';
 
 import type { Wallet } from '@sora-test/wallet-connect/types';
@@ -41,6 +47,7 @@ import type { Wallet } from '@sora-test/wallet-connect/types';
 @Component({
   components: {
     ExtensionConnectionList,
+    ExternalLink,
   },
 })
 export default class ExtensionListStep extends Mixins(TranslationMixin) {
@@ -49,6 +56,9 @@ export default class ExtensionListStep extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly selectedWalletLoading!: boolean;
   @Prop({ default: () => [], type: Array }) readonly internalWallets!: Wallet[];
   @Prop({ default: () => [], type: Array }) readonly externalWallets!: Wallet[];
+  @Prop({ default: () => [], type: Array }) readonly recommendedWallets!: string[];
+
+  readonly wikiLink = Links.connection.wiki;
 
   handleSelectWallet(wallet: Wallet): void {
     this.$emit('select', wallet);
