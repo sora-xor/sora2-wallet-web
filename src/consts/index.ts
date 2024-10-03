@@ -20,6 +20,12 @@ export const HiddenValue = '******';
 export const BLOCK_PRODUCE_TIME = 6_000;
 export const MAX_ALERTS_NUMBER = 10;
 
+export const Links = {
+  connection: {
+    wiki: 'https://wiki.sora.org/polkaswap-connect-wallet.html',
+  },
+};
+
 export enum IndexerType {
   SUBQUERY = 'subquery',
   SUBSQUID = 'subsquid',

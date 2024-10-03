@@ -7,19 +7,7 @@
     :rename-account="renameAccount"
     :check-connected-account-source="checkConnectedAccountSource"
     :close-view="navigateToAccount"
-  >
-    <template #extension>
-      <s-button
-        class="s-typography-button--large learn-more-btn"
-        type="tertiary"
-        icon="question-circle-16"
-        icon-position="right"
-        @click="handleLearnMore"
-      >
-        {{ t('connection.action.learnMore') }}
-      </s-button>
-    </template>
-  </connection-view>
+  />
 </template>
 
 <script lang="ts">
@@ -48,10 +36,6 @@ export default class WalletConnection extends Mixins(TranslationMixin) {
 
   get chainApi() {
     return api;
-  }
-
-  handleLearnMore(): void {
-    this.$emit('learn-more');
   }
 
   @mutation.router.navigate private navigate!: (options: Route) => void;

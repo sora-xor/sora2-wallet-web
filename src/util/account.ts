@@ -1,15 +1,27 @@
 import { addWallet, getWallets, getWalletBySource } from '@sora-test/wallet-connect/dotsama/wallets';
 import { saveAs } from 'file-saver';
 
-import { AppWallet, TranslationConsts } from '../consts';
-import { AppStorageWallets, DesktopWallets, InternalWallets, ExtensionWallets } from '../consts/wallets';
+import { AppWallet } from '../consts';
+import {
+  AppStorageWallets,
+  DesktopWallets,
+  InternalWallets,
+  ExtensionWallets,
+  PredefinedWallets,
+  getWalletInfo,
+} from '../consts/wallets';
 import { AppError, formatAccountAddress, waitForDocumentReady } from '../util';
 
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
-import type { Unsubcall, InjectedWindowProvider } from '@polkadot/extension-inject/types';
+import type { Unsubcall, InjectedWindow, InjectedWindowProvider } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 import type { WithKeyring } from '@sora-substrate/sdk';
-import type { Wallet, WalletAccount, WalletInfo } from '@sora-test/wallet-connect/types';
+import type { Wallet, WalletAccount } from '@sora-test/wallet-connect/types';
+
+declare global {
+  /* eslint-disable @typescript-eslint/no-empty-interface */
+  interface Window extends InjectedWindow {}
+}
 
 export const lockAccountPair = (api: WithKeyring): void => {
   api.lockPair();
@@ -59,18 +71,42 @@ export const isInternalWallet = (wallet: Wallet) => isInternalSource(wallet.exte
 
 export const isExtensionSource = (source: AppWallet) => isWalletsSource(source, ExtensionWallets);
 
+export const initializePredefinedWallets = (dAppName: string): void => {
+  PredefinedWallets.forEach((walletInfo) => {
+    addWallet(walletInfo, dAppName);
+  });
+};
+
+export const initializeInjectedWallets = (dAppName: string): void => {
+  const keys = Object.keys(window.injectedWeb3);
+
+  for (const extensionName of keys) {
+    try {
+      // check that injected wallet is already added
+      checkWallet(extensionName as AppWallet);
+    } catch {
+      const walletInfo = getWalletInfo(extensionName);
+      addWallet(walletInfo, dAppName);
+    }
+  }
+};
+
 export const getAppWallets = (isDesktop = false): Wallet[] => {
   try {
     const wallets = getWallets();
     const filtered = isDesktop ? wallets.filter((wallet) => isDesktopWallet(wallet)) : wallets;
     const sorted = [...filtered].sort((a, b) => {
-      if (a.extensionName === AppWallet.FearlessWallet) {
+      const aName = a.extensionName;
+      const bName = b.extensionName;
+
+      if (aName === AppWallet.FearlessWallet) {
         return -1;
       }
-      if (b.extensionName === AppWallet.FearlessWallet) {
+      if (bName === AppWallet.FearlessWallet) {
         return 1;
       }
-      return 0;
+
+      return aName.localeCompare(bName);
     });
 
     return sorted;
@@ -81,24 +117,23 @@ export const getAppWallets = (isDesktop = false): Wallet[] => {
 
 export const addWalletLocally = (
   wallet: InjectedWindowProvider,
-  walletInfo: WalletInfo,
-  nameOverride?: string
+  walletKey: string,
+  dAppName: string,
+  walletNameOverride?: string
 ): void => {
-  const dappName = TranslationConsts.Polkaswap;
-  const extensionName = nameOverride ?? walletInfo.extensionName;
+  const walletInfo = getWalletInfo(walletKey);
+  const extensionName = walletNameOverride ?? walletInfo.extensionName;
 
-  const injectedWindow = window as any;
-
-  injectedWindow.injectedWeb3 = injectedWindow.injectedWeb3 || {};
-  injectedWindow.injectedWeb3[extensionName] = wallet;
+  window.injectedWeb3 = window.injectedWeb3 || {};
+  window.injectedWeb3[extensionName] = wallet;
 
   if (!getWalletBySource(extensionName)) {
-    addWallet({ ...walletInfo, extensionName }, dappName);
-    console.info(`[${dappName}] Wallet added: "${extensionName}"`);
+    addWallet({ ...walletInfo, extensionName }, dAppName);
+    console.info(`[${dAppName}] Wallet added: "${extensionName}"`);
   }
 };
 
-export const checkWallet = (extension: AppWallet): Wallet => {
+export const checkWallet = (extension: AppWallet | string): Wallet => {
   const wallet = getWalletBySource(extension);
 
   if (!wallet) {

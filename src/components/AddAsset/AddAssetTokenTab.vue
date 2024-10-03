@@ -36,14 +36,14 @@
 </template>
 
 <script lang="ts">
-import { NativeAssets } from '@sora-substrate/sdk/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { FilterOptions } from '@/types/common';
 
 import { api } from '../../api';
-import { AddAssetTabs, syntheticAssetRegexp, kensetsuAssetRegexp, CeresAddresses } from '../../consts';
+import { AddAssetTabs } from '../../consts';
 import { state, getter } from '../../store/decorators';
+import { getAssetsSubset } from '../../util';
 import AssetList from '../AssetList.vue';
 import SearchInput from '../Input/SearchInput.vue';
 import AddAssetMixin from '../mixins/AddAssetMixin';
@@ -77,38 +77,11 @@ export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
   }
 
   private get prefilteredAssets(): Array<Asset> {
-    switch (this.assetsFilter) {
-      case FilterOptions.All: {
-        return this.isVerifiedOnly
-          ? this.notAddedAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
-          : this.notAddedAssets;
-      }
-      case FilterOptions.Native: {
-        const nativeAssetsAddresses = NativeAssets.map((nativeAsset) => nativeAsset.address);
-        return this.notAddedAssets.filter((asset) => nativeAssetsAddresses.includes(asset.address));
-      }
-      case FilterOptions.Kensetsu: {
-        const kensetsuAssets = this.notAddedAssets.filter((asset) => kensetsuAssetRegexp.test(asset.address));
+    const prefiltered = getAssetsSubset(this.notAddedAssets, this.assetsFilter);
 
-        return this.isVerifiedOnly
-          ? kensetsuAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
-          : kensetsuAssets;
-      }
-      case FilterOptions.Synthetics: {
-        const syntheticsAssets = this.notAddedAssets.filter((asset) => syntheticAssetRegexp.test(asset.address));
-
-        return this.isVerifiedOnly
-          ? syntheticsAssets.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
-          : syntheticsAssets;
-      }
-      case FilterOptions.Ceres: {
-        const ceresAssetsAddresses = CeresAddresses;
-        return this.notAddedAssets.filter((asset) => ceresAssetsAddresses.includes(asset.address));
-      }
-      default: {
-        return this.notAddedAssets;
-      }
-    }
+    return this.isVerifiedOnly
+      ? prefiltered.filter((asset) => api.assets.isWhitelist(asset, this.whitelist))
+      : prefiltered;
   }
 
   get foundAssets(): Array<Asset> {
