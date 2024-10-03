@@ -37,7 +37,12 @@
           <div class="asset-details-subtitle">{{ regulatedAssetsTitle }}</div>
           <div class="asset-details-regulated-assets">
             <div v-for="(asset, index) in regulatedAssets" :key="index">
-              <asset-list-item :asset="asset" with-clickable-logo @show-details="handleOpenAssetDetails">
+              <asset-list-item
+                :asset="asset"
+                :pinnable="false"
+                with-clickable-logo
+                @show-details="handleOpenAssetDetails"
+              >
                 <template #default="asset">
                   <s-button
                     class="wallet-assets__button el-button--details"
@@ -110,7 +115,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   }
 
   handleOpenAssetDetails(asset: AccountAsset): void {
-    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } });
+    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset, regulated: true } });
   }
 
   handleBack(): void {
