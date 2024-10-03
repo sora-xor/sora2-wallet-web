@@ -58,6 +58,7 @@ import { historyElementsFilter } from './services/indexer/subsquid/queries/histo
 import * as SUBSQUID_TYPES from './services/indexer/subsquid/types';
 import * as INDEXER_TYPES from './services/indexer/types';
 import { addSoraWalletLocally } from './services/sorawallet';
+import { initializeWallets } from './services/wallet';
 import * as WC from './services/walletconnect';
 import { addWcSubWalletLocally } from './services/walletconnect';
 import SoraWallet from './SoraWallet.vue';
@@ -120,8 +121,7 @@ const initAppWallets = (api: WithKeyring, isDesktop = false, appName?: string) =
     store.dispatch.wallet.account.updateAvailableWallets();
   });
 
-  accountUtils.initializePredefinedWallets(dAppName);
-  accountUtils.initializeInjectedWallets(dAppName);
+  initializeWallets(dAppName);
 
   store.dispatch.wallet.account.updateAvailableWallets();
 };

@@ -1,14 +1,13 @@
-import FearlessWalletLogo from '../assets/img/FearlessWalletLogo.svg';
-import GoogleLogo from '../assets/img/GoogleLogo.svg';
-import PolkadotJsLogo from '../assets/img/PolkadotLogo.svg';
-import SoraWalletLogo from '../assets/img/Sora.svg';
-import SubWalletLogo from '../assets/img/SubWalletLogo.svg';
-import TalismanLogo from '../assets/img/TalismanLogo.svg';
-import WalletConnectLogo from '../assets/img/WalletConnect.svg';
+import FearlessWalletLogo from '../../assets/img/FearlessWalletLogo.svg';
+import GoogleLogo from '../../assets/img/GoogleLogo.svg';
+import PolkadotJsLogo from '../../assets/img/PolkadotLogo.svg';
+import SoraWalletLogo from '../../assets/img/Sora.svg';
+import SubWalletLogo from '../../assets/img/SubWalletLogo.svg';
+import TalismanLogo from '../../assets/img/TalismanLogo.svg';
+import WalletConnectLogo from '../../assets/img/WalletConnect.svg';
+import { AppWallet } from '../../consts/index';
 
-import { AppWallet } from './index';
-
-import type { WalletInfo } from '@sora-test/wallet-connect/types';
+import type { WalletInfo } from './types';
 
 const GDriveWalletInfo: WalletInfo = {
   extensionName: AppWallet.GoogleDrive,
@@ -87,7 +86,7 @@ const SoraWalletInfo: WalletInfo = {
   },
 };
 
-const KnownWallets = {
+export const KnownWallets = {
   [AppWallet.FearlessWallet]: FearlessWalletInfo,
   [AppWallet.GoogleDrive]: GDriveWalletInfo,
   [AppWallet.PolkadotJS]: PolkadotJsInfo,
@@ -97,27 +96,7 @@ const KnownWallets = {
   [AppWallet.WalletConnect]: WalletConnectInfo,
 };
 
-export const getWalletInfo = (extensionName: string): WalletInfo => {
-  if (extensionName in KnownWallets) return KnownWallets[extensionName];
-
-  const title = extensionName
-    .split('-')
-    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-    .join(' ');
-
-  return {
-    extensionName,
-    title,
-    chromeUrl: '',
-    mozillaUrl: '',
-    logo: {
-      src: '',
-      alt: extensionName,
-    },
-  };
-};
-
-export const PredefinedWallets = [FearlessWalletInfo, PolkadotJsInfo];
+export const PredefinedWallets = [AppWallet.FearlessWallet, AppWallet.PolkadotJS];
 export const RecommendedWallets = [AppWallet.FearlessWallet];
 
 /** Wallets with saved accounts in App */
