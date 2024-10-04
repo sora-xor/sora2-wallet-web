@@ -350,6 +350,7 @@ exports[`InfoLine.vue [With Label Tooltip]: should be rendered correctly 1`] = `
    
   <s-tooltip-stub
     animation="el-fade-in-linear"
+    appendtobody="true"
     borderradius="mini"
     closedelay="0"
     content="Label tooltip"
