@@ -2423,10 +2423,10 @@
     "@polkadot/types" "9.14.2"
     "@sora-substrate/type-definitions" "1.40.4"
 
-"@soramitsu-ui/ui-vue2@^1.1.4":
-  version "1.1.4"
-  resolved "https://registry.yarnpkg.com/@soramitsu-ui/ui-vue2/-/ui-vue2-1.1.4.tgz#a2c9b396818529ce14bc76ea5d5ac086f0da3653"
-  integrity sha512-m2VII+epVPt4fB1SlhGWBxwgJJNRw0VBc4ROf9GrEz4tBQBCeqs/jNAxjK1jQyzSaTkDuPp/iyNVtlawMPbVcQ==
+"@soramitsu-ui/ui-vue2@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@soramitsu-ui/ui-vue2/-/ui-vue2-1.1.5.tgz#44bc1a653fc8e4acd76f353a5dac765a125524ab"
+  integrity sha512-cyipq+/heSio9IctA/UM2DFvmxkauegfS9jNMsckQNsdAX/bG5xV03B0KlisKh77sVpg7u6O7vFPhXYv23l+rg==
   dependencies:
     core-js "^3.26.1"
     element-resize-detector "^1.2.4"
