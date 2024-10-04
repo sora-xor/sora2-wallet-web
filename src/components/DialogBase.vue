@@ -116,7 +116,9 @@ export default class DialogBase extends Mixins(DialogMixin) {
   @Ref('dialog') readonly dialogCmp!: SDialog;
 
   @Watch('isVisible')
-  private onVisibilityUpdate(value: boolean) {
+  private async onVisibilityUpdate(value: boolean) {
+    // wait for vdom update (imported async components loading)
+    await this.$nextTick();
     if (value) {
       this.createContentObserver();
     } else {
