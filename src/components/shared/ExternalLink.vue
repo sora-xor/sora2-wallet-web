@@ -21,14 +21,6 @@ export default class ExternalLink extends Vue {
   text-decoration: none;
   color: var(--s-color-theme-accent);
 
-  &__icon {
-    margin-left: $basic-spacing-tiny;
-    font-size: 0.75em !important;
-
-    &,
-    &:hover {
-      color: var(--s-color-theme-accent) !important;
-    }
-  }
+  @include focus-outline;
 }
 </style>

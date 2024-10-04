@@ -42,7 +42,7 @@ import TranslationMixin from '../../mixins/TranslationMixin';
 import ExternalLink from '../../shared/ExternalLink.vue';
 import ExtensionConnectionList from '../List/Extension.vue';
 
-import type { Wallet } from '@sora-test/wallet-connect/types';
+import type { Wallet } from '../../../services/wallet/types';
 
 @Component({
   components: {

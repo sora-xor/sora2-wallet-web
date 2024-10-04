@@ -1,13 +1,13 @@
 import { api } from '../../api';
 import { AppWallet, TranslationConsts } from '../../consts';
-import { addWalletLocally, checkWallet } from '../../util/account';
+import { addWalletLocally, checkWallet } from '../../services/wallet';
 
 import { WcProvider } from './provider/base';
 import { WcSubProvider } from './provider/substrate';
 import { WcWallet } from './wallet';
 
+import type { Wallet } from '../wallet/types';
 import type { WithKeyring } from '@sora-substrate/sdk';
-import type { Wallet } from '@sora-test/wallet-connect/types';
 
 export { WcProvider };
 
