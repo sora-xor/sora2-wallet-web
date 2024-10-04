@@ -10,6 +10,7 @@
       borderRadius: 'medium',
       ...$attrs,
     }"
+    ref="dialog"
   >
     <template #title>
       <div v-if="showBack">
@@ -36,7 +37,11 @@
         <s-button class="el-dialog__close" type="action" icon="x-16" @click="closeDialog" />
       </slot>
     </template>
-    <slot />
+
+    <div class="dialog-content">
+      <slot />
+    </div>
+
     <slot slot="footer" name="footer" />
   </s-dialog>
 </template>
@@ -44,9 +49,11 @@
 <script lang="ts">
 import SScrollbar from '@soramitsu-ui/ui-vue2/lib/components/Scrollbar';
 import Vue from 'vue';
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
 
 import DialogMixin from './mixins/DialogMixin';
+
+import type SDialog from '@soramitsu-ui/ui-vue2/lib/components/Dialog/SDialog.vue';
 
 @Component
 export default class DialogBase extends Mixins(DialogMixin) {
@@ -68,6 +75,25 @@ export default class DialogBase extends Mixins(DialogMixin) {
 
   async mounted(): Promise<void> {
     await this.$nextTick();
+    this.addDialogScrollbar();
+  }
+
+  handleBackClick(): void {
+    this.$emit('back');
+  }
+
+  /**
+   * It's required cuz we've added scrollbar between dialog layers and default click outside directive doesn't work
+   */
+  private handleClickOutside(event: Event, el: Node): void {
+    // IMPORTANT: If something was used with v-if and this node was removed -> dialog will be closed by default.
+    // Need to stop event propagation in this case
+    if (!(el === event.target || el.contains(event.target as Node)) && this.isVisible) {
+      this.closeDialog();
+    }
+  }
+
+  private addDialogScrollbar(): void {
     const dialogWrapper = this.$el;
     const dialog = this.$el.childNodes[0];
     const handleClickOutside = (event: Event) => this.handleClickOutside(event, dialog);
@@ -87,19 +113,38 @@ export default class DialogBase extends Mixins(DialogMixin) {
     scrollbarView.appendChild(dialog);
   }
 
-  handleBackClick(): void {
-    this.$emit('back');
+  @Ref('dialog') readonly dialogCmp!: SDialog;
+
+  @Watch('isVisible')
+  private onVisibilityUpdate(value: boolean) {
+    if (value) {
+      this.createContentObserver();
+    } else {
+      this.destroyContentObserver();
+    }
   }
 
-  /**
-   * It's required cuz we've added scrollbar between dialog layers and default click outside directive doesn't work
-   */
-  private handleClickOutside(event: Event, el: Node): void {
-    // IMPORTANT: If something was used with v-if and this node was removed -> dialog will be closed by default.
-    // Need to stop event propagation in this case
-    if (!(el === event.target || el.contains(event.target as Node)) && this.isVisible) {
-      this.closeDialog();
-    }
+  private contentObserver: ResizeObserver | null = null;
+
+  private createContentObserver(): void {
+    // $ref not working here, so dom search is used
+    const content = this.$el.getElementsByClassName('dialog-content')[0];
+
+    if (!content) return;
+
+    this.contentObserver = new ResizeObserver(() => {
+      this.dialogCmp.computeTop();
+    });
+    this.contentObserver.observe(content);
+  }
+
+  private destroyContentObserver(): void {
+    this.contentObserver?.disconnect();
+    this.contentObserver = null;
+  }
+
+  beforeDestroy() {
+    this.destroyContentObserver();
   }
 }
 </script>
