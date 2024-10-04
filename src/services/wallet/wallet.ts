@@ -71,33 +71,29 @@ export class BaseDotSamaWallet implements Wallet {
       return;
     }
 
-    try {
-      const injectedExtension = this.rawExtension;
+    const injectedExtension = this.rawExtension;
 
-      if (!injectedExtension?.enable) {
-        return;
-      }
-
-      const rawExtension = await injectedExtension.enable(this.dAppName);
-
-      if (!rawExtension) {
-        return;
-      }
-
-      const extension: InjectedExtension = {
-        ...rawExtension,
-        // Manually add `InjectedExtensionInfo` so as to have a consistent response.
-        name: this.extensionName,
-        version: injectedExtension.version ?? 'unknown',
-      };
-
-      this._extension = extension;
-      this._signer = extension?.signer;
-      this._metadata = extension?.metadata;
-      this._provider = extension?.provider;
-    } catch (err) {
-      console.error(err);
+    if (!injectedExtension?.enable) {
+      return;
     }
+
+    const rawExtension = await injectedExtension.enable(this.dAppName);
+
+    if (!rawExtension) {
+      return;
+    }
+
+    const extension: InjectedExtension = {
+      ...rawExtension,
+      // Manually add `InjectedExtensionInfo` so as to have a consistent response.
+      name: this.extensionName,
+      version: injectedExtension.version ?? 'unknown',
+    };
+
+    this._extension = extension;
+    this._signer = extension?.signer;
+    this._metadata = extension?.metadata;
+    this._provider = extension?.provider;
   };
 
   private generateWalletAccount = (account: InjectedAccount): WalletAccount => {

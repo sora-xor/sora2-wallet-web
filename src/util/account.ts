@@ -1,7 +1,7 @@
 import { saveAs } from 'file-saver';
 
 import { AppWallet } from '../consts';
-import { isInternalSource, isExtensionSource, getWallet, checkWallet } from '../services/wallet';
+import { isInternalSource, getWallet, checkWallet } from '../services/wallet';
 import { AppError, formatAccountAddress } from '../util';
 
 import type { WalletAccount } from '../services/wallet/types';
@@ -46,7 +46,7 @@ export const logoutApi = (api: WithKeyring, forget = false): void => {
 };
 
 export const updateApiSigner = async (api: WithKeyring, source: AppWallet): Promise<void> => {
-  const wallet = await getWallet(source, isExtensionSource(source));
+  const wallet = await getWallet(source);
 
   api.setSigner(wallet.signer as Signer);
 };
