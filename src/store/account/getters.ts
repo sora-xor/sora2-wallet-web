@@ -1,4 +1,11 @@
 import { FPNumber } from '@sora-substrate/sdk';
+import {
+  type Asset,
+  type Whitelist,
+  type AccountAsset,
+  type WhitelistArrayItem,
+  AssetTypes,
+} from '@sora-substrate/sdk/build/assets/types';
 import { AES, enc } from 'crypto-js';
 import { defineGetters } from 'direct-vuex';
 import isEqual from 'lodash/fp/isEqual';
@@ -11,7 +18,6 @@ import { accountGetterContext } from './../account';
 
 import type { AccountState } from './types';
 import type { AssetsTable, AccountAssetsTable, PolkadotJsAccount } from '../../types/common';
-import type { Asset, Whitelist, AccountAsset, WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
 
 const toHashTable = <T extends Asset>(list: Readonly<Array<T>>, key: string) => {
   return list.reduce((result, item) => {
@@ -103,8 +109,7 @@ const getters = defineGetters<AccountState>()({
     const { state } = accountGetterContext(args);
 
     return state.accountAssets.some((asset) => {
-      // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
-      if (asset.isSBT) {
+      if (asset.type === AssetTypes.Soulbound) {
         return !FPNumber.fromCodecValue(asset.balance.total, asset.decimals).isZero();
       }
 

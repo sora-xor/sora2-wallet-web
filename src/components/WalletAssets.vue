@@ -8,15 +8,15 @@
             <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
             <asset-list-item
               :asset="asset"
+              :pinned="isAssetPinned(asset)"
               with-fiat
               with-clickable-logo
               @show-details="handleOpenAssetDetails"
-              :pinned="isAssetPinned(asset)"
               @pin="handlePin"
             >
               <template #value="asset">
                 <formatted-amount-with-fiat-value
-                  v-if="!asset.isSBT"
+                  v-if="!isSoulbound(asset)"
                   value-can-be-hidden
                   value-class="asset-value"
                   :value="getBalance(asset)"
@@ -41,12 +41,12 @@
                     <span class="counter">{{ sbtPermissions[asset.address] }}</span>
                     {{ getTranslation(sbtPermissions[asset.address]) }}
                   </div>
-                  <span v-if="asset.isSBT" class="asset-sbt-expiration">{{ sbtExpDates[asset.address] }}</span>
+                  <span v-if="isSoulbound(asset)" class="asset-sbt-expiration">{{ sbtExpDates[asset.address] }}</span>
                 </div>
               </template>
               <template #default="asset">
                 <s-button
-                  v-if="permissions.sendAssets && !isZeroBalance(asset) && !asset.isSBT"
+                  v-if="permissions.sendAssets && !isZeroBalance(asset) && !isSoulbound(asset)"
                   class="wallet-assets__button send"
                   type="action"
                   size="small"
@@ -57,7 +57,7 @@
                   <s-icon name="finance-send-24" size="24" />
                 </s-button>
                 <s-button
-                  v-if="permissions.swapAssets && asset.decimals && !asset.isSBT"
+                  v-if="permissions.swapAssets && asset.decimals && !isSoulbound(asset)"
                   class="wallet-assets__button swap"
                   type="action"
                   size="small"
@@ -99,6 +99,7 @@
 
 <script lang="ts">
 import { api, FPNumber } from '@sora-substrate/sdk';
+import { AssetTypes, type AccountAsset, type Whitelist } from '@sora-substrate/sdk/build/assets/types';
 import isEmpty from 'lodash/fp/isEmpty';
 import { Component, Mixins, Watch } from 'vue-property-decorator';
 import draggable from 'vuedraggable';
@@ -116,7 +117,6 @@ import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
 
 import type { WalletAssetFilters, WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';
-import type { AccountAsset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {
@@ -157,10 +157,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   assetsAreHidden = true;
   sbtPermissions = {};
   sbtExpDates = {};
-
-  isSBT(asset): boolean {
-    return !asset.isSBT;
-  }
 
   get assetList(): Array<AccountAsset> {
     return this.accountAssets.sort((a, b) => {
@@ -219,6 +215,10 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
+  isSoulbound(asset: AccountAsset): boolean {
+    return asset.type === AssetTypes.Soulbound;
+  }
+
   getTranslation(number: number): string {
     return number > 1 ? this.t('sbtDetails.permissions') : this.t('sbtDetails.permission');
   }
@@ -247,8 +247,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   async checkSbtPermissions(): Promise<void> {
     if (!this.accountAssets.length) return;
 
-    // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
-    const sbts = this.accountAssets.filter((asset) => !!asset.isSBT);
+    const sbts = this.accountAssets.filter((asset) => asset.type === AssetTypes.Soulbound);
 
     const sbtsInfo = sbts.map(async (asset) => {
       const { regulatedAssets } = await api.extendedAssets.getSbtMetaInfo(asset.address);
@@ -264,8 +263,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   async checkSbtExpirationDates(): Promise<void> {
-    // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
-    const sbts = this.accountAssets.filter((asset) => !!asset.isSBT);
+    const sbts = this.accountAssets.filter((asset) => asset.type === AssetTypes.Soulbound);
 
     sbts.map(async (asset) => {
       const sbtExpiryDate = await api.extendedAssets.getSbtExpiration(this.connected, asset.address);
@@ -334,9 +332,8 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     const hideZeroBalance = this.filters.zeroBalance;
 
     // asset
-    const isNft = api.assets.isNft(asset);
-    // @ts-expect-error error
-    const isSbt = asset.isSBT;
+    const isNft = asset.type === AssetTypes.NFT;
+    const isSbt = asset.type === AssetTypes.Soulbound;
     const isWhitelisted = api.assets.isWhitelist(asset, this.whitelist);
     const hasZeroBalance = !asset.decimals
       ? asset.balance.total === '0' // for non-divisible tokens

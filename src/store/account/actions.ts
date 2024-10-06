@@ -279,17 +279,7 @@ const actions = defineActions({
           const filtered = api.assets.accountAssets.filter(
             (asset) => !api.assets.isNftBlacklisted(asset, getters.blacklist)
           );
-
-          // TODO: when moved to upgraded assetInfos storage, rely on AssetType
-          // to know if asset is SBT or not upfront
-          const assetsWithMetaInfo = filtered.map((asset) => {
-            return {
-              ...asset,
-              isSBT: !!sbtAssetsList.includes(asset.address),
-            };
-          });
-
-          commit.setAccountAssets(assetsWithMetaInfo);
+          commit.setAccountAssets(filtered);
         });
         commit.setAccountAssetsSubscription(subscription);
         await api.assets.updateAccountAssets();

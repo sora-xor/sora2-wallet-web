@@ -115,7 +115,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   }
 
   handleOpenAssetDetails(asset: AccountAsset): void {
-    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset, regulated: true } });
+    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } });
   }
 
   handleBack(): void {

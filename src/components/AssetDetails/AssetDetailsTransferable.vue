@@ -117,6 +117,7 @@
 
 <script lang="ts">
 import { XOR, BalanceType } from '@sora-substrate/sdk/build/assets/consts';
+import { AssetTypes } from '@sora-substrate/sdk/build/assets/types';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
@@ -184,7 +185,6 @@ export default class AssetDetailsTransferable extends Mixins(
 
   wasBalanceDetailsClicked = false;
   asset = {} as AccountAsset;
-  isRegulated = false;
 
   // ____________________NFT Token Details_____________________________
   private wasNftLinkCopied = false;
@@ -246,9 +246,6 @@ export default class AssetDetailsTransferable extends Mixins(
     } else {
       this.asset = asset;
     }
-
-    // TODO: [DEFI-R] [Rustem] remove line when all SBT operations become available (pool, swap, bridge)
-    this.isRegulated = this.currentRouteParams.regulated as unknown as boolean;
 
     if (this.isNft) {
       this.setNftMeta();
@@ -352,9 +349,13 @@ export default class AssetDetailsTransferable extends Mixins(
 
   isOperationDisabled(operation: Operations): boolean {
     // TODO: [DEFI-R] [Rustem] remove check when all SBT operations become available
-    if ([Operations.Bridge, Operations.Liquidity, Operations.Swap].includes(operation) && this.isRegulated) {
+    if (
+      [Operations.Bridge, Operations.Liquidity, Operations.Swap].includes(operation) &&
+      this.asset?.type === AssetTypes.Regulated
+    ) {
       return true;
     }
+
     return operation === Operations.Send && this.isEmptyBalance;
   }
 

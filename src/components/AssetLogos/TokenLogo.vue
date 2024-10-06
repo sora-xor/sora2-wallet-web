@@ -7,6 +7,7 @@
 </template>
 
 <script lang="ts">
+import { AssetTypes } from '@sora-substrate/sdk/build/assets/types';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { api } from '../../api';
@@ -36,14 +37,12 @@ export default class TokenLogo extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
 
   get isNft(): boolean {
-    // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
-    if (this.token.isSBT) return false;
+    if (this.token?.type === AssetTypes.Soulbound) return false;
     return !!this.token && api.assets.isNft(this.token);
   }
 
   get isSbt(): boolean {
-    // @ts-expect-error TODO: [Rustem] migrate to AsssetInfosV2 and rely on AssetType
-    return this.token.isSBT;
+    return this.token?.type === AssetTypes.Soulbound;
   }
 
   get assetAddress(): Nullable<string> {
