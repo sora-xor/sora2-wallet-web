@@ -140,7 +140,7 @@ export const getAppWallets = (isDesktop = false): Wallet[] => {
   }
 };
 
-export const getWallet = async (extension = AppWallet.PolkadotJS, autoreload = false): Promise<Wallet> => {
+export const getWallet = async (extension = AppWallet.PolkadotJS): Promise<Wallet> => {
   const wallet = checkWallet(extension);
 
   if (!wallet.installed) {
@@ -149,19 +149,17 @@ export const getWallet = async (extension = AppWallet.PolkadotJS, autoreload = f
 
   await waitForDocumentReady();
 
-  await wallet.enable();
+  try {
+    await wallet.enable();
+  } catch {
+    // external wallets
+    throw new AppError({ key: 'polkadotjs.noSigner', payload: { extension: wallet.title } });
+  }
 
   const hasExtension = !!wallet.extension;
   const hasSigner = typeof wallet.signer === 'object';
 
   if (hasExtension && hasSigner) return wallet;
-
-  if (autoreload) {
-    window.location.reload();
-  } else {
-    const key = hasExtension && !isInternalWallet(wallet) ? 'polkadotjs.noSigner' : 'polkadotjs.connectionError';
-    throw new AppError({ key, payload: { extension: wallet.title } });
-  }
-
-  return wallet;
+  // google & wc
+  throw new AppError({ key: 'polkadotjs.connectionError', payload: { extension: wallet.title } });
 };
