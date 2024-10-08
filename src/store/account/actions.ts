@@ -6,16 +6,10 @@ import { AppWallet, BLOCK_PRODUCE_TIME } from '../../consts';
 import alertsApiService from '../../services/alerts';
 import { CeresApiService } from '../../services/ceres';
 import { getCurrentIndexer } from '../../services/indexer';
+import { getAppWallets, checkWallet, isAppStorageSource } from '../../services/wallet';
 import { rootActionContext } from '../../store';
 import { WHITE_LIST_URL, NFT_BLACK_LIST_URL } from '../../util';
-import {
-  getAppWallets,
-  updateApiSigner,
-  checkWallet,
-  loginApi,
-  logoutApi,
-  isAppStorageSource,
-} from '../../util/account';
+import { loginApi, logoutApi, updateApiSigner } from '../../util/account';
 
 import { accountActionContext } from './../account';
 

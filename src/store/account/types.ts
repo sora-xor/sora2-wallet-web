@@ -1,8 +1,8 @@
 import type { AppWallet } from '../../consts';
 import type { FiatPriceObject } from '../../services/indexer/subsquid/types';
-import type { Book, PolkadotJsAccount, AddressKeyMapping, KeyringPair$Json } from '../../types/common';
+import type { Wallet } from '../../services/wallet/types';
+import type { Book, AddressKeyMapping, KeyringPair$Json } from '../../types/common';
 import type { AccountAsset, Asset, Blacklist, WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
-import type { Wallet } from '@sora-test/wallet-connect/types';
 import type { Subscription, Subject } from 'rxjs';
 
 export type CreateAccountArgs = {

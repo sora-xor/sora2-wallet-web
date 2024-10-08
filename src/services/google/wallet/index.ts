@@ -1,6 +1,6 @@
 import { AppWallet } from '../../../consts';
 import { Singleton } from '../../../decorators';
-import { addWalletLocally } from '../../../util/account';
+import { addWalletLocally } from '../../../services/wallet';
 import { GDriveStorage } from '../index';
 
 import Accounts from './accounts';

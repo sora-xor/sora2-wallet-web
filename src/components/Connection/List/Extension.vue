@@ -61,7 +61,7 @@ import TranslationMixin from '../../mixins/TranslationMixin';
 
 import ConnectionItems from './ConnectionItems.vue';
 
-import type { Wallet } from '@sora-test/wallet-connect/types';
+import type { Wallet } from '../../../services/wallet/types';
 
 @Component({
   components: {

@@ -1,5 +1,5 @@
 import { AppWallet } from '../../consts';
-import { addWalletLocally, checkWallet } from '../../util/account';
+import { addWalletLocally, checkWallet } from '../../services/wallet';
 
 import { SoraWallet } from './wallet';
 

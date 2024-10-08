@@ -73,17 +73,14 @@
 import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
-import { RecommendedWallets } from '../../consts/wallets';
 import { GDriveWallet } from '../../services/google/wallet';
+import { isInternalSource, isInternalWallet, isAppStorageSource, getWallet } from '../../services/wallet';
+import { RecommendedWallets } from '../../services/wallet/consts';
 import { addWcSubWalletLocally, isWcWallet } from '../../services/walletconnect';
 import { action, state } from '../../store/decorators';
 import { delay } from '../../util';
 import {
   verifyAccountJson,
-  isInternalSource,
-  getWallet,
-  isInternalWallet,
-  isAppStorageSource,
   subscribeToWalletAccounts,
   exportAccount,
   deleteAccount,
@@ -101,10 +98,10 @@ import CreateAccountStep from './Step/CreateAccount.vue';
 import ExtensionListStep from './Step/ExtensionList.vue';
 import ImportAccountStep from './Step/ImportAccount.vue';
 
+import type { Wallet } from '../../services/wallet/types';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../store/account/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
 import type { WithKeyring } from '@sora-substrate/sdk';
-import type { Wallet } from '@sora-test/wallet-connect/types';
 
 const SelectAccountFlow = [LoginStep.ExtensionList, LoginStep.AccountList];
 const AccountCreateFlow = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];

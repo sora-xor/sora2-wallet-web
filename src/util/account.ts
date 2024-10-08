@@ -1,27 +1,16 @@
-import { addWallet, getWallets, getWalletBySource } from '@sora-test/wallet-connect/dotsama/wallets';
 import { saveAs } from 'file-saver';
 
 import { AppWallet } from '../consts';
-import {
-  AppStorageWallets,
-  DesktopWallets,
-  InternalWallets,
-  ExtensionWallets,
-  PredefinedWallets,
-  getWalletInfo,
-} from '../consts/wallets';
-import { AppError, formatAccountAddress, waitForDocumentReady } from '../util';
+import { isInternalSource, getWallet, checkWallet } from '../services/wallet';
+import { AppError, formatAccountAddress } from '../util';
 
+import type { WalletAccount } from '../services/wallet/types';
 import type { KeyringPair$Json, PolkadotJsAccount } from '../types/common';
-import type { Unsubcall, InjectedWindow, InjectedWindowProvider } from '@polkadot/extension-inject/types';
+import type { Unsubcall } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 import type { WithKeyring } from '@sora-substrate/sdk';
-import type { Wallet, WalletAccount } from '@sora-test/wallet-connect/types';
 
-declare global {
-  /* eslint-disable @typescript-eslint/no-empty-interface */
-  interface Window extends InjectedWindow {}
-}
+export { isAppStorageSource } from '../services/wallet';
 
 export const lockAccountPair = (api: WithKeyring): void => {
   api.lockPair();
@@ -56,122 +45,8 @@ export const logoutApi = (api: WithKeyring, forget = false): void => {
   api.logout();
 };
 
-export const isWalletsSource = (source: AppWallet, wallets: AppWallet[]) =>
-  !!wallets.find((walletName) => source.startsWith(walletName));
-
-export const isAppStorageSource = (source: AppWallet) => isWalletsSource(source, AppStorageWallets);
-
-export const isDesktopSource = (source: AppWallet) => isWalletsSource(source, DesktopWallets);
-
-export const isDesktopWallet = (wallet: Wallet) => isDesktopSource(wallet.extensionName as AppWallet);
-
-export const isInternalSource = (source: AppWallet) => isWalletsSource(source, InternalWallets);
-
-export const isInternalWallet = (wallet: Wallet) => isInternalSource(wallet.extensionName as AppWallet);
-
-export const isExtensionSource = (source: AppWallet) => isWalletsSource(source, ExtensionWallets);
-
-export const initializePredefinedWallets = (dAppName: string): void => {
-  PredefinedWallets.forEach((walletInfo) => {
-    addWallet(walletInfo, dAppName);
-  });
-};
-
-export const initializeInjectedWallets = (dAppName: string): void => {
-  const keys = Object.keys(window.injectedWeb3);
-
-  for (const extensionName of keys) {
-    try {
-      // check that injected wallet is already added
-      checkWallet(extensionName as AppWallet);
-    } catch {
-      const walletInfo = getWalletInfo(extensionName);
-      addWallet(walletInfo, dAppName);
-    }
-  }
-};
-
-export const getAppWallets = (isDesktop = false): Wallet[] => {
-  try {
-    const wallets = getWallets();
-    const filtered = isDesktop ? wallets.filter((wallet) => isDesktopWallet(wallet)) : wallets;
-    const sorted = [...filtered].sort((a, b) => {
-      const aName = a.extensionName;
-      const bName = b.extensionName;
-
-      if (aName === AppWallet.FearlessWallet) {
-        return -1;
-      }
-      if (bName === AppWallet.FearlessWallet) {
-        return 1;
-      }
-
-      return aName.localeCompare(bName);
-    });
-
-    return sorted;
-  } catch (error) {
-    throw new AppError({ key: 'polkadotjs.noExtensions' });
-  }
-};
-
-export const addWalletLocally = (
-  wallet: InjectedWindowProvider,
-  walletKey: string,
-  dAppName: string,
-  walletNameOverride?: string
-): void => {
-  const walletInfo = getWalletInfo(walletKey);
-  const extensionName = walletNameOverride ?? walletInfo.extensionName;
-
-  window.injectedWeb3 = window.injectedWeb3 || {};
-  window.injectedWeb3[extensionName] = wallet;
-
-  if (!getWalletBySource(extensionName)) {
-    addWallet({ ...walletInfo, extensionName }, dAppName);
-    console.info(`[${dAppName}] Wallet added: "${extensionName}"`);
-  }
-};
-
-export const checkWallet = (extension: AppWallet | string): Wallet => {
-  const wallet = getWalletBySource(extension);
-
-  if (!wallet) {
-    // we haven't wallet data, so extension key used in translation
-    throw new AppError({ key: 'polkadotjs.noExtension', payload: { extension } });
-  }
-
-  return wallet;
-};
-
-export const getWallet = async (extension = AppWallet.PolkadotJS, autoreload = false): Promise<Wallet> => {
-  const wallet = checkWallet(extension);
-
-  if (!wallet.installed) {
-    throw new AppError({ key: 'polkadotjs.noExtension', payload: { extension: wallet.title } });
-  }
-
-  await waitForDocumentReady();
-
-  await wallet.enable();
-
-  const hasExtension = !!wallet.extension;
-  const hasSigner = typeof wallet.signer === 'object';
-
-  if (hasExtension && hasSigner) return wallet;
-
-  if (autoreload) {
-    window.location.reload();
-  } else {
-    const key = hasExtension && !isInternalWallet(wallet) ? 'polkadotjs.noSigner' : 'polkadotjs.connectionError';
-    throw new AppError({ key, payload: { extension: wallet.title } });
-  }
-
-  return wallet;
-};
-
 export const updateApiSigner = async (api: WithKeyring, source: AppWallet): Promise<void> => {
-  const wallet = await getWallet(source, isExtensionSource(source));
+  const wallet = await getWallet(source);
 
   api.setSigner(wallet.signer as Signer);
 };
