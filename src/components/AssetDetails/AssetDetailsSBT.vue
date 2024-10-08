@@ -98,7 +98,7 @@ import WalletBase from '../WalletBase.vue';
   },
 })
 export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberFormatterMixin) {
-  @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset>;
   @state.account.address private connected!: string;
   @mutation.router.navigate navigate!: (options: Route) => Promise<void>;
 
@@ -115,7 +115,10 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   }
 
   handleOpenAssetDetails(asset: AccountAsset): void {
-    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } });
+    this.navigate({
+      name: RouteNames.WalletAssetDetails,
+      params: { asset, fromSbtDetails: true, prevAsset: this.currentRouteParams.asset },
+    });
   }
 
   handleBack(): void {

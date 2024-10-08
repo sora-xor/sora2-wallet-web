@@ -308,7 +308,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   handleOpenAssetDetails(asset: AccountAsset): void {
-    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } });
+    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset, fromWalletAssets: true } });
   }
 
   handleOpenAddAsset(): void {

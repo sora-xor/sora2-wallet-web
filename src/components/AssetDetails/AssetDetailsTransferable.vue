@@ -176,12 +176,12 @@ export default class AssetDetailsTransferable extends Mixins(
   ];
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset>;
+  @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.settings.permissions private permissions!: WalletPermissions;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.transactions.history private history!: AccountHistory<HistoryItem>;
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
   @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
-  @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
 
   wasBalanceDetailsClicked = false;
   asset = {} as AccountAsset;
@@ -334,8 +334,13 @@ export default class AssetDetailsTransferable extends Mixins(
     if (this.selectedTransaction) {
       this.resetTxDetailsId();
     } else {
-      if (this.previousRouteParams.asset) {
-        this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.previousRouteParams.asset } });
+      if (this.currentRouteParams.fromWalletAssets) {
+        this.navigate({ name: RouteNames.Wallet });
+        return;
+      }
+
+      if (this.currentRouteParams.fromSbtDetails && this.currentRouteParams.prevAsset) {
+        this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset: this.currentRouteParams.prevAsset } });
         return;
       }
 
@@ -362,7 +367,15 @@ export default class AssetDetailsTransferable extends Mixins(
   handleOperation(operation: Operations): void {
     switch (operation) {
       case Operations.Send:
-        this.navigate({ name: RouteNames.WalletSend, params: { asset: this.asset } });
+        this.navigate({
+          name: RouteNames.WalletSend,
+          params: {
+            asset: this.asset,
+            fromWalletAssets: this.currentRouteParams.fromWalletAssets,
+            fromSbtDetails: this.currentRouteParams.fromSbtDetails,
+            prevAsset: this.previousRouteParams.asset,
+          },
+        });
         break;
       default:
         this.$emit(operation, this.asset);

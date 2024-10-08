@@ -172,7 +172,7 @@ export default class WalletSend extends Mixins(
 
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
-  @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<AccountAsset> | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.transactions.isConfirmTxDialogDisabled private isConfirmTxDisabled!: boolean;
 
@@ -184,26 +184,28 @@ export default class WalletSend extends Mixins(
   amount = '';
   showAdditionalInfo = true;
   showIsNotSbtOwnerReceiver = false;
+  prevAsset: Nullable<AccountAsset> = null; /* remember previous asset for routing */
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
-  @Watch('address')
-  async getIsNotSbtOwnerReceiver(): Promise<void> {
-    if (this.validAddress && this.asset.address) {
-      const assetInfo = (await api.api.query.assets.assetInfosV2(this.asset.address)).toHuman();
-      if (assetInfo.assetType === 'Regulated') {
-        const balance = await getAssetBalance(api.api, this.address, this.asset.address);
+  // TODO: [Rustem] improve logic to not allow to send non-onwer receiver
+  // @Watch('address')
+  // async getIsNotSbtOwnerReceiver(): Promise<void> {
+  //   if (this.validAddress && this.asset.address) {
+  //     const assetInfo = (await api.api.query.assets.assetInfosV2(this.asset.address)).toHuman();
+  //     if (assetInfo.assetType === 'Regulated') {
+  //       const balance = await getAssetBalance(api.api, this.address, this.asset.address);
 
-        if (this.getFPNumberFromCodec(balance.total).lte(FPNumber.ZERO)) {
-          this.showIsNotSbtOwnerReceiver = true;
-        }
-      } else {
-        this.showIsNotSbtOwnerReceiver = false;
-      }
-    } else {
-      this.showIsNotSbtOwnerReceiver = false;
-    }
-  }
+  //       if (this.getFPNumberFromCodec(balance.total).lte(FPNumber.ZERO)) {
+  //         this.showIsNotSbtOwnerReceiver = true;
+  //       }
+  //     } else {
+  //       this.showIsNotSbtOwnerReceiver = false;
+  //     }
+  //   } else {
+  //     this.showIsNotSbtOwnerReceiver = false;
+  //   }
+  // }
 
   created(): void {
     if (!this.currentRouteParams.asset) {
@@ -374,7 +376,11 @@ export default class WalletSend extends Mixins(
     }
     this.navigate({
       name: this.previousRoute,
-      params: this.previousRouteParams,
+      params: {
+        ...this.previousRouteParams,
+        fromWalletAssets: this.currentRouteParams.fromWalletAssets,
+        fromSbtDetails: this.currentRouteParams.fromSbtDetails,
+      },
     });
   }
 
