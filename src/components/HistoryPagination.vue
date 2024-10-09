@@ -3,7 +3,7 @@
     <span class="el-pagination__total">{{ totalText }}</span>
     <s-button
       type="link"
-      :tooltip="t('history.firstText')"
+      :tooltip="t('firstText')"
       :disabled="disabledFirstPrev"
       @click="handlePaginationClick(PaginationButton.First)"
     >
@@ -11,7 +11,7 @@
     </s-button>
     <s-button
       type="link"
-      :tooltip="t('history.prevText')"
+      :tooltip="t('prevText')"
       :disabled="disabledFirstPrev"
       @click="handlePaginationClick(PaginationButton.Prev)"
     >
@@ -19,7 +19,7 @@
     </s-button>
     <s-button
       type="link"
-      :tooltip="t('history.nextText')"
+      :tooltip="t('nextText')"
       :disabled="disabledNextLast"
       @click="handlePaginationClick(PaginationButton.Next)"
     >
@@ -27,7 +27,7 @@
     </s-button>
     <s-button
       type="link"
-      :tooltip="t('history.lastText')"
+      :tooltip="t('lastText')"
       :disabled="disabledNextLast"
       @click="handlePaginationClick(PaginationButton.Last)"
     >

@@ -14,7 +14,7 @@
           <span :class="statusClass">{{ statusTitle }}</span>
           <s-icon v-if="isCompleteTransaction" name="basic-check-mark-24" size="16px" />
         </info-line>
-        <info-line v-if="errorMessage" :label="t('transaction.errorMessage')">
+        <info-line v-if="errorMessage" :label="t('errorText')">
           <span :class="statusClass">{{ errorMessage }}</span>
         </info-line>
         <info-line v-if="transactionFromDate" :label="t('transaction.startTime')" :value="transactionFromDate" />

@@ -109,7 +109,7 @@
         <template v-else-if="!+tokenSupply">{{ t('createToken.enterSupply') }}</template>
         <template v-else-if="!tokenDescription">{{ t('createToken.enterTokenDescription') }}</template>
         <template v-else-if="badSource">{{ t('createToken.provideContent') }}</template>
-        <template v-else>{{ t('createToken.actionNFT') }}</template>
+        <template v-else>{{ t('createTokenTextNFT') }}</template>
       </s-button>
     </template>
     <template v-else-if="step === Step.Warn">
@@ -134,8 +134,8 @@
         :loading="loading"
         @click="onConfirm"
       >
-        <template v-if="!hasEnoughXor">{{ t('createToken.insufficientBalance', { symbol: XOR_SYMBOL }) }}</template>
-        <template v-else>{{ t('createToken.confirm') }}</template>
+        <template v-if="!hasEnoughXor">{{ t('insufficientBalanceText', { symbol: XOR_SYMBOL }) }}</template>
+        <template v-else>{{ t('confirmText') }}</template>
       </s-button>
     </template>
 
@@ -407,7 +407,7 @@ export default class CreateNftToken extends Mixins(
   async onConfirm(): Promise<void> {
     await this.withNotifications(async () => {
       if (!this.hasEnoughXor) {
-        throw new Error('walletSend.badAmount');
+        throw new Error('insufficientBalanceText');
       }
       if (this.file) {
         await this.storeNftImage(this.file);

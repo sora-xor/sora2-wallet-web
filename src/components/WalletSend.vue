@@ -31,7 +31,7 @@
           :max="MaxInputNumber"
         >
           <div class="wallet-send-amount" slot="top">
-            <div class="wallet-send-amount-title">{{ t('walletSend.amount') }}</div>
+            <div class="wallet-send-amount-title">{{ t('amountText') }}</div>
             <div class="wallet-send-amount-balance">
               <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
               <formatted-amount-with-fiat-value
@@ -109,7 +109,7 @@
           :loading="loading"
           @click="handleConfirm"
         >
-          {{ sendButtonDisabledText || t('walletSend.confirm') }}
+          {{ sendButtonDisabledText || t('confirmText') }}
         </s-button>
       </template>
 
@@ -315,14 +315,13 @@ export default class WalletSend extends Mixins(
     }
 
     if (!this.validAmount) {
-      return this.t(
-        `walletSend.${this.emptyAmount ? 'enterAmount' : 'badAmount'}`,
-        this.emptyAmount ? {} : { tokenSymbol: this.asset.symbol }
-      );
+      return this.emptyAmount
+        ? this.t('walletSend.enterAmount')
+        : this.t('insufficientBalanceText', { tokenSymbol: this.asset.symbol });
     }
 
     if (!this.hasEnoughXor) {
-      return this.t('walletSend.badAmount', { tokenSymbol: XOR.symbol });
+      return this.t('insufficientBalanceText', { tokenSymbol: XOR.symbol });
     }
 
     return '';
@@ -380,7 +379,7 @@ export default class WalletSend extends Mixins(
 
   async handleConfirm(): Promise<void> {
     await this.withNotifications(async () => {
-      if (!this.hasEnoughXor) throw new Error('walletSend.badAmount');
+      if (!this.hasEnoughXor) throw new Error('walletSend.insufficientBalanceText');
       await this.transfer({ to: this.address, amount: this.amount });
       this.navigate({ name: RouteNames.Wallet });
     });
