@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "1.40.16-beta-1",
+  "version": "1.40.16-beta-2",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
@@ -25,9 +25,9 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@polkadot/vue-identicon": "2.12.1",
     "@polkadot/extension-inject": "^0.44.7",
-    "@sora-substrate/sdk": "1.40.5",
+    "@polkadot/vue-identicon": "2.12.1",
+    "@sora-substrate/sdk": "1.40.7",
     "@soramitsu-ui/ui-vue2": "^1.1.5",
     "@urql/core": "^5.0.4",
     "@walletconnect/modal": "^2.6.2",

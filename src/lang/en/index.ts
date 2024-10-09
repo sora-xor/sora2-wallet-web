@@ -53,6 +53,7 @@ export default {
     [Operation.SwapAndSend]: 'Swap and Send',
     [Operation.SwapTransferBatch]: '{ADAR} transfer',
     [Operation.Transfer]: 'Transfer',
+    [Operation.XorlessTransfer]: 'Transfer',
     [Operation.AddLiquidity]: 'Add Liquidity',
     [Operation.RemoveLiquidity]: 'Remove Liquidity',
     [Operation.CreatePair]: 'Create Pair',
@@ -97,6 +98,7 @@ export default {
       [Operation.Burn]: 'Burned {amount} {symbol}',
       [Operation.Mint]: 'Minted {amount} {symbol} to {address}',
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
+      [Operation.XorlessTransfer]: '{action} {amount} {symbol} {direction} {address}',
       [Operation.Swap]: 'Swapped {amount} {symbol} for {amount2} {symbol2}',
       [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
       [Operation.SwapTransferBatch]: '{action} {amount} {symbol}',
@@ -144,6 +146,7 @@ export default {
       [Operation.Burn]: 'Failed to burn {amount} {symbol}',
       [Operation.Mint]: 'Failed to mint {amount} {symbol} to {address}',
       [Operation.Transfer]: 'Failed to send {amount} {symbol} to {address}',
+      [Operation.XorlessTransfer]: 'Failed to send {amount} {symbol} to {address}',
       [Operation.Swap]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2}',
       [Operation.SwapAndSend]:
         'Failed to swap {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',

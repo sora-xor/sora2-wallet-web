@@ -125,6 +125,7 @@
 import { FPNumber, Operation } from '@sora-substrate/sdk';
 import { getAssetBalance } from '@sora-substrate/sdk/build/assets';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
+import { AssetTypes, type Asset, type AccountAsset, type AccountBalance } from '@sora-substrate/sdk/build/assets/types';
 import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { api } from '../api';
@@ -147,7 +148,6 @@ import WalletFee from './WalletFee.vue';
 
 import type { Route } from '../store/router/types';
 import type { CodecString } from '@sora-substrate/sdk';
-import type { AccountAsset, AccountBalance } from '@sora-substrate/sdk/build/assets/types';
 import type { Subscription } from 'rxjs';
 
 @Component({
@@ -174,6 +174,7 @@ export default class WalletSend extends Mixins(
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<AccountAsset> | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.account.assets assets!: Array<Asset>;
   @state.transactions.isConfirmTxDialogDisabled private isConfirmTxDisabled!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
@@ -188,24 +189,28 @@ export default class WalletSend extends Mixins(
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
-  // TODO: [Rustem] improve logic to not allow to send non-onwer receiver
-  // @Watch('address')
-  // async getIsNotSbtOwnerReceiver(): Promise<void> {
-  //   if (this.validAddress && this.asset.address) {
-  //     const assetInfo = (await api.api.query.assets.assetInfosV2(this.asset.address)).toHuman();
-  //     if (assetInfo.assetType === 'Regulated') {
-  //       const balance = await getAssetBalance(api.api, this.address, this.asset.address);
+  @Watch('address')
+  async getIsNotSbtOwnerReceiver(): Promise<void> {
+    if (this.validAddress && this.asset.address) {
+      const regulatedAsset = this.assets.find(
+        (asset) => asset.address === this.asset.address && asset.type === AssetTypes.Regulated
+      );
 
-  //       if (this.getFPNumberFromCodec(balance.total).lte(FPNumber.ZERO)) {
-  //         this.showIsNotSbtOwnerReceiver = true;
-  //       }
-  //     } else {
-  //       this.showIsNotSbtOwnerReceiver = false;
-  //     }
-  //   } else {
-  //     this.showIsNotSbtOwnerReceiver = false;
-  //   }
-  // }
+      if (regulatedAsset) {
+        const sbtAddress = await api.extendedAssets.getSbtAddress(regulatedAsset.address);
+
+        const balance = await getAssetBalance(api.api, this.address, sbtAddress);
+
+        if (this.getFPNumberFromCodec(balance.total).lte(FPNumber.ZERO)) {
+          this.showIsNotSbtOwnerReceiver = true;
+        } else {
+          this.showIsNotSbtOwnerReceiver = false;
+        }
+      } else {
+        this.showIsNotSbtOwnerReceiver = false;
+      }
+    }
+  }
 
   created(): void {
     if (!this.currentRouteParams.asset) {

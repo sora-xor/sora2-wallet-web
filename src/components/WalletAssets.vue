@@ -258,7 +258,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     });
 
     for await (const sbt of sbtsInfo) {
-      this.sbtPermissions = { ...sbt };
+      this.sbtPermissions = { ...this.sbtPermissions, ...sbt };
     }
   }
 
