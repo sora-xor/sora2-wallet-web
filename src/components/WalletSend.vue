@@ -206,9 +206,9 @@ export default class WalletSend extends Mixins(
         } else {
           this.showIsNotSbtOwnerReceiver = false;
         }
-      } else {
-        this.showIsNotSbtOwnerReceiver = false;
       }
+    } else {
+      this.showIsNotSbtOwnerReceiver = false;
     }
   }
 
