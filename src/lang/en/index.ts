@@ -252,7 +252,7 @@ export default {
     save: 'Save as contact',
     tooltip: 'Collect address book by providing name and address to keep your contacts organized and up-to-date',
     notSoraAddress:
-      'This address will be saved as {SORA} address below. Make sure the recipient can access the {SORA} chain:',
+      'This address will be saved as {Sora} address below. Make sure the recipient can access the {Sora} chain:',
     options: {
       send: 'Send tokens',
       edit: 'Edit contact',
@@ -467,7 +467,7 @@ export default {
     },
     accountName: {
       placeholder: 'Account name',
-      desc: 'This is the name of your account. It will be visible only to you in {Polkaswap}.',
+      desc: 'This is the name of your account. It will be visible only to you in {AppName}.',
     },
     password: {
       placeholder: 'Password',
