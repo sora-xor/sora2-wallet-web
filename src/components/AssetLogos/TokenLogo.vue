@@ -1,26 +1,30 @@
 <template>
   <div class="logo">
     <span :class="iconClasses" :style="iconStyles" />
+    <sbt-token-logo v-if="isSbt" class="asset-logo__nft-image" :class="iconClasses" :asset="token" />
     <nft-token-logo v-if="isNft" class="asset-logo__nft-image" :class="iconClasses" :asset="token" />
   </div>
 </template>
 
 <script lang="ts">
+import { AssetTypes } from '@sora-substrate/sdk/build/assets/types';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { api } from '../api';
-import { LogoSize, ObjectInit } from '../consts';
-import { getter } from '../store/decorators';
+import { api } from '../../api';
+import { LogoSize, ObjectInit } from '../../consts';
+import { getter } from '../../store/decorators';
+import TranslationMixin from '../mixins/TranslationMixin';
 
-import TranslationMixin from './mixins/TranslationMixin';
 import NftTokenLogo from './NftTokenLogo.vue';
+import SbtTokenLogo from './SbtTokenLogo.vue';
 
-import type { WhitelistIdsBySymbol } from '../types/common';
+import type { WhitelistIdsBySymbol } from '../../types/common';
 import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {
     NftTokenLogo,
+    SbtTokenLogo,
   },
 })
 export default class TokenLogo extends Mixins(TranslationMixin) {
@@ -33,7 +37,12 @@ export default class TokenLogo extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
 
   get isNft(): boolean {
+    if (this.token?.type === AssetTypes.Soulbound) return false;
     return !!this.token && api.assets.isNft(this.token);
+  }
+
+  get isSbt(): boolean {
+    return this.token?.type === AssetTypes.Soulbound;
   }
 
   get assetAddress(): Nullable<string> {
@@ -70,7 +79,11 @@ export default class TokenLogo extends Mixins(TranslationMixin) {
     if (!this.assetAddress) {
       classes.push(questionMark);
     } else if (!this.whitelistedItem) {
-      classes.push(this.isNft ? 'asset-logo-nft' : questionMark);
+      if (this.isSbt) {
+        classes.push('asset-logo-sbt');
+      } else {
+        classes.push(this.isNft ? 'asset-logo-nft' : questionMark);
+      }
     }
 
     classes.push(`${tokenLogoClass}--${this.size.toLowerCase()}`);
@@ -92,8 +105,13 @@ $token-color: var(--s-color-base-content-tertiary);
   position: relative;
 }
 .asset-logo {
+  &-nft,
+  &-sbt {
+    border-radius: 20% !important;
+  }
+
   &__nft-image {
-    border-radius: 50%;
+    border-radius: 20%;
     object-fit: cover;
     position: absolute !important;
     top: 0;
@@ -120,6 +138,10 @@ $token-color: var(--s-color-base-content-tertiary);
         content: 'NFT';
         font-size: 6px;
       }
+      &.#{$className}-sbt::before {
+        content: 'SBT';
+        font-size: 6px;
+      }
     }
   } @else if ($size == 'small') {
     $size-px: 24px;
@@ -131,6 +153,11 @@ $token-color: var(--s-color-base-content-tertiary);
       font-size: 18px;
       &.#{$className}-nft::before {
         content: 'NFT';
+        font-size: 8px;
+        font-weight: 800;
+      }
+      &.#{$className}-sbt::before {
+        content: 'SBT';
         font-size: 8px;
         font-weight: 800;
       }
@@ -148,6 +175,11 @@ $token-color: var(--s-color-base-content-tertiary);
         font-size: 12px;
         font-weight: 800;
       }
+      &.#{$className}-sbt::before {
+        content: 'SBT';
+        font-size: 12px;
+        font-weight: 800;
+      }
     }
   } @else if ($size == 'big') {
     $size-px: var(--s-size-medium);
@@ -157,10 +189,16 @@ $token-color: var(--s-color-base-content-tertiary);
       @include asset-logo-styles;
       line-height: $size-px;
       font-size: 32px;
-      &.#{$className}-nft::before {
-        content: 'NFT';
+      &.#{$className}-nft::before,
+      &.#{$className}-sbt::before {
         font-size: 14px;
         font-weight: 800;
+      }
+      &.#{$className}-nft::before {
+        content: 'NFT';
+      }
+      &.#{$className}-sbt::before {
+        content: 'SBT';
       }
     }
   } @else if ($size == 'bigger') {
@@ -176,6 +214,11 @@ $token-color: var(--s-color-base-content-tertiary);
         font-size: 14px;
         font-weight: 800;
       }
+      &.#{$className}-sbt::before {
+        content: 'SBT';
+        font-size: 14px;
+        font-weight: 800;
+      }
     }
   } @else if ($size == 'large') {
     $size-px: 80px;
@@ -187,6 +230,11 @@ $token-color: var(--s-color-base-content-tertiary);
       font-size: 64px;
       &.#{$className}-nft::before {
         content: 'NFT';
+        font-size: 28px;
+        font-weight: 800;
+      }
+      &.#{$className}-sbt::before {
+        content: 'SBT';
         font-size: 28px;
         font-weight: 800;
       }

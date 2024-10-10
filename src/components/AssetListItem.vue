@@ -39,11 +39,13 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
+import { state } from '../store/decorators';
+
+import NftTokenLogo from './AssetLogos/NftTokenLogo.vue';
+import TokenLogo from './AssetLogos/TokenLogo.vue';
 import TranslationMixin from './mixins/TranslationMixin';
-import NftTokenLogo from './NftTokenLogo.vue';
 import PinIcon from './PinIcon.vue';
 import TokenAddress from './TokenAddress.vue';
-import TokenLogo from './TokenLogo.vue';
 
 import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 
@@ -87,6 +89,10 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
   .formatted-amount__container {
     width: 100%;
   }
+
+  .asset-sbt-expiration {
+    margin-bottom: calc($inner-spacing-mini * -1);
+  }
 }
 </style>
 
@@ -112,9 +118,15 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
 
   &-symbol {
     font-size: var(--s-font-size-big);
-    font-weight: 600;
     letter-spacing: var(--s-letter-spacing-small);
     line-height: var(--s-line-height-extra-small);
+    font-weight: 600;
+  }
+
+  &-sbt-expiration {
+    font-size: var(--s-font-size-extra-mini);
+    display: block;
+    font-weight: 300;
   }
   .check {
     display: flex;

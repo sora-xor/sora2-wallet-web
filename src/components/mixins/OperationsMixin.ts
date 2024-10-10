@@ -26,6 +26,7 @@ const amountBasedOperations = [
   Operation.Burn,
   Operation.Mint,
   Operation.Transfer,
+  Operation.XorlessTransfer,
   Operation.SwapTransferBatch,
   Operation.DemeterFarmingGetRewards,
   Operation.DemeterFarmingStakeToken,
@@ -104,6 +105,9 @@ export default class OperationsMixin extends Mixins(NotificationMixin, NumberFor
       status = TransactionStatus.Error;
     } else if (status !== TransactionStatus.Error) {
       status = TransactionStatus.Finalized;
+    }
+    if (value.type === Operation.SetAccessExpiration) {
+      params.endTime = new Date(params?.endTime).toLocaleDateString();
     }
     if (hideAmountValues) {
       params.amount = HiddenValue;

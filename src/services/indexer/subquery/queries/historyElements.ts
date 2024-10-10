@@ -447,6 +447,53 @@ const OperationFilterMap = {
       equalTo: ModuleMethods.VaultDebtBorrow,
     },
   },
+  // DEFI-R
+  [Operation.SetAccessExpiration]: {
+    module: {
+      equalTo: ModuleNames.DefiR,
+    },
+    method: {
+      equalTo: ModuleMethods.DefiRSetAccessExpiration,
+    },
+  },
+  [Operation.RegulateAsset]: {
+    module: {
+      equalTo: ModuleNames.DefiR,
+    },
+    method: {
+      equalTo: ModuleMethods.DefiRRegulateAsset,
+    },
+  },
+  [Operation.BindRegulatedAsset]: {
+    module: {
+      equalTo: ModuleNames.DefiR,
+    },
+    method: {
+      equalTo: ModuleMethods.DefiRBindRegulatedAsset,
+    },
+  },
+  [Operation.RegisterAndRegulateAsset]: {
+    module: {
+      equalTo: ModuleNames.DefiR,
+    },
+    method: {
+      equalTo: ModuleMethods.DefiRRegisterAndRegulateAsset,
+    },
+  },
+  [Operation.IssueSoulBoundToken]: {
+    module: {
+      equalTo: ModuleNames.Utility,
+    },
+    method: {
+      equalTo: ModuleMethods.UtilityBatchAll,
+    },
+    callNames: {
+      contains: [
+        ModuleNames.DefiR + '.' + ModuleMethods.DefiRBindRegulatedAsset,
+        ModuleNames.DefiR + '.' + ModuleMethods.DefiRIssueSoulBoundToken,
+      ],
+    },
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {

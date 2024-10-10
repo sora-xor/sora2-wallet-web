@@ -306,6 +306,31 @@ const OperationFilterMap = {
     module_eq: ModuleNames.Vault,
     method_eq: ModuleMethods.VaultDebtBorrow,
   },
+  // DEFI-R
+  [Operation.SetAccessExpiration]: {
+    module_eq: ModuleNames.DefiR,
+    method_eq: ModuleMethods.DefiRSetAccessExpiration,
+  },
+  [Operation.RegulateAsset]: {
+    module_eq: ModuleNames.DefiR,
+    method_eq: ModuleMethods.DefiRRegulateAsset,
+  },
+  [Operation.BindRegulatedAsset]: {
+    module_eq: ModuleNames.DefiR,
+    method_eq: ModuleMethods.DefiRBindRegulatedAsset,
+  },
+  [Operation.RegisterAndRegulateAsset]: {
+    module_eq: ModuleNames.DefiR,
+    method_eq: ModuleMethods.DefiRRegisterAndRegulateAsset,
+  },
+  [Operation.IssueSoulBoundToken]: {
+    module_eq: ModuleNames.Utility,
+    method_eq: ModuleMethods.UtilityBatchAll,
+    callNames_containsAny: [
+      ModuleNames.DefiR + '.' + ModuleMethods.DefiRBindRegulatedAsset,
+      ModuleNames.DefiR + '.' + ModuleMethods.DefiRIssueSoulBoundToken,
+    ],
+  },
 };
 
 const createOperationsCriteria = (operations: Array<Operation>) => {

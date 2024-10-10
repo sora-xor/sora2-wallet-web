@@ -1,4 +1,4 @@
-import TokenLogo from '@/components/TokenLogo.vue';
+import TokenLogo from '@/components/AssetLogos/TokenLogo.vue';
 
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_ACCOUNT_ASSETS_NFT, MOCK_WHITE_LIST, MOCK_WHITELIST_IDS_BY_SYMBOL } from '../../utils/mock';

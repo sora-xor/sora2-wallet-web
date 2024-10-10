@@ -8,14 +8,15 @@
             <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
             <asset-list-item
               :asset="asset"
+              :pinned="isAssetPinned(asset)"
               with-fiat
               with-clickable-logo
               @show-details="handleOpenAssetDetails"
-              :pinned="isAssetPinned(asset)"
               @pin="handlePin"
             >
               <template #value="asset">
                 <formatted-amount-with-fiat-value
+                  v-if="!isSoulbound(asset)"
                   value-can-be-hidden
                   value-class="asset-value"
                   :value="getBalance(asset)"
@@ -31,10 +32,21 @@
                     <span>{{ formatFrozenBalance(asset) }}</span>
                   </div>
                 </formatted-amount-with-fiat-value>
+                <div v-else class="asset-sbt-meta">
+                  <div class="title">
+                    {{ TranslationConsts.KYC }} <span class="counter">{{ `#${index}` }}</span>
+                    <s-icon name="el-icon-success" size="16" />
+                  </div>
+                  <div class="permissions">
+                    <span class="counter">{{ sbtPermissions[asset.address] }}</span>
+                    {{ getTranslation(sbtPermissions[asset.address]) }}
+                  </div>
+                  <span v-if="isSoulbound(asset)" class="asset-sbt-expiration">{{ sbtExpDates[asset.address] }}</span>
+                </div>
               </template>
               <template #default="asset">
                 <s-button
-                  v-if="permissions.sendAssets && !isZeroBalance(asset)"
+                  v-if="permissions.sendAssets && !isZeroBalance(asset) && !isSoulbound(asset)"
                   class="wallet-assets__button send"
                   type="action"
                   size="small"
@@ -45,7 +57,7 @@
                   <s-icon name="finance-send-24" size="24" />
                 </s-button>
                 <s-button
-                  v-if="permissions.swapAssets && asset.decimals"
+                  v-if="permissions.swapAssets && asset.decimals && !isSoulbound(asset)"
                   class="wallet-assets__button swap"
                   type="action"
                   size="small"
@@ -87,6 +99,7 @@
 
 <script lang="ts">
 import { api, FPNumber } from '@sora-substrate/sdk';
+import { AssetTypes, type AccountAsset, type Whitelist } from '@sora-substrate/sdk/build/assets/types';
 import isEmpty from 'lodash/fp/isEmpty';
 import { Component, Mixins, Watch } from 'vue-property-decorator';
 import draggable from 'vuedraggable';
@@ -104,7 +117,6 @@ import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
 
 import type { WalletAssetFilters, WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';
-import type { AccountAsset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
 
 @Component({
   components: {
@@ -117,6 +129,7 @@ import type { AccountAsset, Whitelist } from '@sora-substrate/sdk/build/assets/t
 })
 export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, TranslationMixin) {
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.account.address private connected!: string;
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
   @state.settings.permissions permissions!: WalletPermissions;
   @state.settings.filters private filters!: WalletAssetFilters;
@@ -131,14 +144,19 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @mutation.account.setMultiplePinnedAssets private setMultiplePinnedAssets!: (pinnedAssetsAddresses: string[]) => void;
 
   @Watch('assetList')
-  private updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): void {
+  private async updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): Promise<void> {
     if (oldAssets.length !== newAssets.length) {
       this.scrollbarComponentKey += 1;
     }
+
+    this.checkSbtPermissions();
+    this.checkSbtExpirationDates();
   }
 
   scrollbarComponentKey = 0;
   assetsAreHidden = true;
+  sbtPermissions = {};
+  sbtExpDates = {};
 
   get assetList(): Array<AccountAsset> {
     return this.accountAssets.sort((a, b) => {
@@ -197,6 +215,14 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
+  isSoulbound(asset: AccountAsset): boolean {
+    return asset.type === AssetTypes.Soulbound;
+  }
+
+  getTranslation(number: number): string {
+    return number > 1 ? this.t('sbtDetails.permissions') : this.t('sbtDetails.permission');
+  }
+
   onMove(event) {
     const draggedItem = event.draggedContext.element;
     const targetIndex = event.relatedContext.index;
@@ -216,6 +242,41 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
 
   getBalance(asset: AccountAsset): string {
     return `${this.formatCodecNumber(asset.balance.transferable, asset.decimals)}`;
+  }
+
+  async checkSbtPermissions(): Promise<void> {
+    if (!this.accountAssets.length) return;
+
+    const sbts = this.accountAssets.filter((asset) => asset.type === AssetTypes.Soulbound);
+
+    const sbtsInfo = sbts.map(async (asset) => {
+      const { regulatedAssets } = await api.extendedAssets.getSbtMetaInfo(asset.address);
+
+      return {
+        [asset.address]: regulatedAssets.length,
+      };
+    });
+
+    for await (const sbt of sbtsInfo) {
+      this.sbtPermissions = { ...this.sbtPermissions, ...sbt };
+    }
+  }
+
+  async checkSbtExpirationDates(): Promise<void> {
+    const sbts = this.accountAssets.filter((asset) => asset.type === AssetTypes.Soulbound);
+
+    sbts.map(async (asset) => {
+      const sbtExpiryDate = await api.extendedAssets.getSbtExpiration(this.connected, asset.address);
+      let expDate = '';
+
+      if (Number(sbtExpiryDate) === Infinity) {
+        expDate = this.t('sbtDetails.indefiniteExp');
+      } else {
+        expDate = this.formatDate(Number(sbtExpiryDate), 'll');
+      }
+
+      this.sbtExpDates = { ...this.sbtExpDates, [asset.address]: expDate };
+    });
   }
 
   isZeroBalance(asset: AccountAsset): boolean {
@@ -247,7 +308,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   }
 
   handleOpenAssetDetails(asset: AccountAsset): void {
-    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset } });
+    this.navigate({ name: RouteNames.WalletAssetDetails, params: { asset, fromWalletAssets: true } });
   }
 
   handleOpenAddAsset(): void {
@@ -271,13 +332,22 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     const hideZeroBalance = this.filters.zeroBalance;
 
     // asset
-    const isNft = api.assets.isNft(asset);
+    const isNft = asset.type === AssetTypes.NFT;
+    const isSbt = asset.type === AssetTypes.Soulbound;
     const isWhitelisted = api.assets.isWhitelist(asset, this.whitelist);
     const hasZeroBalance = !asset.decimals
       ? asset.balance.total === '0' // for non-divisible tokens
       : asset.balance.total[8] === undefined; // for 0.00000009 and less
 
-    if (tokenType === WalletFilteringOptions.Currencies && isNft) {
+    if (tokenType === WalletFilteringOptions.SBT && !isSbt) {
+      return false;
+    }
+
+    if (tokenType === WalletFilteringOptions.Currencies && isNft && isSbt) {
+      return false;
+    }
+
+    if (tokenType === WalletFilteringOptions.NFT && isSbt) {
       return false;
     }
 
@@ -297,6 +367,11 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     this.assetsAreHidden = false;
 
     return true;
+  }
+
+  mounted(): void {
+    this.checkSbtPermissions();
+    this.checkSbtExpirationDates();
   }
 }
 </script>
@@ -410,6 +485,34 @@ $padding: 5px;
       margin-top: $basic-spacing-mini;
       color: var(--s-color-base-content-primary);
       line-height: var(--s-line-height-reset);
+    }
+
+    &-sbt-meta {
+      .title {
+        font-weight: 600;
+
+        .counter {
+          font-size: var(--s-font-size-mini);
+          font-weight: 450;
+        }
+      }
+
+      .permissions {
+        color: var(--s-color-fiat-value);
+        font-size: 11.5px;
+        margin-top: -7px;
+        margin-bottom: -4px;
+
+        .counter {
+          font-size: var(--s-font-size-extra-small);
+          font-weight: 600;
+        }
+      }
+
+      .el-icon-success {
+        color: var(--s-color-fiat-value);
+        margin-left: 4px;
+      }
     }
   }
 

@@ -36,7 +36,7 @@
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { WalletFilteringOptions } from '../consts';
-import { mutation, state } from '../store/decorators';
+import { state, getter, mutation } from '../store/decorators';
 
 import FormattedAmount from './FormattedAmount.vue';
 import LoadingMixin from './mixins/LoadingMixin';
@@ -59,7 +59,9 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   @Prop({ default: '0', type: String }) readonly assetsFiatAmount!: string;
 
   @state.settings.filters filters!: WalletAssetFilters;
-  @mutation.settings.setFilterOptions private setFilterOptions!: (filter: WalletAssetFilters) => void;
+  @getter.account.hasSomeSbt hasSomeSbt!: boolean;
+  @mutation.settings.setFilterOptions
+  private setFilterOptions!: (filter: WalletAssetFilters) => void;
 
   zeroBalanceSwitch = false;
 
@@ -114,12 +116,16 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
   }
 
   get filterOptionsText(): Array<string> {
-    return [this.t('filter.all'), this.t('filter.token'), this.TranslationConsts.NFT];
+    const basicOptions = [this.t('filter.all'), this.t('filter.token'), this.TranslationConsts.NFT];
+
+    if (this.hasSomeSbt) basicOptions.push(this.TranslationConsts.SBT);
+
+    return basicOptions;
   }
 
   get verifiedOnlySwitchDisabled(): boolean {
-    // disable verified only switch as there are no whitelisted NFTs.
-    return this.filters.option === WalletFilteringOptions.NFT;
+    // disable verified only switch as there are no whitelisted NFTs or SBTs.
+    return [WalletFilteringOptions.NFT, WalletFilteringOptions.SBT].includes(this.filters.option);
   }
 
   get chosenOptionText(): string {
@@ -130,6 +136,9 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
         break;
       case WalletFilteringOptions.NFT:
         text = this.TranslationConsts.NFT;
+        break;
+      case WalletFilteringOptions.SBT:
+        text = this.TranslationConsts.SBT;
         break;
     }
     return text.toUpperCase();
