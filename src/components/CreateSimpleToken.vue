@@ -44,7 +44,7 @@
         <template v-if="!tokenSymbol">{{ t('createToken.enterSymbol') }}</template>
         <template v-else-if="!tokenName.trim()">{{ t('createToken.enterName') }}</template>
         <template v-else-if="!+tokenSupply">{{ t('createToken.enterSupply') }}</template>
-        <template v-else>{{ t('createToken.action') }}</template>
+        <template v-else>{{ t('createTokenText') }}</template>
       </s-button>
     </template>
     <template v-else-if="step === Step.Warn">
@@ -63,8 +63,8 @@
         :loading="loading"
         @click="onConfirm"
       >
-        <template v-if="!hasEnoughXor">{{ t('createToken.insufficientBalance', { symbol: XOR }) }}</template>
-        <template v-else>{{ t('createToken.confirm') }}</template>
+        <template v-if="!hasEnoughXor">{{ t('insufficientBalanceText', { symbol: XOR }) }}</template>
+        <template v-else>{{ t('confirmText') }}</template>
       </s-button>
     </template>
     <wallet-fee v-if="!isCreateDisabled && showFee" :value="fee" />
@@ -176,7 +176,7 @@ export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFo
   async onConfirm(): Promise<void> {
     await this.withNotifications(async () => {
       if (!this.hasEnoughXor) {
-        throw new Error('walletSend.badAmount');
+        throw new Error('insufficientBalanceText');
       }
       await this.registerAsset();
       this.navigate({ name: RouteNames.Wallet });

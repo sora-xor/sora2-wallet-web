@@ -3,8 +3,8 @@
     <info-line
       class="wallet-fee"
       is-formatted
-      :label="t('walletSend.fee')"
-      :label-tooltip="t('walletSend.feeTooltip')"
+      :label="t('networkFeeText')"
+      :label-tooltip="t('networkFeeTooltipText')"
       :value="formattedValue"
       :asset-symbol="xor"
       :fiat-value="formattedFiatValue"

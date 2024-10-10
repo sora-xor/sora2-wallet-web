@@ -7,7 +7,7 @@
       <s-button
         v-if="permissions.createAssets"
         type="action"
-        :tooltip="t('wallet.createToken')"
+        :tooltip="t('createTokenText')"
         @click="handleCreateToken"
       >
         <s-icon name="various-atom-24" size="28" />
