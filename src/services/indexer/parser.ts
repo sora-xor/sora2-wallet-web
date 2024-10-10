@@ -922,6 +922,9 @@ export default class IndexerDataParser {
       case Operation.Transfer: {
         return await parseTransfer(transaction, payload);
       }
+      case Operation.XorlessTransfer: {
+        return await parseTransfer(transaction, payload);
+      }
       case Operation.RegisterAsset: {
         return await parseRegisterAsset(transaction, payload);
       }
