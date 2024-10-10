@@ -468,7 +468,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
     <p
       class="wallet-send-address-error"
     >
-      You cannot send tokens to the same acount that you are currently connected to.
+      You cannot send tokens to the same account that you are currently connected to.
     </p>
      
     <s-float-input-stub
