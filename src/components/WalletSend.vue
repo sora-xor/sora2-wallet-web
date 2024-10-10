@@ -68,6 +68,29 @@
             <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
           </div>
         </s-float-input>
+        <div class="wallet-send__switch-btn">
+          <s-switch v-model="withVesting" :disabled="loading" />
+          <span>Enable token vesting</span>
+        </div>
+        <template v-if="withVesting">
+          <s-select v-model="selectedVestingPeriod" placeholder="Select unlock frequency">
+            <s-option v-for="period in vestingPeriods" :key="period.value" :label="period.label" :value="period.value">
+              {{ period.label }}
+            </s-option>
+          </s-select>
+          <s-float-input
+            class="wallet-send__vesting-input"
+            has-locale-string
+            placeholder="Enter vesting percentage"
+            v-model="vestingPercentage"
+            :decimals="2"
+            :delimiters="delimiters"
+            :max="100"
+            :disabled="loading"
+          >
+            <span slot="right">%</span>
+          </s-float-input>
+        </template>
         <s-button
           class="wallet-send-action s-typography-button--large"
           type="primary"
@@ -165,6 +188,13 @@ export default class WalletSend extends Mixins(
   NetworkFeeWarningMixin
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
+  readonly vestingPeriods = [
+    { value: 1, label: '1 day' },
+    { value: 7, label: '7 days' },
+    { value: 30, label: '30 days' },
+    { value: 60, label: '60 days' },
+    { value: 90, label: '90 days' },
+  ];
 
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
@@ -179,6 +209,9 @@ export default class WalletSend extends Mixins(
   address = '';
   amount = '';
   showAdditionalInfo = true;
+  withVesting = false;
+  selectedVestingPeriod = 1;
+  vestingPercentage = '10';
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
@@ -306,7 +339,13 @@ export default class WalletSend extends Mixins(
   }
 
   get sendButtonDisabled(): boolean {
-    return this.loading || !this.validAddress || !this.validAmount || !this.hasEnoughXor;
+    return (
+      this.loading ||
+      !this.validAddress ||
+      !this.validAmount ||
+      !this.hasEnoughXor ||
+      (this.withVesting && !+this.vestingPercentage)
+    );
   }
 
   get sendButtonDisabledText(): string {
@@ -322,6 +361,10 @@ export default class WalletSend extends Mixins(
 
     if (!this.hasEnoughXor) {
       return this.t('insufficientBalanceText', { tokenSymbol: XOR.symbol });
+    }
+
+    if (this.withVesting && !+this.vestingPercentage) {
+      return 'Enter vesting percentage';
     }
 
     return '';
@@ -581,6 +624,18 @@ $telegram-web-app-width: 500px;
         color: var(--s-color-base-content-secondary);
       }
     }
+  }
+  &__switch-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: var(--s-basic-spacing) 0;
+    > :first-child {
+      margin-right: var(--s-basic-spacing);
+    }
+  }
+  &__vesting-input {
+    margin-top: var(--s-basic-spacing);
   }
   &-action {
     margin-top: #{$basic-spacing-medium};

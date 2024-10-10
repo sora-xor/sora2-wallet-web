@@ -20,11 +20,11 @@
           <template v-else>
             <token-logo :token="asset" size="bigger" />
             <div
-              v-button="isXor"
+              v-button
               :style="balanceStyles"
               :class="balanceDetailsClasses"
-              :tabindex="isXor ? 0 : -1"
-              @click="isXor && handleClickDetailedBalance()"
+              :tabindex="0"
+              @click="handleClickDetailedBalance()"
             >
               <formatted-amount
                 value-can-be-hidden
@@ -33,7 +33,7 @@
                 :font-size-rate="FontSizeRate.SMALL"
                 :asset-symbol="asset.symbol"
               >
-                <s-icon v-if="isXor" name="chevron-down-rounded-16" size="18" />
+                <s-icon name="chevron-down-rounded-16" size="18" />
               </formatted-amount>
             </div>
           </template>
@@ -67,7 +67,7 @@
             </s-button>
           </div>
           <transition name="fadeHeight">
-            <div v-if="isXor && wasBalanceDetailsClicked" class="asset-details-balance-info">
+            <div v-if="wasBalanceDetailsClicked" class="asset-details-balance-info">
               <template v-for="(balanceGroup, index) in balanceTypes">
                 <div
                   v-for="balanceType in Array.isArray(balanceGroup) ? balanceGroup : [balanceGroup]"
