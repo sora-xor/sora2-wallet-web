@@ -71,10 +71,14 @@
         </s-float-input>
         <div class="wallet-send__switch-btn">
           <s-switch v-model="withVesting" :disabled="loading" @change="fetchNetworkFeeDebounced" />
-          <span>Enable token vesting</span>
+          <span>{{ t('walletSend.enableVesting') }}</span>
         </div>
         <template v-if="withVesting">
-          <s-select class="wallet-send__vesting-period" v-model="selectedVestingPeriod" placeholder="Unlock frequency">
+          <s-select
+            class="wallet-send__vesting-period"
+            v-model="selectedVestingPeriod"
+            :placeholder="t('walletSend.unlockFrequency')"
+          >
             <s-option v-for="period in vestingPeriods" :key="period.value" :label="period.label" :value="period.value">
               {{ period.label }}
             </s-option>
@@ -82,8 +86,8 @@
           <s-float-input
             class="wallet-send__vesting-input"
             has-locale-string
-            placeholder="Vesting percentage"
             v-model="vestingPercentage"
+            :placeholder="t('walletSend.vestingPercentage')"
             :decimals="2"
             :delimiters="delimiters"
             :max="100"
@@ -385,7 +389,7 @@ export default class WalletSend extends Mixins(
 
     const vestingPercentage = +this.vestingPercentage;
     if (this.withVesting && (!vestingPercentage || vestingPercentage > 100)) {
-      return 'Enter vesting percentage';
+      return this.t('walletSend.enterVestingPercentage');
     }
 
     return '';

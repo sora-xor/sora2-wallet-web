@@ -6,6 +6,7 @@ import type { FPNumber } from '@sora-substrate/sdk';
 export const accountIdBasedOperations = [
   Operation.SwapAndSend,
   Operation.Transfer,
+  Operation.VestedTransfer,
   Operation.SwapTransferBatch,
   Operation.Mint,
 ];
