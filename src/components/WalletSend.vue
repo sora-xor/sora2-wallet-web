@@ -29,6 +29,7 @@
           :delimiters="delimiters"
           :decimals="asset.decimals"
           :max="MaxInputNumber"
+          @input="fetchNetworkFeeDebounced"
         >
           <div class="wallet-send-amount" slot="top">
             <div class="wallet-send-amount-title">{{ t('amountText') }}</div>
@@ -69,11 +70,11 @@
           </div>
         </s-float-input>
         <div class="wallet-send__switch-btn">
-          <s-switch v-model="withVesting" :disabled="loading" />
+          <s-switch v-model="withVesting" :disabled="loading" @change="fetchNetworkFeeDebounced" />
           <span>Enable token vesting</span>
         </div>
         <template v-if="withVesting">
-          <s-select v-model="selectedVestingPeriod" placeholder="Select unlock frequency">
+          <s-select class="wallet-send__vesting-period" v-model="selectedVestingPeriod" placeholder="Unlock frequency">
             <s-option v-for="period in vestingPeriods" :key="period.value" :label="period.label" :value="period.value">
               {{ period.label }}
             </s-option>
@@ -81,12 +82,13 @@
           <s-float-input
             class="wallet-send__vesting-input"
             has-locale-string
-            placeholder="Enter vesting percentage"
+            placeholder="Vesting percentage"
             v-model="vestingPercentage"
             :decimals="2"
             :delimiters="delimiters"
             :max="100"
             :disabled="loading"
+            @input="fetchNetworkFeeDebounced"
           >
             <span slot="right">%</span>
           </s-float-input>
@@ -122,6 +124,11 @@
             <span>{{ formattedSoraAddress }}</span>
           </div>
 
+          <template v-if="withVesting">
+            <info-line label="Unlock frequency" :value="vestingPeriodsMap[selectedVestingPeriod]" />
+            <info-line asset-symbol="%" label="Vesting percentage" :value="vestingPercentage" />
+          </template>
+
           <account-confirmation-option with-hint />
         </div>
 
@@ -144,6 +151,7 @@
 <script lang="ts">
 import { FPNumber, Operation } from '@sora-substrate/sdk';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
+import debounce from 'lodash/fp/debounce';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../api';
@@ -155,6 +163,7 @@ import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue
 import AddressBookInput from './AddressBook/Input.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
+import InfoLine from './InfoLine.vue';
 import CopyAddressMixin from './mixins/CopyAddressMixin';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
@@ -164,9 +173,10 @@ import TokenLogo from './TokenLogo.vue';
 import WalletBase from './WalletBase.vue';
 import WalletFee from './WalletFee.vue';
 
+import type { VestedTransferFeeParams, VestedTransferParams } from '../store/account/types';
 import type { Route } from '../store/router/types';
 import type { CodecString } from '@sora-substrate/sdk';
-import type { AccountAsset, AccountBalance } from '@sora-substrate/sdk/build/assets/types';
+import type { AccountAsset, AccountBalance, UnlockPeriodDays } from '@sora-substrate/sdk/build/assets/types';
 import type { Subscription } from 'rxjs';
 
 @Component({
@@ -179,6 +189,7 @@ import type { Subscription } from 'rxjs';
     TokenLogo,
     AddressBookInput,
     AccountConfirmationOption,
+    InfoLine,
   },
 })
 export default class WalletSend extends Mixins(
@@ -188,13 +199,18 @@ export default class WalletSend extends Mixins(
   NetworkFeeWarningMixin
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
-  readonly vestingPeriods = [
-    { value: 1, label: '1 day' },
-    { value: 7, label: '7 days' },
-    { value: 30, label: '30 days' },
-    { value: 60, label: '60 days' },
-    { value: 90, label: '90 days' },
-  ];
+  readonly vestingPeriodsMap = {
+    1: '1 day',
+    7: '7 days',
+    30: '30 days',
+    60: '60 days',
+    90: '90 days',
+  };
+
+  readonly vestingPeriods = Object.entries(this.vestingPeriodsMap).map(([value, label]) => ({
+    value: +value as UnlockPeriodDays,
+    label,
+  }));
 
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
@@ -204,14 +220,20 @@ export default class WalletSend extends Mixins(
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @action.account.transfer private transfer!: (options: { to: string; amount: string }) => Promise<void>;
+  // Vested transfer
+  @action.account.vestedTransfer private vestedTransfer!: (options: VestedTransferParams) => Promise<void>;
+  @action.account.getVestedTransferFee private getVestedTransferFee!: (
+    options: VestedTransferFeeParams
+  ) => Promise<Nullable<FPNumber>>;
 
   step = 1;
   address = '';
   amount = '';
   showAdditionalInfo = true;
   withVesting = false;
-  selectedVestingPeriod = 1;
+  selectedVestingPeriod: UnlockPeriodDays = 1;
   vestingPercentage = '10';
+  private fee: FPNumber = this.Zero;
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
 
@@ -231,6 +253,8 @@ export default class WalletSend extends Mixins(
         this.assetBalance = balance;
       });
     }
+
+    this.fee = this.getFPNumberFromCodec(this.networkFees.Transfer);
   }
 
   beforeDestroy(): void {
@@ -252,10 +276,6 @@ export default class WalletSend extends Mixins(
       ...this.assetParams,
       balance: this.assetBalance as AccountBalance,
     };
-  }
-
-  get fee(): FPNumber {
-    return this.getFPNumberFromCodec(this.networkFees.Transfer);
   }
 
   get formattedFee(): string {
@@ -363,7 +383,8 @@ export default class WalletSend extends Mixins(
       return this.t('insufficientBalanceText', { tokenSymbol: XOR.symbol });
     }
 
-    if (this.withVesting && !+this.vestingPercentage) {
+    const vestingPercentage = +this.vestingPercentage;
+    if (this.withVesting && (!vestingPercentage || vestingPercentage > 100)) {
       return 'Enter vesting percentage';
     }
 
@@ -373,6 +394,27 @@ export default class WalletSend extends Mixins(
   get isXorAccountAsset(): boolean {
     return this.asset.address === XOR.address;
   }
+
+  private async fetchNetworkFee(): Promise<void> {
+    const percent = +this.vestingPercentage;
+
+    if (this.withVesting && percent > 0 && percent <= 100 && !this.emptyAmount) {
+      const fee = await this.getVestedTransferFee({
+        amount: this.amount,
+        asset: this.asset,
+        unlockPeriodInDays: this.selectedVestingPeriod,
+        vestingPercent: percent,
+      });
+
+      if (fee) {
+        this.fee = fee;
+      }
+    } else {
+      this.fee = this.getFPNumberFromCodec(this.networkFees.Transfer);
+    }
+  }
+
+  readonly fetchNetworkFeeDebounced = debounce(500)(this.fetchNetworkFee);
 
   getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
@@ -423,7 +465,19 @@ export default class WalletSend extends Mixins(
   async handleConfirm(): Promise<void> {
     await this.withNotifications(async () => {
       if (!this.hasEnoughXor) throw new Error('walletSend.insufficientBalanceText');
-      await this.transfer({ to: this.address, amount: this.amount });
+
+      const percent = +this.vestingPercentage;
+      if (this.withVesting && percent > 0 && percent <= 100) {
+        await this.vestedTransfer({
+          amount: this.amount,
+          asset: this.asset,
+          to: this.address,
+          unlockPeriodInDays: this.selectedVestingPeriod,
+          vestingPercent: percent,
+        });
+      } else {
+        await this.transfer({ to: this.address, amount: this.amount });
+      }
       this.navigate({ name: RouteNames.Wallet });
     });
   }
@@ -455,6 +509,11 @@ export default class WalletSend extends Mixins(
     font-size: var(--s-font-size-large);
     line-height: var(--s-line-height-small);
     font-weight: 800;
+  }
+  &__vesting-period.s-select > .s-placeholder {
+    color: var(--s-color-base-content-secondary);
+    letter-spacing: var(--s-letter-spacing-small);
+    font-weight: 300;
   }
 }
 </style>
