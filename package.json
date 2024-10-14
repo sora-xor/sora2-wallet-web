@@ -28,7 +28,7 @@
     "@polkadot/vue-identicon": "2.12.1",
     "@polkadot/extension-inject": "^0.44.7",
     "@sora-substrate/sdk": "1.41.0",
-    "@soramitsu-ui/ui-vue2": "^1.1.5",
+    "@soramitsu-ui/ui-vue2": "^1.1.6",
     "@urql/core": "^5.0.4",
     "@walletconnect/modal": "^2.6.2",
     "@walletconnect/universal-provider": "^2.14.0",
