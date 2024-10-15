@@ -68,6 +68,17 @@ const mutations = defineMutations<SettingsState>()({
     state.runtimeVersion = version;
     runtimeStorage.set('version', version);
   },
+  setBlockNumber(state, blockNumber: number): void {
+    state.blockNumber = blockNumber;
+  },
+  setBlockNumberSubscription(state, subscription: Subscription): void {
+    state.blockNumberSubscription?.unsubscribe();
+    state.blockNumberSubscription = subscription;
+  },
+  resetBlockNumberSubscription(state): void {
+    state.blockNumberSubscription?.unsubscribe();
+    state.blockNumberSubscription = null;
+  },
   setFeeMultiplierAndRuntimeSubscriptions(state, subscription: Subscription): void {
     if (state.feeMultiplierAndRuntimeSubscriptions) {
       state.feeMultiplierAndRuntimeSubscriptions.unsubscribe();

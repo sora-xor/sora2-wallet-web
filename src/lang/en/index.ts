@@ -54,6 +54,7 @@ export default {
     [Operation.SwapAndSend]: 'Swap and Send',
     [Operation.SwapTransferBatch]: '{ADAR} transfer',
     [Operation.Transfer]: 'Transfer',
+    [Operation.VestedTransfer]: 'Transfer',
     [Operation.AddLiquidity]: 'Add Liquidity',
     [Operation.RemoveLiquidity]: 'Remove Liquidity',
     [Operation.CreatePair]: 'Create Pair',
@@ -93,6 +94,7 @@ export default {
     andText: 'and',
     [TransactionStatus.Finalized]: {
       [Operation.Transfer]: '{action} {amount} {symbol} {direction} {address}',
+      [Operation.VestedTransfer]: '{action} {amount} {symbol} {direction} {address}',
       [Operation.Swap]: 'Swapped {amount} {symbol} for {amount2} {symbol2}',
       [Operation.SwapAndSend]: 'Swapped {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
       [Operation.SwapTransferBatch]: '{action} {amount} {symbol}',
@@ -135,6 +137,7 @@ export default {
     },
     [TransactionStatus.Error]: {
       [Operation.Transfer]: 'Failed to {action} {amount} {symbol} {direction} {address}',
+      [Operation.VestedTransfer]: 'Failed to {action} {amount} {symbol} {direction} {address}',
       [Operation.Swap]: 'Failed to swap {amount} {symbol} for {amount2} {symbol2}',
       [Operation.SwapAndSend]:
         'Failed to swap {amount} {symbol} for {amount2} {symbol2} and {action} {direction} {address}',
@@ -224,6 +227,10 @@ export default {
     balance: 'Balance',
     max: 'MAX',
     enterAddress: 'Enter address',
+    enableVesting: 'Enable token vesting',
+    unlockFrequency: 'Unlock frequency',
+    vestingPercentage: 'Vesting percentage',
+    enterVestingPercentage: 'Enter vesting percentage',
     badAddress: 'Incorrect address',
     enterAmount: 'Enter amount',
     confirmTitle: 'Confirm transaction',

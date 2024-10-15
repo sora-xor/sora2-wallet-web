@@ -57,6 +57,8 @@ function initialState(): SettingsState {
     nftStorage: null,
     feeMultiplier: feeMultiplier ? Number(JSON.parse(feeMultiplier)) : 0,
     runtimeVersion: runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0,
+    blockNumber: 0,
+    blockNumberSubscription: null,
     feeMultiplierAndRuntimeSubscriptions: null,
     networkFees: {} as NetworkFeesObject, // It won't be empty at the moment of usage
     shouldBalanceBeHidden: shouldBalanceBeHidden ? Boolean(JSON.parse(shouldBalanceBeHidden)) : false,

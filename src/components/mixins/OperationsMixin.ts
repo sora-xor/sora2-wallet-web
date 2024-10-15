@@ -26,6 +26,7 @@ const amountBasedOperations = [
   Operation.Burn,
   Operation.Mint,
   Operation.Transfer,
+  Operation.VestedTransfer,
   Operation.SwapTransferBatch,
   Operation.DemeterFarmingGetRewards,
   Operation.DemeterFarmingStakeToken,
