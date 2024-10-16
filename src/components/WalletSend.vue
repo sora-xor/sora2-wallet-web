@@ -251,6 +251,10 @@ export default class WalletSend extends Mixins(
       this.address = this.currentRouteParams.address as string;
     }
 
+    if (this.currentRouteParams.amount) {
+      this.amount = this.currentRouteParams.amount as string;
+    }
+
     if (!this.accountAsset) {
       this.resetAssetBalanceSubscription();
       this.assetBalanceSubscription = api.assets.getAssetBalanceObservable(this.assetParams).subscribe((balance) => {

@@ -24,7 +24,9 @@ export default class QrCodeParserMixin extends Mixins(NotificationMixin) {
     try {
       if (!value) reject('QR Code not provided');
 
-      const [chain, address, publicKey, _accountName, assetId] = (value as string).split(':');
+      console.log(value);
+
+      const [chain, address, publicKey, _accountName, assetId, amount] = (value as string).split(':');
 
       if (chain !== 'substrate') reject(`Unsupported chain: ${chain}`);
       if (!address) reject(`Account address not provided: ${address}`);
@@ -33,17 +35,26 @@ export default class QrCodeParserMixin extends Mixins(NotificationMixin) {
 
       const asset = this.assetsDataTable[assetId];
 
-      if (!asset) reject(`Unsupported asset: ${assetId}`);
+      if (!asset) {
+        reject(`Unsupported asset: ${assetId}`);
+      }
 
       const publicKeyHex = `0x${api.getPublicKeyByAddress(address)}`;
 
-      if (publicKeyHex !== publicKey) reject(`Invalid public key`);
+      if (publicKeyHex !== publicKey) {
+        reject(`Invalid public key: ${publicKey}`);
+      }
+
+      if (amount && !Number.isFinite(parseInt(amount))) {
+        reject(`Invalid amount: ${amount}`);
+      }
 
       this.navigate({
         name: RouteNames.WalletSend,
         params: {
           asset,
           address,
+          amount,
         },
       });
     } catch (error) {
