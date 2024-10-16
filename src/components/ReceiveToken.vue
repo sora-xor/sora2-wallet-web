@@ -8,12 +8,25 @@
 
     <div class="receive-token">
       <qr-code ref="qrcode" :value="code" />
+      <s-float-input
+        v-model="amount"
+        has-locale-string
+        :decimals="asset.decimals"
+        :delimiters="delimiters"
+        :placeholder="t('amountText')"
+        class="receive-token__amount"
+      >
+        <template #right>
+          <token-logo :token="asset" size="small" />
+        </template>
+      </s-float-input>
       <wallet-account class="receive-token__account" primary shadow="never" />
     </div>
   </wallet-base>
 </template>
 
 <script lang="ts">
+import { FPNumber } from '@sora-substrate/sdk';
 import { Component, Mixins, Ref } from 'vue-property-decorator';
 
 import { api } from '../api';
@@ -23,6 +36,7 @@ import { svgSaveAs, IMAGE_EXTENSIONS } from '../util/image';
 import WalletAccount from './Account/WalletAccount.vue';
 import NotificationMixin from './mixins/NotificationMixin';
 import QrCode from './QrCode/QrCode.vue';
+import TokenLogo from './TokenLogo.vue';
 import WalletBase from './WalletBase.vue';
 
 import type { RouteNames } from '../consts';
@@ -35,6 +49,7 @@ import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
     WalletBase,
     WalletAccount,
     QrCode,
+    TokenLogo,
   },
 })
 export default class ReceiveToken extends Mixins(NotificationMixin) {
@@ -47,6 +62,10 @@ export default class ReceiveToken extends Mixins(NotificationMixin) {
 
   @Ref('qrcode') readonly qrcode!: QrCode;
 
+  readonly delimiters = FPNumber.DELIMITERS_CONFIG;
+
+  public amount = '';
+
   get asset(): AccountAsset {
     return this.currentRouteParams.asset;
   }
@@ -56,12 +75,14 @@ export default class ReceiveToken extends Mixins(NotificationMixin) {
   }
 
   get code(): string {
-    const assetAddress = this.asset.address;
+    const chain = 'substrate';
     const accountAddress = this.account.address;
+    const publicKey = `0x${api.getPublicKeyByAddress(accountAddress)}`;
     const accountName = this.account.name || '';
-    const publicKey = api.getPublicKeyByAddress(accountAddress);
+    const assetAddress = this.asset.address;
+    const amount = this.amount;
 
-    return `substrate:${accountAddress}:0x${publicKey}:${accountName}:${assetAddress}`;
+    return [chain, accountAddress, publicKey, accountName, assetAddress, amount].join(':');
   }
 
   downloadCode(): void {
@@ -83,17 +104,20 @@ export default class ReceiveToken extends Mixins(NotificationMixin) {
 </script>
 
 <style lang="scss" scoped>
+$amount-width: 260px;
+
 .receive-token {
   display: flex;
   flex-flow: column nowrap;
   align-items: center;
+  gap: $basic-spacing-medium;
+
+  &__amount {
+    max-width: $amount-width;
+  }
 
   &__account {
     max-width: 100%;
-  }
-
-  & > *:not(:last-child) {
-    margin-bottom: $basic-spacing-medium;
   }
 }
 </style>
