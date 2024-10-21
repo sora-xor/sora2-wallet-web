@@ -113,6 +113,7 @@ export type SettingsStorageKey =
   | 'pinnedAssets'
   | 'isRotatePhoneHideBalanceFeatureEnabled'
   | 'isAccessRotationListener'
-  | 'isAccessAccelerometrEventDeclined';
+  | 'isAccessAccelerometrEventDeclined'
+  | 'isThemePreference';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';
