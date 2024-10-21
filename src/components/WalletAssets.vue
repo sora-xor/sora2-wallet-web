@@ -1,17 +1,17 @@
 <template>
   <div :class="computedClasses" v-loading="loading">
-    <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" @update-filter="updateFilter" />
-    <s-scrollbar class="wallet-assets-scrollbar" :key="scrollbarComponentKey">
+    <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" />
+    <s-scrollbar class="wallet-assets-scrollbar">
       <draggable v-model="assetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes" :move="onMove">
-        <div v-for="(asset, index) in assetList" :key="asset.address" class="wallet-assets-item__wrapper">
-          <div v-if="showAsset(asset)" class="wallet-assets-item s-flex">
+        <template v-for="(asset, index) in visibleAssetList">
+          <div :key="asset.address" class="wallet-assets-item s-flex">
             <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
             <asset-list-item
               :asset="asset"
+              :pinned="isAssetPinned(asset)"
               with-fiat
               with-clickable-logo
               @show-details="handleOpenAssetDetails"
-              :pinned="isAssetPinned(asset)"
               @pin="handlePin"
             >
               <template #value="asset">
@@ -70,7 +70,7 @@
             </asset-list-item>
             <s-divider :key="`${index}-divider`" class="wallet-assets-divider" />
           </div>
-        </div>
+        </template>
         <div v-if="assetsAreHidden" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
       </draggable>
     </s-scrollbar>
@@ -105,6 +105,7 @@ import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
 import type { WalletAssetFilters, WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';
 import type { AccountAsset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
+import type { MoveEvent } from 'vuedraggable';
 
 @Component({
   components: {
@@ -130,16 +131,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
   @mutation.account.removePinnedAsset private removePinnedAsset!: (pinnedAccountAssets: AccountAsset) => void;
   @mutation.account.setMultiplePinnedAssets private setMultiplePinnedAssets!: (pinnedAssetsAddresses: string[]) => void;
 
-  @Watch('assetList')
-  private updateScrollbar(oldAssets: AccountAsset[], newAssets: AccountAsset[]): void {
-    if (oldAssets.length !== newAssets.length) {
-      this.scrollbarComponentKey += 1;
-    }
-  }
-
-  scrollbarComponentKey = 0;
-  assetsAreHidden = true;
-
   get assetList(): Array<AccountAsset> {
     return this.accountAssets.sort((a, b) => {
       const aPinned = Number(this.isAssetPinned(a));
@@ -162,6 +153,14 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     api.assets.accountAssetsAddresses = assetsAddresses;
     api.assets.updateAccountAssets();
     this.setAccountAssets(accountAssets);
+  }
+
+  get visibleAssetList(): AccountAsset[] {
+    return this.assetList.filter((asset) => this.showAsset(asset));
+  }
+
+  get assetsAreHidden(): boolean {
+    return this.visibleAssetList.length === 0;
   }
 
   get computedClasses(): string {
@@ -197,10 +196,9 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
-  onMove(event) {
+  onMove(event: MoveEvent<AccountAsset>): boolean {
     const draggedItem = event.draggedContext.element;
-    const targetIndex = event.relatedContext.index;
-    const targetItem = event.relatedContext.list[targetIndex];
+    const targetItem = event.relatedContext.element;
 
     const draggedIsPinned = this.isAssetPinned(draggedItem);
     const targetIsPinned = this.isAssetPinned(targetItem);
@@ -233,11 +231,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return this.formatCodecNumber(asset.balance.locked, asset.decimals);
   }
 
-  updateFilter(): void {
-    this.assetsAreHidden = true;
-    this.scrollbarComponentKey += 1;
-  }
-
   handleAssetSwap(asset: AccountAsset): void {
     this.$emit('swap', asset);
   }
@@ -264,7 +257,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     }
   }
 
-  showAsset(asset: AccountAsset) {
+  showAsset(asset: AccountAsset): boolean {
     // filter
     const tokenType = this.filters.option;
     const showWhitelistedOnly = this.filters.verifiedOnly;
@@ -293,9 +286,6 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
       return false;
     }
 
-    // there is at least one asset to show
-    this.assetsAreHidden = false;
-
     return true;
   }
 }
@@ -318,12 +308,8 @@ $padding: 5px;
 .wallet-assets {
   &-item {
     position: relative;
-    padding-left: $padding;
     background-color: var(--s-color-utility-surface);
     border-radius: calc(var(--s-border-radius-mini) / 2);
-    &__wrapper {
-      margin-left: calc(#{$padding} * -1);
-    }
   }
 
   &-dashes {
@@ -354,12 +340,12 @@ $padding: 5px;
   }
 
   &-scrollbar {
-    @include scrollbar($basic-spacing-big);
-  }
-
-  &__draggable {
     $dirty-hack-for-users: 32px; // Who doesn't understand that this list is scrollable
-    height: calc(var(--s-asset-item-height--fiat) * 3 + #{$dirty-hack-for-users});
+
+    @include scrollbar(
+      $basic-spacing-big,
+      $height: calc(var(--s-asset-item-height--fiat) * 3 + #{$dirty-hack-for-users})
+    );
   }
 
   &--empty {
