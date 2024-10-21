@@ -43,7 +43,6 @@ function areLocalNetworkFeesOkay(localFees: NetworkFeesObject, apiFees: NetworkF
 
 async function switchCurrentIndexer(context: ActionContext<any, any>): Promise<void> {
   const { dispatch, state } = settingsActionContext(context);
-  const { rootDispatch } = rootActionContext(context);
 
   const availableIndexers = Object.entries(state.indexers).reduce<IndexerType[]>((buffer, [indexerType, data]) => {
     if (data.status !== ConnectionStatus.Unavailable) {
@@ -56,9 +55,6 @@ async function switchCurrentIndexer(context: ActionContext<any, any>): Promise<v
 
   if (next) {
     await dispatch.selectIndexer(next);
-  } else {
-    // fallback for fiat values
-    await rootDispatch.wallet.account.useCeresApiForFiatValues(true);
   }
 }
 
