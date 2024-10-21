@@ -3,74 +3,72 @@
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" />
     <s-scrollbar class="wallet-assets-scrollbar">
       <draggable v-model="assetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes" :move="onMove">
-        <template v-for="(asset, index) in visibleAssetList">
-          <div :key="asset.address" class="wallet-assets-item s-flex">
-            <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
-            <asset-list-item
-              :asset="asset"
-              :pinned="isAssetPinned(asset)"
-              with-fiat
-              with-clickable-logo
-              @show-details="handleOpenAssetDetails"
-              @pin="handlePin"
-            >
-              <template #value="asset">
-                <formatted-amount-with-fiat-value
-                  value-can-be-hidden
-                  value-class="asset-value"
-                  :value="getBalance(asset)"
-                  :font-size-rate="FontSizeRate.SMALL"
-                  :asset-symbol="asset.symbol"
-                  symbol-as-decimal
-                  :fiat-value="getFiatBalance(asset)"
-                  :fiat-font-size-rate="FontSizeRate.MEDIUM"
-                  :fiat-font-weight-rate="FontWeightRate.MEDIUM"
-                >
-                  <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
-                    <s-icon name="lock-16" size="12px" />
-                    <span>{{ formatFrozenBalance(asset) }}</span>
-                  </div>
-                </formatted-amount-with-fiat-value>
-              </template>
-              <template #default="asset">
-                <s-button
-                  v-if="permissions.sendAssets && !isZeroBalance(asset)"
-                  class="wallet-assets__button send"
-                  type="action"
-                  size="small"
-                  alternative
-                  :tooltip="t('assets.send')"
-                  @click="handleAssetSend(asset)"
-                >
-                  <s-icon name="finance-send-24" size="24" />
-                </s-button>
-                <s-button
-                  v-if="permissions.swapAssets && asset.decimals"
-                  class="wallet-assets__button swap"
-                  type="action"
-                  size="small"
-                  alternative
-                  :tooltip="t('assets.swap')"
-                  @click="handleAssetSwap(asset)"
-                >
-                  <s-icon name="arrows-swap-24" size="24" />
-                </s-button>
-                <s-button
-                  v-if="permissions.showAssetDetails"
-                  class="wallet-assets__button el-button--details"
-                  type="action"
-                  size="small"
-                  alternative
-                  :tooltip="t('assets.details')"
-                  @click="handleOpenAssetDetails(asset)"
-                >
-                  <s-icon name="arrows-chevron-right-rounded-24" size="24" />
-                </s-button>
-              </template>
-            </asset-list-item>
-            <s-divider :key="`${index}-divider`" class="wallet-assets-divider" />
-          </div>
-        </template>
+        <div v-for="(asset, index) in visibleAssetList" :key="asset.address" class="wallet-assets-item s-flex">
+          <div v-button class="wallet-assets-dashes"><div class="wallet-assets-three-dash" /></div>
+          <asset-list-item
+            :asset="asset"
+            :pinned="isAssetPinned(asset)"
+            with-fiat
+            with-clickable-logo
+            @show-details="handleOpenAssetDetails"
+            @pin="handlePin"
+          >
+            <template #value="asset">
+              <formatted-amount-with-fiat-value
+                value-can-be-hidden
+                value-class="asset-value"
+                :value="getBalance(asset)"
+                :font-size-rate="FontSizeRate.SMALL"
+                :asset-symbol="asset.symbol"
+                symbol-as-decimal
+                :fiat-value="getFiatBalance(asset)"
+                :fiat-font-size-rate="FontSizeRate.MEDIUM"
+                :fiat-font-weight-rate="FontWeightRate.MEDIUM"
+              >
+                <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
+                  <s-icon name="lock-16" size="12px" />
+                  <span>{{ formatFrozenBalance(asset) }}</span>
+                </div>
+              </formatted-amount-with-fiat-value>
+            </template>
+            <template #default="asset">
+              <s-button
+                v-if="permissions.sendAssets && !isZeroBalance(asset)"
+                class="wallet-assets__button send"
+                type="action"
+                size="small"
+                alternative
+                :tooltip="t('assets.send')"
+                @click="handleAssetSend(asset)"
+              >
+                <s-icon name="finance-send-24" size="24" />
+              </s-button>
+              <s-button
+                v-if="permissions.swapAssets && asset.decimals"
+                class="wallet-assets__button swap"
+                type="action"
+                size="small"
+                alternative
+                :tooltip="t('assets.swap')"
+                @click="handleAssetSwap(asset)"
+              >
+                <s-icon name="arrows-swap-24" size="24" />
+              </s-button>
+              <s-button
+                v-if="permissions.showAssetDetails"
+                class="wallet-assets__button el-button--details"
+                type="action"
+                size="small"
+                alternative
+                :tooltip="t('assets.details')"
+                @click="handleOpenAssetDetails(asset)"
+              >
+                <s-icon name="arrows-chevron-right-rounded-24" size="24" />
+              </s-button>
+            </template>
+          </asset-list-item>
+          <s-divider :key="`${index}-divider`" class="wallet-assets-divider" />
+        </div>
         <div v-if="assetsAreHidden" class="wallet-assets--empty">{{ t('addAsset.empty') }}</div>
       </draggable>
     </s-scrollbar>
@@ -88,7 +86,7 @@
 <script lang="ts">
 import { api, FPNumber } from '@sora-substrate/sdk';
 import isEmpty from 'lodash/fp/isEmpty';
-import { Component, Mixins, Watch } from 'vue-property-decorator';
+import { Component, Mixins } from 'vue-property-decorator';
 import draggable from 'vuedraggable';
 
 import { RouteNames, HiddenValue, WalletFilteringOptions } from '../consts';
@@ -257,7 +255,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     }
   }
 
-  showAsset(asset: AccountAsset): boolean {
+  private showAsset(asset: AccountAsset): boolean {
     // filter
     const tokenType = this.filters.option;
     const showWhitelistedOnly = this.filters.verifiedOnly;
@@ -421,10 +419,7 @@ $padding: 5px;
 </style>
 
 <style scoped lang="scss">
-$wallet-assets-class: '.wallet-assets';
-$wallet-assets-count: 5;
-
-#{$wallet-assets-class} {
+.wallet-assets {
   flex-direction: column;
   margin-top: #{$basic-spacing-medium};
 
