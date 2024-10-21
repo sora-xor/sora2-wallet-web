@@ -24,8 +24,6 @@ export default class QrCodeParserMixin extends Mixins(NotificationMixin) {
     try {
       if (!value) reject('QR Code not provided');
 
-      console.log(value);
-
       const [chain, address, publicKey, _accountName, assetId, amount] = (value as string).split(':');
 
       if (chain !== 'substrate') reject(`Unsupported chain: ${chain}`);
