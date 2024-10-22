@@ -1,4 +1,3 @@
-import { XOR } from '@sora-substrate/sdk/build/assets/consts';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
@@ -67,13 +66,11 @@ export default class QrCodeParserMixin extends Mixins(NotificationMixin) {
       // fearless extension qr support (account address only)
       if (args.length === 1) {
         const address = this.checkAddress(args[0]);
-        const asset = this.checkAsset(XOR.address);
 
         this.navigate({
-          name: RouteNames.WalletSend,
+          name: RouteNames.SelectAsset,
           params: {
             address,
-            asset,
           },
         });
 
