@@ -1,5 +1,5 @@
 <template>
-  <wallet-base :title="TranslationConsts.SBT" show-back @back="handleBack" class="sbt-permissions-info">
+  <wallet-base :title="sbtSymbol || TranslationConsts.SBT" show-back @back="handleBack" class="sbt-permissions-info">
     <s-card class="asset-details" primary>
       <div class="asset-details-container s-flex">
         <token-logo :token="asset" size="large" />
@@ -106,6 +106,7 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
 
   regulatedAssets: Array<Asset | undefined> = [];
   showExpiryDate = false;
+  sbtSymbol = '';
   expiryDate = '';
   expiresIn = '';
   isOwnerOpenedPage = false;
@@ -152,8 +153,10 @@ export default class WalletAssetDetails extends Mixins(TranslationMixin, NumberF
   }
 
   async mounted(): Promise<void> {
-    const { regulatedAssets } = await api.extendedAssets.getSbtMetaInfo(this.asset.address);
+    const { regulatedAssets, symbol } = await api.extendedAssets.getSbtMetaInfo(this.asset.address);
     const infos = regulatedAssets.map((address) => api.assets.getAssetInfo(address));
+
+    this.sbtSymbol = symbol;
 
     const regulatedAssetsInfos = (await Promise.allSettled(infos))
       .map((result) => (result.status === 'fulfilled' ? result.value : undefined))
