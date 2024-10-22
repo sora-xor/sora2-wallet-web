@@ -6,6 +6,7 @@ import type { FPNumber } from '@sora-substrate/sdk';
 export const accountIdBasedOperations = [
   Operation.SwapAndSend,
   Operation.Transfer,
+  Operation.XorlessTransfer,
   Operation.VestedTransfer,
   Operation.SwapTransferBatch,
   Operation.Mint,
@@ -59,7 +60,6 @@ export enum RouteNames {
   WalletSend = 'WalletSend',
   Wallet = 'Wallet',
   WalletAssetDetails = 'WalletAssetDetails',
-  CreateToken = 'CreateToken',
   ReceiveToken = 'ReceiveToken',
   AddAsset = 'AddAsset',
   SelectAsset = 'SelectAsset',
@@ -84,6 +84,7 @@ export enum WalletFilteringOptions {
   All = 'All',
   Currencies = 'Currencies',
   NFT = 'NFT',
+  SBT = 'SBT',
 }
 
 export enum SoraNetwork {
@@ -238,7 +239,9 @@ export const TranslationConsts = {
   TBC: 'TBC',
   XYK: 'XYK',
   NFT: 'NFT',
+  SBT: 'SBT',
   CEX: 'CEX',
+  KYC: 'KYC',
   Polkadot: 'Polkadot',
   SORAScan: 'SORAScan',
   Subscan: 'Subscan',

@@ -4,14 +4,6 @@
       <s-button type="action" :tooltip="t('accountSettings.title')" @click="handleAccountSettings">
         <s-icon name="basic-settings-24" size="28" />
       </s-button>
-      <s-button
-        v-if="permissions.createAssets"
-        type="action"
-        :tooltip="t('createTokenText')"
-        @click="handleCreateToken"
-      >
-        <s-icon name="various-atom-24" size="28" />
-      </s-button>
     </template>
 
     <wallet-account v-if="!selectedTransaction">
@@ -147,10 +139,6 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
 
   handleSwap(asset: any): void {
     this.$emit('swap', asset);
-  }
-
-  handleCreateToken(): void {
-    this.navigate({ name: RouteNames.CreateToken });
   }
 
   handleSwitchAccount(): void {

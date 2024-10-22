@@ -268,6 +268,8 @@ const actions = defineActions({
     commit.resetAccountAssetsSubscription();
 
     if (getters.isLoggedIn) {
+      const sbtAssetsList = await api.extendedAssets.getAllSbtIds();
+
       try {
         const subscription = api.assets.balanceUpdated.subscribe(() => {
           const filtered = api.assets.accountAssets.filter(

@@ -39,6 +39,11 @@ import type {
   HistoryElementVaultClose,
   HistoryElementVaultDepositCollateral,
   HistoryElementVaultDebt,
+  HistoryElementDefiRIssueSBT,
+  HistoryElementDefiRSetSBTExpiration,
+  HistoryElementDefiRRegulateAsset,
+  HistoryElementDefiRBindRegulatedAssetToSbt,
+  HistoryElementDefiRRegisterRegulatedAsset,
   HistoryElementEthBridgeIncoming,
   HistoryElementEthBridgeOutgoing,
   ClaimedRewardItem,
@@ -78,7 +83,6 @@ const OperationsMap = {
   [insensitive(ModuleNames.Utility)]: {
     [insensitive(ModuleMethods.UtilityBatchAll)]: (data: HistoryElementBatchCall[]) => {
       if (!(Array.isArray(data) && !!data.length)) return null;
-
       if (
         !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKInitializePool }) &&
         !!getBatchCall(data, { module: ModuleNames.PoolXYK, method: ModuleMethods.PoolXYKDepositLiquidity })
@@ -116,6 +120,16 @@ const OperationsMap = {
         )
       ) {
         return Operation.StakingBondAndNominate;
+      }
+
+      if (
+        data.every(
+          (call) =>
+            isModuleMethod(call, ModuleNames.DefiR, ModuleMethods.DefiRBindRegulatedAsset) ||
+            isModuleMethod(call, ModuleNames.DefiR, ModuleMethods.DefiRIssueSoulBoundToken)
+        )
+      ) {
+        return Operation.IssueSoulBoundToken;
       }
 
       return null;
@@ -168,6 +182,13 @@ const OperationsMap = {
     [insensitive(ModuleMethods.VaultCollateralDeposit)]: () => Operation.DepositCollateral,
     [insensitive(ModuleMethods.VaultDebtPayment)]: () => Operation.RepayVaultDebt,
     [insensitive(ModuleMethods.VaultDebtBorrow)]: () => Operation.BorrowVaultDebt,
+  },
+  [insensitive(ModuleNames.DefiR)]: {
+    [insensitive(ModuleMethods.DefiRSetAccessExpiration)]: () => Operation.SetAccessExpiration,
+    [insensitive(ModuleMethods.DefiRRegulateAsset)]: () => Operation.RegulateAsset,
+    [insensitive(ModuleMethods.DefiRRegisterAndRegulateAsset)]: () => Operation.RegisterAndRegulateAsset,
+    [insensitive(ModuleMethods.DefiRBindRegulatedAsset)]: () => Operation.BindRegulatedAsset,
+    [insensitive(ModuleMethods.DefiRIssueSoulBoundToken)]: () => Operation.IssueSoulBoundToken,
   },
   [insensitive(ModuleNames.BridgeMultisig)]: {
     [insensitive(ModuleMethods.BridgeMultisigAsMulti)]: () => Operation.EthBridgeIncoming,
@@ -715,6 +736,43 @@ const parseVaultDebtPaymentOrBorrow = async (transaction: HistoryElement, payloa
   return payload;
 };
 
+const parseDefiRIssueSBT = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.calls[0].data as HistoryElementDefiRIssueSBT;
+  payload.symbol = Buffer.from(data.symbol.slice(2), 'hex').toString();
+  return payload;
+};
+
+const parseDefiRRegisterAndRegulatedAsset = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementDefiRRegisterRegulatedAsset;
+  payload.symbol = Buffer.from(data.symbol.slice(2), 'hex').toString();
+  return payload;
+};
+
+const parseDefiRSetSBTExpiration = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementDefiRSetSBTExpiration;
+  const sbtAsset = await getAssetByAddress(data.sbtAssetId);
+  payload.symbol = getAssetSymbol(sbtAsset);
+  const date = new Date(parseInt(data.newExpiresAtTime, 10));
+  payload.to = date.toLocaleString('en-US');
+  return payload;
+};
+
+const parseDefiRRegulateAsset = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementDefiRRegulateAsset;
+  const regulateAsset = await getAssetByAddress(data.assetId);
+  payload.symbol = getAssetSymbol(regulateAsset);
+  return payload;
+};
+
+const parseBindRegulatedAssetToSbt = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementDefiRBindRegulatedAssetToSbt;
+  const regulateAsset = await getAssetByAddress(data.assetId);
+  payload.symbol = getAssetSymbol(regulateAsset);
+  const sbtAsset = await getAssetByAddress(data.sbtAssetId);
+  payload.symbol2 = getAssetSymbol(sbtAsset);
+  return payload;
+};
+
 const parseEthBridgeIncoming = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementEthBridgeIncoming;
 
@@ -790,6 +848,11 @@ export default class IndexerDataParser {
     Operation.DepositCollateral,
     Operation.RepayVaultDebt,
     Operation.BorrowVaultDebt,
+    Operation.SetAccessExpiration,
+    Operation.RegulateAsset,
+    Operation.RegisterAndRegulateAsset,
+    Operation.BindRegulatedAsset,
+    Operation.IssueSoulBoundToken,
     /** Don't show bridge tx in wallet */
     // Operation.EthBridgeIncoming,
     // Operation.EthBridgeOutgoing,
@@ -857,6 +920,9 @@ export default class IndexerDataParser {
         return await parseCreatePair(transaction, payload);
       }
       case Operation.Transfer: {
+        return await parseTransfer(transaction, payload);
+      }
+      case Operation.XorlessTransfer: {
         return await parseTransfer(transaction, payload);
       }
       case Operation.RegisterAsset: {
@@ -929,6 +995,21 @@ export default class IndexerDataParser {
       case Operation.RepayVaultDebt:
       case Operation.BorrowVaultDebt: {
         return await parseVaultDebtPaymentOrBorrow(transaction, payload);
+      }
+      case Operation.RegisterAndRegulateAsset: {
+        return await parseDefiRRegisterAndRegulatedAsset(transaction, payload);
+      }
+      case Operation.IssueSoulBoundToken: {
+        return await parseDefiRIssueSBT(transaction, payload);
+      }
+      case Operation.SetAccessExpiration: {
+        return await parseDefiRSetSBTExpiration(transaction, payload);
+      }
+      case Operation.RegulateAsset: {
+        return await parseDefiRRegulateAsset(transaction, payload);
+      }
+      case Operation.BindRegulatedAsset: {
+        return await parseBindRegulatedAssetToSbt(transaction, payload);
       }
       case Operation.EthBridgeIncoming: {
         return await parseEthBridgeIncoming(transaction, payload);

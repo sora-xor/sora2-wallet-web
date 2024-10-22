@@ -55,7 +55,12 @@ export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMix
         this.showAppNotification(message, 'success');
       }
       if (value.status === TransactionStatus.InBlock) return;
-    } else if (value.type === Operation.RegisterAsset && value.assetAddress) {
+    } else if (
+      [Operation.RegisterAsset, Operation.RegisterAndRegulateAsset, Operation.IssueSoulBoundToken].includes(
+        value.type
+      ) &&
+      value.assetAddress
+    ) {
       // If user was really fast and already added tx
       const alreadyExists = this.accountAssetsAddressTable[value.assetAddress];
       if (!alreadyExists) {

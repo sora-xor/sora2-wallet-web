@@ -14,7 +14,6 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
 import AddAsset from './components/AddAsset/AddAsset.vue';
-import CreateToken from './components/CreateToken.vue';
 import LoadingMixin from './components/mixins/LoadingMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
 import ReceiveToken from './components/ReceiveToken.vue';
@@ -34,7 +33,6 @@ import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
   components: {
     AddAsset,
     SelectAsset,
-    CreateToken,
     ReceiveToken,
     Wallet,
     WalletAssetDetails,

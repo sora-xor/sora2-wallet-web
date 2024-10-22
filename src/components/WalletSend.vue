@@ -20,6 +20,9 @@
           </s-tooltip>
         </template>
         <p v-if="isAccountAddress" class="wallet-send-address-error">{{ t('walletSend.addressError') }}</p>
+        <p v-if="showIsNotSbtOwnerReceiver" class="wallet-send-address-error">
+          {{ t('sbtDetails.noReceiverAccess') }}
+        </p>
 
         <s-float-input
           v-model="amount"
@@ -154,9 +157,17 @@
 
 <script lang="ts">
 import { FPNumber, Operation } from '@sora-substrate/sdk';
+import { getAssetBalance } from '@sora-substrate/sdk/build/assets';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
+import {
+  AssetTypes,
+  type Asset,
+  type AccountAsset,
+  type AccountBalance,
+  type UnlockPeriodDays,
+} from '@sora-substrate/sdk/build/assets/types';
 import debounce from 'lodash/fp/debounce';
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { RouteNames } from '../consts';
@@ -165,6 +176,7 @@ import { validateAddress, formatAddress, formatAccountAddress } from '../util';
 
 import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
 import AddressBookInput from './AddressBook/Input.vue';
+import TokenLogo from './AssetLogos/TokenLogo.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
 import InfoLine from './InfoLine.vue';
@@ -173,14 +185,12 @@ import FormattedAmountMixin from './mixins/FormattedAmountMixin';
 import NetworkFeeWarningMixin from './mixins/NetworkFeeWarningMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 import NetworkFeeWarning from './NetworkFeeWarning.vue';
-import TokenLogo from './TokenLogo.vue';
 import WalletBase from './WalletBase.vue';
 import WalletFee from './WalletFee.vue';
 
 import type { VestedTransferFeeParams, VestedTransferParams } from '../store/account/types';
 import type { Route } from '../store/router/types';
 import type { CodecString } from '@sora-substrate/sdk';
-import type { AccountAsset, AccountBalance, UnlockPeriodDays } from '@sora-substrate/sdk/build/assets/types';
 import type { Subscription } from 'rxjs';
 
 @Component({
@@ -218,8 +228,9 @@ export default class WalletSend extends Mixins(
 
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
-  @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset | string>;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<AccountAsset> | string>;
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
+  @state.account.assets assets!: Array<Asset>;
   @state.transactions.isConfirmTxDialogDisabled private isConfirmTxDisabled!: boolean;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
@@ -234,12 +245,37 @@ export default class WalletSend extends Mixins(
   address = '';
   amount = '';
   showAdditionalInfo = true;
+  showIsNotSbtOwnerReceiver = false;
+  prevAsset: Nullable<AccountAsset> = null; /* remember previous asset for routing */
   withVesting = false;
   selectedVestingPeriod: UnlockPeriodDays = 1;
   vestingPercentage = '10';
   private fee: FPNumber = this.Zero;
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
+
+  @Watch('address')
+  async getIsNotSbtOwnerReceiver(): Promise<void> {
+    if (this.validAddress && this.asset.address) {
+      const regulatedAsset = this.assets.find(
+        (asset) => asset.address === this.asset.address && asset.type === AssetTypes.Regulated
+      );
+
+      if (regulatedAsset) {
+        const sbtAddress = await api.extendedAssets.getSbtAddress(regulatedAsset.address);
+
+        const balance = await getAssetBalance(api.api, this.address, sbtAddress);
+
+        if (this.getFPNumberFromCodec(balance.total).lte(FPNumber.ZERO)) {
+          this.showIsNotSbtOwnerReceiver = true;
+        } else {
+          this.showIsNotSbtOwnerReceiver = false;
+        }
+      }
+    } else {
+      this.showIsNotSbtOwnerReceiver = false;
+    }
+  }
 
   created(): void {
     if (!this.currentRouteParams.asset) {
@@ -372,6 +408,8 @@ export default class WalletSend extends Mixins(
       !this.validAddress ||
       !this.validAmount ||
       !this.hasEnoughXor ||
+      this.isAccountAddress ||
+      this.showIsNotSbtOwnerReceiver ||
       (this.withVesting && !+this.vestingPercentage)
     );
   }
@@ -436,7 +474,11 @@ export default class WalletSend extends Mixins(
     }
     this.navigate({
       name: this.previousRoute,
-      params: this.previousRouteParams,
+      params: {
+        ...this.previousRouteParams,
+        fromWalletAssets: this.currentRouteParams.fromWalletAssets,
+        fromSbtDetails: this.currentRouteParams.fromSbtDetails,
+      },
     });
   }
 

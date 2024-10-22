@@ -34,9 +34,9 @@ import { state, getter, mutation } from '../store/decorators';
 import { svgSaveAs, IMAGE_EXTENSIONS } from '../util/image';
 
 import WalletAccount from './Account/WalletAccount.vue';
+import TokenLogo from './AssetLogos/TokenLogo.vue';
 import NotificationMixin from './mixins/NotificationMixin';
 import QrCode from './QrCode/QrCode.vue';
-import TokenLogo from './TokenLogo.vue';
 import WalletBase from './WalletBase.vue';
 
 import type { RouteNames } from '../consts';

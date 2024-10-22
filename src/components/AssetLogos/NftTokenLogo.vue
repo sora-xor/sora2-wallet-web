@@ -2,8 +2,9 @@
   <img
     v-show="asset.content && showNftImage"
     class="asset-logo nft-image"
-    :src="nftImageUrl"
     ref="nftImage"
+    alt="NFT"
+    :src="nftImageUrl"
     @load="handleNftImageLoad"
     @error="hideNftImage"
   />
@@ -12,7 +13,7 @@
 <script lang="ts">
 import { Component, Prop, Vue, Ref } from 'vue-property-decorator';
 
-import { IpfsStorage } from '../util/ipfsStorage';
+import { IpfsStorage } from '../../util/ipfsStorage';
 
 import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 
