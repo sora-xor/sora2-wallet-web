@@ -22,6 +22,8 @@ export type SettingsState = {
   shouldBalanceBeHidden: boolean;
   feeMultiplier: number;
   runtimeVersion: number;
+  blockNumber: number;
+  blockNumberSubscription: Nullable<Subscription>;
   feeMultiplierAndRuntimeSubscriptions: Nullable<Subscription>;
   nftStorage: Nullable<NFTStorage>;
   currency: Currency;

@@ -152,7 +152,20 @@ const actions = defineActions({
     const { commit } = settingsActionContext(context);
     commit.resetFeeMultiplierAndRuntimeSubscriptions();
   },
+  async subscribeOnBlockNumber(context): Promise<void> {
+    const { commit } = settingsActionContext(context);
 
+    const subscription = api.system.getBlockNumberObservable().subscribe((blockNumber) => {
+      commit.setBlockNumber(blockNumber);
+    });
+
+    commit.setBlockNumberSubscription(subscription);
+  },
+  /** It's used **only** for subscriptions module */
+  async resetBlockNumberSubscription(context): Promise<void> {
+    const { commit } = settingsActionContext(context);
+    commit.resetBlockNumberSubscription();
+  },
   async selectIndexer(context, indexerType?: IndexerType): Promise<void> {
     const { commit, dispatch, state } = settingsActionContext(context);
     const { rootDispatch } = rootActionContext(context);

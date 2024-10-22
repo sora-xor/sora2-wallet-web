@@ -131,6 +131,27 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
       </div>
     </s-float-input-stub>
      
+    <div
+      class="wallet-send__switch-btn"
+    >
+      <s-switch-stub
+        activeiconСlass=""
+        activetext=""
+        activevalue="true"
+        inactiveiconСlass=""
+        inactivetext=""
+        name=""
+        usedesignsystem="true"
+        width="40"
+      />
+       
+      <span>
+        Enable token vesting
+      </span>
+    </div>
+     
+    <!---->
+     
     <s-button-stub
       borderradius="small"
       class="wallet-send-action s-typography-button--large"
@@ -263,6 +284,27 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
         />
       </div>
     </s-float-input-stub>
+     
+    <div
+      class="wallet-send__switch-btn"
+    >
+      <s-switch-stub
+        activeiconСlass=""
+        activetext=""
+        activevalue="true"
+        inactiveiconСlass=""
+        inactivetext=""
+        name=""
+        usedesignsystem="true"
+        width="40"
+      />
+       
+      <span>
+        Enable token vesting
+      </span>
+    </div>
+     
+    <!---->
      
     <s-button-stub
       borderradius="small"
@@ -397,6 +439,27 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
       </div>
     </s-float-input-stub>
      
+    <div
+      class="wallet-send__switch-btn"
+    >
+      <s-switch-stub
+        activeiconСlass=""
+        activetext=""
+        activevalue="true"
+        inactiveiconСlass=""
+        inactivetext=""
+        name=""
+        usedesignsystem="true"
+        width="40"
+      />
+       
+      <span>
+        Enable token vesting
+      </span>
+    </div>
+     
+    <!---->
+     
     <s-button-stub
       borderradius="small"
       class="wallet-send-action s-typography-button--large"
@@ -474,7 +537,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
     <p
       class="wallet-send-address-error"
     >
-      You cannot send tokens to the same acount that you are currently connected to.
+      You cannot send tokens to the same account that you are currently connected to.
     </p>
      
     <!---->
@@ -562,6 +625,27 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
         />
       </div>
     </s-float-input-stub>
+     
+    <div
+      class="wallet-send__switch-btn"
+    >
+      <s-switch-stub
+        activeiconСlass=""
+        activetext=""
+        activevalue="true"
+        inactiveiconСlass=""
+        inactivetext=""
+        name=""
+        usedesignsystem="true"
+        width="40"
+      />
+       
+      <span>
+        Enable token vesting
+      </span>
+    </div>
+     
+    <!---->
      
     <s-button-stub
       borderradius="small"

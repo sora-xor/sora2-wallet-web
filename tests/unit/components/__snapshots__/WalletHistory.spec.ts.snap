@@ -420,7 +420,7 @@ exports[`WalletHistory.vue should render error icon when transaction is failed 1
         <div
           class="history-item-title p4"
         >
-          Failed to send ****** XOR to cnVFi...P2nse
+          Failed to Sent ****** XOR To cnVFi...P2nse
         </div>
          
         <s-icon-stub

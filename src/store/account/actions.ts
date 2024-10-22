@@ -13,7 +13,9 @@ import { loginApi, logoutApi, updateApiSigner } from '../../util/account';
 
 import { accountActionContext } from './../account';
 
+import type { VestedTransferParams, VestedTransferFeeParams } from './types';
 import type { PolkadotJsAccount } from '../../types/common';
+import type { FPNumber } from '@sora-substrate/sdk';
 import type { AccountAsset, WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
 import type { ActionContext } from 'vuex';
 
@@ -347,6 +349,37 @@ const actions = defineActions({
     const asset = rootState.wallet.router.currentRouteParams.asset as AccountAsset;
 
     await api.assets.simpleTransfer(asset, to, amount);
+  },
+  async getVestedTransferFee(
+    context,
+    { asset, amount, vestingPercent, unlockPeriodInDays }: VestedTransferFeeParams
+  ): Promise<Nullable<FPNumber>> {
+    try {
+      const {
+        rootState: {
+          wallet: {
+            settings: { blockNumber },
+          },
+        },
+      } = rootActionContext(context);
+      return await api.assets.getVestedTransferFee(asset, amount, blockNumber, vestingPercent, unlockPeriodInDays);
+    } catch (error) {
+      console.warn('[Vested Transfer Fee]:', error);
+      return null;
+    }
+  },
+  async vestedTransfer(
+    context,
+    { to, asset, amount, vestingPercent, unlockPeriodInDays }: VestedTransferParams
+  ): Promise<void> {
+    const {
+      rootState: {
+        wallet: {
+          settings: { blockNumber },
+        },
+      },
+    } = rootActionContext(context);
+    await api.assets.vestedTransfer(asset, to, amount, blockNumber, vestingPercent, unlockPeriodInDays);
   },
   /** It's used **only** for subscriptions module */
   async resetAssetsSubscription(context): Promise<void> {

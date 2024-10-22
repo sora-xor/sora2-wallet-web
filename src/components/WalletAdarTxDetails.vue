@@ -1,7 +1,7 @@
 <template>
   <div v-if="numberOfRecipients > 0" class="adar-tx-details">
     <div class="adar-tx-details__title">
-      {{ t('transaction.adarTxDetailsTitle') }}
+      {{ t('transaction.title') }}
     </div>
     <div class="adar-tx-details__txs-container">
       <div v-for="(recipient, idx) in txsList" :key="idx">

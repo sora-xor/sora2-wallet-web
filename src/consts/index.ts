@@ -7,6 +7,7 @@ export const accountIdBasedOperations = [
   Operation.SwapAndSend,
   Operation.Transfer,
   Operation.XorlessTransfer,
+  Operation.VestedTransfer,
   Operation.SwapTransferBatch,
   Operation.Mint,
 ];
