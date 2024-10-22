@@ -37,18 +37,26 @@ import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 })
 export default class SelectAsset extends Mixins(TranslationMixin) {
   @state.account.accountAssets accountAssets!: Array<AccountAsset>;
+  @state.router.currentRouteParams private currentRouteParams!: Record<string, string>;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
+
+  get sendAddress(): string | undefined {
+    return this.currentRouteParams.address;
+  }
 
   handleBack(): void {
     this.navigate({ name: RouteNames.Wallet });
   }
 
   selectAsset(asset: AccountAsset): void {
+    const name = this.sendAddress ? RouteNames.WalletSend : RouteNames.ReceiveToken;
+
     this.navigate({
-      name: RouteNames.ReceiveToken,
+      name,
       params: {
         asset,
+        address: this.sendAddress,
       },
     });
   }

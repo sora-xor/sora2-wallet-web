@@ -21,94 +21,82 @@ exports[`WalletAssets.vue should be rendered correctly 1`] = `
       value="[object Object],[object Object],[object Object]"
     >
       <div
-        class="wallet-assets-item__wrapper"
+        class="wallet-assets-item s-flex"
       >
         <div
-          class="wallet-assets-item s-flex"
+          class="wallet-assets-dashes"
+          role="button"
         >
           <div
-            class="wallet-assets-dashes"
-            role="button"
-          >
-            <div
-              class="wallet-assets-three-dash"
-            />
-          </div>
-           
-          <asset-list-item-stub
-            asset="[object Object]"
-            pinnable="true"
-            withclickablelogo="true"
-            withfiat="true"
-          />
-           
-          <s-divider-stub
-            class="wallet-assets-divider"
-            contentposition="center"
-            direction="horizontal"
-            type="secondary"
+            class="wallet-assets-three-dash"
           />
         </div>
+         
+        <asset-list-item-stub
+          asset="[object Object]"
+          pinnable="true"
+          withclickablelogo="true"
+          withfiat="true"
+        />
+         
+        <s-divider-stub
+          class="wallet-assets-divider"
+          contentposition="center"
+          direction="horizontal"
+          type="secondary"
+        />
       </div>
       <div
-        class="wallet-assets-item__wrapper"
+        class="wallet-assets-item s-flex"
       >
         <div
-          class="wallet-assets-item s-flex"
+          class="wallet-assets-dashes"
+          role="button"
         >
           <div
-            class="wallet-assets-dashes"
-            role="button"
-          >
-            <div
-              class="wallet-assets-three-dash"
-            />
-          </div>
-           
-          <asset-list-item-stub
-            asset="[object Object]"
-            pinnable="true"
-            withclickablelogo="true"
-            withfiat="true"
-          />
-           
-          <s-divider-stub
-            class="wallet-assets-divider"
-            contentposition="center"
-            direction="horizontal"
-            type="secondary"
+            class="wallet-assets-three-dash"
           />
         </div>
+         
+        <asset-list-item-stub
+          asset="[object Object]"
+          pinnable="true"
+          withclickablelogo="true"
+          withfiat="true"
+        />
+         
+        <s-divider-stub
+          class="wallet-assets-divider"
+          contentposition="center"
+          direction="horizontal"
+          type="secondary"
+        />
       </div>
       <div
-        class="wallet-assets-item__wrapper"
+        class="wallet-assets-item s-flex"
       >
         <div
-          class="wallet-assets-item s-flex"
+          class="wallet-assets-dashes"
+          role="button"
         >
           <div
-            class="wallet-assets-dashes"
-            role="button"
-          >
-            <div
-              class="wallet-assets-three-dash"
-            />
-          </div>
-           
-          <asset-list-item-stub
-            asset="[object Object]"
-            pinnable="true"
-            withclickablelogo="true"
-            withfiat="true"
-          />
-           
-          <s-divider-stub
-            class="wallet-assets-divider"
-            contentposition="center"
-            direction="horizontal"
-            type="secondary"
+            class="wallet-assets-three-dash"
           />
         </div>
+         
+        <asset-list-item-stub
+          asset="[object Object]"
+          pinnable="true"
+          withclickablelogo="true"
+          withfiat="true"
+        />
+         
+        <s-divider-stub
+          class="wallet-assets-divider"
+          contentposition="center"
+          direction="horizontal"
+          type="secondary"
+        />
       </div>
        
       <!---->
