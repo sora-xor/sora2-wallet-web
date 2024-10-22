@@ -145,7 +145,7 @@
   }
 }
 
-@mixin scrollbar($marginOffset: 0, $verticalRight: 2px) {
+@mixin scrollbar($marginOffset: 0, $verticalRight: 2px, $height: '') {
   &.el-scrollbar {
     margin-left: calc(#{$marginOffset} * -1);
     margin-right: calc(#{$marginOffset} * -1);
@@ -153,6 +153,9 @@
     .el-scrollbar__wrap {
       overflow-x: hidden;
       margin-bottom: 0px !important; // to disable element-ui negative margin
+      @if $height != '' {
+        height: $height;
+      }
     }
     .el-scrollbar__wrap,
     .el-scrollbar__view {

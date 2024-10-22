@@ -24,6 +24,11 @@ export class AppError extends Error {
   public key: string;
   public payload: any;
 
+  get message(): string {
+    const { key, payload } = this;
+    return JSON.stringify({ key, payload });
+  }
+
   constructor({ key = '', payload = {} } = {}, ...params) {
     super(...params);
     this.name = 'AppHandledError';
