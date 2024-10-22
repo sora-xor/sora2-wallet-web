@@ -176,12 +176,12 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return this.accountAssets.filter((asset) => asset.balance && !Number.isNaN(+asset.balance.transferable));
   }
 
-  get assetsFiatAmount(): Nullable<string> {
+  get assetsFiatAmount(): Nullable<{ str: string; num: number }> {
     if (isEmpty(this.fiatPriceObject)) {
       return null;
     }
     if (!this.formattedAccountAssets.length) {
-      return '0';
+      return { str: '0', num: 0 };
     }
     const fiatAmount = this.formattedAccountAssets.reduce((sum: FPNumber, asset: AccountAsset) => {
       const price = this.getAssetFiatPrice(asset);
@@ -191,7 +191,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
           )
         : sum;
     }, new FPNumber(0));
-    return fiatAmount ? fiatAmount.toLocaleString() : null;
+    return fiatAmount ? { str: fiatAmount.toLocaleString(), num: fiatAmount.toNumber() } : null;
   }
 
   onMove(event: MoveEvent<AccountAsset>): boolean {
