@@ -178,6 +178,8 @@ const checkActiveAccount = async (): Promise<void> => {
 };
 
 async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
+  console.info('we are in init wallet');
+
   await Promise.all([waitForCore(options), waitForConnection()]);
 
   initAppWallets(api, store.state.wallet.account.isDesktop, options.appName);
@@ -189,7 +191,9 @@ async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promis
   store.dispatch.wallet.settings.selectIndexer();
   // wait for finalization of network subscriptions
   await Promise.all([api.initialize(false), store.dispatch.wallet.subscriptions.activateNetwokSubscriptions()]);
-
+  store.commit.wallet.settings.setIsMstAvailable(
+    store.state.wallet.account.source === WALLET_CONSTS.AppWallet.FearlessWallet
+  );
   store.commit.wallet.settings.setWalletLoaded(true);
 }
 

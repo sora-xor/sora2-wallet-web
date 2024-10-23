@@ -17,6 +17,7 @@ import AddAsset from './components/AddAsset/AddAsset.vue';
 import CreateToken from './components/CreateToken.vue';
 import LoadingMixin from './components/mixins/LoadingMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
+import CreateMSTWallet from './components/MST/CreateMSTWallet.vue';
 import ReceiveToken from './components/ReceiveToken.vue';
 import SelectAsset from './components/SelectAsset.vue';
 import Wallet from './components/Wallet.vue';
@@ -41,6 +42,7 @@ import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
     WalletConnection,
     WalletSend,
     WalletTransactionDetails,
+    CreateMSTWallet,
   },
 })
 export default class SoraWallet extends Mixins(LoadingMixin, TranslationMixin) {

@@ -1,6 +1,19 @@
 <template>
   <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
+      <s-button
+        type="tertiary"
+        :tooltip="
+          isMSTAvailable
+            ? 'Create a Multisig'
+            : 'MultiSign account is available in Polkaswap. Please log in via Fearless Wallet and gain control over your team. If you don\'t have the Fearless wallet please create it.'
+        "
+        :disabled="!isMSTAvailable"
+        @click="handleMST"
+      >
+        Multi-Sig
+      </s-button>
+
       <s-button type="action" :tooltip="t('accountSettings.title')" @click="handleAccountSettings">
         <s-icon name="basic-settings-24" size="28" />
       </s-button>
@@ -123,6 +136,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;
+  @state.settings.isMSTAvailable isMSTAvailable!: boolean;
   @state.account.isExternal isExternal!: boolean;
 
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
@@ -149,12 +163,17 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
     this.$emit('swap', asset);
   }
 
+  // TODO the same for MST
   handleCreateToken(): void {
     this.navigate({ name: RouteNames.CreateToken });
   }
 
   handleSwitchAccount(): void {
     this.navigate({ name: RouteNames.WalletConnection });
+  }
+
+  handleMST(): void {
+    this.navigate({ name: RouteNames.CreateMSTWallet });
   }
 
   handleAccountActionType(actionType: string) {
