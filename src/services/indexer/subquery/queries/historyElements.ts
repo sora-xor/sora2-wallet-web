@@ -150,6 +150,14 @@ const OperationFilterMap = {
       },
     ],
   },
+  [Operation.VestedTransfer]: {
+    module: {
+      equalTo: ModuleNames.VestedRewards,
+    },
+    method: {
+      equalTo: ModuleMethods.VestedRewardsVestedTransfer,
+    },
+  },
   [Operation.RegisterAsset]: {
     module: {
       equalTo: ModuleNames.Assets,

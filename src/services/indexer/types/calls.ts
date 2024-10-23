@@ -37,6 +37,7 @@ export enum ModuleMethods {
   RewardsClaim = 'claim',
   VestedRewardsClaimRewards = 'claimRewards',
   VestedRewardsClaimCrowdloanRewards = 'claimCrowdloanRewards',
+  VestedRewardsVestedTransfer = 'vestedTransfer',
   PswapDistributionClaimIncentive = 'claimIncentive',
   DemeterFarmingDeposit = 'deposit',
   DemeterFarmingWithdraw = 'withdraw',
