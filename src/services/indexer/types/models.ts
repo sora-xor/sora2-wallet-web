@@ -344,6 +344,15 @@ export type HistoryElementTransfer = {
   comment?: string; // only in xorless transfer
 };
 
+export type HistoryElementVestedTransfer = {
+  amount: string;
+  assetId: string;
+  from: string;
+  to: string;
+  period: number;
+  percent: number;
+};
+
 export type HistoryElementLiquidityOperation = {
   baseAssetAmount: string;
   baseAssetId: string;
@@ -504,6 +513,7 @@ export type HistoryElementDataBase = Nullable<
   | HistoryElementSwapTransfer
   | HistoryElementSwapTransferBatch
   | HistoryElementTransfer
+  | HistoryElementVestedTransfer
   | HistoryElementLiquidityOperation
   | HistoryElementAssetRegistration
   | HistoryElementEthBridgeOutgoing
