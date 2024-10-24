@@ -147,6 +147,10 @@ const OperationFilterMap = {
       },
     ],
   },
+  [Operation.VestedTransfer]: {
+    module_eq: ModuleNames.VestedRewards,
+    method_eq: ModuleMethods.VestedRewardsVestedTransfer,
+  },
   [Operation.RegisterAsset]: {
     module_eq: ModuleNames.Assets,
     method_eq: ModuleMethods.AssetsRegister,
