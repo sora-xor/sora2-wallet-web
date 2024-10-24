@@ -1,23 +1,12 @@
 <template>
-  <wallet-base
-    show-back
-    title="Multisig Wallet"
-    :show-header="showHeader"
-    @back="handleBack"
-    tooltip="A multisig wallet is a crypto wallet that requires multiple approvals to authorize transactions, enhancing security and shared control."
-  >
+  <wallet-base show-back title="Multisig Wallet" :show-header="showHeader" @back="handleBack">
     <div class="multisig-wallet">
       <p class="requirement">Create a wallet that requires multiple signatures of a minimum of 3 addresses.</p>
       <s-input placeholder="Enter Multisig Wallet Name" :minlength="1" v-model="multisigName" />
 
-      <div class="multisig-addresses">
-        <p class="multisig-title-data">
-          ADD MULTISIG ADDRESSES ({{ filledAddressesCount }}/{{ totalNumberOfAddresses }})
-        </p>
-        <s-tooltip slot="suffix" popper-class="multisig-tooltip" content="Should be addresses" placement="bottom">
-          <s-icon class="multisig-tooltip__icon" name="info-16" size="18px" />
-        </s-tooltip>
-      </div>
+      <p class="multisig-title-data address">
+        ADD MULTISIG ADDRESSES ({{ filledAddressesCount }}/{{ totalNumberOfAddresses }})
+      </p>
 
       <s-card v-bind="{ shadow: 'always', size: 'medium', borderRadius: 'small', ...$attrs }" class="address-card">
         <p>Your address</p>
@@ -44,12 +33,7 @@
         <p>Add another address</p>
       </div>
 
-      <div class="multisig-threshold">
-        <p class="multisig-title-data">SET A TRANSACTION APPROVAL THRESHOLD</p>
-        <s-tooltip slot="suffix" popper-class="multisig-tooltip" content="How much threshold" placement="bottom">
-          <s-icon class="multisig-tooltip__icon" name="info-16" size="18px" />
-        </s-tooltip>
-      </div>
+      <p class="multisig-title-data">SET A TRANSACTION APPROVAL THRESHOLD</p>
 
       <s-input placeholder="1" type="number" v-model="amountOfThreshold" class="threshold-amount">
         <template v-slot:suffix> /{{ totalNumberOfAddresses }} </template>
@@ -64,6 +48,7 @@
         SET UP THE DETAILS
       </s-button>
     </div>
+    <multisig-create-dialog :visible.sync="MSTDialogVisibility" :mst-data="MSTData" :threshold="amountOfThreshold" />
   </wallet-base>
 </template>
 
@@ -79,12 +64,16 @@ import AddressBookInput from '../AddressBook/Input.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 import WalletBase from '../WalletBase.vue';
 
+import MultisigCreateDialog from './MultisigCreateDialog.vue';
+
 import type { Route } from '../../store/router/types';
+import type { MSTData } from '../../types/mst';
 
 @Component({
   components: {
     WalletBase,
     AddressBookInput,
+    MultisigCreateDialog,
   },
 })
 export default class CreateMSTWallet extends Mixins(TranslationMixin) {
@@ -93,6 +82,14 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
   transactionLifetime: string | null = null;
   multisigAddresses: string[] = [''];
   amountOfThreshold: number | null = null;
+  MSTDialogVisibility = false;
+  MSTData: MSTData = {
+    addresses: [],
+    multisigName: '',
+    threshold: 0,
+    transactionLifetime: 0,
+  };
+
   readonly durations = TransactionLifetimeMST;
 
   @Watch('amountOfThreshold')
@@ -154,13 +151,14 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
   }
 
   handleClick(): void {
-    const data = {
-      multisigName: this.multisigName,
+    this.MSTData = {
       addresses: [this.accountAddress, ...this.multisigAddresses],
+      multisigName: this.multisigName,
       threshold: this.amountOfThreshold,
       transactionLifetime: TransactionLifetimeMSTDuration[this.transactionLifetime ?? '1D'],
     };
-    console.info(data);
+    console.info(this.MSTData);
+    this.MSTDialogVisibility = true;
   }
 
   addAddress(): void {
@@ -200,7 +198,7 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
 
 .multisig-scrollbar {
   @include scrollbar($basic-spacing-big);
-  height: 145px;
+  height: 155px;
   .el-scrollbar__wrap {
     overflow-x: unset;
   }
@@ -229,18 +227,12 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     text-align: center;
     margin-bottom: 21px;
   }
-  .multisig-addresses,
-  .multisig-threshold {
-    display: flex;
-    flex-direction: row;
-    gap: 8px;
-  }
 
-  .multisig-addresses {
+  .address {
     margin-top: 24px;
-    margin-bottom: 15px;
   }
   .address-card {
+    margin-top: 15px;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -262,6 +254,7 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-top: 6px;
   }
   .add-multisig-address {
     display: flex;
