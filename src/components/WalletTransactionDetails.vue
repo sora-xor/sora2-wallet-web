@@ -27,7 +27,21 @@
           :asset-symbol="transactionSymbol"
         />
         <info-line
-          v-if="selectedTransaction.price"
+          v-if="vestingPercentage"
+          is-formatted
+          value-can-be-hidden
+          asset-symbol="%"
+          :label="t('walletSend.vestingPercentage')"
+          :value="vestingPercentage"
+        />
+        <info-line
+          v-if="vestingPeriod"
+          value-can-be-hidden
+          :label="t('walletSend.unlockFrequency')"
+          :value="vestingPeriod"
+        />
+        <info-line
+          v-if="'price' in selectedTransaction && selectedTransaction.price"
           is-formatted
           value-can-be-hidden
           :label="t('transaction.price')"
@@ -35,7 +49,7 @@
           :asset-symbol="transactionSymbol2"
         />
         <info-line
-          v-if="selectedTransaction.side"
+          v-if="'side' in selectedTransaction && selectedTransaction.side"
           :label="t('transaction.side')"
           :value="selectedTransaction.side.toUpperCase()"
         />
@@ -114,6 +128,7 @@
 <script lang="ts">
 import { TransactionStatus, Operation, FPNumber } from '@sora-substrate/sdk';
 import { KnownSymbols } from '@sora-substrate/sdk/build/assets/consts';
+import dayjs from 'dayjs';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { HashType, SoraNetwork } from '../consts';
@@ -298,6 +313,17 @@ export default class WalletTransactionDetails extends Mixins(
 
   get isSetReferralOperation(): boolean {
     return this.selectedTransaction.type === Operation.ReferralSetInvitedUser;
+  }
+
+  get vestingPercentage(): Nullable<string> {
+    if (!('percent' in this.selectedTransaction)) return null;
+    return `${this.selectedTransaction.percent}`;
+  }
+
+  get vestingPeriod(): Nullable<string> {
+    if (!('period' in this.selectedTransaction)) return null;
+    const periodInMs = this.selectedTransaction.period * 6_000; // 6 seconds per block
+    return dayjs.duration(periodInMs).locale(this.dayjsLocale).humanize();
   }
 
   get isReferrer(): boolean {
