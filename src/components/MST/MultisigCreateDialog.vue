@@ -18,10 +18,11 @@
               <p>Address {{ index + 1 }}</p>
               <formatted-address :value="address" :symbols="24" />
             </div>
-            <s-divider />
+            <s-divider v-if="index < mstData.addresses.length - 1" />
           </div>
         </div>
       </s-scrollbar>
+
       <div class="multisig-cards">
         <s-card v-for="(message, index) in cardMessages" :key="index" class="data-card">
           <div class="data">
@@ -140,8 +141,8 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   display: flex;
   flex-direction: column;
   .el-divider--horizontal {
-    margin-top: 2px;
-    margin-bottom: 12px;
+    margin-top: $basic-spacing-extra-mini;
+    margin-bottom: $basic-spacing-small;
   }
   .data {
     display: flex;
@@ -156,18 +157,19 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
     flex-direction: column;
   }
   .multisig-cards {
-    gap: 10px;
-    margin-bottom: 25px;
+    margin-top: $inner-spacing-mini;
+    gap: calc($basic-spacing-mini * 2.5);
+    margin-bottom: $basic-spacing-big;
   }
   .data-card {
     background: var(--s-color-utility-body);
     box-shadow: var(--s-shadow-element-pressed);
     p {
-      max-width: 360px;
+      max-width: calc($asset-item-height * 4.5);
     }
   }
   .notification-icon {
-    padding: 8px;
+    padding: $basic-spacing;
     border-radius: 50%;
     background-color: var(--s-color-status-info);
     box-shadow: var(--s-shadow-element-pressed);

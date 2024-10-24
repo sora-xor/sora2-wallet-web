@@ -170,7 +170,7 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
 <style lang="scss">
 .threshold-amount {
   .s-input__content {
-    width: 50px;
+    width: calc($basic-spacing-big * 2);
     .el-input__suffix {
       color: var(--s-color-base-content-tertiary);
     }
@@ -189,7 +189,7 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     width: auto;
   }
   .el-tabs__item {
-    padding: 0 10px !important;
+    padding: 0 calc($basic-spacing-mini * 2.5) !important;
   }
   .el-tabs__item:not(:hover):not(.is-active) {
     color: var(--s-color-base-content-secondary) !important;
@@ -225,19 +225,23 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
   }
   .requirement {
     text-align: center;
-    margin-bottom: 21px;
+    margin-bottom: calc($basic-spacing * 2.5);
   }
 
   .address {
-    margin-top: 24px;
+    margin-top: $basic-spacing-big;
   }
-  .address-card {
-    margin-top: 15px;
+  .address-card,
+  .add-multisig-address,
+  .transaction-lifetime {
     display: flex;
     flex-direction: row;
     align-items: center;
+  }
+  .address-card {
+    margin-top: $basic-spacing-medium;
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: $inner-spacing-small;
     box-shadow: var(--s-shadow-element-pressed) !important;
     p:first-of-type {
       font-size: 12px;
@@ -245,7 +249,7 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     }
     font-size: 16px;
     p {
-      max-width: 320px;
+      max-width: calc($asset-item-height * 4.5);
       word-wrap: break-word;
     }
   }
@@ -253,33 +257,28 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
   .multisig-addresses-input {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 6px;
+    gap: $inner-spacing-small;
+    margin-top: calc($basic-spacing-mini * 1.5);
+    margin-bottom: $basic-spacing-extra-mini;
   }
   .add-multisig-address {
-    display: flex;
-    flex-direction: row;
-    gap: 6px;
-    align-items: center;
-    margin-top: 15px;
-    margin-bottom: 24px;
+    gap: calc($basic-spacing-mini * 1.5);
+    margin-top: $basic-spacing-medium;
+    margin-bottom: $basic-spacing-big;
     font-size: 16px;
     button {
-      width: 31px !important;
-      height: 31px !important;
-      padding: 8px !important;
+      width: calc($basic-spacing-medium * 2) !important;
+      height: calc($basic-spacing-medium * 2) !important;
+      padding: $basic-spacing !important;
     }
   }
   .threshold-amount {
-    margin-top: 16px;
-    margin-bottom: 24px;
+    margin-top: $basic-spacing-medium;
+    margin-bottom: $basic-spacing-big;
   }
   .transaction-lifetime {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 24px;
+    gap: $inner-spacing-small;
+    margin-bottom: $basic-spacing-big;
   }
 }
 </style>
