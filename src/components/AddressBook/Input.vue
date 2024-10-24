@@ -27,7 +27,7 @@
       v-bind="{
         maxlength: 128,
         disabled,
-        placeholder: t('addressBook.input'),
+        placeholder: propPlaceholder || t('addressBook.input'),
         borderRadius: 'medium',
         ...$attrs,
       }"
@@ -101,6 +101,7 @@ import type { Book, PolkadotJsAccount } from '../../types/common';
 export default class AddressBookInput extends Mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly excludeConnected!: boolean;
   @Prop({ default: '', type: String }) readonly value!: string;
+  @Prop({ default: '', type: String }) readonly propPlaceholder!: string;
   @Prop({ default: false, type: Boolean }) readonly isValid!: boolean;
   @Prop({ default: false, type: Boolean }) readonly disabled!: boolean;
 

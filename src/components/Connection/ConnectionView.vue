@@ -77,7 +77,7 @@ import { GDriveWallet } from '../../services/google/wallet';
 import { isInternalSource, isInternalWallet, isAppStorageSource, getWallet } from '../../services/wallet';
 import { RecommendedWallets } from '../../services/wallet/consts';
 import { addWcSubWalletLocally, isWcWallet } from '../../services/walletconnect';
-import { action, state } from '../../store/decorators';
+import { action, state, mutation } from '../../store/decorators';
 import { delay } from '../../util';
 import {
   verifyAccountJson,
@@ -155,6 +155,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   @state.account.availableWallets private availableWallets!: Wallet[];
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
+  @mutation.settings.setIsMstAvailable private setIsMstAvailable!: (isAvailable: boolean) => void;
   @action.account.updateAvailableWallets private updateAvailableWallets!: () => void;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
     address: string;
@@ -391,6 +392,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   public async handleAccountSelect(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
+    this.setIsMstAvailable(account.source === AppWallet.FearlessWallet);
     if (isConnected) {
       this.closeView();
     } else if (this.isInternal && !isAppStorageSource(account.source)) {

@@ -178,8 +178,6 @@ const checkActiveAccount = async (): Promise<void> => {
 };
 
 async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
-  console.info('we are in init wallet');
-
   await Promise.all([waitForCore(options), waitForConnection()]);
 
   initAppWallets(api, store.state.wallet.account.isDesktop, options.appName);

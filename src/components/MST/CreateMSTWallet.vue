@@ -1,9 +1,13 @@
 <template>
-  <wallet-base show-back title="Multisig Wallet" :show-header="showHeader" @back="handleBack" tooltip="The MST Wallet">
+  <wallet-base
+    show-back
+    title="Multisig Wallet"
+    :show-header="showHeader"
+    @back="handleBack"
+    tooltip="A multisig wallet is a crypto wallet that requires multiple approvals to authorize transactions, enhancing security and shared control."
+  >
     <div class="multisig-wallet">
-      <p class="requirement">
-        Create a wallet that requires multiple signatures of a minimum of {{ totalNumberOfAddresses }} addresses.
-      </p>
+      <p class="requirement">Create a wallet that requires multiple signatures of a minimum of 3 addresses.</p>
       <s-input placeholder="Enter Multisig Wallet Name" :minlength="1" v-model="multisigName" />
 
       <div class="multisig-addresses">
@@ -20,11 +24,18 @@
         <p>{{ accountAddress }}</p>
       </s-card>
 
-      <div class="multisig-addresses-input">
-        <div v-for="(address, index) in multisigAddresses" :key="index + 1" class="multisig-address-input">
-          <s-input placeholder="Enter the multisig address" :minlength="1" v-model="multisigAddresses[index]" />
+      <s-scrollbar class="multisig-scrollbar">
+        <div class="multisig-addresses-input">
+          <div v-for="(address, index) in multisigAddresses" :key="index + 1">
+            <address-book-input
+              exclude-connected
+              v-model="multisigAddresses[index]"
+              :is-valid="validAddress(address)"
+              prop-placeholder="Enter the multisig address"
+            />
+          </div>
         </div>
-      </div>
+      </s-scrollbar>
 
       <div class="add-multisig-address">
         <s-button type="secondary" tooltip="Add address" @click="addAddress">
@@ -40,20 +51,18 @@
         </s-tooltip>
       </div>
 
-      <!-- Add a check if it's negative or smth not between 0 and totalNumberOfAddresses-->
-      <s-input
-        placeholder="0"
-        type="number"
-        :min="0"
-        :max="totalNumberOfAddresses"
-        v-model="amountOfThreshold"
-        class="threshold-amount"
-      >
+      <s-input placeholder="1" type="number" v-model="amountOfThreshold" class="threshold-amount">
         <template v-slot:suffix> /{{ totalNumberOfAddresses }} </template>
       </s-input>
-      <div>
+      <div class="transaction-lifetime">
         <p class="multisig-title-data">TRANSACTION LIFETIME</p>
+        <s-tabs v-model="transactionLifetime" type="rounded" class="save-password-durations">
+          <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
+        </s-tabs>
       </div>
+      <s-button :type="isButtonEnabled() ? 'primary' : 'tertiary'" :disabled="!isButtonEnabled()" @click="handleClick">
+        SET UP THE DETAILS
+      </s-button>
     </div>
   </wallet-base>
 </template>
@@ -63,8 +72,10 @@ import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { PolkadotJsAccount } from '@/types/common';
 
-import { RouteNames } from '../../consts';
+import { RouteNames, TransactionLifetimeMST, TransactionLifetimeMSTDuration } from '../../consts';
 import { getter, mutation } from '../../store/decorators';
+import { validateAddress } from '../../util';
+import AddressBookInput from '../AddressBook/Input.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
 import WalletBase from '../WalletBase.vue';
 
@@ -73,21 +84,32 @@ import type { Route } from '../../store/router/types';
 @Component({
   components: {
     WalletBase,
+    AddressBookInput,
   },
 })
 export default class CreateMSTWallet extends Mixins(TranslationMixin) {
   showHeader = true;
   multisigName = '';
+  transactionLifetime: string | null = null;
   multisigAddresses: string[] = [''];
   amountOfThreshold: number | null = null;
+  readonly durations = TransactionLifetimeMST;
 
   @Watch('amountOfThreshold')
-  private onAmountOfThresholdUpdate(value: number | null): void {
-    if (value !== null && value > this.totalNumberOfAddresses) {
-      this.amountOfThreshold = this.totalNumberOfAddresses;
-    }
-    if (value !== null && value < 0) {
-      this.amountOfThreshold = 0;
+  private onAmountOfThresholdUpdate(value: any): void {
+    if (value !== null && value !== '') {
+      const numValue = Number(value);
+      if (isNaN(numValue)) {
+        this.amountOfThreshold = null;
+        return;
+      }
+      if (numValue > this.totalNumberOfAddresses) {
+        this.amountOfThreshold = this.totalNumberOfAddresses;
+      } else if (numValue < 1) {
+        this.amountOfThreshold = 1;
+      } else {
+        this.amountOfThreshold = numValue;
+      }
     }
   }
 
@@ -100,6 +122,14 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
 
   initializeMultisigAddresses(): void {
     this.multisigAddresses = ['', ''];
+  }
+
+  isButtonEnabled(): boolean {
+    const isMultisigNameFilled = this.multisigName.trim() !== '';
+    const areAllAddressesFilled = this.multisigAddresses.every((address) => address.trim() !== '');
+    const isThresholdSet = this.amountOfThreshold !== null && this.amountOfThreshold > 0;
+    const isTransactionLifetimeSelected = Boolean(this.transactionLifetime && this.transactionLifetime !== '0');
+    return isMultisigNameFilled && areAllAddressesFilled && isThresholdSet && isTransactionLifetimeSelected;
   }
 
   get totalNumberOfAddresses(): number {
@@ -115,8 +145,22 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     return this.account.address;
   }
 
+  public validAddress(address: string): boolean {
+    return validateAddress(address);
+  }
+
   handleBack(): void {
     this.navigate({ name: RouteNames.Wallet });
+  }
+
+  handleClick(): void {
+    const data = {
+      multisigName: this.multisigName,
+      addresses: [this.accountAddress, ...this.multisigAddresses],
+      threshold: this.amountOfThreshold,
+      transactionLifetime: TransactionLifetimeMSTDuration[this.transactionLifetime ?? '1D'],
+    };
+    console.info(data);
   }
 
   addAddress(): void {
@@ -140,6 +184,25 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
   input[type='number']::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+}
+.transaction-lifetime {
+  .s-tabs {
+    width: auto;
+  }
+  .el-tabs__item {
+    padding: 0 10px !important;
+  }
+  .el-tabs__item:not(:hover):not(.is-active) {
+    color: var(--s-color-base-content-secondary) !important;
+  }
+}
+
+.multisig-scrollbar {
+  @include scrollbar($basic-spacing-big);
+  height: 145px;
+  .el-scrollbar__wrap {
+    overflow-x: unset;
   }
 }
 </style>
@@ -216,6 +279,13 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
   }
   .threshold-amount {
     margin-top: 16px;
+    margin-bottom: 24px;
+  }
+  .transaction-lifetime {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 24px;
   }
 }
