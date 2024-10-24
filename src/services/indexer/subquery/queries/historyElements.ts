@@ -508,6 +508,11 @@ const createAccountAddressCriteria = (address: string) => {
       },
     },
     {
+      dataFrom: {
+        equalTo: address,
+      },
+    },
+    {
       dataTo: {
         equalTo: address,
       },
