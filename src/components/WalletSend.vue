@@ -79,9 +79,12 @@
             v-model="selectedVestingPeriod"
             :placeholder="t('walletSend.unlockFrequency')"
           >
-            <s-option v-for="period in vestingPeriods" :key="period.value" :label="period.label" :value="period.value">
-              {{ period.label }}
-            </s-option>
+            <s-option
+              v-for="period in vestingPeriodsInDays"
+              :key="period"
+              :label="formatDuration(period)"
+              :value="period"
+            />
           </s-select>
           <s-float-input
             class="wallet-send__vesting-input"
@@ -128,7 +131,7 @@
           </div>
 
           <template v-if="withVesting">
-            <info-line :label="t('walletSend.unlockFrequency')" :value="vestingPeriodsMap[selectedVestingPeriod]" />
+            <info-line :label="t('walletSend.unlockFrequency')" :value="formatDuration(selectedVestingPeriod)" />
             <info-line asset-symbol="%" :label="t('walletSend.vestingPercentage')" :value="vestingPercentage" />
           </template>
 
@@ -154,6 +157,7 @@
 <script lang="ts">
 import { FPNumber, Operation } from '@sora-substrate/sdk';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
+import dayjs from 'dayjs';
 import debounce from 'lodash/fp/debounce';
 import { Component, Mixins } from 'vue-property-decorator';
 
@@ -182,6 +186,8 @@ import type { CodecString } from '@sora-substrate/sdk';
 import type { AccountAsset, AccountBalance, UnlockPeriodDays } from '@sora-substrate/sdk/build/assets/types';
 import type { Subscription } from 'rxjs';
 
+const MS_IN_DAY = 24 * 60 * 60_000;
+
 @Component({
   components: {
     WalletBase,
@@ -202,18 +208,7 @@ export default class WalletSend extends Mixins(
   NetworkFeeWarningMixin
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
-  readonly vestingPeriodsMap = {
-    1: '1 day',
-    7: '7 days',
-    30: '30 days',
-    60: '60 days',
-    90: '90 days',
-  };
-
-  readonly vestingPeriods = Object.entries(this.vestingPeriodsMap).map(([value, label]) => ({
-    value: +value as UnlockPeriodDays,
-    label,
-  }));
+  readonly vestingPeriodsInDays: UnlockPeriodDays[] = [1, 7, 30, 60, 90];
 
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
@@ -400,6 +395,13 @@ export default class WalletSend extends Mixins(
 
   get isXorAccountAsset(): boolean {
     return this.asset.address === XOR.address;
+  }
+
+  formatDuration(days: UnlockPeriodDays): string {
+    return dayjs
+      .duration(days * MS_IN_DAY)
+      .locale(this.dayjsLocale)
+      .humanize();
   }
 
   async fetchNetworkFee(): Promise<void> {
