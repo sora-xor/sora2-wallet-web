@@ -1,17 +1,21 @@
 <template>
   <wallet-base show-back title="Multisig Wallet" :show-header="showHeader" @back="handleBack">
     <div class="multisig-wallet">
-      <p class="requirement">Create a wallet that requires multiple signatures of a minimum of 3 addresses.</p>
+      <!-- <p class="requirement">Create a wallet that requires multiple signatures of a minimum of 3 addresses.</p> -->
       <s-input placeholder="Enter Multisig Wallet Name" :minlength="1" v-model="multisigName" />
 
-      <p class="multisig-title-data address">
+      <!-- <p class="multisig-title-data address">
         ADD MULTISIG ADDRESSES ({{ filledAddressesCount }}/{{ totalNumberOfAddresses }})
-      </p>
+      </p> -->
 
-      <s-card v-bind="{ shadow: 'always', size: 'medium', borderRadius: 'small', ...$attrs }" class="address-card">
-        <p>Your address</p>
-        <p>{{ accountAddress }}</p>
-      </s-card>
+      <p class="multisig-title-data address">ADD MULTISIG ADDRESSES</p>
+
+      <account-card class="multisig-user-address">
+        <div class="address-card">
+          <p>Your address</p>
+          <formatted-address :value="accountAddress" :symbols="24" />
+        </div>
+      </account-card>
 
       <s-scrollbar class="multisig-scrollbar">
         <div class="multisig-addresses-input">
@@ -22,6 +26,10 @@
               :is-valid="validAddress(address)"
               prop-placeholder="Enter the multisig address"
             />
+            <p v-if="isDuplicateAddress(index)" class="error-message">This address has already been entered.</p>
+            <p v-if="!validAddress(multisigAddresses[index]) && multisigAddresses[index] != ''" class="error-message">
+              The address is not in correct format
+            </p>
           </div>
         </div>
       </s-scrollbar>
@@ -38,12 +46,12 @@
       <s-input placeholder="1" type="number" v-model="amountOfThreshold" class="threshold-amount">
         <template v-slot:suffix> /{{ totalNumberOfAddresses }} </template>
       </s-input>
-      <div class="transaction-lifetime">
+      <!-- <div class="transaction-lifetime">
         <p class="multisig-title-data">TRANSACTION LIFETIME</p>
         <s-tabs v-model="transactionLifetime" type="rounded" class="save-password-durations">
           <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
         </s-tabs>
-      </div>
+      </div> -->
       <s-button :type="isButtonEnabled() ? 'primary' : 'tertiary'" :disabled="!isButtonEnabled()" @click="handleClick">
         SET UP THE DETAILS
       </s-button>
@@ -57,11 +65,13 @@ import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { PolkadotJsAccount } from '@/types/common';
 
-import { RouteNames, TransactionLifetimeMST, TransactionLifetimeMSTDuration } from '../../consts';
+import { RouteNames } from '../../consts';
 import { getter, mutation } from '../../store/decorators';
 import { validateAddress } from '../../util';
+import AccountCard from '../Account/AccountCard.vue';
 import AddressBookInput from '../AddressBook/Input.vue';
 import TranslationMixin from '../mixins/TranslationMixin';
+import FormattedAddress from '../shared/FormattedAddress.vue';
 import WalletBase from '../WalletBase.vue';
 
 import MultisigCreateDialog from './MultisigCreateDialog.vue';
@@ -74,6 +84,8 @@ import type { MSTData } from '../../types/mst';
     WalletBase,
     AddressBookInput,
     MultisigCreateDialog,
+    AccountCard,
+    FormattedAddress,
   },
 })
 export default class CreateMSTWallet extends Mixins(TranslationMixin) {
@@ -87,10 +99,10 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     addresses: [],
     multisigName: '',
     threshold: 0,
-    transactionLifetime: 0,
+    // transactionLifetime: 0,
   };
 
-  readonly durations = TransactionLifetimeMST;
+  // readonly durations = TransactionLifetimeMST;
 
   @Watch('amountOfThreshold')
   private onAmountOfThresholdUpdate(value: any): void {
@@ -125,21 +137,44 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     const isMultisigNameFilled = this.multisigName.trim() !== '';
     const areAllAddressesFilled = this.multisigAddresses.every((address) => address.trim() !== '');
     const isThresholdSet = this.amountOfThreshold !== null && this.amountOfThreshold > 0;
-    const isTransactionLifetimeSelected = Boolean(this.transactionLifetime && this.transactionLifetime !== '0');
-    return isMultisigNameFilled && areAllAddressesFilled && isThresholdSet && isTransactionLifetimeSelected;
+    const areAllAddressesValid = this.multisigAddresses.every((address) => this.validAddress(address));
+    const noDuplicateAddresses = !this.hasDuplicateAddresses();
+    // const isTransactionLifetimeSelected = Boolean(this.transactionLifetime && this.transactionLifetime !== '0');
+    return (
+      isMultisigNameFilled && areAllAddressesFilled && isThresholdSet && noDuplicateAddresses && areAllAddressesValid
+    );
   }
 
   get totalNumberOfAddresses(): number {
     return this.multisigAddresses.length + 1;
   }
 
-  get filledAddressesCount(): number {
-    const filledExternalAddresses = this.multisigAddresses.filter((address) => address.trim() !== '').length;
-    return filledExternalAddresses + 1;
-  }
+  // get filledAddressesCount(): number {
+  //   const filledExternalAddresses = this.multisigAddresses.filter((address) => address.trim() !== '').length;
+  //   return filledExternalAddresses + 1;
+  // }
 
   get accountAddress(): string {
     return this.account.address;
+  }
+
+  public hasDuplicateAddresses(): boolean {
+    const addresses = this.multisigAddresses.map((addr) => addr.trim()).filter((addr) => addr !== '');
+    const uniqueAddresses = new Set(addresses);
+    if (addresses.includes(this.accountAddress.trim())) {
+      return true;
+    }
+    return uniqueAddresses.size !== addresses.length;
+  }
+
+  public isDuplicateAddress(index: number): boolean {
+    const address = this.multisigAddresses[index].trim();
+    if (!address) return false;
+    if (address === this.accountAddress.trim()) {
+      return true;
+    }
+    const occurrences = this.multisigAddresses.filter((addr, i) => addr.trim() === address && i !== index).length;
+    return occurrences > 0;
   }
 
   public validAddress(address: string): boolean {
@@ -155,7 +190,7 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
       addresses: [this.accountAddress, ...this.multisigAddresses],
       multisigName: this.multisigName,
       threshold: this.amountOfThreshold,
-      transactionLifetime: TransactionLifetimeMSTDuration[this.transactionLifetime ?? '1D'],
+      // transactionLifetime: TransactionLifetimeMSTDuration[this.transactionLifetime ?? '1D'],
     };
     console.info(this.MSTData);
     this.MSTDialogVisibility = true;
@@ -203,6 +238,12 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     overflow-x: unset;
   }
 }
+.multisig-user-address {
+  .account-avatar,
+  .account-credentials {
+    display: none !important;
+  }
+}
 </style>
 
 <style lang="scss" scoped>
@@ -231,26 +272,21 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
   .address {
     margin-top: $basic-spacing-big;
   }
-  .address-card,
-  .add-multisig-address,
-  .transaction-lifetime {
+  .add-multisig-address {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
   .address-card {
-    margin-top: $basic-spacing-medium;
-    width: 100%;
-    margin-bottom: $inner-spacing-small;
-    box-shadow: var(--s-shadow-element-pressed) !important;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: $basic-spacing-tiny;
     p:first-of-type {
       font-size: 12px;
       color: var(--s-color-base-content-secondary);
     }
-    font-size: 16px;
-    p {
-      max-width: calc($asset-item-height * 4.5);
-      word-wrap: break-word;
+    .formatted-address {
+      font-size: 16px !important;
     }
   }
 
@@ -276,9 +312,12 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     margin-top: $basic-spacing-medium;
     margin-bottom: $basic-spacing-big;
   }
-  .transaction-lifetime {
-    gap: $inner-spacing-small;
-    margin-bottom: $basic-spacing-big;
+  .error-message {
+    color: var(--s-color-status-error);
   }
+  // .transaction-lifetime {
+  //   gap: $inner-spacing-small;
+  //   margin-bottom: $basic-spacing-big;
+  // }
 }
 </style>

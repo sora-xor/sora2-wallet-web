@@ -211,13 +211,13 @@ export enum PassphraseTimeout {
   ONE_WEEK = '1W',
 }
 
-export enum TransactionLifetimeMST {
-  ONE_DAY = '1D',
-  THREE_DAYS = '3D',
-  ONE_WEEK = '7D',
-  TWO_WEEKS = '14D',
-  ONE_MONTH = '30D',
-}
+// export enum TransactionLifetimeMST {
+//   ONE_DAY = '1D',
+//   THREE_DAYS = '3D',
+//   ONE_WEEK = '7D',
+//   TWO_WEEKS = '14D',
+//   ONE_MONTH = '30D',
+// }
 
 export const PassphraseTimeoutDuration: Record<PassphraseTimeout, number> = {
   [PassphraseTimeout.FIFTEEN_MINUTES]: 15 * 60 * 1000,
@@ -227,13 +227,13 @@ export const PassphraseTimeoutDuration: Record<PassphraseTimeout, number> = {
   [PassphraseTimeout.ONE_WEEK]: 7 * 24 * 60 * 60 * 1000,
 };
 
-export const TransactionLifetimeMSTDuration: Record<TransactionLifetimeMST, number> = {
-  [TransactionLifetimeMST.ONE_DAY]: 24 * 60 * 60 * 1000,
-  [TransactionLifetimeMST.THREE_DAYS]: 3 * 24 * 60 * 60 * 1000,
-  [TransactionLifetimeMST.ONE_WEEK]: 7 * 24 * 60 * 60 * 1000,
-  [TransactionLifetimeMST.TWO_WEEKS]: 2 * 7 * 24 * 60 * 60 * 1000,
-  [TransactionLifetimeMST.ONE_MONTH]: 30 * 24 * 60 * 60 * 1000,
-};
+// export const TransactionLifetimeMSTDuration: Record<TransactionLifetimeMST, number> = {
+//   [TransactionLifetimeMST.ONE_DAY]: 24 * 60 * 60 * 1000,
+//   [TransactionLifetimeMST.THREE_DAYS]: 3 * 24 * 60 * 60 * 1000,
+//   [TransactionLifetimeMST.ONE_WEEK]: 7 * 24 * 60 * 60 * 1000,
+//   [TransactionLifetimeMST.TWO_WEEKS]: 2 * 7 * 24 * 60 * 60 * 1000,
+//   [TransactionLifetimeMST.ONE_MONTH]: 30 * 24 * 60 * 60 * 1000,
+// };
 
 export const DefaultPassphraseTimeout = PassphraseTimeoutDuration[PassphraseTimeout.FIFTEEN_MINUTES];
 
