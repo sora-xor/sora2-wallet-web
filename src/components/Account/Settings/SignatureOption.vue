@@ -32,7 +32,6 @@
 
 <script lang="ts">
 import dayjs from 'dayjs';
-import duration from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
@@ -42,7 +41,6 @@ import TranslationMixin from '../../mixins/TranslationMixin';
 
 import AccountSettingsOption from './Option.vue';
 
-dayjs.extend(duration);
 dayjs.extend(relativeTime);
 
 @Component({

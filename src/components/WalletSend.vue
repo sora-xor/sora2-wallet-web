@@ -70,7 +70,7 @@
           </div>
         </s-float-input>
         <div class="wallet-send__switch-btn">
-          <s-switch v-model="withVesting" :disabled="loading" @change="fetchNetworkFeeDebounced" />
+          <s-switch v-model="withVesting" @change="fetchNetworkFee" />
           <span>{{ t('walletSend.enableVesting') }}</span>
         </div>
         <template v-if="withVesting">
@@ -79,9 +79,12 @@
             v-model="selectedVestingPeriod"
             :placeholder="t('walletSend.unlockFrequency')"
           >
-            <s-option v-for="period in vestingPeriods" :key="period.value" :label="period.label" :value="period.value">
-              {{ period.label }}
-            </s-option>
+            <s-option
+              v-for="period in vestingPeriodsInDays"
+              :key="period"
+              :label="formatDuration(period)"
+              :value="period"
+            />
           </s-select>
           <s-float-input
             class="wallet-send__vesting-input"
@@ -91,7 +94,6 @@
             :decimals="2"
             :delimiters="delimiters"
             :max="100"
-            :disabled="loading"
             @input="fetchNetworkFeeDebounced"
           >
             <span slot="right">%</span>
@@ -129,8 +131,8 @@
           </div>
 
           <template v-if="withVesting">
-            <info-line label="Unlock frequency" :value="vestingPeriodsMap[selectedVestingPeriod]" />
-            <info-line asset-symbol="%" label="Vesting percentage" :value="vestingPercentage" />
+            <info-line :label="t('walletSend.unlockFrequency')" :value="formatDuration(selectedVestingPeriod)" />
+            <info-line asset-symbol="%" :label="t('walletSend.vestingPercentage')" :value="vestingPercentage" />
           </template>
 
           <account-confirmation-option with-hint />
@@ -155,13 +157,14 @@
 <script lang="ts">
 import { FPNumber, Operation } from '@sora-substrate/sdk';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
+import dayjs from 'dayjs';
 import debounce from 'lodash/fp/debounce';
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { RouteNames } from '../consts';
 import { state, mutation, action } from '../store/decorators';
-import { validateAddress, formatAddress, formatAccountAddress } from '../util';
+import { validateAddress, formatAddress, formatAccountAddress, delay } from '../util';
 
 import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
 import AddressBookInput from './AddressBook/Input.vue';
@@ -183,6 +186,8 @@ import type { CodecString } from '@sora-substrate/sdk';
 import type { AccountAsset, AccountBalance, UnlockPeriodDays } from '@sora-substrate/sdk/build/assets/types';
 import type { Subscription } from 'rxjs';
 
+const MS_IN_DAY = 24 * 60 * 60_000;
+
 @Component({
   components: {
     WalletBase,
@@ -203,18 +208,7 @@ export default class WalletSend extends Mixins(
   NetworkFeeWarningMixin
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
-  readonly vestingPeriodsMap = {
-    1: '1 day',
-    7: '7 days',
-    30: '30 days',
-    60: '60 days',
-    90: '90 days',
-  };
-
-  readonly vestingPeriods = Object.entries(this.vestingPeriodsMap).map(([value, label]) => ({
-    value: +value as UnlockPeriodDays,
-    label,
-  }));
+  readonly vestingPeriodsInDays: UnlockPeriodDays[] = [1, 7, 30, 60, 90];
 
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
@@ -403,10 +397,19 @@ export default class WalletSend extends Mixins(
     return this.asset.address === XOR.address;
   }
 
-  private async fetchNetworkFee(): Promise<void> {
+  formatDuration(days: UnlockPeriodDays): string {
+    return dayjs
+      .duration(days * MS_IN_DAY)
+      .locale(this.dayjsLocale)
+      .humanize();
+  }
+
+  async fetchNetworkFee(): Promise<void> {
     const percent = +this.vestingPercentage;
 
     if (this.withVesting && percent > 0 && percent <= 100 && !this.emptyAmount) {
+      this.loading = true;
+      await delay(250);
       const fee = await this.getVestedTransferFee({
         amount: this.amount,
         asset: this.asset,
@@ -417,12 +420,13 @@ export default class WalletSend extends Mixins(
       if (fee) {
         this.fee = fee;
       }
+      this.loading = false;
     } else {
       this.fee = this.getFPNumberFromCodec(this.networkFees.Transfer);
     }
   }
 
-  readonly fetchNetworkFeeDebounced = debounce(500)(this.fetchNetworkFee);
+  readonly fetchNetworkFeeDebounced = debounce(100)(this.fetchNetworkFee);
 
   getFormattedAddress(asset: AccountAsset): string {
     return formatAddress(asset.address, 10);
@@ -466,6 +470,7 @@ export default class WalletSend extends Mixins(
     if (this.isConfirmTxDisabled) {
       await this.handleConfirm();
     } else {
+      await this.fetchNetworkFee();
       this.step = 3;
     }
   }
