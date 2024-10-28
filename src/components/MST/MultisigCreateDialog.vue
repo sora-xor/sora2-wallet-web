@@ -41,6 +41,7 @@ import { Component, Mixins, Prop } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { RouteNames } from '../../consts';
+import { createMSTWallet } from '../../services/mst';
 import { mutation } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
@@ -63,6 +64,8 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   @Prop({ default: () => ({}), type: Object }) readonly mstData!: MSTData;
   @Prop({ default: 0, type: Number }) readonly threshold!: number;
 
+  createMSTWallet = createMSTWallet;
+
   cardMessages = [
     'For your multisig to function properly, all listed addresses must create the multisig in the exact same way as you did.',
     'Multisig wallet cannot possibly be changed in the future, only the name.',
@@ -71,6 +74,7 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
   handleCreateClose(): void {
+    this.createMSTWallet(this.mstData.addresses, this.mstData.threshold || 0, this.mstData.multisigName);
     this.closeDialog();
     this.navigate({ name: RouteNames.Wallet });
     this.showAppNotification('Multisig wallet has been successfully set up!', 'success');

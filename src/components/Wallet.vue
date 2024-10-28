@@ -1,18 +1,7 @@
 <template>
   <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
-      <s-button
-        type="tertiary"
-        :tooltip="
-          isMSTAvailable
-            ? 'Create a Multisig'
-            : 'MultiSign account is available in Polkaswap. Please log in via Fearless Wallet and gain control over your team. If you don\'t have the Fearless wallet please create it.'
-        "
-        :disabled="!isMSTAvailable"
-        @click="handleMST"
-      >
-        Multi-Sig
-      </s-button>
+      <s-button type="tertiary" @click="handleMST"> Multi-Sig </s-button>
 
       <s-button type="action" :tooltip="t('accountSettings.title')" @click="handleAccountSettings">
         <s-icon name="basic-settings-24" size="28" />
@@ -65,6 +54,7 @@
     <wallet-transaction-details v-if="selectedTransaction" />
 
     <account-settings-dialog :visible.sync="accountSettingsVisibility" />
+    <mst-onboarding-dialog :visible.sync="shouldShowDialogMST" />
 
     <template v-if="!isExternal">
       <account-rename-dialog
@@ -101,6 +91,7 @@ import WalletAccount from './Account/WalletAccount.vue';
 import AccountActionsMixin from './mixins/AccountActionsMixin';
 import OperationsMixin from './mixins/OperationsMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
+import MstOnboardingDialog from './MST/MstOnboardingDialog.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletBase from './WalletBase.vue';
@@ -123,6 +114,7 @@ import type { HistoryItem } from '@sora-substrate/sdk';
     AccountExportDialog,
     AccountDeleteDialog,
     AccountSettingsDialog,
+    MstOnboardingDialog,
   },
 })
 export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin, QrCodeParserMixin) {
@@ -146,6 +138,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   currentTab: WalletTabs = WalletTabs.Assets;
 
   accountSettingsVisibility = false;
+  shouldShowDialogMST = false;
 
   get headerTitle(): string {
     if (!this.selectedTransaction) return this.t('account.accountTitle');
@@ -173,6 +166,8 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   }
 
   handleMST(): void {
+    // if(mstCreated) navigate change mst
+    // this.shouldShowDialogMST = true;
     this.navigate({ name: RouteNames.CreateMSTWallet });
   }
 
