@@ -1,5 +1,5 @@
 <template>
-  <dialog-base title="About" :visible.sync="isVisible" append-to-body>
+  <dialog-base title="About" :visible.sync="isVisible" append-to-body :style="{ maxWidth: '650px' }">
     <div class="mst-info">
       <div class="about">
         <div v-for="(section, index) in sectionsAbout" :key="index" class="section">
@@ -31,6 +31,9 @@
           </a>
         </div>
       </div>
+      <s-button type="primary" @click="connectFearlessOrCreateMST">
+        {{ isMSTAvailable ? 'create multisig wallet' : 'connect via fearless' }}
+      </s-button>
     </div>
   </dialog-base>
 </template>
@@ -38,17 +41,22 @@
 <script lang="ts">
 import { Component, Mixins } from 'vue-property-decorator';
 
+import { RouteNames } from '@/consts';
+
 import MSTFearless from '../../assets/img/MSTFearless.svg';
 import MSTIcon from '../../assets/img/MSTIcon.svg';
 import MSTKeys from '../../assets/img/MSTKeys.svg';
 import MSTSign from '../../assets/img/MSTSign.svg';
 import MSTWallet from '../../assets/img/MSTWallet.svg';
+import { state, mutation } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 import FormattedAddress from '../shared/FormattedAddress.vue';
 import SimpleNotification from '../SimpleNotification.vue';
+
+import type { Route } from '../../store/router/types';
 
 @Component({
   components: {
@@ -58,6 +66,10 @@ import SimpleNotification from '../SimpleNotification.vue';
   },
 })
 export default class MstOnboardingDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
+  @state.settings.isMSTAvailable isMSTAvailable!: boolean;
+
+  @mutation.router.navigate private navigate!: (options: Route) => void;
+
   readonly MSTIcon = MSTIcon;
   readonly MSTKeys = MSTKeys;
   readonly MSTSign = MSTSign;
@@ -94,6 +106,14 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
       text: 'Create a Multisig account.',
     },
   ];
+
+  public connectFearlessOrCreateMST() {
+    if (this.isMSTAvailable) {
+      this.navigate({ name: RouteNames.CreateMSTWallet });
+    } else {
+      this.navigate({ name: RouteNames.WalletConnection });
+    }
+  }
 }
 </script>
 
@@ -117,6 +137,7 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
   }
   .how-to {
     margin-top: 24px;
+    margin-bottom: 31px;
   }
   .section {
     display: flex;
@@ -130,6 +151,10 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
     a {
       color: var(--s-color-theme-accent);
     }
+  }
+  .el-button {
+    width: 100%;
+    font-size: 24px;
   }
 }
 </style>

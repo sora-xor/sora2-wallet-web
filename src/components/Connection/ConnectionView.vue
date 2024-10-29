@@ -410,6 +410,8 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   public async handleWalletSelect(wallet: Wallet): Promise<void> {
+    console.info('we are in handleWalletSelect');
+    console.info(wallet);
     if (!wallet.installed) return;
 
     await this.withAppAlert(async () => {

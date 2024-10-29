@@ -87,7 +87,8 @@ export type StorageKey =
   | 'сhartsEnabled'
   | 'transactionDeadline'
   | 'exploreAccountItems'
-  | 'exploreSyntheticTokens';
+  | 'exploreSyntheticTokens'
+  | 'multisig';
 
 export type RuntimeStorageKey = 'version' | 'networkFees' | 'feeMultiplier';
 export type SettingsStorageKey =

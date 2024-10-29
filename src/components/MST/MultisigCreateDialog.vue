@@ -39,10 +39,12 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
+import { storage } from '@/util/storage';
+
 import { api } from '../../api';
 import { RouteNames } from '../../consts';
-import { createMSTWallet } from '../../services/mst';
-import { mutation } from '../../store/decorators';
+// import { createMSTWallet } from '../../services/mst';
+import { mutation, state } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
@@ -52,6 +54,7 @@ import SimpleNotification from '../SimpleNotification.vue';
 
 import type { Route } from '../../store/router/types';
 import type { MSTData } from '../../types/mst';
+import type { CreateResult } from '@polkadot/ui-keyring/types';
 
 @Component({
   components: {
@@ -64,7 +67,7 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   @Prop({ default: () => ({}), type: Object }) readonly mstData!: MSTData;
   @Prop({ default: 0, type: Number }) readonly threshold!: number;
 
-  createMSTWallet = createMSTWallet;
+  // createMSTWallet = createMSTWallet;
 
   cardMessages = [
     'For your multisig to function properly, all listed addresses must create the multisig in the exact same way as you did.',
@@ -72,62 +75,28 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   ];
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
+  @mutation.account.setMultisigAddress setMultisigAddress!: (address: string) => void;
 
   handleCreateClose(): void {
-    this.createMSTWallet(this.mstData.addresses, this.mstData.threshold || 0, this.mstData.multisigName);
+    const multisigAddress = api.createMST(
+      this.mstData.addresses,
+      this.mstData.threshold || 0,
+      this.mstData.multisigName
+    );
+    this.setMultisigAddress(multisigAddress);
+    console.info('here is multisig address');
+    console.info(multisigAddress);
+    api.updateMultisigName('here is the new name');
+    const updatedName = api.getMSTName();
+    console.info('here is the updatedName', updatedName);
+    // console.info(multisig);
+    // console.info(storage);
+    // this.createMSTWallet(this.mstData.addresses, this.mstData.threshold || 0, this.mstData.multisigName);
     this.closeDialog();
     this.navigate({ name: RouteNames.Wallet });
     this.showAppNotification('Multisig wallet has been successfully set up!', 'success');
   }
 }
-
-// const transferData = [
-//   {
-//     assetAddress: '0x0200000000000000000000000000000000000000000000000000000000000000', // Replace with actual asset address
-//     toAddress: 'cnT3RCp1vihUWncRgHvFBz1ior5phHknTnNM3GUPpmtGnWHVW', // Replace with recipient address
-//     amount: '100', // Replace with actual amount
-//   },
-//   {
-//     assetAddress: '0x0200000000000000000000000000000000000000000000000000000000000000',
-//     toAddress: 'cnT3RCp1vihUWncRgHvFBz1ior5phHknTnNM3GUPpmtGnWHVW',
-//     amount: '100',
-//   },
-//   {
-//     assetAddress: '0x0200000000000000000000000000000000000000000000000000000000000000',
-//     toAddress: 'cnT3RCp1vihUWncRgHvFBz1ior5phHknTnNM3GUPpmtGnWHVW',
-//     amount: '100',
-//   },
-// ];
-// const coSigners = [
-//   'cnT3RCp1vihUWncRgHvFBz1ior5phHknTnNM3GUPpmtGnWHVW',
-//   'cnVP5BrQPuC2vZpXVKw53oy2Vx2mN6cMXYiJbZRAGAcNaefpu',
-//   'cnVP5BrQPuC2vZpXVKw53oy2Vx2mN6cMXYiJbZRAGAcNaefpu',
-// ]; // Replace with actual co-signers
-
-// // Define threshold (e.g., minimum number of signatures required)
-// const threshold = 2; // Replace with actual threshold
-
-// console.info(this.mstData);
-// // console.info('we are in prefilteredAssets');
-// // console.info(api);
-// // console.info(api.mstTransfers);
-// console.info('we are going to make transferCall');
-// const transferCall = api.mstTransfers.prepareCall(transferData);
-
-// console.info('here is transferCall');
-// console.info(transferCall);
-// console.info('// Step 2: Prepare the extrinsic for multisig using the batch call');
-// // Step 2: Prepare the extrinsic for multisig using the batch call
-// const mstExtrinsic = api.mstTransfers.prepareExtrinsic(transferCall, threshold, coSigners);
-// console.info('here is mstExtrinsic');
-// console.info(mstExtrinsic);
-// // Optional: Get network fee
-// const fee = api.mstTransfers.getNetworkFee(mstExtrinsic);
-// console.log('Estimated Network Fee:', fee);
-
-// // Step 3: Submit the extrinsic (MST)
-// const result = api.mstTransfers.submit(mstExtrinsic);
-// console.log('Transaction Result:', result);
 </script>
 
 <style lang="scss">

@@ -1,0 +1,100 @@
+<template>
+  <dialog-base title="Multisig account settings" :visible.sync="isVisible" append-to-body>
+    <div class="multisig-change-forget">
+      <s-card v-bind="{ shadow: 'always', size: 'medium', borderRadius: 'small', ...$attrs }" class="switch-multisig">
+        <div class="switcher">
+          <!-- TODO UPDATE LATER -->
+          <s-switch />
+          <p>Switch to Multisig account</p>
+        </div>
+        <p>All activities and transactions will be carried out through the Multisig account.</p>
+      </s-card>
+      <s-input v-model="multisigNewName" placeholder="Multisig account name" />
+      <s-button :disabled="isNoNameOrTheSame" type="primary" @click="updateName">save changes</s-button>
+      <s-button type="tertiary" @click="forgetMultisig">forget Multisig account</s-button>
+    </div>
+  </dialog-base>
+</template>
+
+<script lang="ts">
+import { Component, Mixins, Prop } from 'vue-property-decorator';
+
+import { storage } from '@/util/storage';
+
+import { api } from '../../api';
+import { RouteNames } from '../../consts';
+import { mutation, state } from '../../store/decorators';
+import DialogBase from '../DialogBase.vue';
+import DialogMixin from '../mixins/DialogMixin';
+import NotificationMixin from '../mixins/NotificationMixin';
+import TranslationMixin from '../mixins/TranslationMixin';
+import FormattedAddress from '../shared/FormattedAddress.vue';
+import SimpleNotification from '../SimpleNotification.vue';
+
+import type { Route } from '../../store/router/types';
+import type { MSTData } from '../../types/mst';
+import type { CreateResult } from '@polkadot/ui-keyring/types';
+
+@Component({
+  components: {
+    DialogBase,
+    SimpleNotification,
+    FormattedAddress,
+  },
+})
+export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
+  @mutation.router.navigate private navigate!: (options: Route) => void;
+
+  multisigNewName = '';
+  currentName: string | null = null;
+
+  mounted() {
+    this.currentName = api.getMSTName();
+  }
+
+  get isNoNameOrTheSame(): boolean {
+    console.info(this.currentName);
+    console.info(this.multisigNewName);
+    return this.currentName === this.multisigNewName || this.multisigNewName === '';
+  }
+
+  updateName(): void {
+    console.info('we will update name');
+    api.updateMultisigName(this.multisigNewName);
+    this.closeDialog();
+    this.navigate({ name: RouteNames.Wallet });
+    this.multisigNewName = '';
+  }
+
+  forgetMultisig(): void {
+    console.info('lets forget account');
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.multisig-change-forget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .switch-multisig {
+    width: 100%;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    .switcher {
+      display: flex;
+      flex-direction: row;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+  }
+  .el-button {
+    width: 100%;
+  }
+  .el-button:first-of-type {
+    margin-top: 24px;
+    margin-bottom: 12px;
+  }
+}
+</style>
