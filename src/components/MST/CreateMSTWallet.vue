@@ -1,22 +1,14 @@
 <template>
   <wallet-base show-back title="Multisig Wallet" :show-header="showHeader" @back="handleBack">
     <div class="multisig-wallet">
-      <!-- <p class="requirement">Create a wallet that requires multiple signatures of a minimum of 3 addresses.</p> -->
       <s-input placeholder="Enter Multisig Wallet Name" :minlength="1" v-model="multisigName" />
-
-      <!-- <p class="multisig-title-data address">
-        ADD MULTISIG ADDRESSES ({{ filledAddressesCount }}/{{ totalNumberOfAddresses }})
-      </p> -->
-
       <p class="multisig-title-data address">ADD MULTISIG ADDRESSES</p>
-
       <account-card class="multisig-user-address">
         <div class="address-card">
           <p>Your address</p>
           <formatted-address :value="accountAddress" :symbols="24" />
         </div>
       </account-card>
-
       <s-scrollbar class="multisig-scrollbar">
         <div class="multisig-addresses-input">
           <div v-for="(address, index) in multisigAddresses" :key="index + 1">
@@ -33,25 +25,16 @@
           </div>
         </div>
       </s-scrollbar>
-
       <div class="add-multisig-address">
         <s-button type="secondary" tooltip="Add address" @click="addAddress">
           <s-icon name="plus-16" size="14" />
         </s-button>
         <p>Add another address</p>
       </div>
-
       <p class="multisig-title-data">SET A TRANSACTION APPROVAL THRESHOLD</p>
-
       <s-input placeholder="1" type="number" v-model="amountOfThreshold" class="threshold-amount">
         <template v-slot:suffix> /{{ totalNumberOfAddresses }} </template>
       </s-input>
-      <!-- <div class="transaction-lifetime">
-        <p class="multisig-title-data">TRANSACTION LIFETIME</p>
-        <s-tabs v-model="transactionLifetime" type="rounded" class="save-password-durations">
-          <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
-        </s-tabs>
-      </div> -->
       <s-button :type="isButtonEnabled() ? 'primary' : 'tertiary'" :disabled="!isButtonEnabled()" @click="handleClick">
         SET UP THE DETAILS
       </s-button>
@@ -99,10 +82,7 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     addresses: [],
     multisigName: '',
     threshold: 0,
-    // transactionLifetime: 0,
   };
-
-  // readonly durations = TransactionLifetimeMST;
 
   @Watch('amountOfThreshold')
   private onAmountOfThresholdUpdate(value: any): void {
@@ -139,7 +119,6 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     const isThresholdSet = this.amountOfThreshold !== null && this.amountOfThreshold > 0;
     const areAllAddressesValid = this.multisigAddresses.every((address) => this.validAddress(address));
     const noDuplicateAddresses = !this.hasDuplicateAddresses();
-    // const isTransactionLifetimeSelected = Boolean(this.transactionLifetime && this.transactionLifetime !== '0');
     return (
       isMultisigNameFilled && areAllAddressesFilled && isThresholdSet && noDuplicateAddresses && areAllAddressesValid
     );
@@ -148,11 +127,6 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
   get totalNumberOfAddresses(): number {
     return this.multisigAddresses.length + 1;
   }
-
-  // get filledAddressesCount(): number {
-  //   const filledExternalAddresses = this.multisigAddresses.filter((address) => address.trim() !== '').length;
-  //   return filledExternalAddresses + 1;
-  // }
 
   get accountAddress(): string {
     return this.account.address;
@@ -190,7 +164,6 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
       addresses: [this.accountAddress, ...this.multisigAddresses],
       multisigName: this.multisigName,
       threshold: this.amountOfThreshold,
-      // transactionLifetime: TransactionLifetimeMSTDuration[this.transactionLifetime ?? '1D'],
     };
     console.info(this.MSTData);
     this.MSTDialogVisibility = true;

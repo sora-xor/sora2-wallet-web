@@ -13,17 +13,16 @@
       <s-button :disabled="isNoNameOrTheSame" type="primary" @click="updateName">save changes</s-button>
       <s-button type="tertiary" @click="forgetMultisig">forget Multisig account</s-button>
     </div>
+    <mst-forget-dialog :visible.sync="dialogMSTNameChange" />
   </dialog-base>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
-
-import { storage } from '@/util/storage';
+import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { RouteNames } from '../../consts';
-import { mutation, state } from '../../store/decorators';
+import { mutation } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
@@ -31,20 +30,22 @@ import TranslationMixin from '../mixins/TranslationMixin';
 import FormattedAddress from '../shared/FormattedAddress.vue';
 import SimpleNotification from '../SimpleNotification.vue';
 
+import MstForgetDialog from './MstForgetDialog.vue';
+
 import type { Route } from '../../store/router/types';
-import type { MSTData } from '../../types/mst';
-import type { CreateResult } from '@polkadot/ui-keyring/types';
 
 @Component({
   components: {
     DialogBase,
     SimpleNotification,
     FormattedAddress,
+    MstForgetDialog,
   },
 })
 export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
+  dialogMSTNameChange = false;
   multisigNewName = '';
   currentName: string | null = null;
 
@@ -59,15 +60,15 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
   }
 
   updateName(): void {
-    console.info('we will update name');
     api.updateMultisigName(this.multisigNewName);
+    this.multisigNewName = '';
     this.closeDialog();
     this.navigate({ name: RouteNames.Wallet });
-    this.multisigNewName = '';
   }
 
   forgetMultisig(): void {
-    console.info('lets forget account');
+    this.closeDialog();
+    this.dialogMSTNameChange = true;
   }
 }
 </script>

@@ -17,7 +17,6 @@ export function initialState(): AccountState {
   const pinnedAssetsString = settingsStorage.get('pinnedAssets');
   const pinnedAssets = pinnedAssetsString ? JSON.parse(pinnedAssetsString) : [];
   const accountPasswordTimeout = settingsStorage.get('accountPasswordTimeout');
-  const multisigAddress = api.getMSTAddress();
 
   return {
     address: storage.get('address') || '',
@@ -50,7 +49,7 @@ export function initialState(): AccountState {
     accountPasswordTimer: {},
     accountPasswordTimestamp: {},
     accountPasswordTimeout: accountPasswordTimeout ? JSON.parse(accountPasswordTimeout) : DefaultPassphraseTimeout,
-    multisigAddress: multisigAddress,
+    multisigAddress: '',
   };
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <dialog-base title="About" :visible.sync="isVisible" append-to-body :style="{ maxWidth: '650px' }">
+  <dialog-base title="About" :visible.sync="isVisible" append-to-body>
     <div class="mst-info">
       <div class="about">
         <div v-for="(section, index) in sectionsAbout" :key="index" class="section">
@@ -117,11 +117,11 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
 }
 </script>
 
-<style lang="scss">
+<!-- <style lang="scss">
 .dialog-wrapper .el-dialog {
   max-width: 650px !important;
 }
-</style>
+</style> -->
 
 <style lang="scss" scoped>
 .mst-info {

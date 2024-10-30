@@ -181,7 +181,6 @@ async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promis
   await Promise.all([waitForCore(options), waitForConnection()]);
 
   initAppWallets(api, store.state.wallet.account.isDesktop, options.appName);
-
   await checkActiveAccount();
 
   // don't wait for finalization of internal & external services subscriptions
@@ -192,6 +191,7 @@ async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promis
   store.commit.wallet.settings.setIsMstAvailable(
     store.state.wallet.account.source === WALLET_CONSTS.AppWallet.FearlessWallet
   );
+  store.dispatch.wallet.account.initMultisigAddress();
   store.commit.wallet.settings.setWalletLoaded(true);
 }
 

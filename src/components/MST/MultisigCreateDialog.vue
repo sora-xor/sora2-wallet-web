@@ -67,8 +67,6 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   @Prop({ default: () => ({}), type: Object }) readonly mstData!: MSTData;
   @Prop({ default: 0, type: Number }) readonly threshold!: number;
 
-  // createMSTWallet = createMSTWallet;
-
   cardMessages = [
     'For your multisig to function properly, all listed addresses must create the multisig in the exact same way as you did.',
     'Multisig wallet cannot possibly be changed in the future, only the name.',
@@ -84,14 +82,6 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
       this.mstData.multisigName
     );
     this.setMultisigAddress(multisigAddress);
-    console.info('here is multisig address');
-    console.info(multisigAddress);
-    api.updateMultisigName('here is the new name');
-    const updatedName = api.getMSTName();
-    console.info('here is the updatedName', updatedName);
-    // console.info(multisig);
-    // console.info(storage);
-    // this.createMSTWallet(this.mstData.addresses, this.mstData.threshold || 0, this.mstData.multisigName);
     this.closeDialog();
     this.navigate({ name: RouteNames.Wallet });
     this.showAppNotification('Multisig wallet has been successfully set up!', 'success');

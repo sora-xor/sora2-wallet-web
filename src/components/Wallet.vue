@@ -134,6 +134,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   @state.settings.permissions permissions!: WalletPermissions;
   @state.settings.isMSTAvailable isMSTAvailable!: boolean;
   @state.account.isExternal isExternal!: boolean;
+  @state.account.multisigAddress multisigAddress!: string;
 
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
 
@@ -152,7 +153,6 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   }
 
   mounted(): void {
-    console.info('we are in mounted wallet');
     if (this.currentRouteParams.currentTab) {
       this.currentTab = this.currentRouteParams.currentTab;
     }
@@ -173,7 +173,6 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
 
   handleMST(): void {
     if (!this.isMST()) {
-      console.info('we are in not in this.isMST');
       this.shouldShowDialogMST = true;
     } else {
       this.dialogMSTNameChange = true;
@@ -195,7 +194,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   }
 
   isMST(): boolean {
-    return api.getMSTAddress() !== '';
+    return this.multisigAddress !== '';
   }
 }
 </script>

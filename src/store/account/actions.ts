@@ -399,6 +399,11 @@ const actions = defineActions({
     const { commit } = accountActionContext(context);
     commit.resetAlertSubscription();
   },
+  initMultisigAddress(context): void {
+    const address = api.getMSTAddress();
+    const { commit } = accountActionContext(context);
+    commit.setMultisigAddress(address);
+  },
 });
 
 export default actions;
