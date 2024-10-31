@@ -69,19 +69,15 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   ];
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
-  @mutation.account.setMultisigAddress setMultisigAddress!: (address: string) => void;
+  @mutation.account.setIsMstAddressExist setIsMstAddressExist!: (isExist: boolean) => void;
   @mutation.account.setIsMST setIsMST!: (isMST: boolean) => void;
   @mutation.account.syncWithStorage syncWithStorage!: () => void;
 
   @action.account.afterLogin afterLogin!: () => void;
 
   handleCreateClose(): void {
-    const multisigAddress = api.createMST(
-      this.mstData.addresses,
-      this.mstData.threshold || 0,
-      this.mstData.multisigName
-    );
-    this.setMultisigAddress(multisigAddress);
+    api.createMST(this.mstData.addresses, this.mstData.threshold || 0, this.mstData.multisigName);
+    this.setIsMstAddressExist(true);
     this.setIsMST(true);
     api.switchAccount(true);
     this.syncWithStorage();

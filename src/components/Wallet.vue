@@ -135,7 +135,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   @state.settings.isMSTAvailable isMSTAvailable!: boolean;
   @state.account.isExternal isExternal!: boolean;
   @state.account.isMST isMST!: boolean;
-  @state.account.multisigAddress multisigAddress!: string;
+  @state.account.isMstAddressExist isMstAddressExist!: boolean;
 
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
 
@@ -158,7 +158,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   }
 
   get hasMSTAccount(): boolean {
-    return !this.isMST && (this.multisigAddress !== '' || api.getMSTName() !== '');
+    return !this.isMST && (this.isMstAddressExist || api.getMSTName() !== '');
   }
 
   mounted(): void {

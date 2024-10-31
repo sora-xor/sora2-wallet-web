@@ -50,7 +50,7 @@ export type AccountState = {
   accountPasswordTimestamp: Record<string, Nullable<number>>;
   accountPasswordTimeout: number;
   pinnedAssets: string[];
-  multisigAddress: string;
+  isMstAddressExist: boolean;
   isMST: boolean;
 };
 

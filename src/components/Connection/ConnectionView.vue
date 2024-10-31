@@ -159,7 +159,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   @state.settings.isMSTAvailable isMSTAvailable!: boolean;
   @mutation.settings.setIsMstAvailable private setIsMstAvailable!: (isAvailable: boolean) => void;
 
-  @mutation.account.setMultisigAddress setMultisigAddress!: (address: string) => void;
   @action.account.initMultisigAddress initMultisigAddress!: () => void;
   @action.account.updateAvailableWallets private updateAvailableWallets!: () => void;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {

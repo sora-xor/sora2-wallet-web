@@ -400,10 +400,10 @@ const actions = defineActions({
     commit.resetAlertSubscription();
   },
   initMultisigAddress(context): void {
-    const address = api.getMSTAddress();
+    const addressMstExist = api.isMstAddressExist();
     const isMST = api.isMST();
     const { commit } = accountActionContext(context);
-    commit.setMultisigAddress(address);
+    commit.setIsMstAddressExist(addressMstExist);
     commit.setIsMST(isMST);
   },
 });

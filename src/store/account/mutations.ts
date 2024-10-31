@@ -208,8 +208,8 @@ const mutations = defineMutations<AccountState>()({
       settingsStorage.set('book', JSON.stringify(state.book));
     }
   },
-  setMultisigAddress(state, address: string): void {
-    state.multisigAddress = address;
+  setIsMstAddressExist(state, isExist: boolean): void {
+    state.isMstAddressExist = isExist;
   },
   setIsMST(state, isMST: boolean): void {
     state.isMST = isMST;

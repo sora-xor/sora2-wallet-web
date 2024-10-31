@@ -51,7 +51,6 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
   @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
 
   @state.account.isMST isMST!: boolean;
-  @state.account.multisigAddress multisigAddress!: string;
 
   @getter.account.account private account!: PolkadotJsAccount;
 
@@ -89,7 +88,7 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
   updateName(): void {
     api.updateMultisigName(this.multisigNewName);
 
-    // If we are in here, then this.multisigAddress is only MST
+    // If we are in here, then we are in mst
     this.renameAccount({ address: this.account.address, name: this.multisigNewName });
     this.multisigNewName = '';
     this.closeDialog();

@@ -33,7 +33,7 @@ import SimpleNotification from '../SimpleNotification.vue';
   },
 })
 export default class MstForgetDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
-  @mutation.account.setMultisigAddress setMultisigAddress!: (address: string) => void;
+  @mutation.account.setIsMstAddressExist setIsMstAddressExist!: (isExist: boolean) => void;
   @mutation.account.setIsMST setIsMST!: (isMST: boolean) => void;
   @mutation.account.syncWithStorage syncWithStorage!: () => void;
 
@@ -47,7 +47,7 @@ export default class MstForgetDialog extends Mixins(TranslationMixin, Notificati
       api.switchAccount(true);
     }
     api.forgetMSTAccount();
-    this.setMultisigAddress('');
+    this.setIsMstAddressExist(false);
     this.setIsMST(false);
     this.syncWithStorage();
     this.afterLogin();
