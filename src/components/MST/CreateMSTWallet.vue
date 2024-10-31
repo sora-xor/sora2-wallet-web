@@ -165,7 +165,6 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
       multisigName: this.multisigName,
       threshold: this.amountOfThreshold,
     };
-    console.info(this.MSTData);
     this.MSTDialogVisibility = true;
   }
 

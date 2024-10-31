@@ -154,10 +154,6 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   }
 
   get isMSTAccount(): boolean {
-    console.info('we are in isMSTAccount');
-    console.info(this.isMST);
-    console.info(api.getMSTName());
-    console.info(this.multisigAddress);
     return this.isMST && api.getMSTName() !== '';
   }
 
@@ -210,7 +206,6 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
     }
   }
 
-  // if true we are mst
   isMultisig(): boolean {
     return this.isMSTAccount;
   }

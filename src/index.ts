@@ -191,7 +191,6 @@ async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promis
   store.commit.wallet.settings.setIsMstAvailable(
     store.state.wallet.account.source === WALLET_CONSTS.AppWallet.FearlessWallet
   );
-  console.info('we are in initWallet, gonna initMultisigAddress');
   store.dispatch.wallet.account.initMultisigAddress();
   store.commit.wallet.settings.setWalletLoaded(true);
 }

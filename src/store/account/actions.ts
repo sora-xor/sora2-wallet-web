@@ -170,8 +170,6 @@ const actions = defineActions({
   },
 
   async loginAccount(context, accountData: PolkadotJsAccount): Promise<void> {
-    console.info('we are in loginAccount');
-    console.info(accountData);
     const { commit, dispatch, state } = accountActionContext(context);
 
     await loginApi(api, accountData, isAppStorageSource(state.source));
@@ -404,7 +402,6 @@ const actions = defineActions({
   initMultisigAddress(context): void {
     const address = api.getMSTAddress();
     const isMST = api.isMST();
-    console.info('address from api.getMSTAddress()', address);
     const { commit } = accountActionContext(context);
     commit.setMultisigAddress(address);
     commit.setIsMST(isMST);

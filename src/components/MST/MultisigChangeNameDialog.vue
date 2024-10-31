@@ -9,7 +9,7 @@
         </div>
         <p>All activities and transactions will be carried out through the Multisig account.</p>
       </s-card>
-      <s-input v-model="multisigNewName" placeholder="Multisig account name" />
+      <s-input :disabled="!isMSTLocal" v-model="multisigNewName" placeholder="Multisig account name" />
       <s-button :disabled="isNoNameOrTheSame" type="primary" @click="updateName">save changes</s-button>
       <s-button type="tertiary" @click="forgetMultisig">forget Multisig account</s-button>
     </div>
@@ -22,7 +22,7 @@ import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { RouteNames } from '../../consts';
-import { mutation, state, action } from '../../store/decorators';
+import { mutation, state, action, getter } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
@@ -33,6 +33,7 @@ import SimpleNotification from '../SimpleNotification.vue';
 import MstForgetDialog from './MstForgetDialog.vue';
 
 import type { Route } from '../../store/router/types';
+import type { PolkadotJsAccount } from '../../types/common';
 
 @Component({
   components: {
@@ -44,13 +45,15 @@ import type { Route } from '../../store/router/types';
 })
 export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
   @mutation.router.navigate private navigate!: (options: Route) => void;
-  @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
   @mutation.account.syncWithStorage syncWithStorage!: () => void;
   @mutation.account.setIsMST setIsMST!: (isMST: boolean) => void;
   @action.account.afterLogin afterLogin!: () => void;
+  @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
 
   @state.account.isMST isMST!: boolean;
   @state.account.multisigAddress multisigAddress!: string;
+
+  @getter.account.account private account!: PolkadotJsAccount;
 
   dialogMSTNameChange = false;
   multisigNewName = '';
@@ -59,7 +62,6 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
 
   mounted() {
     this.isMSTLocal = this.isMSTAccount;
-    console.info('this.isMSTLocal', this.isMSTLocal);
   }
 
   @Watch('isMSTAccount')
@@ -86,7 +88,9 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
 
   updateName(): void {
     api.updateMultisigName(this.multisigNewName);
-    this.renameAccount({ address: this.multisigAddress, name: this.multisigNewName });
+
+    // If we are in here, then this.multisigAddress is only MST
+    this.renameAccount({ address: this.account.address, name: this.multisigNewName });
     this.multisigNewName = '';
     this.closeDialog();
     this.navigate({ name: RouteNames.Wallet });

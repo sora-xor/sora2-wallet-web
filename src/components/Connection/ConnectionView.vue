@@ -155,8 +155,12 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   @state.account.availableWallets private availableWallets!: Wallet[];
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
+  @state.account.isMST isMST!: boolean;
+  @state.settings.isMSTAvailable isMSTAvailable!: boolean;
   @mutation.settings.setIsMstAvailable private setIsMstAvailable!: (isAvailable: boolean) => void;
+
   @mutation.account.setMultisigAddress setMultisigAddress!: (address: string) => void;
+  @action.account.initMultisigAddress initMultisigAddress!: () => void;
   @action.account.updateAvailableWallets private updateAvailableWallets!: () => void;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
     address: string;
@@ -352,6 +356,12 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     this.step = LoginStep.AccountList;
   }
 
+  public switchFromMSTBeforeLogout(): void {
+    if (this.isMST && this.isMSTAvailable) {
+      api.switchAccount(false);
+    }
+  }
+
   public async handleAccountImport(data: RestoreAccountArgs): Promise<void> {
     await this.withLoading(async () => {
       // hack: to render loading state before sync code execution, 250 - button transition
@@ -393,7 +403,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   public async handleAccountSelect(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
-    console.info('we are in handleAccountSelect');
     this.setIsMstAvailable(account.source === AppWallet.FearlessWallet);
     if (isConnected) {
       this.closeView();
@@ -405,6 +414,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
         await this.withAppAlert(async () => {
           await checkExternalAccount(account);
           await this.loginAccount(account);
+          this.initMultisigAddress();
           this.resetStep();
         });
       });
@@ -412,10 +422,8 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   public async handleWalletSelect(wallet: Wallet): Promise<void> {
-    console.info('we are in handleWalletSelect');
-    console.info(wallet);
     if (!wallet.installed) return;
-
+    this.switchFromMSTBeforeLogout();
     await this.withAppAlert(async () => {
       await this.selectWallet(wallet.extensionName as AppWallet);
       this.navigateToAccountList();
@@ -533,6 +541,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   public handleAccountLogout(): void {
+    this.switchFromMSTBeforeLogout();
     this.resetStep();
     this.logoutAccount();
   }

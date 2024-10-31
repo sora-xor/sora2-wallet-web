@@ -39,12 +39,9 @@
 <script lang="ts">
 import { Component, Mixins, Prop } from 'vue-property-decorator';
 
-import { storage } from '@/util/storage';
-
 import { api } from '../../api';
 import { RouteNames } from '../../consts';
-// import { createMSTWallet } from '../../services/mst';
-import { mutation, state, action } from '../../store/decorators';
+import { mutation, action } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
@@ -54,7 +51,6 @@ import SimpleNotification from '../SimpleNotification.vue';
 
 import type { Route } from '../../store/router/types';
 import type { MSTData } from '../../types/mst';
-import type { CreateResult } from '@polkadot/ui-keyring/types';
 
 @Component({
   components: {
