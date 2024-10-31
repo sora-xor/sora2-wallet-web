@@ -4,7 +4,7 @@
       <s-card v-bind="{ shadow: 'always', size: 'medium', borderRadius: 'small', ...$attrs }" class="switch-multisig">
         <div class="switcher">
           <!-- TODO UPDATE LATER -->
-          <s-switch />
+          <s-switch v-model="isMSTLocal" @change="switchToFromMST" />
           <p>Switch to Multisig account</p>
         </div>
         <p>All activities and transactions will be carried out through the Multisig account.</p>
@@ -18,11 +18,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { RouteNames } from '../../consts';
-import { mutation } from '../../store/decorators';
+import { mutation, state, action } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
@@ -44,23 +44,49 @@ import type { Route } from '../../store/router/types';
 })
 export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
   @mutation.router.navigate private navigate!: (options: Route) => void;
+  @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
+  @mutation.account.syncWithStorage syncWithStorage!: () => void;
+  @mutation.account.setIsMST setIsMST!: (isMST: boolean) => void;
+  @action.account.afterLogin afterLogin!: () => void;
+
+  @state.account.isMST isMST!: boolean;
+  @state.account.multisigAddress multisigAddress!: string;
 
   dialogMSTNameChange = false;
   multisigNewName = '';
   currentName: string | null = null;
+  isMSTLocal = false;
 
   mounted() {
-    this.currentName = api.getMSTName();
+    this.isMSTLocal = this.isMSTAccount;
+    console.info('this.isMSTLocal', this.isMSTLocal);
+  }
+
+  @Watch('isMSTAccount')
+  onIsMSTAccountChanged(newVal: boolean) {
+    this.isMSTLocal = newVal;
+  }
+
+  get isMSTAccount(): boolean {
+    if (!this.isMST) return false;
+    const mstName = api.getMSTName();
+    return mstName !== '';
   }
 
   get isNoNameOrTheSame(): boolean {
-    console.info(this.currentName);
-    console.info(this.multisigNewName);
     return this.currentName === this.multisigNewName || this.multisigNewName === '';
+  }
+
+  switchToFromMST(): void {
+    api.switchAccount(this.isMSTLocal);
+    this.setIsMST(this.isMSTLocal);
+    this.syncWithStorage();
+    this.afterLogin();
   }
 
   updateName(): void {
     api.updateMultisigName(this.multisigNewName);
+    this.renameAccount({ address: this.multisigAddress, name: this.multisigNewName });
     this.multisigNewName = '';
     this.closeDialog();
     this.navigate({ name: RouteNames.Wallet });

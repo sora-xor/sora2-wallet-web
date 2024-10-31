@@ -211,6 +211,9 @@ const mutations = defineMutations<AccountState>()({
   setMultisigAddress(state, address: string): void {
     state.multisigAddress = address;
   },
+  setIsMST(state, isMST: boolean): void {
+    state.isMST = isMST;
+  },
 });
 
 export default mutations;

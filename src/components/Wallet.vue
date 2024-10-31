@@ -1,7 +1,7 @@
 <template>
   <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
-      <s-button :type="isMST() ? 'primary' : 'tertiary'" @click="handleMST"> Multi-Sig </s-button>
+      <s-button :type="isMultisig() ? 'primary' : 'tertiary'" @click="handleMST"> Multi-Sig </s-button>
 
       <s-button type="action" :tooltip="t('accountSettings.title')" @click="handleAccountSettings">
         <s-icon name="basic-settings-24" size="28" />
@@ -54,7 +54,7 @@
     <wallet-transaction-details v-if="selectedTransaction" />
 
     <account-settings-dialog :visible.sync="accountSettingsVisibility" />
-    <mst-onboarding-dialog :visible.sync="shouldShowDialogMST" />
+    <mst-onboarding-dialog :visible.sync="mstOnboardingDialog" />
     <multisig-change-name-dialog :visible.sync="dialogMSTNameChange" />
 
     <template v-if="!isExternal">
@@ -134,6 +134,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   @state.settings.permissions permissions!: WalletPermissions;
   @state.settings.isMSTAvailable isMSTAvailable!: boolean;
   @state.account.isExternal isExternal!: boolean;
+  @state.account.isMST isMST!: boolean;
   @state.account.multisigAddress multisigAddress!: string;
 
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
@@ -143,13 +144,25 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   currentTab: WalletTabs = WalletTabs.Assets;
 
   accountSettingsVisibility = false;
-  shouldShowDialogMST = false;
+  mstOnboardingDialog = false;
   dialogMSTNameChange = false;
 
   get headerTitle(): string {
     if (!this.selectedTransaction) return this.t('account.accountTitle');
 
     return this.getTitle(this.selectedTransaction);
+  }
+
+  get isMSTAccount(): boolean {
+    console.info('we are in isMSTAccount');
+    console.info(this.isMST);
+    console.info(api.getMSTName());
+    console.info(this.multisigAddress);
+    return this.isMST && api.getMSTName() !== '';
+  }
+
+  get hasMSTAccount(): boolean {
+    return !this.isMST && (this.multisigAddress !== '' || api.getMSTName() !== '');
   }
 
   mounted(): void {
@@ -162,7 +175,6 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
     this.$emit('swap', asset);
   }
 
-  // TODO the same for MST
   handleCreateToken(): void {
     this.navigate({ name: RouteNames.CreateToken });
   }
@@ -172,10 +184,15 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   }
 
   handleMST(): void {
-    if (!this.isMST()) {
-      this.shouldShowDialogMST = true;
-    } else {
+    if (this.isMSTAccount) {
+      // User is currently in MST account
       this.dialogMSTNameChange = true;
+    } else if (this.hasMSTAccount) {
+      // User has an MST account but is not currently in it
+      this.dialogMSTNameChange = true;
+    } else {
+      // User does not have an MST account
+      this.mstOnboardingDialog = true;
     }
   }
 
@@ -193,8 +210,9 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
     }
   }
 
-  isMST(): boolean {
-    return this.multisigAddress !== '';
+  // if true we are mst
+  isMultisig(): boolean {
+    return this.isMSTAccount;
   }
 }
 </script>

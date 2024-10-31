@@ -17,7 +17,7 @@
 import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
-import { mutation } from '../../store/decorators';
+import { mutation, state, action } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
@@ -34,10 +34,24 @@ import SimpleNotification from '../SimpleNotification.vue';
 })
 export default class MstForgetDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
   @mutation.account.setMultisigAddress setMultisigAddress!: (address: string) => void;
+  @mutation.account.setIsMST setIsMST!: (isMST: boolean) => void;
+  @mutation.account.syncWithStorage syncWithStorage!: () => void;
+
+  @action.account.afterLogin afterLogin!: () => void;
+
+  @state.account.multisigAddress multisigAddress!: string;
+  @state.account.isMST isMST!: boolean;
 
   public forgetMST() {
-    this.setMultisigAddress('');
+    if (!this.isMST) {
+      api.switchAccount(true);
+    }
+    // Switch account to MST
     api.forgetMSTAccount();
+    this.setMultisigAddress('');
+    this.setIsMST(false);
+    this.syncWithStorage();
+    this.afterLogin();
     this.closeDialog();
   }
 }

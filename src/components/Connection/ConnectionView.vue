@@ -70,6 +70,7 @@
 </template>
 
 <script lang="ts">
+import { api, type WithKeyring } from '@sora-substrate/sdk';
 import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
@@ -101,7 +102,6 @@ import ImportAccountStep from './Step/ImportAccount.vue';
 import type { Wallet } from '../../services/wallet/types';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../store/account/types';
 import type { PolkadotJsAccount, KeyringPair$Json } from '../../types/common';
-import type { WithKeyring } from '@sora-substrate/sdk';
 
 const SelectAccountFlow = [LoginStep.ExtensionList, LoginStep.AccountList];
 const AccountCreateFlow = [LoginStep.SeedPhrase, LoginStep.ConfirmSeedPhrase, LoginStep.CreateCredentials];
@@ -156,6 +156,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   @state.account.availableWallets private availableWallets!: Wallet[];
   @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
   @mutation.settings.setIsMstAvailable private setIsMstAvailable!: (isAvailable: boolean) => void;
+  @mutation.account.setMultisigAddress setMultisigAddress!: (address: string) => void;
   @action.account.updateAvailableWallets private updateAvailableWallets!: () => void;
   @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
     address: string;
@@ -392,6 +393,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   public async handleAccountSelect(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
+    console.info('we are in handleAccountSelect');
     this.setIsMstAvailable(account.source === AppWallet.FearlessWallet);
     if (isConnected) {
       this.closeView();

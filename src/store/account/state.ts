@@ -50,6 +50,7 @@ export function initialState(): AccountState {
     accountPasswordTimestamp: {},
     accountPasswordTimeout: accountPasswordTimeout ? JSON.parse(accountPasswordTimeout) : DefaultPassphraseTimeout,
     multisigAddress: '',
+    isMST: false,
   };
 }
 

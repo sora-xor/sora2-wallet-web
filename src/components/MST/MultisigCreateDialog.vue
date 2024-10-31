@@ -44,7 +44,7 @@ import { storage } from '@/util/storage';
 import { api } from '../../api';
 import { RouteNames } from '../../consts';
 // import { createMSTWallet } from '../../services/mst';
-import { mutation, state } from '../../store/decorators';
+import { mutation, state, action } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
@@ -74,6 +74,10 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.account.setMultisigAddress setMultisigAddress!: (address: string) => void;
+  @mutation.account.setIsMST setIsMST!: (isMST: boolean) => void;
+  @mutation.account.syncWithStorage syncWithStorage!: () => void;
+
+  @action.account.afterLogin afterLogin!: () => void;
 
   handleCreateClose(): void {
     const multisigAddress = api.createMST(
@@ -82,6 +86,10 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
       this.mstData.multisigName
     );
     this.setMultisigAddress(multisigAddress);
+    this.setIsMST(true);
+    api.switchAccount(true);
+    this.syncWithStorage();
+    this.afterLogin();
     this.closeDialog();
     this.navigate({ name: RouteNames.Wallet });
     this.showAppNotification('Multisig wallet has been successfully set up!', 'success');

@@ -51,6 +51,7 @@ export type AccountState = {
   accountPasswordTimeout: number;
   pinnedAssets: string[];
   multisigAddress: string;
+  isMST: boolean;
 };
 
 export type VestedTransferFeeParams = {
