@@ -8,7 +8,7 @@
       @clear="resetSearch"
       class="history--search"
     />
-    <div class="history-items" v-loading="loading">
+    <div class="history-items" v-loading="true">
       <template v-if="hasVisibleTransactions">
         <div
           class="history-item s-flex"
@@ -43,6 +43,7 @@
 <script lang="ts">
 import { TransactionStatus } from '@sora-substrate/sdk';
 import debounce from 'lodash/fp/debounce';
+import isEmpty from 'lodash/fp/isEmpty';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import { RouteNames, PaginationButton } from '../consts';
@@ -59,10 +60,11 @@ import TransactionMixin from './mixins/TransactionMixin';
 
 import type { EthBridgeUpdateHistory } from '../consts';
 import type { Route } from '../store/router/types';
-import type { ExternalHistoryParams } from '../types/history';
-import type { History, AccountHistory, HistoryItem, Operation } from '@sora-substrate/sdk';
+import type { ExternalHistoryParams, HistoryQuery } from '../types/history';
+import type { History, AccountHistory, HistoryItem } from '@sora-substrate/sdk';
 import type { AccountAsset, Asset } from '@sora-substrate/sdk/build/assets/types';
 
+const isAssetSymbol = (value: string) => value.length > 2 && value.length < 8;
 const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
 const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
 
@@ -170,32 +172,44 @@ export default class WalletHistory extends Mixins(
     return this.hasVisibleTransactions || !!this.searchQuery;
   }
 
-  get queryCriterias() {
+  get queryCriterias(): HistoryQuery {
     if (!this.searchQuery) return {};
 
+    const query: HistoryQuery = {};
     const indexer = getCurrentIndexer();
 
     const operationNames = indexer.services.dataParser.supportedOperations.filter((operation) =>
       this.t(`operations.${operation}`).toLowerCase().includes(this.searchQuery.toLowerCase())
     );
 
-    const assetsAddresses = this.assets.reduce((buffer: Array<string>, asset) => {
-      if (asset.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())) {
-        buffer.push(asset.address);
+    if (operationNames.length) query.operationNames = operationNames;
+
+    if (isAssetSymbol(this.searchQuery)) {
+      const assetsAddresses = this.assets.reduce((buffer: Array<string>, asset) => {
+        if (asset.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          buffer.push(asset.address);
+        }
+        return buffer;
+      }, []);
+
+      if (assetsAddresses.length) {
+        query.assetsAddresses = assetsAddresses;
       }
-      return buffer;
-    }, []);
+    }
 
-    const accountAddress = isAccountAddress(this.searchQuery) ? this.searchQuery : '';
+    if (isAccountAddress(this.searchQuery)) {
+      query.accountAddress = this.searchQuery;
+    }
 
-    const hexAddress = isHexAddress(this.searchQuery) ? this.searchQuery : '';
+    if (isHexAddress(this.searchQuery)) {
+      query.hexAddress = this.searchQuery;
+    }
 
-    return {
-      operationNames,
-      assetsAddresses,
-      accountAddress,
-      hexAddress,
-    };
+    return query;
+  }
+
+  get isValidQuery(): boolean {
+    return !(this.searchQuery && isEmpty(this.queryCriterias));
   }
 
   async mounted() {
@@ -315,18 +329,33 @@ export default class WalletHistory extends Mixins(
       if (withReset) {
         this.reset();
       }
-      await this.getExternalHistory({
-        page,
-        address: this.account.address,
-        assetAddress: this.assetAddress,
-        pageAmount: this.pageAmount,
-        query: this.queryCriterias,
-      });
+      if (this.isValidQuery) {
+        await this.getExternalHistory({
+          page,
+          address: this.account.address,
+          assetAddress: this.assetAddress,
+          pageAmount: this.pageAmount,
+          query: this.queryCriterias,
+        });
+      }
       this.getHistory();
     });
   }
 }
 </script>
+
+<style lang="scss">
+$history-item-horizontal-space: 10px;
+
+.history {
+  & > .history-items {
+    & > .el-loading-mask {
+      margin-left: -#{$history-item-horizontal-space * 2};
+      margin-right: -#{$history-item-horizontal-space * 2};
+    }
+  }
+}
+</style>
 
 <style scoped lang="scss">
 @import '../styles/icons';
