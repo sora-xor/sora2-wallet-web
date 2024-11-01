@@ -110,7 +110,7 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
   }
 
   initializeMultisigAddresses(): void {
-    this.multisigAddresses = ['', ''];
+    this.multisigAddresses = [''];
   }
 
   isButtonEnabled(): boolean {
@@ -205,7 +205,7 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
 
 .multisig-scrollbar {
   @include scrollbar($basic-spacing-big);
-  height: 155px;
+  height: 135px;
   .el-scrollbar__wrap {
     overflow-x: unset;
   }

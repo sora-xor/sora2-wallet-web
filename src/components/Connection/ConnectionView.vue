@@ -357,7 +357,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   public switchFromMSTBeforeLogout(): void {
     if (this.isMST && this.isMSTAvailable) {
-      api.switchAccount(false);
+      api.mstTransfers.switchAccount(false);
     }
   }
 

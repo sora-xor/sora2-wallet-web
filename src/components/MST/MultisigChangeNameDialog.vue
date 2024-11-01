@@ -70,7 +70,7 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
 
   get isMSTAccount(): boolean {
     if (!this.isMST) return false;
-    const mstName = api.getMSTName();
+    const mstName = api.mstTransfers.getMSTName();
     return mstName !== '';
   }
 
@@ -79,7 +79,7 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
   }
 
   switchToFromMST(): void {
-    api.switchAccount(this.isMSTLocal);
+    api.mstTransfers.switchAccount(this.isMSTLocal);
     this.setIsMST(this.isMSTLocal);
     this.syncWithStorage();
     this.afterLogin();
