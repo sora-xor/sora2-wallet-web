@@ -397,10 +397,11 @@ const parseCreatePair = async (transaction: HistoryElement, payload: HistoryItem
   if (!call) return null;
 
   const args = getCallDataArgs(call);
-  const assetAddress = args.inputAssetA ?? args.input_asset_a;
-  const asset2Address = args.inputAssetB ?? args.input_asset_b;
-  const amount = args.inputADesired ?? args.input_a_desired;
-  const amount2 = args.inputBDesired ?? args.input_b_desired;
+  // [TODO] remove deprecated args names after migration
+  const assetAddress = args.baseAssetId ?? args.inputAssetA ?? args.input_asset_a;
+  const asset2Address = args.targetAssetId ?? args.inputAssetB ?? args.input_asset_b;
+  const amount = args.baseAssetDesired ?? args.inputADesired ?? args.input_a_desired;
+  const amount2 = args.targetAssetDesired ?? args.inputBDesired ?? args.input_b_desired;
 
   const asset = await getAssetByAddress(assetAddress as string);
   const asset2 = await getAssetByAddress(asset2Address as string);

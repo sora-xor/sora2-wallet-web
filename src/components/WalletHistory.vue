@@ -63,6 +63,9 @@ import type { ExternalHistoryParams } from '../types/history';
 import type { History, AccountHistory, HistoryItem, Operation } from '@sora-substrate/sdk';
 import type { AccountAsset, Asset } from '@sora-substrate/sdk/build/assets/types';
 
+const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
+const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
+
 @Component({
   components: {
     SearchInput,
@@ -167,24 +170,32 @@ export default class WalletHistory extends Mixins(
     return this.hasVisibleTransactions || !!this.searchQuery;
   }
 
-  get queryOperationNames(): Array<Operation> {
-    if (!this.searchQuery) return [];
+  get queryCriterias() {
+    if (!this.searchQuery) return {};
 
     const indexer = getCurrentIndexer();
-    return indexer.services.dataParser.supportedOperations.filter((operation) =>
+
+    const operationNames = indexer.services.dataParser.supportedOperations.filter((operation) =>
       this.t(`operations.${operation}`).toLowerCase().includes(this.searchQuery.toLowerCase())
     );
-  }
 
-  get queryAssetsAddresses(): Array<string> {
-    if (!this.searchQuery) return [];
-
-    return this.assets.reduce((buffer: Array<string>, asset) => {
+    const assetsAddresses = this.assets.reduce((buffer: Array<string>, asset) => {
       if (asset.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())) {
         buffer.push(asset.address);
       }
       return buffer;
     }, []);
+
+    const accountAddress = isAccountAddress(this.searchQuery) ? this.searchQuery : '';
+
+    const hexAddress = isHexAddress(this.searchQuery) ? this.searchQuery : '';
+
+    return {
+      operationNames,
+      assetsAddresses,
+      accountAddress,
+      hexAddress,
+    };
   }
 
   async mounted() {
@@ -309,11 +320,7 @@ export default class WalletHistory extends Mixins(
         address: this.account.address,
         assetAddress: this.assetAddress,
         pageAmount: this.pageAmount,
-        query: {
-          search: this.searchQuery,
-          operationNames: this.queryOperationNames,
-          assetsAddresses: this.queryAssetsAddresses,
-        },
+        query: this.queryCriterias,
       });
       this.getHistory();
     });

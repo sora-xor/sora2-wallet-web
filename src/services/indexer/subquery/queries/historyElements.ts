@@ -4,6 +4,7 @@ import { gql } from '@urql/core';
 import { PageInfoFragment } from '../../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
+import type { HistoryQuery } from '../../../../types/history';
 import type { ConnectionQueryResponse, HistoryElement } from '../../types';
 
 export const HistoryElementsQuery = gql<ConnectionQueryResponse<HistoryElement>>`
@@ -520,20 +521,13 @@ const createAccountAddressCriteria = (address: string) => {
   ];
 };
 
-const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
-const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
-
 type SubqueryHistoryElementsFilterOptions = {
   address?: string;
   assetAddress?: string;
   timestamp?: number;
   operations?: Array<Operation>;
   ids?: Array<string>;
-  query?: {
-    search?: string;
-    operationNames?: Array<Operation>;
-    assetsAddresses?: Array<string>;
-  };
+  query?: HistoryQuery;
 };
 
 export const historyElementsFilter = ({
@@ -542,7 +536,7 @@ export const historyElementsFilter = ({
   timestamp = 0,
   operations = [],
   ids = [],
-  query: { search = '', operationNames = [], assetsAddresses = [] } = {},
+  query: { operationNames = [], assetsAddresses = [], accountAddress = '', hexAddress = '' } = {},
 }: SubqueryHistoryElementsFilterOptions = {}): any => {
   const filter: any = {
     and: [],
@@ -584,28 +578,28 @@ export const historyElementsFilter = ({
 
   const queryFilters: Array<any> = [];
 
-  if (search) {
-    // account address criteria
-    if (isAccountAddress(search)) {
-      queryFilters.push({
-        dataFrom: {
-          equalTo: search,
-        },
-      });
-      queryFilters.push({
-        dataTo: {
-          equalTo: search,
-        },
-      });
-      // asset address criteria
-    } else if (isHexAddress(search)) {
-      queryFilters.push(...createAssetCriteria(search));
-      queryFilters.push({
-        blockHash: {
-          includesInsensitive: search,
-        },
-      });
-    }
+  // account address criteria
+  if (accountAddress) {
+    queryFilters.push({
+      dataFrom: {
+        equalTo: accountAddress,
+      },
+    });
+    queryFilters.push({
+      dataTo: {
+        equalTo: accountAddress,
+      },
+    });
+  }
+
+  // hex address criteria
+  if (hexAddress) {
+    queryFilters.push(...createAssetCriteria(hexAddress));
+    queryFilters.push({
+      blockHash: {
+        includesInsensitive: hexAddress,
+      },
+    });
   }
 
   // operation names criteria
