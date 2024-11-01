@@ -8,7 +8,7 @@
       @clear="resetSearch"
       class="history--search"
     />
-    <div class="history-items" v-loading="true">
+    <div class="history-items" v-loading="loading">
       <template v-if="hasVisibleTransactions">
         <div
           class="history-item s-flex"
