@@ -17,6 +17,7 @@ import type {
   HistoryElementSwapTransfer,
   HistoryElementLiquidityOperation,
   HistoryElementTransfer,
+  HistoryElementVestedTransfer,
   HistoryElementAssetRegistration,
   HistoryElementAssetBurn,
   HistoryElementRewardsClaim,
@@ -49,6 +50,7 @@ import type {
   Asset,
   WhitelistItem,
   HistoryElementTransfer as HistoryXorlessTransfer,
+  VestedTransferHistory,
 } from '@sora-substrate/sdk/build/assets/types';
 import type { EthHistory } from '@sora-substrate/sdk/build/bridgeProxy/eth/types';
 import type { VaultHistory } from '@sora-substrate/sdk/build/kensetsu/types';
@@ -135,6 +137,7 @@ const OperationsMap = {
   [insensitive(ModuleNames.VestedRewards)]: {
     [insensitive(ModuleMethods.VestedRewardsClaimRewards)]: () => Operation.ClaimRewards,
     [insensitive(ModuleMethods.VestedRewardsClaimCrowdloanRewards)]: () => Operation.ClaimRewards,
+    [insensitive(ModuleMethods.VestedRewardsVestedTransfer)]: () => Operation.VestedTransfer,
   },
   [insensitive(ModuleNames.DemeterFarming)]: {
     [insensitive(ModuleMethods.DemeterFarmingDeposit)]: (data: HistoryElementDemeterFarming) => {
@@ -425,6 +428,22 @@ const parseTransfer = async (transaction: HistoryElement, payload: HistoryItem) 
   _payload.assetFee = data.assetFee;
   _payload.xorFee = data.xorFee;
   _payload.comment = data.comment;
+
+  return payload;
+};
+
+const parseVestedTransfer = async (transaction: HistoryElement, payload: HistoryItem) => {
+  const data = transaction.data as HistoryElementVestedTransfer;
+  const _payload = payload as VestedTransferHistory;
+
+  const assetAddress = data.assetId;
+  const asset = await getAssetByAddress(assetAddress);
+
+  _payload.assetAddress = assetAddress;
+  _payload.symbol = getAssetSymbol(asset);
+  _payload.amount = formatAmount(data.amount);
+  _payload.period = data.period;
+  _payload.percent = data.percent;
 
   return payload;
 };
@@ -755,6 +774,7 @@ export default class IndexerDataParser {
     Operation.Burn,
     Operation.Mint,
     Operation.Transfer,
+    Operation.VestedTransfer,
     Operation.Swap,
     Operation.SwapAndSend,
     Operation.SwapTransferBatch,
@@ -858,6 +878,9 @@ export default class IndexerDataParser {
       }
       case Operation.Transfer: {
         return await parseTransfer(transaction, payload);
+      }
+      case Operation.VestedTransfer: {
+        return await parseVestedTransfer(transaction, payload);
       }
       case Operation.RegisterAsset: {
         return await parseRegisterAsset(transaction, payload);
