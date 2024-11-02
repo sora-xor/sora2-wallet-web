@@ -59,20 +59,6 @@ export const HistoryElementsQuery = gql<ConnectionQueryResponse<HistoryElement>>
   ${PageInfoFragment}
 `;
 
-type DataCriteria = {
-  data: {
-    contains: {
-      [key: string]: any;
-    };
-  };
-};
-
-type CallsDataCriteria = {
-  calls: {
-    some: DataCriteria;
-  };
-};
-
 const RewardsClaimExtrinsics = [
   [ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive],
   [ModuleNames.Rewards, ModuleMethods.RewardsClaim],
@@ -504,51 +490,38 @@ const OperationFilterMap = {
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
   return operations.reduce((buffer: Array<any>, operation) => {
-    if (!(operation in OperationFilterMap)) return buffer;
-
-    buffer.push(OperationFilterMap[operation]);
-
+    if (operation in OperationFilterMap) {
+      buffer.push(OperationFilterMap[operation]);
+    }
     return buffer;
   }, []);
 };
 
-const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
-  const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId', 'collateralAssetId', 'debtAssetId'];
-
-  const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
-    result.push({
-      data: {
-        contains: {
-          [attr]: assetAddress,
-        },
-      },
-    });
-
-    return result;
-  }, []);
-
-  // for create pair operation
-  ['input_asset_a', 'input_asset_b'].forEach((attr) => {
-    criterias.push({
-      calls: {
-        some: {
-          data: {
-            contains: {
-              [attr]: assetAddress,
-            },
-          },
-        },
-      },
-    });
-  });
-
-  return criterias;
+const createAssetCriteria = (assetAddress: string) => {
+  return {
+    dataAssets: {
+      contains: assetAddress,
+    },
+  };
 };
 
-const createAccountAddressCriteria = (address: string) => {
+const createOwnerCriteria = (address: string) => {
+  return {
+    address: {
+      equalTo: address,
+    },
+  };
+};
+
+const createAddressCriterias = (address: string) => {
   return [
     {
-      address: {
+      dataFrom: {
+        equalTo: address,
+      },
+    },
+    {
+      dataTo: {
         equalTo: address,
       },
     },
@@ -570,28 +543,28 @@ export const historyElementsFilter = ({
   timestamp = 0,
   operations = [],
   ids = [],
-  query: { operationNames = [], assetsAddresses = [], accountAddress = '', hexAddress = '' } = {},
+  query: { operationNames, assetsAddresses = [], accountAddress = '', hexAddress = '' } = {},
 }: SubqueryHistoryElementsFilterOptions = {}): any => {
   const filter: any = {
     and: [],
   };
 
-  if (operations.length) {
-    filter.and.push({
-      or: createOperationsCriteria(operations),
-    });
+  // history owner
+  if (address) {
+    filter.and.push(createOwnerCriteria(address));
   }
 
-  if (address) {
+  // filter has more priority
+  const operationsPrepared = operationNames ?? operations;
+
+  if (operationsPrepared.length) {
     filter.and.push({
-      or: createAccountAddressCriteria(address),
+      or: createOperationsCriteria(operationsPrepared),
     });
   }
 
   if (assetAddress) {
-    filter.and.push({
-      or: createAssetCriteria(assetAddress),
-    });
+    filter.and.push(createAssetCriteria(assetAddress));
   }
 
   if (timestamp) {
@@ -614,21 +587,12 @@ export const historyElementsFilter = ({
 
   // account address criteria
   if (accountAddress) {
-    queryFilters.push({
-      dataFrom: {
-        equalTo: accountAddress,
-      },
-    });
-    queryFilters.push({
-      dataTo: {
-        equalTo: accountAddress,
-      },
-    });
+    queryFilters.push(...createAddressCriterias(accountAddress));
   }
 
   // hex address criteria
   if (hexAddress) {
-    queryFilters.push(...createAssetCriteria(hexAddress));
+    queryFilters.push(createAssetCriteria(hexAddress));
     queryFilters.push({
       blockHash: {
         includesInsensitive: hexAddress,
@@ -636,15 +600,10 @@ export const historyElementsFilter = ({
     });
   }
 
-  // operation names criteria
-  if (operationNames.length) {
-    queryFilters.push(...createOperationsCriteria(operationNames));
-  }
-
   // symbol criteria
   if (assetsAddresses.length) {
     assetsAddresses.forEach((assetAddress) => {
-      queryFilters.push(...createAssetCriteria(assetAddress));
+      queryFilters.push(createAssetCriteria(assetAddress));
     });
   }
 
