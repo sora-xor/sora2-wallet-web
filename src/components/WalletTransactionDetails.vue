@@ -24,6 +24,7 @@
           value-can-be-hidden
           :label="t('transaction.amount')"
           :value="transactionAmount"
+          :fiat-value="transactionAmountUSD"
           :asset-symbol="transactionSymbol"
         />
         <info-line
@@ -59,6 +60,7 @@
           value-can-be-hidden
           :label="t('transaction.amount2')"
           :value="transactionAmount2"
+          :fiat-value="transactionAmount2USD"
           :asset-symbol="transactionSymbol2"
         />
         <info-line v-if="transactionFromFee" :label="t('transaction.fee')">
@@ -139,6 +141,7 @@ import InfoLine from './InfoLine.vue';
 import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import TranslationMixin from './mixins/TranslationMixin';
+import TokenLogo from './TokenLogo.vue';
 import TransactionHashView from './TransactionHashView.vue';
 import AdarTxDetails from './WalletAdarTxDetails.vue';
 import WalletBase from './WalletBase.vue';
@@ -151,6 +154,7 @@ import type { EthHistory } from '@sora-substrate/sdk/build/bridgeProxy/eth/types
   components: {
     WalletBase,
     InfoLine,
+    TokenLogo,
     FormattedAmount,
     TransactionHashView,
     AdarTxDetails,
@@ -226,8 +230,18 @@ export default class WalletTransactionDetails extends Mixins(
     return this.formatStringValue(this.selectedTransaction.amount as string);
   }
 
+  get transactionAmountUSD(): string {
+    const amountUSD = this.selectedTransaction.payload?.amountUSD;
+    return amountUSD ? this.formatStringValue(amountUSD) : '';
+  }
+
   get transactionAmount2(): string {
     return this.formatStringValue(this.selectedTransaction.amount2 as string);
+  }
+
+  get transactionAmount2USD(): string {
+    const amountUSD = this.selectedTransaction.payload?.amount2USD;
+    return amountUSD ? this.formatStringValue(amountUSD) : '';
   }
 
   get transactionSymbol(): string {
