@@ -61,6 +61,16 @@ import type { StakingHistory } from '@sora-substrate/sdk/build/staking/types';
 const insensitive = (value: string) => value.toLowerCase();
 
 const OperationsMap = {
+  // events
+  [insensitive(ModuleNames.Tokens)]: {
+    [insensitive(ModuleMethods.TokensTransfer)]: () => Operation.Transfer,
+    [insensitive(ModuleMethods.TokensDeposited)]: () => Operation.Mint,
+  },
+  [insensitive(ModuleNames.Balances)]: {
+    [insensitive(ModuleMethods.BalancesTransfer)]: () => Operation.Transfer,
+    [insensitive(ModuleMethods.BalancesDeposited)]: () => Operation.Mint,
+  },
+  // extrinsics
   [insensitive(ModuleNames.Assets)]: {
     [insensitive(ModuleMethods.AssetsRegister)]: () => Operation.RegisterAsset,
     [insensitive(ModuleMethods.AssetsTransfer)]: () => Operation.Transfer,

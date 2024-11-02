@@ -64,7 +64,7 @@ import type { ExternalHistoryParams, HistoryQuery } from '../types/history';
 import type { History, AccountHistory, HistoryItem } from '@sora-substrate/sdk';
 import type { AccountAsset, Asset } from '@sora-substrate/sdk/build/assets/types';
 
-const isAssetSymbol = (value: string) => value.length > 2 && value.length < 8;
+const isAssetSymbol = (value: string) => value.length > 1 && value.length < 8;
 const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
 const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
 

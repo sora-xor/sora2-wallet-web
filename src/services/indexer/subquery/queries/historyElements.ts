@@ -29,6 +29,7 @@ export const HistoryElementsQuery = gql<ConnectionQueryResponse<HistoryElement>>
       edges {
         node {
           id
+          type
           timestamp
           blockHash
           blockHeight
@@ -133,6 +134,7 @@ const OperationFilterMap = {
   },
   [Operation.Transfer]: {
     or: [
+      // sender
       {
         module: {
           equalTo: ModuleNames.Assets,
@@ -141,12 +143,31 @@ const OperationFilterMap = {
           equalToInsensitive: ModuleMethods.AssetsTransfer,
         },
       },
+      // sender
       {
         module: {
           equalTo: ModuleNames.LiquidityProxy,
         },
         method: {
           equalTo: ModuleMethods.LiquidityProxyXorlessTransfer,
+        },
+      },
+      // recipient
+      {
+        module: {
+          equalTo: ModuleNames.Tokens,
+        },
+        method: {
+          equalToInsensitive: ModuleMethods.TokensTransfer,
+        },
+      },
+      // recipient
+      {
+        module: {
+          equalTo: ModuleNames.Balances,
+        },
+        method: {
+          equalToInsensitive: ModuleMethods.BalancesTransfer,
         },
       },
     ],
@@ -176,12 +197,35 @@ const OperationFilterMap = {
     },
   },
   [Operation.Mint]: {
-    module: {
-      equalTo: ModuleNames.Assets,
-    },
-    method: {
-      equalTo: ModuleMethods.AssetsMint,
-    },
+    or: [
+      // sender
+      {
+        module: {
+          equalTo: ModuleNames.Assets,
+        },
+        method: {
+          equalTo: ModuleMethods.AssetsMint,
+        },
+      },
+      // recipient
+      {
+        module: {
+          equalTo: ModuleNames.Tokens,
+        },
+        method: {
+          equalTo: ModuleMethods.TokensDeposited,
+        },
+      },
+      // recipient
+      {
+        module: {
+          equalTo: ModuleNames.Balances,
+        },
+        method: {
+          equalTo: ModuleMethods.BalancesDeposited,
+        },
+      },
+    ],
   },
   [Operation.CreatePair]: {
     module: {
@@ -505,16 +549,6 @@ const createAccountAddressCriteria = (address: string) => {
   return [
     {
       address: {
-        equalTo: address,
-      },
-    },
-    {
-      dataFrom: {
-        equalTo: address,
-      },
-    },
-    {
-      dataTo: {
         equalTo: address,
       },
     },
