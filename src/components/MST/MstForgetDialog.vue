@@ -44,9 +44,9 @@ export default class MstForgetDialog extends Mixins(TranslationMixin, Notificati
   public forgetMST() {
     if (!this.isMST) {
       // Switch account to MST
-      api.mstTransfers.switchAccount(true);
+      api.mst.switchAccount(true);
     }
-    api.mstTransfers.forgetMSTAccount();
+    api.mst.forgetMSTAccount();
     this.setIsMstAddressExist(false);
     this.setIsMST(false);
     this.syncWithStorage();

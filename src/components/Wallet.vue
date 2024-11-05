@@ -154,11 +154,11 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   }
 
   get isMSTAccount(): boolean {
-    return this.isMST && api.mstTransfers.getMSTName() !== '';
+    return this.isMST && api.mst.getMSTName() !== '';
   }
 
   get hasMSTAccount(): boolean {
-    return !this.isMST && (this.isMstAddressExist || api.mstTransfers.getMSTName() !== '');
+    return !this.isMST && (this.isMstAddressExist || api.mst.getMSTName() !== '');
   }
 
   mounted(): void {

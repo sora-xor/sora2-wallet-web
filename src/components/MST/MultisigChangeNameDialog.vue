@@ -59,7 +59,11 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
   currentName: string | null = null;
   isMSTLocal = false;
 
-  mounted() {
+  async mounted() {
+    console.info('we are in mounted of MultisigChangeNameDialog');
+    const mstAddress = api.mst.getMstAddress();
+    console.info('the mst address', mstAddress);
+    await api.mst.subscribeOnPendingTxs(mstAddress);
     this.isMSTLocal = this.isMSTAccount;
   }
 
@@ -70,7 +74,7 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
 
   get isMSTAccount(): boolean {
     if (!this.isMST) return false;
-    const mstName = api.mstTransfers.getMSTName();
+    const mstName = api.mst.getMSTName();
     return mstName !== '';
   }
 
@@ -79,14 +83,14 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
   }
 
   switchToFromMST(): void {
-    api.mstTransfers.switchAccount(this.isMSTLocal);
+    api.mst.switchAccount(this.isMSTLocal);
     this.setIsMST(this.isMSTLocal);
     this.syncWithStorage();
     this.afterLogin();
   }
 
   updateName(): void {
-    api.updateMultisigName(this.multisigNewName);
+    api.mst.updateMultisigName(this.multisigNewName);
 
     // If we are in here, then we are in mst
     this.renameAccount({ address: this.account.address, name: this.multisigNewName });
