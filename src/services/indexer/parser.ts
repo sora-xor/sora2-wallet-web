@@ -326,20 +326,7 @@ const parseSwapTransfer = async (transaction: HistoryElement, payload: HistoryIt
 const parseSwapTransferBatch = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementSwapTransferBatch;
 
-  // [INDEXERS]: remove after full reindex
-  if (!data.receivers) {
-    const transfer = data as unknown as HistoryElementTransfer;
-    const assetAddress = transfer.assetId;
-    const asset = await getAssetByAddress(assetAddress);
-
-    payload.assetAddress = assetAddress;
-    payload.symbol = getAssetSymbol(asset);
-    payload.amount = transfer.amount;
-
-    return payload;
-  }
-
-  const inputAssetId = data.inputAssetId ?? data.assetId;
+  const inputAssetId = data.assetId;
   const inputAsset = await getAssetByAddress(inputAssetId);
 
   payload.assetAddress = inputAssetId;
@@ -354,35 +341,16 @@ const parseSwapTransferBatch = async (transaction: HistoryElement, payload: Hist
   payload.payload.receivers = [];
   payload.payload.comment = data.comment ? JSON.parse(data.comment) : null;
 
-  const transfers = data.transfers;
+  for (const receiver of data.receivers) {
+    const asset = await getAssetByAddress(receiver.assetId);
 
-  // [INDEXERS]: remove after full reindex
-  if (Array.isArray(transfers) && transfers.length > 0) {
-    for (const receiver of data.receivers) {
-      const batch = receiver as any;
-      const assetAddress = batch.outcomeAssetId?.code;
-      const asset = await getAssetByAddress(assetAddress);
-
-      for (const receiver of batch.receivers) {
-        payload.payload.receivers.push({
-          accountId: receiver.accountId,
-          asset,
-          amount: FPNumber.fromCodecValue(receiver.targetAmount, asset?.decimals).toString(),
-          symbol: getAssetSymbol(asset),
-        });
-      }
-    }
-  } else {
-    for (const receiver of data.receivers) {
-      const asset = await getAssetByAddress(receiver.assetId);
-
-      payload.payload.receivers.push({
-        accountId: receiver.accountId,
-        asset,
-        amount: receiver.amount,
-        symbol: getAssetSymbol(asset),
-      });
-    }
+    payload.payload.receivers.push({
+      accountId: receiver.accountId,
+      asset,
+      amount: formatAmount(receiver.amount),
+      amountUSD: formatAmount(receiver.amountUSD),
+      symbol: getAssetSymbol(asset),
+    });
   }
 
   return payload;
@@ -615,6 +583,10 @@ const parseStakingUnbond = async (transaction: HistoryElement, payload: HistoryI
   payload.symbol = XOR.symbol;
   payload.assetAddress = XOR.address;
   payload.amount = FPNumber.fromCodecValue(data.amount, XOR.decimals).toString();
+
+  payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
 
   return payload;
 };

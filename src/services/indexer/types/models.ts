@@ -310,6 +310,7 @@ export type HistoryElementSwapTransfer = HistoryElementSwap & {
 export type SwapTransferReceiver = {
   accountId: string;
   amount: string;
+  amountUSD: string;
   assetId: string;
 };
 
@@ -331,9 +332,6 @@ export type HistoryElementSwapTransferBatch = {
   actualFee?: string;
   inputAmount?: string;
   comment?: string; // stringified JSON
-  // outdated
-  inputAssetId?: string;
-  transfers?: SwapTransferBatchTransferParam[];
 };
 
 export type HistoryElementTransfer = {
@@ -393,6 +391,7 @@ export type HistoryElementDemeterFarming = {
 export type ClaimedRewardItem = {
   assetId: string;
   amount: string;
+  amountUSD: string;
 };
 
 export type HistoryElementRewardsClaim = Nullable<ClaimedRewardItem[]>;
@@ -468,6 +467,7 @@ export type HistoryElementStakingRebond = {
 
 export type HistoryElementStakingUnbond = {
   amount: string;
+  amountUSD: string;
 };
 
 export type HistoryElementStakingNominate = {
