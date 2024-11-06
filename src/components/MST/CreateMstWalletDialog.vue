@@ -1,5 +1,13 @@
 <template>
-  <wallet-base show-back title="Multisig Wallet" :show-header="showHeader" @back="handleBack">
+  <dialog-base
+    show-back
+    title="Multisig Wallet"
+    :show-header="showHeader"
+    @back="handleBack"
+    @close="handleClose"
+    :visible.sync="isVisible"
+    append-to-body
+  >
     <div class="multisig-wallet">
       <s-input placeholder="Enter Multisig Wallet Name" :minlength="1" v-model="multisigName" />
       <p class="multisig-title-data address">ADD MULTISIG ADDRESSES</p>
@@ -39,8 +47,14 @@
         SET UP THE DETAILS
       </s-button>
     </div>
-    <multisig-create-dialog :visible.sync="MSTDialogVisibility" :mst-data="MSTData" :threshold="amountOfThreshold" />
-  </wallet-base>
+    <multisig-create-dialog
+      :visible.sync="MSTDialogVisibility"
+      :mst-data="MSTData"
+      :threshold="amountOfThreshold"
+      @back="handleBackFromMSTDialog"
+      @close="handleClose"
+    />
+  </dialog-base>
 </template>
 
 <script lang="ts">
@@ -48,22 +62,24 @@ import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { PolkadotJsAccount } from '@/types/common';
 
-import { RouteNames } from '../../consts';
-import { getter, mutation } from '../../store/decorators';
+import { getter } from '../../store/decorators';
 import { validateAddress } from '../../util';
 import AccountCard from '../Account/AccountCard.vue';
 import AddressBookInput from '../AddressBook/Input.vue';
+import DialogBase from '../DialogBase.vue';
+import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 import FormattedAddress from '../shared/FormattedAddress.vue';
 import WalletBase from '../WalletBase.vue';
 
 import MultisigCreateDialog from './MultisigCreateDialog.vue';
 
-import type { Route } from '../../store/router/types';
 import type { MSTData } from '../../types/mst';
 
 @Component({
+  name: 'CreateMstWalletDialog',
   components: {
+    DialogBase,
     WalletBase,
     AddressBookInput,
     MultisigCreateDialog,
@@ -71,7 +87,7 @@ import type { MSTData } from '../../types/mst';
     FormattedAddress,
   },
 })
-export default class CreateMSTWallet extends Mixins(TranslationMixin) {
+export default class CreateMstWalletDialog extends Mixins(TranslationMixin, DialogMixin) {
   showHeader = true;
   multisigName = '';
   transactionLifetime: string | null = null;
@@ -102,7 +118,6 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     }
   }
 
-  @mutation.router.navigate private navigate!: (options: Route) => void;
   @getter.account.account private account!: PolkadotJsAccount;
 
   mounted() {
@@ -155,8 +170,17 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
     return validateAddress(address);
   }
 
+  handleClose(): void {
+    this.$emit('closeMstCreate');
+  }
+
   handleBack(): void {
-    this.navigate({ name: RouteNames.Wallet });
+    this.closeDialog();
+  }
+
+  handleBackFromMSTDialog() {
+    this.isVisible = true;
+    this.MSTDialogVisibility = false;
   }
 
   handleClick(): void {
@@ -165,6 +189,7 @@ export default class CreateMSTWallet extends Mixins(TranslationMixin) {
       multisigName: this.multisigName,
       threshold: this.amountOfThreshold,
     };
+    this.closeDialog();
     this.MSTDialogVisibility = true;
   }
 

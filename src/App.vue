@@ -93,6 +93,10 @@ export default class App extends Mixins(TransactionMixin) {
     this.setSoraNetwork(SoraNetwork.Dev);
     await initWallet({ withoutStore: true, appName: 'APP NAME HERE' }); // We don't need storage for local development
     await this.subscribeOnExchangeRatesApi();
+    console.info('we are in mounted of MultisigChangeNameDialog');
+    const mstAddress = api.mst.getMstAddress();
+    console.info('the mst address', mstAddress);
+    await api.mst.subscribeOnPendingTxs(mstAddress);
     const localeLanguage = navigator.language;
     FPNumber.DELIMITERS_CONFIG.thousand = Number(1000).toLocaleString(localeLanguage).substring(1, 2);
     FPNumber.DELIMITERS_CONFIG.decimal = Number(1.1).toLocaleString(localeLanguage).substring(1, 2);

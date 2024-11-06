@@ -63,7 +63,6 @@ export enum RouteNames {
   ReceiveToken = 'ReceiveToken',
   AddAsset = 'AddAsset',
   SelectAsset = 'SelectAsset',
-  CreateMSTWallet = 'CreateMSTWallet',
 }
 
 export enum WalletTabs {

@@ -1,5 +1,12 @@
 <template>
-  <dialog-base title="Multisig address creation" :visible.sync="isVisible" append-to-body>
+  <dialog-base
+    title="Multisig address creation"
+    :visible.sync="isVisible"
+    append-to-body
+    show-back
+    @back="handleBack"
+    @close="handleClose"
+  >
     <div class="data-multisig">
       <div class="data">
         <p>Name</p>
@@ -33,6 +40,7 @@
       </div>
       <s-button type="primary" @click="handleCreateClose"> Continue </s-button>
     </div>
+    <!-- <create-mst-wallet-dialog :visible.sync="shouldShowCreateMSTWalletDialog" /> -->
   </dialog-base>
 </template>
 
@@ -49,14 +57,18 @@ import TranslationMixin from '../mixins/TranslationMixin';
 import FormattedAddress from '../shared/FormattedAddress.vue';
 import SimpleNotification from '../SimpleNotification.vue';
 
+import CreateMstWalletDialog from './CreateMstWalletDialog.vue';
+
 import type { Route } from '../../store/router/types';
 import type { MSTData } from '../../types/mst';
 
 @Component({
+  name: 'MultisigCreateDialog',
   components: {
     DialogBase,
     SimpleNotification,
     FormattedAddress,
+    CreateMstWalletDialog,
   },
 })
 export default class MultisigCreateDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
@@ -74,6 +86,18 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   @mutation.account.syncWithStorage syncWithStorage!: () => void;
 
   @action.account.afterLogin afterLogin!: () => void;
+
+  shouldShowCreateMSTWalletDialog = false;
+
+  handleClose() {
+    this.closeDialog();
+    this.$emit('close');
+  }
+
+  handleBack() {
+    this.closeDialog();
+    this.$emit('back');
+  }
 
   handleCreateClose(): void {
     api.mst.createMST(this.mstData.addresses, this.mstData.threshold || 0, this.mstData.multisigName);

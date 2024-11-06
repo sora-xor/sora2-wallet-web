@@ -9,7 +9,7 @@
         </div>
         <p>All activities and transactions will be carried out through the Multisig account.</p>
       </s-card>
-      <s-input :disabled="!isMSTLocal" v-model="multisigNewName" placeholder="Multisig account name" />
+      <s-input v-model="multisigNewName" placeholder="Multisig account name" />
       <s-button :disabled="isNoNameOrTheSame" type="primary" @click="updateName">save changes</s-button>
       <s-button type="tertiary" @click="forgetMultisig">forget Multisig account</s-button>
     </div>
@@ -91,9 +91,8 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
 
   updateName(): void {
     api.mst.updateMultisigName(this.multisigNewName);
-
-    // If we are in here, then we are in mst
-    this.renameAccount({ address: this.account.address, name: this.multisigNewName });
+    const mstAddress = api.mst.getMstAddress();
+    this.renameAccount({ address: mstAddress, name: this.multisigNewName });
     this.multisigNewName = '';
     this.closeDialog();
     this.navigate({ name: RouteNames.Wallet });
