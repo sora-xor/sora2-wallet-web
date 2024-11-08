@@ -58,7 +58,6 @@ import LoadingMixin from './mixins/LoadingMixin';
 import PaginationSearchMixin from './mixins/PaginationSearchMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 
-import type { EthBridgeUpdateHistory } from '../consts';
 import type { Route } from '../store/router/types';
 import type { ExternalHistoryParams, HistoryQuery } from '../types/history';
 import type { History, AccountHistory, HistoryItem } from '@sora-substrate/sdk';
@@ -88,7 +87,6 @@ export default class WalletHistory extends Mixins(
   @state.transactions.externalHistory private externalHistory!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistoryUpdates private externalHistoryUpdates!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistoryTotal private externalHistoryTotal!: number;
-  @state.transactions.updateEthBridgeHistory private updateEthBridgeHistory!: Nullable<EthBridgeUpdateHistory>;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.transactions.resetExternalHistory private resetExternalHistory!: FnWithoutArgs;
@@ -214,9 +212,6 @@ export default class WalletHistory extends Mixins(
 
   async mounted() {
     this.saveExternalHistoryUpdates(true);
-    if (this.updateEthBridgeHistory) {
-      this.updateEthBridgeHistory(this.getHistory);
-    }
     this.updateHistory(1, true);
   }
 

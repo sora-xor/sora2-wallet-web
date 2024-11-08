@@ -16,7 +16,6 @@ function initialState(): TransactionsState {
     activeTxsIds: [],
     updateActiveTxsId: null,
     selectedTxId: null,
-    updateEthBridgeHistory: null,
     isConfirmTxDialogDisabled: isConfirmTxDialogDisabled ? Boolean(JSON.parse(isConfirmTxDialogDisabled)) : false,
     isSignTxDialogDisabled: isSignTxDialogDisabled ? Boolean(JSON.parse(isSignTxDialogDisabled)) : false,
     isSignTxDialogVisible: false,

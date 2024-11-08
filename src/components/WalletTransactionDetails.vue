@@ -1,13 +1,6 @@
 <template>
   <div class="transaction-container">
     <div class="transaction">
-      <div v-if="isEthBridgeOperation" class="transaction-network">
-        {{
-          `${t('bridgeTransaction.steps.step', { step: '1' })} ${t('bridgeTransaction.networkTitle', {
-            network: getNetworkTitle(isSoraTx),
-          })}`
-        }}
-      </div>
       <transaction-hash-view v-if="transactionFromHash.value" v-bind="transactionFromHash" />
       <div class="info-line-container">
         <info-line :label="t('transaction.status')">
@@ -26,7 +19,9 @@
           :value="transactionAmount"
           :fiat-value="transactionAmountUSD"
           :asset-symbol="transactionSymbol"
-        />
+        >
+          <token-logo :token-symbol="transactionSymbol" size="small" />
+        </info-line>
         <info-line
           v-if="vestingPercentage"
           is-formatted
@@ -62,9 +57,12 @@
           :value="transactionAmount2"
           :fiat-value="transactionAmount2USD"
           :asset-symbol="transactionSymbol2"
-        />
-        <info-line v-if="transactionFromFee" :label="t('transaction.fee')">
-          {{ transactionFromFee }}
+        >
+          <token-logo :token-symbol="transactionSymbol2" size="small" />
+        </info-line>
+        <info-line v-if="transactionFee" :label="t('transaction.fee')">
+          {{ transactionFee }}
+          <token-logo :token-symbol="networkFeeSymbol" size="small" />
         </info-line>
         <info-line v-if="transactionComment" :label="t('transaction.comment')">
           {{ transactionComment }}
@@ -74,52 +72,13 @@
         v-if="transactionFromAddress"
         :translation="isSetReferralOperation ? 'transaction.referral' : 'transaction.from'"
         :value="transactionFromAddress"
-        :type="isSoraTx ? HashType.Account : HashType.EthAccount"
+        :type="HashType.Account"
       />
       <transaction-hash-view
-        v-if="transactionToAddress && !isEthBridgeOperation && (!isSetReferralOperation || !isReferrer)"
+        v-if="transactionToAddress && (!isSetReferralOperation || !isReferrer)"
         :translation="isSetReferralOperation ? 'transaction.referrer' : 'transaction.to'"
         :value="transactionToAddress"
         :type="HashType.Account"
-      />
-    </div>
-
-    <div v-if="isEthBridgeOperation" class="transaction">
-      <div class="transaction-network">
-        {{
-          `${t('bridgeTransaction.steps.step', { step: '2' })} ${t('bridgeTransaction.networkTitle', {
-            network: getNetworkTitle(!isSoraTx),
-          })}`
-        }}
-      </div>
-      <transaction-hash-view v-if="transactionToHash.value" v-bind="transactionToHash" />
-      <div class="info-line-container">
-        <info-line :label="t('transaction.status')">
-          <span :class="statusClass2">{{ statusTitle2 }}</span>
-          <s-icon v-if="isTransactionToCompleted" name="basic-check-mark-24" size="16px" />
-        </info-line>
-        <info-line v-if="transactionToDate" :label="t('transaction.startTime')" :value="transactionToDate" />
-        <info-line
-          v-if="selectedTransaction.amount"
-          is-formatted
-          value-can-be-hidden
-          :label="t('transaction.amount')"
-          :value="transactionAmount"
-          :asset-symbol="transactionSymbol"
-        />
-        <info-line
-          is-formatted
-          value-can-be-hidden
-          :label="t('transaction.fee')"
-          :value="transactionToFee"
-          :asset-symbol="getNetworkFeeSymbol(!isSoraTx)"
-        />
-      </div>
-      <transaction-hash-view
-        v-if="transactionToAddress && !isAdarOperation"
-        translation="transaction.to"
-        :value="transactionToAddress"
-        :type="!isSoraTx ? HashType.Account : HashType.EthAccount"
       />
     </div>
 
@@ -148,7 +107,6 @@ import WalletBase from './WalletBase.vue';
 
 import type { PolkadotJsAccount, AssetsTable } from '../types/common';
 import type { HistoryItem } from '@sora-substrate/sdk';
-import type { EthHistory } from '@sora-substrate/sdk/build/bridgeProxy/eth/types';
 
 @Component({
   components: {
@@ -173,54 +131,28 @@ export default class WalletTransactionDetails extends Mixins(
   @getter.account.account private account!: PolkadotJsAccount;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem; // It shouldn't be empty
 
-  get isSoraTx(): boolean {
-    return !this.isEthBridgeOperation || this.selectedTransaction.type === Operation.EthBridgeOutgoing;
-  }
-
-  get statusClass(): Array<string> {
-    return this.getStatusClass(this.isFailedTransaction);
-  }
-
-  // ETH BRIDGE transaction
-  get statusClass2(): Array<string> {
-    return this.getStatusClass(this.isTransactionToFailed);
-  }
-
   get isCompleteTransaction(): boolean {
-    // ETH BRIDGE transaction (first part)
-    if (this.isEthBridgeOperation) return this.isEthBridgeTxFromCompleted(this.selectedTransaction);
-    // or default transaction
     return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(
       this.selectedTransaction.status as TransactionStatus
     );
   }
 
   get isFailedTransaction(): boolean {
-    // ETH BRIDGE transaction (first part)
-    if (this.isEthBridgeOperation) return this.isEthBridgeTxFromFailed(this.selectedTransaction);
-    // or default transaction
     return [TransactionStatus.Error, TransactionStatus.Invalid].includes(
       this.selectedTransaction.status as TransactionStatus
     );
   }
 
-  // Transaction status (or ETH BRIDGE transaction first part status)
+  get statusClass(): Array<string> {
+    return this.getStatusClass(this.isFailedTransaction);
+  }
+
+  // Transaction status
   get statusTitle(): string {
     if (this.isFailedTransaction) {
       return this.t('transaction.statuses.failed');
     }
     if (this.isCompleteTransaction) {
-      return this.t('transaction.statuses.complete');
-    }
-    return this.t('transaction.statuses.pending');
-  }
-
-  // ETH BRIDGE transaction second part status
-  get statusTitle2(): string {
-    if (this.isTransactionToFailed) {
-      return this.t('transaction.statuses.failed');
-    }
-    if (this.isTransactionToCompleted) {
       return this.t('transaction.statuses.complete');
     }
     return this.t('transaction.statuses.pending');
@@ -280,16 +212,11 @@ export default class WalletTransactionDetails extends Mixins(
     return this.account.address !== this.selectedTransaction.from;
   }
 
-  get transactionFromFee(): Nullable<string> {
+  get transactionFee(): Nullable<string> {
     if (this.isRecipient) {
       return null;
     }
-    return this.getNetworkFee(this.isSoraTx);
-  }
-
-  // ETH BRIDGE transaction
-  get transactionToFee(): Nullable<string> {
-    return this.getNetworkFee(!this.isSoraTx);
+    return this.getNetworkFee();
   }
 
   get transactionFromDate(): Nullable<string> {
@@ -298,27 +225,16 @@ export default class WalletTransactionDetails extends Mixins(
     return this.formatDate(this.selectedTransaction.startTime as number);
   }
 
-  // ETH BRIDGE transaction
-  get transactionToDate(): Nullable<string> {
-    if (!this.selectedTransaction.endTime) return null;
-
-    return this.formatDate(this.selectedTransaction.endTime as number);
-  }
-
   get transactionFromAddress(): Nullable<string> {
-    return this.getTransactionAddress(this.isSoraTx, true);
+    return this.selectedTransaction.from;
   }
 
   get transactionToAddress(): Nullable<string> {
-    return this.getTransactionAddress(this.isSoraTx, false);
+    return this.selectedTransaction.to;
   }
 
   get transactionFromHash() {
-    return this.getTransactionHashData(this.isSoraTx);
-  }
-
-  get transactionToHash() {
-    return this.getTransactionHashData(!this.isSoraTx);
+    return this.getTransactionHashData();
   }
 
   get transactionComment(): Nullable<string> {
@@ -373,46 +289,21 @@ export default class WalletTransactionDetails extends Mixins(
   }
   // ____________________________________________________________________________________________________________________
 
-  // ETH BRIDGE transaction
-  get isEthBridgeOperation(): boolean {
-    return this.isEthBridgeTx(this.selectedTransaction);
+  get networkFeeSymbol(): string {
+    return KnownSymbols.XOR;
   }
 
-  // ETH BRIDGE transaction
-  get isTransactionToFailed(): boolean {
-    return this.isEthBridgeTxToFailed(this.selectedTransaction);
-  }
-
-  // ETH BRIDGE transaction
-  get isTransactionToCompleted(): boolean {
-    return this.isEthBridgeTxToCompleted(this.selectedTransaction);
-  }
-
-  public getNetworkTitle(isSoraTx = true): string {
-    if (isSoraTx) {
-      return this.TranslationConsts.soraNetwork[this.soraNetwork];
-    }
-
-    return this.TranslationConsts.Ethereum;
-  }
-
-  public getNetworkFeeSymbol(isSoraTx = true): string {
-    return isSoraTx ? KnownSymbols.XOR : KnownSymbols.ETH;
-  }
-
-  private getNetworkFee(isSoraTx = true): Nullable<string> {
+  private getNetworkFee(): Nullable<string> {
     // [TODO] update History in js-lib
     const xorFee = (this.selectedTransaction as any).xorFee;
     const assetFee = (this.selectedTransaction as any).assetFee;
-    const networkFee = isSoraTx
-      ? this.selectedTransaction.soraNetworkFee
-      : (this.selectedTransaction as EthHistory).externalNetworkFee;
+    const networkFee = this.selectedTransaction.soraNetworkFee;
 
     if (!networkFee) return null;
 
-    const networkFeeFormatted = `${this.formatCodecNumber(networkFee)} ${this.getNetworkFeeSymbol(isSoraTx)}`;
+    const networkFeeFormatted = `${this.formatCodecNumber(networkFee)} ${this.networkFeeSymbol}`;
 
-    if (isSoraTx && xorFee && assetFee) {
+    if (xorFee && assetFee) {
       const aFee = this.getFPNumber(assetFee);
       const xFee = this.getFPNumber(xorFee);
 
@@ -421,7 +312,7 @@ export default class WalletTransactionDetails extends Mixins(
       const sign = FPNumber.isGreaterThan(xFee, FPNumber.ZERO) ? '+' : '';
       const complex = [
         { amount: aFee, symbol: this.transactionSymbol },
-        { amount: xFee, symbol: KnownSymbols.XOR },
+        { amount: xFee, symbol: this.networkFeeSymbol },
       ]
         .filter((part) => !part.amount.isZero())
         .map(({ amount, symbol }) => `${amount.toLocaleString()} ${symbol}`)
@@ -433,35 +324,22 @@ export default class WalletTransactionDetails extends Mixins(
     return networkFeeFormatted;
   }
 
-  private getTransactionHashData(isSoraTx = true): {
+  private getTransactionHashData(): {
     value: Nullable<string>;
     hash: Nullable<string>;
     translation: string;
     type: HashType;
     block: Nullable<string>;
   } {
-    const { value, type } = this.getTransactionId(isSoraTx);
-    const hash = this.getTransactionHash(isSoraTx);
-    const translation = this.getTransactionTranslation(isSoraTx, type === HashType.Block);
-    const block = isSoraTx && type === HashType.ID ? this.selectedTransaction.blockId : undefined;
+    const { value, type } = this.getTransactionId();
+    const hash = this.selectedTransaction.txId;
+    const translation = this.getTransactionTranslation(type === HashType.Block);
+    const block = type === HashType.ID ? this.selectedTransaction.blockId : undefined;
 
     return { value, hash, translation, type, block };
   }
 
-  private getTransactionHash(isSoraTx = true): Nullable<string> {
-    if (!isSoraTx) return (this.selectedTransaction as EthHistory).externalHash;
-
-    return this.isEthBridgeOperation ? (this.selectedTransaction as EthHistory).hash : this.selectedTransaction.txId;
-  }
-
-  private getTransactionId(isSoraTx = true): { type: HashType; value: Nullable<string> } {
-    if (!isSoraTx) {
-      return {
-        type: HashType.EthTransaction,
-        value: (this.selectedTransaction as EthHistory).externalHash,
-      };
-    }
-
+  private getTransactionId(): { type: HashType; value: Nullable<string> } {
     if (this.selectedTransaction.txId) {
       return {
         type: HashType.ID,
@@ -475,17 +353,8 @@ export default class WalletTransactionDetails extends Mixins(
     };
   }
 
-  private getTransactionTranslation(isSoraTx = true, isBlock = false): string {
-    if (!isSoraTx || this.isEthBridgeOperation) return 'bridgeTransaction.transactionHash';
-
+  private getTransactionTranslation(isBlock = false): string {
     return isBlock ? 'transaction.blockId' : 'transaction.txId';
-  }
-
-  private getTransactionAddress(isSoraTx = true, txFrom = true): Nullable<string> {
-    const { from, to } = this.selectedTransaction;
-    const [fromAddress, toAddress] = isSoraTx ? [from, to] : [to, from];
-
-    return txFrom ? fromAddress : toAddress;
   }
 
   private getStatusClass(isFailedTransaction = false): Array<string> {
