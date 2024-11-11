@@ -69,35 +69,37 @@
             <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
           </div>
         </s-float-input>
-        <div class="wallet-send__switch-btn">
-          <s-switch v-model="withVesting" @change="fetchNetworkFee" />
-          <span>{{ t('walletSend.enableVesting') }}</span>
-        </div>
-        <template v-if="withVesting">
-          <s-select
-            class="wallet-send__vesting-period"
-            v-model="selectedVestingPeriod"
-            :placeholder="t('walletSend.unlockFrequency')"
-          >
-            <s-option
-              v-for="period in vestingPeriodsInDays"
-              :key="period"
-              :label="formatDuration(period)"
-              :value="period"
-            />
-          </s-select>
-          <s-float-input
-            class="wallet-send__vesting-input"
-            has-locale-string
-            v-model="vestingPercentage"
-            :placeholder="t('walletSend.vestingPercentage')"
-            :decimals="2"
-            :delimiters="delimiters"
-            :max="100"
-            @input="fetchNetworkFeeDebounced"
-          >
-            <span slot="right">%</span>
-          </s-float-input>
+        <template v-if="!isXorAccountAsset">
+          <div class="wallet-send__switch-btn">
+            <s-switch v-model="withVesting" @change="fetchNetworkFee" />
+            <span>{{ t('walletSend.enableVesting') }}</span>
+          </div>
+          <template v-if="withVesting">
+            <s-select
+              class="wallet-send__vesting-period"
+              v-model="selectedVestingPeriod"
+              :placeholder="t('walletSend.unlockFrequency')"
+            >
+              <s-option
+                v-for="period in vestingPeriodsInDays"
+                :key="period"
+                :label="formatDuration(period)"
+                :value="period"
+              />
+            </s-select>
+            <s-float-input
+              class="wallet-send__vesting-input"
+              has-locale-string
+              v-model="vestingPercentage"
+              :placeholder="t('walletSend.vestingPercentage')"
+              :decimals="2"
+              :delimiters="delimiters"
+              :max="100"
+              @input="fetchNetworkFeeDebounced"
+            >
+              <span slot="right">%</span>
+            </s-float-input>
+          </template>
         </template>
         <s-button
           class="wallet-send-action s-typography-button--large"

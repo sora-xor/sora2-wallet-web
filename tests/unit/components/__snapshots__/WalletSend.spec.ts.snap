@@ -129,25 +129,6 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
       </div>
     </s-float-input-stub>
      
-    <div
-      class="wallet-send__switch-btn"
-    >
-      <s-switch-stub
-        activeiconСlass=""
-        activetext=""
-        activevalue="true"
-        inactiveiconСlass=""
-        inactivetext=""
-        name=""
-        usedesignsystem="true"
-        width="40"
-      />
-       
-      <span>
-        Enable token vesting
-      </span>
-    </div>
-     
     <!---->
      
     <s-button-stub
@@ -281,25 +262,6 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
       </div>
     </s-float-input-stub>
      
-    <div
-      class="wallet-send__switch-btn"
-    >
-      <s-switch-stub
-        activeiconСlass=""
-        activetext=""
-        activevalue="true"
-        inactiveiconСlass=""
-        inactivetext=""
-        name=""
-        usedesignsystem="true"
-        width="40"
-      />
-       
-      <span>
-        Enable token vesting
-      </span>
-    </div>
-     
     <!---->
      
     <s-button-stub
@@ -432,25 +394,6 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
         />
       </div>
     </s-float-input-stub>
-     
-    <div
-      class="wallet-send__switch-btn"
-    >
-      <s-switch-stub
-        activeiconСlass=""
-        activetext=""
-        activevalue="true"
-        inactiveiconСlass=""
-        inactivetext=""
-        name=""
-        usedesignsystem="true"
-        width="40"
-      />
-       
-      <span>
-        Enable token vesting
-      </span>
-    </div>
      
     <!---->
      
@@ -617,25 +560,6 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
         />
       </div>
     </s-float-input-stub>
-     
-    <div
-      class="wallet-send__switch-btn"
-    >
-      <s-switch-stub
-        activeiconСlass=""
-        activetext=""
-        activevalue="true"
-        inactiveiconСlass=""
-        inactivetext=""
-        name=""
-        usedesignsystem="true"
-        width="40"
-      />
-       
-      <span>
-        Enable token vesting
-      </span>
-    </div>
      
     <!---->
      
