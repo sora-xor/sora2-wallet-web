@@ -7,8 +7,6 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
   <div
     class="transaction"
   >
-    <!---->
-     
     <transaction-hash-view-stub
       block=""
       hash=""
@@ -60,7 +58,12 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         value="0.1"
         valuecanbehidden="true"
         valuetooltip=""
-      />
+      >
+        <token-logo-stub
+          size="small"
+          tokensymbol="XOR"
+        />
+      </info-line-stub>
        
       <!---->
        
@@ -79,7 +82,12 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         value="0.9"
         valuecanbehidden="true"
         valuetooltip=""
-      />
+      >
+        <token-logo-stub
+          size="small"
+          tokensymbol="PSWAP"
+        />
+      </info-line-stub>
        
       <!---->
        
@@ -98,8 +106,6 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
   </div>
    
   <!---->
-   
-  <!---->
 </div>
 `;
 
@@ -110,8 +116,6 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
   <div
     class="transaction"
   >
-    <!---->
-     
     <transaction-hash-view-stub
       block=""
       hash=""
@@ -183,8 +187,6 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
   </div>
    
   <!---->
-   
-  <!---->
 </div>
 `;
 
@@ -195,8 +197,6 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
   <div
     class="transaction"
   >
-    <!---->
-     
     <transaction-hash-view-stub
       block=""
       hash=""
@@ -248,7 +248,12 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
         value="100.123"
         valuecanbehidden="true"
         valuetooltip=""
-      />
+      >
+        <token-logo-stub
+          size="small"
+          tokensymbol="XOR"
+        />
+      </info-line-stub>
        
       <!---->
        
@@ -277,8 +282,6 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
   </div>
    
   <!---->
-   
-  <!---->
 </div>
 `;
 
@@ -289,8 +292,6 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
   <div
     class="transaction"
   >
-    <!---->
-     
     <transaction-hash-view-stub
       block=""
       hash=""
@@ -352,7 +353,12 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         value="0.1"
         valuecanbehidden="true"
         valuetooltip=""
-      />
+      >
+        <token-logo-stub
+          size="small"
+          tokensymbol="XOR"
+        />
+      </info-line-stub>
        
       <!---->
        
@@ -371,7 +377,12 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         value="0.9"
         valuecanbehidden="true"
         valuetooltip=""
-      />
+      >
+        <token-logo-stub
+          size="small"
+          tokensymbol="PSWAP"
+        />
+      </info-line-stub>
        
       <!---->
        
@@ -390,8 +401,6 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
   </div>
    
   <!---->
-   
-  <!---->
 </div>
 `;
 
@@ -402,8 +411,6 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
   <div
     class="transaction"
   >
-    <!---->
-     
     <transaction-hash-view-stub
       block=""
       hash=""
@@ -455,7 +462,12 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
         value="1.4665644"
         valuecanbehidden="true"
         valuetooltip=""
-      />
+      >
+        <token-logo-stub
+          size="small"
+          tokensymbol="XOR"
+        />
+      </info-line-stub>
        
       <!---->
        
@@ -477,7 +489,11 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
       >
         
         0.14 XOR
-      
+        
+        <token-logo-stub
+          size="small"
+          tokensymbol="XOR"
+        />
       </info-line-stub>
        
       <!---->
@@ -494,8 +510,6 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
     <!---->
   </div>
    
-  <!---->
-   
   <adar-tx-details-stub
     transaction="[object Object]"
   />
@@ -509,8 +523,6 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
   <div
     class="transaction"
   >
-    <!---->
-     
     <transaction-hash-view-stub
       block="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
       hash="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
@@ -562,7 +574,12 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
         value="0.1"
         valuecanbehidden="true"
         valuetooltip=""
-      />
+      >
+        <token-logo-stub
+          size="small"
+          tokensymbol="XOR"
+        />
+      </info-line-stub>
        
       <!---->
        
@@ -595,8 +612,6 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
       value="cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse"
     />
   </div>
-   
-  <!---->
    
   <!---->
 </div>

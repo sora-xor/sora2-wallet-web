@@ -4,6 +4,7 @@ import { gql } from '@urql/core';
 import { PageInfoFragment } from '../../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
+import type { HistoryQuery } from '../../../../types/history';
 import type { ConnectionQueryResponse, HistoryElement } from '../../types';
 
 export const HistoryElementsQuery = gql<ConnectionQueryResponse<HistoryElement>>`
@@ -28,6 +29,7 @@ export const HistoryElementsQuery = gql<ConnectionQueryResponse<HistoryElement>>
       edges {
         node {
           id
+          type
           timestamp
           blockHash
           blockHeight
@@ -56,20 +58,6 @@ export const HistoryElementsQuery = gql<ConnectionQueryResponse<HistoryElement>>
   }
   ${PageInfoFragment}
 `;
-
-type DataCriteria = {
-  data: {
-    contains: {
-      [key: string]: any;
-    };
-  };
-};
-
-type CallsDataCriteria = {
-  calls: {
-    some: DataCriteria;
-  };
-};
 
 const RewardsClaimExtrinsics = [
   [ModuleNames.PswapDistribution, ModuleMethods.PswapDistributionClaimIncentive],
@@ -132,6 +120,7 @@ const OperationFilterMap = {
   },
   [Operation.Transfer]: {
     or: [
+      // sender
       {
         module: {
           equalTo: ModuleNames.Assets,
@@ -140,12 +129,31 @@ const OperationFilterMap = {
           equalToInsensitive: ModuleMethods.AssetsTransfer,
         },
       },
+      // sender
       {
         module: {
           equalTo: ModuleNames.LiquidityProxy,
         },
         method: {
           equalTo: ModuleMethods.LiquidityProxyXorlessTransfer,
+        },
+      },
+      // recipient
+      {
+        module: {
+          equalTo: ModuleNames.Tokens,
+        },
+        method: {
+          equalToInsensitive: ModuleMethods.TokensTransfer,
+        },
+      },
+      // recipient
+      {
+        module: {
+          equalTo: ModuleNames.Balances,
+        },
+        method: {
+          equalToInsensitive: ModuleMethods.BalancesTransfer,
         },
       },
     ],
@@ -175,12 +183,35 @@ const OperationFilterMap = {
     },
   },
   [Operation.Mint]: {
-    module: {
-      equalTo: ModuleNames.Assets,
-    },
-    method: {
-      equalTo: ModuleMethods.AssetsMint,
-    },
+    or: [
+      // sender
+      {
+        module: {
+          equalTo: ModuleNames.Assets,
+        },
+        method: {
+          equalTo: ModuleMethods.AssetsMint,
+        },
+      },
+      // recipient
+      {
+        module: {
+          equalTo: ModuleNames.Tokens,
+        },
+        method: {
+          equalTo: ModuleMethods.TokensDeposited,
+        },
+      },
+      // recipient
+      {
+        module: {
+          equalTo: ModuleNames.Balances,
+        },
+        method: {
+          equalTo: ModuleMethods.BalancesDeposited,
+        },
+      },
+    ],
   },
   [Operation.CreatePair]: {
     module: {
@@ -459,54 +490,31 @@ const OperationFilterMap = {
 
 const createOperationsCriteria = (operations: Array<Operation>) => {
   return operations.reduce((buffer: Array<any>, operation) => {
-    if (!(operation in OperationFilterMap)) return buffer;
-
-    buffer.push(OperationFilterMap[operation]);
-
+    if (operation in OperationFilterMap) {
+      buffer.push(OperationFilterMap[operation]);
+    }
     return buffer;
   }, []);
 };
 
-const createAssetCriteria = (assetAddress: string): Array<DataCriteria | CallsDataCriteria> => {
-  const attributes = ['assetId', 'baseAssetId', 'targetAssetId', 'quoteAssetId', 'collateralAssetId', 'debtAssetId'];
-
-  const criterias = attributes.reduce((result: Array<DataCriteria | CallsDataCriteria>, attr) => {
-    result.push({
-      data: {
-        contains: {
-          [attr]: assetAddress,
-        },
-      },
-    });
-
-    return result;
-  }, []);
-
-  // for create pair operation
-  ['input_asset_a', 'input_asset_b'].forEach((attr) => {
-    criterias.push({
-      calls: {
-        some: {
-          data: {
-            contains: {
-              [attr]: assetAddress,
-            },
-          },
-        },
-      },
-    });
-  });
-
-  return criterias;
+const createAssetCriteria = (assetAddress: string) => {
+  return {
+    dataAssets: {
+      contains: assetAddress,
+    },
+  };
 };
 
-const createAccountAddressCriteria = (address: string) => {
-  return [
-    {
-      address: {
-        equalTo: address,
-      },
+const createOwnerCriteria = (address: string) => {
+  return {
+    address: {
+      equalTo: address,
     },
+  };
+};
+
+const createAddressCriterias = (address: string) => {
+  return [
     {
       dataFrom: {
         equalTo: address,
@@ -520,20 +528,13 @@ const createAccountAddressCriteria = (address: string) => {
   ];
 };
 
-const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
-const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
-
 type SubqueryHistoryElementsFilterOptions = {
   address?: string;
   assetAddress?: string;
   timestamp?: number;
   operations?: Array<Operation>;
   ids?: Array<string>;
-  query?: {
-    search?: string;
-    operationNames?: Array<Operation>;
-    assetsAddresses?: Array<string>;
-  };
+  query?: HistoryQuery;
 };
 
 export const historyElementsFilter = ({
@@ -542,28 +543,28 @@ export const historyElementsFilter = ({
   timestamp = 0,
   operations = [],
   ids = [],
-  query: { search = '', operationNames = [], assetsAddresses = [] } = {},
+  query: { operationNames, assetsAddresses = [], accountAddress = '', hexAddress = '' } = {},
 }: SubqueryHistoryElementsFilterOptions = {}): any => {
   const filter: any = {
     and: [],
   };
 
-  if (operations.length) {
-    filter.and.push({
-      or: createOperationsCriteria(operations),
-    });
+  // history owner
+  if (address) {
+    filter.and.push(createOwnerCriteria(address));
   }
 
-  if (address) {
+  // filter has more priority
+  const operationsPrepared = operationNames ?? operations;
+
+  if (operationsPrepared.length) {
     filter.and.push({
-      or: createAccountAddressCriteria(address),
+      or: createOperationsCriteria(operationsPrepared),
     });
   }
 
   if (assetAddress) {
-    filter.and.push({
-      or: createAssetCriteria(assetAddress),
-    });
+    filter.and.push(createAssetCriteria(assetAddress));
   }
 
   if (timestamp) {
@@ -584,39 +585,25 @@ export const historyElementsFilter = ({
 
   const queryFilters: Array<any> = [];
 
-  if (search) {
-    // account address criteria
-    if (isAccountAddress(search)) {
-      queryFilters.push({
-        dataFrom: {
-          equalTo: search,
-        },
-      });
-      queryFilters.push({
-        dataTo: {
-          equalTo: search,
-        },
-      });
-      // asset address criteria
-    } else if (isHexAddress(search)) {
-      queryFilters.push(...createAssetCriteria(search));
-      queryFilters.push({
-        blockHash: {
-          includesInsensitive: search,
-        },
-      });
-    }
+  // account address criteria
+  if (accountAddress) {
+    queryFilters.push(...createAddressCriterias(accountAddress));
   }
 
-  // operation names criteria
-  if (operationNames.length) {
-    queryFilters.push(...createOperationsCriteria(operationNames));
+  // hex address criteria
+  if (hexAddress) {
+    queryFilters.push(createAssetCriteria(hexAddress));
+    queryFilters.push({
+      blockHash: {
+        includesInsensitive: hexAddress,
+      },
+    });
   }
 
   // symbol criteria
   if (assetsAddresses.length) {
     assetsAddresses.forEach((assetAddress) => {
-      queryFilters.push(...createAssetCriteria(assetAddress));
+      queryFilters.push(createAssetCriteria(assetAddress));
     });
   }
 

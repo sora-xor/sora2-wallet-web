@@ -79,13 +79,7 @@ const actions = defineActions({
    */
   async getExternalHistory(
     context,
-    {
-      address = '',
-      assetAddress = '',
-      pageAmount = 8,
-      page = 1,
-      query: { search = '', operationNames = [], assetsAddresses = [] } = {},
-    }: ExternalHistoryParams = {}
+    { address = '', assetAddress = '', pageAmount = 8, page = 1, query = {} }: ExternalHistoryParams = {}
   ): Promise<void> {
     const { state, commit } = transactionsActionContext(context);
     const { externalHistory, externalHistoryUpdates } = state;
@@ -96,7 +90,7 @@ const actions = defineActions({
       address,
       assetAddress,
       operations,
-      query: { search, operationNames, assetsAddresses },
+      query,
     });
 
     const variables = {
