@@ -1,6 +1,6 @@
 <template>
   <div class="address-input">
-    <wallet-account v-if="record" :polkadot-account="record">
+    <wallet-account v-if="record" :polkadot-account="record" with-identity>
       <s-icon
         v-button
         class="book-icon-unlink"

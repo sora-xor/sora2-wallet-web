@@ -13,6 +13,7 @@ import {
 import { Currencies } from '../consts/currencies';
 import { FilterOptions } from '../types/common';
 
+import type { AccountIdentity } from '../types/common';
 import type { Currency } from '../types/currency';
 import type { RewardsAmountHeaderItem } from '../types/rewards';
 import type { WithKeyring, WithConnectionApi } from '@sora-substrate/sdk';
@@ -73,13 +74,22 @@ export const getAccountIdentity = async (
   address: string,
   none = '',
   chainApi: WithConnectionApi = api
-): Promise<string> => {
-  if (!validateAddress(address)) return none;
+): Promise<AccountIdentity> => {
+  const data = {
+    name: none,
+    approved: false,
+  };
 
-  const entity = await chainApi.getAccountOnChainIdentity(address);
-  const identity = entity ? entity.legalName : none;
+  if (validateAddress(address)) {
+    const identity = await chainApi.getAccountOnChainIdentity(address);
 
-  return identity;
+    if (identity) {
+      data.name = identity.displayName || identity.legalName;
+      data.approved = identity.approved;
+    }
+  }
+
+  return data;
 };
 
 /**

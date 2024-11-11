@@ -3,20 +3,14 @@
     <template #avatar>
       <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
     </template>
-    <template #name>{{ name }}</template>
+    <template #name>
+      {{ displayName }}
+      <s-icon v-if="isApproved" name="basic-check-mark-24" class="account-checkmark" />
+    </template>
     <template #description>
-      <formatted-address :value="address" :symbols="24" :tooltip-text="t('account.walletAddress')" />
+      <formatted-address :value="address" :symbols="20" :tooltip-text="t('account.walletAddress')" />
     </template>
     <template #default>
-      <s-tooltip
-        v-if="withIdentity && identity"
-        border-radius="mini"
-        :content="t('addressBook.identity')"
-        placement="top"
-        tabindex="-1"
-      >
-        <div class="account-on-chain-name">{{ identity }}</div>
-      </s-tooltip>
       <slot />
     </template>
   </account-card>
@@ -36,7 +30,7 @@ import FormattedAddress from '../shared/FormattedAddress.vue';
 import AccountCard from './AccountCard.vue';
 import WalletAvatar from './WalletAvatar.vue';
 
-import type { PolkadotJsAccount } from '../../types/common';
+import type { PolkadotJsAccount, AccountIdentity } from '../../types/common';
 import type { WithConnectionApi } from '@sora-substrate/sdk';
 
 const DEFAULT_NAME = '<unknown>';
@@ -55,7 +49,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
 
   @getter.account.account private connected!: PolkadotJsAccount;
 
-  accountIdentity = '';
+  accountIdentity: Nullable<AccountIdentity> = null;
 
   @Watch('address', { immediate: true })
   private async updateIdentity(value: string, oldValue: string) {
@@ -79,8 +73,16 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
     return this.account.name || DEFAULT_NAME;
   }
 
-  get identity(): string {
-    return this.account.identity || this.accountIdentity;
+  get identity(): Nullable<AccountIdentity> {
+    return this.account.identity ?? this.accountIdentity;
+  }
+
+  get displayName(): string {
+    return this.identity?.name || this.name;
+  }
+
+  get isApproved(): boolean {
+    return !!this.identity?.approved;
   }
 }
 </script>
@@ -97,14 +99,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
 </style>
 
 <style scoped lang="scss">
-.account-on-chain-name {
-  max-width: 167px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  border-radius: calc(var(--s-border-radius-mini) / 2);
-  padding: $inner-spacing-mini;
-  background-color: var(--s-color-utility-surface);
-  color: var(--s-color-base-content-secondary);
+.account-checkmark {
+  color: var(--s-color-status-success);
 }
 </style>
