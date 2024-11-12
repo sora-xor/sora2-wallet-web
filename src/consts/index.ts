@@ -140,8 +140,6 @@ export interface WalletPermissions {
   swapAssets?: boolean;
 }
 
-export type EthBridgeUpdateHistory = (updateWalletHistory: VoidFunction) => Promise<void>;
-
 export interface WalletAssetFilters {
   option: WalletFilteringOptions;
   verifiedOnly: boolean;
@@ -151,7 +149,6 @@ export interface WalletAssetFilters {
 export interface WalletInitOptions {
   withoutStore?: boolean;
   permissions?: WalletPermissions;
-  updateEthBridgeHistory?: EthBridgeUpdateHistory;
   appName?: string;
 }
 

@@ -236,7 +236,6 @@ exports[`InfoLine.vue [With Fiat Value]: should be rendered correctly 1`] = `
       fontweightrate="normal"
       isfiatvalue="true"
       value="1,234,567.890123"
-      withleftshift="true"
     />
      
   </div>

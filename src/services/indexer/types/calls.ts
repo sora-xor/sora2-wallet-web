@@ -14,6 +14,9 @@ export enum ModuleNames {
   OrderBook = 'orderBook',
   Staking = 'staking',
   Vault = 'kensetsu',
+  // events
+  Tokens = 'tokens',
+  Balances = 'balances',
 }
 
 export enum ModuleMethods {
@@ -60,4 +63,9 @@ export enum ModuleMethods {
   VaultCollateralDeposit = 'depositCollateral',
   VaultDebtPayment = 'repayDebt',
   VaultDebtBorrow = 'borrow',
+  // events
+  TokensTransfer = 'Transfer',
+  TokensDeposited = 'Deposited',
+  BalancesTransfer = 'Transfer',
+  BalancesDeposited = 'Deposited',
 }

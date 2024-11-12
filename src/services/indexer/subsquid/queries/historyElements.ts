@@ -5,6 +5,7 @@ import { gql } from '@urql/core';
 import { PageInfoFragment } from '../../fragments/pageInfo';
 import { ModuleNames, ModuleMethods } from '../types';
 
+import type { HistoryQuery } from '../../../../types/history';
 import type { ConnectionQueryResponse, HistoryElement } from '../../types';
 import type { SubsquidQueryResponse } from '../types';
 
@@ -369,11 +370,7 @@ type SubsquidHistoryElementsFilterOptions = {
   timestamp?: number;
   operations?: Array<Operation>;
   ids?: Array<string>;
-  query?: {
-    search?: string;
-    operationNames?: Array<Operation>;
-    assetsAddresses?: Array<string>;
-  };
+  query?: HistoryQuery;
 };
 
 export const historyElementsFilter = ({
@@ -382,7 +379,7 @@ export const historyElementsFilter = ({
   timestamp = 0,
   operations = [],
   ids = [],
-  query: { search = '', operationNames = [], assetsAddresses = [] } = {},
+  query: { operationNames = [], assetsAddresses = [], accountAddress = '', hexAddress = '' } = {},
 }: SubsquidHistoryElementsFilterOptions = {}): any => {
   const filter: any = {
     AND: [],
@@ -420,22 +417,22 @@ export const historyElementsFilter = ({
 
   const queryFilters: Array<any> = [];
 
-  if (search) {
-    // account address criteria
-    if (isAccountAddress(search)) {
-      queryFilters.push({
-        dataFrom_eq: search,
-      });
-      queryFilters.push({
-        dataTo_eq: search,
-      });
-      // asset address criteria
-    } else if (isHexAddress(search)) {
-      queryFilters.push(...createAssetCriteria(search));
-      queryFilters.push({
-        blockHash_containsInsensitive: search,
-      });
-    }
+  // account address criteria
+  if (accountAddress) {
+    queryFilters.push({
+      dataFrom_eq: accountAddress,
+    });
+    queryFilters.push({
+      dataTo_eq: accountAddress,
+    });
+  }
+
+  // hex address criteria
+  if (hexAddress) {
+    queryFilters.push(...createAssetCriteria(hexAddress));
+    queryFilters.push({
+      blockHash_containsInsensitive: hexAddress,
+    });
   }
 
   // operation names criteria
