@@ -4,8 +4,17 @@
       <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
     </template>
     <template #name>
-      {{ displayName }}
-      <s-icon v-if="isApproved" name="basic-check-mark-24" class="account-checkmark" />
+      <s-tooltip v-if="identityName" :content="name">
+        <div class="identity">
+          <div :class="['identity-status', { approved: isApproved }]">
+            <s-icon :name="identityIcon" size="12" />
+          </div>
+          {{ identityName }}
+        </div>
+      </s-tooltip>
+      <template v-else>
+        {{ name }}
+      </template>
     </template>
     <template #description>
       <formatted-address :value="address" :symbols="20" :tooltip-text="t('account.walletAddress')" />
@@ -77,8 +86,12 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
     return this.account.identity ?? this.accountIdentity;
   }
 
-  get displayName(): string {
-    return this.identity?.name || this.name;
+  get identityName(): Nullable<string> {
+    return this.identity?.name;
+  }
+
+  get identityIcon(): string {
+    return this.isApproved ? 'basic-check-mark-24' : 'notifications-info-24';
   }
 
   get isApproved(): boolean {
@@ -99,7 +112,23 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
 </style>
 
 <style scoped lang="scss">
-.account-checkmark {
-  color: var(--s-color-status-success);
+.identity {
+  display: flex;
+  align-items: center;
+  gap: $basic-spacing-mini;
+
+  &-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: var(--s-color-status-info);
+
+    &.approved {
+      background-color: var(--s-color-status-success);
+    }
+  }
 }
 </style>
