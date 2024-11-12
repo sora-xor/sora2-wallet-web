@@ -73,8 +73,8 @@ export default class Identity extends Vue {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    width: $basic-spacing-medium;
+    height: $basic-spacing-medium;
     border-radius: 50%;
     background-color: var(--s-color-status-info);
 
