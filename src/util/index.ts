@@ -72,26 +72,19 @@ export const formatAccountAddress = (address: string, withPrefix = true, chainAp
 
 export const getAccountIdentity = async (
   address: string,
-  none = '',
   chainApi: WithConnectionApi = api
-): Promise<AccountIdentity> => {
-  const data: AccountIdentity = {
-    name: none,
-    legalName: '',
-    approved: false,
+): Promise<AccountIdentity | null> => {
+  if (!validateAddress(address)) return null;
+
+  const identity = await chainApi.getAccountOnChainIdentity(address);
+
+  if (!identity) return null;
+
+  return {
+    name: identity.displayName,
+    legalName: identity.legalName,
+    approved: identity.approved,
   };
-
-  if (validateAddress(address)) {
-    const identity = await chainApi.getAccountOnChainIdentity(address);
-
-    if (identity) {
-      data.name = identity.displayName;
-      data.legalName = identity.legalName;
-      data.approved = identity.approved;
-    }
-  }
-
-  return data;
 };
 
 /**

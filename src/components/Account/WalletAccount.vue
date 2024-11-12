@@ -58,7 +58,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
     if (!this.withIdentity || value === oldValue) return;
 
     await this.withApi(async () => {
-      this.accountIdentity = await getAccountIdentity(value, '', this.chainApi);
+      this.accountIdentity = await getAccountIdentity(value, this.chainApi);
       this.$emit('identity', this.accountIdentity);
     });
   }
