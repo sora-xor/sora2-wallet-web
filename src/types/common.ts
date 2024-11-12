@@ -27,6 +27,7 @@ export type Book = Record<string, string>;
 
 export type AccountIdentity = {
   name: string;
+  legalName: string;
   approved: boolean;
 };
 

@@ -75,7 +75,7 @@ export const getAccountIdentity = async (
   none = '',
   chainApi: WithConnectionApi = api
 ): Promise<AccountIdentity> => {
-  const data = {
+  const data: AccountIdentity = {
     name: none,
     legalName: '',
     approved: false,

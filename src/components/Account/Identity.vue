@@ -30,19 +30,19 @@ import { AccountIdentity } from '../../types/common';
 
 @Component
 export default class Identity extends Vue {
-  @Prop({ default: () => null, type: Object }) readonly identity!: Nullable<AccountIdentity>;
+  @Prop({ required: true, type: Object }) readonly identity!: AccountIdentity;
   @Prop({ default: '', type: String }) readonly localName!: string;
 
   get isApproved(): boolean {
-    return !!this.identity?.approved;
+    return !!this.identity.approved;
   }
 
-  get identityName(): Nullable<string> {
-    return this.identity?.name;
+  get identityName(): string {
+    return this.identity.name;
   }
 
-  get identityLegalName(): Nullable<string> {
-    return this.identity?.legalName;
+  get identityLegalName(): string {
+    return this.identity.legalName;
   }
 
   get identityIcon(): string {

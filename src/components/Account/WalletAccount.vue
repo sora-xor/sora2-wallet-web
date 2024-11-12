@@ -4,7 +4,8 @@
       <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
     </template>
     <template #name>
-      <identity :identity="identity" :local-name="name" />
+      <identity v-if="identity" :identity="identity" :local-name="name" />
+      <template v-else>{{ name }}</template>
     </template>
     <template #description>
       <formatted-address :value="address" :symbols="20" :tooltip-text="t('account.walletAddress')" />

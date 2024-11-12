@@ -55,14 +55,12 @@ exports[`WalletAccount.vue should be rendered correctly 1`] = `
       ...
       
               <span>
-                TvL6UHcHDCvo
+                L6UHcHDCvo
               </span>
             </div>
           </s-tooltip>
         </div>
       </div>
-       
-      <!---->
        
     </div>
   </div>
