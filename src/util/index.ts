@@ -77,6 +77,7 @@ export const getAccountIdentity = async (
 ): Promise<AccountIdentity> => {
   const data = {
     name: none,
+    legalName: '',
     approved: false,
   };
 
@@ -84,7 +85,8 @@ export const getAccountIdentity = async (
     const identity = await chainApi.getAccountOnChainIdentity(address);
 
     if (identity) {
-      data.name = identity.displayName || identity.legalName;
+      data.name = identity.displayName;
+      data.legalName = identity.legalName;
       data.approved = identity.approved;
     }
   }

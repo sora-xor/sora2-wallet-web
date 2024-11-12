@@ -9,7 +9,13 @@
   >
     <div class="wallet-send">
       <template v-if="step === 1">
-        <address-book-input class="wallet-send-address" exclude-connected v-model="address" :is-valid="validAddress" />
+        <address-book-input
+          class="wallet-send-address"
+          exclude-connected
+          v-model="address"
+          :is-valid="validAddress"
+          @update:name="updateName"
+        />
 
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
@@ -127,9 +133,9 @@
           </div>
 
           <div class="confirm-address">
-            <span>{{ account.address }}</span>
+            <wallet-account class="confirm-address-card" with-identity />
             <s-icon name="arrows-arrow-bottom-24" />
-            <span>{{ formattedSoraAddress }}</span>
+            <wallet-account class="confirm-address-card" :polkadot-account="recipient" with-identity />
           </div>
 
           <template v-if="withVesting">
@@ -169,6 +175,7 @@ import { state, mutation, action } from '../store/decorators';
 import { validateAddress, formatAddress, formatAccountAddress, delay } from '../util';
 
 import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
+import WalletAccount from './Account/WalletAccount.vue';
 import AddressBookInput from './AddressBook/Input.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
@@ -193,6 +200,7 @@ const MS_IN_DAY = 24 * 60 * 60_000;
 @Component({
   components: {
     WalletBase,
+    WalletAccount,
     FormattedAmount,
     FormattedAmountWithFiatValue,
     NetworkFeeWarning,
@@ -228,6 +236,7 @@ export default class WalletSend extends Mixins(
 
   step = 1;
   address = '';
+  name = '';
   amount = '';
   showAdditionalInfo = true;
   withVesting = false;
@@ -236,6 +245,14 @@ export default class WalletSend extends Mixins(
   private fee: FPNumber = this.Zero;
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
+
+  updateName(name: string): void {
+    this.name = name;
+  }
+
+  get recipient() {
+    return { address: this.address, name: this.name };
+  }
 
   created(): void {
     if (!this.currentRouteParams.asset) {
@@ -753,12 +770,16 @@ $telegram-web-app-width: 500px;
     &-address {
       display: flex;
       flex-flow: column nowrap;
-      align-items: flex-start;
+      align-items: center;
       gap: var(--s-basic-spacing);
 
       font-size: var(--s-font-size-mini);
       font-weight: 600;
       overflow-wrap: break-word;
+
+      &-card {
+        width: 100%;
+      }
 
       span {
         @media screen and (max-width: $telegram-web-app-width) {

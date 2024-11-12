@@ -4,17 +4,7 @@
       <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
     </template>
     <template #name>
-      <s-tooltip v-if="identityName" :content="name">
-        <div class="identity">
-          <div :class="['identity-status', { approved: isApproved }]">
-            <s-icon :name="identityIcon" size="12" />
-          </div>
-          {{ identityName }}
-        </div>
-      </s-tooltip>
-      <template v-else>
-        {{ name }}
-      </template>
+      <identity :identity="identity" :local-name="name" />
     </template>
     <template #description>
       <formatted-address :value="address" :symbols="20" :tooltip-text="t('account.walletAddress')" />
@@ -37,6 +27,7 @@ import TranslationMixin from '../mixins/TranslationMixin';
 import FormattedAddress from '../shared/FormattedAddress.vue';
 
 import AccountCard from './AccountCard.vue';
+import Identity from './Identity.vue';
 import WalletAvatar from './WalletAvatar.vue';
 
 import type { PolkadotJsAccount, AccountIdentity } from '../../types/common';
@@ -47,6 +38,7 @@ const DEFAULT_NAME = '<unknown>';
 @Component({
   components: {
     AccountCard,
+    Identity,
     WalletAvatar,
     FormattedAddress,
   },
@@ -62,7 +54,7 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
 
   @Watch('address', { immediate: true })
   private async updateIdentity(value: string, oldValue: string) {
-    if (!this.withIdentity || this.identity || value === oldValue) return;
+    if (!this.withIdentity || value === oldValue) return;
 
     await this.withApi(async () => {
       this.accountIdentity = await getAccountIdentity(value, '', this.chainApi);
@@ -85,18 +77,6 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
   get identity(): Nullable<AccountIdentity> {
     return this.account.identity ?? this.accountIdentity;
   }
-
-  get identityName(): Nullable<string> {
-    return this.identity?.name;
-  }
-
-  get identityIcon(): string {
-    return this.isApproved ? 'basic-check-mark-24' : 'notifications-info-24';
-  }
-
-  get isApproved(): boolean {
-    return !!this.identity?.approved;
-  }
 }
 </script>
 
@@ -107,28 +87,6 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
 
   & > circle:first-child {
     fill: var(--s-color-utility-surface);
-  }
-}
-</style>
-
-<style scoped lang="scss">
-.identity {
-  display: flex;
-  align-items: center;
-  gap: $basic-spacing-mini;
-
-  &-status {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    background-color: var(--s-color-status-info);
-
-    &.approved {
-      background-color: var(--s-color-status-success);
-    }
   }
 }
 </style>
