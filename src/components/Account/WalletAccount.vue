@@ -3,20 +3,14 @@
     <template #avatar>
       <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
     </template>
-    <template #name>{{ name }}</template>
+    <template #name>
+      <identity v-if="identity" :identity="identity" :local-name="name" />
+      <template v-else>{{ name }}</template>
+    </template>
     <template #description>
-      <formatted-address :value="address" :symbols="24" :tooltip-text="t('account.walletAddress')" />
+      <formatted-address :value="address" :symbols="20" :tooltip-text="t('account.walletAddress')" />
     </template>
     <template #default>
-      <s-tooltip
-        v-if="withIdentity && identity"
-        border-radius="mini"
-        :content="t('addressBook.identity')"
-        placement="top"
-        tabindex="-1"
-      >
-        <div class="account-on-chain-name">{{ identity }}</div>
-      </s-tooltip>
       <slot />
     </template>
   </account-card>
@@ -34,9 +28,10 @@ import TranslationMixin from '../mixins/TranslationMixin';
 import FormattedAddress from '../shared/FormattedAddress.vue';
 
 import AccountCard from './AccountCard.vue';
+import Identity from './Identity.vue';
 import WalletAvatar from './WalletAvatar.vue';
 
-import type { PolkadotJsAccount } from '../../types/common';
+import type { PolkadotJsAccount, AccountIdentity } from '../../types/common';
 import type { WithConnectionApi } from '@sora-substrate/sdk';
 
 const DEFAULT_NAME = '<unknown>';
@@ -44,6 +39,7 @@ const DEFAULT_NAME = '<unknown>';
 @Component({
   components: {
     AccountCard,
+    Identity,
     WalletAvatar,
     FormattedAddress,
   },
@@ -55,14 +51,14 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
 
   @getter.account.account private connected!: PolkadotJsAccount;
 
-  accountIdentity = '';
+  accountIdentity: Nullable<AccountIdentity> = null;
 
   @Watch('address', { immediate: true })
   private async updateIdentity(value: string, oldValue: string) {
-    if (!this.withIdentity || this.identity || value === oldValue) return;
+    if (!this.withIdentity || value === oldValue) return;
 
     await this.withApi(async () => {
-      this.accountIdentity = await getAccountIdentity(value, '', this.chainApi);
+      this.accountIdentity = await getAccountIdentity(value, this.chainApi);
       this.$emit('identity', this.accountIdentity);
     });
   }
@@ -79,8 +75,8 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
     return this.account.name || DEFAULT_NAME;
   }
 
-  get identity(): string {
-    return this.account.identity || this.accountIdentity;
+  get identity(): Nullable<AccountIdentity> {
+    return this.account.identity ?? this.accountIdentity;
   }
 }
 </script>
@@ -93,18 +89,5 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
   & > circle:first-child {
     fill: var(--s-color-utility-surface);
   }
-}
-</style>
-
-<style scoped lang="scss">
-.account-on-chain-name {
-  max-width: 167px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  border-radius: calc(var(--s-border-radius-mini) / 2);
-  padding: $inner-spacing-mini;
-  background-color: var(--s-color-utility-surface);
-  color: var(--s-color-base-content-secondary);
 }
 </style>
