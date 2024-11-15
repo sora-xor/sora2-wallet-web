@@ -51,7 +51,7 @@
       <component :is="currentTab" @swap="handleSwap" />
     </div>
 
-    <wallet-transaction-details v-if="selectedTransaction" />
+    <wallet-transaction-details v-if="selectedTransaction" @backToWallet="signTransaction" />
 
     <account-settings-dialog :visible.sync="accountSettingsVisibility" />
     <mst-onboarding-dialog :visible.sync="mstOnboardingDialog" />
@@ -161,7 +161,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
     return !this.isMST && (this.isMstAddressExist || api.mst.getMSTName() !== '');
   }
 
-  mounted(): void {
+  async mounted(): Promise<void> {
     if (this.currentRouteParams.currentTab) {
       this.currentTab = this.currentRouteParams.currentTab;
     }
@@ -177,6 +177,11 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
 
   handleSwitchAccount(): void {
     this.navigate({ name: RouteNames.WalletConnection });
+  }
+
+  signTransaction() {
+    this.resetTxDetailsId();
+    this.currentTab = WalletTabs.Assets;
   }
 
   handleMST(): void {

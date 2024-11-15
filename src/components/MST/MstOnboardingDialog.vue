@@ -57,7 +57,7 @@ import MSTIcon from '../../assets/img/MSTIcon.svg';
 import MSTKeys from '../../assets/img/MSTKeys.svg';
 import MSTSign from '../../assets/img/MSTSign.svg';
 import MSTWallet from '../../assets/img/MSTWallet.svg';
-import { state } from '../../store/decorators';
+import { state, mutation } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
 import NotificationMixin from '../mixins/NotificationMixin';
@@ -67,6 +67,7 @@ import SimpleNotification from '../SimpleNotification.vue';
 
 import CreateMstWalletDialog from './CreateMstWalletDialog.vue';
 
+import type { Route } from '../../store/router/types';
 @Component({
   components: {
     DialogBase,
@@ -77,6 +78,7 @@ import CreateMstWalletDialog from './CreateMstWalletDialog.vue';
 })
 export default class MstOnboardingDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
   @state.settings.isMSTAvailable isMSTAvailable!: boolean;
+  @mutation.router.navigate private navigate!: (options: Route) => void;
 
   readonly MSTIcon = MSTIcon;
   readonly MSTKeys = MSTKeys;

@@ -33,7 +33,9 @@ const mutations = defineMutations<TransactionsState>()({
   resetTxDetailsId(state): void {
     state.selectedTxId = null;
   },
-  getHistory(state): void {
+  async getHistory(state): Promise<void> {
+    const mstAddress = api.mst.getMstAddress();
+    await api.mst.subscribeOnPendingTxs(mstAddress);
     // show eth bridge history, if update fn exists
     const ethBridgeHistory = state.updateEthBridgeHistory ? api.bridgeProxy.eth.history : {};
     // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes

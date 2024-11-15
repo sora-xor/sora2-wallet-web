@@ -60,10 +60,6 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
   isMSTLocal = false;
 
   async mounted() {
-    console.info('we are in mounted of MultisigChangeNameDialog');
-    const mstAddress = api.mst.getMstAddress();
-    console.info('the mst address', mstAddress);
-    await api.mst.subscribeOnPendingTxs(mstAddress);
     this.isMSTLocal = this.isMSTAccount;
   }
 

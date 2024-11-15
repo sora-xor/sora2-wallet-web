@@ -121,6 +121,27 @@
       />
     </div>
 
+    <div class="amount-of-signatures" v-if="isMST && isTransactionNotSigned">
+      <div class="already-signed">
+        <p>SIGNATURES SUBMITTED</p>
+        <p>
+          <span>{{ alreadySigned }}</span> / {{ amountOfThreshold }}
+        </p>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" :style="{ width: progressPercentageMstSigned + '%' }"></div>
+      </div>
+    </div>
+
+    <s-button
+      v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
+      class="sign-btn"
+      type="primary"
+      @click="onSignButtonClick"
+    >
+      Sign
+    </s-button>
+
     <adar-tx-details v-if="isAdarOperation" :transaction="selectedTransaction" />
   </div>
 </template>
@@ -131,12 +152,14 @@ import { KnownSymbols } from '@sora-substrate/sdk/build/assets/consts';
 import dayjs from 'dayjs';
 import { Component, Mixins } from 'vue-property-decorator';
 
+import { api } from '../api';
 import { HashType, SoraNetwork } from '../consts';
-import { getter, state } from '../store/decorators';
+import { getter, state, mutation } from '../store/decorators';
 
 import FormattedAmount from './FormattedAmount.vue';
 import InfoLine from './InfoLine.vue';
 import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
+import NotificationMixin from './mixins/NotificationMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 import TransactionHashView from './TransactionHashView.vue';
@@ -159,7 +182,8 @@ import type { EthHistory } from '@sora-substrate/sdk/build/bridgeProxy/eth/types
 export default class WalletTransactionDetails extends Mixins(
   TranslationMixin,
   NumberFormatterMixin,
-  EthBridgeTransactionMixin
+  EthBridgeTransactionMixin,
+  NotificationMixin
 ) {
   readonly HashType = HashType;
 
@@ -168,6 +192,8 @@ export default class WalletTransactionDetails extends Mixins(
   @getter.account.assetsDataTable private assetsDataTable!: AssetsTable;
   @getter.account.account private account!: PolkadotJsAccount;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem; // It shouldn't be empty
+
+  @mutation.transactions.removeHistoryByIds private removeHistoryByIds!: (ids: Array<string>) => void;
 
   get isSoraTx(): boolean {
     return !this.isEthBridgeOperation || this.selectedTransaction.type === Operation.EthBridgeOutgoing;
@@ -374,6 +400,44 @@ export default class WalletTransactionDetails extends Mixins(
     return this.isEthBridgeTxToCompleted(this.selectedTransaction);
   }
 
+  get isMST(): boolean {
+    return api.mst.isMST();
+  }
+
+  get isTransactionNotSigned(): boolean {
+    return this.selectedTransaction.status === TransactionStatus.Pending;
+  }
+
+  get isNotTheAccountInitiatedTrx(): boolean {
+    console.info(this.selectedTransaction);
+    const addressOfMainAccount = api.formatAddress(api?.mst?.getPrevoiusAccount());
+    if ('multisig' in this.selectedTransaction && this.selectedTransaction.multisig) {
+      return addressOfMainAccount !== this.selectedTransaction.multisig.signatories[0];
+    } else {
+      return false;
+    }
+  }
+
+  get amountOfThreshold(): number {
+    if ('multisig' in this.selectedTransaction && this.selectedTransaction.multisig) {
+      return this.selectedTransaction.multisig.threshold;
+    } else {
+      return 0;
+    }
+  }
+
+  get alreadySigned(): number {
+    if ('multisig' in this.selectedTransaction && this.selectedTransaction.multisig) {
+      return this.selectedTransaction.multisig.numApprovals;
+    } else {
+      return 0;
+    }
+  }
+
+  get progressPercentageMstSigned(): number {
+    return (this.alreadySigned / this.amountOfThreshold) * 100;
+  }
+
   public getNetworkTitle(isSoraTx = true): string {
     if (isSoraTx) {
       return this.TranslationConsts.soraNetwork[this.soraNetwork];
@@ -384,6 +448,29 @@ export default class WalletTransactionDetails extends Mixins(
 
   public getNetworkFeeSymbol(isSoraTx = true): string {
     return isSoraTx ? KnownSymbols.XOR : KnownSymbols.ETH;
+  }
+
+  public async onSignButtonClick(): Promise<void> {
+    try {
+      const callHash = this.selectedTransaction.id;
+
+      if (!callHash) {
+        throw new Error('Call hash not found in selected transaction');
+      }
+
+      const multisigAccountAddress = this.selectedTransaction.from;
+
+      if (!multisigAccountAddress) {
+        throw new Error('No multisigAccountAddress');
+      }
+      await api.mst.approveMultisigExtrinsic(callHash, multisigAccountAddress);
+      this.$emit('backToWallet');
+      this.showAppNotification('Transaction has been signed!', 'success');
+    } catch (e) {
+      console.info(e);
+      this.$emit('backToWallet');
+      this.showAppNotification('Transaction has not been signed!', 'error');
+    }
   }
 
   private getNetworkFee(isSoraTx = true): Nullable<string> {
@@ -532,6 +619,38 @@ export default class WalletTransactionDetails extends Mixins(
   }
   &:not(:last-child) {
     margin-bottom: var(--s-basic-spacing);
+  }
+}
+.sign-btn {
+  margin-top: 24px;
+  width: 100%;
+}
+.amount-of-signatures {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+  margin-top: 24px;
+  .already-signed {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-weight: 800;
+    color: var(--s-color-base-content-secondary);
+    span {
+      color: var(--s-color-status-success);
+    }
+  }
+  .progress-bar-container {
+    background-color: #f4f0f1;
+    height: 6px;
+    border-radius: 4px;
+    overflow: hidden;
+    .progress-bar {
+      background-color: var(--s-color-status-success);
+      height: 100%;
+      border-radius: 4px;
+    }
   }
 }
 </style>
