@@ -66,7 +66,7 @@ import CopyAddressMixin from '../mixins/CopyAddressMixin';
 import DialogMixin from '../mixins/DialogMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 
-import type { PolkadotJsAccount } from '../../types/common';
+import type { PolkadotJsAccount, AccountIdentity } from '../../types/common';
 
 @Component({
   components: {
@@ -85,7 +85,7 @@ export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixi
   readonly contactActions = [AccountActionTypes.BookSend, AccountActionTypes.BookEdit, AccountActionTypes.BookDelete];
 
   search = '';
-  identities: Record<string, string> = {};
+  identities: Record<string, AccountIdentity> = {};
 
   get searchValue(): string {
     return this.search ? this.search.trim().toLowerCase() : '';
@@ -115,7 +115,7 @@ export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixi
     return !(this.addressBookFiltered.length || this.accountBookFiltered.length);
   }
 
-  private formatAccount(account: PolkadotJsAccount, identities: Record<string, string>): PolkadotJsAccount {
+  private formatAccount(account: PolkadotJsAccount, identities: Record<string, AccountIdentity>): PolkadotJsAccount {
     const address = formatAccountAddress(account.address);
     const identity = identities[address];
 
@@ -127,7 +127,10 @@ export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixi
     };
   }
 
-  private prepareRecords(accounts: PolkadotJsAccount[], identities: Record<string, string>): PolkadotJsAccount[] {
+  private prepareRecords(
+    accounts: PolkadotJsAccount[],
+    identities: Record<string, AccountIdentity>
+  ): PolkadotJsAccount[] {
     const records = accounts.map((account) => this.formatAccount(account, identities));
     const filtered = records.filter((record) => record.address !== this.excludedAddress);
     const sorted = [...filtered].sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
@@ -139,10 +142,10 @@ export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixi
     if (!this.searchValue) return records;
 
     return records.filter(
-      ({ address = '', name = '', identity = '' }) =>
+      ({ address = '', name = '', identity }) =>
         address.toLowerCase() === this.searchValue ||
         name.toLowerCase().includes(this.searchValue) ||
-        identity.toLowerCase().includes(this.searchValue)
+        identity?.name?.toLowerCase().includes(this.searchValue)
     );
   }
 
@@ -163,7 +166,7 @@ export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixi
     this.$emit('remove', address);
   }
 
-  updateIdentity(identity: string, address: string): void {
+  updateIdentity(identity: AccountIdentity, address: string): void {
     this.identities = { ...this.identities, [address]: identity };
   }
 

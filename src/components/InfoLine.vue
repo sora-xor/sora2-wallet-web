@@ -38,7 +38,6 @@
         <formatted-amount
           v-if="fiatValue"
           is-fiat-value
-          with-left-shift
           :value="fiatValue"
           :font-size-rate="formattedFontSize"
           :value-can-be-hidden="valueCanBeHidden"
@@ -154,22 +153,17 @@ export default class InfoLine extends Vue {
   &-content {
     display: flex;
     justify-content: flex-end;
-    align-items: baseline;
+    align-items: center;
+    gap: $basic-spacing-tiny;
     flex-wrap: wrap;
     flex-grow: 1;
     word-break: break-all;
     text-align: right;
+    margin-left: auto;
   }
   &-value {
-    margin-left: auto;
     text-align: right;
     font-weight: 600;
-    &-prefix {
-      margin-left: auto;
-      + .info-line-value {
-        margin-left: 0;
-      }
-    }
   }
   .asset-symbol {
     word-break: keep-all;

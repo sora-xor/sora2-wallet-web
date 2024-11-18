@@ -90,7 +90,8 @@ export default class AddressBookContact extends Mixins(DialogMixin, TranslationM
   }
 
   async getIdentity(address: string): Promise<void> {
-    this.onChainIdentity = await getAccountIdentity(address, this.t('addressBook.none'));
+    const identity = await getAccountIdentity(address);
+    this.onChainIdentity = identity?.name ?? this.t('addressBook.none');
   }
 
   get title(): string {

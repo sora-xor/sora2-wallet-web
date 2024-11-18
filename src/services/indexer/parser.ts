@@ -61,6 +61,16 @@ import type { StakingHistory } from '@sora-substrate/sdk/build/staking/types';
 const insensitive = (value: string) => value.toLowerCase();
 
 const OperationsMap = {
+  // events
+  [insensitive(ModuleNames.Tokens)]: {
+    [insensitive(ModuleMethods.TokensTransfer)]: () => Operation.Transfer,
+    [insensitive(ModuleMethods.TokensDeposited)]: () => Operation.Mint,
+  },
+  [insensitive(ModuleNames.Balances)]: {
+    [insensitive(ModuleMethods.BalancesTransfer)]: () => Operation.Transfer,
+    [insensitive(ModuleMethods.BalancesDeposited)]: () => Operation.Mint,
+  },
+  // extrinsics
   [insensitive(ModuleNames.Assets)]: {
     [insensitive(ModuleMethods.AssetsRegister)]: () => Operation.RegisterAsset,
     [insensitive(ModuleMethods.AssetsTransfer)]: () => Operation.Transfer,
@@ -270,7 +280,7 @@ const formatRewards = async (rewards: ClaimedRewardItem[]): Promise<RewardInfo[]
   return formatted;
 };
 
-const formatAmount = (amount: string): string => new FPNumber(amount).toString();
+const formatAmount = (amount: string): string => (amount ? new FPNumber(amount).toString() : '0');
 
 const parseMintOrBurn = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementAssetBurn;
@@ -281,6 +291,10 @@ const parseMintOrBurn = async (transaction: HistoryElement, payload: HistoryItem
   payload.amount = formatAmount(data.amount);
   payload.assetAddress = assetAddress;
   payload.symbol = getAssetSymbol(asset);
+
+  payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
 
   return payload;
 };
@@ -301,26 +315,18 @@ const parseSwapTransfer = async (transaction: HistoryElement, payload: HistoryIt
   payload.symbol2 = getAssetSymbol(asset2);
   payload.liquiditySource = data.selectedMarket;
 
+  payload.payload = {
+    amountUSD: formatAmount(data.baseAssetAmountUSD),
+    amount2USD: formatAmount(data.targetAssetAmountUSD),
+  };
+
   return payload;
 };
 
 const parseSwapTransferBatch = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementSwapTransferBatch;
 
-  // [INDEXERS]: remove after full reindex
-  if (!data.receivers) {
-    const transfer = data as unknown as HistoryElementTransfer;
-    const assetAddress = transfer.assetId;
-    const asset = await getAssetByAddress(assetAddress);
-
-    payload.assetAddress = assetAddress;
-    payload.symbol = getAssetSymbol(asset);
-    payload.amount = transfer.amount;
-
-    return payload;
-  }
-
-  const inputAssetId = data.inputAssetId ?? data.assetId;
+  const inputAssetId = data.assetId;
   const inputAsset = await getAssetByAddress(inputAssetId);
 
   payload.assetAddress = inputAssetId;
@@ -335,35 +341,16 @@ const parseSwapTransferBatch = async (transaction: HistoryElement, payload: Hist
   payload.payload.receivers = [];
   payload.payload.comment = data.comment ? JSON.parse(data.comment) : null;
 
-  const transfers = data.transfers;
+  for (const receiver of data.receivers) {
+    const asset = await getAssetByAddress(receiver.assetId);
 
-  // [INDEXERS]: remove after full reindex
-  if (Array.isArray(transfers) && transfers.length > 0) {
-    for (const receiver of data.receivers) {
-      const batch = receiver as any;
-      const assetAddress = batch.outcomeAssetId?.code;
-      const asset = await getAssetByAddress(assetAddress);
-
-      for (const receiver of batch.receivers) {
-        payload.payload.receivers.push({
-          accountId: receiver.accountId,
-          asset,
-          amount: FPNumber.fromCodecValue(receiver.targetAmount, asset?.decimals).toString(),
-          symbol: getAssetSymbol(asset),
-        });
-      }
-    }
-  } else {
-    for (const receiver of data.receivers) {
-      const asset = await getAssetByAddress(receiver.assetId);
-
-      payload.payload.receivers.push({
-        accountId: receiver.accountId,
-        asset,
-        amount: receiver.amount,
-        symbol: getAssetSymbol(asset),
-      });
-    }
+    payload.payload.receivers.push({
+      accountId: receiver.accountId,
+      asset,
+      amount: formatAmount(receiver.amount),
+      amountUSD: formatAmount(receiver.amountUSD),
+      symbol: getAssetSymbol(asset),
+    });
   }
 
   return payload;
@@ -384,6 +371,11 @@ const parseLiquidityDepositOrWithdrawal = async (transaction: HistoryElement, pa
   payload.amount = formatAmount(data.baseAssetAmount);
   payload.amount2 = formatAmount(data.targetAssetAmount);
 
+  payload.payload = {
+    amountUSD: formatAmount(data.baseAssetAmountUSD),
+    amount2USD: formatAmount(data.targetAssetAmountUSD),
+  };
+
   return payload;
 };
 
@@ -397,10 +389,11 @@ const parseCreatePair = async (transaction: HistoryElement, payload: HistoryItem
   if (!call) return null;
 
   const args = getCallDataArgs(call);
-  const assetAddress = args.inputAssetA ?? args.input_asset_a;
-  const asset2Address = args.inputAssetB ?? args.input_asset_b;
-  const amount = args.inputADesired ?? args.input_a_desired;
-  const amount2 = args.inputBDesired ?? args.input_b_desired;
+  // [TODO] remove deprecated args names after migration
+  const assetAddress = args.baseAssetId ?? args.inputAssetA ?? args.input_asset_a;
+  const asset2Address = args.targetAssetId ?? args.inputAssetB ?? args.input_asset_b;
+  const amount = args.baseAssetDesired ?? args.inputADesired ?? args.input_a_desired;
+  const amount2 = args.targetAssetDesired ?? args.inputBDesired ?? args.input_b_desired;
 
   const asset = await getAssetByAddress(assetAddress as string);
   const asset2 = await getAssetByAddress(asset2Address as string);
@@ -429,6 +422,10 @@ const parseTransfer = async (transaction: HistoryElement, payload: HistoryItem) 
   _payload.xorFee = data.xorFee;
   _payload.comment = data.comment;
 
+  _payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
+
   return payload;
 };
 
@@ -444,6 +441,10 @@ const parseVestedTransfer = async (transaction: HistoryElement, payload: History
   _payload.amount = formatAmount(data.amount);
   _payload.period = data.period;
   _payload.percent = data.percent;
+
+  _payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
 
   return payload;
 };
@@ -461,7 +462,13 @@ const parseRegisterAsset = async (transaction: HistoryElement, payload: HistoryI
 
 const parseReferralReserve = async (transaction: HistoryElement, payload: HistoryItem) => {
   const data = transaction.data as HistoryElementReferrerReserve;
+
   payload.amount = formatAmount(data.amount);
+
+  payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
+
   return payload;
 };
 
@@ -489,6 +496,10 @@ const parseDemeterLiquidity = async (transaction: HistoryElement, payload: Histo
   payload.symbol2 = getAssetSymbol(asset2);
   payload.amount = formatAmount(data.amount);
 
+  payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
+
   return payload;
 };
 
@@ -501,6 +512,10 @@ const parseDemeterStakeOrRewards = async (transaction: HistoryElement, payload: 
   payload.assetAddress = assetAddress;
   payload.symbol = getAssetSymbol(asset);
   payload.amount = formatAmount(data.amount);
+
+  payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
 
   return payload;
 };
@@ -522,6 +537,10 @@ const parseOrderBookLimitOrderPlacement = async (transaction: HistoryElement, pa
   _payload.amount = formatAmount(data.amount);
   _payload.side = data.side;
   _payload.limitOrderTimestamp = data.lifetime;
+
+  _payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
 
   return payload;
 };
@@ -551,6 +570,10 @@ const parseStakingBond = async (transaction: HistoryElement, payload: HistoryIte
   payload.assetAddress = XOR.address;
   payload.amount = formatAmount(data.amount);
 
+  payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
+
   return payload;
 };
 
@@ -561,6 +584,10 @@ const parseStakingUnbond = async (transaction: HistoryElement, payload: HistoryI
   payload.assetAddress = XOR.address;
   payload.amount = FPNumber.fromCodecValue(data.amount, XOR.decimals).toString();
 
+  payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
+
   return payload;
 };
 
@@ -570,6 +597,10 @@ const parseStakingRebond = async (transaction: HistoryElement, payload: HistoryI
   payload.symbol = XOR.symbol;
   payload.assetAddress = XOR.address;
   payload.amount = formatAmount(data.value);
+
+  payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
 
   return payload;
 };
@@ -584,11 +615,15 @@ const parseStakingNominate = async (transaction: HistoryElement, payload: Histor
 };
 
 const parseStakingWithdrawUnbonded = async (transaction: HistoryElement, payload: HistoryItem) => {
-  const _data = transaction.data as HistoryElementStakingWithdrawUnbonded;
+  const data = transaction.data as HistoryElementStakingWithdrawUnbonded;
 
   payload.symbol = XOR.symbol;
   payload.assetAddress = XOR.address;
-  payload.amount = formatAmount(_data.amount);
+  payload.amount = formatAmount(data.amount);
+
+  payload.payload = {
+    amountUSD: formatAmount(data.amountUSD),
+  };
 
   return payload;
 };
@@ -699,6 +734,11 @@ const parseVaultCreateOrClose = async (transaction: HistoryElement, payload: His
   _payload.asset2Address = asset2Address;
   _payload.symbol2 = getAssetSymbol(asset2);
 
+  _payload.payload = {
+    amountUSD: formatAmount(data.collateralAmountUSD),
+    amount2USD: formatAmount(data.debtAmountUSD),
+  };
+
   return payload;
 };
 
@@ -715,6 +755,10 @@ const parseVaultCollateralDeposit = async (transaction: HistoryElement, payload:
   _payload.assetAddress = assetAddress;
   _payload.symbol = getAssetSymbol(asset);
 
+  _payload.payload = {
+    amountUSD: formatAmount(data.collateralAmountUSD),
+  };
+
   return payload;
 };
 
@@ -730,6 +774,10 @@ const parseVaultDebtPaymentOrBorrow = async (transaction: HistoryElement, payloa
   _payload.amount = formatAmount(data.debtAmount);
   _payload.assetAddress = assetAddress;
   _payload.symbol = getAssetSymbol(asset);
+
+  _payload.payload = {
+    amountUSD: formatAmount(data.debtAmountUSD),
+  };
 
   return payload;
 };

@@ -43,6 +43,7 @@
 <script lang="ts">
 import { TransactionStatus } from '@sora-substrate/sdk';
 import debounce from 'lodash/fp/debounce';
+import isEmpty from 'lodash/fp/isEmpty';
 import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import { RouteNames, PaginationButton } from '../consts';
@@ -57,11 +58,14 @@ import LoadingMixin from './mixins/LoadingMixin';
 import PaginationSearchMixin from './mixins/PaginationSearchMixin';
 import TransactionMixin from './mixins/TransactionMixin';
 
-import type { EthBridgeUpdateHistory } from '../consts';
 import type { Route } from '../store/router/types';
-import type { ExternalHistoryParams } from '../types/history';
-import type { History, AccountHistory, HistoryItem, Operation } from '@sora-substrate/sdk';
+import type { ExternalHistoryParams, HistoryQuery } from '../types/history';
+import type { History, AccountHistory, HistoryItem } from '@sora-substrate/sdk';
 import type { AccountAsset, Asset } from '@sora-substrate/sdk/build/assets/types';
+
+const isAssetSymbol = (value: string) => value.length > 1 && value.length < 8;
+const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
+const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
 
 @Component({
   components: {
@@ -83,7 +87,6 @@ export default class WalletHistory extends Mixins(
   @state.transactions.externalHistory private externalHistory!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistoryUpdates private externalHistoryUpdates!: AccountHistory<HistoryItem>;
   @state.transactions.externalHistoryTotal private externalHistoryTotal!: number;
-  @state.transactions.updateEthBridgeHistory private updateEthBridgeHistory!: Nullable<EthBridgeUpdateHistory>;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.transactions.resetExternalHistory private resetExternalHistory!: FnWithoutArgs;
@@ -167,31 +170,48 @@ export default class WalletHistory extends Mixins(
     return this.hasVisibleTransactions || !!this.searchQuery;
   }
 
-  get queryOperationNames(): Array<Operation> {
-    if (!this.searchQuery) return [];
+  get queryCriterias(): HistoryQuery {
+    if (!this.searchQuery) return {};
 
+    const query: HistoryQuery = {};
     const indexer = getCurrentIndexer();
-    return indexer.services.dataParser.supportedOperations.filter((operation) =>
+
+    const operationNames = indexer.services.dataParser.supportedOperations.filter((operation) =>
       this.t(`operations.${operation}`).toLowerCase().includes(this.searchQuery.toLowerCase())
     );
+
+    if (operationNames.length) query.operationNames = operationNames;
+
+    if (isAssetSymbol(this.searchQuery)) {
+      const assetsAddresses = this.assets.reduce((buffer: Array<string>, asset) => {
+        if (asset.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())) {
+          buffer.push(asset.address);
+        }
+        return buffer;
+      }, []);
+
+      if (assetsAddresses.length) {
+        query.assetsAddresses = assetsAddresses;
+      }
+    }
+
+    if (isAccountAddress(this.searchQuery)) {
+      query.accountAddress = this.searchQuery;
+    }
+
+    if (isHexAddress(this.searchQuery)) {
+      query.hexAddress = this.searchQuery;
+    }
+
+    return query;
   }
 
-  get queryAssetsAddresses(): Array<string> {
-    if (!this.searchQuery) return [];
-
-    return this.assets.reduce((buffer: Array<string>, asset) => {
-      if (asset.symbol.toLowerCase().includes(this.searchQuery.toLowerCase())) {
-        buffer.push(asset.address);
-      }
-      return buffer;
-    }, []);
+  get isValidQuery(): boolean {
+    return !(this.searchQuery && isEmpty(this.queryCriterias));
   }
 
   async mounted() {
     this.saveExternalHistoryUpdates(true);
-    if (this.updateEthBridgeHistory) {
-      this.updateEthBridgeHistory(this.getHistory);
-    }
     this.updateHistory(1, true);
   }
 
@@ -304,22 +324,33 @@ export default class WalletHistory extends Mixins(
       if (withReset) {
         this.reset();
       }
-      await this.getExternalHistory({
-        page,
-        address: this.account.address,
-        assetAddress: this.assetAddress,
-        pageAmount: this.pageAmount,
-        query: {
-          search: this.searchQuery,
-          operationNames: this.queryOperationNames,
-          assetsAddresses: this.queryAssetsAddresses,
-        },
-      });
+      if (this.isValidQuery) {
+        await this.getExternalHistory({
+          page,
+          address: this.account.address,
+          assetAddress: this.assetAddress,
+          pageAmount: this.pageAmount,
+          query: this.queryCriterias,
+        });
+      }
       this.getHistory();
     });
   }
 }
 </script>
+
+<style lang="scss">
+$history-item-horizontal-space: 10px;
+
+.history {
+  & > .history-items {
+    & > .el-loading-mask {
+      margin-left: -#{$history-item-horizontal-space * 2};
+      margin-right: -#{$history-item-horizontal-space * 2};
+    }
+  }
+}
+</style>
 
 <style scoped lang="scss">
 @import '../styles/icons';

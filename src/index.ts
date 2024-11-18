@@ -142,16 +142,12 @@ let walletCoreLoaded = false;
 const waitForCore = async ({
   withoutStore = false,
   permissions,
-  updateEthBridgeHistory,
 }: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> => {
   if (!walletCoreLoaded) {
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
     if (permissions) {
       store.commit.wallet.settings.setPermissions(permissions);
-    }
-    if (updateEthBridgeHistory) {
-      store.commit.wallet.transactions.setEthBridgeHistoryUpdateFn(updateEthBridgeHistory);
     }
 
     store.dispatch.wallet.account.getWhitelist();

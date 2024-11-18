@@ -295,9 +295,11 @@ export type HistoryElementExecution = {
 
 export type HistoryElementSwap = {
   baseAssetAmount: string;
+  baseAssetAmountUSD: string;
   baseAssetId: string;
   selectedMarket: string;
   targetAssetAmount: string;
+  targetAssetAmountUSD: string;
   targetAssetId: string;
 };
 
@@ -308,6 +310,7 @@ export type HistoryElementSwapTransfer = HistoryElementSwap & {
 export type SwapTransferReceiver = {
   accountId: string;
   amount: string;
+  amountUSD: string;
   assetId: string;
 };
 
@@ -329,13 +332,11 @@ export type HistoryElementSwapTransferBatch = {
   actualFee?: string;
   inputAmount?: string;
   comment?: string; // stringified JSON
-  // outdated
-  inputAssetId?: string;
-  transfers?: SwapTransferBatchTransferParam[];
 };
 
 export type HistoryElementTransfer = {
   amount: string;
+  amountUSD: string;
   assetId: string;
   from: string;
   to: string;
@@ -346,6 +347,7 @@ export type HistoryElementTransfer = {
 
 export type HistoryElementVestedTransfer = {
   amount: string;
+  amountUSD: string;
   assetId: string;
   from: string;
   to: string;
@@ -355,8 +357,10 @@ export type HistoryElementVestedTransfer = {
 
 export type HistoryElementLiquidityOperation = {
   baseAssetAmount: string;
+  baseAssetAmountUSD: string;
   baseAssetId: string;
   targetAssetAmount: string;
+  targetAssetAmountUSD: string;
   targetAssetId: string;
   type: string;
 };
@@ -367,6 +371,7 @@ export type HistoryElementAssetRegistration = {
 
 export type HistoryElementAssetBurn = {
   amount: string;
+  amountUSD: string;
   assetId: string;
 };
 
@@ -376,6 +381,7 @@ export type HistoryElementAssetMint = HistoryElementAssetBurn & {
 
 export type HistoryElementDemeterFarming = {
   amount: string;
+  amountUSD: string;
   assetId: string;
   isFarm: boolean;
   rewardAssetId?: string;
@@ -385,6 +391,7 @@ export type HistoryElementDemeterFarming = {
 export type ClaimedRewardItem = {
   assetId: string;
   amount: string;
+  amountUSD: string;
 };
 
 export type HistoryElementRewardsClaim = Nullable<ClaimedRewardItem[]>;
@@ -418,6 +425,7 @@ export type HistoryElementReferrerReserve = {
   from: string;
   to: string;
   amount: string;
+  amountUSD: string;
 };
 
 export type HistoryElementPlaceLimitOrder = {
@@ -427,6 +435,7 @@ export type HistoryElementPlaceLimitOrder = {
   orderId: number | undefined;
   price: string;
   amount: string;
+  amountUSD: string;
   side: PriceVariant;
   lifetime: number | undefined;
 };
@@ -440,6 +449,7 @@ export type HistoryElementCancelLimitOrder = Array<{
 
 export type HistoryElementStakingBondExtra = {
   amount: string;
+  amountUSD: string;
 };
 
 export type HistoryElementStakingBond = HistoryElementStakingBondExtra & {
@@ -452,10 +462,12 @@ export type HistoryElementStakingBond = HistoryElementStakingBondExtra & {
 
 export type HistoryElementStakingRebond = {
   value: string;
+  amountUSD: string;
 };
 
 export type HistoryElementStakingUnbond = {
   amount: string;
+  amountUSD: string;
 };
 
 export type HistoryElementStakingNominate = {
@@ -464,6 +476,7 @@ export type HistoryElementStakingNominate = {
 
 export type HistoryElementStakingWithdrawUnbonded = {
   amount: string;
+  amountUSD: string;
   numSlashingSpans: number;
 };
 
@@ -488,20 +501,24 @@ export type HistoryElementVaultCreate = {
   id?: string; // exists on success
   collateralAssetId: string;
   collateralAmount: string;
+  collateralAmountUSD: string;
   debtAssetId: string;
   debtAmount: string;
+  debtAmountUSD: string;
 };
 
 export type HistoryElementVaultDepositCollateral = {
   id: string;
   collateralAssetId: string;
   collateralAmount: string;
+  collateralAmountUSD: string;
 };
 
 export type HistoryElementVaultDebt = {
   id: string;
   debtAssetId: string;
   debtAmount: string;
+  debtAmountUSD: string;
 };
 
 export type HistoryElementVaultClose = Required<HistoryElementVaultCreate>;

@@ -9,7 +9,13 @@
   >
     <div class="wallet-send">
       <template v-if="step === 1">
-        <address-book-input class="wallet-send-address" exclude-connected v-model="address" :is-valid="validAddress" />
+        <address-book-input
+          class="wallet-send-address"
+          exclude-connected
+          v-model="address"
+          :is-valid="validAddress"
+          @update:name="updateName"
+        />
 
         <template v-if="validAddress && isNotSoraAddress">
           <p class="wallet-send-address-warning">{{ t('walletSend.addressWarning') }}</p>
@@ -69,35 +75,37 @@
             <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
           </div>
         </s-float-input>
-        <div class="wallet-send__switch-btn">
-          <s-switch v-model="withVesting" @change="fetchNetworkFee" />
-          <span>{{ t('walletSend.enableVesting') }}</span>
-        </div>
-        <template v-if="withVesting">
-          <s-select
-            class="wallet-send__vesting-period"
-            v-model="selectedVestingPeriod"
-            :placeholder="t('walletSend.unlockFrequency')"
-          >
-            <s-option
-              v-for="period in vestingPeriodsInDays"
-              :key="period"
-              :label="formatDuration(period)"
-              :value="period"
-            />
-          </s-select>
-          <s-float-input
-            class="wallet-send__vesting-input"
-            has-locale-string
-            v-model="vestingPercentage"
-            :placeholder="t('walletSend.vestingPercentage')"
-            :decimals="2"
-            :delimiters="delimiters"
-            :max="100"
-            @input="fetchNetworkFeeDebounced"
-          >
-            <span slot="right">%</span>
-          </s-float-input>
+        <template v-if="!isXorAccountAsset">
+          <div class="wallet-send__switch-btn">
+            <s-switch v-model="withVesting" @change="fetchNetworkFee" />
+            <span>{{ t('walletSend.enableVesting') }}</span>
+          </div>
+          <template v-if="withVesting">
+            <s-select
+              class="wallet-send__vesting-period"
+              v-model="selectedVestingPeriod"
+              :placeholder="t('walletSend.unlockFrequency')"
+            >
+              <s-option
+                v-for="period in vestingPeriodsInDays"
+                :key="period"
+                :label="formatDuration(period)"
+                :value="period"
+              />
+            </s-select>
+            <s-float-input
+              class="wallet-send__vesting-input"
+              has-locale-string
+              v-model="vestingPercentage"
+              :placeholder="t('walletSend.vestingPercentage')"
+              :decimals="2"
+              :delimiters="delimiters"
+              :max="100"
+              @input="fetchNetworkFeeDebounced"
+            >
+              <span slot="right">%</span>
+            </s-float-input>
+          </template>
         </template>
         <s-button
           class="wallet-send-action s-typography-button--large"
@@ -125,9 +133,9 @@
           </div>
 
           <div class="confirm-address">
-            <span>{{ account.address }}</span>
+            <wallet-account class="confirm-address-card" with-identity />
             <s-icon name="arrows-arrow-bottom-24" />
-            <span>{{ formattedSoraAddress }}</span>
+            <wallet-account class="confirm-address-card" :polkadot-account="recipient" with-identity />
           </div>
 
           <template v-if="withVesting">
@@ -167,6 +175,7 @@ import { state, mutation, action } from '../store/decorators';
 import { validateAddress, formatAddress, formatAccountAddress, delay } from '../util';
 
 import AccountConfirmationOption from './Account/Settings/ConfirmationOption.vue';
+import WalletAccount from './Account/WalletAccount.vue';
 import AddressBookInput from './AddressBook/Input.vue';
 import FormattedAmount from './FormattedAmount.vue';
 import FormattedAmountWithFiatValue from './FormattedAmountWithFiatValue.vue';
@@ -191,6 +200,7 @@ const MS_IN_DAY = 24 * 60 * 60_000;
 @Component({
   components: {
     WalletBase,
+    WalletAccount,
     FormattedAmount,
     FormattedAmountWithFiatValue,
     NetworkFeeWarning,
@@ -226,6 +236,7 @@ export default class WalletSend extends Mixins(
 
   step = 1;
   address = '';
+  name = '';
   amount = '';
   showAdditionalInfo = true;
   withVesting = false;
@@ -234,6 +245,14 @@ export default class WalletSend extends Mixins(
   private fee: FPNumber = this.Zero;
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
+
+  updateName(name: string): void {
+    this.name = name;
+  }
+
+  get recipient() {
+    return { address: this.address, name: this.name };
+  }
 
   created(): void {
     if (!this.currentRouteParams.asset) {
@@ -751,12 +770,16 @@ $telegram-web-app-width: 500px;
     &-address {
       display: flex;
       flex-flow: column nowrap;
-      align-items: flex-start;
+      align-items: center;
       gap: var(--s-basic-spacing);
 
       font-size: var(--s-font-size-mini);
       font-weight: 600;
       overflow-wrap: break-word;
+
+      &-card {
+        width: 100%;
+      }
 
       span {
         @media screen and (max-width: $telegram-web-app-width) {
