@@ -8,6 +8,7 @@ import { getCurrentIndexer } from '../../services/indexer';
 import { rootActionContext } from '../../store';
 
 import { transactionsActionContext } from './../transactions';
+import { TimerId } from './types';
 
 import type { HistoryElement } from '../../services/indexer/types';
 import type { ExternalHistoryParams } from '../../types/history';
@@ -160,6 +161,58 @@ const actions = defineActions({
 
     commit.setActiveTxsSubscription(updateActiveTxsId);
   },
+
+  // transactions/actions.ts
+  async trackPendingMstTxs(context): Promise<void> {
+    console.info('we are in trackPendingMstTxs');
+    const { commit } = transactionsActionContext(context);
+    const { rootGetters } = rootActionContext(context);
+    const { account } = rootGetters.wallet.account;
+
+    commit.resetPendingMstTxsSubscription();
+
+    if (!api.mst.isMstAddressExist) {
+      return;
+    }
+
+    try {
+      const mstAddress = api.mst.getMstAddress();
+      await api.mst.startPendingTxsSubscription(mstAddress);
+      console.info('we are in try');
+      const subscription = api.mst.pendingTxsUpdated.subscribe((pendingTxs) => {
+        console.info('pending trxs are', pendingTxs);
+        if (pendingTxs && pendingTxs.length > 0) {
+          const userAddress = account.address;
+
+          // Filter transactions where user hasn't approved yet
+          const pendingApprovalTxs = pendingTxs.filter((tx) => {
+            const multisig = (tx as { multisig: MultisigInfo }).multisig; // Explicit cast
+            return multisig && !multisig.walletsApproved.includes(userAddress);
+          });
+
+          commit.setPendingMstTransactions(pendingApprovalTxs);
+        } else {
+          commit.setPendingMstTransactions([]);
+        }
+
+        commit.getHistory();
+      });
+
+      commit.setPendingMstTxsSubscription(subscription);
+    } catch (error) {
+      console.error('Error starting MST pending transactions subscription:', error);
+    }
+  },
+
+  resetPendingMstTxsSubscription(context): void {
+    const { state, commit } = transactionsActionContext(context);
+    if (state.pendingMstTxsSubscription) {
+      state.pendingMstTxsSubscription.unsubscribe();
+      commit.setPendingMstTxsSubscription(null);
+    }
+    api.mst.stopPendingTxsSubscription();
+  },
+
   /** It's used **only** for subscriptions module */
   async getAccountHistory(context): Promise<void> {
     const { commit } = transactionsActionContext(context);

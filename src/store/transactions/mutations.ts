@@ -1,9 +1,11 @@
 import { defineMutations } from 'direct-vuex';
+import { Subscription } from 'rxjs';
 
 import { api } from '../../api';
 import { settingsStorage } from '../../util/storage';
 
-import type { TransactionsState } from './types';
+import type { TimerId, TransactionsState } from './types';
+import type { EthBridgeUpdateHistory } from '../../consts';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/sdk';
 
 const mutations = defineMutations<TransactionsState>()({
@@ -33,8 +35,9 @@ const mutations = defineMutations<TransactionsState>()({
     state.selectedTxId = null;
   },
   async getHistory(state): Promise<void> {
-    const mstAddress = api.mst.getMstAddress();
-    await api.mst.subscribeOnPendingTxs(mstAddress);
+    // console.info('we are in getHistory');
+    // const mstAddress = api.mst.getMstAddress();
+    // await api.mst.subscribeOnPendingTxs(mstAddress);
     // show eth bridge history, if update fn exists
     const ethBridgeHistory = state.updateEthBridgeHistory ? api.bridgeProxy.eth.history : {};
     // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes
@@ -76,6 +79,15 @@ const mutations = defineMutations<TransactionsState>()({
   },
   setSignTxDialogVisibility(state, visibility: boolean): void {
     state.isSignTxDialogVisible = visibility;
+  },
+  setPendingMstTxsSubscription(state, subscription: Subscription | null) {
+    state.pendingMstTxsSubscription = subscription;
+  },
+  resetPendingMstTxsSubscription(state) {
+    state.pendingMstTxsSubscription = null;
+  },
+  setPendingMstTransactions(state, transactions: HistoryItem[]) {
+    state.pendingMstTransactions = transactions;
   },
 });
 

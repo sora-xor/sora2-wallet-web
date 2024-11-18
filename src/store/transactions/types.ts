@@ -1,4 +1,9 @@
+import { Subscription } from 'rxjs';
+
+import type { EthBridgeUpdateHistory } from '../../consts';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/sdk';
+
+export type TimerId = number | NodeJS.Timeout;
 
 export type TransactionsState = {
   history: AccountHistory<HistoryItem>;
@@ -32,4 +37,6 @@ export type TransactionsState = {
    * `true` when it's opened, `false` when it's closed
    */
   isSignTxDialogVisible: boolean;
+  pendingMstTxsSubscription: Nullable<Subscription>;
+  pendingMstTransactions: HistoryItem[];
 };
