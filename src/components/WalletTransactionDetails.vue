@@ -82,57 +82,6 @@
       />
     </div>
 
-    <div v-if="isEthBridgeOperation" class="transaction">
-      <div class="transaction-network">
-        {{
-          `${t('bridgeTransaction.steps.step', { step: '2' })} ${t('bridgeTransaction.networkTitle', {
-            network: getNetworkTitle(!isSoraTx),
-          })}`
-        }}
-      </div>
-      <transaction-hash-view v-if="transactionToHash.value" v-bind="transactionToHash" />
-      <div class="info-line-container">
-        <info-line :label="t('transaction.status')">
-          <span :class="statusClass2">{{ statusTitle2 }}</span>
-          <s-icon v-if="isTransactionToCompleted" name="basic-check-mark-24" size="16px" />
-        </info-line>
-        <info-line v-if="transactionToDate" :label="t('transaction.startTime')" :value="transactionToDate" />
-        <info-line
-          v-if="selectedTransaction.amount"
-          is-formatted
-          value-can-be-hidden
-          :label="t('transaction.amount')"
-          :value="transactionAmount"
-          :asset-symbol="transactionSymbol"
-        />
-        <info-line
-          is-formatted
-          value-can-be-hidden
-          :label="t('transaction.fee')"
-          :value="transactionToFee"
-          :asset-symbol="getNetworkFeeSymbol(!isSoraTx)"
-        />
-      </div>
-      <transaction-hash-view
-        v-if="transactionToAddress && !isAdarOperation"
-        translation="transaction.to"
-        :value="transactionToAddress"
-        :type="!isSoraTx ? HashType.Account : HashType.EthAccount"
-      />
-    </div>
-
-    <div class="amount-of-signatures" v-if="isMST && isTransactionNotSigned">
-      <div class="already-signed">
-        <p>SIGNATURES SUBMITTED</p>
-        <p>
-          <span>{{ alreadySigned }}</span> / {{ amountOfThreshold }}
-        </p>
-      </div>
-      <div class="progress-bar-container">
-        <div class="progress-bar" :style="{ width: progressPercentageMstSigned + '%' }"></div>
-      </div>
-    </div>
-
     <s-button
       v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
       class="sign-btn"
@@ -193,21 +142,6 @@ export default class WalletTransactionDetails extends Mixins(
   @getter.account.assetsDataTable private assetsDataTable!: AssetsTable;
   @getter.account.account private account!: PolkadotJsAccount;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem; // It shouldn't be empty
-
-  @mutation.transactions.removeHistoryByIds private removeHistoryByIds!: (ids: Array<string>) => void;
-
-  get isSoraTx(): boolean {
-    return !this.isEthBridgeOperation || this.selectedTransaction.type === Operation.EthBridgeOutgoing;
-  }
-
-  get statusClass(): Array<string> {
-    return this.getStatusClass(this.isFailedTransaction);
-  }
-
-  // ETH BRIDGE transaction
-  get statusClass2(): Array<string> {
-    return this.getStatusClass(this.isTransactionToFailed);
-  }
 
   get isCompleteTransaction(): boolean {
     return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(

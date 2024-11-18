@@ -1,6 +1,5 @@
 import { Subscription } from 'rxjs';
 
-import type { EthBridgeUpdateHistory } from '../../consts';
 import type { AccountHistory, HistoryItem } from '@sora-substrate/sdk';
 
 export type TimerId = number | NodeJS.Timeout;
