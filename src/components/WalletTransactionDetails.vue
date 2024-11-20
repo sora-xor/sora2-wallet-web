@@ -23,6 +23,12 @@
           <token-logo :token-symbol="transactionSymbol" size="small" />
         </info-line>
         <info-line
+          v-if="amountOfDaysBeforeExpirationTrx !== '0'"
+          value-can-be-hidden
+          label="time left"
+          :value="amountOfDaysBeforeExpirationTrx"
+        />
+        <info-line
           v-if="vestingPercentage"
           is-formatted
           value-can-be-hidden
@@ -90,6 +96,17 @@
     >
       Sign
     </s-button>
+    <div class="amount-of-signatures" v-if="isMST">
+      <div class="already-signed">
+        <p>SIGNATURES SUBMITTED</p>
+        <p>
+          <span>{{ alreadySigned }}</span> / {{ amountOfThreshold }}
+        </p>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" :style="{ width: progressPercentageMstSigned + '%' }"></div>
+      </div>
+    </div>
 
     <adar-tx-details v-if="isAdarOperation" :transaction="selectedTransaction" />
   </div>
@@ -103,7 +120,7 @@ import { Component, Mixins } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { HashType, SoraNetwork } from '../consts';
-import { getter, state, mutation } from '../store/decorators';
+import { getter, state } from '../store/decorators';
 
 import FormattedAmount from './FormattedAmount.vue';
 import InfoLine from './InfoLine.vue';
@@ -346,6 +363,17 @@ export default class WalletTransactionDetails extends Mixins(
 
   get progressPercentageMstSigned(): number {
     return (this.alreadySigned / this.amountOfThreshold) * 100;
+  }
+
+  get amountOfDaysBeforeExpirationTrx(): string {
+    if ('deadline' in this.selectedTransaction && this.selectedTransaction.deadline) {
+      console.info('we are in amountOfDaysBeforeExpirationTrx');
+      const secondsInADay = 86400;
+      const daysRemaining = Math.ceil(this.selectedTransaction.deadline.secondsRemaining / secondsInADay);
+      return `${daysRemaining}D`;
+    } else {
+      return '0';
+    }
   }
 
   public getNetworkTitle(isSoraTx = true): string {

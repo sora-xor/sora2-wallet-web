@@ -73,6 +73,8 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
        
       <!---->
        
+      <!---->
+       
       <info-line-stub
         assetsymbol="PSWAP"
         fiatvalue=""
@@ -106,6 +108,34 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
   </div>
    
   <!---->
+   
+  <div
+    class="amount-of-signatures"
+  >
+    <div
+      class="already-signed"
+    >
+      <p>
+        SIGNATURES SUBMITTED
+      </p>
+       
+      <p>
+        <span>
+          0
+        </span>
+         / 0
+      
+      </p>
+    </div>
+     
+    <div
+      class="progress-bar-container"
+    >
+      <div
+        class="progress-bar"
+      />
+    </div>
+  </div>
    
   <!---->
 </div>
@@ -175,6 +205,8 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
       <!---->
        
       <!---->
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -189,6 +221,34 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
   </div>
    
   <!---->
+   
+  <div
+    class="amount-of-signatures"
+  >
+    <div
+      class="already-signed"
+    >
+      <p>
+        SIGNATURES SUBMITTED
+      </p>
+       
+      <p>
+        <span>
+          0
+        </span>
+         / 0
+      
+      </p>
+    </div>
+     
+    <div
+      class="progress-bar-container"
+    >
+      <div
+        class="progress-bar"
+      />
+    </div>
+  </div>
    
   <!---->
 </div>
@@ -272,6 +332,8 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
       <!---->
        
       <!---->
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -286,6 +348,34 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
   </div>
    
   <!---->
+   
+  <div
+    class="amount-of-signatures"
+  >
+    <div
+      class="already-signed"
+    >
+      <p>
+        SIGNATURES SUBMITTED
+      </p>
+       
+      <p>
+        <span>
+          0
+        </span>
+         / 0
+      
+      </p>
+    </div>
+     
+    <div
+      class="progress-bar-container"
+    >
+      <div
+        class="progress-bar"
+      />
+    </div>
+  </div>
    
   <!---->
 </div>
@@ -374,6 +464,8 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
        
       <!---->
        
+      <!---->
+       
       <info-line-stub
         assetsymbol="PSWAP"
         fiatvalue=""
@@ -407,6 +499,34 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
   </div>
    
   <!---->
+   
+  <div
+    class="amount-of-signatures"
+  >
+    <div
+      class="already-signed"
+    >
+      <p>
+        SIGNATURES SUBMITTED
+      </p>
+       
+      <p>
+        <span>
+          0
+        </span>
+         / 0
+      
+      </p>
+    </div>
+     
+    <div
+      class="progress-bar-container"
+    >
+      <div
+        class="progress-bar"
+      />
+    </div>
+  </div>
    
   <!---->
 </div>
@@ -487,6 +607,8 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
        
       <!---->
        
+      <!---->
+       
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
@@ -519,6 +641,34 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
   </div>
    
   <!---->
+   
+  <div
+    class="amount-of-signatures"
+  >
+    <div
+      class="already-signed"
+    >
+      <p>
+        SIGNATURES SUBMITTED
+      </p>
+       
+      <p>
+        <span>
+          0
+        </span>
+         / 0
+      
+      </p>
+    </div>
+     
+    <div
+      class="progress-bar-container"
+    >
+      <div
+        class="progress-bar"
+      />
+    </div>
+  </div>
    
   <adar-tx-details-stub
     transaction="[object Object]"
@@ -604,6 +754,8 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
       <!---->
        
       <!---->
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -624,6 +776,34 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
   </div>
    
   <!---->
+   
+  <div
+    class="amount-of-signatures"
+  >
+    <div
+      class="already-signed"
+    >
+      <p>
+        SIGNATURES SUBMITTED
+      </p>
+       
+      <p>
+        <span>
+          0
+        </span>
+         / 0
+      
+      </p>
+    </div>
+     
+    <div
+      class="progress-bar-container"
+    >
+      <div
+        class="progress-bar"
+      />
+    </div>
+  </div>
    
   <!---->
 </div>

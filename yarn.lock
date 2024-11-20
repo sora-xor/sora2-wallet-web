@@ -2359,79 +2359,69 @@
   resolved "https://registry.yarnpkg.com/@soda/get-current-script/-/get-current-script-1.0.2.tgz#a53515db25d8038374381b73af20bb4f2e508d87"
   integrity sha512-T7VNNlYVM1SgQ+VsMYhnDkcGmWhQdL0bDyGm5TlQ3GBXnJscEClUUOKduWTmm2zCnvNLC1hc3JpuXjs/nFOc5w==
 
-"@sora-substrate/api@1.43.0-betaMST":
-  version "1.43.0-betaMST"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/api/-/api-1.43.0-betaMST.tgz#af33f92cb21513f93ebb28c1f38051974cb0c595"
-  integrity sha512-CwF2MW2q8jHJ+nwE7LUpEOR2gF2wq78tAcVQBCrje0TQ3pG7Bk9oJxlAtc7449fQmefsKJdNhVN23dZzHZyglg==
+"@sora-substrate/api@1.43.0-betaMST-1.0.2":
+  version "1.43.0-betaMST-1.0.2"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/api/-/api-1.43.0-betaMST-1.0.2.tgz#da7d3855a1dbe4ce2497c8720e3f797da0403032"
+  integrity sha512-8aE8Fhu43sHw4JxvoIbGp3QSoctPa1xfEeiFSLhgSCwWt0P/77aJtRa2lLx4kG5AnGFuPccnLrMLTbERWQ/DOQ==
   dependencies:
     "@open-web3/orml-api-derive" "1.1.4"
     "@polkadot/api" "9.14.2"
-    "@sora-substrate/types" "1.44.0"
-    "@sora-substrate/types" "1.43.0-betaMST"
+    "@sora-substrate/types" "1.43.0-betaMST-1.0.2"
 
-"@sora-substrate/connection@1.44.0":
-  version "1.44.0"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/connection/-/connection-1.44.0.tgz#3440f4a27e70c67bbc6a8b89f691633a4686023b"
-  integrity sha512-L+gRiI/CBDqFpx4/kORwKX1lh2+wBusP1/rU4ysll20SCoeW6WcsNToeI6GFi137xat61COtPAhimBiKNwosLg==
-"@sora-substrate/connection@1.43.0-betaMST":
-  version "1.43.0-betaMST"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/connection/-/connection-1.43.0-betaMST.tgz#4d6b106ac174a200768140a4bff64afb3892bf2e"
-  integrity sha512-V0hOfk7E78NcSSFYZrc2Z1VmmcscJGJmIo6fnYLxUs9HCHetSbwHgh789I1khCY047i9IE4vEecicrZGVC5QkA==
+"@sora-substrate/connection@1.43.0-betaMST-1.0.2":
+  version "1.43.0-betaMST-1.0.2"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/connection/-/connection-1.43.0-betaMST-1.0.2.tgz#fe4f6868ab90113394e05a6109ac32dff43fe7ab"
+  integrity sha512-f916sVPBF8bjAyxxDt1w4TTgNW3NK4KMIrRD1iN3ui0SmWTLeYsd6nYdJXtwiw3l+4onzs6czuRefRYVceZ/Xg==
 
-"@sora-substrate/liquidity-proxy@1.44.0":
-  version "1.44.0"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/liquidity-proxy/-/liquidity-proxy-1.44.0.tgz#40da60443cb053c0fa81d94de3e2da92e29f96a8"
-  integrity sha512-eVeG6Uj6H8InbI+iHX1TVSlzM53rG/dkiJZfuI0y8l26FdNz8RL+KqskUFkGdTcbSj1OoF5PyJTeV1WBfdrrDw==
-"@sora-substrate/liquidity-proxy@1.43.0-betaMST":
-  version "1.43.0-betaMST"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/liquidity-proxy/-/liquidity-proxy-1.43.0-betaMST.tgz#ca7a42413d4516509be3f4c6504bc4de1d0097f8"
-  integrity sha512-HTUTnTmJynASs29rRz256ly59xV8ScnEHJ+5iq2OC5qXQkHmZXJ+79D7y7ZBxA8pJkgTkCZ3DUu2xFFNDCDN5Q==
+"@sora-substrate/liquidity-proxy@1.43.0-betaMST-1.0.2":
+  version "1.43.0-betaMST-1.0.2"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/liquidity-proxy/-/liquidity-proxy-1.43.0-betaMST-1.0.2.tgz#8d9c8565c2745b23974277fe200ad541c91c710c"
+  integrity sha512-cntH3x9zYrUOrk4jWKulkNQ3KZ2Q09pU5H05iykKA4N4jwjN0HBap4Wwgi0npZwlfDKV8ZH7UwoX8RaDGk9RPA==
   dependencies:
-    "@sora-substrate/math" "1.44.0"
-    "@sora-substrate/math" "1.43.0-betaMST"
+    "@sora-substrate/math" "1.43.0-betaMST-1.0.2"
 
-"@sora-substrate/math@1.43.0-betaMST":
-  version "1.43.0-betaMST"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/math/-/math-1.43.0-betaMST.tgz#110cfbed7326e1251c5432a3d8463bacf3bb2533"
-  integrity sha512-QuSM4Ed0FCdUk0865CVsdizLgaImO7JcFr7OcExiFKaiyncIZiBqd2Ah9ldRRq7ki1yT8xLyMPJHReGjfmt/fA==
+"@sora-substrate/math@1.43.0-betaMST-1.0.2":
+  version "1.43.0-betaMST-1.0.2"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/math/-/math-1.43.0-betaMST-1.0.2.tgz#2f4d63077d260255638f5da6e41d3478341e8e5f"
+  integrity sha512-ekP7CNQPY9RJUA/M+G3iykCLA3a1C/bgCi7/fm2EB861XC5hRAARuqCmGxHlNuzFpr9F0cr/KNmoSz2L6w4zkg==
   dependencies:
     "@polkadot/types" "9.14.2"
     bignumber.js "^9.1.2"
     lodash "^4.17.21"
 
-"@sora-substrate/sdk@1.43.0-betaMST":
-  version "1.43.0-betaMST"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/sdk/-/sdk-1.43.0-betaMST.tgz#7c5b9d9fa3b53bbf921d36114d1e433e9883c783"
-  integrity sha512-CEW3MnWo0IcsZUbd7XB49PUe1+kY9fcFTF31UX1HiToaM3ARicW/SD060HvJ4kDzx0Y9Cr8tmwBdlUOTGuZV4w==
+"@sora-substrate/sdk@1.43.0-betaMST-1.0.2":
+  version "1.43.0-betaMST-1.0.2"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/sdk/-/sdk-1.43.0-betaMST-1.0.2.tgz#e0415547c4494376d062819d9a648999ee007dec"
+  integrity sha512-IdnqrURwlJEKG+LoYCyrVgv/NmmIxKuj5hgGanQW7/274ZNmno4PLjGV5uuKupVm3SrUf/jyVuWro2phvNJxxQ==
   dependencies:
     "@polkadot/ui-keyring" "2.12.1"
-    "@sora-substrate/api" "1.43.0-betaMST"
-    "@sora-substrate/connection" "1.43.0-betaMST"
-    "@sora-substrate/liquidity-proxy" "1.43.0-betaMST"
-    "@sora-substrate/math" "1.43.0-betaMST"
-    "@sora-substrate/types" "1.43.0-betaMST"
+    "@sora-substrate/api" "1.43.0-betaMST-1.0.2"
+    "@sora-substrate/connection" "1.43.0-betaMST-1.0.2"
+    "@sora-substrate/liquidity-proxy" "1.43.0-betaMST-1.0.2"
+    "@sora-substrate/math" "1.43.0-betaMST-1.0.2"
+    "@sora-substrate/types" "1.43.0-betaMST-1.0.2"
     axios "^1.7.7"
     crypto-js "^4.2.0"
     lodash "^4.17.21"
 
-"@sora-substrate/type-definitions@1.43.0-betaMST":
-  version "1.43.0-betaMST"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/type-definitions/-/type-definitions-1.43.0-betaMST.tgz#453437989b5da39a99cf01df6eb4c78320b519ba"
-  integrity sha512-CRCp73SB6rMF2r2T/za/iCIWwN23bBQlNv3269tl9dtyx2k9m1T7QKrGkfLUjzI0lpgvNT0k69ByBEWlCJ4tXQ==
+"@sora-substrate/type-definitions@1.43.0-betaMST-1.0.2":
+  version "1.43.0-betaMST-1.0.2"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/type-definitions/-/type-definitions-1.43.0-betaMST-1.0.2.tgz#abe32ea411419c6298f6592234283c4ee935dcf7"
+  integrity sha512-BOasyWcsbduKi8/jhkJtT3vhdxhcTBPoB/p7cKcVwVMVnvr0h9CUB8qCd+epmucjTjTFdEC5fXLJh26BfVIJOA==
   dependencies:
     "@open-web3/orml-type-definitions" "1.1.4"
 
-"@sora-substrate/types@1.43.0-betaMST":
-  version "1.43.0-betaMST"
-  resolved "https://registry.yarnpkg.com/@sora-substrate/types/-/types-1.43.0-betaMST.tgz#e3ef7848c9639728451f7549bd0dd2e2238abfaa"
-  integrity sha512-gIxChUdVxWzsq55eW7W516/bpRfnBbQpSALFQL463XaOyaRcEIp4n0nln7geISOqmYJgVdhtfxtEG5GLltcTag==
+"@sora-substrate/types@1.43.0-betaMST-1.0.2":
+  version "1.43.0-betaMST-1.0.2"
+  resolved "https://registry.yarnpkg.com/@sora-substrate/types/-/types-1.43.0-betaMST-1.0.2.tgz#4373d29ba79ecc2ae4e0f8f5b952e97b61d61926"
+  integrity sha512-xlI7JDlSP1i5w4P76Gy26s//ZA6yQNcsYkRhKVLOiq3pau33jRmfIPI9UaFlON0v4rTgXWaR4EImTEDGC6Be0w==
   dependencies:
     "@open-web3/api-mobx" "0.9.4-26"
     "@open-web3/orml-types" "1.1.4"
     "@polkadot/api" "9.14.2"
     "@polkadot/typegen" "9.14.2"
     "@polkadot/types" "9.14.2"
-    "@sora-substrate/type-definitions" "1.43.0-betaMST"
+    "@sora-substrate/type-definitions" "1.43.0-betaMST-1.0.2"
 
 "@soramitsu-ui/ui-vue2@^1.1.6":
   version "1.1.6"

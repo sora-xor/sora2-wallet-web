@@ -8,6 +8,8 @@ import type { MessageType } from 'element-ui/types/message';
 
 @Component
 export default class NotificationMixin extends Mixins(TranslationMixin) {
+  public activeNotification: Nullable<{ close: () => void }> = null;
+  public isNotificationVisible = false;
   defaultErrorMessage = 'unknownErrorText';
 
   ErrorMessages = [
@@ -50,6 +52,36 @@ export default class NotificationMixin extends Mixins(TranslationMixin) {
       type,
       title: '',
     });
+  }
+
+  showMSTNotification(message: string, type?: MessageType): void {
+    if (this.isNotificationVisible) {
+      console.info('Notification already visible');
+      return;
+    }
+
+    this.isNotificationVisible = true;
+
+    this.activeNotification = this.$notify({
+      message,
+      type,
+      title: '',
+      duration: 9999999999,
+      onClose: () => {
+        console.info('Notification closed');
+        this.activeNotification = null;
+        this.isNotificationVisible = false;
+      },
+    });
+  }
+
+  clearAppNotification(): void {
+    console.info('Clearing notification');
+    if (this.activeNotification) {
+      this.activeNotification.close();
+      this.activeNotification = null;
+      this.isNotificationVisible = false;
+    }
   }
 
   async withAppNotification(func: AsyncFnWithoutArgs, throwable = false): Promise<void> {

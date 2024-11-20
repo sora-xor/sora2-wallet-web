@@ -100,7 +100,12 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   }
 
   handleCreateClose(): void {
-    api.mst.createMST(this.mstData.addresses, this.mstData.threshold || 0, this.mstData.multisigName);
+    api.mst.createMST(
+      this.mstData.addresses,
+      this.mstData.threshold || 0,
+      this.mstData.multisigName,
+      this.mstData.duration
+    );
     this.setIsMstAddressExist(true);
     this.setIsMST(true);
     api.mst.switchAccount(true);

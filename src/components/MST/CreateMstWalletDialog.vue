@@ -43,6 +43,9 @@
       <s-input placeholder="1" type="number" v-model="amountOfThreshold" class="threshold-amount">
         <template v-slot:suffix> /{{ totalNumberOfAddresses }} </template>
       </s-input>
+      <s-tabs v-model="mstDurationTrxModel" type="rounded" class="multisig-duration-trx">
+        <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
+      </s-tabs>
       <s-button :type="isButtonEnabled() ? 'primary' : 'tertiary'" :disabled="!isButtonEnabled()" @click="handleClick">
         SET UP THE DETAILS
       </s-button>
@@ -62,6 +65,7 @@ import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { PolkadotJsAccount } from '@/types/common';
 
+import { mstTrxDeadline } from '../../consts/mst';
 import { getter } from '../../store/decorators';
 import { validateAddress } from '../../util';
 import AccountCard from '../Account/AccountCard.vue';
@@ -88,9 +92,10 @@ import type { MSTData } from '../../types/mst';
   },
 })
 export default class CreateMstWalletDialog extends Mixins(TranslationMixin, DialogMixin) {
+  readonly durations = Object.keys(mstTrxDeadline);
+  mstDurationTrxModel = '7D';
   showHeader = true;
   multisigName = '';
-  transactionLifetime: string | null = null;
   multisigAddresses: string[] = [''];
   amountOfThreshold: number | null = null;
   MSTDialogVisibility = false;
@@ -98,6 +103,7 @@ export default class CreateMstWalletDialog extends Mixins(TranslationMixin, Dial
     addresses: [],
     multisigName: '',
     threshold: 0,
+    duration: 0,
   };
 
   @Watch('amountOfThreshold')
@@ -184,11 +190,15 @@ export default class CreateMstWalletDialog extends Mixins(TranslationMixin, Dial
   }
 
   handleClick(): void {
+    const selectedDuration = mstTrxDeadline[this.mstDurationTrxModel] || 0;
+
     this.MSTData = {
       addresses: [this.accountAddress, ...this.multisigAddresses],
       multisigName: this.multisigName,
       threshold: this.amountOfThreshold,
+      duration: selectedDuration,
     };
+
     this.closeDialog();
     this.MSTDialogVisibility = true;
   }
@@ -239,6 +249,18 @@ export default class CreateMstWalletDialog extends Mixins(TranslationMixin, Dial
   .account-avatar,
   .account-credentials {
     display: none !important;
+  }
+}
+
+.multisig-duration-trx {
+  width: 100%;
+  .el-tabs__header,
+  .el-tabs__nav,
+  .el-tabs__item {
+    width: 100% !important;
+  }
+  .el-tabs__item {
+    text-align: center;
   }
 }
 </style>
@@ -312,9 +334,21 @@ export default class CreateMstWalletDialog extends Mixins(TranslationMixin, Dial
   .error-message {
     color: var(--s-color-status-error);
   }
+  // .multisig-duration-trx {
+  //   width: 100%;
+
+  //   .el-tabs__header {
+  //     width: 100%;
+  //   }
+  // }
+
   // .transaction-lifetime {
   //   gap: $inner-spacing-small;
   //   margin-bottom: $basic-spacing-big;
   // }
 }
+</style>
+
+<style lang="scss">
+$telegram-web-app-width: 500px;
 </style>
