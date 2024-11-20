@@ -96,7 +96,7 @@
     >
       Sign
     </s-button>
-    <div class="amount-of-signatures" v-if="isMST">
+    <div class="amount-of-signatures" v-if="isMST && amountOfThreshold != 0">
       <div class="already-signed">
         <p>SIGNATURES SUBMITTED</p>
         <p>

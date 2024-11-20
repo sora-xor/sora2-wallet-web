@@ -109,33 +109,7 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
    
   <!---->
    
-  <div
-    class="amount-of-signatures"
-  >
-    <div
-      class="already-signed"
-    >
-      <p>
-        SIGNATURES SUBMITTED
-      </p>
-       
-      <p>
-        <span>
-          0
-        </span>
-         / 0
-      
-      </p>
-    </div>
-     
-    <div
-      class="progress-bar-container"
-    >
-      <div
-        class="progress-bar"
-      />
-    </div>
-  </div>
+  <!---->
    
   <!---->
 </div>
@@ -222,33 +196,7 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
    
   <!---->
    
-  <div
-    class="amount-of-signatures"
-  >
-    <div
-      class="already-signed"
-    >
-      <p>
-        SIGNATURES SUBMITTED
-      </p>
-       
-      <p>
-        <span>
-          0
-        </span>
-         / 0
-      
-      </p>
-    </div>
-     
-    <div
-      class="progress-bar-container"
-    >
-      <div
-        class="progress-bar"
-      />
-    </div>
-  </div>
+  <!---->
    
   <!---->
 </div>
@@ -349,33 +297,7 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
    
   <!---->
    
-  <div
-    class="amount-of-signatures"
-  >
-    <div
-      class="already-signed"
-    >
-      <p>
-        SIGNATURES SUBMITTED
-      </p>
-       
-      <p>
-        <span>
-          0
-        </span>
-         / 0
-      
-      </p>
-    </div>
-     
-    <div
-      class="progress-bar-container"
-    >
-      <div
-        class="progress-bar"
-      />
-    </div>
-  </div>
+  <!---->
    
   <!---->
 </div>
@@ -500,33 +422,7 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
    
   <!---->
    
-  <div
-    class="amount-of-signatures"
-  >
-    <div
-      class="already-signed"
-    >
-      <p>
-        SIGNATURES SUBMITTED
-      </p>
-       
-      <p>
-        <span>
-          0
-        </span>
-         / 0
-      
-      </p>
-    </div>
-     
-    <div
-      class="progress-bar-container"
-    >
-      <div
-        class="progress-bar"
-      />
-    </div>
-  </div>
+  <!---->
    
   <!---->
 </div>
@@ -642,33 +538,7 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
    
   <!---->
    
-  <div
-    class="amount-of-signatures"
-  >
-    <div
-      class="already-signed"
-    >
-      <p>
-        SIGNATURES SUBMITTED
-      </p>
-       
-      <p>
-        <span>
-          0
-        </span>
-         / 0
-      
-      </p>
-    </div>
-     
-    <div
-      class="progress-bar-container"
-    >
-      <div
-        class="progress-bar"
-      />
-    </div>
-  </div>
+  <!---->
    
   <adar-tx-details-stub
     transaction="[object Object]"
@@ -777,33 +647,7 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
    
   <!---->
    
-  <div
-    class="amount-of-signatures"
-  >
-    <div
-      class="already-signed"
-    >
-      <p>
-        SIGNATURES SUBMITTED
-      </p>
-       
-      <p>
-        <span>
-          0
-        </span>
-         / 0
-      
-      </p>
-    </div>
-     
-    <div
-      class="progress-bar-container"
-    >
-      <div
-        class="progress-bar"
-      />
-    </div>
-  </div>
+  <!---->
    
   <!---->
 </div>
