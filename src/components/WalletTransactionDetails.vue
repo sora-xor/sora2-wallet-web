@@ -37,6 +37,12 @@
           :value="vestingPeriod"
         />
         <info-line
+          v-if="vestingStartDate"
+          value-can-be-hidden
+          :label="t('walletSend.startUnlockingDate')"
+          :value="vestingStartDate"
+        />
+        <info-line
           v-if="'price' in selectedTransaction && selectedTransaction.price"
           is-formatted
           value-can-be-hidden
@@ -92,7 +98,7 @@ import { KnownSymbols } from '@sora-substrate/sdk/build/assets/consts';
 import dayjs from 'dayjs';
 import { Component, Mixins } from 'vue-property-decorator';
 
-import { HashType, SoraNetwork } from '../consts';
+import { HashType } from '../consts';
 import { getter, state } from '../store/decorators';
 
 import FormattedAmount from './FormattedAmount.vue';
@@ -125,7 +131,7 @@ export default class WalletTransactionDetails extends Mixins(
 ) {
   readonly HashType = HashType;
 
-  @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
+  @state.settings.blockNumber private blockNumber!: number;
 
   @getter.account.assetsDataTable private assetsDataTable!: AssetsTable;
   @getter.account.account private account!: PolkadotJsAccount;
@@ -254,6 +260,13 @@ export default class WalletTransactionDetails extends Mixins(
     if (!('period' in this.selectedTransaction)) return null;
     const periodInMs = this.selectedTransaction.period * 6_000; // 6 seconds per block
     return dayjs.duration(periodInMs).locale(this.dayjsLocale).humanize();
+  }
+
+  get vestingStartDate(): Nullable<string> {
+    if (!('start' in this.selectedTransaction)) return null;
+    const diffBlock = this.selectedTransaction.start - this.blockNumber;
+    const diffMs = diffBlock * 6_000; // 6 seconds per block
+    return this.formatDate(Date.now() + diffMs, 'll LT');
   }
 
   get isReferrer(): boolean {
