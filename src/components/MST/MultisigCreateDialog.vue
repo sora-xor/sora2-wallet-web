@@ -86,6 +86,7 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   @mutation.account.syncWithStorage syncWithStorage!: () => void;
 
   @action.account.afterLogin afterLogin!: () => void;
+  @action.transactions.trackPendingMstTxs trackPendingMstTxs!: () => void;
 
   shouldShowCreateMSTWalletDialog = false;
 
@@ -111,6 +112,7 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
     api.mst.switchAccount(true);
     this.syncWithStorage();
     this.afterLogin();
+    this.trackPendingMstTxs();
     this.closeDialog();
     this.navigate({ name: RouteNames.Wallet });
     this.showAppNotification('Multisig wallet has been successfully set up!', 'success');
