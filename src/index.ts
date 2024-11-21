@@ -31,6 +31,7 @@ import NumberFormatterMixin from './components/mixins/NumberFormatterMixin';
 import PaginationSearchMixin from './components/mixins/PaginationSearchMixin';
 import TransactionMixin from './components/mixins/TransactionMixin';
 import TranslationMixin from './components/mixins/TranslationMixin';
+import NotificationMST from './components/MST/NotificationMST.vue';
 import NetworkFeeWarning from './components/NetworkFeeWarning.vue';
 import NftDetails from './components/NftDetails.vue';
 import NotificationEnablingPage from './components/NotificationEnablingPage.vue';
@@ -218,6 +219,7 @@ const components = {
   HistoryPagination,
   DialogBase,
   NotificationEnablingPage,
+  NotificationMST,
   SimpleNotification,
   ConnectionItems,
   SyntheticSwitcher,

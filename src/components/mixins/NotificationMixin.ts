@@ -54,27 +54,6 @@ export default class NotificationMixin extends Mixins(TranslationMixin) {
     });
   }
 
-  showMSTNotification(message: string, type?: MessageType): void {
-    if (this.isNotificationVisible) {
-      console.info('Notification already visible');
-      return;
-    }
-
-    this.isNotificationVisible = true;
-
-    this.activeNotification = this.$notify({
-      message,
-      type,
-      title: '',
-      duration: 9999999999,
-      onClose: () => {
-        console.info('Notification closed');
-        this.activeNotification = null;
-        this.isNotificationVisible = false;
-      },
-    });
-  }
-
   clearAppNotification(): void {
     console.info('Clearing notification');
     if (this.activeNotification) {
