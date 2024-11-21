@@ -56,7 +56,6 @@
     <account-settings-dialog :visible.sync="accountSettingsVisibility" />
     <mst-onboarding-dialog :visible.sync="mstOnboardingDialog" />
     <multisig-change-name-dialog :visible.sync="dialogMSTNameChange" />
-    <notification-m-s-t :visible.sync="showNotificationMST" />
 
     <template v-if="!isExternal">
       <account-rename-dialog
@@ -96,7 +95,6 @@ import OperationsMixin from './mixins/OperationsMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
 import MstOnboardingDialog from './MST/MstOnboardingDialog.vue';
 import MultisigChangeNameDialog from './MST/MultisigChangeNameDialog.vue';
-import NotificationMST from './MST/NotificationMST.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletBase from './WalletBase.vue';
@@ -121,7 +119,6 @@ import type { HistoryItem } from '@sora-substrate/sdk';
     AccountSettingsDialog,
     MstOnboardingDialog,
     MultisigChangeNameDialog,
-    NotificationMST,
   },
 })
 export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin, QrCodeParserMixin) {
@@ -150,15 +147,6 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   accountSettingsVisibility = false;
   mstOnboardingDialog = false;
   dialogMSTNameChange = false;
-  showNotificationMST = false;
-
-  @Watch('pendingMstTransactions.length', { immediate: true })
-  onPendingMstTransactionsChange(newLength: number): void {
-    console.info('Pending MST transactions length:', newLength);
-    if (newLength > 0) {
-      this.showNotificationMST = true;
-    }
-  }
 
   get headerTitle(): string {
     if (!this.selectedTransaction) return this.t('account.accountTitle');
