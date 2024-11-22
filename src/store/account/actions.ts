@@ -66,7 +66,9 @@ function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): v
         getFiatPriceUpdatesUsingIndexer(context);
       }
     },
-    () => dispatch.useCeresApiForFiatValues(true)
+    // [CERES] do not switch automatically
+    // () => dispatch.useCeresApiForFiatValues(true)
+    () => {}
   );
 
   commit.setFiatPriceSubscription(subscription);
