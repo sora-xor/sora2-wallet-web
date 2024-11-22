@@ -10,7 +10,9 @@ import type { AppWallet } from '../../consts';
 
 export function initialState(): AccountState {
   const addressBook = settingsStorage.get('book');
-  const ceresFiatValues = settingsStorage.get('ceresFiatValues');
+  // [CERES] is off by default
+  // const ceresFiatValues = settingsStorage.get('ceresFiatValues');
+  // const ceresFiatValuesUsage = ceresFiatValues ? JSON.parse(ceresFiatValues) : false;
   const book = addressBook && JSON.parse(addressBook);
   const isExternal = storage.get('isExternal');
   const pinnedAssetsString = settingsStorage.get('pinnedAssets');
@@ -37,7 +39,7 @@ export function initialState(): AccountState {
     /** fiat prices & subscription */
     fiatPriceObject: {},
     fiatPriceSubscription: null,
-    ceresFiatValuesUsage: ceresFiatValues ? JSON.parse(ceresFiatValues) : false,
+    ceresFiatValuesUsage: false,
     /** extension management */
     availableWallets: [],
     /** desktop key management */
