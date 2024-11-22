@@ -230,6 +230,7 @@ export default {
     enableVesting: 'Enable token vesting',
     unlockFrequency: 'Unlock frequency',
     vestingPercentage: 'Vesting percentage',
+    startUnlockingDate: 'Start unlocking date',
     enterVestingPercentage: 'Enter vesting percentage',
     badAddress: 'Incorrect address',
     enterAmount: 'Enter amount',
