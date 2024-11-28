@@ -389,14 +389,6 @@ export default class WalletTransactionDetails extends Mixins(
     }
   }
 
-  public getNetworkTitle(isSoraTx = true): string {
-    if (isSoraTx) {
-      return this.TranslationConsts.soraNetwork[this.soraNetwork];
-    }
-
-    return this.TranslationConsts.Ethereum;
-  }
-
   public getNetworkFeeSymbol(isSoraTx = true): string {
     return isSoraTx ? KnownSymbols.XOR : KnownSymbols.ETH;
   }
