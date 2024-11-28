@@ -183,6 +183,8 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
       <!---->
        
       <!---->
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -268,6 +270,8 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
           tokensymbol="XOR"
         />
       </info-line-stub>
+       
+      <!---->
        
       <!---->
        
@@ -509,6 +513,8 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
        
       <!---->
        
+      <!---->
+       
       <info-line-stub
         assetsymbol=""
         fiatvalue=""
@@ -614,6 +620,8 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
           tokensymbol="XOR"
         />
       </info-line-stub>
+       
+      <!---->
        
       <!---->
        
