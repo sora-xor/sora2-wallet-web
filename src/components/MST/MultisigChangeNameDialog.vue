@@ -11,7 +11,7 @@
       </s-card>
       <s-input v-model="multisigNewName" placeholder="Multisig account name" />
       <s-button :disabled="isNoNameOrTheSame" type="primary" @click="updateName">save changes</s-button>
-      <s-button type="tertiary" @click="forgetMultisig">forget Multisig account</s-button>
+      <s-button type="secondary" @click="forgetMultisig">forget Multisig account</s-button>
     </div>
     <mst-forget-dialog :visible.sync="dialogMSTNameChange" />
   </dialog-base>
@@ -120,6 +120,7 @@ export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, N
   }
   .el-button {
     width: 100%;
+    font-size: 24px;
   }
   .el-button:first-of-type {
     margin-top: 24px;

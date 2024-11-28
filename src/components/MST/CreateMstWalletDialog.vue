@@ -1,7 +1,7 @@
 <template>
   <dialog-base
     show-back
-    title="Multisig Wallet"
+    title="Multisig Account"
     :show-header="showHeader"
     @back="handleBack"
     @close="handleClose"
@@ -14,7 +14,7 @@
       <account-card class="multisig-user-address">
         <div class="address-card">
           <p>Your address</p>
-          <formatted-address :value="accountAddress" :symbols="24" />
+          <formatted-address :value="accountAddress" :symbols="24" :offset="10" />
         </div>
       </account-card>
       <s-scrollbar class="multisig-scrollbar">
@@ -25,7 +25,10 @@
               v-model="multisigAddresses[index]"
               :is-valid="validAddress(address)"
               prop-placeholder="Enter the multisig address"
+              :on-remove="() => removeAddress(index)"
+              :can-remove="multisigAddresses.length > 1"
             />
+
             <p v-if="isDuplicateAddress(index)" class="error-message">This address has already been entered.</p>
             <p v-if="!validAddress(multisigAddresses[index]) && multisigAddresses[index] != ''" class="error-message">
               The address is not in correct format
@@ -176,6 +179,13 @@ export default class CreateMstWalletDialog extends Mixins(TranslationMixin, Dial
     return validateAddress(address);
   }
 
+  removeAddress(index: number): void {
+    if (this.multisigAddresses.length <= 1) {
+      return;
+    }
+    this.multisigAddresses.splice(index, 1);
+  }
+
   handleClose(): void {
     this.$emit('closeMstCreate');
   }
@@ -240,7 +250,7 @@ export default class CreateMstWalletDialog extends Mixins(TranslationMixin, Dial
 
 .multisig-scrollbar {
   @include scrollbar($basic-spacing-big);
-  height: 135px;
+  height: 150px;
   .el-scrollbar__wrap {
     overflow-x: unset;
   }
@@ -273,6 +283,7 @@ export default class CreateMstWalletDialog extends Mixins(TranslationMixin, Dial
   .multisig-title-data {
     font-weight: 800;
     color: var(--s-color-base-content-secondary);
+    margin-bottom: 8px;
   }
   .multisig-tooltip {
     &__icon {
@@ -334,18 +345,6 @@ export default class CreateMstWalletDialog extends Mixins(TranslationMixin, Dial
   .error-message {
     color: var(--s-color-status-error);
   }
-  // .multisig-duration-trx {
-  //   width: 100%;
-
-  //   .el-tabs__header {
-  //     width: 100%;
-  //   }
-  // }
-
-  // .transaction-lifetime {
-  //   gap: $inner-spacing-small;
-  //   margin-bottom: $basic-spacing-big;
-  // }
 }
 </style>
 

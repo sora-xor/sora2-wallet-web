@@ -23,12 +23,6 @@
           <token-logo :token-symbol="transactionSymbol" size="small" />
         </info-line>
         <info-line
-          v-if="amountOfDaysBeforeExpirationTrx !== '0'"
-          value-can-be-hidden
-          label="time left"
-          :value="amountOfDaysBeforeExpirationTrx"
-        />
-        <info-line
           v-if="vestingPercentage"
           is-formatted
           value-can-be-hidden
@@ -66,6 +60,12 @@
         >
           <token-logo :token-symbol="transactionSymbol2" size="small" />
         </info-line>
+        <info-line
+          v-if="amountOfDaysBeforeExpirationTrx !== '0'"
+          value-can-be-hidden
+          label="time left"
+          :value="amountOfDaysBeforeExpirationTrx"
+        />
         <info-line v-if="transactionFee" :label="t('transaction.fee')">
           {{ transactionFee }}
           <token-logo :token-symbol="networkFeeSymbol" size="small" />

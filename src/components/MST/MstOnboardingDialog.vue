@@ -14,9 +14,9 @@
           <img :src="sectionsAbout[2].image" :alt="sectionsAbout[2].alt" />
           <div>
             <p>{{ sectionsAbout[2].text }}</p>
-            <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" class="learn-more">
+            <!-- <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" class="learn-more">
               Learn more
-            </a>
+            </a> -->
           </div>
         </div>
       </s-card>
@@ -27,7 +27,7 @@
           <div>
             <img :src="section.image" :alt="section.alt" />
             <p>{{ section.text }}</p>
-            <a
+            <!-- <a
               v-if="index === sectionHowTo.length - 1"
               href="https://www.google.com"
               target="_blank"
@@ -35,7 +35,7 @@
               class="learn-more"
             >
               Learn more
-            </a>
+            </a> -->
           </div>
         </s-card>
       </div>

@@ -402,6 +402,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
   }
 
   public async handleAccountSelect(account: PolkadotJsAccount, isConnected: boolean): Promise<void> {
+    this.switchFromMSTBeforeLogout();
     this.setIsMstAvailable(account.source === AppWallet.FearlessWallet);
     if (isConnected) {
       this.closeView();
@@ -422,7 +423,6 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
 
   public async handleWalletSelect(wallet: Wallet): Promise<void> {
     if (!wallet.installed) return;
-    this.switchFromMSTBeforeLogout();
     await this.withAppAlert(async () => {
       await this.selectWallet(wallet.extensionName as AppWallet);
       this.navigateToAccountList();

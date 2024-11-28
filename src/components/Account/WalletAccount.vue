@@ -72,7 +72,22 @@ export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin
   }
 
   get name(): string {
-    return this.account.name || DEFAULT_NAME;
+    try {
+      const mstAddress = api.mst.getMstAddress();
+      if (!mstAddress) {
+        return this.account.name || DEFAULT_NAME; // Fallback if no mstAddress is returned
+      }
+
+      const mstAccount = api.mst.getMstAccount(mstAddress);
+      if (mstAccount && mstAccount.meta && mstAccount.meta.name) {
+        return mstAccount.meta.name; // Return the multisig account name if available
+      }
+
+      return this.account.name || DEFAULT_NAME; // Fallback to account name or default name
+    } catch (error) {
+      console.error('Error fetching multisig account:', error);
+      return this.account.name || DEFAULT_NAME; // Fallback in case of error
+    }
   }
 
   get identity(): Nullable<AccountIdentity> {

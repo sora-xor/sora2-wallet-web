@@ -32,6 +32,17 @@
         ...$attrs,
       }"
     >
+      <template #left>
+        <s-icon
+          v-if="canRemove"
+          v-button
+          class="book-icon-unlink"
+          :class="{ disabled }"
+          name="el-icon-close"
+          size="20"
+          @click.native="removeInput"
+        />
+      </template>
       <template #right>
         <s-icon v-if="address" class="book-icon-unlink" name="el-icon-close" size="20" @click.native="resetAddress" />
         <s-tooltip :content="t('addressBook.selectContact')" border-radius="mini" placement="top" tabindex="-1">
@@ -104,6 +115,8 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly propPlaceholder!: string;
   @Prop({ default: false, type: Boolean }) readonly isValid!: boolean;
   @Prop({ default: false, type: Boolean }) readonly disabled!: boolean;
+  @Prop({ required: false, type: Function }) readonly onRemove!: () => void;
+  @Prop({ default: false, type: Boolean }) readonly canRemove!: boolean;
 
   @Watch('books')
   @Watch('isValid')
@@ -221,6 +234,12 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     if (this.accountsSubscription) {
       this.accountsSubscription();
       this.accountsSubscription = null;
+    }
+  }
+
+  removeInput(): void {
+    if (this.onRemove) {
+      this.onRemove();
     }
   }
 }
