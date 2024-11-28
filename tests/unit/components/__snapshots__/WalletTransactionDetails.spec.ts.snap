@@ -73,6 +73,8 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
        
       <!---->
        
+      <!---->
+       
       <info-line-stub
         assetsymbol="PSWAP"
         fiatvalue=""
@@ -377,6 +379,8 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
           tokensymbol="XOR"
         />
       </info-line-stub>
+       
+      <!---->
        
       <!---->
        

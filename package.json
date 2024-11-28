@@ -25,7 +25,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@polkadot/extension-inject": "^0.44.7",
+    "@polkadot/extension-inject": "^0.44.9",
     "@polkadot/vue-identicon": "2.12.1",
     "@sora-substrate/sdk": "1.43.0-betaMST-1.0.9",
     "@soramitsu-ui/ui-vue2": "^1.1.6",
@@ -38,7 +38,7 @@
     "core-js": "^3.37.1",
     "crypto-js": "^4.2.0",
     "crypto-random-string": "^5.0.0",
-    "dayjs": "^1.11.12",
+    "dayjs": "^1.11.13",
     "direct-vuex": "^0.12.1",
     "file-saver": "^2.0.5",
     "graphql": "^16.9.0",
@@ -71,7 +71,7 @@
     "@types/gapi.client.drive": "^3.0.15",
     "@types/google.accounts": "^0.0.14",
     "@types/jest": "^29.5.12",
-    "@types/lodash": "^4.17.7",
+    "@types/lodash": "^4.17.13",
     "@types/node": "^20.14.12",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",

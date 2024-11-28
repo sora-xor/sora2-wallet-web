@@ -61,4 +61,4 @@ export type VestedTransferFeeParams = {
   unlockPeriodInDays: UnlockPeriodDays;
 };
 
-export type VestedTransferParams = VestedTransferFeeParams & { to: string };
+export type VestedTransferParams = VestedTransferFeeParams & { to: string; start: number; current: number };

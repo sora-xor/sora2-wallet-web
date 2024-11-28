@@ -105,6 +105,21 @@
             >
               <span slot="right">%</span>
             </s-float-input>
+            <div class="wallet-send__vesting-start-container">
+              <span class="wallet-send__vesting-start-placeholder">{{ t('walletSend.startUnlockingDate') }}</span>
+              <s-date-picker
+                class="wallet-send__vesting-start"
+                popper-class="wallet-send__vesting-start-datepicker"
+                size="big"
+                border-radius="small"
+                value-format="timestamp"
+                type="date"
+                input-type="input"
+                :clearable="false"
+                :picker-options="{ disabledDate }"
+                v-model="vestingStart"
+              />
+            </div>
           </template>
         </template>
         <s-button
@@ -141,6 +156,7 @@
           <template v-if="withVesting">
             <info-line :label="t('walletSend.unlockFrequency')" :value="formatDuration(selectedVestingPeriod)" />
             <info-line asset-symbol="%" :label="t('walletSend.vestingPercentage')" :value="vestingPercentage" />
+            <info-line :label="t('walletSend.startUnlockingDate')" :value="formattedVestingStart" />
           </template>
 
           <account-confirmation-option with-hint />
@@ -219,6 +235,10 @@ export default class WalletSend extends Mixins(
 ) {
   readonly delimiters = FPNumber.DELIMITERS_CONFIG;
   readonly vestingPeriodsInDays: UnlockPeriodDays[] = [1, 7, 30, 60, 90];
+  readonly disabledDate = (date: Date) => {
+    const currentDate = new Date().setHours(0, 0, 0, 0);
+    return date.getTime() < currentDate;
+  };
 
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;
@@ -242,6 +262,7 @@ export default class WalletSend extends Mixins(
   withVesting = false;
   selectedVestingPeriod: UnlockPeriodDays = 1;
   vestingPercentage = '10';
+  vestingStart = Date.now();
   private fee: FPNumber = this.Zero;
   private assetBalance: Nullable<AccountBalance> = null;
   private assetBalanceSubscription: Nullable<Subscription> = null;
@@ -416,6 +437,10 @@ export default class WalletSend extends Mixins(
     return this.asset.address === XOR.address;
   }
 
+  get formattedVestingStart(): string {
+    return this.formatDate(this.vestingStart, 'll');
+  }
+
   formatDuration(days: UnlockPeriodDays): string {
     return dayjs
       .duration(days * MS_IN_DAY)
@@ -500,12 +525,20 @@ export default class WalletSend extends Mixins(
 
       const percent = +this.vestingPercentage;
       if (this.withVesting && percent > 0 && percent <= 100) {
+        const currentDate = new Date();
+        const hours = currentDate.getHours();
+        const minutes = currentDate.getMinutes();
+        const seconds = currentDate.getSeconds();
+        const milliseconds = currentDate.getMilliseconds();
+        const start = new Date(this.vestingStart).setHours(hours, minutes, seconds, milliseconds);
         await this.vestedTransfer({
           amount: this.amount,
           asset: this.asset,
           to: this.address,
           unlockPeriodInDays: this.selectedVestingPeriod,
           vestingPercent: percent,
+          start,
+          current: currentDate.getTime(),
         });
       } else {
         await this.transfer({ to: this.address, amount: this.amount });
@@ -542,10 +575,46 @@ export default class WalletSend extends Mixins(
     line-height: var(--s-line-height-small);
     font-weight: 800;
   }
-  &__vesting-period.s-select > .s-placeholder {
-    color: var(--s-color-base-content-secondary);
-    letter-spacing: var(--s-letter-spacing-small);
-    font-weight: 300;
+  &__vesting {
+    &-period.s-select > .s-placeholder {
+      color: var(--s-color-base-content-secondary);
+      letter-spacing: var(--s-letter-spacing-small);
+      font-weight: 300;
+    }
+    &-start {
+      &.s-date-picker.neumorphic.s-input-type .el-date-editor {
+        > .el-input__inner {
+          padding-top: 16px;
+          box-shadow: var(--s-shadow-element);
+        }
+        &:hover,
+        & {
+          .el-input__inner {
+            background-color: var(--s-color-base-background);
+            border-color: var(--s-color-base-background);
+          }
+        }
+      }
+      &-datepicker.el-picker-panel {
+        border-radius: var(--s-border-radius-small);
+        .popper__arrow {
+          display: none;
+        }
+        td.disabled .cell {
+          &,
+          &:hover {
+            color: var(--s-color-base-content-secondary);
+            background-color: var(--s-color-base-background);
+          }
+        }
+        .el-year-table,
+        .el-year-table td .cell {
+          td .cell {
+            border-radius: var(--s-border-radius-small);
+          }
+        }
+      }
+    }
   }
 }
 </style>
@@ -725,8 +794,25 @@ $telegram-web-app-width: 500px;
       margin-right: var(--s-basic-spacing);
     }
   }
-  &__vesting-input {
-    margin-top: var(--s-basic-spacing);
+  &__vesting {
+    &-input {
+      margin-top: var(--s-basic-spacing);
+    }
+    &-start {
+      &-container {
+        position: relative;
+        margin-top: var(--s-basic-spacing);
+      }
+      &-placeholder {
+        position: absolute;
+        z-index: 1;
+        padding: 8px 16px;
+        font-size: var(--s-font-size-mini);
+        color: var(--s-color-base-content-secondary);
+        letter-spacing: var(--s-letter-spacing-small);
+        font-weight: 300;
+      }
+    }
   }
   &-action {
     margin-top: #{$basic-spacing-medium};

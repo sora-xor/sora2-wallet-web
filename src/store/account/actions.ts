@@ -66,7 +66,9 @@ function subscribeOnFiatUsingCurrentIndexer(context: ActionContext<any, any>): v
         getFiatPriceUpdatesUsingIndexer(context);
       }
     },
-    () => dispatch.useCeresApiForFiatValues(true)
+    // [CERES] do not switch automatically
+    // () => dispatch.useCeresApiForFiatValues(true)
+    () => {}
   );
 
   commit.setFiatPriceSubscription(subscription);
@@ -368,7 +370,7 @@ const actions = defineActions({
   },
   async vestedTransfer(
     context,
-    { to, asset, amount, vestingPercent, unlockPeriodInDays }: VestedTransferParams
+    { to, asset, amount, vestingPercent, unlockPeriodInDays, start, current }: VestedTransferParams
   ): Promise<void> {
     const {
       rootState: {
@@ -377,7 +379,9 @@ const actions = defineActions({
         },
       },
     } = rootActionContext(context);
-    await api.assets.vestedTransfer(asset, to, amount, blockNumber, vestingPercent, unlockPeriodInDays);
+    const diff = Math.floor((start - current) / 6_000);
+    const startBlock = diff > 0 ? blockNumber + diff : blockNumber;
+    await api.assets.vestedTransfer(asset, to, amount, startBlock, vestingPercent, unlockPeriodInDays);
   },
   /** It's used **only** for subscriptions module */
   async resetAssetsSubscription(context): Promise<void> {

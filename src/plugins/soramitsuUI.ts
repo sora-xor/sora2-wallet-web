@@ -3,6 +3,7 @@
 
 import SButton from '@soramitsu-ui/ui-vue2/lib/components/Button/SButton';
 import SCard from '@soramitsu-ui/ui-vue2/lib/components/Card/SCard';
+import SDatePicker from '@soramitsu-ui/ui-vue2/lib/components/DatePicker/SDatePicker';
 import SDesignSystemProvider from '@soramitsu-ui/ui-vue2/lib/components/DesignSystem/SDesignSystemProvider';
 import SDialog from '@soramitsu-ui/ui-vue2/lib/components/Dialog';
 import SDivider from '@soramitsu-ui/ui-vue2/lib/components/Divider/SDivider';
@@ -40,6 +41,7 @@ export function install(vue: typeof Vue, store) {
   vue.directive(Directives.Button, Button);
   vue.use(SButton);
   vue.use(SCard);
+  vue.use(SDatePicker);
   vue.use(SDesignSystemProvider);
   vue.use(SDialog);
   vue.use(SDivider);
