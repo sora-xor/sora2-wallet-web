@@ -54,9 +54,6 @@ import { RouteNames } from '@/consts';
 
 import MSTFearless from '../../assets/img/MSTFearless.svg';
 import MSTIcon from '../../assets/img/MSTIcon.svg';
-import MSTKeys from '../../assets/img/MSTKeys.svg';
-import MSTSign from '../../assets/img/MSTSign.svg';
-import MSTWallet from '../../assets/img/MSTWallet.svg';
 import { state, mutation } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
@@ -81,26 +78,27 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
   readonly MSTIcon = MSTIcon;
-  readonly MSTKeys = MSTKeys;
-  readonly MSTSign = MSTSign;
-  readonly MSTWallet = MSTWallet;
+  readonly MSTKeys = require('../../assets/img/MSTKeys.png');
+  readonly MSTSign = require('../../assets/img/MSTSign.png');
+  readonly MSTWallet = require('../../assets/img/MSTWallet.png');
+
   readonly MSTFearless = MSTFearless;
 
   showCreateMSTWalletDialog = false;
 
   sectionsAbout = [
     {
-      image: MSTKeys,
+      image: this.MSTKeys,
       alt: 'mst keys',
       text: 'Multisig wallets require multiple signatures and keys.',
     },
     {
-      image: MSTSign,
+      image: this.MSTSign,
       alt: 'mst sign',
       text: 'Set the number of required signatures to complete transactions.',
     },
     {
-      image: MSTWallet,
+      image: this.MSTWallet,
       alt: 'mst wallet',
       text: 'Multiple signatures reduce the risk of key compromise. Funds remain safe even if one key is lost or stolen.',
     },
