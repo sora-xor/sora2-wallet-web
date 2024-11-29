@@ -78,9 +78,9 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
   readonly MSTIcon = MSTIcon;
-  readonly MSTKeys = require('@/assets/img/MSTKeys.png');
-  readonly MSTSign = require('@/assets/img/MSTSign.png');
-  readonly MSTWallet = require('@/assets/img/MSTWallet.png');
+  // readonly MSTKeys = require('@/assets/img/MSTKeys.png');
+  // readonly MSTSign = require('@/assets/img/MSTSign.png');
+  // readonly MSTWallet = require('@/assets/img/MSTWallet.png');
 
   readonly MSTFearless = MSTFearless;
 
@@ -88,17 +88,17 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
 
   sectionsAbout = [
     {
-      image: this.MSTKeys,
+      image: '/img/MSTKeys.png',
       alt: 'mst keys',
       text: 'Multisig wallets require multiple signatures and keys.',
     },
     {
-      image: this.MSTSign,
+      image: '/img/MSTSign.png',
       alt: 'mst sign',
       text: 'Set the number of required signatures to complete transactions.',
     },
     {
-      image: this.MSTWallet,
+      image: '/img/MSTWallet.png',
       alt: 'mst wallet',
       text: 'Multiple signatures reduce the risk of key compromise. Funds remain safe even if one key is lost or stolen.',
     },
