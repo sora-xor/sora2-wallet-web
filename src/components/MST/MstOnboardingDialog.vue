@@ -78,9 +78,9 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
   readonly MSTIcon = MSTIcon;
-  readonly MSTKeys = require('../../assets/img/MSTKeys.png');
-  readonly MSTSign = require('../../assets/img/MSTSign.png');
-  readonly MSTWallet = require('../../assets/img/MSTWallet.png');
+  readonly MSTKeys = require('@/assets/img/MSTKeys.png');
+  readonly MSTSign = require('@/assets/img/MSTSign.png');
+  readonly MSTWallet = require('@/assets/img/MSTWallet.png');
 
   readonly MSTFearless = MSTFearless;
 
