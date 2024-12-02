@@ -4,15 +4,14 @@
       <div class="about">
         <s-card v-for="(section, index) in displayedSectionsAbout" :key="index" class="section">
           <div>
-            <img v-if="index === 1" :src="require('@/assets/img/MSTSign.png')" :alt="section.alt" />
-            <img v-else :src="require('@/assets/img/MSTKeys.png')" :alt="section.alt" />
+            <img :src="section.image" :alt="section.alt" />
             <p>{{ section.text }}</p>
           </div>
         </s-card>
       </div>
       <s-card class="wallet-card">
         <div class="img-text">
-          <img :src="require(`@/assets/img/MSTWallet.png`)" :alt="sectionsAbout[2].alt" />
+          <img :src="sectionsAbout[2].image" :alt="sectionsAbout[2].alt" />
           <div>
             <p>{{ sectionsAbout[2].text }}</p>
             <!-- <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" class="learn-more">
@@ -55,6 +54,9 @@ import { RouteNames } from '@/consts';
 
 import MSTFearless from '../../assets/img/MSTFearless.svg';
 import MSTIcon from '../../assets/img/MSTIcon.svg';
+import MSTKeys from '../../assets/img/MSTKeys.svg';
+import MSTSign from '../../assets/img/MSTSign.svg';
+import MSTWallet from '../../assets/img/MSTWallet.svg';
 import { state, mutation } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
 import DialogMixin from '../mixins/DialogMixin';
@@ -79,20 +81,27 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
   @mutation.router.navigate private navigate!: (options: Route) => void;
 
   readonly MSTIcon = MSTIcon;
+  readonly MSTKeys = MSTKeys;
+  readonly MSTSign = MSTSign;
+  readonly MSTWallet = MSTWallet;
+
   readonly MSTFearless = MSTFearless;
 
   showCreateMSTWalletDialog = false;
 
   sectionsAbout = [
     {
+      image: MSTKeys,
       alt: 'mst keys',
       text: 'Multisig wallets require multiple signatures and keys.',
     },
     {
+      image: MSTSign,
       alt: 'mst sign',
       text: 'Set the number of required signatures to complete transactions.',
     },
     {
+      image: MSTWallet,
       alt: 'mst wallet',
       text: 'Multiple signatures reduce the risk of key compromise. Funds remain safe even if one key is lost or stolen.',
     },
