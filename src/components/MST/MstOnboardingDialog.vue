@@ -4,14 +4,14 @@
       <div class="about">
         <s-card v-for="(section, index) in displayedSectionsAbout" :key="index" class="section">
           <div>
-            <img :src="section.image" :alt="section.alt" />
+            <img :src="require(`@/assets/img/${section.image}.png`)" :alt="section.alt" />
             <p>{{ section.text }}</p>
           </div>
         </s-card>
       </div>
       <s-card class="wallet-card">
         <div class="img-text">
-          <img :src="sectionsAbout[2].image" :alt="sectionsAbout[2].alt" />
+          <img :src="require(`@/assets/img/${sectionsAbout[2].image}.png`)" :alt="sectionsAbout[2].alt" />
           <div>
             <p>{{ sectionsAbout[2].text }}</p>
             <!-- <a href="https://www.google.com" target="_blank" rel="noopener noreferrer" class="learn-more">
@@ -88,17 +88,17 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
 
   sectionsAbout = [
     {
-      image: '/img/MSTKeys.png',
+      image: 'MSTKeys',
       alt: 'mst keys',
       text: 'Multisig wallets require multiple signatures and keys.',
     },
     {
-      image: '/img/MSTSign.png',
+      image: 'MSTSign',
       alt: 'mst sign',
       text: 'Set the number of required signatures to complete transactions.',
     },
     {
-      image: '/img/MSTWallet.png',
+      image: 'MSTWallet',
       alt: 'mst wallet',
       text: 'Multiple signatures reduce the risk of key compromise. Funds remain safe even if one key is lost or stolen.',
     },
