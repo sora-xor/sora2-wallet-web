@@ -72,6 +72,14 @@
           label="time left"
           :value="amountOfDaysBeforeExpirationTrx"
         />
+        <info-line
+          class="xor-min-amount"
+          v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
+          label="Min amount of fee SIGNER need"
+        >
+          {{ minAmountOfXorForSign !== null ? minAmountOfXorForSign : 0 }} XOR
+          <token-logo :token-symbol="networkFeeSymbol" size="small" />
+        </info-line>
         <info-line v-if="transactionFee" :label="t('transaction.fee')">
           {{ transactionFee }}
           <token-logo :token-symbol="networkFeeSymbol" size="small" />
@@ -120,9 +128,9 @@
 
 <script lang="ts">
 import { TransactionStatus, Operation, FPNumber } from '@sora-substrate/sdk';
-import { KnownSymbols } from '@sora-substrate/sdk/build/assets/consts';
+import { KnownSymbols, XOR } from '@sora-substrate/sdk/build/assets/consts';
 import dayjs from 'dayjs';
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { HashType, SoraNetwork } from '../consts';
@@ -141,7 +149,6 @@ import WalletBase from './WalletBase.vue';
 
 import type { PolkadotJsAccount, AssetsTable } from '../types/common';
 import type { HistoryItem } from '@sora-substrate/sdk';
-
 @Component({
   components: {
     WalletBase,
@@ -165,6 +172,18 @@ export default class WalletTransactionDetails extends Mixins(
   @getter.account.assetsDataTable private assetsDataTable!: AssetsTable;
   @getter.account.account private account!: PolkadotJsAccount;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem; // It shouldn't be empty
+
+  minAmountOfXorForSign: number | null = null;
+
+  mounted() {
+    this.fetchMinAmountOfXor();
+  }
+
+  @Watch('selectedTransaction', { immediate: true, deep: true })
+  private async fetchMinAmountOfXorOnChange(): Promise<void> {
+    await this.$nextTick();
+    this.fetchMinAmountOfXor();
+  }
 
   get isCompleteTransaction(): boolean {
     return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(
@@ -389,6 +408,25 @@ export default class WalletTransactionDetails extends Mixins(
     }
   }
 
+  public async fetchMinAmountOfXor() {
+    if (this.isMST && this.isTransactionNotSigned && this.isNotTheAccountInitiatedTrx) {
+      try {
+        const callHash = this.selectedTransaction.id;
+        if (!callHash) {
+          throw new Error('Call hash not found in selected transaction');
+        }
+        const { finalProofSize } = await api.mst.calculateFinalProofSize(callHash, this.account.address);
+        const proofSizeNumber = finalProofSize.toNumber();
+        this.minAmountOfXorForSign = proofSizeNumber;
+      } catch (error) {
+        console.error('Failed to fetch minimum XOR amount for signing:', error);
+        this.minAmountOfXorForSign = null;
+      }
+    } else {
+      this.minAmountOfXorForSign = null;
+    }
+  }
+
   public getNetworkFeeSymbol(isSoraTx = true): string {
     return isSoraTx ? KnownSymbols.XOR : KnownSymbols.ETH;
   }
@@ -406,6 +444,10 @@ export default class WalletTransactionDetails extends Mixins(
       if (!multisigAccountAddress) {
         throw new Error('No multisigAccountAddress');
       }
+      console.info('we are in onSignButtonClick');
+      const { finalProofSize, details } = await api.mst.calculateFinalProofSize(callHash, this.account.address);
+      const proofSizeNumber = finalProofSize.toNumber(); // Converts BN to a regular number
+      console.info('proofSizeNumber', proofSizeNumber);
       await api.mst.approveMultisigExtrinsic(callHash, multisigAccountAddress);
       this.$emit('backToWallet');
       this.showAppNotification('Transaction has been signed!', 'success');
@@ -541,7 +583,7 @@ export default class WalletTransactionDetails extends Mixins(
   }
 }
 .sign-btn {
-  margin-top: 24px;
+  margin-top: 16px;
   width: 100%;
 }
 .amount-of-signatures {
@@ -571,5 +613,8 @@ export default class WalletTransactionDetails extends Mixins(
       border-radius: 4px;
     }
   }
+}
+.xor-min-amount {
+  margin-top: 8px;
 }
 </style>

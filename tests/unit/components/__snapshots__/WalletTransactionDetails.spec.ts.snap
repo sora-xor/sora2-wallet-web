@@ -96,6 +96,8 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
       <!---->
        
       <!---->
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -165,6 +167,8 @@ exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rend
         value="Nov 27, 2020 11:59:59 PM"
         valuetooltip=""
       />
+       
+      <!---->
        
       <!---->
        
@@ -270,6 +274,8 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
           tokensymbol="XOR"
         />
       </info-line-stub>
+       
+      <!---->
        
       <!---->
        
@@ -415,6 +421,8 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
       <!---->
        
       <!---->
+       
+      <!---->
     </div>
      
     <transaction-hash-view-stub
@@ -500,6 +508,8 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
           tokensymbol="XOR"
         />
       </info-line-stub>
+       
+      <!---->
        
       <!---->
        
@@ -620,6 +630,8 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
           tokensymbol="XOR"
         />
       </info-line-stub>
+       
+      <!---->
        
       <!---->
        

@@ -186,10 +186,10 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   }
 
   handleMST(): void {
-    if (this.isMSTAccount) {
+    if (this.isMSTAccount && this.isMSTAvailable) {
       // User is currently in MST account
       this.dialogMSTNameChange = true;
-    } else if (this.hasMSTAccount) {
+    } else if (this.hasMSTAccount && this.isMSTAvailable) {
       // User has an MST account but is not currently in it
       this.dialogMSTNameChange = true;
     } else {
