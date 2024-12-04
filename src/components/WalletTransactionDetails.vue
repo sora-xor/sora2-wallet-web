@@ -77,7 +77,7 @@
           v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
           label="Min amount of fee SIGNER need"
         >
-          {{ minAmountOfXorForSign !== null ? minAmountOfXorForSign : 0 }} XOR
+          {{ minAmountOfXorForSign !== null ? minAmountOfXorForSign : 'Loading...' }} XOR
           <token-logo :token-symbol="networkFeeSymbol" size="small" />
         </info-line>
         <info-line v-if="transactionFee" :label="t('transaction.fee')">
