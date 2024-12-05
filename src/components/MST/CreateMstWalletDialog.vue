@@ -1,7 +1,7 @@
 <template>
   <dialog-base
     show-back
-    title="Multisig Account"
+    :title="t('mst.multisigAccount')"
     :show-header="showHeader"
     @back="handleBack"
     @close="handleClose"
@@ -9,11 +9,11 @@
     append-to-body
   >
     <div class="multisig-wallet">
-      <s-input placeholder="Enter Multisig Wallet Name" :minlength="1" v-model="multisigName" />
-      <p class="multisig-title-data address">ADD MULTISIG ADDRESSES</p>
+      <s-input :placeholder="t('mst.enterName')" :minlength="1" v-model="multisigName" />
+      <p class="multisig-title-data address">{{ t('mst.addMST').toUpperCase() }}</p>
       <account-card class="multisig-user-address">
         <div class="address-card">
-          <p>Your address</p>
+          <p>{{ t('mst.addMST') }}</p>
           <formatted-address :value="accountAddress" :symbols="24" :offset="10" />
         </div>
       </account-card>
@@ -24,25 +24,25 @@
               exclude-connected
               v-model="multisigAddresses[index]"
               :is-valid="validAddress(address)"
-              prop-placeholder="Enter the multisig address"
+              :prop-placeholder="t('mst.enterAddress')"
               :on-remove="() => removeAddress(index)"
               :can-remove="multisigAddresses.length > 1"
             />
 
-            <p v-if="isDuplicateAddress(index)" class="error-message">This address has already been entered.</p>
+            <p v-if="isDuplicateAddress(index)" class="error-message">{{ t('mst.addressEntered') }}</p>
             <p v-if="!validAddress(multisigAddresses[index]) && multisigAddresses[index] != ''" class="error-message">
-              The address is not in correct format
+              {{ t('mst.incorrectFormatAddress') }}
             </p>
           </div>
         </div>
       </s-scrollbar>
       <div class="add-multisig-address">
-        <s-button type="secondary" tooltip="Add address" @click="addAddress">
+        <s-button type="secondary" :tooltip="t('mst.addAddr')" @click="addAddress">
           <s-icon name="plus-16" size="14" />
         </s-button>
-        <p>Add another address</p>
+        <p>{{ t('mst.addAddress') }}</p>
       </div>
-      <p class="multisig-title-data">SET A TRANSACTION APPROVAL THRESHOLD</p>
+      <p class="multisig-title-data">{{ t('mst.thresholdNumber').toUpperCase() }}</p>
       <s-input placeholder="1" type="number" v-model="amountOfThreshold" class="threshold-amount">
         <template v-slot:suffix> /{{ totalNumberOfAddresses }} </template>
       </s-input>
@@ -50,7 +50,7 @@
         <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
       </s-tabs>
       <s-button :type="isButtonEnabled() ? 'primary' : 'tertiary'" :disabled="!isButtonEnabled()" @click="handleClick">
-        SET UP THE DETAILS
+        {{ t('mst.setupDetails').toUpperCase() }}
       </s-button>
     </div>
     <multisig-create-dialog

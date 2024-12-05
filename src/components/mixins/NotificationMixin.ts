@@ -8,8 +8,6 @@ import type { MessageType } from 'element-ui/types/message';
 
 @Component
 export default class NotificationMixin extends Mixins(TranslationMixin) {
-  public activeNotification: Nullable<{ close: () => void }> = null;
-  public isNotificationVisible = false;
   defaultErrorMessage = 'unknownErrorText';
 
   ErrorMessages = [
@@ -52,15 +50,6 @@ export default class NotificationMixin extends Mixins(TranslationMixin) {
       type,
       title: '',
     });
-  }
-
-  clearAppNotification(): void {
-    console.info('Clearing notification');
-    if (this.activeNotification) {
-      this.activeNotification.close();
-      this.activeNotification = null;
-      this.isNotificationVisible = false;
-    }
   }
 
   async withAppNotification(func: AsyncFnWithoutArgs, throwable = false): Promise<void> {

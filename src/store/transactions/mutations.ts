@@ -34,8 +34,6 @@ const mutations = defineMutations<TransactionsState>()({
     state.selectedTxId = null;
   },
   async getHistory(state): Promise<void> {
-    // const mstAddress = api.mst.getMstAddress();
-    // await api.mst.subscribeOnPendingTxs(mstAddress);
     state.history = Object.freeze({ ...api.history });
   },
   setExternalHistory(state, history: AccountHistory<HistoryItem>): void {

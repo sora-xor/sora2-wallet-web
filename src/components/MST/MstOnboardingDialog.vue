@@ -1,5 +1,5 @@
 <template>
-  <dialog-base title="About" :visible.sync="isVisible" append-to-body>
+  <dialog-base :title="t('mst.about')" :visible.sync="isVisible" append-to-body>
     <div class="mst-info">
       <div class="about">
         <s-card v-for="(section, index) in displayedSectionsAbout" :key="index" class="section">
@@ -21,7 +21,7 @@
         </div>
       </s-card>
 
-      <h1>How To?</h1>
+      <h1>{{ t('mst.how') }}</h1>
       <div class="how-to">
         <s-card v-for="(section, index) in sectionHowTo" :key="index" class="section">
           <div>
@@ -40,7 +40,7 @@
         </s-card>
       </div>
       <s-button type="primary" @click="connectFearlessOrCreateMST">
-        {{ isMSTAvailable ? 'create multisig wallet' : 'connect via fearless' }}
+        {{ isMSTAvailable ? t('mst.createMst') : t('mst.connectFearless') }}
       </s-button>
     </div>
     <create-mst-wallet-dialog :visible.sync="showCreateMSTWalletDialog" @closeMstCreate="handleCloseDialog" />
@@ -93,17 +93,17 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
     {
       image: MSTKeys,
       alt: 'mst keys',
-      text: 'Multisig wallets require multiple signatures and keys.',
+      text: this.t('mst.mstKeys'),
     },
     {
       image: MSTSign,
       alt: 'mst sign',
-      text: 'Set the number of required signatures to complete transactions.',
+      text: this.t('mst.mstSign'),
     },
     {
       image: MSTWallet,
       alt: 'mst wallet',
-      text: 'Multiple signatures reduce the risk of key compromise. Funds remain safe even if one key is lost or stolen.',
+      text: this.t('mst.mstWallet'),
     },
   ];
 
@@ -111,12 +111,12 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
     {
       image: MSTFearless,
       alt: 'fearless wallet logo',
-      text: 'Install Fearless Wallet or connect your account',
+      text: this.t('mst.mstFearless'),
     },
     {
       image: MSTIcon,
       alt: 'mst icon',
-      text: 'Create a Multisig account.',
+      text: this.t('mst.mstIcon'),
     },
   ];
 
@@ -125,7 +125,6 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
   }
 
   handleCloseDialog() {
-    console.info('dialog was closed');
     this.closeDialog();
   }
 
@@ -139,12 +138,6 @@ export default class MstOnboardingDialog extends Mixins(TranslationMixin, Notifi
   }
 }
 </script>
-
-<!-- <style lang="scss">
-.dialog-wrapper .el-dialog {
-  max-width: 575px !important;
-}
-</style> -->
 
 <style lang="scss" scoped>
 .mst-info {

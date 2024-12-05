@@ -75,9 +75,9 @@
         <info-line
           class="xor-min-amount"
           v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
-          label="Min amount of fee SIGNER need"
+          :label="t('mst.minFee')"
         >
-          {{ minAmountOfXorForSign !== null ? minAmountOfXorForSign : 'Loading...' }} XOR
+          {{ minAmountOfXorForSign !== null ? minAmountOfXorForSign : t('mst.loading') }} {{ xor }}
           <token-logo :token-symbol="networkFeeSymbol" size="small" />
         </info-line>
         <info-line v-if="transactionFee" :label="t('transaction.fee')">
@@ -108,11 +108,11 @@
       type="primary"
       @click="onSignButtonClick"
     >
-      Sign
+      {{ t('mst.sign') }}
     </s-button>
     <div class="amount-of-signatures" v-if="isMST && amountOfThreshold != 0">
       <div class="already-signed">
-        <p>SIGNATURES SUBMITTED</p>
+        <p>{{ t('mst.amountOfSignatures').toUpperCase() }}</p>
         <p>
           <span>{{ alreadySigned }}</span> / {{ amountOfThreshold }}
         </p>
@@ -133,7 +133,7 @@ import dayjs from 'dayjs';
 import { Component, Mixins, Watch } from 'vue-property-decorator';
 
 import { api } from '../api';
-import { HashType, SoraNetwork } from '../consts';
+import { HashType } from '../consts';
 import { getter, state } from '../store/decorators';
 
 import FormattedAmount from './FormattedAmount.vue';
@@ -363,6 +363,10 @@ export default class WalletTransactionDetails extends Mixins(
     return api.mst.isMST();
   }
 
+  get xor(): string {
+    return XOR.symbol;
+  }
+
   get isTransactionNotSigned(): boolean {
     return this.selectedTransaction.status === TransactionStatus.Pending;
   }
@@ -399,7 +403,6 @@ export default class WalletTransactionDetails extends Mixins(
 
   get amountOfDaysBeforeExpirationTrx(): string {
     if ('deadline' in this.selectedTransaction && this.selectedTransaction.deadline) {
-      console.info('we are in amountOfDaysBeforeExpirationTrx');
       const secondsInADay = 86400;
       const daysRemaining = Math.ceil(this.selectedTransaction.deadline.secondsRemaining / secondsInADay);
       return `${daysRemaining}D`;

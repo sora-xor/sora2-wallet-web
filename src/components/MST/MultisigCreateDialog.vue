@@ -1,6 +1,6 @@
 <template>
   <dialog-base
-    title="Multisig address creation"
+    :title="t('mst.addrCreation')"
     :visible.sync="isVisible"
     append-to-body
     show-back
@@ -9,12 +9,12 @@
   >
     <div class="data-multisig">
       <div class="data">
-        <p>Name</p>
+        <p>{{ t('nameText') }}</p>
         <p>{{ mstData.multisigName }}</p>
       </div>
       <s-divider />
       <div class="data">
-        <p>Threshold</p>
+        <p>{{ t('mst.threshold') }}</p>
         <p>{{ threshold }}/{{ mstData.addresses.length }}</p>
       </div>
       <s-divider />
@@ -22,7 +22,7 @@
         <div class="data-multisig-scrollbar__info">
           <div class="address" v-for="(address, index) in mstData.addresses" :key="index + 1">
             <div class="data">
-              <p>Address {{ index + 1 }}</p>
+              <p>{{ t('addressText') }} {{ index + 1 }}</p>
               <formatted-address :value="address" :symbols="24" />
             </div>
             <s-divider v-if="index < mstData.addresses.length - 1" />
@@ -38,9 +38,8 @@
           </div>
         </s-card>
       </div>
-      <s-button type="primary" @click="handleCreateClose"> Continue </s-button>
+      <s-button type="primary" @click="handleCreateClose">{{ t('mst.continue') }}</s-button>
     </div>
-    <!-- <create-mst-wallet-dialog :visible.sync="shouldShowCreateMSTWalletDialog" /> -->
   </dialog-base>
 </template>
 
@@ -75,10 +74,7 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
   @Prop({ default: () => ({}), type: Object }) readonly mstData!: MSTData;
   @Prop({ default: 0, type: Number }) readonly threshold!: number;
 
-  cardMessages = [
-    'For your multisig to function properly, all listed addresses must create the multisig in the exact same way as you did.',
-    'Multisig wallet cannot possibly be changed in the future, only the name.',
-  ];
+  cardMessages = [this.t('mst.cardMessageFirst'), this.t('mst.cardMessageSecond')];
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
   @mutation.account.setIsMstAddressExist setIsMstAddressExist!: (isExist: boolean) => void;
@@ -115,7 +111,7 @@ export default class MultisigCreateDialog extends Mixins(TranslationMixin, Notif
     this.trackPendingMstTxs();
     this.closeDialog();
     this.navigate({ name: RouteNames.Wallet });
-    this.showAppNotification('Multisig wallet has been successfully set up!', 'success');
+    this.showAppNotification(this.t('mst.successMstSetUp'), 'success');
   }
 }
 </script>

@@ -1,14 +1,14 @@
 <template>
-  <dialog-base title="Forget Multisig account" :visible.sync="isVisible" append-to-body>
+  <dialog-base :title="t('mst.mstForgetBtn')" :visible.sync="isVisible" append-to-body>
     <div class="forget-multisig">
       <s-card class="warning-delete-card">
         <div class="notification">
-          <p>Your login details will be deleted. You will permanently lose access to your account.</p>
+          <p>{{ t('mst.forgetMst') }}</p>
           <s-icon class="notification-icon" name="notifications-alert-triangle-24" size="22px" />
         </div>
       </s-card>
-      <p>Are you sure you want to forget Multisig account?</p>
-      <s-button type="primary" @click="forgetMST">forget</s-button>
+      <p>{{ t('mst.sureForgetMst') }}</p>
+      <s-button type="primary" @click="forgetMST">{{ t('mst.forget') }}</s-button>
     </div>
   </dialog-base>
 </template>

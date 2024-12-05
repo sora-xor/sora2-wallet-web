@@ -1,17 +1,16 @@
 <template>
-  <dialog-base title="Multisig account settings" :visible.sync="isVisible" append-to-body>
+  <dialog-base :title="t('mst.settingsMst')" :visible.sync="isVisible" append-to-body>
     <div class="multisig-change-forget">
       <s-card v-bind="{ shadow: 'always', size: 'medium', borderRadius: 'small', ...$attrs }" class="switch-multisig">
         <div class="switcher">
-          <!-- TODO UPDATE LATER -->
           <s-switch v-model="isMSTLocal" @change="switchToFromMST" />
-          <p>Switch to Multisig account</p>
+          <p>{{ t('mst.switchMst') }}</p>
         </div>
-        <p>All activities and transactions will be carried out through the Multisig account.</p>
+        <p>{{ t('mst.mstSwitchWarning') }}</p>
       </s-card>
-      <s-input v-model="multisigNewName" placeholder="Multisig account name" />
-      <s-button :disabled="isNoNameOrTheSame" type="primary" @click="updateName">save changes</s-button>
-      <s-button type="secondary" @click="forgetMultisig">forget Multisig account</s-button>
+      <s-input v-model="multisigNewName" :placeholder="t('mst.accountNameMst')" />
+      <s-button :disabled="isNoNameOrTheSame" type="primary" @click="updateName">{{ t('mst.mstSave') }}</s-button>
+      <s-button type="secondary" @click="forgetMultisig">{{ t('mst.mstForgetBtn') }}</s-button>
     </div>
     <mst-forget-dialog :visible.sync="dialogMSTNameChange" />
   </dialog-base>
