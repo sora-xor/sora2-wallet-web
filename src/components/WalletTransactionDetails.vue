@@ -75,10 +75,9 @@
         <info-line
           class="xor-min-amount"
           v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
-          :label="t('mst.minFee')"
+          :label="t('mst.minFee') + ` (${getMainAccountName()})`"
         >
-          {{ minAmountOfXorForSign !== null ? minAmountOfXorForSign : t('mst.loading') }} {{ xor }}
-          <token-logo :token-symbol="networkFeeSymbol" size="small" />
+          <span> {{ minAmountOfXorForSign !== null ? minAmountOfXorForSign : t('mst.loading') }} {{ xor }} </span>
         </info-line>
         <info-line v-if="transactionFee" :label="t('transaction.fee')">
           {{ transactionFee }}
@@ -381,6 +380,13 @@ export default class WalletTransactionDetails extends Mixins(
     }
   }
 
+  getMainAccountName(): string {
+    const addressOfMainAccount = api.formatAddress(api?.mst?.getPrevoiusAccount());
+    const pair = api.getAccountPair(addressOfMainAccount);
+    const accountName = pair.meta.name as string;
+    return accountName.length > 10 ? accountName.slice(0, 10) + '...' : accountName;
+  }
+
   get amountOfThreshold(): number {
     if ('multisig' in this.selectedTransaction && this.selectedTransaction.multisig) {
       return this.selectedTransaction.multisig.threshold;
@@ -448,9 +454,6 @@ export default class WalletTransactionDetails extends Mixins(
         throw new Error('No multisigAccountAddress');
       }
       console.info('we are in onSignButtonClick');
-      const { finalProofSize, details } = await api.mst.calculateFinalProofSize(callHash, this.account.address);
-      const proofSizeNumber = finalProofSize.toNumber(); // Converts BN to a regular number
-      console.info('proofSizeNumber', proofSizeNumber);
       await api.mst.approveMultisigExtrinsic(callHash, multisigAccountAddress);
       this.$emit('backToWallet');
       this.showAppNotification('Transaction has been signed!', 'success');
@@ -619,5 +622,8 @@ export default class WalletTransactionDetails extends Mixins(
 }
 .xor-min-amount {
   margin-top: 8px;
+  span {
+    margin-left: 60px;
+  }
 }
 </style>

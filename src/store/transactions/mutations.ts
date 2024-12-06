@@ -34,6 +34,7 @@ const mutations = defineMutations<TransactionsState>()({
     state.selectedTxId = null;
   },
   async getHistory(state): Promise<void> {
+    console.info('api.history', api.history);
     state.history = Object.freeze({ ...api.history });
   },
   setExternalHistory(state, history: AccountHistory<HistoryItem>): void {

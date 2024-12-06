@@ -222,8 +222,9 @@ export default class CreateMstWalletDialog extends Mixins(TranslationMixin, Dial
 <style lang="scss">
 .threshold-amount {
   .s-input__content {
-    width: calc($basic-spacing-big * 2);
+    width: 100%;
     .el-input__suffix {
+      margin-right: 90%;
       color: var(--s-color-base-content-tertiary);
     }
     input::placeholder {
