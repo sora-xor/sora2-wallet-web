@@ -38,6 +38,7 @@ exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctl
     <address-book-input-stub
       class="wallet-send-address"
       excludeconnected="true"
+      propplaceholder=""
       value=""
     />
      
@@ -171,6 +172,7 @@ exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered cor
     <address-book-input-stub
       class="wallet-send-address"
       excludeconnected="true"
+      propplaceholder=""
       value="12345"
     />
      
@@ -304,6 +306,7 @@ exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered corr
     <address-book-input-stub
       class="wallet-send-address"
       excludeconnected="true"
+      propplaceholder=""
       value="dfsakljfdlkjfhfkjladshslfjafds"
     />
      
@@ -438,6 +441,7 @@ exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered corr
       class="wallet-send-address"
       excludeconnected="true"
       isvalid="true"
+      propplaceholder=""
       value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
     />
      

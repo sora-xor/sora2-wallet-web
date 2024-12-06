@@ -67,6 +67,7 @@ function initialState(): SettingsState {
     fiatExchangeRateObject: { [Currency.DAI]: 1 },
     exchangeRateUnsubFn: null,
     assetsFilter: FilterOptions.All,
+    isMSTAvailable: false,
   };
 }
 

@@ -50,6 +50,8 @@ export type AccountState = {
   accountPasswordTimestamp: Record<string, Nullable<number>>;
   accountPasswordTimeout: number;
   pinnedAssets: string[];
+  isMstAddressExist: boolean;
+  isMST: boolean;
 };
 
 export type VestedTransferFeeParams = {

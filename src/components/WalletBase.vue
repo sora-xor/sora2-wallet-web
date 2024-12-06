@@ -141,6 +141,10 @@ $button-size: var(--s-size-medium);
     align-items: center;
     padding-right: calc(#{$button-size} + #{$basic-spacing-medium});
     margin-bottom: #{$basic-spacing-medium};
+    &_action {
+      display: flex;
+      align-items: flex-start;
+    }
     &--center {
       padding-left: calc(#{$button-size} + #{$basic-spacing-medium});
       text-align: center;

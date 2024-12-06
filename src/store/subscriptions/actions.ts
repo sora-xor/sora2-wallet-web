@@ -64,6 +64,7 @@ const actions = defineActions({
   async activateInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'transactions/trackActiveTxs',
+      'transactions/trackPendingMstTxs',
       'account/subscribeOnAlerts',
       'subscriptions/subscribeToStorageUpdates',
     ]);
@@ -71,6 +72,7 @@ const actions = defineActions({
   async resetInternalSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'transactions/resetActiveTxs',
+      'transactions/resetPendingMstTxsSubscription',
       'account/resetAlertsSubscription',
       'subscriptions/resetStorageUpdatesSubscription',
     ]);
