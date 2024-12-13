@@ -159,6 +159,9 @@ const mutations = defineMutations<SettingsState>()({
   setAssetsFilter(state, filter: FilterOptions): void {
     state.assetsFilter = filter;
   },
+  setIsMstAvailable(state, isAvailable: boolean): void {
+    state.isMSTAvailable = isAvailable;
+  },
 });
 
 export default mutations;

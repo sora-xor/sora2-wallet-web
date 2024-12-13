@@ -5,6 +5,22 @@ import { MOCK_ACCOUNTS, MOCK_ASSETS_TABLE, MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } f
 
 import type { HistoryItem } from '@sora-substrate/sdk';
 
+jest.mock('@/api', () => ({
+  api: {
+    mst: {
+      isMST: jest.fn(() => false),
+      calculateFinalProofSize: jest.fn().mockResolvedValue({ finalProofSize: { toNumber: () => 0 } }),
+      getPrevoiusAccount: jest.fn(() => 'exampleAddress'),
+      approveMultisigExtrinsic: jest.fn().mockResolvedValue(true),
+    },
+    formatAddress: jest.fn(() => 'exampleAddress'),
+    getAccountPair: jest.fn(() => ({ meta: { name: 'TestAccount' } })),
+    assets: {
+      getAccountAsset: jest.fn().mockResolvedValue({ balance: { free: '0' } }),
+    },
+  },
+}));
+
 const createStore = (tx: HistoryItem) =>
   useVuex({
     router: {

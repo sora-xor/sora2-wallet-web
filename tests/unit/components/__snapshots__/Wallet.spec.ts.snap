@@ -85,6 +85,10 @@ exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] 
    
   <account-settings-dialog-stub />
    
+  <mst-onboarding-dialog-stub />
+   
+  <multisig-change-name-dialog-stub />
+   
   <!---->
 </wallet-base-stub>
 `;
@@ -173,6 +177,10 @@ exports[`Wallet.vue [WalletTabs.WalletHistory]: should be rendered correctly 1`]
   <!---->
    
   <account-settings-dialog-stub />
+   
+  <mst-onboarding-dialog-stub />
+   
+  <multisig-change-name-dialog-stub />
    
   <!---->
 </wallet-base-stub>

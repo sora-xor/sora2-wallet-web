@@ -19,6 +19,8 @@ function initialState(): TransactionsState {
     isConfirmTxDialogDisabled: isConfirmTxDialogDisabled ? Boolean(JSON.parse(isConfirmTxDialogDisabled)) : false,
     isSignTxDialogDisabled: isSignTxDialogDisabled ? Boolean(JSON.parse(isSignTxDialogDisabled)) : false,
     isSignTxDialogVisible: false,
+    pendingMstTxsSubscription: null,
+    pendingMstTransactions: [],
   };
 }
 
