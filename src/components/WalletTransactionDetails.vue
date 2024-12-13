@@ -77,7 +77,12 @@
           v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
           :label="t('mst.minFee') + ` (${getMainAccountName()})`"
         >
-          <span> {{ minAmountOfXorForSign !== null ? minAmountOfXorForSign : t('mst.loading') }} {{ xor }} </span>
+          <span>
+            {{ minAmountOfXorForSign !== 0 ? minAmountOfXorForSign : t('mst.loading') }}
+            <span>
+              {{ xor }}
+            </span>
+          </span>
         </info-line>
         <info-line v-if="transactionFee" :label="t('transaction.fee')">
           {{ transactionFee }}
@@ -103,9 +108,10 @@
 
     <s-button
       v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
-      class="sign-btn"
+      class="sign-btn disabled"
       type="primary"
       @click="onSignButtonClick"
+      :disabled="minAmountOfXorForSign === 0 || currentAmountOfXorSignerHas <= minAmountOfXorForSign"
     >
       {{ t('mst.sign') }}
     </s-button>
@@ -172,10 +178,12 @@ export default class WalletTransactionDetails extends Mixins(
   @getter.account.account private account!: PolkadotJsAccount;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem; // It shouldn't be empty
 
-  minAmountOfXorForSign: number | null = null;
+  minAmountOfXorForSign = 0;
+  currentAmountOfXorSignerHas = 0;
 
   mounted() {
     this.fetchMinAmountOfXor();
+    this.getCurrentAmountOfXorOfSigner();
   }
 
   @Watch('selectedTransaction', { immediate: true, deep: true })
@@ -417,6 +425,13 @@ export default class WalletTransactionDetails extends Mixins(
     }
   }
 
+  public async getCurrentAmountOfXorOfSigner() {
+    const addressOfMainAccount = api.formatAddress(api?.mst?.getPrevoiusAccount());
+    const pair = api.getAccountPair(addressOfMainAccount);
+    const xorBalance = await api.assets.getAccountAsset(XOR.address, pair.address);
+    this.currentAmountOfXorSignerHas = this.getFPNumberFromCodec(xorBalance.balance.free, 18).toNumber();
+  }
+
   public async fetchMinAmountOfXor() {
     if (this.isMST && this.isTransactionNotSigned && this.isNotTheAccountInitiatedTrx) {
       try {
@@ -429,10 +444,10 @@ export default class WalletTransactionDetails extends Mixins(
         this.minAmountOfXorForSign = proofSizeNumber;
       } catch (error) {
         console.error('Failed to fetch minimum XOR amount for signing:', error);
-        this.minAmountOfXorForSign = null;
+        this.minAmountOfXorForSign = 0;
       }
     } else {
-      this.minAmountOfXorForSign = null;
+      this.minAmountOfXorForSign = 0;
     }
   }
 
