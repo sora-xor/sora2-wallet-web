@@ -1,7 +1,8 @@
 import { IndexerType } from '@/consts';
 import store from '@/store';
 
-import { createExplorerClient } from './client';
+import { createExplorerClient } from '../client';
+
 import SubsquidExplorer from './explorer';
 
 export * from './queries/historyElements';

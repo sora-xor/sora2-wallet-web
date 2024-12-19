@@ -4,8 +4,8 @@ import { SubsquidAccountModule } from './modules/account';
 import { SubsquidAssetModule } from './modules/asset';
 import { SubsquidPriceModule } from './modules/price';
 
+import type { TypedDocumentNode, AnyVariables } from '../../client';
 import type { ConnectionQueryResponse, SubscriptionPayload } from '../../types';
-import type { TypedDocumentNode, AnyVariables } from '../client';
 import type { SubsquidQueryResponse, QueryResponseNodes, ConnectionQueryResponseData } from '../types';
 
 export default class SubsquidExplorer extends BaseExplorer {

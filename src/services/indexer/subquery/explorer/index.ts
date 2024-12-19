@@ -4,8 +4,8 @@ import { SubqueryAccountModule } from './modules/account';
 import { SubqueryAssetModule } from './modules/asset';
 import { SubqueryPriceModule } from './modules/price';
 
+import type { TypedDocumentNode, AnyVariables } from '../../client';
 import type { ConnectionQueryResponse } from '../../types';
-import type { TypedDocumentNode, AnyVariables } from '../client';
 import type { SubquerySubscriptionPayload } from '../types';
 
 export default class SubqueryExplorer extends BaseExplorer {
