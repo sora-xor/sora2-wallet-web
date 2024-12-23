@@ -2,6 +2,7 @@
   <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
       <s-button :type="isMultisig() ? 'primary' : 'tertiary'" @click="handleMST"> Multi-Sig </s-button>
+      <s-button @click="handleEncrypt">Encrypt</s-button>
 
       <s-button type="action" :tooltip="t('accountSettings.title')" @click="handleAccountSettings">
         <s-icon name="basic-settings-24" size="28" />
@@ -78,8 +79,11 @@
 </template>
 
 <script lang="ts">
+import { hexToU8a } from '@polkadot/util';
 import { api } from '@sora-substrate/sdk';
 import { Component, Mixins, Watch } from 'vue-property-decorator';
+
+import { PolkadotJsAccount } from '@/types/common';
 
 import { RouteNames, WalletTabs, AccountActionTypes } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
@@ -139,6 +143,7 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   @state.transactions.pendingMstTransactions pendingMstTransactions!: Array<any>;
 
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
+  @getter.account.account public accountOwn!: PolkadotJsAccount;
 
   @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
 
@@ -183,6 +188,49 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   signTransaction() {
     this.resetTxDetailsId();
     this.currentTab = WalletTabs.Assets;
+  }
+
+  async handleEncrypt(): Promise<void> {
+    const callData = { foo: 'bar', number: 42 };
+    const callDataStr = JSON.stringify(callData);
+    interface Cosigners {
+      [address: string]: Uint8Array;
+    }
+    const cosignersForEncrypt: Cosigners = {
+      myselfAccount: new Uint8Array([
+        176, 89, 136, 158, 106, 46, 169, 24, 251, 26, 209, 28, 236, 43, 209, 109, 200, 233, 172, 242, 12, 202, 74, 252,
+        135, 115, 162, 111, 253, 204, 139, 30,
+      ]),
+      bob: new Uint8Array([
+        248, 99, 105, 233, 81, 236, 105, 241, 236, 132, 177, 44, 178, 0, 151, 179, 5, 144, 72, 13, 15, 98, 171, 172,
+        195, 145, 227, 15, 46, 24, 206, 84,
+      ]),
+      charlie: new Uint8Array([
+        222, 190, 118, 224, 143, 185, 3, 106, 37, 217, 104, 233, 57, 193, 194, 131, 97, 134, 4, 155, 197, 127, 112, 142,
+        200, 39, 188, 20, 88, 105, 244, 6,
+      ]),
+    };
+    console.info('cosignersForEncrypt', cosignersForEncrypt);
+    interface EncryptByCosignerData {
+      address: string;
+      data: string;
+      cosigners: Cosigners;
+    }
+    console.info('(window as any)', window as any);
+    Object.entries(cosignersForEncrypt).forEach(([address, key]) => {
+      console.info(`Cosigner ${address} key length:`, key.length);
+    });
+
+    console.info('this.accountOwn.address', this.accountOwn.address);
+    const encryptParams: EncryptByCosignerData = {
+      address: this.accountOwn.address,
+      data: callDataStr,
+      cosigners: cosignersForEncrypt,
+    };
+    console.info('encryptParams', encryptParams);
+
+    const finalEncrypted = await (window as any).injectedWeb3['fearless-wallet'].encryptByCosigner(encryptParams);
+    console.info('finalEncrypted', finalEncrypted);
   }
 
   handleMST(): void {
