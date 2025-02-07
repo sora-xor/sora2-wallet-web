@@ -40,8 +40,8 @@ export class AppError extends Error {
 
 export const APP_NAME = 'Sora2 Wallet';
 
-export const WHITE_LIST_URL = 'https://whitelist.polkaswap2.io/whitelist.json';
-export const NFT_BLACK_LIST_URL = 'https://whitelist.polkaswap2.io/blacklist.json';
+export const WHITE_LIST_URL = '/whitelist.json';
+export const NFT_BLACK_LIST_URL = '/blacklist.json';
 
 export function waitForDocumentReady() {
   return new Promise<void>((resolve) => {

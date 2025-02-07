@@ -139,10 +139,7 @@ const waitForStore = async (withoutStore = false): Promise<void> => {
 
 let walletCoreLoaded = false;
 
-const waitForCore = async ({
-  withoutStore = false,
-  permissions,
-}: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> => {
+const waitForCore = async ({ withoutStore = false, permissions }: WALLET_CONSTS.WalletInitOptions): Promise<void> => {
   if (!walletCoreLoaded) {
     await Promise.all([waitForStore(withoutStore), api.initKeyring(true)]);
 
@@ -157,10 +154,10 @@ const waitForCore = async ({
   }
 };
 
-const waitForConnection = async (): Promise<void> => {
+const waitForConnection = async (connection): Promise<void> => {
   if (connection.loading) {
     await delay(100);
-    await waitForConnection();
+    await waitForConnection(connection);
   } else if (!connection.api) {
     await connection.open();
     console.info('Connected to blockchain', connection.endpoint);
@@ -173,8 +170,8 @@ const checkActiveAccount = async (): Promise<void> => {
   await store.dispatch.wallet.router.checkCurrentRoute();
 };
 
-async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
-  await Promise.all([waitForCore(options), waitForConnection()]);
+async function initWallet(options: WALLET_CONSTS.WalletInitOptions): Promise<void> {
+  await Promise.all([waitForCore(options), waitForConnection(options.connection)]);
 
   initAppWallets(api, store.state.wallet.account.isDesktop, options.appName);
 

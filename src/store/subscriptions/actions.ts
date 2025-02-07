@@ -41,16 +41,16 @@ const actions = defineActions({
     await runParallel(context, [
       'settings/subscribeOnBlockNumber',
       'settings/subscribeOnFeeMultiplierAndRuntime',
-      'account/subscribeOnAssets',
-      'account/subscribeOnAccountAssets',
+      // 'account/subscribeOnAssets',
+      // 'account/subscribeOnAccountAssets',
     ]);
   },
   async resetNetworkSubscriptions(context): Promise<void> {
     await runParallel(context, [
       'settings/resetBlockNumberSubscription',
       'settings/resetFeeMultiplierAndRuntimeSubscriptions',
-      'account/resetAssetsSubscription',
-      'account/resetAccountAssetsSubscription',
+      // 'account/resetAssetsSubscription',
+      // 'account/resetAccountAssetsSubscription',
     ]);
   },
   // subscriptions on indexer data
