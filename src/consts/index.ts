@@ -1,6 +1,7 @@
 import { Operation } from '@sora-substrate/sdk';
 import { XSTUSD, KUSD, KGOLD, KEN, KXOR } from '@sora-substrate/sdk/build/assets/consts';
 
+import type { Connection } from '@sora-substrate/connection';
 import type { FPNumber } from '@sora-substrate/sdk';
 
 export const accountIdBasedOperations = [
@@ -150,6 +151,7 @@ export interface WalletInitOptions {
   withoutStore?: boolean;
   permissions?: WalletPermissions;
   appName?: string;
+  connection: Connection;
 }
 
 export interface NetworkFeeWarningOptions {

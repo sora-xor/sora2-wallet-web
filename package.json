@@ -1,6 +1,6 @@
 {
   "name": "@soramitsu/soraneo-wallet-web",
-  "version": "1.44.7",
+  "version": "1.44.7-analog.1",
   "license": "Apache-2.0",
   "private": false,
   "publishConfig": {
@@ -130,5 +130,6 @@
       "vue-cli-service lint",
       "git add"
     ]
-  }
+  },
+  "packageManager": "yarn@1.22.22"
 }
