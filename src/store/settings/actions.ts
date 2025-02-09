@@ -109,51 +109,45 @@ const actions = defineActions({
       commit.setNftStorage({});
     }
   },
-  async subscribeOnFeeMultiplierAndRuntime(context): Promise<void> {
-    const { commit } = settingsActionContext(context);
+  // async subscribeOnFeeMultiplierAndRuntime(context): Promise<void> {
+  //   const { commit } = settingsActionContext(context);
 
-    // set only eth bridge operations
-    (api.NetworkFee as any) = {
-      [Operation.EthBridgeIncoming]: '0',
-      [Operation.EthBridgeOutgoing]: '0',
-    };
+  //   await api.calcStaticNetworkFees();
 
-    await api.calcStaticNetworkFees();
+  //   commit.updateNetworkFees(api.NetworkFee);
 
-    commit.updateNetworkFees(api.NetworkFee);
+  //   const subscription = combineLatest([
+  //     api.system.getRuntimeVersionObservable(),
+  //     api.system.getNetworkFeeMultiplierObservable(),
+  //   ]).subscribe(async ([runtime, multiplier]) => {
+  //     const runtimeVersion = runtimeStorage.get('version');
+  //     const feeMultiplier = runtimeStorage.get('feeMultiplier');
+  //     const networkFeesObj = runtimeStorage.get('networkFees');
+  //     const localMultiplier = feeMultiplier ? Number(JSON.parse(feeMultiplier)) : 0;
+  //     const localRuntime = runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0;
+  //     const networkFees: NetworkFeesObject = networkFeesObj ? JSON.parse(networkFeesObj) : {};
 
-    // const subscription = combineLatest([
-    //   api.system.getRuntimeVersionObservable(),
-    //   api.system.getNetworkFeeMultiplierObservable(),
-    // ]).subscribe(async ([runtime, multiplier]) => {
-    //   const runtimeVersion = runtimeStorage.get('version');
-    //   const feeMultiplier = runtimeStorage.get('feeMultiplier');
-    //   const networkFeesObj = runtimeStorage.get('networkFees');
-    //   const localMultiplier = feeMultiplier ? Number(JSON.parse(feeMultiplier)) : 0;
-    //   const localRuntime = runtimeVersion ? Number(JSON.parse(runtimeVersion)) : 0;
-    //   const networkFees: NetworkFeesObject = networkFeesObj ? JSON.parse(networkFeesObj) : {};
+  //     if (
+  //       localRuntime === runtime &&
+  //       localMultiplier === multiplier &&
+  //       areLocalNetworkFeesOkay(networkFees, api.NetworkFee)
+  //     ) {
+  //       commit.setNetworkFees(networkFees);
+  //       return;
+  //     }
+  //     if (localMultiplier !== multiplier) {
+  //       commit.setFeeMultiplier(multiplier);
+  //     }
+  //     if (runtime && localRuntime !== runtime) {
+  //       commit.setRuntimeVersion(runtime);
+  //     }
 
-    //   if (
-    //     localRuntime === runtime &&
-    //     localMultiplier === multiplier &&
-    //     areLocalNetworkFeesOkay(networkFees, api.NetworkFee)
-    //   ) {
-    //     commit.setNetworkFees(networkFees);
-    //     return;
-    //   }
-    //   if (localMultiplier !== multiplier) {
-    //     commit.setFeeMultiplier(multiplier);
-    //   }
-    //   if (runtime && localRuntime !== runtime) {
-    //     commit.setRuntimeVersion(runtime);
-    //   }
+  //     await api.calcStaticNetworkFees();
+  //     commit.updateNetworkFees(api.NetworkFee);
+  //   });
 
-    //   await api.calcStaticNetworkFees();
-    //   commit.updateNetworkFees(api.NetworkFee);
-    // });
-
-    // commit.setFeeMultiplierAndRuntimeSubscriptions(subscription);
-  },
+  //   commit.setFeeMultiplierAndRuntimeSubscriptions(subscription);
+  // },
   /** It's used **only** for subscriptions module */
   async resetFeeMultiplierAndRuntimeSubscriptions(context): Promise<void> {
     const { commit } = settingsActionContext(context);
