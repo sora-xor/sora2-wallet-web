@@ -2,7 +2,7 @@
   <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
       <s-button :type="isMultisig() ? 'primary' : 'tertiary'" @click="handleMST"> Multi-Sig </s-button>
-      <s-button @click="handleEncrypt">Encrypt</s-button>
+      <!-- <s-button @click="handleEncrypt">Encrypt</s-button> -->
 
       <s-button type="action" :tooltip="t('accountSettings.title')" @click="handleAccountSettings">
         <s-icon name="basic-settings-24" size="28" />

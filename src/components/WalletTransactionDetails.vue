@@ -426,6 +426,11 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   public async getCurrentAmountOfXorOfSigner() {
+    const address = api?.mst?.getPrevoiusAccount();
+    if (!address) {
+      this.currentAmountOfXorSignerHas = 0;
+      return;
+    }
     const addressOfMainAccount = api.formatAddress(api?.mst?.getPrevoiusAccount());
     const pair = api.getAccountPair(addressOfMainAccount);
     const xorBalance = await api.assets.getAccountAsset(XOR.address, pair.address);
@@ -560,6 +565,7 @@ export default class WalletTransactionDetails extends Mixins(
 .transaction {
   &-status {
     text-transform: capitalize;
+
     &--error {
       color: var(--s-color-status-error);
     }
@@ -572,9 +578,11 @@ export default class WalletTransactionDetails extends Mixins(
   .s-icon-basic-check-mark-24 {
     margin-left: var(--s-basic-spacing);
   }
+
   .info-line-container {
     margin-bottom: #{$basic-spacing-medium};
   }
+
   .formatted-amount__divider {
     margin-right: #{$basic-spacing-extra-mini};
     margin-left: #{$basic-spacing-extra-mini};
@@ -589,45 +597,55 @@ export default class WalletTransactionDetails extends Mixins(
     margin-bottom: var(--s-basic-spacing);
   }
 }
+
 .history {
   align-items: center;
+
   &-info {
     flex: 1;
     flex-direction: column;
     font-size: var(--s-font-size-mini);
+
     &_date {
       color: var(--s-color-base-content-tertiary);
     }
   }
+
   &:not(:last-child) {
     margin-bottom: var(--s-basic-spacing);
   }
 }
+
 .sign-btn {
   margin-top: 16px;
   width: 100%;
 }
+
 .amount-of-signatures {
   display: flex;
   flex-direction: column;
   width: 100%;
   gap: 12px;
   margin-top: 24px;
+
   .already-signed {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     font-weight: 800;
     color: var(--s-color-base-content-secondary);
+
     span {
       color: var(--s-color-status-success);
     }
   }
+
   .progress-bar-container {
     background-color: #f4f0f1;
     height: 6px;
     border-radius: 4px;
     overflow: hidden;
+
     .progress-bar {
       background-color: var(--s-color-status-success);
       height: 100%;
@@ -635,8 +653,10 @@ export default class WalletTransactionDetails extends Mixins(
     }
   }
 }
+
 .xor-min-amount {
   margin-top: 8px;
+
   span {
     margin-left: 60px;
   }
