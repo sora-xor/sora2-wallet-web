@@ -66,6 +66,24 @@
         >
           <token-logo :token-symbol="transactionSymbol2" size="small" />
         </info-line>
+        <info-line
+          v-if="amountOfDaysBeforeExpirationTrx !== '0'"
+          value-can-be-hidden
+          label="time left"
+          :value="amountOfDaysBeforeExpirationTrx"
+        />
+        <info-line
+          class="xor-min-amount"
+          v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
+          :label="t('mst.minFee') + ` (${getMainAccountName()})`"
+        >
+          <span>
+            {{ minAmountOfXorForSign !== 0 ? minAmountOfXorForSign : t('mst.loading') }}
+            <span>
+              {{ xor }}
+            </span>
+          </span>
+        </info-line>
         <info-line v-if="transactionFee" :label="t('transaction.fee')">
           {{ transactionFee }}
           <token-logo :token-symbol="networkFeeSymbol" size="small" />
@@ -88,22 +106,45 @@
       />
     </div>
 
+    <s-button
+      v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
+      class="sign-btn disabled"
+      type="primary"
+      @click="onSignButtonClick"
+      :disabled="minAmountOfXorForSign === 0 || currentAmountOfXorSignerHas <= minAmountOfXorForSign"
+    >
+      {{ t('mst.sign') }}
+    </s-button>
+    <div class="amount-of-signatures" v-if="isMST && amountOfThreshold != 0">
+      <div class="already-signed">
+        <p>{{ t('mst.amountOfSignatures').toUpperCase() }}</p>
+        <p>
+          <span>{{ alreadySigned }}</span> / {{ amountOfThreshold }}
+        </p>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" :style="{ width: progressPercentageMstSigned + '%' }"></div>
+      </div>
+    </div>
+
     <adar-tx-details v-if="isAdarOperation" :transaction="selectedTransaction" />
   </div>
 </template>
 
 <script lang="ts">
 import { TransactionStatus, Operation, FPNumber } from '@sora-substrate/sdk';
-import { KnownSymbols } from '@sora-substrate/sdk/build/assets/consts';
+import { KnownSymbols, XOR } from '@sora-substrate/sdk/build/assets/consts';
 import dayjs from 'dayjs';
-import { Component, Mixins } from 'vue-property-decorator';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
 
+import { api } from '../api';
 import { HashType } from '../consts';
 import { getter, state } from '../store/decorators';
 
 import FormattedAmount from './FormattedAmount.vue';
 import InfoLine from './InfoLine.vue';
 import EthBridgeTransactionMixin from './mixins/EthBridgeTransactionMixin';
+import NotificationMixin from './mixins/NotificationMixin';
 import NumberFormatterMixin from './mixins/NumberFormatterMixin';
 import TranslationMixin from './mixins/TranslationMixin';
 import TokenLogo from './TokenLogo.vue';
@@ -113,7 +154,6 @@ import WalletBase from './WalletBase.vue';
 
 import type { PolkadotJsAccount, AssetsTable } from '../types/common';
 import type { HistoryItem } from '@sora-substrate/sdk';
-
 @Component({
   components: {
     WalletBase,
@@ -127,7 +167,8 @@ import type { HistoryItem } from '@sora-substrate/sdk';
 export default class WalletTransactionDetails extends Mixins(
   TranslationMixin,
   NumberFormatterMixin,
-  EthBridgeTransactionMixin
+  EthBridgeTransactionMixin,
+  NotificationMixin
 ) {
   readonly HashType = HashType;
 
@@ -136,6 +177,20 @@ export default class WalletTransactionDetails extends Mixins(
   @getter.account.assetsDataTable private assetsDataTable!: AssetsTable;
   @getter.account.account private account!: PolkadotJsAccount;
   @getter.transactions.selectedTx selectedTransaction!: HistoryItem; // It shouldn't be empty
+
+  minAmountOfXorForSign = 0;
+  currentAmountOfXorSignerHas = 0;
+
+  mounted() {
+    this.fetchMinAmountOfXor();
+    this.getCurrentAmountOfXorOfSigner();
+  }
+
+  @Watch('selectedTransaction', { immediate: true, deep: true })
+  private async fetchMinAmountOfXorOnChange(): Promise<void> {
+    await this.$nextTick();
+    this.fetchMinAmountOfXor();
+  }
 
   get isCompleteTransaction(): boolean {
     return [TransactionStatus.InBlock, TransactionStatus.Finalized].includes(
@@ -306,6 +361,129 @@ export default class WalletTransactionDetails extends Mixins(
     return KnownSymbols.XOR;
   }
 
+  // ETH BRIDGE transaction
+  get isTransactionToCompleted(): boolean {
+    return this.isEthBridgeTxToCompleted(this.selectedTransaction);
+  }
+
+  get isMST(): boolean {
+    return api.mst.isMST();
+  }
+
+  get xor(): string {
+    return XOR.symbol;
+  }
+
+  get isTransactionNotSigned(): boolean {
+    return this.selectedTransaction.status === TransactionStatus.Pending;
+  }
+
+  get isNotTheAccountInitiatedTrx(): boolean {
+    console.info(this.selectedTransaction);
+    const addressOfMainAccount = api.formatAddress(api?.mst?.getPrevoiusAccount());
+    if ('multisig' in this.selectedTransaction && this.selectedTransaction.multisig) {
+      return addressOfMainAccount !== this.selectedTransaction.multisig.signatories[0];
+    } else {
+      return false;
+    }
+  }
+
+  getMainAccountName(): string {
+    const addressOfMainAccount = api.formatAddress(api?.mst?.getPrevoiusAccount());
+    const pair = api.getAccountPair(addressOfMainAccount);
+    const accountName = pair.meta.name as string;
+    return accountName.length > 10 ? accountName.slice(0, 10) + '...' : accountName;
+  }
+
+  get amountOfThreshold(): number {
+    if ('multisig' in this.selectedTransaction && this.selectedTransaction.multisig) {
+      return this.selectedTransaction.multisig.threshold;
+    } else {
+      return 0;
+    }
+  }
+
+  get alreadySigned(): number {
+    if ('multisig' in this.selectedTransaction && this.selectedTransaction.multisig) {
+      return this.selectedTransaction.multisig.numApprovals;
+    } else {
+      return 0;
+    }
+  }
+
+  get progressPercentageMstSigned(): number {
+    return (this.alreadySigned / this.amountOfThreshold) * 100;
+  }
+
+  get amountOfDaysBeforeExpirationTrx(): string {
+    if ('deadline' in this.selectedTransaction && this.selectedTransaction.deadline) {
+      const secondsInADay = 86400;
+      const daysRemaining = Math.ceil(this.selectedTransaction.deadline.secondsRemaining / secondsInADay);
+      return `${daysRemaining}D`;
+    } else {
+      return '0';
+    }
+  }
+
+  public async getCurrentAmountOfXorOfSigner() {
+    const address = api?.mst?.getPrevoiusAccount();
+    if (!address) {
+      this.currentAmountOfXorSignerHas = 0;
+      return;
+    }
+    const addressOfMainAccount = api.formatAddress(api?.mst?.getPrevoiusAccount());
+    const pair = api.getAccountPair(addressOfMainAccount);
+    const xorBalance = await api.assets.getAccountAsset(XOR.address, pair.address);
+    this.currentAmountOfXorSignerHas = this.getFPNumberFromCodec(xorBalance.balance.free, 18).toNumber();
+  }
+
+  public async fetchMinAmountOfXor() {
+    if (this.isMST && this.isTransactionNotSigned && this.isNotTheAccountInitiatedTrx) {
+      try {
+        const callHash = this.selectedTransaction.id;
+        if (!callHash) {
+          throw new Error('Call hash not found in selected transaction');
+        }
+        const { finalProofSize } = await api.mst.calculateFinalProofSize(callHash, this.account.address);
+        const proofSizeNumber = finalProofSize.toNumber();
+        this.minAmountOfXorForSign = proofSizeNumber;
+      } catch (error) {
+        console.error('Failed to fetch minimum XOR amount for signing:', error);
+        this.minAmountOfXorForSign = 0;
+      }
+    } else {
+      this.minAmountOfXorForSign = 0;
+    }
+  }
+
+  public getNetworkFeeSymbol(isSoraTx = true): string {
+    return isSoraTx ? KnownSymbols.XOR : KnownSymbols.ETH;
+  }
+
+  public async onSignButtonClick(): Promise<void> {
+    try {
+      const callHash = this.selectedTransaction.id;
+
+      if (!callHash) {
+        throw new Error('Call hash not found in selected transaction');
+      }
+
+      const multisigAccountAddress = this.selectedTransaction.from;
+
+      if (!multisigAccountAddress) {
+        throw new Error('No multisigAccountAddress');
+      }
+      console.info('we are in onSignButtonClick');
+      await api.mst.approveMultisigExtrinsic(callHash, multisigAccountAddress);
+      this.$emit('backToWallet');
+      this.showAppNotification('Transaction has been signed!', 'success');
+    } catch (e) {
+      console.info(e);
+      this.$emit('backToWallet');
+      this.showAppNotification('Transaction has not been signed!', 'error');
+    }
+  }
+
   private getNetworkFee(): Nullable<string> {
     // [TODO] update History in js-lib
     const xorFee = (this.selectedTransaction as any).xorFee;
@@ -387,6 +565,7 @@ export default class WalletTransactionDetails extends Mixins(
 .transaction {
   &-status {
     text-transform: capitalize;
+
     &--error {
       color: var(--s-color-status-error);
     }
@@ -399,9 +578,11 @@ export default class WalletTransactionDetails extends Mixins(
   .s-icon-basic-check-mark-24 {
     margin-left: var(--s-basic-spacing);
   }
+
   .info-line-container {
     margin-bottom: #{$basic-spacing-medium};
   }
+
   .formatted-amount__divider {
     margin-right: #{$basic-spacing-extra-mini};
     margin-left: #{$basic-spacing-extra-mini};
@@ -416,18 +597,68 @@ export default class WalletTransactionDetails extends Mixins(
     margin-bottom: var(--s-basic-spacing);
   }
 }
+
 .history {
   align-items: center;
+
   &-info {
     flex: 1;
     flex-direction: column;
     font-size: var(--s-font-size-mini);
+
     &_date {
       color: var(--s-color-base-content-tertiary);
     }
   }
+
   &:not(:last-child) {
     margin-bottom: var(--s-basic-spacing);
+  }
+}
+
+.sign-btn {
+  margin-top: 16px;
+  width: 100%;
+}
+
+.amount-of-signatures {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 12px;
+  margin-top: 24px;
+
+  .already-signed {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-weight: 800;
+    color: var(--s-color-base-content-secondary);
+
+    span {
+      color: var(--s-color-status-success);
+    }
+  }
+
+  .progress-bar-container {
+    background-color: #f4f0f1;
+    height: 6px;
+    border-radius: 4px;
+    overflow: hidden;
+
+    .progress-bar {
+      background-color: var(--s-color-status-success);
+      height: 100%;
+      border-radius: 4px;
+    }
+  }
+}
+
+.xor-min-amount {
+  margin-top: 8px;
+
+  span {
+    margin-left: 60px;
   }
 }
 </style>

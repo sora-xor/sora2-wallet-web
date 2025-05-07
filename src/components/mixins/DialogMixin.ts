@@ -17,6 +17,7 @@ export default class DialogMixin extends Vue {
   }
 
   closeDialog(): void {
+    this.$emit('close');
     this.isVisible = false;
   }
 }

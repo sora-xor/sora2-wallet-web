@@ -14,6 +14,7 @@ import type { AppWallet } from '../../consts';
 import type { FiatPriceObject } from '../../services/indexer/types';
 import type { Wallet } from '../../services/wallet/types';
 import type { Book, PolkadotJsAccount } from '../../types/common';
+import type { CreateResult } from '@polkadot/ui-keyring/types';
 import type { Asset, AccountAsset, WhitelistArrayItem, Blacklist } from '@sora-substrate/sdk/build/assets/types';
 import type { Subscription, Subject } from 'rxjs';
 
@@ -206,6 +207,12 @@ const mutations = defineMutations<AccountState>()({
       Vue.delete(state.book, address); // to make it reactive
       settingsStorage.set('book', JSON.stringify(state.book));
     }
+  },
+  setIsMstAddressExist(state, isExist: boolean): void {
+    state.isMstAddressExist = isExist;
+  },
+  setIsMST(state, isMST: boolean): void {
+    state.isMST = isMST;
   },
 });
 

@@ -1,6 +1,9 @@
 <template>
   <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
+      <s-button :type="isMultisig() ? 'primary' : 'tertiary'" @click="handleMST"> Multi-Sig </s-button>
+      <!-- <s-button @click="handleEncrypt">Encrypt</s-button> -->
+
       <s-button type="action" :tooltip="t('accountSettings.title')" @click="handleAccountSettings">
         <s-icon name="basic-settings-24" size="28" />
       </s-button>
@@ -49,9 +52,11 @@
       <component :is="currentTab" @swap="handleSwap" />
     </div>
 
-    <wallet-transaction-details v-if="selectedTransaction" />
+    <wallet-transaction-details v-if="selectedTransaction" @backToWallet="signTransaction" />
 
     <account-settings-dialog :visible.sync="accountSettingsVisibility" />
+    <mst-onboarding-dialog :visible.sync="mstOnboardingDialog" />
+    <multisig-change-name-dialog :visible.sync="dialogMSTNameChange" />
 
     <template v-if="!isExternal">
       <account-rename-dialog
@@ -74,7 +79,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { hexToU8a } from '@polkadot/util';
+import { api } from '@sora-substrate/sdk';
+import { Component, Mixins, Watch } from 'vue-property-decorator';
+
+import { PolkadotJsAccount } from '@/types/common';
 
 import { RouteNames, WalletTabs, AccountActionTypes } from '../consts';
 import { state, getter, mutation } from '../store/decorators';
@@ -88,6 +97,8 @@ import WalletAccount from './Account/WalletAccount.vue';
 import AccountActionsMixin from './mixins/AccountActionsMixin';
 import OperationsMixin from './mixins/OperationsMixin';
 import QrCodeParserMixin from './mixins/QrCodeParserMixin';
+import MstOnboardingDialog from './MST/MstOnboardingDialog.vue';
+import MultisigChangeNameDialog from './MST/MultisigChangeNameDialog.vue';
 import QrCodeScanButton from './QrCode/QrCodeScanButton.vue';
 import WalletAssets from './WalletAssets.vue';
 import WalletBase from './WalletBase.vue';
@@ -110,6 +121,8 @@ import type { HistoryItem } from '@sora-substrate/sdk';
     AccountExportDialog,
     AccountDeleteDialog,
     AccountSettingsDialog,
+    MstOnboardingDialog,
+    MultisigChangeNameDialog,
   },
 })
 export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin, QrCodeParserMixin) {
@@ -123,15 +136,22 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
 
   @state.router.currentRouteParams private currentRouteParams!: Record<string, Nullable<WalletTabs>>;
   @state.settings.permissions permissions!: WalletPermissions;
+  @state.settings.isMSTAvailable isMSTAvailable!: boolean;
   @state.account.isExternal isExternal!: boolean;
+  @state.account.isMST isMST!: boolean;
+  @state.account.isMstAddressExist isMstAddressExist!: boolean;
+  @state.transactions.pendingMstTransactions pendingMstTransactions!: Array<any>;
 
   @getter.transactions.selectedTx selectedTransaction!: Nullable<HistoryItem>;
+  @getter.account.account public accountOwn!: PolkadotJsAccount;
 
   @mutation.transactions.resetTxDetailsId private resetTxDetailsId!: FnWithoutArgs;
 
   currentTab: WalletTabs = WalletTabs.Assets;
 
   accountSettingsVisibility = false;
+  mstOnboardingDialog = false;
+  dialogMSTNameChange = false;
 
   get headerTitle(): string {
     if (!this.selectedTransaction) return this.t('account.accountTitle');
@@ -139,7 +159,15 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
     return this.getTitle(this.selectedTransaction);
   }
 
-  mounted(): void {
+  get isMSTAccount(): boolean {
+    return this.isMST && api.mst.getMSTName() !== '';
+  }
+
+  get hasMSTAccount(): boolean {
+    return !this.isMST && (this.isMstAddressExist || api.mst.getMSTName() !== '');
+  }
+
+  async mounted(): Promise<void> {
     if (this.currentRouteParams.currentTab) {
       this.currentTab = this.currentRouteParams.currentTab;
     }
@@ -157,6 +185,53 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
     this.navigate({ name: RouteNames.WalletConnection });
   }
 
+  signTransaction() {
+    this.resetTxDetailsId();
+    this.currentTab = WalletTabs.Assets;
+  }
+
+  async handleEncrypt(): Promise<void> {
+    const callData = { foo: 'bar', number: 42 };
+    const callDataStr = JSON.stringify(callData);
+    interface Cosigners {
+      [address: string]: Uint8Array;
+    }
+    const cosignersForEncrypt: any = {
+      mySelf: '0xb059889e6a2ea918fb1ad11cec2bd16dc8e9acf20cca4afc8773a26ffdcc8b1e',
+      bob: '0xf86369e951ec69f1ec84b12cb20097b30590480d0f62abacc391e30f2e18ce54',
+      charlie: '0xdebe76e08fb9036a25d968e939c1c2836186049bc57f708ec827bc145869f406',
+    };
+    console.info('cosignersForEncrypt', cosignersForEncrypt);
+    interface EncryptByCosignerData {
+      address: string;
+      data: string;
+      cosigners: Cosigners;
+    }
+    console.info('this.accountOwn.address', this.accountOwn.address);
+    const encryptParams: any = {
+      address: this.accountOwn.address,
+      data: callDataStr,
+      cosigners: cosignersForEncrypt,
+    };
+    console.info('encryptParams', encryptParams);
+
+    const finalEncrypted = await (window as any).injectedWeb3['fearless-wallet'].encryptByCosigner(encryptParams);
+    console.info('finalEncrypted', finalEncrypted);
+  }
+
+  handleMST(): void {
+    if (this.isMSTAccount && this.isMSTAvailable) {
+      // User is currently in MST account
+      this.dialogMSTNameChange = true;
+    } else if (this.hasMSTAccount && this.isMSTAvailable) {
+      // User has an MST account but is not currently in it
+      this.dialogMSTNameChange = true;
+    } else {
+      // User does not have an MST account
+      this.mstOnboardingDialog = true;
+    }
+  }
+
   handleAccountActionType(actionType: string) {
     this.handleAccountAction(actionType, this.account);
   }
@@ -169,6 +244,10 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
     if (this.selectedTransaction) {
       this.resetTxDetailsId();
     }
+  }
+
+  isMultisig(): boolean {
+    return this.isMSTAccount;
   }
 }
 </script>

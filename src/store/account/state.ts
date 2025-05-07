@@ -1,3 +1,4 @@
+import { api } from '@sora-substrate/sdk';
 import isElectron from 'is-electron';
 
 import type { Book } from '@/types/common';
@@ -50,6 +51,8 @@ export function initialState(): AccountState {
     accountPasswordTimer: {},
     accountPasswordTimestamp: {},
     accountPasswordTimeout: accountPasswordTimeout ? JSON.parse(accountPasswordTimeout) : DefaultPassphraseTimeout,
+    isMstAddressExist: false,
+    isMST: false,
   };
 }
 
