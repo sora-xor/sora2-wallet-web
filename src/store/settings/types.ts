@@ -31,4 +31,5 @@ export type SettingsState = {
   fiatExchangeRateObject: FiatExchangeRateObject;
   exchangeRateUnsubFn: Nullable<VoidFunction>;
   assetsFilter: FilterOptions;
+  isMSTAvailable: boolean;
 };

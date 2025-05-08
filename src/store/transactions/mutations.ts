@@ -1,4 +1,5 @@
 import { defineMutations } from 'direct-vuex';
+import { Subscription } from 'rxjs';
 
 import { api } from '../../api';
 import { settingsStorage } from '../../util/storage';
@@ -32,8 +33,8 @@ const mutations = defineMutations<TransactionsState>()({
   resetTxDetailsId(state): void {
     state.selectedTxId = null;
   },
-  getHistory(state): void {
-    // increasing performance: Object.freeze - to remove vue reactivity from 'history' attributes
+  async getHistory(state): Promise<void> {
+    console.info('api.history', api.history);
     state.history = Object.freeze({ ...api.history });
   },
   setExternalHistory(state, history: AccountHistory<HistoryItem>): void {
@@ -72,6 +73,15 @@ const mutations = defineMutations<TransactionsState>()({
   },
   setSignTxDialogVisibility(state, visibility: boolean): void {
     state.isSignTxDialogVisible = visibility;
+  },
+  setPendingMstTxsSubscription(state, subscription: Subscription | null) {
+    state.pendingMstTxsSubscription = subscription;
+  },
+  resetPendingMstTxsSubscription(state) {
+    state.pendingMstTxsSubscription = null;
+  },
+  setPendingMstTransactions(state, transactions: HistoryItem[]) {
+    state.pendingMstTransactions = transactions;
   },
 });
 
