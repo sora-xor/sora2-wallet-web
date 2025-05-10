@@ -2,8 +2,16 @@
   <div class="wallet-assets-headline">
     <div :class="computedClasses">
       <div v-if="assetsFiatAmount" class="total-fiat-values">
-        <span class="total-fiat-values__title">{{ t('assets.totalAssetsValue') }}</span>
-        <formatted-amount value-can-be-hidden is-fiat-value integer-only with-left-shift :value="assetsFiatAmount" />
+        <span class="total-fiat-values__title">TOTAL:</span>
+        <formatted-amount
+          v-if="false"
+          value-can-be-hidden
+          is-fiat-value
+          integer-only
+          with-left-shift
+          :value="assetsFiatAmount?.str"
+        />
+        <p class="big-number">${{ tweenedFiatAmount.toFixed(2) }}</p>
       </div>
       <el-popover popper-class="wallet-assets-filter" trigger="click" :visible-arrow="false">
         <div class="wallet-assets-filter__text">{{ t('filter.showAssets') }}</div>
@@ -33,7 +41,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import gsap from 'gsap';
+import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
 
 import { WalletFilteringOptions } from '../consts';
 import { mutation, state } from '../store/decorators';
@@ -56,12 +65,23 @@ enum Filter {
   },
 })
 export default class WalletAssetsHeadline extends Mixins(TranslationMixin, LoadingMixin) {
-  @Prop({ default: '0', type: String }) readonly assetsFiatAmount!: string;
+  @Prop({ default: () => null, type: Object }) readonly assetsFiatAmount!: Nullable<{ str: string; num: number }>;
 
   @state.settings.filters filters!: WalletAssetFilters;
   @mutation.settings.setFilterOptions private setFilterOptions!: (filter: WalletAssetFilters) => void;
 
   zeroBalanceSwitch = false;
+  tweenedFiatAmount = 0;
+
+  @Watch('assetsFiatAmount', { immediate: true, deep: true })
+  onAssetsFiatAmountChange(): void {
+    if (this.assetsFiatAmount) {
+      gsap.to(this.$data, {
+        tweenedFiatAmount: this.assetsFiatAmount.num,
+        duration: 0.5,
+      });
+    }
+  }
 
   get computedClasses(): string {
     const baseClass = ['wallet-assets-headline__content'];
@@ -178,6 +198,12 @@ export default class WalletAssetsHeadline extends Mixins(TranslationMixin, Loadi
     font-size: var(--s-font-size-small);
     font-weight: 500;
   }
+}
+.big-number {
+  font-weight: bold;
+  font-size: 1.4em;
+  margin-left: 28px;
+  color: rgb(71, 154, 239);
 }
 </style>
 
