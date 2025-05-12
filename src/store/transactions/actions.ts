@@ -173,19 +173,14 @@ const actions = defineActions({
     try {
       const mstAddress = api.mst.getMstAddress();
       await api.mst.startPendingTxsSubscription(mstAddress);
-      console.info('we are in try');
       const subscription = api.mst.pendingTxsUpdated.subscribe((pendingTxs) => {
-        console.info('pending trxs are', pendingTxs);
         if (pendingTxs && pendingTxs.length > 0) {
           let userAddress: string | undefined;
           if (api.mst.isMST()) {
-            console.info('we are in mst');
             userAddress = api.formatAddress(api.mst.getPrevoiusAccount());
           } else {
-            console.info('we are not in mst');
             userAddress = account.address;
           }
-          console.info('here is userAddress', userAddress);
           // TODO fix later this as any
           const pendingApprovalTxs = pendingTxs.filter((tx) => {
             const multisig = (tx as { multisig: any }).multisig;
@@ -197,7 +192,6 @@ const actions = defineActions({
           });
 
           commit.setPendingMstTransactions(pendingApprovalTxs);
-          console.info('pendingApprovalTxs', pendingApprovalTxs);
         } else {
           commit.setPendingMstTransactions([]);
         }
