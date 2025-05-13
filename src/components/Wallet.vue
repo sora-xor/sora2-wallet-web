@@ -2,7 +2,6 @@
   <wallet-base :title="headerTitle" :show-back="!!selectedTransaction" :reset-focus="headerTitle" @back="handleBack">
     <template v-if="!selectedTransaction" #actions>
       <s-button :type="isMultisig() ? 'primary' : 'tertiary'" @click="handleMST"> Multi-Sig </s-button>
-      <!-- <s-button @click="handleEncrypt">Encrypt</s-button> -->
 
       <s-button type="action" :tooltip="t('accountSettings.title')" @click="handleAccountSettings">
         <s-icon name="basic-settings-24" size="28" />
@@ -188,35 +187,6 @@ export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin,
   signTransaction() {
     this.resetTxDetailsId();
     this.currentTab = WalletTabs.Assets;
-  }
-
-  async handleEncrypt(): Promise<void> {
-    const callData = { foo: 'bar', number: 42 };
-    const callDataStr = JSON.stringify(callData);
-    interface Cosigners {
-      [address: string]: Uint8Array;
-    }
-    const cosignersForEncrypt: any = {
-      mySelf: '0xb059889e6a2ea918fb1ad11cec2bd16dc8e9acf20cca4afc8773a26ffdcc8b1e',
-      bob: '0xf86369e951ec69f1ec84b12cb20097b30590480d0f62abacc391e30f2e18ce54',
-      charlie: '0xdebe76e08fb9036a25d968e939c1c2836186049bc57f708ec827bc145869f406',
-    };
-    console.info('cosignersForEncrypt', cosignersForEncrypt);
-    interface EncryptByCosignerData {
-      address: string;
-      data: string;
-      cosigners: Cosigners;
-    }
-    console.info('this.accountOwn.address', this.accountOwn.address);
-    const encryptParams: any = {
-      address: this.accountOwn.address,
-      data: callDataStr,
-      cosigners: cosignersForEncrypt,
-    };
-    console.info('encryptParams', encryptParams);
-
-    const finalEncrypted = await (window as any).injectedWeb3['fearless-wallet'].encryptByCosigner(encryptParams);
-    console.info('finalEncrypted', finalEncrypted);
   }
 
   handleMST(): void {
