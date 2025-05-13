@@ -379,7 +379,6 @@ export default class WalletTransactionDetails extends Mixins(
   }
 
   get isNotTheAccountInitiatedTrx(): boolean {
-    console.info(this.selectedTransaction);
     const addressOfMainAccount = api.formatAddress(api?.mst?.getPrevoiusAccount());
     if ('multisig' in this.selectedTransaction && this.selectedTransaction.multisig) {
       return addressOfMainAccount !== this.selectedTransaction.multisig.signatories[0];
@@ -473,7 +472,6 @@ export default class WalletTransactionDetails extends Mixins(
       if (!multisigAccountAddress) {
         throw new Error('No multisigAccountAddress');
       }
-      console.info('we are in onSignButtonClick');
       await api.mst.approveMultisigExtrinsic(callHash, multisigAccountAddress);
       this.$emit('backToWallet');
       this.showAppNotification('Transaction has been signed!', 'success');
