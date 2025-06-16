@@ -10,6 +10,7 @@
 </template>
 
 <script lang="ts">
+import DOMPurify from 'dompurify';
 import { Component, Prop, Vue, Ref } from 'vue-property-decorator';
 
 import { IpfsStorage } from '../util/ipfsStorage';
@@ -25,7 +26,8 @@ export default class NftTokenLogo extends Vue {
 
   get nftImageUrl(): string {
     if (this.asset.content) {
-      return IpfsStorage.constructFullIpfsUrl(this.asset.content);
+      const cleanContent = DOMPurify.sanitize(this.asset.content);
+      return IpfsStorage.constructFullIpfsUrl(cleanContent);
     }
     return '';
   }
