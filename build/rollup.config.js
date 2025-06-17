@@ -89,6 +89,7 @@ const globals = {
   '@walletconnect/modal': 'modal',
   '@walletconnect/universal-provider': 'UniversalProvider',
   wonka: 'wonka',
+  dompurify: 'DOMPurify',
 };
 
 export default {
@@ -185,6 +186,7 @@ export default {
     'tslib',
     'vue',
     'wonka',
+    'DOMPurify',
   ],
   plugins: [
     typescript({
