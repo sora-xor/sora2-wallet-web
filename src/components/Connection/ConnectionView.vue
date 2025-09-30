@@ -44,7 +44,7 @@
     />
     <create-account-step
       v-else-if="isCreateFlow"
-      :step.sync="step"
+      v-model:step="step"
       :chain-api="chainApi"
       :selected-wallet-title="selectedWalletTitle"
       :loading="loading"
@@ -52,7 +52,7 @@
     />
     <import-account-step
       v-else-if="isImportFlow"
-      :step.sync="step"
+      v-model:step="step"
       :loading="loading"
       :create-account="handleAccountCreate"
       :restore-account="handleAccountImport"
@@ -60,8 +60,8 @@
     />
 
     <account-confirm-dialog
+      v-model:visible="accountLoginVisibility"
       with-timeout
-      :visible.sync="accountLoginVisibility"
       :account="accountLoginData"
       :loading="loading"
       @confirm="handleAccountLogin"
@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import { api, type WithKeyring } from '@sora-substrate/sdk';
-import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
+import { mixins, Options, Prop, Watch } from 'vue-property-decorator';
 
 import { AppWallet, LoginStep } from '../../consts';
 import { GDriveWallet } from '../../services/google/wallet';
@@ -121,7 +121,7 @@ const getPreviousLoginStep = (currentStep?: LoginStep): LoginStep => {
   return SelectAccountFlow.includes(currentStep) ? LoginStep.ExtensionList : LoginStep.AccountList;
 };
 
-@Component({
+@Options({
   components: {
     WalletBase,
     AccountConfirmDialog,
@@ -131,7 +131,7 @@ const getPreviousLoginStep = (currentStep?: LoginStep): LoginStep => {
     ImportAccountStep,
   },
 })
-export default class ConnectionView extends Mixins(NotificationMixin, LoadingMixin) {
+export default class ConnectionView extends mixins(NotificationMixin, LoadingMixin) {
   @Prop({ required: true, type: Object }) public readonly chainApi!: WithKeyring;
 
   @Prop({ default: () => null, type: Object }) private readonly account!: Nullable<PolkadotJsAccount>;
@@ -212,7 +212,7 @@ export default class ConnectionView extends Mixins(NotificationMixin, LoadingMix
     });
   }
 
-  beforeDestroy(): void {
+  beforeUnmount(): void {
     this.resetSelectedWallet();
   }
 

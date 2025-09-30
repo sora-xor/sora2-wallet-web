@@ -16,51 +16,50 @@
   </wallet-base>
 </template>
 
-<script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
-import { RouteNames } from '../consts';
-import { state, mutation } from '../store/decorators';
+import { useTranslation } from '@/composables/useTranslation';
+import { RouteNames } from '@/consts';
+import store from '@/store';
+import type { Route } from '@/store/router/types';
 
 import AssetList from './AssetList.vue';
-import TranslationMixin from './mixins/TranslationMixin';
 import WalletBase from './WalletBase.vue';
 
-import type { Route } from '../store/router/types';
 import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 
-@Component({
-  components: {
-    WalletBase,
-    AssetList,
-  },
-})
-export default class SelectAsset extends Mixins(TranslationMixin) {
-  @state.account.accountAssets accountAssets!: Array<AccountAsset>;
-  @state.router.currentRouteParams private currentRouteParams!: Record<string, string>;
+const { t } = useTranslation();
 
-  @mutation.router.navigate private navigate!: (options: Route) => void;
+const accountAssets = computed<AccountAsset[]>(() => store.state.wallet.account.accountAssets);
+const currentRouteParams = computed<Record<string, unknown>>(() => store.state.wallet.router.currentRouteParams);
 
-  get sendAddress(): string | undefined {
-    return this.currentRouteParams.address;
-  }
+const sendAddress = computed(() => currentRouteParams.value.address as Nullable<string>);
 
-  handleBack(): void {
-    this.navigate({ name: RouteNames.Wallet });
-  }
+const navigate = (route: Route) => {
+  store.commit.wallet.router.navigate(route);
+};
 
-  selectAsset(asset: AccountAsset): void {
-    const name = this.sendAddress ? RouteNames.WalletSend : RouteNames.ReceiveToken;
+const handleBack = () => {
+  navigate({ name: RouteNames.Wallet });
+};
 
-    this.navigate({
-      name,
-      params: {
-        asset,
-        address: this.sendAddress,
-      },
-    });
-  }
-}
+const selectAsset = (asset: AccountAsset) => {
+  const name = sendAddress.value ? RouteNames.WalletSend : RouteNames.ReceiveToken;
+
+  navigate({
+    name,
+    params: {
+      asset,
+      address: sendAddress.value,
+    },
+  });
+};
+
+defineExpose({
+  selectAsset,
+  handleBack,
+});
 </script>
 
 <style lang="scss">

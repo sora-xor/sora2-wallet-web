@@ -1,32 +1,36 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletAdarTxDetails.vue [SwapTransferBatch, finalized]: should be rendered correctly 1`] = `
+exports[`WalletAdarTxDetails.vue > [SwapTransferBatch, finalized]: should be rendered correctly 1`] = `
 <div
   class="adar-tx-details"
+  data-v-29884087=""
 >
   <div
     class="adar-tx-details__title"
+    data-v-29884087=""
   >
-    
     Transaction details
-  
   </div>
-   
   <div
     class="adar-tx-details__txs-container"
+    data-v-29884087=""
   >
-    <div>
+    
+    <div
+      data-v-29884087=""
+    >
       <transaction-hash-view-stub
         block=""
         class="adar-tx-details__account-id"
+        data-v-29884087=""
         hash=""
         translation="transaction.to"
         type="account"
         value="cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo"
       />
-       
       <info-line-stub
         assetsymbol="XOR"
+        data-v-29884087=""
         fiatvalue=""
         isformatted="true"
         label="Amount"
@@ -36,18 +40,21 @@ exports[`WalletAdarTxDetails.vue [SwapTransferBatch, finalized]: should be rende
         valuetooltip=""
       />
     </div>
-    <div>
+    <div
+      data-v-29884087=""
+    >
       <transaction-hash-view-stub
         block=""
         class="adar-tx-details__account-id"
+        data-v-29884087=""
         hash=""
         translation="transaction.to"
         type="account"
         value="cnV2xJFCvXN9fx3DHt9FJWovPkVVBu1vtuzmhr2QnedmZqQ6J"
       />
-       
       <info-line-stub
         assetsymbol="VAL"
+        data-v-29884087=""
         fiatvalue=""
         isformatted="true"
         label="Amount"
@@ -57,22 +64,17 @@ exports[`WalletAdarTxDetails.vue [SwapTransferBatch, finalized]: should be rende
         valuetooltip=""
       />
     </div>
+    
   </div>
-   
   <s-pagination-stub
-    borderradius="small"
     class="adar-tx-details__pagination-panel"
     currentpage="1"
+    data-v-29884087=""
     layout="prev, total, next"
-    nexttext=""
-    oftext="of"
     pagesize="4"
-    pagesizes="10,20,30,40,50,100"
-    perpagetext="Rows per page"
-    popperclass=""
-    prevtext=""
+    pagesizes="10,50,100"
+    sizeslabel="Rows per page"
     total="2"
-    totaltext="Total"
   />
 </div>
 `;

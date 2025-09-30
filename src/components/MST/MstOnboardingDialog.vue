@@ -1,5 +1,5 @@
 <template>
-  <dialog-base :title="t('mst.about')" :visible.sync="isVisible" append-to-body>
+  <dialog-base v-model:visible="isVisible" :title="t('mst.about')" append-to-body>
     <div class="mst-info">
       <div class="about">
         <s-card v-for="(section, index) in displayedSectionsAbout" :key="index" class="section">
@@ -43,100 +43,103 @@
         {{ isMSTAvailable ? t('mst.createMst') : t('mst.connectFearless') }}
       </s-button>
     </div>
-    <create-mst-wallet-dialog :visible.sync="showCreateMSTWalletDialog" @closeMstCreate="handleCloseDialog" />
+    <create-mst-wallet-dialog v-model:visible="showCreateMSTWalletDialog" @close-mst-create="handleCloseDialog" />
   </dialog-base>
 </template>
 
-<script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, ref, toRef } from 'vue';
 
+import MSTFearless from '@/assets/img/MSTFearless.svg';
+import MSTIcon from '@/assets/img/MSTIcon.svg';
+import MSTKeys from '@/assets/img/MSTKeys.svg';
+import MSTSign from '@/assets/img/MSTSign.svg';
+import MSTWallet from '@/assets/img/MSTWallet.svg';
+import { useDialogVisibility } from '@/composables/useDialog';
+import { useTranslation } from '@/composables/useTranslation';
 import { RouteNames } from '@/consts';
+import store from '@/store';
+import type { Route } from '@/store/router/types';
 
-import MSTFearless from '../../assets/img/MSTFearless.svg';
-import MSTIcon from '../../assets/img/MSTIcon.svg';
-import MSTKeys from '../../assets/img/MSTKeys.svg';
-import MSTSign from '../../assets/img/MSTSign.svg';
-import MSTWallet from '../../assets/img/MSTWallet.svg';
-import { state, mutation } from '../../store/decorators';
 import DialogBase from '../DialogBase.vue';
-import DialogMixin from '../mixins/DialogMixin';
-import NotificationMixin from '../mixins/NotificationMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
-import FormattedAddress from '../shared/FormattedAddress.vue';
-import SimpleNotification from '../SimpleNotification.vue';
 
 import CreateMstWalletDialog from './CreateMstWalletDialog.vue';
 
-import type { Route } from '../../store/router/types';
-@Component({
-  components: {
-    DialogBase,
-    SimpleNotification,
-    FormattedAddress,
-    CreateMstWalletDialog,
+defineOptions({ name: 'MstOnboardingDialog' });
+
+const props = withDefaults(
+  defineProps<{
+    visible?: boolean;
+  }>(),
+  {
+    visible: false,
+  }
+);
+
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'close'): void;
+}>();
+
+const { t } = useTranslation();
+const { isVisible, closeDialog } = useDialogVisibility(toRef(props, 'visible'), {
+  emit: (value) => emit('update:visible', value),
+  onClose: () => emit('close'),
+});
+
+const isMSTAvailable = computed(() => store.state.wallet.settings.isMSTAvailable);
+const navigate = (route: Route) => {
+  store.original.commit('router/navigate', route);
+};
+
+const sectionsAbout = computed(() => [
+  {
+    image: MSTKeys,
+    alt: 'mst keys',
+    text: t('mst.mstKeys'),
   },
-})
-export default class MstOnboardingDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
-  @state.settings.isMSTAvailable isMSTAvailable!: boolean;
-  @mutation.router.navigate private navigate!: (options: Route) => void;
+  {
+    image: MSTSign,
+    alt: 'mst sign',
+    text: t('mst.mstSign'),
+  },
+  {
+    image: MSTWallet,
+    alt: 'mst wallet',
+    text: t('mst.mstWallet'),
+  },
+]);
 
-  readonly MSTIcon = MSTIcon;
-  readonly MSTKeys = MSTKeys;
-  readonly MSTSign = MSTSign;
-  readonly MSTWallet = MSTWallet;
+const displayedSectionsAbout = computed(() => sectionsAbout.value.slice(0, 2));
 
-  readonly MSTFearless = MSTFearless;
+const sectionHowTo = computed(() => [
+  {
+    image: MSTFearless,
+    alt: 'fearless wallet logo',
+    text: t('mst.mstFearless'),
+  },
+  {
+    image: MSTIcon,
+    alt: 'mst icon',
+    text: t('mst.mstIcon'),
+  },
+]);
 
-  showCreateMSTWalletDialog = false;
+const showCreateMSTWalletDialog = ref(false);
 
-  sectionsAbout = [
-    {
-      image: MSTKeys,
-      alt: 'mst keys',
-      text: this.t('mst.mstKeys'),
-    },
-    {
-      image: MSTSign,
-      alt: 'mst sign',
-      text: this.t('mst.mstSign'),
-    },
-    {
-      image: MSTWallet,
-      alt: 'mst wallet',
-      text: this.t('mst.mstWallet'),
-    },
-  ];
+const handleCloseDialog = () => {
+  closeDialog();
+};
 
-  sectionHowTo = [
-    {
-      image: MSTFearless,
-      alt: 'fearless wallet logo',
-      text: this.t('mst.mstFearless'),
-    },
-    {
-      image: MSTIcon,
-      alt: 'mst icon',
-      text: this.t('mst.mstIcon'),
-    },
-  ];
-
-  get displayedSectionsAbout() {
-    return this.sectionsAbout.slice(0, 2);
+const connectFearlessOrCreateMST = () => {
+  if (isMSTAvailable.value) {
+    showCreateMSTWalletDialog.value = true;
+    return;
   }
 
-  handleCloseDialog() {
-    this.closeDialog();
-  }
-
-  public connectFearlessOrCreateMST() {
-    if (this.isMSTAvailable) {
-      this.showCreateMSTWalletDialog = true;
-    } else {
-      this.closeDialog();
-      this.navigate({ name: RouteNames.WalletConnection });
-    }
-  }
-}
+  closeDialog();
+  navigate({ name: RouteNames.WalletConnection });
+};
 </script>
 
 <style lang="scss" scoped>

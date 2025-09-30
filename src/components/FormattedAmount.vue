@@ -1,14 +1,14 @@
 <template>
   <span
     v-if="value && isFiniteValue"
+    ref="parent"
     :class="computedClasses"
     @mouseenter="checkWiderFlag"
     @mouseleave="resetWiderFlag"
     @touchstart="checkWiderFlag"
     @touchend="resetWiderFlag"
-    ref="parent"
   >
-    <span class="formatted-amount__value" ref="child">
+    <span ref="child" class="formatted-amount__value">
       <span
         v-if="!isHiddenValue && (isFiatValue || $slots.prefix || customizableCurrency)"
         class="formatted-amount__prefix"
@@ -31,7 +31,7 @@
 <script lang="ts">
 import { FPNumber } from '@sora-substrate/sdk';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Options, mixins, Prop } from 'vue-property-decorator';
 
 import { Currency, FiatExchangeRateObject } from '@/types/currency';
 
@@ -47,8 +47,8 @@ interface FormattedAmountValues {
   decimal: string;
 }
 
-@Component
-export default class FormattedAmount extends Mixins(NumberFormatterMixin) {
+@Options({})
+export default class FormattedAmount extends mixins(NumberFormatterMixin) {
   readonly HiddenValue = HiddenValue;
   /**
    * Balance or Amount value.

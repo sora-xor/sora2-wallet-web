@@ -1,11 +1,11 @@
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { copyToClipboard, delay } from '../../util';
 
 import TranslationMixin from './TranslationMixin';
 
-@Component
-export default class CopyAddressMixin extends Mixins(TranslationMixin) {
+@Options({})
+export default class CopyAddressMixin extends mixins(TranslationMixin) {
   targetElement: Nullable<EventTarget> = null;
   wasAddressCopied = false;
 

@@ -24,7 +24,7 @@ const createStore = () =>
         currentRouteParams: { id: '1', asset: MOCK_ACCOUNT_ASSETS[0] },
       }),
       mutations: {
-        navigate: jest.fn(),
+        navigate: vi.fn(),
       },
     },
     account: {
@@ -38,13 +38,13 @@ const createStore = () =>
         account: () => MOCK_ACCOUNTS[0],
       },
       actions: {
-        transfer: jest.fn(),
+        transfer: vi.fn(),
       },
     },
   });
 
-jest.mock('../../../src/util', () => {
-  const originalModule = jest.requireActual('../../../src/util');
+vi.mock('../../../src/util', async () => {
+  const originalModule = await vi.importActual<typeof import('../../../src/util')>('../../../src/util');
 
   return {
     ...originalModule,

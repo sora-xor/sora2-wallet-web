@@ -1,6 +1,7 @@
-import Maska from 'maska';
-import Vue from 'vue';
+import { vMaska } from 'maska';
 
-export function install(vue: typeof Vue) {
-  vue.use(Maska);
+import type { App } from 'vue';
+
+export function install(app: App): void {
+  app.directive('maska', vMaska);
 }

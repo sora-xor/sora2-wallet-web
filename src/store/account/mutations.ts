@@ -2,7 +2,6 @@ import { AES } from 'crypto-js';
 import cryptoRandomString from 'crypto-random-string';
 import { defineMutations } from 'direct-vuex';
 import omit from 'lodash/fp/omit';
-import Vue from 'vue';
 
 import { api } from '../../api';
 import { storage, settingsStorage } from '../../util/storage';
@@ -204,7 +203,7 @@ const mutations = defineMutations<AccountState>()({
   },
   removeAddressFromBook(state, address: string): void {
     if (state.book) {
-      Vue.delete(state.book, address); // to make it reactive
+      delete state.book[address];
       settingsStorage.set('book', JSON.stringify(state.book));
     }
   },

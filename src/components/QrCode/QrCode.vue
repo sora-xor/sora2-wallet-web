@@ -5,13 +5,13 @@
 <script lang="ts">
 import { BrowserQRCodeSvgWriter } from '@zxing/browser';
 import { EncodeHintType, QRCodeDecoderErrorCorrectionLevel } from '@zxing/library';
-import { Component, Prop, Ref, Vue, Watch } from 'vue-property-decorator';
+import { Options, Prop, Ref, Vue, Watch } from 'vue-property-decorator';
 
 const writer = new BrowserQRCodeSvgWriter();
 const hints = new Map();
 hints.set(EncodeHintType.ERROR_CORRECTION, QRCodeDecoderErrorCorrectionLevel.Q);
 
-@Component
+@Options({})
 export default class QrCode extends Vue {
   @Prop({ default: '', type: String }) readonly value!: string;
   @Prop({ default: 260, type: Number }) readonly size!: number;

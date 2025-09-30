@@ -1,145 +1,169 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`AddAssetSearch.vue [Empty Search Input]: should be rendered correctly 1`] = `
+exports[`AddAssetSearch.vue > [Empty Search Input]: should be rendered correctly 1`] = `
 <div
   class="add-asset-token"
+  data-v-cac19288=""
 >
   <div
     class="add-asset-token__page"
+    data-v-cac19288=""
   >
     <search-input-stub
-      autofocus="true"
+      autofocus=""
       class="add-asset-token__search"
+      data-v-cac19288=""
       maxlength="100"
+      modelvalue=""
       placeholder="Search by Asset ID, Name or Ticker Symbol"
-      value=""
     />
-     
     <assets-filter-stub
       class="add-asset-token__filter"
+      data-v-cac19288=""
+      modelvalue="true"
       showonlyverifiedswitch="true"
-      value="true"
     />
-     
     <div
       class="asset-list asset-search-list"
+      data-v-cac19288=""
     >
-      <recycle-scroller
+      <recycle-scroller-stub
         buffer="NaN"
         class="asset-list-inner hidden-scrollbar"
-        item-size="NaN"
+        direction="vertical"
+        emitupdate="false"
+        itemclass=""
         items=""
-        key-field="address"
-        style="margin-right: 0px;"
+        itemsize="NaN"
+        itemtag="div"
+        keyfield="address"
+        listclass=""
+        listtag="div"
+        pagemode="false"
+        prerender="0"
+        sizefield="size"
+        skiphover="false"
+        style="height: calc(var(--s-asset-item-height) * 5 + 0px); margin-right: 0px;"
+        typefield="type"
+        updateinterval="0"
       />
-       
-      <div
-        class="scrollbar asset-list-scrollbar"
-      >
-        <div
-          class="thumb"
-          style="transform: translateY(0%); height: 0%;"
-        />
-      </div>
+      <scrollbar-stub
+        class="asset-list-scrollbar"
+      />
     </div>
-     
-    <!---->
+    <!--v-if-->
   </div>
 </div>
 `;
 
-exports[`AddAssetSearch.vue [No Tokens Found]: should be rendered correctly 1`] = `
+exports[`AddAssetSearch.vue > [No Tokens Found]: should be rendered correctly 1`] = `
 <div
   class="add-asset-token"
+  data-v-cac19288=""
 >
   <div
     class="add-asset-token__page"
+    data-v-cac19288=""
   >
     <search-input-stub
-      autofocus="true"
+      autofocus=""
       class="add-asset-token__search"
+      data-v-cac19288=""
       maxlength="100"
+      modelvalue=""
       placeholder="Search by Asset ID, Name or Ticker Symbol"
-      value="123456"
     />
-     
     <assets-filter-stub
       class="add-asset-token__filter"
+      data-v-cac19288=""
+      modelvalue="true"
       showonlyverifiedswitch="true"
-      value="true"
     />
-     
     <div
       class="asset-list asset-search-list"
+      data-v-cac19288=""
     >
-      <recycle-scroller
+      <recycle-scroller-stub
         buffer="NaN"
         class="asset-list-inner hidden-scrollbar"
-        item-size="NaN"
+        direction="vertical"
+        emitupdate="false"
+        itemclass=""
         items=""
-        key-field="address"
-        style="margin-right: 0px;"
+        itemsize="NaN"
+        itemtag="div"
+        keyfield="address"
+        listclass=""
+        listtag="div"
+        pagemode="false"
+        prerender="0"
+        sizefield="size"
+        skiphover="false"
+        style="height: calc(var(--s-asset-item-height) * 5 + 0px); margin-right: 0px;"
+        typefield="type"
+        updateinterval="0"
       />
-       
-      <div
-        class="scrollbar asset-list-scrollbar"
-      >
-        <div
-          class="thumb"
-          style="transform: translateY(0%); height: 0%;"
-        />
-      </div>
+      <scrollbar-stub
+        class="asset-list-scrollbar"
+      />
     </div>
-     
-    <!---->
+    <!--v-if-->
   </div>
 </div>
 `;
 
-exports[`AddAssetSearch.vue [Token is Found]: should be rendered correctly 1`] = `
+exports[`AddAssetSearch.vue > [Token is Found]: should be rendered correctly 1`] = `
 <div
   class="add-asset-token"
+  data-v-cac19288=""
 >
   <div
     class="add-asset-token__page"
+    data-v-cac19288=""
   >
     <search-input-stub
-      autofocus="true"
+      autofocus=""
       class="add-asset-token__search"
+      data-v-cac19288=""
       maxlength="100"
+      modelvalue=""
       placeholder="Search by Asset ID, Name or Ticker Symbol"
-      value="TEST"
     />
-     
     <assets-filter-stub
       class="add-asset-token__filter"
+      data-v-cac19288=""
+      modelvalue="true"
       showonlyverifiedswitch="true"
-      value="true"
     />
-     
     <div
       class="asset-list asset-search-list"
+      data-v-cac19288=""
     >
-      <recycle-scroller
+      <recycle-scroller-stub
         buffer="NaN"
         class="asset-list-inner hidden-scrollbar"
-        item-size="NaN"
+        direction="vertical"
+        emitupdate="false"
+        itemclass=""
         items=""
-        key-field="address"
-        style="margin-right: 0px;"
+        itemsize="NaN"
+        itemtag="div"
+        keyfield="address"
+        listclass=""
+        listtag="div"
+        pagemode="false"
+        prerender="0"
+        sizefield="size"
+        skiphover="false"
+        style="height: calc(var(--s-asset-item-height) * 5 + 0px); margin-right: 0px;"
+        typefield="type"
+        updateinterval="0"
       />
-       
-      <div
-        class="scrollbar asset-list-scrollbar"
-      >
-        <div
-          class="thumb"
-          style="transform: translateY(0%); height: 0%;"
-        />
-      </div>
+      <scrollbar-stub
+        class="asset-list-scrollbar"
+      />
     </div>
-     
-    <!---->
+    <!--v-if-->
   </div>
 </div>
 `;

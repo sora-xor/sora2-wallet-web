@@ -8,6 +8,10 @@ type GoogleOauthOptions = {
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 
+/**
+ * Handles OAuth token acquisition for Google Drive access, wrapping the GSI
+ * client with convenient async helpers.
+ */
 export class GoogleOauth {
   private options!: GoogleOauthOptions;
   private client!: google.accounts.oauth2.TokenClient;
@@ -28,10 +32,12 @@ export class GoogleOauth {
     return !!this.options?.clientId;
   }
 
+  /** Persists the OAuth client configuration. */
   public setOptions(options: GoogleOauthOptions): void {
     this.options = { ...options };
   }
 
+  /** Loads the Google Identity script and initializes the token client. */
   public async init(): Promise<void> {
     if (this.ready) return;
     if (!this.options) throw new Error(`[${this.constructor.name}]: Options should be set before inintialization`);
@@ -41,10 +47,12 @@ export class GoogleOauth {
     this.initClient(this.options);
   }
 
+  /** Loads the Google Identity Services script alongside DOM readiness. */
   private async load(): Promise<void> {
     await Promise.all([ScriptLoader.load('https://accounts.google.com/gsi/client'), waitForDocumentReady()]);
   }
 
+  /** Instantiates the token client with callbacks we override during prompts. */
   private initClient({ clientId, scope }: GoogleOauthOptions): void {
     this.client = google.accounts.oauth2.initTokenClient({
       client_id: clientId,
@@ -54,6 +62,10 @@ export class GoogleOauth {
     });
   }
 
+  /**
+   * Wraps the token prompt in a promise, resolving only after the GSI client
+   * returns success or failure.
+   */
   private async waitForAuthFinalization(func: FnWithoutArgs): Promise<void> {
     await new Promise<void>((resolve, reject) => {
       this.authCallback = (token) => {
@@ -73,12 +85,14 @@ export class GoogleOauth {
     });
   }
 
+  /** Refreshes the token if it is missing or about to expire. */
   public async checkToken(): Promise<void> {
     if (!this.token || Date.now() + FIVE_MINUTES > Number(this.token.expires_in)) {
       await this.getToken();
     }
   }
 
+  /** Starts an interactive token request unless a prompt is already running. */
   public async getToken(): Promise<void> {
     if (this.isAuthProcess) return;
 

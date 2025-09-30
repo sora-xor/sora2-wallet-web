@@ -31,7 +31,7 @@ const createStore = (
         account: () => MOCK_ACCOUNT,
       },
       actions: {
-        logout: jest.fn(),
+        logout: vi.fn(),
       },
     },
     transactions: {
@@ -62,6 +62,6 @@ useDescribe('Wallet.vue', Wallet, () => {
 
     const actionBtn = wrapper.find('.base-title_action');
 
-    expect(actionBtn.exists()).toBeFalse();
+    expect(actionBtn.exists()).toBe(false);
   });
 });

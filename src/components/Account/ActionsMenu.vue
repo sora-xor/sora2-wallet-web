@@ -5,9 +5,8 @@
     icon="basic-more-vertical-24"
     class="account-actions"
     popper-class="account-actions-menu"
-    v-on="$listeners"
   >
-    <template slot="menu">
+    <template #menu>
       <s-dropdown-item
         v-for="{ value, name, icon, status } in items"
         :key="value"
@@ -21,14 +20,19 @@
   </s-dropdown>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
-import { AccountActionTypes } from '../../consts';
-import LoadingMixin from '../mixins/LoadingMixin';
-import NotificationMixin from '../mixins/NotificationMixin';
+import { useTranslation } from '@/composables/useTranslation';
+import { AccountActionTypes } from '@/consts';
 
-const ActionsData = {
+interface ActionEntry {
+  name: string;
+  icon: string;
+  status: string;
+}
+
+const actionsMetadata: Record<AccountActionTypes, ActionEntry> = {
   [AccountActionTypes.Rename]: {
     name: 'account.rename',
     icon: 'basic-options-24',
@@ -66,23 +70,30 @@ const ActionsData = {
   },
 };
 
-@Component
-export default class AccountActionsMenu extends Mixins(NotificationMixin, LoadingMixin) {
-  @Prop({ default: () => [], type: Array }) readonly actions!: AccountActionTypes[];
-
-  get items() {
-    return this.actions.map((value) => {
-      const { name, icon, status } = ActionsData[value];
-
-      return {
-        value,
-        name: this.t(name),
-        icon,
-        status,
-      };
-    });
+const props = withDefaults(
+  defineProps<{
+    actions?: AccountActionTypes[];
+  }>(),
+  {
+    actions: () => [],
   }
-}
+);
+
+const { t } = useTranslation();
+
+const items = computed(() =>
+  props.actions.map((value) => {
+    const { name, icon, status } = actionsMetadata[value];
+    return {
+      value,
+      name: t(name),
+      icon,
+      status,
+    };
+  })
+);
+
+defineExpose({ items });
 </script>
 
 <style lang="scss">

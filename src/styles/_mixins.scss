@@ -60,6 +60,15 @@
   line-height: $lineHeight;
 }
 
+
+@mixin heading3-text {
+  font-family: var(--s-font-family-default);
+  font-size: var(--s-font-size-large);
+  font-weight: 600;
+  line-height: var(--s-line-height-large);
+  letter-spacing: var(--s-letter-spacing-small);
+}
+
 @mixin switch-block($fontSize: var(--s-font-size-medium)) {
   display: flex;
   align-items: center;
@@ -146,32 +155,35 @@
 }
 
 @mixin scrollbar($marginOffset: 0, $verticalRight: 2px, $height: '') {
-  &.el-scrollbar {
+  $host: &;
+  $scrollbar: selector-append($host, '.el-scrollbar');
+
+  @at-root #{ $scrollbar } {
     margin-left: calc(#{$marginOffset} * -1);
     margin-right: calc(#{$marginOffset} * -1);
+  }
 
-    .el-scrollbar__wrap {
-      overflow-x: hidden;
-      margin-bottom: 0px !important; // to disable element-ui negative margin
-      @if $height != '' {
-        height: $height;
-      }
+  @at-root #{ selector-nest($scrollbar, '.el-scrollbar__wrap') } {
+    overflow-x: hidden;
+    margin-bottom: 0px !important; // to disable element-ui negative margin
+    @if $height != '' {
+      height: $height;
     }
-    .el-scrollbar__wrap,
-    .el-scrollbar__view {
-      display: flex;
-      flex: 1;
-      flex-flow: column nowrap;
-    }
-    .el-scrollbar__view {
-      padding-left: $marginOffset;
-      padding-right: $marginOffset;
-    }
-    .el-scrollbar__bar {
-      &.is-vertical {
-        right: $verticalRight;
-      }
-    }
+  }
+
+  @at-root #{ selector-nest($scrollbar, '.el-scrollbar__wrap, .el-scrollbar__view') } {
+    display: flex;
+    flex: 1;
+    flex-flow: column nowrap;
+  }
+
+  @at-root #{ selector-nest($scrollbar, '.el-scrollbar__view') } {
+    padding-left: $marginOffset;
+    padding-right: $marginOffset;
+  }
+
+  @at-root #{ selector-nest($scrollbar, '.el-scrollbar__bar.is-vertical') } {
+    right: $verticalRight;
   }
 }
 

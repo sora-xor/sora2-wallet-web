@@ -1,6 +1,9 @@
 import { createDecorator, VueDecorator } from 'vue-class-component';
 import { mapGetters, mapState, mapActions, mapMutations } from 'vuex';
 
+/**
+ * Enumerates the Vuex helpers the wallet exposes via decorators.
+ */
 export enum VuexOperation {
   State = 'state',
   Getter = 'getter',
@@ -8,6 +11,9 @@ export enum VuexOperation {
   Action = 'action',
 }
 
+/**
+ * Resolves the Vuex helper that should be used for a given decorator type.
+ */
 function getVuexMapFn(type: VuexOperation): any {
   switch (type) {
     case VuexOperation.State:
@@ -21,10 +27,18 @@ function getVuexMapFn(type: VuexOperation): any {
   }
 }
 
+/**
+ * Detects whether a decorator maps into a computed property (state/getter) so
+ * we can register it under the correct Vue component option.
+ */
 function isComputedDecorator(type: VuexOperation): boolean {
   return [VuexOperation.State, VuexOperation.Getter].includes(type);
 }
 
+/**
+ * Creates a class-style Vue decorator that maps Vuex state, getters, actions
+ * or mutations into component properties.
+ */
 export function attachDecorator(type: VuexOperation, name: string, modulesChain?: string): VueDecorator {
   const mapFn = getVuexMapFn(type);
   const featuresType = isComputedDecorator(type) ? 'computed' : 'methods';
@@ -42,6 +56,10 @@ export function attachDecorator(type: VuexOperation, name: string, modulesChain?
 
 const uiLibGetters = ['libraryDesignSystem', 'libraryTheme'];
 
+/**
+ * Recursively walks through Vuex modules and builds a matching decorator tree
+ * so consuming apps can import a single object and destructure nested helpers.
+ */
 export function createDecoratorsObject(
   obj: any,
   newObj: any,

@@ -1,11 +1,11 @@
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 
 import { state } from '../../store/decorators';
 import { delay } from '../../util';
 
 import type { WithConnectionApi } from '@sora-substrate/sdk';
 
-@Component
+@Options({})
 export default class LoadingMixin extends Vue {
   @Prop({ type: Boolean, default: false }) readonly parentLoading!: boolean;
 

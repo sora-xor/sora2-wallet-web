@@ -1,68 +1,72 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletAccount.vue should be rendered correctly 1`] = `
-<s-card
+exports[`WalletAccount.vue > should be rendered correctly 1`] = `
+<div
   borderradius="medium"
   class="account-card"
+  data-v-55d10baf=""
   shadow="always"
   size="small"
 >
+  
   <div
     class="account"
+    data-v-55d10baf=""
   >
     <div
       class="account-avatar"
+      data-v-55d10baf=""
     >
+      
       <wallet-avatar-stub
         address="cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo"
         class="account-gravatar"
         size="28"
-        slot="avatar"
         theme="polkadot"
       />
+      
     </div>
-     
     <div
       class="account-details s-flex"
+      data-v-55d10baf=""
     >
       <div
         class="account-credentials s-flex"
+        data-v-55d10baf=""
       >
         <div
           class="account-credentials_name"
+          data-v-55d10baf=""
         >
+          
+          
           Polkadot Name
+          
+          
         </div>
-         
         <div
           class="account-credentials_description"
+          data-v-55d10baf=""
         >
-          <s-tooltip
+          
+          <s-tooltip-stub
             append-to-body=""
             content="Copy Wallet address"
+            data-v-2748f8d2=""
+            header=""
+            placement="bottom"
+            primarybuttontext=""
+            secondarybuttontext=""
             tabindex="-1"
-          >
-            <div
-              class="formatted-address"
-            >
-              <span
-                class="address"
-                style="width: 0px;"
-              >
-                cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo
-              </span>
-              
-      ...
-      
-              <span>
-                L6UHcHDCvo
-              </span>
-            </div>
-          </s-tooltip>
+            wrappertag="div"
+          />
+          
         </div>
       </div>
-       
+      
+      
     </div>
   </div>
-</s-card>
+  
+</div>
 `;

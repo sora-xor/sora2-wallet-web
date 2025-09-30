@@ -52,25 +52,25 @@
       <component :is="currentTab" @swap="handleSwap" />
     </div>
 
-    <wallet-transaction-details v-if="selectedTransaction" @backToWallet="signTransaction" />
+    <wallet-transaction-details v-if="selectedTransaction" @back-to-wallet="signTransaction" />
 
-    <account-settings-dialog :visible.sync="accountSettingsVisibility" />
-    <mst-onboarding-dialog :visible.sync="mstOnboardingDialog" />
-    <multisig-change-name-dialog :visible.sync="dialogMSTNameChange" />
+    <account-settings-dialog v-model:visible="accountSettingsVisibility" />
+    <mst-onboarding-dialog v-model:visible="mstOnboardingDialog" />
+    <multisig-change-name-dialog v-model:visible="dialogMSTNameChange" />
 
     <template v-if="!isExternal">
       <account-rename-dialog
-        :visible.sync="accountRenameVisibility"
+        v-model:visible="accountRenameVisibility"
         :loading="loading"
         @confirm="handleAccountRename"
       />
       <account-export-dialog
-        :visible.sync="accountExportVisibility"
+        v-model:visible="accountExportVisibility"
         :loading="loading"
         @confirm="handleAccountExport"
       />
       <account-delete-dialog
-        :visible.sync="accountDeleteVisibility"
+        v-model:visible="accountDeleteVisibility"
         :loading="loading"
         @confirm="handleAccountDelete"
       />
@@ -81,7 +81,7 @@
 <script lang="ts">
 import { hexToU8a } from '@polkadot/util';
 import { api } from '@sora-substrate/sdk';
-import { Component, Mixins, Watch } from 'vue-property-decorator';
+import { Options, mixins, Watch } from 'vue-property-decorator';
 
 import { PolkadotJsAccount } from '@/types/common';
 
@@ -108,7 +108,7 @@ import WalletTransactionDetails from './WalletTransactionDetails.vue';
 import type { WalletPermissions } from '../consts';
 import type { HistoryItem } from '@sora-substrate/sdk';
 
-@Component({
+@Options({
   components: {
     WalletBase,
     WalletAccount,
@@ -125,7 +125,7 @@ import type { HistoryItem } from '@sora-substrate/sdk';
     MultisigChangeNameDialog,
   },
 })
-export default class Wallet extends Mixins(AccountActionsMixin, OperationsMixin, QrCodeParserMixin) {
+export default class Wallet extends mixins(AccountActionsMixin, OperationsMixin, QrCodeParserMixin) {
   readonly WalletTabs = WalletTabs;
   readonly accountActions = [
     AccountActionTypes.Rename,

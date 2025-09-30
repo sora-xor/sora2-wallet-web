@@ -1,43 +1,47 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletConnection.vue [Extension available]: Accounts should be rendered 1`] = `
+exports[`WalletConnection.vue > [Extension available]: Accounts should be rendered 1`] = `
 <connection-view-stub
   chainapi="[object Object]"
   checkconnectedaccountsource="[Function]"
   closeview="[Function]"
+  data-v-05516735=""
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"
 />
 `;
 
-exports[`WalletConnection.vue [Extension available]: Connect account screen should be rendered 1`] = `
+exports[`WalletConnection.vue > [Extension available]: Connect account screen should be rendered 1`] = `
 <connection-view-stub
   chainapi="[object Object]"
   checkconnectedaccountsource="[Function]"
   closeview="[Function]"
+  data-v-05516735=""
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"
 />
 `;
 
-exports[`WalletConnection.vue [Extension available]: Extensions should be rendered 1`] = `
+exports[`WalletConnection.vue > [Extension available]: Extensions should be rendered 1`] = `
 <connection-view-stub
   chainapi="[object Object]"
   checkconnectedaccountsource="[Function]"
   closeview="[Function]"
+  data-v-05516735=""
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"
 />
 `;
 
-exports[`WalletConnection.vue [Extension available]: No accounts, refresh screen should be rendered 1`] = `
+exports[`WalletConnection.vue > [Extension available]: No accounts, refresh screen should be rendered 1`] = `
 <connection-view-stub
   chainapi="[object Object]"
   checkconnectedaccountsource="[Function]"
   closeview="[Function]"
+  data-v-05516735=""
   loginaccount="[Function]"
   logoutaccount="[Function]"
   renameaccount="[Function]"

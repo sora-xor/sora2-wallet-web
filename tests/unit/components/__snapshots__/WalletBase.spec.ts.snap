@@ -1,36 +1,43 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletBase.vue should be rendered correctly 1`] = `
+exports[`WalletBase.vue > should be rendered correctly 1`] = `
 <div
-  class="el-card s-card base is-always-shadow s-status-default s-size-big s-border-radius-medium s-primary"
+  borderradius="medium"
+  class="base"
+  data-v-27926e93=""
+  primary="true"
+  shadow="always"
+  size="big"
 >
   <div
-    class="el-card__header"
+    class="s-card-stub__header"
   >
     <div
       class="base-title s-flex"
+      data-v-27926e93=""
       tabindex="-1"
     >
-      <!---->
-       
+      <!--v-if-->
       <h3
         class="base-title_text"
+        data-v-27926e93=""
+      >
+         
+        <!--v-if-->
+      </h3>
+      <div
+        class="base-title_action"
+        data-v-27926e93=""
       >
         
         
-        
-        <!---->
-      </h3>
-       
-      <div
-        class="base-title_action"
-      />
-       
-      <!---->
+      </div>
+      <!--v-if-->
     </div>
   </div>
-  <div
-    class="el-card__body"
-  />
+  
+  
+  
+  
 </div>
 `;

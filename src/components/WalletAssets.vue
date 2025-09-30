@@ -1,5 +1,5 @@
 <template>
-  <div :class="computedClasses" v-loading="loading">
+  <div v-loading="loading" :class="computedClasses">
     <wallet-assets-headline :assets-fiat-amount="assetsFiatAmount" />
     <s-scrollbar class="wallet-assets-scrollbar">
       <draggable v-model="assetList" class="wallet-assets__draggable" handle=".wallet-assets-dashes" :move="onMove">
@@ -13,44 +13,44 @@
             @show-details="handleOpenAssetDetails"
             @pin="handlePin"
           >
-            <template #value="asset">
+            <template #value="slotAsset">
               <formatted-amount-with-fiat-value
                 value-can-be-hidden
                 value-class="asset-value"
-                :value="getBalance(asset)"
+                :value="getBalance(slotAsset)"
                 :font-size-rate="FontSizeRate.SMALL"
-                :asset-symbol="asset.symbol"
+                :asset-symbol="slotAsset.symbol"
                 symbol-as-decimal
-                :fiat-value="getFiatBalance(asset)"
+                :fiat-value="getFiatBalance(slotAsset)"
                 :fiat-font-size-rate="FontSizeRate.MEDIUM"
                 :fiat-font-weight-rate="FontWeightRate.MEDIUM"
               >
-                <div v-if="hasLockedBalance(asset)" class="asset-value-locked p4">
+                <div v-if="hasLockedBalance(slotAsset)" class="asset-value-locked p4">
                   <s-icon name="lock-16" size="12px" />
-                  <span>{{ formatFrozenBalance(asset) }}</span>
+                  <span>{{ formatFrozenBalance(slotAsset) }}</span>
                 </div>
               </formatted-amount-with-fiat-value>
             </template>
-            <template #default="asset">
+            <template #default="slotAsset">
               <s-button
-                v-if="permissions.sendAssets && !isZeroBalance(asset)"
+                v-if="permissions.sendAssets && !isZeroBalance(slotAsset)"
                 class="wallet-assets__button send"
                 type="action"
                 size="small"
                 alternative
                 :tooltip="t('assets.send')"
-                @click="handleAssetSend(asset)"
+                @click="handleAssetSend(slotAsset)"
               >
                 <s-icon name="finance-send-24" size="24" />
               </s-button>
               <s-button
-                v-if="permissions.swapAssets && asset.decimals"
+                v-if="permissions.swapAssets && slotAsset.decimals"
                 class="wallet-assets__button swap"
                 type="action"
                 size="small"
                 alternative
                 :tooltip="t('assets.swap')"
-                @click="handleAssetSwap(asset)"
+                @click="handleAssetSwap(slotAsset)"
               >
                 <s-icon name="arrows-swap-24" size="24" />
               </s-button>
@@ -61,7 +61,7 @@
                 size="small"
                 alternative
                 :tooltip="t('assets.details')"
-                @click="handleOpenAssetDetails(asset)"
+                @click="handleOpenAssetDetails(slotAsset)"
               >
                 <s-icon name="arrows-chevron-right-rounded-24" size="24" />
               </s-button>
@@ -86,7 +86,7 @@
 <script lang="ts">
 import { api, FPNumber } from '@sora-substrate/sdk';
 import isEmpty from 'lodash/fp/isEmpty';
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 import draggable from 'vuedraggable';
 
 import { RouteNames, HiddenValue, WalletFilteringOptions } from '../consts';
@@ -103,9 +103,12 @@ import WalletAssetsHeadline from './WalletAssetsHeadline.vue';
 import type { WalletAssetFilters, WalletPermissions } from '../consts';
 import type { Route } from '../store/router/types';
 import type { AccountAsset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
-import type { MoveEvent } from 'vuedraggable';
+type DraggableMoveEvent<T> = {
+  draggedContext: { element: T };
+  relatedContext: { element: T };
+};
 
-@Component({
+@Options({
   components: {
     AssetList,
     AssetListItem,
@@ -114,7 +117,7 @@ import type { MoveEvent } from 'vuedraggable';
     draggable,
   },
 })
-export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMixin, TranslationMixin) {
+export default class WalletAssets extends mixins(LoadingMixin, FormattedAmountMixin, TranslationMixin) {
   @state.account.accountAssets private accountAssets!: Array<AccountAsset>;
   @state.settings.shouldBalanceBeHidden private shouldBalanceBeHidden!: boolean;
   @state.settings.permissions permissions!: WalletPermissions;
@@ -194,7 +197,7 @@ export default class WalletAssets extends Mixins(LoadingMixin, FormattedAmountMi
     return fiatAmount ? fiatAmount.toLocaleString() : null;
   }
 
-  onMove(event: MoveEvent<AccountAsset>): boolean {
+  onMove(event: DraggableMoveEvent<AccountAsset>): boolean {
     const draggedItem = event.draggedContext.element;
     const targetItem = event.relatedContext.element;
 

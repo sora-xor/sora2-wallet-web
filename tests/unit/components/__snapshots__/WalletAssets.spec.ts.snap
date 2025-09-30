@@ -1,124 +1,131 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletAssets.vue should be rendered correctly 1`] = `
+exports[`WalletAssets.vue > should be rendered correctly 1`] = `
 <div
   class="wallet-assets wallet-assets--fiat s-flex"
+  data-v-89e419e5=""
 >
   <wallet-assets-headline-stub
     assetsfiatamount="151.782"
+    data-v-89e419e5=""
   />
-   
   <s-scrollbar-stub
     class="wallet-assets-scrollbar"
-    tag="div"
+    data-v-89e419e5=""
   >
     <draggable-stub
       class="wallet-assets__draggable"
-      clone="[Function]"
-      element="div"
+      data-v-89e419e5=""
       handle=".wallet-assets-dashes"
-      move="[Function]"
-      value="[object Object],[object Object],[object Object]"
+      move="function () { [native code] }"
     >
+      
       <div
         class="wallet-assets-item s-flex"
+        data-v-89e419e5=""
       >
         <div
           class="wallet-assets-dashes"
-          role="button"
+          data-v-89e419e5=""
+          tabindex="0"
         >
           <div
             class="wallet-assets-three-dash"
+            data-v-89e419e5=""
           />
         </div>
-         
         <asset-list-item-stub
           asset="[object Object]"
+          data-v-89e419e5=""
           pinnable="true"
+          pinned="false"
+          selectable="false"
+          selected="false"
           withclickablelogo="true"
           withfiat="true"
+          withtabindex="false"
         />
-         
-        <s-divider-stub
+        <hr
           class="wallet-assets-divider"
-          contentposition="center"
-          direction="horizontal"
-          type="secondary"
+          data-v-89e419e5=""
         />
       </div>
       <div
         class="wallet-assets-item s-flex"
+        data-v-89e419e5=""
       >
         <div
           class="wallet-assets-dashes"
-          role="button"
+          data-v-89e419e5=""
+          tabindex="0"
         >
           <div
             class="wallet-assets-three-dash"
+            data-v-89e419e5=""
           />
         </div>
-         
         <asset-list-item-stub
           asset="[object Object]"
+          data-v-89e419e5=""
           pinnable="true"
+          pinned="false"
+          selectable="false"
+          selected="false"
           withclickablelogo="true"
           withfiat="true"
+          withtabindex="false"
         />
-         
-        <s-divider-stub
+        <hr
           class="wallet-assets-divider"
-          contentposition="center"
-          direction="horizontal"
-          type="secondary"
+          data-v-89e419e5=""
         />
       </div>
       <div
         class="wallet-assets-item s-flex"
+        data-v-89e419e5=""
       >
         <div
           class="wallet-assets-dashes"
-          role="button"
+          data-v-89e419e5=""
+          tabindex="0"
         >
           <div
             class="wallet-assets-three-dash"
+            data-v-89e419e5=""
           />
         </div>
-         
         <asset-list-item-stub
           asset="[object Object]"
+          data-v-89e419e5=""
           pinnable="true"
+          pinned="false"
+          selectable="false"
+          selected="false"
           withclickablelogo="true"
           withfiat="true"
+          withtabindex="false"
         />
-         
-        <s-divider-stub
+        <hr
           class="wallet-assets-divider"
-          contentposition="center"
-          direction="horizontal"
-          type="secondary"
+          data-v-89e419e5=""
         />
       </div>
-       
-      <!---->
+      
+      <!--v-if-->
     </draggable-stub>
   </s-scrollbar-stub>
-   
   <s-button-stub
-    borderradius="small"
     class="wallet-assets-add s-typography-button--large"
+    data-v-89e419e5=""
+    disabled="false"
     icon=""
     iconposition="left"
+    loading="false"
     nativetype="button"
-    size="medium"
-    tabindex="0"
-    tooltip=""
-    tooltipplacement="top"
+    rounded="false"
+    size="md"
     type="secondary"
-    usedesignsystem="true"
-  >
-    
-    Add asset
-  
-  </s-button-stub>
+    uppercase="false"
+  />
 </div>
 `;

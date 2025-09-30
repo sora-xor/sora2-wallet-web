@@ -26,7 +26,7 @@ const createStore = ({
         availableWallets,
       }),
       actions: {
-        importPolkadotJs: jest.fn(),
+        importPolkadotJs: vi.fn(),
       },
     },
     router: {

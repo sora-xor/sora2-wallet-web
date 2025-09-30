@@ -1,13 +1,13 @@
 <template>
   <connection-items v-if="accountList.length" :size="accountList.length">
     <wallet-account
-      v-button
       v-for="{ account, isConnected } in accountList"
       :key="account.address"
+      v-button
       :polkadot-account="account"
       :chain-api="chainApi"
       tabindex="0"
-      @click.native="handleSelectAccount(account, isConnected)"
+      @click="handleSelectAccount(account, isConnected)"
     >
       <s-button v-if="isConnected" size="small" disabled>
         {{ t('connection.wallet.connected') }}
@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+import { mixins, Options, Prop } from 'vue-property-decorator';
 
 import { api } from '../../../api';
 import WalletAccount from '../../Account/WalletAccount.vue';
@@ -33,13 +33,13 @@ import type { AppWallet } from '../../../consts';
 import type { PolkadotJsAccount } from '../../../types/common';
 import type { WithConnectionApi } from '@sora-substrate/sdk';
 
-@Component({
+@Options({
   components: {
     ConnectionItems,
     WalletAccount,
   },
 })
-export default class AccountConnectionList extends Mixins(TranslationMixin) {
+export default class AccountConnectionList extends mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) private accounts!: Array<PolkadotJsAccount>;
   @Prop({ default: '', type: String }) private wallet!: AppWallet;
   @Prop({ default: () => false, type: Function }) private isConnected!: (account: PolkadotJsAccount) => boolean;

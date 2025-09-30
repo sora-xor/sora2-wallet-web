@@ -1,13 +1,5 @@
 <template>
-  <s-input
-    ref="input"
-    v-model="query"
-    class="search-input"
-    prefix="s-icon-search-16"
-    size="big"
-    v-bind="$attrs"
-    v-on="$listeners"
-  >
+  <s-input ref="input" v-model="query" class="search-input" prefix="s-icon-search-16" size="big" v-bind="$attrs">
     <template #suffix>
       <s-button v-show="query" type="link" class="s-button--clear" icon="clear-X-16" @click="handleClearSearch" />
     </template>
@@ -15,14 +7,14 @@
 </template>
 
 <script lang="ts">
-import { Component, ModelSync, Mixins } from 'vue-property-decorator';
+import { Model, Options, mixins } from 'vue-property-decorator';
 
 import InputFocusMixin from '../mixins/InputFocusMixin';
 
-@Component
-export default class SearchInput extends Mixins(InputFocusMixin) {
-  @ModelSync('value', 'input', { type: String })
-  readonly query!: string;
+@Options({ inheritAttrs: false })
+export default class SearchInput extends mixins(InputFocusMixin) {
+  @Model('modelValue', { type: String })
+  query!: string;
 
   handleClearSearch(): void {
     this.$emit('clear');

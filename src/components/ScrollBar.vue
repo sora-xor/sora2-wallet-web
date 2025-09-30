@@ -1,11 +1,11 @@
 <template>
-  <div class="scrollbar" ref="scrollbar" @mousedown="clickTrackHandler">
+  <div ref="scrollbar" class="scrollbar" @mousedown="clickTrackHandler">
     <div ref="thumb" class="thumb" :style="style" @mousedown="clickThumbHandler" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Ref, Vue } from 'vue-property-decorator';
+import { Options, Prop, Ref, Vue } from 'vue-property-decorator';
 
 const bar = {
   offset: 'offsetHeight',
@@ -18,7 +18,7 @@ const bar = {
   direction: 'top',
 };
 
-@Component
+@Options({})
 export default class Scrollbar extends Vue {
   @Prop({ default: 0, type: Number }) readonly move!: number;
   @Prop({ default: 0, type: Number }) readonly scrollHeight!: number;
@@ -87,7 +87,7 @@ export default class Scrollbar extends Vue {
     document.onselectstart = null;
   }
 
-  destroyed(): void {
+  unmounted(): void {
     document.removeEventListener('mouseup', this.mouseUpDocumentHandler);
   }
 }

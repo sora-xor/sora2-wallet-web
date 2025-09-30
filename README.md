@@ -1,28 +1,53 @@
 # sora2-wallet-web
 
-## How to use
+Vue plugin and reusable component library that brings the SORA non-custodial wallet UI and services into existing applications.
 
-You should set vuex storage and endpoint to blockchain url when using it as a vue plugin:
+## Overview
+- Ships as a Vue plugin (`src/index.ts`) that wires Vue components, Vuex modules and blockchain services together.
+- Supports selective imports so host apps can cherry-pick components, mixins or utilities instead of registering the full plugin.
+- Builds on top of `@sora-substrate/sdk` for blockchain connectivity and uses Vuex for all long-lived state.
+
+## Architecture at a Glance
+- `src/components/` – UI building blocks that compose wallet screens and dialogs.
+- `src/store/` – Namespaced Vuex modules plus helper decorators (`src/store/util.ts`).
+- `src/services/` – Integration points for indexers, wallet providers and external APIs.
+- `src/util/` – Shared helpers for formatting, runtime checks and script loading.
+
+## Integrating as a Vue Plugin
+Set the Vuex store instance and blockchain endpoint before installing the plugin:
+
 ```
-import Vue from 'vue'
-import Wallet, { connection } from '@soramitsu/soraneo-wallet-web'
+import { createApp } from 'vue'
+import Wallet, { connection, initWallet } from '@soramitsu/soraneo-wallet-web'
 
+import App from './App.vue'
 import store from '@/store'
-import * as env from '../../public/env.json'
+import env from '../public/env.json'
 
-connection.endpoint = env.BLOCKCHAIN_URL
-Vue.use(Wallet, { store })
+async function bootstrap () {
+  connection.endpoint = env.BLOCKCHAIN_URL
+
+  const app = createApp(App)
+
+  app.use(store.original)
+  app.use(Wallet, { store })
+
+  await initWallet()
+
+  app.mount('#app')
+}
+
+bootstrap()
 ```
 
-You can also use `storage` instance to interact with wallet data:
+Use the exported storage helpers to work with persisted wallet state:
 
 ```
 import { storage } from '@soramitsu/soraneo-wallet-web'
-
 ```
 
-If you want to change some default wallet permissions, pass related object to `initWallet` function.
-Here is example with default permissions:
+### Customizing permissions
+If you need to change default wallet permissions, pass the overrides to `initWallet`:
 
 ```
 const permissions = {
@@ -33,7 +58,8 @@ const permissions = {
 initWallet({ permissions })
 ```
 
-Also, you need to unsubscribe from events of balances updates and txs statuses sync when Vue root component will be destroyed.
+### Unsubscribing from runtime subscriptions
+Make sure to unsubscribe from balance updates and network subscriptions when the Vue root component is destroyed:
 
 ```
 import { Action } from 'vuex-class'
@@ -43,7 +69,7 @@ import { Action } from 'vuex-class'
 @Action resetRuntimeVersionSubscription
 @Action resetFiatPriceAndApySubscription
 
-beforeDestroy (): void {
+beforeUnmount (): void {
     this.resetActiveTransactions()
     this.resetAccountAssetsSubscription()
     this.resetRuntimeVersionSubscription()
@@ -51,38 +77,30 @@ beforeDestroy (): void {
 }
 ```
 
-## Project setup
+## Wallet bootstrap sequence
+1. `waitForCore` initializes the Vuex store and keyring, applying optional permission overrides.
+2. `waitForConnection` opens the websocket connection to the configured node.
+3. `initWallet` ties the steps together, registers available wallets (local, Google Drive, WalletConnect) and activates network subscriptions.
+
+Refer to `src/index.ts` for the exported helpers.
+
+## Development Setup
 ```
-yarn install
+yarn install        # install dependencies
+yarn serve          # compile and hot-reload for development
+yarn build          # compile and minify for production
+yarn test:unit      # run unit tests
+yarn test:e2e       # run end-to-end tests
+yarn lint           # lint and autofix issues
 ```
 
-### Compiles and hot-reloads for development
-```
-yarn serve
-```
+## Desktop mode
+To run the desktop version in a browser window, toggle the `isElectron` flag in `src/store/settings/state.ts`.
 
-### Compiles and minifies for production
-```
-yarn build
-```
-
-### Run your unit tests
-```
-yarn test:unit
-```
-
-### Run your end-to-end tests
-```
-yarn test:e2e
-```
-
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Desktop
-To run desktop version in the browser window, please change **isElectron** flag in `src/store/settings/state.ts`
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Additional resources
+- `AGENTS.md` – quick guide for contributors highlighting build commands and the upcoming Vue 3 migration.
+- `docs/api-reference.md` – catalog of exports exposed by the wallet plugin (components, services, utilities).
+- `docs/architecture.md` – high-level explanation of data flow, Vuex modules and external dependencies.
+- `docs/vue3-migration-plan.md` – dependency audit and phased rollout plan for the Vue 3 migration.
+- `SECURITY.md` – security policies and responsible disclosure process.
+- See the [Vue CLI configuration reference](https://cli.vuejs.org/config/) for advanced build tweaks.

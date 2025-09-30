@@ -1,4 +1,4 @@
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { RouteNames } from '../../consts';
@@ -15,8 +15,8 @@ const reject = (message: string) => {
   throw new Error(`[QR Code]: ${message}`);
 };
 
-@Component
-export default class QrCodeParserMixin extends Mixins(NotificationMixin) {
+@Options({})
+export default class QrCodeParserMixin extends mixins(NotificationMixin) {
   @getter.account.assetsDataTable assetsDataTable!: AssetsTable;
 
   @mutation.router.navigate navigate!: (options: Route) => Promise<void>;

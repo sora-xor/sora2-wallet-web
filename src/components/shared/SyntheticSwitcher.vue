@@ -8,25 +8,37 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, ModelSync } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
-import TranslationMixin from '../mixins/TranslationMixin';
+import { useTranslation } from '@/composables/useTranslation';
 
 import ExternalLink from './ExternalLink.vue';
 
-@Component({
-  components: {
-    ExternalLink,
-  },
-})
-export default class SyntheticSwitcher extends Mixins(TranslationMixin) {
-  @ModelSync('value', 'input', { type: Boolean })
-  readonly model!: boolean;
+const props = withDefaults(
+  defineProps<{
+    modelValue?: boolean;
+  }>(),
+  {
+    modelValue: false,
+  }
+);
 
-  readonly SYNTHS_LINK =
-    'https://medium.com/polkaswap/unveiling-synthetic-assets-a-game-changer-in-the-financial-landscape-1720e5858422';
-}
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: boolean): void;
+}>();
+
+const { t } = useTranslation();
+
+const model = computed({
+  get: () => props.modelValue,
+  set: (value: boolean) => emit('update:modelValue', value),
+});
+
+const SYNTHS_LINK =
+  'https://medium.com/polkaswap/unveiling-synthetic-assets-a-game-changer-in-the-financial-landscape-1720e5858422';
+
+defineExpose({ model });
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,6 @@
 <template>
   <div
+    v-button="withTabindex"
     :class="[
       's-flex',
       'asset',
@@ -8,16 +9,14 @@
       { 'asset--pinned': pinned },
     ]"
     v-bind="$attrs"
-    v-button="withTabindex"
     :tabindex="withTabindex ? 0 : -1"
-    v-on="$listeners"
   >
     <token-logo
       v-button
-      size="big"
+      :size="defaultLogoSize"
       :token="asset"
       :with-clickable-logo="withClickableLogo"
-      @click.native="handleIconClick"
+      @click="handleIconClick"
     />
     <div class="asset-description s-flex">
       <slot name="value" v-bind="asset">
@@ -30,16 +29,15 @@
     <div v-if="selectable" class="check">
       <s-icon name="basic-check-mark-24" size="12px" />
     </div>
-    <div v-if="pinnable" @click="pin" class="pin">
-      <pin-icon :isPinned="pinned" />
+    <div v-if="pinnable" class="pin" @click="pin">
+      <pin-icon :is-pinned="pinned" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { LogoSize } from '@/consts';
 
-import TranslationMixin from './mixins/TranslationMixin';
 import NftTokenLogo from './NftTokenLogo.vue';
 import PinIcon from './PinIcon.vue';
 import TokenAddress from './TokenAddress.vue';
@@ -47,39 +45,50 @@ import TokenLogo from './TokenLogo.vue';
 
 import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 
-@Component({
-  components: {
-    NftTokenLogo,
-    TokenLogo,
-    TokenAddress,
-    PinIcon,
-  },
-})
-export default class AssetListItem extends Mixins(TranslationMixin) {
-  @Prop({ required: true, type: Object }) readonly asset!: Asset;
-  @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly selected!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
-  @Prop({ default: true, type: Boolean }) readonly pinnable!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly pinned!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly withTabindex!: boolean;
+const props = withDefaults(
+  defineProps<{
+    asset: Asset;
+    withClickableLogo?: boolean;
+    selected?: boolean;
+    selectable?: boolean;
+    pinnable?: boolean;
+    pinned?: boolean;
+    withFiat?: boolean;
+    withTabindex?: boolean;
+  }>(),
+  {
+    withClickableLogo: false,
+    selected: false,
+    selectable: false,
+    pinnable: true,
+    pinned: false,
+    withFiat: false,
+    withTabindex: false,
+  }
+);
 
-  handleIconClick(event: Event): void {
-    if (!this.withClickableLogo) {
-      return;
-    }
-    if (event) {
-      event.stopImmediatePropagation();
-    }
-    this.$emit('show-details', this.asset);
+const emit = defineEmits<{
+  (event: 'show-details', asset: Asset): void;
+  (event: 'pin', asset: Asset): void;
+}>();
+
+const defaultLogoSize = LogoSize.BIG;
+
+const handleIconClick = (event: Event) => {
+  if (!props.withClickableLogo) {
+    return;
   }
 
-  pin(event: Event) {
-    event.stopPropagation();
-    this.$emit('pin', this.asset);
-  }
-}
+  event.stopImmediatePropagation();
+  emit('show-details', props.asset);
+};
+
+const pin = (event: Event) => {
+  event.stopPropagation();
+  emit('pin', props.asset);
+};
+
+defineExpose({ handleIconClick, pin });
 </script>
 
 <style lang="scss">
@@ -124,7 +133,10 @@ export default class AssetListItem extends Mixins(TranslationMixin) {
     height: 24px;
     border: 1px solid var(--s-color-base-content-secondary);
     border-radius: 50%;
-    transition: opacity 150ms, border-color 150ms, background-color 150ms;
+    transition:
+      opacity 150ms,
+      border-color 150ms,
+      background-color 150ms;
     i {
       color: white;
     }

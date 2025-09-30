@@ -9,6 +9,10 @@ import type { Alert } from '../../types/common';
 import type { FiatPriceObject } from '../indexer/subsquid/types';
 import type { WhitelistArrayItem } from '@sora-substrate/sdk/build/assets/types';
 
+/**
+ * Coordinates token price alerts by tracking the configured thresholds and
+ * dispatching browser notifications when conditions are met.
+ */
 @Singleton
 export class AlertsApiService {
   private fiatPriceObject: FiatPriceObject = {};
@@ -19,6 +23,10 @@ export class AlertsApiService {
     return !!store.state.wallet.settings.alerts.length;
   }
 
+  /**
+   * Triggers a browser notification for the provided asset. Errors are
+   * swallowed because notification support varies across browsers.
+   */
   public async pushNotification(asset: WhitelistArrayItem, message: string): Promise<void> {
     try {
       if (Notification.permission === 'granted') {
@@ -37,6 +45,10 @@ export class AlertsApiService {
     }
   }
 
+  /**
+   * Checks every configured alert against the latest fiat price snapshot and
+   * sends notifications for matches.
+   */
   private checkAlerts() {
     this.alerts.forEach((alert, position) => {
       if (alert.wasNotified) return;
@@ -72,6 +84,10 @@ export class AlertsApiService {
     });
   }
 
+  /**
+   * Resets one-shot alerts once the asset price moves away from the threshold
+   * so they can fire again later.
+   */
   private resetPriceAlerts(): void {
     this.alerts.forEach((alert, position) => {
       if (!alert.wasNotified) return alert;
@@ -97,14 +113,20 @@ export class AlertsApiService {
     });
   }
 
+  /** Removes the alert at the given index from Vuex. */
   public removeAlert(position: number): void {
     store.commit.wallet.settings.removePriceAlert(position);
   }
 
+  /** Flags the alert as already notified so the UI can reflect the state. */
   public setAlertAsNotified(position: number, value: boolean): void {
     store.commit.wallet.settings.setPriceAlertAsNotified({ position, value });
   }
 
+  /**
+   * Returns an RxJS subject that accepts fiat price payloads and takes care of
+   * checking alert conditions.
+   */
   createPriceAlertSubscription(): Subject<FiatPriceObject> {
     const alertSubject = new Subject<FiatPriceObject>();
 

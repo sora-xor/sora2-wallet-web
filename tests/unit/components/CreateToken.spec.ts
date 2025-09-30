@@ -9,7 +9,7 @@ const createStore = () =>
   useVuex({
     router: {
       mutations: {
-        navigate: jest.fn(),
+        navigate: vi.fn(),
       },
     },
   });

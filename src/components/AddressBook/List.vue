@@ -1,9 +1,9 @@
 <template>
-  <dialog-base :title="t('addressBook.dialogTitle')" :visible.sync="isVisible" append-to-body>
+  <dialog-base v-model:visible="isVisible" :title="t('addressBook.dialogTitle')" append-to-body>
     <template v-if="userHasContacts">
       <search-input
-        autofocus
         v-model="search"
+        autofocus
         :placeholder="t('addressBook.searchPlaceholder')"
         :maxlength="100"
         class="address-book__search"
@@ -16,12 +16,12 @@
           </span>
           <wallet-account
             v-for="(record, index) in accountBookFiltered"
+            :key="index"
             v-button
             class="address-book__list-item"
             with-identity
-            :key="index"
             :polkadot-account="record"
-            @click.native="selectRecord(record)"
+            @click="selectRecord(record)"
             @identity="updateIdentity($event, record.address)"
           >
             <account-actions-menu :actions="accountActions" @select="handleContactAction($event, record)" />
@@ -31,12 +31,12 @@
           <span class="address-book__sections">{{ t('addressBook.myBook') }}</span>
           <wallet-account
             v-for="(record, index) in addressBookFiltered"
+            :key="index"
             v-button
             class="address-book__list-item"
             with-identity
-            :key="index"
             :polkadot-account="record"
-            @click.native="selectRecord(record)"
+            @click="selectRecord(record)"
           >
             <account-actions-menu :actions="contactActions" @select="handleContactAction($event, record)" />
           </wallet-account>
@@ -47,146 +47,149 @@
       </s-scrollbar>
     </template>
     <div v-else class="address-book__no-contacts">{{ t('addressBook.noContacts') }}</div>
-    <s-button @click="setContact(null)" class="address-book__btn s-typography-button--large">
+    <s-button class="address-book__btn s-typography-button--large" @click="setContact(null)">
       {{ t('addressBook.addContact') }}
     </s-button>
   </dialog-base>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, reactive, ref, toRef } from 'vue';
 
-import { AccountActionTypes } from '../../consts';
-import { formatAccountAddress } from '../../util';
+import { useDialogVisibility } from '@/composables/useDialog';
+import { useTranslation } from '@/composables/useTranslation';
+import { AccountActionTypes } from '@/consts';
+import type { AccountIdentity, PolkadotJsAccount } from '@/types/common';
+import { formatAccountAddress } from '@/util';
+
 import AccountActionsMenu from '../Account/ActionsMenu.vue';
 import WalletAccount from '../Account/WalletAccount.vue';
 import DialogBase from '../DialogBase.vue';
 import SearchInput from '../Input/SearchInput.vue';
-import CopyAddressMixin from '../mixins/CopyAddressMixin';
-import DialogMixin from '../mixins/DialogMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
 
-import type { PolkadotJsAccount, AccountIdentity } from '../../types/common';
+defineOptions({ name: 'AddressBookListDialog' });
 
-@Component({
-  components: {
-    DialogBase,
-    AccountActionsMenu,
-    WalletAccount,
-    SearchInput,
-  },
-})
-export default class AddressBookList extends Mixins(CopyAddressMixin, DialogMixin, TranslationMixin) {
-  @Prop({ default: () => [], type: Array }) readonly accounts!: PolkadotJsAccount[];
-  @Prop({ default: () => [], type: Array }) readonly records!: PolkadotJsAccount[];
-  @Prop({ default: '', type: String }) readonly excludedAddress!: string;
-
-  readonly accountActions = [AccountActionTypes.BookSend];
-  readonly contactActions = [AccountActionTypes.BookSend, AccountActionTypes.BookEdit, AccountActionTypes.BookDelete];
-
-  search = '';
-  identities: Record<string, AccountIdentity> = {};
-
-  get searchValue(): string {
-    return this.search ? this.search.trim().toLowerCase() : '';
+const props = withDefaults(
+  defineProps<{
+    visible?: boolean;
+    accounts?: PolkadotJsAccount[];
+    records?: PolkadotJsAccount[];
+    excludedAddress?: string;
+  }>(),
+  {
+    visible: false,
+    accounts: () => [] as PolkadotJsAccount[],
+    records: () => [] as PolkadotJsAccount[],
+    excludedAddress: '',
   }
+);
 
-  get addressBook(): PolkadotJsAccount[] {
-    return this.prepareRecords(this.records, this.identities);
-  }
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'close'): void;
+  (event: 'select', value: PolkadotJsAccount): void;
+  (event: 'open', address: Nullable<string>, isEditMode?: boolean): void;
+  (event: 'remove', address: string): void;
+}>();
 
-  get addressBookFiltered(): PolkadotJsAccount[] {
-    return this.foundRecords(this.addressBook);
-  }
+const { t } = useTranslation();
+const { isVisible, closeDialog } = useDialogVisibility(toRef(props, 'visible'), {
+  emit: (value) => emit('update:visible', value),
+  onClose: () => emit('close'),
+});
 
-  get accountBook(): PolkadotJsAccount[] {
-    return this.prepareRecords(this.accounts, this.identities);
-  }
+const accountActions = [AccountActionTypes.BookSend];
+const contactActions = [AccountActionTypes.BookSend, AccountActionTypes.BookEdit, AccountActionTypes.BookDelete];
 
-  get accountBookFiltered(): PolkadotJsAccount[] {
-    return this.foundRecords(this.accountBook);
-  }
+const search = ref('');
+const identities = reactive<Record<string, AccountIdentity>>({});
 
-  get userHasContacts(): boolean {
-    return !!this.addressBook.length || !!this.accountBook.length;
-  }
+const searchValue = computed(() => (search.value ? search.value.trim().toLowerCase() : ''));
 
-  get showNoRecordsFound(): boolean {
-    return !(this.addressBookFiltered.length || this.accountBookFiltered.length);
-  }
+const baseRecords = computed(() => props.records ?? []);
+const baseAccounts = computed(() => props.accounts ?? []);
 
-  private formatAccount(account: PolkadotJsAccount, identities: Record<string, AccountIdentity>): PolkadotJsAccount {
-    const address = formatAccountAddress(account.address);
-    const identity = identities[address];
+const formatAccount = (account: PolkadotJsAccount) => {
+  const address = formatAccountAddress(account.address);
+  const identity = identities[address];
 
-    return {
-      address,
-      name: account.name,
-      source: account.source,
-      identity,
-    };
-  }
+  return {
+    address,
+    name: account.name,
+    source: account.source,
+    identity,
+  } as PolkadotJsAccount;
+};
 
-  private prepareRecords(
-    accounts: PolkadotJsAccount[],
-    identities: Record<string, AccountIdentity>
-  ): PolkadotJsAccount[] {
-    const records = accounts.map((account) => this.formatAccount(account, identities));
-    const filtered = records.filter((record) => record.address !== this.excludedAddress);
-    const sorted = [...filtered].sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
+const prepareRecords = (source: PolkadotJsAccount[]) => {
+  const mapped = source.map(formatAccount);
+  const filtered = mapped.filter((record) => record.address !== (props.excludedAddress ?? ''));
+  return [...filtered].sort((a, b) => (a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1));
+};
 
-    return sorted;
-  }
+const addressBook = computed(() => prepareRecords(baseRecords.value));
+const accountBook = computed(() => prepareRecords(baseAccounts.value));
 
-  private foundRecords(records: PolkadotJsAccount[]): PolkadotJsAccount[] {
-    if (!this.searchValue) return records;
+const foundRecords = (records: PolkadotJsAccount[]) => {
+  if (!searchValue.value) return records;
 
-    return records.filter(
-      ({ address = '', name = '', identity }) =>
-        address.toLowerCase() === this.searchValue ||
-        name.toLowerCase().includes(this.searchValue) ||
-        identity?.name?.toLowerCase().includes(this.searchValue)
+  return records.filter(({ address = '', name = '', identity }) => {
+    const normalizedAddress = address.toLowerCase();
+    const normalizedName = name.toLowerCase();
+    const identityName = identity?.name?.toLowerCase() ?? '';
+
+    return (
+      normalizedAddress === searchValue.value ||
+      normalizedName.includes(searchValue.value) ||
+      identityName.includes(searchValue.value)
     );
-  }
+  });
+};
 
-  resetSearch(): void {
-    this.search = '';
-  }
+const addressBookFiltered = computed(() => foundRecords(addressBook.value));
+const accountBookFiltered = computed(() => foundRecords(accountBook.value));
 
-  selectRecord(record: PolkadotJsAccount): void {
-    this.$emit('select', record);
-    this.closeDialog();
-  }
+const userHasContacts = computed(() => Boolean(addressBook.value.length || accountBook.value.length));
+const showNoRecordsFound = computed(() => !(addressBookFiltered.value.length || accountBookFiltered.value.length));
 
-  setContact(address: Nullable<string>, isEditMode = false): void {
-    this.$emit('open', address, isEditMode);
-  }
+const resetSearch = () => {
+  search.value = '';
+};
 
-  removeAddressFromBook(address: string): void {
-    this.$emit('remove', address);
-  }
+const selectRecord = (record: PolkadotJsAccount) => {
+  emit('select', record);
+  closeDialog();
+};
 
-  updateIdentity(identity: AccountIdentity, address: string): void {
-    this.identities = { ...this.identities, [address]: identity };
-  }
+const setContact = (address: Nullable<string>, isEditMode = false) => {
+  emit('open', address, isEditMode);
+};
 
-  handleContactAction(actionType: string, { address, name, source }: PolkadotJsAccount): void {
-    switch (actionType) {
-      case AccountActionTypes.BookSend: {
-        this.selectRecord({ address, name, source });
-        break;
-      }
-      case AccountActionTypes.BookEdit: {
-        this.setContact(address, true);
-        break;
-      }
-      case AccountActionTypes.BookDelete: {
-        this.removeAddressFromBook(address);
-        break;
-      }
-    }
+const removeAddressFromBook = (address: string) => {
+  emit('remove', address);
+};
+
+const updateIdentity = (identity: Nullable<AccountIdentity>, address: string) => {
+  if (identity) {
+    identities[address] = identity;
+  } else {
+    delete identities[address];
   }
-}
+};
+
+const handleContactAction = (actionType: string, { address, name, source }: PolkadotJsAccount) => {
+  switch (actionType) {
+    case AccountActionTypes.BookSend:
+      selectRecord({ address, name, source } as PolkadotJsAccount);
+      break;
+    case AccountActionTypes.BookEdit:
+      setContact(address, true);
+      break;
+    case AccountActionTypes.BookDelete:
+      removeAddressFromBook(address);
+      break;
+  }
+};
 </script>
 
 <style lang="scss">

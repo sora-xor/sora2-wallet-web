@@ -1,4 +1,4 @@
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { AppWallet, AccountActionTypes } from '../../consts';
@@ -13,8 +13,8 @@ import NotificationMixin from './NotificationMixin';
 
 import type { PolkadotJsAccount } from '../../types/common';
 
-@Component
-export default class AccountActionsMixin extends Mixins(LoadingMixin, NotificationMixin) {
+@Options({})
+export default class AccountActionsMixin extends mixins(LoadingMixin, NotificationMixin) {
   @action.account.renameAccount private renameAccount!: (data: { address: string; name: string }) => Promise<void>;
 
   @action.account.logout private logoutAccount!: (forgetAddress?: string) => Promise<void>;

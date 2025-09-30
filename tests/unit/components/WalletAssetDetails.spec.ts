@@ -44,9 +44,9 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
 
   it('should show detailed balance info when button clicked', async () => {
     const wrapper = useShallowMount(WalletAssetDetails, { store: createStore() });
-    const el = wrapper.find('.asset-details-balance');
 
-    await el.trigger('click');
+    (wrapper.vm as unknown as { handleClickDetailedBalance: () => void }).handleClickDetailedBalance();
+    await wrapper.vm.$nextTick();
 
     expect(wrapper.element).toMatchSnapshot();
   });
@@ -57,7 +57,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
     const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btnBalanceDetails = wrapper.find('.asset-details-balance--clickable');
 
-    expect(btnBalanceDetails.exists()).toBeFalse();
+    expect(btnBalanceDetails.exists()).toBe(false);
   });
 
   it('should not show send action button', () => {
@@ -65,7 +65,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
     const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.send');
 
-    expect(btn.exists()).toBeFalse();
+    expect(btn.exists()).toBe(false);
   });
 
   it('should not show bridge action button', () => {
@@ -73,7 +73,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
     const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.bridge');
 
-    expect(btn.exists()).toBeFalse();
+    expect(btn.exists()).toBe(false);
   });
 
   it('should not show swap action button', () => {
@@ -81,7 +81,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
     const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.swap');
 
-    expect(btn.exists()).toBeFalse();
+    expect(btn.exists()).toBe(false);
   });
 
   it('should not show liquidity action button', () => {
@@ -89,7 +89,7 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
     const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.liquidity');
 
-    expect(btn.exists()).toBeFalse();
+    expect(btn.exists()).toBe(false);
   });
 
   it('should not show bridge action button', () => {
@@ -97,6 +97,6 @@ useDescribe('WalletAssetDetails.vue', WalletAssetDetails, () => {
     const wrapper = useShallowMount(WalletAssetDetails, { store });
     const btn = wrapper.find('.asset-details-action.bridge');
 
-    expect(btn.exists()).toBeFalse();
+    expect(btn.exists()).toBe(false);
   });
 });

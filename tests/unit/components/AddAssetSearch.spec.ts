@@ -25,7 +25,7 @@ const createStore = () =>
     },
     router: {
       mutations: {
-        navigate: jest.fn(),
+        navigate: vi.fn(),
       },
     },
   });

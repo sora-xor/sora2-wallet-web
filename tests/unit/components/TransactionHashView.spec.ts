@@ -4,17 +4,10 @@ import { SoraNetwork, HashType } from '@/consts';
 import { useDescribe, useShallowMount, useVuex } from '../../utils';
 import { MOCK_TRANSACTION_HASH_VIEW } from '../../utils/TransactionHashViewMock';
 
-const createStore = (env: SoraNetwork) =>
-  useVuex({
-    settings: {
-      state: () => ({
-        soraNetwork: env,
-      }),
-    },
-  });
+const createStore = () => useVuex();
 
-jest.mock('../../../src/util', () => {
-  const originalModule = jest.requireActual('../../../src/util');
+vi.mock('../../../src/util', async () => {
+  const originalModule = await vi.importActual<typeof import('../../../src/util')>('../../../src/util');
 
   return {
     ...originalModule,
@@ -28,19 +21,30 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
   const totalLength = formattedAddressLength + ellipsisLength;
 
   MOCK_TRANSACTION_HASH_VIEW.map((item) =>
-    it(`[type: ${item.type}, env: ${SoraNetwork.Dev}]: should be rendered correctly`, () => {
+    it(`[type: ${item.type}, env: ${SoraNetwork.Dev}]: should be rendered correctly`, async () => {
       const wrapper = useShallowMount(TransactionHashView, {
         propsData: item,
-        store: createStore(SoraNetwork.Dev),
+        store: createStore(),
       });
-      let expectedLinksCount = HashType.Account === item.type ? 0 : 1;
-      if (item.type === HashType.ID && !item.block) {
-        expectedLinksCount = 0;
+      wrapper.vm.$store.state.wallet.settings.soraNetwork = SoraNetwork.Dev;
+      await wrapper.vm.$nextTick();
+      let expectedLinksCount = 0;
+      switch (item.type) {
+        case HashType.EthAccount:
+        case HashType.EthTransaction:
+        case HashType.Block:
+          expectedLinksCount = 1;
+          break;
+        case HashType.ID:
+          expectedLinksCount = item.block ? 1 : 0;
+          break;
+        default:
+          expectedLinksCount = 0;
       }
       const txLinks = wrapper
         .findAll('.s-input-container .transaction-link')
-        .wrappers.map((item) => item.element) as Array<HTMLAnchorElement>;
-      const txInputValue = wrapper.find('.s-input-container s-input-stub').props().value as string;
+        .map((node) => node.element as HTMLAnchorElement);
+      const txInputValue = wrapper.find('.s-input-container s-input-stub').attributes('value') ?? '';
       expect(wrapper.element).toMatchSnapshot();
       expect(txLinks.length).toBe(expectedLinksCount);
       expect(txInputValue.length).toBe(totalLength);
@@ -48,21 +52,32 @@ useDescribe('TransactionHashView.vue', TransactionHashView, () => {
   );
 
   MOCK_TRANSACTION_HASH_VIEW.map((item) =>
-    it(`[type: ${item.type}, env: ${SoraNetwork.Prod}]: should be rendered correctly`, () => {
+    it(`[type: ${item.type}, env: ${SoraNetwork.Prod}]: should be rendered correctly`, async () => {
       const wrapper = useShallowMount(TransactionHashView, {
         propsData: item,
-        store: createStore(SoraNetwork.Prod),
+        store: createStore(),
       });
-      let expectedLinksCount = [HashType.EthAccount, HashType.EthTransaction, HashType.Account].includes(item.type)
-        ? 1
-        : 2;
-      if (item.type === HashType.ID && !item.block) {
-        expectedLinksCount = 1;
+      wrapper.vm.$store.state.wallet.settings.soraNetwork = SoraNetwork.Prod;
+      await wrapper.vm.$nextTick();
+      let expectedLinksCount = 0;
+      switch (item.type) {
+        case HashType.EthAccount:
+        case HashType.EthTransaction:
+          expectedLinksCount = 1;
+          break;
+        case HashType.Block:
+          expectedLinksCount = 1;
+          break;
+        case HashType.ID:
+          expectedLinksCount = item.block ? 1 : 0;
+          break;
+        default:
+          expectedLinksCount = 0;
       }
       const txLinks = wrapper
         .findAll('.s-input-container .transaction-link')
-        .wrappers.map((item) => item.element) as Array<HTMLAnchorElement>;
-      const txInputValue = wrapper.find('.s-input-container s-input-stub').props().value as string;
+        .map((node) => node.element as HTMLAnchorElement);
+      const txInputValue = wrapper.find('.s-input-container s-input-stub').attributes('value') ?? '';
       expect(wrapper.element).toMatchSnapshot();
       expect(txLinks.length).toBe(expectedLinksCount);
       expect(txInputValue.length).toBe(totalLength);

@@ -1,3 +1,4 @@
+/** Enumerates the backup sources we support for Drive snapshots. */
 export enum BackupAccountType {
   PASSHRASE = 'passphrase',
   JSON = 'json',
@@ -14,6 +15,7 @@ export type Seed = {
   ethSeed: Nullable<string>;
 };
 
+/** Structure used after decrypting a Drive backup. */
 export type DecryptedBackupAccount = {
   name: string;
   address: string;
@@ -26,6 +28,7 @@ export type DecryptedBackupAccount = {
   json: Nullable<Json>;
 };
 
+/** Payload persisted in Drive with all secrets encrypted. */
 export type EncryptedBackupAccount = {
   name: string;
   address: string;

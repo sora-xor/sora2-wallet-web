@@ -10,40 +10,40 @@
   />
 </template>
 
-<script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
-import { api } from '../api';
-import { RouteNames } from '../consts';
-import { action, getter, mutation } from '../store/decorators';
+import { api } from '@/api';
+import { RouteNames } from '@/consts';
+import store from '@/store';
+import type { Route } from '@/store/router/types';
+import type { PolkadotJsAccount } from '@/types/common';
 
 import ConnectionView from './Connection/ConnectionView.vue';
-import TranslationMixin from './mixins/TranslationMixin';
 
-import type { Route } from '../store/router/types';
-import type { PolkadotJsAccount } from '../types/common';
+const chainApi = api;
 
-@Component({
-  components: { ConnectionView },
-})
-export default class WalletConnection extends Mixins(TranslationMixin) {
-  @getter.account.account public account!: Nullable<PolkadotJsAccount>;
+const account = computed<Nullable<PolkadotJsAccount>>(
+  () => store.getters['wallet/account/account'] as Nullable<PolkadotJsAccount>
+);
 
-  @action.account.loginAccount public loginAccount!: (account: PolkadotJsAccount) => Promise<void>;
-  @action.account.logout public logoutAccount!: (forgetAddress?: string) => Promise<void>;
-  @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
-  @action.account.checkConnectedAccountSource public checkConnectedAccountSource!: (source: string) => Promise<void>;
+const loginAccount = (payload: PolkadotJsAccount) => store.dispatch.wallet.account.loginAccount(payload);
+const logoutAccount = () => store.dispatch.wallet.account.logout();
+const renameAccount = (data: { address: string; name: string }) => store.dispatch.wallet.account.renameAccount(data);
+const checkConnectedAccountSource = (source: string) =>
+  store.dispatch.wallet.account.checkConnectedAccountSource(source);
 
-  get chainApi() {
-    return api;
-  }
+const navigateToAccount = () => {
+  store.commit.wallet.router.navigate({ name: RouteNames.Wallet } as Route);
+};
 
-  @mutation.router.navigate private navigate!: (options: Route) => void;
-
-  navigateToAccount(): void {
-    this.navigate({ name: RouteNames.Wallet });
-  }
-}
+defineExpose({
+  loginAccount,
+  logoutAccount,
+  renameAccount,
+  checkConnectedAccountSource,
+  navigateToAccount,
+});
 </script>
 
 <style lang="scss" scoped>

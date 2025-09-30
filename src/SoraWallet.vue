@@ -1,17 +1,19 @@
 <template>
-  <component
-    v-loading="loading"
-    :is="currentRoute"
-    @swap="(asset) => handleOperation(Operations.Swap, asset)"
-    @liquidity="(asset) => handleOperation(Operations.Liquidity, asset)"
-    @bridge="(asset) => handleOperation(Operations.Bridge, asset)"
-    @learn-more="handleLearnMore"
-    @close="handleClose"
-  />
+  <WalletProviders>
+    <component
+      :is="currentRoute"
+      v-loading="loading"
+      @swap="(asset) => handleOperation(Operations.Swap, asset)"
+      @liquidity="(asset) => handleOperation(Operations.Liquidity, asset)"
+      @bridge="(asset) => handleOperation(Operations.Bridge, asset)"
+      @learn-more="handleLearnMore"
+      @close="handleClose"
+    />
+  </WalletProviders>
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import AddAsset from './components/AddAsset/AddAsset.vue';
 import CreateToken from './components/CreateToken.vue';
@@ -22,6 +24,7 @@ import SelectAsset from './components/SelectAsset.vue';
 import Wallet from './components/Wallet.vue';
 import WalletAssetDetails from './components/WalletAssetDetails.vue';
 import WalletConnection from './components/WalletConnection.vue';
+import WalletProviders from './components/WalletProviders.vue';
 import WalletSend from './components/WalletSend.vue';
 import WalletTransactionDetails from './components/WalletTransactionDetails.vue';
 import { state } from './store/decorators';
@@ -30,7 +33,7 @@ import { Operations } from './types/common';
 import type { RouteNames } from './consts';
 import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 
-@Component({
+@Options({
   components: {
     AddAsset,
     SelectAsset,
@@ -41,9 +44,10 @@ import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
     WalletConnection,
     WalletSend,
     WalletTransactionDetails,
+    WalletProviders,
   },
 })
-export default class SoraWallet extends Mixins(LoadingMixin, TranslationMixin) {
+export default class SoraWallet extends mixins(LoadingMixin, TranslationMixin) {
   readonly Operations = Operations;
 
   @state.router.currentRoute currentRoute!: RouteNames;

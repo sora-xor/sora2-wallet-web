@@ -1,12 +1,12 @@
 <template>
-  <dialog-base :visible.sync="isVisible" append-to-body>
+  <dialog-base v-model:visible="isVisible" append-to-body>
     <simple-notification
+      v-model="hideDeleteDialog"
       optional
       modal-content
-      v-model="hideDeleteDialog"
       :button-text="t('logoutText')"
       :loading="loading"
-      @submit.native.prevent="handleConfirm"
+      @submit.prevent="handleConfirm"
     >
       <template #title>{{ t('desktop.assetsAtRiskText') }}</template>
       <template #text>{{ t('desktop.deleteAccountText') }}</template>
@@ -14,34 +14,49 @@
   </dialog-base>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { ref, toRef, watch } from 'vue';
+
+import { useDialogVisibility } from '@/composables/useDialog';
+import { useTranslation } from '@/composables/useTranslation';
 
 import DialogBase from '../DialogBase.vue';
-import DialogMixin from '../mixins/DialogMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
 import SimpleNotification from '../SimpleNotification.vue';
 
-@Component({
-  components: {
-    DialogBase,
-    SimpleNotification,
-  },
-})
-export default class AccountDeleteDialog extends Mixins(TranslationMixin, DialogMixin) {
-  @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
-
-  @Watch('isVisible')
-  private setupFormState(visibility: boolean): void {
-    if (!visibility) {
-      this.hideDeleteDialog = false;
-    }
+const props = withDefaults(
+  defineProps<{
+    visible?: boolean;
+    loading?: boolean;
+  }>(),
+  {
+    visible: false,
+    loading: false,
   }
+);
 
-  hideDeleteDialog = false;
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'close'): void;
+  (event: 'confirm', hideOnConfirm: boolean): void;
+}>();
 
-  async handleConfirm(): Promise<void> {
-    this.$emit('confirm', !this.hideDeleteDialog);
+const { t } = useTranslation();
+
+const { isVisible } = useDialogVisibility(toRef(props, 'visible'), {
+  emit: (value) => emit('update:visible', value),
+  onClose: () => emit('close'),
+});
+
+const loading = toRef(props, 'loading');
+const hideDeleteDialog = ref(false);
+
+watch(isVisible, (visible) => {
+  if (!visible) {
+    hideDeleteDialog.value = false;
   }
-}
+});
+
+const handleConfirm = () => {
+  emit('confirm', !hideDeleteDialog.value);
+};
 </script>

@@ -5,7 +5,7 @@ module.exports = {
   },
   plugins: ['eslint-plugin-prettier'],
   extends: [
-    'plugin:vue/essential',
+    'plugin:vue/vue3-recommended',
     'eslint:recommended',
     '@vue/standard',
     '@vue/prettier',
@@ -39,6 +39,7 @@ module.exports = {
       },
     ],
     'vue/html-indent': ['warn', 2],
+    'vue/no-v-model-argument': 'off',
     '@typescript-eslint/explicit-function-return-type': ['off'],
     '@typescript-eslint/no-explicit-any': ['off'],
     '@typescript-eslint/no-use-before-define': ['off'],
@@ -46,12 +47,23 @@ module.exports = {
     '@typescript-eslint/no-empty-function': ['off'],
     '@typescript-eslint/no-var-requires': ['off'],
     '@typescript-eslint/no-namespace': ['off'],
+    '@typescript-eslint/no-duplicate-enum-values': ['off'],
   },
   overrides: [
     {
       files: ['**/__tests__/*.{j,t}s?(x)', '**/tests/unit/**/*.spec.{j,t}s?(x)'],
       env: {
-        jest: true,
+        node: true,
+      },
+      globals: {
+        afterAll: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        beforeEach: 'readonly',
+        describe: 'readonly',
+        expect: 'readonly',
+        it: 'readonly',
+        vi: 'readonly',
       },
     },
     {

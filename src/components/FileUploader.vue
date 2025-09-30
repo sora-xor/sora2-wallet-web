@@ -13,12 +13,12 @@
     <div v-if="clearBtnShown" @click="clear">
       <s-icon class="clear-file-input-btn" name="basic-clear-X-24" size="64px" />
     </div>
-    <input class="drop-zone__input" ref="fileInput" type="file" :accept="accept" @change="upload" />
+    <input ref="fileInput" class="drop-zone__input" type="file" :accept="accept" @change="upload" />
   </div>
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Ref, Prop } from 'vue-property-decorator';
+import { mixins, Options, Ref, Prop } from 'vue-property-decorator';
 
 import { IMAGE_MIME_TYPES } from '../util/image';
 
@@ -29,8 +29,8 @@ const FILE_TYPES_LIST_STRING = Object.values(IMAGE_MIME_TYPES).join(',');
 
 const HUNDRED_MB = 100 * 1024 * 1024; // 100MB in bytes
 
-@Component
-export default class FileUploader extends Mixins(LoadingMixin, TranslationMixin) {
+@Options({})
+export default class FileUploader extends mixins(LoadingMixin, TranslationMixin) {
   /**
    * Boolean check for the external link
    */

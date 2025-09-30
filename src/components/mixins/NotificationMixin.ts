@@ -1,86 +1,52 @@
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
-import { AppError } from '../../util';
+import { useNotification, type AsyncFnWithoutArgs } from '@/composables/useNotification';
+import type { NotificationSeverity } from '@/services/notification';
+import { useNotificationStore } from '@/stores/notification';
 
 import TranslationMixin from './TranslationMixin';
 
-import type { MessageType } from 'element-ui/types/message';
+@Options({})
+export default class NotificationMixin extends mixins(TranslationMixin) {
+  private notification = useNotification();
 
-@Component
-export default class NotificationMixin extends Mixins(TranslationMixin) {
-  defaultErrorMessage = 'unknownErrorText';
+  private notificationStore = useNotificationStore();
 
-  ErrorMessages = [
-    ['Invalid decoded address', 'walletSend.errorAddress'],
-    ['Invalid bip39 mnemonic specified', 'desktop.errorMessages.mnemonic'],
-    ['Unable to decode using the supplied passphrase', 'desktop.errorMessages.password'],
-    ['is not allowed to interact with this extension', 'polkadotjs.noSigner'],
-  ];
+  get defaultErrorMessage(): string {
+    return this.notificationStore.defaultErrorTranslationKey;
+  }
 
-  getErrorMessage(error: unknown) {
-    if (error instanceof AppError) {
-      return this.t(error.key, error.payload);
-    }
-    if (error instanceof Error) {
-      const errorMessage = error.message;
+  set defaultErrorMessage(value: string) {
+    this.notificationStore.setDefaultErrorTranslationKey(value);
+  }
 
-      if (this.te(errorMessage)) {
-        return this.t(errorMessage);
-      }
+  get ErrorMessages(): [string, string][] {
+    return this.notificationStore.errorMappings.map(({ pattern, translationKey }) => [pattern, translationKey]);
+  }
 
-      const supportedMessage = this.ErrorMessages.find(([message]) => errorMessage.includes(message));
+  set ErrorMessages(value: [string, string][]) {
+    this.notificationStore.replaceErrorMappings(
+      value.map(([pattern, translationKey]) => ({ pattern, translationKey }))
+    );
+  }
 
-      if (supportedMessage) {
-        return this.t(supportedMessage[1]);
-      }
-    }
-
-    console.error(error);
-
-    return this.t(this.defaultErrorMessage);
+  getErrorMessage(error: unknown): string {
+    return this.notification.getErrorMessage(error);
   }
 
   showAppAlert(message: string, title = ''): void {
-    this.$alert(message, title);
+    this.notification.showAppAlert(message, title);
   }
 
-  showAppNotification(message: string, type?: MessageType): void {
-    this.$notify({
-      message,
-      type,
-      title: '',
-    });
+  showAppNotification(message: string, severity?: NotificationSeverity): void {
+    this.notification.showAppNotification(message, severity);
   }
 
   async withAppNotification(func: AsyncFnWithoutArgs, throwable = false): Promise<void> {
-    try {
-      await func();
-    } catch (error) {
-      const message = this.getErrorMessage(error);
-      this.showAppNotification(message, 'error');
-      if (throwable) throw error;
-    }
+    await this.notification.withAppNotification(func, throwable);
   }
 
   async withAppAlert(func: AsyncFnWithoutArgs, throwable = false): Promise<void> {
-    try {
-      await func();
-    } catch (error) {
-      const message = this.getErrorMessage(error);
-
-      this.$alert(message, {
-        title: this.t('errorText'),
-        showCancelButton: true,
-        cancelButtonText: this.t('cancelText'),
-        confirmButtonText: this.t('provider.messages.reloadPage'),
-        callback: (action) => {
-          if (action === 'confirm') {
-            window.location.reload();
-          }
-        },
-      });
-
-      if (throwable) throw error;
-    }
+    await this.notification.withAppAlert(func, throwable);
   }
 }

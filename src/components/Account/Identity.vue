@@ -24,11 +24,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Options, Prop, Vue } from 'vue-property-decorator';
 
 import { AccountIdentity } from '../../types/common';
 
-@Component
+@Options({})
 export default class Identity extends Vue {
   @Prop({ required: true, type: Object }) readonly identity!: AccountIdentity;
   @Prop({ default: '', type: String }) readonly localName!: string;

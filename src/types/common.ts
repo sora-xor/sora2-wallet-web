@@ -1,4 +1,4 @@
-import type { AppWallet } from '../consts';
+import type { AppWallet, Theme } from '../consts';
 import type { Asset, AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 
 export type { KeyringPair$Json } from '@polkadot/keyring/types';
@@ -121,6 +121,11 @@ export type SettingsStorageKey =
   | 'isRotatePhoneHideBalanceFeatureEnabled'
   | 'isAccessRotationListener'
   | 'isAccessAccelerometrEventDeclined'
-  | 'isThemePreference';
+  | 'isThemePreference'
+  | 'theme';
 
 export type NotificationType = 'balanceChange' | 'priceAlert';
+
+export type LibraryDesignSystem = {
+  theme: Theme;
+};

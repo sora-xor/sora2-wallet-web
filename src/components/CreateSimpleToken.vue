@@ -2,21 +2,21 @@
   <div class="wallet-settings-create-token">
     <template v-if="step === Step.CreateSimpleToken">
       <s-input
+        v-model="tokenSymbol"
+        v-maska="tokenSymbolMask"
         :placeholder="t('createToken.tokenSymbol.placeholder')"
         :minlength="1"
         :maxlength="7"
         :disabled="loading"
-        v-maska="tokenSymbolMask"
-        v-model="tokenSymbol"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSymbol.desc') }}</p>
       <s-input
+        v-model="tokenName"
+        v-maska="tokenNameMask"
         :placeholder="t('createToken.tokenName.placeholder')"
         :minlength="1"
         :maxlength="33"
         :disabled="loading"
-        v-maska="tokenNameMask"
-        v-model="tokenName"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
       <s-float-input
@@ -74,7 +74,7 @@
 <script lang="ts">
 import { FPNumber, Operation } from '@sora-substrate/sdk';
 import { MaxTotalSupply, XOR } from '@sora-substrate/sdk/build/assets/consts';
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Options, mixins, Prop } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { RouteNames, Step } from '../consts';
@@ -91,7 +91,7 @@ import WalletFee from './WalletFee.vue';
 
 import type { Route } from '../store/router/types';
 
-@Component({
+@Options({
   components: {
     WalletBase,
     InfoLine,
@@ -100,7 +100,7 @@ import type { Route } from '../store/router/types';
     AccountConfirmationOption,
   },
 })
-export default class CreateSimpleToken extends Mixins(TransactionMixin, NumberFormatterMixin, NetworkFeeWarningMixin) {
+export default class CreateSimpleToken extends mixins(TransactionMixin, NumberFormatterMixin, NetworkFeeWarningMixin) {
   readonly XOR = XOR.symbol;
   readonly Step = Step;
   readonly decimals = FPNumber.DEFAULT_PRECISION;

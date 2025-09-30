@@ -1,10 +1,10 @@
 <template>
   <account-settings-option
+    v-model="model"
     :disabled="disabled"
     :title="t('accountSettings.signature.title')"
     :hint="t('accountSettings.hint')"
     :with-hint="withHint"
-    v-model="model"
   >
     <slot />
     <div v-if="disabled || model" class="save-password-duration">
@@ -30,106 +30,106 @@
   </account-settings-option>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 
-import { PassphraseTimeout, PassphraseTimeoutDuration, DefaultPassphraseTimeout } from '../../../consts';
-import { action, mutation, state } from '../../../store/decorators';
-import TranslationMixin from '../../mixins/TranslationMixin';
+import { useTranslation } from '@/composables/useTranslation';
+import { PassphraseTimeout, PassphraseTimeoutDuration, DefaultPassphraseTimeout } from '@/consts';
+import store from '@/store';
 
 import AccountSettingsOption from './Option.vue';
 
 dayjs.extend(relativeTime);
 
-@Component({
-  components: {
-    AccountSettingsOption,
-  },
-})
-export default class AccountSignatureOption extends Mixins(TranslationMixin) {
-  @Prop({ default: false, type: Boolean }) readonly withHint!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly disabled!: boolean;
-
-  @state.transactions.isSignTxDialogDisabled private isSignTxDialogDisabled!: boolean;
-  @mutation.transactions.setSignTxDialogDisabled private setSignTxDialogDisabled!: (flag: boolean) => void;
-
-  @state.account.accountPasswordTimeout private accountPasswordTimeout!: number;
-  @mutation.account.setPasswordTimeout private setPasswordTimeout!: (timeout: number) => void;
-
-  @state.account.address private connected!: string;
-  @state.account.accountPasswordTimestamp private accountPasswordTimestamp!: Record<string, Nullable<number>>;
-  @action.account.resetAccountPassphrase private resetAccountPassphrase!: (address: string) => void;
-
-  readonly durations = PassphraseTimeout;
-
-  get model(): boolean {
-    return this.isSignTxDialogDisabled;
+const props = withDefaults(
+  defineProps<{
+    withHint?: boolean;
+    disabled?: boolean;
+  }>(),
+  {
+    withHint: false,
+    disabled: false,
   }
+);
 
-  set model(value: boolean) {
-    this.setSignTxDialogDisabled(value);
+const { t, dayjsLocale } = useTranslation();
+
+const durations = PassphraseTimeout;
+
+const timestamp = ref<number | null>(null);
+const timer = ref<ReturnType<typeof setInterval> | null>(null);
+
+const updateTimestamp = () => {
+  timestamp.value = Date.now();
+};
+
+const resetTimer = () => {
+  if (timer.value) {
+    clearInterval(timer.value);
+  }
+  timer.value = null;
+  timestamp.value = null;
+};
+
+const createTimer = () => {
+  resetTimer();
+  updateTimestamp();
+  timer.value = setInterval(updateTimestamp, 1000);
+};
+
+onMounted(() => {
+  createTimer();
+});
+
+onUnmounted(() => {
+  resetTimer();
+});
+
+const model = computed({
+  get: () => store.state.wallet.transactions.isSignTxDialogDisabled,
+  set: (value: boolean) => {
+    store.commit.wallet.transactions.setSignTxDialogDisabled(value);
 
     if (!value) {
-      this.resetAccountPassphrase(this.connected);
+      store.dispatch.wallet.account.resetAccountPassphrase(store.state.wallet.account.address);
     }
-  }
+  },
+});
 
-  get passwordTimeoutModel(): PassphraseTimeout {
-    const key = Object.keys(PassphraseTimeoutDuration).find(
-      (key) => PassphraseTimeoutDuration[key] === this.accountPasswordTimeout
+const passwordTimeoutModel = computed<PassphraseTimeout>({
+  get: () => {
+    const currentTimeout = store.state.wallet.account.accountPasswordTimeout;
+    const key = (Object.keys(PassphraseTimeoutDuration) as PassphraseTimeout[]).find(
+      (durationKey) => PassphraseTimeoutDuration[durationKey] === currentTimeout
     );
 
-    if (!key) return PassphraseTimeout.FIFTEEN_MINUTES;
-
-    return key as PassphraseTimeout;
-  }
-
-  set passwordTimeoutModel(name: PassphraseTimeout) {
+    return key ?? PassphraseTimeout.FIFTEEN_MINUTES;
+  },
+  set: (name) => {
     const duration = PassphraseTimeoutDuration[name] ?? DefaultPassphraseTimeout;
-    this.setPasswordTimeout(duration);
+    store.commit.wallet.account.setPasswordTimeout(duration);
+  },
+});
+
+const passwordResetDate = computed<Nullable<string>>(() => {
+  const accountTimestamp = store.state.wallet.account.accountPasswordTimestamp[store.state.wallet.account.address];
+
+  if (!accountTimestamp || !timestamp.value) {
+    return null;
   }
 
-  private timestamp: Nullable<number> = null;
-  private timer: Nullable<NodeJS.Timeout> = null;
+  const diff = accountTimestamp + store.state.wallet.account.accountPasswordTimeout - timestamp.value;
 
-  created(): void {
-    this.createTimer();
-  }
+  return dayjs.duration(diff).locale(dayjsLocale.value).humanize();
+});
 
-  destroyed(): void {
-    this.resetTimer();
-  }
-
-  private updateTimestamp(): void {
-    this.timestamp = Date.now();
-  }
-
-  private createTimer(): void {
-    this.resetTimer();
-    this.updateTimestamp();
-    this.timer = setInterval(this.updateTimestamp, 1000);
-  }
-
-  private resetTimer(): void {
-    if (this.timer) {
-      clearInterval(this.timer);
-    }
-    this.timer = null;
-    this.timestamp = null;
-  }
-
-  get passwordResetDate(): Nullable<string> {
-    const accountPasswordTimestamp = this.accountPasswordTimestamp[this.connected];
-
-    if (!(accountPasswordTimestamp && this.timestamp)) return null;
-
-    const diff = accountPasswordTimestamp + this.accountPasswordTimeout - this.timestamp;
-
-    return dayjs.duration(diff).locale(this.dayjsLocale).humanize();
-  }
-}
+defineExpose({
+  model,
+  passwordTimeoutModel,
+  durations,
+});
 </script>
 
 <style lang="scss">

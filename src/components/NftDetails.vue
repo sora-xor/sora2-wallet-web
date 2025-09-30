@@ -9,7 +9,7 @@
           class="preview-image-confirm-nft__icon-refresh"
           name="refresh-16"
           size="64px"
-          @click.native="handleRefresh"
+          @click="handleRefresh"
         />
         <span class="preview-image-confirm-nft__placeholder">{{
           t('createToken.nft.image.placeholderBadSource')
@@ -37,14 +37,14 @@
 </template>
 
 <script lang="ts">
-import { Prop, Component, Mixins } from 'vue-property-decorator';
+import { Prop, Options, mixins } from 'vue-property-decorator';
 
 import TranslationMixin from './mixins/TranslationMixin';
 
 const UrlCreator = window.URL || window.webkitURL;
 
-@Component
-export default class NftDetails extends Mixins(TranslationMixin) {
+@Options({})
+export default class NftDetails extends mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly contentLink!: string;
   @Prop({ default: '', type: String }) readonly tokenName!: string;
   @Prop({ default: '', type: String }) readonly tokenSymbol!: string;
@@ -107,7 +107,7 @@ export default class NftDetails extends Mixins(TranslationMixin) {
     this.checkImageAvailability();
   }
 
-  beforeDestroy(): void {
+  beforeUnmount(): void {
     if (this.image) {
       UrlCreator.revokeObjectURL(this.image);
     }

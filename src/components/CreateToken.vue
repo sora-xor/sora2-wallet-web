@@ -7,16 +7,16 @@
       <component
         :is="currentTab"
         :step="currentStep"
-        @showTabs="setTabVisibility"
-        @showHeader="setHeaderVisibility"
-        @stepChange="setStep"
+        @show-tabs="setTabVisibility"
+        @show-header="setHeaderVisibility"
+        @step-change="setStep"
       />
     </div>
   </wallet-base>
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { TokenTabs, Step, RouteNames } from '../consts';
 import { mutation } from '../store/decorators';
@@ -28,14 +28,14 @@ import WalletBase from './WalletBase.vue';
 
 import type { Route } from '../store/router/types';
 
-@Component({
+@Options({
   components: {
     WalletBase,
     CreateSimpleToken,
     CreateNftToken,
   },
 })
-export default class CreateToken extends Mixins(TranslationMixin) {
+export default class CreateToken extends mixins(TranslationMixin) {
   readonly TokenTabs = TokenTabs;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;
@@ -44,7 +44,11 @@ export default class CreateToken extends Mixins(TranslationMixin) {
   currentTab: Step = Step.CreateSimpleToken;
   showTabs = true;
   showHeader = true;
-  createTokenTitle = this.t('createToken.titleCommon');
+  createTokenTitle = '';
+
+  created(): void {
+    this.createTokenTitle = this.t('createToken.titleCommon');
+  }
 
   get currentStep(): Step {
     return this.step;

@@ -1,5 +1,5 @@
 import { TransactionStatus, Operation } from '@sora-substrate/sdk';
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { HiddenValue, accountIdBasedOperations } from '../../consts';
 import { getter } from '../../store/decorators';
@@ -43,8 +43,8 @@ const orderBookOperations = [
   Operation.OrderBookCancelLimitOrders,
 ];
 
-@Component
-export default class OperationsMixin extends Mixins(NotificationMixin, NumberFormatterMixin) {
+@Options({})
+export default class OperationsMixin extends mixins(NotificationMixin, NumberFormatterMixin) {
   @getter.account.account account!: PolkadotJsAccount;
 
   getTitle(value?: History): string {

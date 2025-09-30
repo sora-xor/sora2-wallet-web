@@ -1,6 +1,6 @@
 import { TransactionStatus, Operation } from '@sora-substrate/sdk';
 import findLast from 'lodash/fp/findLast';
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { getter, mutation, action, state } from '../../store/decorators';
@@ -12,8 +12,10 @@ import OperationsMixin from './OperationsMixin';
 import type { AccountAssetsTable } from '../../types/common';
 import type { HistoryItem } from '@sora-substrate/sdk';
 
-@Component
-export default class TransactionMixin extends Mixins(LoadingMixin, OperationsMixin) {
+@Options({})
+export default class TransactionMixin extends mixins(LoadingMixin, OperationsMixin) {
+  declare $store: any;
+
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
   @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;

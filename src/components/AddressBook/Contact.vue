@@ -1,18 +1,18 @@
 <template>
-  <dialog-base :title="title" :visible.sync="isVisible" :tooltip="tooltip" append-to-body>
+  <dialog-base v-model:visible="isVisible" :title="title" :tooltip="tooltip" append-to-body>
     <div class="set-address">
       <s-input
-        ref="address"
+        ref="addressInput"
+        v-model="name"
         class="set-address__input"
         :placeholder="t('nameText')"
-        v-model="name"
         :disabled="loading"
         :maxlength="30"
       />
       <s-input
+        v-model="address"
         class="set-address__input"
         :placeholder="t('addressText')"
-        v-model="address"
         :disabled="inputDisabled"
         @input="defineIdentity"
       />
@@ -24,9 +24,9 @@
           </p>
         </s-tooltip>
       </template>
-      <s-input class="set-address__input" :placeholder="t('addressBook.identity')" v-model="onChainIdentity" disabled />
+      <s-input v-model="onChainIdentity" class="set-address__input" :placeholder="t('addressBook.identity')" disabled />
       <div class="set-address__btn">
-        <s-button @click="setContact" type="primary" class="s-typography-button--large" :disabled="btnDisabled">
+        <s-button type="primary" class="s-typography-button--large" :disabled="btnDisabled" @click="setContact">
           {{ btnText }}
         </s-button>
       </div>
@@ -34,124 +34,130 @@
   </dialog-base>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import debounce from 'lodash/fp/debounce';
-import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
+import { computed, nextTick, ref, toRef, watch } from 'vue';
 
-import { validateAddress, formatAccountAddress, getAccountIdentity } from '../../util';
+import { useCopyAddress } from '@/composables/useCopyAddress';
+import { useDialogVisibility } from '@/composables/useDialog';
+import { useTranslation } from '@/composables/useTranslation';
+import type { Book, PolkadotJsAccount } from '@/types/common';
+import { formatAccountAddress, getAccountIdentity, validateAddress } from '@/util';
+
 import DialogBase from '../DialogBase.vue';
-import CopyAddressMixin from '../mixins/CopyAddressMixin';
-import DialogMixin from '../mixins/DialogMixin';
-import LoadingMixin from '../mixins/LoadingMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
 
-import type { Book, PolkadotJsAccount } from '../../types/common';
+defineOptions({ name: 'AddressBookContactDialog' });
 
-@Component({
-  components: {
-    DialogBase,
-  },
-})
-export default class AddressBookContact extends Mixins(DialogMixin, TranslationMixin, LoadingMixin, CopyAddressMixin) {
-  @Prop({ default: () => ({}), type: Object }) readonly book!: Book;
-  @Prop({ default: () => [], type: Array }) readonly accounts!: PolkadotJsAccount[];
-  @Prop({ default: '', type: String }) readonly prefilledAddress!: string;
-  @Prop({ default: false, type: Boolean }) readonly isEditMode!: boolean;
+const props = withDefaults(
+  defineProps<{
+    visible?: boolean;
+    book?: Book;
+    accounts?: PolkadotJsAccount[];
+    prefilledAddress?: string;
+    isEditMode?: boolean;
+  }>(),
+  {
+    visible: false,
+    book: () => ({}) as Book,
+    accounts: () => [] as PolkadotJsAccount[],
+    prefilledAddress: '',
+    isEditMode: false,
+  }
+);
 
-  @Ref('address') private readonly addressInput!: HTMLInputElement;
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'close'): void;
+  (event: 'add', value: { address: string; name: string }): void;
+}>();
 
-  @Watch('isVisible')
-  async handlePrefilledValues(isVisible: boolean): Promise<void> {
-    if (!isVisible) {
-      this.address = '';
-      this.name = '';
-      return;
-    }
+const { t } = useTranslation();
+const { handleCopyAddress, copyTooltip } = useCopyAddress();
 
-    if (this.prefilledAddress) {
-      this.address = this.prefilledAddress;
-      this.name = this.book[this.prefilledAddress] ?? '';
-    }
+const { isVisible, closeDialog } = useDialogVisibility(toRef(props, 'visible'), {
+  emit: (value) => emit('update:visible', value),
+  onClose: () => emit('close'),
+});
 
-    await this.$nextTick();
-    this.addressInput.focus();
+const addressInput = ref<any>(null);
+
+const address = ref('');
+const name = ref('');
+const onChainIdentity = ref(t('addressBook.none'));
+const loading = ref(false);
+
+const book = computed(() => props.book ?? {});
+const accounts = computed(() => props.accounts ?? []);
+
+const formattedName = computed(() => name.value.trim());
+const formattedSoraAddress = computed(() => formatAccountAddress(address.value));
+
+const emptyAddress = computed(() => !address.value.trim());
+const inputDisabled = computed(() => props.isEditMode);
+
+const validAddress = computed(() => validateAddress(address.value));
+const isNotSoraAddress = computed(() => !!formattedSoraAddress.value && address.value.slice(0, 2) !== 'cn');
+
+const isAddressAdded = computed(() => {
+  const matchedAccount = accounts.value.find(
+    (account) => formatAccountAddress(account.address) === formattedSoraAddress.value
+  );
+  return Boolean(book.value[address.value]) || Boolean(matchedAccount);
+});
+
+const isAddressPresented = computed(() => isAddressAdded.value && !props.isEditMode);
+
+const btnDisabled = computed(() => !validAddress.value || !formattedName.value || isAddressPresented.value);
+
+const btnText = computed(() => {
+  if (!formattedName.value) return t('addressBook.btn.enterName');
+  if (!validAddress.value) {
+    return t(`walletSend.${emptyAddress.value ? 'enterAddress' : 'badAddress'}`);
+  }
+  if (isAddressPresented.value) return t('addressBook.btn.present');
+  return props.isEditMode ? t('addressBook.btn.saveChanges') : t('saveText');
+});
+
+const title = computed(() => (props.isEditMode ? t('addressBook.options.edit') : t('addressBook.addContact')));
+const tooltip = computed(() => t('addressBook.tooltip'));
+
+const copyValueAssetId = computed(() => copyTooltip(t('assets.assetId')));
+
+const defineIdentity = debounce(500)(async (value: string) => {
+  if (!value) {
+    onChainIdentity.value = t('addressBook.none');
+    return;
+  }
+  const identity = await getAccountIdentity(value);
+  onChainIdentity.value = identity?.name ?? t('addressBook.none');
+});
+
+const setContact = () => {
+  const record = { address: formattedSoraAddress.value, name: formattedName.value };
+  emit('add', record);
+  closeDialog();
+};
+
+const resetState = () => {
+  address.value = '';
+  name.value = '';
+  onChainIdentity.value = t('addressBook.none');
+};
+
+watch(isVisible, async (visible) => {
+  if (!visible) {
+    resetState();
+    return;
   }
 
-  address = '';
-  name = '';
-  onChainIdentity = this.t('addressBook.none');
-
-  defineIdentity = debounce(500)(this.getIdentity);
-
-  setContact(): void {
-    const record = { address: this.formattedSoraAddress, name: this.formattedName };
-    this.$emit('add', record);
-    this.closeDialog();
+  if (props.prefilledAddress) {
+    address.value = props.prefilledAddress;
+    name.value = book.value[props.prefilledAddress] ?? '';
   }
 
-  async getIdentity(address: string): Promise<void> {
-    const identity = await getAccountIdentity(address);
-    this.onChainIdentity = identity?.name ?? this.t('addressBook.none');
-  }
-
-  get title(): string {
-    return this.isEditMode ? this.t('addressBook.options.edit') : this.t('addressBook.addContact');
-  }
-
-  get tooltip(): string {
-    return this.t('addressBook.tooltip');
-  }
-
-  get copyValueAssetId(): string {
-    return this.copyTooltip(this.t('assets.assetId'));
-  }
-
-  get btnText(): string {
-    if (!this.formattedName) return this.t('addressBook.btn.enterName');
-    if (!this.validAddress) {
-      return this.t(`walletSend.${this.emptyAddress ? 'enterAddress' : 'badAddress'}`);
-    }
-    if (this.isAddressPresented) return this.t('addressBook.btn.present');
-    return this.isEditMode ? this.t('addressBook.btn.saveChanges') : this.t('saveText');
-  }
-
-  get btnDisabled(): boolean {
-    return !this.validAddress || !this.formattedName || this.isAddressPresented;
-  }
-
-  get inputDisabled(): boolean {
-    return this.isEditMode;
-  }
-
-  get isNotSoraAddress(): boolean {
-    return !!this.formattedSoraAddress && this.address.slice(0, 2) !== 'cn';
-  }
-
-  get isAddressAdded(): boolean {
-    const found = this.accounts.find((account) => formatAccountAddress(account.address) === this.formattedSoraAddress);
-    return !!this.book[this.address] || Boolean(found);
-  }
-
-  get isAddressPresented(): boolean {
-    return this.isAddressAdded && !this.isEditMode;
-  }
-
-  get emptyAddress(): boolean {
-    return !this.address.trim();
-  }
-
-  get formattedName(): string {
-    return this.name.trim();
-  }
-
-  get formattedSoraAddress(): string {
-    return formatAccountAddress(this.address);
-  }
-
-  get validAddress(): boolean {
-    return validateAddress(this.address);
-  }
-}
+  await nextTick();
+  addressInput.value?.focus?.();
+});
 </script>
 
 <style lang="scss" scoped>

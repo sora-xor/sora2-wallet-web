@@ -2,11 +2,11 @@
   <div>
     <connection-items :size="wallets.length">
       <account-card
-        v-button
         v-for="wallet in wallets"
         :key="wallet.extensionName"
+        v-button
         tabindex="0"
-        @click.native="handleSelect(wallet)"
+        @click="handleSelect(wallet)"
       >
         <template #avatar>
           <img v-if="wallet.logo.src" :src="wallet.logo.src" :alt="wallet.logo.alt" />
@@ -35,7 +35,7 @@
             <s-icon name="el-icon-loading" size="16" class="connection-loading-icon" />
           </span>
 
-          <s-button v-if="hasDisconnectAction(wallet)" size="small" @click.native.stop="handleDisconnect(wallet)">
+          <s-button v-if="hasDisconnectAction(wallet)" size="small" @click.stop="handleDisconnect(wallet)">
             {{ t('disconnectWalletText') }}
           </s-button>
           <s-button v-else-if="isConnectedWallet(wallet)" size="small" disabled>
@@ -54,7 +54,7 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+import { mixins, Options, Prop } from 'vue-property-decorator';
 
 import AccountCard from '../../Account/AccountCard.vue';
 import TranslationMixin from '../../mixins/TranslationMixin';
@@ -63,13 +63,13 @@ import ConnectionItems from './ConnectionItems.vue';
 
 import type { Wallet } from '../../../services/wallet/types';
 
-@Component({
+@Options({
   components: {
     ConnectionItems,
     AccountCard,
   },
 })
-export default class ExtensionConnectionList extends Mixins(TranslationMixin) {
+export default class ExtensionConnectionList extends mixins(TranslationMixin) {
   @Prop({ default: () => [], type: Array }) readonly wallets!: Wallet[];
   @Prop({ default: () => [], type: Array }) readonly recommendedWallets!: string[];
   @Prop({ default: '', type: String }) readonly connectedWallet!: string;

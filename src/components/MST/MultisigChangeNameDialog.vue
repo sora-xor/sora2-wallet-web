@@ -1,5 +1,5 @@
 <template>
-  <dialog-base :title="t('mst.settingsMst')" :visible.sync="isVisible" append-to-body>
+  <dialog-base v-model:visible="isVisible" :title="t('mst.settingsMst')" append-to-body>
     <div class="multisig-change-forget">
       <s-card v-bind="{ shadow: 'always', size: 'medium', borderRadius: 'small', ...$attrs }" class="switch-multisig">
         <div class="switcher">
@@ -12,92 +12,109 @@
       <s-button :disabled="isNoNameOrTheSame" type="primary" @click="updateName">{{ t('mst.mstSave') }}</s-button>
       <s-button type="secondary" @click="forgetMultisig">{{ t('mst.mstForgetBtn') }}</s-button>
     </div>
-    <mst-forget-dialog :visible.sync="dialogMSTNameChange" />
+    <mst-forget-dialog v-model:visible="dialogMSTNameChange" />
   </dialog-base>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Watch } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, onMounted, ref, toRef, watch } from 'vue';
 
-import { api } from '../../api';
-import { RouteNames } from '../../consts';
-import { mutation, state, action, getter } from '../../store/decorators';
+import { api } from '@/api';
+import { useDialogVisibility } from '@/composables/useDialog';
+import { useTranslation } from '@/composables/useTranslation';
+import { RouteNames } from '@/consts';
+import store from '@/store';
+import type { Route } from '@/store/router/types';
+
 import DialogBase from '../DialogBase.vue';
-import DialogMixin from '../mixins/DialogMixin';
-import NotificationMixin from '../mixins/NotificationMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
-import FormattedAddress from '../shared/FormattedAddress.vue';
-import SimpleNotification from '../SimpleNotification.vue';
 
 import MstForgetDialog from './MstForgetDialog.vue';
 
-import type { Route } from '../../store/router/types';
-import type { PolkadotJsAccount } from '../../types/common';
+defineOptions({ name: 'MultisigChangeNameDialog' });
 
-@Component({
-  components: {
-    DialogBase,
-    SimpleNotification,
-    FormattedAddress,
-    MstForgetDialog,
-  },
-})
-export default class MultisigChangeNameDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
-  @mutation.router.navigate private navigate!: (options: Route) => void;
-  @mutation.account.syncWithStorage syncWithStorage!: () => void;
-  @mutation.account.setIsMST setIsMST!: (isMST: boolean) => void;
-  @action.account.afterLogin afterLogin!: () => void;
-  @action.account.renameAccount public renameAccount!: (data: { address: string; name: string }) => Promise<void>;
-
-  @state.account.isMST isMST!: boolean;
-
-  @getter.account.account private account!: PolkadotJsAccount;
-
-  dialogMSTNameChange = false;
-  multisigNewName = '';
-  currentName: string | null = null;
-  isMSTLocal = false;
-
-  async mounted() {
-    this.isMSTLocal = this.isMSTAccount;
+const props = withDefaults(
+  defineProps<{
+    visible?: boolean;
+  }>(),
+  {
+    visible: false,
   }
+);
 
-  @Watch('isMSTAccount')
-  onIsMSTAccountChanged(newVal: boolean) {
-    this.isMSTLocal = newVal;
-  }
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'close'): void;
+}>();
 
-  get isMSTAccount(): boolean {
-    if (!this.isMST) return false;
-    const mstName = api.mst.getMSTName();
-    return mstName !== '';
-  }
+const { t } = useTranslation();
+const { isVisible, closeDialog } = useDialogVisibility(toRef(props, 'visible'), {
+  emit: (value) => emit('update:visible', value),
+  onClose: () => emit('close'),
+});
 
-  get isNoNameOrTheSame(): boolean {
-    return this.currentName === this.multisigNewName || this.multisigNewName === '';
-  }
+const navigate = (route: Route) => {
+  store.original.commit('router/navigate', route);
+};
+const syncWithStorage = store.commit.wallet.account.syncWithStorage;
+const setIsMST = store.commit.wallet.account.setIsMST;
+const afterLogin = store.dispatch.wallet.account.afterLogin;
+const renameAccount = store.dispatch.wallet.account.renameAccount;
 
-  switchToFromMST(): void {
-    api.mst.switchAccount(this.isMSTLocal);
-    this.setIsMST(this.isMSTLocal);
-    this.syncWithStorage();
-    this.afterLogin();
-  }
+const account = computed(() => store.getters.wallet.account.account);
+const isMST = computed(() => store.state.wallet.account.isMST);
 
-  updateName(): void {
-    api.mst.updateMultisigName(this.multisigNewName);
-    const mstAddress = api.mst.getMstAddress();
-    this.renameAccount({ address: mstAddress, name: this.multisigNewName });
-    this.multisigNewName = '';
-    this.closeDialog();
-    this.navigate({ name: RouteNames.Wallet });
-  }
+const dialogMSTNameChange = ref(false);
+const multisigNewName = ref('');
+const currentName = ref<string | null>(null);
+const isMSTLocal = ref(false);
 
-  forgetMultisig(): void {
-    this.closeDialog();
-    this.dialogMSTNameChange = true;
+const resolveCurrentName = () => {
+  const name = api.mst.getMSTName();
+  currentName.value = name || null;
+  return currentName.value;
+};
+
+const isMSTAccount = computed(() => {
+  if (!isMST.value) return false;
+  const name = api.mst.getMSTName();
+  return name !== '';
+});
+
+onMounted(() => {
+  resolveCurrentName();
+  isMSTLocal.value = isMSTAccount.value;
+});
+
+watch(isMSTAccount, (value) => {
+  isMSTLocal.value = value;
+  if (value) {
+    resolveCurrentName();
   }
-}
+});
+
+const isNoNameOrTheSame = computed(() => currentName.value === multisigNewName.value || multisigNewName.value === '');
+
+const switchToFromMST = () => {
+  api.mst.switchAccount(isMSTLocal.value);
+  setIsMST(isMSTLocal.value);
+  syncWithStorage();
+  afterLogin();
+};
+
+const updateName = async () => {
+  api.mst.updateMultisigName(multisigNewName.value);
+  const mstAddress = api.mst.getMstAddress();
+  await renameAccount({ address: mstAddress, name: multisigNewName.value });
+  multisigNewName.value = '';
+  resolveCurrentName();
+  closeDialog();
+  navigate({ name: RouteNames.Wallet });
+};
+
+const forgetMultisig = () => {
+  closeDialog();
+  dialogMSTNameChange.value = true;
+};
 </script>
 
 <style lang="scss" scoped>

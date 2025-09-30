@@ -1,10 +1,10 @@
 import { FPNumber } from '@sora-substrate/sdk';
 import { MaxTotalSupply } from '@sora-substrate/sdk/build/assets/consts';
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Options } from 'vue-property-decorator';
 
 import type { CodecString } from '@sora-substrate/sdk';
 
-@Component
+@Options({})
 export default class NumberFormatterMixin extends Vue {
   readonly Zero = FPNumber.ZERO;
   readonly Hundred = FPNumber.HUNDRED;

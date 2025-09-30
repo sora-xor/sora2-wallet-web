@@ -12,16 +12,16 @@
 </template>
 
 <script lang="ts">
-import { Component, ModelSync, Prop, Vue } from 'vue-property-decorator';
+import { Options, Model, Prop, Vue } from 'vue-property-decorator';
 
-@Component
+@Options({})
 export default class AccountSettingsOption extends Vue {
   @Prop({ default: '', type: String }) readonly hint!: string;
   @Prop({ default: '', type: String }) readonly title!: string;
   @Prop({ default: false, type: Boolean }) readonly disabled!: boolean;
   @Prop({ default: false, type: Boolean }) readonly withHint!: boolean;
 
-  @ModelSync('value', 'input', { type: Boolean })
+  @Model('modelValue', { type: Boolean })
   readonly model!: boolean;
 }
 </script>

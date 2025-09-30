@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletFee.vue [With "0" Value]: should be rendered correctly 1`] = `
+exports[`WalletFee.vue > [With "0" Value]: should be rendered correctly 1`] = `
 <div
   class="info-line-container"
 >
@@ -12,12 +12,13 @@ exports[`WalletFee.vue [With "0" Value]: should be rendered correctly 1`] = `
     label="Network Fee"
     labeltooltip="Network fee is used to ensure SORA system's growth and stable performance."
     value="0"
+    valuecanbehidden="false"
     valuetooltip=""
   />
 </div>
 `;
 
-exports[`WalletFee.vue [With "Infinity" Value]: should be rendered correctly 1`] = `
+exports[`WalletFee.vue > [With "Infinity" Value]: should be rendered correctly 1`] = `
 <div
   class="info-line-container"
 >
@@ -29,12 +30,13 @@ exports[`WalletFee.vue [With "Infinity" Value]: should be rendered correctly 1`]
     label="Network Fee"
     labeltooltip="Network fee is used to ensure SORA system's growth and stable performance."
     value="Infinity"
+    valuecanbehidden="false"
     valuetooltip=""
   />
 </div>
 `;
 
-exports[`WalletFee.vue [With "NaN" Value]: should be rendered correctly 1`] = `
+exports[`WalletFee.vue > [With "NaN" Value]: should be rendered correctly 1`] = `
 <div
   class="info-line-container"
 >
@@ -46,12 +48,13 @@ exports[`WalletFee.vue [With "NaN" Value]: should be rendered correctly 1`] = `
     label="Network Fee"
     labeltooltip="Network fee is used to ensure SORA system's growth and stable performance."
     value="NaN"
+    valuecanbehidden="false"
     valuetooltip=""
   />
 </div>
 `;
 
-exports[`WalletFee.vue [With Value]: should be rendered correctly 1`] = `
+exports[`WalletFee.vue > [With Value]: should be rendered correctly 1`] = `
 <div
   class="info-line-container"
 >
@@ -63,6 +66,7 @@ exports[`WalletFee.vue [With Value]: should be rendered correctly 1`] = `
     label="Network Fee"
     labeltooltip="Network fee is used to ensure SORA system's growth and stable performance."
     value="1,234,567.890123"
+    valuecanbehidden="false"
     valuetooltip=""
   />
 </div>

@@ -1,6 +1,6 @@
-import { Vue, Component, Prop, Watch } from 'vue-property-decorator';
+import { Vue, Options, Prop, Watch } from 'vue-property-decorator';
 
-@Component
+@Options({})
 export default class DialogMixin extends Vue {
   @Prop({ type: Boolean, default: false, required: true }) readonly visible!: boolean;
 

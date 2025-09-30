@@ -14,9 +14,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Options, Prop, Vue } from 'vue-property-decorator';
 
-@Component
+@Options({})
 export default class PinIcon extends Vue {
   @Prop({ type: Boolean, required: true }) isPinned!: boolean;
 }

@@ -25,8 +25,8 @@
           :value-can-be-hidden="valueCanBeHidden"
         />
         <component
-          v-else-if="!valueCanBeHidden || !shouldBalanceBeHidden"
           :is="tooltipOrTemplate"
+          v-else-if="!valueCanBeHidden || !shouldBalanceBeHidden"
           :content="valueTooltip"
         >
           <span class="info-line-value">
@@ -49,14 +49,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 
 import { FontSizeRate, FontWeightRate, HiddenValue } from '../consts';
 import { state } from '../store/decorators';
 
 import FormattedAmount from './FormattedAmount.vue';
 
-@Component({
+@Options({
   components: { FormattedAmount },
 })
 export default class InfoLine extends Vue {

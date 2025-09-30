@@ -1,3 +1,4 @@
+import { Theme } from '@/consts';
 import { Currency } from '@/types/currency';
 
 import { WalletAssetFilters, WalletFilteringOptions, IndexerType } from '../../consts';
@@ -21,6 +22,7 @@ function initialState(): SettingsState {
   const allowTopUpAlerts = settingsStorage.get('allowTopUpAlerts');
   const filters = storage.get('filters');
   const { option, verifiedOnly, zeroBalance } = filters && JSON.parse(filters);
+  const theme = settingsStorage.get('theme') as Theme;
 
   return {
     apiKeys: {},
@@ -68,6 +70,7 @@ function initialState(): SettingsState {
     exchangeRateUnsubFn: null,
     assetsFilter: FilterOptions.All,
     isMSTAvailable: false,
+    theme: theme ?? Theme.Light,
   };
 }
 

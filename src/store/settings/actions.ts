@@ -6,7 +6,7 @@ import { combineLatest } from 'rxjs';
 import { CurrencyExchangeRateService } from '@/services/currency';
 
 import { api } from '../../api';
-import { IndexerType, SoraNetwork } from '../../consts';
+import { IndexerType, SoraNetwork, Theme } from '../../consts';
 import { getCurrenciesState } from '../../consts/currencies';
 import { GDriveStorage } from '../../services/google';
 import { WcProvider } from '../../services/walletconnect';
@@ -203,6 +203,18 @@ const actions = defineActions({
     );
     commit.setExchangeRateUnsubFn(unsubFn);
     console.info(`[Exchange Rate API] Fiat rates subscribe.`);
+  },
+  async setTheme(context, theme: Theme): Promise<void> {
+    const { commit } = settingsActionContext(context);
+
+    commit.setTheme(theme);
+  },
+  async toggleTheme(context): Promise<void> {
+    const { state, dispatch } = settingsActionContext(context);
+
+    const next = state.theme === Theme.Light ? Theme.Dark : Theme.Light;
+
+    await dispatch.setTheme(next);
   },
 });
 

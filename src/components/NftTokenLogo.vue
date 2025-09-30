@@ -1,22 +1,22 @@
 <template>
   <img
     v-show="asset.content && showNftImage"
+    ref="nftImage"
     class="asset-logo nft-image"
     :src="nftImageUrl"
-    ref="nftImage"
     @load="handleNftImageLoad"
     @error="hideNftImage"
   />
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Ref } from 'vue-property-decorator';
+import { Options, Prop, Vue, Ref } from 'vue-property-decorator';
 
 import { IpfsStorage } from '../util/ipfsStorage';
 
 import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 
-@Component
+@Options({})
 export default class NftTokenLogo extends Vue {
   @Prop({ default: () => {}, type: Object, required: true }) readonly asset!: Asset;
   @Ref('nftImage') readonly nftImage!: HTMLImageElement;

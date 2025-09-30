@@ -11,38 +11,44 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
-import CopyAddressMixin from './mixins/CopyAddressMixin';
-import TranslationMixin from './mixins/TranslationMixin';
+import { useTranslation } from '@/composables/useTranslation';
+
 import FormattedAddress from './shared/FormattedAddress.vue';
 
-@Component({
-  components: {
-    FormattedAddress,
-  },
-})
-export default class TokenAddress extends Mixins(TranslationMixin, CopyAddressMixin) {
-  @Prop({ default: '', type: String }) readonly name!: string;
-  @Prop({ default: '', type: String }) readonly symbol!: string;
-  @Prop({ default: '', type: String }) readonly address!: string;
-  @Prop({ default: '', type: String }) readonly externalAddress!: string;
-  @Prop({ default: false, type: Boolean }) readonly external!: boolean;
-  @Prop({ default: true, type: Boolean }) readonly showName!: boolean;
-  /** Default visible token length, default: 11 */
-  @Prop({ default: 11, type: [Number, String] }) readonly symbols!: number | string;
-  /** Offset in symbols, default: 2 */
-  @Prop({ default: 2, type: [Number, String] }) readonly symbolsOffset!: number | string;
-
-  get tokenName(): string {
-    return this.name || this.symbol;
+const props = withDefaults(
+  defineProps<{
+    name?: string;
+    symbol?: string;
+    address?: string;
+    externalAddress?: string;
+    external?: boolean;
+    showName?: boolean;
+    symbols?: number | string;
+    symbolsOffset?: number | string;
+  }>(),
+  {
+    name: '',
+    symbol: '',
+    address: '',
+    externalAddress: '',
+    external: false,
+    showName: true,
+    symbols: 11,
+    symbolsOffset: 2,
   }
+);
 
-  get tokenAddress(): string {
-    return this.external ? this.externalAddress : this.address;
-  }
-}
+const { t } = useTranslation();
+
+const tokenName = computed(() => props.name || props.symbol);
+const tokenAddress = computed(() => (props.external ? props.externalAddress : props.address));
+
+defineExpose({
+  tokenAddress,
+});
 </script>
 
 <style lang="scss" scoped>

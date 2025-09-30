@@ -21,9 +21,9 @@
       </div>
     </div>
     <s-pagination
+      v-model:current-page="currentPage"
       class="adar-tx-details__pagination-panel"
       :layout="'prev, total, next'"
-      :current-page.sync="currentPage"
       :page-size="pageAmount"
       :total="numberOfRecipients"
       @prev-click="handlePrevClick"
@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { Operation } from '@sora-substrate/sdk';
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Options, mixins, Prop } from 'vue-property-decorator';
 
 import { formatAddress } from '@/util';
 
@@ -50,13 +50,13 @@ import TransactionHashView from './TransactionHashView.vue';
 import type { PolkadotJsAccount } from '../types/common';
 import type { HistoryItem } from '@sora-substrate/sdk';
 
-@Component({
+@Options({
   components: {
     InfoLine,
     TransactionHashView,
   },
 })
-export default class WalletAdarTxDetails extends Mixins(TranslationMixin, NumberFormatterMixin, PaginationSearchMixin) {
+export default class WalletAdarTxDetails extends mixins(TranslationMixin, NumberFormatterMixin, PaginationSearchMixin) {
   readonly HashType = HashType;
 
   @getter.account.account private account!: PolkadotJsAccount;

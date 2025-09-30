@@ -26,30 +26,44 @@
   </s-form>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop, ModelSync } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
-import TranslationMixin from './mixins/TranslationMixin';
+import { useTranslation } from '@/composables/useTranslation';
 
-@Component
-export default class SimpleNotification extends Mixins(TranslationMixin) {
-  @Prop({ default: false, type: Boolean }) readonly success!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly optional!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly modalContent!: boolean;
-  @Prop({ default: '', type: String }) readonly buttonText!: string;
-
-  @ModelSync('value', 'input', { default: false, type: Boolean })
-  readonly optionalModel!: boolean;
-
-  get iconName(): string {
-    return this.success ? 'basic-check-mark-24' : 'notifications-alert-triangle-24';
+const props = withDefaults(
+  defineProps<{
+    success?: boolean;
+    loading?: boolean;
+    optional?: boolean;
+    modalContent?: boolean;
+    buttonText?: string;
+    modelValue?: boolean;
+  }>(),
+  {
+    success: false,
+    loading: false,
+    optional: false,
+    modalContent: false,
+    buttonText: '',
+    modelValue: false,
   }
+);
 
-  get btnText(): string {
-    return this.buttonText || this.t('closeText');
-  }
-}
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: boolean): void;
+}>();
+
+const { t } = useTranslation();
+
+const optionalModel = computed({
+  get: () => props.modelValue,
+  set: (value: boolean) => emit('update:modelValue', value),
+});
+
+const iconName = computed(() => (props.success ? 'basic-check-mark-24' : 'notifications-alert-triangle-24'));
+
+const btnText = computed(() => props.buttonText || t('closeText'));
 </script>
 
 <style lang="scss" scoped>

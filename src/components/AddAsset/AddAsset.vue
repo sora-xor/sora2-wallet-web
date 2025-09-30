@@ -7,7 +7,7 @@
       <keep-alive>
         <component
           :is="currentTab"
-          :tokenDetailsPageOpened="tokenDetailsPageOpened"
+          :token-details-page-opened="tokenDetailsPageOpened"
           @change-visibility="changeVisibility"
         />
       </keep-alive>
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { RouteNames, AddAssetTabs } from '../../consts';
 import { mutation } from '../../store/decorators';
@@ -28,14 +28,14 @@ import AddAssetToken from './AddAssetTokenTab.vue';
 
 import type { Route } from '../../store/router/types';
 
-@Component({
+@Options({
   components: {
     WalletBase,
     AddAssetToken,
     AddAssetNFT,
   },
 })
-export default class AddAsset extends Mixins(TranslationMixin) {
+export default class AddAsset extends mixins(TranslationMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
   @mutation.router.navigate private navigate!: (options: Route) => void;

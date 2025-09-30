@@ -2,19 +2,19 @@
   <div class="history s-flex">
     <search-input
       v-if="hasTransactions"
-      :placeholder="t('history.filterPlaceholder')"
       v-model="query"
+      :placeholder="t('history.filterPlaceholder')"
       autofocus
-      @clear="resetSearch"
       class="history--search"
+      @clear="resetSearch"
     />
-    <div class="history-items" v-loading="loading">
+    <div v-loading="loading" class="history-items">
       <template v-if="hasVisibleTransactions">
         <div
-          class="history-item s-flex"
           v-for="(item, index) in transactions"
-          v-button
           :key="index"
+          v-button
+          class="history-item s-flex"
           tabindex="0"
           @click="handleOpenTransactionDetails(item.id)"
         >
@@ -44,7 +44,7 @@
 import { TransactionStatus } from '@sora-substrate/sdk';
 import debounce from 'lodash/fp/debounce';
 import isEmpty from 'lodash/fp/isEmpty';
-import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
+import { Options, mixins, Prop, Watch } from 'vue-property-decorator';
 
 import { RouteNames, PaginationButton } from '../consts';
 import { getCurrentIndexer } from '../services/indexer';
@@ -67,13 +67,13 @@ const isAssetSymbol = (value: string) => value.length > 1 && value.length < 8;
 const isAccountAddress = (value: string) => value.startsWith('cn') && value.length === 49;
 const isHexAddress = (value: string) => value.startsWith('0x') && value.length === 66;
 
-@Component({
+@Options({
   components: {
     SearchInput,
     HistoryPagination,
   },
 })
-export default class WalletHistory extends Mixins(
+export default class WalletHistory extends mixins(
   LoadingMixin,
   TransactionMixin,
   PaginationSearchMixin,
@@ -215,7 +215,7 @@ export default class WalletHistory extends Mixins(
     this.updateHistory(1, true);
   }
 
-  beforeDestroy(): void {
+  beforeUnmount(): void {
     this.saveExternalHistoryUpdates(false);
     this.reset();
   }

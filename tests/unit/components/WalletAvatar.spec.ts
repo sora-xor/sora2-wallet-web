@@ -16,7 +16,7 @@ useDescribe('WalletAvatar.vue', WalletAvatar, () => {
       const wrapper = useShallowMount(WalletAvatar, {
         propsData,
         stubs: {
-          Identicon: Identicon,
+          Identicon,
         },
       });
       expect(wrapper.element).toMatchSnapshot();

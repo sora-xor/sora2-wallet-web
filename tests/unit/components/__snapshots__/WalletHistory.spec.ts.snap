@@ -1,695 +1,730 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletHistory.vue should be rendered correctly 1`] = `
+exports[`WalletHistory.vue > should be rendered correctly 1`] = `
 <div
   class="history s-flex"
+  data-v-b99e3575=""
 >
   <search-input-stub
-    autofocus="true"
+    autofocus=""
     class="history--search"
+    data-v-b99e3575=""
+    modelvalue=""
     placeholder="Filter by Address, Symbol, Type or Block ID"
-    value=""
   />
-   
   <div
     class="history-items"
+    data-v-b99e3575=""
   >
+    
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** VAL To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:39 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** XOR To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:35 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** XOR To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:17 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** VAL To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:15 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** XOR To cnVFi...P2nse
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Nov 11, 2020 2:50 AM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Swap"
+          data-v-b99e3575=""
         >
           Swap
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Failed to swap ****** XOR for ****** PSWAP
         </div>
-         
-        <s-icon-stub
+        <span
           class="info-status info-status--error"
-          name="basic-clear-X-xs-24"
+          data-icon="basic-clear-X-xs-24"
+          data-v-b99e3575=""
         />
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Nov 11, 2020 2:50 AM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="AddLiquidity"
+          data-v-b99e3575=""
         >
           Add Liquidity
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Supplied ****** XOR and ****** PSWAP
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Nov 11, 2020 2:50 AM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="RemoveLiquidity"
+          data-v-b99e3575=""
         >
           Remove Liquidity
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Removed ****** XOR and ****** PSWAP
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Nov 11, 2020 2:50 AM
       </div>
     </div>
+    
   </div>
-   
   <history-pagination-stub
     currentpage="1"
+    data-v-b99e3575=""
     lastpage="2"
+    loading="false"
     pageamount="8"
     total="10"
   />
 </div>
 `;
 
-exports[`WalletHistory.vue should render error icon when transaction is failed 1`] = `
+exports[`WalletHistory.vue > should render error icon when transaction is failed 1`] = `
 <div
   class="history s-flex"
+  data-v-b99e3575=""
 >
   <search-input-stub
-    autofocus="true"
+    autofocus=""
     class="history--search"
+    data-v-b99e3575=""
+    modelvalue=""
     placeholder="Filter by Address, Symbol, Type or Block ID"
-    value=""
   />
-   
   <div
     class="history-items"
+    data-v-b99e3575=""
   >
+    
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** VAL To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:39 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** XOR To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:35 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** XOR To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:17 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** VAL To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:15 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Failed to Sent ****** XOR To cnVFi...P2nse
         </div>
-         
-        <s-icon-stub
+        <span
           class="info-status info-status--error"
-          name="basic-clear-X-xs-24"
+          data-icon="basic-clear-X-xs-24"
+          data-v-b99e3575=""
         />
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Nov 11, 2020 2:50 AM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="SwapTransferBatch"
+          data-v-b99e3575=""
         >
           ADAR transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** XOR
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Nov 11, 2020 2:50 AM
       </div>
     </div>
+    
   </div>
-   
-  <!---->
+  <!--v-if-->
 </div>
 `;
 
-exports[`WalletHistory.vue should render history empty text when no transacion 1`] = `
+exports[`WalletHistory.vue > should render history empty text when no transacion 1`] = `
 <div
   class="history s-flex"
+  data-v-b99e3575=""
 >
-  <!---->
-   
+  <!--v-if-->
   <div
     class="history-items"
+    data-v-b99e3575=""
   >
     <div
       class="history-empty p4"
+      data-v-b99e3575=""
     >
       Your transactions will appear here
     </div>
   </div>
-   
-  <!---->
+  <!--v-if-->
 </div>
 `;
 
-exports[`WalletHistory.vue should render spinner when transaction is pending 1`] = `
+exports[`WalletHistory.vue > should render spinner when transaction is pending 1`] = `
 <div
   class="history s-flex"
+  data-v-b99e3575=""
 >
   <search-input-stub
-    autofocus="true"
+    autofocus=""
     class="history--search"
+    data-v-b99e3575=""
+    modelvalue=""
     placeholder="Filter by Address, Symbol, Type or Block ID"
-    value=""
   />
-   
   <div
     class="history-items"
+    data-v-b99e3575=""
   >
+    
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** VAL To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:39 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** XOR To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:35 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** XOR To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:17 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** VAL To cnW4q...L2ftG
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Jan 27, 2022 6:15 PM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="Transfer"
+          data-v-b99e3575=""
         >
           Transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** XOR To cnVFi...P2nse
         </div>
-         
-        <s-icon-stub
+        <span
           class="info-status info-status--loading"
-          name="refresh-16"
+          data-icon="refresh-16"
+          data-v-b99e3575=""
         />
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Nov 11, 2020 2:50 AM
       </div>
     </div>
     <div
       class="history-item s-flex"
-      role="button"
+      data-v-b99e3575=""
       tabindex="0"
     >
       <div
         class="history-item-info"
+        data-v-b99e3575=""
       >
         <div
           class="history-item-operation ch3"
           data-type="SwapTransferBatch"
+          data-v-b99e3575=""
         >
           ADAR transfer
         </div>
-         
         <div
           class="history-item-title p4"
+          data-v-b99e3575=""
         >
           Sent ****** XOR
         </div>
-         
-        <!---->
+        <!--v-if-->
       </div>
-       
       <div
         class="history-item-date"
+        data-v-b99e3575=""
       >
-        Nov 27, 2020 11:59 PM
+        Nov 11, 2020 2:50 AM
       </div>
     </div>
+    
   </div>
-   
-  <!---->
+  <!--v-if-->
 </div>
 `;

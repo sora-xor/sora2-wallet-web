@@ -2,6 +2,7 @@ import { FPNumber } from '@sora-substrate/math';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
 import { defineGetters } from 'direct-vuex';
 
+import type { LibraryDesignSystem } from '@/types/common';
 import { Currency } from '@/types/currency';
 import { getCurrency } from '@/util';
 
@@ -34,6 +35,20 @@ const getters = defineGetters<SettingsState>()({
     }
 
     return state.fiatExchangeRateObject[state.currency] ?? 1;
+  },
+
+  libraryTheme(...args) {
+    const { state } = settingsGetterContext(args);
+
+    return state.theme;
+  },
+
+  libraryDesignSystem(...args): LibraryDesignSystem {
+    const { state } = settingsGetterContext(args);
+
+    return {
+      theme: state.theme,
+    };
   },
 });
 

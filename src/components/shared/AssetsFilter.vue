@@ -7,7 +7,7 @@
           <div class="assets-filter__text--reset" @click="resetFilter">{{ t('filter.reset') }}</div>
         </div>
         <s-radio-group v-model="selectedFilter" class="assets-filter-options">
-          <s-radio size="small" v-for="(filter, index) in filterOptionsText" :key="index" :label="getLabel(index)">
+          <s-radio v-for="(filter, index) in filterOptionsText" :key="index" size="small" :label="getLabel(index)">
             {{ filter }}
           </s-radio>
         </s-radio-group>
@@ -18,100 +18,97 @@
             <span>{{ t(`addAsset.${AddAssetTabs.Token}.switchBtn`) }}</span>
           </div>
         </div>
-        <div v-button class="assets-filter__button" slot="reference">
-          {{ showText }}:
-          <span class="assets-filter__button-option">{{ chosenOptionText }}</span>
-          <s-icon class="assets-filter__button-icon" name="basic-settings-24" size="14px" />
-        </div>
+        <template #reference>
+          <div v-button class="assets-filter__button">
+            {{ showText }}:
+            <span class="assets-filter__button-option">{{ chosenOptionText }}</span>
+            <s-icon class="assets-filter__button-icon" name="basic-settings-24" size="14px" />
+          </div>
+        </template>
       </el-popover>
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, ModelSync, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
 
+import { useTranslation } from '@/composables/useTranslation';
 import { AddAssetTabs } from '@/consts';
-import { state, mutation } from '@/store/decorators';
+import store from '@/store';
 import { FilterOptions } from '@/types/common';
 
-import LoadingMixin from '../mixins/LoadingMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
-
-@Component
-export default class WalletAssetsHeadline extends Mixins(TranslationMixin, LoadingMixin) {
-  @state.settings.assetsFilter assetsFilter!: FilterOptions;
-
-  @mutation.settings.setAssetsFilter
-  private setFilterOptions!: (filter: FilterOptions) => void;
-
-  @ModelSync('value', 'input', { type: Boolean }) isVerifiedOnly!: boolean;
-
-  @Prop({ default: false, type: Boolean }) readonly showOnlyVerifiedSwitch!: boolean;
-
-  readonly AddAssetTabs = AddAssetTabs;
-
-  get computedClasses(): string {
-    const baseClass = ['assets-filter-wrapper__content'];
-
-    return baseClass.join(' ');
+const props = withDefaults(
+  defineProps<{
+    modelValue?: boolean;
+    showOnlyVerifiedSwitch?: boolean;
+  }>(),
+  {
+    modelValue: false,
+    showOnlyVerifiedSwitch: false,
   }
+);
 
-  get selectedFilter(): string {
-    return this.assetsFilter;
+const emit = defineEmits<{
+  (event: 'update:modelValue', value: boolean): void;
+}>();
+
+const { t, TranslationConsts } = useTranslation();
+
+const loading = ref(false);
+
+const assetsFilter = computed<FilterOptions>(() => store.state.wallet.settings.assetsFilter);
+
+const selectedFilter = computed<FilterOptions>({
+  get: () => assetsFilter.value,
+  set: (value: FilterOptions) => {
+    store.commit.wallet.settings.setAssetsFilter(value);
+  },
+});
+
+const isVerifiedOnly = computed({
+  get: () => props.modelValue,
+  set: (value: boolean) => emit('update:modelValue', value),
+});
+
+const computedClasses = computed(() => ['assets-filter-wrapper__content'].join(' '));
+
+const getLabel = (index: number) => Object.values(FilterOptions)[index];
+
+const resetFilter = () => {
+  selectedFilter.value = FilterOptions.All;
+  isVerifiedOnly.value = true;
+};
+
+const filterOptionsText = computed(() => [
+  t('filter.all'),
+  t('filter.native'),
+  TranslationConsts.Kensetsu,
+  t('filter.synthetics'),
+  TranslationConsts.Ceres,
+]);
+
+const chosenOptionText = computed(() => {
+  switch (assetsFilter.value) {
+    case FilterOptions.Native:
+      return t('filter.native').toUpperCase();
+    case FilterOptions.Kensetsu:
+      return TranslationConsts.Kensetsu.toUpperCase();
+    case FilterOptions.Synthetics:
+      return t('filter.synthetics').toUpperCase();
+    case FilterOptions.Ceres:
+      return TranslationConsts.Ceres.toUpperCase();
+    default:
+      return t('filter.all').toUpperCase();
   }
+});
 
-  set selectedFilter(value: FilterOptions) {
-    this.setFilterOptions(value);
-  }
+const showText = computed(() => t('filter.show').toUpperCase());
 
-  getLabel(index: number): string {
-    return Object.values(FilterOptions)[index];
-  }
-
-  resetFilter(): void {
-    this.selectedFilter = FilterOptions.All;
-    this.isVerifiedOnly = true;
-  }
-
-  get filterOptionsText(): Array<string> {
-    const basicOptions = [
-      this.t('filter.all'),
-      this.t('filter.native'),
-      this.TranslationConsts.Kensetsu,
-      this.t('filter.synthetics'),
-      this.TranslationConsts.Ceres,
-    ];
-
-    return basicOptions;
-  }
-
-  get chosenOptionText(): string {
-    let text = this.t('filter.all');
-    switch (this.assetsFilter) {
-      case FilterOptions.All:
-        text = this.t('filter.all');
-        break;
-      case FilterOptions.Native:
-        text = this.t('filter.native');
-        break;
-      case FilterOptions.Kensetsu:
-        text = this.TranslationConsts.Kensetsu;
-        break;
-      case FilterOptions.Synthetics:
-        text = this.t('filter.synthetics');
-        break;
-      case FilterOptions.Ceres:
-        text = this.TranslationConsts.Ceres;
-        break;
-    }
-    return text.toUpperCase();
-  }
-
-  get showText(): string {
-    return this.t('filter.show').toUpperCase();
-  }
-}
+defineExpose({
+  resetFilter,
+  selectedFilter,
+});
 </script>
 
 <style lang="scss" scoped>

@@ -24,13 +24,13 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 
 import { FontSizeRate, FontWeightRate } from '../consts';
 
 import FormattedAmount from './FormattedAmount.vue';
 
-@Component({
+@Options({
   components: {
     FormattedAmount,
   },

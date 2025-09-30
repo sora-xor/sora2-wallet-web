@@ -1,5 +1,5 @@
 <template>
-  <s-pagination class="history-pagination" layout="slot" :current-page.sync="currentPage" :page-size="pageAmount">
+  <s-pagination class="history-pagination" layout="slot" :current-page="currentPage" :page-size="pageAmount">
     <span class="el-pagination__total">{{ totalText }}</span>
     <s-button
       type="link"
@@ -36,46 +36,57 @@
   </s-pagination>
 </template>
 
-<script lang="ts">
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
-import { PaginationButton } from '../consts';
+import { useTranslation } from '@/composables/useTranslation';
+import { PaginationButton } from '@/consts';
 
-import TranslationMixin from './mixins/TranslationMixin';
-
-@Component
-export default class HistoryPagination extends Mixins(TranslationMixin) {
-  @Prop({ default: 1, type: Number }) readonly currentPage!: number;
-  @Prop({ default: 10, type: Number }) readonly pageAmount!: number;
-  @Prop({ default: 0, type: Number }) readonly total!: number;
-  @Prop({ default: false, type: Boolean }) readonly loading?: boolean;
-  @Prop({ default: 1, type: Number }) readonly lastPage!: number;
-
-  readonly PaginationButton = PaginationButton;
-
-  get totalText(): string {
-    const upperNumber = this.pageAmount * this.currentPage;
-
-    return `${this.t('ofText', {
-      first: `${upperNumber - this.pageAmount + 1}-${upperNumber > this.total ? this.total : upperNumber}`,
-      second: this.total,
-    })}`;
+const props = withDefaults(
+  defineProps<{
+    currentPage?: number;
+    pageAmount?: number;
+    total?: number;
+    loading?: boolean;
+    lastPage?: number;
+  }>(),
+  {
+    currentPage: 1,
+    pageAmount: 10,
+    total: 0,
+    loading: false,
+    lastPage: 1,
   }
+);
 
-  /** Disable First, Prev buttons if this is the first page or loading state */
-  get disabledFirstPrev(): boolean {
-    return this.currentPage === 1 || !!this.loading;
-  }
+const emit = defineEmits<{
+  (event: 'pagination-click', value: PaginationButton): void;
+}>();
 
-  /** Disable Next, Last buttons if this is the last page or loading state */
-  get disabledNextLast(): boolean {
-    return this.currentPage === this.lastPage || !!this.loading;
-  }
+const { t } = useTranslation();
 
-  handlePaginationClick(button: PaginationButton): void {
-    this.$emit('pagination-click', button);
-  }
-}
+const totalText = computed(() => {
+  const upperNumber = props.pageAmount * props.currentPage;
+  const lowerBound = upperNumber - props.pageAmount + 1;
+  const upperBound = upperNumber > props.total ? props.total : upperNumber;
+
+  return t('ofText', {
+    first: `${lowerBound}-${upperBound}`,
+    second: props.total,
+  });
+});
+
+const disabledFirstPrev = computed(() => props.currentPage === 1 || Boolean(props.loading));
+
+const disabledNextLast = computed(() => props.currentPage === props.lastPage || Boolean(props.loading));
+
+const handlePaginationClick = (button: PaginationButton) => {
+  emit('pagination-click', button);
+};
+
+defineExpose({
+  handlePaginationClick,
+});
 </script>
 
 <style lang="scss">

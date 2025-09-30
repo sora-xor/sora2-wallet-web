@@ -12,11 +12,11 @@
       @click="handleButtonClick"
     >
       <s-dropdown
+        ref="dropdown"
         type="ellipsis"
         border-radius="mini"
         icon="basic-scan-24"
         class="qr-code-dropdown"
-        ref="dropdown"
         tabindex="-1"
         @select="handleSelect"
       >
@@ -39,7 +39,7 @@
 
     <input ref="input" type="file" class="qr-code-file" @change="handleFileInput" />
 
-    <dialog-base :visible.sync="scanerDialog" :title="t('code.upload')">
+    <dialog-base v-model:visible="scanerDialog" :title="t('code.upload')">
       <div class="qr-code-stream">
         <video ref="preview" class="qr-code-stream-video" />
         <div class="mask">
@@ -58,9 +58,9 @@
           v-if="multipleMediaDevices"
           :value="selectedDeviceId"
           :placeholder="t('code.camera')"
-          @input="handleChangeDevice"
           border-radius="mini"
           popper-class="device-select-popper"
+          @input="handleChangeDevice"
         >
           <s-option v-for="(device, index) in mediaDevices" :key="index" :label="device.label" :value="device.deviceId">
             {{ device.label }}
@@ -77,15 +77,15 @@
 
 <script lang="ts">
 import { BrowserQRCodeReader } from '@zxing/browser';
-import { Component, Ref, Mixins } from 'vue-property-decorator';
+import { Options, Ref, mixins } from 'vue-property-decorator';
 
 import DialogBase from '../DialogBase.vue';
 import CameraPermissionMixin from '../mixins/CameraPermissionMixin';
 import TranslationMixin from '../mixins/TranslationMixin';
 import NotificationEnablingPage from '../NotificationEnablingPage.vue';
 
-import type SDropdown from '@soramitsu-ui/ui-vue2/lib/components/Dropdown/SDropdown/SDropdown.vue';
 import type { IScannerControls } from '@zxing/browser';
+import type { ComponentPublicInstance } from 'vue';
 
 enum SCAN_TYPES {
   FILE = 'file',
@@ -94,16 +94,16 @@ enum SCAN_TYPES {
 
 const reader = new BrowserQRCodeReader();
 
-@Component({
+@Options({
   components: {
     DialogBase,
     NotificationEnablingPage,
   },
 })
-export default class QrCodeScanButton extends Mixins(TranslationMixin, CameraPermissionMixin) {
+export default class QrCodeScanButton extends mixins(TranslationMixin, CameraPermissionMixin) {
   @Ref('input') readonly input!: HTMLInputElement;
   @Ref('preview') readonly preview!: HTMLVideoElement;
-  @Ref('dropdown') readonly dropdown!: SDropdown;
+  @Ref('dropdown') readonly dropdown!: ComponentPublicInstance;
 
   readonly scanTypes = SCAN_TYPES;
 
@@ -131,7 +131,9 @@ export default class QrCodeScanButton extends Mixins(TranslationMixin, CameraPer
 
   handleButtonClick(): void {
     // emulate click in el-dropdown
-    (this.dropdown.$refs.dropdown as SDropdown).handleClick();
+    const dropdown = this.dropdown.$refs.dropdown as { handleClick: () => void } | undefined;
+
+    dropdown?.handleClick();
   }
 
   handleSelect(value: SCAN_TYPES): void {

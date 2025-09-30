@@ -1,7 +1,7 @@
 <template>
   <dialog-base
+    v-model:visible="isVisible"
     :title="t('accountSettings.title')"
-    :visible.sync="isVisible"
     class="account-settings-dialog"
     append-to-body
   >
@@ -42,7 +42,7 @@
     </div>
 
     <account-confirm-dialog
-      :visible.sync="accountConfirmVisibility"
+      v-model:visible="accountConfirmVisibility"
       :loading="loading"
       :passphrase="passphrase"
       @confirm="saveAccountPassphrase"
@@ -50,71 +50,82 @@
   </dialog-base>
 </template>
 
-<script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, nextTick, ref, toRef } from 'vue';
+
+import { useDialogVisibility } from '@/composables/useDialog';
+import { useLoading } from '@/composables/useLoading';
+import { useNotification } from '@/composables/useNotification';
+import { useTranslation } from '@/composables/useTranslation';
 
 import { api } from '../../api';
-import GoogleLogo from '../../assets/img/GoogleLogo.svg';
-import { action, getter, state } from '../../store/decorators';
+import GoogleLogoAsset from '../../assets/img/GoogleLogo.svg';
+import store from '../../store';
 import { delay } from '../../util';
 import { lockAccountPair, unlockAccountPair } from '../../util/account';
 import DialogBase from '../DialogBase.vue';
-import DialogMixin from '../mixins/DialogMixin';
-import LoadingMixin from '../mixins/LoadingMixin';
-import NotificationMixin from '../mixins/NotificationMixin';
 
 import AccountConfirmDialog from './ConfirmDialog.vue';
 import AccountConfirmationOption from './Settings/ConfirmationOption.vue';
 import AccountSignatureOption from './Settings/SignatureOption.vue';
 
-@Component({
-  components: {
-    DialogBase,
-    AccountConfirmDialog,
-    AccountConfirmationOption,
-    AccountSignatureOption,
-  },
-})
-export default class AccountSettingsDialog extends Mixins(DialogMixin, LoadingMixin, NotificationMixin) {
-  @getter.account.getPassword getPassword!: (accountAddress: string) => Nullable<string>;
-
-  @state.account.address private connected!: string;
-  @state.account.isExternal isExternal!: boolean;
-  @state.transactions.isSignTxDialogDisabled isSignTxDialogDisabled!: boolean;
-
-  @action.account.setAccountPassphrase private setAccountPassphrase!: (opts: {
-    address: string;
-    password: string;
-  }) => void;
-
-  readonly GoogleLogo = GoogleLogo;
-
-  accountConfirmVisibility = false;
-
-  get passphrase(): Nullable<string> {
-    return this.getPassword(this.connected);
+const props = withDefaults(
+  defineProps<{
+    visible?: boolean;
+  }>(),
+  {
+    visible: false,
   }
+);
 
-  openConfirmDialog(): void {
-    this.accountConfirmVisibility = true;
-  }
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'close'): void;
+}>();
 
-  async saveAccountPassphrase(password: string): Promise<void> {
-    await this.withLoading(async () => {
-      // hack: to render loading state before sync code execution, 250 - button transition
-      await this.$nextTick();
-      await delay(250);
-      await this.withAppNotification(async () => {
-        // unlock pair to check password
-        unlockAccountPair(api, password);
-        this.setAccountPassphrase({ address: this.connected, password });
-        this.accountConfirmVisibility = false;
-      });
-      // lock pair after check
-      lockAccountPair(api);
+const { t } = useTranslation();
+const { isVisible } = useDialogVisibility(toRef(props, 'visible'), {
+  emit: (value) => emit('update:visible', value),
+  onClose: () => emit('close'),
+});
+
+const isWalletLoaded = computed(() => store.state.wallet.settings.isWalletLoaded);
+const { loading, withLoading } = useLoading({ isWalletLoaded });
+const { withAppNotification } = useNotification();
+
+const getPassword = computed(() => store.getters.wallet.account.getPassword);
+const connected = computed(() => store.state.wallet.account.address);
+const isExternal = computed(() => store.state.wallet.account.isExternal);
+const isSignTxDialogDisabled = computed(() => store.state.wallet.transactions.isSignTxDialogDisabled);
+const GoogleLogo = GoogleLogoAsset;
+
+const accountConfirmVisibility = ref(false);
+
+const passphrase = computed(() => {
+  const value = getPassword.value(connected.value);
+  return value ?? undefined;
+});
+
+const openConfirmDialog = () => {
+  accountConfirmVisibility.value = true;
+};
+
+const saveAccountPassphrase = async (password: string) => {
+  await withLoading(async () => {
+    await nextTick();
+    await delay(250);
+    await withAppNotification(async () => {
+      unlockAccountPair(api, password);
+      await store.dispatch.wallet.account.setAccountPassphrase({ address: connected.value, password });
+      accountConfirmVisibility.value = false;
     });
-  }
-}
+    lockAccountPair(api);
+  });
+};
+
+defineExpose({
+  openConfirmDialog,
+});
 </script>
 
 <style lang="scss" scoped>

@@ -1,5 +1,5 @@
 <template>
-  <dialog-base :title="t('mst.mstForgetBtn')" :visible.sync="isVisible" append-to-body>
+  <dialog-base v-model:visible="isVisible" :title="t('mst.mstForgetBtn')" append-to-body>
     <div class="forget-multisig">
       <s-card class="warning-delete-card">
         <div class="notification">
@@ -13,47 +13,55 @@
   </dialog-base>
 </template>
 
-<script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { toRef } from 'vue';
+
+import { useDialogVisibility } from '@/composables/useDialog';
+import { useTranslation } from '@/composables/useTranslation';
 
 import { api } from '../../api';
-import { mutation, state, action } from '../../store/decorators';
+import store from '../../store';
 import DialogBase from '../DialogBase.vue';
-import DialogMixin from '../mixins/DialogMixin';
-import NotificationMixin from '../mixins/NotificationMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
-import FormattedAddress from '../shared/FormattedAddress.vue';
-import SimpleNotification from '../SimpleNotification.vue';
 
-@Component({
-  components: {
-    DialogBase,
-    SimpleNotification,
-    FormattedAddress,
-  },
-})
-export default class MstForgetDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
-  @mutation.account.setIsMstAddressExist setIsMstAddressExist!: (isExist: boolean) => void;
-  @mutation.account.setIsMST setIsMST!: (isMST: boolean) => void;
-  @mutation.account.syncWithStorage syncWithStorage!: () => void;
-
-  @action.account.afterLogin afterLogin!: () => void;
-
-  @state.account.isMST isMST!: boolean;
-
-  public forgetMST() {
-    if (!this.isMST) {
-      // Switch account to MST
-      api.mst.switchAccount(true);
-    }
-    api.mst.forgetMSTAccount();
-    this.setIsMstAddressExist(false);
-    this.setIsMST(false);
-    this.syncWithStorage();
-    this.afterLogin();
-    this.closeDialog();
+const props = withDefaults(
+  defineProps<{
+    visible?: boolean;
+  }>(),
+  {
+    visible: false,
   }
-}
+);
+
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'close'): void;
+}>();
+
+const { t } = useTranslation();
+
+const { isVisible, closeDialog } = useDialogVisibility(toRef(props, 'visible'), {
+  emit: (value) => emit('update:visible', value),
+  onClose: () => emit('close'),
+});
+
+const isMST = () => store.state.wallet.account.isMST;
+const setIsMstAddressExist = store.commit.wallet.account.setIsMstAddressExist;
+const setIsMST = store.commit.wallet.account.setIsMST;
+const syncWithStorage = store.commit.wallet.account.syncWithStorage;
+const afterLogin = store.dispatch.wallet.account.afterLogin;
+
+const forgetMST = () => {
+  if (!isMST()) {
+    api.mst.switchAccount(true);
+  }
+
+  api.mst.forgetMSTAccount();
+  setIsMstAddressExist(false);
+  setIsMST(false);
+  syncWithStorage();
+  afterLogin();
+  closeDialog();
+};
 </script>
 
 <style lang="scss" scoped>

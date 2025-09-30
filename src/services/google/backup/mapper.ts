@@ -8,7 +8,15 @@ import { BackupAccountType } from './types';
 import type { DecryptedBackupAccount, EncryptedBackupAccount } from './types';
 import type { KeyringPair$Json } from '@polkadot/keyring/types';
 
+/**
+ * Converts between encrypted backup payloads and the keyring JSON format used
+ * across the wallet.
+ */
 export class BackupAccountMapper {
+  /**
+   * Decrypts the backup account and returns a keyring JSON representation that
+   * can be imported into the wallet.
+   */
   public static getPairJson(encryptedAccount: EncryptedBackupAccount, password: string): Nullable<KeyringPair$Json> {
     const decryptedAccount = BackupAccountCrypto.decryptAccount(encryptedAccount, password);
 
@@ -32,6 +40,10 @@ export class BackupAccountMapper {
     return null;
   }
 
+  /**
+   * Produces an encrypted backup from a keyring JSON export, optionally
+   * including mnemonic metadata for full restorations.
+   */
   public static createFromPairJson(
     pairJson: KeyringPair$Json,
     password: string,
@@ -62,6 +74,7 @@ export class BackupAccountMapper {
     return encryptedAccount;
   }
 
+  /** Updates both the plaintext and JSON metadata names in an encrypted backup. */
   public static changeName(encryptedAccount: EncryptedBackupAccount, name: string): EncryptedBackupAccount {
     // update name in root
     encryptedAccount.name = name;

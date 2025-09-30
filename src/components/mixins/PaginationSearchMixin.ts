@@ -1,10 +1,10 @@
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import LoadingMixin from './LoadingMixin';
 import TranslationMixin from './TranslationMixin';
 
-@Component
-export default class PaginationSearchMixin extends Mixins(LoadingMixin, TranslationMixin) {
+@Options({})
+export default class PaginationSearchMixin extends mixins(LoadingMixin, TranslationMixin) {
   currentPage = 1;
   pageAmount = 10;
   query = '';

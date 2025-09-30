@@ -1,14 +1,14 @@
 <template>
   <div class="asset-list">
     <recycle-scroller
+      ref="wrap"
       :items="assets"
       :item-size="itemHeightValue"
       :buffer="itemHeightValue"
       :style="style"
       key-field="address"
       :class="['asset-list-inner', { 'hidden-scrollbar': !gutterOffset }]"
-      ref="wrap"
-      @scroll.native="handleScroll"
+      @scroll="handleScroll"
     >
       <template #before>
         <div v-if="isEmptyList" class="asset-list-empty">
@@ -17,18 +17,18 @@
       </template>
       <template #default="{ item, index }">
         <asset-list-item
+          :key="index"
           :asset="item"
           :with-clickable-logo="withClickableLogo"
           :selectable="selectable"
           :selected="isSelected(item)"
           :pinnable="pinnable"
           :with-fiat="withFiat"
-          :key="index"
           :with-tabindex="withTabindex"
           v-on="wrapListeners(item)"
         >
-          <template v-for="(_, name) in $scopedSlots" :slot="name" slot-scope="slotData">
-            <slot :name="name" v-bind="slotData" />
+          <template v-for="name in forwardedSlots" #[name]="slotProps">
+            <slot :name="name" v-bind="slotProps" />
           </template>
         </asset-list-item>
         <s-divider v-if="divider && index !== assets.length - 1" :key="`${index}-divider`" />
@@ -45,117 +45,179 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop, Ref, Watch } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, nextTick, onMounted, ref, useAttrs, useSlots, watch } from 'vue';
 
-import { delay, getCssVariableValue, getScrollbarWidth } from '../util';
+import { useTranslation } from '@/composables/useTranslation';
+import { delay, getCssVariableValue, getScrollbarWidth } from '@/util';
 
 import AssetListItem from './AssetListItem.vue';
-import TranslationMixin from './mixins/TranslationMixin';
 import Scrollbar from './ScrollBar.vue';
 
 import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 import type { RecycleScroller } from 'vue-virtual-scroller';
 
-@Component({
-  components: {
-    AssetListItem,
-    Scrollbar,
-  },
-})
-export default class AssetList extends Mixins(TranslationMixin) {
-  @Prop({ default: () => [], type: Array }) readonly assets!: Array<Asset>;
-  @Prop({ default: 5, type: Number }) readonly size!: number;
-  @Prop({ default: false, type: Boolean }) readonly divider!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
-  @Prop({ default: () => [], type: Array }) readonly selected!: Array<Asset>;
-  @Prop({ default: false, type: Boolean }) readonly selectable!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly pinnable!: boolean;
-  @Prop({ default: () => [], type: Array }) readonly pinned!: Array<Asset>;
-  @Prop({ default: false, type: Boolean }) readonly withFiat!: boolean;
-  @Prop({ default: true, type: Boolean }) readonly withTabindex!: boolean;
-  @Ref('wrap') readonly wrap!: RecycleScroller;
+type Props = {
+  assets?: Asset[];
+  size?: number;
+  divider?: boolean;
+  withClickableLogo?: boolean;
+  selected?: Asset[];
+  selectable?: boolean;
+  pinnable?: boolean;
+  pinned?: Asset[];
+  withFiat?: boolean;
+  withTabindex?: boolean;
+};
 
-  @Watch('size')
-  @Watch('assets')
-  private async rerenderScrollbar(): Promise<void> {
-    await this.$nextTick();
-    this.updateScrollbar();
-    this.handleScroll();
+const props = withDefaults(defineProps<Props>(), {
+  assets: () => [],
+  size: 5,
+  divider: false,
+  withClickableLogo: false,
+  selected: () => [],
+  selectable: false,
+  pinnable: false,
+  pinned: () => [],
+  withFiat: false,
+  withTabindex: true,
+});
+
+const attrs = useAttrs();
+const slots = useSlots();
+
+const { t } = useTranslation();
+
+const wrap = ref<InstanceType<typeof RecycleScroller> | null>(null);
+const barSize = ref(0);
+const barMove = ref(0);
+const scrollHeight = ref(0);
+
+const forwardedSlots = computed(() => Object.keys(slots).filter((name) => name !== 'list-empty'));
+
+const invokeListener = (handler: unknown, asset: Asset, args: unknown[]): void => {
+  if (Array.isArray(handler)) {
+    handler.forEach((fn) => {
+      if (typeof fn === 'function') {
+        fn(asset, ...args);
+      }
+    });
+  } else if (typeof handler === 'function') {
+    handler(asset, ...args);
   }
+};
 
-  barSize = 0;
-  barMove = 0;
-  scrollHeight = 0;
+const wrapListeners = (asset: Asset): Record<string, (...args: unknown[]) => void> => {
+  const entries = Object.entries(attrs).filter(([key]) => key.startsWith('on'));
 
-  wrapListeners(asset: Asset): { [key: string]: VoidFunction } {
-    return Object.entries(this.$listeners).reduce((result, [eventName, handlers]) => {
-      return {
-        ...result,
-        [eventName]: () => (Array.isArray(handlers) ? handlers.map((handler) => handler(asset)) : handlers(asset)),
-      };
-    }, {});
-  }
+  return entries.reduce<Record<string, (...args: unknown[]) => void>>((result, [key, handler]) => {
+    const eventName = key.slice(2);
+    const normalized = eventName.charAt(0).toLowerCase() + eventName.slice(1);
 
-  get el(): HTMLDivElement {
-    return this.wrap.$el;
-  }
+    if (!handler) {
+      return result;
+    }
 
-  get isEmptyList(): boolean {
-    return this.assets.length === 0;
-  }
-
-  get itemHeightCssVar(): string {
-    return `--s-asset-item-height${this.withFiat ? '--fiat' : ''}`;
-  }
-
-  get itemHeightValue(): number {
-    return parseFloat(getCssVariableValue(this.itemHeightCssVar)) + Number(this.divider);
-  }
-
-  get gutterOffset(): number {
-    return this.assets.length > this.size ? -1 * getScrollbarWidth() : 0;
-  }
-
-  get style(): object {
-    const dividersHeight = this.divider ? this.size : 0;
-    const height = `calc(var(${this.itemHeightCssVar}) * ${this.size} + ${dividersHeight}px)`;
-    const marginRight = `${this.gutterOffset}px`;
-
-    return {
-      height,
-      marginRight,
+    result[normalized] = (...args: unknown[]) => {
+      invokeListener(handler, asset, args);
     };
-  }
 
-  async mounted(): Promise<void> {
-    await this.waitForAssetsListReady();
-    this.updateScrollbar();
-  }
+    return result;
+  }, {});
+};
 
-  async waitForAssetsListReady(): Promise<void> {
-    if (this.wrap && this.wrap.ready) return;
-    await delay();
-    await this.waitForAssetsListReady();
-  }
+const getScrollerEl = () => wrap.value?.$el as HTMLDivElement | undefined;
 
-  private updateScrollbar(): void {
-    this.barSize = (this.el.clientHeight * 100) / this.el.scrollHeight;
-    this.scrollHeight = this.el.scrollHeight;
-  }
+const isEmptyList = computed(() => props.assets.length === 0);
 
-  handleScroll(): void {
-    this.barMove = (this.el.scrollTop * 100) / this.el.clientHeight;
-  }
+const itemHeightCssVar = computed(() => `--s-asset-item-height${props.withFiat ? '--fiat' : ''}`);
 
-  scrollTo(value: number): void {
-    this.el.scrollTop = value;
-  }
+const itemHeightValue = computed(() => parseFloat(getCssVariableValue(itemHeightCssVar.value)) + Number(props.divider));
 
-  isSelected(asset: Asset): boolean {
-    return this.selected.some((selectedAsset) => selectedAsset.address === asset.address);
+const gutterOffset = computed(() => (props.assets.length > props.size ? -1 * getScrollbarWidth() : 0));
+
+const style = computed(() => {
+  const dividersHeight = props.divider ? props.size : 0;
+
+  return {
+    height: `calc(var(${itemHeightCssVar.value}) * ${props.size} + ${dividersHeight}px)`,
+    marginRight: `${gutterOffset.value}px`,
+  };
+});
+
+const updateScrollbar = () => {
+  const el = getScrollerEl();
+  if (!el) return;
+
+  barSize.value = (el.clientHeight * 100) / el.scrollHeight;
+  scrollHeight.value = el.scrollHeight;
+};
+
+const handleScroll = () => {
+  const el = getScrollerEl();
+  if (!el) return;
+
+  barMove.value = (el.scrollTop * 100) / el.clientHeight;
+};
+
+const scrollTo = (value: number) => {
+  const el = getScrollerEl();
+  if (!el) return;
+
+  el.scrollTop = value;
+};
+
+const isSelected = (asset: Asset) => props.selected.some((selectedAsset) => selectedAsset.address === asset.address);
+
+const waitForAssetsListReady = async (): Promise<void> => {
+  const scroller = wrap.value as (InstanceType<typeof RecycleScroller> & { ready?: boolean }) | null;
+
+  if (scroller?.ready) return;
+
+  await delay();
+  await waitForAssetsListReady();
+};
+
+const rerenderScrollbar = async () => {
+  await nextTick();
+  updateScrollbar();
+  handleScroll();
+};
+
+watch(
+  () => props.size,
+  async () => {
+    await rerenderScrollbar();
   }
-}
+);
+
+watch(
+  () => props.assets,
+  async () => {
+    await rerenderScrollbar();
+  }
+);
+
+onMounted(async () => {
+  await waitForAssetsListReady();
+  updateScrollbar();
+});
+
+defineExpose({
+  wrap,
+  barSize,
+  barMove,
+  scrollHeight,
+  forwardedSlots,
+  wrapListeners,
+  isEmptyList,
+  itemHeightValue,
+  gutterOffset,
+  style,
+  handleScroll,
+  scrollTo,
+  isSelected,
+});
 </script>
 
 <style lang="scss">

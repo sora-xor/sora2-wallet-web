@@ -2,7 +2,14 @@ import { defineMutations } from 'direct-vuex';
 import { NFTStorage } from 'nft.storage';
 
 import { api } from '../../api';
-import { MAX_ALERTS_NUMBER, SoraNetwork, WalletAssetFilters, WalletPermissions, IndexerType } from '../../consts';
+import {
+  MAX_ALERTS_NUMBER,
+  SoraNetwork,
+  WalletAssetFilters,
+  WalletPermissions,
+  IndexerType,
+  Theme,
+} from '../../consts';
 import { Alert, ApiKeysObject, ConnectionStatus, type FilterOptions } from '../../types/common';
 import { Currency, type CurrencyFields, type FiatExchangeRateObject } from '../../types/currency';
 import { runtimeStorage, settingsStorage, storage } from '../../util/storage';
@@ -161,6 +168,10 @@ const mutations = defineMutations<SettingsState>()({
   },
   setIsMstAvailable(state, isAvailable: boolean): void {
     state.isMSTAvailable = isAvailable;
+  },
+  setTheme(state, theme: Theme): void {
+    state.theme = theme;
+    settingsStorage.set('theme', theme);
   },
 });
 

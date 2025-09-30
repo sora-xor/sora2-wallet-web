@@ -2,22 +2,23 @@
   <div class="wallet-settings-create-token">
     <template v-if="step === Step.CreateNftToken">
       <s-input
+        v-model="tokenContentLink"
         :placeholder="t('createToken.nft.link.placeholder')"
         :minlength="1"
         :maxlength="200"
         :disabled="loading"
-        v-model="tokenContentLink"
         @input="handleInputLinkChange"
       >
-        <s-tooltip
-          slot="suffix"
-          popper-class="ipfs-tooltip"
-          :content="t('createToken.nft.link.tooltip')"
-          placement="bottom"
-          tabindex="-1"
-        >
-          <s-icon class="ipfs-tooltip__icon" name="info-16" size="18px" />
-        </s-tooltip>
+        <template #suffix>
+          <s-tooltip
+            popper-class="ipfs-tooltip"
+            :content="t('createToken.nft.link.tooltip')"
+            placement="bottom"
+            tabindex="-1"
+          >
+            <s-icon class="ipfs-tooltip__icon" name="info-16" size="18px" />
+          </s-tooltip>
+        </template>
       </s-input>
       <file-uploader
         ref="uploader"
@@ -49,40 +50,40 @@
         </div>
       </file-uploader>
       <s-input
+        v-model="tokenSymbol"
+        v-maska="tokenSymbolMask"
         :placeholder="t('createToken.tokenSymbol.placeholder')"
         :minlength="1"
         :maxlength="7"
         :disabled="loading"
-        v-maska="tokenSymbolMask"
-        v-model="tokenSymbol"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenSymbol.desc') }}</p>
       <s-input
+        v-model="tokenName"
+        v-maska="tokenNameMask"
         :placeholder="t('createToken.tokenName.placeholder')"
         :minlength="1"
         :maxlength="33"
         :disabled="loading"
-        v-maska="tokenNameMask"
-        v-model="tokenName"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.tokenName.desc') }}</p>
       <s-input
+        v-model="tokenDescription"
         class="input-textarea"
         type="textarea"
         :placeholder="t('createToken.nft.description.placeholder')"
         :disabled="loading"
         :maxlength="200"
-        v-model="tokenDescription"
-        @keypress.native="handleTextAreaInput($event)"
+        @keypress="handleTextAreaInput($event)"
       />
       <s-float-input
+        v-model="tokenSupply"
         has-locale-string
         :placeholder="t('createToken.nft.supply.placeholder')"
         :decimals="decimals"
         :delimiters="delimiters"
         :max="maxTotalSupply"
         :disabled="loading"
-        v-model="tokenSupply"
       />
       <p class="wallet-settings-create-token_desc">{{ t('createToken.nft.supply.desc') }}</p>
       <div class="wallet-settings-create-token_supply-block">
@@ -147,7 +148,7 @@
 import { FPNumber, Operation } from '@sora-substrate/sdk';
 import { MaxTotalSupply, XOR } from '@sora-substrate/sdk/build/assets/consts';
 import { File as ImageNFT } from 'nft.storage';
-import { Component, Mixins, Prop, Ref } from 'vue-property-decorator';
+import { Options, mixins, Prop, Ref } from 'vue-property-decorator';
 
 import { api } from '../api';
 import LoadingMixin from '../components/mixins/LoadingMixin';
@@ -170,7 +171,7 @@ import WalletFee from './WalletFee.vue';
 import type { Route } from '../store/router/types';
 import type { NFTStorage } from 'nft.storage';
 
-@Component({
+@Options({
   components: {
     InfoLine,
     WalletFee,
@@ -180,7 +181,7 @@ import type { NFTStorage } from 'nft.storage';
     AccountConfirmationOption,
   },
 })
-export default class CreateNftToken extends Mixins(
+export default class CreateNftToken extends mixins(
   TranslationMixin,
   TransactionMixin,
   LoadingMixin,

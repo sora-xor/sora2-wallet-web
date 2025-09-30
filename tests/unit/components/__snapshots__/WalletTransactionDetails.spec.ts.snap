@@ -1,56 +1,52 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rendered correctly 1`] = `
+exports[`WalletTransactionDetails.vue > [AddLiquidity, finalized]: should be rendered correctly 1`] = `
 <div
   class="transaction-container"
+  data-v-d0ab371b=""
 >
   <div
     class="transaction"
+    data-v-d0ab371b=""
   >
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.blockId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
-     
     <div
       class="info-line-container"
+      data-v-d0ab371b=""
     >
       <info-line-stub
         assetsymbol=""
+        data-v-d0ab371b=""
         fiatvalue=""
+        isformatted="false"
         label="Status"
         labeltooltip=""
         value=""
-        valuetooltip=""
-      >
-        <span
-          class="transaction-status"
-        >
-          Complete
-        </span>
-         
-        <s-icon-stub
-          name="basic-check-mark-24"
-          size="16px"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <info-line-stub
-        assetsymbol=""
-        fiatvalue=""
-        label="Date"
-        labeltooltip=""
-        value="Nov 27, 2020 11:59:59 PM"
+        valuecanbehidden="false"
         valuetooltip=""
       />
-       
+      <!--v-if-->
+      <info-line-stub
+        assetsymbol=""
+        data-v-d0ab371b=""
+        fiatvalue=""
+        isformatted="false"
+        label="Date"
+        labeltooltip=""
+        value="Nov 11, 2020 2:50:43 AM"
+        valuecanbehidden="false"
+        valuetooltip=""
+      />
       <info-line-stub
         assetsymbol="XOR"
+        data-v-d0ab371b=""
         fiatvalue=""
         isformatted="true"
         label="Amount"
@@ -58,25 +54,15 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         value="0.1"
         valuecanbehidden="true"
         valuetooltip=""
-      >
-        <token-logo-stub
-          size="small"
-          tokensymbol="XOR"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
+      />
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
       <info-line-stub
         assetsymbol="PSWAP"
+        data-v-d0ab371b=""
         fiatvalue=""
         isformatted="true"
         label="Amount 2"
@@ -84,183 +70,147 @@ exports[`WalletTransactionDetails.vue [AddLiquidity, finalized]: should be rende
         value="0.9"
         valuecanbehidden="true"
         valuetooltip=""
-      >
-        <token-logo-stub
-          size="small"
-          tokensymbol="PSWAP"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
+      />
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
     </div>
-     
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.from"
       type="account"
       value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <!---->
-   
-  <!---->
-   
-  <!---->
+  <!--v-if-->
+  <!--v-if-->
+  <!--v-if-->
 </div>
 `;
 
-exports[`WalletTransactionDetails.vue [RegisterAsset, finalized]: should be rendered correctly 1`] = `
+exports[`WalletTransactionDetails.vue > [RegisterAsset, finalized]: should be rendered correctly 1`] = `
 <div
   class="transaction-container"
+  data-v-d0ab371b=""
 >
   <div
     class="transaction"
+    data-v-d0ab371b=""
   >
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.blockId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
-     
     <div
       class="info-line-container"
+      data-v-d0ab371b=""
     >
       <info-line-stub
         assetsymbol=""
+        data-v-d0ab371b=""
         fiatvalue=""
+        isformatted="false"
         label="Status"
         labeltooltip=""
         value=""
-        valuetooltip=""
-      >
-        <span
-          class="transaction-status"
-        >
-          Complete
-        </span>
-         
-        <s-icon-stub
-          name="basic-check-mark-24"
-          size="16px"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <info-line-stub
-        assetsymbol=""
-        fiatvalue=""
-        label="Date"
-        labeltooltip=""
-        value="Nov 27, 2020 11:59:59 PM"
+        valuecanbehidden="false"
         valuetooltip=""
       />
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
+      <!--v-if-->
+      <info-line-stub
+        assetsymbol=""
+        data-v-d0ab371b=""
+        fiatvalue=""
+        isformatted="false"
+        label="Date"
+        labeltooltip=""
+        value="Nov 11, 2020 2:50:43 AM"
+        valuecanbehidden="false"
+        valuetooltip=""
+      />
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
     </div>
-     
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.from"
       type="account"
       value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <!---->
-   
-  <!---->
-   
-  <!---->
+  <!--v-if-->
+  <!--v-if-->
+  <!--v-if-->
 </div>
 `;
 
-exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be rendered correctly 1`] = `
+exports[`WalletTransactionDetails.vue > [RemoveLiquidity, finalized]: should be rendered correctly 1`] = `
 <div
   class="transaction-container"
+  data-v-d0ab371b=""
 >
   <div
     class="transaction"
+    data-v-d0ab371b=""
   >
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.blockId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
-     
     <div
       class="info-line-container"
+      data-v-d0ab371b=""
     >
       <info-line-stub
         assetsymbol=""
+        data-v-d0ab371b=""
         fiatvalue=""
+        isformatted="false"
         label="Status"
         labeltooltip=""
         value=""
-        valuetooltip=""
-      >
-        <span
-          class="transaction-status"
-        >
-          Complete
-        </span>
-         
-        <s-icon-stub
-          name="basic-check-mark-24"
-          size="16px"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <info-line-stub
-        assetsymbol=""
-        fiatvalue=""
-        label="Date"
-        labeltooltip=""
-        value="Nov 27, 2020 11:59:59 PM"
+        valuecanbehidden="false"
         valuetooltip=""
       />
-       
+      <!--v-if-->
+      <info-line-stub
+        assetsymbol=""
+        data-v-d0ab371b=""
+        fiatvalue=""
+        isformatted="false"
+        label="Date"
+        labeltooltip=""
+        value="Nov 11, 2020 2:50:43 AM"
+        valuecanbehidden="false"
+        valuetooltip=""
+      />
       <info-line-stub
         assetsymbol="XOR"
+        data-v-d0ab371b=""
         fiatvalue=""
         isformatted="true"
         label="Amount"
@@ -268,114 +218,91 @@ exports[`WalletTransactionDetails.vue [RemoveLiquidity, finalized]: should be re
         value="100.123"
         valuecanbehidden="true"
         valuetooltip=""
-      >
-        <token-logo-stub
-          size="small"
-          tokensymbol="XOR"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
+      />
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
     </div>
-     
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.from"
       type="account"
       value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <!---->
-   
-  <!---->
-   
-  <!---->
+  <!--v-if-->
+  <!--v-if-->
+  <!--v-if-->
 </div>
 `;
 
-exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctly 1`] = `
+exports[`WalletTransactionDetails.vue > [Swap, error]: should be rendered correctly 1`] = `
 <div
   class="transaction-container"
+  data-v-d0ab371b=""
 >
   <div
     class="transaction"
+    data-v-d0ab371b=""
   >
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.blockId"
       type="block"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
     />
-     
     <div
       class="info-line-container"
+      data-v-d0ab371b=""
     >
       <info-line-stub
         assetsymbol=""
+        data-v-d0ab371b=""
         fiatvalue=""
+        isformatted="false"
         label="Status"
         labeltooltip=""
         value=""
+        valuecanbehidden="false"
         valuetooltip=""
-      >
-        <span
-          class="transaction-status transaction-status--error"
-        >
-          Transaction failed
-        </span>
-         
-        <!---->
-      </info-line-stub>
-       
+      />
       <info-line-stub
         assetsymbol=""
+        data-v-d0ab371b=""
         fiatvalue=""
+        isformatted="false"
         label="Error"
         labeltooltip=""
         value=""
-        valuetooltip=""
-      >
-        <span
-          class="transaction-status transaction-status--error"
-        >
-          Something went wrong
-        </span>
-      </info-line-stub>
-       
-      <info-line-stub
-        assetsymbol=""
-        fiatvalue=""
-        label="Date"
-        labeltooltip=""
-        value="Nov 27, 2020 11:59:59 PM"
+        valuecanbehidden="false"
         valuetooltip=""
       />
-       
+      <info-line-stub
+        assetsymbol=""
+        data-v-d0ab371b=""
+        fiatvalue=""
+        isformatted="false"
+        label="Date"
+        labeltooltip=""
+        value="Nov 11, 2020 2:50:43 AM"
+        valuecanbehidden="false"
+        valuetooltip=""
+      />
       <info-line-stub
         assetsymbol="XOR"
+        data-v-d0ab371b=""
         fiatvalue=""
         isformatted="true"
         label="Amount"
@@ -383,25 +310,15 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         value="0.1"
         valuecanbehidden="true"
         valuetooltip=""
-      >
-        <token-logo-stub
-          size="small"
-          tokensymbol="XOR"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
+      />
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
       <info-line-stub
         assetsymbol="PSWAP"
+        data-v-d0ab371b=""
         fiatvalue=""
         isformatted="true"
         label="Amount 2"
@@ -409,92 +326,75 @@ exports[`WalletTransactionDetails.vue [Swap, error]: should be rendered correctl
         value="0.9"
         valuecanbehidden="true"
         valuetooltip=""
-      >
-        <token-logo-stub
-          size="small"
-          tokensymbol="PSWAP"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
+      />
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
     </div>
-     
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.from"
       type="account"
       value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <!---->
-   
-  <!---->
-   
-  <!---->
+  <!--v-if-->
+  <!--v-if-->
+  <!--v-if-->
 </div>
 `;
 
-exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be rendered correctly 1`] = `
+exports[`WalletTransactionDetails.vue > [SwapTransferBatch, finalized]: should be rendered correctly 1`] = `
 <div
   class="transaction-container"
+  data-v-d0ab371b=""
 >
   <div
     class="transaction"
+    data-v-d0ab371b=""
   >
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.blockId"
       type="block"
       value="0xf6792dc278d4f6251167e48c9fc1674c06df2cc27486ea63db48a989c90453d0"
     />
-     
     <div
       class="info-line-container"
+      data-v-d0ab371b=""
     >
       <info-line-stub
         assetsymbol=""
+        data-v-d0ab371b=""
         fiatvalue=""
+        isformatted="false"
         label="Status"
         labeltooltip=""
         value=""
-        valuetooltip=""
-      >
-        <span
-          class="transaction-status"
-        >
-          Complete
-        </span>
-         
-        <s-icon-stub
-          name="basic-check-mark-24"
-          size="16px"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <info-line-stub
-        assetsymbol=""
-        fiatvalue=""
-        label="Date"
-        labeltooltip=""
-        value="Nov 27, 2020 11:59:59 PM"
+        valuecanbehidden="false"
         valuetooltip=""
       />
-       
+      <!--v-if-->
+      <info-line-stub
+        assetsymbol=""
+        data-v-d0ab371b=""
+        fiatvalue=""
+        isformatted="false"
+        label="Date"
+        labeltooltip=""
+        value="Nov 11, 2020 2:50:43 AM"
+        valuecanbehidden="false"
+        valuetooltip=""
+      />
       <info-line-stub
         assetsymbol="XOR"
+        data-v-d0ab371b=""
         fiatvalue=""
         isformatted="true"
         label="Amount"
@@ -502,121 +402,94 @@ exports[`WalletTransactionDetails.vue [SwapTransferBatch, finalized]: should be 
         value="1.4665644"
         valuecanbehidden="true"
         valuetooltip=""
-      >
-        <token-logo-stub
-          size="small"
-          tokensymbol="XOR"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
+      />
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
       <info-line-stub
         assetsymbol=""
+        data-v-d0ab371b=""
         fiatvalue=""
+        isformatted="false"
         label="Transaction Fee"
         labeltooltip=""
         value=""
+        valuecanbehidden="false"
         valuetooltip=""
-      >
-        
-        0.14 XOR
-        
-        <token-logo-stub
-          size="small"
-          tokensymbol="XOR"
-        />
-      </info-line-stub>
-       
-      <!---->
+      />
+      <!--v-if-->
     </div>
-     
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.from"
       type="account"
       value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
     />
-     
-    <!---->
+    <!--v-if-->
   </div>
-   
-  <!---->
-   
-  <!---->
-   
+  <!--v-if-->
+  <!--v-if-->
   <adar-tx-details-stub
+    data-v-d0ab371b=""
     transaction="[object Object]"
   />
 </div>
 `;
 
-exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered correctly 1`] = `
+exports[`WalletTransactionDetails.vue > [Transfer, finalized]: should be rendered correctly 1`] = `
 <div
   class="transaction-container"
+  data-v-d0ab371b=""
 >
   <div
     class="transaction"
+    data-v-d0ab371b=""
   >
     <transaction-hash-view-stub
       block="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6DD"
+      data-v-d0ab371b=""
       hash="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
       translation="transaction.txId"
       type="id"
       value="0xB8c77482e45F1F4d123DeRwQ5F52C74426C6D7"
     />
-     
     <div
       class="info-line-container"
+      data-v-d0ab371b=""
     >
       <info-line-stub
         assetsymbol=""
+        data-v-d0ab371b=""
         fiatvalue=""
+        isformatted="false"
         label="Status"
         labeltooltip=""
         value=""
-        valuetooltip=""
-      >
-        <span
-          class="transaction-status"
-        >
-          Complete
-        </span>
-         
-        <s-icon-stub
-          name="basic-check-mark-24"
-          size="16px"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <info-line-stub
-        assetsymbol=""
-        fiatvalue=""
-        label="Date"
-        labeltooltip=""
-        value="Nov 27, 2020 11:59:59 PM"
+        valuecanbehidden="false"
         valuetooltip=""
       />
-       
+      <!--v-if-->
+      <info-line-stub
+        assetsymbol=""
+        data-v-d0ab371b=""
+        fiatvalue=""
+        isformatted="false"
+        label="Date"
+        labeltooltip=""
+        value="Nov 11, 2020 2:50:43 AM"
+        valuecanbehidden="false"
+        valuetooltip=""
+      />
       <info-line-stub
         assetsymbol="XOR"
+        data-v-d0ab371b=""
         fiatvalue=""
         isformatted="true"
         label="Amount"
@@ -624,55 +497,37 @@ exports[`WalletTransactionDetails.vue [Transfer, finalized]: should be rendered 
         value="0.1"
         valuecanbehidden="true"
         valuetooltip=""
-      >
-        <token-logo-stub
-          size="small"
-          tokensymbol="XOR"
-        />
-      </info-line-stub>
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
-       
-      <!---->
+      />
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
+      <!--v-if-->
     </div>
-     
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.from"
       type="account"
       value="cnToWyQbAUWygF6utv6vSqFfi6VKayKsvXEkbyLGKFBTRYbz8"
     />
-     
     <transaction-hash-view-stub
       block=""
+      data-v-d0ab371b=""
       hash=""
       translation="transaction.to"
       type="account"
       value="cnVFiwzF3WPtnTpPc726d77MHcHEqbo1qRs589B5HLcwP2nse"
     />
   </div>
-   
-  <!---->
-   
-  <!---->
-   
-  <!---->
+  <!--v-if-->
+  <!--v-if-->
+  <!--v-if-->
 </div>
 `;

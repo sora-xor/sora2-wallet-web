@@ -2,20 +2,20 @@
   <div class="add-asset-token">
     <div v-if="!tokenDetailsPageOpened" class="add-asset-token__page">
       <search-input
-        autofocus
         v-model="search"
+        autofocus
         :placeholder="t(`addAsset.searchInputText`)"
         :maxlength="100"
-        @clear="resetSearch"
         class="add-asset-token__search"
+        @clear="resetSearch"
       />
       <assets-filter v-model="isVerifiedOnly" show-only-verified-switch class="add-asset-token__filter" />
       <asset-list
         :assets="foundAssets"
         class="asset-search-list"
-        @click="handleSelectAsset"
         selectable
         :selected="selectedAssets"
+        @click="handleSelectAsset"
       >
         <template #list-empty>
           {{ t(assetIsAlreadyAdded ? 'addAsset.alreadyAttached' : 'addAsset.empty') }}
@@ -31,12 +31,12 @@
         {{ t('addAsset.add') }}
       </s-button>
     </div>
-    <add-asset-details-card v-else :select-assets="selectedAssets" assetTypeKey="token" />
+    <add-asset-details-card v-else :select-assets="selectedAssets" asset-type-key="token" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { FilterOptions } from '@/types/common';
 
@@ -54,7 +54,7 @@ import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
 import type { Asset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
 
-@Component({
+@Options({
   components: {
     AssetList,
     AssetsFilter,
@@ -62,7 +62,7 @@ import type { Asset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
     AddAssetDetailsCard,
   },
 })
-export default class AddAssetToken extends Mixins(LoadingMixin, AddAssetMixin) {
+export default class AddAssetToken extends mixins(LoadingMixin, AddAssetMixin) {
   readonly AddAssetTabs = AddAssetTabs;
 
   @state.settings.assetsFilter assetsFilter!: FilterOptions;

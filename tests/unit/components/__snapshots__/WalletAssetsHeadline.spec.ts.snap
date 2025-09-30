@@ -1,163 +1,164 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletAssetsHeadline.vue should be rendered correctly 1`] = `
+exports[`WalletAssetsHeadline.vue > should be rendered correctly 1`] = `
 <div
   class="wallet-assets-headline"
+  data-v-e08c422e=""
 >
   <div
     class="wallet-assets-headline__content"
+    data-v-e08c422e=""
   >
     <div
       class="total-fiat-values"
+      data-v-e08c422e=""
     >
       <span
         class="total-fiat-values__title"
+        data-v-e08c422e=""
       >
         Total assets value:
       </span>
-       
       <formatted-amount-stub
         assetsymbol=""
         customizablecurrency=""
+        data-v-e08c422e=""
+        fiatdefaultrounding="false"
         fontsizerate="normal"
         fontweightrate="normal"
         integeronly="true"
         isfiatvalue="true"
+        symbolasdecimal="false"
         value="0"
         valuecanbehidden="true"
         withleftshift="true"
       />
     </div>
-     
-    <el-popover-stub
-      appendtobody="true"
-      arrowoffset="0"
-      boundariespadding="5"
-      closedelay="200"
-      offset="0"
-      opendelay="0"
-      placement="bottom"
-      popperclass="wallet-assets-filter"
-      popperoptions="[object Object]"
-      tabindex="0"
-      transformorigin="true"
-      transition="fade-in-linear"
-      trigger="click"
+    <div
+      class="el-popover-stub wallet-assets-filter"
+      data-placement="top"
+      data-trigger="click"
+      data-v-e08c422e=""
+      data-visible-arrow="false"
     >
       <div
-        class="wallet-assets-filter__text"
+        class="el-popover-stub__reference"
       >
-        Show assets
+        <div
+          class="wallet-assets-filter__button"
+          data-v-e08c422e=""
+          tabindex="0"
+        >
+          SHOW: 
+          <span
+            class="wallet-assets-filter__button-option"
+            data-v-e08c422e=""
+          >
+            ALL
+          </span>
+          <span
+            class="wallet-assets-filter__button-icon"
+            data-icon="basic-settings-24"
+            data-v-e08c422e=""
+            style="font-size: 14px;"
+          />
+        </div>
       </div>
-       
-      <s-radio-group-stub
-        size="medium"
-        value="All"
+      <div
+        class="el-popover-stub__content"
       >
-        <s-radio-stub
-          label="All"
-          name=""
-          size="small"
-          usedesignsystem="true"
+        <div
+          class="wallet-assets-filter__text"
+          data-v-e08c422e=""
+        >
+          Show assets
+        </div>
+        <div
+          class="s-radio-group-stub"
+          data-v-e08c422e=""
         >
           
-          All
-        
-        </s-radio-stub>
-        <s-radio-stub
-          label="Currencies"
-          name=""
-          size="small"
-          usedesignsystem="true"
-        >
+          <label
+            class="s-radio-stub"
+            data-label="All"
+            data-v-e08c422e=""
+          >
+            <input
+              checked=""
+              type="radio"
+            />
+            
+            All
+            
+          </label>
+          <label
+            class="s-radio-stub"
+            data-label="Currencies"
+            data-v-e08c422e=""
+          >
+            <input
+              type="radio"
+            />
+            
+            Currencies
+            
+          </label>
+          <label
+            class="s-radio-stub"
+            data-label="NFT"
+            data-v-e08c422e=""
+          >
+            <input
+              type="radio"
+            />
+            
+            NFT
+            
+          </label>
           
-          Currencies
-        
-        </s-radio-stub>
-        <s-radio-stub
-          label="NFT"
-          name=""
-          size="small"
-          usedesignsystem="true"
+        </div>
+        <hr
+          class="wallet-assets-filter__divider"
+          data-v-e08c422e=""
+        />
+        <div
+          class="wallet-assets-filter__switch"
+          data-v-e08c422e=""
         >
-          
-          NFT
-        
-        </s-radio-stub>
-      </s-radio-group-stub>
-       
-      <s-divider-stub
-        class="wallet-assets-filter__divider"
-        contentposition="center"
-        direction="horizontal"
-        type="secondary"
-      />
-       
-      <div
-        class="wallet-assets-filter__switch"
-      >
-        <s-switch-stub
-          activeiconСlass=""
-          activetext=""
-          activevalue="true"
-          inactiveiconСlass=""
-          inactivetext=""
-          name=""
-          usedesignsystem="true"
-          width="40"
-        />
-         
-        <span>
-          Show verified assets only
-        </span>
-      </div>
-       
-      <div
-        class="wallet-assets-filter__switch"
-      >
-        <s-switch-stub
-          activeiconСlass=""
-          activetext=""
-          activevalue="true"
-          inactiveiconСlass=""
-          inactivetext=""
-          name=""
-          usedesignsystem="true"
-          width="40"
-        />
-         
-        <span>
-          Hide 0 balance assets
-        </span>
-      </div>
-       
-      <div
-        class="wallet-assets-filter__button"
-        role="button"
-      >
-        
-        SHOW:
-        
-        <span
-          class="wallet-assets-filter__button-option"
+          <button
+            aria-pressed="false"
+            class="s-switch-stub"
+            data-v-e08c422e=""
+            type="button"
+          />
+          <span
+            data-v-e08c422e=""
+          >
+            Show verified assets only
+          </span>
+        </div>
+        <div
+          class="wallet-assets-filter__switch"
+          data-v-e08c422e=""
         >
-          ALL
-        </span>
-         
-        <s-icon-stub
-          class="wallet-assets-filter__button-icon"
-          name="basic-settings-24"
-          size="14px"
-        />
+          <button
+            aria-pressed="false"
+            class="s-switch-stub"
+            data-v-e08c422e=""
+            type="button"
+          />
+          <span
+            data-v-e08c422e=""
+          >
+            Hide 0 balance assets
+          </span>
+        </div>
       </div>
-    </el-popover-stub>
+    </div>
   </div>
-   
-  <s-divider-stub
+  <hr
     class="wallet-assets-headline__divider"
-    contentposition="center"
-    direction="horizontal"
-    type="secondary"
+    data-v-e08c422e=""
   />
 </div>
 `;

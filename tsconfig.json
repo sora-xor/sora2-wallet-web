@@ -16,12 +16,21 @@
     "declaration": true,
     "outDir": "./lib",
     "baseUrl": ".",
-    "types": ["webpack-env", "element-ui", "jest", "cypress", "google.accounts", "gapi", "gapi.client.drive"],
+    "types": [
+      "vite/client",
+      "vitest",
+      "vitest/globals",
+      "@vitest/expect",
+      "cypress",
+      "google.accounts",
+      "gapi",
+      "gapi.client.drive"
+    ],
     "paths": {
       "@/*": ["src/*"]
     },
     "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "tests/**/*.ts", "tests/**/*.tsx", "tests/**/*.d.ts"],
   "exclude": ["node_modules"]
 }

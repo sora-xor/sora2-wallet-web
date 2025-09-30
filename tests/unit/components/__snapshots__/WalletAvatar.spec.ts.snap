@@ -1,401 +1,51 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletAvatar.vue [With Beachball Theme]: should be rendered correctly 1`] = `<!--(a, b, c, d) =&gt; createElement$1(vm, a, b, c, d, true)-->`;
-
-exports[`WalletAvatar.vue [With Empty Address]: should be rendered correctly 1`] = `
-<svg
-  height="32"
-  key=""
-  viewBox="0 0 64 64"
-  width="32"
->
-  <circle
-    cx="32"
-    cy="32"
-    fill="#eee"
-    r="32"
-  />
-  <circle
-    cx="32"
-    cy="8"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="20"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="14"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="11.215390309173472"
-    cy="20"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="26"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="11.215390309173472"
-    cy="32"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="11.215390309173472"
-    cy="44"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="38"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="50"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="56"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="44"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="50"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="52.78460969082653"
-    cy="44"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="38"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="52.78460969082653"
-    cy="32"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="52.78460969082653"
-    cy="20"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="26"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="14"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="32"
-    fill="#ddd"
-    r="5"
-  />
-</svg>
-`;
-
-exports[`WalletAvatar.vue [With Size 10]: should be rendered correctly 1`] = `
-<svg
-  height="10"
-  key=""
-  viewBox="0 0 64 64"
-  width="10"
->
-  <circle
-    cx="32"
-    cy="32"
-    fill="#eee"
-    r="32"
-  />
-  <circle
-    cx="32"
-    cy="8"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="20"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="14"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="11.215390309173472"
-    cy="20"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="26"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="11.215390309173472"
-    cy="32"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="11.215390309173472"
-    cy="44"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="38"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="50"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="56"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="44"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="50"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="52.78460969082653"
-    cy="44"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="38"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="52.78460969082653"
-    cy="32"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="52.78460969082653"
-    cy="20"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="26"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="14"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="32"
-    fill="#ddd"
-    r="5"
-  />
-</svg>
-`;
-
-exports[`WalletAvatar.vue [With Substrate Theme]: should be rendered correctly 1`] = `
-<substrate
+exports[`WalletAvatar.vue > [With Beachball Theme]: should be rendered correctly 1`] = `
+<identicon-stub
   address=""
-  key=""
+  isalternative="false"
   size="32"
+  theme="beachball"
+  value="cnWRzNrVQpnMoq4GNDyUjTp1ZTWxTaXNguoRTTqg45j4g23yq"
 />
 `;
 
-exports[`WalletAvatar.vue [With default Theme (Polkadot) and Size]: should be rendered correctly 1`] = `
-<svg
-  height="32"
-  key=""
-  viewBox="0 0 64 64"
-  width="32"
->
-  <circle
-    cx="32"
-    cy="32"
-    fill="#eee"
-    r="32"
-  />
-  <circle
-    cx="32"
-    cy="8"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="20"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="14"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="11.215390309173472"
-    cy="20"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="26"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="11.215390309173472"
-    cy="32"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="11.215390309173472"
-    cy="44"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="38"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="21.607695154586736"
-    cy="50"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="56"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="44"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="50"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="52.78460969082653"
-    cy="44"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="38"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="52.78460969082653"
-    cy="32"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="52.78460969082653"
-    cy="20"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="26"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="42.392304845413264"
-    cy="14"
-    fill="#ddd"
-    r="5"
-  />
-  <circle
-    cx="32"
-    cy="32"
-    fill="#ddd"
-    r="5"
-  />
-</svg>
+exports[`WalletAvatar.vue > [With Empty Address]: should be rendered correctly 1`] = `
+<identicon-stub
+  address=""
+  isalternative="false"
+  size="32"
+  theme="polkadot"
+  value=""
+/>
+`;
+
+exports[`WalletAvatar.vue > [With Size 10]: should be rendered correctly 1`] = `
+<identicon-stub
+  address=""
+  isalternative="false"
+  size="10"
+  theme="polkadot"
+  value="cnWRzNrVQpnMoq4GNDyUjTp1ZTWxTaXNguoRTTqg45j4g23yq"
+/>
+`;
+
+exports[`WalletAvatar.vue > [With Substrate Theme]: should be rendered correctly 1`] = `
+<identicon-stub
+  address=""
+  isalternative="false"
+  size="32"
+  theme="substrate"
+  value="cnWRzNrVQpnMoq4GNDyUjTp1ZTWxTaXNguoRTTqg45j4g23yq"
+/>
+`;
+
+exports[`WalletAvatar.vue > [With default Theme (Polkadot) and Size]: should be rendered correctly 1`] = `
+<identicon-stub
+  address=""
+  isalternative="false"
+  size="32"
+  theme="polkadot"
+  value="cnWRzNrVQpnMoq4GNDyUjTp1ZTWxTaXNguoRTTqg45j4g23yq"
+/>
 `;

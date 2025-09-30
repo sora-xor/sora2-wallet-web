@@ -1,17 +1,11 @@
 import { Storage } from '@sora-substrate/sdk';
 
 import type { StorageKey, RuntimeStorageKey, SettingsStorageKey } from '../types/common';
-/**
- * This storage is dependent on account login
- */
+/** Persists state tied to the active account (cleared on logout). */
 export const storage = new Storage<StorageKey>();
 
-/**
- * This storage is dependent on runtime version
- */
+/** Holds runtime-derived values that should reset when the API version changes. */
 export const runtimeStorage = new Storage<RuntimeStorageKey>('runtime');
 
-/**
- * Common storage
- */
+/** Stores global, long-lived wallet settings. */
 export const settingsStorage = new Storage<SettingsStorageKey>('dexSettings');

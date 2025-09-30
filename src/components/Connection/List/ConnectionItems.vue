@@ -7,9 +7,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Options, Vue, Prop } from 'vue-property-decorator';
 
-@Component
+@Options({})
 export default class ConnectionItems extends Vue {
   @Prop({ default: 0, type: Number }) readonly size!: number;
   @Prop({ default: 7, type: Number }) readonly visible!: number;

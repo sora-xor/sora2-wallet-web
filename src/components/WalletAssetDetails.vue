@@ -105,7 +105,7 @@
               :label="t('createToken.nft.source.label')"
               :value="displayedNftContentLink"
               :value-tooltip="nftLinkTooltipText"
-              @click.native.stop="handleCopyNftLink"
+              @click.stop="handleCopyNftLink"
             />
           </div>
         </transition>
@@ -118,7 +118,7 @@
 
 <script lang="ts">
 import { XOR, BalanceType } from '@sora-substrate/sdk/build/assets/consts';
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { RouteNames } from '../consts';
@@ -150,7 +150,7 @@ interface Operation {
   icon: string;
 }
 
-@Component({
+@Options({
   components: {
     WalletBase,
     FormattedAmount,
@@ -163,7 +163,7 @@ interface Operation {
     TokenLogo,
   },
 })
-export default class WalletAssetDetails extends Mixins(
+export default class WalletAssetDetails extends mixins(
   OperationsMixin,
   FormattedAmountMixin,
   CopyAddressMixin,

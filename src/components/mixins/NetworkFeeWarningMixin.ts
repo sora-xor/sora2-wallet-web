@@ -1,6 +1,6 @@
 import { FPNumber, Operation } from '@sora-substrate/sdk';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
-import { Mixins, Component } from 'vue-property-decorator';
+import { mixins, Options } from 'vue-property-decorator';
 
 import { NetworkFeeWarningOptions } from '../../consts';
 import { state, getter } from '../../store/decorators';
@@ -18,8 +18,8 @@ const PredefinedOperations = [
   Operation.AddLiquidity,
 ];
 
-@Component
-export default class NetworkFeeWarningMixin extends Mixins(NumberFormatterMixin) {
+@Options({})
+export default class NetworkFeeWarningMixin extends mixins(NumberFormatterMixin) {
   @state.settings.networkFees networkFees!: NetworkFeesObject;
   @state.settings.allowFeePopup allowFeePopup!: boolean;
   @getter.account.accountAssetsAddressTable accountAssetsAddressTable!: AccountAssetsTable;

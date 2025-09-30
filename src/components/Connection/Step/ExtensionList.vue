@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+import { mixins, Options, Prop } from 'vue-property-decorator';
 
 import { AppWallet, Links } from '../../../consts';
 import TranslationMixin from '../../mixins/TranslationMixin';
@@ -44,13 +44,13 @@ import ExtensionConnectionList from '../List/Extension.vue';
 
 import type { Wallet } from '../../../services/wallet/types';
 
-@Component({
+@Options({
   components: {
     ExtensionConnectionList,
     ExternalLink,
   },
 })
-export default class ExtensionListStep extends Mixins(TranslationMixin) {
+export default class ExtensionListStep extends mixins(TranslationMixin) {
   @Prop({ default: '', type: String }) readonly connectedWallet!: string;
   @Prop({ default: '', type: String }) readonly selectedWallet!: AppWallet;
   @Prop({ default: false, type: Boolean }) readonly selectedWalletLoading!: boolean;

@@ -10,8 +10,8 @@
         :wallet="selectedWallet"
         :is-connected="isConnectedAccount"
         :chain-api="chainApi"
-        @select="handleSelectAccount"
         class="connection__accounts"
+        @select="handleSelectAccount"
       >
         <template v-if="isInternal" #menu="account">
           <account-actions-menu :actions="accountActions" @select="handleAccountAction($event, account)" />
@@ -19,13 +19,13 @@
       </account-connection-list>
 
       <connection-items v-if="isInternal">
-        <account-card class="connection__button" v-button tabindex="0" @click.native="handleCreateAccount">
+        <account-card v-button class="connection__button" tabindex="0" @click="handleCreateAccount">
           <template #avatar>
             <s-icon name="basic-circle-plus-24" size="28" class="connection__button-icon" />
           </template>
           <template #name>{{ t('desktop.button.createAccount') }}</template>
         </account-card>
-        <account-card class="connection__button" v-button tabindex="0" @click.native="handleImportAccount">
+        <account-card v-button class="connection__button" tabindex="0" @click="handleImportAccount">
           <template #avatar>
             <s-icon name="el-icon-link" size="28" class="connection__button-icon" />
           </template>
@@ -46,19 +46,19 @@
 
     <template v-if="isInternal">
       <account-rename-dialog
+        v-model:visible="accountRenameVisibility"
         :account="selectedAccount"
-        :visible.sync="accountRenameVisibility"
         :loading="loading"
         @confirm="handleRenameAccount"
       />
       <account-export-dialog
+        v-model:visible="accountExportVisibility"
         :account="selectedAccount"
-        :visible.sync="accountExportVisibility"
         :loading="loading"
         @confirm="handleExportAccount"
       />
       <account-delete-dialog
-        :visible.sync="accountDeleteVisibility"
+        v-model:visible="accountDeleteVisibility"
         :loading="loading"
         @confirm="handleDeleteAccount"
       />
@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { Mixins, Component, Prop } from 'vue-property-decorator';
+import { mixins, Options, Prop } from 'vue-property-decorator';
 
 import { AccountActionTypes, AppWallet } from '../../../consts';
 import { GDriveWallet } from '../../../services/google/wallet';
@@ -87,7 +87,7 @@ import ConnectionItems from '../List/ConnectionItems.vue';
 import type { PolkadotJsAccount } from '../../../types/common';
 import type { WithKeyring } from '@sora-substrate/sdk';
 
-@Component({
+@Options({
   components: {
     AccountConnectionList,
     AccountCard,
@@ -98,7 +98,7 @@ import type { WithKeyring } from '@sora-substrate/sdk';
     ConnectionItems,
   },
 })
-export default class AccountListStep extends Mixins(LoadingMixin, NotificationMixin) {
+export default class AccountListStep extends mixins(LoadingMixin, NotificationMixin) {
   @Prop({ required: true, type: Object }) public readonly chainApi!: WithKeyring;
 
   @Prop({ default: '', type: String }) readonly text!: string;

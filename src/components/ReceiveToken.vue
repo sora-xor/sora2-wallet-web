@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import { FPNumber } from '@sora-substrate/sdk';
-import { Component, Mixins, Ref } from 'vue-property-decorator';
+import { Options, mixins, Ref } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { state, getter, mutation } from '../store/decorators';
@@ -44,7 +44,7 @@ import type { Route } from '../store/router/types';
 import type { PolkadotJsAccount } from '../types/common';
 import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
 
-@Component({
+@Options({
   components: {
     WalletBase,
     WalletAccount,
@@ -52,7 +52,7 @@ import type { AccountAsset } from '@sora-substrate/sdk/build/assets/types';
     TokenLogo,
   },
 })
-export default class ReceiveToken extends Mixins(NotificationMixin) {
+export default class ReceiveToken extends mixins(NotificationMixin) {
   @state.router.currentRouteParams private currentRouteParams!: Record<string, AccountAsset>;
   @state.router.previousRoute private previousRoute!: RouteNames;
   @state.router.previousRouteParams private previousRouteParams!: Record<string, unknown>;

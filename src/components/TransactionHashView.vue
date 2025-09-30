@@ -13,13 +13,13 @@
     <s-dropdown
       v-if="hasExplorerLinks"
       class="s-dropdown-menu"
-      borderRadius="mini"
+      border-radius="mini"
       type="ellipsis"
       icon="basic-more-vertical-24"
       placement="bottom-end"
       @select="isEthHash ? handleOpenEtherscan() : undefined"
     >
-      <template slot="menu">
+      <template #menu>
         <a v-if="isEthHash" class="transaction-link" :href="etherscanLink" target="_blank" rel="nofollow noopener">
           <s-dropdown-item class="s-dropdown-menu__item">
             {{ t('transaction.viewIn', { explorer: TranslationConsts.Etherscan }) }}
@@ -44,118 +44,127 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
-import { HashType, ExplorerType, SoraNetwork } from '../consts';
-import { state } from '../store/decorators';
-import { formatAddress, getExplorerLinks, formatAccountAddress } from '../util';
+import { useCopyAddress } from '@/composables/useCopyAddress';
+import { useTranslation } from '@/composables/useTranslation';
+import { HashType, ExplorerType, SoraNetwork, type ExplorerLink } from '@/consts';
+import store from '@/store';
+import { formatAddress, formatAccountAddress, getExplorerLinks } from '@/util';
 
-import CopyAddressMixin from './mixins/CopyAddressMixin';
-import TranslationMixin from './mixins/TranslationMixin';
+const props = withDefaults(
+  defineProps<{
+    value: string;
+    type: HashType;
+    translation: string;
+    hash?: string;
+    block?: string;
+  }>(),
+  {
+    hash: '',
+    block: '',
+  }
+);
 
-import type { ExplorerLink } from '../consts';
+const { t, TranslationConsts } = useTranslation();
+const { copyTooltip, handleCopyAddress } = useCopyAddress();
 
-@Component
-export default class TransactionHashView extends Mixins(TranslationMixin, CopyAddressMixin) {
-  @Prop({ type: String, required: true }) readonly value!: string;
-  @Prop({ type: String, required: true }) readonly type!: HashType;
-  @Prop({ type: String, required: true }) readonly translation!: string;
-  @Prop({ type: String, default: '' }) readonly hash!: string;
-  /** Should be set for SORA ID type for Polkadot explorer */
-  @Prop({ type: String, default: '' }) readonly block!: string;
+const soraNetwork = computed<SoraNetwork>(() => store.state.wallet.settings.soraNetwork ?? SoraNetwork.Dev);
 
-  @state.settings.soraNetwork private soraNetwork!: SoraNetwork;
+const isEthHash = computed(() => [HashType.EthAccount, HashType.EthTransaction].includes(props.type));
 
-  get hasExplorerLinks(): boolean {
-    return this.isEthHash || !!this.explorerLinks.length;
+const formattedValue = computed(() => {
+  if (props.type === HashType.Account) {
+    return formatAccountAddress(props.value);
   }
 
-  get isEthHash(): boolean {
-    return [HashType.EthAccount, HashType.EthTransaction].includes(this.type);
-  }
+  return props.value;
+});
 
-  get formattedValue(): string {
-    if (this.type === HashType.Account) {
-      return formatAccountAddress(this.value);
-    }
-    return this.value;
-  }
+const displayValue = computed(() => props.hash || formattedValue.value);
 
-  get displayValue(): string {
-    return this.hash || this.formattedValue;
-  }
+const explorerLinks = computed<ExplorerLink[]>(() => {
+  if (isEthHash.value) return [];
 
-  get explorerLinks(): Array<ExplorerLink> {
-    if (this.isEthHash) return [];
+  const baseLinks = getExplorerLinks(soraNetwork.value);
+  if (!baseLinks.length) return [];
 
-    const baseLinks = getExplorerLinks(this.soraNetwork);
-    if (!baseLinks.length) return [];
+  switch (props.type) {
+    case HashType.Account:
+      return baseLinks
+        .filter(({ type }) => type !== ExplorerType.Polkadot)
+        .map(({ type, value }) => ({ type, value: `${value}/${props.type}/${formattedValue.value}` }));
+    case HashType.Block:
+      return baseLinks.map(({ type, value }) => {
+        const link: ExplorerLink = { type, value: '' };
 
-    switch (this.type) {
-      case HashType.Account:
-        return baseLinks
-          .filter(({ type }) => type !== ExplorerType.Polkadot) // Cuz accounts cannot be parsed using Polkadot
-          .map(({ type, value }) => ({ type, value: `${value}/${this.type}/${this.formattedValue}` }));
-      case HashType.Block:
-        return baseLinks.map(({ type, value }) => {
-          const link = { type } as ExplorerLink;
-          if (type === ExplorerType.Polkadot) {
-            link.value = `${value}/${this.formattedValue}`;
-          } else {
-            link.value = `${value}/${this.type}/${this.formattedValue}`;
-          }
-          return link;
-        });
-      case HashType.ID:
-        return baseLinks
-          .map(({ type, value }) => {
-            const link = { type } as ExplorerLink;
-            if (type === ExplorerType.Sorascan) {
-              link.value = `${value}/transaction/${this.value}`;
-            } else if (type === ExplorerType.Subscan) {
-              // [TODO] add support for history type EVENT
-              if (this.value.startsWith('0x')) {
-                link.value = `${value}/extrinsic/${this.value}`;
-              }
-            } else if (this.block) {
-              // ExplorerType.Polkadot
-              link.value = `${value}/${this.block}`;
+        if (type === ExplorerType.Polkadot) {
+          link.value = `${value}/${formattedValue.value}`;
+        } else {
+          link.value = `${value}/${props.type}/${formattedValue.value}`;
+        }
+
+        return link;
+      });
+    case HashType.ID:
+      return baseLinks
+        .map(({ type, value }) => {
+          const link: ExplorerLink = { type, value: '' };
+
+          if (type === ExplorerType.Sorascan) {
+            link.value = `${value}/transaction/${props.value}`;
+          } else if (type === ExplorerType.Subscan) {
+            if (props.value.startsWith('0x')) {
+              link.value = `${value}/extrinsic/${props.value}`;
             }
-            return link;
-          })
-          .filter((value) => !!value.value); // Polkadot explorer won't be shown without block prop
-      default:
-        return [];
-    }
-  }
+          } else if (props.block) {
+            link.value = `${value}/${props.block}`;
+          }
 
-  get formattedAddress(): string {
-    return formatAddress(this.displayValue, 24);
+          return link;
+        })
+        .filter((entry) => Boolean(entry.value));
+    default:
+      return [];
   }
+});
 
-  get etherscanLink(): string {
-    const path = this.type === HashType.EthAccount ? 'address' : 'tx';
-    const base = this.soraNetwork !== SoraNetwork.Prod ? 'sepolia' + '.' : '';
-    return `https://${base}etherscan.io/${path}/${this.value}`;
-  }
+const hasExplorerLinks = computed(() => isEthHash.value || explorerLinks.value.length > 0);
 
-  getExplorerTranslation(type: ExplorerType): string {
-    switch (type) {
-      case ExplorerType.Polkadot:
-        return this.TranslationConsts.Polkadot;
-      case ExplorerType.Sorascan:
-        return this.TranslationConsts.SORAScan;
-      case ExplorerType.Subscan:
-        return this.TranslationConsts.Subscan;
-    }
-  }
+const formattedAddress = computed(() => formatAddress(displayValue.value, 24));
 
-  handleOpenEtherscan(): void {
-    const win = window.open(this.etherscanLink, '_blank');
-    win && win.focus();
+const etherscanLink = computed(() => {
+  const path = props.type === HashType.EthAccount ? 'address' : 'tx';
+  const base = soraNetwork.value !== SoraNetwork.Prod ? 'sepolia.' : '';
+
+  return `https://${base}etherscan.io/${path}/${props.value}`;
+});
+
+const getExplorerTranslation = (type: ExplorerType) => {
+  switch (type) {
+    case ExplorerType.Polkadot:
+      return TranslationConsts.Polkadot;
+    case ExplorerType.Sorascan:
+      return TranslationConsts.SORAScan;
+    case ExplorerType.Subscan:
+      return TranslationConsts.Subscan;
+    default:
+      return '';
   }
-}
+};
+
+const handleOpenEtherscan = () => {
+  const win = window.open(etherscanLink.value, '_blank');
+  win?.focus();
+};
+
+defineExpose({
+  handleCopyAddress,
+  copyTooltip,
+  getExplorerTranslation,
+  handleOpenEtherscan,
+});
 </script>
 
 <style scoped lang="scss">

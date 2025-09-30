@@ -12,6 +12,7 @@ interface IAccountMetadata extends InjectedAccount {
 
 const ACCOUNTS_UPDATE_INTERVAL = 60_000;
 
+/** Converts an encrypted account into the file shape expected by Drive. */
 const prepareAccountFile = (account: EncryptedBackupAccount) => {
   return {
     name: `${account.address}.json`,
@@ -20,6 +21,10 @@ const prepareAccountFile = (account: EncryptedBackupAccount) => {
   };
 };
 
+/**
+ * Implements the polkadot-js `InjectedAccounts` interface backed by Google
+ * Drive storage, syncing encrypted backups to cloud files.
+ */
 export default class Accounts implements InjectedAccounts {
   private _list: IAccountMetadata[] = [];
   private accountsCallback: Nullable<(accounts: InjectedAccount[]) => unknown> = null;
@@ -37,12 +42,14 @@ export default class Accounts implements InjectedAccounts {
     }
   }
 
+  /** Looks up the cached account metadata by a formatted address. */
   private findAccountByAddress(address: string): Nullable<IAccountMetadata> {
     const defaultAddress = formatAccountAddress(address, false);
 
     return this.accountsList.find((acc) => acc.address === defaultAddress);
   }
 
+  /** Retrieves the Drive file id for the given account address. */
   private async getAccountIdByAddress(address: string): Promise<string> {
     await this.get();
 
@@ -53,6 +60,7 @@ export default class Accounts implements InjectedAccounts {
     return account.id;
   }
 
+  /** Stores a new encrypted backup derived from the provided keyring JSON. */
   public async add(accountPairJson: KeyringPair$Json, password: string, passphrase?: string): Promise<void> {
     if (this.findAccountByAddress(accountPairJson.address)) return;
 
@@ -63,6 +71,7 @@ export default class Accounts implements InjectedAccounts {
     await this.get();
   }
 
+  /** Updates the human readable name for a stored backup. */
   public async changeName(address: string, name: string) {
     const id = await this.getAccountIdByAddress(address);
     const encryptedAccount = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
@@ -77,6 +86,7 @@ export default class Accounts implements InjectedAccounts {
     }));
   }
 
+  /** Removes the account backup from Drive and local cache. */
   public async delete(address: string): Promise<void> {
     const id = await this.getAccountIdByAddress(address);
 
@@ -85,6 +95,7 @@ export default class Accounts implements InjectedAccounts {
     this.accountsList = this.accountsList.filter((account) => account.id !== id);
   }
 
+  /** Refreshes the local cache with the latest list of Drive backups. */
   public async get(): Promise<InjectedAccount[]> {
     const files = await GDriveStorage.getAll();
 
@@ -99,6 +110,7 @@ export default class Accounts implements InjectedAccounts {
     return this.accountsList;
   }
 
+  /** Decrypts a specific backup file and returns a keyring JSON blob. */
   public async getAccount(address: string, password: string): Promise<Nullable<KeyringPair$Json>> {
     const id = await this.getAccountIdByAddress(address);
     const encryptedAccount = (await GDriveStorage.get(id)) as EncryptedBackupAccount;
@@ -107,6 +119,7 @@ export default class Accounts implements InjectedAccounts {
     return json;
   }
 
+  /** Implements the extension subscription mechanism with a simple polling loop. */
   public subscribe(accountsCallback: (accounts: InjectedAccount[]) => unknown): Unsubcall {
     this.accountsCallback = accountsCallback;
 
@@ -115,6 +128,7 @@ export default class Accounts implements InjectedAccounts {
     return this.unsubscribe.bind(this);
   }
 
+  /** Stops the polling loop and clears the subscription callback. */
   public unsubscribe(): void {
     if (this.accountsUpdateInterval) {
       clearInterval(this.accountsUpdateInterval);

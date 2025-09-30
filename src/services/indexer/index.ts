@@ -29,8 +29,17 @@ type IndexerTypeMap = {
   [IndexerType.SUBSQUID]: SubsquidIndexer;
 };
 
+/**
+ * Shared instance of the indexer data parser so the heavy parsing helpers can
+ * maintain internal caches between calls.
+ */
 const IndexerDataParserService = new IndexerDataParser();
 
+/**
+ * Returns the descriptor for a given indexer type. The descriptor bundles the
+ * explorer service, data parser and history filter that should be used for the
+ * selected backend.
+ */
 function getIndexer<T extends IndexerType>(type: T): IndexerTypeMap[T] {
   switch (type) {
     case IndexerType.SUBQUERY:
@@ -56,6 +65,10 @@ function getIndexer<T extends IndexerType>(type: T): IndexerTypeMap[T] {
   }
 }
 
+/**
+ * Convenience helper that resolves the indexer configuration based on the
+ * value stored in Vuex settings.
+ */
 export function getCurrentIndexer() {
   const indexerType = store.state.wallet.settings.indexerType;
   return getIndexer(indexerType);

@@ -8,8 +8,12 @@ import del from 'rollup-plugin-delete';
 import scss from 'rollup-plugin-scss';
 import typescript from 'rollup-plugin-typescript2';
 import vue from 'rollup-plugin-vue';
+import path from 'node:path';
 
-import pkg from '../package.json';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
+const pkg = require('../package.json');
 
 const globals = {
   '@polkadot/util': 'util$1',
@@ -24,37 +28,8 @@ const globals = {
   '@sora-substrate/sdk/build/rewards/consts': 'consts$2',
   '@sora-test/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg': 'PolkadotLogo',
   '@sora-test/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg': 'SubWalletLogo',
-  '@soramitsu-ui/ui-vue2/lib/components/Button/SButton': 'SButton',
-  '@soramitsu-ui/ui-vue2/lib/components/Card/SCard': 'SCard',
-  '@soramitsu-ui/ui-vue2/lib/components/DesignSystem/SDesignSystemProvider': 'SDesignSystemProvider',
-  '@soramitsu-ui/ui-vue2/lib/components/Dialog': 'SDialog',
-  '@soramitsu-ui/ui-vue2/lib/components/Divider/SDivider': 'SDivider',
-  '@soramitsu-ui/ui-vue2/lib/components/Dropdown/SDropdown': 'SDropdown',
-  '@soramitsu-ui/ui-vue2/lib/components/Dropdown/SDropdownItem': 'SDropdownItem',
-  '@soramitsu-ui/ui-vue2/lib/components/Form/SForm': 'SForm',
-  '@soramitsu-ui/ui-vue2/lib/components/Form/SFormItem': 'SFormItem',
-  '@soramitsu-ui/ui-vue2/lib/components/Icon/SIcon': 'SIcon',
-  '@soramitsu-ui/ui-vue2/lib/components/Image/SImage': 'SImage',
-  '@soramitsu-ui/ui-vue2/lib/components/Input/SFloatInput': 'SFloatInput',
-  '@soramitsu-ui/ui-vue2/lib/components/Input/SInput': 'SInput',
-  '@soramitsu-ui/ui-vue2/lib/components/Pagination': 'SPagination',
-  '@soramitsu-ui/ui-vue2/lib/components/Radio/SRadio': 'SRadio',
-  '@soramitsu-ui/ui-vue2/lib/components/Radio/SRadioGroup': 'SRadioGroup',
-  '@soramitsu-ui/ui-vue2/lib/components/Scrollbar': 'SScrollbar',
-  '@soramitsu-ui/ui-vue2/lib/components/Select/SOption': 'SOption',
-  '@soramitsu-ui/ui-vue2/lib/components/Select/SSelect': 'SSelect',
-  '@soramitsu-ui/ui-vue2/lib/components/Switch': 'SSwitch',
-  '@soramitsu-ui/ui-vue2/lib/components/Tab/STab': 'STab',
-  '@soramitsu-ui/ui-vue2/lib/components/Tab/STabs': 'STabs',
-  '@soramitsu-ui/ui-vue2/lib/components/Tooltip': 'STooltip',
-  '@soramitsu-ui/ui-vue2/lib/directives': 'directives',
-  '@soramitsu-ui/ui-vue2/lib/plugins/elementUI': 'ElementUIPlugin',
-  '@soramitsu-ui/ui-vue2/lib/plugins/soramitsuUIStore': 'SoramitsuUIStorePlugin',
-  '@soramitsu-ui/ui-vue2/lib/types/DesignSystem': 'DesignSystem',
-  '@soramitsu-ui/ui-vue2/lib/types/Theme': 'Theme',
-  '@soramitsu-ui/ui-vue2/lib/types/directives': 'Directives',
-  '@soramitsu-ui/ui-vue2/lib/utils': 'utils',
   '@sora-test/wallet-connect/dotsama/wallets': 'wallets',
+  '@soramitsu-ui/ui': 'SoramitsuUI',
   '@urql/core': 'core',
   '@zxing/browser': 'browser',
   '@zxing/library': 'library',
@@ -64,7 +39,6 @@ const globals = {
   dayjs: 'dayjs',
   'dayjs/plugin/localizedFormat': 'localizedFormat',
   'direct-vuex': 'directVuex',
-  'element-ui/lib/popover': 'ElPopover',
   'file-saver': 'fileSaver',
   'graphql-ws': 'graphqlWs',
   'is-electron': 'isElectron',
@@ -90,6 +64,12 @@ const globals = {
   '@walletconnect/universal-provider': 'UniversalProvider',
   wonka: 'wonka',
 };
+
+const scssAdditionalData = `
+  @use "${path.resolve('src/styles/_variables.scss')}" as *;
+  @use "${path.resolve('src/styles/_layout.scss')}" as *;
+  @use "${path.resolve('src/styles/_mixins.scss')}" as *;
+`;
 
 export default {
   input: 'src/index.ts',
@@ -131,45 +111,12 @@ export default {
     '@sora-substrate/sdk/build/poolXyk/types',
     '@sora-substrate/sdk/build/rewards/consts',
     '@sora-substrate/sdk/build/rewards/types',
-    '@soramitsu-ui/ui-vue2/lib/components/Button/SButton',
-    '@soramitsu-ui/ui-vue2/lib/components/Card/SCard',
-    '@soramitsu-ui/ui-vue2/lib/components/DesignSystem/SDesignSystemProvider',
-    '@soramitsu-ui/ui-vue2/lib/components/Dialog',
-    '@soramitsu-ui/ui-vue2/lib/components/Divider/SDivider',
-    '@soramitsu-ui/ui-vue2/lib/components/Dropdown/SDropdown',
-    '@soramitsu-ui/ui-vue2/lib/components/Dropdown/SDropdown/SDropdown.vue',
-    '@soramitsu-ui/ui-vue2/lib/components/Dropdown/SDropdownItem',
-    '@soramitsu-ui/ui-vue2/lib/components/Form/SForm',
-    '@soramitsu-ui/ui-vue2/lib/components/Form/SFormItem',
-    '@soramitsu-ui/ui-vue2/lib/components/Icon/SIcon',
-    '@soramitsu-ui/ui-vue2/lib/components/Image/SImage',
-    '@soramitsu-ui/ui-vue2/lib/components/Input/SFloatInput',
-    '@soramitsu-ui/ui-vue2/lib/components/Input/SInput',
-    '@soramitsu-ui/ui-vue2/lib/components/Pagination',
-    '@soramitsu-ui/ui-vue2/lib/components/Radio/SRadio',
-    '@soramitsu-ui/ui-vue2/lib/components/Radio/SRadioGroup',
-    '@soramitsu-ui/ui-vue2/lib/components/Scrollbar',
-    '@soramitsu-ui/ui-vue2/lib/components/Select/SOption',
-    '@soramitsu-ui/ui-vue2/lib/components/Select/SSelect',
-    '@soramitsu-ui/ui-vue2/lib/components/Switch',
-    '@soramitsu-ui/ui-vue2/lib/components/Tab/STab',
-    '@soramitsu-ui/ui-vue2/lib/components/Tab/STabs',
-    '@soramitsu-ui/ui-vue2/lib/components/Tooltip',
-    '@soramitsu-ui/ui-vue2/lib/directives',
-    '@soramitsu-ui/ui-vue2/lib/plugins/elementUI',
-    '@soramitsu-ui/ui-vue2/lib/plugins/soramitsuUIStore',
-    '@soramitsu-ui/ui-vue2/lib/types/DesignSystem',
-    '@soramitsu-ui/ui-vue2/lib/types/Theme',
-    '@soramitsu-ui/ui-vue2/lib/types/directives',
-    '@soramitsu-ui/ui-vue2/lib/utils',
-    '@soramitsu-ui/ui-vue2/lib/utils/DesignSystem',
-    '@soramitsu-ui/ui-vue2/lib/utils/Theme',
+    '@soramitsu-ui/ui',
     '@sora-test/wallet-connect/dotsama/wallets',
     '@sora-test/wallet-connect/dotsama/predefinedWallet/PolkadotLogo.svg',
     '@sora-test/wallet-connect/dotsama/predefinedWallet/SubWalletLogo.svg',
     '@sora-test/wallet-connect/types',
     'dayjs/plugin/localizedFormat',
-    'element-ui/lib/popover',
     'lodash/fp/concat',
     'lodash/fp/debounce',
     'lodash/fp/findLast',
@@ -187,31 +134,37 @@ export default {
     'wonka',
   ],
   plugins: [
-    typescript({
-      typescript: require('typescript'),
-      objectHashIgnoreUnknownHack: true,
-      module: 'esnext',
-
-      tsconfig: 'tsconfig.json',
-      tsconfigOverride: { exclude: ['node_modules', 'tests'] },
-    }),
-    resolve(),
-    commonjs(),
     vue({
       css: true,
       runtimeCompiler: true,
       compileTemplate: true,
-      needMap: false, // fix for https://github.com/vuejs/rollup-plugin-vue/issues/238
-      data: {
-        scss: `
-          @import "src/styles/_variables.scss";
-          @import "src/styles/_layout.scss";
-          @import "src/styles/_mixins.scss";
-        `,
+      preprocessStyles: true,
+      preprocessCustomRequire: (id) => require(id),
+      needMap: false,
+      style: {
+        preprocessOptions: {
+          scss: {
+            additionalData: (content, loaderContext) => {
+              console.log('Preprocessing', loaderContext.id || 'unknown');
+              return scssAdditionalData + content;
+            },
+            includePaths: ['src', 'src/styles'],
+          },
+        },
       },
     }),
+    typescript({
+      typescript: require('typescript'),
+      objectHashIgnoreUnknownHack: true,
+      module: 'esnext',
+      tsconfig: 'tsconfig.json',
+      tsconfigOverride: { exclude: ['node_modules', 'tests'] },
+    }),
+    resolve({ extensions: ['.js', '.ts', '.vue', '.json'] }),
+    commonjs(),
     scss({
       output: 'lib/soraneo-wallet-web.css',
+      includePaths: ['src', 'src/styles'],
     }),
     image(),
     json(),
@@ -220,8 +173,6 @@ export default {
       mangle: true,
     }),
     copy({
-      // TODO: we should find out how to solve an issue with @sora-substrate/sdk
-      // For now build operation can be done like:
       targets: [{ src: 'lib/src/*', dest: 'lib' }],
       hook: 'writeBundle',
       verbose: true,

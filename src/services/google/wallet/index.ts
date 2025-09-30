@@ -8,6 +8,10 @@ import Accounts from './accounts';
 import type { InjectedWindowProvider, Injected } from '@polkadot/extension-inject/types';
 import type { Signer } from '@polkadot/types/types';
 
+/**
+ * Minimal WalletConnect-like adapter that exposes Google Drive backups through
+ * the polkadot extension interface expected by the wallet infrastructure.
+ */
 @Singleton
 class GoogleDriveWallet implements InjectedWindowProvider {
   public static readonly version = '0.0.1';
@@ -23,6 +27,10 @@ class GoogleDriveWallet implements InjectedWindowProvider {
     return (this.access ? null : undefined) as unknown as Signer;
   }
 
+  /**
+   * Requests Drive access and exposes the accounts wrapper so the caller can
+   * manage encrypted backups like regular extension accounts.
+   */
   async enable(): Promise<Injected> {
     try {
       await GDriveStorage.auth();
@@ -42,6 +50,7 @@ class GoogleDriveWallet implements InjectedWindowProvider {
 
 export const GDriveWallet = new GoogleDriveWallet();
 
+/** Adds the Google Drive wallet to the registry if the app is configured for it. */
 export const addGDriveWalletLocally = (dAppName: string) => {
   if (!GDriveStorage.hasKey) return;
 

@@ -7,7 +7,7 @@
         :class="{ disabled }"
         name="el-icon-close"
         size="20"
-        @click.native="resetAddress"
+        @click="resetAddress"
       />
       <s-tooltip :content="t('addressBook.selectContact')" border-radius="mini" placement="top" tabindex="-1">
         <s-icon
@@ -16,7 +16,7 @@
           :class="{ disabled }"
           name="basic-user-24"
           size="18"
-          @click.native="openAddressBook"
+          @click="openAddressBook"
         />
       </s-tooltip>
     </wallet-account>
@@ -40,11 +40,11 @@
           :class="{ disabled }"
           name="el-icon-close"
           size="20"
-          @click.native="removeInput"
+          @click="removeInput"
         />
       </template>
       <template #right>
-        <s-icon v-if="address" class="book-icon-unlink" name="el-icon-close" size="20" @click.native="resetAddress" />
+        <s-icon v-if="address" class="book-icon-unlink" name="el-icon-close" size="20" @click="resetAddress" />
         <s-tooltip :content="t('addressBook.selectContact')" border-radius="mini" placement="top" tabindex="-1">
           <s-icon
             v-button
@@ -52,7 +52,7 @@
             :class="{ disabled }"
             name="basic-user-24"
             size="18"
-            @click.native="openAddressBook"
+            @click="openAddressBook"
           />
         </s-tooltip>
       </template>
@@ -64,7 +64,7 @@
     </div>
 
     <address-book-list
-      :visible.sync="showAddressBookDialog"
+      v-model:visible="showAddressBookDialog"
       :accounts="accountsRecords"
       :records="bookRecords"
       :excluded-address="excludedAddress"
@@ -73,18 +73,18 @@
       @remove="removeAddressFromBook"
     />
     <address-book-contact
+      v-model:visible="showSetContactDialog"
       :accounts="accountsRecords"
       :book="addressBook"
       :prefilled-address="prefilledAddress"
       :is-edit-mode="isEditMode"
-      :visible.sync="showSetContactDialog"
       @add="setAddressToBook"
     />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
+import { Options, mixins, Prop, Watch } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import { mutation, state } from '../../store/decorators';
@@ -100,7 +100,7 @@ import AddressBookList from './List.vue';
 import type { AppWallet } from '../../consts';
 import type { Book, PolkadotJsAccount } from '../../types/common';
 
-@Component({
+@Options({
   inheritAttrs: false,
   components: {
     SearchInput,
@@ -109,7 +109,7 @@ import type { Book, PolkadotJsAccount } from '../../types/common';
     AddressBookContact,
   },
 })
-export default class AddressBookInput extends Mixins(TranslationMixin) {
+export default class AddressBookInput extends mixins(TranslationMixin) {
   @Prop({ default: false, type: Boolean }) readonly excludeConnected!: boolean;
   @Prop({ default: '', type: String }) readonly value!: string;
   @Prop({ default: '', type: String }) readonly propPlaceholder!: string;
@@ -230,7 +230,7 @@ export default class AddressBookInput extends Mixins(TranslationMixin) {
     });
   }
 
-  beforeDestroy(): void {
+  beforeUnmount(): void {
     if (this.accountsSubscription) {
       this.accountsSubscription();
       this.accountsSubscription = null;

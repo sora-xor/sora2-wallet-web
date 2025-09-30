@@ -1,10 +1,10 @@
 <template>
   <simple-notification
+    v-model="hidePopup"
     optional
     modal-content
-    v-model="hidePopup"
     :button-text="t('confirmNextTxFailure.button')"
-    @submit.native.prevent="handleConfirm"
+    @submit.prevent="handleConfirm"
   >
     <template #title>{{ t('confirmNextTxFailure.header') }}</template>
     <template #text>
@@ -14,32 +14,43 @@
   </simple-notification>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { KnownSymbols } from '@sora-substrate/sdk/build/assets/consts';
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { ref } from 'vue';
 
-import { mutation } from '../store/decorators';
+import { useTranslation } from '@/composables/useTranslation';
+import store from '@/store';
 
-import TranslationMixin from './mixins/TranslationMixin';
 import SimpleNotification from './SimpleNotification.vue';
 
-@Component({
-  components: {
-    SimpleNotification,
-  },
-})
-export default class NetworkFeeWarning extends Mixins(TranslationMixin) {
-  @Prop({ type: String }) readonly fee!: string;
-  @Prop({ type: String, default: KnownSymbols.XOR }) readonly symbol!: string;
-  @Prop({ type: Boolean, default: true }) readonly payoff!: boolean;
-
-  @mutation.settings.setAllowFeePopup private setAllowFeePopup!: (flag: boolean) => void;
-
-  hidePopup = false;
-
-  async handleConfirm(): Promise<void> {
-    this.setAllowFeePopup(!this.hidePopup);
-    this.$emit('confirm');
+const props = withDefaults(
+  defineProps<{
+    fee?: string;
+    symbol?: string;
+    payoff?: boolean;
+  }>(),
+  {
+    fee: undefined,
+    symbol: KnownSymbols.XOR,
+    payoff: true,
   }
-}
+);
+
+const emit = defineEmits<{
+  (event: 'confirm'): void;
+}>();
+
+const { t } = useTranslation();
+
+const hidePopup = ref(false);
+
+const handleConfirm = async () => {
+  store.commit.wallet.settings.setAllowFeePopup(!hidePopup.value);
+  emit('confirm');
+};
+
+defineExpose({
+  hidePopup,
+  handleConfirm,
+});
 </script>

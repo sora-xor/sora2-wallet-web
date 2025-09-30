@@ -32,14 +32,15 @@
       :disabled="!selectAssets.length || !isConfirmed || loading"
       @click="handleAddAssets"
     >
-      {{ $tc('addAssetsText', selectAssets.length) }}
+      {{ tc('addAssetsText', selectAssets.length) }}
     </s-button>
   </div>
 </template>
 
 <script lang="ts">
-import Theme from '@soramitsu-ui/ui-vue2/lib/types/Theme';
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Options, mixins, Prop } from 'vue-property-decorator';
+
+import { Theme } from '@/consts';
 
 import { api } from '../../api';
 import { getter } from '../../store/decorators';
@@ -53,24 +54,24 @@ import WalletBase from '../WalletBase.vue';
 import type { WhitelistIdsBySymbol } from '../../types/common';
 import type { Asset, Whitelist } from '@sora-substrate/sdk/build/assets/types';
 
-@Component({
+@Options({
   components: {
     WalletBase,
     AssetListItem,
   },
 })
-export default class AddAssetDetailsCard extends Mixins(TranslationMixin, LoadingMixin, AddAssetMixin) {
+export default class AddAssetDetailsCard extends mixins(TranslationMixin, LoadingMixin, AddAssetMixin) {
   @getter.account.whitelist whitelist!: Whitelist;
   @getter.account.whitelistIdsBySymbol whitelistIdsBySymbol!: WhitelistIdsBySymbol;
 
   @Prop({ required: true, type: Array }) readonly selectAssets!: Array<Asset>;
-  @Prop({ default: Theme.LIGHT, type: String }) readonly theme!: Theme;
+  @Prop({ default: Theme.Light, type: String }) readonly theme!: Theme;
   @Prop({ required: true, type: String }) readonly assetTypeKey!: string;
 
   isConfirmed = false;
 
   get isCardPrimary(): boolean {
-    return this.theme !== Theme.DARK;
+    return this.theme !== Theme.Dark;
   }
 
   get height(): string {
@@ -117,14 +118,14 @@ export default class AddAssetDetailsCard extends Mixins(TranslationMixin, Loadin
   }
 
   get warningMessage(): string {
-    const assetType = this.$tc(`addAsset.assetType.${this.assetTypeKey}`, 1);
-    const assetTypePlural = this.$tc(`addAsset.assetType.${this.assetTypeKey}`, this.selectAssets.length);
+    const assetType = this.tc(`addAsset.assetType.${this.assetTypeKey}`, 1);
+    const assetTypePlural = this.tc(`addAsset.assetType.${this.assetTypeKey}`, this.selectAssets.length);
     const purchaseAssetType =
       this.selectAssets.length === 1
-        ? this.$tc('addAsset.warningMessage', 1, { assetType })
-        : this.$tc('addAsset.warningMessage', this.selectAssets.length, { assetTypePlural });
+        ? this.tc('addAsset.warningMessage', 1, { assetType })
+        : this.tc('addAsset.warningMessage', this.selectAssets.length, { assetTypePlural });
 
-    return this.$tc('addAsset.warningMessageText', this.selectAssets.length, {
+    return this.tc('addAsset.warningMessageText', this.selectAssets.length, {
       assetType,
       assetTypePlural,
       purchaseAssetType,

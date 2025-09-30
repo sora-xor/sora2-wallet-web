@@ -1,13 +1,13 @@
 <template>
-  <dialog-base :title="t('account.rename')" :visible.sync="isVisible" append-to-body class="account-rename-dialog">
-    <s-form class="account-rename-dialog__form" @submit.native.prevent="handleConfirm">
+  <dialog-base v-model:visible="isVisible" :title="t('account.rename')" append-to-body class="account-rename-dialog">
+    <s-form class="account-rename-dialog__form" @submit.prevent="handleConfirm">
       <wallet-account :polkadot-account="account" />
       <s-input
+        v-model="value"
         type="text"
         :placeholder="t('desktop.accountName.placeholder')"
         :minlength="MINLENGTH"
         :disabled="loading"
-        v-model="value"
       />
       <s-button
         type="primary"
@@ -22,51 +22,61 @@
   </dialog-base>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, ref, toRef, watch } from 'vue';
 
-import { ObjectInit } from '../../consts';
+import { useDialogVisibility } from '@/composables/useDialog';
+import { useTranslation } from '@/composables/useTranslation';
+import type { PolkadotJsAccount } from '@/types/common';
+
 import DialogBase from '../DialogBase.vue';
-import DialogMixin from '../mixins/DialogMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
 
 import WalletAccount from './WalletAccount.vue';
 
-import type { PolkadotJsAccount } from '../../types/common';
-
-@Component({
-  components: {
-    DialogBase,
-    WalletAccount,
-  },
-})
-export default class AccountRenameDialog extends Mixins(DialogMixin, TranslationMixin) {
-  @Prop({ default: ObjectInit, type: Object }) readonly account!: PolkadotJsAccount;
-  @Prop({ default: false, type: Boolean }) readonly loading!: boolean;
-
-  @Watch('isVisible')
-  private setupFormState(visibility: boolean): void {
-    if (!visibility) {
-      this.value = '';
-    }
+const props = withDefaults(
+  defineProps<{
+    visible?: boolean;
+    account?: Nullable<PolkadotJsAccount>;
+    loading?: boolean;
+  }>(),
+  {
+    visible: false,
+    account: null,
+    loading: false,
   }
+);
 
-  readonly MINLENGTH = 3;
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'close'): void;
+  (event: 'confirm', name: string): void;
+}>();
 
-  value = '';
+const { t } = useTranslation();
 
-  get prepared(): string {
-    return this.value.trim();
+const { isVisible } = useDialogVisibility(toRef(props, 'visible'), {
+  emit: (value) => emit('update:visible', value),
+  onClose: () => emit('close'),
+});
+
+const account = toRef(props, 'account');
+const loading = toRef(props, 'loading');
+
+const MINLENGTH = 3;
+const value = ref('');
+
+const prepared = computed(() => value.value.trim());
+const valid = computed(() => prepared.value.length >= MINLENGTH);
+
+watch(isVisible, (visible) => {
+  if (!visible) {
+    value.value = '';
   }
+});
 
-  get valid(): boolean {
-    return this.prepared.length >= this.MINLENGTH;
-  }
-
-  async handleConfirm(): Promise<void> {
-    this.$emit('confirm', this.prepared);
-  }
-}
+const handleConfirm = () => {
+  emit('confirm', prepared.value);
+};
 </script>
 
 <style lang="scss" scoped>

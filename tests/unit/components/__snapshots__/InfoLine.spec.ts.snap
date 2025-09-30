@@ -1,393 +1,455 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`InfoLine.vue [Label and Value]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [Label and Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
-  <!---->
-   
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-     
+    
+    
+    
     <span
       content=""
+      data-v-798aed33=""
     >
       <span
         class="info-line-value"
+        data-v-798aed33=""
       >
-        
-          1,234,567.890123
-          
-        <!---->
+        1,234,567.890123 
+        <!--v-if-->
       </span>
     </span>
-     
-    <!---->
-     
+    <!--v-if-->
+    
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With "-Infinity" Value]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With "-Infinity" Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
-  <!---->
-   
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-    <!---->
-     
+    <!--v-if-->
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With "0" Value]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With "0" Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
-  <!---->
-   
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-     
+    
+    
+    
     <span
       content=""
+      data-v-798aed33=""
     >
       <span
         class="info-line-value"
+        data-v-798aed33=""
       >
-        
-          0
-          
-        <!---->
+        0 
+        <!--v-if-->
       </span>
     </span>
-     
-    <!---->
-     
+    <!--v-if-->
+    
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With "Infinity" Value]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With "Infinity" Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
-  <!---->
-   
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-    <!---->
-     
+    <!--v-if-->
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With "NaN" Value]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With "NaN" Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
-  <!---->
-   
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-    <!---->
-     
+    <!--v-if-->
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With Asset Symbol]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With Asset Symbol]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
-  <!---->
-   
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-     
+    
+    
+    
     <span
       content=""
+      data-v-798aed33=""
     >
       <span
         class="info-line-value"
+        data-v-798aed33=""
       >
-        
-          1,234,567.890123
-          
+        1,234,567.890123 
         <span
           class="asset-symbol"
+          data-v-798aed33=""
         >
            XOR
         </span>
       </span>
     </span>
-     
-    <!---->
-     
+    <!--v-if-->
+    
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With Empty Label and Value]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With Empty Label and Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
-  >
-    
-  </span>
-   
-  <!---->
-   
+    data-v-798aed33=""
+  />
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-    <!---->
-     
+    <!--v-if-->
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With Fiat Value]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With Fiat Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
-  <!---->
-   
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-     
+    
+    
+    
     <span
       content=""
+      data-v-798aed33=""
     >
       <span
         class="info-line-value"
+        data-v-798aed33=""
       >
-        
-          1,234,567.890123
-          
-        <!---->
+        1,234,567.890123 
+        <!--v-if-->
       </span>
     </span>
-     
     <formatted-amount-stub
       assetsymbol=""
       customizablecurrency=""
+      data-v-798aed33=""
+      fiatdefaultrounding="false"
       fontweightrate="normal"
+      integeronly="false"
       isfiatvalue="true"
+      symbolasdecimal="false"
       value="1,234,567.890123"
+      valuecanbehidden="false"
+      withleftshift="false"
     />
-     
+    
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With Formatted & Hidden value; hide balances button was clicked]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With Formatted & Hidden value; hide balances button was clicked]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
-  <!---->
-   
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-     
+    
+    
+    
     <formatted-amount-stub
       assetsymbol=""
       class="info-line-value"
       customizablecurrency=""
+      data-v-798aed33=""
+      fiatdefaultrounding="false"
       fontsizerate="medium"
       fontweightrate="small"
+      integeronly="false"
+      isfiatvalue="false"
+      symbolasdecimal="false"
       value="1,234,567.890123456789"
       valuecanbehidden="true"
+      withleftshift="false"
     />
-     
-    <!---->
-     
+    <!--v-if-->
+    
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With Formatted Value]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With Formatted Value]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
-  <!---->
-   
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-     
+    
+    
+    
     <formatted-amount-stub
       assetsymbol=""
       class="info-line-value"
       customizablecurrency=""
+      data-v-798aed33=""
+      fiatdefaultrounding="false"
       fontsizerate="medium"
       fontweightrate="small"
+      integeronly="false"
+      isfiatvalue="false"
+      symbolasdecimal="false"
       value="1,234,567.890123456789"
+      valuecanbehidden="false"
+      withleftshift="false"
     />
-     
-    <!---->
-     
+    <!--v-if-->
+    
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With Hidden value; hide balances button was clicked]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With Hidden value; hide balances button was clicked]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
-  <!---->
-   
+  <!--v-if-->
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-     
+    
+    
+    
     <span
       class="info-line-value"
+      data-v-798aed33=""
     >
       ******
     </span>
-     
-    <!---->
-     
+    <!--v-if-->
+    
+    
+    
   </div>
 </div>
 `;
 
-exports[`InfoLine.vue [With Label Tooltip]: should be rendered correctly 1`] = `
+exports[`InfoLine.vue > [With Label Tooltip]: should be rendered correctly 1`] = `
 <div
   class="info-line"
+  data-v-798aed33=""
 >
-   
+  
+  
   <span
     class="info-line-label"
+    data-v-798aed33=""
   >
     Label
   </span>
-   
   <s-tooltip-stub
-    animation="el-fade-in-linear"
-    appendtobody="true"
-    borderradius="mini"
-    closedelay="0"
+    border-radius="mini"
     content="Label tooltip"
-    hideafter="0"
-    offset="0"
-    opendelay="500"
+    data-v-798aed33=""
+    header=""
     placement="right-start"
-    popperclass="info-tooltip info-tooltip--info-line"
-    showarrow="true"
+    popper-class="info-tooltip info-tooltip--info-line"
+    primarybuttontext=""
+    secondarybuttontext=""
     tabindex="-1"
-    theme="auto"
-    usedesignsystem="true"
-  >
-    <s-icon-stub
-      name="info-16"
-      size="14px"
-    />
-  </s-tooltip-stub>
-   
+    wrappertag="div"
+  />
   <div
     class="info-line-content"
+    data-v-798aed33=""
   >
-     
+    
+    
+    
     <span
       content=""
+      data-v-798aed33=""
     >
       <span
         class="info-line-value"
+        data-v-798aed33=""
       >
-        
-          1,234,567.890123
-          
-        <!---->
+        1,234,567.890123 
+        <!--v-if-->
       </span>
     </span>
-     
-    <!---->
-     
+    <!--v-if-->
+    
+    
+    
   </div>
 </div>
 `;

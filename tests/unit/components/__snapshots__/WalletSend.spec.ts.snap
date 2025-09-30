@@ -1,594 +1,66 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`WalletSend.vue [Confirm Step]: should be rendered correctly 1`] = `
+exports[`WalletSend.vue > [Confirm Step]: should be rendered correctly 1`] = `
 <wallet-base-stub
-  resetfocus="2"
-  showback="true"
-  showheader="true"
-  title="Confirm transaction"
-  tooltip=""
->
-  <div
-    class="wallet-send"
-  >
-    <network-fee-warning-stub
-      fee="0"
-      payoff="true"
-      symbol="XOR"
-    />
-     
-    <wallet-fee-stub
-      value="0"
-    />
-  </div>
-</wallet-base-stub>
-`;
-
-exports[`WalletSend.vue [Create Step: Empty Fields]: should be rendered correctly 1`] = `
-<wallet-base-stub
+  data-v-d2f12a45=""
   resetfocus="1"
   showback="true"
+  showclose="false"
   showheader="true"
   title="Send"
+  titlecenter="false"
   tooltip="Send tokens between SORA network accounts"
->
-  <div
-    class="wallet-send"
-  >
-    <address-book-input-stub
-      class="wallet-send-address"
-      excludeconnected="true"
-      propplaceholder=""
-      value=""
-    />
-     
-    <!---->
-     
-    <!---->
-     
-    <s-float-input-stub
-      class="wallet-send-input"
-      decimals="18"
-      delimiters="[object Object]"
-      haslocalestring="true"
-      max="100000000000000000000"
-      size="medium"
-      value=""
-    >
-      <div
-        class="wallet-send-amount"
-      >
-        <div
-          class="wallet-send-amount-title"
-        >
-          Amount
-        </div>
-         
-        <div
-          class="wallet-send-amount-balance"
-        >
-          <span
-            class="wallet-send-amount-balance-title"
-          >
-            Balance
-          </span>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="151.782"
-            fontsizerate="normal"
-            fontweightrate="normal"
-            hasfiatvalue="true"
-            value="123.4"
-            valuecanbehidden="true"
-            valueclass="wallet-send-amount-balance-value"
-            withleftshift="true"
-          />
-        </div>
-      </div>
-       
-      <div
-        class="asset s-flex"
-      >
-        <!---->
-         
-        <div
-          class="asset-box"
-        >
-          <div
-            class="asset-box__logo"
-          >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
-          </div>
-           
-          <span
-            class="asset-name"
-          >
-            XOR
-          </span>
-        </div>
-      </div>
-       
-      <div
-        class="asset-info"
-      >
-        <formatted-amount-stub
-          assetsymbol=""
-          customizablecurrency=""
-          fontsizerate="normal"
-          fontweightrate="normal"
-          isfiatvalue="true"
-          value="0"
-        />
-      </div>
-    </s-float-input-stub>
-     
-    <!---->
-     
-    <s-button-stub
-      borderradius="small"
-      class="wallet-send-action s-typography-button--large"
-      disabled="true"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
-      usedesignsystem="true"
-    >
-      
-        Enter address
-      
-    </s-button-stub>
-     
-    <wallet-fee-stub
-      value="0"
-    />
-  </div>
-</wallet-base-stub>
+/>
 `;
 
-exports[`WalletSend.vue [Create Step: Incorrect Address]: should be rendered correctly 1`] = `
+exports[`WalletSend.vue > [Create Step: Empty Fields]: should be rendered correctly 1`] = `
 <wallet-base-stub
+  data-v-d2f12a45=""
   resetfocus="1"
   showback="true"
+  showclose="false"
   showheader="true"
   title="Send"
+  titlecenter="false"
   tooltip="Send tokens between SORA network accounts"
->
-  <div
-    class="wallet-send"
-  >
-    <address-book-input-stub
-      class="wallet-send-address"
-      excludeconnected="true"
-      propplaceholder=""
-      value="12345"
-    />
-     
-    <!---->
-     
-    <!---->
-     
-    <s-float-input-stub
-      class="wallet-send-input"
-      decimals="18"
-      delimiters="[object Object]"
-      haslocalestring="true"
-      max="100000000000000000000"
-      size="medium"
-      value=""
-    >
-      <div
-        class="wallet-send-amount"
-      >
-        <div
-          class="wallet-send-amount-title"
-        >
-          Amount
-        </div>
-         
-        <div
-          class="wallet-send-amount-balance"
-        >
-          <span
-            class="wallet-send-amount-balance-title"
-          >
-            Balance
-          </span>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="151.782"
-            fontsizerate="normal"
-            fontweightrate="normal"
-            hasfiatvalue="true"
-            value="123.4"
-            valuecanbehidden="true"
-            valueclass="wallet-send-amount-balance-value"
-            withleftshift="true"
-          />
-        </div>
-      </div>
-       
-      <div
-        class="asset s-flex"
-      >
-        <!---->
-         
-        <div
-          class="asset-box"
-        >
-          <div
-            class="asset-box__logo"
-          >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
-          </div>
-           
-          <span
-            class="asset-name"
-          >
-            XOR
-          </span>
-        </div>
-      </div>
-       
-      <div
-        class="asset-info"
-      >
-        <formatted-amount-stub
-          assetsymbol=""
-          customizablecurrency=""
-          fontsizerate="normal"
-          fontweightrate="normal"
-          isfiatvalue="true"
-          value="0"
-        />
-      </div>
-    </s-float-input-stub>
-     
-    <!---->
-     
-    <s-button-stub
-      borderradius="small"
-      class="wallet-send-action s-typography-button--large"
-      disabled="true"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
-      usedesignsystem="true"
-    >
-      
-        Incorrect address
-      
-    </s-button-stub>
-     
-    <wallet-fee-stub
-      value="0"
-    />
-  </div>
-</wallet-base-stub>
+/>
 `;
 
-exports[`WalletSend.vue [Create Step: Not SORA Address]: should be rendered correctly 1`] = `
+exports[`WalletSend.vue > [Create Step: Incorrect Address]: should be rendered correctly 1`] = `
 <wallet-base-stub
+  data-v-d2f12a45=""
   resetfocus="1"
   showback="true"
+  showclose="false"
   showheader="true"
   title="Send"
+  titlecenter="false"
   tooltip="Send tokens between SORA network accounts"
->
-  <div
-    class="wallet-send"
-  >
-    <address-book-input-stub
-      class="wallet-send-address"
-      excludeconnected="true"
-      propplaceholder=""
-      value="dfsakljfdlkjfhfkjladshslfjafds"
-    />
-     
-    <!---->
-     
-    <!---->
-     
-    <s-float-input-stub
-      class="wallet-send-input"
-      decimals="18"
-      delimiters="[object Object]"
-      haslocalestring="true"
-      max="100000000000000000000"
-      size="medium"
-      value=""
-    >
-      <div
-        class="wallet-send-amount"
-      >
-        <div
-          class="wallet-send-amount-title"
-        >
-          Amount
-        </div>
-         
-        <div
-          class="wallet-send-amount-balance"
-        >
-          <span
-            class="wallet-send-amount-balance-title"
-          >
-            Balance
-          </span>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="151.782"
-            fontsizerate="normal"
-            fontweightrate="normal"
-            hasfiatvalue="true"
-            value="123.4"
-            valuecanbehidden="true"
-            valueclass="wallet-send-amount-balance-value"
-            withleftshift="true"
-          />
-        </div>
-      </div>
-       
-      <div
-        class="asset s-flex"
-      >
-        <!---->
-         
-        <div
-          class="asset-box"
-        >
-          <div
-            class="asset-box__logo"
-          >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
-          </div>
-           
-          <span
-            class="asset-name"
-          >
-            XOR
-          </span>
-        </div>
-      </div>
-       
-      <div
-        class="asset-info"
-      >
-        <formatted-amount-stub
-          assetsymbol=""
-          customizablecurrency=""
-          fontsizerate="normal"
-          fontweightrate="normal"
-          isfiatvalue="true"
-          value="0"
-        />
-      </div>
-    </s-float-input-stub>
-     
-    <!---->
-     
-    <s-button-stub
-      borderradius="small"
-      class="wallet-send-action s-typography-button--large"
-      disabled="true"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
-      usedesignsystem="true"
-    >
-      
-        Incorrect address
-      
-    </s-button-stub>
-     
-    <wallet-fee-stub
-      value="0"
-    />
-  </div>
-</wallet-base-stub>
+/>
 `;
 
-exports[`WalletSend.vue [Create Step: The Same Account]: should be rendered correctly 1`] = `
+exports[`WalletSend.vue > [Create Step: Not SORA Address]: should be rendered correctly 1`] = `
 <wallet-base-stub
+  data-v-d2f12a45=""
   resetfocus="1"
   showback="true"
+  showclose="false"
   showheader="true"
   title="Send"
+  titlecenter="false"
   tooltip="Send tokens between SORA network accounts"
->
-  <div
-    class="wallet-send"
-  >
-    <address-book-input-stub
-      class="wallet-send-address"
-      excludeconnected="true"
-      isvalid="true"
-      propplaceholder=""
-      value="5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL"
-    />
-     
-    <p
-      class="wallet-send-address-warning"
-    >
-      Tokens will be sent to the SORA address below. Make sure the recipient can access the SORA chain to use the tokens:
-    </p>
-     
-    <s-tooltip-stub
-      animation="el-fade-in-linear"
-      appendtobody="true"
-      borderradius="small"
-      closedelay="0"
-      content="Copy Asset ID"
-      hideafter="0"
-      offset="0"
-      opendelay="500"
-      placement="top"
-      showarrow="true"
-      tabindex="0"
-      theme="auto"
-      usedesignsystem="true"
-    >
-      <p
-        class="wallet-send-address-formatted"
-      >
-        
-            5FbFx7AoLdnyMbKCbVZVZqXcZQkhy4HDKnerSW4oKeEQb6pL
-          
-      </p>
-    </s-tooltip-stub>
-     
-    <p
-      class="wallet-send-address-error"
-    >
-      You cannot send tokens to the same account that you are currently connected to.
-    </p>
-     
-    <s-float-input-stub
-      class="wallet-send-input"
-      decimals="18"
-      delimiters="[object Object]"
-      haslocalestring="true"
-      max="100000000000000000000"
-      size="medium"
-      value=""
-    >
-      <div
-        class="wallet-send-amount"
-      >
-        <div
-          class="wallet-send-amount-title"
-        >
-          Amount
-        </div>
-         
-        <div
-          class="wallet-send-amount-balance"
-        >
-          <span
-            class="wallet-send-amount-balance-title"
-          >
-            Balance
-          </span>
-           
-          <formatted-amount-with-fiat-value-stub
-            assetsymbol="XOR"
-            fiatfontsizerate="normal"
-            fiatfontweightrate="normal"
-            fiatformatasvalue="true"
-            fiatvalue="151.782"
-            fontsizerate="normal"
-            fontweightrate="normal"
-            hasfiatvalue="true"
-            value="123.4"
-            valuecanbehidden="true"
-            valueclass="wallet-send-amount-balance-value"
-            withleftshift="true"
-          />
-        </div>
-      </div>
-       
-      <div
-        class="asset s-flex"
-      >
-        <!---->
-         
-        <div
-          class="asset-box"
-        >
-          <div
-            class="asset-box__logo"
-          >
-            <token-logo-stub
-              size="small"
-              token="[object Object]"
-              tokensymbol=""
-            />
-          </div>
-           
-          <span
-            class="asset-name"
-          >
-            XOR
-          </span>
-        </div>
-      </div>
-       
-      <div
-        class="asset-info"
-      >
-        <formatted-amount-stub
-          assetsymbol=""
-          customizablecurrency=""
-          fontsizerate="normal"
-          fontweightrate="normal"
-          isfiatvalue="true"
-          value="0"
-        />
-      </div>
-    </s-float-input-stub>
-     
-    <!---->
-     
-    <s-button-stub
-      borderradius="small"
-      class="wallet-send-action s-typography-button--large"
-      disabled="true"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      size="medium"
-      tabindex="0"
-      tooltip=""
-      tooltipplacement="top"
-      type="primary"
-      usedesignsystem="true"
-    >
-      
-        Enter amount
-      
-    </s-button-stub>
-     
-    <wallet-fee-stub
-      value="0"
-    />
-  </div>
-</wallet-base-stub>
+/>
+`;
+
+exports[`WalletSend.vue > [Create Step: The Same Account]: should be rendered correctly 1`] = `
+<wallet-base-stub
+  data-v-d2f12a45=""
+  resetfocus="1"
+  showback="true"
+  showclose="false"
+  showheader="true"
+  title="Send"
+  titlecenter="false"
+  tooltip="Send tokens between SORA network accounts"
+/>
 `;

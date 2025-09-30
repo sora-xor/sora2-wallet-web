@@ -9,6 +9,11 @@ import {
 } from '@polkadot/util-crypto';
 import { SCRYPT_LENGTH, NONCE_LENGTH } from '@polkadot/util-crypto/json/constants';
 
+/**
+ * Cryptographic utilities mirroring the polkadot-js extension so Drive
+ * backups stay compatible with official tooling.
+ */
+
 const toHex = (data: Uint8Array): string => u8aToHex(data, -1, false);
 const fromHex = (data: string): Uint8Array => hexToU8a(data, -1);
 
@@ -36,6 +41,7 @@ const decrypt = (encrypted: Uint8Array, passphrase: string): Uint8Array => {
   return encoded;
 };
 
+/** Encrypts arbitrary text using the extension-compatible scrypt + nacl flow. */
 export const encryptToHex = (message: string, passphrase: string): string => {
   const messageBytes = stringToU8a(message);
   const encrypted = encrypt(messageBytes, passphrase);
@@ -43,6 +49,7 @@ export const encryptToHex = (message: string, passphrase: string): string => {
   return toHex(encrypted);
 };
 
+/** Decrypts strings produced by {@link encryptToHex}. */
 export const decryptFromHex = (encryptedMessage: string, passphrase: string): string => {
   const encryptedMessageBytes = fromHex(encryptedMessage);
   const decrypted = decrypt(encryptedMessageBytes, passphrase);
@@ -50,12 +57,14 @@ export const decryptFromHex = (encryptedMessage: string, passphrase: string): st
   return u8aToString(decrypted);
 };
 
+/** Converts a mnemonic to its mini secret seed representation. */
 export const generateSeed = (mnemonic: string) => {
   const seedBytes = mnemonicToMiniSecret(mnemonic);
 
   return toHex(seedBytes);
 };
 
+/** Normalizes raw seed strings to the expected hex format. */
 export const prepareSeed = (rawSeed: string) => {
   return isHex(rawSeed) ? rawSeed : `0x${rawSeed}`;
 };

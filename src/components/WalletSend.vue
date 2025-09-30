@@ -4,15 +4,15 @@
     :reset-focus="step.toString()"
     :title="t(`walletSend.${step === 1 ? 'title' : 'confirmTitle'}`)"
     :tooltip="tooltipContent"
-    :showHeader="showAdditionalInfo"
+    :show-header="showAdditionalInfo"
     @back="handleBack"
   >
     <div class="wallet-send">
       <template v-if="step === 1">
         <address-book-input
+          v-model="address"
           class="wallet-send-address"
           exclude-connected
-          v-model="address"
           :is-valid="validAddress"
           @update:name="updateName"
         />
@@ -37,43 +37,49 @@
           :max="MaxInputNumber"
           @input="fetchNetworkFeeDebounced"
         >
-          <div class="wallet-send-amount" slot="top">
-            <div class="wallet-send-amount-title">{{ t('amountText') }}</div>
-            <div class="wallet-send-amount-balance">
-              <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
-              <formatted-amount-with-fiat-value
-                value-can-be-hidden
-                fiat-format-as-value
-                with-left-shift
-                value-class="wallet-send-amount-balance-value"
-                :value="formattedBalance"
-                :asset-symbol="asset.symbol"
-                :fiat-value="getFiatBalance(asset)"
-              />
-            </div>
-          </div>
-          <div class="asset s-flex" slot="right">
-            <s-button
-              v-if="isMaxButtonAvailable"
-              class="asset-max s-typography-button--small"
-              type="primary"
-              alternative
-              size="mini"
-              border-radius="mini"
-              @click="handleMaxClick"
-            >
-              {{ t('walletSend.max') }}
-            </s-button>
-            <div class="asset-box">
-              <div class="asset-box__logo">
-                <token-logo :token="asset" size="small" />
+          <template #top>
+            <div class="wallet-send-amount">
+              <div class="wallet-send-amount-title">{{ t('amountText') }}</div>
+              <div class="wallet-send-amount-balance">
+                <span class="wallet-send-amount-balance-title">{{ t('walletSend.balance') }}</span>
+                <formatted-amount-with-fiat-value
+                  value-can-be-hidden
+                  fiat-format-as-value
+                  with-left-shift
+                  value-class="wallet-send-amount-balance-value"
+                  :value="formattedBalance"
+                  :asset-symbol="asset.symbol"
+                  :fiat-value="getFiatBalance(asset)"
+                />
               </div>
-              <span class="asset-name">{{ asset.symbol }}</span>
             </div>
-          </div>
-          <div class="asset-info" slot="bottom">
-            <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
-          </div>
+          </template>
+          <template #right>
+            <div class="asset s-flex">
+              <s-button
+                v-if="isMaxButtonAvailable"
+                class="asset-max s-typography-button--small"
+                type="primary"
+                alternative
+                size="mini"
+                border-radius="mini"
+                @click="handleMaxClick"
+              >
+                {{ t('walletSend.max') }}
+              </s-button>
+              <div class="asset-box">
+                <div class="asset-box__logo">
+                  <token-logo :token="asset" size="small" />
+                </div>
+                <span class="asset-name">{{ asset.symbol }}</span>
+              </div>
+            </div>
+          </template>
+          <template #bottom>
+            <div class="asset-info">
+              <formatted-amount v-if="fiatAmount" :value="fiatAmount" is-fiat-value />
+            </div>
+          </template>
         </s-float-input>
         <template v-if="!isXorAccountAsset">
           <div class="wallet-send__switch-btn">
@@ -82,8 +88,8 @@
           </div>
           <template v-if="withVesting">
             <s-select
-              class="wallet-send__vesting-period"
               v-model="selectedVestingPeriod"
+              class="wallet-send__vesting-period"
               :placeholder="t('walletSend.unlockFrequency')"
             >
               <s-option
@@ -94,20 +100,23 @@
               />
             </s-select>
             <s-float-input
+              v-model="vestingPercentage"
               class="wallet-send__vesting-input"
               has-locale-string
-              v-model="vestingPercentage"
               :placeholder="t('walletSend.vestingPercentage')"
               :decimals="2"
               :delimiters="delimiters"
               :max="100"
               @input="fetchNetworkFeeDebounced"
             >
-              <span slot="right">%</span>
+              <template #right>
+                <span>%</span>
+              </template>
             </s-float-input>
             <div class="wallet-send__vesting-start-container">
               <span class="wallet-send__vesting-start-placeholder">{{ t('walletSend.startUnlockingDate') }}</span>
               <s-date-picker
+                v-model="vestingStart"
                 class="wallet-send__vesting-start"
                 popper-class="wallet-send__vesting-start-datepicker"
                 size="big"
@@ -117,7 +126,6 @@
                 input-type="input"
                 :clearable="false"
                 :picker-options="{ disabledDate }"
-                v-model="vestingStart"
               />
             </div>
           </template>
@@ -183,7 +191,7 @@ import { FPNumber, Operation } from '@sora-substrate/sdk';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
 import dayjs from 'dayjs';
 import debounce from 'lodash/fp/debounce';
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { RouteNames } from '../consts';
@@ -213,7 +221,7 @@ import type { Subscription } from 'rxjs';
 
 const MS_IN_DAY = 24 * 60 * 60_000;
 
-@Component({
+@Options({
   components: {
     WalletBase,
     WalletAccount,
@@ -227,7 +235,7 @@ const MS_IN_DAY = 24 * 60 * 60_000;
     InfoLine,
   },
 })
-export default class WalletSend extends Mixins(
+export default class WalletSend extends mixins(
   TransactionMixin,
   FormattedAmountMixin,
   CopyAddressMixin,
@@ -299,7 +307,7 @@ export default class WalletSend extends Mixins(
     this.fee = this.getFPNumberFromCodec(this.networkFees.Transfer);
   }
 
-  beforeDestroy(): void {
+  beforeUnmount(): void {
     this.resetAssetBalanceSubscription();
   }
 

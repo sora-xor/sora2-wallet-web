@@ -2,12 +2,12 @@
   <div class="add-asset-nft">
     <div v-if="!tokenDetailsPageOpened" class="add-asset-nft__page">
       <search-input
-        autofocus
         v-model="search"
+        autofocus
         :placeholder="t(`addAsset.searchInputText`)"
         :maxlength="100"
-        @clear="resetSearch"
         class="add-asset-nft__input"
+        @clear="resetSearch"
       />
       <asset-list
         :assets="foundAssets"
@@ -30,12 +30,12 @@
         {{ t('addAsset.add') }}
       </s-button>
     </div>
-    <add-asset-details-card v-else :select-assets="selectedAssets" assetTypeKey="nft" />
+    <add-asset-details-card v-else :select-assets="selectedAssets" asset-type-key="nft" />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { api } from '../../api';
 import AssetList from '../AssetList.vue';
@@ -46,14 +46,14 @@ import AddAssetDetailsCard from './AddAssetDetailsCard.vue';
 
 import type { Asset } from '@sora-substrate/sdk/build/assets/types';
 
-@Component({
+@Options({
   components: {
     AssetList,
     SearchInput,
     AddAssetDetailsCard,
   },
 })
-export default class AddAssetNFT extends Mixins(AddAssetMixin) {
+export default class AddAssetNFT extends mixins(AddAssetMixin) {
   private get notAddedNftAssets(): Array<Asset> {
     return this.assets.filter((asset) => !(asset.address in this.accountAssetsAddressTable) && api.assets.isNft(asset));
   }

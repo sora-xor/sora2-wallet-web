@@ -1,19 +1,20 @@
 // https://docs.cypress.io/api/introduction/api.html
 
-import DesignSystem from '@soramitsu-ui/ui-vue2/lib/types/DesignSystem';
-import Theme from '@soramitsu-ui/ui-vue2/lib/types/Theme';
+import { Theme } from '@/consts';
 
 describe('App.vue test', () => {
   it('Check theme switch', () => {
     cy.openApp();
     // Each cy.get('html') takes time so it's better to call it every time
     // because of async theme settings
-    cy.get('html').checkAttr('design-system', DesignSystem.NEUMORPHIC);
-    cy.get('html').checkAttr('design-system-theme', Theme.LIGHT);
+    const themeScope = cy.get('.sora-theme-provider').first();
+    themeScope.should('have.attr', 'data-theme', Theme.Light);
+
     const switchThemeButton = cy.get('.theme-switch');
-    switchThemeButton.contains(`${Theme.LIGHT} theme`);
+    switchThemeButton.contains(`${Theme.Light} theme`);
     switchThemeButton.click();
-    switchThemeButton.contains(`${Theme.DARK} theme`);
-    cy.get('html').checkAttr('design-system-theme', Theme.DARK);
+    switchThemeButton.contains(`${Theme.Dark} theme`);
+
+    themeScope.should('have.attr', 'data-theme', Theme.Dark);
   });
 });

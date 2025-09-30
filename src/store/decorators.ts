@@ -32,7 +32,7 @@ const mutation = walletMutation.wallet;
 const action = walletAction.wallet;
 
 // Add Design System getters
-getter.libraryDesignSystem = attachDecorator(VuexOperation.Getter, 'libraryDesignSystem');
-getter.libraryTheme = attachDecorator(VuexOperation.Getter, 'libraryTheme');
+getter.libraryDesignSystem = attachDecorator(VuexOperation.Getter, 'libraryDesignSystem', 'wallet/settings');
+getter.libraryTheme = attachDecorator(VuexOperation.Getter, 'libraryTheme', 'wallet/settings');
 
 export { state, getter, mutation, action };

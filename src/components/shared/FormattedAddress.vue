@@ -13,42 +13,51 @@
   </s-tooltip>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed } from 'vue';
 
-import { getTextWidth } from '../../util';
-import CopyAddressMixin from '../mixins/CopyAddressMixin';
+import { useCopyAddress } from '@/composables/useCopyAddress';
+import { getTextWidth } from '@/util';
 
-@Component
-export default class FormattedAddress extends Mixins(CopyAddressMixin) {
-  @Prop({ default: '', type: String }) readonly value!: string;
-  @Prop({ default: '', type: String }) readonly tooltipText!: string;
-  /** Default visible address length, default: 12 */
-  @Prop({ default: 12, type: [Number, String] }) readonly symbols!: number | string;
-  /** Offset in px, default: 0 */
-  @Prop({ default: 0, type: [Number, String] }) readonly offset!: number | string;
-  /** Offset in symbols, default: 0 */
-  @Prop({ default: 0, type: [Number, String] }) readonly symbolsOffset!: number | string;
-
-  get sliced(): boolean {
-    return this.value.length >= +this.symbols;
+const props = withDefaults(
+  defineProps<{
+    value?: string;
+    tooltipText?: string;
+    symbols?: number | string;
+    offset?: number | string;
+    symbolsOffset?: number | string;
+  }>(),
+  {
+    value: '',
+    tooltipText: '',
+    symbols: 12,
+    offset: 0,
+    symbolsOffset: 0,
   }
+);
 
-  get count(): number {
-    return +this.symbols / 2;
-  }
+const { copyTooltip, handleCopyAddress } = useCopyAddress();
 
-  get firstPartWidth(): string {
-    const text = this.value.slice(0, Math.round(this.count) + Number(this.symbolsOffset));
-    const width = getTextWidth(text) - Number(this.offset);
-    return width + 'px';
-  }
+const symbolsCount = computed(() => Number(props.symbols));
+const offsetValue = computed(() => Number(props.offset));
+const symbolsOffsetValue = computed(() => Number(props.symbolsOffset));
 
-  get secondPart(): string {
-    // TODO: Remove this dirty hack. It's made just for browser search
-    return this.value.slice(-Math.floor(this.count) + Number(this.symbolsOffset));
-  }
-}
+const sliced = computed(() => props.value.length >= symbolsCount.value);
+
+const count = computed(() => symbolsCount.value / 2);
+
+const firstPartWidth = computed(() => {
+  const text = props.value.slice(0, Math.round(count.value) + symbolsOffsetValue.value);
+  const width = getTextWidth(text) - offsetValue.value;
+  return `${width}px`;
+});
+
+const secondPart = computed(() => props.value.slice(-Math.floor(count.value) + symbolsOffsetValue.value));
+
+defineExpose({
+  handleCopyAddress,
+  copyTooltip,
+});
 </script>
 
 <style lang="scss" scoped>

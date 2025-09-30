@@ -73,8 +73,8 @@
           :value="amountOfDaysBeforeExpirationTrx"
         />
         <info-line
-          class="xor-min-amount"
           v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
+          class="xor-min-amount"
           :label="t('mst.minFee') + ` (${getMainAccountName()})`"
         >
           <span>
@@ -110,12 +110,12 @@
       v-if="isMST && isTransactionNotSigned && isNotTheAccountInitiatedTrx"
       class="sign-btn disabled"
       type="primary"
-      @click="onSignButtonClick"
       :disabled="minAmountOfXorForSign === 0 || currentAmountOfXorSignerHas <= minAmountOfXorForSign"
+      @click="onSignButtonClick"
     >
       {{ t('mst.sign') }}
     </s-button>
-    <div class="amount-of-signatures" v-if="isMST && amountOfThreshold != 0">
+    <div v-if="isMST && amountOfThreshold != 0" class="amount-of-signatures">
       <div class="already-signed">
         <p>{{ t('mst.amountOfSignatures').toUpperCase() }}</p>
         <p>
@@ -135,7 +135,7 @@
 import { TransactionStatus, Operation, FPNumber } from '@sora-substrate/sdk';
 import { KnownSymbols, XOR } from '@sora-substrate/sdk/build/assets/consts';
 import dayjs from 'dayjs';
-import { Component, Mixins, Watch } from 'vue-property-decorator';
+import { Options, mixins, Watch } from 'vue-property-decorator';
 
 import { api } from '../api';
 import { HashType } from '../consts';
@@ -154,7 +154,7 @@ import WalletBase from './WalletBase.vue';
 
 import type { PolkadotJsAccount, AssetsTable } from '../types/common';
 import type { HistoryItem } from '@sora-substrate/sdk';
-@Component({
+@Options({
   components: {
     WalletBase,
     InfoLine,
@@ -164,7 +164,7 @@ import type { HistoryItem } from '@sora-substrate/sdk';
     AdarTxDetails,
   },
 })
-export default class WalletTransactionDetails extends Mixins(
+export default class WalletTransactionDetails extends mixins(
   TranslationMixin,
   NumberFormatterMixin,
   EthBridgeTransactionMixin,

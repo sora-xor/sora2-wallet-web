@@ -1,7 +1,7 @@
 <template>
   <dialog-base
+    v-model:visible="isVisible"
     :title="t('mst.addrCreation')"
-    :visible.sync="isVisible"
     append-to-body
     show-back
     @back="handleBack"
@@ -20,7 +20,7 @@
       <s-divider />
       <s-scrollbar class="data-multisig__scrollbar">
         <div class="data-multisig-scrollbar__info">
-          <div class="address" v-for="(address, index) in mstData.addresses" :key="index + 1">
+          <div v-for="(address, index) in mstData.addresses" :key="index + 1" class="address">
             <div class="data">
               <p>{{ t('addressText') }} {{ index + 1 }}</p>
               <formatted-address :value="address" :symbols="24" />
@@ -43,83 +43,103 @@
   </dialog-base>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, toRef } from 'vue';
 
-import { api } from '../../api';
-import { RouteNames } from '../../consts';
-import { mutation, action } from '../../store/decorators';
+import { api } from '@/api';
+import { useDialogVisibility } from '@/composables/useDialog';
+import { useNotification } from '@/composables/useNotification';
+import { useTranslation } from '@/composables/useTranslation';
+import { RouteNames } from '@/consts';
+import store from '@/store';
+import type { Route } from '@/store/router/types';
+import type { MSTData } from '@/types/mst';
+
 import DialogBase from '../DialogBase.vue';
-import DialogMixin from '../mixins/DialogMixin';
-import NotificationMixin from '../mixins/NotificationMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
-import FormattedAddress from '../shared/FormattedAddress.vue';
-import SimpleNotification from '../SimpleNotification.vue';
 
 import CreateMstWalletDialog from './CreateMstWalletDialog.vue';
 
-import type { Route } from '../../store/router/types';
-import type { MSTData } from '../../types/mst';
+defineOptions({ name: 'MultisigCreateDialog' });
 
-@Component({
-  name: 'MultisigCreateDialog',
-  components: {
-    DialogBase,
-    SimpleNotification,
-    FormattedAddress,
-    CreateMstWalletDialog,
-  },
-})
-export default class MultisigCreateDialog extends Mixins(TranslationMixin, NotificationMixin, DialogMixin) {
-  @Prop({ default: () => ({}), type: Object }) readonly mstData!: MSTData;
-  @Prop({ default: 0, type: Number }) readonly threshold!: number;
-
-  cardMessages = [this.t('mst.cardMessageFirst'), this.t('mst.cardMessageSecond')];
-
-  @mutation.router.navigate private navigate!: (options: Route) => void;
-  @mutation.account.setIsMstAddressExist setIsMstAddressExist!: (isExist: boolean) => void;
-  @mutation.account.setIsMST setIsMST!: (isMST: boolean) => void;
-  @mutation.account.syncWithStorage syncWithStorage!: () => void;
-
-  @action.account.afterLogin afterLogin!: () => void;
-  @action.transactions.trackPendingMstTxs trackPendingMstTxs!: () => void;
-
-  shouldShowCreateMSTWalletDialog = false;
-
-  handleClose() {
-    this.closeDialog();
-    this.$emit('close');
+const props = withDefaults(
+  defineProps<{
+    visible?: boolean;
+    mstData?: MSTData;
+    threshold?: number;
+  }>(),
+  {
+    visible: false,
+    mstData: () =>
+      ({
+        addresses: [],
+        multisigName: '',
+        threshold: 0,
+        duration: 0,
+      }) as MSTData,
+    threshold: 0,
   }
+);
 
-  handleBack() {
-    this.closeDialog();
-    this.$emit('back');
-  }
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'close'): void;
+  (event: 'back'): void;
+}>();
 
-  handleCreateClose(): void {
-    api.mst.createMST(
-      this.mstData.addresses,
-      this.mstData.threshold || 0,
-      this.mstData.multisigName,
-      this.mstData.duration
-    );
-    this.setIsMstAddressExist(true);
-    this.setIsMST(true);
-    api.mst.switchAccount(true);
-    this.syncWithStorage();
-    this.afterLogin();
-    this.trackPendingMstTxs();
-    this.closeDialog();
-    this.navigate({ name: RouteNames.Wallet });
-    this.showAppNotification(this.t('mst.successMstSetUp'), 'success');
-  }
-}
+const { t } = useTranslation();
+const { showAppNotification } = useNotification();
+
+const { isVisible, closeDialog } = useDialogVisibility(toRef(props, 'visible'), {
+  emit: (value) => emit('update:visible', value),
+  onClose: () => emit('close'),
+});
+
+const navigate = (route: Route) => {
+  store.original.commit('router/navigate', route);
+};
+const setIsMstAddressExist = store.commit.wallet.account.setIsMstAddressExist;
+const setIsMST = store.commit.wallet.account.setIsMST;
+const syncWithStorage = store.commit.wallet.account.syncWithStorage;
+const afterLogin = store.dispatch.wallet.account.afterLogin;
+const trackPendingMstTxs = store.dispatch.wallet.transactions.trackPendingMstTxs;
+
+const cardMessages = computed(() => [t('mst.cardMessageFirst'), t('mst.cardMessageSecond')]);
+
+const handleClose = () => {
+  closeDialog();
+  emit('close');
+};
+
+const handleBack = () => {
+  closeDialog();
+  emit('back');
+};
+
+const handleCreateClose = () => {
+  const data = props.mstData ?? {
+    addresses: [],
+    multisigName: '',
+    threshold: 0,
+    duration: 0,
+  };
+
+  api.mst.createMST(data.addresses, data.threshold || 0, data.multisigName, data.duration);
+  setIsMstAddressExist(true);
+  setIsMST(true);
+  api.mst.switchAccount(true);
+  syncWithStorage();
+  afterLogin();
+  trackPendingMstTxs();
+  closeDialog();
+  navigate({ name: RouteNames.Wallet });
+  showAppNotification(t('mst.successMstSetUp'), 'success');
+};
 </script>
 
 <style lang="scss">
 .data-multisig__scrollbar {
-  @include scrollbar($basic-spacing-big);
   height: 105px;
+  @include scrollbar($basic-spacing-big);
   .el-scrollbar__wrap {
     overflow-x: unset;
   }

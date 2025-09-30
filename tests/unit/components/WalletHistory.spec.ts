@@ -25,7 +25,7 @@ const createStore = ({ history = {}, externalHistory = {} } = {}) =>
     },
     router: {
       mutations: {
-        navigate: jest.fn(),
+        navigate: vi.fn(),
       },
     },
     transactions: {
@@ -37,13 +37,13 @@ const createStore = ({ history = {}, externalHistory = {} } = {}) =>
         saveExternalHistoryUpdates: false,
       }),
       mutations: {
-        getHistory: jest.fn(),
-        resetExternalHistory: jest.fn(),
-        addActiveTx: jest.fn(),
-        removeActiveTxs: jest.fn(),
+        getHistory: vi.fn(),
+        resetExternalHistory: vi.fn(),
+        addActiveTx: vi.fn(),
+        removeActiveTxs: vi.fn(),
       },
       actions: {
-        getExternalHistory: jest.fn(),
+        getExternalHistory: vi.fn(),
       },
       getters: {
         selectedTx: () => null,
@@ -69,7 +69,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
     });
     const textMessage = wrapper.find('.history-empty');
 
-    expect(textMessage.exists()).toBeTrue();
+    expect(textMessage.exists()).toBe(true);
     expect(wrapper.element).toMatchSnapshot();
   });
 
@@ -103,7 +103,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
     });
     const pendingIcon = wrapper.find('.info-status--loading');
 
-    expect(pendingIcon.exists()).toBeTrue();
+    expect(pendingIcon.exists()).toBe(true);
     expect(wrapper.element).toMatchSnapshot();
   });
 
@@ -125,7 +125,7 @@ useDescribe('WalletHistory.vue', WalletHistory, () => {
     });
     const errorIcon = wrapper.find('.info-status--error');
 
-    expect(errorIcon.exists()).toBeTrue();
+    expect(errorIcon.exists()).toBe(true);
     expect(wrapper.element).toMatchSnapshot();
   });
 });

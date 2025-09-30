@@ -39,7 +39,7 @@ const createStore = (permissions: WalletPermissions = MOCK_WALLET_PERMISSIONS, w
     },
     router: {
       mutations: {
-        navigate: jest.fn(),
+        navigate: vi.fn(),
       },
     },
   });
@@ -61,7 +61,7 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
     });
     const sendBtn = wrapper.find('.send');
 
-    expect(sendBtn.exists()).toBeFalse();
+    expect(sendBtn.exists()).toBe(false);
   });
 
   it('should not render swap button when swapAssets property is false', () => {
@@ -70,7 +70,7 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
     });
     const swapBtn = wrapper.find('.swap');
 
-    expect(swapBtn.exists()).toBeFalse();
+    expect(swapBtn.exists()).toBe(false);
   });
 
   it('should not render asset details button when showAssetDetails property is false', () => {
@@ -79,7 +79,7 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
     });
     const detailsBtn = wrapper.find('.el-button--details');
 
-    expect(detailsBtn.exists()).toBeFalse();
+    expect(detailsBtn.exists()).toBe(false);
   });
 
   it('should not render add assets button when addAssets property is false', () => {
@@ -88,7 +88,7 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
     });
     const addAssetsBtn = wrapper.find('.wallet-assets-add');
 
-    expect(addAssetsBtn.exists()).toBeFalse();
+    expect(addAssetsBtn.exists()).toBe(false);
   });
 
   it('should not render fiat value when withoutFiatAndApy property is true', () => {
@@ -97,6 +97,6 @@ useDescribe('WalletAssets.vue', WalletAssets, () => {
     });
     const fiatValue = wrapper.find('.wallet-assets--fiat');
 
-    expect(fiatValue.exists()).toBeFalse();
+    expect(fiatValue.exists()).toBe(false);
   });
 });

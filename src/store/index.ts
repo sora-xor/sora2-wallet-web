@@ -1,12 +1,9 @@
 import { createDirectStore } from 'direct-vuex';
-import Vue from 'vue';
 import Vuex from 'vuex';
 
 import wallet, { WalletModule } from './wallet';
 
 import type { Store } from 'vuex';
-
-Vue.use(Vuex);
 
 const modules = {
   wallet,

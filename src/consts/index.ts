@@ -32,6 +32,11 @@ export enum IndexerType {
   SUBSQUID = 'subsquid',
 }
 
+export enum Theme {
+  Light = 'light',
+  Dark = 'dark',
+}
+
 export enum AppWallet {
   Sora = 'sora',
   WalletConnect = 'walletconnect',

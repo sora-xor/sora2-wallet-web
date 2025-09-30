@@ -20,7 +20,7 @@ const createStore = (currency = DaiCurrency, exchangeRate = 1) =>
         exchangeRate: () => exchangeRate,
       },
       mutations: {
-        setFilterOptions: jest.fn(),
+        setFilterOptions: vi.fn(),
       },
     },
   });

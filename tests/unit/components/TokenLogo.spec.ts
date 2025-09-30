@@ -25,6 +25,6 @@ useDescribe('TokenLogo.vue', TokenLogo, () => {
     });
     const nftComponent = wrapper.find('.asset-logo-nft');
 
-    expect(nftComponent.exists()).toBeTrue();
+    expect(nftComponent.exists()).toBe(true);
   });
 });

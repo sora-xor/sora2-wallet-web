@@ -1,7 +1,7 @@
 <template>
   <account-card v-bind="$attrs">
     <template #avatar>
-      <wallet-avatar slot="avatar" class="account-gravatar" :address="address" :size="28" />
+      <wallet-avatar class="account-gravatar" :address="address" :size="28" />
     </template>
     <template #name>
       <identity v-if="identity" :identity="identity" :local-name="name" />
@@ -16,88 +16,106 @@
   </account-card>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, ref, watch } from 'vue';
 
-import { api } from '../../api';
-import { ObjectInit } from '../../consts';
-import { getter } from '../../store/decorators';
-import { formatAccountAddress, getAccountIdentity } from '../../util';
-import LoadingMixin from '../mixins/LoadingMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
+import { api } from '@/api';
+import { useLoading } from '@/composables/useLoading';
+import { useTranslation } from '@/composables/useTranslation';
+import store from '@/store';
+import type { AccountIdentity, PolkadotJsAccount } from '@/types/common';
+import { formatAccountAddress, getAccountIdentity } from '@/util';
+
 import FormattedAddress from '../shared/FormattedAddress.vue';
 
 import AccountCard from './AccountCard.vue';
 import Identity from './Identity.vue';
 import WalletAvatar from './WalletAvatar.vue';
 
-import type { PolkadotJsAccount, AccountIdentity } from '../../types/common';
 import type { WithConnectionApi } from '@sora-substrate/sdk';
 
 const DEFAULT_NAME = '<unknown>';
 
-@Component({
-  components: {
-    AccountCard,
-    Identity,
-    WalletAvatar,
-    FormattedAddress,
-  },
-})
-export default class WalletAccount extends Mixins(TranslationMixin, LoadingMixin) {
-  @Prop({ default: ObjectInit, type: Object }) readonly polkadotAccount!: PolkadotJsAccount;
-  @Prop({ default: false, type: Boolean }) readonly withIdentity!: boolean;
-  @Prop({ default: () => api, type: Object }) readonly chainApi!: WithConnectionApi;
+const props = withDefaults(
+  defineProps<{
+    polkadotAccount?: Nullable<PolkadotJsAccount>;
+    withIdentity?: boolean;
+    chainApi?: Nullable<WithConnectionApi>;
+  }>(),
+  {
+    polkadotAccount: null,
+    withIdentity: false,
+    chainApi: null,
+  }
+);
 
-  @getter.account.account private connected!: PolkadotJsAccount;
+const emit = defineEmits<{
+  (event: 'identity', identity: Nullable<AccountIdentity>): void;
+}>();
 
-  accountIdentity: Nullable<AccountIdentity> = null;
+const { t } = useTranslation();
 
-  @Watch('address', { immediate: true })
-  private async updateIdentity(value: string, oldValue: string) {
-    if (!this.withIdentity || value === oldValue) return;
+const isWalletLoaded = computed(() => store.state.wallet.settings.isWalletLoaded);
+const { withApi } = useLoading({ isWalletLoaded });
 
-    await this.withApi(async () => {
-      this.accountIdentity = await getAccountIdentity(value, this.chainApi);
-      this.$emit('identity', this.accountIdentity);
+const resolvedChainApi = computed<WithConnectionApi>(() => props.chainApi ?? api);
+
+const connected = computed(() => store.getters['wallet/account/account'] as Nullable<PolkadotJsAccount>);
+
+const account = computed<Nullable<PolkadotJsAccount>>(() => props.polkadotAccount ?? connected.value ?? null);
+
+const address = computed(() => {
+  const value = account.value?.address;
+
+  return value ? formatAccountAddress(value, true, resolvedChainApi.value) : '';
+});
+
+const accountIdentity = ref<Nullable<AccountIdentity>>(null);
+
+watch(
+  address,
+  async (value, oldValue) => {
+    if (!props.withIdentity || value === oldValue || !value) return;
+
+    await withApi(async () => {
+      accountIdentity.value = await getAccountIdentity(value, resolvedChainApi.value);
+      emit('identity', accountIdentity.value);
     });
-  }
+  },
+  { immediate: true }
+);
 
-  get account(): PolkadotJsAccount {
-    return this.polkadotAccount || this.connected;
-  }
+const name = computed(() => {
+  try {
+    if (account.value?.name) {
+      return account.value.name;
+    }
 
-  get address(): string {
-    return formatAccountAddress(this.account.address, true, this.chainApi);
-  }
-
-  get name(): string {
-    try {
-      if (this.account.name) {
-        return this.account.name;
-      }
-
-      const mstAddress = api.mst.getMstAddress();
-      if (!mstAddress) {
-        return DEFAULT_NAME;
-      }
-
-      const mstAccount = api.mst.getMstAccount(mstAddress);
-      if (mstAccount?.meta?.name) {
-        return mstAccount.meta.name;
-      }
-
-      return DEFAULT_NAME;
-    } catch (error) {
-      console.error('Error fetching multisig account:', error);
+    const mstAddress = api.mst.getMstAddress();
+    if (!mstAddress) {
       return DEFAULT_NAME;
     }
-  }
 
-  get identity(): Nullable<AccountIdentity> {
-    return this.account.identity ?? this.accountIdentity;
+    const mstAccount = api.mst.getMstAccount(mstAddress);
+    if (mstAccount?.meta?.name) {
+      return mstAccount.meta.name;
+    }
+
+    return DEFAULT_NAME;
+  } catch (error) {
+    console.error('Error fetching multisig account:', error);
+    return DEFAULT_NAME;
   }
-}
+});
+
+const identity = computed<Nullable<AccountIdentity>>(() => account.value?.identity ?? accountIdentity.value);
+
+defineExpose({
+  account,
+  address,
+  name,
+  identity,
+});
 </script>
 
 <style lang="scss">

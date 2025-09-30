@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import Identicon from '@polkadot/vue-identicon';
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 
 enum THEMES {
   POLKADOT = 'polkadot',
@@ -12,7 +12,7 @@ enum THEMES {
   BEACHBALL = 'beachball',
 }
 
-@Component({
+@Options({
   components: {
     Identicon,
   },

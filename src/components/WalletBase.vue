@@ -10,14 +10,14 @@
     class="base"
   >
     <template #header>
-      <div :class="headerClasses" ref="headerBase" :tabindex="hasFocusReset ? 0 : -1">
+      <div ref="headerBase" :class="headerClasses" :tabindex="hasFocusReset ? 0 : -1">
         <div v-if="showBack" :class="backButtonClass">
           <s-button type="action" @click="handleBackClick">
             <s-icon name="arrows-chevron-left-rounded-24" size="28" />
           </s-button>
         </div>
 
-        <h3 class="base-title_text" v-if="showHeader">
+        <h3 v-if="showHeader" class="base-title_text">
           {{ title }}
           <s-tooltip
             v-if="tooltip"
@@ -52,67 +52,92 @@
   </s-card>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop, Watch } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, onMounted, ref, watch } from 'vue';
 
-import TranslationMixin from './mixins/TranslationMixin';
+import { useTranslation } from '@/composables/useTranslation';
 
-@Component
-export default class WalletBase extends Mixins(TranslationMixin) {
-  @Prop({ default: '', type: String }) readonly title!: string;
-  @Prop({ default: '', type: String }) readonly tooltip!: string;
-  @Prop({ default: false, type: Boolean }) readonly titleCenter!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly showBack!: boolean;
-  @Prop({ default: false, type: Boolean }) readonly showClose!: boolean;
-  @Prop({ default: true, type: Boolean }) readonly showHeader!: boolean;
-  @Prop({ default: '', type: String }) readonly resetFocus!: string;
+const props = withDefaults(
+  defineProps<{
+    title?: string;
+    tooltip?: string;
+    titleCenter?: boolean;
+    showBack?: boolean;
+    showClose?: boolean;
+    showHeader?: boolean;
+    resetFocus?: string;
+  }>(),
+  {
+    title: '',
+    tooltip: '',
+    titleCenter: false,
+    showBack: false,
+    showClose: false,
+    showHeader: true,
+    resetFocus: '',
+  }
+);
 
-  @Watch('resetFocus')
-  private async resetBaseFocus(value: string) {
+const emit = defineEmits<{
+  (event: 'back'): void;
+  (event: 'close'): void;
+}>();
+
+const { t } = useTranslation();
+
+const headerBase = ref<HTMLElement | null>(null);
+const hasFocusReset = ref(false);
+
+const setFocusToHeader = () => {
+  const element = headerBase.value;
+  if (!element) return;
+  element.focus();
+  element.blur();
+};
+
+watch(
+  () => props.resetFocus,
+  (value) => {
     if (value) {
-      this.hasFocusReset = true;
-      this.setFocusToHeader();
-      this.hasFocusReset = false;
+      hasFocusReset.value = true;
+      setFocusToHeader();
+      hasFocusReset.value = false;
     }
   }
+);
 
-  setFocusToHeader() {
-    const editButtonRef = this.$refs.headerBase as any;
-    editButtonRef.focus();
-    editButtonRef.blur();
+const headerClasses = computed(() => {
+  const classes = ['base-title', 's-flex'];
+  if (props.showBack || props.titleCenter) {
+    classes.push('base-title--center');
   }
-
-  hasFocusReset = false;
-
-  get headerClasses(): Array<string> {
-    const cssClasses: Array<string> = ['base-title', 's-flex'];
-    if (this.showBack || this.titleCenter) {
-      cssClasses.push('base-title--center');
-    }
-    if (this.showClose) {
-      cssClasses.push('base-title--actions');
-    }
-    return cssClasses;
+  if (props.showClose) {
+    classes.push('base-title--actions');
   }
+  return classes;
+});
 
-  get backButtonClass(): Array<string> {
-    const base = ['base-title_back'];
-    if (!this.showBack) base.push('base-title_back--hidden');
-    return base;
-  }
+const backButtonClass = computed(() => {
+  const base = ['base-title_back'];
+  if (!props.showBack) base.push('base-title_back--hidden');
+  return base;
+});
 
-  mounted(): void {
-    this.setFocusToHeader();
-  }
+const handleBackClick = () => {
+  emit('back');
+};
 
-  handleBackClick(): void {
-    this.$emit('back');
-  }
+const handleCloseClick = () => {
+  emit('close');
+};
 
-  handleCloseClick(): void {
-    this.$emit('close');
-  }
-}
+onMounted(() => {
+  setFocusToHeader();
+});
+
+defineExpose({
+  setFocusToHeader,
+});
 </script>
 
 <style lang="scss">

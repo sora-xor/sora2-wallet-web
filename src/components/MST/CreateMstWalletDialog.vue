@@ -1,15 +1,15 @@
 <template>
   <dialog-base
+    v-model:visible="isVisible"
     show-back
     :title="t('mst.multisigAccount')"
     :show-header="showHeader"
+    append-to-body
     @back="handleBack"
     @close="handleClose"
-    :visible.sync="isVisible"
-    append-to-body
   >
     <div class="multisig-wallet">
-      <s-input :placeholder="t('mst.enterName')" :minlength="1" v-model="multisigName" />
+      <s-input v-model="multisigName" :placeholder="t('mst.enterName')" :minlength="1" />
       <p class="multisig-title-data address">{{ t('mst.addMST').toUpperCase() }}</p>
       <account-card class="multisig-user-address">
         <div class="address-card">
@@ -21,8 +21,8 @@
         <div class="multisig-addresses-input">
           <div v-for="(address, index) in multisigAddresses" :key="index + 1">
             <address-book-input
-              exclude-connected
               v-model="multisigAddresses[index]"
+              exclude-connected
               :is-valid="validAddress(address)"
               :prop-placeholder="t('mst.enterAddress')"
               :on-remove="() => removeAddress(index)"
@@ -43,8 +43,8 @@
         <p>{{ t('mst.addAddress') }}</p>
       </div>
       <p class="multisig-title-data">{{ t('mst.thresholdNumber').toUpperCase() }}</p>
-      <s-input placeholder="1" type="number" v-model="amountOfThreshold" class="threshold-amount">
-        <template v-slot:suffix> /{{ totalNumberOfAddresses }} </template>
+      <s-input v-model="amountOfThreshold" placeholder="1" type="number" class="threshold-amount">
+        <template #suffix> /{{ totalNumberOfAddresses }} </template>
       </s-input>
       <s-tabs v-model="mstDurationTrxModel" type="rounded" class="multisig-duration-trx">
         <s-tab v-for="duration in durations" :key="duration" :label="duration" :name="duration" />
@@ -54,169 +54,173 @@
       </s-button>
     </div>
     <multisig-create-dialog
-      :visible.sync="MSTDialogVisibility"
-      :mst-data="MSTData"
-      :threshold="amountOfThreshold"
+      v-model:visible="mstDialogVisibility"
+      :mst-data="mstData"
+      :threshold="amountOfThreshold ?? undefined"
       @back="handleBackFromMSTDialog"
       @close="handleClose"
     />
   </dialog-base>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Watch } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, onMounted, ref, toRef, watch } from 'vue';
 
-import { PolkadotJsAccount } from '@/types/common';
+import { useDialogVisibility } from '@/composables/useDialog';
+import { useTranslation } from '@/composables/useTranslation';
+import { mstTrxDeadline } from '@/consts/mst';
+import store from '@/store';
+import type { MSTData } from '@/types/mst';
+import { validateAddress } from '@/util';
 
-import { mstTrxDeadline } from '../../consts/mst';
-import { getter } from '../../store/decorators';
-import { validateAddress } from '../../util';
 import AccountCard from '../Account/AccountCard.vue';
 import AddressBookInput from '../AddressBook/Input.vue';
 import DialogBase from '../DialogBase.vue';
-import DialogMixin from '../mixins/DialogMixin';
-import TranslationMixin from '../mixins/TranslationMixin';
 import FormattedAddress from '../shared/FormattedAddress.vue';
-import WalletBase from '../WalletBase.vue';
 
 import MultisigCreateDialog from './MultisigCreateDialog.vue';
 
-import type { MSTData } from '../../types/mst';
+defineOptions({ name: 'CreateMstWalletDialog' });
 
-@Component({
-  name: 'CreateMstWalletDialog',
-  components: {
-    DialogBase,
-    WalletBase,
-    AddressBookInput,
-    MultisigCreateDialog,
-    AccountCard,
-    FormattedAddress,
-  },
-})
-export default class CreateMstWalletDialog extends Mixins(TranslationMixin, DialogMixin) {
-  readonly durations = Object.keys(mstTrxDeadline);
-  mstDurationTrxModel = '7D';
-  showHeader = true;
-  multisigName = '';
-  multisigAddresses: string[] = [''];
-  amountOfThreshold: number | null = null;
-  MSTDialogVisibility = false;
-  MSTData: MSTData = {
-    addresses: [],
-    multisigName: '',
-    threshold: 0,
-    duration: 0,
+const props = withDefaults(
+  defineProps<{
+    visible?: boolean;
+  }>(),
+  {
+    visible: false,
+  }
+);
+
+const emit = defineEmits<{
+  (event: 'update:visible', value: boolean): void;
+  (event: 'close'): void;
+  (event: 'closeMstCreate'): void;
+}>();
+
+const { t } = useTranslation();
+const { isVisible, setVisible, closeDialog } = useDialogVisibility(toRef(props, 'visible'), {
+  emit: (value) => emit('update:visible', value),
+  onClose: () => emit('close'),
+});
+
+const durations = Object.keys(mstTrxDeadline);
+const mstDurationTrxModel = ref<string>('7D');
+const showHeader = ref(true);
+const multisigName = ref('');
+const multisigAddresses = ref<string[]>(['']);
+const amountOfThreshold = ref<number | null>(null);
+const mstDialogVisibility = ref(false);
+const mstData = ref<MSTData>({
+  addresses: [],
+  multisigName: '',
+  threshold: 0,
+  duration: 0,
+});
+
+const account = computed(() => store.getters.wallet.account.account);
+const accountAddress = computed(() => account.value.address);
+
+const totalNumberOfAddresses = computed(() => multisigAddresses.value.length + 1);
+
+const normalizeThreshold = (value: unknown) => {
+  if (value === null || value === '') {
+    return;
+  }
+
+  const numValue = Number(value);
+  if (Number.isNaN(numValue)) {
+    amountOfThreshold.value = null;
+    return;
+  }
+
+  if (numValue > totalNumberOfAddresses.value) {
+    amountOfThreshold.value = totalNumberOfAddresses.value;
+  } else if (numValue < 1) {
+    amountOfThreshold.value = 1;
+  } else {
+    amountOfThreshold.value = numValue;
+  }
+};
+
+watch(amountOfThreshold, (value) => {
+  normalizeThreshold(value);
+});
+
+const initializeMultisigAddresses = () => {
+  multisigAddresses.value = [''];
+};
+
+onMounted(() => {
+  initializeMultisigAddresses();
+});
+
+const validAddress = (address: string) => validateAddress(address);
+
+const hasDuplicateAddresses = () => {
+  const addresses = multisigAddresses.value.map((addr) => addr.trim()).filter((addr) => addr !== '');
+  if (addresses.includes(accountAddress.value.trim())) {
+    return true;
+  }
+  return new Set(addresses).size !== addresses.length;
+};
+
+const isDuplicateAddress = (index: number) => {
+  const address = multisigAddresses.value[index].trim();
+  if (!address) return false;
+  if (address === accountAddress.value.trim()) {
+    return true;
+  }
+  const occurrences = multisigAddresses.value.filter((addr, i) => addr.trim() === address && i !== index).length;
+  return occurrences > 0;
+};
+
+const isButtonEnabled = () => {
+  const isMultisigNameFilled = multisigName.value.trim() !== '';
+  const areAllAddressesFilled = multisigAddresses.value.every((addr) => addr.trim() !== '');
+  const isThresholdSet = amountOfThreshold.value !== null && amountOfThreshold.value > 0;
+  const areAllAddressesValid = multisigAddresses.value.every((addr) => validAddress(addr));
+  const noDuplicateAddresses = !hasDuplicateAddresses();
+
+  return (
+    isMultisigNameFilled && areAllAddressesFilled && isThresholdSet && noDuplicateAddresses && areAllAddressesValid
+  );
+};
+
+const removeAddress = (index: number) => {
+  if (multisigAddresses.value.length <= 1) return;
+  multisigAddresses.value.splice(index, 1);
+};
+
+const handleClose = () => {
+  emit('closeMstCreate');
+};
+
+const handleBack = () => {
+  closeDialog();
+};
+
+const handleBackFromMSTDialog = () => {
+  setVisible(true);
+  mstDialogVisibility.value = false;
+};
+
+const handleClick = () => {
+  const selectedDuration = mstTrxDeadline[mstDurationTrxModel.value] || 0;
+
+  mstData.value = {
+    addresses: [accountAddress.value, ...multisigAddresses.value],
+    multisigName: multisigName.value,
+    threshold: amountOfThreshold.value ?? 0,
+    duration: selectedDuration,
   };
 
-  @Watch('amountOfThreshold')
-  private onAmountOfThresholdUpdate(value: any): void {
-    if (value !== null && value !== '') {
-      const numValue = Number(value);
-      if (isNaN(numValue)) {
-        this.amountOfThreshold = null;
-        return;
-      }
-      if (numValue > this.totalNumberOfAddresses) {
-        this.amountOfThreshold = this.totalNumberOfAddresses;
-      } else if (numValue < 1) {
-        this.amountOfThreshold = 1;
-      } else {
-        this.amountOfThreshold = numValue;
-      }
-    }
-  }
+  closeDialog();
+  mstDialogVisibility.value = true;
+};
 
-  @getter.account.account private account!: PolkadotJsAccount;
-
-  mounted() {
-    this.initializeMultisigAddresses();
-  }
-
-  initializeMultisigAddresses(): void {
-    this.multisigAddresses = [''];
-  }
-
-  isButtonEnabled(): boolean {
-    const isMultisigNameFilled = this.multisigName.trim() !== '';
-    const areAllAddressesFilled = this.multisigAddresses.every((address) => address.trim() !== '');
-    const isThresholdSet = this.amountOfThreshold !== null && this.amountOfThreshold > 0;
-    const areAllAddressesValid = this.multisigAddresses.every((address) => this.validAddress(address));
-    const noDuplicateAddresses = !this.hasDuplicateAddresses();
-    return (
-      isMultisigNameFilled && areAllAddressesFilled && isThresholdSet && noDuplicateAddresses && areAllAddressesValid
-    );
-  }
-
-  get totalNumberOfAddresses(): number {
-    return this.multisigAddresses.length + 1;
-  }
-
-  get accountAddress(): string {
-    return this.account.address;
-  }
-
-  public hasDuplicateAddresses(): boolean {
-    const addresses = this.multisigAddresses.map((addr) => addr.trim()).filter((addr) => addr !== '');
-    const uniqueAddresses = new Set(addresses);
-    if (addresses.includes(this.accountAddress.trim())) {
-      return true;
-    }
-    return uniqueAddresses.size !== addresses.length;
-  }
-
-  public isDuplicateAddress(index: number): boolean {
-    const address = this.multisigAddresses[index].trim();
-    if (!address) return false;
-    if (address === this.accountAddress.trim()) {
-      return true;
-    }
-    const occurrences = this.multisigAddresses.filter((addr, i) => addr.trim() === address && i !== index).length;
-    return occurrences > 0;
-  }
-
-  public validAddress(address: string): boolean {
-    return validateAddress(address);
-  }
-
-  removeAddress(index: number): void {
-    if (this.multisigAddresses.length <= 1) {
-      return;
-    }
-    this.multisigAddresses.splice(index, 1);
-  }
-
-  handleClose(): void {
-    this.$emit('closeMstCreate');
-  }
-
-  handleBack(): void {
-    this.closeDialog();
-  }
-
-  handleBackFromMSTDialog() {
-    this.isVisible = true;
-    this.MSTDialogVisibility = false;
-  }
-
-  handleClick(): void {
-    const selectedDuration = mstTrxDeadline[this.mstDurationTrxModel] || 0;
-
-    this.MSTData = {
-      addresses: [this.accountAddress, ...this.multisigAddresses],
-      multisigName: this.multisigName,
-      threshold: this.amountOfThreshold,
-      duration: selectedDuration,
-    };
-
-    this.closeDialog();
-    this.MSTDialogVisibility = true;
-  }
-
-  addAddress(): void {
-    this.multisigAddresses.push('');
-  }
-}
+const addAddress = () => {
+  multisigAddresses.value.push('');
+};
 </script>
 
 <style lang="scss">
@@ -250,8 +254,8 @@ export default class CreateMstWalletDialog extends Mixins(TranslationMixin, Dial
 }
 
 .multisig-scrollbar {
-  @include scrollbar($basic-spacing-big);
   height: 150px;
+  @include scrollbar($basic-spacing-big);
   .el-scrollbar__wrap {
     overflow-x: unset;
   }

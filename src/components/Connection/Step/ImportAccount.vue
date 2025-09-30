@@ -4,17 +4,17 @@
       <!-- Mnemonic phrase imput (only for desktop version) -->
       <template v-if="!jsonOnly">
         <s-input
+          v-model="mnemonicPhrase"
           class="input-textarea"
           type="textarea"
           :disabled="loading"
           :placeholder="t('desktop.accountMnemonic.placeholder')"
           :maxlength="255"
-          v-model="mnemonicPhrase"
           @input="handleMnemonicInput"
         />
         <s-button
-          class="s-typography-button--large login-btn"
           key="step1"
+          class="s-typography-button--large login-btn"
           type="primary"
           :disabled="disabledNextStep"
           @click="nextStep"
@@ -63,10 +63,10 @@
       </template>
     </template>
     <template v-else-if="step === LoginStep.ImportCredentials">
-      <s-form :class="computedClasses" @submit.native.prevent="importAccount">
+      <s-form :class="computedClasses" @submit.prevent="importAccount">
         <wallet-account v-if="json" :polkadot-account="{ name: accountName, address: json.address }" />
         <template v-else>
-          <s-input :disabled="loading" :placeholder="t('desktop.accountName.placeholder')" v-model="accountName" />
+          <s-input v-model="accountName" :disabled="loading" :placeholder="t('desktop.accountName.placeholder')" />
 
           <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
         </template>
@@ -77,18 +77,18 @@
           <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
 
           <s-input
+            v-model="accountPasswordConfirm"
             type="password"
             :disabled="loading"
             :placeholder="t('desktop.confirmPassword.placeholder')"
-            v-model="accountPasswordConfirm"
           />
         </template>
 
         <s-button
+          key="step2"
           :disabled="disabledImportStep"
           :loading="loading"
           class="s-typography-button--large login-btn"
-          key="step2"
           type="primary"
           native-type="submit"
         >
@@ -101,7 +101,7 @@
 
 <script lang="ts">
 import { mnemonicValidate } from '@polkadot/util-crypto';
-import { Mixins, Component, Prop, Ref } from 'vue-property-decorator';
+import { mixins, Options, Prop, Ref } from 'vue-property-decorator';
 
 import FearlessLogo from '../../../assets/img/FearlessWalletLogo.svg';
 import PolkadotLogo from '../../../assets/img/PolkadotLogo.svg';
@@ -117,14 +117,14 @@ import NotificationMixin from '../../mixins/NotificationMixin';
 import type { CreateAccountArgs, RestoreAccountArgs } from '../../../store/account/types';
 import type { KeyringPair$Json } from '../../../types/common';
 
-@Component({
+@Options({
   components: {
     FileUploader,
     PasswordInput,
     WalletAccount,
   },
 })
-export default class ImportAccountStep extends Mixins(NotificationMixin) {
+export default class ImportAccountStep extends mixins(NotificationMixin) {
   @Prop({ type: String, required: true }) readonly step!: LoginStep;
   @Prop({ type: Boolean, default: false }) readonly jsonOnly!: boolean;
   @Prop({ type: Boolean, default: false }) readonly loading!: boolean;

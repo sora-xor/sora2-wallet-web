@@ -5,83 +5,99 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, type CSSProperties } from 'vue';
 
-import { api } from '../api';
-import { LogoSize, ObjectInit } from '../consts';
-import { getter } from '../store/decorators';
+import { api } from '@/api';
+import { LogoSize } from '@/consts';
+import store from '@/store';
+import type { WhitelistIdsBySymbol } from '@/types/common';
 
-import TranslationMixin from './mixins/TranslationMixin';
 import NftTokenLogo from './NftTokenLogo.vue';
 
-import type { WhitelistIdsBySymbol } from '../types/common';
-import type { Asset, AccountAsset, Whitelist, WhitelistItem } from '@sora-substrate/sdk/build/assets/types';
+import type { AccountAsset, Asset, Whitelist, WhitelistItem } from '@sora-substrate/sdk/build/assets/types';
 
-@Component({
-  components: {
-    NftTokenLogo,
-  },
-})
-export default class TokenLogo extends Mixins(TranslationMixin) {
-  @getter.account.whitelist private whitelist!: Whitelist;
-  @getter.account.whitelistIdsBySymbol private whitelistIdsBySymbol!: WhitelistIdsBySymbol;
+const props = withDefaults(
+  defineProps<{
+    tokenSymbol?: string;
+    token?: Nullable<AccountAsset | Asset>;
+    size?: LogoSize;
+    withClickableLogo?: boolean;
+  }>(),
+  {
+    tokenSymbol: '',
+    token: null,
+    size: LogoSize.MEDIUM,
+    withClickableLogo: false,
+  }
+);
 
-  @Prop({ type: String, default: '' }) readonly tokenSymbol!: string;
-  @Prop({ type: Object, default: ObjectInit }) readonly token!: Nullable<AccountAsset | Asset>;
-  @Prop({ type: String, default: LogoSize.MEDIUM, required: false }) readonly size!: LogoSize;
-  @Prop({ default: false, type: Boolean }) readonly withClickableLogo!: boolean;
+const whitelist = computed<Whitelist>(() => {
+  const value = store.getters['wallet/account/whitelist'] as Nullable<Whitelist>;
+  return value ?? {};
+});
 
-  get isNft(): boolean {
-    return !!this.token && api.assets.isNft(this.token);
+const whitelistIdsBySymbol = computed<WhitelistIdsBySymbol>(() => {
+  const value = store.getters['wallet/account/whitelistIdsBySymbol'] as Nullable<WhitelistIdsBySymbol>;
+  return value ?? {};
+});
+
+const isNft = computed(() => Boolean(props.token) && api.assets.isNft(props.token as AccountAsset | Asset));
+
+const assetAddress = computed<Nullable<string>>(() => {
+  return props.tokenSymbol ? whitelistIdsBySymbol.value[props.tokenSymbol] : (props.token?.address ?? null);
+});
+
+const whitelistedItem = computed<Nullable<WhitelistItem>>(() => {
+  if (!props.token && !props.tokenSymbol) {
+    return null;
   }
 
-  get assetAddress(): Nullable<string> {
-    return this.tokenSymbol ? this.whitelistIdsBySymbol[this.tokenSymbol] : (this.token || {}).address;
+  const address = assetAddress.value;
+  if (!address) {
+    return null;
   }
 
-  get whitelistedItem(): Nullable<WhitelistItem> {
-    if (!(this.token || this.tokenSymbol)) {
-      return null;
-    }
-    const address = this.assetAddress;
-    if (!address) {
-      return null;
-    }
-    return this.whitelist[address];
+  return whitelist.value[address] ?? null;
+});
+
+const iconStyles = computed<CSSProperties>(() => {
+  const asset = whitelistedItem.value;
+
+  if (!asset) {
+    return {};
   }
 
-  get iconStyles(): object {
-    const asset = this.whitelistedItem;
-    if (!asset) {
-      return {};
-    }
-    return {
-      'background-size': '100%',
-      'background-image': `url("${asset.icon}")`,
-    };
+  return {
+    'background-size': '100%',
+    'background-image': `url("${asset.icon}")`,
+  };
+});
+
+const iconClasses = computed(() => {
+  const questionMark = 's-icon-notifications-info-24';
+  const tokenLogoClass = 'asset-logo';
+  const classes = [tokenLogoClass];
+
+  if (!assetAddress.value) {
+    classes.push(questionMark);
+  } else if (!whitelistedItem.value) {
+    classes.push(isNft.value ? 'asset-logo-nft' : questionMark);
   }
 
-  get iconClasses(): Array<string> {
-    const questionMark = 's-icon-notifications-info-24';
-    const tokenLogoClass = 'asset-logo';
-    const classes = [tokenLogoClass];
+  classes.push(`${tokenLogoClass}--${props.size.toLowerCase()}`);
 
-    if (!this.assetAddress) {
-      classes.push(questionMark);
-    } else if (!this.whitelistedItem) {
-      classes.push(this.isNft ? 'asset-logo-nft' : questionMark);
-    }
-
-    classes.push(`${tokenLogoClass}--${this.size.toLowerCase()}`);
-
-    if (this.withClickableLogo) {
-      classes.push('asset-logo--clickable');
-    }
-
-    return classes;
+  if (props.withClickableLogo) {
+    classes.push('asset-logo--clickable');
   }
-}
+
+  return classes;
+});
+
+defineExpose({
+  iconStyles,
+  iconClasses,
+});
 </script>
 
 <style lang="scss" scoped>

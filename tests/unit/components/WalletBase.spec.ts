@@ -1,14 +1,14 @@
-import Theme from '@soramitsu-ui/ui-vue2/lib/types/Theme';
 import Vuex from 'vuex';
 
 import WalletBase from '@/components/WalletBase.vue';
+import { Theme } from '@/consts';
 
 import { useDescribe, useMount } from '../../utils';
 
 const createStore = () =>
   new Vuex.Store({
     getters: {
-      libraryTheme: () => Theme.DARK,
+      libraryTheme: () => Theme.Dark,
     },
   });
 
@@ -25,27 +25,27 @@ useDescribe('WalletBase.vue', WalletBase, () => {
     const wrapper = mount({ tooltip: 'Test tooltip' });
     const tooltip = wrapper.find('.base-title_tooltip');
 
-    expect(tooltip.exists()).toBeTrue();
+    expect(tooltip.exists()).toBe(true);
   });
 
   it('should render go-back button icon when passed as prop', () => {
     const wrapper = mount({ showBack: true });
     const backBtn = wrapper.find('.base-title_back');
 
-    expect(backBtn.exists()).toBeTrue();
+    expect(backBtn.exists()).toBe(true);
   });
 
   it('should render close button icon when passed as prop', () => {
     const wrapper = mount({ showClose: true });
     const closeBtn = wrapper.find('.base-title_close');
 
-    expect(closeBtn.exists()).toBeTrue();
+    expect(closeBtn.exists()).toBe(true);
   });
 
   it('should render action button icon when passed as prop', () => {
     const wrapper = mount({ showAction: true });
     const actionBtn = wrapper.find('.base-title_action');
 
-    expect(actionBtn.exists()).toBeTrue();
+    expect(actionBtn.exists()).toBe(true);
   });
 });

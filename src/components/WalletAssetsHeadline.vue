@@ -8,7 +8,7 @@
       <el-popover popper-class="wallet-assets-filter" trigger="click" :visible-arrow="false">
         <div class="wallet-assets-filter__text">{{ t('filter.showAssets') }}</div>
         <s-radio-group v-model="selectedFilter">
-          <s-radio size="small" v-for="(filter, index) in filterOptionsText" :key="index" :label="getLabel(index)">
+          <s-radio v-for="(filter, index) in filterOptionsText" :key="index" size="small" :label="getLabel(index)">
             {{ filter }}
           </s-radio>
         </s-radio-group>
@@ -21,124 +21,112 @@
           <s-switch v-model="zeroBalanceAssets" :disabled="zeroBalanceSwitch" />
           <span>{{ t('filter.zeroBalance') }}</span>
         </div>
-        <div v-button class="wallet-assets-filter__button" slot="reference">
-          {{ showText }}:
-          <span class="wallet-assets-filter__button-option">{{ chosenOptionText }}</span>
-          <s-icon class="wallet-assets-filter__button-icon" name="basic-settings-24" size="14px" />
-        </div>
+        <template #reference>
+          <div v-button class="wallet-assets-filter__button">
+            {{ showText }}:
+            <span class="wallet-assets-filter__button-option">{{ chosenOptionText }}</span>
+            <s-icon class="wallet-assets-filter__button-icon" name="basic-settings-24" size="14px" />
+          </div>
+        </template>
       </el-popover>
     </div>
     <s-divider class="wallet-assets-headline__divider" />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+<script lang="ts" setup>
+import { computed, ref } from 'vue';
 
-import { WalletFilteringOptions } from '../consts';
-import { mutation, state } from '../store/decorators';
+import { useTranslation } from '@/composables/useTranslation';
+import { WalletFilteringOptions, type WalletAssetFilters } from '@/consts';
+import store from '@/store';
 
 import FormattedAmount from './FormattedAmount.vue';
-import LoadingMixin from './mixins/LoadingMixin';
-import TranslationMixin from './mixins/TranslationMixin';
 
-import type { WalletAssetFilters } from '../consts';
+const props = withDefaults(
+  defineProps<{
+    assetsFiatAmount?: string;
+  }>(),
+  {
+    assetsFiatAmount: '0',
+  }
+);
 
-enum Filter {
-  verifiedOnly = 'verifiedOnly',
-  zeroBalance = 'zeroBalance',
-  option = 'option',
-}
+const emit = defineEmits<{
+  (event: 'update-filter'): void;
+}>();
 
-@Component({
-  components: {
-    FormattedAmount,
+const { t, TranslationConsts } = useTranslation();
+
+const filters = computed<WalletAssetFilters>(() => store.state.wallet.settings.filters);
+
+const zeroBalanceSwitch = ref(false);
+
+const updateFilters = <K extends keyof WalletAssetFilters>(key: K, value: WalletAssetFilters[K]) => {
+  const updatedFilters = {
+    ...filters.value,
+    [key]: value,
+  } as WalletAssetFilters;
+
+  store.commit.wallet.settings.setFilterOptions(updatedFilters);
+  emit('update-filter');
+};
+
+const onlyVerifiedAssets = computed({
+  get: () => filters.value.verifiedOnly,
+  set: (value: boolean) => updateFilters('verifiedOnly', value),
+});
+
+const zeroBalanceAssets = computed({
+  get: () => filters.value.zeroBalance,
+  set: (value: boolean) => updateFilters('zeroBalance', value),
+});
+
+const selectedFilter = computed({
+  get: () => filters.value.option,
+  set: (value: WalletAssetFilters['option']) => {
+    updateFilters('option', value);
+
+    if (value === WalletFilteringOptions.NFT) {
+      onlyVerifiedAssets.value = false;
+    }
   },
-})
-export default class WalletAssetsHeadline extends Mixins(TranslationMixin, LoadingMixin) {
-  @Prop({ default: '0', type: String }) readonly assetsFiatAmount!: string;
+});
 
-  @state.settings.filters filters!: WalletAssetFilters;
-  @mutation.settings.setFilterOptions private setFilterOptions!: (filter: WalletAssetFilters) => void;
+const getLabel = (index: number) => Object.values(WalletFilteringOptions)[index];
 
-  zeroBalanceSwitch = false;
+const filterOptionsText = computed(() => [t('filter.all'), t('filter.token'), TranslationConsts.NFT]);
 
-  get computedClasses(): string {
-    const baseClass = ['wallet-assets-headline__content'];
-    if (!this.assetsFiatAmount) {
-      baseClass.push('wallet-assets-headline__content--no-fiat');
-    }
-    return baseClass.join(' ');
+const verifiedOnlySwitchDisabled = computed(() => filters.value.option === WalletFilteringOptions.NFT);
+
+const chosenOptionText = computed(() => {
+  switch (filters.value.option) {
+    case WalletFilteringOptions.Currencies:
+      return t('filter.token').toUpperCase();
+    case WalletFilteringOptions.NFT:
+      return TranslationConsts.NFT.toUpperCase();
+    default:
+      return t('filter.all').toUpperCase();
   }
+});
 
-  get onlyVerifiedAssets(): boolean {
-    return this.filters.verifiedOnly;
+const showText = computed(() => t('filter.show').toUpperCase());
+
+const computedClasses = computed(() => {
+  const baseClass = ['wallet-assets-headline__content'];
+  if (!props.assetsFiatAmount) {
+    baseClass.push('wallet-assets-headline__content--no-fiat');
   }
+  return baseClass.join(' ');
+});
 
-  set onlyVerifiedAssets(value: boolean) {
-    this.updateFilters(Filter.verifiedOnly, value);
-  }
-
-  get zeroBalanceAssets(): boolean {
-    return this.filters.zeroBalance;
-  }
-
-  set zeroBalanceAssets(value: boolean) {
-    this.updateFilters(Filter.zeroBalance, value);
-  }
-
-  get selectedFilter(): string {
-    return this.filters.option;
-  }
-
-  set selectedFilter(value) {
-    this.updateFilters(Filter.option, value);
-
-    if (this.filters.option === WalletFilteringOptions.NFT) {
-      this.onlyVerifiedAssets = false;
-    }
-  }
-
-  getLabel(index: number): string {
-    return Object.values(WalletFilteringOptions)[index];
-  }
-
-  updateFilters(key: string, value: string | boolean): void {
-    const filters = {
-      ...this.filters,
-      [key]: value,
-    };
-
-    this.setFilterOptions(filters);
-    this.$emit('update-filter');
-  }
-
-  get filterOptionsText(): Array<string> {
-    return [this.t('filter.all'), this.t('filter.token'), this.TranslationConsts.NFT];
-  }
-
-  get verifiedOnlySwitchDisabled(): boolean {
-    // disable verified only switch as there are no whitelisted NFTs.
-    return this.filters.option === WalletFilteringOptions.NFT;
-  }
-
-  get chosenOptionText(): string {
-    let text = this.t('filter.all');
-    switch (this.filters.option) {
-      case WalletFilteringOptions.Currencies:
-        text = this.t('filter.token');
-        break;
-      case WalletFilteringOptions.NFT:
-        text = this.TranslationConsts.NFT;
-        break;
-    }
-    return text.toUpperCase();
-  }
-
-  get showText(): string {
-    return this.t('filter.show').toUpperCase();
-  }
-}
+defineExpose({
+  onlyVerifiedAssets,
+  zeroBalanceAssets,
+  selectedFilter,
+  getLabel,
+  updateFilters,
+});
 </script>
 
 <style lang="scss" scoped>

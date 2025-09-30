@@ -12,7 +12,7 @@ const createStore = (tx: HistoryItem) =>
         currentRouteParams: { id: '1', asset: MOCK_ACCOUNT_ASSETS[0] },
       }),
       mutations: {
-        navigate: jest.fn(),
+        navigate: vi.fn(),
       },
     },
     account: {

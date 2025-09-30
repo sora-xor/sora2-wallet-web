@@ -2,6 +2,10 @@ import { encryptToHex, decryptFromHex } from './crypto';
 
 import type { DecryptedBackupAccount, EncryptedBackupAccount } from './types';
 
+/**
+ * Handles the encryption/decryption of backup account payloads using the same
+ * primitives as the Polkadot JS extension.
+ */
 export class BackupAccountCrypto {
   private static decrypt = decryptFromHex;
   private static encrypt = encryptToHex;
@@ -14,6 +18,10 @@ export class BackupAccountCrypto {
     return value ? this.decrypt(value, password) : null;
   }
 
+  /**
+   * Encrypts the sensitive fields of the backup account with the provided
+   * password, returning a transport-safe payload.
+   */
   public static encryptAccount(
     decryptedBackupAccount: DecryptedBackupAccount,
     password: string
@@ -44,6 +52,10 @@ export class BackupAccountCrypto {
     };
   }
 
+  /**
+   * Reverses {@link encryptAccount}, returning the decrypted account ready for
+   * import flows.
+   */
   public static decryptAccount(
     encryptedBackupAccount: EncryptedBackupAccount,
     password: string

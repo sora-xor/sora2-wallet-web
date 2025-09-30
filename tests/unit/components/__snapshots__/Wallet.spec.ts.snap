@@ -1,187 +1,27 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Wallet.vue [WalletTabs.WalletAssets]: should be rendered correctly 1`] = `
+exports[`Wallet.vue > [WalletTabs.WalletAssets]: should be rendered correctly 1`] = `
 <wallet-base-stub
+  data-v-700fe8f9=""
   resetfocus="Account"
+  showback="false"
+  showclose="false"
   showheader="true"
   title="Account"
+  titlecenter="false"
   tooltip=""
->
-   
-  <wallet-account-stub
-    chainapi="[object Object]"
-  >
-    <qr-code-scan-button-stub
-      alternative=""
-    />
-     
-    <s-button-stub
-      alternative="true"
-      borderradius="small"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      rounded="true"
-      size="small"
-      tabindex="0"
-      tooltip="Receive"
-      tooltipplacement="top"
-      type="action"
-      usedesignsystem="true"
-    >
-      <s-icon-stub
-        name="finance-receive-show-QR-24"
-        size="24"
-      />
-    </s-button-stub>
-     
-    <s-button-stub
-      alternative="true"
-      borderradius="small"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      rounded="true"
-      size="small"
-      tabindex="0"
-      tooltip="Switch account"
-      tooltipplacement="top"
-      type="action"
-      usedesignsystem="true"
-    >
-      <s-icon-stub
-        name="arrows-refresh-ccw-24"
-        size="24"
-      />
-    </s-button-stub>
-     
-    <!---->
-  </wallet-account-stub>
-   
-  <div
-    class="wallet"
-  >
-    <s-tabs-stub
-      borderradius="small"
-      position="top"
-      type="rounded"
-      usedesignsystem="true"
-      value="WalletAssets"
-    >
-      <s-tab-stub
-        label="Assets"
-        name="WalletAssets"
-      />
-      <s-tab-stub
-        label="Activity"
-        name="WalletHistory"
-      />
-    </s-tabs-stub>
-     
-    <walletassets-stub />
-  </div>
-   
-  <!---->
-   
-  <account-settings-dialog-stub />
-   
-  <mst-onboarding-dialog-stub />
-   
-  <multisig-change-name-dialog-stub />
-   
-  <!---->
-</wallet-base-stub>
+/>
 `;
 
-exports[`Wallet.vue [WalletTabs.WalletHistory]: should be rendered correctly 1`] = `
+exports[`Wallet.vue > [WalletTabs.WalletHistory]: should be rendered correctly 1`] = `
 <wallet-base-stub
+  data-v-700fe8f9=""
   resetfocus="Account"
+  showback="false"
+  showclose="false"
   showheader="true"
   title="Account"
+  titlecenter="false"
   tooltip=""
->
-   
-  <wallet-account-stub
-    chainapi="[object Object]"
-  >
-    <qr-code-scan-button-stub
-      alternative=""
-    />
-     
-    <s-button-stub
-      alternative="true"
-      borderradius="small"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      rounded="true"
-      size="small"
-      tabindex="0"
-      tooltip="Receive"
-      tooltipplacement="top"
-      type="action"
-      usedesignsystem="true"
-    >
-      <s-icon-stub
-        name="finance-receive-show-QR-24"
-        size="24"
-      />
-    </s-button-stub>
-     
-    <s-button-stub
-      alternative="true"
-      borderradius="small"
-      icon=""
-      iconposition="left"
-      nativetype="button"
-      rounded="true"
-      size="small"
-      tabindex="0"
-      tooltip="Switch account"
-      tooltipplacement="top"
-      type="action"
-      usedesignsystem="true"
-    >
-      <s-icon-stub
-        name="arrows-refresh-ccw-24"
-        size="24"
-      />
-    </s-button-stub>
-     
-    <!---->
-  </wallet-account-stub>
-   
-  <div
-    class="wallet"
-  >
-    <s-tabs-stub
-      borderradius="small"
-      position="top"
-      type="rounded"
-      usedesignsystem="true"
-      value="WalletAssets"
-    >
-      <s-tab-stub
-        label="Assets"
-        name="WalletAssets"
-      />
-      <s-tab-stub
-        label="Activity"
-        name="WalletHistory"
-      />
-    </s-tabs-stub>
-     
-    <walletassets-stub />
-  </div>
-   
-  <!---->
-   
-  <account-settings-dialog-stub />
-   
-  <mst-onboarding-dialog-stub />
-   
-  <multisig-change-name-dialog-stub />
-   
-  <!---->
-</wallet-base-stub>
+/>
 `;

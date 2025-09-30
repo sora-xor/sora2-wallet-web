@@ -1,12 +1,12 @@
 import { Operation } from '@sora-substrate/sdk';
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Options } from 'vue-property-decorator';
 
 import { ETH_BRIDGE_STATES } from '../../consts';
 
 import type { HistoryItem } from '@sora-substrate/sdk';
 import type { EthHistory } from '@sora-substrate/sdk/build/bridgeProxy/eth/types';
 
-@Component
+@Options({})
 export default class EthBridgeTransactionMixin extends Vue {
   isEthBridgeTx(transaction: HistoryItem): boolean {
     return [Operation.EthBridgeOutgoing, Operation.EthBridgeIncoming].includes(transaction.type);

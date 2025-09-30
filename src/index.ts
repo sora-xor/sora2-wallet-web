@@ -1,3 +1,10 @@
+/**
+ * Entry point for the SORA wallet Vue plugin. This module wires together the
+ * public API surface that host applications rely on: the plugin installer,
+ * exported components, Vuex helpers, and utility functions.
+ */
+import { createPinia, type Pinia } from 'pinia';
+
 import { api, connection } from './api';
 // Components & Mixins
 import AccountCard from './components/Account/AccountCard.vue';
@@ -22,7 +29,6 @@ import InfoLine from './components/InfoLine.vue';
 import SearchInput from './components/Input/SearchInput.vue';
 import CameraPermissionMixin from './components/mixins/CameraPermissionMixin';
 import CopyAddressMixin from './components/mixins/CopyAddressMixin';
-import DialogMixin from './components/mixins/DialogMixin';
 import FormattedAmountMixin from './components/mixins/FormattedAmountMixin';
 import LoadingMixin from './components/mixins/LoadingMixin';
 import NetworkFeeWarningMixin from './components/mixins/NetworkFeeWarningMixin';
@@ -81,32 +87,43 @@ import { ScriptLoader } from './util/scriptLoader';
 import { storage, runtimeStorage, settingsStorage } from './util/storage';
 
 import type { WithKeyring } from '@sora-substrate/sdk';
-import type { PluginObject } from 'vue';
-import type Vue from 'vue';
+import type { App, Plugin } from 'vue';
 
 type Store = typeof internalStore;
-
 type PluginOptions = {
   store: Store;
+  pinia?: Pinia;
 };
 
 let store: Store;
+let piniaInstance: Pinia | undefined;
 
-const SoraWalletElements: PluginObject<PluginOptions> = {
-  install(vue: typeof Vue, options?: PluginOptions): void {
+/**
+ * Vue plugin definition that registers the wallet into the host application.
+ * The plugin expects a Vuex store so it can connect the internal modules.
+ */
+const SoraWalletElements: Plugin<PluginOptions> = {
+  install(app: App, options?: PluginOptions): void {
     if (!options || !options.store) {
       throw new Error('Please provide vuex store.');
     }
     store = options.store;
-    installWalletPlugins(vue, store.original);
-    vue.component('SoraWallet', SoraWallet); // Root component
+    piniaInstance = options.pinia ?? piniaInstance ?? createPinia();
+
+    if (!app.config.globalProperties.$pinia && piniaInstance) {
+      app.use(piniaInstance);
+    }
+
+    installWalletPlugins(app);
+    app.component('SoraWallet', SoraWallet); // Root component
   },
 };
 
-if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.use(SoraWalletElements, {});
-}
-
+/**
+ * Initializes built-in wallet integrations and local storage depending on the
+ * runtime environment (desktop vs web). The initialization is intentionally
+ * side-effectful because the wallet modules depend on these registrations.
+ */
 const initAppWallets = (api: WithKeyring, isDesktop = false, appName?: string) => {
   const dAppName = appName ?? WALLET_CONSTS.TranslationConsts.Polkaswap;
 
@@ -126,6 +143,11 @@ const initAppWallets = (api: WithKeyring, isDesktop = false, appName?: string) =
   store.dispatch.wallet.account.updateAvailableWallets();
 };
 
+/**
+ * Ensures the Vuex store instance is ready before running wallet logic. The
+ * wallet can work with either an injected store from the host app or the
+ * internal store used by standalone mode, so we wait until one is available.
+ */
 const waitForStore = async (withoutStore = false): Promise<void> => {
   if (!store) {
     if (withoutStore) {
@@ -139,6 +161,11 @@ const waitForStore = async (withoutStore = false): Promise<void> => {
 
 let walletCoreLoaded = false;
 
+/**
+ * Lazily bootstraps the wallet core by waiting for the store and keyring to
+ * initialize, then fetching runtime data and applying permission overrides.
+ * The function is idempotent so subsequent calls resolve immediately.
+ */
 const waitForCore = async ({
   withoutStore = false,
   permissions,
@@ -157,6 +184,11 @@ const waitForCore = async ({
   }
 };
 
+/**
+ * Waits for an active blockchain connection before continuing. The helper
+ * retries until the API instance is ready so that higher level flows can be
+ * written without defensive checks at every stage.
+ */
 const waitForConnection = async (): Promise<void> => {
   if (connection.loading) {
     await delay(100);
@@ -167,12 +199,20 @@ const waitForConnection = async (): Promise<void> => {
   }
 };
 
+/**
+ * Restores the last active account and refreshes all computed state that
+ * depends on it. This includes route guards and wallet availability checks.
+ */
 const checkActiveAccount = async (): Promise<void> => {
   await api.restoreActiveAccount();
   await store.dispatch.wallet.account.checkWalletAvailability();
   await store.dispatch.wallet.router.checkCurrentRoute();
 };
 
+/**
+ * Public initializer that brings the wallet online. Consumers should await
+ * this function before interacting with any wallet services.
+ */
 async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promise<void> {
   await Promise.all([waitForCore(options), waitForConnection()]);
 
@@ -191,6 +231,10 @@ async function initWallet(options: WALLET_CONSTS.WalletInitOptions = {}): Promis
   store.commit.wallet.settings.setWalletLoaded(true);
 }
 
+/**
+ * Public registry of Vue components that can be consumed individually by the
+ * host application when the full plugin is not desired.
+ */
 const components = {
   SoraWallet,
   WalletAccount,
@@ -229,6 +273,10 @@ const components = {
   PinIcon,
 };
 
+/**
+ * Convenience export for the core mixins. These are kept separate so host
+ * applications can register only the behaviors they need.
+ */
 const mixins = {
   NetworkFeeWarningMixin,
   NumberFormatterMixin,
@@ -239,10 +287,13 @@ const mixins = {
   LoadingMixin,
   PaginationSearchMixin,
   CopyAddressMixin,
-  DialogMixin,
   CameraPermissionMixin,
 };
 
+/**
+ * Exposes Vuex utilities that allow consumers to interact with the wallet
+ * store using decorators or manual module registration.
+ */
 const vuex = {
   walletModules: modules,
   VuexOperation,
@@ -282,5 +333,12 @@ export {
   WC,
   vuex,
 };
+
+export { useDialogVisibility } from './composables/useDialog';
+export { useNotification } from './composables/useNotification';
+export { useTranslation } from './composables/useTranslation';
+export { useNotificationStore } from './stores/notification';
+
+export type { PluginOptions };
 
 export default SoraWalletElements;

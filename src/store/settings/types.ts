@@ -1,4 +1,4 @@
-import { IndexerType } from '@/consts';
+import { IndexerType, Theme } from '@/consts';
 
 import type { SoraNetwork, WalletPermissions, WalletAssetFilters } from '../../consts';
 import type { Alert, ApiKeysObject, FilterOptions, IndexerState } from '../../types/common';
@@ -32,4 +32,5 @@ export type SettingsState = {
   exchangeRateUnsubFn: Nullable<VoidFunction>;
   assetsFilter: FilterOptions;
   isMSTAvailable: boolean;
+  theme: Theme;
 };

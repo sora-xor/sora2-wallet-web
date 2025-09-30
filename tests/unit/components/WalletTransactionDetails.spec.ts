@@ -5,18 +5,18 @@ import { MOCK_ACCOUNTS, MOCK_ASSETS_TABLE, MOCK_ACCOUNT_ASSETS, MOCK_HISTORY } f
 
 import type { HistoryItem } from '@sora-substrate/sdk';
 
-jest.mock('@/api', () => ({
+vi.mock('@/api', () => ({
   api: {
     mst: {
-      isMST: jest.fn(() => false),
-      calculateFinalProofSize: jest.fn().mockResolvedValue({ finalProofSize: { toNumber: () => 0 } }),
-      getPrevoiusAccount: jest.fn(() => 'exampleAddress'),
-      approveMultisigExtrinsic: jest.fn().mockResolvedValue(true),
+      isMST: vi.fn(() => false),
+      calculateFinalProofSize: vi.fn().mockResolvedValue({ finalProofSize: { toNumber: () => 0 } }),
+      getPrevoiusAccount: vi.fn(() => 'exampleAddress'),
+      approveMultisigExtrinsic: vi.fn().mockResolvedValue(true),
     },
-    formatAddress: jest.fn(() => 'exampleAddress'),
-    getAccountPair: jest.fn(() => ({ meta: { name: 'TestAccount' } })),
+    formatAddress: vi.fn(() => 'exampleAddress'),
+    getAccountPair: vi.fn(() => ({ meta: { name: 'TestAccount' } })),
     assets: {
-      getAccountAsset: jest.fn().mockResolvedValue({ balance: { free: '0' } }),
+      getAccountAsset: vi.fn().mockResolvedValue({ balance: { free: '0' } }),
     },
   },
 }));
@@ -28,7 +28,7 @@ const createStore = (tx: HistoryItem) =>
         currentRouteParams: { id: '1', asset: MOCK_ACCOUNT_ASSETS[0] },
       }),
       mutations: {
-        navigate: jest.fn(),
+        navigate: vi.fn(),
       },
     },
     account: {
@@ -45,7 +45,7 @@ const createStore = (tx: HistoryItem) =>
         selectedTx: () => tx,
       },
       mutations: {
-        setTxDetailsId: jest.fn(),
+        setTxDetailsId: vi.fn(),
       },
     },
   });

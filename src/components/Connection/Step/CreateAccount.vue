@@ -13,7 +13,7 @@
           </div>
         </div>
       </div>
-      <s-button @click="handleCopy" size="mini" class="login__copy-seed" icon="basic-copy-24" icon-position="right">
+      <s-button size="mini" class="login__copy-seed" icon="basic-copy-24" icon-position="right" @click="handleCopy">
         <span>{{ t('copyPhraseText') }}</span>
       </s-button>
       <div class="login__text-advice">
@@ -21,7 +21,7 @@
         <p>{{ t('desktop.seedAdviceAdditionTitle') }}</p>
         <p>{{ t('desktop.seedAdviceAdditionText') }}</p>
       </div>
-      <s-button key="step1" @click="nextStep" class="s-typography-button--large login-btn" type="primary">{{
+      <s-button key="step1" class="s-typography-button--large login-btn" type="primary" @click="nextStep">{{
         t('desktop.button.next')
       }}</s-button>
     </template>
@@ -62,16 +62,16 @@
     </template>
     <!-- Create/Credentials -->
     <template v-else-if="step === LoginStep.CreateCredentials">
-      <s-form class="login__inputs" @submit.native.prevent="handleAccountCreate">
-        <s-input :disabled="loading" :placeholder="t('desktop.accountName.placeholder')" v-model="accountName" />
+      <s-form class="login__inputs" @submit.prevent="handleAccountCreate">
+        <s-input v-model="accountName" :disabled="loading" :placeholder="t('desktop.accountName.placeholder')" />
         <p class="login__create-account-desc">{{ t('desktop.accountName.desc') }}</p>
         <password-input v-model="accountPassword" :disabled="loading" />
         <p class="login__create-account-desc">{{ t('desktop.password.desc') }}</p>
         <s-input
+          v-model="accountPasswordConfirm"
           type="password"
           :disabled="loading"
           :placeholder="t('desktop.confirmPassword.placeholder')"
-          v-model="accountPasswordConfirm"
         />
         <p v-if="!arePasswordsEqual" class="login__create-account-desc error">
           {{ t('desktop.errorMessages.passwords') }}
@@ -101,7 +101,7 @@
 
 <script lang="ts">
 import isEqual from 'lodash/fp/isEqual';
-import { Mixins, Component, Prop, Watch } from 'vue-property-decorator';
+import { mixins, Options, Prop, Watch } from 'vue-property-decorator';
 
 import { LoginStep } from '../../../consts';
 import { copyToClipboard } from '../../../util';
@@ -111,12 +111,12 @@ import NotificationMixin from '../../mixins/NotificationMixin';
 import type { CreateAccountArgs } from '../../../store/account/types';
 import type { WithKeyring } from '@sora-substrate/sdk';
 
-@Component({
+@Options({
   components: {
     PasswordInput,
   },
 })
-export default class CreateAccountStep extends Mixins(NotificationMixin) {
+export default class CreateAccountStep extends mixins(NotificationMixin) {
   readonly ColumnsCount = 3;
   readonly LoginStep = LoginStep;
   readonly PhraseLength = 12;

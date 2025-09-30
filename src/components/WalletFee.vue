@@ -15,7 +15,7 @@
 <script lang="ts">
 import { FPNumber } from '@sora-substrate/sdk';
 import { XOR } from '@sora-substrate/sdk/build/assets/consts';
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Options, mixins, Prop } from 'vue-property-decorator';
 
 import InfoLine from './InfoLine.vue';
 import FormattedAmountMixin from './mixins/FormattedAmountMixin';
@@ -28,12 +28,12 @@ function isFPNumber(value: unknown): boolean {
   throw new Error('[WalletFee.vue]: property "value" should have FPNumber type');
 }
 
-@Component({
+@Options({
   components: {
     InfoLine,
   },
 })
-export default class WalletFee extends Mixins(TranslationMixin, FormattedAmountMixin) {
+export default class WalletFee extends mixins(TranslationMixin, FormattedAmountMixin) {
   @Prop({ required: true, validator: isFPNumber }) readonly value!: FPNumber;
 
   get xor(): string {

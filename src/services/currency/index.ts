@@ -1,6 +1,6 @@
-import { Notification } from '@soramitsu-ui/ui-vue2/lib/plugins/elementUI';
 import { timer } from 'rxjs';
 
+import notificationService from '@/services/notification';
 import { settingsStorage } from '@/util/storage';
 
 import { API_ENDPOINT } from '../../consts/currencies';
@@ -77,11 +77,10 @@ export class CurrencyExchangeRateService {
 
   static resetData(error?: Error | string): void {
     console.warn('[Exchange rate API] not available. Now using default option.', error);
-    Notification({
+    notificationService.notify({
       message: 'Switched to DAI fiat pricing.',
-      type: 'error',
-      duration: 4500,
-      customClass: 'sora s-flex',
+      severity: 'error',
+      timeout: 4500,
     });
     store.commit.wallet.settings.updateFiatExchangeRates();
     store.commit.wallet.settings.setFiatCurrency();

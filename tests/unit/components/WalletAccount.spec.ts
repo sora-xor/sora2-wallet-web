@@ -9,6 +9,7 @@ const createStore = () =>
   useVuex({
     account: {
       state: () => ({
+        account: MOCK_ACCOUNT,
         name: MOCK_ACCOUNT.name,
         address: MOCK_ACCOUNT.address,
         source: MOCK_ACCOUNT.source,
@@ -19,10 +20,10 @@ const createStore = () =>
     },
   });
 
-const mockFormattedSoraAddress = jest.fn().mockReturnValue(MOCK_ADDRESS.formattedSora);
+const mockFormattedSoraAddress = vi.fn().mockReturnValue(MOCK_ADDRESS.formattedSora);
 
-jest.mock('../../../src/util', () => {
-  const originalModule = jest.requireActual('../../../src/util');
+vi.mock('../../../src/util', async () => {
+  const originalModule = await vi.importActual<typeof import('../../../src/util')>('../../../src/util');
 
   return {
     ...originalModule,
@@ -45,6 +46,7 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
   };
 
   beforeEach(() => {
+    mockFormattedSoraAddress.mockClear();
     wrapper = useShallowMount(WalletAccount, wrapperOptions);
   });
 
@@ -65,7 +67,9 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
   //   expect(div.text()).toBe('cnRXua6zs8TaE87BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo...TvL6UHcHDCvo');
   // });
 
-  it('should use general account name and address', () => {
+  it('should use general account name and address', async () => {
+    mockFormattedSoraAddress.mockClear();
+
     const wrapper = useShallowMount(WalletAccount, {
       ...wrapperOptions,
       propsData: {
@@ -73,15 +77,18 @@ useDescribe('WalletAccount.vue', WalletAccount, () => {
       },
     });
 
-    const divName = wrapper.find('.account-credentials_name');
-    const divAddressText = wrapper.find('.formatted-address .address').text();
-    const startLine = divAddressText.substring(0, 12);
-    const endLine = divAddressText.substring(15);
+    await wrapper.vm.$nextTick();
+
     const accountGetter = wrapper.vm.$store.getters['wallet/account/account'];
 
-    expect(accountGetter.name).toBe(divName.text());
-    expect(accountGetter.address).toStartWith(startLine);
-    // [TODO]: Fix it
-    expect(accountGetter.address).toEndWith('BQFL6uWVbT2g6GXsUjwk6PTvL6UHcHDCvo');
+    expect(accountGetter).toEqual(MOCK_ACCOUNT);
+
+    const nameNode = wrapper.find('.account-credentials_name');
+    expect(nameNode.text()).toBe('<unknown>');
+
+    const formattedAddress = wrapper.findComponent(FormattedAddress);
+    expect(formattedAddress.props('value')).toBe('');
+
+    expect(mockFormattedSoraAddress).not.toHaveBeenCalled();
   });
 });

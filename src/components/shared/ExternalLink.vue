@@ -5,9 +5,9 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop } from 'vue-property-decorator';
+import { Vue, Options, Prop } from 'vue-property-decorator';
 
-@Component
+@Options({})
 export default class ExternalLink extends Vue {
   @Prop({ default: '', type: String }) title!: string;
   @Prop({ default: '', type: String }) href!: string;

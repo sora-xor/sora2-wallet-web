@@ -1,7 +1,7 @@
 <template>
   <account-confirm-dialog
+    v-model:visible="visible"
     with-timeout
-    :visible.sync="visible"
     :account="account"
     :loading="loading"
     :passphrase="passphrase"
@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Mixins, Prop } from 'vue-property-decorator';
+import { Options, mixins, Prop } from 'vue-property-decorator';
 
 import { getter, action, state } from '../store/decorators';
 import { delay } from '../util';
@@ -24,12 +24,12 @@ import NotificationMixin from './mixins/NotificationMixin';
 import type { PolkadotJsAccount } from '../types/common';
 import type { WithKeyring } from '@sora-substrate/sdk';
 
-@Component({
+@Options({
   components: {
     AccountConfirmDialog,
   },
 })
-export default class ConfirmDialog extends Mixins(NotificationMixin, LoadingMixin) {
+export default class ConfirmDialog extends mixins(NotificationMixin, LoadingMixin) {
   @Prop({ required: true, type: Object }) private account!: PolkadotJsAccount;
   @Prop({ required: true, type: Object }) private chainApi!: WithKeyring;
   @Prop({ required: true, type: Boolean }) private visibility!: boolean;

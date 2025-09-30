@@ -17,6 +17,7 @@ export const IMAGE_MIME_TYPES = {
   [IMAGE_EXTENSIONS.GIF]: 'image/gif',
 };
 
+/** Converts a base64 data URI into a `Blob`. */
 export const dataURItoBlob = (dataURI: string): Blob => {
   // convert base64 to raw binary data held in a string
   const byteString = atob(dataURI.split(',')[1]);
@@ -38,9 +39,7 @@ export const dataURItoBlob = (dataURI: string): Blob => {
   return blob;
 };
 
-/**
- * Create a blob by image url
- */
+/** Creates a `Blob` from an image URL by drawing it onto a canvas. */
 export const createImageBlobByUrl = (url: string, mimeType: string): Promise<Blob> => {
   return new Promise((resolve, reject) => {
     const image = new Image();
@@ -70,6 +69,7 @@ export const createImageBlobByUrl = (url: string, mimeType: string): Promise<Blo
   });
 };
 
+/** Serializes an SVG element into a standalone blob. */
 export const createSvgBlob = (svgElement: SVGSVGElement): Blob => {
   const data = new XMLSerializer().serializeToString(svgElement);
   const blob = new Blob([data], { type: 'image/svg+xml' });
@@ -77,6 +77,10 @@ export const createSvgBlob = (svgElement: SVGSVGElement): Blob => {
   return blob;
 };
 
+/**
+ * Persists an SVG element to disk, optionally rasterizing to another format
+ * before downloading.
+ */
 export const svgSaveAs = async (
   svgElement: SVGSVGElement,
   name: string,
@@ -98,9 +102,7 @@ export const svgSaveAs = async (
   saveAs(blob, filename);
 };
 
-/**
- * Transform svg to png icon
- */
+/** Transform svg data URIs into base64 encoded PNG icons. */
 export async function getBase64Icon(icon: string): Promise<string> {
   const BASE64_PNG_PREFIX = 'data:image/png;base64';
   const XML_SVG_PREFIX = 'data:image/svg+xml';
@@ -126,6 +128,7 @@ export async function getBase64Icon(icon: string): Promise<string> {
   return '';
 }
 
+/** Helper that renders a base64-encoded SVG onto a canvas and returns a PNG. */
 function base64SvgToBase64Png(imgsrc: string): Promise<string> {
   return new Promise((resolve, reject) => {
     const canvas = document.createElement('canvas');

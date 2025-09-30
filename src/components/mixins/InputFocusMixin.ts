@@ -1,7 +1,7 @@
-import { Component, Prop, Mixins, Ref } from 'vue-property-decorator';
+import { Options, Prop, mixins, Ref } from 'vue-property-decorator';
 
-@Component
-export default class InputFocusMixin extends Mixins() {
+@Options({})
+export default class InputFocusMixin extends mixins() {
   @Prop({ default: false, type: Boolean }) readonly autofocus!: boolean;
 
   @Ref('input') readonly input!: any;

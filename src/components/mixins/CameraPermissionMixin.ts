@@ -1,11 +1,11 @@
-import { Component, Mixins } from 'vue-property-decorator';
+import { Options, mixins } from 'vue-property-decorator';
 
 import { checkDevicesAvailability, checkCameraPermission } from '../../util';
 
 import NotificationMixin from './NotificationMixin';
 
-@Component
-export default class CameraPermissionMixin extends Mixins(NotificationMixin) {
+@Options({})
+export default class CameraPermissionMixin extends mixins(NotificationMixin) {
   permissionDialogVisibility = false;
 
   async checkMediaDevicesAllowance(context: string): Promise<boolean> {
