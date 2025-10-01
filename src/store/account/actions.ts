@@ -10,6 +10,7 @@ import { getAppWallets, checkWallet, isAppStorageSource } from '../../services/w
 import { rootActionContext } from '../../store';
 import { WHITE_LIST_URL, NFT_BLACK_LIST_URL } from '../../util';
 import { loginApi, logoutApi, updateApiSigner } from '../../util/account';
+import { sanitizeNftBlacklistPayload, sanitizeWhitelistPayload } from '../../util/security';
 
 import { accountActionContext } from './../account';
 
@@ -289,10 +290,14 @@ const actions = defineActions({
     commit.clearWhitelist();
     try {
       const response = await fetch(WHITE_LIST_URL, { cache: 'no-cache' });
-      const data = await response.json();
+      if (!response.ok) throw new Error(`Whitelist request failed with status ${response.status}`);
+
+      const payload = await response.text();
+      const data = sanitizeWhitelistPayload(payload);
       commit.setWhitelist(data);
     } catch (error) {
       commit.clearWhitelist();
+      console.error('[whitelist] Unable to load whitelist.', error);
     }
   },
   async getNftBlacklist(context): Promise<void> {
@@ -300,10 +305,14 @@ const actions = defineActions({
     commit.clearBlacklist();
     try {
       const response = await fetch(NFT_BLACK_LIST_URL, { cache: 'no-cache' });
-      const data = await response.json();
+      if (!response.ok) throw new Error(`NFT blacklist request failed with status ${response.status}`);
+
+      const payload = await response.text();
+      const data = sanitizeNftBlacklistPayload(payload);
       commit.setNftBlacklist(data);
     } catch (error) {
       commit.clearBlacklist();
+      console.error('[nft-blacklist] Unable to load NFT blacklist.', error);
     }
   },
   async subscribeOnAlerts(context): Promise<void> {

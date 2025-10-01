@@ -1,6 +1,6 @@
 <template>
   <span
-    v-if="value && isFiniteValue"
+    v-if="shouldRender"
     ref="parent"
     :class="computedClasses"
     @mouseenter="checkWiderFlag"
@@ -53,7 +53,7 @@ export default class FormattedAmount extends mixins(NumberFormatterMixin) {
   /**
    * Balance or Amount value.
    */
-  @Prop({ default: '', type: String }) readonly value!: string;
+  @Prop({ default: '', type: [String, Number] }) readonly value!: string | number;
   /**
    * Font size rate between integer and decimal numbers' parts. Possible values: `"small"`, `"medium"`, `"normal"`.
    * By default it's set to `"normal"` and it means the same font sizes for both numbers' parts.
@@ -115,6 +115,26 @@ export default class FormattedAmount extends mixins(NumberFormatterMixin) {
     return this.currencySymbol;
   }
 
+  get normalizedValue(): string {
+    if (this.value === null || this.value === undefined) {
+      return '';
+    }
+
+    if (typeof this.value === 'string') {
+      return this.value;
+    }
+
+    return String(this.value);
+  }
+
+  get hasDisplayableValue(): boolean {
+    if (typeof this.value === 'number') {
+      return !Number.isNaN(this.value) && this.value !== 0;
+    }
+
+    return this.normalizedValue.trim().length > 0;
+  }
+
   private formatFiatDecimal(integer: Nullable<string>, decimal: Nullable<string>): string {
     if (!decimal || !+decimal) {
       return '00';
@@ -130,20 +150,31 @@ export default class FormattedAmount extends mixins(NumberFormatterMixin) {
   }
 
   get unformatted(): string {
-    return this.value
+    return this.normalizedValue
       .replaceAll(FPNumber.DELIMITERS_CONFIG.thousand, '')
       .replace(FPNumber.DELIMITERS_CONFIG.decimal, '.');
   }
 
   get isFiniteValue(): boolean {
-    if (+this.value !== Infinity) {
+    if (+this.normalizedValue !== Infinity) {
       return Number.isFinite(+this.unformatted);
     }
     return false;
   }
 
+  get shouldRender(): boolean {
+    return this.hasDisplayableValue && this.isFiniteValue;
+  }
+
   get formatted(): FormattedAmountValues {
-    let value = this.value;
+    if (!this.shouldRender) {
+      return {
+        integer: '',
+        decimal: '',
+      };
+    }
+
+    let value = this.normalizedValue;
 
     if (this.isFiatValue) {
       let coefficient = this.exchangeRate;

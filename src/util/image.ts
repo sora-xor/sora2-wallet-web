@@ -1,6 +1,8 @@
 import base64 from 'base-64';
 import { saveAs } from 'file-saver';
 
+import type { Nullable } from '@/types/common';
+
 export enum IMAGE_EXTENSIONS {
   SVG = '.svg',
   PNG = '.png',
@@ -102,27 +104,176 @@ export const svgSaveAs = async (
   saveAs(blob, filename);
 };
 
+const ALLOWED_ICON_MIME_TYPES = new Set([
+  'image/png',
+  'image/jpeg',
+  'image/webp',
+  'image/gif',
+  'image/svg+xml',
+]);
+
+const DATA_URI_REGEX = /^data:(image\/[a-z0-9+.-]+);base64,([A-Za-z0-9+/=]+)$/i;
+
+const decodeBase64 = (value: string): string => {
+  try {
+    if (typeof atob === 'function') {
+      return atob(value);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  return base64.decode(value);
+};
+
+const encodeBase64 = (value: string): string => {
+  try {
+    if (typeof btoa === 'function') {
+      return btoa(value);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  return base64.encode(value);
+};
+
+const sanitizeElementAttributes = (element: Element): void => {
+  Array.from(element.attributes).forEach((attribute) => {
+    const name = attribute.name;
+    const value = attribute.value || '';
+
+    if (/^on/i.test(name) || value.trim().toLowerCase().startsWith('javascript:')) {
+      element.removeAttribute(name);
+    }
+  });
+};
+
+const stripDisallowedSvgContent = (rawSvg: string): string | null => {
+  if (typeof DOMParser === 'undefined') return null;
+
+  const parser = new DOMParser();
+  const document = parser.parseFromString(rawSvg, 'image/svg+xml');
+
+  if (document.querySelector('parsererror')) return null;
+
+  const root = document.documentElement;
+
+  if (!root) return null;
+
+  const disallowedSelectors = ['script', 'foreignObject'];
+  disallowedSelectors.forEach((selector) => {
+    document.querySelectorAll(selector).forEach((node) => node.parentNode?.removeChild(node));
+  });
+
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+
+  sanitizeElementAttributes(root);
+
+  while (walker.nextNode()) {
+    const element = walker.currentNode as Element;
+    if (!element) continue;
+
+    sanitizeElementAttributes(element);
+  }
+
+  root.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  if (!root.getAttribute('width')) {
+    root.setAttribute('width', '80px');
+  }
+  if (!root.getAttribute('height')) {
+    root.setAttribute('height', '80px');
+  }
+
+  return new XMLSerializer().serializeToString(document);
+};
+
+const sanitizeSvgDataUri = (dataUri: string): string => {
+  const match = DATA_URI_REGEX.exec(dataUri);
+  if (!match) return '';
+
+  const [, mimeType, payload] = match;
+  if (mimeType.toLowerCase() !== 'image/svg+xml') return '';
+
+  try {
+    const decodedSvg = decodeBase64(payload);
+    const sanitizedSvg = stripDisallowedSvgContent(decodedSvg);
+
+    if (!sanitizedSvg) return '';
+
+    const base64SvgEncoded = encodeBase64(sanitizedSvg);
+    return `data:image/svg+xml;base64,${base64SvgEncoded}`;
+  } catch (error) {
+    console.error(error);
+    return '';
+  }
+};
+
+const sanitizeDataUri = (dataUri: string): string => {
+  const match = DATA_URI_REGEX.exec(dataUri);
+  if (!match) return '';
+
+  const [, mimeType] = match;
+  const normalizedMime = mimeType.toLowerCase();
+
+  if (!ALLOWED_ICON_MIME_TYPES.has(normalizedMime)) {
+    return '';
+  }
+
+  if (normalizedMime === 'image/svg+xml') {
+    return sanitizeSvgDataUri(dataUri);
+  }
+
+  return dataUri;
+};
+
+/**
+ * Ensures the provided icon URL or data URI is safe to embed. Returns an empty
+ * string when the input is considered unsafe.
+ */
+export const sanitizeIconSource = (icon: Nullable<string>): string => {
+  if (!icon) return '';
+
+  const trimmed = icon.trim();
+
+  if (trimmed.startsWith('data:')) {
+    return sanitizeDataUri(trimmed);
+  }
+
+  try {
+    const url = new URL(trimmed);
+    if (url.protocol !== 'https:') return '';
+    if (/["'()\s]/.test(trimmed)) return '';
+
+    return url.href;
+  } catch (error) {
+    console.error(error);
+    return '';
+  }
+};
+
+/**
+ * Formats a safe CSS `url()` string escaping troublesome characters.
+ */
+export const buildCssUrl = (url: string): string => {
+  const escaped = url.replace(/["\\\n\r]/g, (char) => `\\${char}`);
+  const parenthesesEscaped = escaped.replace(/\)/g, '\\)');
+
+  return `url("${parenthesesEscaped}")`;
+};
+
 /** Transform svg data URIs into base64 encoded PNG icons. */
 export async function getBase64Icon(icon: string): Promise<string> {
-  const BASE64_PNG_PREFIX = 'data:image/png;base64';
-  const XML_SVG_PREFIX = 'data:image/svg+xml';
+  const safeIcon = sanitizeIconSource(icon);
 
-  if (icon.startsWith(BASE64_PNG_PREFIX)) return icon;
-  if (icon.startsWith(XML_SVG_PREFIX)) {
-    // take svg string starting from '<' char up to end
-    const svgUriEncodedTrimmed = icon.substring(icon.indexOf('%3C'));
-    // provide width and height for original svg
-    const svgUriEncoded = svgUriEncodedTrimmed.replace(
-      "xmlns='http://www.w3.org/2000/svg'",
-      "xmlns='http://www.w3.org/2000/svg' width='80px' height='80px' "
-    );
-    const svgUriDecoded = decodeURIComponent(svgUriEncoded);
-    const base64SvgEncoded = base64.encode(svgUriDecoded);
+  if (!safeIcon) return '';
+  if (safeIcon.startsWith('data:image/png;base64')) return safeIcon;
+  if (safeIcon.startsWith('data:image/svg+xml;base64')) {
+    return base64SvgToBase64Png(safeIcon);
+  }
 
-    const base64SVG = `${XML_SVG_PREFIX};base64,${base64SvgEncoded}`;
-    const base64PNG = base64SvgToBase64Png(base64SVG);
-
-    return base64PNG;
+  if (safeIcon.startsWith('https://')) {
+    return safeIcon;
   }
 
   return '';

@@ -30,7 +30,7 @@
           :content="valueTooltip"
         >
           <span class="info-line-value">
-            {{ value }}
+            {{ normalizedValue }}
             <span v-if="assetSymbol" class="asset-symbol">{{ ' ' + assetSymbol }}</span>
           </span>
         </component>
@@ -64,7 +64,7 @@ export default class InfoLine extends Vue {
 
   @Prop({ default: '', type: String }) readonly label!: string;
   @Prop({ default: '', type: String }) readonly labelTooltip!: string;
-  @Prop({ default: '' }) readonly value!: string;
+  @Prop({ default: '', type: [String, Number] }) readonly value!: string | number;
   @Prop({ default: '', type: String }) readonly assetSymbol!: string;
   @Prop({ default: false, type: Boolean }) readonly isFormatted!: boolean;
   @Prop({ default: '', type: String }) readonly fiatValue!: string;
@@ -76,12 +76,28 @@ export default class InfoLine extends Vue {
 
   @state.settings.shouldBalanceBeHidden shouldBalanceBeHidden!: boolean;
 
+  get normalizedValue(): string {
+    if (this.value === null || this.value === undefined) {
+      return '';
+    }
+
+    if (typeof this.value === 'string') {
+      return this.value;
+    }
+
+    return String(this.value);
+  }
+
+  get hasInvalidValue(): boolean {
+    return ['NaN', 'Infinity', '-Infinity'].includes(this.normalizedValue);
+  }
+
   get isValueExists(): boolean {
-    if (this.value === 'NaN' || this.value.includes('Infinity')) {
-      console.warn(`The ${this.label} value is: ${this.value}.`);
+    if (this.hasInvalidValue) {
       return false;
     }
-    return !!this.value;
+
+    return this.normalizedValue.trim().length > 0;
   }
 
   get formattedFontSize(): Nullable<FontSizeRate> {

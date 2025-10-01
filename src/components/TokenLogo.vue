@@ -12,6 +12,7 @@ import { api } from '@/api';
 import { LogoSize } from '@/consts';
 import store from '@/store';
 import type { WhitelistIdsBySymbol } from '@/types/common';
+import { buildCssUrl, sanitizeIconSource } from '@/util/image';
 
 import NftTokenLogo from './NftTokenLogo.vue';
 
@@ -61,16 +62,21 @@ const whitelistedItem = computed<Nullable<WhitelistItem>>(() => {
   return whitelist.value[address] ?? null;
 });
 
-const iconStyles = computed<CSSProperties>(() => {
-  const asset = whitelistedItem.value;
+const sanitizedIcon = computed(() => {
+  const icon = whitelistedItem.value?.icon;
+  return sanitizeIconSource(icon ?? '');
+});
 
-  if (!asset) {
+const iconStyles = computed<CSSProperties>(() => {
+  const icon = sanitizedIcon.value;
+
+  if (!icon) {
     return {};
   }
 
   return {
     'background-size': '100%',
-    'background-image': `url("${asset.icon}")`,
+    'background-image': buildCssUrl(icon),
   };
 });
 
